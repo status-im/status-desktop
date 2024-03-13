@@ -37,10 +37,6 @@ StatusScrollView {
     property string referenceName: ""
     property string referenceSymbol: ""
 
-    // Network related properties:
-    property var layer1Networks
-    property var layer2Networks
-
     // Account expected roles: address, name, color, emoji, walletType
     property var accounts
 

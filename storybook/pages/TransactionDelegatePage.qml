@@ -8,6 +8,8 @@ import utils 1.0
 
 import shared.controls 1.0
 
+import Models 1.0
+
 SplitView {
     id: root
 
@@ -82,13 +84,7 @@ SplitView {
                             return "%L1 %2".arg(cryptoValue).arg(symbol)
                         }
 
-                        function getNetworkFullName(chainId) {
-                            return chainId
-                        }
-
-                        function getNetworkColor(chainId) {
-                            return "pink"
-                        }
+                        property var flatNetworks: NetworksModel.flatNetworks
                     }
                     walletRootStore: QtObject {
                         function getNameForAddress(address) {

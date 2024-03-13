@@ -6,8 +6,5 @@ QtObject {
 
     //
     // Silence warnings
-    readonly property ListModel layer1: ListModel {}
-    readonly property ListModel layer2: ListModel {}
-    readonly property ListModel enabled: ListModel {}
-    readonly property ListModel all: ListModel {}
+    readonly property ListModel flatNetworks: ListModel {}
 }

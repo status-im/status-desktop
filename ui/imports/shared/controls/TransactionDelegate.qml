@@ -6,6 +6,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet 1.0
 
@@ -62,10 +63,10 @@ StatusListItem {
     readonly property double outFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(outCryptoValue, modelData.outSymbol): 0.0
     readonly property double feeCryptoValue: 0.0 // TODO fill when bridge data is implemented
     readonly property double feeFiatValue: 0.0 // TODO fill when bridge data is implemented
-    readonly property string networkColor: isModelDataValid ? rootStore.getNetworkColor(modelData.chainId) : ""
-    readonly property string networkName: isModelDataValid ? rootStore.getNetworkFullName(modelData.chainId) : ""
-    readonly property string networkNameIn: isMultiTransaction ? rootStore.getNetworkFullName(modelData.chainIdIn) : ""
-    readonly property string networkNameOut: isMultiTransaction ? rootStore.getNetworkFullName(modelData.chainIdOut) : ""
+    readonly property string networkColor: isModelDataValid ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainId, "chainColor") : ""
+    readonly property string networkName: isModelDataValid ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainId, "chainName") : ""
+    readonly property string networkNameIn: isMultiTransaction ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainIdIn, "chainName") : ""
+    readonly property string networkNameOut: isMultiTransaction ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainIdOut, "chainName") : ""
     readonly property string addressNameTo: isModelDataValid ? walletRootStore.getNameForAddress(modelData.recipient) : ""
     readonly property string addressNameFrom: isModelDataValid ? walletRootStore.getNameForAddress(modelData.sender) : ""
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
@@ -246,7 +247,7 @@ StatusListItem {
         }
 
         // PROGRESS
-        const networkLayer = rootStore.getNetworkLayer(modelData.chainId)
+        const networkLayer = SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainId, "layer")
 
         const isBridge = type === Constants.TransactionType.Bridge
         switch(transactionStatus) {
@@ -272,7 +273,7 @@ StatusListItem {
             details += qsTr("Confirmed on %1").arg(root.networkName) + endl
             details += LocaleUtils.formatDateTime(confirmationTimeStamp * 1000, Locale.LongFormat) + endl2
             if (isBridge) {
-                const networkInLayer = rootStore.getNetworkLayer(modelData.chainIdIn)
+                const networkInLayer = SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainIdIn, "layer")
                 const confirmationTimeStampIn = WalletUtils.calculateConfirmationTimestamp(networkInLayer, modelData.timestamp)
                 details += qsTr("Signed on %1").arg(root.networkNameIn) + endl + timestampString + endl2
                 details += qsTr("Confirmed on %1").arg(root.networkNameIn) + endl
@@ -293,7 +294,7 @@ StatusListItem {
             details += qsTr("Finalised on %1").arg(root.networkName) + endl
             details += LocaleUtils.formatDateTime(finalisationTimeStamp * 1000, Locale.LongFormat) + endl2
             if (isBridge) {
-                const networkInLayer = rootStore.getNetworkLayer(modelData.chainIdIn)
+                const networkInLayer = SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainIdIn, "layer")
                 const confirmationTimeStampIn = WalletUtils.calculateConfirmationTimestamp(networkInLayer, modelData.timestamp)
                 const finalisationTimeStampIn = WalletUtils.calculateFinalisationTimestamp(networkInLayer, modelData.timestamp)
                 const epochIn = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainIdIn) - detailsObj.blockNumberIn)

@@ -5,6 +5,8 @@ import QtQuick.Layouts 1.13
 import Storybook 1.0
 import Models 1.0
 
+import SortFilterProxyModel 0.2
+
 import AppLayouts.Wallet.controls 1.0
 
 SplitView {
@@ -36,12 +38,11 @@ SplitView {
                     id: networkFilter
 
                     anchors.centerIn: parent
-                    width: 200
 
-                    layer1Networks: NetworksModel.layer1Networks
-                    layer2Networks: NetworksModel.layer2Networks
-                    enabledNetworks: NetworksModel.enabledNetworks
-                    allNetworks: enabledNetworks
+                    flatNetworks: SortFilterProxyModel {
+                        sourceModel: NetworksModel.flatNetworks
+                        filters: ValueFilter { roleName: "isTest"; value: false; }
+                    }
 
                     multiSelection: multiSelectionCheckBox.checked
 

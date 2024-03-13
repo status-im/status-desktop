@@ -35,7 +35,7 @@ proc init*(self: Controller) =
   discard
 
 proc getChainIds*(self: Controller): seq[int] =
-  return self.networkService.getNetworks().map(n => n.chainId)
+  return self.networkService.getCurrentNetworks().map(n => n.chainId)
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()

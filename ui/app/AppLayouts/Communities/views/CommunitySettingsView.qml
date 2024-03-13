@@ -354,10 +354,7 @@ StatusSectionLayout {
             // Models
             tokensModel: root.community.communityTokens
             membersModel: root.community.members
-            layer1Networks: communityTokensStore.layer1Networks
-            layer2Networks: communityTokensStore.layer2Networks
-            enabledNetworks: communityTokensStore.enabledNetworks
-            allNetworks: communityTokensStore.allNetworks
+            flatNetworks: communityTokensStore.filteredFlatModel
             accounts: root.walletAccountsModel
             referenceAssetsBySymbolModel: root.tokensStore.assetsBySymbolModel
 

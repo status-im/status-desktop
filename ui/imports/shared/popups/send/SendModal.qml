@@ -268,7 +268,7 @@ StatusDialog {
                         selectedSenderAccount: store.selectedSenderAccount.address
                         assetsModel: popup.store.processedAssetsModel
                         collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
-                        networksModel: popup.store.allNetworksModel
+                        networksModel: popup.store.flatNetworksModel
                         currentCurrencySymbol: d.currencyStore.currentCurrencySymbol
                         visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.TokenType.Unknown) ||
                                  (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.TokenType.Unknown)
@@ -400,7 +400,7 @@ StatusDialog {
             selectedSenderAccount: store.selectedSenderAccount.address
             assets: popup.store.processedAssetsModel
             collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
-            networksModel: popup.store.allNetworksModel
+            networksModel: popup.store.flatNetworksModel
             onlyAssets: holdingSelector.onlyAssets
             onTokenSelected: {
                 d.setSelectedHoldingId(symbol, holdingType)

@@ -262,7 +262,7 @@ QtObject:
       self.items[i].isPreferred = true
       self.dataChanged(index, index, @[ModelRole.IsPreferred.int])
 
-  proc getNetworkColor*(self: NetworkModel, shortName: string): string {.slot.} =
+  proc getNetworkColor*(self: NetworkModel, shortName: string): string =
     for item in self.items:
       if cmpIgnoreCase(item.getShortName(), shortName) == 0:
         return item.getChainColor()

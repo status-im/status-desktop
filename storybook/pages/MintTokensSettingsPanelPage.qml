@@ -109,10 +109,10 @@ SplitView {
             // Models:
             tokensModel: editorModelChecked.checked ? emptyModel :
                                                       privilegedModelChecked.checked ? privilegedTokensModel : mintedTokensModel
-            layer1Networks: NetworksModel.layer1Networks
-            layer2Networks: NetworksModel.layer2Networks
-            enabledNetworks: NetworksModel.enabledNetworks
-            allNetworks: enabledNetworks
+            flatNetworks: SortFilterProxyModel {
+                sourceModel: NetworksModel.flatNetworks
+                filters: ValueFilter { roleName: "isTest"; value: false }
+            }
             accounts: WalletAccountsModel {}
             referenceAssetsBySymbolModel: ListModel {
                 ListElement {

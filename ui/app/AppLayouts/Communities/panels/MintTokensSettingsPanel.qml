@@ -55,10 +55,7 @@ StackView {
     required property var referenceAssetsBySymbolModel
 
     // Network related properties:
-    property var layer1Networks
-    property var layer2Networks
-    property var enabledNetworks
-    property var allNetworks
+    property var flatNetworks
 
     signal mintCollectible(var collectibleItem)
     signal mintAsset(var assetItem)
@@ -226,10 +223,7 @@ StackView {
                 tMasterToken.accountName: ownerTokenPage.accountName
                 tMasterToken.accountAddress: ownerTokenPage.accountAddress
 
-                layer1Networks: root.layer1Networks
-                layer2Networks: root.layer2Networks
-                enabledNetworks: root.enabledNetworks
-                allNetworks: root.allNetworks
+                flatNetworks: root.flatNetworks
                 accounts: root.accounts
 
                 feeText: feeSubscriber.feeText
@@ -278,14 +272,9 @@ StackView {
             id: newTokenPage
 
             readonly property int ownerTokenChainId: SQUtils.ModelUtils.get(root.tokensModel, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner).chainId ?? 0
-            readonly property var chainModel: NetworkModelHelpers.getLayerNetworkModelByChainId(root.layer1Networks,
-                                                                                                root.layer2Networks,
-                                                                                                ownerTokenChainId) ?? root.layer2Networks
-            readonly property int chainIndex: NetworkModelHelpers.getChainIndexByChainId(root.layer1Networks,
-                                                                                         root.layer2Networks,
-                                                                                         ownerTokenChainId)
-            readonly property string chainName: NetworkModelHelpers.getChainName(chainModel, chainIndex)
-            readonly property string chainIcon: NetworkModelHelpers.getChainIconUrl(chainModel, chainIndex)
+            readonly property int chainIndex: NetworkModelHelpers.getChainIndexByChainId(root.flatNetworks, ownerTokenChainId)
+            readonly property string chainName: NetworkModelHelpers.getChainName(root.flatNetworks, chainIndex)
+            readonly property string chainIcon: NetworkModelHelpers.getChainIconUrl(root.flatNetworks, chainIndex)
 
             property TokenObject asset: TokenObject{
                 type: Constants.TokenType.ERC20
@@ -368,8 +357,6 @@ StackView {
                         id: editView
 
                         viewWidth: root.viewWidth
-                        layer1Networks: root.layer1Networks
-                        layer2Networks: root.layer2Networks
                         accounts: root.accounts
                         tokensModel: root.tokensModel
                         referenceAssetsBySymbolModel: root.referenceAssetsBySymbolModel

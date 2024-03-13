@@ -34,7 +34,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.refreshNetworks()
 
-proc getFlatNetworks*(self: Controller): seq[NetworkDto] =
+proc getFlatNetworks*(self: Controller): var seq[NetworkDto] =
   return self.networkService.getFlatNetworks()
 
 proc setNetworksState*(self: Controller, chainIds: seq[int], enabled: bool) =

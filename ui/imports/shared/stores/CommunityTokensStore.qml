@@ -1,4 +1,6 @@
 import QtQuick 2.15
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 
 QtObject {
@@ -7,10 +9,11 @@ QtObject {
     property var communityTokensModuleInst: communityTokensModule ?? null
 
     // Network selection properties:
-    property var layer1Networks: networksModule.layer1
-    property var layer2Networks: networksModule.layer2
-    property var enabledNetworks: networksModule.enabled
-    property var allNetworks: networksModule.all
+    property var flatNetworks: networksModule.flatNetworks
+    property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
+        sourceModel: root.flatNetworks
+        filters: ValueFilter { roleName: "isTest"; value: networksModule.areTestNetworksEnabled }
+    }
 
     // set by asyncGetOwnerTokenDetails
     readonly property var ownerTokenDetails: {

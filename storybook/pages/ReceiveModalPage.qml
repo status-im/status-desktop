@@ -2,6 +2,10 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import SortFilterProxyModel 0.2
+
+import StatusQ.Core.Utils 0.1
+
 import Storybook 1.0
 import Models 1.0
 import AppLayouts.Wallet.popups 1.0
@@ -40,19 +44,61 @@ SplitView {
                 "name": "My account",
                 "emoji": "",
                 "address": "0x1234567890123456789012345678901234567890",
-                "preferredSharingChainIds": "opt:eth:"
+                "preferredSharingChainIds": "10:42161:1:"
             }
             switchingAccounsEnabled: true
             changingPreferredChainsEnabled: true
             hasFloatingButtons: true
             qrImageSource: "https://upload.wikimedia.org/wikipedia/commons/4/41/QR_Code_Example.svg"
             getNetworkShortNames: function (chainIDsString) {
-                return networksNames
+                let chainArray = chainIDsString.split(":")
+                let chainNameString = ""
+                for (let i =0; i<chainArray.length; i++) {
+                    chainNameString += NetworksModel.getShortChainName(Number(chainArray[i])) + ":"
+                }
+                return chainNameString
             }
 
             property string networksNames: "opt:arb:eth:"
 
-            store: NetworksModel
+            store: QtObject {
+                property var filteredFlatModel: SortFilterProxyModel {
+                    sourceModel: NetworksModel.flatNetworks
+                    filters: ValueFilter { roleName: "isTest"; value: false }
+                }
+
+                function getAllNetworksChainIds() {
+                    let result = []
+                    let chainIdsArray = ModelUtils.modelToFlatArray(filteredFlatModel, "chainId")
+                    for(let i = 0; i< chainIdsArray.length; i++) {
+                        result.push(chainIdsArray[i].toString())
+                    }
+                    return result
+                }
+
+                function processPreferredSharingNetworkToggle(preferredSharingNetworks, toggledNetwork) {
+                    let prefChains = preferredSharingNetworks
+                    if(prefChains.length === filteredFlatModel.count) {
+                        prefChains = [toggledNetwork.chainId.toString()]
+                    }
+                    else if(!prefChains.includes(toggledNetwork.chainId.toString())) {
+                        prefChains.push(toggledNetwork.chainId.toString())
+                    }
+                    else {
+                        if(prefChains.length === 1) {
+                            prefChains = getAllNetworksChainIds()
+                        }
+                        else {
+                            for(var i = 0; i < prefChains.length;i++) {
+                                if(prefChains[i] === toggledNetwork.chainId.toString()) {
+                                    prefChains.splice(i, 1)
+                                }
+                            }
+                        }
+                    }
+                    return prefChains
+                }
+            }
         }
     }
 

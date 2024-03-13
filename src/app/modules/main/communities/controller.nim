@@ -372,8 +372,8 @@ proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTo
 proc getAllCommunityTokens*(self: Controller): seq[CommunityTokenDto] =
   self.communityTokensService.getAllCommunityTokens()
 
-proc getNetwork*(self:Controller, chainId: int): NetworkDto =
-  self.networksService.getNetwork(chainId)
+proc getNetworkByChainId*(self:Controller, chainId: int): NetworkDto =
+  self.networksService.getNetworkByChainId(chainId)
 
 proc getTokenBySymbolList*(self: Controller): seq[TokenBySymbolItem] =
   return self.tokenService.getTokenBySymbolList()
@@ -480,8 +480,8 @@ proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataTo
 proc removeCommunityChat*(self: Controller, communityId: string, channelId: string) =
   self.communityService.deleteCommunityChat(communityId, channelId)
 
-proc getNetworks*(self: Controller): seq[NetworkDto] =
-  return self.networksService.getNetworks()
+proc getCurrentNetworks*(self: Controller): seq[NetworkDto] =
+  return self.networksService.getCurrentNetworks()
 
 proc promoteSelfToControlNode*(self: Controller, communityId: string) =
   self.communityService.promoteSelfToControlNode(communityId)

@@ -491,7 +491,6 @@ QtObject {
     property var accounts: walletSectionSendInst.accounts
     property string currentCurrency: walletSection.currentCurrency
     property CurrenciesStore currencyStore: CurrenciesStore {}
-    property var allNetworks: networksModule.all
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
     property var disabledChainIdsFromList: []

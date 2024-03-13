@@ -50,7 +50,7 @@ proc getWalletAddresses*(self: Controller): seq[string] =
   return self.walletAccountService.getWalletAddresses()
 
 proc getChainIds*(self: Controller): seq[int] =
-  return self.networkService.getNetworks().map(n => n.chainId)
+  return self.networkService.getCurrentNetworks().map(n => n.chainId)
 
 proc updateCollectiblePreferences*(self: Controller, tokenPreferencesJson: string) =
   self.collectibleService.updateCollectiblePreferences(tokenPreferencesJson)

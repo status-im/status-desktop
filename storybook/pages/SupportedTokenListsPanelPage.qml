@@ -20,7 +20,7 @@ SplitView {
     readonly property var flatTokensModel: FlatTokensModel {}
     readonly property var joinModel: LeftJoinModel {
         leftModel: root.flatTokensModel
-        rightModel: NetworksModel.allNetworks
+        rightModel: NetworksModel.flatNetworks
 
         joinRole: "chainId"
     }

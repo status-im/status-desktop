@@ -487,8 +487,8 @@ QtObject:
         if token != nil:
           tokenSymbol = token.symbol
 
-        let network = self.networkService.getNetwork(chainID)
-        if network.nativeCurrencySymbol == tokenSymbol:
+        let network = self.networkService.getNetworkByChainId(chainID)
+        if not network.isNil and network.nativeCurrencySymbol == tokenSymbol:
           isEthTx = true
 
       if(isEthTx):

@@ -573,8 +573,8 @@ proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string
 proc getRemoteDestructedAmount*(self: Controller, chainId: int, contractAddress: string): Uint256 =
   return self.communityTokensService.getRemoteDestructedAmount(chainId, contractAddress)
 
-proc getNetwork*(self:Controller, chainId: int): NetworkDto =
-  self.networksService.getNetwork(chainId)
+proc getNetworkByChainId*(self:Controller, chainId: int): NetworkDto =
+  self.networksService.getNetworkByChainId(chainId)
 
 proc getAppNetwork*(self:Controller): NetworkDto =
   self.networksService.getAppNetwork()

@@ -132,7 +132,7 @@ proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Service, address: str
     result.balance = 0.0
     result.fetched = false
     return
-  let chainIds = self.networkService.getNetworks().map(n => n.chainId)
+  let chainIds = self.networkService.getCurrentNetworks().map(n => n.chainId)
   result.balance = self.getTotalCurrencyBalance(@[acc.address], chainIds)
   result.fetched = true
 
@@ -159,7 +159,7 @@ proc checkRecentHistory*(self: Service, addresses: seq[string]) =
   if(not main_constants.WALLET_ENABLED):
     return
   try:
-    let chainIds = self.networkService.getNetworks().map(a => a.chainId)
+    let chainIds = self.networkService.getCurrentNetworks().map(a => a.chainId)
     status_go_transactions.checkRecentHistory(chainIds, addresses)
   except Exception as e:
     let errDescription = e.msg

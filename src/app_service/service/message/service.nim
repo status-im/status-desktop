@@ -470,7 +470,7 @@ QtObject:
       self.resetMessageCursor(chatArg.chatId)
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
-    let networksDto = self.networkService.getNetworks()
+    let networksDto = self.networkService.getCurrentNetworks()
     var token = self.tokenService.findTokenByAddress(networksDto[0].chainId, ZERO_ADDRESS)
 
     if message.transactionParameters.contract != "":

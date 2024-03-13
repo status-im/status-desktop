@@ -413,9 +413,6 @@ method getAddAccountModule*(self: Module): QVariant =
 method onAddAccountModuleLoaded*(self: Module) =
   self.view.emitDisplayAddAccountPopup()
 
-method getNetworkLayer*(self: Module, chainId: int): string =
-  return self.networksModule.getNetworkLayer(chainId)
-
 method getLatestBlockNumber*(self: Module, chainId: int): string =
   return self.transactionService.getLatestBlockNumber(chainId)
 

@@ -12,6 +12,26 @@ QtObject {
     readonly property int testnetNet: 5
     readonly property int customNet: 6
 
+    function getShortChainName(chainId) {
+        if(chainId === root.ethNet)
+            return "eth"
+
+        if(chainId === root.optimismNet)
+            return "opt"
+
+        if(chainId === root.arbitrumNet)
+            return "arb"
+
+        if(chainId === root.hermezNet)
+            return "her"
+
+        if(chainId === root.testnetNet)
+            return "goe"
+
+        if(chainId === root.customNet)
+            return "cus"
+    }
+
     function getChainName(chainId) {
         if(chainId === root.ethNet)
             return "Mainnet"
@@ -39,157 +59,7 @@ QtObject {
         }
     }
 
-    readonly property var layer1Networks: CustomNetworkModel {
-        Component.onCompleted:
-            append([
-                       {
-                           chainId: ethNet,
-                           chainName: "Ethereum Mainnet",
-                           iconUrl: ModelsData.networks.ethereum,
-                           isActive: true,
-                           isEnabled: true,
-                           shortName: "ETH",
-                           chainColor: "blue",
-                           isTest: false
-                       }
-                   ])
-    }
-
-    readonly property var layer2Networks: CustomNetworkModel {
-        Component.onCompleted:
-            append([
-                       {
-                           chainId: optimismNet,
-                           chainName: "Optimism",
-                           iconUrl: ModelsData.networks.optimism,
-                           isActive: false,
-                           isEnabled: true,
-                           shortName: "OPT",
-                           chainColor: "red",
-                           isTest: false
-                       },
-                       {
-                           chainId: arbitrumNet,
-                           chainName: "Arbitrum",
-                           iconUrl: ModelsData.networks.arbitrum,
-                           isActive: false,
-                           isEnabled: true,
-                           shortName: "ARB",
-                           chainColor: "purple",
-                           isTest: false
-                       }
-                   ])
-    }
-
-    readonly property var testNetworks: CustomNetworkModel {
-        Component.onCompleted:
-            append([
-                       {
-                           chainId: hermezNet,
-                           chainName: "Hermez",
-                           iconUrl: ModelsData.networks.hermez,
-                           isActive: false,
-                           isEnabled: true,
-                           shortName: "HEZ",
-                           chainColor: "orange",
-                           isTest: true
-                       },
-                       {
-                           chainId: testnetNet,
-                           chainName: "Testnet",
-                           iconUrl: ModelsData.networks.testnet,
-                           isActive: false,
-                           isEnabled: true,
-                           shortName: "TNET",
-                           chainColor: "lightblue",
-                           isTest: true
-                       },
-                       {
-                           chainId: customNet,
-                           chainName: "Custom",
-                           iconUrl: ModelsData.networks.custom,
-                           isActive: false,
-                           isEnabled: true,
-                           shortName: "CUSTOM",
-                           chainColor: "orange",
-                           isTest: true
-                       }
-                   ])
-    }
-
-    readonly property var enabledNetworks: CustomNetworkModel {
-        Component.onCompleted:
-            append([
-                       {
-                            chainId: 1,
-                            layer: 1,
-                            chainName: "Ethereum Mainnet",
-                            iconUrl: ModelsData.networks.ethereum,
-                            isActive: true,
-                            isEnabled: false,
-                            shortName: "ETH",
-                            chainColor: "blue",
-                            isTest: false
-                       },
-                       {
-                            chainId: 2,
-                            layer: 2,
-                            chainName: "Optimism",
-                            iconUrl: ModelsData.networks.optimism,
-                            isActive: false,
-                            isEnabled: true,
-                            shortName: "OPT",
-                            chainColor: "red",
-                            isTest: false
-                       },
-                       {
-                            chainId: 3,
-                            layer: 2,
-                            chainName: "Arbitrum",
-                            iconUrl: ModelsData.networks.arbitrum,
-                            isActive: false,
-                            isEnabled: true,
-                            shortName: "ARB",
-                            chainColor: "purple",
-                            isTest: false
-                       },
-                       {
-                            chainId: 4,
-                            layer: 2,
-                            chainName: "Hermez",
-                            iconUrl: ModelsData.networks.hermez,
-                            isActive: false,
-                            isEnabled: true,
-                            shortName: "HEZ",
-                            chainColor: "orange",
-                            isTest: false
-                       },
-                       {
-                            chainId: 5,
-                            layer: 1,
-                            chainName: "Testnet",
-                            iconUrl: ModelsData.networks.testnet,
-                            isActive: false,
-                            isEnabled: true,
-                            shortName: "TNET",
-                            chainColor: "lightblue",
-                            isTest: true
-                       },
-                       {
-                            chainId: 6,
-                            layer: 1,
-                            chainName: "Custom",
-                            iconUrl: ModelsData.networks.custom,
-                            isActive: false,
-                            isEnabled: true,
-                            shortName: "CUSTOM",
-                            chainColor: "orange",
-                            isTest: false
-                       }
-                   ])
-    }
-
-    readonly property var allNetworks: CustomNetworkModel {
+    readonly property var flatNetworks: CustomNetworkModel {
         Component.onCompleted: append([
             {
                 chainId: 1,
@@ -276,44 +146,6 @@ QtObject {
                 isEnabled: true,
             }]
         )
-    }
-
-    readonly property var mainNetworks: CustomNetworkModel {
-        Component.onCompleted: append([
-                   {
-                       chainId: 1,
-                       chainName: "Ethereum Mainnet",
-                       iconUrl: ModelsData.networks.ethereum,
-                       isActive: true,
-                       isEnabled: true,
-                       shortName: "ETH",
-                       chainColor: "blue",
-                       layer: 1,
-                       isTest: false
-                   },
-                   {
-                       chainId: 10,
-                       chainName: "Optimism",
-                       iconUrl: ModelsData.networks.optimism,
-                       isActive: false,
-                       isEnabled: true,
-                       shortName: "OPT",
-                       chainColor: "red",
-                       layer: 2,
-                       isTest: false
-                   },
-                   {
-                       chainId: 42161,
-                       chainName: "Arbitrum",
-                       iconUrl: ModelsData.networks.arbitrum,
-                       isActive: false,
-                       isEnabled: true,
-                       shortName: "ARB",
-                       chainColor: "purple",
-                       layer: 2,
-                       isTest: false
-                   }
-               ])
     }
 
     readonly property var sendFromNetworks: CustomNetworkModel {

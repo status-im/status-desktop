@@ -147,7 +147,7 @@ QtObject:
     self.loadMoreItems()
 
   proc getExtraData(self: Controller, chainID: int): ExtraData =
-    let network = self.networkService.getNetwork(chainID)
+    let network = self.networkService.getNetworkByChainId(chainID)
     return getExtraData(network)
 
   proc setTempItems(self: Controller, newItems: seq[CollectiblesEntry], offset: int) =

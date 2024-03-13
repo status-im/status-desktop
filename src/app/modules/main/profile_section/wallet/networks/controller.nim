@@ -41,7 +41,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_NETWORK_ENDPOINT_UPDATED) do(e: Args):
     self.delegate.refreshNetworks()
 
-proc getNetworks*(self: Controller): seq[CombinedNetworkDto] =
+proc getCombinedNetworks*(self: Controller): seq[CombinedNetworkDto] =
   return self.networkService.getCombinedNetworks()
 
 proc areTestNetworksEnabled*(self: Controller): bool =

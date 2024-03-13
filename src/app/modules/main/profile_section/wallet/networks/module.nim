@@ -41,7 +41,7 @@ method getModuleAsVariant*(self: Module): QVariant =
 method refreshNetworks*(self: Module) =
   var items: seq[Item] = @[]
   var combinedItems: seq[CombinedItem] = @[]
-  for n in self.controller.getNetworks():
+  for n in self.controller.getCombinedNetworks():
     var prod = newItem(
         n.prod.chainId,
         n.prod.layer,

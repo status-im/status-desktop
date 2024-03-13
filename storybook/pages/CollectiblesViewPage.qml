@@ -164,7 +164,7 @@ SplitView {
                 }
                 Repeater {
                     id: networksRepeater
-                    model: NetworksModel.allNetworks
+                    model: NetworksModel.flatNetworks
                     delegate: CheckBox {
                         property int chainID: chainId
                         width: parent.width

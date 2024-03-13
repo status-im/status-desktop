@@ -11,7 +11,7 @@ QtObject {
     property string signingPhrase: walletSection.signingPhrase
     
     function getEtherscanLink(chainID) {
-        return networksModule.all.getBlockExplorerURL(chainID)
+        return networksModule.getBlockExplorerURL(chainID)
     }
 
     function switchAccountByAddress(address) {

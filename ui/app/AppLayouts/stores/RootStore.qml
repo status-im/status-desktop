@@ -161,10 +161,10 @@ QtObject {
     readonly property bool showBrowserSelector: localAccountSensitiveSettings.showBrowserSelector
     readonly property bool openLinksInStatus: false
 
-    property var allNetworks: networksModule.all
+    property var flatNetworks: networksModule.flatNetworks
 
     function getEtherscanLink(chainID) {
-        return allNetworks.getBlockExplorerURL(chainID)
+        return networksModule.getBlockExplorerURL(chainID)
     }
 
     function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,

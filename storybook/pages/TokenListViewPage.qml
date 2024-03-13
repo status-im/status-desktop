@@ -46,7 +46,7 @@ SplitView {
 
             assets: txStore.processedAssetsModel
             collectibles: WalletNestedCollectiblesModel {}
-            networksModel: NetworksModel.allNetworks
+            networksModel: NetworksModel.flatNetworks
             formatCurrentCurrencyAmount: function(balance){
                 return currencyStore.formatCurrencyAmount(balance, "USD")
             }

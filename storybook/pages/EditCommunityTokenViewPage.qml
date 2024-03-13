@@ -28,8 +28,6 @@ SplitView {
                 anchors.fill: parent
                 anchors.margins: 50
                 isAssetView: isAssetBox.checked
-                layer1Networks: NetworksModel.layer1Networks
-                layer2Networks: NetworksModel.layer2Networks
                 accounts: WalletAccountsModel {}
                 tokensModel: MintedTokensModel {}
                 referenceAssetsBySymbolModel: ListModel {

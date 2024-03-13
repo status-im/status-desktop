@@ -1,6 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
+import SortFilterProxyModel 0.2
+
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Chat.panels 1.0
@@ -78,10 +80,10 @@ SplitView {
         }
 
         readonly property QtObject walletStore: QtObject {
-            property var allNetworks: enabledNetworks
-            property var layer1Networks: NetworksModel.layer1Networks
-            property var layer2Networks: NetworksModel.layer2Networks
-            property var enabledNetworks: NetworksModel.enabledNetworks
+            property var filteredFlatModel: SortFilterProxyModel {
+                sourceModel: NetworksModel.flatNetworks
+                filters: ValueFilter { roleName: "isTest"; value: false }
+            }
             function toggleNetwork(chainId) {
             }
 

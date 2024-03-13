@@ -1809,7 +1809,7 @@ Item {
         }
 
         sourceComponent: WalletPopups.AddEditSavedAddressPopup {
-            allNetworks: RootStore.allNetworks
+            flatNetworks: WalletStore.RootStore.filteredFlatModel
 
             onClosed: {
                 addEditSavedAddress.close()

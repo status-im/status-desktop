@@ -46,7 +46,7 @@ proc removeAddress*(self: Filter, address: string) =
 
 proc updateNetworks*(self: Filter) =
   self.chainIds = self.controller.getEnabledChainIds()
-  self.allChainsEnabled = (self.chainIds.len == self.controller.getNetworks().len)
+  self.allChainsEnabled = (self.chainIds.len == self.controller.getCurrentNetworks().len)
 
 proc load*(self: Filter) =
   self.setFillterAllAddresses()

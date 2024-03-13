@@ -30,41 +30,12 @@ QtObject {
     property bool isNonArchivalNode: Global.appIsReady && walletSectionInst.isNonArchivalNode
 
     property var marketValueStore: TokenMarketValuesStore{}
-    property var allNetworks: networksModule.all
 
     function resetActivityData() {
         walletSectionInst.activityController.resetActivityData()
     }
 
-    // TODO remove all these by linking chainId for networks and activity using LeftJoinModel
-    // not possible currently due to the current structure of the activity model
-    function getNetworkColor(chainId) {
-        return networksModule.all.getChainColor(chainId)
-    }
-
-    function getNetworkIcon(chainId) {
-        return networksModule.all.getIconUrl(chainId)
-    }
-
-    function getNetworkShortName(chainId) {
-        return networksModule.all.getNetworkShortName(chainId)
-    }
-
-    function getNetworkFullName(chainId) {
-        return networksModule.all.getNetworkFullName(chainId)
-    }
-
-    function getNetworkLayer(chainId) {
-        return networksModule.all.getNetworkLayer(chainId)
-    }
-
-    function getNetworkIconUrl(symbol) {
-        return networksModule.all.getNetworkIconUrl(symbol)
-    }
-
-    function getNetworkName(symbol) {
-        return networksModule.all.getNetworkName(symbol)
-    }
+    property var flatNetworks: networksModule.flatNetworks
 
     function hex2Dec(value) {
         return globalUtils.hex2Dec(value)
