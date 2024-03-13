@@ -63,35 +63,19 @@ QtObject {
 
     // Identity related:
     function saveIdentityInfo(displayName, bio, source, aX, aY, bX, bY) {
-        // TODO: Update according to issue #13767
-        _setDisplayName(displayName)
-        _setBio(bio)
-        if(source)
-            _uploadImage(source, aX, aY, bX, bY)
-        else
-            _removeImage()
-    }
-
-    function _setDisplayName(displayName) {
-        root.profileModule.setDisplayName(displayName)
-    }
-
-    function _setBio(bio) {
-        root.profileModule.setBio(bio)
-    }
-
-    function _uploadImage(source, aX, aY, bX, bY) {
-        return root.profileModule.upload(source, aX, aY, bX, bY)
-    }
-
-    function _removeImage() {
-        return root.profileModule.remove()
-    }
-
-    // Preferences (Accounts, Communities, Collectibles, Assets and social links):
-    // TO BE REMOVED: Deprecated --> Issue #13688
-    function storeProfileShowcasePreferences() {
-        root.profileModule.storeProfileShowcasePreferences()
+        var identityInfo = {
+            "displayName": displayName,
+            "bio": bio,
+            "image": source ? {
+                "source": source,
+                "aX": aX,
+                "aY": aY,
+                "bX": bX,
+                "bY": bY
+            } : null
+        }
+        let json = JSON.stringify(identityInfo)
+        root.profileModule.saveIdentityInfo(json)
     }
 
     function getProfileShowcaseEntriesLimit() {

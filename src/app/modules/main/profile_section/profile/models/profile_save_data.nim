@@ -23,6 +23,18 @@ type ShowcaseSaveData* = ref object of RootObj
   assets*: seq[ShowcaseSaveEntry]
   socialLinks*: seq[ShowcaseSaveSocialLink]
 
+type IdentityImage* = ref object of RootObj
+  source*: string
+  aX*: int
+  aY*: int
+  bX*: int
+  bY*: int
+
+type IdentitySaveData* = ref object of RootObj
+  displayName*: string
+  bio*: string
+  image*: IdentityImage
+
 proc toShowcaseSaveEntry*(jsonObj: JsonNode): ShowcaseSaveEntry =
   result = ShowcaseSaveEntry()
   discard jsonObj.getProp("showcaseKey", result.showcaseKey)
@@ -57,3 +69,20 @@ proc toShowcaseSaveData*(jsonObj: JsonNode): ShowcaseSaveData =
   result.collectibles = toShowcaseSaveEntries(jsonObj, "collectibles")
   result.assets = toShowcaseSaveEntries(jsonObj, "assets")
   result.socialLinks = toShowcaseSaveSocialLinks(jsonObj)
+
+proc toIdentityImage*(jsonObj: JsonNode): IdentityImage =
+  result = IdentityImage()
+  discard jsonObj.getProp("source", result.source)
+  discard jsonObj.getProp("aX", result.aX)
+  discard jsonObj.getProp("aY", result.aY)
+  discard jsonObj.getProp("bX", result.bX)
+  discard jsonObj.getProp("bY", result.bY)
+
+proc toIdentitySaveData*(jsonObj: JsonNode): IdentitySaveData =
+  result = IdentitySaveData()
+  discard jsonObj.getProp("displayName", result.displayName)
+  discard jsonObj.getProp("bio", result.bio)
+  if jsonObj{"image"} != nil and jsonObj{"image"}.kind != JNull:
+    result.image = jsonObj{"image"}.toIdentityImage()
+  else:
+    result.image = nil

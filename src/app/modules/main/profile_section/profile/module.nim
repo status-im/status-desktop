@@ -27,7 +27,7 @@ import models/profile_preferences_asset_item
 
 import models/showcase_preferences_generic_model
 import models/showcase_preferences_social_links_model
-import models/showcase_save_data
+import models/profile_save_data
 
 import backend/collectibles as backend_collectibles
 
@@ -96,23 +96,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.profileModuleDidLoad()
 
-method storeIdentityImage*(self: Module, imageUrl: string, aX: int, aY: int, bX: int, bY: int) =
-  let keyUid = singletonInstance.userProfile.getKeyUid()
-  let image = singletonInstance.utils.formatImagePath(imageUrl)
-  self.controller.storeIdentityImage(keyUid, image, aX, aY, bX, bY)
-
-method deleteIdentityImage*(self: Module) =
-  let keyUid = singletonInstance.userProfile.getKeyUid()
-  self.controller.deleteIdentityImage(keyUid)
-
-method setDisplayName*(self: Module, displayName: string) =
-  self.controller.setDisplayName(displayName)
-
 method getBio(self: Module): string =
   self.controller.getBio()
-
-method setBio(self: Module, bio: string) =
-  discard self.controller.setBio(bio)
 
 method onBioChanged*(self: Module, bio: string) =
   self.view.emitBioChangedSignal()
@@ -133,43 +118,29 @@ method getProfileShowcaseSocialLinksLimit*(self: Module): int =
 method getProfileShowcaseEntriesLimit*(self: Module): int =
   return self.controller.getProfileShowcaseEntriesLimit()
 
-# TODO: remove old save api
-method storeProfileShowcasePreferences(self: Module,
-                                       communities: seq[ProfileShowcaseCommunityItem],
-                                       accounts: seq[ProfileShowcaseAccountItem],
-                                       collectibles: seq[ProfileShowcaseCollectibleItem],
-                                       assets: seq[ProfileShowcaseAssetItem]) =
-  if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
-    error "Attempt to save preferences with wrong public key"
-    return
-
-  var revealedAddresses: seq[string]
-  for acc in accounts:
-    if acc.showcaseVisibility != ProfileShowcaseVisibility.ToNoOne:
-      revealedAddresses.add(acc.address)
-
-  var verifiedTokens: seq[ProfileShowcaseVerifiedTokenPreference] = @[]
-  var unverifiedTokens: seq[ProfileShowcaseUnverifiedTokenPreference] = @[]
-
-  for asset in assets:
-    # TODO: more obvious way to check if it is verified or not
-    if asset.communityId == "":
-      verifiedTokens.add(asset.toShowcaseVerifiedTokenPreference())
-    else:
-      unverifiedTokens.add(asset.toShowcaseUnverifiedTokenPreference())
-
-  self.controller.storeProfileShowcasePreferences(ProfileShowcasePreferencesDto(
-    communities: communities.map(item => item.toShowcasePreferenceItem()),
-    accounts: accounts.map(item => item.toShowcasePreferenceItem()),
-    collectibles: collectibles.map(item => item.toShowcasePreferenceItem()),
-    verifiedTokens: verifiedTokens,
-    unverifiedTokens: unverifiedTokens
-    ),
-    revealedAddresses
-  )
-
 method setIsFirstShowcaseInteraction(self: Module) =
   singletonInstance.localAccountSettings.setIsFirstShowcaseInteraction(false)
+
+proc storeIdentityImage*(self: Module, identityImage: IdentityImage) =
+  let keyUid = singletonInstance.userProfile.getKeyUid()
+  let image = singletonInstance.utils.formatImagePath(identityImage.source)
+  # FIXME the function to get the file size is messed up
+  # let size = image_getFileSize(image)
+  # TODO find a way to i18n this (maybe send just a code and then QML sets the right string)
+  # return "Max file size is 20MB"
+  self.controller.storeIdentityImage(keyUid, image, identityImage.aX, identityImage.aY, identityImage.bX, identityImage.bY)
+
+proc deleteIdentityImage*(self: Module) =
+  let keyUid = singletonInstance.userProfile.getKeyUid()
+  self.controller.deleteIdentityImage(keyUid)
+
+method saveProfileIdentityInfo*(self: Module, identity: IdentitySaveData) =
+  self.controller.setDisplayName(identity.displayName)
+  discard self.controller.setBio(identity.bio)
+  if identity.image != nil:
+    self.storeIdentityImage(identity.image)
+  else:
+    self.deleteIdentityImage()
 
 method saveProfileShowcasePreferences*(self: Module, showcase: ShowcaseSaveData) =
   # TODO: remove this check within old api

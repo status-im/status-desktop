@@ -10,7 +10,7 @@ import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
 import models/profile_preferences_asset_item
 
-import models/showcase_save_data
+import models/profile_save_data
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -31,12 +31,6 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method getCollectiblesModel*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method storeIdentityImage*(self: AccessInterface, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method deleteIdentityImage*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getBio*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -53,6 +47,9 @@ method saveSocialLinks*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onSocialLinksUpdated*(self: AccessInterface, socialLinks: SocialLinks, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method saveProfileIdentityInfo*(self: AccessInterface, identity: IdentitySaveData) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method saveProfileShowcasePreferences*(self: AccessInterface, showcase: ShowcaseSaveData) {.base.} =

@@ -14,7 +14,7 @@ import models/profile_preferences_collectible_item
 import models/profile_preferences_assets_model
 import models/profile_preferences_asset_item
 
-import models/showcase_save_data
+import models/profile_save_data
 import models/showcase_preferences_generic_model
 import models/showcase_preferences_social_links_model
 
@@ -106,21 +106,6 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc upload*(self: View, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
-    # var image = singletonInstance.utils.formatImagePath(imageUrl)
-    # FIXME the function to get the file size is messed up
-    # var size = image_getFileSize(image)
-    # TODO find a way to i18n this (maybe send just a code and then QML sets the right string)
-    # return "Max file size is 20MB"
-
-    self.delegate.storeIdentityImage(imageUrl, aX, aY, bX, bY)
-
-  proc remove*(self: View): string {.slot.} =
-    self.delegate.deleteIdentityImage()
-
-  proc setDisplayName(self: View, displayName: string) {.slot.} =
-    self.delegate.setDisplayName(displayName)
-
   proc socialLinksModel*(self: View): SocialLinksModel =
     return self.socialLinksModel
 
@@ -209,9 +194,6 @@ QtObject:
     read = getBio
     notify = bioChanged
 
-  proc setBio(self: View, bio: string) {.slot.} =
-    self.delegate.setBio(bio)
-
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
 
@@ -276,20 +258,16 @@ QtObject:
   QtProperty[QVariant] showcasePreferencesSocialLinksModel:
     read = getProfileShowcasePreferencesSocialLinksModel
 
-  # TODO: remove old save preferences api
-  proc storeProfileShowcasePreferences(self: View) {.slot.} =
-    let communities = self.profileShowcaseCommunitiesModel.items()
-    let accounts = self.profileShowcaseAccountsModel.items()
-    let collectibles = self.profileShowcaseCollectiblesModel.items()
-    let assets = self.profileShowcaseAssetsModel.items()
-
-    self.delegate.storeProfileShowcasePreferences(communities, accounts, collectibles, assets)
-
   proc clearModels*(self: View) {.slot.} =
     self.profileShowcaseCommunitiesModel.clear()
     self.profileShowcaseAccountsModel.clear()
     self.profileShowcaseCollectiblesModel.clear()
     self.profileShowcaseAssetsModel.clear()
+
+  proc saveIdentityInfo(self: View, profileData: string) {.slot.} =
+    let profileDataObj = profileData.parseJson
+    let identityInfo = profileDataObj.toIdentitySaveData()
+    self.delegate.saveProfileIdentityInfo(identityInfo)
 
   proc saveProfileShowcasePreferences(self: View, profileData: string) {.slot.} =
     let profileDataObj = profileData.parseJson
