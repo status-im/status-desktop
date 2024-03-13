@@ -13,6 +13,7 @@ type
     KeyUid,
     Position,
     KeycardAccount,
+    PreferredSharingChainIds
 
 QtObject:
   type
@@ -57,6 +58,7 @@ QtObject:
       ModelRole.KeyUid.int: "keyUid",
       ModelRole.Position.int: "position",
       ModelRole.KeycardAccount.int: "keycardAccount",
+      ModelRole.PreferredSharingChainIds.int: "preferredSharingChainIds"
     }.toTable
 
 
@@ -108,6 +110,8 @@ QtObject:
       result = newQVariant(item.getPosition())
     of ModelRole.KeycardAccount:
       result = newQVariant(item.keycardAccount())
+    of ModelRole.PreferredSharingChainIds:
+      result = newQVariant(item.preferredSharingChainIds())
 
   proc moveItem*(self: Model, fromRow: int, toRow: int): bool =
     if toRow < 0 or toRow > self.items.len - 1:
