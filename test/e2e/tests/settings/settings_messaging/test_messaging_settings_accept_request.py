@@ -1,6 +1,7 @@
 import allure
 import pytest
 from allure_commons._allure import step
+
 from . import marks
 
 import configs.testpath
@@ -23,7 +24,7 @@ def test_messaging_settings_accepting_request(multiple_instance, user_data_one, 
     user_two: UserAccount = constants.user_account_two
     main_window = MainWindow()
 
-    with multiple_instance() as aut_one, multiple_instance() as aut_two:
+    with (multiple_instance() as aut_one, multiple_instance() as aut_two):
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()
@@ -93,3 +94,14 @@ def test_messaging_settings_accepting_request(multiple_instance, user_data_one, 
             assert contacts_settings.contacts_list_title == 'Contacts'
             assert user_two.name == contacts_settings.contact_items[0].contact
             assert len(contacts_settings.contact_items) == 1
+
+        with step(f'Verify that 1X1 chat with {user_two.name} appeared for {user_one.name}'):
+            messages_screen = main_window.left_panel.open_messages_screen()
+            assert user_two.name in messages_screen.left_panel.contacts
+            main_window.hide()
+
+        with step(f'VVerify that 1X1 chat with {user_one.name} appeared for {user_two.name}'):
+            aut_two.attach()
+            main_window.prepare()
+            messages_screen = main_window.left_panel.open_messages_screen()
+            assert user_one.name in messages_screen.left_panel.contacts
