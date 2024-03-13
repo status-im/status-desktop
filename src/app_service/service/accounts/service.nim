@@ -659,6 +659,7 @@ QtObject:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
   proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
+    trace "<<< doLoginV2"
     let nodeConfigJson = self.getLoginNodeConfig()
     let response = status_account.login(
       account.name,
@@ -677,7 +678,23 @@ QtObject:
     self.loggedInAccount = account
     self.setLocalAccountSettingsFile()
 
+  proc doLoginV2(self: Service, account: AccountDto, passwordHash: string) =
+    trace "<<< doLoginV2"
+    let response = status_account.loginAccount(
+      account.keyUid,
+      account.kdfIterations,
+      passwordHash,
+    )
+    if response.result{"error"}.getStr != "":
+      self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr))
+      return
+
+    debug "Account logged in"
+    self.loggedInAccount = account      # WARNING: is this needed?
+    self.setLocalAccountSettingsFile()  # WARNING: is this needed?
+
   proc login*(self: Service, account: AccountDto, hashedPassword: string) =
+    trace "<<< login"
     try:
       var thumbnailImage: string
       var largeImage: string
@@ -714,18 +731,21 @@ QtObject:
         self.threadpool.start(arg)
         return
 
-      self.doLogin(account, hashedPassword, thumbnailImage, largeImage)
+      # self.doLogin(account, hashedPassword, thumbnailImage, largeImage)
+      self.doLoginV2(account, hashedPassword)
     except Exception as e:
-      error "error: ", procName="login", errName = e.name, errDesription = e.msg
+      error "login failed", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: e.msg))
 
   proc onWaitForReencryptionTimeout(self: Service, response: string) {.slot.} =
+    trace "<<< onWaitForReencryptionTimeout"
     # Reencryption (can freeze and take up to 30 minutes)
     let oldHashedPassword = hashedPasswordToUpperCase(self.tmpHashedPassword)
     discard status_privacy.changeDatabasePassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
 
     # Normal login after reencryption
     self.doLogin(self.tmpAccount, self.tmpHashedPassword, self.tmpThumbnailImage, self.tmpLargeImage)
+    # self.doLoginV2(self.tmpAccount, self.tmpHashedPassword)
 
     # Clear out the temp properties
     self.tmpAccount = AccountDto()
@@ -734,6 +754,7 @@ QtObject:
     self.tmpLargeImage = ""
 
   proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string =
+    trace "<<< loginAccountKeycard"
     try:
       self.setKeyStoreDir(keycardData.keyUid)
 
@@ -758,7 +779,7 @@ QtObject:
           self.setLocalAccountSettingsFile()
           return
     except Exception as e:
-      error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
+      error "keycard login failed", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
       return e.msg
 
   proc convertRegularProfileKeypairToKeycard*(self: Service, keycardUid, currentPassword: string, newPassword: string) =
