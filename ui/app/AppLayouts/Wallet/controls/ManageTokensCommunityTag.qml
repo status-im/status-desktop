@@ -63,6 +63,8 @@ Control {
             Layout.fillWidth: true
 
             StatusBaseText {
+                Layout.fillWidth: true
+
                 font.pixelSize: Style.current.tertiaryTextFontSize
                 font.weight: Font.Medium
                 text:  {
@@ -87,12 +89,13 @@ Control {
             }
 
             CopyToClipBoardButton {
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
+
                 visible: d.unknownCommunityName && root.hovered
                 icon.height: Style.current.tertiaryTextFontSize
                 icon.width: Style.current.tertiaryTextFontSize
                 icon.color: Theme.palette.directColor1
-                Layout.preferredWidth: 16
-                Layout.preferredHeight: 16
                 color: Style.current.transparent
                 textToCopy: root.communityName
                 onCopyClicked: {
