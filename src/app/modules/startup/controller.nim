@@ -134,7 +134,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
-    self.delegate.onNodeLogin(signal.error)
+    self.delegate.onNodeLogin(signal.error, signal.account, signal.settings)
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SignalType.NodeStopped.event) do(e:Args):
@@ -389,12 +389,19 @@ proc setupAccount(self: Controller, accountId: string, removeMnemonic: bool, sto
     self.setupKeychain(storeToKeychain)
 
 proc storeGeneratedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
-  let accounts = self.getGeneratedAccounts()
-  if accounts.len == 0:
-    error "list of generated accounts is empty"
-    return
-  let accountId = accounts[0].id
-  self.setupAccount(accountId, removeMnemonic=false, storeToKeychain)
+  # let accounts = self.getGeneratedAccounts()
+  # if accounts.len == 0:
+  #   error "list of generated accounts is empty"
+  #   return
+  # let accountId = accounts[0].id
+  # self.setupAccount(accountId, removeMnemonic=false, storeToKeychain)
+  self.delegate.moveToLoadingAppState()
+  let profileImageUrl = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
+  let error = self.accountsService.createAccountAndLogin(self.tmpPassword, self.tmpDisplayName, profileImageUrl)
+  if error != "":
+    self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
+  else:
+    self.setupKeychain(storeToKeychain)
 
 proc storeImportedAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
   let accountId = self.getImportedAccount().id
@@ -611,3 +618,6 @@ proc validateLocalPairingConnectionString*(self: Controller, connectionString: s
 
 proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string): string =
   return self.devicesService.inputConnectionStringForBootstrapping(connectionString)
+
+proc setLoggedInAccount*(self: Controller, account: AccountDto) =
+  self.accountsService.setLoggedInAccount(account)

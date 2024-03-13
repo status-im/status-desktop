@@ -29,7 +29,7 @@ const DEFAULT_WALLET_ACCOUNT_NAME = "Account 1"
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET, PATH_ENCRYPTION]
 const ACCOUNT_ALREADY_EXISTS_ERROR* =  "account already exists"
 const KDF_ITERATIONS* {.intdefine.} = 256_000
-const DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT = "primary" # to match `CustomizationColor` on the go side
+const DEFAULT_CUSTOMIZATION_COLOR = "primary"  # to match `CustomizationColor` on the go side
 
 # allow runtime override via environment variable. core contributors can set a
 # specific peer to set for testing messaging and mailserver functionality with squish.
@@ -81,8 +81,16 @@ QtObject:
     result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
     result.defaultWalletEmoji = ""
 
+  proc setLocalAccountSettingsFile(self: Service) =
+    if self.loggedInAccount.isValid():
+      singletonInstance.localAccountSettings.setFileName(self.loggedInAccount.name)
+
   proc getLoggedInAccount*(self: Service): AccountDto =
     return self.loggedInAccount
+
+  proc setLoggedInAccount*(self: Service, account: AccountDto) =
+    self.loggedInAccount = account
+    self.setLocalAccountSettingsFile()
 
   proc updateLoggedInAccount*(self: Service, displayName: string, images: seq[Image]) =
     self.loggedInAccount.name = displayName
@@ -238,7 +246,7 @@ QtObject:
       {
         "public-key": account.derivedAccounts.defaultWallet.publicKey,
         "address": account.derivedAccounts.defaultWallet.address,
-        "colorId": DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT,
+        "colorId": DEFAULT_CUSTOMIZATION_COLOR,
         "wallet": true,
         "path": PATH_DEFAULT_WALLET,
         "name": DEFAULT_WALLET_ACCOUNT_NAME,
@@ -394,10 +402,6 @@ QtObject:
     if STATUS_PORT != 0:
       result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
 
-  proc setLocalAccountSettingsFile(self: Service) =
-    if self.getLoggedInAccount.isValid():
-      singletonInstance.localAccountSettings.setFileName(self.getLoggedInAccount.name)
-
   proc addKeycardDetails(self: Service, kcInstance: string, settingsJson: var JsonNode, accountData: var JsonNode) =
     let keycardPairingJsonString = readFile(main_constants.KEYCARDPAIRINGDATAFILE)
     let keycardPairingJsonObj = keycardPairingJsonString.parseJSON
@@ -412,39 +416,83 @@ QtObject:
       if not accountData.isNil:
         accountData["keycard-pairing"] = kcDataObj{"key"}
 
-  proc setupAccount*(self: Service, accountId, password, displayName: string, removeMnemonic: bool, recoverAccount: bool = false): string =
+  proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string): string =
     try:
-      let installationId = $genUUID()
-      var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
-      self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr) # must be called before `getDefaultNodeConfig`
-      let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
-      var settingsJson = self.getAccountSettings(accountId, installationId, displayName, removeMnemonic)
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId, recoverAccount)
+      let request = %* {
+        "backupDisabledDataDir": main_constants.ROOTKEYSTOREDIR,
+        # "deviceName": 
+        "password": hashPassword(password),
+        "displayName": displayName,
+        "customizationColor": DEFAULT_CUSTOMIZATION_COLOR,
+        "imagePath": imagePath,
+        "logLevel": toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL),
+        
+        "wakuV2LightClient": false,
+        "previewPrivacy": true,
 
-      if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
-        nodeConfigJson.isNil):
-        let description = "at least one json object is not prepared well"
-        error "error: ", procName="setupAccount", errDesription = description
-        return description
+        "networkId": NETWORKS[0]{"chainId"},
+        "verifyENSURL": NETWORKS[0]{"fallbackUrl"},
+        "verifyTransactionURL": NETWORKS[0]{"fallbackUrl"},
+        "upstreamConfig": NETWORKS[0]{"rpcUrl"},
+      }
+      let response = status_account.createAccountAndLogin($request)
+      # var error = "response doesn't contain \"error\""
+      debug "<<< createAccountAndLogin response: ", response
+      
+      if not response.result.contains("error"):
+        error "invalid status-go response", response
+        return "invalid response: no error field found"
 
-      let hashedPassword = hashPassword(password)
-      discard self.storeAccount(accountId, hashedPassword)
-      discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
-      self.loggedInAccount = self.saveAccountAndLogin(hashedPassword,
-        accountDataJson,
-        subaccountDataJson,
-        settingsJson,
-        nodeConfigJson)
-
-      self.setLocalAccountSettingsFile()
-
-      if self.getLoggedInAccount.isValid():
+      let error = response.result["error"].getStr
+      if error == "":
+        debug "Account saved succesfully"
+        # result = toAccountDto(account)
         return ""
-      else:
-        return "logged in account is not valid"
+      
+      error "createAccountAndLogin status-go error: ", error
+      return "createAccountAndLogin failed: " & error
+
+      # WARNING: get account from node.login signal
+      # self.loggedInAccount = 
     except Exception as e:
-      error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
+      error "failed to create account or login", procName="createAccountAndLogin", errName = e.name, errDesription = e.msg
       return e.msg
+
+
+  proc setupAccount*(self: Service, accountId, password, displayName: string, removeMnemonic: bool, recoverAccount: bool = false): string =
+    return "not implemented"
+    # try:
+    #   let installationId = $genUUID()
+    #   var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
+    #   self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr) # must be called before `getDefaultNodeConfig`
+    #   let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
+    #   var settingsJson = self.getAccountSettings(accountId, installationId, displayName, removeMnemonic)
+    #   let nodeConfigJson = self.getDefaultNodeConfig(installationId, recoverAccount)
+
+    #   if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
+    #     nodeConfigJson.isNil):
+    #     let description = "at least one json object is not prepared well"
+    #     error "error: ", procName="setupAccount", errDesription = description
+    #     return description
+
+    #   let hashedPassword = hashPassword(password)
+    #   discard self.storeAccount(accountId, hashedPassword)
+    #   discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
+    #   self.loggedInAccount = self.saveAccountAndLogin(hashedPassword,
+    #     accountDataJson,
+    #     subaccountDataJson,
+    #     settingsJson,
+    #     nodeConfigJson)
+
+    #   self.setLocalAccountSettingsFile()
+
+    #   if self.getLoggedInAccount.isValid():
+    #     return ""
+    #   else:
+    #     return "logged in account is not valid"
+    # except Exception as e:
+    #   error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
+    #   return e.msg
 
   proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool,
     recoverAccount: bool = false) =
@@ -491,7 +539,7 @@ QtObject:
         {
           "public-key": walletPublicKey,
           "address": walletAddress,
-          "colorId": DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT,
+          "colorId": DEFAULT_CUSTOMIZATION_COLOR,
           "wallet": true,
           "path": PATH_DEFAULT_WALLET,
           "name": DEFAULT_WALLET_ACCOUNT_NAME,
