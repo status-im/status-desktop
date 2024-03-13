@@ -169,9 +169,10 @@ QObject {
             expression: {
                 root.accountsSearcherText
                 return (address.toLowerCase().includes(root.accountsSearcherText.toLowerCase()) ||
-                        name.toLowerCase().includes( root.accountsSearcherText.toLowerCase()))
+                        name.toLowerCase().includes(root.accountsSearcherText.toLowerCase()) ||
+                        preferredSharingChainShortNames.toLowerCase().includes(root.accountsSearcherText.toLowerCase()))
             }
-            expectedRoles: ["address", "name"]
+            expectedRoles: ["address", "name", "preferredSharingChainShortNames"]
         }
     }
 

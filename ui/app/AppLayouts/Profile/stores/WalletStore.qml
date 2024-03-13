@@ -2,6 +2,10 @@ import QtQuick 2.13
 
 import utils 1.0
 
+import StatusQ 0.1
+
+import SortFilterProxyModel 0.2
+
 QtObject {
     id: root
 
@@ -29,6 +33,21 @@ QtObject {
     property var overview: walletSectionOverview
     property var accounts: Global.appIsReady? accountsModule.accounts : null
     property var originModel: accountsModule.keyPairModel
+    property var ownAccounts: SortFilterProxyModel {
+        sourceModel: root.accounts
+        proxyRoles:  FastExpressionRole {
+            name: "preferredSharingChainShortNames"
+            expression: {
+                return root.networksModule.getNetworkShortNames(preferredSharingChainIds)
+            }
+            expectedRoles: ["preferredSharingChainIds"]
+        }
+        filters: ValueFilter {
+            roleName: "walletType"
+            value: Constants.watchWalletType
+            inverted: true
+        }
+    }
 
     property string userProfilePublicKey: userProfile.pubKey
 
@@ -87,7 +106,7 @@ QtObject {
     }
 
     function getNetworkShortNames(chainIds) {
-       return networksModule.getNetworkShortNames(chainIds)
+        return networksModule.getNetworkShortNames(chainIds)
     }
 
     function processPreferredSharingNetworkToggle(preferredSharingNetworks, toggledNetwork) {

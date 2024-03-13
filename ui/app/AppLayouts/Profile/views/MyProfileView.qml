@@ -133,7 +133,7 @@ SettingsContentBase {
             communitiesShowcaseModel: root.profileStore.showcasePreferencesCommunitiesModel
             communitiesSearcherText: profileShowcaseCommunitiesPanel.searcherText
             
-            accountsSourceModel: root.walletStore.accounts
+            accountsSourceModel: root.walletStore.ownAccounts
             accountsShowcaseModel: root.profileStore.showcasePreferencesAccountsModel
             accountsSearcherText: profileShowcaseAccountsPanel.searcherText
 
