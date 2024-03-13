@@ -58,8 +58,8 @@ StatusStackModal {
     readonly property int maxChannelDescLength: 140
 
     // channel signals
-    signal createCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
-    signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
+    signal createCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId, bool viewOnlyCanAddReaction)
+    signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId, bool viewOnlyCanAddReaction)
     signal deleteCommunityChannel()
 
     // Permissions signals:
@@ -77,7 +77,6 @@ StatusStackModal {
     signal addPermissions(var permissions)
     signal removePermissions(var permissions)
     signal editPermissions(var permissions)
-    signal setViewOnlyCanAddReaction(bool checked)
     signal setHideIfPermissionsNotMet(bool checked)
 
     width: 640
@@ -187,13 +186,15 @@ StatusStackModal {
                                             StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
                                             emoji,
                                             colorPanel.color.toString().toUpperCase(),
-                                            root.categoryId)
+                                            root.categoryId,
+                                            d.viewOnlyCanAddReaction)
             } else {
                 root.editCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
                                             StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
                                             emoji,
                                             colorPanel.color.toString().toUpperCase(),
-                                            root.categoryId)
+                                            root.categoryId,
+                                            d.viewOnlyCanAddReaction)
             }
 
             if (d.channelEditModel.dirtyPermissions) {
@@ -211,10 +212,6 @@ StatusStackModal {
                 if (removedPermissions.length > 0) {
                     root.removePermissions(removedPermissions);
                 }
-            }
-
-            if (root.viewOnlyCanAddReaction !== d.viewOnlyCanAddReaction) {
-                root.setViewOnlyCanAddReaction(d.viewOnlyCanAddReaction);
             }
 
             if (root.hideIfPermissionsNotMet !== d.hideIfPermissionsNotMet) {

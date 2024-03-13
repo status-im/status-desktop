@@ -302,7 +302,8 @@ proc createCommunityChannel*(
     description: string,
     emoji: string,
     color: string,
-    categoryId: string
+    categoryId: string,
+    viewersCanPostReactions: bool,
     ): RpcResponse[JsonNode] =
   result = callPrivateRPC("createCommunityChat".prefix, %*[
     communityId,
@@ -316,7 +317,8 @@ proc createCommunityChannel*(
         "emoji": emoji,
         "color": color
       },
-      "category_id": categoryId
+      "category_id": categoryId,
+      "viewers_can_post_reactions": viewersCanPostReactions,
     }])
 
 proc editCommunityChannel*(
@@ -327,7 +329,8 @@ proc editCommunityChannel*(
     emoji: string,
     color: string,
     categoryId: string,
-    position: int
+    position: int,
+    viewersCanPostReactions: bool,
     ): RpcResponse[JsonNode] =
   result = callPrivateRPC("editCommunityChat".prefix, %*[
     communityId,
@@ -343,7 +346,8 @@ proc editCommunityChannel*(
         "color": color
       },
       "category_id": categoryId,
-      "position": position
+      "position": position,
+      "viewers_can_post_reactions": viewersCanPostReactions,
     }])
 
 proc reorderCommunityCategories*(communityId: string, categoryId: string, position: int): RpcResponse[JsonNode] =

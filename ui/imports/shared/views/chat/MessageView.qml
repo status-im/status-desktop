@@ -261,7 +261,7 @@ Loader {
         property string activeMessage
         readonly property bool isMessageActive: d.activeMessage === root.messageId
 
-        readonly property bool addReactionAllowed: !root.isInPinnedPopup && !root.isChatBlocked
+        readonly property bool addReactionAllowed: !root.isInPinnedPopup && root.chatContentModule.chatDetails.canPostReactions
 
         function nextMessageHasHeader() {
             if(!root.nextMessageAsJsonObj) {
@@ -648,7 +648,7 @@ Loader {
                 topPadding: showHeader ? Style.current.halfPadding : 0
                 bottomPadding: showHeader && d.nextMessageHasHeader() ? Style.current.halfPadding : 2
                 disableHover: root.disableHover ||
-                              delegate.hideQuickActions ||
+                              (delegate.hideQuickActions && !d.addReactionAllowed) ||
                               (root.chatLogView && root.chatLogView.moving) ||
                               Global.activityPopupOpened
 
@@ -727,7 +727,7 @@ Loader {
 
                 mouseArea {
                     acceptedButtons: Qt.RightButton
-                    enabled: !root.isChatBlocked &&
+                    enabled: (!root.isChatBlocked || d.addReactionAllowed) &&
                              !root.placeholderMessage
                     onClicked: {
                         root.openMessageContextMenu()
@@ -910,7 +910,7 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: d.addReactionAllowed && delegate.hovered && !delegate.hideQuickActions
+                        active: d.addReactionAllowed && delegate.hovered
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
@@ -1125,6 +1125,7 @@ Loader {
             store: root.rootStore
             reactionModel: root.emojiReactionsModel
             disabledForChat: !root.rootStore.isUserAllowedToSendMessage
+            forceEnableEmojiReactions: !root.rootStore.isUserAllowedToSendMessage && d.addReactionAllowed
 
             onPinMessage: (messageId) => {
                 root.messageStore.pinMessage(messageId)

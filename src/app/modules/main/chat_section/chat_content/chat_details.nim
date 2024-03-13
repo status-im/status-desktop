@@ -23,6 +23,7 @@ QtObject:
     isContact: bool
     active: bool
     blocked: bool
+    canPostReactions: bool
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -31,10 +32,25 @@ QtObject:
     new(result, delete)
     result.QObject.setup
 
-  proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity,
-      isUsersListAvailable: bool, name, icon: string, color, description,
-      emoji: string, hasUnreadMessages: bool, notificationsCount: int, highlight, muted: bool, position: int,
-      isUntrustworthy: bool, isContact: bool = false, blocked: bool = false) =
+  proc setChatDetails*(
+      self: ChatDetails,
+      id: string,
+      `type`: int,
+      belongsToCommunity,
+      isUsersListAvailable: bool,
+      name,
+      icon:string,
+      color, description,
+      emoji: string,
+      hasUnreadMessages: bool,
+      notificationsCount: int,
+      highlight, muted: bool,
+      position: int,
+      isUntrustworthy: bool,
+      isContact: bool = false,
+      blocked: bool = false,
+      canPostReactions: bool = true,
+    ) =
     self.id = id
     self.`type` = `type`
     self.belongsToCommunity = belongsToCommunity
@@ -53,6 +69,7 @@ QtObject:
     self.isContact = isContact
     self.active = false
     self.blocked = blocked
+    self.canPostReactions = canPostReactions
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
@@ -227,3 +244,14 @@ QtObject:
   proc setBlocked*(self: ChatDetails, value: bool) =
     self.blocked = value
     self.blockedChanged()
+
+  proc canPostReactionsChanged(self: ChatDetails) {.signal.}
+  proc getCanPostReactions(self: ChatDetails): bool {.slot.} =
+    return self.canPostReactions
+  QtProperty[bool] canPostReactions:
+    read = getCanPostReactions
+    notify = canPostReactionsChanged
+
+  proc setCanPostReactions*(self: ChatDetails, value: bool) =
+    self.canPostReactions = value
+    self.canPostReactionsChanged()

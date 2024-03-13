@@ -421,13 +421,6 @@ QtObject:
           # but implement a solution for individual updates
           self.events.emit(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED, CommunityIdArgs(communityId: receivedData.communityId))
 
-  proc updateMissingFields(chatDto: var ChatDto, chat: ChatDto) =
-    # This proc sets fields of `chatDto` which are available only for community channels.
-    chatDto.position = chat.position
-    chatDto.canPost = chat.canPost
-    chatDto.categoryId = chat.categoryId
-    chatDto.members = chat.members
-
   proc findChatById(id: string, chats: seq[ChatDto]): ChatDto =
     for chat in chats:
       if(chat.id == id):
@@ -641,10 +634,20 @@ QtObject:
               )
             )
 
-          # Handle name/description changes
-          if chat.name != prevChat.name or chat.description != prevChat.description or chat.color != prevChat.color or chat.emoji != prevChat.emoji:
-            var updatedChat = findChatById(chat.id, updatedChats)
-            updatedChat.updateMissingFields(chat)
+          if chat.name != prevChat.name or chat.description != prevChat.description or chat.color != prevChat.color or
+              chat.emoji != prevChat.emoji or chat.viewersCanPostReactions != prevChat.viewersCanPostReactions:
+            var updatedChat = chat
+
+            # TODO improve this in https://github.com/status-im/status-desktop/issues/12595
+            # Currently, status-go only sends canPostReactions on app start (getChannelGroups)
+            # so here, we need to imply it. If viewersCanPostReactions is true, then everyone can post reactions
+            # admins can also always post reactions
+            if chat.viewersCanPostReactions or
+                (not chat.viewersCanPostReactions and community.memberRole != MemberRole.None):
+              updatedChat.canPostReactions = true
+            elif not chat.viewersCanPostReactions and community.memberRole == MemberRole.None:
+              updatedChat.canPostReactions = false
+
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
 
             let data = CommunityChatArgs(chat: updatedChat)
@@ -1271,9 +1274,12 @@ QtObject:
       description: string,
       emoji: string,
       color: string,
-      categoryId: string) =
+      categoryId: string,
+      viewersCanPostReactions: bool,
+      ) =
     try:
-      let response = status_go.createCommunityChannel(communityId, name, description, emoji, color, categoryId)
+      let response = status_go.createCommunityChannel(communityId, name, description, emoji, color, categoryId,
+        viewersCanPostReactions)
 
       if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
@@ -1308,7 +1314,9 @@ QtObject:
       emoji: string,
       color: string,
       categoryId: string,
-      position: int) =
+      position: int,
+      viewersCanPostReactions: bool,
+      ) =
     try:
       let response = status_go.editCommunityChannel(
         communityId,
@@ -1318,7 +1326,9 @@ QtObject:
         emoji,
         color,
         categoryId,
-        position)
+        position,
+        viewersCanPostReactions
+      )
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)

@@ -83,7 +83,8 @@ type ChatDto* = object
   syncedTo*: int64
   syncedFrom*: int64
   firstMessageTimestamp: int64 # valid only for community chats, 0 - undefined, 1 - no messages, >1 valid timestamps
-  canPost*: bool
+  canPostReactions*: bool
+  viewersCanPostReactions*: bool
   position*: int
   categoryId*: string
   highlight*: bool
@@ -144,7 +145,8 @@ proc `$`*(self: ChatDto): string =
     communityId: {self.communityId},
     profile: {self.profile},
     joined: {self.joined},
-    canPost: {self.canPost},
+    canPostReactions: {self.canPostReactions},
+    viewersCanPostReactions: {self.viewersCanPostReactions},
     syncedTo: {self.syncedTo},
     syncedFrom: {self.syncedFrom},
     firstMessageTimestamp: {self.firstMessageTimestamp},
@@ -269,7 +271,8 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("readMessagesAtClockValue", result.readMessagesAtClockValue)
   discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
-  discard jsonObj.getProp("canPost", result.canPost)
+  discard jsonObj.getProp("canPostReactions", result.canPostReactions)
+  discard jsonObj.getProp("viewersCanPostReactions", result.viewersCanPostReactions)
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("muted", result.muted)
   discard jsonObj.getProp("categoryId", result.categoryId)
@@ -416,3 +419,11 @@ proc communityChannelUuid*(self: ChatDto): string =
   if self.communityId == "":
     return ""
   return self.id[self.communityId.len .. ^1]
+
+proc updateMissingFields*(chatToUpdate: var ChatDto, oldChat: ChatDto) =
+  # This proc sets fields of `chatToUpdate` which are available only for community channels.
+  chatToUpdate.position = oldChat.position
+  chatToUpdate.canPostReactions = oldChat.canPostReactions
+  chatToUpdate.viewersCanPostReactions = oldChat.viewersCanPostReactions
+  chatToUpdate.categoryId = oldChat.categoryId
+  chatToUpdate.members = oldChat.members

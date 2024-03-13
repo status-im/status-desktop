@@ -26,6 +26,7 @@ StatusMenu {
     property bool chatMuted: false
     property int channelPosition: -1
     property string chatCategoryId: ""
+    property bool viewersCanPostReactions: true
     property bool showDebugOptions: false
     property alias deleteChatConfirmationDialog: deleteChatConfirmationDialogComponent
 
@@ -41,8 +42,6 @@ StatusMenu {
     signal leaveChat(string chatId)
     signal updateGroupChatDetails(string chatId, string groupName, string groupColor, string groupImage)
 
-    signal createCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor)
-    signal editCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor, string newCategory)
     signal requestMoreMessages(string chatId)
     signal addRemoveGroupMember()
 

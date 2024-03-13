@@ -268,9 +268,10 @@ QtObject:
       description: string,
       emoji: string,
       color: string,
-      categoryId: string
+      categoryId: string,
+      viewersCanPostReactions: bool
       ) {.slot.} =
-    self.delegate.createCommunityChannel(name, description, emoji, color, categoryId)
+    self.delegate.createCommunityChannel(name, description, emoji, color, categoryId, viewersCanPostReactions)
 
   proc editCommunityChannel*(
       self: View,
@@ -280,7 +281,8 @@ QtObject:
       emoji: string,
       color: string,
       categoryId: string,
-      position: int
+      position: int,
+      viewersCanPostReactions: bool,
     ) {.slot.} =
     self.delegate.editCommunityChannel(
       channelId,
@@ -289,7 +291,8 @@ QtObject:
       emoji,
       color,
       categoryId,
-      position
+      position,
+      viewersCanPostReactions,
     )
 
   proc leaveCommunity*(self: View) {.slot.} =

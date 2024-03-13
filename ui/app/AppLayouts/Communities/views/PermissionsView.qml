@@ -127,9 +127,8 @@ ColumnLayout {
     StatusIconSwitch {
         Layout.fillWidth: true
         padding: 0
-       
-        visible: false //TODO: enable this when we have the backend support https://github.com/status-im/status-desktop/issues/13292
-        //visible: root.showChannelOptions
+
+        visible: root.showChannelOptions
         title: qsTr("Users with view only permissions can add reactions")
         icon: "emojis"
         checked: root.viewOnlyCanAddReaction

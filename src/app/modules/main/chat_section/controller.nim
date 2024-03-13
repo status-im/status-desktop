@@ -564,9 +564,11 @@ proc createCommunityChannel*(
     description: string,
     emoji: string,
     color: string,
-    categoryId: string) =
+    categoryId: string,
+    viewersCanPostReactions: bool,
+    ) =
   self.communityService.createCommunityChannel(self.sectionId, name, description, emoji, color,
-    categoryId)
+    categoryId, viewersCanPostReactions)
 
 proc editCommunityChannel*(
     self: Controller,
@@ -576,7 +578,9 @@ proc editCommunityChannel*(
     emoji: string,
     color: string,
     categoryId: string,
-    position: int) =
+    position: int,
+    viewersCanPostReactions: bool,
+    ) =
   self.communityService.editCommunityChannel(
     self.sectionId,
     channelId,
@@ -585,7 +589,9 @@ proc editCommunityChannel*(
     emoji,
     color,
     categoryId,
-    position)
+    position,
+    viewersCanPostReactions
+  )
 
 proc createCommunityCategory*(self: Controller, name: string, channels: seq[string]) =
   self.communityService.createCommunityCategory(self.sectionId, name, channels)

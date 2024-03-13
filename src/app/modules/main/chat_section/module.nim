@@ -69,6 +69,8 @@ proc buildChatSectionUI(
 
 proc reevaluateRequiresTokenPermissionToJoin(self: Module)
 
+proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewersCanPostReactions: bool)
+
 proc addOrUpdateChat(self: Module,
     chat: ChatDto,
     channelGroup: ChannelGroupDto,
@@ -611,6 +613,8 @@ proc addNewChat*(
         self.controller.checkChatHasPermissions(self.controller.getMySectionId(), chatDto.id)
       else:
         false,
+    canPostReactions = chatDto.canPostReactions,
+    viewersCanPostReactions = chatDto.viewersCanPostReactions,
   )
 
   self.addSubmodule(
@@ -720,6 +724,7 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   if(not self.chatContentModules.contains(chat.id)):
     return
   self.view.chatsModel().updateItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color)
+  self.changeCanPostValues(chat.id, chat.canPostReactions, chat.viewersCanPostReactions)
 
 method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
   # One To One chat is available only in the `Chat` section
@@ -768,6 +773,9 @@ method onCategoryUnmuted*(self: Module, categoryId: string) =
 
 method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
   self.view.chatsModel().changeMutedOnItemById(chatId, muted)
+
+proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewersCanPostReactions: bool) =
+  self.view.chatsModel().changeCanPostValues(chatId, canPostReactions, viewersCanPostReactions)
 
 method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, permissionId: string) =
   self.rebuildCommunityTokenPermissionsModel()
@@ -1085,13 +1093,13 @@ method onAcceptRequestToJoinFailedNoPermission*(self: Module, communityId: strin
   let contact = self.controller.getContactById(memberKey)
   self.view.emitOpenNoPermissionsToJoinPopupSignal(community.name, contact.displayName,  community.id, requestId)
 
-method createCommunityChannel*(self: Module, name, description, emoji, color, categoryId: string) =
-  self.controller.createCommunityChannel(name, description, emoji, color, categoryId)
+method createCommunityChannel*(self: Module, name, description, emoji, color, categoryId: string, viewersCanPostReactions: bool) =
+  self.controller.createCommunityChannel(name, description, emoji, color, categoryId, viewersCanPostReactions)
 
 method editCommunityChannel*(self: Module, channelId, name, description, emoji, color,
-    categoryId: string, position: int) =
+    categoryId: string, position: int, viewersCanPostReactions: bool) =
   self.controller.editCommunityChannel(channelId, name, description, emoji, color, categoryId,
-    position)
+    position, viewersCanPostReactions)
 
 method createCommunityCategory*(self: Module, name: string, channels: seq[string]) =
   self.controller.createCommunityCategory(name, channels)
@@ -1232,6 +1240,7 @@ proc addOrUpdateChat(self: Module,
 
   if chatExists:
     self.changeMutedOnChat(chat.id, chat.muted)
+    self.changeCanPostValues(chat.id, chat.canPostReactions, chat.viewersCanPostReactions)
     self.updateChatRequiresPermissions(chat.id)
     self.updateChatLocked(chat.id)
     if (chat.chatType == ChatType.PrivateGroupChat):
