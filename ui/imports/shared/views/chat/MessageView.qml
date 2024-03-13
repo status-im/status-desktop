@@ -652,7 +652,7 @@ Loader {
                               (root.chatLogView && root.chatLogView.moving) ||
                               Global.activityPopupOpened
 
-                disableEmojis: root.isChatBlocked
+                disableEmojis: !d.addReactionAllowed
                 hideMessage: d.hideMessage
 
                 overrideBackground: root.placeholderMessage

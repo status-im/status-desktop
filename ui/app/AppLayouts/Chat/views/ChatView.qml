@@ -205,7 +205,7 @@ StatusSectionLayout {
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
             viewAndPostHoldingsModel: root.viewAndPostPermissionsModel
-            viewAndPostPermissionsSatisfied: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.amISectionAdmin || root.viewAndPostPermissionsSatisfied
+            viewAndPostPermissionsSatisfied: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.viewAndPostPermissionsSatisfied
             amISectionAdmin: root.amISectionAdmin
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )

@@ -168,7 +168,7 @@ QtObject:
     self.viewOnlyPermissionsSatisfiedChanged()
 
   proc getViewOnlyPermissionsSatisfied*(self: View): bool {.slot.} =
-    return self.viewOnlyPermissionsSatisfied
+    return self.viewOnlyPermissionsSatisfied or self.amIChatAdmin()
   QtProperty[bool] viewOnlyPermissionsSatisfied:
     read = getViewOnlyPermissionsSatisfied
     notify = viewOnlyPermissionsSatisfiedChanged
@@ -180,7 +180,7 @@ QtObject:
     self.viewAndPostPermissionsSatisfiedChanged()
 
   proc getViewAndPostPermissionsSatisfied*(self: View): bool {.slot.} =
-    return self.viewAndPostPermissionsSatisfied
+    return self.viewAndPostPermissionsSatisfied or self.amIChatAdmin()
   QtProperty[bool] viewAndPostPermissionsSatisfied:
     read = getViewAndPostPermissionsSatisfied
     notify = viewAndPostPermissionsSatisfiedChanged
