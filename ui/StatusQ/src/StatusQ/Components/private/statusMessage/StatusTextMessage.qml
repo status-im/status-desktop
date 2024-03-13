@@ -1,8 +1,9 @@
-import QtQuick 2.13
+import QtQuick 2.15
 import QtGraphicalEffects 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 
@@ -50,7 +51,7 @@ Item {
                 const editedMessage = formattedMessage.slice(0, index)
                                     + ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
                                     + formattedMessage.slice(index);
-                return Utils.getMessageWithStyle(Emoji.parse(editedMessage), d.hoveredLink)
+                return Utils.getMessageWithStyle(Emoji.parse(editedMessage))
             }
 
             if (root.convertToSingleLine || isQuote)
@@ -66,7 +67,7 @@ Item {
                 // short return not to add styling when no html
                 return formattedMessage
 
-            return Utils.getMessageWithStyle(formattedMessage, d.hoveredLink)
+            return Utils.getMessageWithStyle(formattedMessage)
         }
     }
 
@@ -106,8 +107,14 @@ Item {
         }
     }
 
-    // Horizontal crop mask
+    StatusSyntaxHighlighter {
+        quickTextDocument: chatText.textDocument
+        hyperlinkHoverColor: Theme.palette.primaryColor3
+        highlightedHyperlink: d.hoveredLink
+        features: StatusSyntaxHighlighter.HighlightedHyperlink
+    }
 
+    // Horizontal crop mask
     Loader {
         id: horizontalClipMask
         anchors.fill: chatText

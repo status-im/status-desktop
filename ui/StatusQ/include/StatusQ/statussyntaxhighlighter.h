@@ -3,6 +3,7 @@
 #include <QQmlParserStatus>
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>
+#include <QFlags>
 
 class QQuickTextDocument;
 class QTextCharFormat;
@@ -26,9 +27,25 @@ class StatusSyntaxHighlighter : public QSyntaxHighlighter, public QQmlParserStat
     Q_PROPERTY(QString highlightedHyperlink READ highlightedHyperlink WRITE setHighlightedHyperlink NOTIFY
                     highlightedHyperlinkChanged)
 
+    Q_PROPERTY(Features features READ features WRITE setFeatures NOTIFY featuresChanged)
+
     Q_INTERFACES(QQmlParserStatus)
 
 public:
+    enum FeatureFlags {
+        None = 0,
+        SingleLineBold = 1 << 0,
+        SingleLineItalic = 1 << 1,
+        Code = 1 << 2,
+        CodeBlock = 1 << 3,
+        SingleLineStrikeThrough = 1 << 4,
+        Hyperlink = 1 << 5,
+        HighlightedHyperlink = 1 << 6,
+        All = SingleLineBold | SingleLineItalic | Code | CodeBlock | SingleLineStrikeThrough | Hyperlink | HighlightedHyperlink
+    };
+    Q_DECLARE_FLAGS(Features, FeatureFlags)
+    Q_FLAG(Features)
+
     explicit StatusSyntaxHighlighter(QObject* parent = nullptr);
 
     QQuickTextDocument* quickTextDocument() const;
@@ -47,6 +64,7 @@ signals:
     void hyperlinkHoverColorChanged();
     void hyperlinksChanged();
     void highlightedHyperlinkChanged();
+    void featuresChanged();
 
 private:
     QQuickTextDocument* m_quicktextdocument{nullptr};
@@ -80,8 +98,15 @@ private:
     QStringList getPossibleUrlFormats(const QUrl& url) const;
     QRegularExpression buildHyperlinkRegex(QStringList hyperlinks) const;
 
+    Features features() const;
+    void setFeatures(Features features);
+
+    void buildRules();
+    int findRuleIndex(FeatureFlags flag) const;
+
     struct HighlightingRule
     {
+        int id;
         QRegularExpression pattern;
         QRegularExpression::MatchType matchType{QRegularExpression::PartialPreferCompleteMatch};
         QTextCharFormat format;
@@ -94,4 +119,8 @@ private:
     QTextCharFormat singleLineStrikeThroughFormat;
     QTextCharFormat hyperlinkFormat;
     QTextCharFormat highlightedHyperlinkFormat;
+
+    Features m_features{All};
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(StatusSyntaxHighlighter::Features)

@@ -50,6 +50,16 @@ SplitView {
                 isAReply: true
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
             }
+            ListElement {
+                timestamp: 1667937930489
+                senderId: "zqdeadbeef"
+                senderDisplayName: "replicator.stateofus.eth"
+                contentType: StatusMessage.ContentType.Text
+                message: "Test message with a link https://github.com/. Try to copy the link!"
+                isContact: true
+                isAReply: true
+                trustIndicator: StatusContactVerificationIcons.TrustedType.None
+            }
         }
         readonly property var colorHash: ListModel {
             ListElement { colorId: 13; segmentLength: 5 }
