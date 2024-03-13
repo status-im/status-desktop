@@ -73,11 +73,11 @@ class AddressPopup(AddSavedAddressPopup):
         self._address_text_edit.type_text(address)
         if address.startswith("0x"):
             self.verify_network_selector_enabled()
-            self._add_networks_selector.click(1, 1)
+            self._add_networks_selector.click()
             self.set_ethereum_mainnet_network(True)
             self.set_optimism_mainnet_network(True)
             self.set_arbitrum_mainnet_network(True)
-            self._save_add_address_button.click()  # click it twice to close the network selector pop up
+            self._name_text_edit.click()  # click the text field to close the network selector pop up
             self.verify_ethereum_mainnet_network_tag_present()
             self.verify_otimism_mainnet_network_tag_present()
             self.verify_arbitrum_mainnet_network_tag_present(),
