@@ -1,4 +1,4 @@
-import stint, strformat
+import stint, stew/shims/strformat
 
 type BalanceItem* = ref object of RootObj
   account*: string

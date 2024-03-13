@@ -1,4 +1,4 @@
-import json, strformat, sequtils, sugar
+import json, stew/shims/strformat, sequtils, sugar
 import base_item
 import ../../shared_models/[color_hash_item, color_hash_model]
 

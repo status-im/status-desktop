@@ -1,5 +1,5 @@
 import Tables, json, chronicles, strutils
-import strformat, sets, options
+import stew/shims/strformat, sets, options
 import chronicles, libp2p/[multihash, multicodec, cid]
 import nimcrypto, stint
 import ../../common/conversion as common_conversion

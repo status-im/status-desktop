@@ -1,4 +1,4 @@
-import strformat
+import stew/shims/strformat
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contacts
 

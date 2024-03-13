@@ -1,4 +1,4 @@
-import NimQml, strformat
+import NimQml, stew/shims/strformat
 import ../../../shared_models/keypair_item
 
 export keypair_item

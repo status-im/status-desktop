@@ -1,5 +1,5 @@
 
-import hashes, strformat, json_serialization
+import hashes, stew/shims/strformat, json_serialization
 
 import ./types
 

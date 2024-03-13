@@ -1,6 +1,6 @@
 import
   json, tables, sequtils, httpclient, net
-import json, strutils, strformat, tables, chronicles, unicode, times
+import json, strutils, stew/shims/strformat, tables, chronicles, unicode, times
 import
   json_serialization, chronicles, libp2p/[multihash, multicodec, cid], stint, nimcrypto
 from sugar import `=>`, `->`

@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, sequtils
+import NimQml, Tables, strutils, stew/shims/strformat, sequtils
 
 import ./collectibles_model as flat_model
 import ./collectibles_entry as flat_item

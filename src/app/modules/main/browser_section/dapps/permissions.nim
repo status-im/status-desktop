@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, stew/shims/strformat
 
 type
   ModelRole {.pure.} = enum

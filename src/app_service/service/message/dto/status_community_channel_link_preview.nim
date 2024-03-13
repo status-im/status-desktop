@@ -1,4 +1,4 @@
-import json, strformat, NimQml, chronicles
+import json, stew/shims/strformat, NimQml, chronicles
 import link_preview_thumbnail
 import status_community_link_preview
 import ../../community/dto/community

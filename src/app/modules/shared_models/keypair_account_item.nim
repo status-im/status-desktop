@@ -1,4 +1,4 @@
-import NimQml, strformat
+import NimQml, stew/shims/strformat
 import app_service/service/wallet_account/dto/account_dto as wa_dto
 import ./currency_amount
 

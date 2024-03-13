@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, std/sets, std/algorithm, strformat, strutils, chronicles, json_serialization, sugar, times
+import NimQml, Tables, json, sequtils, std/sets, std/algorithm, stew/shims/strformat, strutils, chronicles, json_serialization, sugar, times
 import json_serialization/std/tables as ser_tables
 
 import ./dto/community as community_dto

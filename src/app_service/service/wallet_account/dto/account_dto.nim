@@ -1,4 +1,4 @@
-import tables, json, strformat, strutils
+import tables, json, stew/shims/strformat, strutils
 
 import account_token_item
 

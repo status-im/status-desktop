@@ -1,4 +1,4 @@
-import Nimqml, json, strformat
+import Nimqml, json, stew/shims/strformat
 
 QtObject:
   type

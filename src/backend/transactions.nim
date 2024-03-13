@@ -1,4 +1,4 @@
-import Tables, json, stint, json_serialization, strformat
+import Tables, json, stint, json_serialization, stew/shims/strformat
 
 import ../app_service/service/eth/dto/transaction
 import ./core as core

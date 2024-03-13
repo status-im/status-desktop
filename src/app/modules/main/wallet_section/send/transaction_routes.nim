@@ -1,4 +1,4 @@
-import NimQml, strformat, stint
+import NimQml, stew/shims/strformat, stint
 
 import ./gas_estimate_item, ./suggested_route_model, ./network_model
 

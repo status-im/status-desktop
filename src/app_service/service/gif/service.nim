@@ -1,5 +1,5 @@
 import json
-import strformat
+import stew/shims/strformat
 import os
 import uri
 import chronicles

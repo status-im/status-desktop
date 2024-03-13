@@ -1,4 +1,4 @@
-import strformat, sequtils, sugar
+import stew/shims/strformat, sequtils, sugar
 
 import ../../shared_models/[color_hash_item, color_hash_model]
 

@@ -1,4 +1,4 @@
-import NimQml, json, stint, sequtils, strutils, sugar, strformat, parseutils, chronicles
+import NimQml, json, stint, sequtils, strutils, sugar, stew/shims/strformat, parseutils, chronicles
 
 import io_interface
 import ../io_interface as delegate_interface

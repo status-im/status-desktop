@@ -1,4 +1,4 @@
-import NimQml, Tables, json, strutils, strformat
+import NimQml, Tables, json, strutils, stew/shims/strformat
 
 import message_reaction_item
 

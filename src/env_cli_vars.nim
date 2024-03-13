@@ -1,4 +1,4 @@
-import os, sequtils, strutils, strformat, chronicles
+import os, sequtils, strutils, stew/shims/strformat, chronicles
 
 import # vendor libs
   confutils

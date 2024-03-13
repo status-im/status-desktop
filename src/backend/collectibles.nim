@@ -1,4 +1,4 @@
-import json, strformat
+import json, stew/shims/strformat
 import stint, Tables, strutils
 import core
 import response_type, collectibles_types

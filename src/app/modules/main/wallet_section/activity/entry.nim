@@ -1,4 +1,4 @@
-import NimQml, json, strformat, sequtils, strutils, logging, stint
+import NimQml, json, stew/shims/strformat, sequtils, strutils, logging, stint
 
 import backend/activity as backend
 import app/modules/shared_models/currency_amount

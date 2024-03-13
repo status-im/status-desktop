@@ -1,4 +1,4 @@
-import NimQml, strutils, uri, strformat, strutils, stint, re
+import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, re
 import stew/byteutils
 import ./utils/qrcodegen
 import ./utils/time_utils

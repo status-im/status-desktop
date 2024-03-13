@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils, strformat
+import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils, stew/shims/strformat
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]

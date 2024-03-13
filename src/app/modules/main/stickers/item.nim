@@ -1,4 +1,4 @@
-import strformat, stint
+import stew/shims/strformat, stint
 
 #####
 # Sticker Item

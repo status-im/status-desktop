@@ -1,4 +1,4 @@
-import json, strutils, strformat, stint, json_serialization, tables
+import json, strutils, stew/shims/strformat, stint, json_serialization, tables
 
 import profile_preferences_base_item
 
