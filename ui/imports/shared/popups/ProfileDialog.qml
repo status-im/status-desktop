@@ -15,6 +15,9 @@ StatusDialog {
     property var contactsStore
     property var networkConnectionStore
 
+    property var dirtyValues: ({})
+    property bool dirty: false
+
     width: 640
     padding: 0
 
@@ -27,5 +30,7 @@ StatusDialog {
         contactsStore: root.contactsStore
         networkConnectionStore: root.networkConnectionStore
         onCloseRequested: root.close()
+        dirtyValues: root.dirtyValues
+        dirty: root.dirty
     }
 }

@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -26,20 +27,83 @@ Control {
     property var walletStore
     property var networkConnectionStore
 
+    property bool livePreview: false
+    property var livePreviewValues: ({})
+
     signal closeRequested()
 
-    onVisibleChanged: if (visible) profileStore.requestProfileShowcase(publicKey)
+    onVisibleChanged: if (visible && !livePreview) profileStore.requestProfileShowcase(publicKey)
 
     horizontalPadding: readOnly ? 20 : 40 // smaller in settings/preview
     topPadding: Style.current.bigPadding
 
-    QtObject {
+    StatusQUtils.QObject {
         id: d
 
         readonly property string copyLiteral: qsTr("Copy")
 
         readonly property var timer: Timer {
             id: timer
+        }
+
+        readonly property var communitiesModel: root.livePreview ? liveCommunitiesModel
+                                                                 : communitiesStoreModel
+        readonly property var accountsModel: root.livePreview ? root.livePreviewValues.accountsModel
+                                                              : accountsStoreModel
+        readonly property var collectiblesModel: root.livePreview ? root.livePreviewValues.collectiblesModel
+                                                                  : collectiblesStoreModel
+        // TODO: add dirty values to the livePreviewValues once assets are supported
+        // readonly property assetsModel: root.livePreview ? root.livePreviewValues.assetsModel
+        //                                                     : root.profileStore.profileShowcaseAssetsModel
+        readonly property var assetsModel: root.profileStore.profileShowcaseAssetsModel
+        readonly property var socialLinksModel: root.livePreview ? root.livePreviewValues.socialLinksModel
+                                                            : root.profileStore.socialLinksModel
+        SortFilterProxyModel {
+            id: liveCommunitiesModel
+            sourceModel: root.livePreviewValues.communitiesModel
+            proxyRoles: [
+                FastExpressionRole {
+                    name: "membersCount"
+                    expression: model.members.count
+                    expectedRoles: ["members"]
+                }
+            ]
+        }
+
+        SortFilterProxyModel {
+            id: communitiesStoreModel
+            sourceModel: root.profileStore.profileShowcaseCommunitiesModel
+            filters: [
+                ValueFilter {
+                    roleName: "showcaseVisibility"
+                    value: Constants.ShowcaseVisibility.NoOne
+                    inverted: true
+                },
+                ValueFilter {
+                    roleName: "loading"
+                    value: false
+                }
+            ]
+        }
+
+        SortFilterProxyModel {
+            id: accountsStoreModel
+            sourceModel: root.profileStore.profileShowcaseAccountsModel
+            filters: ValueFilter {
+                roleName: "showcaseVisibility"
+                value: Constants.ShowcaseVisibility.NoOne
+                inverted: true
+            }
+        }
+
+        SortFilterProxyModel {
+            id: collectiblesStoreModel
+            sourceModel: root.profileStore.profileShowcaseCollectiblesModel
+            filters: ValueFilter {
+                roleName: "showcaseVisibility"
+                value: Constants.ShowcaseVisibility.NoOne
+                inverted: true
+            }
         }
     }
 
@@ -79,20 +143,7 @@ Control {
                 cellWidth: (width-rightMargin)/2
                 cellHeight: cellWidth/2
                 visible: count
-                model: SortFilterProxyModel {
-                    sourceModel: root.profileStore.profileShowcaseCommunitiesModel
-                    filters: [
-                        ValueFilter {
-                            roleName: "showcaseVisibility"
-                            value: Constants.ShowcaseVisibility.NoOne
-                            inverted: true
-                        },
-                        ValueFilter {
-                            roleName: "loading"
-                            value: false
-                        }
-                    ]
-                }
+                model: d.communitiesModel
                 ScrollBar.vertical: StatusScrollBar { }
                 delegate: StatusListItem { // TODO custom delegate
                     width: GridView.view.cellWidth - Style.current.smallPadding
@@ -149,14 +200,7 @@ Control {
                 id: accountsView
                 spacing: Style.current.halfPadding
                 visible: count
-                model: SortFilterProxyModel {
-                    sourceModel: root.profileStore.profileShowcaseAccountsModel
-                    filters: ValueFilter {
-                        roleName: "showcaseVisibility"
-                        value: Constants.ShowcaseVisibility.NoOne
-                        inverted: true
-                    }
-                }
+                model: d.accountsModel
                 delegate: StatusListItem {
                     id: accountDelegate
                     property bool saved: {
@@ -253,14 +297,7 @@ Control {
                 cellHeight: cellWidth
                 visible: count
                 // TODO Issue #11637: Dedicated controller for user's list of collectibles (no watch-only entries)
-                model: SortFilterProxyModel {
-                    sourceModel: root.profileStore.profileShowcaseCollectiblesModel
-                    filters: ValueFilter {
-                        roleName: "showcaseVisibility"
-                        value: Constants.ShowcaseVisibility.NoOne
-                        inverted: true
-                    }
-                }
+                model: d.collectiblesModel
                 ScrollBar.vertical: StatusScrollBar { }
                 delegate: StatusRoundedImage {
                     width: GridView.view.cellWidth - Style.current.smallPadding
@@ -347,7 +384,7 @@ Control {
                 cellHeight: cellWidth/2.5
                 visible: count
                 model: SortFilterProxyModel {
-                    sourceModel: root.profileStore.profileShowcaseAssetsModel
+                    sourceModel: d.assetsModel
                     filters: ValueFilter {
                         roleName: "showcaseVisibility"
                         value: Constants.ShowcaseVisibility.NoOne

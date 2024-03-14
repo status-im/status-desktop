@@ -44,6 +44,10 @@ SettingsContentBase {
         property string displayName: descriptionPanel.displayName.text
         property string bio: descriptionPanel.bio.text
         property url profileLargeImage: profileHeader.previewIcon
+        property var socialLinks: priv.showcaseModels.socialLinksVisibleModel
+        property var communitiesModel: priv.showcaseModels.communitiesVisibleModel
+        property var accountsModel: priv.showcaseModels.accountsVisibleModel
+        property var collectiblesModel: priv.showcaseModels.collectiblesVisibleModel
     }
 
     enum TabIndex {
@@ -322,6 +326,8 @@ SettingsContentBase {
                 contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 onClosed: destroy()
+                dirtyValues: root.dirtyValues
+                dirty: root.dirty
             }
         }
 
