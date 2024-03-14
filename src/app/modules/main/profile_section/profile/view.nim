@@ -197,6 +197,14 @@ QtObject:
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
 
+  proc profileShowcasePreferencesSaveSucceeded*(self: View) {.signal.}
+  proc emitProfileShowcasePreferencesSaveSucceededSignal*(self: View) =
+    self.profileShowcasePreferencesSaveSucceeded()
+
+  proc profileShowcasePreferencesSaveFailed*(self: View) {.signal.}
+  proc emitProfileShowcasePreferencesSaveFailedSignal*(self: View) =
+    self.profileShowcasePreferencesSaveFailed()
+
   # TODO: remove old models
   proc getCollectiblesModel(self: View): QVariant {.slot.} =
     return self.delegate.getCollectiblesModel()

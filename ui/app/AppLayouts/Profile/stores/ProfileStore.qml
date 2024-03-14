@@ -102,6 +102,20 @@ QtObject {
         root.profileModule.setIsFirstShowcaseInteraction()
     }
 
+    signal profileShowcasePreferencesSaveSucceeded()
+    signal profileShowcasePreferencesSaveFailed()
+
+    readonly property Connections profileModuleConnections: Connections {
+        target: root.profileModule
+
+        function onProfileShowcasePreferencesSaveSucceeded() {
+            root.profileShowcasePreferencesSaveSucceeded()
+        }
+        function onProfileShowcasePreferencesSaveFailed() {
+            root.profileShowcasePreferencesSaveFailed()
+        }
+    }
+
     // Social links related: All to be removed: Deprecated --> Issue #13688
     function containsSocialLink(text, url) {
         return root.profileModule.containsSocialLink(text, url)

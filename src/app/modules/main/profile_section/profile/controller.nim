@@ -58,6 +58,12 @@ proc init*(self: Controller) =
     let args = SocialLinksArgs(e)
     self.delegate.onSocialLinksUpdated(args.socialLinks, args.error)
 
+  self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_SUCCEEDED) do(e: Args):
+    self.delegate.onProfileShowcasePreferencesSaveSucceeded()
+
+  self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_FAILED) do(e: Args):
+    self.delegate.onProfileShowcasePreferencesSaveFailed()
+
   self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_UPDATED) do(e: Args):
     let args = ProfileShowcasePreferencesArgs(e)
     self.delegate.updateProfileShowcasePreferences(args.preferences)

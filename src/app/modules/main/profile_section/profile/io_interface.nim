@@ -49,6 +49,12 @@ method saveSocialLinks*(self: AccessInterface) {.base.} =
 method onSocialLinksUpdated*(self: AccessInterface, socialLinks: SocialLinks, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onProfileShowcasePreferencesSaveSucceeded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onProfileShowcasePreferencesSaveFailed*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method saveProfileIdentityInfo*(self: AccessInterface, identity: IdentitySaveData) {.base.} =
   raise newException(ValueError, "No implementation available")
 

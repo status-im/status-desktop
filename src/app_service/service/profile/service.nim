@@ -27,8 +27,12 @@ type
 
 # Signals which may be emitted by this service:
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_UPDATED* = "profileShowcasePreferencesUpdated"
-const SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED* = "profileShowcaseForContactUpdated"
+const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_SUCCEEDED* = "profileShowcasePreferencesSaveSucceeded"
+const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_FAILED* = "profileShowcasePreferencesSaveFailed"
 const SIGNAL_PROFILE_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED* = "profileShowcaseAccountsByAddressFetched"
+
+# TODO: move to contacts service
+const SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED* = "profileShowcaseForContactUpdated"
 
 QtObject:
   type Service* = ref object of QObject
@@ -192,7 +196,10 @@ QtObject:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         error "Error saving profile showcase preferences", msg = rpcResponseObj{"error"}
+        self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_FAILED, Args())
         return
+
+      self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_SUCCEEDED, Args())
       self.requestProfileShowcasePreferences()
     except Exception as e:
       error "Error saving profile showcase preferences", msg = e.msg
