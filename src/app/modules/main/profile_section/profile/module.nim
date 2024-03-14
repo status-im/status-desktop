@@ -112,6 +112,12 @@ method onSocialLinksUpdated*(self: Module, socialLinks: SocialLinks, error: stri
     return
   self.updateSocialLinks(socialLinks)
 
+method onProfileShowcasePreferencesSaveSucceeded*(self: Module) =
+  self.view.emitProfileShowcasePreferencesSaveSucceededSignal()
+
+method onProfileShowcasePreferencesSaveFailed*(self: Module) =
+  self.view.emitProfileShowcasePreferencesSaveFailedSignal()
+
 method getProfileShowcaseSocialLinksLimit*(self: Module): int =
   return self.controller.getProfileShowcaseSocialLinksLimit()
 
