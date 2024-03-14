@@ -55,7 +55,7 @@ Rectangle {
             id: modeSwitch
             objectName: "switch"
 
-            visible: !!text
+            visible: !!text && !!root.ListView.view && root.ListView.view.model && root.ListView.view.model.count
             LayoutMirroring.enabled: true
             LayoutMirroring.childrenInherit: true
             textColor: Theme.palette.baseColor1
