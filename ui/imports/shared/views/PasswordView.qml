@@ -11,16 +11,23 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 
 ColumnLayout {
     id: root
 
     property bool ready: newPswInput.text.length >= Constants.minPasswordLength && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
     property bool createNewPsw: true
-    property string title: qsTr("Create a password")
+    property string title: createNewPsw ? qsTr("Create a password") : qsTr("Change your password")
     property bool titleVisible: true
     property real titleSize: 22
-    property string introText: qsTr("Create a password to unlock Status on this device & sign transactions.")
+    property string introText: {
+        if (createNewPsw) {
+            return qsTr("Create a password to unlock Status on this device & sign transactions.")
+        }
+
+        return qsTr("Change password used to unlock Status on this device & sign transactions.")
+    }
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
     property string strengthenText: qsTr("Minimum %n character(s). To strengthen your password consider including:", "", Constants.minPasswordLength)
     property bool highSizeIntro: false
@@ -146,9 +153,7 @@ ColumnLayout {
     spacing: Style.current.bigPadding
     z: root.zFront
 
-    // View visual content:
     StatusBaseText {
-        id: title
         Layout.alignment: root.contentAlignment
         visible: root.titleVisible
         text: root.title
@@ -187,34 +192,45 @@ ColumnLayout {
         }
     }
 
-    StatusPasswordInput {
-        id: currentPswInput
-        objectName: "passwordViewCurrentPassword"
+    ColumnLayout {
+        StatusBaseText {
+            text: qsTr("Current password")
+        }
 
-        property bool showPassword
+        StatusPasswordInput {
+            id: currentPswInput
+            objectName: "passwordViewCurrentPassword"
 
-        z: root.zFront
-        visible: !root.createNewPsw
+            property bool showPassword
+
+            z: root.zFront
+            visible: !root.createNewPsw
+            Layout.fillWidth: true
+            Layout.alignment: root.contentAlignment
+            placeholderText: qsTr("Enter current password")
+            echoMode: showPassword ? TextInput.Normal : TextInput.Password
+            rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
+            onAccepted: root.returnPressed()
+
+            StatusFlatRoundButton {
+                id: showHideCurrentIcon
+                visible: currentPswInput.text !== ""
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 16
+                width: 24
+                height: 24
+                icon.name: currentPswInput.showPassword ? "hide" : "show"
+                icon.color: Theme.palette.baseColor1
+
+                onClicked: currentPswInput.showPassword = !currentPswInput.showPassword
+            }
+        }
+    }
+
+    StatusModalDivider {
         Layout.fillWidth: true
         Layout.alignment: root.contentAlignment
-        placeholderText: qsTr("Current password")
-        echoMode: showPassword ? TextInput.Normal : TextInput.Password
-        rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
-        onAccepted: root.returnPressed()
-
-        StatusFlatRoundButton {
-            id: showHideCurrentIcon
-            visible: currentPswInput.text !== ""
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 16
-            width: 24
-            height: 24
-            icon.name: currentPswInput.showPassword ? "hide" : "show"
-            icon.color: Theme.palette.baseColor1
-
-            onClicked: currentPswInput.showPassword = !currentPswInput.showPassword
-        }
     }
 
     ColumnLayout {
@@ -222,6 +238,10 @@ ColumnLayout {
         z: root.zFront
         Layout.fillWidth: true
         Layout.alignment: root.contentAlignment
+
+        StatusBaseText {
+            text: qsTr("New password")
+        }
 
         StatusPasswordInput {
             id: newPswInput
@@ -231,7 +251,7 @@ ColumnLayout {
 
             Layout.alignment: root.contentAlignment
             Layout.fillWidth: true
-            placeholderText: qsTr("New password")
+            placeholderText: qsTr("Enter new password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
             rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Style.current.padding / 2
 
@@ -347,54 +367,61 @@ ColumnLayout {
         }
     }
 
-    StatusPasswordInput {
-        id: confirmPswInput
-        objectName: "passwordViewNewPasswordConfirm"
-
-        property bool showPassword
-
-        z: root.zFront
-        Layout.fillWidth: true
-        Layout.alignment: root.contentAlignment
-        placeholderText: qsTr("Confirm password")
-        echoMode: showPassword ? TextInput.Normal : TextInput.Password
-        rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
-
-        onTextChanged: {
-            errorTxt.text = ""
-
-            if(!d.validateCharacterSet(newPswInput.text)) return
-
-            d.passwordValidation();
-            if(text.length === newPswInput.text.length) {
-                root.checkPasswordMatches()
-            }
+    ColumnLayout {
+        StatusBaseText {
+            text: qsTr("Confirm new password")
+            color: Theme.palette.baseColor1
         }
 
-        onFocusChanged: {
-            // When clicking into the confirmation input, validate if new password:
-            if(focus) {
-                d.passwordValidation()
-            }
-            // When leaving the confirmation input because of the button or other input component is focused, check if password matches
-            else {
-                root.checkPasswordMatches(false)
-            }
-        }
-        onAccepted: root.returnPressed()
+        StatusPasswordInput {
+            id: confirmPswInput
+            objectName: "passwordViewNewPasswordConfirm"
 
-        StatusFlatRoundButton {
-            id: showHideConfirmIcon
-            visible: confirmPswInput.text !== ""
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 16
-            width: 24
-            height: 24
-            icon.name: confirmPswInput.showPassword ? "hide" : "show"
-            icon.color: Theme.palette.baseColor1
+            property bool showPassword
 
-            onClicked: confirmPswInput.showPassword = !confirmPswInput.showPassword
+            z: root.zFront
+            Layout.fillWidth: true
+            Layout.alignment: root.contentAlignment
+            placeholderText: qsTr("Enter new password")
+            echoMode: showPassword ? TextInput.Normal : TextInput.Password
+            rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
+
+            onTextChanged: {
+                errorTxt.text = ""
+
+                if(!d.validateCharacterSet(newPswInput.text)) return
+
+                d.passwordValidation();
+                if(text.length === newPswInput.text.length) {
+                    root.checkPasswordMatches()
+                }
+            }
+
+            onFocusChanged: {
+                // When clicking into the confirmation input, validate if new password:
+                if(focus) {
+                    d.passwordValidation()
+                }
+                // When leaving the confirmation input because of the button or other input component is focused, check if password matches
+                else {
+                    root.checkPasswordMatches(false)
+                }
+            }
+            onAccepted: root.returnPressed()
+
+            StatusFlatRoundButton {
+                id: showHideConfirmIcon
+                visible: confirmPswInput.text !== ""
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 16
+                width: 24
+                height: 24
+                icon.name: confirmPswInput.showPassword ? "hide" : "show"
+                icon.color: Theme.palette.baseColor1
+
+                onClicked: confirmPswInput.showPassword = !confirmPswInput.showPassword
+            }
         }
     }
 
