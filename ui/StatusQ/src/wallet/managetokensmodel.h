@@ -39,13 +39,13 @@ struct TokenData {
     bool isSelfCollection{false};
 };
 
-// symbol -> {sortOrder, visible, groupId}
-using SerializedTokenData = QHash<QString, std::tuple<int, bool, QString>>;
+// symbol -> {sortOrder, visible, groupId, isCommunityGroup, isCollectionGroup}
+using SerializedTokenData = QHash<QString, std::tuple<int, bool, QString, bool, bool>>;
 
 class ManageTokensModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(int count READ count NOTIFY countChanged FINAL)
+    Q_PROPERTY(int count READ rowCount NOTIFY countChanged FINAL)
     Q_PROPERTY(bool dirty READ dirty NOTIFY dirtyChanged FINAL)
 
 public:
@@ -87,12 +87,8 @@ public:
     void applySort();
     void applySortByTokensAmount();
 
-    int count() const { return rowCount(); }
     const TokenData& itemAt(int row) const { return m_data.at(row); }
     TokenData& itemAt(int row) { return m_data[row]; }
-
-    void setCommunityIds(const QStringList& ids) { m_communityIds = ids; }; // FIXME remove; sort by number of tokens inside
-    bool hasCommunityIdToken(const QString& communityId) const; // FIXME remove
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
@@ -103,8 +99,6 @@ signals:
     void dirtyChanged();
 
 private:
-    QStringList m_communityIds;
-
     bool m_dirty{false};
 
     QList<TokenData> m_data;

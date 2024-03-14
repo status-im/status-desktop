@@ -116,22 +116,20 @@ private:
     bool arrangeByCollection() const;
     void setArrangeByCollection(bool newArrangeByCollection);
 
-    QStringList m_communityIds;
-    void reloadCommunityIds();
     void rebuildCommunityTokenGroupsModel();
     void rebuildHiddenCommunityTokenGroupsModel();
     void rebuildCollectionGroupsModel();
     void rebuildHiddenCollectionGroupsModel();
 
     const std::array<ManageTokensModel*, 7> m_allModels {m_regularTokensModel, m_collectionGroupsModel, m_communityTokensModel, m_communityTokenGroupsModel,
-                                                        m_hiddenTokensModel, m_hiddenCommunityTokenGroupsModel, m_hiddenCollectionGroupsModel};
+                                                         m_hiddenTokensModel, m_hiddenCommunityTokenGroupsModel, m_hiddenCollectionGroupsModel};
 
     QString m_settingsKey;
     QString settingsKey() const;
     QString settingsGroupName() const;
     void setSettingsKey(const QString& newSettingsKey);
     QSettings m_settings;
-    SerializedTokenData m_settingsData; // symbol -> {sortOrder, visible, groupId}
+    SerializedTokenData m_settingsData; // symbol -> {sortOrder, visible, groupId, isCommunityGroup, isCollectionGroup}
     bool hasSettings() const;
     void loadSettingsData(bool withGroup = false);
 
@@ -145,7 +143,7 @@ private:
 
     bool m_modelConnectionsInitialized{false};
 
-    // explicitely mass-hidden community asset/collectible groups
+    // explicitely mass-hidden asset/collectible groups
     QSet<QString> m_hiddenCommunityGroups;
     QStringList hiddenCommunityGroups() const;
 
