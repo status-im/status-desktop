@@ -80,32 +80,32 @@ proc init*(self: Controller) =
     let args = CommunitiesArgs(e)
     self.delegate.onCommunitiesUpdated(args.communities)
 
-proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
-  discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
+proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int): bool =
+  len(self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)) > 0
 
-proc deleteIdentityImage*(self: Controller, address: string) =
+proc deleteIdentityImage*(self: Controller, address: string): bool =
   self.profileService.deleteIdentityImage(address)
 
-proc setDisplayName*(self: Controller, displayName: string) =
+proc setDisplayName*(self: Controller, displayName: string): bool =
   self.profileService.setDisplayName(displayName)
 
 proc getSocialLinks*(self: Controller): SocialLinks =
-  return self.settingsService.getSocialLinks()
+  self.settingsService.getSocialLinks()
 
 proc getCommunityById*(self: Controller, id: string): CommunityDto =
-  return self.communityService.getCommunityById(id)
+  self.communityService.getCommunityById(id)
 
 proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
-  return self.walletAccountService.getAccountByAddress(address)
+  self.walletAccountService.getAccountByAddress(address)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
-  return self.walletAccountService.getWalletAccounts(true)
+  self.walletAccountService.getWalletAccounts(true)
 
 proc getChainIds*(self: Controller): seq[int] =
-  return self.networkService.getNetworks().map(n => n.chainId)
+  self.networkService.getNetworks().map(n => n.chainId)
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
-  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
+  self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
 
 proc setSocialLinks*(self: Controller, links: SocialLinks) =
   self.settingsService.setSocialLinks(links)
@@ -139,4 +139,4 @@ proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard) 
   self.communityService.requestCommunityInfo(communityId, shard)
 
 proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
-  return self.tokenService.getTokenBySymbolList()
+  self.tokenService.getTokenBySymbolList()

@@ -62,7 +62,7 @@ QtObject {
     }
 
     // Identity related:
-    function saveIdentityInfo(displayName, bio, source, aX, aY, bX, bY) {
+    function saveProfileIdentity(displayName, bio, source, aX, aY, bX, bY) {
         var identityInfo = {
             "displayName": displayName,
             "bio": bio,
@@ -75,7 +75,7 @@ QtObject {
             } : null
         }
         let json = JSON.stringify(identityInfo)
-        root.profileModule.saveIdentityInfo(json)
+        root.profileModule.saveProfileIdentity(json)
     }
 
     function getProfileShowcaseEntriesLimit() {
@@ -102,12 +102,20 @@ QtObject {
         root.profileModule.setIsFirstShowcaseInteraction()
     }
 
+    signal profileIdentitySaveSucceeded()
+    signal profileIdentitySaveFailed()
     signal profileShowcasePreferencesSaveSucceeded()
     signal profileShowcasePreferencesSaveFailed()
 
     readonly property Connections profileModuleConnections: Connections {
         target: root.profileModule
 
+        function onProfileIdentitySaveSucceeded() {
+            root.profileIdentitySaveSucceeded()
+        }
+        function onProfileIdentitySaveFailed() {
+            root.profileIdentitySaveFailed()
+        }
         function onProfileShowcasePreferencesSaveSucceeded() {
             root.profileShowcasePreferencesSaveSucceeded()
         }

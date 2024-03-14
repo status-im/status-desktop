@@ -127,7 +127,7 @@ method getProfileShowcaseEntriesLimit*(self: Module): int =
 method setIsFirstShowcaseInteraction(self: Module) =
   singletonInstance.localAccountSettings.setIsFirstShowcaseInteraction(false)
 
-proc storeIdentityImage*(self: Module, identityImage: IdentityImage) =
+proc storeIdentityImage*(self: Module, identityImage: IdentityImage): bool =
   let keyUid = singletonInstance.userProfile.getKeyUid()
   let image = singletonInstance.utils.formatImagePath(identityImage.source)
   # FIXME the function to get the file size is messed up
@@ -136,17 +136,21 @@ proc storeIdentityImage*(self: Module, identityImage: IdentityImage) =
   # return "Max file size is 20MB"
   self.controller.storeIdentityImage(keyUid, image, identityImage.aX, identityImage.aY, identityImage.bX, identityImage.bY)
 
-proc deleteIdentityImage*(self: Module) =
+proc deleteIdentityImage*(self: Module): bool =
   let keyUid = singletonInstance.userProfile.getKeyUid()
   self.controller.deleteIdentityImage(keyUid)
 
-method saveProfileIdentityInfo*(self: Module, identity: IdentitySaveData) =
-  self.controller.setDisplayName(identity.displayName)
-  discard self.controller.setBio(identity.bio)
+method saveProfileIdentity*(self: Module, identity: IdentitySaveData) =
+  var ok = self.controller.setDisplayName(identity.displayName)
+  ok = ok and self.controller.setBio(identity.bio)
   if identity.image != nil:
-    self.storeIdentityImage(identity.image)
+    ok = ok and self.storeIdentityImage(identity.image)
   else:
-    self.deleteIdentityImage()
+    ok = ok and self.deleteIdentityImage()
+  if ok:
+    self.view.emitProfileIdentitySaveSucceededSignal()
+  else:
+    self.view.emitProfileIdentitySaveFailedSignal()
 
 method saveProfileShowcasePreferences*(self: Module, showcase: ShowcaseSaveData) =
   # TODO: remove this check within old api
