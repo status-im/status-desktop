@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -60,11 +61,12 @@ Item {
             model: SortFilterProxyModel {
                 sourceModel: root.usersModel
 
-                proxyRoles: ExpressionRole {
+                proxyRoles: FastExpressionRole {
                     function displayNameProxy(nickname, ensName, displayName, aliasName) {
                         return ProfileUtils.displayName(nickname, ensName, displayName, aliasName)
                     }
                     name: "preferredDisplayName"
+                    expectedRoles: ["localNickname", "ensName", "displayName", "alias"]
                     expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
                 }
 
