@@ -13,6 +13,7 @@ import StatusQ.Controls 0.1
 Rectangle {
     id: root
 
+    property bool loading: false
     property bool active: false
     property bool cancelButtonVisible: true
     property bool saveChangesButtonEnabled: false
@@ -133,7 +134,7 @@ Rectangle {
         StatusButton {
             id: cancelChangesButton
             text: root.defaultCancelChangesText
-            enabled: root.active
+            enabled: !root.loading && root.active
             visible: root.cancelButtonVisible
             type: StatusBaseButton.Type.Danger
             onClicked: root.resetChangesClicked()
@@ -142,6 +143,7 @@ Rectangle {
         StatusFlatButton {
             id: saveForLaterButton
             text: root.defaultSaveForLaterText
+            loading: root.loading
             enabled: root.active && root.saveChangesButtonEnabled
             visible: root.saveForLaterButtonVisible
             onClicked: root.saveForLaterClicked()
@@ -149,7 +151,9 @@ Rectangle {
 
         StatusButton {
             id: saveChangesButton
+
             objectName: "settingsDirtyToastMessageSaveButton"
+            loading: root.loading
             text: root.defaultSaveChangesText
             interactive: root.active && root.saveChangesButtonEnabled
             tooltip.text: root.saveChangesTooltipText

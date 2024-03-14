@@ -6,6 +6,7 @@ import AppLayouts.Wallet 1.0
 
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Profile.stores 1.0
 
 import shared.stores 1.0 as SharedStores
 
@@ -31,6 +32,7 @@ QtObject {
     required property RootStore rootStore
     required property ChatStores.RootStore rootChatStore
     required property SharedStores.CommunityTokensStore communityTokensStore
+    required property ProfileStore profileStore
 
     // Properties:
     required property var sendModalPopup
@@ -39,6 +41,7 @@ QtObject {
     readonly property string viewOptimismExplorerText: qsTr("View on Optimism Explorer")
     readonly property string checkmarkCircleAssetName: "checkmark-circle"
     readonly property string crownOffAssetName: "crown-off"
+    readonly property string warningAssetName: "warning"
 
     // Community Transfer Ownership related toasts:
     readonly property Connections _communityTokensStoreConnections: Connections {
@@ -76,7 +79,7 @@ QtObject {
             } else if (status === Constants.ContractTransactionStatus.Failed) {
                 Global.displayToastMessage(qsTr("%1 smart contract update failed").arg(communityName),
                                            root.viewOptimismExplorerText,
-                                           "warning",
+                                           root.warningAssetName,
                                            false,
                                            Constants.ephemeralNotificationType.danger,
                                            url)
@@ -202,6 +205,29 @@ QtObject {
 
         function onDisplayImageToastWithActionMessage(title: string, subTitle: string, image: string, ephNotifType: int, actionType: int, actionData: string) {
             root.rootStore.mainModuleInst.displayEphemeralImageWithActionNotification(title, subTitle, image, ephNotifType, actionType, actionData)
+        }
+    }
+
+    // Profile settings related toasts:
+    readonly property Connections _profileStoreConnections: Connections {
+        target: root.profileStore
+
+        function onProfileSettingsSaveSucceeded() {
+            Global.displayToastMessage(qsTr("Profile changes saved"),
+                                       "",
+                                       root.checkmarkCircleAssetName,
+                                       false,
+                                       Constants.ephemeralNotificationType.success,
+                                       "")
+        }
+
+        function onProfileSettingsSaveFailed() {
+            Global.displayToastMessage(qsTr("Profile changes could not be saved"),
+                                       "",
+                                       root.warningAssetName,
+                                       false,
+                                        Constants.ephemeralNotificationType.danger,
+                                       "")
         }
     }
 
