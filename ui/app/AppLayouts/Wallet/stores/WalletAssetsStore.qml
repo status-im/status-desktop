@@ -20,7 +20,7 @@ QtObject {
         settingsKey: "WalletAssets"
         serializeAsCollectibles: false
 
-        // TODO #13313: call the assets controller for all events
+        // TODO #13312: call the assets controller for all events
         onRequestSaveSettings: (jsonData) => {
             // savingStarted()
             saveToQSettings(jsonData)
