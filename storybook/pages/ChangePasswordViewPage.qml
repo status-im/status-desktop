@@ -37,6 +37,23 @@ SplitView {
                     signal storeToKeychainError(errorDescription: string)
                     signal storeToKeychainSuccess()
                  }
+
+                 function tryStoreToKeyChain(errorDescription) {
+                    if (generateMacKeyChainStoreError.checked) {
+                        privacyModule.storeToKeychainError(errorDescription)
+                    } else {
+                        privacyModule.storeToKeychainSuccess()
+                        privacyModule.passwordChanged(true, "")
+                    }
+                 }
+
+                 function tryRemoveFromKeyChain() {
+                    if (generateMacKeyChainStoreError.checked) {
+                        privacyModule.storeToKeychainError(errorDescription)
+                    } else {
+                        privacyModule.storeToKeychainSuccess()
+                    }
+                 }
             }
 
             property QtObject localAccountSettings: QtObject {
@@ -54,7 +71,11 @@ SplitView {
         logsView.logText: logs.logText
 
         RowLayout {
-
+            Switch {
+                id: generateMacKeyChainStoreError
+                text: "Generate key chain error"
+                checked: false
+            }
         }
     }
 }
