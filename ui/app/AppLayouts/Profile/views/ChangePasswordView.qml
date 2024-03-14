@@ -25,15 +25,20 @@ SettingsContentBase {
 
     readonly property bool biometricsEnabled: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
 
+    readonly property StatusSwitch biometricsSwitch: titleRowComponentLoader.item.switchItem
     readonly property Connections privacyStoreConnections: Connections {
         target: Qt.platform.os === Constants.mac ? root.privacyStore.privacyModule : null
 
         function onStoreToKeychainError(errorDescription: string) {
-            biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
+            root.biometricsSwitch.checked = Qt.binding(() => {
+                return root.biometricsSwitch.currentStoredValue
+            })
         }
 
         function onStoreToKeychainSuccess() {
-            biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
+            root.biometricsSwitch.checked = Qt.binding(() => {
+                return root.biometricsSwitch.currentStoredValue
+            })
         }
     }
 
@@ -43,14 +48,22 @@ SettingsContentBase {
         implicitWidth: 226
         implicitHeight: 38
         visible: (Qt.platform.os === Constants.mac)
+
+        property StatusSwitch switchItem: biometricsSwitch
         StatusSwitch {
             id: biometricsSwitch
+
             LayoutMirroring.enabled: true
             LayoutMirroring.childrenInherit: true
+
             text: qsTr("Enable biometrics")
             textColor: Theme.palette.baseColor1
+
+            property bool currentStoredValue: false
+
             checked: root.biometricsEnabled
             onToggled: {
+                currentStoredValue = checked
                 enableBiometricsPopup.open();
             }
             StatusToolTip {
