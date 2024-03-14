@@ -139,6 +139,7 @@ Item {
                         showAddButton: showCategoryActionButtons
                         showMenuButton: !!root.popupMenu
                         hasUnreadMessages: model.hasUnreadMessages
+                        muted: model.muted
                         onClicked: {
                             if (mouse.button === Qt.RightButton && showCategoryActionButtons && !!root.categoryPopupMenu) {
                                 statusChatListCategoryItem.setupPopup()

@@ -21,6 +21,7 @@ Control {
     property bool showMenuButton: showActionButtons
     property bool showAddButton: showActionButtons
     property bool hasUnreadMessages: false
+    property bool muted: false
     property alias addButton: addButton
     property alias menuButton: menuButton
     property alias toggleButton: toggleButton
@@ -44,10 +45,19 @@ Control {
         StatusBaseText {
             width: Math.min(implicitWidth, parent.width)
             anchors.verticalCenter: parent.verticalCenter
-            font.weight: Font.Medium
+            font.weight: root.hasUnreadMessages ? Font.Bold : Font.Medium
             font.pixelSize: 15
             elide: Text.ElideRight
-            color: Theme.palette.directColor4
+            color: {
+                if (root.muted && !hoverHandler.hovered && !root.highlighted) {
+                    return Theme.palette.directColor5
+                }
+                if (root.hasUnreadMessages || root.highlighted || hoverHandler.hovered) {
+                    return Theme.palette.directColor1
+                }
+                return Theme.palette.directColor4
+            }
+
             text: root.text
         }
         Row {
@@ -80,3 +90,4 @@ Control {
         }
     }
 }
+
