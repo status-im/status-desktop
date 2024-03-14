@@ -318,10 +318,8 @@ QtObject:
 
     result = NODE_CONFIG.copy()
     result["ClusterConfig"]["Fleet"] = newJString($fleet)
-    result["NetworkId"] = NETWORKS[0]{"chainId"}
     result["DataDir"] = "ethereum".newJString()
     result["UpstreamConfig"]["Enabled"] = true.newJBool()
-    result["UpstreamConfig"]["URL"] = NETWORKS[0]{"rpcUrl"}
     result["ShhextConfig"]["InstallationID"] = newJString(installationId)
 
 
@@ -357,23 +355,9 @@ QtObject:
     result = %*{}
 
     # mandatory params
-    result["NetworkId"] = NETWORKS[0]{"chainId"}
     result["DataDir"] = %* "./ethereum/mainnet"
     result["KeyStoreDir"] = %* self.keyStoreDir.replace(main_constants.STATUSGODIR, "")
     result["KeycardPairingDataFile"] = %* main_constants.KEYCARDPAIRINGDATAFILE
-
-    # other params
-    result["Networks"] = NETWORKS
-
-    result["UpstreamConfig"] = %* {
-      "URL": NETWORKS[0]{"rpcUrl"},
-      "Enabled": true,
-    }
-
-    result["ShhextConfig"] = %* {
-      "VerifyENSURL": NETWORKS[0]{"fallbackUrl"},
-      "VerifyTransactionURL": NETWORKS[0]{"fallbackUrl"}
-    }
 
     result["WakuV2Config"] = %* {
       "Port": WAKU_V2_PORT,
