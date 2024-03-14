@@ -618,6 +618,9 @@ Pane {
                     profileStore: root.profileStore
                     walletStore: root.walletStore
                     networkConnectionStore: root.networkConnectionStore
+                    
+                    livePreview: root.dirty
+                    livePreviewValues: root.dirtyValues
 
                     onCloseRequested: root.closeRequested()
                 }
