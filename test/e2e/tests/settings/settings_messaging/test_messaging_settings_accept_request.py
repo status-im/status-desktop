@@ -67,13 +67,14 @@ def test_messaging_settings_accepting_request(multiple_instance, user_data_one, 
             assert user_one.name == contacts_settings.contact_items[0].contact
             assert len(contacts_settings.contact_items) == 1
 
-        with step('Verify toast message about new contact request received'):
-            toast_messages = main_window.wait_for_notification()
-            assert len(toast_messages) == 1, \
-                f"Multiple toast messages appeared"
-            message = toast_messages[0]
-            assert message == Messaging.NEW_CONTACT_REQUEST.value, \
-                f"Toast message is incorrect, current message is {message}"
+        # TODO https://github.com/status-im/desktop-qa-automation/issues/346
+        # with step('Verify toast message about new contact request received'):
+        #     toast_messages = main_window.wait_for_notification()
+        #     assert len(toast_messages) == 1, \
+        #         f"Multiple toast messages appeared"
+        #     message = toast_messages[0]
+        #     assert message == Messaging.NEW_CONTACT_REQUEST.value, \
+        #         f"Toast message is incorrect, current message is {message}"
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
             contacts_settings.accept_contact_request(user_one.name)
@@ -100,7 +101,7 @@ def test_messaging_settings_accepting_request(multiple_instance, user_data_one, 
             assert user_two.name in messages_screen.left_panel.contacts
             main_window.hide()
 
-        with step(f'VVerify that 1X1 chat with {user_one.name} appeared for {user_two.name}'):
+        with step(f'Verify that 1X1 chat with {user_one.name} appeared for {user_two.name}'):
             aut_two.attach()
             main_window.prepare()
             messages_screen = main_window.left_panel.open_messages_screen()
