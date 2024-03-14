@@ -1,5 +1,7 @@
 #include "managetokenscontroller.h"
 
+#include <tuple>
+
 #include <QElapsedTimer>
 #include <QMutableHashIterator>
 
@@ -35,8 +37,6 @@ ManageTokensController::ManageTokensController(QObject* parent)
 
             rebuildCommunityTokenGroupsModel();
             rebuildHiddenCommunityTokenGroupsModel();
-            reloadCommunityIds();
-            m_communityTokensModel->setCommunityIds(m_communityIds);
             rebuildCollectionGroupsModel();
             rebuildHiddenCollectionGroupsModel();
 
@@ -50,20 +50,6 @@ ManageTokensController::ManageTokensController(QObject* parent)
         });
         connect(m_sourceModel, &QAbstractItemModel::rowsRemoved, this, &ManageTokensController::parseSourceModel);
         connect(m_sourceModel, &QAbstractItemModel::dataChanged, this, &ManageTokensController::parseSourceModel); // NB at this point we don't know in which submodel the item is
-        connect(m_communityTokensModel, &ManageTokensModel::rowsMoved, this, [this]() {
-            if (!m_arrangeByCommunity)
-                rebuildCommunityTokenGroupsModel();
-            reloadCommunityIds();
-            m_communityTokensModel->setCommunityIds(m_communityIds);
-            m_communityTokensModel->saveCustomSortOrder();
-        });
-        connect(m_communityTokenGroupsModel, &ManageTokensModel::rowsMoved, this, [this](const QModelIndex &parent, int start, int end, const QModelIndex &destination, int toRow) {
-            qCDebug(manageTokens) << "!!! COMMUNITY GROUP MOVED FROM" << start << "TO" << toRow;
-            reloadCommunityIds();
-            m_communityTokensModel->setCommunityIds(m_communityIds);
-            m_communityTokensModel->saveCustomSortOrder();
-            m_communityTokensModel->applySort();
-        });
         m_modelConnectionsInitialized = true;
     });
 }
@@ -92,20 +78,15 @@ void ManageTokensController::showHideCommunityToken(const QString& symbol, bool 
         auto hiddenItem = m_hiddenTokensModel->takeItem(symbol);
         if (hiddenItem) {
             m_communityTokensModel->addItem(*hiddenItem);
-            if (!m_communityIds.contains(hiddenItem->communityId))
-                m_communityIds.append(hiddenItem->communityId);
             emit tokenShown(hiddenItem->symbol, hiddenItem->name);
         }
     } else { // hide
         auto shownItem = m_communityTokensModel->takeItem(symbol);
         if (shownItem) {
             m_hiddenTokensModel->addItem(*shownItem, false /*prepend*/);
-            if (!m_communityTokensModel->hasCommunityIdToken(shownItem->communityId))
-                m_communityIds.removeAll(shownItem->communityId);
             emit tokenHidden(shownItem->symbol, shownItem->name);
         }
     }
-    m_communityTokensModel->setCommunityIds(m_communityIds);
     m_communityTokensModel->saveCustomSortOrder();
     rebuildCommunityTokenGroupsModel();
     rebuildHiddenCommunityTokenGroupsModel();
@@ -122,7 +103,6 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
             }
             emit communityTokenGroupShown(tokens.constFirst().communityName);
         }
-        m_communityIds.append(groupId);
         if (m_hiddenCommunityGroups.remove(groupId)) {
             emit hiddenCommunityGroupsChanged();
         }
@@ -134,13 +114,13 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
             }
             emit communityTokenGroupHidden(tokens.constFirst().communityName);
         }
-        m_communityIds.removeAll(groupId);
         if (!m_hiddenCommunityGroups.contains(groupId)) {
             m_hiddenCommunityGroups.insert(groupId);
             emit hiddenCommunityGroupsChanged();
         }
     }
     rebuildCommunityTokenGroupsModel();
+    m_communityTokenGroupsModel->applySort();
     rebuildHiddenCommunityTokenGroupsModel();
     saveSettings();
 }
@@ -172,6 +152,7 @@ void ManageTokensController::showHideCollectionGroup(const QString& groupId, boo
         }
     }
     rebuildCollectionGroupsModel();
+    m_collectionGroupsModel->applySort();
     rebuildHiddenCollectionGroupsModel();
     saveSettings();
 }
@@ -184,8 +165,17 @@ void ManageTokensController::saveSettings()
 
     // gather the data to save
     SerializedTokenData result;
+    const auto resultCount = m_regularTokensModel->rowCount() + m_communityTokensModel->rowCount() + m_hiddenTokensModel->rowCount() +
+                             (m_arrangeByCommunity ? m_communityTokenGroupsModel->rowCount() : 0) +
+                             (m_arrangeByCollection ? m_collectionGroupsModel->rowCount() : 0);
+    result.reserve(resultCount);
+
     for(auto model : {m_regularTokensModel, m_communityTokensModel})
         result.insert(model->save());
+    if (m_arrangeByCommunity)
+        result.insert(m_communityTokenGroupsModel->save());
+    if (m_arrangeByCollection)
+        result.insert(m_collectionGroupsModel->save());
     result.insert(m_hiddenTokensModel->save(false));
 
     // save to QSettings
@@ -200,11 +190,13 @@ void ManageTokensController::saveSettings()
     SerializedTokenData::const_key_value_iterator it = result.constKeyValueBegin();
     for (auto i = 0; it != result.constKeyValueEnd() && i < result.size(); it++, i++) {
         m_settings.setArrayIndex(i);
-        const auto& [pos, visible, groupId] = it->second;
+        const auto& [pos, visible, groupId, isCommunityGroup, isCollectionGroup] = it->second;
         m_settings.setValue(QStringLiteral("symbol"), it->first);
         m_settings.setValue(QStringLiteral("pos"), pos);
         m_settings.setValue(QStringLiteral("visible"), visible);
         m_settings.setValue(QStringLiteral("groupId"), groupId);
+        m_settings.setValue(QStringLiteral("isCommunityGroup"), isCommunityGroup);
+        m_settings.setValue(QStringLiteral("isCollectionGroup"), isCollectionGroup);
     }
     m_settings.endArray();
 
@@ -251,13 +243,15 @@ void ManageTokensController::loadSettingsData(bool withGroup)
         m_settings.setArrayIndex(i);
         const auto symbol = m_settings.value(QStringLiteral("symbol")).toString();
         if (symbol.isEmpty()) {
-            qCWarning(manageTokens) << Q_FUNC_INFO << "Missing symbol while reading tokens settings";
+            qCDebug(manageTokens) << Q_FUNC_INFO << "Missing symbol while reading tokens settings";
             continue;
         }
         const auto pos = m_settings.value(QStringLiteral("pos"), INT_MAX).toInt();
         const auto visible = m_settings.value(QStringLiteral("visible"), true).toBool();
         const auto groupId = m_settings.value(QStringLiteral("groupId")).toString();
-        result.insert(symbol, {pos, visible, groupId});
+        const auto isCommunityGroup = m_settings.value(QStringLiteral("isCommunityGroup"), false).toBool();
+        const auto isCollectionGroup = m_settings.value(QStringLiteral("isCollectionGroup"), false).toBool();
+        result.insert(symbol, {pos, visible, groupId, isCommunityGroup, isCollectionGroup});
     }
     m_settings.endArray();
 
@@ -343,11 +337,22 @@ bool ManageTokensController::hasSettings() const
 
 int ManageTokensController::compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const
 {
+    constexpr auto defaultVal = std::make_tuple(INT_MAX, false, QLatin1String(), false, false);
+
     int leftPos, rightPos;
     bool leftVisible, rightVisible;
+    QString leftGroup, rightGroup;
+    bool leftIsCommunityGroup, rightIsCommunityGroup, leftIsCollectionGroup, rightIsCollectionGroup;
 
-    std::tie(leftPos, leftVisible, std::ignore) = m_settingsData.value(lhsSymbol, {INT_MAX, false, QString()});
-    std::tie(rightPos, rightVisible, std::ignore) = m_settingsData.value(rhsSymbol, {INT_MAX, false, QString()});
+    std::tie(leftPos, leftVisible, leftGroup, leftIsCommunityGroup, leftIsCollectionGroup) = m_settingsData.value(lhsSymbol, defaultVal);
+    std::tie(rightPos, rightVisible, rightGroup, rightIsCommunityGroup, rightIsCollectionGroup) = m_settingsData.value(rhsSymbol, defaultVal);
+
+    // check grouped position
+    if (((m_arrangeByCommunity && leftIsCommunityGroup && rightIsCommunityGroup)
+         || (m_arrangeByCollection && leftIsCollectionGroup && rightIsCollectionGroup))) {
+        leftPos = std::get<0>(m_settingsData.value(leftGroup, defaultVal));
+        rightPos = std::get<0>(m_settingsData.value(rightGroup, defaultVal));
+    }
 
     // check if visible
     leftPos = leftVisible ? leftPos : INT_MAX;
@@ -364,8 +369,7 @@ bool ManageTokensController::filterAcceptsSymbol(const QString& symbol) const
 {
     if (symbol.isEmpty()) return true;
 
-    const auto& [pos, visible, groupId] = m_settingsData.value(symbol, {INT_MAX, true, QString()});
-    return visible;
+    return std::get<1>(m_settingsData.value(symbol, {INT_MAX, true, QString(), false, false}));
 }
 
 void ManageTokensController::classBegin()
@@ -388,7 +392,6 @@ void ManageTokensController::setSourceModel(QAbstractItemModel* newSourceModel)
         for (auto model: m_allModels)
             model->clear();
         m_settingsData.clear();
-        m_communityIds.clear();
         m_hiddenCommunityGroups.clear();
         m_hiddenCollectionGroups.clear();
         setSettingsDirty(false);
@@ -439,8 +442,6 @@ void ManageTokensController::parseSourceModel()
     // build community groups model
     rebuildCommunityTokenGroupsModel();
     rebuildHiddenCommunityTokenGroupsModel();
-    reloadCommunityIds();
-    m_communityTokensModel->setCommunityIds(m_communityIds);
 
     // build collections
     rebuildCollectionGroupsModel();
@@ -449,7 +450,6 @@ void ManageTokensController::parseSourceModel()
     // (pre)sort
     for (auto model: m_allModels) {
         model->applySort();
-        model->saveCustomSortOrder();
         model->setDirty(false);
     }
 
@@ -549,25 +549,12 @@ void ManageTokensController::setArrangeByCollection(bool newArrangeByCollection)
     emit arrangeByCollectionChanged();
 }
 
-void ManageTokensController::reloadCommunityIds()
-{
-    m_communityIds.clear();
-    auto model = m_arrangeByCommunity ? m_communityTokenGroupsModel : m_communityTokensModel;
-    const auto count = model->count();
-    for (int i = 0; i < count; i++) {
-        const auto& token = model->itemAt(i);
-        if (!m_communityIds.contains(token.communityId))
-            m_communityIds.append(token.communityId);
-    }
-    qCDebug(manageTokens) << "!!! FOUND UNIQUE COMMUNITY GROUP IDs:" << m_communityIds;
-}
-
 void ManageTokensController::rebuildCommunityTokenGroupsModel()
 {
     QStringList communityIds;
     QList<TokenData> result;
 
-    const auto count = m_communityTokensModel->count();
+    const auto count = m_communityTokensModel->rowCount();
     for (auto i = 0; i < count; i++) {
         const auto& communityToken = m_communityTokensModel->itemAt(i);
         const auto communityId = communityToken.communityId;
@@ -575,10 +562,17 @@ void ManageTokensController::rebuildCommunityTokenGroupsModel()
             communityIds.append(communityId);
 
             TokenData tokenGroup;
+            tokenGroup.symbol = communityId;
             tokenGroup.communityId = communityId;
             tokenGroup.communityName = communityToken.communityName;
             tokenGroup.communityImage = communityToken.communityImage;
+            tokenGroup.backgroundColor = communityToken.backgroundColor;
             tokenGroup.balance = 1;
+
+            if (m_settingsData.contains(communityId)) {
+                tokenGroup.customSortOrderNo = std::get<0>(m_settingsData.value(communityId));
+            }
+
             result.append(tokenGroup);
         } else { // update group's childCount
             const auto tokenGroup = std::find_if(result.cbegin(), result.cend(), [communityId](const auto& item) {
@@ -604,7 +598,7 @@ void ManageTokensController::rebuildHiddenCommunityTokenGroupsModel()
     QStringList communityIds;
     QList<TokenData> result;
 
-    const auto count = m_hiddenTokensModel->count();
+    const auto count = m_hiddenTokensModel->rowCount();
     for (auto i = 0; i < count; i++) {
         const auto& communityToken = m_hiddenTokensModel->itemAt(i);
         const auto communityId = communityToken.communityId;
@@ -614,9 +608,11 @@ void ManageTokensController::rebuildHiddenCommunityTokenGroupsModel()
             communityIds.append(communityId);
 
             TokenData tokenGroup;
+            tokenGroup.symbol = communityId;
             tokenGroup.communityId = communityId;
             tokenGroup.communityName = communityToken.communityName;
             tokenGroup.communityImage = communityToken.communityImage;
+            tokenGroup.backgroundColor = communityToken.backgroundColor;
             tokenGroup.balance = 1;
             result.append(tokenGroup);
         } else { // update group's childCount
@@ -643,7 +639,7 @@ void ManageTokensController::rebuildCollectionGroupsModel()
     QStringList collectionIds;
     QList<TokenData> result;
 
-    const auto count = m_regularTokensModel->count();
+    const auto count = m_regularTokensModel->rowCount();
     for (auto i = 0; i < count; i++) {
         const auto& collectionToken = m_regularTokensModel->itemAt(i);
         const auto collectionId = collectionToken.collectionUid;
@@ -654,11 +650,18 @@ void ManageTokensController::rebuildCollectionGroupsModel()
             const auto collectionName = !collectionToken.collectionName.isEmpty() ? collectionToken.collectionName : collectionToken.name;
 
             TokenData tokenGroup;
+            tokenGroup.symbol = collectionId;
             tokenGroup.collectionUid = collectionId;
             tokenGroup.isSelfCollection = isSelfCollection;
             tokenGroup.collectionName = collectionName;
             tokenGroup.image = collectionToken.image;
+            tokenGroup.backgroundColor = collectionToken.backgroundColor;
             tokenGroup.balance = 1;
+
+            if (m_settingsData.contains(collectionId)) {
+                tokenGroup.customSortOrderNo = std::get<0>(m_settingsData.value(collectionId));
+            }
+
             result.append(tokenGroup);
         } else if (!isSelfCollection) { // update group's childCount
             const auto tokenGroup = std::find_if(result.cbegin(), result.cend(), [collectionId](const auto& item) {
@@ -684,7 +687,7 @@ void ManageTokensController::rebuildHiddenCollectionGroupsModel()
     QStringList collectionIds;
     QList<TokenData> result;
 
-    const auto count = m_hiddenTokensModel->count();
+    const auto count = m_hiddenTokensModel->rowCount();
     for (auto i = 0; i < count; i++) {
         const auto& collectionToken = m_hiddenTokensModel->itemAt(i);
         const auto collectionId = collectionToken.collectionUid;
@@ -695,10 +698,12 @@ void ManageTokensController::rebuildHiddenCollectionGroupsModel()
             const auto collectionName = !collectionToken.collectionName.isEmpty() ? collectionToken.collectionName : collectionToken.name;
 
             TokenData tokenGroup;
+            tokenGroup.symbol = collectionId;
             tokenGroup.collectionUid = collectionId;
             tokenGroup.isSelfCollection = isSelfCollection;
             tokenGroup.collectionName = collectionName;
             tokenGroup.image = collectionToken.image;
+            tokenGroup.backgroundColor = collectionToken.backgroundColor;
             tokenGroup.balance = 1;
             result.append(tokenGroup);
         } else if (!isSelfCollection) { // update group's childCount

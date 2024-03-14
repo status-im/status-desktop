@@ -89,12 +89,15 @@ void ManageTokensModel::clear()
 SerializedTokenData ManageTokensModel::save(bool isVisible)
 {
     saveCustomSortOrder();
-    const auto size = count();
+    const auto size = rowCount();
     SerializedTokenData result;
+    result.reserve(size);
     for (int i = 0; i < size; i++) {
         const auto& token = itemAt(i);
-        const auto groupId = !token.communityId.isEmpty() ? token.communityId : token.collectionUid;
-        result.insert(token.symbol, {i, isVisible, groupId});
+        const auto isCommunityGroup = !token.communityId.isEmpty();
+        const auto isCollectionGroup = !token.collectionUid.isEmpty();
+        const auto groupId = isCommunityGroup ? token.communityId : isCollectionGroup ? token.collectionUid : QString();
+        result.insert(token.symbol, {i, isVisible, groupId, isCommunityGroup, isCollectionGroup});
     }
     setDirty(false);
     return result;
@@ -175,14 +178,7 @@ void ManageTokensModel::saveCustomSortOrder()
 {
     const auto count = rowCount();
     for (auto i = 0; i < count; i++) {
-        TokenData newToken{m_data.at(i)};
-        if (newToken.communityId.isEmpty()) {
-            newToken.customSortOrderNo = i;
-        } else {
-            const auto communityIdx = m_communityIds.indexOf(newToken.communityId) + 1;
-            newToken.customSortOrderNo = i + (communityIdx * 100'000);
-        }
-        m_data[i] = newToken;
+        m_data[i].customSortOrderNo = i;
     }
     if (count > 0)
         emit dataChanged(index(0, 0), index(count - 1, 0), {TokenDataRoles::CustomSortOrderNoRole});
@@ -210,11 +206,4 @@ void ManageTokensModel::applySortByTokensAmount()
     });
 
     emit layoutChanged({}, QAbstractItemModel::VerticalSortHint);
-}
-
-bool ManageTokensModel::hasCommunityIdToken(const QString& communityId) const
-{
-    return std::any_of(m_data.cbegin(), m_data.constEnd(), [communityId](const auto& token) {
-        return token.communityId == communityId;
-    });
 }

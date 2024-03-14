@@ -143,6 +143,8 @@ add_library(StatusQ SHARED
         src/wallet/managetokensmodel.h
         )
 
+target_compile_features(StatusQ PRIVATE cxx_std_17)
+
 set_target_properties(StatusQ PROPERTIES
     ADDITIONAL_CLEAN_FILES bin/StatusQ/qmldir
     RUNTIME_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}

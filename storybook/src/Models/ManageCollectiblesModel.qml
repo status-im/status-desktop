@@ -157,7 +157,7 @@ ListModel {
             communityImage: "",
             imageUrl: "",
             isLoading: false,
-            backgroundColor: "pink",
+            backgroundColor: "ivory",
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",

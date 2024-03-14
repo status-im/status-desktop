@@ -246,6 +246,40 @@ Item {
             tryCompare(findChild(lvCommunity, "manageTokensGroupDelegate-0"), "title", titleToTest)
         }
 
+        function test_arrangeByCommunity() {
+            const communityHeader = findChild(controlUnderTest, "communityHeader")
+            verify(!!communityHeader)
+            const switchArrangeByCommunity = findChild(communityHeader, "switch")
+            verify(!!switchArrangeByCommunity)
+            waitForRendering(switchArrangeByCommunity)
+            mouseClick(switchArrangeByCommunity)
+
+            const lvCommunity = findChild(controlUnderTest, "communityTokensListView")
+            verify(!!lvCommunity)
+            waitForItemPolished(lvCommunity)
+
+            const pandasGroup = findChild(lvCommunity, "manageTokensGroupDelegate-0")
+            tryCompare(pandasGroup, "title", "Frenly Pandas")
+            tryCompare(pandasGroup, "childCount", 4)
+        }
+
+        function test_arrangeByCollection() {
+            const collectionsHeader = findChild(controlUnderTest, "nonCommunityHeader")
+            verify(!!collectionsHeader)
+            const switchArrangeByCollection = findChild(collectionsHeader, "switch")
+            verify(!!switchArrangeByCollection)
+            waitForRendering(switchArrangeByCollection)
+            mouseClick(switchArrangeByCollection)
+
+            const lvCollections = findChild(controlUnderTest, "otherTokensListView")
+            verify(!!lvCollections)
+            waitForItemPolished(lvCollections)
+
+            const kittiesGroup = findChild(lvCollections, "manageTokensGroupDelegate-0")
+            tryCompare(kittiesGroup, "title", "Kitties")
+            tryCompare(kittiesGroup, "childCount", 3)
+        }
+
         function test_moveOperations() {
             verify(!controlUnderTest.dirty)
 
