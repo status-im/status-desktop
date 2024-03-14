@@ -89,6 +89,7 @@ Item {
         rootStore: appMain.rootStore
         rootChatStore: appMain.rootChatStore
         communityTokensStore: appMain.communityTokensStore
+        profileStore: appMain.rootStore.profileSectionStore.profileStore
 
         sendModalPopup: sendModal
     }

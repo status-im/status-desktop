@@ -71,7 +71,8 @@ SettingsContentBase {
 
     toast.saveChangesTooltipText: saveChangesButtonEnabled ? "" : qsTr("Invalid changes made to Identity")
     autoscrollWhenDirty: profileTabBar.currentIndex === MyProfileView.Identity
-
+    toast.loading: priv.expectedBackendResponses > 0
+    
     onResetChangesClicked: priv.reset()
 
     onSaveChangesClicked: priv.save()
@@ -124,12 +125,12 @@ SettingsContentBase {
     readonly property var priv: QtObject {
         id: priv
 
-        property bool hasAnyProfileShowcaseChanges: showcaseModels.dirty
-        property bool isIdentityTabDirty: (!descriptionPanel.isEnsName &&
-                                            descriptionPanel.displayName.text !== profileStore.displayName) ||
-                                            descriptionPanel.bio.text !== profileStore.bio ||
-                                            profileStore.socialLinksDirty ||
-                                            profileHeader.icon !== profileStore.profileLargeImage
+        readonly property bool hasAnyProfileShowcaseChanges: showcaseModels.dirty
+        readonly property bool isIdentityTabDirty: (!descriptionPanel.isEnsName &&
+                                                    descriptionPanel.displayName.text !== profileStore.displayName) ||
+                                                   descriptionPanel.bio.text !== profileStore.bio ||
+                                                   profileStore.socialLinksDirty ||
+                                                   profileHeader.icon !== profileStore.profileLargeImage
 
         property ProfileShowcaseModels showcaseModels: ProfileShowcaseModels {
             communitiesSourceModel: root.communitiesModel
@@ -147,6 +148,62 @@ SettingsContentBase {
             socialLinksSourceModel: root.profileStore.showcasePreferencesSocialLinksModel
         }
 
+        // Used to track which are the expected backend responses (they can be 0, 1 or 2) depending on the dirty changes
+        property int expectedBackendResponses: 0
+        property bool saveRequestFailed: false
+
+        // Maximum save action waiting time controller.
+        // Backend response must be received before, otherwise it will be considered
+        // a failure and UI will be released.
+        property Timer saveLoadingTimeout : Timer {
+            interval: 5000
+            repeat: false
+            running: toast.active && toast.loading
+
+            onTriggered: {
+                // Forcing a failure
+                if(priv.expectedBackendResponses > 0) {
+                    root.profileStore.profileSettingsSaveFailed()
+                    priv.expectedBackendResponses = 0
+                }
+            }
+        }
+
+        // Save backend response received:
+        property Connections profileStoreConnection: Connections {
+            target: root.profileStore
+
+            function onProfileIdentitySaveSucceeded() {
+                priv.checkSaveResult(false)
+            }
+
+            function onProfileIdentitySaveFailed() {
+                priv.checkSaveResult(true)
+            }
+
+            function onProfileShowcasePreferencesSaveSucceeded() {
+                priv.checkSaveResult(false)
+            }
+
+            function onProfileShowcasePreferencesSaveFailed() {
+                priv.checkSaveResult(true)
+            }
+        }
+
+        function checkSaveResult(isFailure) {
+            priv.expectedBackendResponses--
+            if(isFailure)
+                priv.saveRequestFailed = isFailure
+
+            if(priv.expectedBackendResponses == 0) {
+                if(priv.saveRequestFailed || isFailure) {
+                    root.profileStore.profileSettingsSaveFailed()
+                } else {
+                    root.profileStore.profileSettingsSaveSucceeded()
+                }
+            }
+        }
+
         function reset() {
             descriptionPanel.displayName.text = Qt.binding(() => { return profileStore.displayName })
             descriptionPanel.bio.text = Qt.binding(() => { return profileStore.bio })
@@ -154,25 +211,41 @@ SettingsContentBase {
             profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
 
             priv.showcaseModels.revert()
+            priv.saveRequestFailed = false
+            priv.expectedBackendResponses = 0
             root.profileStore.requestProfileShowcasePreferences()
         }
 
         function save() {
-            // Accounts, Communities, Assets, Collectibles and social links info
-            if (hasAnyProfileShowcaseChanges) {
-                root.profileStore.saveProfileShowcasePreferences(showcaseModels.buildJSONModelsCurrentState())
+            // IMPORTANT: Save implies 2 calls in backend but 1 result in UI so the order in current save method is relevant
+            // First save stage: Review which are the expected responses before calling backend
+            priv.expectedBackendResponses = 0
+            priv.saveRequestFailed = false
+            if(hasAnyProfileShowcaseChanges) {
+                priv.expectedBackendResponses++
+            }
+            if (isIdentityTabDirty ) {
+                priv.expectedBackendResponses++
             }
 
-            // Identity info
-            if (isIdentityTabDirty) {
-                root.profileStore.saveProfileIdentity(descriptionPanel.displayName.text,
-                                                    descriptionPanel.bio.text.trim(),
-                                                    profileHeader.icon,
-                                                    profileHeader.cropRect.x,
-                                                    profileHeader.cropRect.y,
-                                                    (profileHeader.cropRect.x + profileHeader.cropRect.width),
-                                                    (profileHeader.cropRect.y + profileHeader.cropRect.height))
-                profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
+            // Second save stage: Ready to call backend
+            if(priv.expectedBackendResponses > 0) {
+                // Accounts, Communities, Assets, Collectibles and social links info
+                if (hasAnyProfileShowcaseChanges) {
+                    root.profileStore.saveProfileShowcasePreferences(showcaseModels.buildJSONModelsCurrentState())
+                }
+
+                // Identity info
+                if (isIdentityTabDirty) {
+                    root.profileStore.saveProfileIdentity(descriptionPanel.displayName.text,
+                                                          descriptionPanel.bio.text.trim(),
+                                                          profileHeader.icon,
+                                                          profileHeader.cropRect.x,
+                                                          profileHeader.cropRect.y,
+                                                          (profileHeader.cropRect.x + profileHeader.cropRect.width),
+                                                          (profileHeader.cropRect.y + profileHeader.cropRect.height))
+                    profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
+                }
             }
         }
     }
@@ -254,7 +327,7 @@ SettingsContentBase {
 
             onChangePositionRequested: function (from, to) {
                 priv.showcaseModels.changeAccountPosition(from, to)
-            
+
             }
             onSetVisibilityRequested: function (key, toVisibility) {
                 priv.showcaseModels.setAccountVisibility(key, toVisibility)

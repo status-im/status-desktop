@@ -45,13 +45,37 @@ QtObject {
 
     readonly property bool isFirstShowcaseInteraction: localAccountSettings.isFirstShowcaseInteraction
 
-    onUserDeclinedBackupBannerChanged: {
-        if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
-            localAccountSensitiveSettings.userDeclinedBackupBanner = userDeclinedBackupBanner
+    property var details: Utils.getContactDetailsAsJson(pubkey)
+
+    // The following signals wrap the settings / preferences save request responses in one unique result (identity + preferences result)
+    signal profileSettingsSaveSucceeded()
+    signal profileSettingsSaveFailed()
+
+    // The following signals describe separate save request responses between identity and preferences
+    signal profileIdentitySaveSucceeded()
+    signal profileIdentitySaveFailed()
+    signal profileShowcasePreferencesSaveSucceeded()
+    signal profileShowcasePreferencesSaveFailed()
+
+    readonly property Connections profileModuleConnections: Connections {
+        target: root.profileModule
+
+        function onProfileIdentitySaveSucceeded() {
+            root.profileIdentitySaveSucceeded()
+        }
+
+        function onProfileIdentitySaveFailed() {
+            root.profileIdentitySaveFailed()
+        }
+
+        function onProfileShowcasePreferencesSaveSucceeded() {
+            root.profileShowcasePreferencesSaveSucceeded()
+        }
+
+        function onProfileShowcasePreferencesSaveFailed() {
+            root.profileShowcasePreferencesSaveFailed()
         }
     }
-
-    property var details: Utils.getContactDetailsAsJson(pubkey)
 
     function getQrCodeSource(text) {
         return globalUtils.qrCode(text)
@@ -67,12 +91,12 @@ QtObject {
             "displayName": displayName,
             "bio": bio,
             "image": source ? {
-                "source": source,
-                "aX": aX,
-                "aY": aY,
-                "bX": bX,
-                "bY": bY
-            } : null
+                                  "source": source,
+                                  "aX": aX,
+                                  "aY": aY,
+                                  "bX": bX,
+                                  "bY": bY
+                              } : null
         }
         let json = JSON.stringify(identityInfo)
         root.profileModule.saveProfileIdentity(json)
@@ -100,28 +124,6 @@ QtObject {
 
     function setIsFirstShowcaseInteraction() {
         root.profileModule.setIsFirstShowcaseInteraction()
-    }
-
-    signal profileIdentitySaveSucceeded()
-    signal profileIdentitySaveFailed()
-    signal profileShowcasePreferencesSaveSucceeded()
-    signal profileShowcasePreferencesSaveFailed()
-
-    readonly property Connections profileModuleConnections: Connections {
-        target: root.profileModule
-
-        function onProfileIdentitySaveSucceeded() {
-            root.profileIdentitySaveSucceeded()
-        }
-        function onProfileIdentitySaveFailed() {
-            root.profileIdentitySaveFailed()
-        }
-        function onProfileShowcasePreferencesSaveSucceeded() {
-            root.profileShowcasePreferencesSaveSucceeded()
-        }
-        function onProfileShowcasePreferencesSaveFailed() {
-            root.profileShowcasePreferencesSaveFailed()
-        }
     }
 
     // Social links related: All to be removed: Deprecated --> Issue #13688
@@ -153,4 +155,10 @@ QtObject {
         root.profileModule.saveSocialLinks(silent)
     }
     // End of social links to be removed
+
+    onUserDeclinedBackupBannerChanged: {
+        if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
+            localAccountSensitiveSettings.userDeclinedBackupBanner = userDeclinedBackupBanner
+        }
+    }
 }
