@@ -13,6 +13,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Profile.popups 1.0
@@ -47,6 +48,7 @@ SettingsContentBase {
             LayoutMirroring.enabled: true
             LayoutMirroring.childrenInherit: true
             text: qsTr("Enable biometrics")
+            textColor: Theme.palette.baseColor1
             checked: root.biometricsEnabled
             onToggled: {
                 enableBiometricsPopup.open();
@@ -106,9 +108,11 @@ SettingsContentBase {
             height: 660
 
             createNewPsw: false
-            title: qsTr("Change your password.")
+            title: qsTr("Change your password")
             titleSize: 17
             contentAlignment: Qt.AlignLeft
+
+            highSizeIntro: true
 
             passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
             onReadyChanged: {
@@ -120,6 +124,12 @@ SettingsContentBase {
                     confirmPasswordChangePopup.open();
                 }
             }
+        }
+
+        StatusModalDivider {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            Layout.bottomMargin: 20
         }
 
         RowLayout {
