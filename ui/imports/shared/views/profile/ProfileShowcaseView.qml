@@ -53,7 +53,7 @@ Control {
         readonly property var collectiblesModel: root.livePreview ? root.livePreviewValues.collectiblesModel
                                                                   : collectiblesStoreModel
         // TODO: add dirty values to the livePreviewValues once assets are supported
-        // readonly property assetsModel: root.livePeview ? root.livePreviewValues.assetsModel
+        // readonly property assetsModel: root.livePreview ? root.livePreviewValues.assetsModel
         //                                                     : root.profileStore.profileShowcaseAssetsModel
         readonly property var assetsModel: root.profileStore.profileShowcaseAssetsModel
         readonly property var socialLinksModel: root.livePreview ? root.livePreviewValues.socialLinksModel
