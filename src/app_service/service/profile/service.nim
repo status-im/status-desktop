@@ -86,29 +86,33 @@ QtObject:
     except Exception as e:
       error "error: ", procName="storeIdentityImage", errName = e.name, errDesription = e.msg
 
-  proc deleteIdentityImage*(self: Service, address: string) =
+  proc deleteIdentityImage*(self: Service, address: string): bool =
     try:
       let response = status_accounts.deleteIdentityImage(address)
       if(not response.error.isNil):
         error "could not delete identity images"
-        return
+        return false
       singletonInstance.userProfile.setLargeImage("")
       singletonInstance.userProfile.setThumbnailImage("")
+      return true
 
     except Exception as e:
       error "error: ", procName="deleteIdentityImage", errName = e.name, errDesription = e.msg
+      return false
 
-  proc setDisplayName*(self: Service, displayName: string) =
+  proc setDisplayName*(self: Service, displayName: string): bool =
     try:
       let response = status_accounts.setDisplayName(displayName)
       if(not response.error.isNil):
         error "could not set display name"
-        return
+        return false
       if(not self.settingsService.saveDisplayName(displayName)):
         error "could save display name to the settings"
-        return
+        return false
+      return true
     except Exception as e:
       error "error: ", procName="setDisplayName", errName = e.name, errDesription = e.msg
+      return false
 
   proc requestProfileShowcaseForContact*(self: Service, contactId: string) =
     let arg = AsyncGetProfileShowcaseForContactTaskArg(

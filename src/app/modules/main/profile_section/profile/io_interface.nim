@@ -55,7 +55,7 @@ method onProfileShowcasePreferencesSaveSucceeded*(self: AccessInterface) {.base.
 method onProfileShowcasePreferencesSaveFailed*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method saveProfileIdentityInfo*(self: AccessInterface, identity: IdentitySaveData) {.base.} =
+method saveProfileIdentity*(self: AccessInterface, identity: IdentitySaveData) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method saveProfileShowcasePreferences*(self: AccessInterface, showcase: ShowcaseSaveData) {.base.} =

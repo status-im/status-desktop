@@ -198,7 +198,7 @@ proc shouldStartWithOnboardingScreen*(self: Controller): bool =
 
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
-  self.profileService.setDisplayName(self.tmpDisplayName)
+  discard self.profileService.setDisplayName(self.tmpDisplayName)
   let images = self.storeIdentityImage()
   self.accountsService.updateLoggedInAccount(self.tmpDisplayName, images)
   self.delegate.finishAppLoading()

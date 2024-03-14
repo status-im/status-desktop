@@ -165,13 +165,13 @@ SettingsContentBase {
 
             // Identity info
             if (isIdentityTabDirty) {
-                root.profileStore.saveIdentityInfo(descriptionPanel.displayName.text,
-                                                   descriptionPanel.bio.text.trim(),
-                                                   profileHeader.icon,
-                                                   profileHeader.cropRect.x,
-                                                   profileHeader.cropRect.y,
-                                                   (profileHeader.cropRect.x + profileHeader.cropRect.width),
-                                                   (profileHeader.cropRect.y + profileHeader.cropRect.height))
+                root.profileStore.saveProfileIdentity(descriptionPanel.displayName.text,
+                                                    descriptionPanel.bio.text.trim(),
+                                                    profileHeader.icon,
+                                                    profileHeader.cropRect.x,
+                                                    profileHeader.cropRect.y,
+                                                    (profileHeader.cropRect.x + profileHeader.cropRect.width),
+                                                    (profileHeader.cropRect.y + profileHeader.cropRect.height))
                 profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
             }
         }

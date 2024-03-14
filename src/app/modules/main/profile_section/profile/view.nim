@@ -197,6 +197,14 @@ QtObject:
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
 
+  proc profileIdentitySaveSucceeded*(self: View) {.signal.}
+  proc emitProfileIdentitySaveSucceededSignal*(self: View) =
+    self.profileIdentitySaveSucceeded()
+
+  proc profileIdentitySaveFailed*(self: View) {.signal.}
+  proc emitProfileIdentitySaveFailedSignal*(self: View) =
+    self.profileIdentitySaveFailed()
+
   proc profileShowcasePreferencesSaveSucceeded*(self: View) {.signal.}
   proc emitProfileShowcasePreferencesSaveSucceededSignal*(self: View) =
     self.profileShowcasePreferencesSaveSucceeded()
@@ -272,10 +280,10 @@ QtObject:
     self.profileShowcaseCollectiblesModel.clear()
     self.profileShowcaseAssetsModel.clear()
 
-  proc saveIdentityInfo(self: View, profileData: string) {.slot.} =
+  proc saveProfileIdentity(self: View, profileData: string) {.slot.} =
     let profileDataObj = profileData.parseJson
     let identityInfo = profileDataObj.toIdentitySaveData()
-    self.delegate.saveProfileIdentityInfo(identityInfo)
+    self.delegate.saveProfileIdentity(identityInfo)
 
   proc saveProfileShowcasePreferences(self: View, profileData: string) {.slot.} =
     let profileDataObj = profileData.parseJson
