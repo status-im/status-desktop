@@ -818,7 +818,7 @@ method setActiveSection*[T](self: Module[T], item: SectionItem, skipSavingInSett
   if(item.isEmpty()):
     echo "section is empty and cannot be made as active one"
     return
-  self.controller.setActiveSection(item.id, skipSavingInSettings)
+  self.controller.setActiveSection(item.id, skipSavingInSettings = skipSavingInSettings)
 
 method setActiveSectionById*[T](self: Module[T], id: string) =
   let item = self.view.model().getItemById(id)
@@ -833,8 +833,18 @@ proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
 
   # If there is a need other section may be notified the same way from here...
 
-method activeSectionSet*[T](self: Module[T], sectionId: string) =
+method setActiveChat*[T](self: Module[T], sectionId: string, chatId: string) =
+  if chatId == "":
+    return
+
+  if not self.channelGroupModules.contains(sectionId):
+    return
+
+  self.channelGroupModules[sectionId].setActiveItem(chatId)
+
+method activeSectionSet*[T](self: Module[T], sectionId: string, chatId: string = "") =
   if self.view.activeSection.getId() == sectionId:
+    self.setActiveChat(sectionId, chatId)
     return
   let item = self.view.model().getItemById(sectionId)
 
@@ -851,7 +861,7 @@ method activeSectionSet*[T](self: Module[T], sectionId: string) =
 
   self.view.model().setActiveSection(sectionId)
   self.view.activeSectionSet(item)
-
+  self.setActiveChat(sectionId, chatId)
   self.notifySubModulesAboutChange(sectionId)
 
 proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, available: bool) =

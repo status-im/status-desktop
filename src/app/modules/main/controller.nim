@@ -62,7 +62,7 @@ type
     sharedUrlsService: urls_service.Service
 
 # Forward declaration
-proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
+proc setActiveSection*(self: Controller, sectionId: string, chatId: string = "", skipSavingInSettings: bool = false)
 proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): Uint256
 proc getRemoteDestructedAmount*(self: Controller, chainId: int, contractAddress: string): Uint256
 
@@ -498,12 +498,12 @@ proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
 
-proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false) =
+proc setActiveSection*(self: Controller, sectionId: string, chatId: string = "", skipSavingInSettings: bool = false) =
   self.activeSectionId = sectionId
   if not skipSavingInSettings:
     let sectionIdToSave = if (sectionId == conf.SETTINGS_SECTION_ID): "" else: sectionId
     singletonInstance.localAccountSensitiveSettings.setActiveSection(sectionIdToSave)
-  self.delegate.activeSectionSet(self.activeSectionId)
+  self.delegate.activeSectionSet(self.activeSectionId, chatId)
 
 proc getAllChats*(self: Controller): seq[ChatDto] =
   result = self.chatService.getAllChats()

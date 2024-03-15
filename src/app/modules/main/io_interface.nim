@@ -148,7 +148,10 @@ method emitMailserverWorking*(self: AccessInterface) {.base.} =
 method emitMailserverNotWorking*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method activeSectionSet*(self: AccessInterface, sectionId: string) {.base.} =
+method activeSectionSet*(self: AccessInterface, sectionId: string, chatId: string = "") {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setActiveChat*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method toggleSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
