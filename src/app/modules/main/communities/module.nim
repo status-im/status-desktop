@@ -591,10 +591,13 @@ proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[Co
         infiniteSupply,
       )
 
-      if tokenMetadata.tokenType == TokenType.ERC20:
+      if tokenMetadata.tokenType == TokenType.ERC20 and
+        not self.view.tokenListModel().hasItem(tokenMetadata.symbol, community.id):
       # Community ERC20 tokens
         tokenListItems.add(communityTokenItem)
-      else:
+
+      if tokenMetadata.tokenType == TokenType.ERC721 and
+        not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol, community.id):
       # Community collectibles (ERC721 and others)
         collectiblesListItems.add(communityTokenItem)
 
@@ -651,12 +654,12 @@ method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMe
   )
 
   if tokenMetadata.tokenType == TokenType.ERC721 and
-      not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol):
+      not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol, communityId):
     self.view.collectiblesListModel.addItems(@[tokenListItem])
     return
 
   if tokenMetadata.tokenType == TokenType.ERC20 and
-      not self.view.tokenListModel().hasItem(tokenMetadata.symbol):
+      not self.view.tokenListModel().hasItem(tokenMetadata.symbol, communityId):
     self.view.tokenListModel.addItems(@[tokenListItem])
 
 method shareCommunityUrlWithChatKey*(self: Module, communityId: string): string =

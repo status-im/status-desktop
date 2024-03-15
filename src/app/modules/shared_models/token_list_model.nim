@@ -56,9 +56,9 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
-  proc hasItem*(self: TokenListModel, symbol: string): bool =
+  proc hasItem*(self: TokenListModel, symbol: string, communityId: string): bool =
     for item in self.items:
-      if item.getSymbol() == symbol:
+      if item.getSymbol() == symbol and item.getCommunityId() == communityId:
         return true
     return false
 
