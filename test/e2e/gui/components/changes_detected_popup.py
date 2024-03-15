@@ -17,7 +17,7 @@ class ChangesDetectedToastMessage(QObject):
         self._save_button.click()
 
     @allure.step('Check if save changes button is visible')
-    def is_save_changes_button_visible(self):
+    def is_save_changes_button_visible(self) -> bool:
         return self._save_button.is_visible
 
 
@@ -25,7 +25,7 @@ class PermissionsChangesDetectedToastMessage(QObject):
 
     def __init__(self):
         super().__init__(communities_names.editPermissionView_settingsDirtyToastMessage_SettingsDirtyToastMessage)
-        self._update_permission_button = Button(communities_names.editPermissionView_Save_changes_StatusButton)
+        self._update_permission_button = Button(communities_names.editPermissionView_Update_permission_StatusButton)
 
     @allure.step('Update permission')
     def update_permission(self):

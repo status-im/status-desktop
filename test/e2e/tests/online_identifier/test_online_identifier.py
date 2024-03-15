@@ -31,8 +31,7 @@ def test_change_own_display_name(main_screen: MainWindow, user_account, new_name
     with step('Go to edit profile settings and change the name of the user'):
         profile_popup.edit_profile().set_name(new_name)
         ChangesDetectedToastMessage().click_save_changes_button()
-        assert ChangesDetectedToastMessage().is_save_changes_button_visible() is False, \
-            f'Save button is not hidden when clicked'
+        assert ChangesDetectedToastMessage().is_visible is False, f'Changes detected popup is not hidden when save changes button clicked'
 
     with step('Open own profile popup and check name of user is correct'):
         assert main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier().user_name == new_name

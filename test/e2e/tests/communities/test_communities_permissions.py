@@ -108,9 +108,9 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkb
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Check toast message for edited permission'):
-       messages = main_screen.wait_for_notification()
-       assert ToastMessages.UPDATE_PERMISSION_TOAST.value in messages, \
-           f"Toast message is incorrect, current message is {message}"
+        messages = main_screen.wait_for_notification()
+        assert ToastMessages.UPDATE_PERMISSION_TOAST.value in messages, \
+            f"Toast message is incorrect, current message is {message}"
 
     with step('Delete permission'):
         permissions_intro_view.click_delete_permission()
@@ -120,6 +120,6 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkb
         assert driver.waitFor(lambda: PermissionsIntroView().is_visible)
 
     with step('Check toast message for deleted permission'):
-       messages = main_screen.wait_for_notification()
-       assert ToastMessages.DELETE_PERMISSION_TOAST.value in messages, \
-           f"Toast message is incorrect, current message is {message}"
+        messages = main_screen.wait_for_notification()
+        assert ToastMessages.DELETE_PERMISSION_TOAST.value in messages, \
+            f"Toast message is incorrect, current message is {message}"
