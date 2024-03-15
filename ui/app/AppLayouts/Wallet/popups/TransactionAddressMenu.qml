@@ -50,6 +50,7 @@ StatusMenu {
         id: d
 
         property string selectedAddress: ""
+        property string cleanSelectedAddress: d.selectedAddress.split(":").pop()
 
         property string addressName: ""
         property string addressEns: ""
@@ -59,6 +60,10 @@ StatusMenu {
         property string contractName: ""
 
         property int addressType: TransactionAddressMenu.AddressType.Address
+
+        readonly property QtObject exp: Constants.networkExplorerLinks
+        readonly property QtObject chains: Constants.networkShortChainNames
+        readonly property bool isAddress: d.addressType !== TransactionAddressMenu.Tx
 
         function getViewText(target) {
             switch(d.addressType) {
@@ -82,10 +87,10 @@ StatusMenu {
         function refreshShowOnActionsVisiblity(shortChainNameList) {
             for (let i = 0 ; i < shortChainNameList.length ; i++) {
                 switch(shortChainNameList[i].toLowerCase()) {
-                case Constants.networkShortChainNames.arbiscan.toLowerCase():
+                case d.chains.arbitrum:
                     showOnArbiscanAction.enabled = true
                     break
-                case Constants.networkShortChainNames.optimism.toLowerCase():
+                case d.chains.optimism:
                     showOnOptimismAction.enabled = true
                     break
                 default:
@@ -152,8 +157,8 @@ StatusMenu {
         }
 
         showOnEtherscanAction.enabled = true
-        showOnArbiscanAction.enabled = address.includes(Constants.networkShortChainNames.arbiscan + ":")
-        showOnOptimismAction.enabled = address.includes(Constants.networkShortChainNames.optimism + ":")
+        showOnArbiscanAction.enabled = address.includes(d.chains.arbitrum + ":")
+        showOnOptimismAction.enabled = address.includes(d.chains.optimism + ":")
         d.refreshShowOnActionsVisiblity(chainShortNameList)
         saveAddressAction.enabled = d.addressName.length === 0
         editAddressAction.enabled = !isWalletAccount && !isContact && d.addressName.length > 0
@@ -210,16 +215,9 @@ StatusMenu {
         text: d.getViewText(qsTr("Etherscan"))
         icon.name: "link"
         onTriggered: {
-            const type = d.addressType === TransactionAddressMenu.Tx ? Constants.networkExplorerLinks.txPath : Constants.networkExplorerLinks.addressPath
-            let link = Constants.networkExplorerLinks.etherscan
-            if (areTestNetworksEnabled) {
-                if (root.isGoerliEnabled) {
-                    link = Constants.networkExplorerLinks.sepoliaEtherscan
-                } else {
-                    link = Constants.networkExplorerLinks.goerliEtherscan
-                }
-            }
-            Global.openLink("%1/%2/%3".arg(link).arg(type).arg(d.selectedAddress))
+            let url = Utils.getEtherscanUrl(d.chains.mainnet, root.areTestNetworksEnabled, !root.isGoerliEnabled,
+                                            d.cleanSelectedAddress, d.isAddress)
+            Global.openLink(url)
         }
     }
     StatusAction {
@@ -228,9 +226,9 @@ StatusMenu {
         text: d.getViewText(qsTr("Arbiscan"))
         icon.name: "link"
         onTriggered: {
-            const type = d.addressType === TransactionAddressMenu.Tx ? Constants.networkExplorerLinks.txPath : Constants.networkExplorerLinks.addressPath
-            const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliArbiscan : Constants.networkExplorerLinks.arbiscan
-            Global.openLink("%1/%2/%3".arg(link).arg(type).arg(d.selectedAddress))
+            let url = Utils.getEtherscanUrl(d.chains.arbitrum, root.areTestNetworksEnabled, !root.isGoerliEnabled,
+                                            d.cleanSelectedAddress, d.isAddress)
+            Global.openLink(url)
         }
     }
     StatusAction {
@@ -239,9 +237,9 @@ StatusMenu {
         text: d.getViewText(qsTr("Optimism Explorer"))
         icon.name: "link"
         onTriggered: {
-            const type = d.addressType === TransactionAddressMenu.Tx ? Constants.networkExplorerLinks.txPath : Constants.networkExplorerLinks.addressPath
-            const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliOptimism : Constants.networkExplorerLinks.optimism
-            Global.openLink("%1/%2/%3".arg(link).arg(type).arg(d.selectedAddress))
+            let url = Utils.getEtherscanUrl(d.chains.optimism, root.areTestNetworksEnabled, !root.isGoerliEnabled,
+                                            d.cleanSelectedAddress, d.isAddress)
+            Global.openLink(url)
         }
     }
     StatusSuccessAction {

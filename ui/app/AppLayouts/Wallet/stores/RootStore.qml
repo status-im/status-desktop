@@ -492,16 +492,16 @@ QtObject {
         let link = Constants.networkExplorerLinks.etherscan
         if (root.areTestNetworksEnabled) {
             if (root.isGoerliEnabled) {
-                link = Constants.networkExplorerLinks.sepoliaEtherscan
-            } else {
                 link = Constants.networkExplorerLinks.goerliEtherscan
+            } else {
+                link = Constants.networkExplorerLinks.sepoliaEtherscan
             }
         }
         return link
     }
 
     function getExplorerNameForNetwork(networkShortName)  {
-        if (networkShortName === Constants.networkShortChainNames.arbiscan) {
+        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
             return qsTr("Arbiscan Explorer")
         }
         if (networkShortName === Constants.networkShortChainNames.optimism) {

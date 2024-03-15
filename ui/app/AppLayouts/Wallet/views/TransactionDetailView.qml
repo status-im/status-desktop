@@ -299,7 +299,7 @@ Item {
                         width: parent.width
                         title: d.transactionType === Constants.TransactionType.Swap || d.transactionType === Constants.TransactionType.Bridge ?
                                    qsTr("In") : qsTr("From")
-                        addresses: d.isTransactionValid && d.reEvaluateSender? [d.transaction.sender] : []
+                        addresses: d.isTransactionValid && d.reEvaluateSender? [d.transaction.from] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
                         onButtonClicked: {
@@ -342,7 +342,7 @@ Item {
                     TransactionAddressTile {
                         width: parent.width
                         title: qsTr("To")
-                        addresses: d.isTransactionValid && visible && d.reEvaluateRecipient? [d.transaction.recipient] : []
+                        addresses: d.isTransactionValid && visible && d.reEvaluateRecipient? [d.transaction.to] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
                         onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0], [d.networkShortName])

@@ -241,11 +241,11 @@ StatusListItem {
         }
 
         StatusAction {
-            text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.arbiscan)
-            enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbiscan)
+            text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.arbitrum)
+            enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbitrum)
             icon.name: "link"
             onTriggered: {
-                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbiscan, root.areTestNetworksEnabled, root.isGoerliEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
+                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbitrum, root.areTestNetworksEnabled, root.isGoerliEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
                 Global.openLink(link)
             }
         }

@@ -51,11 +51,11 @@ StatusMenu {
     }
 
     StatusAction {
-        text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.arbiscan)
-        enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbiscan)
+        text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.arbitrum)
+        enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbitrum)
         icon.name: "link"
         onTriggered: {
-            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbiscan, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
+            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbitrum, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
             Global.openLink(link)
         }
     }
