@@ -26,6 +26,7 @@ SettingsPage {
     signal unbanUserClicked(string id)
     signal acceptRequestToJoin(string id)
     signal declineRequestToJoin(string id)
+    signal viewMemberMessagesClicked(string pubKey, string displayName)
 
     function goTo(tab: int) {
         if(root.contentItem) {
@@ -127,6 +128,8 @@ SettingsPage {
                     kickBanPopup.userId = id
                     kickBanPopup.open()
                 }
+
+                onViewMemberMessagesClicked: root.viewMemberMessagesClicked(pubKey, displayName)
             }
 
             MembersTabPanel {

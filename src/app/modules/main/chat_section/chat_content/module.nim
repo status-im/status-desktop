@@ -58,7 +58,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
     messageService)
   result.moduleLoaded = false
 
-  result.inputAreaModule = input_area_module.newModule(result, events, sectionId, chatId, belongsToCommunity, 
+  result.inputAreaModule = input_area_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
     chatService, communityService, contactService, gifService, messageService, settingsService)
   result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
     contactService, communityService, chatService, messageService, mailserversService, sharedUrlsService)
@@ -174,6 +174,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
   item = pinned_msg_item.initItem(
     message.id,
     message.communityId,
+    message.chatId,
     message.responseTo,
     message.`from`,
     contactDetails.defaultDisplayName,
@@ -411,7 +412,7 @@ method amIChatAdmin*(self: Module): bool =
     return false
   else:
     let communityDto = self.controller.getCommunityDetails()
-    return communityDto.memberRole == MemberRole.Owner or 
+    return communityDto.memberRole == MemberRole.Owner or
       communityDto.memberRole == MemberRole.Admin or communityDto.memberRole == MemberRole.TokenMaster
 
 method onUpdateViewOnlyPermissionsSatisfied*(self: Module, value: bool) =
@@ -425,3 +426,6 @@ method setPermissionsCheckOngoing*(self: Module, value: bool) =
 
 method getPermissionsCheckOngoing*(self: Module): bool =
   self.view.getPermissionsCheckOngoing()
+
+method scrollToMessage*(self: Module, messageId: string) =
+  self.messagesModule.scrollToMessage(messageId)

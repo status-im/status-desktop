@@ -100,6 +100,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
   return msg_item_qobj.newMessageItem(msg_item.initItem(
     message.id,
     communityId, # we don't received community id via `activityCenterNotifications` api call
+    message.chatId,
     message.responseTo,
     message.`from`,
     contactDetails.defaultDisplayName,

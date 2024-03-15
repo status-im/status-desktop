@@ -2,6 +2,7 @@ import NimQml, json, sequtils, strutils
 import model as chats_model
 import item, active_item
 import ../../shared_models/user_model as user_model
+import ../../shared_models/message_model as member_msg_model
 import ../../shared_models/token_permissions_model
 import io_interface
 
@@ -32,6 +33,9 @@ QtObject:
       isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin: bool
       shardingInProgress: bool
       allChannelsAreHiddenBecauseNotPermitted: bool
+      memberMessagesModel: member_msg_model.Model
+      memberMessagesModelVariant: QVariant
+
 
   proc delete*(self: View) =
     self.model.delete
@@ -46,6 +50,8 @@ QtObject:
     self.editCategoryChannelsVariant.delete
     self.tokenPermissionsModel.delete
     self.tokenPermissionsVariant.delete
+    self.memberMessagesModel.delete
+    self.memberMessagesModelVariant.delete
 
     self.QObject.delete
 
@@ -71,6 +77,8 @@ QtObject:
     result.chatsLoaded = false
     result.communityMetrics = "[]"
     result.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin = false
+    result.memberMessagesModel = member_msg_model.newModel()
+    result.memberMessagesModelVariant = newQVariant(result.memberMessagesModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -509,3 +517,20 @@ QtObject:
       return
     self.allChannelsAreHiddenBecauseNotPermitted = allAreHidden
     self.allChannelsAreHiddenBecauseNotPermittedChanged()
+  proc getMemberMessagesModel*(self: View): member_msg_model.Model =
+    return self.memberMessagesModel
+
+  proc getMemberMessagesModelVariant(self: View): QVariant {.slot.} =
+    return self.memberMessagesModelVariant
+
+  QtProperty[QVariant] memberMessagesModel:
+    read = getMemberMessagesModelVariant
+
+  proc loadCommunityMemberMessaages*(self: View, communityId: string, memberPubKey: string) {.slot.} =
+    self.delegate.loadCommunityMemberMessaages(communityId, memberPubKey)
+
+  proc deleteCommunityMemberMessages*(self: View, memberPubKey: string, messageId: string, chatId: string) {.slot.} =
+    self.delegate.deleteCommunityMemberMessages(memberPubKey, messageId, chatId)
+
+  proc openCommunityChatAndScrollToMessage*(self: View, chatId: string, messageId: string) {.slot.} =
+    self.delegate.openCommunityChatAndScrollToMessage(chatId, messageId)

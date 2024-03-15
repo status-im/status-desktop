@@ -5,6 +5,9 @@ import ../io_interface as delegate_interface
 import view, controller, active_item
 import model as chats_model
 import item as chat_item
+import ../../shared_models/message_item as member_msg_item
+import ../../shared_models/message_model as member_msg_model
+import ../../shared_models/message_transaction_parameters_item
 import ../../shared_models/user_item as user_item
 import ../../shared_models/user_model as user_model
 import ../../shared_models/token_permissions_model
@@ -87,7 +90,7 @@ proc addOrUpdateChat(self: Module,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
-  ): Item
+  ): chat_item.Item
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -119,6 +122,95 @@ proc newModule*(
   result.chatsLoaded = false
 
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
+
+# TODO: duplicates in chats and messages
+proc currentUserWalletContainsAddress(self: Module, address: string): bool =
+  if (address.len == 0):
+    return false
+  let accounts = self.controller.getWalletAccounts()
+  for acc in accounts:
+    if (acc.address == address):
+      return true
+  return false
+
+proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_msg_item.Item =
+  let contactDetails = self.controller.getContactDetails(message.`from`)
+  let communityChats = self.controller.getAllChats(self.getMySectionId())
+  var quotedMessageAuthorDetails = ContactDetails()
+  if message.quotedMessage.`from` != "":
+    if message.`from` == message.quotedMessage.`from`:
+      quotedMessageAuthorDetails = contactDetails
+    else:
+      quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
+
+  var transactionContract = message.transactionParameters.contract
+  var transactionValue = message.transactionParameters.value
+  var isCurrentUser = contactDetails.isCurrentUser
+  if message.contentType == ContentType.Transaction:
+    (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
+    if message.transactionParameters.fromAddress != "":
+      isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
+  return member_msg_item.initItem(
+    message.id,
+    message.communityId,
+    message.chatId,
+    message.responseTo,
+    message.`from`,
+    contactDetails.defaultDisplayName,
+    contactDetails.optionalName,
+    contactDetails.icon,
+    contactDetails.colorHash,
+    isCurrentUser,
+    contactDetails.dto.added,
+    message.outgoingStatus,
+    self.controller.getRenderedText(message.parsedText, communityChats),
+    message.text,
+    message.parsedText,
+    message.image,
+    message.containsContactMentions(),
+    message.seen,
+    timestamp = message.timestamp,
+    clock = message.clock,
+    message.contentType,
+    message.messageType,
+    message.contactRequestState,
+    message.sticker.url,
+    message.sticker.pack,
+    message.links,
+    message.linkPreviews,
+    newTransactionParametersItem(message.transactionParameters.id,
+      message.transactionParameters.fromAddress,
+      message.transactionParameters.address,
+      transactionContract,
+      transactionValue,
+      message.transactionParameters.transactionHash,
+      message.transactionParameters.commandState,
+      message.transactionParameters.signature),
+    message.mentionedUsersPks,
+    contactDetails.dto.trustStatus,
+    contactDetails.dto.ensVerified,
+    message.discordMessage,
+    resendError = "",
+    message.deleted,
+    message.deletedBy,
+    deletedByContactDetails = ContactDetails(),
+    message.mentioned,
+    message.quotedMessage.`from`,
+    message.quotedMessage.text,
+    self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
+    message.quotedMessage.contentType,
+    message.quotedMessage.deleted,
+    message.quotedMessage.discordMessage,
+    quotedMessageAuthorDetails,
+    message.quotedMessage.albumImages,
+    message.quotedMessage.albumImagesCount,
+    message.albumId,
+    if len(message.albumId) == 0: @[] else: @[message.image],
+    if len(message.albumId) == 0: @[] else: @[message.id],
+    message.albumImagesCount,
+    message.bridgeMessage,
+    message.quotedMessage.bridgeMessage,
+  )
 
 method delete*(self: Module) =
   self.controller.delete
@@ -166,7 +258,7 @@ proc removeSubmodule(self: Module, chatId: string) =
   self.chatContentModules.del(chatId)
 
 
-proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, communityId: string, insertIntoModel: bool = true): Item =
+proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, communityId: string, insertIntoModel: bool = true): chat_item.Item =
   let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(communityId, category.id)
   result = chat_item.initItem(
         id = category.id,
@@ -210,7 +302,7 @@ proc buildChatSectionUI(
   var selectedItemId = ""
   let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
 
-  var items: seq[Item] = @[]
+  var items: seq[chat_item.Item] = @[]
   for categoryDto in channelGroup.categories:
     # Add items for the categories. We use a special type to identify categories
     items.add(self.addCategoryItem(categoryDto, channelGroup.memberRole, channelGroup.id))
@@ -544,7 +636,7 @@ proc addNewChat(
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
-  ): Item =
+  ): chat_item.Item =
   let hasNotification =chatDto.unviewedMessagesCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
 
@@ -1262,7 +1354,7 @@ proc addOrUpdateChat(self: Module,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
-  ): Item =
+  ): chat_item.Item =
 
   let sectionId = self.controller.getMySectionId()
   if(belongsToCommunity and sectionId != chat.communityId or
@@ -1326,7 +1418,7 @@ method addOrUpdateChat*(self: Module,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
-  ): Item =
+  ): chat_item.Item =
  result = self.addOrUpdateChat(
     chat,
     ChannelGroupDto(),
@@ -1430,3 +1522,33 @@ method setCommunityShard*(self: Module, shardIndex: int) =
 method setShardingInProgress*(self: Module, value: bool) =
   self.view.setShardingInProgress(value)
 
+method loadCommunityMemberMessaages*(self: Module, communityId: string, memberPubKey: string) =
+  self.view.getMemberMessagesModel().clear()
+  self.controller.loadCommunityMemberMessaages(communityId, memberPubKey)
+
+method onCommunityMemberMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
+  var viewItems: seq[member_msg_item.Item]
+  for message in messages:
+    let item = self.buildCommunityMemberMessageItem(message)
+    viewItems.add(item)
+
+  if viewItems.len == 0:
+    return
+
+  self.view.getMemberMessagesModel().insertItemsBasedOnClock(viewItems)
+
+method deleteCommunityMemberMessages*(self: Module, memberPubKey: string, messageId: string, chatId: string) =
+  self.controller.deleteCommunityMemberMessages(memberPubKey, messageId, chatId)
+
+method onCommunityMemberMessagesDeleted*(self: Module, deletedMessages: seq[string]) =
+  if self.view.getMemberMessagesModel().rowCount > 0:
+    for deletedMessageId in deletedMessages:
+      self.view.getMemberMessagesModel().removeItem(deletedMessageId)
+
+method communityContainsChat*(self: Module, chatId: string): bool =
+  return self.chatContentModules.hasKey(chatId)
+
+method openCommunityChatAndScrollToMessage*(self: Module, chatId: string, messageId: string) =
+  self.delegate.setActiveSectionById(self.getMySectionId())
+  self.setActiveItem(chatId)
+  self.chatContentModules[chatId].scrollToMessage(messageId)

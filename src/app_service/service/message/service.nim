@@ -64,6 +64,7 @@ const SIGNAL_URLS_UNFURLED* = "urlsUnfurled"
 const SIGNAL_GET_MESSAGE_FINISHED* = "getMessageFinished"
 const SIGNAL_URLS_UNFURLING_PLAN_READY* = "urlsUnfurlingPlanReady"
 const SIGNAL_MESSAGE_MARKED_AS_UNREAD* = "messageMarkedAsUnread"
+const SIGNAL_COMMUNITY_MEMBER_ALL_MESSAGES* = "communityMemberAllMessages"
 
 include async_tasks
 
@@ -117,6 +118,7 @@ type
     deletedBy*: string
 
   MessagesDeletedArgs* =  ref object of Args
+    communityId*: string
     deletedMessages*: Table[string, seq[string]]
 
   MessageDeliveredArgs* = ref object of Args
@@ -153,6 +155,10 @@ type
     messageId*: string
     message*: MessageDto
     error*: string
+
+  CommunityMemberMessagesArgs* = ref object of Args
+    communityId*: string
+    messages*: seq[MessageDto]
 
 QtObject:
   type Service* = ref object of QObject
@@ -274,6 +280,17 @@ QtObject:
 
     discard self.asyncLoadMoreMessagesForChat(chatId)
 
+  proc asyncLoadCommunityMemberAllMessages*(self: Service, communityId: string, memberPublicKey: string) =
+    let arg = AsyncLoadCommunityMemberAllMessagesTaskArg(
+      communityId: communityId,
+      memberPubKey: memberPublicKey,
+      tptr: cast[ByteAddress](asyncLoadCommunityMemberAllMessagesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncLoadCommunityMemberAllMessages"
+    )
+
+    self.threadpool.start(arg)
+
   proc handleMessagesUpdate(self: Service, chats: var seq[ChatDto], messages: var seq[MessageDto]) =
     # We included `chats` in this condition cause that's the form how `status-go` sends updates.
     # The first element from the `receivedData.chats` array contains details about the chat a messages received in
@@ -358,8 +375,8 @@ QtObject:
       let data = MessageRemovedArgs(chatId: rm.chatId, messageId: rm.messageId, deletedBy: rm.deletedBy)
       self.events.emit(SIGNAL_MESSAGE_REMOVED, data)
 
-  proc handleDeletedMessagesUpdate(self: Service, deletedMessages: Table[string, seq[string]]) =
-      let data = MessagesDeletedArgs(deletedMessages: deletedMessages)
+  proc handleDeletedMessagesUpdate(self: Service, deletedMessages: Table[string, seq[string]], communityId: string) =
+      let data = MessagesDeletedArgs(deletedMessages: deletedMessages, communityId: communityId)
       self.events.emit(SIGNAL_MESSAGES_DELETED, data)
 
   proc handleEmojiReactionsUpdate(self: Service, emojiReactions: seq[ReactionDto]) =
@@ -430,7 +447,7 @@ QtObject:
         self.handleRemovedMessagesUpdate(receivedData.removedMessages)
       # Handling deleted messages updates
       if (receivedData.deletedMessages.len > 0):
-        self.handleDeletedMessagesUpdate(receivedData.deletedMessages)
+        self.handleDeletedMessagesUpdate(receivedData.deletedMessages, "")
       # Handling emoji reactions updates
       if (receivedData.emojiReactions.len > 0):
         self.handleEmojiReactionsUpdate(receivedData.emojiReactions)
@@ -541,6 +558,29 @@ QtObject:
     )
 
     self.events.emit(SIGNAL_MESSAGES_LOADED, data)
+
+  proc onAsyncLoadCommunityMemberAllMessages*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(RpcException, rpcResponseObj{"error"}.getStr)
+      if rpcResponseObj{"messages"}.kind == JNull:
+        return
+      if rpcResponseObj{"messages"}.kind != JArray:
+        raise newException(RpcException, "invalid messages type in response")
+
+      var communityId: string
+      discard rpcResponseObj.getProp("communityId", communityId)
+
+      var messages = map(rpcResponseObj{"messages"}.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
+      if messages.len > 0:
+        self.bulkReplacePubKeysWithDisplayNames(messages)
+
+      let data = CommunityMemberMessagesArgs(communityId: communityId, messages: messages)
+      self.events.emit(SIGNAL_COMMUNITY_MEMBER_ALL_MESSAGES, data)
+
+    except Exception as e:
+      error "error: ", procName="onAsyncLoadCommunityMemberAllMessages", errName = e.name, errDesription = e.msg
 
   proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int) =
     try:
@@ -1147,3 +1187,26 @@ proc resendChatMessage*(self: Service, messageId: string): string =
   except Exception as e:
     error "error: ", procName="resendChatMessage", errName = e.name, errDesription = e.msg
     return fmt"{e.name}: {e.msg}"
+
+# TODO: would be nice to make it async but in this case we will need to show come spinner in the UI during deleting the message
+proc deleteCommunityMemberMessages*(self: Service, communityId: string, memberPubKey: string, messageId: string, chatId: string) =
+  try:
+    let response = status_go.deleteCommunityMemberMessages(communityId, memberPubKey, messageId, chatId)
+
+    if response.result.contains("error"):
+        let errMsg = response.result["error"].getStr
+        raise newException(RpcException, "Error deleting community member messages: " & errMsg)
+
+    var deletedMessages = initTable[string, seq[string]]()
+    if response.result.contains("deletedMessages"):
+      let deletedMessagesObj = response.result["deletedMessages"]
+      for chatId, messageIdsArrayJson in deletedMessagesObj:
+        if not deletedMessages.hasKey(chatId):
+          deletedMessages[chatId] = @[]
+        for messageId in messageIdsArrayJson:
+          deletedMessages[chatId].add(messageId.getStr())
+
+      self.handleDeletedMessagesUpdate(deletedMessages, communityId)
+
+  except Exception as e:
+    error "error: ", procName="deleteCommunityMemberMessages", errName = e.name, errDesription = e.msg

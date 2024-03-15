@@ -16,6 +16,7 @@ type
     NextMsgIndex
     NextMsgTimestamp
     CommunityId
+    ChatId
     ResponseToMessageWithId
     SenderId
     SenderDisplayName
@@ -123,6 +124,7 @@ QtObject:
       ModelRole.NextMsgIndex.int:"nextMsgIndex",
       ModelRole.NextMsgTimestamp.int:"nextMsgTimestamp",
       ModelRole.CommunityId.int:"communityId",
+      ModelRole.ChatId.int:"chatId",
       ModelRole.ResponseToMessageWithId.int:"responseToMessageWithId",
       ModelRole.SenderId.int:"senderId",
       ModelRole.SenderDisplayName.int:"senderDisplayName",
@@ -231,6 +233,8 @@ QtObject:
         result = newQVariant(0)
     of ModelRole.CommunityId:
       result = newQVariant(item.communityId)
+    of ModelRole.ChatId:
+      result = newQVariant(item.chatId)
     of ModelRole.ResponseToMessageWithId:
       result = newQVariant(item.responseToMessageWithId)
     of ModelRole.SenderId:

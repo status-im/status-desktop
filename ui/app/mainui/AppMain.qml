@@ -1412,6 +1412,15 @@ Item {
                                     }
                                 }
 
+                                Connections {
+                                    target: Global
+                                    function onSwitchToCommunityChannelsView(communityId: string) {
+                                        if (communityId !== model.id)
+                                            return
+                                        chatLayoutComponent.currentIndex = 0
+                                    }
+                                }
+
                                 sendModalPopup: sendModal
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item

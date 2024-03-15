@@ -252,7 +252,7 @@ StatusSectionLayout {
                 mintPanel.openNewTokenForm(false/*Collectible owner token*/)
             }
 
-            onShardIndexEdited: if (root.community.shardIndex != shardIndex) {
+            onShardIndexEdited: if (root.community.shardIndex !== shardIndex) {
                 root.chatCommunitySectionModule.setCommunityShard(shardIndex)
             }
         }
@@ -277,6 +277,10 @@ StatusSectionLayout {
             onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
             onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id, root.community.id)
             onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.community.id)
+            onViewMemberMessagesClicked: {
+                root.rootStore.loadCommunityMemberMessages(root.community.id, pubKey)
+                Global.openCommunityMemberMessagesPopupRequested(root.rootStore, root.chatCommunitySectionModule, pubKey, displayName)
+            }
         }
 
         PermissionsSettingsPanel {

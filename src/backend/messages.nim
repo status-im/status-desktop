@@ -87,3 +87,24 @@ proc getTextURLsToUnfurl*(text: string): RpcResponse[JsonNode] =
 proc unfurlUrls*(urls: seq[string]): RpcResponse[JsonNode] =
   let payload = %*[urls]
   result = callPrivateRPC("unfurlURLs".prefix, payload)
+
+proc getCommunityMemberAllMessages*(communityId: string, memberPublicKey: string): RpcResponse[JsonNode] =
+  let payload = %* [{"communityId": communityId, "memberPublicKey": memberPublicKey}]
+  result = callPrivateRPC("getCommunityMemberAllMessages".prefix, payload)
+
+
+proc deleteCommunityMemberMessages*(communityId: string, memberPubKey: string, messageId: string, chatId: string): RpcResponse[JsonNode] =
+  var messages: seq[JsonNode] = @[]
+  if messageId != "" and chatId != "":
+    messages.add(%*{
+      "id": messageId,
+      "chatId": chatId,
+    })
+
+  let payload = %* [{
+    "communityId": communityId,
+    "memberPubKey": memberPubKey,
+    "messages": messages,
+    "deleteAll": messages.len() == 0
+    }]
+  result = callPrivateRPC("deleteCommunityMemberMessages".prefix, payload)

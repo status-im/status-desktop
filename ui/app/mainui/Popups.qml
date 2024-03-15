@@ -86,6 +86,7 @@ QtObject {
         Global.openFirstTokenReceivedPopup.connect(openFirstTokenReceivedPopup)
         Global.openConfirmHideAssetPopup.connect(openConfirmHideAssetPopup)
         Global.openConfirmHideCollectiblePopup.connect(openConfirmHideCollectiblePopup)
+        Global.openCommunityMemberMessagesPopupRequested.connect(openCommunityMemberMessagesPopup)
     }
 
     property var currentPopup
@@ -360,6 +361,15 @@ QtObject {
 
     function openConfirmHideCollectiblePopup(collectibleSymbol, collectibleName, collectibleImage, isCommunityToken) {
         openPopup(confirmHideCollectiblePopup, { collectibleSymbol, collectibleName, collectibleImage, isCommunityToken })
+    }
+
+    function openCommunityMemberMessagesPopup(store, chatCommunitySectionModule, memberPubKey, displayName) {
+        openPopup(communityMemberMessagesPopup, {
+            store: store,
+            chatCommunitySectionModule: chatCommunitySectionModule,
+            memberPubKey: memberPubKey,
+            displayName: displayName
+        })
     }
 
     readonly property list<Component> _components: [
@@ -1134,6 +1144,12 @@ QtObject {
                                                Constants.ephemeralNotificationType.success,
                                                "")
                 }
+            }
+        },
+        Component {
+            id: communityMemberMessagesPopup
+            CommunityMemberMessagesPopup {
+                onClosed: destroy()
             }
         }
     ]

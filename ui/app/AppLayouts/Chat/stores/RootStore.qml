@@ -329,6 +329,10 @@ QtObject {
         chatCommunitySectionModule.removeUserFromCommunity(pubKey);
     }
 
+    function loadCommunityMemberMessages(communityId, pubKey) {
+        chatCommunitySectionModule.loadCommunityMemberMessaages(communityId, pubKey);
+    }
+
     function banUserFromCommunity(pubKey, deleteAllMessages) {
         chatCommunitySectionModule.banUserFromCommunity(pubKey, deleteAllMessages);
     }

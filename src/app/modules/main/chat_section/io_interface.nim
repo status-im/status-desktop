@@ -404,3 +404,20 @@ method setCommunityShard*(self: AccessInterface, shardIndex: int) {.base.} =
 method setShardingInProgress*(self: AccessInterface, value: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method loadCommunityMemberMessaages*(self: AccessInterface, communityId: string, memberPubKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityMemberMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteCommunityMemberMessages*(self: AccessInterface, memberPubKey: string, messageId: string, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityMemberMessagesDeleted*(self: AccessInterface, messages: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityContainsChat*(self: AccessInterface, chatId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method openCommunityChatAndScrollToMessage*(self: AccessInterface, chatId: string, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
