@@ -911,7 +911,7 @@ QtObject {
     }
 
     function getActionNameForDisplayingAddressOnNetwork(networkShortName)  {
-        if (networkShortName === Constants.networkShortChainNames.arbiscan) {
+        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
             return qsTr("View on Arbiscan")
         }
         if (networkShortName === Constants.networkShortChainNames.optimism) {
@@ -921,7 +921,10 @@ QtObject {
         return qsTr("View on Etherscan")
     }
 
-    function getUrlForAddressOnNetwork(networkShortName, testnetMode, sepoliaEnabled, address)  {
+    function getEtherscanUrl(networkShortName, testnetMode, sepoliaEnabled, addressOrTx, isAddressNotTx)  {
+        const type = isAddressNotTx
+            ? Constants.networkExplorerLinks.addressPath
+            : Constants.networkExplorerLinks.txPath
         let link = Constants.networkExplorerLinks.etherscan
         if (testnetMode) {
             if (sepoliaEnabled) {
@@ -931,7 +934,7 @@ QtObject {
             }
         }
 
-        if (networkShortName === Constants.networkShortChainNames.arbiscan) {
+        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
             link = Constants.networkExplorerLinks.arbiscan
             if (testnetMode) {
                 if (sepoliaEnabled) {
@@ -951,7 +954,17 @@ QtObject {
             }
         }
 
-        return "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(address)
+        return "%1/%2/%3".arg(link).arg(type).arg(addressOrTx)
+    }
+
+    // Etherscan URL for an address
+    function getUrlForAddressOnNetwork(networkShortName, testnetMode, sepoliaEnabled, address)  {
+        return getEtherscanUrl(networkShortName, testnetMode, sepoliaEnabled, address, true /* is address */)
+    }
+
+    // Etherscan URL for a transaction
+    function getUrlForTxOnNetwork(networkShortName, testnetMode, sepoliaEnabled, tx)  {
+        return getEtherscanUrl(networkShortName, testnetMode, sepoliaEnabled, tx, false /* is TX */)
     }
 
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this

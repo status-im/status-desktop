@@ -107,9 +107,9 @@ ColumnLayout {
                         let link = Constants.networkExplorerLinks.etherscan
                         if (areTestNetworksEnabled) {
                             if (root.isGoerliEnabled) {
-                                link = Constants.networkExplorerLinks.sepoliaEtherscan
-                            } else {
                                 link = Constants.networkExplorerLinks.goerliEtherscan
+                            } else {
+                                link = Constants.networkExplorerLinks.sepoliaEtherscan
                             }
                         }
                         Global.openLink("%1/nft/%2/%3".arg(link).arg(root.tokenAddress).arg(root.tokenId))

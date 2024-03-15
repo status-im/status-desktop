@@ -895,7 +895,7 @@ QtObject {
 
     readonly property QtObject networkShortChainNames: QtObject {
         readonly property string mainnet: "eth"
-        readonly property string arbiscan: "arb"
+        readonly property string arbitrum: "arb"
         readonly property string optimism: "opt"
     }
 
