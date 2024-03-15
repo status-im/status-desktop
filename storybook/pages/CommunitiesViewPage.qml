@@ -5,6 +5,7 @@ import StatusQ.Core 0.1
 
 import AppLayouts.Profile.views 1.0
 import AppLayouts.Wallet.stores 1.0
+import AppLayouts.Profile.stores 1.0
 import mainui 1.0
 import utils 1.0
 
@@ -44,7 +45,7 @@ SplitView {
         SplitView.preferredHeight: 400
 
         contentWidth: 664
-        profileSectionStore: QtObject {
+        profileSectionStore: ProfileSectionStore {
             property var communitiesProfileModule: QtObject {
                 function setCommunityMuted(communityId, mutedType) {
                     logs.logEvent("profileSectionStore::communitiesProfileModule::setCommunityMuted", ["communityId", "mutedType"], arguments)
