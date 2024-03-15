@@ -425,15 +425,16 @@ QtObject:
         "displayName": displayName,
         "customizationColor": DEFAULT_CUSTOMIZATION_COLOR,
         "imagePath": imagePath,
+
         "logLevel": toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL),
         
         "wakuV2LightClient": false,
         "previewPrivacy": true,
 
-        "networkId": NETWORKS[0]{"chainId"},
-        "verifyENSURL": NETWORKS[0]{"fallbackUrl"},
-        "verifyTransactionURL": NETWORKS[0]{"fallbackUrl"},
-        "upstreamConfig": NETWORKS[0]{"rpcUrl"},
+        # "networkId": NETWORKS[0]{"chainId"},
+        # "verifyENSURL": NETWORKS[0]{"fallbackUrl"},
+        # "verifyTransactionURL": NETWORKS[0]{"fallbackUrl"},
+        # "upstreamConfig": NETWORKS[0]{"rpcUrl"},
       }
       let response = status_account.createAccountAndLogin($request)
       # var error = "response doesn't contain \"error\""
