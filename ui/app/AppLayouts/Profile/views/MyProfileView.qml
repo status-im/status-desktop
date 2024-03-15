@@ -39,6 +39,7 @@ SettingsContentBase {
     property var communitiesModel
 
     property bool sideBySidePreview
+    property bool toastClashesWithDirtyBubble
 
     property QtObject dirtyValues: QtObject {
         property string displayName: descriptionPanel.displayName.text
@@ -72,7 +73,10 @@ SettingsContentBase {
     toast.saveChangesTooltipText: saveChangesButtonEnabled ? "" : qsTr("Invalid changes made to Identity")
     autoscrollWhenDirty: profileTabBar.currentIndex === MyProfileView.Identity
     toast.loading: priv.expectedBackendResponses > 0
-    
+    toast.additionalComponent.visible: false // TODO:Issue #13997 // !toast.loading && root.toastClashesWithDirtyBubble && priv.saveRequestFailed
+    toast.additionalComponent.text: qsTr("Changes could not be saved. Try again")
+    toast.additionalComponent.color: Theme.palette.dangerColor1
+
     onResetChangesClicked: priv.reset()
 
     onSaveChangesClicked: priv.save()

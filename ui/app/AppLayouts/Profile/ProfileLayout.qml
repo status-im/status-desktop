@@ -78,6 +78,10 @@ StatusSectionLayout {
 
         readonly property bool isProfilePanelActive: profileContainer.currentIndex === Constants.settingsSubsection.profile
         readonly property bool sideBySidePreviewAvailable: root.Window.width >= 1840 // design
+
+        // Used to alternatively add an error message to the dirty bubble if ephemeral notification
+        // can clash at smaller viewports
+        readonly property bool toastClashesWithDirtyBubble: root.Window.width <= 1650 // design
     }
 
     headerBackground: AccountHeaderGradient {
@@ -142,6 +146,7 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
                 sideBySidePreview: d.sideBySidePreviewAvailable
+                toastClashesWithDirtyBubble: d.toastClashesWithDirtyBubble
             }
         }
 
