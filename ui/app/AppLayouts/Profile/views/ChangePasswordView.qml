@@ -25,20 +25,30 @@ SettingsContentBase {
 
     readonly property bool biometricsEnabled: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
 
-    readonly property StatusSwitch biometricsSwitch: titleRowComponentLoader.item.switchItem
+    readonly property Item biometricsPopup: titleRowComponentLoader.item
     readonly property Connections privacyStoreConnections: Connections {
         target: Qt.platform.os === Constants.mac ? root.privacyStore.privacyModule : null
 
         function onStoreToKeychainError(errorDescription: string) {
-            root.biometricsSwitch.checked = Qt.binding(() => {
-                return root.biometricsSwitch.currentStoredValue
-            })
+            biometricsPopup.popupItem.close();
+            if (biometricsPopup.switchItem.requestForEnabling) {
+                Global.displayToastMessage(qsTr("Failed to enable biometric login and transaction authentication for this device"),
+                errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
+            } else {
+                Global.displayToastMessage(qsTr("Failed to disable biometric login and transaction authentication for this device"),
+                errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
+            }
         }
 
         function onStoreToKeychainSuccess() {
-            root.biometricsSwitch.checked = Qt.binding(() => {
-                return root.biometricsSwitch.currentStoredValue
-            })
+            biometricsPopup.popupItem.close();
+            if (biometricsPopup.switchItem.requestForEnabling) {
+                Global.displayToastMessage(qsTr("Biometric login and transaction authentication enabled for this device"),
+                "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+            } else {
+                Global.displayToastMessage(qsTr("Biometric login and transaction authentication disabled for this device"),
+                "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+            }
         }
     }
 
@@ -50,6 +60,8 @@ SettingsContentBase {
         visible: (Qt.platform.os === Constants.mac)
 
         property StatusSwitch switchItem: biometricsSwitch
+        property StatusDialog popupItem: enableBiometricsPopup
+
         StatusSwitch {
             id: biometricsSwitch
 
@@ -59,11 +71,10 @@ SettingsContentBase {
             text: qsTr("Enable biometrics")
             textColor: Theme.palette.baseColor1
 
-            property bool currentStoredValue: false
+            property bool requestForEnabling: false
 
             checked: root.biometricsEnabled
-            onToggled: {
-                currentStoredValue = checked
+            onReleased: {
                 enableBiometricsPopup.open();
             }
             StatusToolTip {
@@ -98,8 +109,10 @@ SettingsContentBase {
                         text: biometricsSwitch.checked ? qsTr("Yes, enable biometrics") : qsTr("Yes, disable biometrics")
                         onClicked: {
                             if (biometricsSwitch.checked && !biometricsSwitch.biometricsEnabled) {
+                                biometricsSwitch.requestForEnabling = true;
                                 root.privacyStore.tryStoreToKeyChain();
                             } else if (!biometricsSwitch.checked) {
+                                biometricsSwitch.requestForEnabling = false;
                                 root.privacyStore.tryRemoveFromKeyChain();
                             }
                         }

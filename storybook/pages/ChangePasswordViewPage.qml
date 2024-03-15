@@ -42,6 +42,7 @@ SplitView {
                     if (generateMacKeyChainStoreError.checked) {
                         privacyModule.storeToKeychainError(errorDescription)
                     } else {
+                        passwordView.localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store
                         privacyModule.storeToKeychainSuccess()
                         privacyModule.passwordChanged(true, "")
                     }
@@ -49,8 +50,9 @@ SplitView {
 
                  function tryRemoveFromKeyChain() {
                     if (generateMacKeyChainStoreError.checked) {
-                        privacyModule.storeToKeychainError(errorDescription)
+                        privacyModule.storeToKeychainError("Error removing from keychain")
                     } else {
+                        passwordView.localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.notNow
                         privacyModule.storeToKeychainSuccess()
                     }
                  }
