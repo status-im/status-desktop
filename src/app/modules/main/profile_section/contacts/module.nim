@@ -7,10 +7,19 @@ import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
 import ../../../../core/eventemitter
-import ../../../../../app_service/common/types
-import ../../../../../app_service/service/contacts/dto/contacts as contacts_dto
-import ../../../../../app_service/service/contacts/service as contacts_service
-import ../../../../../app_service/service/chat/service as chat_service
+import app_service/common/types
+import app_service/service/contacts/dto/contacts as contacts_dto
+import app_service/service/contacts/service as contacts_service
+import app_service/service/chat/service as chat_service
+import app_service/service/network/service as network_service
+
+import app/modules/shared_modules/collectibles/controller as collectiblesc
+import backend/collectibles as backend_collectibles
+import app_service/service/contacts/dto/profile_showcase
+
+import models/showcase_contact_generic_model
+import models/showcase_contact_accounts_model
+import models/showcase_contact_social_links_model
 
 export io_interface
 
@@ -20,25 +29,36 @@ logScope:
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
-    controller: Controller
+    controller: controller.Controller
+    collectiblesController: collectiblesc.Controller
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
+    showcasePublicKey: string
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   contactsService: contacts_service.Service,
-  chatService: chat_service.Service):
+  chatService: chat_service.Service,
+  networkService: network_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, contactsService, chatService)
+  result.controller = controller.newController(result, events, contactsService, chatService, networkService)
+  result.collectiblesController = collectiblesc.newController(
+    requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
+    loadType = collectiblesc.LoadType.AutoLoadSingleUpdate,
+    networkService = networkService,
+    events = events
+  )
   result.moduleLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
+  self.viewVariant.delete
+  self.collectiblesController.delete
 
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contactDetails = self.controller.getContactDetails(publicKey)
@@ -303,3 +323,82 @@ method shareUserUrlWithChatKey*(self: Module, pubkey: string): string =
 
 method shareUserUrlWithENS*(self: Module, pubkey: string): string =
   return self.controller.shareUserUrlWithENS(pubkey)
+
+# Profile showcase for a contanct related stuff
+method requestProfileShowcase*(self: Module, publicKey: string) =
+  if self.showcasePublicKey != publicKey:
+    self.view.clearShowcaseModels()
+  self.showcasePublicKey = publicKey
+
+  self.controller.requestProfileShowcaseForContact(publicKey)
+
+method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
+  if self.showcasePublicKey != profileShowcase.contactId:
+    warn "Got profile showcase for wrong contact id"
+    return
+
+  var communityItems: seq[ShowcaseContactGenericItem] = @[]
+  for community in profileShowcase.communities:
+    # TODO: https://github.com/status-im/status-desktop/issues/14084
+    # if community.membershipStatus == ProfileShowcaseMembershipStatus.ProvenMember:
+    communityItems.add(ShowcaseContactGenericItem(
+      showcaseKey: community.communityId,
+      showcasePosition: community.order
+    ))
+  self.view.updateProfileShowcaseContactCommunities(communityItems)
+
+  var accountItems: seq[ShowcaseContactAccountItem] = @[]
+  var accountAddresses: seq[string] = @[]
+  for account in profileShowcase.accounts:
+    accountItems.add(ShowcaseContactAccountItem(
+      address: account.address,
+      name: account.name,
+      emoji: account.emoji,
+      colorId: account.colorId,
+      showcasePosition: account.order
+    ))
+    accountAddresses.add(account.address)
+  self.view.updateProfileShowcaseContactAccounts(accountItems)
+
+  var collectibleItems: seq[ShowcaseContactGenericItem] = @[]
+  for collectible in profileShowcase.collectibles:
+    collectibleItems.add(ShowcaseContactGenericItem(
+      showcaseKey: collectible.toCombinedCollectibleId(),
+      showcasePosition: collectible.order
+    ))
+  self.view.updateProfileShowcaseContactCollectibles(collectibleItems)
+
+  var assetItems: seq[ShowcaseContactGenericItem] = @[]
+  for token in profileShowcase.verifiedTokens:
+    assetItems.add(ShowcaseContactGenericItem(
+      showcaseKey: token.symbol,
+      showcasePosition: token.order
+    ))
+  for token in profileShowcase.unverifiedTokens:
+    assetItems.add(ShowcaseContactGenericItem(
+      showcaseKey: token.toCombinedTokenId(),
+      showcasePosition: token.order
+    ))
+  self.view.updateProfileShowcaseContactAssets(assetItems)
+
+  var socialLinkItems: seq[ShowcaseContactSocialLinkItem] = @[]
+  for socialLink in profileShowcase.socialLinks:
+    socialLinkItems.add(ShowcaseContactSocialLinkItem(
+      url: socialLink.url,
+      text: socialLink.text,
+      showcasePosition: socialLink.order
+    ))
+  self.view.updateProfileShowcaseContactSocialLinks(socialLinkItems)
+
+  let chainIds = self.controller.getChainIds()
+  self.collectiblesController.setFilterAddressesAndChains(accountAddresses, chainIds)
+
+method fetchProfileShowcaseAccountsByAddress*(self: Module, address: string) =
+  self.controller.fetchProfileShowcaseAccountsByAddress(address)
+
+method onProfileShowcaseAccountsByAddressFetched*(self: Module, accounts: seq[ProfileShowcaseAccount]) =
+  let jsonObj = % accounts
+  self.view.emitProfileShowcaseAccountsByAddressFetchedSignal($jsonObj)
+
+method getShowcaseCollectiblesModel*(self: Module): QVariant =
+  return self.collectiblesController.getModelAsVariant()

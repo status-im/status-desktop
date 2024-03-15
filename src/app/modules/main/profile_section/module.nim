@@ -96,8 +96,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.controller = controller.newController(result)
   result.moduleLoaded = false
 
-  result.profileModule = profile_module.newModule(result, events, profileService, settingsService, communityService, walletAccountService, networkService, tokenService)
-  result.contactsModule = contacts_module.newModule(result, events, contactsService, chatService)
+  result.profileModule = profile_module.newModule(result, events, profileService, settingsService, communityService, walletAccountService, tokenService)
+  result.contactsModule = contacts_module.newModule(result, events, contactsService, chatService, networkService)
   result.languageModule = language_module.newModule(result, events, languageService)
   result.privacyModule = privacy_module.newModule(result, events, settingsService, keychainService, privacyService, generalService)
   result.aboutModule = about_module.newModule(result, events, aboutService)

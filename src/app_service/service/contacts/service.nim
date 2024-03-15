@@ -17,6 +17,8 @@ import ../visual_identity/service as procs_from_visual_identity_service
 import ./dto/contacts as contacts_dto
 import ./dto/status_update as status_update_dto
 import ./dto/contact_details
+import ./dto/profile_showcase
+
 import ../../../backend/contacts as status_contacts
 import ../../../backend/accounts as status_accounts
 
@@ -60,6 +62,9 @@ type
     chatId*: string
     messages*: JsonNode
 
+  ProfileShowcaseForContactArgs* = ref object of Args
+    profileShowcase*: ProfileShowcaseDto
+
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
 const SIGNAL_CONTACT_ADDED* = "contactAdded"
@@ -83,6 +88,9 @@ const SIGNAL_CONTACT_VERIFICATION_ADDED* = "contactVerificationRequestAdded"
 const SIGNAL_CONTACT_VERIFICATION_UPDATED* = "contactVerificationRequestUpdated"
 const SIGNAL_CONTACT_INFO_REQUEST_FINISHED* = "contactInfoRequestFinished"
 const SIGNAL_APPEND_CHAT_MESSAGES* = "appendChatMessages"
+
+const SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED* = "contactProfileShowcaseUpdated"
+const SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED* = "profileShowcaseAccountsByAddressFetched"
 
 type
   ContactsGroup* {.pure.} = enum
@@ -223,7 +231,12 @@ QtObject:
 
           else:
             self.events.emit(SIGNAL_CONTACT_VERIFICATION_ADDED, data)
-
+    self.events.on(SignalType.Message.event) do(e: Args):
+      let receivedData = MessageSignal(e)
+      if receivedData.updatedProfileShowcases.len > 0:
+        for profileShowcase in receivedData.updatedProfileShowcases:
+          self.events.emit(SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED,
+            ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
     self.events.on(SignalType.StatusUpdatesTimedout.event) do(e:Args):
       var receivedData = StatusUpdatesTimedoutSignal(e)
       if(receivedData.statusUpdates.len > 0):
@@ -881,3 +894,53 @@ QtObject:
       return response.result.getStr
     except Exception as e:
       error "Error getting user url with ens name", msg = e.msg, pubkey
+
+  proc requestProfileShowcaseForContact*(self: Service, contactId: string) =
+    let arg = AsyncGetProfileShowcaseForContactTaskArg(
+      pubkey: contactId,
+      tptr: cast[ByteAddress](asyncGetProfileShowcaseForContactTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "asyncProfileShowcaseForContactLoaded",
+    )
+    self.threadpool.start(arg)
+
+  proc asyncProfileShowcaseForContactLoaded*(self: Service, rpcResponse: string) {.slot.} =
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        error "Error requesting profile showcase for a contact", msg = rpcResponseObj{"error"}
+        return
+
+      let profileShowcase = rpcResponseObj["response"]["result"].toProfileShowcaseDto()
+
+      self.events.emit(SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED,
+        ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
+    except Exception as e:
+      error "Error requesting profile showcase for a contact", msg = e.msg
+
+  proc fetchProfileShowcaseAccountsByAddress*(self: Service, address: string) =
+    let arg = FetchProfileShowcaseAccountsTaskArg(
+      address: address,
+      tptr: cast[ByteAddress](fetchProfileShowcaseAccountsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onProfileShowcaseAccountsByAddressFetched",
+    )
+    self.threadpool.start(arg)
+
+  proc onProfileShowcaseAccountsByAddressFetched*(self: Service, rpcResponse: string) {.slot.} =
+    var data = ProfileShowcaseForContactArgs(
+      profileShowcase: ProfileShowcaseDto(
+        accounts: @[],
+      ),
+    )
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+      if rpcResponseObj{"response"}.kind != JArray:
+        raise newException(CatchableError, "invalid response")
+
+      data.profileShowcase.accounts = map(rpcResponseObj{"response"}.getElems(), proc(x: JsonNode): ProfileShowcaseAccount = toProfileShowcaseAccount(x))
+    except Exception as e:
+      error "onProfileShowcaseAccountsByAddressFetched", msg = e.msg
+    self.events.emit(SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED, data)
