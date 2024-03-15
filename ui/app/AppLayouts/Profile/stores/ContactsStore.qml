@@ -16,6 +16,23 @@ QtObject {
     property var receivedContactRequestsModel: contactsModule.receivedContactRequestsModel
     property var sentContactRequestsModel: contactsModule.sentContactRequestsModel
 
+    readonly property var showcasePublicKey: contactsModule.showcasePublicKey
+
+    // Showcase models for a contact with showcasePublicKey
+    readonly property var showcaseContactCommunitiesModel: contactsModule.showcaseContactCommunitiesModel
+    readonly property var showcaseContactAccountsModel: contactsModule.showcaseContactAccountsModel
+    readonly property var showcaseContactCollectiblesModel: contactsModule.showcaseContactCollectiblesModel
+    readonly property var showcaseContactAssetsModel: contactsModule.showcaseContactAssetsModel
+    readonly property var showcaseContactSocialLinksModel: contactsModule.showcaseContactSocialLinksModel
+
+    // Support models for showcase for a contact with showcasePublicKey
+    readonly property var showcaseCollectiblesModel: profileModule.showcaseCollectiblesModel
+
+    // Sets showcasePublicKey and updates showcase models with corresponding data
+    function requestProfileShowcase(publicKey) {
+        root.contactsModule.requestProfileShowcase(publicKey)
+    }
+
     // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
 //    property var receivedButRejectedContactRequestsModel: contactsModule.receivedButRejectedContactRequestsModel
 //    property var sentButRejectedContactRequestsModel: contactsModule.sentButRejectedContactRequestsModel
@@ -25,23 +42,23 @@ QtObject {
     }
 
     function generateAlias(pubKey) {
-       return root.globalUtilsInst.generateAlias(pubKey)
+        return root.globalUtilsInst.generateAlias(pubKey)
     }
 
     function getFromClipboard() {
-       return root.globalUtilsInst.getFromClipboard()
+        return root.globalUtilsInst.getFromClipboard()
     }
 
     function isMyMutualContact(pubKey) {
-       return root.contactsModule.isMyMutualContact(pubKey)
+        return root.contactsModule.isMyMutualContact(pubKey)
     }
 
     function isBlockedContact(pubKey) {
-       return root.contactsModule.isBlockedContact(pubKey)
+        return root.contactsModule.isBlockedContact(pubKey)
     }
 
     function hasPendingContactRequest(pubKey) {
-       return root.contactsModule.hasPendingContactRequest(pubKey)
+        return root.contactsModule.hasPendingContactRequest(pubKey)
     }
 
     function joinPrivateChat(pubKey) {

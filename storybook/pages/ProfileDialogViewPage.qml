@@ -298,17 +298,15 @@ SplitView {
                             function copyToClipboard(text) {
                                 logs.logEvent("profileStore::copyToClipboard", ["text"], arguments)
                             }
-                            function requestProfileShowcase(publicKey) {
-                                logs.logEvent("profileStore::requestProfileShowcase", ["publicKey"], arguments)
-                            }
-
-                            readonly property var profileShowcaseCommunitiesModel: CommunitiesModel {}
-                            readonly property var profileShowcaseAccountsModel: WalletAccountsModel {}
-                            readonly property var profileShowcaseCollectiblesModel: ManageCollectiblesModel {}
-                            readonly property var profileShowcaseAssetsModel: assetsStore.groupedAccountAssetsModel
                         }
 
                         contactsStore: QtObject {
+                            readonly property var showcaseContactCommunitiesModel: CommunitiesModel {}
+                            readonly property var showcaseContactAccountsModel: WalletAccountsModel {}
+                            readonly property var showcaseContactCollectiblesModel: ManageCollectiblesModel {}
+                            readonly property var showcaseContactAssetsModel: assetsStore.groupedAccountAssetsModel
+                            // TODO: showcaseContactSocialLinksModel
+
                             readonly property string myPublicKey: "0xdeadbeef"
 
                             function joinPrivateChat(publicKey) {
@@ -363,6 +361,10 @@ SplitView {
                             function changeContactNickname(publicKey, newNickname, displayName, isEdit) {
                                 logs.logEvent("contactsStore::changeContactNickname", ["publicKey", "newNickname", "displayName", "isEdit"], arguments)
                                 localNickname.text = newNickname
+                            }
+
+                            function requestProfileShowcase(publicKey) {
+                                logs.logEvent("contactsStore::requestProfileShowcase", ["publicKey"], arguments)
                             }
                         }
 

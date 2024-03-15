@@ -1,10 +1,16 @@
-import json, json_serialization
+import json, json_serialization, stew/shims/strformat
 
 include ../../../common/json_utils
+
+type ProfileShowcaseMembershipStatus* {.pure.}= enum
+  Unproven = 0,
+  ProvenMember = 1,
+  NotAMember = 2,
 
 type ProfileShowcaseCommunity* = ref object of RootObj
   communityId*: string
   order*: int
+  membershipStatus*: ProfileShowcaseMembershipStatus
 
 type ProfileShowcaseAccount* = ref object of RootObj
   contactId*: string
@@ -43,10 +49,19 @@ type ProfileShowcaseDto* = ref object of RootObj
   unverifiedTokens*: seq[ProfileShowcaseUnverifiedToken]
   socialLinks*: seq[ProfileShowcaseSocialLink]
 
+proc toProfileShowcaseMembershipStatus*(jsonObj: JsonNode): ProfileShowcaseMembershipStatus =
+  var membershipStatusInt: int
+  if (jsonObj.getProp("membershipStatus", membershipStatusInt) and
+    (membershipStatusInt >= ord(low(ProfileShowcaseMembershipStatus)) and
+    membershipStatusInt <= ord(high(ProfileShowcaseMembershipStatus)))):
+      return ProfileShowcaseMembershipStatus(membershipStatusInt)
+  return ProfileShowcaseMembershipStatus.Unproven
+
 proc toProfileShowcaseCommunity*(jsonObj: JsonNode): ProfileShowcaseCommunity =
   result = ProfileShowcaseCommunity()
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("order", result.order)
+  result.membershipStatus = jsonObj.toProfileShowcaseMembershipStatus()
 
 proc toProfileShowcaseAccount*(jsonObj: JsonNode): ProfileShowcaseAccount =
   result = ProfileShowcaseAccount()
@@ -113,3 +128,10 @@ proc `%`*(x: ProfileShowcaseAccount): JsonNode =
   result["colorId"] = % x.colorId
   result["emoji"] = % x.emoji
   result["order"] = % x.order
+
+# TODO: refactor to utils function on code cleanup stage
+proc toCombinedCollectibleId*(self: ProfileShowcaseCollectible): string =
+  return fmt"{self.chainId}+{self.contractAddress}+{self.tokenId}"
+
+proc toCombinedTokenId*(self: ProfileShowcaseUnverifiedToken): string =
+  return fmt"{self.chainId}+{self.contractAddress}"

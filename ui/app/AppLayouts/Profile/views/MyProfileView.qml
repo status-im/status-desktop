@@ -363,8 +363,8 @@ SettingsContentBase {
         //     id: profileShowcaseAssetsPanel
 
         //     baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
-        //     showcaseModel: root.profileStore.profileShowcaseAssetsModel
-        //     addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
+        //     showcaseModel: root.contactsStore.showcaseContactAssetsModel
+        //     addAccountsButtonVisible: root.contactsStore.showcaseContactAccountsModel.hiddenCount > 0
         //     formatCurrencyAmount: function(amount, symbol) {
         //         return root.currencyStore.formatCurrencyAmount(amount, symbol)
         //     }

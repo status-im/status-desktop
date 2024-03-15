@@ -10,7 +10,6 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/accounts as status_accounts
 
 import ../accounts/dto/accounts
-import dto/profile_showcase
 import dto/profile_showcase_preferences
 
 include async_tasks
@@ -22,17 +21,10 @@ type
   ProfileShowcasePreferencesArgs* = ref object of Args
     preferences*: ProfileShowcasePreferencesDto
 
-  ProfileShowcaseForContactArgs* = ref object of Args
-    profileShowcase*: ProfileShowcaseDto
-
 # Signals which may be emitted by this service:
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_UPDATED* = "profileShowcasePreferencesUpdated"
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_SUCCEEDED* = "profileShowcasePreferencesSaveSucceeded"
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_FAILED* = "profileShowcasePreferencesSaveFailed"
-const SIGNAL_PROFILE_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED* = "profileShowcaseAccountsByAddressFetched"
-
-# TODO: move to contacts service
-const SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED* = "profileShowcaseForContactUpdated"
 
 QtObject:
   type Service* = ref object of QObject
@@ -54,13 +46,6 @@ QtObject:
     self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
       let args = SettingsTextValueArgs(e)
       singletonInstance.userProfile.setDisplayName(args.value)
-
-    self.events.on(SignalType.Message.event) do(e: Args):
-      let receivedData = MessageSignal(e)
-      if receivedData.updatedProfileShowcases.len > 0:
-        for profileShowcase in receivedData.updatedProfileShowcases:
-          self.events.emit(SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED,
-            ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
 
   proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
     try:
@@ -113,56 +98,6 @@ QtObject:
     except Exception as e:
       error "error: ", procName="setDisplayName", errName = e.name, errDesription = e.msg
       return false
-
-  proc requestProfileShowcaseForContact*(self: Service, contactId: string) =
-    let arg = AsyncGetProfileShowcaseForContactTaskArg(
-      pubkey: contactId,
-      tptr: cast[ByteAddress](asyncGetProfileShowcaseForContactTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "asyncProfileShowcaseForContactLoaded",
-    )
-    self.threadpool.start(arg)
-
-  proc asyncProfileShowcaseForContactLoaded*(self: Service, rpcResponse: string) {.slot.} =
-    try:
-      let rpcResponseObj = rpcResponse.parseJson
-      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        error "Error requesting profile showcase for a contact", msg = rpcResponseObj{"error"}
-        return
-
-      let profileShowcase = rpcResponseObj["response"]["result"].toProfileShowcaseDto()
-
-      self.events.emit(SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED,
-        ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
-    except Exception as e:
-      error "Error requesting profile showcase for a contact", msg = e.msg
-
-  proc fetchProfileShowcaseAccountsByAddress*(self: Service, address: string) =
-    let arg = FetchProfileShowcaseAccountsTaskArg(
-      address: address,
-      tptr: cast[ByteAddress](fetchProfileShowcaseAccountsTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onProfileShowcaseAccountsByAddressFetched",
-    )
-    self.threadpool.start(arg)
-
-  proc onProfileShowcaseAccountsByAddressFetched*(self: Service, rpcResponse: string) {.slot.} =
-    var data = ProfileShowcaseForContactArgs(
-      profileShowcase: ProfileShowcaseDto(
-        accounts: @[],
-      ),
-    )
-    try:
-      let rpcResponseObj = rpcResponse.parseJson
-      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
-      if rpcResponseObj{"response"}.kind != JArray:
-        raise newException(CatchableError, "invalid response")
-
-      data.profileShowcase.accounts = map(rpcResponseObj{"response"}.getElems(), proc(x: JsonNode): ProfileShowcaseAccount = toProfileShowcaseAccount(x))
-    except Exception as e:
-      error "onProfileShowcaseAccountsByAddressFetched", msg = e.msg
-    self.events.emit(SIGNAL_PROFILE_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED, data)
 
   proc requestProfileShowcasePreferences*(self: Service) =
     let arg = QObjectTaskArg(
