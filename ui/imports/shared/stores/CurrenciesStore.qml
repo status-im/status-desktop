@@ -10,7 +10,7 @@ QtObject {
 
     // Some token+currency-related functions are implemented in the profileSectionModule.
     // We should probably refactor this and move those functions to some Wallet module.
-    property ProfileSectionStore profileSectionStore: ProfileSectionStore {}
+    property var _profileSectionModuleInst: profileSectionModule
 
     function getModelIndexForKey(key) {
         for (var i=0; i<currenciesModel.count; i++) {
@@ -989,17 +989,17 @@ QtObject {
     }
 
     function getFiatValue(cryptoAmount, cryptoSymbol) {
-        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getFiatValue(cryptoAmount, cryptoSymbol)
+        var amount = _profileSectionModuleInst.ensUsernamesModule.getFiatValue(cryptoAmount, cryptoSymbol)
         return parseFloat(amount)
     }
 
     function getCryptoValue(fiatAmount, cryptoSymbol) {
-        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getCryptoValue(fiatAmount, cryptoSymbol)
+        var amount = _profileSectionModuleInst.ensUsernamesModule.getCryptoValue(fiatAmount, cryptoSymbol)
         return parseFloat(amount)
     }
 
     function getGasEthValue(gweiValue, gasLimit) {
-        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
+        var amount = _profileSectionModuleInst.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
         return parseFloat(amount)
     }
 

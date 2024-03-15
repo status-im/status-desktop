@@ -19,13 +19,14 @@ import SortFilterProxyModel 0.2
 import "../panels"
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import AppLayouts.Chat.stores 1.0 as ChatStore
 
 SettingsContentBase {
     id: root
 
-    property var profileSectionStore
+    property ProfileSectionStore profileSectionStore
     property var rootStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property CurrenciesStore currencyStore
