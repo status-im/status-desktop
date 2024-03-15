@@ -52,7 +52,6 @@ StatusDialog {
 
     Column {
         anchors.fill: parent
-        anchors.margins: 16
         spacing: 20
         StatusBaseText {
             width: parent.width
