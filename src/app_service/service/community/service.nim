@@ -530,12 +530,14 @@ QtObject:
 
       let prevCommunity = self.communities[community.id]
 
-      let currOwner = community.findOwner()
-      let prevOwner = prevCommunity.findOwner()
-
-      if currOwner.id != prevOwner.id:
-        for chat in community.chats:
-          self.updateMemberRole(chat.id, currOwner)
+      try:
+        let currOwner = community.findOwner()
+        let prevOwner = prevCommunity.findOwner()
+        if currOwner.id != prevOwner.id:
+          for chat in community.chats:
+            self.updateMemberRole(chat.id, currOwner)
+      except Exception:
+        discard
 
       # ownership lost
       if prevCommunity.isOwner and not community.isOwner:
