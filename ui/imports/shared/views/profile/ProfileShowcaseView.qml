@@ -20,7 +20,6 @@ Control {
 
     property alias currentTabIndex: stackLayout.currentIndex
 
-    property string publicKey
     property string mainDisplayName
     property bool readOnly
     property var profileStore
@@ -32,7 +31,7 @@ Control {
 
     signal closeRequested()
 
-    onVisibleChanged: if (visible && !livePreview) profileStore.requestProfileShowcase(publicKey)
+    onVisibleChanged: if (visible && !livePreview) profileStore.requestProfileShowcasePreferences()
 
     horizontalPadding: readOnly ? 20 : 40 // smaller in settings/preview
     topPadding: Style.current.bigPadding
@@ -72,7 +71,7 @@ Control {
 
         SortFilterProxyModel {
             id: communitiesStoreModel
-            sourceModel: root.profileStore.profileShowcaseCommunitiesModel
+            sourceModel: root.profileStore.showcasePreferencesCommunitiesModel
             filters: [
                 ValueFilter {
                     roleName: "showcaseVisibility"
@@ -88,7 +87,7 @@ Control {
 
         SortFilterProxyModel {
             id: accountsStoreModel
-            sourceModel: root.profileStore.profileShowcaseAccountsModel
+            sourceModel: root.profileStore.showcasePreferencesAccountsModel
             filters: ValueFilter {
                 roleName: "showcaseVisibility"
                 value: Constants.ShowcaseVisibility.NoOne
@@ -98,7 +97,7 @@ Control {
 
         SortFilterProxyModel {
             id: collectiblesStoreModel
-            sourceModel: root.profileStore.profileShowcaseCollectiblesModel
+            sourceModel: root.profileStore.showcasePreferencesCollectiblesModel
             filters: ValueFilter {
                 roleName: "showcaseVisibility"
                 value: Constants.ShowcaseVisibility.NoOne

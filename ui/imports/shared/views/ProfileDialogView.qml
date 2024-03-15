@@ -604,13 +604,12 @@ Pane {
                     Layout.preferredHeight: 300
 
                     currentTabIndex: showcaseTabBar.currentIndex
-                    publicKey: root.publicKey
                     mainDisplayName: d.mainDisplayName
                     readOnly: root.readOnly
                     profileStore: root.profileStore
                     walletStore: root.walletStore
                     networkConnectionStore: root.networkConnectionStore
-                    
+
                     livePreview: root.dirty
                     livePreviewValues: root.dirtyValues
 
