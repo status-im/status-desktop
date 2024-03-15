@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.15
 import utils 1.0
 
 import shared.controls 1.0
+import shared.panels 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -23,6 +24,7 @@ Rectangle {
     property alias saveForLaterText: saveForLaterButton.text
     property alias cancelChangesText: cancelChangesButton.text
     property alias changesDetectedText: changesDetectedTextItem.text
+    property alias additionalComponent: additionalTextComponent
 
     readonly property string defaultChangesDetectedText: qsTr("Changes detected")
     readonly property string defaultSaveChangesText: qsTr("Save changes")
@@ -114,50 +116,68 @@ Rectangle {
         hoverEnabled: true
     }
 
-    RowLayout {
+    ColumnLayout {
         id: toastContent
+        anchors.fill: parent
+        anchors.margins: Style.current.padding
+        spacing: Style.current.padding
 
-        anchors {
-            fill: parent
-            margins: 16
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+
+            StatusBaseText {
+                id: changesDetectedTextItem
+                Layout.fillWidth: true
+                padding: 8
+                horizontalAlignment: Text.AlignHCenter
+                color: Theme.palette.directColor1
+                text: root.defaultChangesDetectedText
+            }
+
+            StatusButton {
+                id: cancelChangesButton
+                text: root.defaultCancelChangesText
+                enabled: !root.loading && root.active
+                visible: root.cancelButtonVisible
+                type: StatusBaseButton.Type.Danger
+                onClicked: root.resetChangesClicked()
+            }
+
+            StatusFlatButton {
+                id: saveForLaterButton
+                text: root.defaultSaveForLaterText
+                loading: root.loading
+                enabled: root.active && root.saveChangesButtonEnabled
+                visible: root.saveForLaterButtonVisible
+                onClicked: root.saveForLaterClicked()
+            }
+
+            StatusButton {
+                id: saveChangesButton
+
+                objectName: "settingsDirtyToastMessageSaveButton"
+                loading: root.loading
+                text: root.defaultSaveChangesText
+                interactive: root.active && root.saveChangesButtonEnabled
+                tooltip.text: root.saveChangesTooltipText
+                onClicked: root.saveChangesClicked()
+            }
+        }
+
+        Separator {
+            id: separator
+            Layout.fillWidth: true
+
+            visible: additionalTextComponent.visible
         }
 
         StatusBaseText {
-            id: changesDetectedTextItem
-            Layout.fillWidth: true
-            padding: 8
-            horizontalAlignment: Text.AlignHCenter
-            color: Theme.palette.directColor1
-            text: root.defaultChangesDetectedText
-        }
+            id: additionalTextComponent
 
-        StatusButton {
-            id: cancelChangesButton
-            text: root.defaultCancelChangesText
-            enabled: !root.loading && root.active
-            visible: root.cancelButtonVisible
-            type: StatusBaseButton.Type.Danger
-            onClicked: root.resetChangesClicked()
-        }
+            Layout.alignment: Qt.AlignHCenter
 
-        StatusFlatButton {
-            id: saveForLaterButton
-            text: root.defaultSaveForLaterText
-            loading: root.loading
-            enabled: root.active && root.saveChangesButtonEnabled
-            visible: root.saveForLaterButtonVisible
-            onClicked: root.saveForLaterClicked()
-        }
-
-        StatusButton {
-            id: saveChangesButton
-
-            objectName: "settingsDirtyToastMessageSaveButton"
-            loading: root.loading
-            text: root.defaultSaveChangesText
-            interactive: root.active && root.saveChangesButtonEnabled
-            tooltip.text: root.saveChangesTooltipText
-            onClicked: root.saveChangesClicked()
+            font.pixelSize: Theme.tertiaryTextFontSize
+            visible: false
         }
     }
 }
