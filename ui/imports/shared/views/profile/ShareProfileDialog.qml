@@ -28,106 +28,115 @@ StatusDialog {
 
     topPadding: Style.current.padding
     bottomPadding: Style.current.xlPadding
-    horizontalPadding: 80
+    horizontalPadding: 0
 
-    contentItem: ColumnLayout {
-        spacing: Style.current.halfPadding
+    StatusScrollView {
+        anchors.fill: parent
+        contentWidth: availableWidth
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: width
-            color: Theme.palette.white
+        ColumnLayout {
+            anchors.left: parent.left
+            anchors.leftMargin: 40
+            anchors.right: parent.right
+            anchors.rightMargin: 40
+            spacing: Style.current.halfPadding
 
-            Image {
-                anchors.fill: parent
-                asynchronous: true
-                fillMode: Image.PreserveAspectFit
-                mipmap: true
-                smooth: false
-                source: root.qrCode
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: width
+                color: Theme.palette.white
 
-                UserImage {
-                    anchors.centerIn: parent
-                    name: root.displayName
-                    pubkey: root.publicKey
-                    image: root.largeImage
-                    interactive: false
-                    imageWidth: 78
-                    imageHeight: 78
-
-                    // show a hardcoded white ring
-                    showRing: true
-                    colorHash: JSON.stringify([{colorId: 4, segmentLength: 32}])
-                }
-
-                MouseArea {
+                Image {
                     anchors.fill: parent
-                    acceptedButtons: Qt.RightButton
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: qrContextMenu.popup()
-                }
+                    asynchronous: true
+                    fillMode: Image.PreserveAspectFit
+                    mipmap: true
+                    smooth: false
+                    source: root.qrCode
 
-                ImageContextMenu {
-                    id: qrContextMenu
-                    imageSource: root.qrCode
-                }
-            }
-        }
+                    UserImage {
+                        anchors.centerIn: parent
+                        name: root.displayName
+                        pubkey: root.publicKey
+                        image: root.largeImage
+                        interactive: false
+                        imageWidth: 78
+                        imageHeight: 78
 
-        StatusBaseText {
-            Layout.topMargin: Style.current.smallPadding
-            Layout.fillWidth: true
-            text: qsTr("Profile link")
-        }
+                        // show a hardcoded white ring
+                        showRing: true
+                        colorHash: JSON.stringify([{colorId: 4, segmentLength: 32}])
+                    }
 
-        StatusBaseInput {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 44
-            leftPadding: Style.current.padding
-            rightPadding: Style.current.halfPadding
-            topPadding: 0
-            bottomPadding: 0
-            placeholder.rightPadding: Style.current.halfPadding
-            placeholder.elide: Text.ElideMiddle
-            placeholderText: root.linkToProfile
-            placeholderTextColor: Theme.palette.directColor1
-            edit.readOnly: true
-            background.color: "transparent"
-            background.border.color: Theme.palette.baseColor2
-            rightComponent: CopyButton {
-                textToCopy: root.linkToProfile
-                StatusToolTip {
-                    text: qsTr("Copy link")
-                    visible: parent.hovered
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.RightButton
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: qrContextMenu.popup()
+                    }
+
+                    ImageContextMenu {
+                        id: qrContextMenu
+                        imageSource: root.qrCode
+                    }
                 }
             }
-        }
 
-        StatusBaseText {
-            Layout.topMargin: Style.current.halfPadding
-            Layout.fillWidth: true
-            text: qsTr("Emoji hash")
-        }
-
-        StatusBaseInput {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 44
-            leftPadding: Style.current.padding
-            rightPadding: Style.current.halfPadding
-            topPadding: 0
-            bottomPadding: 0
-            edit.readOnly: true
-            background.color: "transparent"
-            background.border.color: Theme.palette.baseColor2
-            leftComponent: EmojiHash {
-                publicKey: root.publicKey
-                oneRow: true
+            StatusBaseText {
+                Layout.topMargin: Style.current.smallPadding
+                Layout.fillWidth: true
+                text: qsTr("Profile link")
             }
-            rightComponent: CopyButton {
-                textToCopy: Utils.getEmojiHashAsJson(root.publicKey).join("").toString()
-                StatusToolTip {
-                    text: qsTr("Copy emoji hash")
-                    visible: parent.hovered
+
+            StatusBaseInput {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 44
+                leftPadding: Style.current.padding
+                rightPadding: Style.current.halfPadding
+                topPadding: 0
+                bottomPadding: 0
+                placeholder.rightPadding: Style.current.halfPadding
+                placeholder.elide: Text.ElideMiddle
+                placeholderText: root.linkToProfile
+                placeholderTextColor: Theme.palette.directColor1
+                edit.readOnly: true
+                background.color: "transparent"
+                background.border.color: Theme.palette.baseColor2
+                rightComponent: CopyButton {
+                    textToCopy: root.linkToProfile
+                    StatusToolTip {
+                        text: qsTr("Copy link")
+                        visible: parent.hovered
+                    }
+                }
+            }
+
+            StatusBaseText {
+                Layout.topMargin: Style.current.halfPadding
+                Layout.fillWidth: true
+                text: qsTr("Emoji hash")
+            }
+
+            StatusBaseInput {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 44
+                leftPadding: Style.current.padding
+                rightPadding: Style.current.halfPadding
+                topPadding: 0
+                bottomPadding: 0
+                edit.readOnly: true
+                background.color: "transparent"
+                background.border.color: Theme.palette.baseColor2
+                leftComponent: EmojiHash {
+                    publicKey: root.publicKey
+                    oneRow: true
+                }
+                rightComponent: CopyButton {
+                    textToCopy: Utils.getEmojiHashAsJson(root.publicKey).join("").toString()
+                    StatusToolTip {
+                        text: qsTr("Copy emoji hash")
+                        visible: parent.hovered
+                    }
                 }
             }
         }
