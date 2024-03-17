@@ -1456,19 +1456,13 @@ Item {
                             }
 
                             let t = qsTr("%1 is your default Status keypair.").arg(root.sharedKeycardModule.keyPairForProcessing.name)
-                            t += qsTr(" Migrating this keypair will mean you will no longer require this Keycard to login to Status or")
-                            t += qsTr(" transact with the keypair’s derived account(s).", "", root.sharedKeycardModule.keyPairForProcessing.accounts.count)
-                            t += qsTr(" The keypair and account(s) will be fully removed from Keycard and stored on device.", "", root.sharedKeycardModule.keyPairForProcessing.accounts.count)
+                            t += qsTr(" Migrating this keypair will mean you will no longer require this Keycard to login to Status or transact with the keypair’s derived accounts.")
+                            t += qsTr(" The keypair and accounts will be fully removed from Keycard and stored on device.")
                             return t
                         }
 
-                        let t = qsTr("%1 keypair and its derived account(s) will be fully removed from Keycard and stored on device.",
-                                     "",
-                                     root.sharedKeycardModule.keyPairForProcessing.accounts.count)
-                        .arg(root.sharedKeycardModule.keyPairForProcessing.name)
-                        t += qsTr(" This will make your keypair and derived account(s) less secure as you will no longer require this Keycard to transact.",
-                                  "",
-                                  root.sharedKeycardModule.keyPairForProcessing.accounts.count)
+                        let t = qsTr("%1 keypair and its derived accounts will be fully removed from Keycard and stored on device.").arg(root.sharedKeycardModule.keyPairForProcessing.name)
+                        t += qsTr(" This will make your keypair and derived accounts less secure as you will no longer require this Keycard to transact.")
                         return t
                     }
                     return ""
