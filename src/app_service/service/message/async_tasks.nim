@@ -347,9 +347,6 @@ type
     communityId*: string
     memberPubKey*: string
 
-#################################################
-# Async load community member messages
-#################################################
 const asyncLoadCommunityMemberAllMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncLoadCommunityMemberAllMessagesTaskArg](argEncoded)
 

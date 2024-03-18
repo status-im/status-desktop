@@ -123,7 +123,6 @@ proc newModule*(
 
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
 
-# TODO: duplicates in chats and messages
 proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   if (address.len == 0):
     return false
@@ -133,6 +132,7 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
       return true
   return false
 
+# TODO: duplicates in chats and messages
 proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_msg_item.Item =
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let communityChats = self.controller.getAllChats(self.getMySectionId())

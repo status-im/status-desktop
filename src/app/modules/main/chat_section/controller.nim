@@ -404,7 +404,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_MESSAGES_DELETED) do(e:Args):
     var args = MessagesDeletedArgs(e)
-    let isSectionEmpty = args.communityId != ""
+    let isSectionEmpty = args.communityId == ""
     if args.communityId == self.sectionId or isSectionEmpty:
       for chatId, messagesIds in args.deletedMessages:
         if isSectionEmpty and not self.delegate.communityContainsChat(chatId):

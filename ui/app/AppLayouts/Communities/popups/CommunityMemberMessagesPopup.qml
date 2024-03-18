@@ -24,13 +24,13 @@ StatusDialog {
 
 
     width: 800
-    height: 428
     padding: 0
 
     title: qsTr("%1 messages").arg(root.displayName)
-    subtitle: qsTr("%1 messages").arg(root.memberMessagesModel.count)
+    subtitle: qsTr("%n message(s)", "", root.memberMessagesModel.count)
 
-    contentItem: ColumnLayout {
+   ColumnLayout {
+       anchors.fill: parent
         id: column
 
         StatusBaseText {
@@ -39,6 +39,8 @@ StatusDialog {
             Layout.alignment: Qt.AlignCenter
             verticalAlignment: Text.AlignVCenter
             color: Style.current.secondaryText
+            Layout.topMargin: 40
+            Layout.bottomMargin: 40
         }
 
         StatusListView {
@@ -46,6 +48,7 @@ StatusDialog {
             model: root.memberMessagesModel
             Layout.fillWidth: true
             Layout.fillHeight: count
+            implicitHeight: contentHeight
 
             delegate: Item {
                 id: messageDelegate
