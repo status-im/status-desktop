@@ -321,22 +321,31 @@ DoubleFlickableWithFolding {
 
         visible: d.dragItem && d.dragItem.showcaseMaxVisibility >= showcaseVisibility
 
-        background: ShapeRectangle {
-            path.strokeColor: dropArea.containsDrag ? Theme.palette.primaryColor2 : Theme.palette.directColor7
-            path.fillColor: dropArea.containsDrag ? Theme.palette.primaryColor3 : Theme.palette.getColor(Theme.palette.baseColor4, 0.7)
+        background: Rectangle {
+            id: shapeWrapper
 
-            DropArea {
-                id: dropArea
-
+            color: dropArea.containsDrag ? Theme.palette.primaryColor3 : Theme.palette.getColor(Theme.palette.baseColor4, 0.7)
+            radius: Style.current.radius
+            
+            ShapeRectangle {
                 anchors.fill: parent
-                keys: visibilityDropAreaButton.dropAreaKeys
+                anchors.margins: path.strokeWidth / 2
+                radius: shapeWrapper.radius
+                path.strokeColor: dropArea.containsDrag ? Theme.palette.primaryColor3 : Theme.palette.directColor7
+                path.fillColor: "transparent"
+                DropArea {
+                    id: dropArea
 
-                onEntered: function(drag) {
-                    drag.accept()
-                }
+                    anchors.fill: parent
+                    keys: visibilityDropAreaButton.dropAreaKeys
 
-                onDropped: function(drop) {
-                    d.setVisibilityInternalRequested(drop.source.key, visibilityDropAreaButton.showcaseVisibility)
+                    onEntered: function(drag) {
+                        drag.accept()
+                    }
+
+                    onDropped: function(drop) {
+                        d.setVisibilityInternalRequested(drop.source.key, visibilityDropAreaButton.showcaseVisibility)
+                    }
                 }
             }
         }
