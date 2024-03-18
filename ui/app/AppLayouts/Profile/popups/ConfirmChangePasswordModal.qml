@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.15
-
+import QtGraphicalEffects 1.15
 
 import utils 1.0
 import shared 1.0
@@ -48,11 +48,65 @@ StatusDialog {
 
     width: 480
     height: 546
-    closePolicy: d.passwordChanged ||  d.dbEncryptionInProgress ? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    closePolicy: d.passwordChanged || d.dbEncryptionInProgress
+                     ? Popup.NoAutoClose
+                     : Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+    // Overwrite the default modal background with a conditioned blurred one
+    Overlay.modal: Item {
+        Rectangle {
+            id: normalBackground
+            anchors.fill: parent
+            visible: !blurredBackground.visible
+            color: Theme.palette.backdropColor
+        }
+        Item {
+            id: blurredBackground
+
+            anchors.fill: parent
+            visible: d.dbEncryptionInProgress
+
+            // Update the blur source only once, when the modal is shown for performance reasons
+            onVisibleChanged: {
+                if (!visible) {
+                    return;
+                }
+                blurSource.scheduleUpdate()
+            }
+
+            GaussianBlur {
+                visible: true
+
+                anchors.fill: parent
+                source: blurSource
+                radius: 16
+                samples: 16
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: normalBackground.color
+                    opacity: 0.6
+                }
+            }
+
+            // Capture the entire main window content to be blurred
+            ShaderEffectSource {
+                id: blurSource
+
+                sourceItem: Global.applicationWindow.contentItem
+                width: Global.applicationWindow.contentItem.width
+                height: Global.applicationWindow.contentItem.height
+
+                live: false
+                visible: false
+            }
+        }
+    }
 
     Column {
         anchors.fill: parent
         spacing: 20
+
         StatusBaseText {
             width: parent.width
             wrapMode: Text.WordWrap
@@ -109,7 +163,7 @@ StatusDialog {
         id: footer
         leftButtons: ObjectModel {
             StatusFlatButton {
-                text: qsTr("Cancel")  
+                text: qsTr("Cancel")
                 visible: !d.dbEncryptionInProgress && !d.passwordChanged
                 textColor: Style.current.darkGrey
                 onClicked: { root.close(); }

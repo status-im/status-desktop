@@ -31,6 +31,11 @@ ApplicationWindow {
 
     onCurrentPageChanged: testsReRunTimer.restart()
 
+    // We need to set Global.applicationWindow to test components that relies on it e.g. ConfirmChangePasswordModal
+    Component.onCompleted: {
+        Global.applicationWindow = this;
+    }
+
     QtObject {
         id: d
 
