@@ -71,9 +71,10 @@ SettingsContentBase {
         manageTokensView.saveChanges()
     }
     onSaveChangesClicked: {
+        manageTokensView.saveChanges()
+
         if (manageTokensView.advancedTabVisible) {
-            // Save changes only when tab is active
-            manageTokensView.saveChanges()
+            // don't emit toasts when the Advanced tab is visible
             return
         }
 
