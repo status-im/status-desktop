@@ -304,6 +304,7 @@ proc createCommunityChannel*(
     color: string,
     categoryId: string,
     viewersCanPostReactions: bool,
+    hideIfPermissionsNotMet: bool
     ): RpcResponse[JsonNode] =
   result = callPrivateRPC("createCommunityChat".prefix, %*[
     communityId,
@@ -319,6 +320,7 @@ proc createCommunityChannel*(
       },
       "category_id": categoryId,
       "viewers_can_post_reactions": viewersCanPostReactions,
+      "hide_if_permissions_not_met": hideIfPermissionsNotMet
     }])
 
 proc editCommunityChannel*(
@@ -331,6 +333,7 @@ proc editCommunityChannel*(
     categoryId: string,
     position: int,
     viewersCanPostReactions: bool,
+    hideIfPermissionsNotMet: bool
     ): RpcResponse[JsonNode] =
   result = callPrivateRPC("editCommunityChat".prefix, %*[
     communityId,
@@ -348,6 +351,7 @@ proc editCommunityChannel*(
       "category_id": categoryId,
       "position": position,
       "viewers_can_post_reactions": viewersCanPostReactions,
+      "hide_if_permissions_not_met": hideIfPermissionsNotMet
     }])
 
 proc reorderCommunityCategories*(communityId: string, categoryId: string, position: int): RpcResponse[JsonNode] =

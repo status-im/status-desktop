@@ -332,6 +332,7 @@ Item {
                         channelPosition = obj.position
                         chatCategoryId = obj.categoryId
                         viewersCanPostReactions = obj.viewersCanPostReactions
+                        hideIfPermissionsNotMet = obj.hideIfPermissionsNotMet
                     } catch (e) {
                         console.error("error parsing chat item json object, id: ", id, " error: ", e)
                         close()
@@ -387,7 +388,8 @@ Item {
                         chatId: chatContextMenuView.chatId,
                         channelPosition: channelPosition,
                         viewOnlyCanAddReaction: viewersCanPostReactions,
-                        deleteChatConfirmationDialog: deleteChatConfirmationDialog
+                        deleteChatConfirmationDialog: deleteChatConfirmationDialog,
+                        hideIfPermissionsNotMet: hideIfPermissionsNotMet
                     });
                 }
             }
@@ -628,9 +630,9 @@ Item {
             property var deleteChatConfirmationDialog
             
             onCreateCommunityChannel: function (chName, chDescription, chEmoji, chColor,
-                                                chCategoryId) {
+                                                chCategoryId, hideIfPermissionsNotMet) {
                 root.store.createCommunityChannel(chName, chDescription, chEmoji, chColor,
-                                                  chCategoryId, viewOnlyCanAddReaction)
+                                                  chCategoryId, viewOnlyCanAddReaction, hideIfPermissionsNotMet)
                 chatId = root.store.currentChatContentModule().chatDetails.id
             }
             onEditCommunityChannel: {
@@ -641,7 +643,8 @@ Item {
                                                 chColor,
                                                 chCategoryId,
                                                 channelPosition,
-                                                viewOnlyCanAddReaction);
+                                                viewOnlyCanAddReaction,
+                                                hideIfPermissionsNotMet);
             }
 
             onAddPermissions: function (permissions) {

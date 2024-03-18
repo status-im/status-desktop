@@ -89,6 +89,7 @@ type ChatDto* = object
   categoryId*: string
   highlight*: bool
   permissions*: Permission
+  hideIfPermissionsNotMet*: bool
 
 type ChannelGroupDto* = object
   id*: string
@@ -152,7 +153,8 @@ proc `$`*(self: ChatDto): string =
     firstMessageTimestamp: {self.firstMessageTimestamp},
     categoryId: {self.categoryId},
     position: {self.position},
-    highlight: {self.highlight}
+    highlight: {self.highlight},
+    hideIfPermissionsNotMet: {self.hideIfPermissionsNotMet}
     )"""
 
 proc toCheckPermissionsResultDto*(jsonObj: JsonNode): CheckPermissionsResultDto =
@@ -280,6 +282,7 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
     # Communities have `categoryID` and chats have `categoryId`
     # This should be fixed in status-go, but would be a breaking change
     discard jsonObj.getProp("categoryID", result.categoryId)
+  discard jsonObj.getProp("hideIfPermissionsNotMet", result.hideIfPermissionsNotMet)
   discard jsonObj.getProp("position", result.position)
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("profile", result.profile)

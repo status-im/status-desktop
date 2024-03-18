@@ -56,6 +56,12 @@ Item {
 
             model: SortFilterProxyModel {
                 sourceModel: root.model
+                filters: [
+                    ValueFilter {
+                        roleName: "shouldBeHiddenBecausePermissionsAreNotMet"
+                        value: false
+                    }
+                ]
                 sorters: [
                     RoleSorter {
                         roleName: "categoryPosition"

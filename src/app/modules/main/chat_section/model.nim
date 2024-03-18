@@ -37,6 +37,11 @@ type
     RequiresPermissions
     CanPostReactions
     ViewersCanPostReactions
+    HideIfPermissionsNotMet
+    ViewOnlyPermissionsSatisfied
+    ViewAndPostPermissionsSatisfied
+    ShouldBeHiddenBecausePermissionsAreNotMet #this is a complex role which depends on other roles
+                                              #(MemberRole , HideIfPermissionsNotMet, ViewOnlyPermissionsSatisfied, ViewAndPostPermissionsSatisfied)
 
 QtObject:
   type
@@ -78,6 +83,28 @@ QtObject:
   proc items*(self: Model): seq[Item] =
     return self.items
 
+  proc categoryShouldBeHiddenBecauseNotPermitted(self: Model, categoryId: string): bool =
+    for i in 0 ..< self.items.len:
+      if not self.items[i].isCategory and self.items[i].categoryId == categoryId:
+        if not self.items[i].hideBecausePermissionsAreNotMet():
+          return false
+    return true
+
+  proc itemShouldBeHiddenBecauseNotPermitted*(self: Model, item: Item): bool =
+    let isRegularUser = item.memberRole != MemberRole.Owner and item.memberRole != MemberRole.Admin and item.memberRole != MemberRole.TokenMaster
+    if not isRegularUser:
+      return false
+    if item.isCategory:
+      return self.categoryShouldBeHiddenBecauseNotPermitted(item.id)
+    else:
+      return item.hideBecausePermissionsAreNotMet()
+
+  proc firstNotHiddenItemId*(self: Model): string =
+    for i in 0 ..< self.items.len:
+      if not self.items[i].isCategory and not self.itemShouldBeHiddenBecauseNotPermitted(self.items[i]):
+        return self.items[i].id
+    return ""
+
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"itemId",
@@ -98,6 +125,9 @@ QtObject:
       ModelRole.Active.int:"active",
       ModelRole.Position.int:"position",
       ModelRole.CategoryId.int:"categoryId",
+      ModelRole.HideIfPermissionsNotMet.int:"hideIfPermissionsNotMet",
+      ModelRole.ViewOnlyPermissionsSatisfied.int:"viewOnlyPermissionsSatisfied",
+      ModelRole.ViewAndPostPermissionsSatisfied.int:"viewAndPostPermissionsSatisfied",
       ModelRole.CategoryPosition.int:"categoryPosition",
       ModelRole.Highlight.int:"highlight",
       ModelRole.CategoryOpened.int:"categoryOpened",
@@ -109,6 +139,7 @@ QtObject:
       ModelRole.RequiresPermissions.int:"requiresPermissions",
       ModelRole.CanPostReactions.int:"canPostReactions",
       ModelRole.ViewersCanPostReactions.int:"viewersCanPostReactions",
+      ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int:"shouldBeHiddenBecausePermissionsAreNotMet"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -180,6 +211,14 @@ QtObject:
       result = newQVariant(item.canPostReactions)
     of ModelRole.ViewersCanPostReactions:
       result = newQVariant(item.viewersCanPostReactions)
+    of ModelRole.HideIfPermissionsNotMet:
+      result = newQVariant(item.hideIfPermissionsNotMet)
+    of ModelRole.ViewAndPostPermissionsSatisfied:
+      result = newQVariant(item.viewAndPostPermissionsSatisfied)
+    of ModelRole.ViewOnlyPermissionsSatisfied:
+      result = newQVariant(item.viewOnlyPermissionsSatisfied)
+    of ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet:
+      return newQVariant(self.itemShouldBeHiddenBecauseNotPermitted(item))
 
   proc getItemIdxById(items: seq[Item], id: string): int =
     var idx = 0
@@ -234,6 +273,20 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.dataChanged(index, index, @[ModelRole.CategoryOpened.int])
+
+  # This function only refreshes ShouldBeHiddenBecausePermissionsAreNotMet.
+  # Then itemShouldBeHiddenBecauseNotPermitted() is used in data() to determined whether category is hidden or not.
+  proc updateHiddenFlagForCategory(self: Model, id: string) =
+    if id == "":
+      return
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    if not self.items[index].isCategory:
+      return
+    let modelIndex = self.createIndex(index, 0, nil)
+    defer: modelIndex.delete
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int])
 
   proc removeItemByIndex(self: Model, idx: int) =
     if idx == -1:
@@ -295,6 +348,11 @@ QtObject:
         else:
           self.dataChanged(index, index, @[ModelRole.Active.int])
 
+  proc activeItem*(self: Model): Item =
+    for i in 0 ..< self.items.len:
+      if self.items[i].active:
+        return self.items[i]
+
   proc setItemLocked*(self: Model, id: string, locked: bool) =
     let index = self.getItemIdxById(id)
     if index == -1:
@@ -303,6 +361,28 @@ QtObject:
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Locked.int])
+
+  proc setViewOnlyPermissionsSatisfied*(self: Model, id: string, satisfied: bool) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    self.items[index].viewOnlyPermissionsSatisfied = satisfied
+    let modelIndex = self.createIndex(index, 0, nil)
+    defer: modelIndex.delete
+    # refresh also ShouldBeHiddenBecausePermissionsAreNotMet because it depends on ViewOnlyPermissionsSatisfied
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.ViewOnlyPermissionsSatisfied.int, ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int])
+    self.updateHiddenFlagForCategory(self.items[index].categoryId)
+
+  proc setViewAndPostPermissionsSatisfied*(self: Model, id: string, satisfied: bool) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    self.items[index].viewAndPostPermissionsSatisfied = satisfied
+    let modelIndex = self.createIndex(index, 0, nil)
+    defer: modelIndex.delete
+    # refresh also ShouldBeHiddenBecausePermissionsAreNotMet because it depends on ViewAndPostPermissionsSatisfied
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.ViewAndPostPermissionsSatisfied.int, ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int])
+    self.updateHiddenFlagForCategory(self.items[index].categoryId)
 
   proc setItemPermissionsRequired*(self: Model, id: string, value: bool) =
     let index = self.getItemIdxById(id)
@@ -356,6 +436,12 @@ QtObject:
         self.items[i].muted = muted
         self.dataChanged(index, index, @[ModelRole.Muted.int])
 
+  proc allChannelsAreHiddenBecauseNotPermitted*(self: Model): bool =
+    for i in 0 ..< self.items.len:
+      if not self.items[i].isCategory and not self.itemShouldBeHiddenBecauseNotPermitted(self.items[i]):
+        return false
+    return true
+
   proc changeBlockedOnItemById*(self: Model, id: string, blocked: bool) =
     let index = self.getItemIdxById(id)
     if index == -1:
@@ -385,7 +471,7 @@ QtObject:
       ModelRole.TrustStatus.int,
     ])
 
-  proc updateItemDetailsById*(self: Model, id, name, description, emoji, color: string) =
+  proc updateItemDetailsById*(self: Model, id, name, description, emoji, color: string, hideIfPermissionsNotMet: bool) =
     let index = self.getItemIdxById(id)
     if index == -1:
       return
@@ -393,6 +479,7 @@ QtObject:
     self.items[index].description = description
     self.items[index].emoji = emoji
     self.items[index].color = color
+    self.items[index].hideIfPermissionsNotMet = hideIfPermissionsNotMet
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
@@ -400,7 +487,11 @@ QtObject:
       ModelRole.Description.int,
       ModelRole.Emoji.int,
       ModelRole.Color.int,
+      ModelRole.HideIfPermissionsNotMet.int,
+      # refresh also ShouldBeHiddenBecausePermissionsAreNotMet because it depends on HideIfPermissionsNotMet
+      ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int
     ])
+    self.updateHiddenFlagForCategory(self.items[index].categoryId)
 
   proc updateNameColorIconOnItemById*(self: Model, id, name, color, icon: string) =
     let index = self.getItemIdxById(id)
