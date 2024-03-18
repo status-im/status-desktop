@@ -198,12 +198,12 @@ StackView {
                     return false
                 }
 
-                permissionTypeLimitReached: {
+                readonly property var permissionTypeLimitReachedOrExceeded: {
                     const type = dirtyValues.permissionType
                     const limit = PermissionTypes.getPermissionsCountLimit(type)
 
                     if (limit === -1)
-                        return false
+                        return [false, false]
 
                     const model = root.permissionsModel
                     const count = model.rowCount()
@@ -213,8 +213,11 @@ StackView {
                         if (type === ModelUtils.get(model, i, "permissionType"))
                             sameTypeCount++
 
-                    return limit <= sameTypeCount
+                    return [sameTypeCount >= limit, sameTypeCount > limit]
                 }
+
+                permissionTypeLimitReached: permissionTypeLimitReachedOrExceeded[0]
+                permissionTypeLimitExceeded: permissionTypeLimitReachedOrExceeded[1]
 
                 onCreatePermissionClicked: {
                     const holdings = dirtyValues.holdingsRequired ?

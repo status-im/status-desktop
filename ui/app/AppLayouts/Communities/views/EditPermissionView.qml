@@ -28,7 +28,7 @@ StatusScrollView {
 
     readonly property bool saveEnabled: root.isFullyFilled
                      && !root.permissionDuplicated
-                     && !root.permissionTypeLimitReached
+                     && (isEditState ? !root.permissionTypeLimitExceeded : !root.permissionTypeLimitReached)
 
     property int viewWidth: 560 // by design
     property bool isEditState: false
@@ -59,6 +59,7 @@ StatusScrollView {
 
     property bool permissionDuplicated: false
     property bool permissionTypeLimitReached: false
+    property bool permissionTypeLimitExceeded
 
     signal createPermissionClicked
     signal navigateToMintTokenSettings(bool isAssetType)
@@ -119,8 +120,7 @@ StatusScrollView {
             property bool holdingsRequired: true
 
             Binding on isPrivate {
-                value: (d.dirtyValues.permissionType === PermissionTypes.Type.Admin) ||
-                       (d.dirtyValues.permissionType === PermissionTypes.Type.Moderator)
+                value: d.dirtyValues.permissionType === PermissionTypes.Type.Admin
             }
 
             function getHoldingIndex(key) {
@@ -404,17 +404,17 @@ StatusScrollView {
                 leftPadding: 6
 
                 Binding on bgColor {
-                    when: root.permissionTypeLimitReached
+                    when: root.permissionTypeLimitReached && !root.isEditState
                     value: Theme.palette.dangerColor3
                 }
 
                 Binding on titleText.color {
-                    when: root.permissionTypeLimitReached
+                    when: root.permissionTypeLimitReached && !root.isEditState
                     value: Theme.palette.dangerColor1
                 }
 
                 Binding on asset.color {
-                    when: root.permissionTypeLimitReached
+                    when: root.permissionTypeLimitReached && !root.isEditState
                     value: Theme.palette.dangerColor1
                 }
 
@@ -603,7 +603,7 @@ StatusScrollView {
                 return ""
             }
 
-            visible: root.permissionDuplicated || root.permissionTypeLimitReached
+            visible: root.permissionDuplicated || (root.permissionTypeLimitReached && !root.isEditState)
         }
 
         StatusWarningBox {
