@@ -33,7 +33,7 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
 @pytest.mark.parametrize('autocomplete, default_name', [
     pytest.param(False, 'Account 1'),
-    pytest.param(True, 'Account 1')
+    pytest.param(True, 'Account 1', marks=pytest.mark.critical)
 ])
 def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, default_name: str, autocomplete: bool):
     with step('Open import seed phrase view and enter seed phrase'):
