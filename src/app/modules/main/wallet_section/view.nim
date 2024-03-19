@@ -7,7 +7,7 @@ import ./io_interface
 import ../../shared_models/currency_amount
 import ./wallet_connect/controller as wcc
 
-type 
+type
   ActivityControllerArray* = array[2, activityc.Controller]
 
 QtObject:
@@ -36,11 +36,11 @@ QtObject:
   proc delete*(self: View) =
     self.QObject.delete
 
-  proc newView*(delegate: io_interface.AccessInterface, 
-    activityController: activityc.Controller, 
-    tmpActivityControllers: ActivityControllerArray, 
-    activityDetailsController: activity_detailsc.Controller, 
-    collectibleDetailsController: collectible_detailsc.Controller, 
+  proc newView*(delegate: io_interface.AccessInterface,
+    activityController: activityc.Controller,
+    tmpActivityControllers: ActivityControllerArray,
+    activityDetailsController: activity_detailsc.Controller,
+    collectibleDetailsController: collectible_detailsc.Controller,
     wcController: wcc.Controller): View =
     new(result, delete)
     result.delegate = delegate
@@ -259,3 +259,6 @@ QtObject:
     return self.delegate.getRpcStats()
   proc resetRpcStats*(self: View) {.slot.} =
     self.delegate.resetRpcStats()
+
+  proc canProfileProveOwnershipOfProvidedAddresses*(self: View, addresses: string): bool {.slot.} =
+    return self.delegate.canProfileProveOwnershipOfProvidedAddresses(addresses)

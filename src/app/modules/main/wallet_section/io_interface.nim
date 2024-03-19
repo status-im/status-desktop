@@ -120,3 +120,6 @@ method getRpcStats*(self: AccessInterface): string {.base.} =
 
 method resetRpcStats*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method canProfileProveOwnershipOfProvidedAddresses*(self: AccessInterface, addresses: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

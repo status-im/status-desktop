@@ -209,6 +209,10 @@ QtObject {
         }
     }
 
+    function canProfileProveOwnershipOfProvidedAddresses(addresses) {
+        return walletSection.canProfileProveOwnershipOfProvidedAddresses(JSON.stringify(addresses))
+    }
+
     function setHideSignPhraseModal(value) {
         localAccountSensitiveSettings.hideSignPhraseModal = value;
     }
