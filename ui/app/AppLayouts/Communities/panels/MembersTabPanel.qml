@@ -95,8 +95,9 @@ Item {
                 readonly property bool tabIsShowingRejectButton: root.panelType === MembersTabPanel.TabType.PendingRequests
                 readonly property bool tabIsShowingAcceptButton: root.panelType === MembersTabPanel.TabType.PendingRequests ||
                                                                     root.panelType === MembersTabPanel.TabType.DeclinedRequests
-                readonly property bool tabIsShowingViewMessagesButton: root.panelType === MembersTabPanel.TabType.AllMembers ||
-                                                                       root.panelType === MembersTabPanel.TabType.BannedMembers
+                readonly property bool tabIsShowingViewMessagesButton: model.membershipRequestState !== Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete &&
+                                                                       (root.panelType === MembersTabPanel.TabType.AllMembers ||
+                                                                       root.panelType === MembersTabPanel.TabType.BannedMembers)
 
 
                 // Request states
@@ -147,6 +148,8 @@ Item {
                 readonly property bool banPendingButtonVisible: tabIsShowingKickBanButtons && isBanPending
                 readonly property bool unbanButtonVisible: tabIsShowingUnbanButton && isBanned && showOnHover
                 readonly property bool viewMessagesButtonVisible: tabIsShowingViewMessagesButton && showOnHover
+                readonly property bool messagesDeletedTextVisible: showOnHover &&
+                                                                   model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete
 
                 /// Pending states ///
                 readonly property bool isPendingState: isAcceptedPending || isRejectedPending || isBanPending || isUnbanPending || isKickPending
@@ -186,6 +189,13 @@ Item {
                         }
                     },
 
+                    StatusBaseText {
+                        text: qsTr("Messages deleted")
+                        color: Theme.palette.baseColor1
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: messagesDeletedTextVisible
+                    },
+
                     StatusButton {
                         id: viewMessages
                         anchors.verticalCenter: parent.verticalCenter
@@ -221,6 +231,8 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: unbanButtonVisible
                         text: qsTr("Unban")
+                        type: StatusBaseButton.Type.Danger
+                        size: StatusBaseButton.Size.Small
                         onClicked: root.unbanUserClicked(model.pubKey)
                     },
 

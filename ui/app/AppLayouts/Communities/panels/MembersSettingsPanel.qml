@@ -185,6 +185,7 @@ SettingsPage {
                 Layout.fillHeight: true
 
                 onUnbanUserClicked: root.unbanUserClicked(id)
+                onViewMemberMessagesClicked: root.viewMemberMessagesClicked(pubKey, displayName)
             }
         }
     }

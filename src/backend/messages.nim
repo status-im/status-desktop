@@ -98,7 +98,7 @@ proc deleteCommunityMemberMessages*(communityId: string, memberPubKey: string, m
   if messageId != "" and chatId != "":
     messages.add(%*{
       "id": messageId,
-      "chatId": chatId,
+      "chat_id": chatId,
     })
 
   let payload = %* [{

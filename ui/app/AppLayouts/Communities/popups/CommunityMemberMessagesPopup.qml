@@ -24,7 +24,6 @@ StatusDialog {
 
 
     width: 800
-    padding: 0
 
     title: qsTr("%1 messages").arg(root.displayName)
     subtitle: qsTr("%n message(s)", "", root.memberMessagesModel.count)
