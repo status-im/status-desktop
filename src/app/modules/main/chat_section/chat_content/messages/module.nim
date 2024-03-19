@@ -665,9 +665,8 @@ method onGetMessageById*(self: Module, requestId: UUID, messageId: string, messa
     self.view.setMessageSearchOngoing(false)
     return
 
-  if message.contentType == ContentType.ContactIdentityVerification or
-     message.contentType == ContentType.ContactRequest:
-    warn "attempted to scroll to a non-displayed message", messageId, contentType = $message.contentType
+  if message.contentType == ContentType.ContactIdentityVerification:
+    warn "attempted to scroll to a non-visual message", messageId, contentType = $message.contentType
     self.view.setMessageSearchOngoing(false)
     return
 
