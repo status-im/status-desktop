@@ -1,9 +1,12 @@
-import NimQml, Tables, os, json, stew/shims/strformat, sequtils, strutils, uuids, times
+import NimQml, Tables, os, json, stew/shims/strformat, sequtils, strutils, uuids, times, std/options
 import json_serialization, chronicles
 
 import ../../../app/global/global_singleton
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
+import ./dto/login_request
+import ./dto/create_account_and_login_request
+import ./dto/wallet_secretes_config
 from ../keycard/service import KeycardEvent, KeyDetails
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
@@ -416,27 +419,89 @@ QtObject:
       if not accountData.isNil:
         accountData["keycard-pairing"] = kcDataObj{"key"}
 
+  proc buildWalletSecrets(self: Service): WalletSecretsConfig =
+    return WalletSecretsConfig(
+      poktToken: POKT_TOKEN_RESOLVED,
+      infuraToken: INFURA_TOKEN_RESOLVED,
+      infuraSecret: INFURA_TOKEN_SECRET_RESOLVED,
+      openseaApiKey: OPENSEA_API_KEY_RESOLVED,
+      raribleMainnetApiKey: RARIBLE_MAINNET_API_KEY_RESOLVED,
+      raribleTestnetApiKey: RARIBLE_TESTNET_API_KEY_RESOLVED,
+
+      # ganacheURL:
+      alchemyEthereumMainnetToken: ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
+      alchemyEthereumGoerliToken: ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
+      alchemyEthereumSepoliaToken: ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,
+      alchemyArbitrumMainnetToken: ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
+      alchemyArbitrumGoerliToken: ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
+      alchemyArbitrumSepoliaToken: ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
+      alchemyOptimismMainnetToken: ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
+      alchemyOptimismGoerliToken: ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
+      alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
+    )
+
   proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string): string =
     try:
-      let request = %* {
-        "backupDisabledDataDir": main_constants.ROOTKEYSTOREDIR,
-        # "deviceName": 
-        "password": hashPassword(password),
-        "displayName": displayName,
-        "customizationColor": DEFAULT_CUSTOMIZATION_COLOR,
-        "imagePath": imagePath,
+      # let request = %* {
+      #   "backupDisabledDataDir": main_constants.STATUSGODIR,
+      #   # "deviceName": 
+      #   "password": hashPassword(password),
+      #   "displayName": displayName,
+      #   "customizationColor": DEFAULT_CUSTOMIZATION_COLOR,
+      #   "imagePath": imagePath,
 
-        "logLevel": toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL),
+      #   "logLevel": toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL),
         
-        "wakuV2LightClient": false,
-        "previewPrivacy": true,
+      #   "wakuV2LightClient": false,
+      #   "previewPrivacy": true,
 
-        # "networkId": NETWORKS[0]{"chainId"},
-        # "verifyENSURL": NETWORKS[0]{"fallbackUrl"},
-        # "verifyTransactionURL": NETWORKS[0]{"fallbackUrl"},
-        # "upstreamConfig": NETWORKS[0]{"rpcUrl"},
-      }
-      let response = status_account.createAccountAndLogin($request)
+      #   # "networkId": NETWORKS[0]{"chainId"},
+      #   # "verifyENSURL": NETWORKS[0]{"fallbackUrl"},
+      #   # "verifyTransactionURL": NETWORKS[0]{"fallbackUrl"},
+      #   # "upstreamConfig": NETWORKS[0]{"rpcUrl"},
+
+      #   "torrentConfigEnabled": true,
+      #   "torrentConfigPort": TORRENT_CONFIG_PORT,
+
+      #   "poktToken": POKT_TOKEN_RESOLVED,
+      #   "infuraToken": INFURA_TOKEN_RESOLVED,
+      #   "infuraSecret": INFURA_TOKEN_SECRET_RESOLVED,
+      #   "openseaApiKey": OPENSEA_API_KEY_RESOLVED,
+      #   "raribleMainnetApiKey": RARIBLE_MAINNET_API_KEY_RESOLVED,
+      #   "raribleTestnetApiKey": RARIBLE_TESTNET_API_KEY_RESOLVED,
+
+      #   # "ganacheURL":
+      #   "alchemyEthereumMainnetToken": ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
+      #   "alchemyEthereumGoerliToken": ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
+      #   "alchemyEthereumSepoliaToken": ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,
+      #   "alchemyArbitrumMainnetToken": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
+      #   "alchemyArbitrumGoerliToken": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
+      #   "alchemyArbitrumSepoliaToken": ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
+      #   "alchemyOptimismMainnetToken": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
+      #   "alchemyOptimismGoerliToken": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
+      #   "alchemyOptimismSepoliaToken": ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
+      # }
+
+      let request = CreateAccountAndLoginRequest(
+        backupDisabledDataDir: main_constants.STATUSGODIR,
+
+        password: hashPassword(password),
+        displayName: displayName,
+        customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
+        imagePath: imagePath,
+
+        logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
+        
+        wakuV2LightClient: false,
+        previewPrivacy: true,
+
+        torrentConfigEnabled: some(true),
+        torrentConfigPort: some(TORRENT_CONFIG_PORT),
+
+        walletSecretsConfig: self.buildWalletSecrets(),
+      )
+
+      let response = status_account.createAccountAndLogin(request)
       # var error = "response doesn't contain \"error\""
       debug "<<< createAccountAndLogin response: ", response
       
@@ -708,7 +773,7 @@ QtObject:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
   proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
-    trace "<<< doLoginV2"
+    trace "<<< doLogin"
     let nodeConfigJson = self.getLoginNodeConfig()
     let response = status_account.login(
       account.name,
@@ -729,11 +794,32 @@ QtObject:
 
   proc doLoginV2(self: Service, account: AccountDto, passwordHash: string) =
     trace "<<< doLoginV2"
-    let response = status_account.loginAccount(
-      account.keyUid,
-      account.kdfIterations,
-      passwordHash,
+    let request = LoginAccountRequest(
+      keyUid: account.keyUid,
+      kdfIterations: account.kdfIterations,
+      passwordHash: passwordHash,
+      walletSecretsConfig: self.buildWalletSecrets(),
     )
+    let response = status_account.loginAccount(request)
+
+        # "poktToken": POKT_TOKEN_RESOLVED,
+        # "infuraToken": INFURA_TOKEN_RESOLVED,
+        # "infuraSecret": INFURA_TOKEN_SECRET_RESOLVED,
+        # "openseaApiKey": OPENSEA_API_KEY_RESOLVED,
+        # "raribleMainnetApiKey": RARIBLE_MAINNET_API_KEY_RESOLVED,
+        # "raribleTestnetApiKey": RARIBLE_TESTNET_API_KEY_RESOLVED,
+
+        # # "ganacheURL":
+        # "alchemyEthereumMainnetToken": ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
+        # "alchemyEthereumGoerliToken": ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
+        # "alchemyEthereumSepoliaToken": ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,
+        # "alchemyArbitrumMainnetToken": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
+        # "alchemyArbitrumGoerliToken": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
+        # "alchemyArbitrumSepoliaToken": ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
+        # "alchemyOptimismMainnetToken": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
+        # "alchemyOptimismGoerliToken": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
+        # "alchemyOptimismSepoliaToken": ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
+
     if response.result{"error"}.getStr != "":
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr))
       return

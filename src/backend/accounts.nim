@@ -1,6 +1,8 @@
 import json, json_serialization, chronicles, strutils
 import ./core, ../app_service/common/utils
 import ../app_service/service/wallet_account/dto/account_dto
+import ../app_service/service/accounts/dto/login_request
+import ../app_service/service/accounts/dto/create_account_and_login_request
 import ./response_type
 
 import status_go
@@ -360,9 +362,11 @@ proc saveAccountAndLogin*(hashedPassword: string, account, subaccounts, settings
     error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc createAccountAndLogin*(requestJSON: string): RpcResponse[JsonNode] =
+proc createAccountAndLogin*(request: CreateAccountAndLoginRequest): RpcResponse[JsonNode] =
   try:
-    let response = status_go.createAccountAndLogin(requestJSON)
+    let payload = request.toJson()
+    debug "<<< createAccountAndLogin payload: ", payload
+    let response = status_go.createAccountAndLogin($payload)
     result.result = Json.decode(response, JsonNode)
 
   except RpcException as e:
@@ -418,13 +422,9 @@ proc login*(name, keyUid: string, kdfIterations: int, hashedPassword, thumbnail,
     error "error doing rpc request", methodName = "login", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc loginAccount*(keyUid: string, kdfIterations: int, passwordHash: string): RpcResponse[JsonNode] =
+proc loginAccount*(request: LoginAccountRequest): RpcResponse[JsonNode] =
   try:
-    let payload = %* {
-      "keyUid": keyUid,
-      "password": passwordHash,
-      "kdfIterations": kdfIterations
-    }
+    let payload = request.toJson()
     let response = status_go.loginAccount($payload)
     result.result = Json.decode(response, JsonNode)
     
