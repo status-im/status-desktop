@@ -32,6 +32,7 @@ ColumnLayout {
 
     property var currencyStore
     property var networkConnectionStore
+    required property var tokensStore
     property var overview
     property bool assetDetailsLaunched: false
     property bool filterVisible
@@ -54,12 +55,19 @@ ColumnLayout {
 
         readonly property bool isCustomView: cmbTokenOrder.currentValue === SortOrderComboBox.TokenOrderCustom
 
-        function tokenIsVisible(symbol) {
+        function tokenIsVisible(symbol, currentCurrencyBalance, isCommunityAsset) {
             // NOTE Backend returns ETH, SNT, STT and DAI by default
             if (!root.controller.filterAcceptsSymbol(symbol)) // explicitely hidden
                 return false
-            // Received tokens can have 0 balance, which indicate previosuly owned token
-            return true // TODO handle UI threshold (#12611)
+            if (isCommunityAsset)
+                return true
+            // Received tokens can have 0 balance, which indicate previously owned token
+            if (root.tokensStore.displayAssetsBelowBalance) {
+                const threshold = root.tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
+                if (threshold > 0)
+                    return currentCurrencyBalance > threshold
+            }
+            return true
         }
 
         function getTotalBalance(balances, decimals, key) {
@@ -89,13 +97,11 @@ ColumnLayout {
                     expression: {
                         if(!model.communityId) {
                             if (!!model.marketDetails) {
-                            	return model.currentBalance * model.marketDetails.currencyPrice.amount
- 			      }
+                                return model.currentBalance * model.marketDetails.currencyPrice.amount
+                            }
                             return 0
                         }
-                        else {
-                            return model.currentBalance
-                        }
+                        return model.currentBalance
                     }
                     expectedRoles: ["marketDetails", "communityId", "currentBalance"]
                 },
@@ -126,9 +132,10 @@ ColumnLayout {
                 FastExpressionFilter {
                     expression: {
                         root.controller.revision
-                        return d.tokenIsVisible(model.symbol)
+                        root.tokensStore.displayAssetsBelowBalance
+                        return d.tokenIsVisible(model.symbol, model.currentCurrencyBalance, model.isCommunityAsset)
                     }
-                    expectedRoles: ["symbol"]
+                    expectedRoles: ["symbol", "currentCurrencyBalance", "isCommunityAsset"]
                 }
             ]
             sorters: [
@@ -337,7 +344,7 @@ ColumnLayout {
                 onTriggered: root.manageTokensRequested()
             }
             StatusAction {
-                enabled: symbol !== "ETH"
+                enabled: symbol !== Constants.ethToken
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: qsTr("Hide asset")

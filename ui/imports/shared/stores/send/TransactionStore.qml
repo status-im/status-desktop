@@ -303,7 +303,7 @@ QtObject {
                     }
                     return 0
                 }
-                expectedRoles: ["marketDetails", "currentBalance", "symbol"]
+                expectedRoles: ["marketDetails", "currentBalance"]
             }
         ]
         filters: [
@@ -324,12 +324,17 @@ QtObject {
             },
             FastExpressionFilter {
                 expression: {
+                    root.walletAssetStore.assetsController.revision
+
+                    if (!root.walletAssetStore.assetsController.filterAcceptsSymbol(model.symbol)) // explicitely hidden
+                        return false
                     if (model.isCommunityAsset)
                         return true
-                    return model.currentCurrencyBalance > processedAssetsModel.displayAssetsBelowBalanceThresholdAmount
+                    if (tokensStore.displayAssetsBelowBalance)
+                        return model.currentCurrencyBalance > processedAssetsModel.displayAssetsBelowBalanceThresholdAmount
+                    return true
                 }
-                expectedRoles: ["isCommunityAsset", "currentCurrencyBalance"]
-                enabled: tokensStore.displayAssetsBelowBalance
+                expectedRoles: ["symbol", "isCommunityAsset", "currentCurrencyBalance"]
             }
         ]
         sorters: RoleSorter {

@@ -8,7 +8,7 @@ ListModel {
             tokensKey: "DAI",
             balances: [
                 { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 5, balance: "0"},
-                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 5, balance: "0"}
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 5, balance: "123456789123456789"}
             ]
         },
         {

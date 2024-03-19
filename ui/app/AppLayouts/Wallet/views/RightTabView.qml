@@ -149,6 +149,7 @@ RightTabBaseView {
                         overview: RootStore.overview
                         currencyStore: RootStore.currencyStore
                         networkConnectionStore: root.networkConnectionStore
+                        tokensStore: RootStore.tokensStore
                         assetDetailsLaunched: stack.currentIndex === 2
                         filterVisible: filterButton.checked
                         onAssetClicked: {
