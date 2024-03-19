@@ -7,7 +7,10 @@ import allure
 import configs
 import driver
 from driver.objects_access import walk_children
+from gui.components.activity_center import ActivityCenter
 from gui.components.context_menu import ContextMenu
+from gui.components.delete_popup import DeleteMessagePopup
+from gui.components.emoji_popup import EmojiPopup
 from gui.components.messaging.edit_group_name_and_image_popup import EditGroupNameAndImagePopup
 from gui.components.messaging.leave_group_popup import LeaveGroupPopup
 from gui.elements.button import Button
@@ -69,10 +72,12 @@ class ToolBar(QObject):
 
     def __init__(self):
         super().__init__(messaging_names.mainWindow_statusToolBar_StatusToolBar)
-        self.pinned_message_tooltip = QObject(communities_names.statusToolBar_StatusChatInfo_pinText_TruncatedTextWithTooltip)
+        self.pinned_message_tooltip = QObject(
+            communities_names.statusToolBar_StatusChatInfo_pinText_TruncatedTextWithTooltip)
         self.confirm_button = Button(messaging_names.statusToolBar_Confirm_StatusButton)
         self.status_button = Button(messaging_names.statusToolBar_Cancel_StatusButton)
         self.contact_tag = QObject(messaging_names.statusToolBar_StatusTagItem)
+        self.notifications_button = Button(messaging_names.statusToolBar_notificationButton_StatusActivityCenterButton)
 
     @property
     @allure.step('Get visibility of pin message tooltip')
@@ -91,6 +96,11 @@ class ToolBar(QObject):
                     if getattr(child, 'objectName', '') == 'close-icon':
                         driver.mouseClick(child)
                         break
+
+    @allure.step('Open activity center')
+    def open_activity_center(self):
+        self.notifications_button.click()
+        return ActivityCenter().wait_until_appears()
 
 
 class Message:
@@ -165,7 +175,7 @@ class ChatView(QObject):
         self._message_list_item = QObject(messaging_names.chatLogView_chatMessageViewDelegate_MessageView)
 
     @allure.step('Get messages')
-    def messages(self, index: bool) -> typing.List[Message]:
+    def messages(self, index: int) -> typing.List[Message]:
         _messages = []
         # message_list_item has different indexes if we run multiple instances, so we pass index
         self._message_list_item.real_name['index'] = index
@@ -174,7 +184,7 @@ class ChatView(QObject):
                 _messages.append(Message(item))
         return _messages
 
-    def find_message_by_text(self, message_text: str, index: bool):
+    def find_message_by_text(self, message_text: str, index: int):
         message = None
         started_at = time.monotonic()
         while message is None:
@@ -240,6 +250,7 @@ class ChatMessagesView(QObject):
         self._add_remove_item = QObject(messaging_names.add_remove_from_group_StatusMenuItem)
         self._message_input_area = QObject(messaging_names.inputScrollView_messageInputField_TextArea)
         self._message_field = TextEdit(messaging_names.inputScrollView_Message_PlaceholderText)
+        self._emoji_button = Button(messaging_names.mainWindow_statusChatInputEmojiButton_StatusFlatRoundButton)
 
     @property
     @allure.step('Get group name')
@@ -258,12 +269,14 @@ class ChatMessagesView(QObject):
     @property
     @allure.step('Get gray text from message area')
     def gray_text_from_message_area(self) -> str:
-        return driver.waitForObjectExists(self._message_input_area.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).placeholderText
+        return driver.waitForObjectExists(self._message_input_area.real_name,
+                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).placeholderText
 
     @property
     @allure.step('Get enabled state of message area')
     def is_message_area_enabled(self) -> bool:
-        return driver.waitForObjectExists(self._message_input_area.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+        return driver.waitForObjectExists(self._message_input_area.real_name,
+                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
 
     @allure.step('Click more options button')
     def open_more_options(self):
@@ -291,6 +304,13 @@ class ChatMessagesView(QObject):
         for i in range(2):
             driver.nativeType('<Return>')
 
+    @allure.step('Send emoji to chat')
+    def send_emoji_to_chat(self, emoji: str):
+        self._emoji_button.click()
+        EmojiPopup().wait_until_appears().select(emoji)
+        for i in range(2):
+            driver.nativeType('<Return>')
+
     @allure.step('Remove member from chat')
     def remove_member_from_chat(self, member):
         time.sleep(2)
@@ -307,11 +327,32 @@ class ChatMessagesView(QObject):
 class MessageQuickActions(QObject):
     def __init__(self):
         super().__init__(messaging_names.chatMessageViewDelegate_StatusMessageQuickActions)
-        self._pin_button = Button(messaging_names.chatMessageViewDelegate_MessageView_toggleMessagePin_StatusFlatRoundButton)
+        self._pin_button = Button(
+            messaging_names.chatMessageViewDelegate_MessageView_toggleMessagePin_StatusFlatRoundButton)
+        self._edit_button = Button(messaging_names.chatMessageViewDelegate_editMessageButton_StatusFlatRoundButton)
+        self._delete_button = Button(
+            messaging_names.chatMessageViewDelegate_chatDeleteMessageButton_StatusFlatRoundButton)
+        self._edit_message_field = TextEdit(messaging_names.edit_inputScrollView_messageInputField_TextArea)
+        self._save_text_button = Button(messaging_names.chatMessageViewDelegate_Save_StatusButton)
 
     @allure.step('Toggle pin button')
     def toggle_pin(self):
         self._pin_button.click()
+
+    @allure.step('Edit message and save changes')
+    def edit_message(self, text: str):
+        self._edit_button.click()
+        self._edit_message_field.type_text(text)
+        self._save_text_button.click()
+
+    @allure.step('Delete message')
+    def delete_message(self):
+        self._delete_button.click()
+        DeleteMessagePopup().delete()
+
+    @allure.step('Delete button is visible')
+    def is_delete_button_visible(self) -> bool:
+        return self._delete_button.is_visible
 
 
 class Members(QObject):
