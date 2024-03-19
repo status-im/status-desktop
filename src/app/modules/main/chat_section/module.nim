@@ -738,7 +738,6 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   self.view.chatsModel().removeItemById(chatId)
   self.removeSubmodule(chatId)
 
-  # check if the currently active chat has been deleted
   let activeChatId = self.controller.getActiveChatId()
   if chatId == activeChatId:
     self.setFirstChannelAsActive()
