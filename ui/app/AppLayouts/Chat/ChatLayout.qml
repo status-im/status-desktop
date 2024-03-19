@@ -122,9 +122,9 @@ StackLayout {
                 Global.openPopup(communityIntroDialogPopup, {
                     communityId: joinCommunityView.communityId,
                     isInvitationPending: joinCommunityView.isInvitationPending,
-                    name: communityData.name,
+                    communityName: communityData.name,
                     introMessage: communityData.introMessage,
-                    imageSrc: communityData.image,
+                    communityIcon: communityData.image,
                     accessType: communityData.access
                 })
             }
@@ -190,9 +190,9 @@ StackLayout {
                 Global.openPopup(communityIntroDialogPopup, {
                     communityId: chatView.communityId,
                     isInvitationPending: root.rootStore.isMyCommunityRequestPending(chatView.communityId),
-                    name: root.sectionItemModel.name,
+                    communityName: root.sectionItemModel.name,
                     introMessage: root.sectionItemModel.introMessage,
-                    imageSrc: root.sectionItemModel.image,
+                    communityIcon: root.sectionItemModel.image,
                     accessType: root.sectionItemModel.access
                 })
             }
@@ -205,8 +205,8 @@ StackLayout {
 
     Loader {
         id: communitySettingsLoader
-        active: root.rootStore.chatCommunitySectionModule.isCommunity() && 
-                root.isPrivilegedUser && 
+        active: root.rootStore.chatCommunitySectionModule.isCommunity() &&
+                root.isPrivilegedUser &&
                 (root.currentIndex === 1 || !!communitySettingsLoader.item) // lazy load and preserve state after loading
         asynchronous: false // It's false on purpose. We want to load the component synchronously
         sourceComponent: CommunitySettingsView {
@@ -272,8 +272,9 @@ StackLayout {
 
             property string communityId
 
-            loginType: root.rootStore.loginType
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+            canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
+
             walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
             requirementsCheckPending: root.rootStore.requirementsCheckPending
             permissionsModel: {
@@ -293,8 +294,8 @@ StackLayout {
                 communityIntroDialog.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
             }
 
-            onSignSharedAddressesForAllNonKeycardKeypairs: {
-                root.rootStore.signSharedAddressesForAllNonKeycardKeypairs()
+            onSignProfileKeypairAndAllNonKeycardKeypairs: {
+                root.rootStore.signProfileKeypairAndAllNonKeycardKeypairs()
             }
 
             onSignSharedAddressesForKeypair: {
@@ -321,9 +322,21 @@ StackLayout {
             Connections {
                 target: root.rootStore.communitiesModuleInst
 
-                function onSharedAddressesForAllNonKeycardKeypairsSigned() {
+                function onAllSharedAddressesSigned() {
+                    if (communityIntroDialog.profileProvesOwnershipOfSelectedAddresses) {
+                        communityIntroDialog.joinCommunity()
+                        communityIntroDialog.close()
+                        return
+                    }
+
+                    if (communityIntroDialog.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                        communityIntroDialog.joinCommunity()
+                        communityIntroDialog.close()
+                        return
+                    }
+
                     if (!!communityIntroDialog.replaceItem) {
-                        communityIntroDialog.replaceLoader.item.sharedAddressesForAllNonKeycardKeypairsSigned()
+                        communityIntroDialog.replaceLoader.item.allSigned()
                     }
                 }
             }

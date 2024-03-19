@@ -339,8 +339,8 @@ QtObject:
   proc prepareTokenModelForCommunity(self: View, communityId: string) {.slot.} =
     self.delegate.prepareTokenModelForCommunity(communityId)
 
-  proc signSharedAddressesForAllNonKeycardKeypairs*(self: View) {.slot.} =
-    self.delegate.signSharedAddressesForAllNonKeycardKeypairs()
+  proc signProfileKeypairAndAllNonKeycardKeypairs*(self: View) {.slot.} =
+    self.delegate.signProfileKeypairAndAllNonKeycardKeypairs()
 
   proc signSharedAddressesForKeypair*(self: View, keyUid: string) {.slot.} =
     self.delegate.signSharedAddressesForKeypair(keyUid, pin = "")
@@ -815,9 +815,9 @@ QtObject:
     self.keypairsSigningModel.setItems(items)
     self.keypairsSigningModelChanged()
 
-  proc sharedAddressesForAllNonKeycardKeypairsSigned(self: View) {.signal.}
-  proc sendSharedAddressesForAllNonKeycardKeypairsSignedSignal*(self: View) =
-    self.sharedAddressesForAllNonKeycardKeypairsSigned()
+  proc allSharedAddressesSigned*(self: View) {.signal.}
+  proc sendAllSharedAddressesSignedSignal*(self: View) =
+    self.allSharedAddressesSigned()
 
   proc promoteSelfToControlNode*(self: View, communityId: string) {.slot.} =
     self.delegate.promoteSelfToControlNode(communityId)

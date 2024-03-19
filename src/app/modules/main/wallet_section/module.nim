@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, strutils, sugar
+import NimQml, json, chronicles, sequtils, strutils, sugar
 
 import ./controller, ./view, ./filter
 import ./io_interface as io_interface
@@ -471,3 +471,21 @@ method getRpcStats*(self: Module): string =
 
 method resetRpcStats*(self: Module) =
   self.view.resetRpcStats()
+
+method canProfileProveOwnershipOfProvidedAddresses*(self: Module, addresses: string): bool =
+  var addressesForProvingOwnership: seq[string]
+  try:
+    addressesForProvingOwnership = map(parseJson(addresses).getElems(), proc(x:JsonNode):string = x.getStr())
+  except Exception as e:
+    error "Failed to parse addresses for proving ownership: ", msg=e.msg
+    return false
+
+  for address in addressesForProvingOwnership:
+    let keypair = self.controller.getKeypairByAccountAddress(address)
+    if keypair.isNil:
+      return false
+    if keypair.keyUid == singletonInstance.userProfile.getKeyUid():
+      continue
+    if keypair.migratedToKeycard():
+      return false
+  return true

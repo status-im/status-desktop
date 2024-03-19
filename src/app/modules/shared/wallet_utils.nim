@@ -60,6 +60,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: boo
 proc walletAccountToWalletSendAccountItem*(w: WalletAccountDto, chainIds: seq[int], enabledChainIds: seq[int],
   currencyBalance: float64, currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool): wallet_send_account_item.AccountItem =
   return wallet_send_account_item.newAccountItem(
+    w.keyUid,
     w.name,
     w.address,
     w.colorId,

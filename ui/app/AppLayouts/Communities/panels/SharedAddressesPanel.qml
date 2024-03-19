@@ -24,13 +24,18 @@ import shared.panels 1.0
 Control {
     id: root
 
-    property bool isEditMode
+    required property string componentUid
+    required property bool isEditMode
+    required property var selectedSharedAddressesMap // Map[address, [keyUid, selected, isAirdrop]
+    property var currentSharedAddressesMap // Map[address, [keyUid, selected, isAirdrop]
+    required property int totalNumOfAddressesForSharing
+    required property bool profileProvesOwnershipOfSelectedAddresses
+    required property bool allAddressesToRevealBelongToSingleNonProfileKeypair
 
     property bool requirementsCheckPending: false
 
     required property string communityName
     required property string communityIcon
-    property int loginType: Constants.LoginType.Password
 
     required property var walletAssetsModel
     required property var walletAccountsModel // name, address, emoji, colorId, assets
@@ -38,52 +43,16 @@ Control {
     required property var assetsModel
     required property var collectiblesModel
 
-    readonly property string title: isEditMode ? qsTr("Edit which addresses you share with %1").arg(communityName)
-                                               : qsTr("Select addresses to share with %1").arg(communityName)
+    readonly property string title: isEditMode ? qsTr("Edit which addresses you share with %1").arg(root.communityName)
+                                               : qsTr("Select addresses to share with %1").arg(root.communityName)
 
-    readonly property var buttons: ObjectModel {
-        StatusFlatButton {
-            visible: root.isEditMode
-            borderColor: Theme.palette.baseColor2
-            text: qsTr("Cancel")
-            onClicked: root.close()
-        }
-        StatusButton {
-            enabled: d.dirty
-            type: d.lostCommunityPermission || d.lostChannelPermissions ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal
-            visible: root.isEditMode
-            icon.name: type === StatusBaseButton.Type.Normal && d.selectedAddressesDirty?
-                           !root.isEditMode? Constants.authenticationIconByType[root.loginType] : ""
-                            : ""
-            text: d.lostCommunityPermission ? qsTr("Save changes & leave %1").arg(root.communityName) :
-                                              d.lostChannelPermissions ? qsTr("Save changes & update my permissions")
-                                                                       : qsTr("Prove ownership")
-            onClicked: {
-                root.prepareForSigning(root.selectedAirdropAddress, root.selectedSharedAddresses)
-            }
-        }
-        StatusButton {
-            visible: !root.isEditMode
-            text: qsTr("Share selected addresses to join")
-            onClicked: {
-                root.shareSelectedAddressesClicked(root.selectedAirdropAddress, root.selectedSharedAddresses)
-                root.close()
-            }
-        }
-        // NB no more buttons after this, see property `rightButtons` below
-    }
-
-    readonly property var rightButtons: [buttons.get(buttons.count-1)] // "magically" used by CommunityIntroDialog StatusStackModal impl
-
-    property var selectedSharedAddresses: []
-    property string selectedAirdropAddress
+    readonly property var rightButtons: root.isEditMode? [d.cancelButton, d.saveButton] : [d.shareAddressesButton]
 
     property var getCurrencyAmount: function (balance, symbol){}
 
-    signal sharedAddressesChanged(string airdropAddress, var sharedAddresses)
-    signal shareSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
-    signal prepareForSigning(string airdropAddress, var sharedAddresses)
-
+    signal toggleAddressSelection(string keyUid, string address)
+    signal airdropAddressSelected (string address)
+    signal shareSelectedAddressesClicked()
     signal close()
 
     padding: 0
@@ -94,69 +63,108 @@ Control {
 
         // internal logic
         readonly property bool hasPermissions: root.permissionsModel && root.permissionsModel.count
+        readonly property int selectedSharedAddressesCount: root.selectedSharedAddressesMap.size
 
-        // initial state (not bindings, we want a static snapshot of the initial state)
-        property var initialSelectedSharedAddresses: []
-        property string initialSelectedAirdropAddress
-
-        // dirty state handling
-        readonly property bool selectedAddressesDirty: !SQInternal.ModelUtils.isSameArray(d.initialSelectedSharedAddresses, root.selectedSharedAddresses)
-        readonly property bool selectedAirdropAddressDirty: root.selectedAirdropAddress !== d.initialSelectedAirdropAddress
-        readonly property bool dirty: selectedAddressesDirty || selectedAirdropAddressDirty
+        readonly property bool dirty: {
+            if (root.currentSharedAddressesMap.size !== root.selectedSharedAddressesMap.size) {
+                return true
+            }
+            for (const [key, value] of root.currentSharedAddressesMap) {
+                const obj = root.selectedSharedAddressesMap.get(key)
+                if (!obj || value.selected !== obj.selected || value.isAirdrop !== obj.isAirdrop) {
+                    return true
+                }
+            }
+            return false
+        }
 
         // warning states
         readonly property bool lostCommunityPermission: root.isEditMode && permissionsView.lostPermissionToJoin
         readonly property bool lostChannelPermissions: root.isEditMode && permissionsView.lostChannelPermissions
-    }
 
-    Component.onCompleted: {
-        // initialize the state
-        d.initialSelectedSharedAddresses = root.selectedSharedAddresses.length ? root.selectedSharedAddresses
-                                                                               : filteredAccountsModel.count ? ModelUtils.modelToFlatArray(filteredAccountsModel, "address")
-                                                                                                             : []
-        d.initialSelectedAirdropAddress = !!root.selectedAirdropAddress ? root.selectedAirdropAddress
-                                                                        : d.initialSelectedSharedAddresses.length ? d.initialSelectedSharedAddresses[0] : ""
-        root.selectedSharedAddresses = accountSelector.selectedSharedAddresses
-        root.selectedAirdropAddress = accountSelector.selectedAirdropAddress
-    }
-
-    function setOldSharedAddresses(oldSharedAddresses) {
-        d.initialSelectedSharedAddresses = oldSharedAddresses
-        accountSelector.selectedSharedAddresses = Qt.binding(() => d.initialSelectedSharedAddresses)
-        accountSelector.applyChange()
-    }
-
-    function setOldAirdropAddress(oldAirdropAddress) {
-        d.initialSelectedAirdropAddress = oldAirdropAddress
-        accountSelector.selectedAirdropAddress = Qt.binding(() => d.initialSelectedAirdropAddress)
-        accountSelector.applyChange()
-    }
-
-    SortFilterProxyModel {
-        id: filteredAccountsModel
-        sourceModel: root.walletAccountsModel
-        filters: ValueFilter {
-            roleName: "walletType"
-            value: Constants.watchWalletType
-            inverted: true
+        readonly property var cancelButton: StatusFlatButton {
+            visible: root.isEditMode
+            borderColor: Theme.palette.baseColor2
+            text: qsTr("Cancel")
+            onClicked: root.close()
         }
-        sorters: [
-            ExpressionSorter {
-                function isGenerated(modelData) {
-                    return modelData.walletType === Constants.generatedWalletType
+
+        readonly property var saveButton: StatusButton {
+            enabled: d.dirty
+            type: d.lostCommunityPermission || d.lostChannelPermissions ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal
+            visible: root.isEditMode
+
+            text: {
+                if (d.lostCommunityPermission) {
+                    return qsTr("Save changes & leave %1").arg(root.communityName)
+                }
+                if (d.lostChannelPermissions) {
+                    return qsTr("Save changes & update my permissions")
+                }
+                if (d.selectedSharedAddressesCount === root.totalNumOfAddressesForSharing) {
+                    return qsTr("Reveal all addresses")
+                }
+                return qsTr("Reveal %n address(s)", "", d.selectedSharedAddressesCount)
+            }
+
+            icon.name: {
+                if (!d.lostCommunityPermission
+                        && !d.lostChannelPermissions
+                        && root.profileProvesOwnershipOfSelectedAddresses) {
+                    if (userProfile.usingBiometricLogin) {
+                        return "touch-id"
+                    }
+
+                    if (userProfile.isKeycardUser) {
+                        return "keycard"
+                    }
+
+                    return "password"
+                }
+                if (root.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                    return "keycard"
                 }
 
-                expression: {
-                    return isGenerated(modelLeft)
-                }
-            },
-            RoleSorter {
-                roleName: "position"
-            },
-            RoleSorter {
-                roleName: "name"
+                return ""
             }
-        ]
+
+            onClicked: {
+                root.shareSelectedAddressesClicked()
+            }
+        }
+
+        readonly property var shareAddressesButton: StatusButton {
+            visible: !root.isEditMode
+            text: {
+                if (d.selectedSharedAddressesCount === root.totalNumOfAddressesForSharing) {
+                    return qsTr("Share all addresses to join")
+                }
+                return qsTr("Share %n address(s) to join", "", d.selectedSharedAddressesCount)
+            }
+
+            icon.name: {
+                if (root.profileProvesOwnershipOfSelectedAddresses) {
+                    if (userProfile.usingBiometricLogin) {
+                        return "touch-id"
+                    }
+
+                    if (userProfile.isKeycardUser) {
+                        return "keycard"
+                    }
+
+                    return "password"
+                }
+                if (root.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                    return "keycard"
+                }
+
+                return ""
+            }
+
+            onClicked: {
+                root.shareSelectedAddressesClicked()
+            }
+        }
     }
 
     contentItem: ColumnLayout {
@@ -184,14 +192,16 @@ Control {
             Layout.fillHeight: !hasPermissions
             model: root.walletAccountsModel
             walletAssetsModel: root.walletAssetsModel
-            selectedSharedAddresses: d.initialSelectedSharedAddresses
-            selectedAirdropAddress: d.initialSelectedAirdropAddress
-            onAddressesChanged: accountSelector.applyChange()
-            function applyChange() {
-                root.selectedSharedAddresses = selectedSharedAddresses
-                root.selectedAirdropAddress = selectedAirdropAddress
-                root.sharedAddressesChanged(selectedAirdropAddress, selectedSharedAddresses)
+            selectedSharedAddressesMap: root.selectedSharedAddressesMap
+
+            onToggleAddressSelection: {
+                root.toggleAddressSelection(keyUid, address)
             }
+
+            onAirdropAddressSelected: {
+                root.airdropAddressSelected(address)
+            }
+
             getCurrencyAmount: function (balance, symbol){
                 return root.getCurrencyAmount(balance, symbol)
             }
