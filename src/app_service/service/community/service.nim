@@ -161,7 +161,7 @@ type
   CommunityMemberStatusUpdatedArgs* = ref object of Args
     communityId*: string
     memberPubkey*: string
-    status*: MembershipRequestState
+    state*: MembershipRequestState
 
   CommunityShardSetArgs* = ref object of Args
     communityId*: string
@@ -745,15 +745,16 @@ QtObject:
         else:
           # We were kicked or banned, leave the community
           self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: community.id))
-          var status = MembershipRequestState.Kicked
-          if community.pendingAndBannedMembers.hasKey(myPublicKey) and
-            community.pendingAndBannedMembers[myPublicKey] == CommunityMemberPendingBanOrKick.Banned:
-            status = MembershipRequestState.Banned
+          var state = MembershipRequestState.Kicked
+          if community.pendingAndBannedMembers.hasKey(myPublicKey):
+            let status = community.pendingAndBannedMembers[myPublicKey]
+            if isBanned(status):
+              state = status.toMembershipRequestState()
 
           self.events.emit(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED, CommunityMemberStatusUpdatedArgs(
             communityId: community.id,
             memberPubkey: myPublicKey,
-            status: status))
+            state: state))
 
       # Check if we were unbanned
       if not wasJoined and not community.joined and prevCommunity.pendingAndBannedMembers.hasKey(myPublicKey) and not
@@ -761,7 +762,7 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED, CommunityMemberStatusUpdatedArgs(
             communityId: community.id,
             memberPubkey: myPublicKey,
-            status: MembershipRequestState.Unbanned))
+            state: MembershipRequestState.Unbanned))
 
     except Exception as e:
       error "Error handling community updates", msg = e.msg
@@ -2166,21 +2167,21 @@ QtObject:
 
       var community = communityJArr[0].toCommunityDto()
 
-      var status: MembershipRequestState = MembershipRequestState.None
+      var state: MembershipRequestState = MembershipRequestState.None
       if community.pendingAndBannedMembers.hasKey(memberPubkey):
-        status = community.pendingAndBannedMembers[memberPubkey].toMembershipRequestState()
+        state = community.pendingAndBannedMembers[memberPubkey].toMembershipRequestState()
 
-      if status == MembershipRequestState.None:
+      if state == MembershipRequestState.None:
         let prevCommunity = self.communities[community.id]
         if prevCommunity.pendingAndBannedMembers.hasKey(memberPubkey):
-          status = MembershipRequestState.Unbanned
+          state = MembershipRequestState.Unbanned
         elif len(prevCommunity.members) > len(community.members):
-          status = MembershipRequestState.Kicked
+          state = MembershipRequestState.Kicked
 
       self.events.emit(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED, CommunityMemberStatusUpdatedArgs(
         communityId: community.id,
         memberPubkey: memberPubkey,
-        status: status
+        state: state
       ))
 
     except Exception as e:

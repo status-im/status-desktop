@@ -287,10 +287,10 @@ proc access*(self: SectionItem): int {.inline.} =
 proc ensOnly*(self: SectionItem): bool {.inline.} =
   self.ensOnly
 
-proc muted*(self: SectionItem): bool {.inline.} = 
+proc muted*(self: SectionItem): bool {.inline.} =
   self.muted
 
-proc `muted=`*(self: var SectionItem, value: bool) {.inline.} = 
+proc `muted=`*(self: var SectionItem, value: bool) {.inline.} =
   self.muted = value
 
 proc members*(self: SectionItem): member_model.Model {.inline.} =
@@ -380,11 +380,12 @@ proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.in
 proc updatePendingRequestLoadingState*(self: SectionItem, memberKey: string, loading: bool) {.inline.} =
   self.pendingMemberRequestsModel.updateLoadingState(memberKey, loading)
 
-proc updateMembershipStatus*(self: SectionItem, memberKey: string, status: MembershipRequestState) {.inline.} =
-  if status == MembershipRequestState.UnbannedPending or status == MembershipRequestState.Banned:
-    self.bannedMembersModel.updateMembershipStatus(memberKey, status)
-  else:
-    self.membersModel.updateMembershipStatus(memberKey, status)
+proc updateMembershipStatus*(self: SectionItem, memberKey: string, state: MembershipRequestState) {.inline.} =
+  case state:
+    of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete, MembershipRequestState.UnbannedPending:
+      self.bannedMembersModel.updateMembershipStatus(memberKey, state)
+    else:
+      self.membersModel.updateMembershipStatus(memberKey, state)
 
 proc pubsubTopic*(self: SectionItem): string {.inline.} =
   self.pubsubTopic

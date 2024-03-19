@@ -40,9 +40,11 @@ type
     Banned = 0,
     BanPending,
     UnbanPending,
-    KickPending
-    Unbanned,
-    Kicked
+    KickPending,
+    BannedWithAllMessagesDelete
+
+proc isBanned*(state: CommunityMemberPendingBanOrKick): bool =
+  return state == CommunityMemberPendingBanOrKick.Banned or state == CommunityMemberPendingBanOrKick.BannedWithAllMessagesDelete
 
 type CommunityMembershipRequestDto* = object
   id*: string
@@ -481,6 +483,8 @@ proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): Membersh
       return MembershipRequestState.UnbannedPending
     of CommunityMemberPendingBanOrKick.KickPending:
       return MembershipRequestState.KickedPending
+    of CommunityMemberPendingBanOrKick.BannedWithAllMessagesDelete:
+      return MembershipRequestState.BannedWithAllMessagesDelete
     else:
       return MembershipRequestState.None
 
@@ -526,7 +530,7 @@ proc contains(arrayToSearch: seq[int], searched: int): bool =
 proc getBannedMembersIds*(self: CommunityDto): seq[string] =
   var bannedIds: seq[string] = @[]
   for memberId, state in self.pendingAndBannedMembers:
-    if state == CommunityMemberPendingBanOrKick.Banned:
+    if isBanned(state):
       bannedIds.add(memberId)
   return bannedIds
 

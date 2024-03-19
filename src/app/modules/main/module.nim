@@ -348,8 +348,11 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
   var bannedMembers = newSeq[MemberItem]()
   for memberId, memberState in communityDetails.pendingAndBannedMembers.pairs:
     let state = memberState.toMembershipRequestState()
-    if state == MembershipRequestState.Banned or state == MembershipRequestState.UnbannedPending:
-      bannedMembers.add(self.createMemberItem(memberId, state, MemberRole.None))
+    case state:
+      of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete, MembershipRequestState.UnbannedPending:
+        bannedMembers.add(self.createMemberItem(memberId, state, MemberRole.None))
+      else:
+        discard
 
   result = initItem(
     channelGroup.id,
@@ -1233,13 +1236,13 @@ method onAcceptRequestToJoinSuccess*[T](self: Module[T], communityId: string, me
   if item.id != "":
     item.updatePendingRequestLoadingState(memberKey, false)
 
-method onMembershipStatusUpdated*[T](self: Module[T], communityId: string, memberPubkey: string, status: MembershipRequestState) =
+method onMembershipStateUpdated*[T](self: Module[T], communityId: string, memberPubkey: string, state: MembershipRequestState) =
   let myPublicKey = singletonInstance.userProfile.getPubKey()
   let communityDto = self.controller.getCommunityById(communityId)
 
   if myPublicKey == memberPubkey:
-    case status:
-      of MembershipRequestState.Banned:
+    case state:
+      of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete:
         singletonInstance.globalEvents.showCommunityMemberBannedNotification(fmt "You've been banned from {communityDto.name}", "", communityId)
       of MembershipRequestState.Kicked:
         singletonInstance.globalEvents.showCommunityMemberKickedNotification(fmt "You were kicked from {communityDto.name}", "", communityId)
@@ -1251,9 +1254,13 @@ method onMembershipStatusUpdated*[T](self: Module[T], communityId: string, membe
     let (contactName, _, _) = self.controller.getContactNameAndImage(memberPubkey)
     let item = self.view.model().getItemById(communityId)
     if item.id != "":
-      item.updateMembershipStatus(memberPubkey, status)
-    if status == MembershipRequestState.Banned or status == MembershipRequestState.Kicked or status == MembershipRequestState.Unbanned:
-      self.view.emitCommunityMemberStatusEphemeralNotification(communityDto.name, contactName, status.int)
+      item.updateMembershipStatus(memberPubkey, state)
+    case state:
+      of MembershipRequestState.Banned, MembershipRequestState.Kicked,
+          MembershipRequestState.Unbanned, MembershipRequestState.BannedWithAllMessagesDelete:
+        self.view.emitCommunityMemberStatusEphemeralNotification(communityDto.name, contactName, state.int)
+      else:
+        discard
 
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
   return not self.controller.isMnemonicBackedUp()
