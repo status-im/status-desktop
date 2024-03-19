@@ -81,6 +81,7 @@ def test_create_edit_remove_community_category(main_screen: MainWindow, category
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703274', 'Member role cannot remove category')
 @pytest.mark.case(703272, 703273, 703274)
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
+@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/603')
 def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow):
     with step('Choose community user is not owner of'):
         community_screen = main_screen.left_panel.select_community('Super community')
