@@ -738,7 +738,9 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   self.view.chatsModel().removeItemById(chatId)
   self.removeSubmodule(chatId)
 
-  self.setFirstChannelAsActive()
+  let activeChatId = self.controller.getActiveChatId()
+  if chatId == activeChatId:
+    self.setFirstChannelAsActive()
 
 proc refreshHiddenBecauseNotPermittedState(self: Module) =
   self.view.refreshAllChannelsAreHiddenBecauseNotPermittedChanged()
