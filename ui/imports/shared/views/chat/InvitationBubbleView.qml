@@ -206,7 +206,7 @@ Control {
                     if (d.communityJoined || d.communitySpectated) {
                         root.store.setActiveCommunity(communityId)
                     } else {
-                        root.store.spectateCommunity(communityId, userProfile.name)
+                        root.store.spectateCommunity(communityId)
                     }
                 }
             }

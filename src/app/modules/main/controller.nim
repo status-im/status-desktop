@@ -545,6 +545,9 @@ proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
 
+proc spectateCommunity*(self: Controller, communityId: string) =
+  discard self.communityService.spectateCommunity(communityId)
+
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)
 

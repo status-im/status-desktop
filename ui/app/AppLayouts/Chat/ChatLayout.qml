@@ -59,15 +59,15 @@ StackLayout {
 
     Loader {
         id: mainViewLoader
-        readonly property var chatItem: root.rootStore.chatCommunitySectionModule
+        readonly property var sectionItem: root.rootStore.chatCommunitySectionModule
 
         sourceComponent: {
-            if (chatItem.isCommunity() && !chatItem.amIMember) {
+            if (sectionItem.isCommunity() && !sectionItem.amIMember) {
                 if (sectionItemModel.amIBanned) {
                     return communityBanComponent
-                } else if (chatItem.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin) {
+                } else if (sectionItem.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin) {
                     return controlNodeOfflineComponent
-                } else if (chatItem.requiresTokenPermissionToJoin) {
+                } else if (sectionItem.requiresTokenPermissionToJoin) {
                     return joinCommunityViewComponent
                 }
             }
@@ -149,7 +149,7 @@ StackLayout {
         ChatView {
             id: chatView
 
-            readonly property var chatItem: root.rootStore.chatCommunitySectionModule
+            readonly property var sectionItem: root.rootStore.chatCommunitySectionModule
             readonly property string communityId: root.sectionItemModel.id
 
             emojiPopup: root.emojiPopup
@@ -162,7 +162,7 @@ StackLayout {
             walletAssetsStore: root.walletAssetsStore
             currencyStore: root.currencyStore
             sectionItemModel: root.sectionItemModel
-            amIMember: chatItem.amIMember
+            amIMember: sectionItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
                              root.sectionItemModel.memberRole === Constants.memberRole.tokenMaster
