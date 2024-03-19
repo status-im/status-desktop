@@ -35,11 +35,12 @@ Item {
         }
 
         accountName.text = root.store.addAccountModule.accountName
-        if (d.isEdit) {
+        if (root.store.addAccountModule.selectedEmoji !== "") {
             accountName.input.asset.emoji = root.store.addAccountModule.selectedEmoji;
         } else {
             accountName.input.asset.isLetterIdenticon = true;
         }
+
         accountName.input.edit.forceActiveFocus()
         accountName.validate(true)
     }
