@@ -10,6 +10,7 @@ QtObject:
     canSend: bool
 
   proc setup*(self: AccountItem,
+    keyUid: string,
     name: string,
     address: string,
     colorId: string,
@@ -29,7 +30,7 @@ QtObject:
       emoji,
       walletType,
       path = "",
-      keyUid = "",
+      keyUid = keyUid,
       keycardAccount = false,
       position,
       operability = wa_dto.AccountFullyOperable,
@@ -43,6 +44,7 @@ QtObject:
     self.QObject.delete
 
   proc newAccountItem*(
+    keyUid: string = "",
     name: string = "",
     address: string = "",
     colorId: string = "",
@@ -56,7 +58,7 @@ QtObject:
     canSend: bool = true,
     ): AccountItem =
       new(result, delete)
-      result.setup(name, address, colorId, emoji, walletType, currencyBalance, position, areTestNetworksEnabled, prodPreferredChainIds, testPreferredChainIds, canSend)
+      result.setup(keyUid, name, address, colorId, emoji, walletType, currencyBalance, position, areTestNetworksEnabled, prodPreferredChainIds, testPreferredChainIds, canSend)
 
   proc `$`*(self: AccountItem): string =
     result = "WalletSection-Send-Item("

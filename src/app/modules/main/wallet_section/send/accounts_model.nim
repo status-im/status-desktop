@@ -5,13 +5,14 @@ import ../../../shared_models/currency_amount
 
 type
   ModelRole {.pure.} = enum
-    Name = UserRole + 1,
-    Address,
-    ColorId,
-    WalletType,
-    Emoji,
-    CurrencyBalance,
-    Position,
+    KeyUid = UserRole + 1
+    Name
+    Address
+    ColorId
+    WalletType
+    Emoji
+    CurrencyBalance
+    Position
     PreferredSharingChainIds
 
 QtObject:
@@ -48,6 +49,7 @@ QtObject:
 
   method roleNames(self: AccountsModel): Table[int, string] =
     {
+      ModelRole.KeyUid.int: "keyUid",
       ModelRole.Name.int:"name",
       ModelRole.Address.int:"address",
       ModelRole.ColorId.int:"colorId",
@@ -75,6 +77,8 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
+    of ModelRole.KeyUid:
+      result = newQVariant(item.keyUid())
     of ModelRole.Name:
       result = newQVariant(item.name())
     of ModelRole.Address:

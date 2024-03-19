@@ -403,8 +403,8 @@ QtObject {
         communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
     }
 
-    function signSharedAddressesForAllNonKeycardKeypairs() {
-        communitiesModuleInst.signSharedAddressesForAllNonKeycardKeypairs()
+    function signProfileKeypairAndAllNonKeycardKeypairs() {
+        communitiesModuleInst.signProfileKeypairAndAllNonKeycardKeypairs()
     }
 
     function signSharedAddressesForKeypair(keyUid) {

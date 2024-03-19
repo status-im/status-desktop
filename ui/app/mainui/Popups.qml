@@ -263,9 +263,9 @@ QtObject {
                                      imageSrc, accessType, isInvitationPending) {
         openPopup(communityIntroDialogPopup,
                   {communityId: communityId,
-                   name: name,
+                   communityName: name,
                    introMessage: introMessage,
-                   imageSrc: imageSrc,
+                   communityIcon: imageSrc,
                    accessType: accessType,
                    isInvitationPending: isInvitationPending
                   })
@@ -275,9 +275,9 @@ QtObject {
         openPopup(communityIntroDialogPopup,
                   {communityId: communityId,
                    stackTitle: qsTr("Share addresses with %1's owner").arg(name),
-                   name: name,
+                   communityName: name,
                    introMessage: qsTr("Share addresses to rejoin %1").arg(name),
-                   imageSrc: imageSrc,
+                   communityIcon: imageSrc,
                    accessType: Constants.communityChatOnRequestAccess,
                    isInvitationPending: false
                   })
@@ -354,7 +354,7 @@ QtObject {
                       tokenImage: tokenImage
                   })
     }
-    
+
     function openConfirmHideAssetPopup(assetSymbol, assetName, assetImage, isCommunityToken) {
         openPopup(confirmHideAssetPopup, { assetSymbol, assetName, assetImage, isCommunityToken })
     }
@@ -682,9 +682,12 @@ QtObject {
             CommunityIntroDialog {
                 id: communityIntroDialog
                 property string communityId
-                loginType: root.rootStore.loginType
+
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
+
                 walletAccountsModel: root.rootStore.walletAccountsModel
+                canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
+
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                 permissionsModel: {
                     root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
@@ -703,8 +706,8 @@ QtObject {
                     communityIntroDialog.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
                 }
 
-                onSignSharedAddressesForAllNonKeycardKeypairs: {
-                    root.rootStore.signSharedAddressesForAllNonKeycardKeypairs()
+                onSignProfileKeypairAndAllNonKeycardKeypairs: {
+                    root.rootStore.signProfileKeypairAndAllNonKeycardKeypairs()
                 }
 
                 onSignSharedAddressesForKeypair: {
@@ -739,9 +742,21 @@ QtObject {
                 Connections {
                     target: root.rootStore.communitiesModuleInst
 
-                    function onSharedAddressesForAllNonKeycardKeypairsSigned() {
+                    function onAllSharedAddressesSigned() {
+                        if (communityIntroDialog.profileProvesOwnershipOfSelectedAddresses) {
+                            communityIntroDialog.joinCommunity()
+                            communityIntroDialog.close()
+                            return
+                        }
+
+                        if (communityIntroDialog.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                            communityIntroDialog.joinCommunity()
+                            communityIntroDialog.close()
+                            return
+                        }
+
                         if (!!communityIntroDialog.replaceItem) {
-                            communityIntroDialog.replaceLoader.item.sharedAddressesForAllNonKeycardKeypairsSigned()
+                            communityIntroDialog.replaceLoader.item.allSigned()
                         }
                     }
                 }
@@ -886,23 +901,8 @@ QtObject {
 
         Component {
             id: editSharedAddressesPopupComponent
-            SharedAddressesPopup {
+            CommunityIntroDialog {
                 id: editSharedAddressesPopup
-
-                readonly property var oldSharedAddresses: root.rootStore.myRevealedAddressesForCurrentCommunity
-                readonly property string oldAirdropAddress: root.rootStore.myRevealedAirdropAddressForCurrentCommunity
-
-                onOldSharedAddressesChanged: {
-                    editSharedAddressesPopup.setOldSharedAddresses(
-                        editSharedAddressesPopup.oldSharedAddresses
-                    )
-                }
-
-                onOldAirdropAddressChanged: {
-                    editSharedAddressesPopup.setOldAirdropAddress(
-                        editSharedAddressesPopup.oldAirdropAddress
-                    )
-                }
 
                 property string communityId
 
@@ -914,10 +914,17 @@ QtObject {
                     }
                 }
 
+                isEditMode: true
+
+                currentSharedAddresses: root.rootStore.myRevealedAddressesForCurrentCommunity
+                currentAirdropAddress: root.rootStore.myRevealedAirdropAddressForCurrentCommunity
+
                 communityName: chatStore.sectionDetails.name
                 communityIcon: chatStore.sectionDetails.image
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
-                loginType: chatStore.loginType
+
+                canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
+
                 walletAccountsModel: root.rootStore.walletAccountsModel
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                 permissionsModel: {
@@ -927,16 +934,22 @@ QtObject {
                 assetsModel: chatStore.assetsModel
                 collectiblesModel: chatStore.collectiblesModel
 
-                onSharedAddressesChanged: root.rootStore.updatePermissionsModel(
-                    editSharedAddressesPopup.communityId, sharedAddresses)
+                getCurrencyAmount: function (balance, symbol) {
+                    return root.currencyStore.getCurrencyAmount(balance, symbol)
+                }
+
+                onSharedAddressesUpdated: {
+                    root.rootStore.updatePermissionsModel(editSharedAddressesPopup.communityId, sharedAddresses)
+                }
+
                 onPrepareForSigning: {
                     root.rootStore.prepareKeypairsForSigning(editSharedAddressesPopup.communityId, "", sharedAddresses, airdropAddress, true)
 
                     editSharedAddressesPopup.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
                 }
 
-                onSignSharedAddressesForAllNonKeycardKeypairs: {
-                    root.rootStore.signSharedAddressesForAllNonKeycardKeypairs()
+                onSignProfileKeypairAndAllNonKeycardKeypairs: {
+                    root.rootStore.signProfileKeypairAndAllNonKeycardKeypairs()
                 }
 
                 onSignSharedAddressesForKeypair: {
@@ -952,13 +965,23 @@ QtObject {
                 Connections {
                     target: root.rootStore.communitiesModuleInst
 
-                    function onSharedAddressesForAllNonKeycardKeypairsSigned() {
-                        editSharedAddressesPopup.sharedAddressesForAllNonKeycardKeypairsSigned()
-                    }
-                }
+                    function onAllSharedAddressesSigned() {
+                        if (editSharedAddressesPopup.profileProvesOwnershipOfSelectedAddresses) {
+                            editSharedAddressesPopup.editRevealedAddresses()
+                            editSharedAddressesPopup.close()
+                            return
+                        }
 
-                getCurrencyAmount: function (balance, symbol) {
-                    return root.currencyStore.getCurrencyAmount(balance, symbol)
+                        if (editSharedAddressesPopup.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                            editSharedAddressesPopup.editRevealedAddresses()
+                            editSharedAddressesPopup.close()
+                            return
+                        }
+
+                        if (!!editSharedAddressesPopup.replaceItem) {
+                            editSharedAddressesPopup.replaceLoader.item.allSigned()
+                        }
+                    }
                 }
             }
         },
