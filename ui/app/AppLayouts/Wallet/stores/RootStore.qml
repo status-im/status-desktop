@@ -60,7 +60,7 @@ QtObject {
     property CollectiblesStore collectiblesStore: CollectiblesStore {}
 
     readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
-    readonly property bool isGoerliEnabled: networksModule.isGoerliEnabled
+    readonly property bool isGoerliEnabled: profileSectionModule.walletModule.networksModule.isGoerliEnabled
 
     property var savedAddresses: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model
@@ -488,16 +488,39 @@ QtObject {
         return root.mainModuleInst.addressWasShown(address)
     }
 
-    function getExplorerUrl() {
+    function getExplorerUrl(networkShortName, contractAddress, tokenId) {
         let link = Constants.networkExplorerLinks.etherscan
-        if (root.areTestNetworksEnabled) {
-            if (root.isGoerliEnabled) {
-                link = Constants.networkExplorerLinks.goerliEtherscan
-            } else {
-                link = Constants.networkExplorerLinks.sepoliaEtherscan
+        if (networkShortName === Constants.networkShortChainNames.mainnet) {
+            if (root.areTestNetworksEnabled) {
+                if (!root.isGoerliEnabled) {
+                    link = Constants.networkExplorerLinks.sepoliaEtherscan
+                } else {
+                    link = Constants.networkExplorerLinks.goerliEtherscan
+                }
             }
+            return "%1/nft/%2/%3".arg(link).arg(contractAddress).arg(tokenId)
         }
-        return link
+        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
+            link = Constants.networkExplorerLinks.arbiscan
+            if (root.areTestNetworksEnabled) {
+                if (!root.isGoerliEnabled) {
+                    link = Constants.networkExplorerLinks.sepoliaArbiscan
+                } else {
+                    link = Constants.networkExplorerLinks.goerliArbiscan
+                }
+            }
+            return "%1/token/%2?a=%3".arg(link).arg(contractAddress).arg(tokenId)
+        } else if (networkShortName === Constants.networkShortChainNames.optimism) {
+            link = Constants.networkExplorerLinks.optimism
+            if (root.areTestNetworksEnabled) {
+                if (!root.isGoerliEnabled) {
+                    link = Constants.networkExplorerLinks.sepoliaOptimism
+                } else {
+                    link = Constants.networkExplorerLinks.goerliOptimism
+                }
+            }
+            return "%1/token/%2?a=%3".arg(link).arg(contractAddress).arg(tokenId)
+        }
     }
 
     function getExplorerNameForNetwork(networkShortName)  {
