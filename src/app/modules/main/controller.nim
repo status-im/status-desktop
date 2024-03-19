@@ -535,6 +535,9 @@ proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
   let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
+proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
+  return self.communityService.getJoinedCommunities()
+
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
 
