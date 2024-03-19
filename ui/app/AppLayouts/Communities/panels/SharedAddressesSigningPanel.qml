@@ -13,45 +13,66 @@ import SortFilterProxyModel 0.2
 ColumnLayout {
     id: root
 
+    required property string componentUid
+    required property bool isEditMode
     property var keypairSigningModel
 
-    readonly property string title: qsTr("Prove ownership of keypairs")
+    required property var selectedSharedAddressesMap // Map[address, [keyUid, selected, isAirdrop]
+    required property int totalNumOfAddressesForSharing
+
+    required property string communityName
+    readonly property string title: root.isEditMode?
+                                        qsTr("Save addresses you share with %1").arg(root.communityName)
+                                      : qsTr("Request to join %1").arg(root.communityName)
     readonly property var rightButtons: [d.rightBtn]
-    readonly property bool allSigned: regularKeypairs.visible == d.sharedAddressesForAllNonKeycardKeypairsSigned &&
-                                      keycardKeypairs.visible == d.allKeycardKeypairsSigned
 
     signal joinCommunity()
-    signal signSharedAddressesForAllNonKeycardKeypairs()
+    signal signProfileKeypairAndAllNonKeycardKeypairs()
     signal signSharedAddressesForKeypair(string keyUid)
 
-    function sharedAddressesForAllNonKeycardKeypairsSigned() {
-        d.sharedAddressesForAllNonKeycardKeypairsSigned = true
+    function allSigned() {
+        d.allSigned = true
     }
 
     QtObject {
         id: d
 
-        property bool sharedAddressesForAllNonKeycardKeypairsSigned: false
-        property bool allKeycardKeypairsSigned: false
+        readonly property int selectedSharedAddressesCount: root.selectedSharedAddressesMap.size
+
+        property bool allSigned: false
+
+        readonly property bool anyOfSelectedAddressesToRevealBelongToProfileKeypair: {
+            for (const [key, value] of root.selectedSharedAddressesMap) {
+                if (value.keyUid === userProfile.keyUid) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        readonly property bool thereAreMoreThanOneNonProfileRegularKeypairs: nonProfileRegularKeypairs.count > 1
+
+        readonly property bool allNonProfileRegularKeypairsSigned: {
+            for (let i = 0; i < nonProfileRegularKeypairs.model.count; ++i) {
+                const item = nonProfileRegularKeypairs.model.get(i)
+                if (!!item && !item.keyPair.ownershipVerified) {
+                    return false
+                }
+            }
+            return true
+        }
 
         readonly property var rightBtn: StatusButton {
-            enabled: root.allSigned
-            text: qsTr("Share your addresses to join")
+            enabled: d.allSigned
+            text: {
+                if (d.selectedSharedAddressesCount === root.totalNumOfAddressesForSharing) {
+                    return qsTr("Share all addresses to join")
+                }
+                return qsTr("Share %n address(s) to join", "", d.selectedSharedAddressesCount)
+            }
             onClicked: {
                 root.joinCommunity()
             }
-        }
-
-        function reEvaluateSignedKeypairs() {
-            let allKeypairsSigned = true
-            for(var i = 0; i< keycardKeypairs.model.count; i++) {
-                if(!keycardKeypairs.model.get(i).keyPair.ownershipVerified) {
-                    allKeypairsSigned = false
-                    break
-                }
-            }
-
-            d.allKeycardKeypairsSigned = allKeypairsSigned
         }
     }
 
@@ -61,43 +82,41 @@ ColumnLayout {
 
         spacing: Style.current.padding
 
+        StatusBaseText {
+            Layout.preferredWidth: parent.width
+            elide: Text.ElideRight
+            font.pixelSize: Constants.keycard.general.fontSize2
+            text: qsTr("To share %n address(s) with <b>%1</b>, authenticate the associated keypairs...", "", d.selectedSharedAddressesCount).arg(root.communityName)
+        }
+
         RowLayout {
             Layout.fillWidth: true
 
-            visible: regularKeypairs.visible
+            visible: nonKeycardProfileKeypair.visible
 
             StatusBaseText {
                 Layout.fillWidth: true
-                text: qsTr("Keypairs we need an authentication for")
+                text: qsTr("Stored on device")
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
             }
-
-            StatusButton {
-                text: d.sharedAddressesForAllNonKeycardKeypairsSigned? qsTr("Authenticated") : qsTr("Authenticate")
-                enabled: !d.sharedAddressesForAllNonKeycardKeypairsSigned
-                icon.name: userProfile.usingBiometricLogin? "touch-id" : "password"
-
-                onClicked: {
-                    root.signSharedAddressesForAllNonKeycardKeypairs()
-                }
-            }
         }
 
         StatusListView {
-            id: regularKeypairs
+            id: nonKeycardProfileKeypair
             Layout.fillWidth: true
-            Layout.preferredHeight: regularKeypairs.contentHeight
-            visible: regularKeypairs.model.count > 0
+            Layout.preferredHeight: nonKeycardProfileKeypair.contentHeight
+            visible: nonKeycardProfileKeypair.model.count > 0
             spacing: Style.current.padding
             model: SortFilterProxyModel {
                 sourceModel: root.keypairSigningModel
                 filters: ExpressionFilter {
-                    expression: !model.keyPair.migratedToKeycard
+                    expression: model.keyPair.keyUid === userProfile.keyUid && !userProfile.isKeycardUser
                 }
             }
             delegate: KeyPairItem {
+                id: kpOnDeviceDelegate
                 width: ListView.view.width
                 sensor.hoverEnabled: false
                 additionalInfoForProfileKeypair: ""
@@ -109,22 +128,80 @@ ColumnLayout {
                 keyPairImage: model.keyPair.image
                 keyPairDerivedFrom: model.keyPair.derivedFrom
                 keyPairAccounts: model.keyPair.accounts
+
+                components: [
+                    StatusButton {
+                        text: qsTr("Authenticate")
+                        visible: !model.keyPair.ownershipVerified
+                        icon.name: {
+                            if (userProfile.usingBiometricLogin) {
+                                return "touch-id"
+                            }
+
+                            if (userProfile.isKeycardUser) {
+                                return "keycard"
+                            }
+
+                            return "password"
+                        }
+
+                        onClicked: {
+                            root.signProfileKeypairAndAllNonKeycardKeypairs()
+                        }
+                    },
+                    StatusButton {
+                        text: qsTr("Authenticated")
+                        visible: model.keyPair.ownershipVerified
+                        enabled: false
+                        normalColor: "transparent"
+                        disabledColor: "transparent"
+                        disabledTextColor: Theme.palette.successColor1
+                        icon.name: "checkmark-circle"
+                    }
+                ]
+
+                SequentialAnimation {
+                    running: model.keyPair.ownershipVerified
+                    PropertyAnimation {
+                        target: kpOnDeviceDelegate
+                        property: "color"
+                        to: Theme.palette.successColor3
+                        duration: 500
+                    }
+                    PropertyAnimation {
+                        target: kpOnDeviceDelegate
+                        property: "color"
+                        to: Theme.palette.baseColor2
+                        duration: 1500
+                    }
+                }
             }
         }
 
         Item {
-            visible: regularKeypairs.visible && keycardKeypairs.visible
+            visible: nonKeycardProfileKeypair.visible
             Layout.fillWidth: true
             Layout.preferredHeight: Style.current.xlPadding
         }
 
-        StatusBaseText {
+        RowLayout {
             Layout.fillWidth: true
+
             visible: keycardKeypairs.visible
-            text: qsTr("Keypairs that need to be singed using appropriate Keycard")
-            font.pixelSize: Constants.keycard.general.fontSize2
-            color: Theme.palette.baseColor1
-            wrapMode: Text.WordWrap
+
+            StatusBaseText {
+                text: qsTr("Stored on keycard")
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.baseColor1
+                wrapMode: Text.WordWrap
+            }
+
+            StatusIcon {
+                Layout.preferredHeight: 20
+                Layout.preferredWidth: 20
+                color: Theme.palette.baseColor1
+                icon: "keycard"
+            }
         }
 
         StatusListView {
@@ -140,6 +217,7 @@ ColumnLayout {
                 }
             }
             delegate: KeyPairItem {
+                id: kpOnKeycardDelegate
                 width: ListView.view.width
                 sensor.hoverEnabled: !model.keyPair.ownershipVerified
                 additionalInfoForProfileKeypair: ""
@@ -153,28 +231,173 @@ ColumnLayout {
                 keyPairAccounts: model.keyPair.accounts
 
                 components: [
-                    StatusBaseText {
-                        font.weight: Font.Medium
-                        font.underline: mouseArea.containsMouse
-                        font.pixelSize: Theme.primaryTextFontSize
-                        color: model.keyPair.ownershipVerified? Theme.palette.baseColor1 : Theme.palette.primaryColor1
-                        text: model.keyPair.ownershipVerified? qsTr("Signed") : qsTr("Sign")
-                        MouseArea {
-                            id: mouseArea
-                            anchors.fill: parent
-                            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-                            hoverEnabled: !model.keyPair.ownershipVerified
-                            enabled: !model.keyPair.ownershipVerified
-                            onEnabledChanged: {
-                                d.reEvaluateSignedKeypairs()
+                    StatusButton {
+                        text: qsTr("Authenticate")
+                        visible: !model.keyPair.ownershipVerified
+                        icon.name: "keycard"
+
+                        onClicked: {
+                            if (model.keyPair.keyUid === userProfile.keyUid) {
+                                root.signProfileKeypairAndAllNonKeycardKeypairs()
+                                return
                             }
-                            onClicked: {
-                                root.signSharedAddressesForKeypair(model.keyPair.keyUid)
-                            }
+                            root.signSharedAddressesForKeypair(model.keyPair.keyUid)
                         }
+                    },
+                    StatusButton {
+                        text: qsTr("Authenticated")
+                        visible: model.keyPair.ownershipVerified
+                        enabled: false
+                        normalColor: "transparent"
+                        disabledColor: "transparent"
+                        disabledTextColor: Theme.palette.successColor1
+                        icon.name: "checkmark-circle"
                     }
                 ]
+
+                SequentialAnimation {
+                    running: model.keyPair.ownershipVerified
+                    PropertyAnimation {
+                        target: kpOnKeycardDelegate
+                        property: "color"
+                        to: Theme.palette.successColor3
+                        duration: 500
+                    }
+                    PropertyAnimation {
+                        target: kpOnKeycardDelegate
+                        property: "color"
+                        to: Theme.palette.baseColor2
+                        duration: 1500
+                    }
+                }
+            }
+        }
+
+        Item {
+            visible: keycardKeypairs.visible
+            Layout.fillWidth: true
+            Layout.preferredHeight: Style.current.xlPadding
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+            visible: nonProfileRegularKeypairs.visible
+
+            StatusBaseText {
+                Layout.preferredWidth: !d.anyOfSelectedAddressesToRevealBelongToProfileKeypair &&
+                                       d.thereAreMoreThanOneNonProfileRegularKeypairs?
+                                           370
+                                         : -1
+                Layout.fillWidth: true
+                text: !d.anyOfSelectedAddressesToRevealBelongToProfileKeypair &&
+                      d.thereAreMoreThanOneNonProfileRegularKeypairs?
+                          qsTr("Authenticate via “%1” keypair").arg(userProfile.name)
+                        : qsTr("The following keypairs will be authenticated via “%1” keypair").arg(userProfile.name)
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.baseColor1
+                wrapMode: Text.WrapAnywhere
+            }
+
+            StatusButton {
+                Layout.rightMargin: 16
+                text: qsTr("Authenticate")
+                visible: !d.anyOfSelectedAddressesToRevealBelongToProfileKeypair
+                         && d.thereAreMoreThanOneNonProfileRegularKeypairs
+                         && !d.allNonProfileRegularKeypairsSigned
+                icon.name: {
+                    if (userProfile.usingBiometricLogin) {
+                        return "touch-id"
+                    }
+
+                    if (userProfile.isKeycardUser) {
+                        return "keycard"
+                    }
+
+                    return "password"
+                }
+
+                onClicked: {
+                    root.signProfileKeypairAndAllNonKeycardKeypairs()
+                }
+            }
+        }
+
+        StatusListView {
+            id: nonProfileRegularKeypairs
+            Layout.fillWidth: true
+            Layout.preferredHeight: nonProfileRegularKeypairs.contentHeight
+            visible: nonProfileRegularKeypairs.model.count > 0
+            spacing: Style.current.padding
+            model: SortFilterProxyModel {
+                sourceModel: root.keypairSigningModel
+                filters: ExpressionFilter {
+                    expression: !model.keyPair.migratedToKeycard && model.keyPair.keyUid !== userProfile.keyUid
+                }
+            }
+            delegate: KeyPairItem {
+                id: dependantKpOnDeviceDelegate
+                width: ListView.view.width
+                sensor.hoverEnabled: false
+                additionalInfoForProfileKeypair: ""
+
+                keyPairType: model.keyPair.pairType
+                keyPairKeyUid: model.keyPair.keyUid
+                keyPairName: model.keyPair.name
+                keyPairIcon: model.keyPair.icon
+                keyPairImage: model.keyPair.image
+                keyPairDerivedFrom: model.keyPair.derivedFrom
+                keyPairAccounts: model.keyPair.accounts
+
+                components: [
+                    StatusButton {
+                        Layout.rightMargin: 16
+                        text: qsTr("Authenticate")
+                        visible: !d.anyOfSelectedAddressesToRevealBelongToProfileKeypair
+                                 && !d.thereAreMoreThanOneNonProfileRegularKeypairs
+                                 && !model.keyPair.ownershipVerified
+                        icon.name: {
+                            if (userProfile.usingBiometricLogin) {
+                                return "touch-id"
+                            }
+
+                            if (userProfile.isKeycardUser) {
+                                return "keycard"
+                            }
+
+                            return "password"
+                        }
+
+                        onClicked: {
+                            root.signProfileKeypairAndAllNonKeycardKeypairs()
+                        }
+                    },
+                    StatusButton {
+                        text: qsTr("Authenticated")
+                        visible: model.keyPair.ownershipVerified
+                        enabled: false
+                        normalColor: "transparent"
+                        disabledColor: "transparent"
+                        disabledTextColor: Theme.palette.successColor1
+                        icon.name: "checkmark-circle"
+                    }
+                ]
+
+                SequentialAnimation {
+                    running: model.keyPair.ownershipVerified
+                    PropertyAnimation {
+                        target: dependantKpOnDeviceDelegate
+                        property: "color"
+                        to: Theme.palette.successColor3
+                        duration: 500
+                    }
+                    PropertyAnimation {
+                        target: dependantKpOnDeviceDelegate
+                        property: "color"
+                        to: Theme.palette.baseColor2
+                        duration: 1500
+                    }
+                }
             }
         }
     }

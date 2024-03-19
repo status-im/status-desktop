@@ -15,17 +15,16 @@ import utils 1.0
 StatusListView {
     id: root
 
+    required property var selectedSharedAddressesMap // Map[address, [selected, isAirdrop]]
+
     property var walletAssetsModel
     property bool hasPermissions
     property var uniquePermissionTokenKeys
 
-    // read/write properties
-    property string selectedAirdropAddress
-    property var selectedSharedAddresses: []
-
     property var getCurrencyAmount: function (balance, symbol){}
 
-    signal addressesChanged()
+    signal toggleAddressSelection(string keyUid, string address)
+    signal airdropAddressSelected (string address)
 
     leftMargin: d.absLeftMargin
     topMargin: Style.current.padding
@@ -34,6 +33,8 @@ StatusListView {
 
     QtObject {
         id: d
+
+        readonly property int selectedSharedAddressesCount: root.selectedSharedAddressesMap.size
 
         // UI
         readonly property int absLeftMargin: 12
@@ -44,10 +45,6 @@ StatusListView {
 
         readonly property ButtonGroup addressesGroup: ButtonGroup {
             exclusive: false
-        }
-
-        function selectFirstAvailableAirdropAddress() {
-            root.selectedAirdropAddress = ModelUtils.modelToFlatArray(root.model, "address").find(address => selectedSharedAddresses.includes(address))
         }
 
         function getTotalBalance(balances, decimals, symbol) {
@@ -143,12 +140,20 @@ StatusListView {
                 icon.color: hovered ? Theme.palette.primaryColor3 :
                                       checked ? Theme.palette.primaryColor1 : disabledTextColor
                 checkable: true
-                checked: listItem.address === root.selectedAirdropAddress.toLowerCase()
-                enabled: shareAddressCheckbox.checked && root.selectedSharedAddresses.length > 1 // last cannot be unchecked
+                checked: {
+                    let obj = root.selectedSharedAddressesMap.get(listItem.address)
+                    if (!!obj) {
+                        return obj.isAirdrop
+                    }
+                    return false
+                }
+                enabled: shareAddressCheckbox.checked && d.selectedSharedAddressesCount > 1 // last cannot be unchecked
                 visible: shareAddressCheckbox.checked
                 opacity: enabled ? 1.0 : 0.3
-                onCheckedChanged: if (checked) root.selectedAirdropAddress = listItem.address
-                onToggled: root.addressesChanged()
+
+                onToggled: {
+                    root.airdropAddressSelected(listItem.address)
+                }
 
                 StatusToolTip {
                     text: qsTr("Use this address for any Community airdrops")
@@ -161,25 +166,11 @@ StatusListView {
                 ButtonGroup.group: d.addressesGroup
                 anchors.verticalCenter: parent.verticalCenter
                 checkable: true
-                checked: root.selectedSharedAddresses.some((address) => address.toLowerCase() === listItem.address )
-                enabled: !(root.selectedSharedAddresses.length === 1 && checked) // last cannot be unchecked
+                checked: root.selectedSharedAddressesMap.has(listItem.address)
+                enabled: !(d.selectedSharedAddressesCount === 1 && checked) // last cannot be unchecked
+
                 onToggled: {
-                    // handle selected addresses
-                    const index = root.selectedSharedAddresses.findIndex((address) => address.toLowerCase() === listItem.address)
-                    const selectedSharedAddressesCopy = Object.assign([], root.selectedSharedAddresses) // deep copy
-                    if (index === -1) {
-                        selectedSharedAddressesCopy.push(listItem.address)
-                    } else {
-                        selectedSharedAddressesCopy.splice(index, 1)
-                    }
-                    root.selectedSharedAddresses = selectedSharedAddressesCopy
-
-                    // switch to next available airdrop address when unchecking
-                    if (!checked && listItem.address === root.selectedAirdropAddress.toLowerCase()) {
-                        d.selectFirstAvailableAirdropAddress()
-                    }
-
-                    root.addressesChanged()
+                    root.toggleAddressSelection(model.keyUid, listItem.address)
                 }
             }
         ]

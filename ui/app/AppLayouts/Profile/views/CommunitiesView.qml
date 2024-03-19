@@ -211,9 +211,9 @@ SettingsContentBase {
             Global.openPopup(communityIntroDialogPopup, {
                 communityId: communityId,
                 isInvitationPending: root.rootStore.isMyCommunityRequestPending(communityId),
-                name: name,
+                communityName: name,
                 introMessage: introMessage,
-                imageSrc: imageSrc,
+                communityIcon: imageSrc,
                 accessType: accessType
             })
         }
@@ -236,8 +236,9 @@ SettingsContentBase {
                 }
             }
 
-            loginType: chatStore.loginType
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+            canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
+
             walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
             requirementsCheckPending: root.rootStore.requirementsCheckPending
             permissionsModel: {
@@ -257,8 +258,8 @@ SettingsContentBase {
                 communityIntroDialog.keypairSigningModel = chatStore.communitiesModuleInst.keypairsSigningModel
             }
 
-            onSignSharedAddressesForAllNonKeycardKeypairs: {
-                chatStore.signSharedAddressesForAllNonKeycardKeypairs()
+            onSignProfileKeypairAndAllNonKeycardKeypairs: {
+                chatStore.signProfileKeypairAndAllNonKeycardKeypairs()
             }
 
             onSignSharedAddressesForKeypair: {
@@ -280,9 +281,21 @@ SettingsContentBase {
             Connections {
                 target: chatStore.communitiesModuleInst
 
-                function onSharedAddressesForAllNonKeycardKeypairsSigned() {
+                function onAllSharedAddressesSigned() {
+                    if (communityIntroDialog.profileProvesOwnershipOfSelectedAddresses) {
+                        communityIntroDialog.joinCommunity()
+                        communityIntroDialog.close()
+                        return
+                    }
+
+                    if (communityIntroDialog.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                        communityIntroDialog.joinCommunity()
+                        communityIntroDialog.close()
+                        return
+                    }
+
                     if (!!communityIntroDialog.replaceItem) {
-                        communityIntroDialog.replaceLoader.item.sharedAddressesForAllNonKeycardKeypairsSigned()
+                        communityIntroDialog.replaceLoader.item.allSigned()
                     }
                 }
             }

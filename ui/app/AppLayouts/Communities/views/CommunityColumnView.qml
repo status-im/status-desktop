@@ -305,7 +305,7 @@ Item {
 
             chatListPopupMenu: ChatContextMenuView {
                 id: chatContextMenuView
-                showDebugOptions: root.store.isDebugEnabledfir 
+                showDebugOptions: root.store.isDebugEnabledfir
 
                 // TODO pass the chatModel in its entirety instead of fetching the JSOn using just the id
                 openHandler: function (id) {
@@ -536,12 +536,14 @@ Item {
 
                     isInvitationPending: d.invitationPending
                     requirementsCheckPending: root.store.requirementsCheckPending
-                    name: communityData.name
+                    communityName: communityData.name
                     introMessage: communityData.introMessage
-                    imageSrc: communityData.image
+                    communityIcon: communityData.image
                     accessType: communityData.access
-                    loginType: root.store.loginType
+
                     walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+                    canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
+
                     walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                     permissionsModel: {
                         root.store.prepareTokenModelForCommunity(communityData.id)
@@ -560,8 +562,8 @@ Item {
                         communityIntroDialog.keypairSigningModel = root.store.communitiesModuleInst.keypairsSigningModel
                     }
 
-                    onSignSharedAddressesForAllNonKeycardKeypairs: {
-                        root.store.signSharedAddressesForAllNonKeycardKeypairs()
+                    onSignProfileKeypairAndAllNonKeycardKeypairs: {
+                        root.store.signProfileKeypairAndAllNonKeycardKeypairs()
                     }
 
                     onSignSharedAddressesForKeypair: {
@@ -589,9 +591,21 @@ Item {
                     Connections {
                         target: root.store.communitiesModuleInst
 
-                        function onSharedAddressesForAllNonKeycardKeypairsSigned() {
+                        function onAllSharedAddressesSigned() {
+                            if (communityIntroDialog.profileProvesOwnershipOfSelectedAddresses) {
+                                communityIntroDialog.joinCommunity()
+                                communityIntroDialog.close()
+                                return
+                            }
+
+                            if (communityIntroDialog.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                                communityIntroDialog.joinCommunity()
+                                communityIntroDialog.close()
+                                return
+                            }
+
                             if (!!communityIntroDialog.replaceItem) {
-                                communityIntroDialog.replaceLoader.item.sharedAddressesForAllNonKeycardKeypairsSigned()
+                                communityIntroDialog.replaceLoader.item.allSigned()
                             }
                         }
                     }
@@ -628,7 +642,7 @@ Item {
 
             property int channelPosition: -1
             property var deleteChatConfirmationDialog
-            
+
             onCreateCommunityChannel: function (chName, chDescription, chEmoji, chColor,
                                                 chCategoryId, hideIfPermissionsNotMet) {
                 root.store.createCommunityChannel(chName, chDescription, chEmoji, chColor,
@@ -649,7 +663,7 @@ Item {
 
             onAddPermissions: function (permissions) {
                 for (var i = 0; i < permissions.length; i++) {
-                    root.store.permissionsStore.createPermission(permissions[i].holdingsListModel, 
+                    root.store.permissionsStore.createPermission(permissions[i].holdingsListModel,
                                                                 permissions[i].permissionType,
                                                                 permissions[i].isPrivate,
                                                                 permissions[i].channelsListModel)

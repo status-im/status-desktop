@@ -10,6 +10,12 @@ import AppLayouts.Communities.panels 1.0
 
 import utils 1.0
 
+/****************************************************
+  This file is not in use any more.
+
+  TODO: remove it
+ ****************************************************/
+
 StatusDialog {
     id: root
 
@@ -35,7 +41,7 @@ StatusDialog {
 
     signal prepareForSigning(string airdropAddress, var sharedAddresses)
     signal editRevealedAddresses()
-    signal signSharedAddressesForAllNonKeycardKeypairs()
+    signal signProfileKeypairAndAllNonKeycardKeypairs()
     signal signSharedAddressesForKeypair(string keyUid)
 
     function setOldSharedAddresses(oldSharedAddresses) {
@@ -70,6 +76,8 @@ StatusDialog {
 
         property var oldSharedAddresses
         property string oldAirdropAddress
+
+        property int selectedSharedAddressesCount
 
         property var selectAddressesPanelButtons: ObjectModel {}
         readonly property var signingPanelButtons: ObjectModel {
@@ -136,6 +144,7 @@ StatusDialog {
                 d.displaySigningPanel = true
             }
             onSharedAddressesChanged: {
+                d.selectedSharedAddressesCount = sharedAddresses.length
                 root.sharedAddressesChanged(airdropAddress, sharedAddresses)
             }
             onClose: root.close()
@@ -147,12 +156,16 @@ StatusDialog {
 
     Component {
         id: sharedAddressesSigningPanelComponent
-        SharedAddressesSigningPanel {
+           SharedAddressesSigningPanel {
 
+            totalNumOfAddressesForSharing: root.walletAccountsModel.count
+            numOfSelectedAddressesForSharing: d.selectedSharedAddressesCount
+
+            communityName: root.communityName
             keypairSigningModel: root.keypairSigningModel
 
-            onSignSharedAddressesForAllNonKeycardKeypairs: {
-                root.signSharedAddressesForAllNonKeycardKeypairs()
+            onSignProfileKeypairAndAllNonKeycardKeypairs: {
+                root.signProfileKeypairAndAllNonKeycardKeypairs()
             }
 
             onSignSharedAddressesForKeypair: {
