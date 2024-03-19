@@ -63,7 +63,7 @@ QtObject {
     function fromCodePoint(value) {
         return Twemoji.twemoji.convert.fromCodePoint(value)
     }
-    
+
     // This regular expression looks for html tag `img` with following attributes in any order:
     //  - `src` containig with "/assets/twemoji/" substring
     //  - `alt` (this one is captured)
@@ -125,22 +125,28 @@ QtObject {
         return undefined
     }
 
-    function getRandomEmoji(size) {
-        var randomEmoji = EmojiJSON.emoji_json[Math.floor(Math.random() * EmojiJSON.emoji_json.length)]
+    // Used to exclude flags emojis from the random emoji picker
+    // Based on the knowledge that flags emojis are contiguous in the emoji list
+    readonly property int firstFlagIndex: 1003
+    readonly property int lastFlagIndex: 1259
+    readonly property int flagsCount: lastFlagIndex - firstFlagIndex + 1
 
-        const extenstionIndex = randomEmoji.unicode.lastIndexOf('.');
+    // Returns a random emoji excluding flags emojis
+    function getRandomEmoji(size) {
+        let whitelistedIndex = Math.floor(Math.random() * (EmojiJSON.emoji_json.length - flagsCount))
+        // Compensating for the missing flags emojis index
+        if (whitelistedIndex >= firstFlagIndex) {
+            whitelistedIndex += flagsCount
+        }
+        var randomEmoji = EmojiJSON.emoji_json[whitelistedIndex]
+
+        const extensionIndex = randomEmoji.unicode.lastIndexOf('.');
         let iconCodePoint = randomEmoji.unicode
-        if (extenstionIndex > -1) {
-            iconCodePoint = iconCodePoint.substring(0, extenstionIndex)
+        if (extensionIndex > -1) {
+            iconCodePoint = iconCodePoint.substring(0, extensionIndex)
         }
 
-        // Split the unicode to get all the parts and then encode them from hex to utf8
-        const splitCodePoint = iconCodePoint.split('-')
-        let codePointParts = []
-        splitCodePoint.forEach(function (codePoint) {
-            codePointParts.push(`0x${codePoint}`)
-        })
-        const encodedIcon = String.fromCodePoint(...codePointParts);
+        const encodedIcon = getEmojiCodepoint(iconCodePoint)
 
         // Adding a space because otherwise, some emojis would fuse since emoji is just a string
         return Emoji.parse(encodedIcon, size || undefined) + ' '
