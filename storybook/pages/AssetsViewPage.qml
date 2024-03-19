@@ -12,6 +12,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import mainui 1.0
 import utils 1.0
 
+import shared.controls 1.0
 import shared.views 1.0
 import shared.stores 1.0
 
@@ -33,28 +34,21 @@ SplitView {
         id: d
 
         readonly property string networksChainsCurrentlySelected: {
-            let supportNwChains = ":"
-            for (let i =0; i< networksRepeater.count; i++) {
+            let supportedNwChains = []
+            for (let i = 0; i< networksRepeater.count; i++) {
                 if (networksRepeater.itemAt(i).checked && networksRepeater.itemAt(i).visible)
-                    supportNwChains +=  networksRepeater.itemAt(i).chainID + ":"
+                    supportedNwChains.push(networksRepeater.itemAt(i).chainID)
             }
-            return supportNwChains
+            return supportedNwChains.join(":")
         }
 
         readonly property string addressesSelected: {
-            let supportedAddresses = ""
-            let allChecked = true
-            let allUnchecked = true
-            for (let i =0; i< accountsRepeater.count; i++) {
+            let supportedAddresses = []
+            for (let i = 0; i< accountsRepeater.count; i++) {
                 if (accountsRepeater.itemAt(i).checked && accountsRepeater.itemAt(i).visible)
-                    supportedAddresses +=  accountsRepeater.itemAt(i).address
-                allChecked = allChecked && accountsRepeater.itemAt(i).checked
-                allUnchecked = allUnchecked && !accountsRepeater.itemAt(i).checked
+                    supportedAddresses.push(accountsRepeater.itemAt(i).address)
             }
-            if(allChecked || allUnchecked) {
-                supportedAddresses = ""
-            }
-            return supportedAddresses
+            return supportedAddresses.join(":")
         }
 
         readonly property var currencyStore: CurrenciesStore {}
@@ -70,13 +64,12 @@ SplitView {
             submodelRoleName: "balances"
             delegateModel: SortFilterProxyModel {
                 sourceModel: submodel
-                filters: ExpressionFilter {
+                filters: FastExpressionFilter {
                     expression: {
                         d.networksChainsCurrentlySelected
-                        d.addressesSelected
-                        return d.networksChainsCurrentlySelected.split(":").includes(chainId+"") &&
-                                (!!d.addressesSelected ? d.addressesSelected.toUpperCase() === account.toUpperCase() : true)
+                        return d.networksChainsCurrentlySelected.split(":").includes(model.chainId+"")
                     }
+                    expectedRoles: ["chainId"]
                 }
             }
         }
@@ -118,6 +111,10 @@ SplitView {
             }
             filterVisible: ctrlFilterVisible.checked
             currencyStore: d.currencyStore
+            tokensStore: TokensStore {
+                displayAssetsBelowBalance: ctrlBalanceThresholdSwitch.checked
+                getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => ctrlBalanceThreshold.value
+            }
             networkFilters: d.networksChainsCurrentlySelected
             addressFilters: d.addressesSelected
             onAssetClicked: {
@@ -204,6 +201,19 @@ SplitView {
                         width: parent.width
                         text: name
                     }
+                }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                Switch {
+                    id: ctrlBalanceThresholdSwitch
+                    text: qsTr("Currency balance threshold")
+                    checked: false
+                }
+                CurrencyAmountInput {
+                    id: ctrlBalanceThreshold
+                    value: 10.1
                 }
             }
         }

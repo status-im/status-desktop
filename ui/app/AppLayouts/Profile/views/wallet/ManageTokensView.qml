@@ -173,7 +173,7 @@ Item {
 
                 property bool dirty: false
 
-                property var thresholdCurrency: root.tokensStore.getDisplayAssetsBelowBalanceThresholdCurrency()
+                readonly property var thresholdCurrency: root.tokensStore.getDisplayAssetsBelowBalanceThresholdCurrency()
 
                 spacing: 8
                 StatusListItem {
