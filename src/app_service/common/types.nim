@@ -72,6 +72,7 @@ type MembershipRequestState* {.pure} = enum
   KickedPending = 10,
   AwaitingAddress = 11,
   Unbanned = 12,
+  BannedWithAllMessagesDelete = 13
 
 type
   ContractTransactionStatus* {.pure.} = enum

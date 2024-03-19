@@ -376,7 +376,7 @@ method onAcceptRequestToJoinLoading*(self: AccessInterface, communityId: string,
 method onAcceptRequestToJoinSuccess*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onMembershipStatusUpdated*(self: AccessInterface, communityId: string, memberPubkey: string, status: MembershipRequestState) {.base.} =
+method onMembershipStateUpdated*(self: AccessInterface, communityId: string, memberPubkey: string, state: MembershipRequestState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onDeactivateChatLoader*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =

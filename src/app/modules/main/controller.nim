@@ -407,7 +407,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED) do(e: Args):
     let args = CommunityMemberStatusUpdatedArgs(e)
-    self.delegate.onMembershipStatusUpdated(args.communityId, args.memberPubkey, args.status)
+    self.delegate.onMembershipStateUpdated(args.communityId, args.memberPubkey, args.state)
 
   self.events.on(SIGNAL_COMMUNITY_MEMBERS_CHANGED) do(e: Args):
     let args = CommunityMembersArgs(e)

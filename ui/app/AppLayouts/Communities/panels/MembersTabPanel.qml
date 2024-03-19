@@ -104,7 +104,8 @@ Item {
                 readonly property bool isBanPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedPending
                 readonly property bool isUnbanPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.UnbannedPending
                 readonly property bool isKickPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.KickedPending
-                readonly property bool isBanned: model.membershipRequestState === Constants.CommunityMembershipRequestState.Banned
+                readonly property bool isBanned: model.membershipRequestState === Constants.CommunityMembershipRequestState.Banned ||
+                                                 model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete
                 readonly property bool isKicked: model.membershipRequestState === Constants.CommunityMembershipRequestState.Kicked
 
                 // TODO: Connect to backend when available

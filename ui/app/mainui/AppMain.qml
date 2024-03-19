@@ -229,6 +229,7 @@ Item {
             var text = ""
             switch (state) {
                 case Constants.CommunityMembershipRequestState.Banned:
+                case Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete:
                     text = qsTr("%1 was banned from %2").arg(memberName).arg(communityName)
                     break
                 case Constants.CommunityMembershipRequestState.Unbanned:

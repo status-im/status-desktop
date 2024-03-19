@@ -1226,7 +1226,8 @@ QtObject {
         UnbannedPending,
         KickedPending,
         AwaitingAddress,
-        Unbanned
+        Unbanned,
+        BannedWithAllMessagesDelete
     }
 
     readonly property QtObject walletAccountColors: QtObject {
