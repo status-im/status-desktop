@@ -773,13 +773,16 @@ method onChannelGroupsLoaded*[T](
     sharedUrlsService,
     networkService
   )
+  let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
+    myPubKey
+  )
   let channelGroupItem = initItem(
     myPubKey,
     sectionType = SectionType.Chat,
     name = conf.CHAT_SECTION_NAME,
     icon = conf.CHAT_SECTION_ICON,
-    hasNotification = false,# TODO get that from chats
-    notificationsCount = 0,# TODO get that from chats
+    hasNotification = unviewedMessagesCount > 0,
+    notificationsCount = unviewedMentionsCount,
     active = self.getActiveSectionId() == myPubKey,
     enabled = true,
     joined = true,
