@@ -62,7 +62,7 @@ Item {
             /* TODO add link out to opensea
             https://github.com/status-im/status-desktop/issues/13918 */
         }
-        onOpenCollectibleOnExplorer: Global.openLink("%1/nft/%2/%3".arg(root.walletRootStore.getExplorerUrl()).arg(collectible.contractAddress).arg(collectible.tokenId))
+        onOpenCollectibleOnExplorer: Global.openLink(root.walletRootStore.getExplorerUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId))
     }
 
     ColumnLayout {
