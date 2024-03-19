@@ -1150,7 +1150,8 @@ QtObject {
         "OTN", "QRL", "ROL", "STORJ", "TKN", "VERI", "AE", "aREP", "BAND",
         "CFI", "DGX", "ENJ", "GNT", "LINK", "MOC", "PAXG", "QSP", "R",
         "STORM", "TKX", "VIB", "aETH", "aSNX", "BAT", "CK", "DLT", "EOS",
-        "GRID", "LISK", "MOD", "PAX", "RAE", "SAI", "ST", "TNT", "WABI"
+        "GRID", "LISK", "MOD", "PAX", "RAE", "SAI", "ST", "TNT", "WABI",
+        "EUROC"
     ]
 
     function tokenIcon(symbol, useDefault=true) {
