@@ -298,7 +298,6 @@ QtObject:
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)
 
-
   proc getChatIndex*(self: Service, channelGroupId, chatId: string): int =
     var i = 0
 
@@ -492,6 +491,9 @@ QtObject:
 
   proc getChatsOfChatTypes*(self: Service, types: seq[chat_dto.ChatType]): seq[ChatDto] =
     return self.getAllChats().filterIt(it.chatType in types)
+
+  proc getChatsForPersonalSection*(self: Service): seq[ChatDto] =
+    return self.getAllChats().filterIt(it.isActivePersonalChat())
 
   proc getChatById*(self: Service, chatId: string, showWarning: bool = true): ChatDto =
     if(not self.chats.contains(chatId)):

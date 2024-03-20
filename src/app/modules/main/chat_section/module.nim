@@ -57,7 +57,8 @@ type
 # Forward declaration
 proc buildChatSectionUI(
   self: Module,
-  channelGroup: ChannelGroupDto,
+  community: CommunityDto,
+  chats: seq[ChatDto],
   events: UniqueUUIDEventEmitter,
   settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
@@ -76,7 +77,7 @@ proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewer
 
 proc addOrUpdateChat(self: Module,
     chat: ChatDto,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -287,7 +288,8 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
 
 proc buildChatSectionUI(
     self: Module,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
+    chats: seq[ChatDto],
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
@@ -303,11 +305,11 @@ proc buildChatSectionUI(
   let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
 
   var items: seq[chat_item.Item] = @[]
-  for categoryDto in channelGroup.categories:
+  for categoryDto in community.categories:
     # Add items for the categories. We use a special type to identify categories
-    items.add(self.addCategoryItem(categoryDto, channelGroup.memberRole, channelGroup.id))
+    items.add(self.addCategoryItem(categoryDto, community.memberRole, community.id))
 
-  for chatDto in channelGroup.chats:
+  for chatDto in chats:
     var categoryPosition = -1
 
     # Add an empty chat item that has the category info
@@ -319,14 +321,14 @@ proc buildChatSectionUI(
       isActive = true
 
     if chatDto.categoryId != "":
-      for category in channelGroup.categories:
+      for category in community.categories:
         if category.id == chatDto.categoryId:
           categoryPosition = category.position
           break
 
     items.add(self.addOrUpdateChat(
       chatDto,
-      channelGroup,
+      community,
       belongsToCommunity = chatDto.communityId.len > 0,
       events,
       settingsService,
@@ -395,7 +397,7 @@ proc reevaluateRequiresTokenPermissionToJoin(self: Module) =
 
   self.view.setRequiresTokenPermissionToJoin(hasBecomeMemberOrBecomeAdminPermissions)
 
-proc initCommunityTokenPermissionsModel(self: Module, channelGroup: ChannelGroupDto) =
+proc initCommunityTokenPermissionsModel(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
 
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
@@ -420,7 +422,8 @@ method load*(self: Module) =
 
 method onChatsLoaded*(
     self: Module,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
+    chats: seq[ChatDto],
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
@@ -433,7 +436,7 @@ method onChatsLoaded*(
     sharedUrlsService: shared_urls_service.Service,
   ) =
   self.chatsLoaded = true
-  self.buildChatSectionUI(channelGroup, events, settingsService, nodeConfigurationService,
+  self.buildChatSectionUI(community, chats, events, settingsService, nodeConfigurationService,
     contactService, chatService, communityService, messageService, gifService, mailserversService, sharedUrlsService)
 
   if(not self.controller.isCommunity()):
@@ -443,8 +446,8 @@ method onChatsLoaded*(
     let community = self.controller.getMyCommunity()
     self.view.setAmIMember(community.joined)
     self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(self.controller.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(community.id))
-    self.initCommunityTokenPermissionsModel(channelGroup)
-    self.onCommunityCheckAllChannelsPermissionsResponse(channelGroup.channelPermissions)
+    self.initCommunityTokenPermissionsModel()
+    self.onCommunityCheckAllChannelsPermissionsResponse(community.channelPermissions)
     self.controller.asyncCheckPermissionsToJoin()
 
   let activeChatId = self.controller.getActiveChatId()
@@ -623,7 +626,7 @@ method chatsModel*(self: Module): chats_model.Model =
 proc addNewChat(
     self: Module,
     chatDto: ChatDto,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
     belongsToCommunity: bool,
     events: EventEmitter,
     settingsService: settings_service.Service,
@@ -667,10 +670,10 @@ proc addNewChat(
   var memberRole = self.getUserMemberRole(chatDto.members)
 
   if chatDto.chatType != ChatType.PrivateGroupChat:
-    memberRole = channelGroup.memberRole
+    memberRole = community.memberRole
 
   if memberRole == MemberRole.None and len(chatDto.communityId) != 0:
-    memberRole = channelGroup.memberRole
+    memberRole = community.memberRole
     if memberRole == MemberRole.None:
       let community = communityService.getCommunityById(chatDto.communityId)
       memberRole = community.memberRole
@@ -679,8 +682,8 @@ proc addNewChat(
   if chatDto.categoryId != "":
     let categoryItem = self.view.chatsModel.getItemById(chatDto.categoryId)
     categoryOpened = categoryItem.categoryOpened
-    if channelGroup.id != "":
-      for category in channelGroup.categories:
+    if community.id != "":
+      for category in community.categories:
         if category.id == chatDto.categoryId:
           categoryPosition = category.position
           break
@@ -1343,7 +1346,7 @@ method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
 
 proc addOrUpdateChat(self: Module,
     chat: ChatDto,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -1390,7 +1393,7 @@ proc addOrUpdateChat(self: Module,
 
   result = self.addNewChat(
       chat,
-      channelGroup,
+      community,
       belongsToCommunity,
       events.eventsEmitter(),
       settingsService,
@@ -1424,7 +1427,7 @@ method addOrUpdateChat*(self: Module,
   ): chat_item.Item =
  result = self.addOrUpdateChat(
     chat,
-    ChannelGroupDto(),
+    CommunityDto(),
     belongsToCommunity,
     events,
     settingsService,
