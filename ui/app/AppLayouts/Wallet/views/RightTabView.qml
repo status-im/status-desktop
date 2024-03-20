@@ -73,6 +73,7 @@ RightTabBaseView {
             readonly property var detailedCollectibleActivityController: RootStore.tmpActivityController0
         }
 
+        // StackLayout.currentIndex === 0
         ColumnLayout {
             spacing: 0
 
@@ -263,27 +264,30 @@ RightTabBaseView {
             }
         }
 
-        TransactionDetailView {
-            id: transactionDetailView
-            controller: RootStore.activityDetailsController
-            onVisibleChanged: {
-                if (visible) {
-                    if (!!transaction) {
-                        RootStore.addressWasShown(transaction.sender)
-                        if (transaction.sender !== transaction.recipient) {
-                            RootStore.addressWasShown(transaction.recipient)
+        Loader {
+            active: stack.currentIndex === 3
+
+            sourceComponent: TransactionDetailView {
+                controller: RootStore.activityDetailsController
+                onVisibleChanged: {
+                    if (visible) {
+                        if (!!transaction) {
+                            RootStore.addressWasShown(transaction.sender)
+                            if (transaction.sender !== transaction.recipient) {
+                                RootStore.addressWasShown(transaction.recipient)
+                            }
                         }
+                    } else {
+                        controller.resetActivityEntry()
                     }
-                } else {
-                    controller.resetActivityEntry()
                 }
+                showAllAccounts: RootStore.showAllAccounts
+                communitiesStore: root.communitiesStore
+                sendModal: root.sendModal
+                contactsStore: root.contactsStore
+                networkConnectionStore: root.networkConnectionStore
+                visible: (stack.currentIndex === 3)
             }
-            showAllAccounts: RootStore.showAllAccounts
-            communitiesStore: root.communitiesStore
-            sendModal: root.sendModal
-            contactsStore: root.contactsStore
-            networkConnectionStore: root.networkConnectionStore
-            visible: (stack.currentIndex === 3)
         }
     }
 }
