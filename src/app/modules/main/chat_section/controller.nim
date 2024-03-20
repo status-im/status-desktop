@@ -739,7 +739,7 @@ proc waitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Controller, commu
 proc setCommunityShard*(self: Controller, shardIndex: int) =
   self.communityService.asyncSetCommunityShard(self.getMySectionId(), shardIndex)
 
-proc loadCommunityMemberMessaages*(self: Controller, communityId: string, memberPubKey: string) =
+proc loadCommunityMemberMessages*(self: Controller, communityId: string, memberPubKey: string) =
   self.messageService.asyncLoadCommunityMemberAllMessages(communityId, memberPubKey)
 
 proc getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =

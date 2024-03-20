@@ -1522,9 +1522,9 @@ method setCommunityShard*(self: Module, shardIndex: int) =
 method setShardingInProgress*(self: Module, value: bool) =
   self.view.setShardingInProgress(value)
 
-method loadCommunityMemberMessaages*(self: Module, communityId: string, memberPubKey: string) =
+method loadCommunityMemberMessages*(self: Module, communityId: string, memberPubKey: string) =
   self.view.getMemberMessagesModel().clear()
-  self.controller.loadCommunityMemberMessaages(communityId, memberPubKey)
+  self.controller.loadCommunityMemberMessages(communityId, memberPubKey)
 
 method onCommunityMemberMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
   var viewItems: seq[member_msg_item.Item]

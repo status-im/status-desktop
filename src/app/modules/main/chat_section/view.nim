@@ -526,8 +526,8 @@ QtObject:
   QtProperty[QVariant] memberMessagesModel:
     read = getMemberMessagesModelVariant
 
-  proc loadCommunityMemberMessaages*(self: View, communityId: string, memberPubKey: string) {.slot.} =
-    self.delegate.loadCommunityMemberMessaages(communityId, memberPubKey)
+  proc loadCommunityMemberMessages*(self: View, communityId: string, memberPubKey: string) {.slot.} =
+    self.delegate.loadCommunityMemberMessages(communityId, memberPubKey)
 
   proc deleteCommunityMemberMessages*(self: View, memberPubKey: string, messageId: string, chatId: string) {.slot.} =
     self.delegate.deleteCommunityMemberMessages(memberPubKey, messageId, chatId)

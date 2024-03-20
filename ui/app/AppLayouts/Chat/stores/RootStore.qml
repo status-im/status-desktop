@@ -330,7 +330,7 @@ QtObject {
     }
 
     function loadCommunityMemberMessages(communityId, pubKey) {
-        chatCommunitySectionModule.loadCommunityMemberMessaages(communityId, pubKey);
+        chatCommunitySectionModule.loadCommunityMemberMessages(communityId, pubKey);
     }
 
     function banUserFromCommunity(pubKey, deleteAllMessages) {
