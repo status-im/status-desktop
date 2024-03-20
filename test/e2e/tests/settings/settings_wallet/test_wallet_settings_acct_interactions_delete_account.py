@@ -11,7 +11,6 @@ import driver
 from constants.wallet import WalletAccountSettings, DerivationPath
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
-from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
 

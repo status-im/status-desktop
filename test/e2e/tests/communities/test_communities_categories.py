@@ -18,7 +18,8 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703235', 'Edit category - remove channel')
 @pytest.mark.case(703226, 703233, 703234, 703235, 703227)
 @pytest.mark.parametrize(
-    'category_name, general_checkbox, channel_name, channel_description, channel_emoji, second_channel_name, second_channel_description, second_channel_emoji',
+    'category_name, general_checkbox, channel_name, channel_description, channel_emoji, second_channel_name, '
+    'second_channel_description, second_channel_emoji',
     [pytest.param('Category in general', True, 'Channel', 'Description', 'sunglasses', 'Second-channel',
                   'Description', 'sunglasses')])
 def test_create_edit_remove_community_category(main_screen: MainWindow, category_name, general_checkbox, channel_name,

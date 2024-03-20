@@ -4,7 +4,6 @@ from allure_commons._allure import step
 from . import marks
 
 import configs
-import driver
 from gui.components.back_up_your_seed_phrase_banner import BackUpSeedPhraseBanner
 from gui.main_window import MainWindow
 

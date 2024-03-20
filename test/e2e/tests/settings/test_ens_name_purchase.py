@@ -7,6 +7,7 @@ import constants
 import driver
 from configs.timeouts import UI_LOAD_TIMEOUT_SEC
 from constants.wallet import WalletTransactions
+from . import marks
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
@@ -15,7 +16,7 @@ from gui.components.wallet.send_popup import SendPopup
 from gui.screens.onboarding import KeysView, AllowNotificationsView, WelcomeToStatusView, BiometricsView
 from gui.screens.settings_ens_usernames import ENSRegisteredView
 
-
+pytestmark = marks
 @pytest.fixture
 def keys_screen(main_window) -> KeysView:
     with step('Open Generate new keys view'):

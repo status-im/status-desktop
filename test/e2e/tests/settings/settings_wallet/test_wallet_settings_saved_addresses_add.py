@@ -5,7 +5,6 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from gui.components.toast_message import ToastMessage
 from . import marks
 
 import configs

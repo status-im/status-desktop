@@ -10,6 +10,8 @@ from constants.wallet import WalletNetworkNaming, WalletEditNetworkErrorMessages
 from gui.main_window import MainWindow
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703515',
                  'Network:  Network: Editing network -> Restore defaults')
 @pytest.mark.case(703515)
@@ -18,7 +20,6 @@ pytestmark = marks
     pytest.param(WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value)
 ])
 def test_settings_networks_edit_restore_defaults(main_screen: MainWindow, network_tab: str):
-
     networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
 
     with step('Check network items titles'):

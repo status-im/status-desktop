@@ -5,9 +5,11 @@ import constants
 import pytest
 from allure_commons._allure import step
 from constants import UserAccount
+from . import marks
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
 
+pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704610', 'Reject a contact request with a chat key')
 @pytest.mark.case(704610)
