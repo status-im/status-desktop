@@ -845,7 +845,7 @@ QtObject:
         if self.communities.hasKey(settings.id):
           self.communities[settings.id].settings = settings
 
-      # Non approver requests to join for all communities
+      # Non approved requests to join for all communities
       let nonAprrovedRequestsToJoinObj = responseObj["nonAprrovedRequestsToJoin"]
 
       if nonAprrovedRequestsToJoinObj{"result"}.kind != JNull:

@@ -723,7 +723,6 @@ method load*[T](
 
 method onChannelGroupsLoaded*[T](
   self: Module[T],
-  channelGroups: seq[ChannelGroupDto],
   events: EventEmitter,
   settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
@@ -851,7 +850,6 @@ method onCommunityDataLoaded*[T](
     return
 
   self.onChannelGroupsLoaded(
-    self.controller.getChannelGroups(),
     events,
     settingsService,
     nodeConfigurationService,

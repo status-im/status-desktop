@@ -86,7 +86,6 @@ method communitySectionDidLoad*(self: AccessInterface) {.base.} =
 
 method onChannelGroupsLoaded*(
     self: AccessInterface,
-    channelGroups: seq[ChannelGroupDto],
     events: EventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,

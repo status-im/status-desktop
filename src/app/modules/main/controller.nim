@@ -109,10 +109,8 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_CHANNEL_GROUPS_LOADED) do(e:Args):
-    let args = ChannelGroupsArgs(e)
+  self.events.on(SIGNAL_ACTIVE_CHATS_LOADED) do(e:Args):
     self.delegate.onChannelGroupsLoaded(
-      args.channelGroups,
       self.events,
       self.settingsService,
       self.nodeConfigurationService,
@@ -488,9 +486,6 @@ proc init*(self: Controller) =
 
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
-
-proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
-  return self.chatService.getChannelGroups()
 
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId

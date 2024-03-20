@@ -7,6 +7,7 @@ import ../../shared_models/message_item as msg_item
 import ../../shared_models/message_item_qobject as msg_item_qobj
 import ../../shared_models/message_transaction_parameters_item
 import ../../../global/global_singleton
+import ../../../global/app_sections_config as conf
 import ../../../core/eventemitter
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/contacts/service as contacts_service
@@ -268,32 +269,34 @@ method switchTo*(self: Module, sectionId, chatId, messageId: string) =
   self.controller.switchTo(sectionId, chatId, messageId)
 
 method getDetails*(self: Module, sectionId: string, chatId: string): string =
-  let groups = self.controller.getChannelGroups()
   var jsonObject = newJObject()
+  if sectionId == singletonInstance.userProfile.getPubKey():
+    echo "personal"
+    jsonObject["sType"] = %* ChannelGroupType.Personal
+    jsonObject["sName"] = %* conf.CHAT_SECTION_NAME
+    jsonObject["sImage"] = %* ""
+    jsonObject["sColor"] = %* ""
+  else:
+    # Community
+    let community = self.controller.getCommunityById(sectionId)
 
-  for g in groups:
-    if(g.id != sectionId):
-      continue
+    jsonObject["sType"] = %* ChannelGroupType.Community
+    jsonObject["sName"] = %* community.name
+    jsonObject["sImage"] = %* community.images.thumbnail
+    jsonObject["sColor"] = %* community.color
 
-    jsonObject["sType"] = %* g.channelGroupType
-    jsonObject["sName"] = %* g.name
-    jsonObject["sImage"] = %* g.images.thumbnail
-    jsonObject["sColor"] = %* g.color
+  let c = self.controller.getChatDetails(chatId)
+  
+  var chatName = c.name
+  var chatImage = c.icon
+  if c.chatType == ChatType.OneToOne:
+    (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
 
-    for c in g.chats:
-      if(c.id != chatId):
-        continue
-
-      var chatName = c.name
-      var chatImage = c.icon
-      if(c.chatType == ChatType.OneToOne):
-        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
-
-      jsonObject["cName"] = %* chatName
-      jsonObject["cImage"] = %* chatImage
-      jsonObject["cColor"] = %* c.color
-      jsonObject["cEmoji"] = %* c.emoji
-      return $jsonObject
+  jsonObject["cName"] = %* chatName
+  jsonObject["cImage"] = %* chatImage
+  jsonObject["cColor"] = %* c.color
+  jsonObject["cEmoji"] = %* c.emoji
+  return $jsonObject
 
 method getChatDetailsAsJson*(self: Module, chatId: string): string =
   let chatDto = self.controller.getChatDetails(chatId)

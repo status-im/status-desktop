@@ -459,7 +459,10 @@ proc getChatsAndBuildUI*(self: Controller) =
   var community: CommunityDto
   if self.isCommunity():
     community = self.getMyCommunity()
-    chats = community.chats
+    # chats = community.chats
+    chats = self.chatService.getChatsForCommunity(community.id)
+    echo "name ", community.name
+    echo "CHATS LEN ", chats.len
     # Fetch community chat members as we lazy load them
     # TODO add fetch
   else:
