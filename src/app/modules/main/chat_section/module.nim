@@ -503,8 +503,8 @@ method activeItemSet*(self: Module, itemId: string) =
     return
 
   # update view maintained by this module
-  self.view.chatsModel().setActiveItem(itemId)
   self.view.activeItemSet(chat_item)
+  self.view.chatsModel().setActiveItem(itemId)
 
   self.updateActiveChatMembership()
 
@@ -536,7 +536,7 @@ method getModuleAsVariant*(self: Module): QVariant =
 
 method getChatContentModule*(self: Module, chatId: string): QVariant =
   if(not self.chatContentModules.contains(chatId)):
-    error "unexisting chat key", chatId, methodName="getChatContentModule"
+    error "getChatContentModule: unexisting chat key", chatId, methodName="getChatContentModule"
     return
 
   return self.chatContentModules[chatId].getModuleAsVariant()

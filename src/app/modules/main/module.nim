@@ -1013,9 +1013,8 @@ method communityJoined*[T](
 
   if setActive:
     self.setActiveSection(communitySectionItem)
-    if(channelGroup.chats.len > 0):
-      let chatId = channelGroup.chats[0].id
-      self.channelGroupModules[community.id].setActiveItem(chatId)
+    if channelGroup.chats.len > 0:
+      self.channelGroupModules[community.id].setActiveItem(channelGroup.chats[0].id)
 
 method communityLeft*[T](self: Module[T], communityId: string) =
   if(not self.channelGroupModules.contains(communityId)):
@@ -1038,6 +1037,8 @@ method communityLeft*[T](self: Module[T], communityId: string) =
 method communityEdited*[T](
     self: Module[T],
     community: CommunityDto) =
+  if(not self.channelGroupModules.contains(community.id)):
+    return
   let channelGroup = community.toChannelGroupDto()
   var channelGroupItem = self.createChannelGroupItem(channelGroup)
   # We need to calculate the unread counts because the community update doesn't come with it
@@ -1411,6 +1412,9 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
     of StatusUrlAction.OpenCommunity:
       let item = self.view.model().getItemById(communityId)
       if item.isEmpty():
+        if self.controller.getCommunityById(communityId).id != "":
+          self.controller.spectateCommunity(communityId)
+          return
         # request community info and then spectate
         self.pendingSpectateRequest.communityId = communityId
         self.pendingSpectateRequest.channelUuid = ""

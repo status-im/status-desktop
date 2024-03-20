@@ -930,7 +930,7 @@ QtObject:
       error "trying to get community categories for an unexisting community id"
       return
 
-    let categories = self.communities[communityId].categories
+    let categories = self.getCommunityById(communityId).categories
     let categoryIndex = findIndexById(categoryId, categories)
     return categories[categoryIndex]
 
@@ -939,7 +939,7 @@ QtObject:
       error "trying to get community categories for an unexisting community id"
       return
 
-    result = self.communities[communityId].categories
+    result = self.getCommunityById(communityId).categories
     if(order == SortOrder.Ascending):
       result.sort(sortAsc[Category])
     else:
@@ -971,7 +971,7 @@ QtObject:
       error "trying to get all community chats for an unexisting community id", communityId
       return
 
-    result = self.communities[communityId].chats
+    result = self.getCommunityById(communityId).chats
 
     if(order == SortOrder.Ascending):
       result.sort(sortAsc[ChatDto])
@@ -1048,7 +1048,9 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true, isPendingOwnershipRequest: (ownerTokenNotification != nil)))
 
       for k, chat in updatedCommunity.chats:
-        let fullChatId = communityId & chat.id
+        var fullChatId = chat.id
+        if not chat.id.startsWith(communityId):
+          fullChatId = communityId & chat.id
         let currentChat =  self.chatService.getChatById(fullChatId, showWarning = false)
 
         if (currentChat.id != ""):
@@ -1387,7 +1389,7 @@ QtObject:
         let prev_chat_idx = findIndexById(chat.id, self.communities[communityId].chats)
         if prev_chat_idx == -1:
           continue
-        let prev_chat = self.communities[communityId].chats[prev_chat_idx]
+        let prev_chat = self.getCommunityById(communityId).chats[prev_chat_idx]
 
         # we are free to do this cause channel must be created before we add it to a category
         var chatDetails = self.chatService.getChatById(chat.id)
@@ -1974,7 +1976,7 @@ QtObject:
       error "Error slowing down archives import: ", msg = e.msg
 
   proc getPendingRequestIndex(self: Service, communityId: string, requestId: string): int =
-    let community = self.communities[communityId]
+    let community = self.getCommunityById(communityId)
     var i = 0
     for pendingRequest in community.pendingRequestsToJoin:
       if (pendingRequest.id == requestId):
@@ -1983,7 +1985,7 @@ QtObject:
     return -1
 
   proc getDeclinedRequestIndex(self: Service, communityId: string, requestId: string): int =
-    let community = self.communities[communityId]
+    let community = self.getCommunityById(communityId)
     var i = 0
     for declinedRequest in community.declinedRequestsToJoin:
       if (declinedRequest.id == requestId):
@@ -1992,7 +1994,7 @@ QtObject:
     return -1
 
   proc getWaitingForSharedAddressesRequestIndex(self: Service, communityId: string, requestId: string): int =
-    let community = self.communities[communityId]
+    let community = self.getCommunityById(communityId)
     for i in 0 ..< len(community.waitingForSharedAddressesRequestsToJoin):
       if (community.waitingForSharedAddressesRequestsToJoin[i].id == requestId):
         return i
@@ -2007,7 +2009,7 @@ QtObject:
     if (indexPending == -1 and indexDeclined == -1 and indexAwaitingAddresses == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
-    var community = self.communities[communityId]
+    var community = self.getCommunityById(communityId)
 
     if (indexPending != -1):
       if @[RequestToJoinType.Declined, RequestToJoinType.Accepted, RequestToJoinType.Canceled].any(x => x == newState):
@@ -2040,7 +2042,7 @@ QtObject:
         error "Cancel request to join community failed: unknown community", communityId=communityId
         return
 
-      var community = self.communities[communityId]
+      var community = self.getCommunityById(communityId)
       let myPublicKey = singletonInstance.userProfile.getPubKey()
       var i = 0
       for myPendingRequest in community.pendingRequestsToJoin:
@@ -2206,7 +2208,7 @@ QtObject:
       return false
 
     let myPublicKey = singletonInstance.userProfile.getPubKey()
-    var community = self.communities[communityId]
+    var community = self.getCommunityById(communityId)
     for pendingRequest in community.pendingRequestsToJoin:
       if pendingRequest.publicKey == myPublicKey:
         return true
@@ -2218,7 +2220,7 @@ QtObject:
       return false
 
     let myPublicKey = singletonInstance.userProfile.getPubKey()
-    var community = self.communities[communityId]
+    var community = self.getCommunityById(communityId)
     for request in community.waitingForSharedAddressesRequestsToJoin:
       if request.publicKey == myPublicKey:
         return true
@@ -2281,7 +2283,7 @@ QtObject:
     if (indexPending == -1 and indexDeclined == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
-    let community = self.communities[communityId]
+    let community = self.getCommunityById(communityId)
     if (indexPending != -1):
       return community.pendingRequestsToJoin[indexPending].publicKey
     else:

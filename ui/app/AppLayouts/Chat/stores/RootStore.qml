@@ -75,7 +75,7 @@ QtObject {
     readonly property var oneToOneChatContact: _d.oneToOneChatContact
     // Since qml component doesn't follow encaptulation from the backend side, we're introducing
     // a method which will return appropriate chat content module for selected chat/channel
-    function currentChatContentModule(){
+    function currentChatContentModule() {
         // When we decide to have the same struct as it's on the backend we will remove this function.
         // So far this is a way to deal with refactored backend from the current qml structure.
         chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)

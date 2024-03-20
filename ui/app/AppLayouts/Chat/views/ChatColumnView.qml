@@ -82,12 +82,15 @@ Item {
         readonly property var activeChatContentModule: d.getChatContentModule(root.activeChatId)
 
         readonly property var urlsList: {
+            if (!d.activeChatContentModule) {
+                return
+            }
             urlsModelChangeTracker.revision
             ModelUtils.modelToFlatArray(d.activeChatContentModule.inputAreaModule.urlsModel, "url")
         }
 
         readonly property ModelChangeTracker urlsModelChangeTracker: ModelChangeTracker {
-            model: d.activeChatContentModule.inputAreaModule.urlsModel
+            model: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.urlsModel : null
         }
 
         readonly property UsersStore activeUsersStore: UsersStore {
@@ -126,6 +129,9 @@ Item {
         }
 
         function restoreInputReply() {
+            if (!d.activeChatContentModule) {
+                return
+            }
             const replyMessageId = d.activeChatContentModule.inputAreaModule.preservedProperties.replyMessageId
             if (replyMessageId)
                 d.showReplyArea(replyMessageId)
@@ -134,6 +140,9 @@ Item {
         }
 
         function restoreInputAttachments() {
+            if (!d.activeChatContentModule) {
+                return
+            }
             const filesJson = d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson
             let filesList = []
             if (filesJson) {
@@ -164,6 +173,9 @@ Item {
         }
 
         readonly property var updateLinkPreviews: {
+            if (!d.activeChatContentModule) {
+                return
+            }
             return Backpressure.debounce(this, 250, () => {
                                              const messageText = root.rootStore.cleanMessageText(chatInput.textInput.text)
                                              d.activeChatContentModule.inputAreaModule.setText(messageText)
@@ -171,10 +183,11 @@ Item {
         }
 
         onActiveChatContentModuleChanged: {
-            let preservedText = ""
-            if (d.activeChatContentModule) {
-                preservedText = d.activeChatContentModule.inputAreaModule.preservedProperties.text
+            if (!d.activeChatContentModule) {
+                return
             }
+            let preservedText = ""
+            preservedText = d.activeChatContentModule.inputAreaModule.preservedProperties.text
 
             d.activeChatContentModule.inputAreaModule.clearLinkPreviewCache()
             // Call later to make sure activeUsersStore and activeMessagesStore bindings are updated
@@ -203,33 +216,38 @@ Item {
                 id: chatRepeater
                 model: parentModule && parentModule.model
 
-                ChatContentView {
+                Loader {
                     width: parent.width
                     height: parent.height
-                    visible: !root.rootStore.openCreateChat && model.active
-                    chatId: model.itemId
-                    chatType: model.type
-                    chatMessagesLoader.active: model.loaderActive
-                    rootStore: root.rootStore
-                    contactsStore: root.contactsStore
-                    emojiPopup: root.emojiPopup
-                    stickersPopup: root.stickersPopup
-                    stickersLoaded: root.stickersLoaded
-                    isBlocked: model.blocked
-                    onOpenStickerPackPopup: {
-                        root.openStickerPackPopup(stickerPackId)
-                    }
-                    onShowReplyArea: (messageId) => {
-                                         d.showReplyArea(messageId)
-                                     }
-                    onForceInputFocus: {
-                        chatInput.forceInputActiveFocus()
-                    }
+                    active: model.type !== Constants.chatType.category && model.type !== Constants.chatType.unknown
+                    sourceComponent: ChatContentView {
+                        width: parent.width
+                        height: parent.height
+                        visible: !root.rootStore.openCreateChat && model.active
+                        chatId: model.itemId
+                        chatType: model.type
+                        chatMessagesLoader.active: model.loaderActive
+                        rootStore: root.rootStore
+                        contactsStore: root.contactsStore
+                        emojiPopup: root.emojiPopup
+                        stickersPopup: root.stickersPopup
+                        stickersLoaded: root.stickersLoaded
+                        isBlocked: model.blocked
+                        onOpenStickerPackPopup: {
+                            root.openStickerPackPopup(stickerPackId)
+                        }
+                        onShowReplyArea: (messageId) => {
+                                            d.showReplyArea(messageId)
+                                        }
+                        onForceInputFocus: {
+                            chatInput.forceInputActiveFocus()
+                        }
 
-                    Component.onCompleted: {
-                        chatContentModule = d.getChatContentModule(model.itemId)
-                        chatSectionModule = root.parentModule
-                        root.checkForCreateChatOptions(model.itemId)
+                        Component.onCompleted: {
+                            chatContentModule = d.getChatContentModule(model.itemId)
+                            chatSectionModule = root.parentModule
+                            root.checkForCreateChatOptions(model.itemId)
+                        }
                     }
                 }
             }
@@ -264,7 +282,7 @@ Item {
 
                     store: root.rootStore
                     usersStore: d.activeUsersStore
-                    linkPreviewModel: d.activeChatContentModule.inputAreaModule.linkPreviewModel
+                    linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
                     urlsList: d.urlsList
                     askToEnableLinkPreview: {
                         if(!d.activeChatContentModule || !d.activeChatContentModule.inputAreaModule || !d.activeChatContentModule.inputAreaModule.preservedProperties)
@@ -274,7 +292,7 @@ Item {
                     }
                     textInput.placeholderText: {
                         if (!channelPostRestrictions.visible) {
-                            if (d.activeChatContentModule.chatDetails.blocked)
+                            if (d.activeChatContentModule && d.activeChatContentModule.chatDetails.blocked)
                                 return qsTr("This user has been blocked.")
                             if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned) {
                                 return qsTr("You need to join this community to send messages")
