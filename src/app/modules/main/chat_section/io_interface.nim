@@ -26,7 +26,8 @@ method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatsLoaded*(self: AccessInterface,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
+    chats: seq[ChatDto],
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,

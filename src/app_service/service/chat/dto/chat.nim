@@ -433,3 +433,12 @@ proc updateMissingFields*(chatToUpdate: var ChatDto, oldChat: ChatDto) =
   chatToUpdate.viewersCanPostReactions = oldChat.viewersCanPostReactions
   chatToUpdate.categoryId = oldChat.categoryId
   chatToUpdate.members = oldChat.members
+
+proc isOneToOne*(c: ChatDto): bool =
+  return c.chatType == ChatType.OneToOne
+
+proc isPrivateGroupChat*(c: ChatDto): bool =
+  return c.chatType == ChatType.PrivateGroupChat
+
+proc isActivePersonalChat*(c: ChatDto): bool =
+  return c.active and (c.isOneToOne() or c.isPrivateGroupChat()) and c.communityId == ""

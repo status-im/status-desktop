@@ -455,9 +455,21 @@ proc getAllChats*(self: Controller, communityId: string): seq[ChatDto] =
   return self.communityService.getAllChats(communityId)
 
 proc getChatsAndBuildUI*(self: Controller) =
-  let channelGroup = self.chatService.getChannelGroupById(self.sectionId)
+  var chats: seq[ChatDto]
+  var community: CommunityDto
+  if self.isCommunity():
+    community = self.getMyCommunity()
+    chats = community.chats
+    # Fetch community chat members as we lazy load them
+    # TODO add fetch
+  else:
+    community = CommunityDto()
+    chats = self.chatService.getChatsForPersonalSection()
+
+  # Build chat section with the preloaded community (empty community for personal chat)
   self.delegate.onChatsLoaded(
-        channelGroup,
+        community,
+        chats,
         self.events,
         self.settingsService,
         self.nodeConfigurationService,
