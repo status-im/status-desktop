@@ -55,6 +55,7 @@ StatusListItem {
             return "▴"
         return ""
     }
+    readonly property bool isUndefined: modelData && !modelData.marketDetailsLoading && title === ""
 
     signal switchToCommunityRequested(string communityId)
 
@@ -65,6 +66,8 @@ StatusListItem {
     asset.width: 32
     asset.height: 32
     errorIcon.tooltip.maxWidth: 300
+    height: isUndefined ? 0 : implicitHeight
+    visible: !isUndefined
 
     statusListItemTitleIcons.sourceComponent: StatusFlatRoundButton {
         width: 14
