@@ -40,6 +40,7 @@ StatusFlatRoundButton {
     icon.name: "notification"
     icon.height: 21
     type: StatusFlatRoundButton.Type.Secondary
+    objectName: "activityCenterNotificationsButton"
 
     // initializing the tooltip
     tooltip.text: qsTr("Notifications")

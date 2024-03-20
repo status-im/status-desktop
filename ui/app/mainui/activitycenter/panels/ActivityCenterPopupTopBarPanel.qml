@@ -60,6 +60,7 @@ Item {
                              { text: qsTr("System"), group: ActivityCenterStore.ActivityCenterGroup.System, visible: false, enabled: true } ]
 
                     StatusFlatButton {
+                        objectName: "activityCenterGroupButton"
                         enabled: modelData.enabled
                         visible: modelData.visible
                         text: modelData.text
@@ -75,6 +76,7 @@ Item {
 
         StatusFlatRoundButton {
             id: markAllReadBtn
+            objectName: "markAllReadButton"
             enabled: root.unreadNotificationsCount > 0
             icon.name: "double-checkmark"
             onClicked: root.markAllReadClicked()
@@ -87,6 +89,7 @@ Item {
 
         StatusFlatRoundButton {
             id: hideReadNotificationsBtn
+            objectName: "hideReadNotificationsButton"
             icon.name: root.hideReadNotifications ? "hide" : "show"
             onClicked: root.showHideReadNotifications(!root.hideReadNotifications)
 
