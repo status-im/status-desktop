@@ -761,7 +761,7 @@ proc fetchChainIdForUrl*(self: Service, url: string, isMainUrl: bool) =
   self.threadpool.start(arg)
 
 proc getEnabledChainIds*(self: Service): seq[int] =
-  return self.networkService.getCurrentNetworks().filter(n => n.enabled).map(n => n.chainId)
+  return self.networkService.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
 
 proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)

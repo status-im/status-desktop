@@ -3,6 +3,7 @@ import json, json_serialization, chronicles, sugar, sequtils
 import ../../../app/core/eventemitter
 import ../../../backend/backend as backend
 import ../settings/service as settings_service
+import ./network_item, ./combined_network_item
 
 import dto, types
 
@@ -21,8 +22,8 @@ type NetworkEndpointUpdatedArgs* = ref object of Args
 type
   Service* = ref object of RootObj
     events: EventEmitter
-    combinedNetworks: seq[CombinedNetworkDto]
-    flatNetworks: seq[NetworkDto]
+    combinedNetworks: seq[CombinedNetworkItem]
+    flatNetworks: seq[NetworkItem]
     settingsService: settings_service.Service
 
 proc delete*(self: Service) =
@@ -33,18 +34,19 @@ proc newService*(events: EventEmitter, settingsService: settings_service.Service
   result.events = events
   result.settingsService = settingsService
 
-proc fetchNetworks*(self: Service): seq[CombinedNetworkDto]=
+proc fetchNetworks*(self: Service): seq[CombinedNetworkItem]=
   let response = backend.getEthereumChains()
   if not response.error.isNil:
     raise newException(Exception, "Error getting combinedNetworks: " & response.error.message)
-  result = if response.result.isNil or response.result.kind == JNull: @[]
+  let combinedNetworksDto = if response.result.isNil or response.result.kind == JNull: @[]
             else: Json.decode($response.result, seq[CombinedNetworkDto], allowUnknownFields = true)
+  result = combinedNetworksDto.map(x => x.combinedNetworkDtoToCombinedItem())
   self.combinedNetworks = result
-  let allTestEnabled = self.combinedNetworks.filter(n => n.test.enabled).len == self.combinedNetworks.len
-  let allProdEnabled = self.combinedNetworks.filter(n => n.prod.enabled).len == self.combinedNetworks.len
+  let allTestEnabled = self.combinedNetworks.filter(n => n.test.isEnabled).len == self.combinedNetworks.len
+  let allProdEnabled = self.combinedNetworks.filter(n => n.prod.isEnabled).len == self.combinedNetworks.len
   for n in self.combinedNetworks:
-    n.test.enabledState = networkEnabledToUxEnabledState(n.test.enabled, allTestEnabled)
-    n.prod.enabledState = networkEnabledToUxEnabledState(n.prod.enabled, allProdEnabled)
+    n.test.enabledState = networkEnabledToUxEnabledState(n.test.isEnabled, allTestEnabled)
+    n.prod.enabledState = networkEnabledToUxEnabledState(n.prod.isEnabled, allProdEnabled)
   self.flatNetworks = @[]
   for network in self.combinedNetworks:
     self.flatNetworks.add(network.test)
@@ -56,17 +58,17 @@ proc init*(self: Service) =
 proc resetNetworks*(self: Service) =
   discard self.fetchNetworks()
 
-proc getCombinedNetworks*(self: Service): seq[CombinedNetworkDto] =
+proc getCombinedNetworks*(self: Service): var seq[CombinedNetworkItem] =
   return self.combinedNetworks
 
-proc getFlatNetworks*(self: Service): var seq[NetworkDto] =
+proc getFlatNetworks*(self: Service): var seq[NetworkItem] =
   return self.flatNetworks
 
 # passes networks based on users choice of test/mainnet
-proc getCurrentNetworks*(self: Service): seq[NetworkDto] =
+proc getCurrentNetworks*(self: Service): seq[NetworkItem] =
   self.flatNetworks.filter(n => n.isTest == self.settingsService.areTestNetworksEnabled())
 
-proc upsertNetwork*(self: Service, network: NetworkDto): bool =
+proc upsertNetwork*(self: Service, network: NetworkItem): bool =
   let response = backend.addEthereumChain(backend.Network(
     chainId: network.chainId,
     nativeCurrencyDecimals: network.nativeCurrencyDecimals,
@@ -81,17 +83,17 @@ proc upsertNetwork*(self: Service, network: NetworkDto): bool =
     nativeCurrencyName: network.nativeCurrencyName,
     nativeCurrencySymbol: network.nativeCurrencySymbol,
     isTest: network.isTest,
-    enabled: network.enabled,
+    enabled: network.isEnabled,
     chainColor: network.chainColor,
     shortName: network.shortName,
-    relatedChainID: network.relatedChainID,
+    relatedChainID: network.relatedChainId
   ))
   return response.error == nil
 
-proc deleteNetwork*(self: Service, network: NetworkDto) =
+proc deleteNetwork*(self: Service, network: NetworkItem) =
   discard backend.deleteEthereumChain(network.chainId)
 
-proc getNetworkByChainId*(self: Service, chainId: int): NetworkDto =
+proc getNetworkByChainId*(self: Service, chainId: int): NetworkItem =
   var networks = self.combinedNetworks
   if self.combinedNetworks.len == 0:
     networks = self.fetchNetworks()
@@ -108,10 +110,10 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
     let network = self.getNetworkByChainId(chainId)
 
     if not network.isNil:
-      if network.enabled == enabled:
+      if network.isEnabled == enabled:
         continue
 
-      network.enabled = enabled
+      network.isEnabled = enabled
       discard self.upsertNetwork(network)
   discard self.fetchNetworks()
 
@@ -125,7 +127,7 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
 ## - Collectibles
 ## - ENS names
 ## - Browser
-proc getAppNetwork*(self: Service): NetworkDto =
+proc getAppNetwork*(self: Service): NetworkItem =
   var networkId = Mainnet
   if self.settingsService.areTestNetworksEnabled():
     networkId = Sepolia

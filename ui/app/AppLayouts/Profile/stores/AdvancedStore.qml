@@ -6,7 +6,7 @@ QtObject {
 
     property var advancedModule
     property var walletModule
-    property var networksModule: root.walletModule.networksModule
+    property var networksModuleInst: networksModule
 
     // Advanced Module Properties
     property string fleet: advancedModule? advancedModule.fleet : ""
@@ -39,7 +39,7 @@ QtObject {
     readonly property real scrollVelocity: localAppSettings.scrollVelocity
     readonly property real scrollDeceleration: localAppSettings.scrollDeceleration
 
-    readonly property bool isGoerliEnabled: networksModule.isGoerliEnabled
+    readonly property bool isGoerliEnabled: networksModuleInst.isGoerliEnabled
 
     function logDir() {
         if(!root.advancedModule)

@@ -22,6 +22,7 @@ import app_service/service/token/service as token_service
 import app_service/service/network/service as networks_service
 import app_service/service/visual_identity/service as procs_from_visual_identity_service
 import app_service/service/shared_urls/service as urls_service
+import app_service/service/network/network_item
 
 import app_service/service/community_tokens/community_collectible_owner
 
@@ -573,10 +574,10 @@ proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string
 proc getRemoteDestructedAmount*(self: Controller, chainId: int, contractAddress: string): Uint256 =
   return self.communityTokensService.getRemoteDestructedAmount(chainId, contractAddress)
 
-proc getNetworkByChainId*(self:Controller, chainId: int): NetworkDto =
+proc getNetworkByChainId*(self:Controller, chainId: int): NetworkItem =
   self.networksService.getNetworkByChainId(chainId)
 
-proc getAppNetwork*(self:Controller): NetworkDto =
+proc getAppNetwork*(self:Controller): NetworkItem =
   self.networksService.getAppNetwork()
 
 proc slowdownArchivesImport*(self:Controller) =

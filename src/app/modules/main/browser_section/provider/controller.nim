@@ -6,6 +6,7 @@ import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/provider/service as provider_service
 import ../../../../../app_service/service/wallet_account/service
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
+import app_service/service/network/network_item
 
 const UNIQUE_BROWSER_SECTION_TRANSACTION_MODULE_IDENTIFIER* = "BrowserSection-TransactionModule"
 
@@ -34,7 +35,7 @@ proc newController*(
 proc delete*(self: Controller) =
   discard
 
-proc getAppNetwork*(self: Controller): NetworkDto =
+proc getAppNetwork*(self: Controller): NetworkItem =
   return self.networkService.getAppNetwork()
 
 proc init*(self: Controller) =

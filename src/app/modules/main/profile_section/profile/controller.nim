@@ -104,9 +104,6 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 proc getChainIds*(self: Controller): seq[int] =
   self.networkService.getCurrentNetworks().map(n => n.chainId)
 
-proc getEnabledChainIds*(self: Controller): seq[int] =
-  self.networkService.getCurrentNetworks().filter(n => n.enabled).map(n => n.chainId)
-
 proc setSocialLinks*(self: Controller, links: SocialLinks) =
   self.settingsService.setSocialLinks(links)
 

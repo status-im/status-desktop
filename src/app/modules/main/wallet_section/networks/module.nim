@@ -1,11 +1,13 @@
 import NimQml
 import ../io_interface as delegate_interface
 import io_interface, view, controller
-import ../../../../global/global_singleton
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/settings/service as settings_service
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/service/network/service as network_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/settings/service as settings_service
+import app_service/service/network/network_item
+import app_service/service/network/combined_network_item
 
 export io_interface
 
@@ -60,12 +62,30 @@ proc checkIfModuleDidLoad(self: Module) =
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
+method toggleTestNetworksEnabled*(self: Module) =
+  self.controller.toggleTestNetworksEnabled()
+  self.refreshNetworks()
+
+method toggleIsGoerliEnabled*(self: Module) =
+  self.controller.toggleIsGoerliEnabled()
+  self.refreshNetworks()
+
 method setNetworksState*(self: Module, chainIds: seq[int], enabled: bool) =
   self.controller.setNetworksState(chainIds, enabled)
+
+method updateNetworkEndPointValues*(self: Module, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
+  self.controller.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+
+method fetchChainIdForUrl*(self: Module, url: string, isMainUrl: bool) =
+  self.controller.fetchChainIdForUrl(url, isMainUrl)
+
+method chainIdFetchedForUrl*(self: Module, url: string, chainId: int, success: bool, isMainUrl: bool) =
+  self.view.chainIdFetchedForUrl(url, chainId, success, isMainUrl)
 
 # Interfaces for getting lists from the service files into the abstract models
 
 method getNetworksDataSource*(self: Module): NetworksDataSource =
   return (
-    getFlatNetworksList: proc(): var seq[NetworkDto] = self.controller.getFlatNetworks()
+    getFlatNetworksList: proc(): var seq[NetworkItem] = self.controller.getFlatNetworks(),
+    getCombinedNetworksList: proc(): var seq[CombinedNetworkItem] = self.controller.getCombinedNetworks()
   )

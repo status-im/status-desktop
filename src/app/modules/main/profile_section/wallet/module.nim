@@ -5,7 +5,6 @@ import ./controller, ./view
 import ../io_interface as delegate_interface
 
 import ./accounts/module as accounts_module
-import ./networks/module as networks_module
 
 import app/global/global_singleton
 import app/core/eventemitter
@@ -36,7 +35,6 @@ type
     devicesService: devices_service.Service
     nodeService: node_service.Service
     accountsModule: accounts_module.AccessInterface
-    networksModule: networks_module.AccessInterface
     keypairImportModule: keypair_import_module.AccessInterface
 
 proc newModule*(
@@ -60,21 +58,18 @@ proc newModule*(
   result.walletAccountService = walletAccountService
   result.devicesService = devicesService
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService)
-  result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
 
 method delete*(self: Module) =
   self.controller.delete
   self.view.delete
   self.viewVariant.delete
   self.accountsModule.delete
-  self.networksModule.delete
   if not self.keypairImportModule.isNil:
     self.keypairImportModule.delete
 
 method load*(self: Module) =
   self.controller.init()
   self.accountsModule.load()
-  self.networksModule.load()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -89,9 +84,6 @@ proc checkIfModuleDidLoad(self: Module) =
   if(not self.accountsModule.isLoaded()):
     return
 
-  if(not self.networksModule.isLoaded()):
-    return
-
   self.moduleLoaded = true
   self.delegate.walletModuleDidLoad()
 
@@ -103,12 +95,6 @@ method accountsModuleDidLoad*(self: Module) =
 
 method getAccountsModule*(self: Module): QVariant =
   return self.accountsModule.getModuleAsVariant()
-
-method networksModuleDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method getNetworksModule*(self: Module): QVariant =
-  return self.networksModule.getModuleAsVariant()
 
 method destroyKeypairImportPopup*(self: Module) =
   if self.keypairImportModule.isNil:

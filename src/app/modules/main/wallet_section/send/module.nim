@@ -14,6 +14,7 @@ import app/modules/shared/wallet_utils
 import app_service/service/transaction/dto
 import app/modules/shared_models/currency_amount
 import app_service/service/token/service
+import app_service/service/network/network_item as network_service_item
 
 import app/modules/shared_modules/collectibles/controller as collectiblesc
 import app/modules/shared_models/collectibles_model as collectibles
@@ -93,7 +94,7 @@ method delete*(self: Module) =
   self.nestedCollectiblesModel.delete
   self.collectiblesController.delete
 
-proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): NetworkItem =
+proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): network_item.NetworkItem =
   result = initNetworkItem(
       network.chainId,
       network.chainName,
@@ -113,7 +114,7 @@ proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): Ne
       amountIn = "",
       $network.amountOut)
 
-proc convertNetworkDtoToNetworkItem(self: Module, network: NetworkDto): NetworkItem =
+proc convertNetworkDtoToNetworkItem(self: Module, network: network_service_item.NetworkItem): network_item.NetworkItem =
   result = initNetworkItem(
       network.chainId,
       network.chainName,

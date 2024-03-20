@@ -94,6 +94,7 @@ QtObject:
     self.refreshSelectedAccount()
 
   proc onPreferredSharingChainsUpdated*(self: View, keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
+    self.accounts.onPreferredSharingChainsUpdated(address, prodPreferredChainIds, testPreferredChainIds)
     self.keyPairModel.onPreferredSharingChainsUpdated(keyUid, address, prodPreferredChainIds, testPreferredChainIds)
     self.refreshSelectedAccount()
 

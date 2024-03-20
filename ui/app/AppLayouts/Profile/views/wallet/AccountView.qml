@@ -256,7 +256,7 @@ ColumnLayout {
         color: Theme.palette.transparent
         components: [
             NetworkFilter {
-                flatNetworks: root.walletStore.networks
+                flatNetworks: root.walletStore.filteredFlatModel
                 preferredNetworksMode: true
                 preferredSharingNetworks: d.preferredSharingNetworksArray
                 onToggleNetwork: (network) => {
