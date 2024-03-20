@@ -31,7 +31,6 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.case(704597)
 @pytest.mark.parametrize('user_account', [constants.user.user_with_funds])
 @pytest.mark.parametrize('ens_name', [pytest.param(constants.user.ens_user_name)])
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/13964')
 def test_ens_name_purchase(keys_screen, main_window, user_account, ens_name):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()

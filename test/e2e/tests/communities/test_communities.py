@@ -84,7 +84,7 @@ def test_create_community(user_account, main_screen: MainWindow, params):
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703057', 'Edit community')
 @pytest.mark.case(703057)
-# @pytest.mark.critical TODO: figure out why it is failing on the creation form
+@pytest.mark.critical
 @pytest.mark.parametrize('params', [
     {
         'name': 'Updated Name',
