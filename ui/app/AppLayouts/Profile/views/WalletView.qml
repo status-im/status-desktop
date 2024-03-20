@@ -261,7 +261,7 @@ SettingsContentBase {
             id: editNetwork
             Layout.fillHeight: true
             Layout.fillWidth: true
-            networksModule: root.walletStore.networksModule
+            networksModule: root.walletStore.networksModuleInst
             networkRPCChanged: root.walletStore.networkRPCChanged
             onEvaluateRpcEndPoint: root.walletStore.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: {

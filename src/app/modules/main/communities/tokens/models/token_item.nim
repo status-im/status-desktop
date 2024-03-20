@@ -1,8 +1,8 @@
 import stew/shims/strformat, sequtils, stint
-import ../../../../../../app_service/service/community_tokens/dto/community_token
-import ../../../../../../app_service/service/community_tokens/community_collectible_owner
-import ../../../../../../app_service/service/network/dto
-import ../../../../../../app_service/common/types
+import app_service/service/community_tokens/dto/community_token
+import app_service/service/community_tokens/community_collectible_owner
+import app_service/service/network/network_item
+import app_service/common/types
 
 import token_owners_model
 import token_owners_item
@@ -23,7 +23,7 @@ type
 
 proc initTokenItem*(
   tokenDto: CommunityTokenDto,
-  network: NetworkDto,
+  network: NetworkItem,
   tokenOwners: seq[CommunityCollectibleOwner],
   accountName: string,
   burnState: ContractTransactionStatus,

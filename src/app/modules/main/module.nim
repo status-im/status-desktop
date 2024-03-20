@@ -69,6 +69,7 @@ import ../../../app_service/service/visual_identity/service as procs_from_visual
 import ../../../app_service/common/types
 import ../../../app_service/common/social_links
 import ../../../app_service/common/utils as common_utils
+import app_service/service/network/network_item
 
 import ../../core/notifications/details
 import ../../core/eventemitter
@@ -259,7 +260,7 @@ method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
 
-method getAppNetwork*[T](self: Module[T]): NetworkDto =
+method getAppNetwork*[T](self: Module[T]): NetworkItem =
   return self.controller.getAppNetwork()
 
 method onAppNetworkChanged*[T](self: Module[T]) =

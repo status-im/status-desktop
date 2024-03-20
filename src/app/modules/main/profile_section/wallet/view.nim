@@ -21,11 +21,6 @@ QtObject:
   QtProperty[QVariant] accountsModule:
     read = getAccountsModule
 
-  proc getNetworksModule(self: View): QVariant {.slot.} =
-    return self.delegate.getNetworksModule()
-  QtProperty[QVariant] networksModule:
-    read = getNetworksModule
-
   proc getCollectiblesModel(self: View): QVariant {.slot.} =
     return self.delegate.getCollectiblesModel()
   QtProperty[QVariant] collectiblesModel:

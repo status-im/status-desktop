@@ -1,8 +1,10 @@
-import app_service/service/network/dto
+import app_service/service/network/network_item
+import app_service/service/network/combined_network_item
 
 type
   NetworksDataSource* = tuple[
-    getFlatNetworksList: proc(): var seq[NetworkDto]
+    getFlatNetworksList: proc(): var seq[NetworkItem],
+    getCombinedNetworksList: proc(): var seq[CombinedNetworkItem]
   ]
 
 type
@@ -24,10 +26,25 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method toggleTestNetworksEnabled*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method toggleIsGoerliEnabled*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setNetworksState*(self: AccessInterface, chainIds: seq[int], enable: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method refreshNetworks*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateNetworkEndPointValues*(self: AccessInterface, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method fetchChainIdForUrl*(self: AccessInterface, url: string, isMainUrl: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method chainIdFetchedForUrl*(self: AccessInterface, url: string, chainId: int, success: bool, isMainUrl: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getNetworksDataSource*(self: AccessInterface): NetworksDataSource {.base.} =

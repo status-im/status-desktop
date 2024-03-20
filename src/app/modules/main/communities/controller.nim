@@ -14,6 +14,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/keycard/service as keycard_service
 import app_service/common/types
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
+import app_service/service/network/network_item
 
 const UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER* = "CommunitiesModule-Authentication"
 const UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER* = "CommunitiesModule-Signing"
@@ -372,7 +373,7 @@ proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTo
 proc getAllCommunityTokens*(self: Controller): seq[CommunityTokenDto] =
   self.communityTokensService.getAllCommunityTokens()
 
-proc getNetworkByChainId*(self:Controller, chainId: int): NetworkDto =
+proc getNetworkByChainId*(self:Controller, chainId: int): NetworkItem =
   self.networksService.getNetworkByChainId(chainId)
 
 proc getTokenBySymbolList*(self: Controller): seq[TokenBySymbolItem] =
@@ -480,7 +481,7 @@ proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataTo
 proc removeCommunityChat*(self: Controller, communityId: string, channelId: string) =
   self.communityService.deleteCommunityChat(communityId, channelId)
 
-proc getCurrentNetworks*(self: Controller): seq[NetworkDto] =
+proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networksService.getCurrentNetworks()
 
 proc promoteSelfToControlNode*(self: Controller, communityId: string) =

@@ -15,7 +15,7 @@ import app_service/service/community_tokens/service as community_tokens_service
 import app_service/service/community_tokens/community_collectible_owner
 import app_service/service/shared_urls/service as urls_service
 import app_service/service/network/service as network_service
-import app_service/service/network/dto as network_dto
+import app_service/service/network/network_item
 from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState, Shard
 
 import app/global/app_signals
@@ -44,7 +44,7 @@ method load*(
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getAppNetwork*(self: AccessInterface): NetworkDto {.base.} =
+method getAppNetwork*(self: AccessInterface): NetworkItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onAppNetworkChanged*(self: AccessInterface) {.base.} =

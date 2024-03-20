@@ -8,19 +8,22 @@ const EXPLORER_TX_PREFIX* = "/tx/"
 type
   ModelRole* {.pure.} = enum
     ChainId = UserRole + 1,
-    NativeCurrencyDecimals
     Layer
     ChainName
     RpcURL
     BlockExplorerURL
     NativeCurrencyName
     NativeCurrencySymbol
+    NativeCurrencyDecimals
     IsTest
     IsEnabled
     IconUrl
     ChainColor
     ShortName
     EnabledState
+    FallbackURL
+    OriginalRpcURL
+    OriginalFallbackURL
 
 QtObject:
   type
@@ -66,6 +69,9 @@ QtObject:
       ModelRole.ShortName.int: "shortName",
       ModelRole.ChainColor.int: "chainColor",
       ModelRole.EnabledState.int: "enabledState",
+      ModelRole.FallbackURL.int: "fallbackURL",
+      ModelRole.OriginalRpcURL.int: "originalRpcURL",
+      ModelRole.OriginalFallbackURL.int: "originalFallbackURL",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -98,7 +104,7 @@ QtObject:
     of ModelRole.IsTest:
       result = newQVariant(item.isTest)
     of ModelRole.IsEnabled:
-      result = newQVariant(item.enabled)
+      result = newQVariant(item.isEnabled)
     of ModelRole.IconUrl:
       result = newQVariant(item.iconURL)
     of ModelRole.ShortName:
@@ -107,6 +113,12 @@ QtObject:
       result = newQVariant(item.chainColor)
     of ModelRole.EnabledState:
       result = newQVariant(item.enabledState.int)
+    of ModelRole.FallbackURL:
+      result = newQVariant(item.fallbackURL)
+    of ModelRole.OriginalRpcURL:
+      result = newQVariant(item.originalRpcURL)
+    of ModelRole.OriginalFallbackURL:
+      result = newQVariant(item.originalFallbackURL)
 
   proc rowData*(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.rowCount()):
@@ -122,15 +134,19 @@ QtObject:
       of "nativeCurrencyName": result = $item.nativeCurrencyName
       of "nativeCurrencySymbol": result = $item.nativeCurrencySymbol
       of "isTest": result = $item.isTest
-      of "isEnabled": result = $item.enabled
+      of "isEnabled": result = $item.isEnabled
       of "iconUrl": result = $item.iconURL
       of "chainColor": result = $item.chainColor
       of "shortName": result = $item.shortName
       of "enabledState": result = $item.enabledState.int
+      of "fallbackURL": result = $item.fallbackURL
+      of "originalRpcURL": result = $item.originalRpcURL
+      of "originalFallbackURL": result = $item.originalFallbackURL
 
   proc refreshModel*(self: Model) =
     self.beginResetModel()
     self.endResetModel()
+    self.countChanged()
 
   proc getBlockExplorerURL*(self: Model, chainId: int): string =
     for item in self.delegate.getFlatNetworksList():
@@ -198,4 +214,4 @@ QtObject:
     return networkIds
 
   proc getEnabledChainIds*(self: Model, areTestNetworksEnabled: bool): string =
-    return self.delegate.getFlatNetworksList().filter(n => n.enabled and n.isTest == areTestNetworksEnabled).map(n => n.chainId).join(":")
+    return self.delegate.getFlatNetworksList().filter(n => n.isEnabled and n.isTest == areTestNetworksEnabled).map(n => n.chainId).join(":")

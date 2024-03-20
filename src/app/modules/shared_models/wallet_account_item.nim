@@ -205,6 +205,14 @@ QtObject:
     read = preferredSharingChainIds
     notify = preferredSharingChainIdsChanged
 
+  proc `testPreferredChainIds=`*(self: WalletAccountItem, value: string) {.inline.} =
+    self.testPreferredChainIds = value
+    self.preferredSharingChainIdsChanged()
+
+  proc `prodPreferredChainIds=`*(self: WalletAccountItem, value: string) {.inline.} =
+    self.prodPreferredChainIds = value
+    self.preferredSharingChainIdsChanged()
+
   proc hideFromTotalBalanceChanged*(self: WalletAccountItem) {.signal.}
   proc hideFromTotalBalance*(self: WalletAccountItem): bool {.slot.} =
     return self.hideFromTotalBalance

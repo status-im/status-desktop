@@ -3,6 +3,7 @@ import QtQuick 2.13
 import utils 1.0
 
 import StatusQ 0.1
+import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -11,23 +12,29 @@ QtObject {
 
     property var walletModule
     property var accountsModule: root.walletModule.accountsModule
-    property var networksModule: root.walletModule.networksModule
+    property var networksModuleInst: networksModule
     property var collectibles: root.walletModule.collectiblesModel
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
     property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
 
-    readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
-    readonly property bool isGoerliEnabled: networksModule.isGoerliEnabled
+    readonly property bool areTestNetworksEnabled: networksModuleInst.areTestNetworksEnabled
+    readonly property bool isGoerliEnabled: networksModuleInst.isGoerliEnabled
 
-    readonly property var networks: networksModule.networks
-    readonly property var combinedNetworks: networksModule.combinedNetworks
+    readonly property var combinedNetworks: networksModuleInst.combinedNetworks
+
+    property var flatNetworks: networksModuleInst.flatNetworks
+    property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
+        sourceModel: root.flatNetworks
+        filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
+    }
+
     property var selectedAccount
 
     property var networkRPCChanged: ({}) // add network id to the object if changed
 
     function toggleTestNetworksEnabled(){
-        networksModule.toggleTestNetworksEnabled()
+        networksModuleInst.toggleTestNetworksEnabled()
     }
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
     property var overview: walletSectionOverview
@@ -38,7 +45,7 @@ QtObject {
         proxyRoles:  FastExpressionRole {
             name: "preferredSharingChainShortNames"
             expression: {
-                return root.networksModule.getNetworkShortNames(preferredSharingChainIds)
+                return root.networksModuleInst.getNetworkShortNames(model.preferredSharingChainIds)
             }
             expectedRoles: ["preferredSharingChainIds"]
         }
@@ -76,7 +83,12 @@ QtObject {
     }
 
     function getAllNetworksChainIds() {
-        return networksModule.getAllNetworksChainIds()
+        let result = []
+        let chainIdsArray = ModelUtils.modelToFlatArray(root.filteredFlatModel, "chainId")
+        for(let i = 0; i< chainIdsArray.length; i++) {
+            result.push(chainIdsArray[i].toString())
+        }
+        return result
     }
 
     function runAddAccountPopup() {
@@ -93,11 +105,11 @@ QtObject {
     }
 
     function evaluateRpcEndPoint(url, isMainUrl) {
-        return networksModule.fetchChainIdForUrl(url, isMainUrl)
+        return networksModuleInst.fetchChainIdForUrl(url, isMainUrl)
     }
 
     function updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault) {
-        networksModule.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+        networksModuleInst.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
     }
 
     function updateWalletAccountPreferredChains(address, preferredChainIds) {
@@ -110,12 +122,12 @@ QtObject {
     }
 
     function getNetworkShortNames(chainIds) {
-        return networksModule.getNetworkShortNames(chainIds)
+        return networksModuleInst.getNetworkShortNames(chainIds)
     }
 
     function processPreferredSharingNetworkToggle(preferredSharingNetworks, toggledNetwork) {
         let prefChains = preferredSharingNetworks
-        if(prefChains.length === networks.count) {
+        if(prefChains.length === root.flatNetworks.count) {
             prefChains = [toggledNetwork.chainId.toString()]
         }
         else if(!prefChains.includes(toggledNetwork.chainId.toString())) {
@@ -123,7 +135,7 @@ QtObject {
         }
         else {
             if(prefChains.length === 1) {
-                prefChains = getAllNetworksChainIds().split(":")
+                prefChains = getAllNetworksChainIds()
             }
             else {
                 for(var i = 0; i < prefChains.length;i++) {

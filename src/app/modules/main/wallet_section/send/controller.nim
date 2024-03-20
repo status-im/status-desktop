@@ -7,6 +7,7 @@ import app_service/service/transaction/service as transaction_service
 import app_service/service/currency/service as currency_service
 import app_service/service/currency/dto as currency_dto
 import app_service/service/keycard/service as keycard_service
+import app_service/service/network/network_item
 
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 import app/modules/shared/wallet_utils
@@ -83,7 +84,7 @@ proc getChainIds*(self: Controller): seq[int] =
   return self.networkService.getCurrentNetworks().map(n => n.chainId)
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworks().filter(n => n.enabled).map(n => n.chainId)
+  return self.networkService.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
@@ -130,7 +131,7 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 proc getTotalCurrencyBalance*(self: Controller, address: seq[string], chainIds: seq[int]): float64 =
   return self.walletAccountService.getTotalCurrencyBalance(address, chainIds)
 
-proc getCurrentNetworks*(self: Controller): seq[NetworkDto] =
+proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networkService.getCurrentNetworks()
 
 proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =

@@ -1,9 +1,10 @@
 import sequtils, sugar
 import io_interface
-import ../../../../app_service/service/settings/service as settings_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/currency/service as currency_service
-import ../../../../app_service/service/network/service as network_service
+import app_service/service/settings/service as settings_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/currency/service as currency_service
+import app_service/service/network/service as network_service
+import app_service/service/network/network_item
 
 import ../../shared/wallet_utils
 import ../../shared_models/currency_amount
@@ -54,14 +55,14 @@ proc getCurrencyAmount*(self: Controller, amount: float64, symbol: string): Curr
 proc updateCurrency*(self: Controller, currency: string) =
   self.walletAccountService.updateCurrency(currency)
 
-proc getCurrentNetworks*(self: Controller): seq[NetworkDto] =
+proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networkService.getCurrentNetworks()
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworks().filter(n => n.enabled).map(n => n.chainId)
+  return self.networkService.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
 
 proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
   return self.walletAccountService.getKeypairByAccountAddress(address)

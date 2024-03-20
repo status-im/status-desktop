@@ -8,7 +8,6 @@ import chat_search_model
 import ephemeral_notification_model
 from app_service/common/conversion import intToEnum
 from app_service/common/types import StatusType
-import app_service/service/network/dto as network_dto
 
 QtObject:
   type

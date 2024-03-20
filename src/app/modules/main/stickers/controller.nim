@@ -12,6 +12,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/service as token_service
 import app_service/service/keycard/service as keycard_service
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
+import app_service/service/network/network_item
 
 const UNIQUE_BUY_STICKER_TRANSACTION_MODULE_IDENTIFIER* = "StickersSection-TransactionModule"
 
@@ -170,7 +171,7 @@ proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto 
 proc getCurrentCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
-proc getAppNetwork*(self: Controller): NetworkDto =
+proc getAppNetwork*(self: Controller): NetworkItem =
   return self.networkService.getAppNetwork()
 
 proc getStatusTokenKey*(self: Controller): string =

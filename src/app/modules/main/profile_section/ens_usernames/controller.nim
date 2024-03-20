@@ -11,6 +11,7 @@ import app_service/service/token/service as token_service
 import app_service/service/keycard/service as keycard_service
 from app_service/service/transaction/dto import PendingTransactionTypeDto
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
+import app_service/service/network/network_item
 
 logScope:
   topics = "profile-section-ens-usernames-module-controller"
@@ -72,7 +73,7 @@ proc init*(self: Controller) =
       return
     self.delegate.onKeypairAuthenticated(args.password,  args.pin)
 
-proc getAppNetwork*(self: Controller): NetworkDto =
+proc getAppNetwork*(self: Controller): NetworkItem =
   return self.networkService.getAppNetwork()
 
 proc checkEnsUsernameAvailability*(self: Controller, desiredEnsUsername: string, statusDomain: bool) =

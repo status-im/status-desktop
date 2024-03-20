@@ -6,10 +6,11 @@ import std/json
 import ../../../../core/eventemitter
 
 import ../io_interface as delegate_interface
-import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/provider/service as provider_service
-import ../../../../global/global_singleton
+import app_service/service/settings/service as settings_service
+import app_service/service/network/service as network_service
+import app_service/service/provider/service as provider_service
+import app_service/service/network/network_item
+import app/global/global_singleton
 export io_interface
 
 # Shouldn't be public ever, use only within this module.
@@ -77,7 +78,7 @@ method onPostMessage*(self: Module, payloadMethod: string, result: string, chain
 method ensResourceURL*(self: Module, ens: string, url: string): (string, string, string, string, bool) =
   return self.controller.ensResourceURL(ens, url)
 
-method updateNetwork*(self: Module, network: NetworkDto) =
+method updateNetwork*(self: Module, network: NetworkItem) =
   self.view.chainId = network.chainId
   self.view.chainName = network.chainName
 

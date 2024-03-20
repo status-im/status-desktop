@@ -5,6 +5,7 @@ import app_service/service/community_tokens/service as community_tokens_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/network/service as networks_service
 import app_service/service/community/service as community_service
+import app_service/service/network/network_item
 import app_service/common/types
 import app/core/signals/types
 import app/core/eventemitter
@@ -159,7 +160,7 @@ proc findContractByUniqueId*(self: Controller, contractUniqueKey: string): Commu
 proc computeBurnFee*(self: Controller, contractUniqueKey: string, amount: Uint256, addressFrom: string, requestId: string) =
   self.communityTokensService.computeBurnFee(contractUniqueKey, amount, addressFrom, requestId)
 
-proc getNetworkByChainId*(self:Controller, chainId: int): NetworkDto =
+proc getNetworkByChainId*(self:Controller, chainId: int): NetworkItem =
   self.networksService.getNetworkByChainId(chainId)
 
 proc getOwnerToken*(self: Controller, communityId: string): CommunityTokenDto =
