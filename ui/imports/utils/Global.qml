@@ -81,6 +81,7 @@ QtObject {
     signal openSendModal(string address)
     signal switchToCommunity(string communityId)
     signal switchToCommunitySettings(string communityId)
+    signal switchToCommunityChannelsView(string communityId)
     signal createCommunityPopupRequested(bool isDiscordImport)
     signal importCommunityPopupRequested()
     signal communityIntroPopupRequested(string communityId, string name, string introMessage,
@@ -101,6 +102,7 @@ QtObject {
     signal openDeleteSavedAddressesPopup(var params)
     signal openShowQRPopup(var params)
     signal openSavedAddressActivityPopup(var params)
+    signal openCommunityMemberMessagesPopupRequested(var store, var chatCommunitySectionModule, var memberPubKey, var displayName)
 
     function openProfilePopup(publicKey, parentPopup, cb) {
         root.openProfilePopupRequested(publicKey, parentPopup, cb)

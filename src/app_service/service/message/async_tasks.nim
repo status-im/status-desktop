@@ -186,7 +186,7 @@ type
 
 const asyncGetFirstUnseenMessageIdForTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetFirstUnseenMessageIdForTaskArg](argEncoded)
-  
+
   let responseJson = %*{
     "messageId": "",
     "chatId": arg.chatId,
@@ -335,6 +335,37 @@ const asyncMarkMessageAsUnreadTask: Task = proc(argEncoded: string) {.gcsafe, ni
 
   except Exception as e:
     error "asyncMarkMessageAsUnreadTask failed", message = e.msg
+    responseJson["error"] = %e.msg
+
+  arg.finish(responseJson)
+
+#################################################
+# Async load community member messages
+#################################################
+type
+  AsyncLoadCommunityMemberAllMessagesTaskArg = ref object of QObjectTaskArg
+    communityId*: string
+    memberPubKey*: string
+
+const asyncLoadCommunityMemberAllMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncLoadCommunityMemberAllMessagesTaskArg](argEncoded)
+
+  var responseJson = %*{
+    "communityId": arg.communityId,
+    "error": ""
+  }
+
+  try:
+    let response = status_go.getCommunityMemberAllMessages(arg.communityId, arg.memberPubKey)
+
+    if not response.error.isNil:
+     raise newException(CatchableError, "response error: " & response.error.message)
+
+    responseJson["messages"] = response.result
+
+  except Exception as e:
+    error "error: ", procName = "asyncLoadCommunityMemberAllMessagesTask", errName = e.name,
+        errDesription = e.msg, communityId=arg.communityId, memberPubKey=arg.memberPubKey
     responseJson["error"] = %e.msg
 
   arg.finish(responseJson)

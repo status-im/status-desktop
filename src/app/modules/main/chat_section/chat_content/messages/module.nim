@@ -151,6 +151,7 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
 
     var item = initItem(
       message.id,
+      message.chatId,
       message.communityId,
       message.responseTo,
       message.`from`,
@@ -239,6 +240,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
   result = initItem(
     FETCH_MORE_MESSAGES_MESSAGE_ID,
     communityId = "",
+    chatId = "",
     responseToMessageWithId = "",
     senderId = chatDto.id,
     senderDisplayName = "",
@@ -306,6 +308,7 @@ proc createChatIdentifierItem(self: Module): Item =
   result = initItem(
     CHAT_IDENTIFIER_MESSAGE_ID,
     communityId = "",
+    chatId = "",
     responseToMessageWithId = "",
     senderId = chatDto.id,
     senderDisplayName = chatName,
@@ -389,7 +392,7 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 method reevaluateViewLoadingState*(self: Module) =
-  let loading = not self.initialMessagesLoaded or 
+  let loading = not self.initialMessagesLoaded or
                 not self.firstUnseenMessageState.initialized or
                 self.firstUnseenMessageState.fetching or
                 self.view.getMessageSearchOngoing()

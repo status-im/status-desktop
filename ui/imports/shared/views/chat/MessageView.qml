@@ -24,6 +24,7 @@ Loader {
     property var usersStore
     property var contactsStore
     property var chatContentModule
+    property var chatCommunitySectionModule
 
     property string channelEmoji
 
@@ -96,6 +97,7 @@ Loader {
 
     // External behavior changers
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
+    property bool isViewMemberMessagesePopup: false // The view member messages popup limits the number of buttons
     property bool disableHover: false // Used to force the HoverHandler to be active (useful for messages in popups)
     property bool placeholderMessage: false
 
@@ -261,7 +263,10 @@ Loader {
         property string activeMessage
         readonly property bool isMessageActive: d.activeMessage === root.messageId
 
-        readonly property bool addReactionAllowed: !root.isInPinnedPopup && root.chatContentModule.chatDetails.canPostReactions
+
+        readonly property bool addReactionAllowed: !root.isInPinnedPopup &&
+                                                   root.chatContentModule.chatDetails.canPostReactions &&
+                                                   !root.isViewMemberMessagesePopup
 
         function nextMessageHasHeader() {
             if(!root.nextMessageAsJsonObj) {
@@ -568,7 +573,7 @@ Loader {
                 Layout.bottomMargin: 16
                 messageTimestamp: root.messageTimestamp
                 previousMessageTimestamp: root.prevMessageIndex === -1 ? 0 : root.prevMessageTimestamp
-                visible: text !== "" && !root.isInPinnedPopup
+                visible: text !== "" && !root.isInPinnedPopup && !root.isViewMemberMessagesePopup
             }
 
             StatusMessage {
@@ -910,7 +915,8 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: d.addReactionAllowed && delegate.hovered
+                        active: d.addReactionAllowed && delegate.hovered && !root.isViewMemberMessagesePopup
+
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
@@ -925,7 +931,7 @@ Loader {
                     },
                     Loader {
                         active: !root.isInPinnedPopup && delegate.hovered && !delegate.hideQuickActions
-                                && root.rootStore.permissionsStore.viewAndPostCriteriaMet
+                                && !root.isViewMemberMessagesePopup && root.rootStore.permissionsStore.viewAndPostCriteriaMet
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "replyToMessageButton"
@@ -941,7 +947,7 @@ Loader {
                     },
                     Loader {
                         active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
-                                && root.rootStore.permissionsStore.viewAndPostCriteriaMet
+                                && !root.isViewMemberMessagesePopup && root.rootStore.permissionsStore.viewAndPostCriteriaMet
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "editMessageButton"
@@ -968,6 +974,10 @@ Loader {
 
                             if (!root.rootStore.permissionsStore.viewAndPostCriteriaMet)
                                 return false;
+
+                            if (root.isViewMemberMessagesePopup) {
+                                return false
+                            }
 
                             const chatType = root.messageStore.chatType;
                             const pinMessageAllowedForMembers = root.messageStore.isPinMessageAllowedForMembers
@@ -1007,7 +1017,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.editModeOn && delegate.hovered && !delegate.hideQuickActions
+                        active: !root.editModeOn && delegate.hovered && !delegate.hideQuickActions && !root.isViewMemberMessagesePopup
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "markAsUnreadButton"
@@ -1048,9 +1058,9 @@ Loader {
                             icon.name: "delete"
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Delete")
-                            onClicked: {
-                                messageStore.warnAndDeleteMessage(root.messageId)
-                            }
+                            onClicked: root.isViewMemberMessagesePopup
+                                       ? root.chatCommunitySectionModule.deleteCommunityMemberMessages(root.senderId, root.messageId, root.chatId)
+                                       : messageStore.warnAndDeleteMessage(root.messageId)
                         }
                     }
                 ]

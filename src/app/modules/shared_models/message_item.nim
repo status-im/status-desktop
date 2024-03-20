@@ -13,6 +13,7 @@ type
   Item* = ref object
     id: string
     communityId: string
+    chatId: string
     responseToMessageWithId: string
     senderId: string
     senderDisplayName: string
@@ -75,6 +76,7 @@ type
 proc initItem*(
     id,
     communityId,
+    chatId,
     responseToMessageWithId,
     senderId,
     senderDisplayName,
@@ -128,6 +130,7 @@ proc initItem*(
   result = Item()
   result.id = id
   result.communityId = communityId
+  result.chatId = chatId
   result.responseToMessageWithId = responseToMessageWithId
   result.senderId = senderId
   result.senderDisplayName = senderDisplayName
@@ -228,6 +231,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
   return initItem(
     id = "",
     communityId = "",
+    chatId = "",
     responseToMessageWithId = "",
     senderId = "",
     senderDisplayName = "",
@@ -283,6 +287,7 @@ proc `$`*(self: Item): string =
   result = fmt"""Item(
     id: {$self.id},
     communityId: {$self.communityId},
+    chatId: {$self.chatId},
     responseToMessageWithId: {self.responseToMessageWithId},
     senderId: {self.senderId},
     senderDisplayName: {$self.senderDisplayName},
@@ -319,6 +324,9 @@ proc id*(self: Item): string {.inline.} =
 
 proc communityId*(self: Item): string {.inline.} =
   self.communityId
+
+proc chatId*(self: Item): string {.inline.} =
+  self.chatId
 
 proc responseToMessageWithId*(self: Item): string {.inline.} =
   self.responseToMessageWithId
@@ -419,7 +427,7 @@ proc albumMessageIds*(self: Item): seq[string] {.inline.} =
 proc `albumMessageIds=`*(self: Item, value: seq[string]) {.inline.} =
   self.albumMessageIds = value
 
-proc albumImagesCount*(self: Item): int {.inline.} = 
+proc albumImagesCount*(self: Item): int {.inline.} =
   self.albumImagesCount
 
 proc bridgeName*(self: Item): string {.inline.} =
@@ -516,6 +524,7 @@ proc toJsonNode*(self: Item): JsonNode =
   result = %* {
     "id": self.id,
     "communityId": self.communityId,
+    "chatId": self.chatId,
     "responseToMessageWithId": self.responseToMessageWithId,
     "senderId": self.senderId,
     "senderDisplayName": self.senderDisplayName,
@@ -661,8 +670,8 @@ proc quotedMessageAlbumMessageImages*(self: Item): seq[string] {.inline.} =
 proc `quotedMessageAlbumMessageImages=`*(self: Item, value: seq[string]) {.inline.} =
   self.quotedMessageAlbumMessageImages = value
 
-proc quotedMessageAlbumImagesCount*(self: Item): int {.inline.} = 
+proc quotedMessageAlbumImagesCount*(self: Item): int {.inline.} =
   self.quotedMessageAlbumImagesCount
 
-proc `quotedMessageAlbumImagesCount=`*(self: Item, value: int) {.inline.} = 
+proc `quotedMessageAlbumImagesCount=`*(self: Item, value: int) {.inline.} =
   self.quotedMessageAlbumImagesCount = value

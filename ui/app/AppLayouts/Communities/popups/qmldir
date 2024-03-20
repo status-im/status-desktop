@@ -26,3 +26,4 @@ TokenMasterActionPopup 1.0 TokenMasterActionPopup.qml
 TokenPermissionsPopup 1.0 TokenPermissionsPopup.qml
 TransferOwnershipPopup 1.0 TransferOwnershipPopup.qml
 TransferOwnershipAlertPopup 1.0 TransferOwnershipAlertPopup.qml
+CommunityMemberMessagesPopup 1.0 CommunityMemberMessagesPopup.qml

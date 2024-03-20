@@ -211,7 +211,7 @@ proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   var bridgeMessageObj: JsonNode
   if(jsonObj.getProp("bridgeMessage", bridgeMessageObj)):
     result.bridgeMessage = toBridgeMessage(bridgeMessageObj)
-  
+
   var quotedImagesArr: JsonNode
   if jsonObj.getProp("albumImages", quotedImagesArr):
     for element in quotedImagesArr.getElems():
@@ -313,7 +313,7 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   if jsonObj.getProp("statusLinkPreviews", statusLinkPreviewsArr):
     for element in statusLinkPreviewsArr.getElems():
       result.linkPreviews.add(element.toLinkPreview(false))
-      
+
   var parsedTextArr: JsonNode
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
     for pTextObj in parsedTextArr:

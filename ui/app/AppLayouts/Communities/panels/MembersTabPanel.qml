@@ -29,6 +29,7 @@ Item {
     signal kickUserClicked(string id, string name)
     signal banUserClicked(string id, string name)
     signal unbanUserClicked(string id)
+    signal viewMemberMessagesClicked(string pubKey, string displayName)
 
     signal acceptRequestToJoin(string id)
     signal declineRequestToJoin(string id)
@@ -94,6 +95,10 @@ Item {
                 readonly property bool tabIsShowingRejectButton: root.panelType === MembersTabPanel.TabType.PendingRequests
                 readonly property bool tabIsShowingAcceptButton: root.panelType === MembersTabPanel.TabType.PendingRequests ||
                                                                     root.panelType === MembersTabPanel.TabType.DeclinedRequests
+                readonly property bool tabIsShowingViewMessagesButton: model.membershipRequestState !== Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete &&
+                                                                       (root.panelType === MembersTabPanel.TabType.AllMembers ||
+                                                                       root.panelType === MembersTabPanel.TabType.BannedMembers)
+
 
                 // Request states
                 readonly property bool isPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.Pending
@@ -130,6 +135,7 @@ Item {
                     }
                 }
                 readonly property bool showOnHover: isHovered && ctaAllowed
+                readonly property bool canDeleteMessages: itsMe || model.memberRole !== Constants.memberRole.owner
 
                 /// Button visibility ///
                 readonly property bool acceptButtonVisible:  tabIsShowingAcceptButton && (isPending || isRejected || isRejectedPending || isAcceptedPending) && showOnHover
@@ -141,6 +147,9 @@ Item {
                 readonly property bool kickPendingButtonVisible: tabIsShowingKickBanButtons && isKickPending
                 readonly property bool banPendingButtonVisible: tabIsShowingKickBanButtons && isBanPending
                 readonly property bool unbanButtonVisible: tabIsShowingUnbanButton && isBanned && showOnHover
+                readonly property bool viewMessagesButtonVisible: tabIsShowingViewMessagesButton && showOnHover
+                readonly property bool messagesDeletedTextVisible: showOnHover &&
+                                                                   model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete
 
                 /// Pending states ///
                 readonly property bool isPendingState: isAcceptedPending || isRejectedPending || isBanPending || isUnbanPending || isKickPending
@@ -179,6 +188,24 @@ Item {
                             enabled: pendingText.visible
                         }
                     },
+
+                    StatusBaseText {
+                        text: qsTr("Messages deleted")
+                        color: Theme.palette.baseColor1
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: messagesDeletedTextVisible
+                    },
+
+                    StatusButton {
+                        id: viewMessages
+                        anchors.verticalCenter: parent.verticalCenter
+                        objectName: "MemberListItem_ViewMessages"
+                        text: qsTr("View Messages")
+                        visible: viewMessagesButtonVisible
+                        size: StatusBaseButton.Size.Small
+                        onClicked: root.viewMemberMessagesClicked(model.pubKey, model.displayName)
+                    },
+
                     StatusButton {
                         id: kickButton
                         anchors.verticalCenter: parent.verticalCenter
@@ -204,6 +231,8 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: unbanButtonVisible
                         text: qsTr("Unban")
+                        type: StatusBaseButton.Type.Danger
+                        size: StatusBaseButton.Size.Small
                         onClicked: root.unbanUserClicked(model.pubKey)
                     },
 

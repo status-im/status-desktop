@@ -397,6 +397,20 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_MAILSERVER_HISTORY_REQUEST_COMPLETED) do(e:Args):
     self.delegate.setLoadingHistoryMessagesInProgress(false)
 
+  self.events.on(SIGNAL_COMMUNITY_MEMBER_ALL_MESSAGES) do(e:Args):
+    var args = CommunityMemberMessagesArgs(e)
+    if args.communityId == self.sectionId:
+      self.delegate.onCommunityMemberMessagesLoaded(args.messages)
+
+  self.events.on(SIGNAL_MESSAGES_DELETED) do(e:Args):
+    var args = MessagesDeletedArgs(e)
+    let isSectionEmpty = args.communityId == ""
+    if args.communityId == self.sectionId or isSectionEmpty:
+      for chatId, messagesIds in args.deletedMessages:
+        if isSectionEmpty and not self.delegate.communityContainsChat(chatId):
+          continue
+        self.delegate.onCommunityMemberMessagesDeleted(messagesIds)
+
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
@@ -725,3 +739,14 @@ proc waitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Controller, commu
 proc setCommunityShard*(self: Controller, shardIndex: int) =
   self.communityService.asyncSetCommunityShard(self.getMySectionId(), shardIndex)
 
+proc loadCommunityMemberMessages*(self: Controller, communityId: string, memberPubKey: string) =
+  self.messageService.asyncLoadCommunityMemberAllMessages(communityId, memberPubKey)
+
+proc getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
+  return self.messageService.getTransactionDetails(message)
+
+proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+  return self.messageService.getWalletAccounts()
+
+proc deleteCommunityMemberMessages*(self: Controller, memberPubKey: string, messageId: string, chatId: string) =
+  self.messageService.deleteCommunityMemberMessages(self.getMySectionId(), memberPubKey, messageId, chatId)

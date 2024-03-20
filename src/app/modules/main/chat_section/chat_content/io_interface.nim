@@ -142,3 +142,6 @@ method setPermissionsCheckOngoing*(self: AccessInterface, value: bool) {.base.} 
 
 method getPermissionsCheckOngoing*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method scrollToMessage*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
