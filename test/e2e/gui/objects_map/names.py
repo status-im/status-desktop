@@ -439,7 +439,7 @@ close_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_
 build_your_showcase_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "buildShowcaseButton", "type": "StatusButton", "visible": True}
 
 # Activity center
-activityCenterStatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "activityCenterButton", "type": "StatusFlatButton", "visible": True}
+activityCenterStatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "activityCenterGroupButton", "type": "StatusFlatButton", "visible": True}
 checkmark_circle_icon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "objectName": "checkmark-circle-icon", "type": "StatusIcon", "visible": True}
 o_ActivityNotificationContactRequest = {"container": statusDesktop_mainWindow_overlay, "type": "ActivityNotificationContactRequest", "unnamed": 1, "visible": True}
 activityCenterTopBar_ActivityCenterPopupTopBarPanel = {"container": statusDesktop_mainWindow_overlay, "id": "activityCenterTopBar", "type": "ActivityCenterPopupTopBarPanel", "unnamed": 1, "visible": True}
