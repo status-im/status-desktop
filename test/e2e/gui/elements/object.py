@@ -6,7 +6,7 @@ import allure
 
 import configs
 import driver
-from gui.objects_map import names
+from driver import isFrozen
 from scripts.tools.image import Image
 
 LOG = logging.getLogger(__name__)
@@ -92,8 +92,12 @@ class QObject:
             self,
             x: int = None,
             y: int = None,
-            button=None
+            button=None,
     ):
+        if isFrozen(500) is False:
+            pass
+        else:
+            time.sleep(2000)
         driver.mouseClick(
             self.object,
             x or int(self.object.width * 0.1),
