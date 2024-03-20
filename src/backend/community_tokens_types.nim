@@ -14,6 +14,9 @@ type
     symbol*: string
     image*: string
     chainId*: int
+    decimals*: int
+    verified*: bool
+    tokenListID*: string
     communityId*: string
     communityName*: string
     communityColor*: string
@@ -28,6 +31,9 @@ proc fromJson*(t: JsonNode, T: typedesc[CommunityTokenReceivedPayload]): Communi
   discard t.getProp("symbol", result.symbol)
   discard t.getProp("image", result.image)
   discard t.getProp("chainId", result.chainId)
+  discard t.getProp("decimals", result.decimals)
+  discard t.getProp("verified", result.verified)
+  discard t.getProp("tokenListID", result.tokenListID)
   discard t.getProp("txHash", result.txHash)
   discard t.getProp("isFirst", result.isFirst)
   discard t.getProp("amount", result.amount)
