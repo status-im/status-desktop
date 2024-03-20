@@ -48,6 +48,19 @@ proc init*(self: Controller) =
     let args = TokenBalanceHistoryDataArgs(e)
     self.delegate.tokenBalanceHistoryDataResolved(args.result)
 
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_RECEIVED) do(e: Args):
+    let args = CommunityTokenReceivedArgs(e)
+    let token = TokenDto(
+        address: args.address,
+        name: args.name,
+        symbol: args.symbol,
+        decimals: args.decimals,
+        chainID: args.chainId,
+        communityID: args.communityId,
+        image: args.image,
+    )
+    self.tokenService.addNewCommunityToken(token)
+
   self.tokenService.getSupportedTokensList()
 
 proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =

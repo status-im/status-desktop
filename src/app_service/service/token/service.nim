@@ -219,6 +219,45 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
 
+  proc addNewCommunityToken*(self: Service, token: TokenDto) =
+    let sourceName = "custom"
+    let tokenType = TokenType.ERC20
+
+    var updated = false
+    let unique_key = $token.chainID & token.address
+    if not any(self.flatTokenList, proc (x: TokenItem): bool = x.key == unique_key):
+      self.flatTokenList.add(TokenItem(
+        key: unique_key,
+        name: token.name,
+        symbol: token.symbol,
+        sources: @[sourceName],
+        chainID: token.chainID,
+        address: token.address,
+        decimals: token.decimals,
+        image: token.image,
+        `type`: tokenType,
+        communityId: token.communityID))
+      self.flatTokenList.sort(cmpTokenItem)
+      updated = true
+
+    let token_by_symbol_key = token.address
+    if not any(self.tokenBySymbolList, proc (x: TokenBySymbolItem): bool = x.key == token_by_symbol_key):
+      self.tokenBySymbolList.add(TokenBySymbolItem(
+          key: token_by_symbol_key,
+          name: token.name,
+          symbol: token.symbol,
+          sources: @[sourceName],
+          addressPerChainId: @[AddressPerChain(chainId: token.chainID, address: token.address)],
+          decimals: token.decimals,
+          image: token.image,
+          `type`: tokenType,
+          communityId: token.communityID))
+      self.tokenBySymbolList.sort(cmpTokenBySymbolItem)
+      updated = true
+
+    if updated:
+      self.events.emit(SIGNAL_TOKENS_LIST_UPDATED, Args())
+
   # Callback to process the response of getSupportedTokensList call
   proc supportedTokensListRetrieved(self: Service, response: string) {.slot.} =
     # this is emited so that the models can know that the seq it depends on has been updated
@@ -329,7 +368,7 @@ QtObject:
       var data = WalletSignal(e)
       case data.eventType:
         of "wallet-tick-reload":
-          self.rebuildMarketData()
+          self.rebuildMarketData()    
     # update and populate internal list and then emit signal when new custom token detected?
 
   proc getCurrency*(self: Service): string =
