@@ -821,6 +821,7 @@ method setActiveSection*[T](self: Module[T], item: SectionItem, skipSavingInSett
   if(item.isEmpty()):
     echo "section is empty and cannot be made as active one"
     return
+  self.controller.setActiveSectionId(item.id)
   self.activeSectionSet(item.id, skipSavingInSettings)
 
 method setActiveSectionById*[T](self: Module[T], id: string) =
