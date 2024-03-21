@@ -9,15 +9,14 @@ import app/core/signals/types
 import backend/activity as backend_activity
 
 type EventCallbackProc = proc (eventObject: JsonNode)
-type WalletEventCallbackProc = proc (data: WalletSignal)
 
 # EventsHandler responsible for catching activity related backend events and reporting them
+# Events are processed on the main thread and don't overlap with UI calls; see src/app/core/signals/signals_manager.nim
 QtObject:
   type
     EventsHandler* = ref object of QObject
       events: EventEmitter
       eventHandlers: Table[string, EventCallbackProc]
-      walletEventHandlers: Table[string, WalletEventCallbackProc]
 
       sessionId: Option[int32]
 
@@ -56,10 +55,7 @@ QtObject:
     if self.sessionId.isSome() and data.requestId.get() != self.sessionId.get():
       return
 
-    if self.walletEventHandlers.hasKey(data.eventType):
-      let callback = self.walletEventHandlers[data.eventType]
-      callback(data)
-    elif self.eventHandlers.hasKey(data.eventType):
+    if self.eventHandlers.hasKey(data.eventType):
       let callback = self.eventHandlers[data.eventType]
       let responseJson = parseJson(data.message)
       callback(responseJson)
