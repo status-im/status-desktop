@@ -323,7 +323,7 @@ QtObject:
     result.communityService = communityService
     result.currencyService = currencyService
     result.tokenOwnersTimer = newQTimer()
-    result.tokenOwnersTimer.setInterval(10*60*1000)
+    result.tokenOwnersTimer.setInterval(5*60*1000)
     signalConnect(result.tokenOwnersTimer, "timeout()", result, "onRefreshTransferableTokenOwners()", 2)
     result.tokenOwners1SecTimer = newQTimer()
     result.tokenOwners1SecTimer.setInterval(1000)
@@ -1369,7 +1369,13 @@ QtObject:
       dataToEmit.requestId = responseJson{"requestId"}.getStr
       self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
 
+  proc isTokenDeployed(self: Service, token: CommunityTokenDto): bool =
+    return token.deployState == DeployState.Deployed
+
   proc fetchCommunityOwners*(self: Service,  communityToken: CommunityTokenDto) =
+    if not self.isTokenDeployed(communityToken):
+      return
+
     if communityToken.tokenType == TokenType.ERC20:
       let arg = FetchAssetOwnersArg(
         tptr: cast[ByteAddress](fetchAssetOwnersTaskArg),
@@ -1392,6 +1398,8 @@ QtObject:
       )
       self.threadpool.start(arg)
       return
+    else:
+      debug "Unable to fetch token hodlers for token type ", token=communityToken.tokenType
 
   proc onCommunityTokenOwnersFetched*(self:Service, response: string) {.slot.} =
     let responseJson = response.parseJson()
