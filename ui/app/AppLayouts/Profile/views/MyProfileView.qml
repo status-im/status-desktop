@@ -28,27 +28,24 @@ import AppLayouts.Wallet.stores 1.0
 SettingsContentBase {
     id: root
 
-    property WalletStore walletStore
     property ProfileStore profileStore
-    property PrivacyStore privacyStore
     property ContactsStore contactsStore
-    property NetworkConnectionStore networkConnectionStore
-    required property WalletAssetsStore walletAssetsStore
-    required property CurrenciesStore currencyStore
 
-    property var communitiesModel
+    property bool sendToAccountEnabled: false
+
+    property alias communitiesShowcaseModel: showcaseModels.communitiesSourceModel
+    property alias accountsShowcaseModel: showcaseModels.accountsSourceModel
+    property alias collectiblesShowcaseModel: showcaseModels.collectiblesSourceModel
+    property alias socialLinksShowcaseModel: showcaseModels.socialLinksSourceModel
 
     property bool sideBySidePreview
     property bool toastClashesWithDirtyBubble
+    readonly property alias sideBySidePreviewComponent: myProfilePreviewComponent
 
-    property QtObject dirtyValues: QtObject {
-        property string displayName: descriptionPanel.displayName.text
-        property string bio: descriptionPanel.bio.text
-        property url profileLargeImage: profileHeader.previewIcon
-        property var socialLinks: priv.showcaseModels.socialLinksVisibleModel
-        property var communitiesModel: priv.showcaseModels.communitiesVisibleModel
-        property var accountsModel: priv.showcaseModels.accountsVisibleModel
-        property var collectiblesModel: priv.showcaseModels.collectiblesVisibleModel
+    readonly property QtObject liveValues: QtObject {
+        readonly property string displayName: descriptionPanel.displayName.text
+        readonly property string bio: descriptionPanel.bio.text
+        readonly property url profileLargeImage: profileHeader.previewIcon
     }
 
     enum TabIndex {
@@ -126,7 +123,7 @@ SettingsContentBase {
     onVisibleChanged: if (visible) profileStore.requestProfileShowcasePreferences()
     Component.onCompleted: profileStore.requestProfileShowcasePreferences()
 
-    readonly property var priv: QtObject {
+    property QObject priv: QObject {
         id: priv
 
         readonly property bool hasAnyProfileShowcaseChanges: showcaseModels.dirty
@@ -137,19 +134,11 @@ SettingsContentBase {
                                                    profileHeader.icon !== profileStore.profileLargeImage
 
         property ProfileShowcaseModels showcaseModels: ProfileShowcaseModels {
-            communitiesSourceModel: root.communitiesModel
-            communitiesShowcaseModel: root.profileStore.showcasePreferencesCommunitiesModel
+            id: showcaseModels
+
             communitiesSearcherText: profileShowcaseCommunitiesPanel.searcherText
-            
-            accountsSourceModel: root.walletStore.ownAccounts
-            accountsShowcaseModel: root.profileStore.showcasePreferencesAccountsModel
             accountsSearcherText: profileShowcaseAccountsPanel.searcherText
-
-            collectiblesSourceModel: root.profileStore.collectiblesModel
-            collectiblesShowcaseModel: root.profileStore.showcasePreferencesCollectiblesModel
             collectiblesSearcherText: profileShowcaseCollectiblesPanel.searcherText
-
-            socialLinksSourceModel: root.profileStore.showcasePreferencesSocialLinksModel
         }
 
         // Used to track which are the expected backend responses (they can be 0, 1 or 2) depending on the dirty changes
@@ -401,10 +390,33 @@ SettingsContentBase {
                 publicKey: root.contactsStore.myPublicKey
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
-                networkConnectionStore: root.networkConnectionStore
+                sendToAccountEnabled: root.sendToAccountEnabled
                 onClosed: destroy()
-                dirtyValues: root.dirtyValues
+                dirtyValues: root.liveValues
                 dirty: root.dirty
+
+                showcaseCommunitiesModel: priv.showcaseModels.communitiesVisibleModel
+                showcaseAccountsModel: priv.showcaseModels.accountsVisibleModel
+                showcaseCollectiblesModel: priv.showcaseModels.collectiblesVisibleModel
+                showcaseSocialLinksModel: priv.showcaseModels.socialLinksVisibleModel
+                //showcaseAssetsModel: priv.showcaseModels.assetsVisibleModel
+            }
+        }
+
+        Component {
+            id: myProfilePreviewComponent
+            MyProfilePreview {
+                profileStore: root.profileStore
+                contactsStore: root.contactsStore
+                sendToAccountEnabled: root.sendToAccountEnabled
+                dirtyValues: root.liveValues
+                dirty: root.dirty
+
+                showcaseCommunitiesModel: priv.showcaseModels.communitiesVisibleModel
+                showcaseAccountsModel: priv.showcaseModels.accountsVisibleModel
+                showcaseCollectiblesModel: priv.showcaseModels.collectiblesVisibleModel
+                showcaseSocialLinksModel: priv.showcaseModels.socialLinksVisibleModel
+                //showcaseAssetsModel: priv.showcaseModels.assetsVisibleModel
             }
         }
 

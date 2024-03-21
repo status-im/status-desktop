@@ -9,14 +9,20 @@ StatusDialog {
 
     property var parentPopup
 
-    property string publicKey
+    property alias publicKey: profileView.publicKey
 
-    property var profileStore
-    property var contactsStore
-    property var networkConnectionStore
+    property alias profileStore: profileView.profileStore
+    property alias contactsStore: profileView.contactsStore
+    property alias sendToAccountEnabled: profileView.sendToAccountEnabled
 
-    property var dirtyValues: ({})
-    property bool dirty: false
+    property alias showcaseCommunitiesModel: profileView.showcaseCommunitiesModel
+    property alias showcaseAccountsModel: profileView.showcaseAccountsModel
+    property alias showcaseCollectiblesModel: profileView.showcaseCollectiblesModel
+    property alias showcaseSocialLinksModel: profileView.showcaseSocialLinksModel
+    property alias showcaseAssetsModel: profileView.showcaseAssetsModel
+
+    property alias dirtyValues: profileView.dirtyValues
+    property alias dirty: profileView.dirty
 
     width: 640
     padding: 0
@@ -25,12 +31,8 @@ StatusDialog {
     footer: null
 
     contentItem: ProfileDialogView {
-        publicKey: root.publicKey
-        profileStore: root.profileStore
-        contactsStore: root.contactsStore
-        networkConnectionStore: root.networkConnectionStore
+        id: profileView
+
         onCloseRequested: root.close()
-        dirtyValues: root.dirtyValues
-        dirty: root.dirty
     }
 }
