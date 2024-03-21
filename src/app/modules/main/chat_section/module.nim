@@ -1549,6 +1549,6 @@ method communityContainsChat*(self: Module, chatId: string): bool =
   return self.chatContentModules.hasKey(chatId)
 
 method openCommunityChatAndScrollToMessage*(self: Module, chatId: string, messageId: string) =
-  self.delegate.setActiveSectionById(self.getMySectionId())
-  self.setActiveItem(chatId)
-  self.chatContentModules[chatId].scrollToMessage(messageId)
+  if chatId in self.chatContentModules:
+    self.setActiveItem(chatId)
+    self.chatContentModules[chatId].scrollToMessage(messageId)

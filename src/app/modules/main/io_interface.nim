@@ -148,7 +148,7 @@ method emitMailserverWorking*(self: AccessInterface) {.base.} =
 method emitMailserverNotWorking*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method activeSectionSet*(self: AccessInterface, sectionId: string) {.base.} =
+method activeSectionSet*(self: AccessInterface, sectionId: string, skipSavingInSettings: bool = false) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method toggleSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
@@ -419,6 +419,9 @@ method addressWasShown*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkIfAddressWasCopied*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method openSectionChatAndMessage*(self: AccessInterface, sectionId: string, chatId: string, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

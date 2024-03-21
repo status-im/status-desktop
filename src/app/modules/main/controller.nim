@@ -1,5 +1,4 @@
 import chronicles, stint
-import app/global/app_sections_config as conf
 import app/global/global_singleton
 import app/global/app_signals
 import app/core/signals/types as signal_types
@@ -62,7 +61,6 @@ type
     sharedUrlsService: urls_service.Service
 
 # Forward declaration
-proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
 proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): Uint256
 proc getRemoteDestructedAmount*(self: Controller, chainId: int, contractAddress: string): Uint256
 
@@ -291,7 +289,11 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
     var args = ActiveSectionChatArgs(e)
-    self.setActiveSection(args.sectionId)
+    self.activeSectionId = args.sectionId
+    self.delegate.activeSectionSet(self.activeSectionId)
+
+    if args.chatId != "":
+      self.delegate.openSectionChatAndMessage(args.sectionId, args.chatId, args.messageId)
 
   self.events.on(SIGNAL_STATUS_URL_ACTIVATED) do(e: Args):
     var args = StatusUrlArgs(e)
@@ -497,13 +499,6 @@ proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
 
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
-
-proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false) =
-  self.activeSectionId = sectionId
-  if not skipSavingInSettings:
-    let sectionIdToSave = if (sectionId == conf.SETTINGS_SECTION_ID): "" else: sectionId
-    singletonInstance.localAccountSensitiveSettings.setActiveSection(sectionIdToSave)
-  self.delegate.activeSectionSet(self.activeSectionId)
 
 proc getAllChats*(self: Controller): seq[ChatDto] =
   result = self.chatService.getAllChats()
