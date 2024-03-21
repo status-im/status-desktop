@@ -10,7 +10,6 @@ import ../../../../../../app_service/service/mailservers/service as mailservers_
 import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../../../app_service/common/types
-import ../../../../../global/app_signals
 import ../../../../../core/eventemitter
 import ../../../../../core/unique_event_emitter
 
@@ -204,12 +203,6 @@ proc init*(self: Controller) =
     if(self.chatId != args.chatId):
       return
     self.delegate.onHistoryCleared()
-
-  self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
-    let args = ActiveSectionChatArgs(e)
-    if(self.sectionId != args.sectionId or self.chatId != args.chatId):
-      return
-    self.delegate.scrollToMessage(args.messageId)
 
   self.events.on(SIGNAL_CHAT_MEMBER_UPDATED) do(e: Args):
     let args = ChatMemberUpdatedArgs(e)
