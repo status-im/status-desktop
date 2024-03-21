@@ -32,11 +32,17 @@ Pane {
 
     property var profileStore
     property var contactsStore
-    property var walletStore: WalletNS.RootStore
-    property var networkConnectionStore
+    
+    property alias sendToAccountEnabled: showcaseView.sendToAccountEnabled
 
     property var dirtyValues: ({})
     property bool dirty: false
+
+    property var showcaseCommunitiesModel
+    property var showcaseAccountsModel
+    property var showcaseCollectiblesModel
+    property var showcaseSocialLinksModel
+    property var showcaseAssetsModel
 
     signal closeRequested()
 
@@ -599,6 +605,8 @@ Pane {
 
                 // Profile Showcase
                 ProfileShowcaseView {
+                    id: showcaseView
+                    
                     Layout.fillWidth: true
                     Layout.topMargin: -column.spacing
                     Layout.preferredHeight: 300
@@ -606,14 +614,15 @@ Pane {
                     currentTabIndex: showcaseTabBar.currentIndex
                     mainDisplayName: d.mainDisplayName
                     readOnly: root.readOnly
-                    profileStore: root.profileStore
-                    walletStore: root.walletStore
-                    networkConnectionStore: root.networkConnectionStore
-
-                    livePreview: root.dirty
-                    livePreviewValues: root.dirtyValues
+                    
+                    communitiesModel: root.showcaseCommunitiesModel
+                    accountsModel: root.showcaseAccountsModel
+                    collectiblesModel: root.showcaseCollectiblesModel
+                    // socialLinksModel: root.showcaseSocialLinksModel
+                    // assetsModel: root.showcaseAssetsModel
 
                     onCloseRequested: root.closeRequested()
+                    onCopyToClipboard: root.profileStore.copyToClipboard(text)
                 }
             }
         }
