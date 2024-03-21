@@ -471,6 +471,7 @@ QtObject:
 
   proc updateRecipientsModel*(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)
+    # Recipients don't change with filers so we can use the same request id
     let res = backend_activity.getRecipientsAsync(self.sessionId(), self.chainIds, self.addresses, 0, FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil or res.result.kind != JBool:
       self.status.setLoadingRecipients(false)
@@ -483,6 +484,7 @@ QtObject:
 
   proc loadMoreRecipients(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)
+    # Recipients don't change with filers so we can use the same request id
     let res = backend_activity.getRecipientsAsync(self.sessionId(), self.chainIds, self.addresses, self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil:
       self.status.setLoadingRecipients(false)

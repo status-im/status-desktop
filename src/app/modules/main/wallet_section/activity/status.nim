@@ -12,9 +12,10 @@ QtObject:
       loadingData: bool
       errorCode: backend_activity.ErrorCode
 
-      loadingRecipients: Atomic[int]
       loadingCollectibles: Atomic[int]
-      loadingStartTimestamp: Atomic[int]
+      # No need for synchronization primitives, all operations are serialized on the main thread; see events_handler.nim
+      loadingRecipients: bool
+      loadingStartTimestamp: bool
 
       startTimestamp: int
 
@@ -30,7 +31,7 @@ QtObject:
 
   proc filterChainsChanged*(self: Status) {.signal.}
 
-  proc emitFilterChainsChanged*(self: Status) = 
+  proc emitFilterChainsChanged*(self: Status) =
     self.filterChainsChanged()
 
   proc loadingDataChanged*(self: Status) {.signal.}
@@ -42,8 +43,9 @@ QtObject:
   proc loadingRecipientsChanged*(self: Status) {.signal.}
 
   proc setLoadingRecipients*(self: Status, loadingData: bool) =
-    discard fetchAdd(self.loadingRecipients, if loadingData: 1 else: -1)
-    self.loadingRecipientsChanged()
+    if self.loadingRecipients != loadingData:
+      self.loadingRecipients = loadingData
+      self.loadingRecipientsChanged()
 
   proc loadingCollectiblesChanged*(self: Status) {.signal.}
 
@@ -54,8 +56,9 @@ QtObject:
   proc loadingStartTimestampChanged*(self: Status) {.signal.}
 
   proc setLoadingStartTimestamp*(self: Status, loadingData: bool) =
-    discard fetchAdd(self.loadingStartTimestamp, if loadingData: 1 else: -1)
-    self.loadingStartTimestampChanged()
+    if self.loadingStartTimestamp != loadingData:
+      self.loadingStartTimestamp = loadingData
+      self.loadingStartTimestampChanged()
 
   proc errorCodeChanged*(self: Status) {.signal.}
 
@@ -86,14 +89,14 @@ QtObject:
     notify = errorCodeChanged
 
   proc getLoadingRecipients*(self: Status): bool {.slot.} =
-    return load(self.loadingRecipients) > 0
+    return self.loadingRecipients
 
   QtProperty[bool] loadingRecipients:
     read = getLoadingRecipients
     notify = loadingRecipientsChanged
 
   proc getLoadingStartTimestamp*(self: Status): bool {.slot.} =
-    return load(self.loadingStartTimestamp) > 0
+    return self.loadingStartTimestamp
 
   QtProperty[bool] loadingStartTimestamp:
     read = getLoadingStartTimestamp

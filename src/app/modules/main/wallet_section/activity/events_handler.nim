@@ -48,7 +48,12 @@ QtObject:
   proc handleApiEvents(self: EventsHandler, e: Args) =
     var data = WalletSignal(e)
 
-    if not data.requestId.isSome() or not self.sessionId.isSome() or data.requestId.get() != self.sessionId.get():
+    # All activiy messages have a requestId matching the session ID or static request ID
+    if not data.requestId.isSome():
+      return
+
+    # Ignore message requested by other sessions
+    if self.sessionId.isSome() and data.requestId.get() != self.sessionId.get():
       return
 
     if self.walletEventHandlers.hasKey(data.eventType):
@@ -74,7 +79,7 @@ QtObject:
     )
 
   proc getSessionId*(self: EventsHandler): int32 =
-    self.sessionId.get(-1)
+    return self.sessionId.get(-1)
 
   proc setSessionId*(self: EventsHandler, sessionId: int32) =
     self.sessionId = some(sessionId)
