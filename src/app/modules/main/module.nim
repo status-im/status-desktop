@@ -821,7 +821,7 @@ method setActiveSection*[T](self: Module[T], item: SectionItem, skipSavingInSett
   if(item.isEmpty()):
     echo "section is empty and cannot be made as active one"
     return
-  self.controller.setActiveSection(item.id, skipSavingInSettings)
+  self.activeSectionSet(item.id, skipSavingInSettings)
 
 method setActiveSectionById*[T](self: Module[T], id: string) =
   let item = self.view.model().getItemById(id)
@@ -836,7 +836,7 @@ proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
 
   # If there is a need other section may be notified the same way from here...
 
-method activeSectionSet*[T](self: Module[T], sectionId: string) =
+method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSettings: bool = false) =
   if self.view.activeSection.getId() == sectionId:
     return
   let item = self.view.model().getItemById(sectionId)
@@ -854,6 +854,9 @@ method activeSectionSet*[T](self: Module[T], sectionId: string) =
 
   self.view.model().setActiveSection(sectionId)
   self.view.activeSectionSet(item)
+
+  if not skipSavingInSettings:
+    singletonInstance.localAccountSensitiveSettings.setActiveSection(sectionId)
 
   self.notifySubModulesAboutChange(sectionId)
 
@@ -1635,6 +1638,10 @@ method checkIfAddressWasCopied*[T](self: Module[T], value: string) =
   if walletAcc.isNil:
     return
   self.addressWasShown(value)
+
+method openSectionChatAndMessage*[T](self: Module[T], sectionId: string, chatId: string, messageId: string) =
+  if sectionId in self.channelGroupModules:
+    self.channelGroupModules[sectionId].openCommunityChatAndScrollToMessage(chatId, messageId)
 
 proc createMemberItem*[T](self: Module[T], memberId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)
