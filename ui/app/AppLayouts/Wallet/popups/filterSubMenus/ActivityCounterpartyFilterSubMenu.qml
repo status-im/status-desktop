@@ -111,52 +111,64 @@ StatusMenu {
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("No Recents")
-                    visible: recipientsListView.count === 0 && !root.loadingRecipients
+                    visible: !!recipientsLoader.item && recipientsLoader.item.count === 0 && !root.loadingRecipients
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("Loading Recents")
                     visible: root.loadingRecipients
                 }
-                StatusListView {
-                    id: recipientsListView
-                    visible: !root.loadingRecipients
+
+                // Use lazy loading as a workaround to refresh the list when the model is updated
+                // to force an address lookup to all delegates
+                Loader {
+                    id: recipientsLoader
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    model: SortFilterProxyModel {
-                        sourceModel: root.recentsList
-                        filters: ExpressionFilter {
-                            enabled: root.recentsList.count > 0 && layout.currentIndex === 0
-                            expression: {
-                                const searchValue = searchBox.searchValue
-                                if (!searchValue)
-                                    return true
-                                const address = model.address.toLowerCase()
-                                return address.startsWith(searchValue) || store.getNameForAddress(address).toLowerCase().indexOf(searchValue) !== -1
+                    active: parent.visible && !root.loadingRecipients
+                    sourceComponent: recipientsComponent
+                }
+
+                Component {
+                    id: recipientsComponent
+
+                    StatusListView {
+                        visible: true
+                        model: SortFilterProxyModel {
+                            sourceModel: root.recentsList
+                            filters: ExpressionFilter {
+                                enabled: root.recentsList.count > 0 && layout.currentIndex === 0
+                                expression: {
+                                    const searchValue = searchBox.searchValue
+                                    if (!searchValue)
+                                        return true
+                                    const address = model.address.toLowerCase()
+                                    return address.startsWith(searchValue) || store.getNameForAddress(address).toLowerCase().indexOf(searchValue) !== -1
+                                }
                             }
                         }
-                    }
 
-                    reuseItems: true
-                    delegate: ActivityTypeCheckBox {
-                        readonly property string name: store.getNameForAddress(model.address)
-                        width: ListView.view.width
-                        height: 44
-                        title: name || StatusQUtils.Utils.elideText(model.address,6,4)
-                        subTitle: name ? StatusQUtils.Utils.elideText(model.address,6,4): ""
-                        statusListItemSubTitle.elide: Text.ElideMiddle
-                        statusListItemSubTitle.wrapMode: Text.NoWrap
-                        assetSettings.name: name || "address"
-                        assetSettings.isLetterIdenticon: !!name
-                        assetSettings.bgHeight: 32
-                        assetSettings.bgWidth: 32
-                        assetSettings.bgRadius: assetSettings.bgHeight/2
-                        assetSettings.width: !!name ? 32 : 16
-                        assetSettings.height: !!name ? 32 : 16
-                        buttonGroup: recentsButtonGroup
-                        allChecked: root.allRecentsChecked
-                        checked: root.allRecentsChecked ? true : root.recentsFilters.includes(model.address)
-                        onActionTriggered: root.recentsToggled(model.address)
+                        reuseItems: true
+                        delegate: ActivityTypeCheckBox {
+                            readonly property string name: store.getNameForAddress(model.address)
+                            width: ListView.view.width
+                            height: 44
+                            title: name || StatusQUtils.Utils.elideText(model.address,6,4)
+                            subTitle: name ? StatusQUtils.Utils.elideText(model.address,6,4): ""
+                            statusListItemSubTitle.elide: Text.ElideMiddle
+                            statusListItemSubTitle.wrapMode: Text.NoWrap
+                            assetSettings.name: name || "address"
+                            assetSettings.isLetterIdenticon: !!name
+                            assetSettings.bgHeight: 32
+                            assetSettings.bgWidth: 32
+                            assetSettings.bgRadius: assetSettings.bgHeight/2
+                            assetSettings.width: !!name ? 32 : 16
+                            assetSettings.height: !!name ? 32 : 16
+                            buttonGroup: recentsButtonGroup
+                            allChecked: root.allRecentsChecked
+                            checked: root.allRecentsChecked ? true : root.recentsFilters.includes(model.address)
+                            onActionTriggered: root.recentsToggled(model.address)
+                        }
                     }
                 }
             }

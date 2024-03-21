@@ -192,9 +192,15 @@ Column {
 
         Repeater {
             model: activityFilterStore.recentsFilters
-            delegate: ActivityFilterTagItem {
-                tagPrimaryLabel.text: root.store.getNameForAddress(modelData) || StatusQUtils.Utils.elideText(modelData,6,4)
-                onClosed: activityFilterStore.toggleRecents(modelData)
+
+            // Use lazy loading as a workaround to refresh the list when the model is updated
+            // to force an address lookup to all delegates
+            delegate: Loader {
+                active: parent.visible
+                sourceComponent: ActivityFilterTagItem {
+                    tagPrimaryLabel.text: root.store.getNameForAddress(modelData) || StatusQUtils.Utils.elideText(modelData,6,4)
+                    onClosed: activityFilterStore.toggleRecents(modelData)
+                }
             }
         }
 
