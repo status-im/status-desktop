@@ -500,6 +500,9 @@ proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
 
+proc setActiveSectionId*(self: Controller, sectionId: string) =
+  self.activeSectionId = sectionId
+
 proc getAllChats*(self: Controller): seq[ChatDto] =
   result = self.chatService.getAllChats()
 
@@ -593,4 +596,3 @@ proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: strin
 
 proc asyncReevaluateCommunityMembersPermissions*(self: Controller, communityId: string) =
   self.communityService.asyncReevaluateCommunityMembersPermissions(communityId)
-
