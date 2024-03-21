@@ -288,6 +288,14 @@ SplitView {
 
                         onCloseRequested: logs.logEvent("closeRequested()")
 
+                        sendToAccountEnabled: true
+
+                        showcaseCommunitiesModel: CommunitiesModel {}
+                        showcaseAccountsModel: WalletAccountsModel {}
+                        showcaseCollectiblesModel: ManageCollectiblesModel {}
+                        showcaseSocialLinksModel: assetsStore.groupedAccountAssetsModel
+                        // TODO: showcaseAssetsModel
+
                         profileStore: QtObject {
                             readonly property string pubkey: "0xdeadbeef"
                             readonly property string ensName: name.text
@@ -301,12 +309,6 @@ SplitView {
                         }
 
                         contactsStore: QtObject {
-                            readonly property var showcaseContactCommunitiesModel: CommunitiesModel {}
-                            readonly property var showcaseContactAccountsModel: WalletAccountsModel {}
-                            readonly property var showcaseContactCollectiblesModel: ManageCollectiblesModel {}
-                            readonly property var showcaseContactAssetsModel: assetsStore.groupedAccountAssetsModel
-                            // TODO: showcaseContactSocialLinksModel
-
                             readonly property string myPublicKey: "0xdeadbeef"
 
                             function joinPrivateChat(publicKey) {
@@ -366,32 +368,6 @@ SplitView {
                             function requestProfileShowcase(publicKey) {
                                 logs.logEvent("contactsStore::requestProfileShowcase", ["publicKey"], arguments)
                             }
-                        }
-
-                        walletStore: QtObject {
-                            function setFilterAddress(address) {
-                                logs.logEvent("walletStore::setFilterAddress", ["address"], arguments)
-                            }
-
-                            function getSavedAddress(address) {
-                                return {
-                                    name: "My Status Saved Account",
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000",
-                                    ens: false,
-                                    colorId: Constants.walletAccountColors.primary,
-                                    chainShortNames: "",
-                                    isTest: false
-                                }
-                            }
-
-                            function createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames) {
-                                logs.logEvent("walletStore::createOrUpdateSavedAddress", ["name", "address", "ens", "colorId", "chainShortNames"],
-                                              arguments)
-                            }
-                        }
-
-                        networkConnectionStore: QtObject {
-                            readonly property bool sendBuyBridgeEnabled: true
                         }
                     }
                 }
