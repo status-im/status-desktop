@@ -13,23 +13,21 @@ QObject {
 
     // Communities input models
     property alias communitiesSourceModel: communitySFPM.sourceModel
-    property alias communitiesShowcaseModel: communityJoinedModel.leftModel
+    property alias communitiesShowcaseModel: communityJoinedModel.rightModel
 
     // adapted models
     readonly property alias adaptedCommunitiesSourceModel: communityJoinedModel
 
     // Accounts input models
     property alias accountsSourceModel: accountsSFPM.sourceModel
+    property alias accountsShowcaseModel: accountsJoinedModel.rightModel
 
     // adapted models
-    readonly property alias adaptedAccountsSourceModel: accountsSFPM
-
-    //helpers
-    property var isAddressSaved: (address) => false
+    readonly property alias adaptedAccountsSourceModel: accountsJoinedModel
 
     // Collectibles input models
     property alias collectiblesSourceModel: collectiblesSFPM.sourceModel
-    property alias collectiblesShowcaseModel: collectiblesJoinedModel.leftModel
+    property alias collectiblesShowcaseModel: collectiblesJoinedModel.rightModel
 
     // adapted models
     readonly property alias adaptedCollectiblesSourceModel: collectiblesJoinedModel
@@ -44,8 +42,9 @@ QObject {
         joinRole: "showcaseKey"
     }
 
+    //
     // Communities proxies
-
+    //
     SortFilterProxyModel {
         id: communitySFPM
         proxyRoles: [
@@ -64,9 +63,12 @@ QObject {
 
     JoinModel {
         id: communityJoinedModel
-        rightModel: communitySFPM
+        leftModel: communitySFPM
     }
 
+    //
+    // Accounts proxies
+    //
     SortFilterProxyModel {
         id: accountsSFPM
         proxyRoles: [
@@ -74,17 +76,18 @@ QObject {
                 name: "showcaseKey"
                 expression: model.address
                 expectedRoles: ["address"]
-            },
-            FastExpressionRole {
-                name: "saved"
-                expression: root.isAddressSaved(model.address)
-                expectedRoles: ["address"]
             }
         ]
     }
 
-    // Collectibles proxies
+    JoinModel {
+        id: accountsJoinedModel
+        leftModel: accountsSFPM
+    }
 
+    //
+    // Collectibles proxies
+    //
     SortFilterProxyModel {
         id: collectiblesSFPM
         proxyRoles: [
@@ -98,11 +101,12 @@ QObject {
 
     JoinModel {
         id: collectiblesJoinedModel
-        rightModel: collectiblesSFPM
+        leftModel: collectiblesSFPM
     }
 
+    //
     // Social links proxies
-
+    //
     SortFilterProxyModel {
         id: socialLinksSFPM
         proxyRoles: [

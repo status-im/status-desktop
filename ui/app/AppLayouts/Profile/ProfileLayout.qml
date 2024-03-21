@@ -132,21 +132,22 @@ StatusSectionLayout {
             active: false
             asynchronous: true
             sourceComponent: MyProfileView {
+                id: myProfileView
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                walletAssetsStore: root.walletAssetsStore
-                currencyStore: root.currencyStore
-                walletStore: root.store.walletStore
                 profileStore: root.store.profileStore
-                privacyStore: root.store.privacyStore
                 contactsStore: root.store.contactsStore
-                networkConnectionStore: root.networkConnectionStore
-                communitiesModel: root.store.communitiesList
+                sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
                 sideBySidePreview: d.sideBySidePreviewAvailable
                 toastClashesWithDirtyBubble: d.toastClashesWithDirtyBubble
+
+                communitiesShowcaseModel: root.store.ownShowcaseCommunitiesModel
+                accountsShowcaseModel: root.store.ownShowcaseAccountsModel
+                collectiblesShowcaseModel: root.store.ownShowcaseCollectiblesModel
+                socialLinksShowcaseModel: root.store.ownShowcaseSocialLinksModel
             }
         }
 
@@ -432,13 +433,7 @@ StatusSectionLayout {
 
     showRightPanel: d.isProfilePanelActive && d.sideBySidePreviewAvailable
     rightPanelWidth: d.rightPanelWidth
-    rightPanel: MyProfilePreview {
-        profileStore: root.store.profileStore
-        contactsStore: root.store.contactsStore
-        networkConnectionStore: root.networkConnectionStore
-        dirtyValues: d.isProfilePanelActive ? profileContainer.currentItem.dirtyValues : ({})
-        dirty: d.isProfilePanelActive ? profileContainer.currentItem.dirty : false
-    }
+    rightPanel: d.isProfilePanelActive ? profileContainer.currentItem.sideBySidePreviewComponent : null
 
     Connections {
         target: root.store.keycardStore.keycardModule
