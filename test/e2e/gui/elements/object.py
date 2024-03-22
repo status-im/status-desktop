@@ -94,10 +94,6 @@ class QObject:
             y: int = None,
             button=None,
     ):
-        if isFrozen(500) is False:
-            pass
-        else:
-            time.sleep(2000)
         driver.mouseClick(
             self.object,
             x or int(self.object.width * 0.1),
