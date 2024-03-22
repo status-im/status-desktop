@@ -64,10 +64,6 @@ pipeline {
     PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
-    /* Control output the filename */
-    //STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch())}"
-    /* 7zip archive filename */
-    //STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch())}"
     /* RFC 3161 timestamping URL for DigiCert */
     WINDOWS_CODESIGN_TIMESTAMP_URL = 'http://timestamp.digicert.com'
   }
@@ -78,6 +74,10 @@ pipeline {
         cleanWs()
         // We need to explicitly checkout from SCM here
         checkout scm
+        /* Control output the filename */
+        env.STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch())}"
+        /* 7zip archive filename */
+        env.STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch())}"
         sh 'make update'
         sh 'make deps'
       }
