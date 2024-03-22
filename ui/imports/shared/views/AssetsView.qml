@@ -194,6 +194,7 @@ ColumnLayout {
 
             SortOrderComboBox {
                 id: cmbTokenOrder
+                objectName: "cmbTokenOrder"
                 hasCustomOrderDefined: root.controller.hasSettings
                 model: [
                     { value: SortOrderComboBox.TokenOrderCurrencyBalance, text: qsTr("Asset balance value"), icon: "token-sale", sortRoleName: "currentCurrencyBalance" }, // custom SFPM ExpressionRole on "enabledNetworkCurrencyBalance" amount
