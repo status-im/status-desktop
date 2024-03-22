@@ -119,8 +119,8 @@ pipeline {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
     cleanup {
-      //cleanWs(disableDeferredWipeout: true, deleteDirs: true)
-      cleanWs()
+      cleanWs(disableDeferredWipeout: true, deleteDirs: true)
+      //cleanWs()
     }
   }
 }
