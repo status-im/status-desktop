@@ -74,12 +74,12 @@ pipeline {
         cleanWs()
         // We need to explicitly checkout from SCM here
         checkout scm
-        script {
-          /* Control output the filename */
-          env.STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch())}"
-          /* 7zip archive filename */
-          env.STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch())}"
-        }
+        //script {
+        //  /* Control output the filename */
+        //  env.STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch())}"
+        //  /* 7zip archive filename */
+        //  env.STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch())}"
+        //}
         sh 'make update'
         sh 'make deps'
       }
