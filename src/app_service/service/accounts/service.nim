@@ -7,7 +7,7 @@ import ./dto/generated_accounts as dto_generated_accounts
 import ./dto/login_request
 import ./dto/create_account_request
 import ./dto/restore_account_request
-import ./dto/wallet_secretes_config
+
 from ../keycard/service import KeycardEvent, KeyDetails
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
@@ -442,13 +442,14 @@ QtObject:
       alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
     )
 
-  proc buildCreateAccountRequest(self: Service, password: string, displayName: string, imagePath: string): CreateAccountRequest =
+  proc buildCreateAccountRequest(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
     return CreateAccountRequest(
         backupDisabledDataDir: main_constants.STATUSGODIR,
         kdfIterations: KDF_ITERATIONS,
         password: hashPassword(password),
         displayName: displayName,
         imagePath: imagePath,
+        imageCropRectangle: imageCropRectangle,
         customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
         logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
         wakuV2LightClient: false,
@@ -458,9 +459,9 @@ QtObject:
         walletSecretsConfig: self.buildWalletSecrets(),
       )
 
-  proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string): string =
+  proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
     try:
-      let request = self.buildCreateAccountRequest(password, displayName, imagePath)
+      let request = self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
       let response = status_account.createAccountAndLogin(request)
       # var error = "response doesn't contain \"error\""
       debug "<<< createAccountAndLogin response: ", response
@@ -482,12 +483,12 @@ QtObject:
       error "failed to create account or login", procName="createAccountAndLogin", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc importAccountAndLogin*(self: Service, mnemonic: string, password: string, recoverAccount: bool, displayName: string, imagePath: string): string =
+  proc importAccountAndLogin*(self: Service, mnemonic: string, password: string, recoverAccount: bool, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
     try:
       let request = RestoreAccountRequest(
         mnemonic: mnemonic,
         fetchBackup: recoverAccount,
-        createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath),
+        createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
       )
       let response = status_account.restoreAccountAndLogin(request)
       debug "<<< importAccountAndLogin response: ", response
@@ -778,12 +779,16 @@ QtObject:
 
   proc doLoginV2(self: Service, account: AccountDto, passwordHash: string) =
     trace "<<< doLoginV2"
-    let request = LoginAccountRequest(
+    var request = LoginAccountRequest(
       keyUid: account.keyUid,
       kdfIterations: account.kdfIterations,
       passwordHash: passwordHash,
       walletSecretsConfig: self.buildWalletSecrets(),
     )
+
+    if main_constants.runtimeLogLevelSet():
+      request.runtimeLogLevel = toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)
+
     let response = status_account.loginAccount(request)
 
     if response.result{"error"}.getStr != "":

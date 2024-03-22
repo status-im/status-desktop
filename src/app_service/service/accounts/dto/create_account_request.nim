@@ -1,5 +1,9 @@
 import json, std/options
 import ./wallet_secretes_config
+import ./image_crop_rectangle
+
+export wallet_secretes_config
+export image_crop_rectangle
 
 type
   CreateAccountRequest* = object
@@ -9,6 +13,7 @@ type
     displayName*: string
     password*: string
     imagePath*: string
+    imageCropRectangle*: ImageCropRectangle
     customizationColor*: string
     emoji*: string
 
@@ -41,6 +46,7 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "displayName": self.displayName,
     "password": self.password,
     "imagePath": self.imagePath,
+    "imageCropRectangle": self.imageCropRectangle,
     "customizationColor": self.customizationColor,
     "emoji": self.emoji,
     "wakuV2LightClient": self.wakuV2LightClient,

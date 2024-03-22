@@ -13,19 +13,17 @@ import app_service/service/profile/service as profile_service
 import app_service/service/keycard/service as keycard_service
 import app_service/service/devices/service as devices_service
 import app_service/common/[account_constants, utils]
-
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
+
+import app_service/service/accounts/dto/create_account_request
 
 logScope:
   topics = "startup-controller"
 
 type ProfileImageDetails = object
   url*: string
-  croppedImage*: string
-  x1*: int
-  y1*: int
-  x2*: int
-  y2*: int
+  croppedImage*: string # TODO: Not needed with new CreateAccount endpoint?
+  cropRectangle*: ImageCropRectangle
 
 type
   Controller* = ref object of RootObj
@@ -216,11 +214,15 @@ proc clearImage*(self: Controller) =
 proc generateImage*(self: Controller, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string =
   let formatedImg = singletonInstance.utils.formatImagePath(imageUrl)
   let images = self.generalService.generateImages(formatedImg, aX, aY, bX, bY)
-  if(images.len == 0):
+  if images.len == 0:
     return
   for img in images:
-    if(img.imgType == "large"):
-      self.tmpProfileImageDetails = ProfileImageDetails(url: imageUrl, croppedImage: img.uri, x1: aX, y1: aY, x2: bX, y2: bY)
+    if img.imgType == "large":
+      self.tmpProfileImageDetails = ProfileImageDetails(
+        url: formatedImg, 
+        croppedImage: img.uri, 
+        cropRectangle: ImageCropRectangle(ax: aX, ay: aY, bx: bX, by: bY)
+      )
       return img.uri
 
 proc fetchWakuMessages*(self: Controller) =
@@ -344,13 +346,20 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   let selectedAccount = self.getSelectedLoginAccount()
   self.keychainService.tryToObtainData(selectedAccount.keyUid)
 
+# FIXME: Remove with new login endpoint
 proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:
     return
   let account = self.accountsService.getLoggedInAccount()
   let image = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
-  result = self.profileService.storeIdentityImage(account.keyUid, image, self.tmpProfileImageDetails.x1,
-  self.tmpProfileImageDetails.y1, self.tmpProfileImageDetails.x2, self.tmpProfileImageDetails.y2)
+  result = self.profileService.storeIdentityImage(
+    account.keyUid, 
+    image, 
+    self.tmpProfileImageDetails.cropRectangle.aX,
+    self.tmpProfileImageDetails.cropRectangle.aY,
+    self.tmpProfileImageDetails.cropRectangle.bX,
+    self.tmpProfileImageDetails.cropRectangle.bY,
+  )
   self.tmpProfileImageDetails = ProfileImageDetails()
 
 # validMnemonic only checks if mnemonic is valid
@@ -401,16 +410,26 @@ proc processCreateAccountResult*(self: Controller, error: string, storeToKeychai
 
 proc createAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   self.delegate.moveToLoadingAppState()
-  let profileImageUrl = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
-  let error = self.accountsService.createAccountAndLogin(self.tmpPassword, self.tmpDisplayName, profileImageUrl)
+  let error = self.accountsService.createAccountAndLogin(
+    self.tmpPassword, 
+    self.tmpDisplayName, 
+    self.tmpProfileImageDetails.url, 
+    self.tmpProfileImageDetails.cropRectangle
+  )
   self.processCreateAccountResult(error, storeToKeychain)
 
 proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
   if recoverAccount:
     self.delegate.prepareAndInitFetchingData()
     self.connectToFetchingFromWakuEvents()
-  let profileImageUrl = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
-  let error = self.accountsService.importAccountAndLogin(self.tmpSeedPhrase, self.tmpPassword, recoverAccount, self.tmpDisplayName, profileImageUrl)
+  let error = self.accountsService.importAccountAndLogin(
+    self.tmpSeedPhrase, 
+    self.tmpPassword, 
+    recoverAccount, 
+    self.tmpDisplayName, 
+    self.tmpProfileImageDetails.url,
+    self.tmpProfileImageDetails.cropRectangle,
+  )
   self.processCreateAccountResult(error, storeToKeychain)
 
 proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
