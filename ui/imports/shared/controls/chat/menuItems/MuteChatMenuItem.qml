@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import utils 1.0
 
@@ -29,6 +29,11 @@ StatusMenu {
     StatusAction {
         text: qsTr("For 8 hours")
         onTriggered: muteTriggered(Constants.MutingVariations.For8hr)
+    }
+
+    StatusAction {
+        text: qsTr("For 24 hours")
+        onTriggered: muteTriggered(Constants.MutingVariations.For24hr)
     }
 
     StatusAction {
