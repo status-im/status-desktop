@@ -79,8 +79,8 @@ pipeline {
         checkout scm
         sh 'pwd'
         sh 'echo $WORKSPACE'
-        #deleteDir()
-        #cleanWs()
+        //deleteDir()
+        //cleanWs()
         sh 'make update'
         sh 'make deps'
       }
@@ -129,8 +129,8 @@ pipeline {
     cleanup {
       sh 'pwd'
       sh 'echo $WORKSPACE'
-      #deleteDir()
-      #cleanWs()
+      //deleteDir()
+      //cleanWs()
     }
   }
 }
