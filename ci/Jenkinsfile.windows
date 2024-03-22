@@ -51,6 +51,8 @@ pipeline {
     disableConcurrentBuilds(
       abortPrevious: isPRBuild
     )
+    // This is required if you want to clean before build
+    skipDefaultCheckout(true)
   }
 
   environment {
@@ -73,6 +75,12 @@ pipeline {
   stages {
     stage('Deps') {
       steps {
+        // We need to explicitly checkout from SCM here
+        checkout scm
+        sh 'pwd'
+        sh 'echo $WORKSPACE'
+        #deleteDir()
+        #cleanWs()
         sh 'make update'
         sh 'make deps'
       }
@@ -121,8 +129,8 @@ pipeline {
     cleanup {
       sh 'pwd'
       sh 'echo $WORKSPACE'
-      deleteDir()
-      cleanWs()
+      #deleteDir()
+      #cleanWs()
     }
   }
 }
