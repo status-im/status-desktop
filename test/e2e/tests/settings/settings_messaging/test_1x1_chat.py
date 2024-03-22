@@ -18,8 +18,8 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703011', 'Add a contact with a chat key')
-@pytest.mark.case(703011)
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703087', '1-1 Chat')
+@pytest.mark.case(703087)
 @pytest.mark.parametrize('user_data_one, user_data_two', [
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
@@ -86,12 +86,13 @@ def test_1x1_chat(multiple_instance, user_data_one, user_data_two):
             messages_screen.left_panel.open_chat(user_one.name)
 
         with step(f'User {user_two.name} send reply to {user_one.name}'):
-            ChatMessagesView().send_message_to_group_chat('Hello squisher')
             messages_screen.group_chat.send_message_to_group_chat('Hello squisher')
-            message_objects = messages_screen.chat.messages(1)
+            message_objects = messages_screen.chat.messages(0)
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
                 assert 'Hello squisher' in message_item
+            message_objects = messages_screen.chat.messages(1)
+            message_items = [message.text for message in message_objects]
             for message_item in message_items:
                 assert 'How are you?' in message_item
 
@@ -119,10 +120,10 @@ def test_1x1_chat(multiple_instance, user_data_one, user_data_two):
                 assert '😎' in message_item
 
         with step(f'User {user_one.name}, delete own message and verify it was deleted'):
-            message = messages_screen.left_panel.open_chat(user_two.name).find_message_by_text('How are you?', 3)
+            message = messages_screen.left_panel.open_chat(user_two.name).find_message_by_text('How are you?', 2)
             message.hover_message().delete_message()
 
         with step(f'User {user_one.name}, cannot delete {user_two.name} message'):
-            message = messages_screen.left_panel.open_chat(user_two.name).find_message_by_text('Hello squisher', 2)
+            message = messages_screen.left_panel.open_chat(user_two.name).find_message_by_text('Hello squisher', 1)
             assert not message.hover_message().is_delete_button_visible()
             main_window.hide()

@@ -177,6 +177,7 @@ class ChatView(QObject):
     @allure.step('Get messages')
     def messages(self, index: int) -> typing.List[Message]:
         _messages = []
+        time.sleep(1)
         # message_list_item has different indexes if we run multiple instances, so we pass index
         self._message_list_item.real_name['index'] = index
         for item in driver.findAllObjects(self._message_list_item.real_name):
