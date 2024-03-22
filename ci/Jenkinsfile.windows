@@ -75,12 +75,9 @@ pipeline {
   stages {
     stage('Deps') {
       steps {
-        sh 'pwd'
-        sh 'echo $WORKSPACE'
+        cleanWs()
         // We need to explicitly checkout from SCM here
         checkout scm
-        //deleteDir()
-        //cleanWs()
         sh 'make update'
         sh 'make deps'
       }
@@ -126,12 +123,7 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    cleanup {
-      sh 'pwd'
-      sh 'echo $WORKSPACE'
-      //deleteDir()
-      //cleanWs()
-    }
+    cleanup { cleanWs() }
   }
 }
 
