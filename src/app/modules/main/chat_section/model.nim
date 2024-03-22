@@ -84,10 +84,14 @@ QtObject:
     return self.items
 
   proc categoryShouldBeHiddenBecauseNotPermitted(self: Model, categoryId: string): bool =
+    var catHasNoChannels = true
     for i in 0 ..< self.items.len:
       if not self.items[i].isCategory and self.items[i].categoryId == categoryId:
+        catHasNoChannels = false
         if not self.items[i].hideBecausePermissionsAreNotMet():
           return false
+    if catHasNoChannels:
+      return false
     return true
 
   proc itemShouldBeHiddenBecauseNotPermitted*(self: Model, item: Item): bool =
