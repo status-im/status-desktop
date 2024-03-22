@@ -75,10 +75,10 @@ pipeline {
   stages {
     stage('Deps') {
       steps {
-        // We need to explicitly checkout from SCM here
-        checkout scm
         sh 'pwd'
         sh 'echo $WORKSPACE'
+        // We need to explicitly checkout from SCM here
+        checkout scm
         //deleteDir()
         //cleanWs()
         sh 'make update'
