@@ -41,8 +41,8 @@ SplitView {
             CommunityIntroDialog {
                 id: dialog
                 anchors.centerIn: parent
-                name: "Status"
-                imageSrc: ModelsData.icons.status
+                communityName: "Status"
+                communityIcon: ModelsData.icons.status
                 introMessage: "%1 sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
 1. Ut enim ad minim veniam
@@ -52,7 +52,6 @@ SplitView {
 5. 🚗 consectetur adipiscing elit
 
 Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.".arg(dialog.name)
-                loginType: ctrlLoginType.currentIndex
                 requirementsCheckPending: false
 
                 walletAccountsModel: WalletAccountsModel {}
@@ -66,7 +65,8 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
 
                 onPrepareForSigning: logs.logEvent("CommunityIntroDialog::onPrepareForSigning", ["airdropAddress", "sharedAddresses"], arguments)
                 onJoinCommunity: logs.logEvent("CommunityIntroDialog::onJoinCommunity")
-                onSignSharedAddressesForAllNonKeycardKeypairs: logs.logEvent("CommunityIntroDialog::onSignSharedAddressesForAllNonKeycardKeypairs")
+                onEditRevealedAddresses: logs.logEvent("CommunityIntroDialog::editRevealedAddresses")
+                onSignProfileKeypairAndAllNonKeycardKeypairs: logs.logEvent("CommunityIntroDialog::editRevealedAddresses")
                 onSignSharedAddressesForKeypair: logs.logEvent("CommunityIntroDialog::onSignSharedAddressesForKeypair", ["keyUid"], arguments)
                 onSharedAddressesUpdated: logs.logEvent("CommunityIntroDialog::onSharedAddressesUpdated", ["sharedAddresses"], arguments)
                 getCurrencyAmount: function (balance, symbol) {
