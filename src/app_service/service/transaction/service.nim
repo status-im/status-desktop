@@ -368,11 +368,14 @@ QtObject:
     except Exception as e:
       self.sendTransactionSentSignal(from_addr, to_addr, uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
 
+  # in case of collectibles transfer, assetKey is used to get the contract address and token id
+  # in case of asset transfer, asset is valid and used to get the asset symbol and contract address
   proc transferToken(
     self: Service,
     from_addr: string,
     to_addr: string,
-    tokenSymbol: string,
+    assetKey: string,
+    asset: TokenBySymbolItem,
     uuid: string,
     routes: seq[TransactionPathDto],
     password: string,
@@ -387,30 +390,38 @@ QtObject:
       mtCommand = MultiTransactionCommandDto(
         fromAddress: from_addr,
         toAddress: to_addr,
-        fromAsset: tokenSymbol,
-        toAsset: tokenSymbol,
+        fromAsset: if not asset.isNil: asset.symbol else: assetKey,
+        toAsset: if not asset.isNil: asset.symbol else: assetKey,
         multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
       )
 
-    if self.isCollectiblesTransfer(sendType):
-      let contract_tokenId = mtCommand.toAsset.split(":")
+    # if collectibles transfer ...
+    if asset.isNil:
+      let contract_tokenId = assetKey.split(":")
       if contract_tokenId.len == 2:
         toContractAddress = parseAddress(contract_tokenId[0])
         mtCommand.fromAsset = contract_tokenId[1]
         mtCommand.toAsset = contract_tokenId[1]
+      else:
+        error "Invalid assetKey for collectibles transfer", assetKey=assetKey
+        return
 
     try:
       for route in routes:
         var txData = TransactionDataDto()
         var gasFees: string = ""
 
-        if not self.isCollectiblesTransfer(sendType):
-          let token = self.tokenService.getTokenBySymbolByTokensKey(mtCommand.toAsset)
-          if token != nil:
-            for addressPerChain in token.addressPerChainId:
-              if addressPerChain.chainId == route.toNetwork.chainId:
-                toContractAddress = parseAddress(addressPerChain.address)
-                break
+        # If not collectible ...
+        if not asset.isNil:
+          var foundAddress = false
+          for addressPerChain in asset.addressPerChainId:
+            if addressPerChain.chainId == route.toNetwork.chainId:
+              toContractAddress = parseAddress(addressPerChain.address)
+              foundAddress = true
+              break
+          if not foundAddress:
+            error "Contract address not found for asset", assetKey=assetKey
+            return
 
         if not route.gasFees.eip1559Enabled:
           gasFees = $route.gasFees.gasPrice
@@ -471,27 +482,25 @@ QtObject:
         finalPassword = common_utils.hashPassword(password)
     try:
       var chainID = 0
-      var isEthTx = false
 
       if(selectedRoutes.len > 0):
         chainID = selectedRoutes[0].fromNetwork.chainID
 
-      var tokenSymbol = ""
-      if self.isCollectiblesTransfer(sendType):
-        tokenSymbol = assetKey
-      else:
-        let token = self.tokenService.getTokenBySymbolByTokensKey(assetKey)
-        if token != nil:
-          tokenSymbol = token.symbol
+      # asset == nil means transferToken is executed for a collectibles transfer
+      var asset: TokenBySymbolItem
+      if not self.isCollectiblesTransfer(sendType):
+        asset = self.tokenService.getTokenBySymbolByTokensKey(assetKey)
+        if not asset.isNil:
+          let network = self.networkService.getNetworkByChainId(chainID)
+          if not network.isNil and network.nativeCurrencySymbol == asset.symbol:
+            self.transferEth(fromAddr, toAddr, asset.symbol, uuid, selectedRoutes, finalPassword)
+            return
+          # else continue with asset transfer
+        else:
+          error "Asset not found for", assetKey=assetKey
+          return
 
-        let network = self.networkService.getNetworkByChainId(chainID)
-        if not network.isNil and network.nativeCurrencySymbol == tokenSymbol:
-          isEthTx = true
-
-      if(isEthTx):
-        self.transferEth(fromAddr, toAddr, tokenSymbol, uuid, selectedRoutes, finalPassword)
-      else:
-        self.transferToken(fromAddr, toAddr, tokenSymbol, uuid, selectedRoutes, finalPassword, sendType, tokenName, isOwnerToken)
+      self.transferToken(fromAddr, toAddr, assetKey, asset, uuid, selectedRoutes, finalPassword, sendType, tokenName, isOwnerToken)
 
     except Exception as e:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
