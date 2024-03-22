@@ -29,7 +29,6 @@ class NewChannelPopup(ChannelPopup):
             self._emoji_button.click()
             EmojiPopup().wait_until_appears().select(emoji)
         self._save_create_button.click()
-        self.wait_until_hidden()
 
 
 class EditChannelPopup(ChannelPopup):

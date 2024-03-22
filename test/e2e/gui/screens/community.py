@@ -268,20 +268,14 @@ class LeftPanel(QObject):
         return CommunitySettingsScreen().wait_until_appears()
 
     @allure.step('Open create channel popup')
-    def open_create_channel_popup(self, attempt: int = 2) -> NewChannelPopup:
-        try:
-            self._channel_or_category_button.click()
-            self._create_channel_menu_item.click()
-            return NewChannelPopup().wait_until_appears()
-        except LookupError as er:
-            if attempt:
-                self.open_create_channel_popup(attempt - 1)
-            else:
-                raise er
+    def open_create_channel_popup(self) -> NewChannelPopup:
+        self._channel_or_category_button.click()
+        self._create_channel_menu_item.click()
+        return NewChannelPopup()
 
-    @allure.step('Get visibility state of create channel or category button')
-    def is_create_channel_or_category_button_visible(self) -> bool:
-        return self._channel_or_category_button.is_visible
+    @allure.step('Get presence state of create channel or category button')
+    def does_create_channel_or_category_button_exist(self) -> bool:
+        return self._channel_or_category_button.exists
 
     @allure.step('Get visibility state of add channels button')
     def is_add_channels_button_visible(self) -> bool:

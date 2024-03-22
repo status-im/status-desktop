@@ -98,15 +98,10 @@ class LeftPanel(QObject):
         self._open_context_menu_for_account(account_name).select_hide_include_total_balance_from_context_menu()
 
     @allure.step('Open account popup for editing from context menu')
-    def open_edit_account_popup_from_context_menu(self, account_name: str, attempt: int = 2) -> AccountPopup:
-        try:
-            self._open_context_menu_for_account(account_name).select_edit_account_from_context_menu()
-            return AccountPopup().wait_until_appears()
-        except Exception as ex:
-            if attempt:
-                return self.open_edit_account_popup_from_context_menu(account_name, attempt - 1)
-            else:
-                raise ex
+    def open_edit_account_popup_from_context_menu(self, account_name: str) -> AccountPopup:
+        self._open_context_menu_for_account(account_name).select_edit_account_from_context_menu()
+        return AccountPopup().verify_edit_account_popup_present()
+
 
     @allure.step('Open account popup')
     def open_add_account_popup(self, attempt: int = 2):

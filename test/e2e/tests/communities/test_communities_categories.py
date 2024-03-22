@@ -89,7 +89,7 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow)
 
     with step('Verify that member cannot add category'):
         with step('Verify that create channel or category button is not present'):
-            assert not community_screen.left_panel.is_create_channel_or_category_button_visible()
+            assert not community_screen.left_panel.does_create_channel_or_category_button_exist()
         with step('Verify that add category button is not present'):
             assert not community_screen.left_panel.is_add_category_button_visible()
 

@@ -81,7 +81,7 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
         community_screen = main_screen.left_panel.select_community('Super community')
     with step('Verify that member cannot add new channel'):
         with step('Verify that create channel or category button is not present'):
-            assert not community_screen.left_panel.is_create_channel_or_category_button_visible()
+            assert not community_screen.left_panel.does_create_channel_or_category_button_exist()
         with step('Verify that add channel button is not present'):
             assert not community_screen.left_panel.is_add_channels_button_visible()
         with step('Right-click a channel on the left navigation bar'):

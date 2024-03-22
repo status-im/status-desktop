@@ -41,7 +41,7 @@ class WalletSettingsView(QObject):
     def open_add_account_pop_up(self, attempts: int = 2) -> 'AccountPopup':
         self._wallet_settings_add_new_account_button.click()
         try:
-            return AccountPopup().verify_account_popup_present()
+            return AccountPopup().verify_add_account_popup_present()
         except Exception as ex:
             if attempts:
                 return self.open_add_account_pop_up(attempts - 1)

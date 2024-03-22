@@ -66,3 +66,4 @@ class WalletTransactions(Enum):
 
 class WalletScreensHeaders(Enum):
     WALLET_ADD_ACCOUNT_POPUP_TITLE = 'Add a new account'
+    WALLET_EDIT_ACCOUNT_POPUP_TITLE = 'Edit account'
