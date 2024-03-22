@@ -484,8 +484,6 @@ proc appReady*(self: AppController) =
   self.statusFoundation.appReady()
 
 proc finishAppLoading*(self: AppController) =
-  debug "<<< finishAppLoading"
-  
   self.load()
 
   if not self.startupModule.isNil:

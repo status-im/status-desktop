@@ -97,7 +97,6 @@ QtObject:
     self.setLocalAccountSettingsFile()
 
   proc updateLoggedInAccount*(self: Service, displayName: string, images: seq[Image]) =
-    debug "<<< updateLoggedInAccount", displayName, imagesCount = $len(images)
     self.loggedInAccount.name = displayName
     self.loggedInAccount.images = images
     singletonInstance.localAccountSettings.setFileName(displayName)
@@ -463,8 +462,6 @@ QtObject:
     try:
       let request = self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
       let response = status_account.createAccountAndLogin(request)
-      # var error = "response doesn't contain \"error\""
-      debug "<<< createAccountAndLogin response: ", response
       
       if not response.result.contains("error"):
         error "invalid status-go response", response
@@ -473,7 +470,6 @@ QtObject:
       let error = response.result["error"].getStr
       if error == "":
         debug "Account saved succesfully"
-        # result = toAccountDto(account)
         return ""
       
       error "createAccountAndLogin status-go error: ", error
@@ -491,7 +487,6 @@ QtObject:
         createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
       )
       let response = status_account.restoreAccountAndLogin(request)
-      debug "<<< importAccountAndLogin response: ", response
 
       if not response.result.contains("error"):
         error "invalid status-go response", response
@@ -500,7 +495,6 @@ QtObject:
       let error = response.result["error"].getStr
       if error == "":
         debug "Account saved succesfully"
-        # result = toAccountDto(account)
         return ""
 
       error "importAccountAndLogin status-go error: ", error
@@ -795,13 +789,15 @@ QtObject:
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr))
       return
 
-    debug "Account logged in"
-    self.loggedInAccount = account      # WARNING: is this needed?
+    debug "account logged in"
     self.setLocalAccountSettingsFile()  # WARNING: is this needed?
 
   proc login*(self: Service, account: AccountDto, hashedPassword: string) =
     trace "<<< login"
     try:
+      
+      # FIXME: CLEANUP
+
       var thumbnailImage: string
       var largeImage: string
       for img in account.images:

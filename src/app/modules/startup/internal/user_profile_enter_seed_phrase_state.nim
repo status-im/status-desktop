@@ -44,8 +44,7 @@ method getNextPrimaryState*(self: UserProfileEnterSeedPhraseState, controller: C
 method executePrimaryCommand*(self: UserProfileEnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserImportSeedPhrase or
     self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
-      # self.successfulImport = controller.importMnemonic()
-      self.successfulImport = controller.validateMnemonic(controller.getSeedPhrase())
+      self.successfulImport = controller.validateMnemonicForImport(controller.getSeedPhrase())
       return
 
   self.successfulImport = controller.validMnemonic(controller.getSeedPhrase())

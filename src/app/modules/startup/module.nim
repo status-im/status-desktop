@@ -175,7 +175,6 @@ method moveToAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.MainAppState)
 
 method moveToStartupState*[T](self: Module[T]) =
-  debug "<<< moveToStartupState"
   self.view.setAppState(AppState.StartupState)
 
 proc moveToAppEncryptionProcessState[T](self: Module[T]) =
@@ -344,7 +343,6 @@ method finishAppLoading*[T](self: Module[T]) =
   self.delegate.appReady()
 
 method checkFetchingStatusAndProceed*[T](self: Module[T]) =
-  debug "<<< checkFetchingStatusAndProceed"
   if self.view.fetchingDataModel().isEntityLoaded(FetchingFromWakuProfile):
     self.finishAppLoading()
     return
@@ -356,7 +354,6 @@ method checkFetchingStatusAndProceed*[T](self: Module[T]) =
 
 method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: uint64, section: string,
   totalMessages: int, receivedMessageAtPosition: int) =
-  debug "<<< onFetchingFromWakuMessageReceived", backedUpMsgClock, section, totalMessages, receivedMessageAtPosition
   if not self.view.fetchingDataModel().evaluateWhetherToProcessReceivedData(backedUpMsgClock, listOfEntitiesWeExpectToBeSynced):
     return
   if self.view.fetchingDataModel().allMessagesLoaded():
@@ -376,7 +373,6 @@ method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: 
   if receivedMessageAtPosition > 0:
     self.view.fetchingDataModel().receivedMessageAtPosition(section, receivedMessageAtPosition)
   if self.view.fetchingDataModel().allMessagesLoaded():
-    debug "<<< onFetchingFromWakuMessageReceived -> allMessagesLoaded"
     self.view.setCurrentStartupState(newProfileFetchingSuccessState(currStateObj.flowType(), nil))
 
 method prepareAndInitFetchingData*[T](self: Module[T]) =
@@ -408,8 +404,6 @@ method onProfileConverted*[T](self: Module[T], success: bool) =
   self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
 
 method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, settings: SettingsDto) =
-  trace "<<< onNodeLogin", error
-
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot determine current startup state", procName="onNodeLogin"

@@ -188,8 +188,9 @@ proc init*(self: Controller) =
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
+# This is used when fetching backup failed and we create a new displayName and profileImage.
+# At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
-  debug "<<< storeProfileDataAndProceedWithAppLoading"
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
   discard self.profileService.setDisplayName(self.tmpDisplayName)
   let images = self.storeIdentityImage()
@@ -363,6 +364,7 @@ proc storeIdentityImage*(self: Controller): seq[Image] =
   self.tmpProfileImageDetails = ProfileImageDetails()
 
 # validMnemonic only checks if mnemonic is valid
+# This is used from UI.
 proc validMnemonic*(self: Controller, mnemonic: string): bool =
   let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
   if err.len == 0:
@@ -370,15 +372,13 @@ proc validMnemonic*(self: Controller, mnemonic: string): bool =
     return true
   return false
 
-# validateMnemonic checks if mnemonic is valid and not yet saved in local database
-proc validateMnemonic*(self: Controller, mnemonic: string): bool =
+# validateMnemonicForImport checks if mnemonic is valid and not yet saved in local database
+proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
   let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
-  debug "<<< validateMnemonic", mnemonic, keyUID, err
   if err.len != 0:
     self.delegate.emitStartupError(err, StartupErrorType.ImportAccError)
     return false
 
-  debug "<<< accounts: ", openAccounts = $self.accountsService.openedAccounts.mapIt(it.keyUid)
   if keyUID in self.accountsService.openedAccounts.mapIt(it.keyUid):
     self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
     return false

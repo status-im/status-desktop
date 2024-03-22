@@ -82,7 +82,6 @@ QtObject:
     return self.currentStartupState.getStateObj()
 
   proc setCurrentStartupState*(self: View, state: State) =
-    debug "<<< setCurrentStartupState: ", flow = $state.flowType, state = $state.stateType
     self.currentStartupState.setStateObj(state)
   proc getCurrentStartupState(self: View): QVariant {.slot.} =
     return self.currentStartupStateVariant
