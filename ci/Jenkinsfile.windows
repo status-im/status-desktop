@@ -119,7 +119,7 @@ pipeline {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
     cleanup {
-      node {
+      environment {
         deleteDir()
         sh 'pwd'
         sh 'echo $WORKSPACE'
