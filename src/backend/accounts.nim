@@ -313,36 +313,6 @@ proc openedAccounts*(path: string): RpcResponse[JsonNode] =
     error "error doing rpc request", methodName = "openedAccounts", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc storeDerivedAccounts*(id, hashedPassword: string, paths: seq[string]):
-  RpcResponse[JsonNode] =
-  let payload = %* {
-    "accountID": id,
-    "paths": paths,
-    "password": hashedPassword
-  }
-
-  try:
-    let response = status_go.multiAccountStoreDerivedAccounts($payload)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "storeDerivedAccounts", exception=e.msg
-    raise newException(RpcException, e.msg)
-
-proc storeAccounts*(id, hashedPassword: string): RpcResponse[JsonNode] =
-  let payload = %* {
-    "accountID": id,
-    "password": hashedPassword
-  }
-
-  try:
-    let response = status_go.multiAccountStoreAccount($payload)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "storeAccounts", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 proc addPeer*(peer: string): RpcResponse[JsonNode] =
   try:
     let response = status_go.addPeer(peer)
@@ -352,21 +322,9 @@ proc addPeer*(peer: string): RpcResponse[JsonNode] =
     error "error doing rpc request", methodName = "addPeer", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc saveAccountAndLogin*(hashedPassword: string, account, subaccounts, settings,
-  config: JsonNode): RpcResponse[JsonNode] =
-  try:
-    let response = status_go.saveAccountAndLogin($account, hashedPassword,
-    $settings, $config, $subaccounts)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 proc createAccountAndLogin*(request: CreateAccountRequest): RpcResponse[JsonNode] =
   try:
     let payload = request.toJson()
-    debug "<<< createAccountAndLogin payload: ", payload
     let response = status_go.createAccountAndLogin($payload)
     result.result = Json.decode(response, JsonNode)
 
@@ -377,7 +335,6 @@ proc createAccountAndLogin*(request: CreateAccountRequest): RpcResponse[JsonNode
 proc restoreAccountAndLogin*(request: RestoreAccountRequest): RpcResponse[JsonNode] =
   try:
     let payload = request.toJson()
-    debug "<<< restoreAccountAndLogin payload: ", payload
     let response = status_go.restoreAccountAndLogin($payload)
     result.result = Json.decode(response, JsonNode)
 
@@ -411,27 +368,6 @@ proc convertKeycardProfileKeypairToRegular*(mnemonic: string, currPassword: stri
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error doing rpc request", methodName = "convertKeycardProfileKeypairToRegular", exception=e.msg
-    raise newException(RpcException, e.msg)
-
-proc login*(name, keyUid: string, kdfIterations: int, hashedPassword, thumbnail, large: string, nodeCfgObj: string):
-  RpcResponse[JsonNode]
-  =
-  try:
-    var payload = %* {
-      "name": name,
-      "key-uid": keyUid,
-      "identityImage": newJNull(),
-      "kdfIterations": kdfIterations,
-    }
-
-    if(thumbnail.len>0 and large.len > 0):
-      payload["identityImage"] = %* {"thumbnail": thumbnail, "large": large}
-
-    let response = status_go.loginWithConfig($payload, hashedPassword, nodeCfgObj)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "login", exception=e.msg
     raise newException(RpcException, e.msg)
 
 proc loginAccount*(request: LoginAccountRequest): RpcResponse[JsonNode] =

@@ -386,7 +386,7 @@ proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
   self.setSeedPhrase(mnemonic)
   return true
 
-# FIXME: This should probably be removed
+# TODO: Remove after https://github.com/status-im/status-go/issues/4977
 proc importMnemonic*(self: Controller): bool =
   let error = self.accountsService.importMnemonic(self.tmpSeedPhrase)
   if(error.len == 0):

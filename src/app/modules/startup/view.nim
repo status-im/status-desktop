@@ -1,4 +1,4 @@
-import NimQml, chronicles
+import NimQml
 import io_interface
 import selected_login_account
 import internal/[state, state_wrapper]

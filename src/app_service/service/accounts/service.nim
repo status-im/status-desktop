@@ -70,8 +70,6 @@ QtObject:
     defaultWalletEmoji: string
     tmpAccount: AccountDto
     tmpHashedPassword: string
-    tmpThumbnailImage: string
-    tmpLargeImage: string
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -171,42 +169,6 @@ QtObject:
         return true
     return false
 
-  proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
-    paths: seq[string]): DerivedAccounts =
-    let response = status_account.storeDerivedAccounts(accountId, hashedPassword, paths)
-
-    if response.result.contains("error"):
-      raise newException(Exception, response.result["error"].getStr)
-
-    result = toDerivedAccounts(response.result)
-
-  proc storeAccount(self: Service, accountId, hashedPassword: string): GeneratedAccountDto =
-    let response = status_account.storeAccounts(accountId, hashedPassword)
-
-    if response.result.contains("error"):
-      raise newException(Exception, response.result["error"].getStr)
-
-    result = toGeneratedAccountDto(response.result)
-
-  proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
-    subaccounts, settings, config: JsonNode): AccountDto =
-    try:
-      let response = status_account.saveAccountAndLogin(hashedPassword, account, subaccounts, settings, config)
-
-      var error = "response doesn't contain \"error\""
-      if(response.result.contains("error")):
-        error = response.result["error"].getStr
-        if error == "":
-          debug "Account saved succesfully"
-          result = toAccountDto(account)
-          return
-
-      let err = "Error saving account and logging in: " & error
-      error "error: ", procName="saveAccountAndLogin", errDesription = err
-
-    except Exception as e:
-      error "error: ", procName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
-
   proc saveKeycardAccountAndLogin(self: Service, chatKey, password: string, account, subaccounts, settings,
     config: JsonNode): AccountDto =
     try:
@@ -225,24 +187,6 @@ QtObject:
 
     except Exception as e:
       error "error: ", procName="saveKeycardAccountAndLogin", errName = e.name, errDesription = e.msg
-
-  proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string): JsonNode =
-    result = %* {
-      "name": if displayName == "": account.alias else: displayName,
-      "address": account.address,
-      "key-uid": account.keyUid,
-      "keycard-pairing": nil,
-      "kdfIterations": KDF_ITERATIONS,
-    }
-
-  proc getAccountDataForAccountId(self: Service, accountId: string, displayName: string): JsonNode =
-    for acc in self.generatedAccounts:
-      if(acc.id == accountId):
-        return self.prepareAccountJsonObject(acc, displayName)
-
-    if(self.importedAccount.isValid()):
-      if(self.importedAccount.id == accountId):
-        return self.prepareAccountJsonObject(self.importedAccount, displayName)
 
   proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string):
     JsonNode =
@@ -324,6 +268,7 @@ QtObject:
       if(self.importedAccount.id == accountId):
         return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName, withoutMnemonic)
 
+  # TODO: Remove after https://github.com/status-im/status-go/issues/4977
   proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
     let fleet = Fleet.ShardsTest
     let dnsDiscoveryURL = "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.test.shards.nodes.status.im"
@@ -364,6 +309,7 @@ QtObject:
     result["KeycardPairingDataFile"] = newJString(main_constants.KEYCARDPAIRINGDATAFILE)
     result["ProcessBackedupMessages"] = newJBool(recoverAccount)
 
+  # TODO: Remove after https://github.com/status-im/status-go/issues/4977
   proc getLoginNodeConfig(self: Service): JsonNode =
     # To create appropriate NodeConfig for Login we set only params that maybe be set via env variables or cli flags
     result = %*{}
@@ -503,41 +449,6 @@ QtObject:
     except Exception as e:
       error "failed to import account or login", procName="importAccountAndLogin", errName = e.name, errDesription = e.msg
       return e.msg
-
-  proc setupAccount*(self: Service, accountId, password, displayName: string, removeMnemonic: bool, recoverAccount: bool = false): string =
-    return "not implemented"
-    # try:
-    #   let installationId = $genUUID()
-    #   var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
-    #   self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr) # must be called before `getDefaultNodeConfig`
-    #   let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
-    #   var settingsJson = self.getAccountSettings(accountId, installationId, displayName, removeMnemonic)
-    #   let nodeConfigJson = self.getDefaultNodeConfig(installationId, recoverAccount)
-
-    #   if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
-    #     nodeConfigJson.isNil):
-    #     let description = "at least one json object is not prepared well"
-    #     error "error: ", procName="setupAccount", errDesription = description
-    #     return description
-
-    #   let hashedPassword = hashPassword(password)
-    #   discard self.storeAccount(accountId, hashedPassword)
-    #   discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
-    #   self.loggedInAccount = self.saveAccountAndLogin(hashedPassword,
-    #     accountDataJson,
-    #     subaccountDataJson,
-    #     settingsJson,
-    #     nodeConfigJson)
-
-    #   self.setLocalAccountSettingsFile()
-
-    #   if self.getLoggedInAccount.isValid():
-    #     return ""
-    #   else:
-    #     return "logged in account is not valid"
-    # except Exception as e:
-    #   error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
-    #   return e.msg
 
   proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool,
     recoverAccount: bool = false) =
@@ -751,28 +662,7 @@ QtObject:
     except Exception as e:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
-  proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
-    trace "<<< doLogin"
-    let nodeConfigJson = self.getLoginNodeConfig()
-    let response = status_account.login(
-      account.name,
-      account.keyUid,
-      account.kdfIterations,
-      hashedPassword,
-      thumbnailImage,
-      largeImage,
-      $nodeConfigJson
-    )
-    if response.result{"error"}.getStr != "":
-      self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr))
-      return
-
-    debug "Account logged in"
-    self.loggedInAccount = account
-    self.setLocalAccountSettingsFile()
-
-  proc doLoginV2(self: Service, account: AccountDto, passwordHash: string) =
-    trace "<<< doLoginV2"
+  proc doLogin(self: Service, account: AccountDto, passwordHash: string) =
     var request = LoginAccountRequest(
       keyUid: account.keyUid,
       kdfIterations: account.kdfIterations,
@@ -790,22 +680,10 @@ QtObject:
       return
 
     debug "account logged in"
-    self.setLocalAccountSettingsFile()  # WARNING: is this needed?
+    self.setLocalAccountSettingsFile()
 
   proc login*(self: Service, account: AccountDto, hashedPassword: string) =
-    trace "<<< login"
     try:
-      
-      # FIXME: CLEANUP
-
-      var thumbnailImage: string
-      var largeImage: string
-      for img in account.images:
-        if(img.imgType == "thumbnail"):
-          thumbnailImage = img.uri
-        elif(img.imgType == "large"):
-          largeImage = img.uri
-
       let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
       if not dirExists(keyStoreDir):
         os.createDir(keyStoreDir)
@@ -817,11 +695,11 @@ QtObject:
 
       let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPasswordToUpperCase(hashedPassword))
       if isOldHashPassword:
+        debug "database reencryption scheduled"
+
         # Save tmp properties so that we can login after the timer
         self.tmpAccount = account
         self.tmpHashedPassword = hashedPassword
-        self.tmpThumbnailImage = thumbnailImage
-        self.tmpLargeImage = largeImage
 
         # Start a 1 second timer for the loading screen to appear
         let arg = TimerTaskArg(
@@ -833,30 +711,27 @@ QtObject:
         self.threadpool.start(arg)
         return
 
-      # self.doLogin(account, hashedPassword, thumbnailImage, largeImage)
-      self.doLoginV2(account, hashedPassword)
+      self.doLogin(account, hashedPassword)
+
     except Exception as e:
       error "login failed", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: e.msg))
 
   proc onWaitForReencryptionTimeout(self: Service, response: string) {.slot.} =
-    trace "<<< onWaitForReencryptionTimeout"
+    debug "starting database reencryption"
+
     # Reencryption (can freeze and take up to 30 minutes)
     let oldHashedPassword = hashedPasswordToUpperCase(self.tmpHashedPassword)
     discard status_privacy.changeDatabasePassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
 
     # Normal login after reencryption
-    self.doLogin(self.tmpAccount, self.tmpHashedPassword, self.tmpThumbnailImage, self.tmpLargeImage)
-    # self.doLoginV2(self.tmpAccount, self.tmpHashedPassword)
+    self.doLogin(self.tmpAccount, self.tmpHashedPassword)
 
     # Clear out the temp properties
     self.tmpAccount = AccountDto()
     self.tmpHashedPassword = ""
-    self.tmpThumbnailImage = ""
-    self.tmpLargeImage = ""
 
   proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string =
-    trace "<<< loginAccountKeycard"
     try:
       self.setKeyStoreDir(keycardData.keyUid)
 
