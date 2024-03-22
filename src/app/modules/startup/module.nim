@@ -175,6 +175,7 @@ method moveToAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.MainAppState)
 
 method moveToStartupState*[T](self: Module[T]) =
+  debug "<<< moveToStartupState"
   self.view.setAppState(AppState.StartupState)
 
 proc moveToAppEncryptionProcessState[T](self: Module[T]) =
@@ -343,6 +344,7 @@ method finishAppLoading*[T](self: Module[T]) =
   self.delegate.appReady()
 
 method checkFetchingStatusAndProceed*[T](self: Module[T]) =
+  debug "<<< checkFetchingStatusAndProceed"
   if self.view.fetchingDataModel().isEntityLoaded(FetchingFromWakuProfile):
     self.finishAppLoading()
     return
@@ -354,6 +356,7 @@ method checkFetchingStatusAndProceed*[T](self: Module[T]) =
 
 method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: uint64, section: string,
   totalMessages: int, receivedMessageAtPosition: int) =
+  debug "<<< onFetchingFromWakuMessageReceived", backedUpMsgClock, section, totalMessages, receivedMessageAtPosition
   if not self.view.fetchingDataModel().evaluateWhetherToProcessReceivedData(backedUpMsgClock, listOfEntitiesWeExpectToBeSynced):
     return
   if self.view.fetchingDataModel().allMessagesLoaded():
@@ -373,27 +376,12 @@ method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: 
   if receivedMessageAtPosition > 0:
     self.view.fetchingDataModel().receivedMessageAtPosition(section, receivedMessageAtPosition)
   if self.view.fetchingDataModel().allMessagesLoaded():
+    debug "<<< onFetchingFromWakuMessageReceived -> allMessagesLoaded"
     self.view.setCurrentStartupState(newProfileFetchingSuccessState(currStateObj.flowType(), nil))
 
-proc prepareAndInitFetchingData[T](self: Module[T]) =
+method prepareAndInitFetchingData*[T](self: Module[T]) =
   # fetching data from waku starts when messenger starts
   self.view.createAndInitFetchingDataModel(listOfEntitiesWeExpectToBeSynced)
-
-proc delayStartingApp[T](self: Module[T]) =
-  ## In the following 2 cases:
-  ## - FlowType.FirstRunOldUserImportSeedPhrase
-  ## - FlowType.FirstRunOldUserKeycardImport
-  ## we want to delay app start just to be sure that messages from waku will be received
-  self.controller.connectToTimeoutEventAndStratTimer(timeoutInMilliseconds = 30000) # delay for 30 seconds
-
-method startAppAfterDelay*[T](self: Module[T]) =
-  if not self.view.fetchingDataModel().allMessagesLoaded():
-    let currStateObj = self.view.currentStartupStateObj()
-    if currStateObj.isNil:
-      error "cannot determine current startup state", procName="startAppAfterDelay"
-      quit() # quit the app
-    self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
-  self.moveToStartupState()
 
 proc logoutAndDisplayError[T](self: Module[T], error: string, errType: StartupErrorType) =
   self.delegate.logout()
@@ -443,9 +431,6 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
 
   if currStateObj.flowType() == state.FlowType.FirstRunOldUserImportSeedPhrase or
     currStateObj.flowType() == state.FlowType.FirstRunOldUserKeycardImport:
-      self.prepareAndInitFetchingData()
-      self.controller.connectToFetchingFromWakuEvents()
-      self.delayStartingApp()
       let err = self.delegate.userLoggedIn()
       if err.len > 0:
         self.logoutAndDisplayError(err, StartupErrorType.UnknownType)

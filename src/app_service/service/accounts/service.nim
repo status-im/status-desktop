@@ -5,7 +5,8 @@ import ../../../app/global/global_singleton
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
 import ./dto/login_request
-import ./dto/create_account_and_login_request
+import ./dto/create_account_request
+import ./dto/restore_account_request
 import ./dto/wallet_secretes_config
 from ../keycard/service import KeycardEvent, KeyDetails
 import ../../../backend/general as status_general
@@ -96,6 +97,7 @@ QtObject:
     self.setLocalAccountSettingsFile()
 
   proc updateLoggedInAccount*(self: Service, displayName: string, images: seq[Image]) =
+    debug "<<< updateLoggedInAccount", displayName, imagesCount = $len(images)
     self.loggedInAccount.name = displayName
     self.loggedInAccount.images = images
     singletonInstance.localAccountSettings.setFileName(displayName)
@@ -136,12 +138,12 @@ QtObject:
     self.loggedInAccount = AccountDto()
     self.importedAccount = GeneratedAccountDto()
 
-  proc validateMnemonic*(self: Service, mnemonic: string): string =
+  proc validateMnemonic*(self: Service, mnemonic: string): (string, string) =
     try:
       let response = status_general.validateMnemonic(mnemonic)
       if response.result.contains("error"):
-        return response.result["error"].getStr
-      return ""
+        return ("", response.result["error"].getStr)
+      return (response.result["keyUID"].getStr, "")
     except Exception as e:
       error "error: ", procName="validateMnemonic", errName = e.name, errDesription = e.msg
 
@@ -440,67 +442,25 @@ QtObject:
       alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
     )
 
-  proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string): string =
-    try:
-      # let request = %* {
-      #   "backupDisabledDataDir": main_constants.STATUSGODIR,
-      #   # "deviceName": 
-      #   "password": hashPassword(password),
-      #   "displayName": displayName,
-      #   "customizationColor": DEFAULT_CUSTOMIZATION_COLOR,
-      #   "imagePath": imagePath,
-
-      #   "logLevel": toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL),
-        
-      #   "wakuV2LightClient": false,
-      #   "previewPrivacy": true,
-
-      #   # "networkId": NETWORKS[0]{"chainId"},
-      #   # "verifyENSURL": NETWORKS[0]{"fallbackUrl"},
-      #   # "verifyTransactionURL": NETWORKS[0]{"fallbackUrl"},
-      #   # "upstreamConfig": NETWORKS[0]{"rpcUrl"},
-
-      #   "torrentConfigEnabled": true,
-      #   "torrentConfigPort": TORRENT_CONFIG_PORT,
-
-      #   "poktToken": POKT_TOKEN_RESOLVED,
-      #   "infuraToken": INFURA_TOKEN_RESOLVED,
-      #   "infuraSecret": INFURA_TOKEN_SECRET_RESOLVED,
-      #   "openseaApiKey": OPENSEA_API_KEY_RESOLVED,
-      #   "raribleMainnetApiKey": RARIBLE_MAINNET_API_KEY_RESOLVED,
-      #   "raribleTestnetApiKey": RARIBLE_TESTNET_API_KEY_RESOLVED,
-
-      #   # "ganacheURL":
-      #   "alchemyEthereumMainnetToken": ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
-      #   "alchemyEthereumGoerliToken": ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
-      #   "alchemyEthereumSepoliaToken": ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,
-      #   "alchemyArbitrumMainnetToken": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
-      #   "alchemyArbitrumGoerliToken": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
-      #   "alchemyArbitrumSepoliaToken": ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
-      #   "alchemyOptimismMainnetToken": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
-      #   "alchemyOptimismGoerliToken": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
-      #   "alchemyOptimismSepoliaToken": ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
-      # }
-
-      let request = CreateAccountAndLoginRequest(
+  proc buildCreateAccountRequest(self: Service, password: string, displayName: string, imagePath: string): CreateAccountRequest =
+    return CreateAccountRequest(
         backupDisabledDataDir: main_constants.STATUSGODIR,
-
+        kdfIterations: KDF_ITERATIONS,
         password: hashPassword(password),
         displayName: displayName,
-        customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
         imagePath: imagePath,
-
+        customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
         logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
-        
         wakuV2LightClient: false,
         previewPrivacy: true,
-
         torrentConfigEnabled: some(true),
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
-
         walletSecretsConfig: self.buildWalletSecrets(),
       )
 
+  proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string): string =
+    try:
+      let request = self.buildCreateAccountRequest(password, displayName, imagePath)
       let response = status_account.createAccountAndLogin(request)
       # var error = "response doesn't contain \"error\""
       debug "<<< createAccountAndLogin response: ", response
@@ -518,12 +478,36 @@ QtObject:
       error "createAccountAndLogin status-go error: ", error
       return "createAccountAndLogin failed: " & error
 
-      # WARNING: get account from node.login signal
-      # self.loggedInAccount = 
     except Exception as e:
       error "failed to create account or login", procName="createAccountAndLogin", errName = e.name, errDesription = e.msg
       return e.msg
 
+  proc importAccountAndLogin*(self: Service, mnemonic: string, password: string, recoverAccount: bool, displayName: string, imagePath: string): string =
+    try:
+      let request = RestoreAccountRequest(
+        mnemonic: mnemonic,
+        fetchBackup: recoverAccount,
+        createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath),
+      )
+      let response = status_account.restoreAccountAndLogin(request)
+      debug "<<< importAccountAndLogin response: ", response
+
+      if not response.result.contains("error"):
+        error "invalid status-go response", response
+        return "invalid response: no error field found"
+
+      let error = response.result["error"].getStr
+      if error == "":
+        debug "Account saved succesfully"
+        # result = toAccountDto(account)
+        return ""
+
+      error "importAccountAndLogin status-go error: ", error
+      return "importAccountAndLogin failed: " & error
+
+    except Exception as e:
+      error "failed to import account or login", procName="importAccountAndLogin", errName = e.name, errDesription = e.msg
+      return e.msg
 
   proc setupAccount*(self: Service, accountId, password, displayName: string, removeMnemonic: bool, recoverAccount: bool = false): string =
     return "not implemented"
@@ -801,24 +785,6 @@ QtObject:
       walletSecretsConfig: self.buildWalletSecrets(),
     )
     let response = status_account.loginAccount(request)
-
-        # "poktToken": POKT_TOKEN_RESOLVED,
-        # "infuraToken": INFURA_TOKEN_RESOLVED,
-        # "infuraSecret": INFURA_TOKEN_SECRET_RESOLVED,
-        # "openseaApiKey": OPENSEA_API_KEY_RESOLVED,
-        # "raribleMainnetApiKey": RARIBLE_MAINNET_API_KEY_RESOLVED,
-        # "raribleTestnetApiKey": RARIBLE_TESTNET_API_KEY_RESOLVED,
-
-        # # "ganacheURL":
-        # "alchemyEthereumMainnetToken": ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
-        # "alchemyEthereumGoerliToken": ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
-        # "alchemyEthereumSepoliaToken": ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,
-        # "alchemyArbitrumMainnetToken": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
-        # "alchemyArbitrumGoerliToken": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
-        # "alchemyArbitrumSepoliaToken": ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
-        # "alchemyOptimismMainnetToken": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
-        # "alchemyOptimismGoerliToken": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
-        # "alchemyOptimismSepoliaToken": ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
 
     if response.result{"error"}.getStr != "":
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr))

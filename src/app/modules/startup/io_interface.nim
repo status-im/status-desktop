@@ -172,13 +172,13 @@ method onFetchingFromWakuMessageReceived*(self: AccessInterface, backedUpMsgCloc
   totalMessages: int, loadedMessages: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method prepareAndInitFetchingData*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method finishAppLoading*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkFetchingStatusAndProceed*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method startAppAfterDelay*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getConnectionString*(self: AccessInterface): string {.base} =

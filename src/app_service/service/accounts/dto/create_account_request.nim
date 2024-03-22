@@ -2,8 +2,9 @@ import json, std/options
 import ./wallet_secretes_config
 
 type
-  CreateAccountAndLoginRequest* = object
+  CreateAccountRequest* = object
     backupDisabledDataDir*: string
+    kdfIterations*: int
     deviceName*: string
     displayName*: string
     password*: string
@@ -32,9 +33,10 @@ type
     torrentConfigEnabled*: Option[bool]
     torrentConfigPort*: Option[int]
 
-proc toJson*(self: CreateAccountAndLoginRequest): JsonNode =
+proc toJson*(self: CreateAccountRequest): JsonNode =
   result = %*{
     "backupDisabledDataDir": self.backupDisabledDataDir,
+    "kdfIterations": self.kdfIterations,
     "deviceName": self.deviceName,
     "displayName": self.displayName,
     "password": self.password,

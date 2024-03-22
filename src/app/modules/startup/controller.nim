@@ -1,4 +1,4 @@
-import Tables, chronicles, strutils
+import Tables, chronicles, strutils, sequtils
 import uuids
 import io_interface
 
@@ -116,12 +116,6 @@ proc connectToFetchingFromWakuEvents*(self: Controller) =
       self.delegate.onFetchingFromWakuMessageReceived(receivedData.clock, k, v.totalNumber, v.dataNumber)
   self.connectionIds.add(handlerId)
 
-proc connectToTimeoutEventAndStratTimer*(self: Controller, timeoutInMilliseconds: int) =
-  var handlerId = self.events.onWithUUID(SIGNAL_GENERAL_TIMEOUT) do(e: Args):
-    self.delegate.startAppAfterDelay()
-  self.connectionIds.add(handlerId)
-  self.generalService.runTimer(timeoutInMilliseconds)
-
 proc disconnect*(self: Controller) =
   self.disconnectKeychain()
   for id in self.connectionIds:
@@ -197,6 +191,7 @@ proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
+  debug "<<< storeProfileDataAndProceedWithAppLoading"
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
   discard self.profileService.setDisplayName(self.tmpDisplayName)
   let images = self.storeIdentityImage()
@@ -358,13 +353,31 @@ proc storeIdentityImage*(self: Controller): seq[Image] =
   self.tmpProfileImageDetails.y1, self.tmpProfileImageDetails.x2, self.tmpProfileImageDetails.y2)
   self.tmpProfileImageDetails = ProfileImageDetails()
 
+# validMnemonic only checks if mnemonic is valid
 proc validMnemonic*(self: Controller, mnemonic: string): bool =
-  let err = self.accountsService.validateMnemonic(mnemonic)
+  let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
   if err.len == 0:
     self.setSeedPhrase(mnemonic)
     return true
   return false
 
+# validateMnemonic checks if mnemonic is valid and not yet saved in local database
+proc validateMnemonic*(self: Controller, mnemonic: string): bool =
+  let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
+  debug "<<< validateMnemonic", mnemonic, keyUID, err
+  if err.len != 0:
+    self.delegate.emitStartupError(err, StartupErrorType.ImportAccError)
+    return false
+
+  debug "<<< accounts: ", openAccounts = $self.accountsService.openedAccounts.mapIt(it.keyUid)
+  if keyUID in self.accountsService.openedAccounts.mapIt(it.keyUid):
+    self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
+    return false
+
+  self.setSeedPhrase(mnemonic)
+  return true
+
+# FIXME: This should probably be removed
 proc importMnemonic*(self: Controller): bool =
   let error = self.accountsService.importMnemonic(self.tmpSeedPhrase)
   if(error.len == 0):
@@ -380,32 +393,25 @@ proc setupKeychain(self: Controller, store: bool) =
   else:
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
 
-proc setupAccount(self: Controller, accountId: string, removeMnemonic: bool, storeToKeychain: bool, recoverAccount: bool = false) =
-  self.delegate.moveToLoadingAppState()
-  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName, removeMnemonic, recoverAccount)
+proc processCreateAccountResult*(self: Controller, error: string, storeToKeychain: bool) =
   if error != "":
     self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
   else:
     self.setupKeychain(storeToKeychain)
 
-proc storeGeneratedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
-  # let accounts = self.getGeneratedAccounts()
-  # if accounts.len == 0:
-  #   error "list of generated accounts is empty"
-  #   return
-  # let accountId = accounts[0].id
-  # self.setupAccount(accountId, removeMnemonic=false, storeToKeychain)
+proc createAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   self.delegate.moveToLoadingAppState()
   let profileImageUrl = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
   let error = self.accountsService.createAccountAndLogin(self.tmpPassword, self.tmpDisplayName, profileImageUrl)
-  if error != "":
-    self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
-  else:
-    self.setupKeychain(storeToKeychain)
+  self.processCreateAccountResult(error, storeToKeychain)
 
-proc storeImportedAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
-  let accountId = self.getImportedAccount().id
-  self.setupAccount(accountId, removeMnemonic=true, storeToKeychain, recoverAccount)
+proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
+  if recoverAccount:
+    self.delegate.prepareAndInitFetchingData()
+    self.connectToFetchingFromWakuEvents()
+  let profileImageUrl = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
+  let error = self.accountsService.importAccountAndLogin(self.tmpSeedPhrase, self.tmpPassword, recoverAccount, self.tmpDisplayName, profileImageUrl)
+  self.processCreateAccountResult(error, storeToKeychain)
 
 proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
   if self.importMnemonic():

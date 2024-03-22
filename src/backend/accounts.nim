@@ -2,7 +2,8 @@ import json, json_serialization, chronicles, strutils
 import ./core, ../app_service/common/utils
 import ../app_service/service/wallet_account/dto/account_dto
 import ../app_service/service/accounts/dto/login_request
-import ../app_service/service/accounts/dto/create_account_and_login_request
+import ../app_service/service/accounts/dto/create_account_request
+import ../app_service/service/accounts/dto/restore_account_request
 import ./response_type
 
 import status_go
@@ -362,7 +363,7 @@ proc saveAccountAndLogin*(hashedPassword: string, account, subaccounts, settings
     error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc createAccountAndLogin*(request: CreateAccountAndLoginRequest): RpcResponse[JsonNode] =
+proc createAccountAndLogin*(request: CreateAccountRequest): RpcResponse[JsonNode] =
   try:
     let payload = request.toJson()
     debug "<<< createAccountAndLogin payload: ", payload
@@ -371,6 +372,17 @@ proc createAccountAndLogin*(request: CreateAccountAndLoginRequest): RpcResponse[
 
   except RpcException as e:
     error "error doing rpc request", methodName = "createAccountAndLogin", exception=e.msg
+    raise newException(RpcException, e.msg)
+
+proc restoreAccountAndLogin*(request: RestoreAccountRequest): RpcResponse[JsonNode] =
+  try:
+    let payload = request.toJson()
+    debug "<<< restoreAccountAndLogin payload: ", payload
+    let response = status_go.restoreAccountAndLogin($payload)
+    result.result = Json.decode(response, JsonNode)
+
+  except RpcException as e:
+    error "error doing rpc request", methodName = "restoreAccountAndLogin", exception=e.msg
     raise newException(RpcException, e.msg)
 
 proc saveAccountAndLoginWithKeycard*(chatKey, password: string, account, subaccounts, settings, config: JsonNode):

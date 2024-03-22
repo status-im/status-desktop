@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, chronicles
 import io_interface
 import selected_login_account
 import internal/[state, state_wrapper]
@@ -82,6 +82,7 @@ QtObject:
     return self.currentStartupState.getStateObj()
 
   proc setCurrentStartupState*(self: View, state: State) =
+    debug "<<< setCurrentStartupState: ", flow = $state.flowType, state = $state.stateType
     self.currentStartupState.setStateObj(state)
   proc getCurrentStartupState(self: View): QVariant {.slot.} =
     return self.currentStartupStateVariant
@@ -206,10 +207,8 @@ QtObject:
   proc validMnemonic*(self: View, mnemonic: string): bool {.slot.} =
     return self.delegate.validMnemonic(mnemonic)
 
-  proc accountImportSuccess*(self: View) {.signal.}
   proc importAccountSuccess*(self: View) =
     self.importedAccountChanged()
-    self.accountImportSuccess()
 
   proc selectedLoginAccountChanged*(self: View) {.signal.}
   proc getSelectedLoginAccount(self: View): QVariant {.slot.} =
