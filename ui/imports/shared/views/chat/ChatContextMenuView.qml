@@ -55,6 +55,15 @@ StatusMenu {
     }
 
     StatusAction {
+        text: qsTr("View Members")
+        icon.name: "group-chat"
+        enabled: root.chatType === Constants.chatType.privateGroupChat
+        onTriggered: {
+            localAccountSensitiveSettings.expandUsersList = !localAccountSensitiveSettings.expandUsersList;
+        }
+    }
+
+    StatusAction {
         text: root.amIChatAdmin ? qsTr("Add / remove from group") : qsTr("Add to group")
         icon.name: "add-to-dm"
         enabled: (root.chatType === Constants.chatType.privateGroupChat)
@@ -92,6 +101,7 @@ StatusMenu {
     Component {
         id: renameGroupPopupComponent
         RenameGroupPopup {
+            destroyOnClose: true
             onUpdateGroupChatDetails: {
                 root.updateGroupChatDetails(root.chatId, groupName, groupColor, groupImage)
                 close()
@@ -126,7 +136,16 @@ StatusMenu {
         }
     }
 
-    
+    StatusAction {
+        objectName: "editChannelMenuItem"
+        text: qsTr("Edit Channel")
+        icon.name: "edit"
+        enabled: root.isCommunityChat && root.amIChatAdmin
+        onTriggered: {
+            root.displayEditChannelPopup(root.chatId);
+        }
+    }
+
     StatusMenu {
         title: qsTr("Debug actions")
         enabled: root.showDebugOptions
@@ -148,16 +167,6 @@ StatusMenu {
     }
 
     StatusAction {
-        objectName: "editChannelMenuItem"
-        text: qsTr("Edit Channel")
-        icon.name: "edit"
-        enabled: root.isCommunityChat && root.amIChatAdmin
-        onTriggered: {
-            root.displayEditChannelPopup(root.chatId);
-        }
-    }
-
-    StatusAction {
         text: qsTr("Download")
         enabled: localAccountSensitiveSettings.downloadChannelMessagesEnabled
         icon.name: "download"
@@ -165,15 +174,16 @@ StatusMenu {
     }
 
     StatusMenuSeparator {
-        visible: clearHistoryMenuItem.enabled || deleteOrLeaveMenuItem.enabled
+        visible: clearHistoryGroupMenuItem.enabled || deleteOrLeaveMenuItem.enabled
     }
 
     StatusAction {
-        id: clearHistoryMenuItem
-        objectName: "clearHistoryMenuItem"
+        id: clearHistoryGroupMenuItem
+        objectName: "clearHistoryGroupMenuItem"
+        enabled: (root.chatType !== Constants.chatType.oneToOne)
         text: qsTr("Clear History")
-        icon.name: "close-circle"
-        type: deleteOrLeaveMenuItem.enabled ? StatusAction.Type.Normal : StatusAction.Type.Danger
+        icon.name: "delete"
+        type: StatusAction.Type.Danger
         onTriggered: {
             Global.openPopup(clearChatConfirmationDialogComponent);
         }
@@ -193,7 +203,7 @@ StatusMenu {
                         qsTr("Close Chat") :
                         qsTr("Leave Chat")
         }
-        icon.name: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? "delete" : "arrow-left"
+        icon.name: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? "close-circle" : "arrow-left"
         icon.width: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? 18 : 14
 
         type: StatusAction.Type.Danger
@@ -206,6 +216,18 @@ StatusMenu {
         }
 
         enabled: !root.isCommunityChat || root.amIChatAdmin
+    }
+
+    StatusAction {
+        id: clearHistoryMenuItem
+        objectName: "clearHistoryMenuItem"
+        enabled: (root.chatType === Constants.chatType.oneToOne)
+        text: qsTr("Clear History")
+        icon.name: "delete"
+        type: StatusAction.Type.Danger
+        onTriggered: {
+            Global.openPopup(clearChatConfirmationDialogComponent);
+        }
     }
 
     FileDialog {
@@ -226,8 +248,8 @@ StatusMenu {
         ConfirmationDialog {
             confirmButtonObjectName: "clearChatConfirmationDialogClearButton"
             headerSettings.title: qsTr("Clear chat history")
-            confirmationText: qsTr("Are you sure you want to clear chat history for <b>%1</b>?").arg(root.chatName)
-            confirmButtonLabel: qsTr("Clear")
+            confirmationText: qsTr("Are you sure you want to clear your chat history with <b>%1</b>? All messages will be deleted on your side and will be unrecoverable.").arg(root.chatName)
+            confirmButtonLabel: qsTr("Clear chat history")
             showCancelButton: true
             cancelBtnType: "normal"
 
@@ -278,7 +300,7 @@ StatusMenu {
             confirmButtonLabel: root.isCommunityChat ? qsTr("Delete") : headerSettings.title
             confirmationText: root.isCommunityChat ? qsTr("Are you sure you want to delete #%1 channel?").arg(root.chatName) :
                                                 root.chatType === Constants.chatType.oneToOne ?
-                                                qsTr("Are you sure you want to close this chat?"):
+                                                qsTr("Are you sure you want to close this chat? This will remove the chat from the list. Your chat history will be retained and shown the next time you message each other."):
                                                 qsTr("Are you sure you want to leave this chat?")
             showCancelButton: true
             cancelBtnType: "normal"
