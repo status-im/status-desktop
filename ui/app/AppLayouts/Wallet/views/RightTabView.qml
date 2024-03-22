@@ -96,15 +96,18 @@ RightTabBaseView {
                     Layout.topMargin: Style.current.padding
 
                     StatusTabButton {
+                        objectName: "assetsTabButton"
                         leftPadding: 0
                         width: implicitWidth
                         text: qsTr("Assets")
                     }
                     StatusTabButton {
+                        objectName: "collectiblesTabButton"
                         width: implicitWidth
                         text: qsTr("Collectibles")
                     }
                     StatusTabButton {
+                        objectName: "activityTabButton"
                         rightPadding: 0
                         width: implicitWidth
                         text: qsTr("Activity")
@@ -116,6 +119,7 @@ RightTabBaseView {
                 StatusFlatButton {
                     Layout.alignment: Qt.AlignTop
                     id: filterButton
+                    objectName: "filterButton"
                     icon.name: "filter"
                     checkable: true
                     icon.color: checked ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
