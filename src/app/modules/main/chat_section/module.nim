@@ -676,8 +676,9 @@ proc addNewChat(
 
   var categoryOpened = true
   if chatDto.categoryId != "":
-    let categoryItem = self.view.chatsModel.getItemById(chatDto.categoryId)
-    categoryOpened = categoryItem.categoryOpened
+    categoryOpened = communityService.isCommunityCategoryExpanded(chatDto.categoryId)
+    self.view.chatsModel().changeCategoryOpened(chatDto.categoryId, categoryOpened)
+
     if channelGroup.id != "":
       for category in channelGroup.categories:
         if category.id == chatDto.categoryId:
@@ -1331,6 +1332,12 @@ method reorderCommunityCategories*(self: Module, categoryId: string, categoryPos
     finalPosition = 0
 
   self.controller.reorderCommunityCategories(categoryId, finalPosition)
+
+method toggleCollapsedCommunityCategory*(self: Module, categoryId: string, collapsed: bool) =
+  self.controller.toggleCollapsedCommunityCategory(categoryId, collapsed)
+
+method onToggleCollapsedCommunityCategory*(self: Module, categoryId: string, collapsed: bool) =
+  self.view.chatsModel().changeCategoryOpened(categoryId, collapsed)
 
 method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, toPosition: int) =
   self.controller.reorderCommunityChat(categoryId, chatId, toPosition + 1)
