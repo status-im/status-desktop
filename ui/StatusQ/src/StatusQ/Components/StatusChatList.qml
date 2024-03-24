@@ -32,6 +32,7 @@ Item {
     signal categoryReordered(string categoryId, int to)
     signal chatItemReordered(string categoryId, string chatId, int to)
     signal categoryAddButtonClicked(string id)
+    signal toggleCollapsedCommunityCategory(string categoryId, bool collapsed)
 
     StatusListView {
         id: statusChatListItems
@@ -146,10 +147,12 @@ Item {
                                 highlighted = true;
                                 categoryPopupMenuSlot.item.popup()
                             } else if (mouse.button === Qt.LeftButton) {
-                                root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
+                                root.toggleCollapsedCommunityCategory(model.categoryId, !statusChatListCategoryItem.opened)
                             }
                         }
-                        onToggleButtonClicked: root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
+                        onToggleButtonClicked: {
+                            root.toggleCollapsedCommunityCategory(model.categoryId, !statusChatListCategoryItem.opened)
+                        }
                         onMenuButtonClicked: {
                             statusChatListCategoryItem.setupPopup()
                             highlighted = true

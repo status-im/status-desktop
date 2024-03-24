@@ -277,6 +277,7 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
         viewOnlyPermissionsSatisfied = true,
         viewAndPostPermissionsSatisfied = true
       )
+
   if insertIntoModel:
     self.view.chatsModel().appendItem(result)
 
@@ -679,20 +680,18 @@ proc addNewChat(
       memberRole = community.memberRole
 
   var categoryOpened = true
+
   if chatDto.categoryId != "":
-    let categoryItem = self.view.chatsModel.getItemById(chatDto.categoryId)
-    categoryOpened = categoryItem.categoryOpened
-    if channelGroup.id != "":
-      for category in channelGroup.categories:
-        if category.id == chatDto.categoryId:
-          categoryPosition = category.position
-          break
+    let category = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), chatDto.categoryId)
+    if category.id == "":
+      error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
     else:
-      let category = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), chatDto.categoryId)
-      if category.id == "":
-        error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
-      else:
-        categoryPosition = category.position
+      categoryOpened = category.categoryOpened
+      categoryPosition = category.position
+
+      # TODO: This call will update the model for each category in channels which is not
+      # preferable. Please fix-me in https://github.com/status-im/status-desktop/issues/14431
+      self.view.chatsModel().changeCategoryOpened(category.id, category.categoryOpened)
 
   result = chat_item.initItem(
     chatDto.id,
@@ -1364,6 +1363,12 @@ method reorderCommunityCategories*(self: Module, categoryId: string, categoryPos
     finalPosition = 0
 
   self.controller.reorderCommunityCategories(categoryId, finalPosition)
+
+method toggleCollapsedCommunityCategory*(self: Module, categoryId: string, collapsed: bool) =
+  self.controller.toggleCollapsedCommunityCategory(categoryId, collapsed)
+
+method onToggleCollapsedCommunityCategory*(self: Module, categoryId: string, collapsed: bool) =
+  self.view.chatsModel().changeCategoryOpened(categoryId, collapsed)
 
 method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, toPosition: int) =
   self.controller.reorderCommunityChat(categoryId, chatId, toPosition + 1)

@@ -122,6 +122,9 @@ method communityImported*(self: AccessInterface, community: CommunityDto) {.base
 method communityDataImported*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method toggleCollapsedCommunityCategory*(self: AccessInterface, communityId:string, categoryId: string, collapsed: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method communityInfoRequestFailed*(self: AccessInterface, communityId: string, errorMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

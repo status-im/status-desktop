@@ -29,6 +29,7 @@ Item {
     signal chatItemReordered(string categoryId, string chatId, int to)
     signal chatListCategoryReordered(string categoryId, int to)
     signal categoryAddButtonClicked(string id)
+    signal toggleCollapsedCommunityCategory(string categoryId, bool collapsed)
 
     MouseArea {
         id: sensor
@@ -53,6 +54,7 @@ Item {
             draggableItems: root.draggableItems
             showCategoryActionButtons: root.showCategoryActionButtons
             onCategoryAddButtonClicked: root.categoryAddButtonClicked(id)
+            onToggleCollapsedCommunityCategory: root.toggleCollapsedCommunityCategory(categoryId, collapsed)
 
             model: SortFilterProxyModel {
                 sourceModel: root.model
