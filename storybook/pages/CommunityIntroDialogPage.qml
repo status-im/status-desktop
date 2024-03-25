@@ -40,7 +40,12 @@ SplitView {
 
             CommunityIntroDialog {
                 id: dialog
+
                 anchors.centerIn: parent
+                visible: true
+                modal: false
+                closePolicy: Popup.NoAutoClose
+
                 communityName: "Status"
                 communityIcon: ModelsData.icons.status
                 introMessage: "%1 sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
