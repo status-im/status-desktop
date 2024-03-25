@@ -609,9 +609,16 @@ method onMessageEdited*(self: Module, message: MessageDto) =
   let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
   let communityChats = self.controller.getCommunityDetails().chats
 
+  var updatedText = ""
+  if message.contentType == ContentType.BridgeMessage:
+    # message from bridge does not have any tags, we need to add them here to show correctly edited message
+    updatedText = "<p>" & message.bridgeMessage.content & "</p>"
+  else:
+    updatedText = self.controller.getRenderedText(message.parsedText, communityChats)
+
   self.view.model().updateEditedMsg(
     message.id,
-    self.controller.getRenderedText(message.parsedText, communityChats),
+    updatedText,
     message.text,
     message.parsedText,
     message.contentType,
