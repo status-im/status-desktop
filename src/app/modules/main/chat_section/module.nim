@@ -392,6 +392,7 @@ proc reevaluateRequiresTokenPermissionToJoin(self: Module) =
   for id, tokenPermission in community.tokenPermissions:
     if tokenPermission.`type` == TokenPermissionType.BecomeMember or tokenPermission.`type` == TokenPermissionType.BecomeAdmin:
       hasBecomeMemberOrBecomeAdminPermissions = true
+
   self.view.setRequiresTokenPermissionToJoin(hasBecomeMemberOrBecomeAdminPermissions)
 
 proc initCommunityTokenPermissionsModel(self: Module, channelGroup: ChannelGroupDto) =
@@ -968,9 +969,9 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
       )
       self.view.tokenPermissionsModel().updateItem(id, updatedTokenPermissionItem)
 
-  if not thereWasAnUpdate:
-    return false
+    return thereWasAnUpdate
 
+proc updateCommunityPermissionsView*(self: Module) =
   let tokenPermissionsItems = self.view.tokenPermissionsModel().getItems()
 
   let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
@@ -992,17 +993,16 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
 
   let tmRequirementMet = tokenMasterPermissions.len() > 0 and any(tokenMasterPermissions, proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
 
-  let requiresPermissionToJoin = not (tokenMasterPermissions.len() > 0 and tmRequirementMet) and
-    ((adminPermissions.len() > 0 and adminRequirementMet) or memberPermissions.len() > 0)
+
+  let requiresPermissionToJoin = memberPermissions.len() > 0
+
   let tokenRequirementsMet = if requiresPermissionToJoin:
       tmRequirementMet or adminRequirementMet or memberRequirementMet
     else:
-      false
+      true
 
   self.view.setAllTokenRequirementsMet(tokenRequirementsMet)
   self.view.setRequiresTokenPermissionToJoin(requiresPermissionToJoin)
-
-  return true
 
 proc updateChannelPermissionViewData*(
     self: Module,
@@ -1030,6 +1030,7 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissions
   let community = self.controller.getMyCommunity()
   self.view.setAllTokenRequirementsMet(checkPermissionsToJoinResponse.satisfied)
   discard self.updateTokenPermissionModel(checkPermissionsToJoinResponse.permissions, community)
+  self.updateCommunityPermissionsView()
   self.setPermissionsToJoinCheckOngoing(false)
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
