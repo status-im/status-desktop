@@ -97,7 +97,9 @@ QtObject {
         id: becomeMemberPermissionsModel
         sourceModel: root.permissionsModel
         function filterPredicate(modelData) {
-            return (modelData.permissionType == Constants.permissionType.member) &&
+            return (modelData.permissionType === Constants.permissionType.member ||
+                    modelData.permissionType === Constants.permissionType.admin ||
+                    modelData.permissionType === Constants.permissionType.becomeTokenMaster) &&
                 (modelData.tokenCriteriaMet || !modelData.isPrivate)
         }
         filters: [

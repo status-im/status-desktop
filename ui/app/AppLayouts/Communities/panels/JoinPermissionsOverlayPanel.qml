@@ -153,7 +153,7 @@ Control {
             text: root.isInvitationPending ? d.getInvitationPendingText() : d.getRevealAddressText()
             icon.name: root.isInvitationPending ? "" : Constants.authenticationIconByType[root.loginType]
             font.pixelSize: 13
-            enabled: root.requirementsMet || d.communityPermissionsModel.count === 0
+            enabled: root.requirementsMet || (joinCommunity && d.communityPermissionsModel.count === 0)
             onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.revealAddressClicked()
         }
 
