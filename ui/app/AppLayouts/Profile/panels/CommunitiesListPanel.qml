@@ -21,7 +21,8 @@ StatusListView {
     signal leaveCommunityClicked(string community, string communityId, string outroMessage)
     signal setCommunityMutedClicked(string communityId, int mutedType)
     signal setActiveCommunityClicked(string communityId)
-    signal showCommunityIntroDialog(string communityId, string name, string introMessage, string imageSrc, int accessType)
+    signal showCommunityMembershipSetupDialog(string communityId, string name,
+                                              string introMessage, string imageSrc, int accessType)
     signal cancelMembershipRequest(string communityId)
 
     interactive: false
@@ -67,7 +68,8 @@ StatusListView {
                 size: StatusBaseButton.Size.Small
                 text: listItem.isInvitationPending ? qsTr("Membership Request Sent") : qsTr("View & Join Community")
                 visible: listItem.isSpectator
-                onClicked: root.showCommunityIntroDialog(model.id, model.name, model.introMessage, model.image, model.access)
+                onClicked: root.showCommunityMembershipSetupDialog(
+                               model.id, model.name, model.introMessage, model.image, model.access)
             },
             StatusFlatButton {
                 anchors.verticalCenter: parent.verticalCenter

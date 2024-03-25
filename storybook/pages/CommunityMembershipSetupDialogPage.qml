@@ -38,7 +38,7 @@ SplitView {
                 onClicked: dialog.open()
             }
 
-            CommunityIntroDialog {
+            CommunityMembershipSetupDialog {
                 id: dialog
 
                 anchors.centerIn: parent
@@ -66,14 +66,14 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 assetsModel: AssetsModel {}
                 collectiblesModel: CollectiblesModel {}
 
-                onCancelMembershipRequest: logs.logEvent("CommunityIntroDialog::onCancelMembershipRequest()")
+                onCancelMembershipRequest: logs.logEvent("CommunityMembershipSetupDialog::onCancelMembershipRequest()")
 
-                onPrepareForSigning: logs.logEvent("CommunityIntroDialog::onPrepareForSigning", ["airdropAddress", "sharedAddresses"], arguments)
-                onJoinCommunity: logs.logEvent("CommunityIntroDialog::onJoinCommunity")
-                onEditRevealedAddresses: logs.logEvent("CommunityIntroDialog::editRevealedAddresses")
-                onSignProfileKeypairAndAllNonKeycardKeypairs: logs.logEvent("CommunityIntroDialog::editRevealedAddresses")
-                onSignSharedAddressesForKeypair: logs.logEvent("CommunityIntroDialog::onSignSharedAddressesForKeypair", ["keyUid"], arguments)
-                onSharedAddressesUpdated: logs.logEvent("CommunityIntroDialog::onSharedAddressesUpdated", ["sharedAddresses"], arguments)
+                onPrepareForSigning: logs.logEvent("CommunityMembershipSetupDialog::onPrepareForSigning", ["airdropAddress", "sharedAddresses"], arguments)
+                onJoinCommunity: logs.logEvent("CommunityMembershipSetupDialog::onJoinCommunity")
+                onEditRevealedAddresses: logs.logEvent("CommunityMembershipSetupDialog::editRevealedAddresses")
+                onSignProfileKeypairAndAllNonKeycardKeypairs: logs.logEvent("CommunityMembershipSetupDialog::editRevealedAddresses")
+                onSignSharedAddressesForKeypair: logs.logEvent("CommunityMembershipSetupDialog::onSignSharedAddressesForKeypair", ["keyUid"], arguments)
+                onSharedAddressesUpdated: logs.logEvent("CommunityMembershipSetupDialog::onSharedAddressesUpdated", ["sharedAddresses"], arguments)
                 getCurrencyAmount: function (balance, symbol) {
                     return ({
                                 amount: balance,
