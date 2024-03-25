@@ -7,7 +7,7 @@ from allure_commons._allure import step
 import driver
 from gui.components.activity_center import ContactRequest
 from gui.screens.messages import MessagesScreen, ToolBar, ChatMessagesView
-from . import marks
+from tests.settings.settings_messaging import marks
 
 import configs.testpath
 import constants
