@@ -497,7 +497,7 @@ Item {
             }
 
             onClicked: {
-                Global.openPopup(communityIntroDialogComponent);
+                Global.openPopup(communityMembershipSetupDialogComponent);
             }
 
             Connections {
@@ -525,9 +525,10 @@ Item {
             }
 
             Component {
-                id: communityIntroDialogComponent
-                CommunityIntroDialog {
-                    id: communityIntroDialog
+                id: communityMembershipSetupDialogComponent
+
+                CommunityMembershipSetupDialog {
+                    id: dialogRoot
 
                     isInvitationPending: d.invitationPending
                     requirementsCheckPending: root.store.requirementsCheckPending
@@ -554,7 +555,7 @@ Item {
                     onPrepareForSigning: {
                         root.store.prepareKeypairsForSigning(communityData.id, root.store.userProfileInst.name, sharedAddresses, airdropAddress, false)
 
-                        communityIntroDialog.keypairSigningModel = root.store.communitiesModuleInst.keypairsSigningModel
+                        dialogRoot.keypairSigningModel = root.store.communitiesModuleInst.keypairsSigningModel
                     }
 
                     onSignProfileKeypairAndAllNonKeycardKeypairs: {
@@ -587,20 +588,20 @@ Item {
                         target: root.store.communitiesModuleInst
 
                         function onAllSharedAddressesSigned() {
-                            if (communityIntroDialog.profileProvesOwnershipOfSelectedAddresses) {
-                                communityIntroDialog.joinCommunity()
-                                communityIntroDialog.close()
+                            if (dialogRoot.profileProvesOwnershipOfSelectedAddresses) {
+                                dialogRoot.joinCommunity()
+                                dialogRoot.close()
                                 return
                             }
 
-                            if (communityIntroDialog.allAddressesToRevealBelongToSingleNonProfileKeypair) {
-                                communityIntroDialog.joinCommunity()
-                                communityIntroDialog.close()
+                            if (dialogRoot.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                                dialogRoot.joinCommunity()
+                                dialogRoot.close()
                                 return
                             }
 
-                            if (!!communityIntroDialog.replaceItem) {
-                                communityIntroDialog.replaceLoader.item.allSigned()
+                            if (!!dialogRoot.replaceItem) {
+                                dialogRoot.replaceLoader.item.allSigned()
                             }
                         }
                     }
