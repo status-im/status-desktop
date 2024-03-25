@@ -22,6 +22,7 @@ InformationTile 1.0 InformationTile.qml
 Input 1.0 Input.qml
 LoadingTokenDelegate 1.0 LoadingTokenDelegate.qml
 LinkPreviewDebugView 1.0 LinkPreviewDebugView.qml
+ProfilePerspectiveSelector 1.0 ProfilePerspectiveSelector.qml
 RadioButtonSelector 1.0 RadioButtonSelector.qml
 RecipientSelector 1.0 RecipientSelector.qml
 SearchBox 1.0 SearchBox.qml
