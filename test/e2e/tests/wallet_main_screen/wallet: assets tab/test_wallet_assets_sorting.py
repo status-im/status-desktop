@@ -12,17 +12,17 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704636',
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727223',
                  'Sort by Asset balance value')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704677',
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727224',
                  'Sort by Asset balance')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704678',
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727225',
                  'Sort by Asset value')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704679',
-                 'Sort by 1W change: balance value')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704680',
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727226',
+                 'Sort by 1d change: balance value')
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727227',
                  'Sort by Asset name')
-@pytest.mark.case(704636, 704677, 704678, 704679, 704680)
+@pytest.mark.case(727223, 727224, 727225, 727226, 727227)
 @pytest.mark.parametrize('address, name, dai, weenus, stt, eth', [
     pytest.param('0xFf58d746A67C2E42bCC07d6B3F58406E8837E883', 'AssetsCollectibles', 'Dai Stablecoin', 'WEENUS Token',
                  'Status Test Token', 'Ether')
