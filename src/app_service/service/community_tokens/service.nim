@@ -174,6 +174,7 @@ type
   CommunityTokenReceivedArgs* =  ref object of Args
     name*: string
     image*: string
+    address*: string
     collectibleId*: CollectibleUniqueID
     communityId*: string
     communityName*: string
@@ -181,25 +182,33 @@ type
     amount*: float64
     txHash*: string
     symbol*: string
+    decimals*: int
+    verified*: bool
+    tokenListID*: string
     isFirst*: bool
     tokenType*: int
     accountAddress*: string
     accountName*: string
+    isWatchOnlyAccount*: bool
 
 proc `$`*(self: CommunityTokenReceivedArgs): string =
   return fmt"""CommunityTokenReceivedArgs(
-    name: {self.name}
-    image: {self.image}
-    communityId: {self.communityId}
-    communityName: {self.communityName}
-    chainId: {self.chainId}
-    amount: {self.amount}
-    txHash: {self.txHash}
-    symbol: {self.symbol}
-    isFirst: {self.isFirst}
-    tokenType: {self.tokenType}
-    accountAddress: {self.accountAddress}
-    accountName: {self.accountName}
+    name: {self.name},
+    image: {self.image},
+    communityId: {self.communityId},
+    communityName: {self.communityName},
+    chainId: {self.chainId},
+    amount: {self.amount},
+    decimals: {self.decimals},
+    verified: {self.verified},
+    tokenListID: {self.tokenListID},
+    txHash: {self.txHash},
+    symbol: {self.symbol},
+    isFirst: {self.isFirst},
+    tokenType: {self.tokenType},
+    accountAddress: {self.accountAddress},
+    accountName: {self.accountName},
+    isWatchOnlyAccount: {self.isWatchOnlyAccount}
   )"""
 
 proc toTokenData*(self: CommunityTokenReceivedArgs): string =
@@ -413,10 +422,6 @@ QtObject:
         return
 
       let watchOnlyAccounts = self.walletAccountService.getWatchOnlyAccounts()
-      if any(watchOnlyAccounts, proc (x: WalletAccountDto): bool = x.address == accounts[0]):
-        # skip events on watch-only accounts
-        return
-
       var accountName, accountAddress: string
       if len(accounts) > 0:
         accountAddress = accounts[0]
@@ -429,14 +434,19 @@ QtObject:
         communityName: tokenDataPayload.communityName, 
         chainId: tokenDataPayload.chainId, 
         txHash: tokenDataPayload.txHash, 
+        address: "0x" & tokenDataPayload.address.toHex(),
         name: tokenDataPayload.name, 
         amount: tokenDataPayload.amount,
+        decimals: tokenDataPayload.decimals,
+        verified: tokenDataPayload.verified,
+        tokenListID: tokenDataPayload.tokenListID,
         image: tokenDataPayload.image,
         symbol: tokenDataPayload.symbol,
         isFirst: tokenDataPayload.isFirst,
         tokenType: int(TokenType.ERC20),
         accountAddress: accountAddress,
-        accountName: accountName
+        accountName: accountName,
+        isWatchOnlyAccount: any(watchOnlyAccounts, proc (x: WalletAccountDto): bool = x.address == accounts[0])
       )
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_RECEIVED, tokenReceivedArgs)
       
