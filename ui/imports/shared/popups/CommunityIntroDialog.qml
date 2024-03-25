@@ -156,6 +156,7 @@ StatusStackModal {
 
         property var currentSharedAddressesMap: new Map() // Map[address, [keyUid, selected, isAirdrop]] - used in edit mode only
         property var selectedSharedAddressesMap: new Map() // Map[address, [keyUid, selected, isAirdrop]]
+
         readonly property int selectedSharedAddressesCount: d.selectedSharedAddressesMap.size
 
         property var initialAddressesModel: SortFilterProxyModel {
@@ -280,16 +281,19 @@ StatusStackModal {
             const tmpCurrentSharedAddressesMap = new Map()
             for (let i=0; i < d.initialAddressesModel.count; ++i){
                 const obj = d.initialAddressesModel.get(i)
+
                 if (!!obj) {
+                    const lAddress = obj.address.toLowerCase()
+
                     let isAirdrop = i === 0
                     if (root.isEditMode) {
                         if (root.currentSharedAddresses.indexOf(obj.address) === -1) {
                             continue
                         }
-                        isAirdrop = obj.address.toLowerCase() === root.currentAirdropAddress.toLowerCase()
+                        isAirdrop = lAddress === root.currentAirdropAddress.toLowerCase()
                     }
-                    tmpSharedAddressesMap.set(obj.address, {keyUid: obj.keyUid, selected: true, isAirdrop: isAirdrop})
-                    tmpCurrentSharedAddressesMap.set(obj.address, {keyUid: obj.keyUid, selected: true, isAirdrop: isAirdrop})
+                    tmpSharedAddressesMap.set(lAddress, {keyUid: obj.keyUid, selected: true, isAirdrop: isAirdrop})
+                    tmpCurrentSharedAddressesMap.set(lAddress, {keyUid: obj.keyUid, selected: true, isAirdrop: isAirdrop})
                 }
             }
 
@@ -334,6 +338,7 @@ StatusStackModal {
             currentSharedAddressesMap: d.currentSharedAddressesMap
 
             totalNumOfAddressesForSharing: d.totalNumOfAddressesForSharing
+
             profileProvesOwnershipOfSelectedAddresses: root.profileProvesOwnershipOfSelectedAddresses
             allAddressesToRevealBelongToSingleNonProfileKeypair: root.allAddressesToRevealBelongToSingleNonProfileKeypair
 
