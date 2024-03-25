@@ -1,8 +1,10 @@
 import QtQuick 2.14
+import QtQuick.Controls 2.15
 
 import StatusQ.Popups.Dialog 0.1
 
 import shared.views 1.0
+import shared.controls 1.0
 
 StatusDialog {
     id: root
@@ -24,11 +26,29 @@ StatusDialog {
     property alias dirtyValues: profileView.dirtyValues
     property alias dirty: profileView.dirty
 
+    implicitHeight: implicitContentHeight + (header.visible ? header.height : 0)
     width: 640
     padding: 0
 
-    header: null
     footer: null
+    background: null
+    header: Item {
+        id: headerItem
+        height: selector.height + 20
+        visible: profileView.isCurrentUser
+
+        TapHandler {
+            enabled: root.closePolicy != Popup.NoAutoClose
+            onTapped: {
+                root.close()
+            }   
+        }
+        ProfilePerspectiveSelector {
+            id: selector
+            showcaseVisibility: profileView.showcaseMaxVisibility
+            onVisibilitySelected: (visibility) => profileView.showcaseMaxVisibility = visibility
+        }
+    }
 
     contentItem: ProfileDialogView {
         id: profileView

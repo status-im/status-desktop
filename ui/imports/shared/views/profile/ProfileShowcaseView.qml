@@ -19,6 +19,8 @@ Control {
     id: root
 
     property alias currentTabIndex: stackLayout.currentIndex
+
+    property int maxVisibility: Constants.ShowcaseVisibility.Everyone
     
     property alias communitiesModel: communitiesProxyModel.sourceModel
     property alias accountsModel: accountsProxyModel.sourceModel
@@ -48,18 +50,24 @@ Control {
                 roleName: "showcasePosition"
             }
         ]
-        filters: AnyOf {
-            inverted: true
-            UndefinedFilter {
-                roleName: "showcaseVisibility"
-            }
+        filters: [
+            AnyOf {
+                inverted: true
+                UndefinedFilter {
+                    roleName: "showcaseVisibility"
+                }
 
-            ValueFilter {
-                roleName: "showcaseVisibility"
-                value: Constants.ShowcaseVisibility.NoOne
+                ValueFilter {
+                    roleName: "showcaseVisibility"
+                    value: Constants.ShowcaseVisibility.NoOne
+                }
+            },
+            FastExpressionFilter {
+                expression: model.showcaseVisibility >= root.maxVisibility
+                expectedRoles: ["showcaseVisibility"]
             }
-        }
-    } 
+        ]
+    }
 
     PositionSFPM {
         id: communitiesProxyModel

@@ -29,6 +29,7 @@ Pane {
     property bool readOnly // inside settings/profile/preview
 
     property string publicKey: contactsStore.myPublicKey
+    readonly property alias isCurrentUser: d.isCurrentUser
 
     property var profileStore
     property var contactsStore
@@ -43,6 +44,8 @@ Pane {
     property var showcaseCollectiblesModel
     property var showcaseSocialLinksModel
     property var showcaseAssetsModel
+    
+    property alias showcaseMaxVisibility: showcaseView.maxVisibility
 
     signal closeRequested()
 
