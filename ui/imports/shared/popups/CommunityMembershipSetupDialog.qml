@@ -410,7 +410,7 @@ StatusStackModal {
 
             ColumnLayout {
                 spacing: 24
-                width: root.availableWidth
+                width: scrollView.availableWidth
 
                 StatusRoundedImage {
                     Layout.alignment: Qt.AlignHCenter
