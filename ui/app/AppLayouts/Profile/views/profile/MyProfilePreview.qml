@@ -1,9 +1,12 @@
-import QtQuick 2.14
-import QtGraphicalEffects 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import shared.views 1.0 as SharedViews
 
 import StatusQ.Core.Theme 0.1
+
+import shared.controls 1.0
 
 Item {
     property alias profileStore: profilePreview.profileStore
@@ -31,16 +34,32 @@ Item {
         profilePreview.reload()
     }
 
-    SharedViews.ProfileDialogView {
-        id: profilePreview
+    ColumnLayout {
+        id: layout
         anchors.fill: parent
         anchors.margins: 64
-        readOnly: true
+        spacing: 20
+        ProfilePerspectiveSelector {
+            id: selector
+            showcaseVisibility: profilePreview.showcaseMaxVisibility
+            onVisibilitySelected: (visibility) => profilePreview.showcaseMaxVisibility = visibility
+        }
+
+        SharedViews.ProfileDialogView {
+            id: profilePreview
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.maximumHeight: implicitHeight
+            Layout.maximumWidth: implicitWidth
+            readOnly: true
+        }
+        Item { Layout.fillHeight: true }
     }
 
     DropShadow {
         id: shadow
-        anchors.fill: profilePreview
+        anchors.fill: layout
+        anchors.topMargin: profilePreview.y
         horizontalOffset: 0
         verticalOffset: 4
         radius: 16
