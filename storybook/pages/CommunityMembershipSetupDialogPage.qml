@@ -46,6 +46,7 @@ SplitView {
                 modal: false
                 closePolicy: Popup.NoAutoClose
 
+                isEditMode: ctrlIsEditMode.checked
                 communityName: "Status"
                 communityIcon: ModelsData.icons.status
                 introMessage: "%1 sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
@@ -56,8 +57,10 @@ SplitView {
 4. Dolore eu fugiat nulla pariatur
 5. 🚗 consectetur adipiscing elit
 
-Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.".arg(dialog.name)
-                requirementsCheckPending: false
+Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.".arg(dialog.communityName)
+
+                isInvitationPending: ctrlIsInvitationPending.checked
+                requirementsCheckPending: ctrlRequirementsCheckPending.checked
 
                 walletAccountsModel: WalletAccountsModel {}
                 walletAssetsModel: root.walletAssetStore.groupedAccountAssetsModel
@@ -71,7 +74,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 onPrepareForSigning: logs.logEvent("CommunityMembershipSetupDialog::onPrepareForSigning", ["airdropAddress", "sharedAddresses"], arguments)
                 onJoinCommunity: logs.logEvent("CommunityMembershipSetupDialog::onJoinCommunity")
                 onEditRevealedAddresses: logs.logEvent("CommunityMembershipSetupDialog::editRevealedAddresses")
-                onSignProfileKeypairAndAllNonKeycardKeypairs: logs.logEvent("CommunityMembershipSetupDialog::editRevealedAddresses")
+                onSignProfileKeypairAndAllNonKeycardKeypairs: logs.logEvent("CommunityMembershipSetupDialog::onSignProfileKeypairAndAllNonKeycardKeypairs")
                 onSignSharedAddressesForKeypair: logs.logEvent("CommunityMembershipSetupDialog::onSignSharedAddressesForKeypair", ["keyUid"], arguments)
                 onSharedAddressesUpdated: logs.logEvent("CommunityMembershipSetupDialog::onSharedAddressesUpdated", ["sharedAddresses"], arguments)
                 getCurrencyAmount: function (balance, symbol) {
@@ -110,8 +113,8 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
 
             TextField {
                 Layout.fillWidth: true
-                text: dialog.name
-                onTextChanged: dialog.name = text
+                text: dialog.communityName
+                onTextChanged: dialog.communityName = text
             }
 
             Label {
@@ -130,36 +133,36 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 Label {
                     Layout.fillWidth: true
                     text: "Icon:"
+                    font.weight: Font.Bold
                 }
                 RadioButton {
                     checked: true
                     text: "Status"
-                    onCheckedChanged: if(checked) dialog.imageSrc = ModelsData.icons.status
+                    onCheckedChanged: if(checked) dialog.communityIcon = ModelsData.icons.status
                 }
                 RadioButton {
                     text: "Crypto Punks"
-                    onCheckedChanged: if(checked) dialog.imageSrc = ModelsData.icons.cryptPunks
+                    onCheckedChanged: if(checked) dialog.communityIcon = ModelsData.icons.cryptPunks
                 }
                 RadioButton {
                     text: "Rarible"
-                    onCheckedChanged: if(checked) dialog.imageSrc = ModelsData.icons.rarible
+                    onCheckedChanged: if(checked) dialog.communityIcon = ModelsData.icons.rarible
                 }
                 RadioButton {
                     text: "None"
-                    onCheckedChanged: if(checked) dialog.imageSrc = ""
+                    onCheckedChanged: if(checked) dialog.communityIcon = ""
                 }
             }
 
-            ColumnLayout {
-                Label {
-                    Layout.fillWidth: true
-                    text: "Is invitation pending:"
-                }
+            CheckBox {
+                id: ctrlIsInvitationPending
+                text: "Is invitation pending"
+            }
 
-                CheckBox {
-                    checked: dialog.isInvitationPending
-                    onCheckedChanged:  dialog.isInvitationPending = checked
-                }
+            CheckBox {
+                id: ctrlIsEditMode
+                visible: !dialog.isInvitationPending
+                text: "Is edit mode"
             }
 
             ColumnLayout {
@@ -180,18 +183,10 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 }
             }
 
-            ColumnLayout {
-                visible: dialog.accessType == Constants.communityChatOnRequestAccess && !dialog.isInvitationPending
-                Label {
-                    Layout.fillWidth: true
-                    text: "Login type"
-                }
-
-                ComboBox {
-                    id: ctrlLoginType
-                    Layout.fillWidth: true
-                    model: ["Password","Biometrics","Keycard"]
-                }
+            CheckBox {
+                id: ctrlRequirementsCheckPending
+                visible: !dialog.isInvitationPending && dialog.accessType == Constants.communityChatOnRequestAccess
+                text: "Requirements check pending"
             }
 
             Item {

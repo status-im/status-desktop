@@ -27,6 +27,8 @@ Rectangle {
     property var assetsModel
     property var collectiblesModel
 
+    property bool requirementsCheckPending
+
     readonly property bool lostPermissionToJoin: d.lostPermissionToJoin
     readonly property bool lostChannelPermissions: d.lostChannelPermissions
 
@@ -142,6 +144,21 @@ Rectangle {
                 StatusBaseText {
                     font.weight: Font.Medium
                     text: qsTr("Permissions")
+                }
+                Item { Layout.fillWidth: true }
+                RowLayout {
+                    Layout.rightMargin: Style.current.halfPadding
+                    spacing: 4
+                    visible: root.requirementsCheckPending
+                    StatusBaseText {
+                        text: qsTr("Updating eligibility")
+                        font.pixelSize: Style.current.tertiaryTextFontSize
+                        color: Theme.palette.baseColor1
+                    }
+                    StatusLoadingIndicator {
+                        Layout.preferredWidth: 12
+                        Layout.preferredHeight: 12
+                    }
                 }
             }
 

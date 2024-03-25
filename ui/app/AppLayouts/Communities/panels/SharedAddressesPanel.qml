@@ -207,16 +207,6 @@ Control {
             }
         }
 
-        RequirementsCheckPendingLoader {
-            visible: root.requirementsCheckPending
-            Layout.alignment: Qt.AlignHCenter
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Style.current.padding
-        }
-
         // divider with top rounded corners + drop shadow
         Rectangle {
             Layout.fillWidth: true
@@ -244,6 +234,7 @@ Control {
             permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
+            requirementsCheckPending: root.requirementsCheckPending
             communityName: root.communityName
             communityIcon: root.communityIcon
 
