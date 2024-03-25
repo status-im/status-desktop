@@ -540,7 +540,7 @@ QtObject {
                 errorMessage: qsTr("Display Names can’t start or end with a space")
             },
             StatusRegularExpressionValidator {
-                regularExpression: regularExpressions.alphanumericalExpanded
+                regularExpression: /^$|^[a-zA-Z0-9\-_\u0020]+$/
                 errorMessage: qsTr("Invalid characters (use A-Z and 0-9, hyphens and underscores only)")
             },
             StatusMinLengthValidator {
