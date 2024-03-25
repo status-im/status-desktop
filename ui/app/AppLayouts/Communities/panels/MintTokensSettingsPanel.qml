@@ -89,7 +89,7 @@ StackView {
         pop(initialItem, StackView.Immediate)
     }
 
-    // This method will be called from the outsite from a different section like Airdrop or Permissions
+    // This method will be called from the outside from a different section like Airdrop or Permissions
     function openNewTokenForm(isAssetView) {
         resetNavigation()
 
@@ -342,7 +342,7 @@ StackView {
                     Layout.preferredWidth: root.viewWidth
                     Layout.fillHeight: true
 
-                    currentIndex: optionsTab.currentItem === collectiblesTab ? 0 : 1
+                    currentIndex: optionsTab.currentIndex
 
                     CustomEditCommunityTokenView {
                         id: newCollectibleView

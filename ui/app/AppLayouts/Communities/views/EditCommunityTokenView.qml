@@ -95,6 +95,8 @@ StatusScrollView {
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
 
+    onVisibleChanged: if (visible) nameInput.forceActiveFocus()
+
     ColumnLayout {
         id: mainLayout
 
@@ -103,7 +105,6 @@ StatusScrollView {
 
         StatusBaseText {
             elide: Text.ElideRight
-            font.pixelSize: Theme.primaryTextFontSize
             text: root.isAssetView ? qsTr("Icon") : qsTr("Artwork")
         }
 
@@ -150,7 +151,7 @@ StatusScrollView {
             }
             extraValidator.errorMessage: d.containsAssetReferenceName ? qsTr("Asset name already exists") :
                                                                         qsTr("You have used this token name before")
-
+            input.tabNavItem: descriptionInput
             onTextChanged: root.token.name = text
         }
 
@@ -170,7 +171,7 @@ StatusScrollView {
             minLengthValidator.errorMessage: qsTr("Please enter a token description")
             regexValidator.regularExpression: Constants.regularExpressions.ascii
             regexValidator.errorMessage: qsTr("Only A-Z, 0-9 and standard punctuation allowed")
-
+            input.tabNavItem: symbolInput
             onTextChanged: root.token.description = text
         }
 
@@ -197,6 +198,7 @@ StatusScrollView {
                 return (!SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text) && !d.containsAssetReferenceSymbol)
             }
             extraValidator.errorMessage: d.containsAssetReferenceSymbol ? qsTr("Symbol already exists") : qsTr("You have used this token symbol before")
+            input.tabNavItem: supplyInput.visible ? supplyInput : assetDecimalsInput
 
             onTextChanged: {
                 const cursorPos = input.edit.cursorPosition
@@ -210,7 +212,6 @@ StatusScrollView {
         StatusBaseText {
             text: qsTr("Network")
             color: Theme.palette.directColor1
-            font.pixelSize: Theme.primaryTextFontSize
         }
 
         Rectangle {
@@ -285,6 +286,7 @@ StatusScrollView {
             regexValidator.regularExpression: Constants.regularExpressions.numerical
             extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 999999999 }
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 999,999,999")
+            input.tabNavItem: assetDecimalsInput.visible ? assetDecimalsInput : previewButton
 
             onTextChanged: {
                 const supplyNumber = parseInt(text)
@@ -333,6 +335,7 @@ StatusScrollView {
             regexValidator.regularExpression: Constants.regularExpressions.numerical
             extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 10 }
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 10")
+            input.tabNavItem: previewButton
             onTextChanged: root.token.decimals = parseInt(text)
         }
 
@@ -382,6 +385,7 @@ StatusScrollView {
         }
 
         StatusButton {
+            id: previewButton
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
@@ -389,6 +393,7 @@ StatusScrollView {
             Layout.bottomMargin: Style.current.padding
             text: qsTr("Preview")
             enabled: d.isFullyFilled
+            highlighted: visualFocus
 
             onClicked: root.previewClicked()
         }
@@ -435,7 +440,6 @@ StatusScrollView {
         StatusBaseText {
             text: labelDescComponent.label
             color: Theme.palette.directColor1
-            font.pixelSize: Theme.primaryTextFontSize
         }
 
         StatusBaseText {
@@ -443,7 +447,6 @@ StatusScrollView {
             Layout.fillHeight: true
             text: labelDescComponent.description
             color: Theme.palette.baseColor1
-            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 1.2
             wrapMode: Text.WordWrap
         }
