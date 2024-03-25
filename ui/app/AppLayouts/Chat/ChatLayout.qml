@@ -118,7 +118,7 @@ StackLayout {
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
             onRequestToJoinClicked: {
-                Global.openPopup(communityIntroDialogPopup, {
+                Global.openPopup(communityMembershipSetupDialogComponent, {
                     communityId: joinCommunityView.communityId,
                     isInvitationPending: joinCommunityView.isInvitationPending,
                     communityName: communityData.name,
@@ -186,7 +186,7 @@ StackLayout {
                 root.openAppSearch()
             }
             onRequestToJoinClicked: {
-                Global.openPopup(communityIntroDialogPopup, {
+                Global.openPopup(communityMembershipSetupDialogComponent, {
                     communityId: chatView.communityId,
                     isInvitationPending: root.rootStore.isMyCommunityRequestPending(chatView.communityId),
                     communityName: root.sectionItemModel.name,
@@ -265,9 +265,10 @@ StackLayout {
     }
 
     Component {
-        id: communityIntroDialogPopup
-        CommunityIntroDialog {
-            id: communityIntroDialog
+        id: communityMembershipSetupDialogComponent
+
+        CommunityMembershipSetupDialog {
+            id: dialogRoot
 
             property string communityId
 
@@ -277,7 +278,7 @@ StackLayout {
             walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
             requirementsCheckPending: root.rootStore.requirementsCheckPending
             permissionsModel: {
-                root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
+                root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
                 return root.rootStore.permissionsModel
             }
             assetsModel: root.rootStore.assetsModel
@@ -288,9 +289,9 @@ StackLayout {
             }
 
             onPrepareForSigning: {
-                root.rootStore.prepareKeypairsForSigning(communityIntroDialog.communityId, communityIntroDialog.name, sharedAddresses, airdropAddress)
+                root.rootStore.prepareKeypairsForSigning(dialogRoot.communityId, dialogRoot.name, sharedAddresses, airdropAddress)
 
-                communityIntroDialog.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                dialogRoot.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
             }
 
             onSignProfileKeypairAndAllNonKeycardKeypairs: {
@@ -306,12 +307,12 @@ StackLayout {
             }
 
             onCancelMembershipRequest: {
-                root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
-                mainViewLoader.item.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityIntroDialog.communityId)
+                root.rootStore.cancelPendingRequest(dialogRoot.communityId)
+                mainViewLoader.item.isInvitationPending = root.rootStore.isMyCommunityRequestPending(dialogRoot.communityId)
             }
 
             onSharedAddressesUpdated: {
-                root.rootStore.updatePermissionsModel(communityIntroDialog.communityId, sharedAddresses)
+                root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
             }
 
             onClosed: {
@@ -322,20 +323,20 @@ StackLayout {
                 target: root.rootStore.communitiesModuleInst
 
                 function onAllSharedAddressesSigned() {
-                    if (communityIntroDialog.profileProvesOwnershipOfSelectedAddresses) {
-                        communityIntroDialog.joinCommunity()
-                        communityIntroDialog.close()
+                    if (dialogRoot.profileProvesOwnershipOfSelectedAddresses) {
+                        dialogRoot.joinCommunity()
+                        dialogRoot.close()
                         return
                     }
 
-                    if (communityIntroDialog.allAddressesToRevealBelongToSingleNonProfileKeypair) {
-                        communityIntroDialog.joinCommunity()
-                        communityIntroDialog.close()
+                    if (dialogRoot.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                        dialogRoot.joinCommunity()
+                        dialogRoot.close()
                         return
                     }
 
-                    if (!!communityIntroDialog.replaceItem) {
-                        communityIntroDialog.replaceLoader.item.allSigned()
+                    if (!!dialogRoot.replaceItem) {
+                        dialogRoot.replaceLoader.item.allSigned()
                     }
                 }
             }
