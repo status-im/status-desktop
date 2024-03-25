@@ -65,7 +65,7 @@ StatusButton {
         id: menuItem
         required property int showcaseVisibility
 
-        readonly property string selectedText: d.buttonTextFormat.arg(text)
+        readonly property string selectedText: qsTr("Preview as %1").arg(text)
         readonly property alias selectedTextWidth: textMetricsMaxWidth.width
 
         ButtonGroup.group: showcaseVisibilityGroup
@@ -81,10 +81,7 @@ StatusButton {
     }
 
     QtObject {
-        id: d
-
-        readonly property string buttonTextFormat: "%1%2".arg(qsTr("Preview as "))
-        
+        id: d        
         property real maxTextWidth: {
                 let max = 0
                 for (var i = 0; i < showcaseVisibilityGroup.buttons.length; i++) {
