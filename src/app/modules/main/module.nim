@@ -641,7 +641,7 @@ method onChannelGroupsLoaded*[T](
     return
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
-  if activeSectionId == "":
+  if activeSectionId == "" or activeSectionId == conf.SETTINGS_SECTION_ID:
     activeSectionId = singletonInstance.userProfile.getPubKey()
 
   for channelGroup in channelGroups:
