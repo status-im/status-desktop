@@ -22,7 +22,7 @@ logScope:
 
 type ProfileImageDetails = object
   url*: string
-  croppedImage*: string # TODO: Not needed with new CreateAccount endpoint?
+  croppedImage*: string # TODO: Remove after https://github.com/status-im/status-go/issues/4977
   cropRectangle*: ImageCropRectangle
 
 type
