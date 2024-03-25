@@ -609,9 +609,15 @@ method onMessageEdited*(self: Module, message: MessageDto) =
   let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
   let communityChats = self.controller.getCommunityDetails().chats
 
+  var updatedText = ""
+  if message.contentType == ContentType.BridgeMessage:
+    updatedText = message.bridgeMessage.content
+  else:
+    updatedText = self.controller.getRenderedText(message.parsedText, communityChats)
+
   self.view.model().updateEditedMsg(
     message.id,
-    self.controller.getRenderedText(message.parsedText, communityChats),
+    updatedText,
     message.text,
     message.parsedText,
     message.contentType,
