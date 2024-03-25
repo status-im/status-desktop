@@ -20,13 +20,15 @@ import StatusQ.Core.Theme 0.1
 
 StatusWindow {
     property bool appIsReady: false
+    readonly property double dpr: Screen.devicePixelRatio
+    readonly property bool highdpi: Screen.pixelDensity >=3
 
     Universal.theme: Universal.System
 
     id: applicationWindow
     objectName: "mainWindow"
-    minimumWidth: 1200 / Screen.devicePixelRatio
-    minimumHeight: 680 / Screen.devicePixelRatio
+    minimumWidth: 1200 / (highdpi && dpr > 2 ? dpr : 1)
+    minimumHeight: 680 / (highdpi && dpr > 2 ? dpr : 1)
     color: Style.current.background
     title: {
         // Set application settings
@@ -43,6 +45,10 @@ StatusWindow {
         let geometry = localAppSettings.geometry;
         let visibility = localAppSettings.visibility;
 
+        console.warn("!!! RESTORING GEOMETRY:", geometry)
+        console.warn("!!! DPR:", Screen.devicePixelRatio)
+        console.warn("!!! DENSITY:", Screen.pixelDensity)
+
         if (visibility !== Window.Windowed &&
             visibility !== Window.Maximized &&
             visibility !== Window.FullScreen) {
@@ -57,22 +63,27 @@ StatusWindow {
             geometry.width > Screen.desktopAvailableWidth ||
             geometry.height > Screen.desktopAvailableHeight)
         {
-            let screen = Qt.application.screens[0];
+            let screen = applicationWindow.screen ?? Qt.application.screens[0];
 
             geometry = Qt.rect(0,
                                0,
-                               Math.min(Screen.desktopAvailableWidth - 125, 1400),
-                               Math.min(Screen.desktopAvailableHeight - 125, 840));
+                               Math.min(Screen.desktopAvailableWidth - 125, applicationWindow.minimumWidth),
+                               Math.min(Screen.desktopAvailableHeight - 125, applicationWindow.minimumHeight));
             geometry.x = (screen.width - geometry.width) / 2;
             geometry.y = (screen.height - geometry.height) / 2;
         }
 
         applicationWindow.visibility = visibility;
         if (visibility === Window.Windowed) {
+            console.warn("!!! SETTING GEOMETRY, MIN SIZE:", Qt.rect(applicationWindow.x, applicationWindow.y,
+                                                                    applicationWindow.minimumWidth, applicationWindow.minimumHeight))
             applicationWindow.x = geometry.x;
             applicationWindow.y = geometry.y;
             applicationWindow.width = Math.max(geometry.width, applicationWindow.minimumWidth)
             applicationWindow.height = Math.max(geometry.height, applicationWindow.minimumHeight)
+
+            console.warn("!!! SETTING FINAL GEOMETRY:", Qt.rect(applicationWindow.x, applicationWindow.y,
+                                                                applicationWindow.width, applicationWindow.height))
         }
     }
 
