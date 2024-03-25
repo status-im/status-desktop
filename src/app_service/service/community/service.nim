@@ -2085,7 +2085,7 @@ QtObject:
       # We no longer send invites, but merely share the community so
       # users can request access (with automatic acception)
       let response = status_go.shareCommunityToUsers(communityId, pubKeys, inviteMessage)
-      discard self.chatService.processMessageUpdateAfterSend(response)
+      discard self.chatService.processMessengerResponse(response)
     except Exception as e:
       error "Error sharing community", msg = e.msg
       result = "Error sharing community: " & e.msg

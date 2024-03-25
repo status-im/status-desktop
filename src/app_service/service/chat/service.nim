@@ -154,7 +154,7 @@ QtObject:
   proc updateOrAddChat*(self: Service, chat: ChatDto)
   proc hydrateChannelGroups*(self: Service, data: JsonNode)
   proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto, isCommunityChannelGroup: bool = false)
-  proc processMessageUpdateAfterSend*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])
+  proc processMessengerResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])
 
   proc doConnect(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
@@ -195,7 +195,7 @@ QtObject:
 
     self.events.on(SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND) do(e: Args):
       var args = RpcResponseArgs(e)
-      discard self.processMessageUpdateAfterSend(args.response)
+      discard self.processMessengerResponse(args.response)
 
   proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
     return toSeq(self.channelGroups.values)
@@ -389,27 +389,20 @@ QtObject:
   proc parseChatResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     var chats: seq[ChatDto] = @[]
     var messages: seq[MessageDto] = @[]
-    if response.result{"messages"} != nil:
-      for jsonMsg in response.result["messages"]:
-        messages.add(jsonMsg.toMessageDto)
-    if response.result{"chats"} != nil:
-      for jsonChat in response.result["chats"]:
-        let chat = chat_dto.toChatDto(jsonChat)
-        # TODO add the channel back to `chat` when it is refactored
-        self.updateOrAddChat(chat)
-        chats.add(chat)
-    result = (chats, messages)
-
-  proc parseGroupChatResponse*(self: Service, response: RpcResponse[JsonNode]): (ChatDto, seq[MessageDto]) =
-    var chat: ChatDto
-    var messages: seq[MessageDto] = @[]
-    if response.result{"chat"} != nil:
-      chat = chat_dto.toChatDto(response.result["chat"])
-      self.updateOrAddChat(chat)
-    if response.result{"messages"} != nil:
-      for jsonMsg in response.result["messages"]:
-        messages.add(jsonMsg.toMessageDto)
-    return (chat, messages)
+    let errDesription = response.result{"error"}.getStr
+    if errDesription != "":
+      error "Error in parseGroupChatResponse: ", errDesription
+    else:
+      if response.result{"messages"} != nil:
+        for jsonMsg in response.result["messages"]:
+          messages.add(jsonMsg.toMessageDto)
+      if response.result{"chats"} != nil:
+        for jsonChat in response.result["chats"]:
+          let chat = chat_dto.toChatDto(jsonChat)
+          # TODO add the channel back to `chat` when it is refactored
+          self.updateOrAddChat(chat)
+          chats.add(chat)
+    return (chats, messages)
 
   proc signalChatsAndMessagesUpdates*(self: Service, chats: seq[ChatDto], messages: seq[MessageDto]) =
     if chats.len == 0 or messages.len == 0:
@@ -426,18 +419,34 @@ QtObject:
         let chat = chatMap[msg.chatId]
         self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chat))
 
-  proc processMessageUpdateAfterSend*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
+  proc processMessengerResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     result = self.parseChatResponse(response)
     var (chats, messages) = result
     self.signalChatsAndMessagesUpdates(chats, messages)
 
-  proc processGroupChatUpdateAfterSend*(self: Service, response: RpcResponse[JsonNode]): (ChatDto, seq[MessageDto]) =
-    result = self.parseGroupChatResponse(response)
-    var (chat, messages) = result
-    self.signalChatsAndMessagesUpdates(@[chat], messages)
+  proc processGroupChatResponse*(self: Service, response: RpcResponse[JsonNode]) =
+    proc parseGroupChatResponse(response: RpcResponse[JsonNode]): (ChatDto, seq[MessageDto], string) =
+      var chat: ChatDto
+      var messages: seq[MessageDto] = @[]
+
+      let errorDescription = response.result{"error"}.getStr
+
+      if response.result{"chat"} != nil:
+        chat = chat_dto.toChatDto(response.result["chat"])
+      if response.result{"messages"} != nil:
+        for jsonMsg in response.result["messages"]:
+          messages.add(jsonMsg.toMessageDto)
+      return (chat, messages, errorDescription)
+
+    var (chat, messages, errorDescription) = parseGroupChatResponse(response)
+    if errorDescription != "":
+      error "Received an error in the ProcessGroupChatResponse: ", errorDescription
+    else:
+      self.updateOrAddChat(chat)
+      self.signalChatsAndMessagesUpdates(@[chat], messages)
 
   proc processUpdateForTransaction*(self: Service, messageId: string, response: RpcResponse[JsonNode]) =
-    var (chats, _) = self.processMessageUpdateAfterSend(response)
+    var (chats, _) = self.processMessengerResponse(response)
     # TODO: Signal is not handled anywhere
     self.events.emit(SIGNAL_MESSAGE_REMOVE, MessageArgs(id: messageId, channel: chats[0].id))
 
@@ -552,7 +561,7 @@ QtObject:
       for imagePath in imagePaths:
         removeFile(imagePath)
 
-      discard self.processMessageUpdateAfterSend(response)
+      discard self.processMessengerResponse(response)
     except Exception as e:
       error "Error sending images", msg = e.msg
       result = fmt"Error sending images: {e.msg}"
@@ -579,7 +588,7 @@ QtObject:
         linkPreviews,
         communityId) # Only send a community ID for the community invites
 
-      let (chats, messages) = self.processMessageUpdateAfterSend(response)
+      let (chats, messages) = self.processMessengerResponse(response)
       if chats.len == 0 or messages.len == 0:
         self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: chatId))
     except Exception as e:
@@ -589,7 +598,7 @@ QtObject:
     try:
       let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
       let response =  status_chat_commands.requestAddressForTransaction(chatId, fromAddress, amount, address)
-      discard self.processMessageUpdateAfterSend(response)
+      discard self.processMessengerResponse(response)
     except Exception as e:
       error "Error requesting address for transaction", msg = e.msg
 
@@ -597,7 +606,7 @@ QtObject:
     try:
       let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
       let response = status_chat_commands.requestTransaction(chatId, fromAddress, amount, address)
-      discard self.processMessageUpdateAfterSend(response)
+      discard self.processMessengerResponse(response)
     except Exception as e:
       error "Error requesting transaction", msg = e.msg
 
@@ -625,7 +634,7 @@ QtObject:
   proc acceptRequestTransaction*(self: Service, transactionHash: string, messageId: string, signature: string) =
     try:
       let response = status_chat_commands.acceptRequestTransaction(transactionHash, messageId, signature)
-      discard self.processMessageUpdateAfterSend(response)
+      discard self.processMessengerResponse(response)
     except Exception as e:
       error "Error requesting transaction", msg = e.msg
 
@@ -684,7 +693,7 @@ QtObject:
       let response = status_group_chat.addMembers(communityID, chatId, members)
       if (response.error.isNil):
         self.events.emit(SIGNAL_CHAT_MEMBERS_ADDED, ChatMembersAddedArgs(chatId: chatId, ids: members))
-        discard self.processGroupChatUpdateAfterSend(response)
+        self.processGroupChatResponse(response)
     except Exception as e:
       error "error while adding group members: ", msg = e.msg
 
@@ -693,7 +702,7 @@ QtObject:
       let response = status_group_chat.removeMember(communityID, chatId, member)
       if (response.error.isNil):
         self.events.emit(SIGNAL_CHAT_MEMBER_REMOVED, ChatMemberRemovedArgs(chatId: chatId, id: member))
-        discard self.processGroupChatUpdateAfterSend(response)
+        self.processGroupChatResponse(response)
     except Exception as e:
       error "error while removing member from group: ", msg = e.msg
 

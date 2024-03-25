@@ -369,7 +369,7 @@ QtObject:
         communityId = "", # communityId is not necessary when sending a sticker
         sticker.hash,
         sticker.packId)
-    discard self.chatService.processMessageUpdateAfterSend(response)
+    discard self.chatService.processMessengerResponse(response)
     self.addStickerToRecent(sticker)
 
   proc removeRecentStickers*(self: Service, packId: string) =

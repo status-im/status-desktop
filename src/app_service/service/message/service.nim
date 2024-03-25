@@ -644,7 +644,7 @@ QtObject:
             if(not pinned and not pin):
               self.numOfPinnedMessagesPerChat[chatId] = self.getNumOfPinnedMessages(chatId) - 1
               self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
-          discard self.chatService.processMessageUpdateAfterSend(response)
+          discard self.chatService.processMessengerResponse(response)
 
     except Exception as e:
       error "error: ", procName="pinUnpinMessage", errName = e.name, errDesription = e.msg
