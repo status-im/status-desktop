@@ -47,6 +47,11 @@ Item {
             isQuote = (formattedMessage.startsWith("<blockquote>") && formattedMessage.endsWith("</blockquote>"));
 
             if (root.isEdited) {
+                if (root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage) {
+                    // message from bridge does not have any tags, we need to add them here to format correctly
+                    formattedMessage = "<p>"+root.messageDetails.messageText+"</p>"
+                }
+
                 const index = formattedMessage.endsWith("code>") ? formattedMessage.length : formattedMessage.length - 4;
                 const editedMessage = formattedMessage.slice(0, index)
                                     + ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
