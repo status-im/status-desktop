@@ -10,16 +10,24 @@ proc newBiometricsState*(flowType: FlowType, backState: State): BiometricsState 
 proc delete*(self: BiometricsState) =
   self.State.delete
 
+method getNextPrimaryState*(self: BiometricsState, controller: Controller): State =
+  if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
+    return createState(StateType.ProfileFetching, self.flowType, self)
+  return nil
+
+method getNextSecondaryState*(self: BiometricsState, controller: Controller): State =
+  return self.getNextPrimaryState(controller)
+
 method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   let storeToKeychain = true # true, cause we have support for keychain for mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeys:
-    controller.storeGeneratedAccountAndLogin(storeToKeychain)
+    controller.createAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
-    controller.storeImportedAccountAndLogin(storeToKeychain)
+    controller.importAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
     ## This should not be the correct call for this flow, this is an issue,
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
-    controller.storeImportedAccountAndLogin(storeToKeychain, recoverAccount = true)
+    controller.importAccountAndLogin(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
@@ -35,13 +43,13 @@ method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
 method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
   let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeys:
-    controller.storeGeneratedAccountAndLogin(storeToKeychain)
+    controller.createAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
-    controller.storeImportedAccountAndLogin(storeToKeychain)
+    controller.importAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
     ## This should not be the correct call for this flow, this is an issue,
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
-    controller.storeImportedAccountAndLogin(storeToKeychain, recoverAccount = true)
+    controller.importAccountAndLogin(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:

@@ -206,10 +206,8 @@ QtObject:
   proc validMnemonic*(self: View, mnemonic: string): bool {.slot.} =
     return self.delegate.validMnemonic(mnemonic)
 
-  proc accountImportSuccess*(self: View) {.signal.}
   proc importAccountSuccess*(self: View) =
     self.importedAccountChanged()
-    self.accountImportSuccess()
 
   proc selectedLoginAccountChanged*(self: View) {.signal.}
   proc getSelectedLoginAccount(self: View): QVariant {.slot.} =

@@ -370,7 +370,7 @@ proc getSeedPhraseLength*(self: Controller): int =
 proc validSeedPhrase*(self: Controller, seedPhrase: string): bool =
   if not serviceApplicable(self.accountsService):
     return
-  let err = self.accountsService.validateMnemonic(seedPhrase)
+  let (_, err) = self.accountsService.validateMnemonic(seedPhrase)
   return err.len == 0
 
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =

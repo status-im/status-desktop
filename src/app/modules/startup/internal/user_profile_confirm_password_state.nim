@@ -18,14 +18,12 @@ method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller:
     return
   let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeys:
-    controller.storeGeneratedAccountAndLogin(storeToKeychain)
+    controller.createAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
-    controller.storeImportedAccountAndLogin(storeToKeychain)
+    controller.importAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
-    controller.storeImportedAccountAndLogin(storeToKeychain, recoverAccount = true)
+    controller.importAccountAndLogin(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.LostKeycardConvertToRegularAccount:
     controller.loginAccountKeycardUsingSeedPhrase(storeToKeychain)
-
-  
