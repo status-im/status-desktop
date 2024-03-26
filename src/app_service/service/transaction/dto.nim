@@ -185,6 +185,7 @@ type
     maxFeePerGasL*: float64
     maxFeePerGasM*: float64
     maxFeePerGasH*: float64
+    l1GasFee*: float64
     eip1559Enabled*: bool
 
 proc decodeSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
@@ -195,6 +196,7 @@ proc decodeSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
   result.maxFeePerGasL = jsonObj{"maxFeePerGasL"}.getFloat
   result.maxFeePerGasM = jsonObj{"maxFeePerGasM"}.getFloat
   result.maxFeePerGasH = jsonObj{"maxFeePerGasH"}.getFloat
+  result.l1GasFee = jsonObj{"l1GasFee"}.getFloat
   result.eip1559Enabled = jsonObj{"eip1559Enabled"}.getbool
 
 proc toSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
@@ -205,6 +207,7 @@ proc toSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
   result.maxFeePerGasL = parseFloat(jsonObj{"maxFeePerGasLow"}.getStr)
   result.maxFeePerGasM = parseFloat(jsonObj{"maxFeePerGasMedium"}.getStr)
   result.maxFeePerGasH = parseFloat(jsonObj{"maxFeePerGasHigh"}.getStr)
+  result.l1GasFee = parseFloat(jsonObj{"l1GasFee"}.getStr)
   result.eip1559Enabled = jsonObj{"eip1559Enabled"}.getbool
 
 proc `$`*(self: SuggestedFeesDto): string =
@@ -215,6 +218,7 @@ proc `$`*(self: SuggestedFeesDto): string =
     maxFeePerGasL:{self.maxFeePerGasL},
     maxFeePerGasM:{self.maxFeePerGasM},
     maxFeePerGasH:{self.maxFeePerGasH},
+    l1GasFee:{self.l1GasFee},
     eip1559Enabled:{self.eip1559Enabled}
   )"""
 
@@ -260,6 +264,7 @@ proc `$`*(self: TransactionPathDto): string =
     approvalGasFees:{self.approvalGasFees},
     approvalAmountRequired:{self.approvalAmountRequired},
     approvalContractAddress:{self.approvalContractAddress},
+    gasFees:{$self.gasFees}
   )"""
 
 proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
