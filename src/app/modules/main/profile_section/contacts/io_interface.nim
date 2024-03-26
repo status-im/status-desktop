@@ -145,7 +145,10 @@ method shareUserUrlWithENS*(self: AccessInterface, pubkey: string): string {.bas
 method requestProfileShowcase*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateProfileShowcase*(self: AccessInterface, profileShowcase: ProfileShowcaseDto) {.base.} =
+method onProfileShowcaseUpdated*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadProfileShowcase*(self: AccessInterface, profileShowcase: ProfileShowcaseDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method fetchProfileShowcaseAccountsByAddress*(self: AccessInterface, address: string) {.base.} =

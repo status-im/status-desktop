@@ -22,7 +22,7 @@ type
     preferences*: ProfileShowcasePreferencesDto
 
 # Signals which may be emitted by this service:
-const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_UPDATED* = "profileShowcasePreferencesUpdated"
+const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED* = "profileShowcasePreferencesLoaded"
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_SUCCEEDED* = "profileShowcasePreferencesSaveSucceeded"
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_FAILED* = "profileShowcasePreferencesSaveFailed"
 
@@ -116,7 +116,7 @@ QtObject:
 
       let preferences = rpcResponseObj["response"]["result"].toProfileShowcasePreferencesDto()
 
-      self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_UPDATED,
+      self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED,
         ProfileShowcasePreferencesArgs(preferences: preferences))
     except Exception as e:
       error "Error requesting profile showcase preferences", msg = e.msg

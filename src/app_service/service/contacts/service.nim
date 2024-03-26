@@ -65,6 +65,9 @@ type
   ProfileShowcaseForContactArgs* = ref object of Args
     profileShowcase*: ProfileShowcaseDto
 
+  ProfileShowcaseContactIdArgs* = ref object of Args
+    contactId*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
 const SIGNAL_CONTACT_ADDED* = "contactAdded"
@@ -90,6 +93,7 @@ const SIGNAL_CONTACT_INFO_REQUEST_FINISHED* = "contactInfoRequestFinished"
 const SIGNAL_APPEND_CHAT_MESSAGES* = "appendChatMessages"
 
 const SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED* = "contactProfileShowcaseUpdated"
+const SIGNAL_CONTACT_PROFILE_SHOWCASE_LOADED* = "contactProfileShowcaseLoaded"
 const SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED* = "profileShowcaseAccountsByAddressFetched"
 
 type
@@ -233,10 +237,10 @@ QtObject:
             self.events.emit(SIGNAL_CONTACT_VERIFICATION_ADDED, data)
     self.events.on(SignalType.Message.event) do(e: Args):
       let receivedData = MessageSignal(e)
-      if receivedData.updatedProfileShowcases.len > 0:
-        for profileShowcase in receivedData.updatedProfileShowcases:
+      if receivedData.updatedProfileShowcaseContactIDs.len > 0:
+        for contactId in receivedData.updatedProfileShowcaseContactIDs:
           self.events.emit(SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED,
-            ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
+            ProfileShowcaseContactIdArgs(contactId: contactId))
     self.events.on(SignalType.StatusUpdatesTimedout.event) do(e:Args):
       var receivedData = StatusUpdatesTimedoutSignal(e)
       if(receivedData.statusUpdates.len > 0):
@@ -913,7 +917,7 @@ QtObject:
 
       let profileShowcase = rpcResponseObj["response"]["result"].toProfileShowcaseDto()
 
-      self.events.emit(SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED,
+      self.events.emit(SIGNAL_CONTACT_PROFILE_SHOWCASE_LOADED,
         ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
     except Exception as e:
       error "Error requesting profile showcase for a contact", msg = e.msg

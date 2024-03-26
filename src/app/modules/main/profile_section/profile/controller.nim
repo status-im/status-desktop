@@ -59,9 +59,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_FAILED) do(e: Args):
     self.delegate.onProfileShowcasePreferencesSaveFailed()
 
-  self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_UPDATED) do(e: Args):
+  self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED) do(e: Args):
     let args = ProfileShowcasePreferencesArgs(e)
-    self.delegate.updateProfileShowcasePreferences(args.preferences)
+    self.delegate.loadProfileShowcasePreferences(args.preferences)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int): bool =
   len(self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)) > 0

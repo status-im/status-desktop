@@ -195,7 +195,7 @@ method saveProfileShowcasePreferences*(self: Module, showcase: ShowcaseSaveData)
 method requestProfileShowcasePreferences(self: Module) =
   self.controller.requestProfileShowcasePreferences()
 
-method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowcasePreferencesDto) =
+method loadProfileShowcasePreferences(self: Module, preferences: ProfileShowcasePreferencesDto) =
   var communityItems: seq[ShowcasePreferencesGenericItem] = @[]
   for community in preferences.communities:
     communityItems.add(ShowcasePreferencesGenericItem(
@@ -203,7 +203,7 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
       showcaseVisibility: community.showcaseVisibility,
       showcasePosition: community.order
     ))
-  self.view.updateProfileShowcasePreferencesCommunities(communityItems)
+  self.view.loadProfileShowcasePreferencesCommunities(communityItems)
 
   var accountItems: seq[ShowcasePreferencesGenericItem] = @[]
   for account in preferences.accounts:
@@ -212,7 +212,7 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
       showcaseVisibility: account.showcaseVisibility,
       showcasePosition: account.order
     ))
-  self.view.updateProfileShowcasePreferencesAccounts(accountItems)
+  self.view.loadProfileShowcasePreferencesAccounts(accountItems)
 
   var collectibleItems: seq[ShowcasePreferencesGenericItem] = @[]
   for collectible in preferences.collectibles:
@@ -221,7 +221,7 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
       showcaseVisibility: collectible.showcaseVisibility,
       showcasePosition: collectible.order
     ))
-  self.view.updateProfileShowcasePreferencesCollectibles(collectibleItems)
+  self.view.loadProfileShowcasePreferencesCollectibles(collectibleItems)
 
   var assetItems: seq[ShowcasePreferencesGenericItem] = @[]
   for token in preferences.verifiedTokens:
@@ -236,7 +236,7 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
       showcaseVisibility: token.showcaseVisibility,
       showcasePosition: token.order
     ))
-  self.view.updateProfileShowcasePreferencesAssets(assetItems)
+  self.view.loadProfileShowcasePreferencesAssets(assetItems)
 
   var socialLinkItems: seq[ShowcasePreferencesSocialLinkItem] = @[]
   for socialLink in preferences.socialLinks:
@@ -245,4 +245,4 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
       text: socialLink.text,
       showcasePosition: socialLink.order
     ))
-  self.view.updateProfileShowcasePreferencesSocialLinks(socialLinkItems)
+  self.view.loadProfileShowcasePreferencesSocialLinks(socialLinkItems)

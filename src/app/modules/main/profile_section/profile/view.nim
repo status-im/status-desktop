@@ -226,17 +226,17 @@ QtObject:
   proc setIsFirstShowcaseInteraction(self: View) {.slot.} =
     self.delegate.setIsFirstShowcaseInteraction()
 
-  proc updateProfileShowcasePreferencesCommunities*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
+  proc loadProfileShowcasePreferencesCommunities*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
     self.showcasePreferencesCommunitiesModel.setItems(items)
 
-  proc updateProfileShowcasePreferencesAccounts*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
+  proc loadProfileShowcasePreferencesAccounts*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
     self.showcasePreferencesAccountsModel.setItems(items)
 
-  proc updateProfileShowcasePreferencesCollectibles*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
+  proc loadProfileShowcasePreferencesCollectibles*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
     self.showcasePreferencesCollectiblesModel.setItems(items)
 
-  proc updateProfileShowcasePreferencesAssets*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
+  proc loadProfileShowcasePreferencesAssets*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
     self.showcasePreferencesAssetsModel.setItems(items)
 
-  proc updateProfileShowcasePreferencesSocialLinks*(self: View, items: seq[ShowcasePreferencesSocialLinkItem]) =
+  proc loadProfileShowcasePreferencesSocialLinks*(self: View, items: seq[ShowcasePreferencesSocialLinkItem]) =
     self.showcasePreferencesSocialLinksModel.setItems(items)

@@ -328,11 +328,15 @@ method shareUserUrlWithENS*(self: Module, pubkey: string): string =
 method requestProfileShowcase*(self: Module, publicKey: string) =
   if self.showcasePublicKey != publicKey:
     self.view.clearShowcaseModels()
-  self.showcasePublicKey = publicKey
+    self.showcasePublicKey = publicKey
 
   self.controller.requestProfileShowcaseForContact(publicKey)
 
-method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
+method onProfileShowcaseUpdated(self: Module, publicKey: string) =
+  if self.showcasePublicKey == publicKey:
+    self.controller.requestProfileShowcaseForContact(publicKey)
+
+method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
   if self.showcasePublicKey != profileShowcase.contactId:
     warn "Got profile showcase for wrong contact id"
     return

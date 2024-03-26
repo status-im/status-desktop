@@ -63,7 +63,7 @@ method requestProfileShowcasePreferences*(self: AccessInterface) {.base.} =
 method setIsFirstShowcaseInteraction*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateProfileShowcasePreferences*(self: AccessInterface, preferences: ProfileShowcasePreferencesDto) {.base.} =
+method loadProfileShowcasePreferences*(self: AccessInterface, preferences: ProfileShowcasePreferencesDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

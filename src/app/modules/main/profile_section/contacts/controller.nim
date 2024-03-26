@@ -96,8 +96,12 @@ proc init*(self: Controller) =
     self.delegate.onContactInfoRequestFinished(args.publicKey, args.ok)
 
   self.events.on(SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED) do(e: Args):
+    let args = ProfileShowcaseContactIdArgs(e)
+    self.delegate.onProfileShowcaseUpdated(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_PROFILE_SHOWCASE_LOADED) do(e: Args):
     let args = ProfileShowcaseForContactArgs(e)
-    self.delegate.updateProfileShowcase(args.profileShowcase)
+    self.delegate.loadProfileShowcase(args.profileShowcase)
 
   self.events.on(SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED) do(e: Args):
     let args = ProfileShowcaseForContactArgs(e)
