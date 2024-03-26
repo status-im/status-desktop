@@ -659,25 +659,6 @@ QtObject:
     except Exception as e:
       error "error while creating group chat", msg = e.msg
 
-  proc getMembers*(self: Service, communityID, chatId: string): seq[ChatMember] =
-    try:
-      var realChatId = chatId.replace(communityID, "")
-      let response = status_chat.getMembers(communityID, realChatId)
-      if response.result.kind == JNull:
-        # No members. Could be a public chat
-        return
-      let myPubkey = singletonInstance.userProfile.getPubKey()
-      result = @[]
-      for (id, memberObj) in response.result.pairs:
-        var member = toChatMember(memberObj, id)
-        # Make yourself as the first result
-        if (id == myPubkey):
-          result.insert(member)
-        else:
-          result.add(member)
-    except Exception as e:
-      error "error while getting members", msg = e.msg, communityID, chatId
-
   proc updateUnreadMessage*(self: Service, chatID: string, messagesCount:int, messagesWithMentionsCount:int) =
     var chat = self.getChatById(chatID)
     if chat.id == "":
