@@ -13,7 +13,7 @@ class AuthenticatePopup(BasePopup):
     def __init__(self):
         super().__init__()
         self._content = QObject(names.keycardSharedPopupContent_KeycardPopupContent)
-        self._passwort_text_edit = TextEdit(names.password_PlaceholderText)
+        self._password_text_edit = TextEdit(names.password_PlaceholderText)
         self._authenticate_button = Button(names.authenticate_StatusButton)
         self._close_button = Button(names.headerCloseButton_StatusFlatRoundButton)
 
@@ -24,7 +24,7 @@ class AuthenticatePopup(BasePopup):
 
     @allure.step('Authenticate actions with password {0}')
     def authenticate(self, password: str):
-        self._passwort_text_edit.type_text(password)
+        self._password_text_edit.type_text(password)
         self._authenticate_button.click()
         self._authenticate_button.wait_until_hidden()
 
