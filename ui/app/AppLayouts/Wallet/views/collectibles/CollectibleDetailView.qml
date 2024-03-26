@@ -12,6 +12,7 @@ import AppLayouts.Communities.panels 1.0
 import utils 1.0
 import shared.controls 1.0
 import shared.views 1.0
+import shared.views.chat 1.0
 
 import "../../stores"
 import "../../controls"
@@ -110,6 +111,16 @@ Item {
                 mediaUrl: collectible.mediaUrl ?? ""
                 mediaType: collectible.mediaType ?? ""
                 fallbackImageUrl: collectible.imageUrl
+                interactive: true
+                onImageClicked: (image) => Global.openImagePopup(image, "")
+                onOpenContextMenu: (image) => Global.openMenu(imageContextMenu, collectibleimage, { imageSource: image.source })
+
+                Component {
+                    id: imageContextMenu
+                    ImageContextMenu {
+                        onClosed: destroy()
+                    }
+                }
             }
 
             Column {

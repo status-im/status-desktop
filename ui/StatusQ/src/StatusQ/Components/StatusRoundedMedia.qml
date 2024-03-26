@@ -71,6 +71,13 @@ StatusRoundedComponent {
     */
     property url fallbackImageUrl
 
+    /*!
+        \qmlproperty bool StatusRoundedMedia::interactive
+
+        Enable mouse interaction with the media.
+    */
+    property bool interactive: false
+
     readonly property int componentMediaType: {
         if (root.mediaType.startsWith("image")) {
             return StatusRoundedMedia.MediaType.Image
@@ -79,6 +86,9 @@ StatusRoundedComponent {
         }
         return StatusRoundedMedia.MediaType.Unknown
     }
+
+    signal imageClicked(var image)
+    signal openContextMenu(var image)
 
     isLoading: {
         if (mediaLoader.status === Loader.Ready) {
@@ -117,6 +127,24 @@ StatusRoundedComponent {
         anchors.fill: parent
         asynchronous: true
         visible: !root.isError && !root.isLoading
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        propagateComposedEvents: true
+        enabled: root.interactive && mediaLoader.visible && mediaLoader.item
+        cursorShape: Qt.PointingHandCursor
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: {
+            if (mouse.button == Qt.RightButton) {
+                root.openContextMenu(mediaLoader.item)
+                return
+            }
+
+            if (componentMediaType === StatusRoundedMedia.MediaType.Image) {
+                root.imageClicked(mediaLoader.item)
+            }
+        }
     }
 
     Component.onCompleted: updateMediaLoader()
