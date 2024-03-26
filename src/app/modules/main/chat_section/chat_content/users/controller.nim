@@ -115,11 +115,18 @@ proc init*(self: Controller) =
 proc belongsToCommunity*(self: Controller): bool =
   self.belongsToCommunity
 
+proc getMyCommunity*(self: Controller): CommunityDto =
+  return self.communityService.getCommunityById(self.sectionId)
+
 proc getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
 proc getChatMembers*(self: Controller): seq[ChatMember] =
-  return self.chatService.getChatById(self.chatId).members
+  if self.belongsToCommunity:
+    let myCommunity = self.getMyCommunity()
+    return myCommunity.getSpecificCommunityChat(self.chatId).members
+  else:
+    return self.chatService.getChatById(self.chatId).members
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =

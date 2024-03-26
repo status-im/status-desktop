@@ -628,14 +628,19 @@ proc toMembersRevealedAccounts*(membersRevealedAccountsObj: JsonNode): MembersRe
   for (pubkey, revealedAccountsObj) in membersRevealedAccountsObj.pairs:
     result[pubkey] = revealedAccountsObj.toRevealedAccounts()
 
-proc getCommunityChats*(self: CommunityDto, chatsIds: seq[string]): seq[ChatDto] =
+proc getCommunityChats*(self: CommunityDto, chatIds: seq[string]): seq[ChatDto] =
   var chats: seq[ChatDto] = @[]
-  for chatId in chatsIds:
+  for chatId in chatIds:
     for communityChat in self.chats:
       if chatId == communityChat.id:
         chats.add(communityChat)
         break
   return chats
+
+proc getSpecificCommunityChat*(self: CommunityDto, chatId: string): ChatDto =
+  for communityChat in self.chats:
+    if chatId == communityChat.id:
+      return communityChat
 
 proc isOwner*(self: CommunityDto): bool =
   return self.memberRole == MemberRole.Owner
