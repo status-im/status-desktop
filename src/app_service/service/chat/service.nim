@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, stew/shims/strformat, chronicles, os, std/algorithm, strutils, uuids, base64
+import NimQml, Tables, json, sequtils, stew/shims/strformat, chronicles, os, strutils, uuids, base64
 import std/[times, os]
 
 import ../../../app/core/tasks/[qt, threadpool]
@@ -30,12 +30,6 @@ include ../../../app/core/tasks/common
 include async_tasks
 
 type
-  ChannelGroupsArgs* = ref object of Args
-    channelGroups*: seq[ChannelGroupDto]
-
-  ChannelGroupArgs* = ref object of Args
-    channelGroup*: ChannelGroupDto
-
   ChatUpdateArgs* = ref object of Args
     chats*: seq[ChatDto]
 
@@ -103,7 +97,7 @@ type
 
 # Signals which may be emitted by this service:
 const SIGNAL_ACTIVE_CHATS_LOADED* = "activeChatsLoaded"
-const SIGNAL_CHANNEL_GROUPS_LOADING_FAILED* = "channelGroupsLoadingFailed"
+const SIGNAL_CHATS_LOADING_FAILED* = "chatsLoadingFailed"
 const SIGNAL_CHAT_UPDATE* = "chatUpdate"
 const SIGNAL_CHAT_LEFT* = "channelLeft"
 const SIGNAL_SENDING_FAILED* = "messageSendingFailed"
@@ -131,7 +125,6 @@ QtObject:
     threadpool: ThreadPool
     events: EventEmitter
     chats: Table[string, ChatDto] # [chat_id, ChatDto]
-    channelGroups: OrderedTable[string, ChannelGroupDto] # [chatGroup_id, ChannelGroupDto]
     contactService: contact_service.Service
 
   proc delete*(self: Service) =
@@ -148,12 +141,9 @@ QtObject:
     result.threadpool = threadpool
     result.contactService = contactService
     result.chats = initTable[string, ChatDto]()
-    result.channelGroups = initOrderedTable[string, ChannelGroupDto]()
 
   # Forward declarations
   proc updateOrAddChat*(self: Service, chat: ChatDto)
-  proc hydrateChannelGroups*(self: Service, data: JsonNode)
-  proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto, isCommunityChannelGroup: bool = false)
   proc processMessengerResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])
 
   proc doConnect(self: Service) =
@@ -187,25 +177,9 @@ QtObject:
         for clearedHistoryDto in receivedData.clearedHistories:
           self.events.emit(SIGNAL_CHAT_HISTORY_CLEARED, ChatArgs(chatId: clearedHistoryDto.chatId))
 
-      # Handling community updates
-      if (receivedData.communities.len > 0):
-        for community in receivedData.communities:
-          if community.joined:
-            self.updateOrAddChannelGroup(community.toChannelGroupDto(), isCommunityChannelGroup = true)
-
     self.events.on(SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND) do(e: Args):
       var args = RpcResponseArgs(e)
       discard self.processMessengerResponse(args.response)
-
-  proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
-    return toSeq(self.channelGroups.values)
-
-  proc loadChannelGroupById*(self: Service, channelGroupId: string) =
-    try:
-      let response = status_chat.getChannelGroupById(channelGroupId)
-      self.hydrateChannelGroups(response.result)
-    except Exception as e:
-      error "error loadChannelGroupById: ", errorDescription = e.msg
 
   proc asyncGetActiveChat*(self: Service) =
     let arg = AsyncGetActiveChatsTaskArg(
@@ -214,23 +188,6 @@ QtObject:
       slot: "onAsyncGetActiveChatsResponse",
     )
     self.threadpool.start(arg)
-
-  proc sortPersonnalChatAsFirst[T, D](x, y: (T, D)): int =
-    if (x[1].channelGroupType == Personal): return -1
-    if (y[1].channelGroupType == Personal): return 1
-    return 0
-
-  proc hydrateChannelGroups(self: Service, data: JsonNode) =
-    var chats: seq[ChatDto] = @[]
-    for (sectionId, section) in data.pairs:
-      var channelGroup = section.toChannelGroupDto()
-      channelGroup.id = sectionId
-      self.channelGroups[sectionId] = channelGroup
-      for (chatId, chat) in section["chats"].pairs:
-        chats.add(chat.toChatDto())
-
-    # Make the personal channelGroup the first one
-    self.channelGroups.sort(sortPersonnalChatAsFirst[string, ChannelGroupDto], SortOrder.Ascending)
 
   proc hydrateChats(self: Service, data: JsonNode) =
     for chatJson in data:
@@ -253,7 +210,7 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "error get active chats: ", errDesription
-      self.events.emit(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED, Args())
+      self.events.emit(SIGNAL_CHATS_LOADING_FAILED, Args())
 
   proc init*(self: Service) =
     self.doConnect()
@@ -263,47 +220,19 @@ QtObject:
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)
 
-  proc getChatIndex*(self: Service, channelGroupId, chatId: string): int =
-    var i = 0
-
-    if not self.channelGroups.contains(channelGroupId):
-      warn "unknown channel group", channelGroupId
-      return -1
-
-    for chat in self.channelGroups[channelGroupId].chats:
-      if (chat.id == chatId):
-        return i
-      i.inc()
-    return -1
-
-  proc chatsWithCategoryHaveUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
-    if communityId == "" or categoryId == "":
-      return false
-
-    if not self.channelGroups.contains(communityId):
-      warn "unknown community", communityId
-      return false
-
-    for chat in self.channelGroups[communityId].chats:
-      if chat.categoryId != categoryId:
-        continue
-      if (not chat.muted and chat.unviewedMessagesCount > 0) or chat.unviewedMentionsCount > 0:
-        return true
-    return false
-
   proc sectionUnreadMessagesAndMentionsCount*(self: Service, communityId: string):
       tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
-    if communityId == "":
-      return
-
-    if not self.channelGroups.contains(communityId):
-      warn "unknown community", communityId
-      return
 
     result.unviewedMentionsCount = 0
     result.unviewedMessagesCount = 0
 
-    for chat in self.channelGroups[communityId].chats:
+    let myPubKey = singletonInstance.userProfile.getPubKey()
+    var commId = communityId
+    if communityId == myPubKey:
+      commId = ""
+    for _, chat in self.chats:
+      if chat.communityId != commId:
+        continue
       result.unviewedMentionsCount += chat.unviewedMentionsCount
       # We count the unread messages if we are unmuted and it's not a mention, we want to show a badge on mentions
       if chat.unviewedMentionsCount == 0 and chat.muted:
@@ -325,49 +254,6 @@ QtObject:
     self.chats[chat.id].categoryId = categoryId
     self.events.emit(SIGNAL_CHAT_ADDED_OR_UPDATED, ChatArgs(communityId: chat.communityId, chatId: chat.id))
 
-    var channelGroupId = chat.communityId
-    if (channelGroupId == ""):
-      channelGroupId = singletonInstance.userProfile.getPubKey()
-
-    if not self.channelGroups.contains(channelGroupId):
-      warn "unknown community for new channel update", channelGroupId
-      return
-
-    let index = self.getChatIndex(channelGroupId, chat.id)
-    if (index == -1):
-      self.channelGroups[channelGroupId].chats.add(self.chats[chat.id])
-    else:
-      self.channelGroups[channelGroupId].chats[index] = self.chats[chat.id]
-
-  proc updateMissingFieldsInCommunityChat(self: Service, channelGroupId: string, newChat: ChatDto): ChatDto =
-
-    if not self.channelGroups.contains(channelGroupId):
-      warn "unknown channel group", channelGroupId
-      return
-
-    var chat = newChat
-    for previousChat in self.channelGroups[channelGroupId].chats:
-      if previousChat.id != newChat.id:
-        continue
-      chat.unviewedMessagesCount = previousChat.unviewedMessagesCount
-      chat.unviewedMentionsCount = previousChat.unviewedMentionsCount
-      chat.muted = previousChat.muted
-      chat.highlight = previousChat.highlight
-      break
-    return chat
-
-  # Community channel groups have less info because they come from community signals
-  proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto, isCommunityChannelGroup: bool = false) =
-    var newChannelGroup = channelGroup
-    if isCommunityChannelGroup and self.channelGroups.contains(channelGroup.id):
-      # We need to update missing fields in the chats seq before saving
-      let newChats = channelGroup.chats.mapIt(self.updateMissingFieldsInCommunityChat(channelGroup.id, it))
-      newChannelGroup.chats = newChats
-
-    self.channelGroups[channelGroup.id] = newChannelGroup
-    for chat in newChannelGroup.chats:
-      self.updateOrAddChat(chat)
-
   proc updateChannelMembers*(self: Service, channel: ChatDto) =
     if not self.chats.hasKey(channel.id):
       return
@@ -376,12 +262,6 @@ QtObject:
     chat.members = channel.members
     self.updateOrAddChat(chat)
     self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chat.id, members: chat.members))
-
-  proc getChannelGroupById*(self: Service, channelGroupId: string): ChannelGroupDto =
-    if not self.channelGroups.contains(channelGroupId):
-      warn "Unknown channel group", channelGroupId
-      return
-    return self.channelGroups[channelGroupId]
 
   proc parseChatResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     var chats: seq[ChatDto] = @[]
@@ -530,11 +410,6 @@ QtObject:
 
       discard status_chat.deactivateChat(chatId, preserveHistory = chat.chatType == chat_dto.ChatType.OneToOne)
 
-      var channelGroupId = chat.communityId
-      if (channelGroupId == ""):
-        channelGroupId = singletonInstance.userProfile.getPubKey()
-
-      self.channelGroups[channelGroupId].chats.delete(self.getChatIndex(channelGroupId, chatId))
       self.chats.del(chatId)
       self.events.emit(SIGNAL_CHAT_LEFT, ChatArgs(chatId: chatId))
     except Exception as e:
@@ -845,7 +720,8 @@ QtObject:
       let communityId = rpcResponseObj{"communityId"}.getStr()
       let chatId = rpcResponseObj{"chatId"}.getStr()
       let checkChannelPermissionsResponse = rpcResponseObj["response"]["result"].toCheckChannelPermissionsResponseDto()
-      self.channelGroups[communityId].channelPermissions.channels[chatId] = checkChannelPermissionsResponse
+
+      # TODO need to save permissions somewhere?
       self.events.emit(SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE, CheckChannelPermissionsResponseArgs(communityId: communityId, chatId: chatId, checkChannelPermissionsResponse: checkChannelPermissionsResponse))
     except Exception as e:
       let errMsg = e.msg
@@ -873,7 +749,7 @@ QtObject:
         raise newException(RpcException, error.message)
 
       let checkAllChannelsPermissionsResponse = rpcResponseObj["response"]["result"].toCheckAllChannelsPermissionsResponseDto()
-      self.channelGroups[communityId].channelPermissions = checkAllChannelsPermissionsResponse
+      # TODO save it
       self.events.emit(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE, CheckAllChannelsPermissionsResponseArgs(communityId: communityId, checkAllChannelsPermissionsResponse: checkAllChannelsPermissionsResponse))
     except Exception as e:
       let errMsg = e.msg

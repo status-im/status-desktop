@@ -39,10 +39,6 @@ proc getActiveChats*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("activeChats".prefix, payload)
 
-proc getChannelGroupById*(channelGroupId: string): RpcResponse[JsonNode] =
-  let payload = %* [channelGroupId]
-  result = callPrivateRPC("chat_getChannelGroupByID", payload)
-
 proc createOneToOneChat*(chatId: string, ensName: string = ""): RpcResponse[JsonNode] =
   let communityId = ""
   let payload = %* [communityId, chatId, ensName]
