@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -49,6 +50,7 @@ Control {
         readonly property string channelRevealAddressText: qsTr("Reveal your address to enter")
         readonly property string channelMembershipRequestPendingText: qsTr("Channel Membership Request Pending...")
         readonly property string memberchipRequestRejectedText: qsTr("Membership Request Rejected")
+        readonly property bool onlyPrivateNotMetPermissions: (d.visiblePermissionsModel.count === 0) && root.communityHoldingsModel.count > 0
 
         function getInvitationPendingText() {
             return root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText
@@ -58,15 +60,14 @@ Control {
             return root.joinCommunity ? (root.requiresRequest ? d.communityRevealAddressWithRequestText : d.communityRevealAddressText) : d.channelRevealAddressText
         }
 
-        function filterPermissions(model) {
-            return !!model && (model.tokenCriteriaMet || !model.isPrivate)
-        }
-
-        readonly property var communityPermissionsModel: SortFilterProxyModel {
+        readonly property var visiblePermissionsModel: SortFilterProxyModel {
             sourceModel: root.communityHoldingsModel
+
             filters: [
-                ExpressionFilter {
-                    expression: d.filterPermissions(model)
+                // The only permissions to be discarded are if they are private and NOT met
+                FastExpressionFilter {
+                    expression: { return !!model && !(!model.tokenCriteriaMet && model.isPrivate) }
+                    expectedRoles: ["tokenCriteriaMet", "isPrivate"]
                 }
             ]
         }
@@ -119,10 +120,10 @@ Control {
             id: communityRequirements
 
             visible: root.joinCommunity
-            introText: d.communityPermissionsModel.count > 0 ? 
+            introText: !d.onlyPrivateNotMetPermissions ?
                 qsTr("To join <b>%1</b> you need to prove that you hold").arg(root.communityName) : 
                 qsTr("Sorry, you can't join <b>%1</b> because it's a private, closed community").arg(root.communityName)
-            model: d.communityPermissionsModel
+            model: d.visiblePermissionsModel
         }
 
         CustomHoldingsListPanel {
@@ -149,17 +150,21 @@ Control {
 
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
-            visible: !root.showOnlyPanels && !root.isJoinRequestRejected && root.requiresRequest
+            visible: !root.showOnlyPanels && !root.isJoinRequestRejected && root.requiresRequest && !d.onlyPrivateNotMetPermissions
             text: root.isInvitationPending ? d.getInvitationPendingText() : d.getRevealAddressText()
             icon.name: root.isInvitationPending ? "" : Constants.authenticationIconByType[root.loginType]
             font.pixelSize: 13
-            enabled: root.requirementsMet || (joinCommunity && d.communityPermissionsModel.count === 0)
+            enabled: root.requirementsMet || (root.joinCommunity && d.visiblePermissionsModel.count === 0)
+
             onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.revealAddressClicked()
         }
 
         StatusBaseText {
             Layout.alignment: Qt.AlignHCenter
-            visible: !root.showOnlyPanels && !root.requirementsCheckPending && (root.isJoinRequestRejected || !root.requirementsMet)
+            visible: !root.showOnlyPanels
+                     && !root.requirementsCheckPending
+                     && (root.isJoinRequestRejected || !root.requirementsMet)
+                     && !d.onlyPrivateNotMetPermissions
             text: root.isJoinRequestRejected ? d.memberchipRequestRejectedText :
                                           (root.joinCommunity ? d.communityRequirementsNotMetText : d.channelRequirementsNotMetText)
             color: Theme.palette.dangerColor1
