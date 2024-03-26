@@ -23,7 +23,7 @@ Column {
 
     signal goToNetworksView()
     signal goToAccountOrderView()
-    signal goToAccountView(var account, var keypair)
+    signal goToAccountView(var account)
     signal goToDappPermissionsView()
     signal goToManageTokensView()
     signal goToSavedAddressesView()
@@ -267,7 +267,7 @@ Column {
                 hasPairedDevices: root.walletStore.walletModule.hasPairedDevices
                 getNetworkShortNames: walletStore.getNetworkShortNames
                 userProfilePublicKey: walletStore.userProfilePublicKey
-                onGoToAccountView: root.goToAccountView(account, keyPair)
+                onGoToAccountView: root.goToAccountView(account)
                 onRunRenameKeypairFlow: root.runRenameKeypairFlow(model)
                 onRunRemoveKeypairFlow: root.runRemoveKeypairFlow(model)
                 onRunImportViaSeedPhraseFlow: {

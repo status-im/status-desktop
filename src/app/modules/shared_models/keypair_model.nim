@@ -1,5 +1,6 @@
 import NimQml, Tables, stew/shims/strformat, sequtils, sugar
 import keypair_item
+import keypair_account_item
 import ./currency_amount
 
 export keypair_item
@@ -75,6 +76,13 @@ QtObject:
       if(self.items[i].getKeyUid() == keyUid):
         return self.items[i]
     return nil
+
+  proc findKeyPairAndAccountByAddresss*(self: KeyPairModel, address: string): (KeyPairItem, KeyPairAccountItem) =
+    for i in 0 ..< self.items.len:
+      let account = self.items[i].getAccountByAddress(address)
+      if not account.isNil:
+        return (self.items[i], account)
+    return (nil, nil)
 
   proc onUpdatedAccount*(self: KeyPairModel, keyUid, address, name, colorId, emoji: string) =
     for item in self.items:

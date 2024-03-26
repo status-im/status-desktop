@@ -71,6 +71,10 @@ QtObject {
         root.accountsModule.moveAccountFinally(from, to)
     }
 
+    function setSelectedAccount(address) {
+        root.accountsModule.setSelectedAccount(address)
+    }
+
     function getAllNetworksChainIds() {
         return networksModule.getAllNetworksChainIds()
     }

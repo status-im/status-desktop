@@ -98,6 +98,12 @@ QtObject:
       return newKeyPairAccountItem()
     return self.items[index]
 
+  proc getItemByAddress*(self: KeyPairAccountModel, address: string): KeyPairAccountItem =
+    for it in self.items:
+      if cmpIgnoreCase(it.getAddress(), address) == 0:
+        return it
+    return nil
+
   proc removeItemAtIndex*(self: KeyPairAccountModel, index: int) =
     if (index < 0 or index >= self.items.len):
       return

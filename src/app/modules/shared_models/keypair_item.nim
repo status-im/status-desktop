@@ -96,6 +96,9 @@ QtObject:
       accounts: {$self.accounts},
       ]"""
 
+  proc getAccountByAddress*(self: KeyPairItem, address: string): KeyPairAccountItem =
+    return self.accounts.getItemByAddress(address)
+
   proc keyUidChanged*(self: KeyPairItem) {.signal.}
   proc getKeyUid*(self: KeyPairItem): string {.slot.} =
     return self.keyUid
