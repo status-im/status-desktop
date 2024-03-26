@@ -204,8 +204,10 @@ SettingsContentBase {
                 if (!!account && !!account.address) {
                     root.rootStore.addressWasShown(account.address)
                 }
-                root.walletStore.selectedAccount = account
-                accountView.keyPair = keypair
+
+                root.walletStore.setSelectedAccount(account.address)
+                root.walletStore.selectedAccount = Qt.binding(function() { return root.walletStore.accountsModule.selectedAccount })
+                accountView.keyPair = Qt.binding(function() { return root.walletStore.accountsModule.selectedKeyPair })
                 stackContainer.currentIndex = accountViewIndex
             }
 
@@ -286,7 +288,12 @@ SettingsContentBase {
             emojiPopup: root.emojiPopup
             userProfilePublicKey: walletStore.userProfilePublicKey
             onGoBack: stackContainer.currentIndex = mainViewIndex
-            onVisibleChanged: if(!visible) root.walletStore.selectedAccount = null
+            onVisibleChanged: {
+                if (!visible) {
+                    root.walletStore.selectedAccount = null
+                    keyPair = null
+                }
+            }
             onRunRenameKeypairFlow: {
                 renameKeypairPopup.keyUid = keyPair.keyUid
                 renameKeypairPopup.name = keyPair.name
