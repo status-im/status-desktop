@@ -70,7 +70,11 @@ QtObject:
     # Otherwise, if any address+chainID is updating, then the whole model is updating
     # Otherwise, the model is idle
     for address, statusPerChainID in self.ownershipStatus.pairs:
+      if not self.addresses.contains(address):
+        continue
       for chainID, status in statusPerChainID:
+        if not self.chainIds.contains(chainID):
+          continue
         if status.state == OwnershipStateError:
           overallState = OwnershipStateError
           break
