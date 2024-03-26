@@ -64,6 +64,7 @@ type
 
   ProfileShowcaseForContactArgs* = ref object of Args
     profileShowcase*: ProfileShowcaseDto
+    validated*: bool
 
   ProfileShowcaseContactIdArgs* = ref object of Args
     contactId*: string
@@ -899,9 +900,10 @@ QtObject:
     except Exception as e:
       error "Error getting user url with ens name", msg = e.msg, pubkey
 
-  proc requestProfileShowcaseForContact*(self: Service, contactId: string) =
+  proc requestProfileShowcaseForContact*(self: Service, contactId: string, validate: bool) =
     let arg = AsyncGetProfileShowcaseForContactTaskArg(
       pubkey: contactId,
+      validate: validate,
       tptr: cast[ByteAddress](asyncGetProfileShowcaseForContactTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "asyncProfileShowcaseForContactLoaded",
@@ -916,9 +918,13 @@ QtObject:
         return
 
       let profileShowcase = rpcResponseObj["response"]["result"].toProfileShowcaseDto()
+      let validated = rpcResponseObj["validated"].getBool
 
       self.events.emit(SIGNAL_CONTACT_PROFILE_SHOWCASE_LOADED,
-        ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
+        ProfileShowcaseForContactArgs(
+          profileShowcase: profileShowcase,
+          validated: validated
+      ))
     except Exception as e:
       error "Error requesting profile showcase for a contact", msg = e.msg
 

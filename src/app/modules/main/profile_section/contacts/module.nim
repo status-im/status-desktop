@@ -35,6 +35,7 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
     showcasePublicKey: string
+    showcaseForAContactLoading: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
@@ -54,6 +55,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     events = events
   )
   result.moduleLoaded = false
+  result.showcaseForAContactLoading = false
 
 method delete*(self: Module) =
   self.view.delete
@@ -329,27 +331,28 @@ method requestProfileShowcase*(self: Module, publicKey: string) =
   if self.showcasePublicKey != publicKey:
     self.view.clearShowcaseModels()
     self.showcasePublicKey = publicKey
+    self.showcaseForAContactLoading = true
+    self.view.emitShowcaseForAContactLoadingChangedSignal()
 
-  self.controller.requestProfileShowcaseForContact(publicKey)
+  self.controller.requestProfileShowcaseForContact(publicKey, false)
 
 method onProfileShowcaseUpdated(self: Module, publicKey: string) =
   if self.showcasePublicKey == publicKey:
-    self.controller.requestProfileShowcaseForContact(publicKey)
+    self.controller.requestProfileShowcaseForContact(publicKey, true)
 
-method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
+method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto, validated: bool) =
   if self.showcasePublicKey != profileShowcase.contactId:
     warn "Got profile showcase for wrong contact id"
     return
 
   var communityItems: seq[ShowcaseContactGenericItem] = @[]
   for community in profileShowcase.communities:
-    # TODO: https://github.com/status-im/status-desktop/issues/14084
-    # if community.membershipStatus == ProfileShowcaseMembershipStatus.ProvenMember:
-    communityItems.add(ShowcaseContactGenericItem(
-      showcaseKey: community.communityId,
-      showcasePosition: community.order
-    ))
-  self.view.updateProfileShowcaseContactCommunities(communityItems)
+    if not validated or community.membershipStatus == ProfileShowcaseMembershipStatus.ProvenMember:
+      communityItems.add(ShowcaseContactGenericItem(
+        showcaseKey: community.communityId,
+        showcasePosition: community.order
+      ))
+  self.view.loadProfileShowcaseContactCommunities(communityItems)
 
   var accountItems: seq[ShowcaseContactAccountItem] = @[]
   var accountAddresses: seq[string] = @[]
@@ -362,7 +365,7 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
       showcasePosition: account.order
     ))
     accountAddresses.add(account.address)
-  self.view.updateProfileShowcaseContactAccounts(accountItems)
+  self.view.loadProfileShowcaseContactAccounts(accountItems)
 
   var collectibleItems: seq[ShowcaseContactGenericItem] = @[]
   for collectible in profileShowcase.collectibles:
@@ -370,7 +373,7 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
       showcaseKey: collectible.toCombinedCollectibleId(),
       showcasePosition: collectible.order
     ))
-  self.view.updateProfileShowcaseContactCollectibles(collectibleItems)
+  self.view.loadProfileShowcaseContactCollectibles(collectibleItems)
 
   var assetItems: seq[ShowcaseContactGenericItem] = @[]
   for token in profileShowcase.verifiedTokens:
@@ -383,7 +386,7 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
       showcaseKey: token.toCombinedTokenId(),
       showcasePosition: token.order
     ))
-  self.view.updateProfileShowcaseContactAssets(assetItems)
+  self.view.loadProfileShowcaseContactAssets(assetItems)
 
   var socialLinkItems: seq[ShowcaseContactSocialLinkItem] = @[]
   for socialLink in profileShowcase.socialLinks:
@@ -392,10 +395,16 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
       text: socialLink.text,
       showcasePosition: socialLink.order
     ))
-  self.view.updateProfileShowcaseContactSocialLinks(socialLinkItems)
+  self.view.loadProfileShowcaseContactSocialLinks(socialLinkItems)
 
   let chainIds = self.controller.getChainIds()
   self.collectiblesController.setFilterAddressesAndChains(accountAddresses, chainIds)
+
+  if validated:
+    self.showcaseForAContactLoading = false
+    self.view.emitShowcaseForAContactLoadingChangedSignal()
+  else:
+    self.controller.requestProfileShowcaseForContact(self.showcasePublicKey, true)
 
 method fetchProfileShowcaseAccountsByAddress*(self: Module, address: string) =
   self.controller.fetchProfileShowcaseAccountsByAddress(address)
@@ -406,3 +415,6 @@ method onProfileShowcaseAccountsByAddressFetched*(self: Module, accounts: seq[Pr
 
 method getShowcaseCollectiblesModel*(self: Module): QVariant =
   return self.collectiblesController.getModelAsVariant()
+
+method isShowcaseForAContactLoading*(self: Module): bool =
+  return self.showcaseForAContactLoading

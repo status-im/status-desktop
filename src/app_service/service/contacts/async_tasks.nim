@@ -79,19 +79,22 @@ const asyncRequestContactInfoTask: Task = proc(argEncoded: string) {.gcsafe, nim
 type
   AsyncGetProfileShowcaseForContactTaskArg = ref object of QObjectTaskArg
     pubkey: string
+    validate: bool
 
 const asyncGetProfileShowcaseForContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetProfileShowcaseForContactTaskArg](argEncoded)
   try:
-    let response = status_go.getProfileShowcaseForContact(arg.pubkey)
+    let response = status_go.getProfileShowcaseForContact(arg.pubkey, arg.validate)
     arg.finish(%* {
       "publicKey": arg.pubkey,
+      "validated": arg.validate,
       "response": response,
       "error": nil,
     })
   except Exception as e:
     arg.finish(%* {
       "publicKey": arg.pubkey,
+      "validated": arg.validate,
       "error": e.msg,
     })
 

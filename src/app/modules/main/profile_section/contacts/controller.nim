@@ -101,7 +101,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CONTACT_PROFILE_SHOWCASE_LOADED) do(e: Args):
     let args = ProfileShowcaseForContactArgs(e)
-    self.delegate.loadProfileShowcase(args.profileShowcase)
+    self.delegate.loadProfileShowcase(args.profileShowcase, args.validated)
 
   self.events.on(SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED) do(e: Args):
     let args = ProfileShowcaseForContactArgs(e)
@@ -198,8 +198,8 @@ proc shareUserUrlWithChatKey*(self: Controller, pubkey: string): string =
 proc shareUserUrlWithENS*(self: Controller, pubkey: string): string =
   self.contactsService.shareUserUrlWithENS(pubkey)
 
-proc requestProfileShowcaseForContact*(self: Controller, contactId: string) =
-  self.contactsService.requestProfileShowcaseForContact(contactId)
+proc requestProfileShowcaseForContact*(self: Controller, contactId: string, validated: bool) =
+  self.contactsService.requestProfileShowcaseForContact(contactId, validated)
 
 proc fetchProfileShowcaseAccountsByAddress*(self: Controller, address: string) =
   self.contactsService.fetchProfileShowcaseAccountsByAddress(address)

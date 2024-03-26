@@ -148,7 +148,7 @@ method requestProfileShowcase*(self: AccessInterface, publicKey: string) {.base.
 method onProfileShowcaseUpdated*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method loadProfileShowcase*(self: AccessInterface, profileShowcase: ProfileShowcaseDto) {.base.} =
+method loadProfileShowcase*(self: AccessInterface, profileShowcase: ProfileShowcaseDto, validated: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method fetchProfileShowcaseAccountsByAddress*(self: AccessInterface, address: string) {.base.} =
@@ -158,4 +158,7 @@ method onProfileShowcaseAccountsByAddressFetched*(self: AccessInterface, account
   raise newException(ValueError, "No implementation available")
 
 method getShowcaseCollectiblesModel*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isShowcaseForAContactLoading*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")

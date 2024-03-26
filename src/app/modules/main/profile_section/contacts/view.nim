@@ -275,6 +275,15 @@ QtObject:
     read = getShowcaseCollectiblesModel
     notify = showcaseCollectiblesModelChanged
 
+  proc showcaseForAContactLoadingChanged*(self: View) {.signal.}
+  proc emitShowcaseForAContactLoadingChangedSignal*(self: View) =
+    self.showcaseForAContactLoadingChanged()
+  proc isShowcaseForAContactLoading*(self: View): bool {.signal.} =
+    return self.delegate.isShowcaseForAContactLoading()
+  QtProperty[QVariant] showcaseForAContactLoading:
+    read = isShowcaseForAContactLoading
+    notify = showcaseForAContactLoadingChanged
+
   proc fetchProfileShowcaseAccountsByAddress*(self: View, address: string) {.slot.} =
     self.delegate.fetchProfileShowcaseAccountsByAddress(address)
 
@@ -292,17 +301,17 @@ QtObject:
     self.showcaseContactAssetsModel.clear()
     self.showcaseContactSocialLinksModel.clear()
 
-  proc updateProfileShowcaseContactCommunities*(self: View, items: seq[ShowcaseContactGenericItem]) =
+  proc loadProfileShowcaseContactCommunities*(self: View, items: seq[ShowcaseContactGenericItem]) =
     self.showcaseContactCommunitiesModel.setItems(items)
 
-  proc updateProfileShowcaseContactAccounts*(self: View, items: seq[ShowcaseContactAccountItem]) =
+  proc loadProfileShowcaseContactAccounts*(self: View, items: seq[ShowcaseContactAccountItem]) =
     self.showcaseContactAccountsModel.setItems(items)
 
-  proc updateProfileShowcaseContactCollectibles*(self: View, items: seq[ShowcaseContactGenericItem]) =
+  proc loadProfileShowcaseContactCollectibles*(self: View, items: seq[ShowcaseContactGenericItem]) =
     self.showcaseContactCollectiblesModel.setItems(items)
 
-  proc updateProfileShowcaseContactAssets*(self: View, items: seq[ShowcaseContactGenericItem]) =
+  proc loadProfileShowcaseContactAssets*(self: View, items: seq[ShowcaseContactGenericItem]) =
     self.showcaseContactAssetsModel.setItems(items)
 
-  proc updateProfileShowcaseContactSocialLinks*(self: View, items: seq[ShowcaseContactSocialLinkItem]) =
+  proc loadProfileShowcaseContactSocialLinks*(self: View, items: seq[ShowcaseContactSocialLinkItem]) =
     self.showcaseContactSocialLinksModel.setItems(items)
