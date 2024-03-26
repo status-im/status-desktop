@@ -138,6 +138,7 @@ proc convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFeesDt
     maxFeePerGasL = gasFees.maxFeePerGasL,
     maxFeePerGasM = gasFees.maxFeePerGasM,
     maxFeePerGasH = gasFees.maxFeePerGasH,
+    l1GasFee = gasFees.l1GasFee,
     eip1559Enabled = gasFees.eip1559Enabled
     )
 
