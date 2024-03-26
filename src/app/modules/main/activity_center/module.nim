@@ -271,8 +271,7 @@ method switchTo*(self: Module, sectionId, chatId, messageId: string) =
 method getDetails*(self: Module, sectionId: string, chatId: string): string =
   var jsonObject = newJObject()
   if sectionId == singletonInstance.userProfile.getPubKey():
-    echo "personal"
-    jsonObject["sType"] = %* ChannelGroupType.Personal
+    jsonObject["sType"] = %* ChatSectionType.Personal
     jsonObject["sName"] = %* conf.CHAT_SECTION_NAME
     jsonObject["sImage"] = %* ""
     jsonObject["sColor"] = %* ""
@@ -280,7 +279,7 @@ method getDetails*(self: Module, sectionId: string, chatId: string): string =
     # Community
     let community = self.controller.getCommunityById(sectionId)
 
-    jsonObject["sType"] = %* ChannelGroupType.Community
+    jsonObject["sType"] = %* ChatSectionType.Community
     jsonObject["sName"] = %* community.name
     jsonObject["sImage"] = %* community.images.thumbnail
     jsonObject["sColor"] = %* community.color

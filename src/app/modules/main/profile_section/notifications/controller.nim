@@ -17,23 +17,41 @@ type
     settingsService: settings_service.Service
     chatService: chat_service.Service
     contactService: contact_service.Service
+    communityService: community_service.Service
+    chatsLoaded: bool
+    communitiesLoaded: bool
 
 proc newController*(delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  chatService: chat_service.Service,
-  contactService: contact_service.Service): Controller =
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    chatService: chat_service.Service,
+    contactService: contact_service.Service,
+    communityService: community_service.Service,
+  ): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.settingsService = settingsService
   result.chatService = chatService
   result.contactService = contactService
+  result.communityService = communityService
+  result.chatsLoaded = false
+  result.communitiesLoaded = false
 
 proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  self.events.on(SIGNAL_ACTIVE_CHATS_LOADED) do(e:Args):
+    self.chatsLoaded = true
+    if self.communitiesLoaded:
+      self.delegate.initModel()
+
+  self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
+    self.communitiesLoaded = true
+    if self.chatsLoaded:
+      self.delegate.initModel()
+
   self.events.on(SIGNAL_COMMUNITY_JOINED) do(e:Args):
     let args = CommunityArgs(e)
     if(args.error.len > 0):
@@ -95,11 +113,14 @@ proc setNotifSettingExemptions*(self: Controller, id: string, exemptions: Notifi
 proc removeNotifSettingExemptions*(self: Controller, id: string): bool =
   return self.settingsService.removeNotifSettingExemptions(id)
 
-proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
-  return self.chatService.getChannelGroups()
+proc getChatsForPersonalSection*(self: Controller): seq[ChatDto] =
+  return self.chatService.getChatsForPersonalSection()
 
 proc getChatDetails*(self: Controller, chatId: string): ChatDto =
   return self.chatService.getChatById(chatId)
-  
+
 proc getContactDetails*(self: Controller, id: string): ContactDetails =
   return self.contactService.getContactDetails(id)
+
+proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
+  return self.communityService.getJoinedCommunities()

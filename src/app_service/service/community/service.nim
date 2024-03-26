@@ -1056,7 +1056,6 @@ QtObject:
 
       updatedCommunity.settings = communitySettings
       self.communities[communityId] = updatedCommunity
-      self.chatService.loadChannelGroupById(communityId)
 
       let ownerTokenNotification = self.activityCenterService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, communityId)
 
@@ -1225,8 +1224,6 @@ QtObject:
         community.settings = communitySettings
         # add this to the communities list and communitiesSettings
         self.communities[community.id] = community
-        # add new community channel group and chats to chat service
-        self.chatService.updateOrAddChannelGroup(community.toChannelGroupDto())
         for chat in community.chats:
           self.chatService.updateOrAddChat(chat)
 
@@ -2495,3 +2492,18 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
     except Exception as e:
       error "error promoting self to control node", msg = e.msg
+
+  proc chatsWithCategoryHaveUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
+    if communityId == "" or categoryId == "":
+      return false
+
+    if not self.communities.contains(communityId):
+      warn "unknown community", communityId
+      return false
+
+    for chat in self.communities[communityId].chats:
+      if chat.categoryId != categoryId:
+        continue
+      if (not chat.muted and chat.unviewedMessagesCount > 0) or chat.unviewedMentionsCount > 0:
+        return true
+    return false

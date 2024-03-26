@@ -14,6 +14,9 @@ method load*(self: AccessInterface) {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method initModel*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

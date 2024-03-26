@@ -110,7 +110,7 @@ proc delete*(self: Controller) =
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_ACTIVE_CHATS_LOADED) do(e:Args):
-    self.delegate.onChannelGroupsLoaded(
+    self.delegate.onChatsLoaded(
       self.events,
       self.settingsService,
       self.nodeConfigurationService,
@@ -143,7 +143,7 @@ proc init*(self: Controller) =
       self.networksService,
     )
 
-  self.events.on(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED) do(e:Args):
+  self.events.on(SIGNAL_CHATS_LOADING_FAILED) do(e:Args):
     self.delegate.onChatsLoadingFailed()
 
   self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e:Args):

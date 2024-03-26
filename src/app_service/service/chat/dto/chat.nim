@@ -16,7 +16,7 @@ type ChatType* {.pure.}= enum
   Timeline {.deprecated.} = 5,
   CommunityChat = 6
 
-type ChannelGroupType* {.pure.}= enum
+type ChatSectionType* {.pure.}= enum
   Unknown = "unknown",
   Personal = "personal",
   Community = "community"
@@ -95,7 +95,7 @@ type ChatDto* = object
 
 type ChannelGroupDto* = object
   id*: string
-  channelGroupType*: ChannelGroupType
+  channelGroupType*: ChatSectionType
   memberRole*: MemberRole
   verified*: bool
   name*: string
@@ -337,10 +337,10 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
 
-  result.channelGroupType = ChannelGroupType.Unknown
+  result.channelGroupType = ChatSectionType.Unknown
   var channelGroupTypeString: string
   if (jsonObj.getProp("channelGroupType", channelGroupTypeString)):
-      result.channelGroupType = parseEnum[ChannelGroupType](channelGroupTypeString)
+      result.channelGroupType = parseEnum[ChatSectionType](channelGroupTypeString)
 
   var chatsObj: JsonNode
   if(jsonObj.getProp("chats", chatsObj)):

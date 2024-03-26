@@ -548,39 +548,6 @@ proc getBannedMembersIds*(self: CommunityDto): seq[string] =
       bannedIds.add(memberId)
   return bannedIds
 
-proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
-  ChannelGroupDto(
-    id: communityDto.id,
-    channelGroupType: ChannelGroupType.Community,
-    name: communityDto.name,
-    images: communityDto.images,
-    chats: communityDto.chats,
-    categories: communityDto.categories,
-    # Community doesn't have an ensName yet. Add this when it is added in status-go
-    # ensName: communityDto.ensName,
-    memberRole: communityDto.memberRole,
-    verified: communityDto.verified,
-    description: communityDto.description,
-    introMessage: communityDto.introMessage,
-    outroMessage: communityDto.outroMessage,
-    color: communityDto.color,
-    # tags: communityDto.tags, NOTE: do we need tags here?
-    permissions: communityDto.permissions,
-    members: communityDto.members.map(m => ChatMember(
-        id: m.id,
-        joined: true,
-        role: m.role
-      )),
-    canManageUsers: communityDto.canManageUsers,
-    muted: communityDto.muted,
-    historyArchiveSupportEnabled: communityDto.settings.historyArchiveSupportEnabled,
-    bannedMembersIds: communityDto.getBannedMembersIds(),
-    encrypted: communityDto.encrypted,
-    shard: communityDto.shard,
-    pubsubTopic: communityDto.pubsubTopic,
-    pubsubTopicKey: communityDto.pubsubTopicKey,
-  )
-
 proc parseCommunitiesSettings*(response: JsonNode): seq[CommunitySettingsDto] =
   result = map(response["result"].getElems(),
     proc(x: JsonNode): CommunitySettingsDto = x.toCommunitySettingsDto())

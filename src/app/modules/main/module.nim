@@ -619,7 +619,7 @@ method load*[T](
   else:
     self.setActiveSection(activeSection)
 
-method onChannelGroupsLoaded*[T](
+method onChatsLoaded*[T](
   self: Module[T],
   events: EventEmitter,
   settingsService: settings_service.Service,
@@ -667,6 +667,7 @@ method onChannelGroupsLoaded*[T](
     networkService
   )
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(myPubKey)
+  echo "unviewedMessagesCount ", unviewedMessagesCount
   let personalChatSectionItem = initItem(
     myPubKey,
     sectionType = SectionType.Chat,
@@ -747,7 +748,7 @@ method onCommunityDataLoaded*[T](
   if not self.chatsLoaded:
     return
 
-  self.onChannelGroupsLoaded(
+  self.onChatsLoaded(
     events,
     settingsService,
     nodeConfigurationService,
@@ -1089,14 +1090,14 @@ method communityEdited*[T](
     community: CommunityDto) =
   if(not self.chatSectionModules.contains(community.id)):
     return
-  var channelGroupItem = self.createCommunitySectionItem(community)
+  var communitySectionItem = self.createCommunitySectionItem(community)
   # We need to calculate the unread counts because the community update doesn't come with it
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
-    channelGroupItem.id
+    communitySectionItem.id
   )
-  channelGroupItem.setHasNotification(unviewedMessagesCount > 0)
-  channelGroupItem.setNotificationsCount(unviewedMentionsCount)
-  self.view.editItem(channelGroupItem)
+  communitySectionItem.setHasNotification(unviewedMessagesCount > 0)
+  communitySectionItem.setNotificationsCount(unviewedMentionsCount)
+  self.view.editItem(communitySectionItem)
 
 method onCommunityMuted*[T](
     self: Module[T],
