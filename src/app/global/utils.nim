@@ -1,4 +1,4 @@
-import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, re
+import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, re, httpclient
 import stew/byteutils
 import ./utils/qrcodegen
 import ./utils/time_utils
@@ -8,6 +8,8 @@ import ../../app_service/common/conversion
 import ../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 
 include ../../app_service/service/accounts/utils
+
+const URL_STATUS_OK* = "200 OK"
 
 QtObject:
   type Utils* = ref object of QObject
@@ -182,3 +184,11 @@ QtObject:
 
   proc addTimestampToURL*(self: Utils, url: string): string {.slot.} =
     return time_utils.addTimestampToURL(url)
+
+  proc isValidURL*(self: Utils, url: string): bool {.slot.} =
+    var client = newHttpClient()
+    defer: client.close()
+    try:
+      return client.head(url).status == URL_STATUS_OK
+    except:
+      return false

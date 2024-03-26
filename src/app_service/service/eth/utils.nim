@@ -1,5 +1,5 @@
 import
-  json, tables, sequtils, httpclient, net
+  json, tables, sequtils, net
 import json, strutils, stew/shims/strformat, tables, chronicles, unicode, times
 import
   json_serialization, chronicles, libp2p/[multihash, multicodec, cid], stint, nimcrypto

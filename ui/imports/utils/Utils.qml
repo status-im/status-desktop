@@ -991,4 +991,8 @@ QtObject {
 
         return communitiesModuleInst.isDisplayNameDupeOfCommunityMember(displayName)
     }
+
+    function getUrlStatus(url) {
+        return globalUtilsInst.isValidURL(url)
+    }
 }

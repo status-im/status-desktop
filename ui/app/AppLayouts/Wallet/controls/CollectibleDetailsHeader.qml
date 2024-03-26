@@ -24,6 +24,10 @@ ColumnLayout {
     property string networkIconURL
     property string networkExplorerName
 
+    property bool collectibleLinkEnabled
+    property bool collectionLinkEnabled
+    property bool explorerLinkEnabled
+
     signal collectionTagClicked()
     signal openCollectibleExternally()
     signal openCollectibleOnExplorer()
@@ -58,15 +62,15 @@ ColumnLayout {
                 size: StatusBaseButton.Size.Small
                 text: root.networkExplorerName
                 icon.name: "external"
-                asset.emoji: d.effectiveEmoji
                 onClicked: root.openCollectibleOnExplorer()
+                visible: root.explorerLinkEnabled
             }
             StatusButton {
                 size: StatusBaseButton.Size.Small
                 text: "OpenSea"
                 icon.name: "external"
-                asset.emoji: d.effectiveEmoji
                 onClicked: root.openCollectibleExternally()
+                visible: root.collectibleLinkEnabled
             }
         }
     }
@@ -78,11 +82,13 @@ ColumnLayout {
             id: collectionTag
             asset.name: !!root.communityImage ? root.communityImage: !sensor.containsMouse ? root.isCollection ? "tiny/folder" : "tiny/profile" : "tiny/external"
             asset.isImage: !!root.communityImage
+            enabled: root.collectionLinkEnabled
             MouseArea {
                 id: sensor
                 anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: root.collectionLinkEnabled
+                cursorShape: root.collectionLinkEnabled ? Qt.PointingHandCursor: undefined
+                enabled: root.collectionLinkEnabled
                 onClicked: {
                     root.collectionTagClicked()
                 }

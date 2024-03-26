@@ -1,7 +1,5 @@
 import NimQml, Tables, json, sequtils, chronicles, strutils, sets, stint
 
-import httpclient
-
 import app/core/[main]
 import app/core/tasks/[qt, threadpool]
 
