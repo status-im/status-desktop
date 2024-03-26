@@ -8,6 +8,7 @@ QtObject:
     maxFeePerGasL: float
     maxFeePerGasM: float
     maxFeePerGasH: float
+    l1GasFee: float
     eip1559Enabled: bool
 
   proc setup*(self: GasFeesItem,
@@ -17,6 +18,7 @@ QtObject:
     maxFeePerGasL: float,
     maxFeePerGasM: float,
     maxFeePerGasH: float,
+    l1GasFee: float,
     eip1559Enabled: bool
   ) =
     self.QObject.setup
@@ -26,6 +28,7 @@ QtObject:
     self.maxFeePerGasL = maxFeePerGasL
     self.maxFeePerGasM = maxFeePerGasM
     self.maxFeePerGasH = maxFeePerGasH
+    self.l1GasFee = l1GasFee
     self.eip1559Enabled = eip1559Enabled
 
   proc delete*(self: GasFeesItem) =
@@ -38,10 +41,11 @@ QtObject:
     maxFeePerGasL: float = 0,
     maxFeePerGasM: float = 0,
     maxFeePerGasH: float = 0,
+    l1GasFee: float = 0,
     eip1559Enabled: bool = false
     ): GasFeesItem =
       new(result, delete)
-      result.setup(gasPrice, baseFee, maxPriorityFeePerGas, maxFeePerGasL, maxFeePerGasM, maxFeePerGasH, eip1559Enabled)
+      result.setup(gasPrice, baseFee, maxPriorityFeePerGas, maxFeePerGasL, maxFeePerGasM, maxFeePerGasH, l1GasFee, eip1559Enabled)
 
   proc `$`*(self: GasFeesItem): string =
     result = "GasFeesItem("
@@ -51,54 +55,46 @@ QtObject:
     result = result & "\nmaxFeePerGasL: " & $self.maxFeePerGasL
     result = result & "\nmaxFeePerGasM: " & $self.maxFeePerGasM
     result = result & "\nmaxFeePerGasH: " & $self.maxFeePerGasH
+    result = result & "\nl1GasFee: " & $self.l1GasFee
     result = result & "\neip1559Enabled: " & $self.eip1559Enabled
     result = result & ")"
 
-  proc gasPriceChanged*(self: GasFeesItem) {.signal.}
   proc getGasPrice*(self: GasFeesItem): float {.slot.} =
     return self.gasPrice
   QtProperty[float] gasPrice:
     read = getGasPrice
-    notify = gasPriceChanged
 
-  proc baseFeeChanged*(self: GasFeesItem) {.signal.}
   proc getBaseFee*(self: GasFeesItem): float {.slot.} =
     return self.baseFee
   QtProperty[float] baseFee:
     read = getBaseFee
-    notify = baseFeeChanged
 
-  proc maxPriorityFeePerGasChanged*(self: GasFeesItem) {.signal.}
   proc getMaxPriorityFeePerGas*(self: GasFeesItem): float {.slot.} =
     return self.maxPriorityFeePerGas
   QtProperty[float] maxPriorityFeePerGas:
     read = getMaxPriorityFeePerGas
-    notify = maxPriorityFeePerGasChanged
 
-  proc maxFeePerGasLChanged*(self: GasFeesItem) {.signal.}
   proc getMaxFeePerGasL*(self: GasFeesItem): float {.slot.} =
     return self.maxFeePerGasL
   QtProperty[float] maxFeePerGasL:
     read = getMaxFeePerGasL
-    notify = maxFeePerGasLChanged
 
-  proc maxFeePerGasMChanged*(self: GasFeesItem) {.signal.}
   proc getMaxFeePerGasM*(self: GasFeesItem): float {.slot.} =
     return self.maxFeePerGasM
   QtProperty[float] maxFeePerGasM:
     read = getMaxFeePerGasM
-    notify = maxFeePerGasMChanged
 
-  proc maxFeePerGasHChanged*(self: GasFeesItem) {.signal.}
   proc getMaxFeePerGasH*(self: GasFeesItem): float {.slot.} =
     return self.maxFeePerGasH
   QtProperty[float] maxFeePerGasH:
     read = getMaxFeePerGasH
-    notify = maxFeePerGasHChanged
 
-  proc eip1559EnabledChanged*(self: GasFeesItem) {.signal.}
+  proc getL1GasFee*(self: GasFeesItem): float {.slot.} =
+    return self.l1GasFee
+  QtProperty[float] l1GasFee:
+    read = getL1GasFee
+
   proc getEip1559Enabled*(self: GasFeesItem): bool {.slot.} =
     return self.eip1559Enabled
   QtProperty[bool] eip1559Enabled:
     read = getEip1559Enabled
-    notify = eip1559EnabledChanged
