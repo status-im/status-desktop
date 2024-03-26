@@ -142,9 +142,6 @@ proc createGroupChatFromInvitation*(groupName: string, chatId: string, adminPK: 
   let payload = %* [groupName, chatId, adminPK]
   result = callPrivateRPC("createGroupChatFromInvitation".prefix, payload)
 
-proc getMembers*(communityId, chatId: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("chat_getMembers", %* [communityId, chatId])
-
 proc editChat*(communityID: string, chatID: string, name: string, color: string, imageJson: string): RpcResponse[JsonNode] =
   let croppedImage = newCroppedImage(imageJson)
   let payload = %* [communityID, chatID, name, color, croppedImage]

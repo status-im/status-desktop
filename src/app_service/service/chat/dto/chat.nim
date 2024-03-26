@@ -93,35 +93,6 @@ type ChatDto* = object
   permissions*: Permission
   hideIfPermissionsNotMet*: bool
 
-type ChannelGroupDto* = object
-  id*: string
-  channelGroupType*: ChatSectionType
-  memberRole*: MemberRole
-  verified*: bool
-  name*: string
-  ensName*: string
-  description*: string
-  introMessage*: string
-  outroMessage*: string
-  chats*: seq[ChatDto]
-  categories*: seq[Category]
-  images*: Images
-  permissions*: Permission
-  members*: seq[ChatMember]
-  canManageUsers*: bool
-  color*: string
-  muted*: bool
-  historyArchiveSupportEnabled*: bool
-  pinMessageAllMembersEnabled*: bool
-  bannedMembersIds*: seq[string]
-  encrypted*: bool
-  unviewedMessagesCount*: int
-  unviewedMentionsCount*: int
-  channelPermissions*: CheckAllChannelsPermissionsResponseDto
-  pubsubTopic*: string
-  pubsubTopicKey*: string
-  shard*: Shard
-
 type ClearedHistoryDto* = object
   chatId*: string
   clearedAt*: int
@@ -323,74 +294,6 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   # Add community ID if needed
   if (result.communityId != "" and not result.id.contains(result.communityId)):
     result.id = result.communityId & result.id
-
-proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
-  result = ChannelGroupDto()
-
-  discard jsonObj.getProp("verified", result.verified)
-  discard jsonObj.getProp("memberRole", result.memberRole)
-  discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("description", result.description)
-  discard jsonObj.getProp("introMessage", result.introMessage)
-  discard jsonObj.getProp("outroMessage", result.outroMessage)
-  discard jsonObj.getProp("encrypted", result.encrypted)
-  discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
-  discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
-
-  result.channelGroupType = ChatSectionType.Unknown
-  var channelGroupTypeString: string
-  if (jsonObj.getProp("channelGroupType", channelGroupTypeString)):
-      result.channelGroupType = parseEnum[ChatSectionType](channelGroupTypeString)
-
-  var chatsObj: JsonNode
-  if(jsonObj.getProp("chats", chatsObj)):
-    for _, chatObj in chatsObj:
-      let chat = toChatDto(chatObj)
-      if (chat.chatType == ChatType.Public):
-        # Filter out public chats as we don't show them anymore
-        continue
-      result.chats.add(chat)
-
-  var categoriesObj: JsonNode
-  if(jsonObj.getProp("categories", categoriesObj)):
-    for _, categoryObj in categoriesObj:
-      result.categories.add(toCategory(categoryObj))
-
-  var imagesObj: JsonNode
-  if(jsonObj.getProp("images", imagesObj)):
-    result.images = toImages(imagesObj)
-
-  var permissionObj: JsonNode
-  if(jsonObj.getProp("permissions", permissionObj)):
-    result.permissions = toPermission(permissionObj)
-
-  var membersObj: JsonNode
-  if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
-    for memberId, memberObj in membersObj:
-      result.members.add(toChannelMember(memberObj, memberId, joined = true))
-
-  var bannedMembersIdsObj: JsonNode
-  if(jsonObj.getProp("banList", bannedMembersIdsObj) and bannedMembersIdsObj.kind == JArray):
-    for bannedMemberId in bannedMembersIdsObj:
-      result.bannedMembersIds.add(bannedMemberId.getStr)
-
-  discard jsonObj.getProp("canManageUsers", result.canManageUsers)
-  discard jsonObj.getProp("color", result.color)
-  discard jsonObj.getProp("muted", result.muted)
-
-  var responseDto = CheckAllChannelsPermissionsResponseDto()
-  responseDto.channels = initTable[string, CheckChannelPermissionsResponseDto]()
-  result.channelPermissions = responseDto
-  var checkChannelPermissionResponsesObj: JsonNode
-  if(jsonObj.getProp("checkChannelPermissionResponses", checkChannelPermissionResponsesObj) and checkChannelPermissionResponsesObj.kind == JObject):
-
-    for channelId, permissionResponse in checkChannelPermissionResponsesObj:
-      result.channelPermissions.channels[channelId] = permissionResponse.toCheckChannelPermissionsResponseDto()
-
-  discard jsonObj.getProp("pubsubTopic", result.pubsubTopic)
-  discard jsonObj.getProp("pubsubTopicKey", result.pubsubTopicKey)
-
-  result.shard = jsonObj.getShard()
 
 # To parse Community chats to ChatDto, we need to add the commuity ID and type
 proc toChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =
