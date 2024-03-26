@@ -36,6 +36,13 @@ Item {
 
     readonly property var communityDetails: isCommunityCollectible ? root.communitiesStore.getCommunityDetailsAsJson(collectible.communityId) : null
 
+    QtObject {
+        id: d
+        readonly property string collectibleLink: root.walletRootStore.getOpenSeaCollectibleUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId)
+        readonly property string collectionLink: root.walletRootStore.getOpenSeaCollectionUrl(collectible.networkShortName, collectible.contractAddress)
+        readonly property string blockExplorerLink: root.walletRootStore.getExplorerUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId)
+    }
+
     CollectibleDetailsHeader {
         id: collectibleHeader
         anchors.top: parent.top
@@ -50,22 +57,22 @@ Item {
         networkColor: collectible.networkColor
         networkIconURL: collectible.networkIconUrl
         networkExplorerName: root.walletRootStore.getExplorerNameForNetwork(collectible.networkShortName)
+        collectibleLinkEnabled: Utils.getUrlStatus(d.collectibleLink)
+        collectionLinkEnabled: (!!communityDetails && communityDetails.name)  || Utils.getUrlStatus(d.collectionLink)
+        explorerLinkEnabled: Utils.getUrlStatus(d.blockExplorerLink)
         onCollectionTagClicked: {
             if (root.isCommunityCollectible) {
                 Global.switchToCommunity(collectible.communityId)
             }
-            /* TODO for non community token link out to collection on opensea
-            https://github.com/status-im/status-desktop/issues/13918 */
-
+            else {
+                Global.openLinkWithConfirmation(d.collectionLink, root.walletRootStore.getOpenseaDomainName())
+            }
         }
-        onOpenCollectibleExternally: {
-            /* TODO add link out to opensea
-            https://github.com/status-im/status-desktop/issues/13918 */
-        }
-        onOpenCollectibleOnExplorer: Global.openLink(root.walletRootStore.getExplorerUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId))
+        onOpenCollectibleExternally: Global.openLinkWithConfirmation(d.collectibleLink, root.walletRootStore.getOpenseaDomainName())
+        onOpenCollectibleOnExplorer: Global.openLinkWithConfirmation(d.blockExplorerLink, root.walletRootStore.getExplorerDomain(networkShortName))
     }
 
-    ColumnLayout {
+    Column {
         id: collectibleBody
         anchors.top: collectibleHeader.bottom
         anchors.topMargin: 25
@@ -82,8 +89,8 @@ Item {
             readonly property real visibleImageHeight: (collectibleimage.visible ? collectibleimage.height : privilegedCollectibleImage.height)
             readonly property real visibleImageWidth: (collectibleimage.visible ? collectibleimage.width : privilegedCollectibleImage.width)
 
-            Layout.preferredHeight: collectibleImageDetails.visibleImageHeight
-            Layout.preferredWidth: parent.width
+            height: collectibleImageDetails.visibleImageHeight
+            width: parent.width
             spacing: 24
 
             // Special artwork representation for community `Owner and Master Token` token types:
@@ -132,36 +139,28 @@ Item {
                     wrapMode: Text.WordWrap
                 }
 
-                StatusScrollView {
-                    id: descriptionScrollView
+                StatusBaseText {
+                    id: descriptionText
                     width: parent.width
                     height: collectibleImageDetails.height - collectibleName.height - parent.spacing
 
-                    contentWidth: availableWidth
-
-                    padding: 0
-                    
-                    StatusBaseText {
-                        id: descriptionText
-                        width: descriptionScrollView.availableWidth
-
-                        text: collectible.description
-                        textFormat: Text.MarkdownText
-                        color: Theme.palette.directColor4
-                        font.pixelSize: 15
-                        lineHeight: 22
-                        lineHeightMode: Text.FixedHeight
-                        elide: Text.ElideRight
-                        wrapMode: Text.Wrap
-                    }
+                    clip: true
+                    text: collectible.description
+                    textFormat: Text.MarkdownText
+                    color: Theme.palette.directColor4
+                    font.pixelSize: 15
+                    lineHeight: 22
+                    lineHeightMode: Text.FixedHeight
+                    elide: Text.ElideRight
+                    wrapMode: Text.Wrap
                 }
             }
         }
 
         StatusTabBar {
             id: collectiblesDetailsTab
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.xlPadding
+            width: parent.width
+            topPadding: Style.current.xlPadding
             visible: collectible.traits.count > 0
 
             StatusTabButton {
@@ -178,14 +177,15 @@ Item {
 
         StatusScrollView {
             id: scrollView
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            width: parent.width
+            height: parent.height
             contentWidth: availableWidth
 
             Loader {
                 id: tabLoader
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                width: parent.width
+                height: parent.height
+
                 sourceComponent: {
                     switch (collectiblesDetailsTab.currentIndex) {
                     case 0: return traitsView

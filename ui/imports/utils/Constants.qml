@@ -916,6 +916,23 @@ QtObject {
         readonly property string txPath: "tx"
     }
 
+    readonly property QtObject openseaExplorerLinks: QtObject {
+        readonly property string mainnetLink: "https://opensea.io"
+        readonly property string testnetLink: "https://testnets.opensea.io"
+
+        readonly property string ethereum: "ethereum"
+        readonly property string arbitrum: "arbitrum"
+        readonly property string optimism: "optimism"
+
+        readonly property string goerliEthereum: "goerli"
+        readonly property string goerliArbitrum: "arbitrum-goerli"
+        readonly property string goerliOptimism: "optimism-goerli"
+
+        readonly property string sepoliaEthereum: "sepolia"
+        readonly property string sepoliaArbitrum: "arbitrum-sepolia"
+        readonly property string sepoliaOptimism: "optimism-sepolia"
+    }
+
     readonly property string api_request: "api-request"
     readonly property string web3SendAsyncReadOnly: "web3-send-async-read-only"
     readonly property string web3DisconnectAccount: "web3-disconnect-account"

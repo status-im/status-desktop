@@ -488,7 +488,7 @@ QtObject {
         return root.mainModuleInst.addressWasShown(address)
     }
 
-    function getExplorerUrl(networkShortName, contractAddress, tokenId) {
+    function getExplorerDomain(networkShortName) {
         let link = Constants.networkExplorerLinks.etherscan
         if (networkShortName === Constants.networkShortChainNames.mainnet) {
             if (root.areTestNetworksEnabled) {
@@ -498,7 +498,6 @@ QtObject {
                     link = Constants.networkExplorerLinks.goerliEtherscan
                 }
             }
-            return "%1/nft/%2/%3".arg(link).arg(contractAddress).arg(tokenId)
         }
         if (networkShortName === Constants.networkShortChainNames.arbitrum) {
             link = Constants.networkExplorerLinks.arbiscan
@@ -509,7 +508,6 @@ QtObject {
                     link = Constants.networkExplorerLinks.goerliArbiscan
                 }
             }
-            return "%1/token/%2?a=%3".arg(link).arg(contractAddress).arg(tokenId)
         } else if (networkShortName === Constants.networkShortChainNames.optimism) {
             link = Constants.networkExplorerLinks.optimism
             if (root.areTestNetworksEnabled) {
@@ -519,6 +517,16 @@ QtObject {
                     link = Constants.networkExplorerLinks.goerliOptimism
                 }
             }
+        }
+        return link
+    }
+
+    function getExplorerUrl(networkShortName, contractAddress, tokenId) {
+        let link = getExplorerDomain(networkShortName)
+        if (networkShortName === Constants.networkShortChainNames.mainnet) {
+            return "%1/nft/%2/%3".arg(link).arg(contractAddress).arg(tokenId)
+        }
+        else {
             return "%1/token/%2?a=%3".arg(link).arg(contractAddress).arg(tokenId)
         }
     }
@@ -531,5 +539,54 @@ QtObject {
             return qsTr("Optimism Explorer")
         }
         return qsTr("Etherscan Explorer")
+    }
+
+    function getOpenSeaNetworkName(networkShortName) {
+        let networkName = Constants.openseaExplorerLinks.ethereum
+        if (networkShortName === Constants.networkShortChainNames.mainnet) {
+            if (root.areTestNetworksEnabled) {
+                if (!root.isGoerliEnabled) {
+                    networkName = Constants.openseaExplorerLinks.sepoliaEthereum
+                } else {
+                    networkName = Constants.openseaExplorerLinks.goerliEthereum
+                }
+            }
+        }
+        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
+            networkName = Constants.openseaExplorerLinks.arbitrum
+            if (root.areTestNetworksEnabled) {
+                if (!root.isGoerliEnabled) {
+                    networkName = Constants.openseaExplorerLinks.sepoliaArbitrum
+                } else {
+                    networkName = Constants.openseaExplorerLinks.goerliArbitrum
+                }
+            }
+        } else if (networkShortName === Constants.networkShortChainNames.optimism) {
+            networkName = Constants.openseaExplorerLinks.optimism
+            if (root.areTestNetworksEnabled) {
+                if (!root.isGoerliEnabled) {
+                    networkName = Constants.openseaExplorerLinks.sepoliaOptimism
+                } else {
+                    networkName = Constants.openseaExplorerLinks.goerliOptimism
+                }
+            }
+        }
+        return networkName
+    }
+
+    function getOpenseaDomainName() {
+        return root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink
+    }
+
+    function getOpenSeaCollectionUrl(networkShortName, contractAddress) {
+        let networkName = getOpenSeaNetworkName(networkShortName)
+        let baseLink = root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink
+        return "%1/assets/%2/%3".arg(baseLink).arg(networkName).arg(contractAddress)
+    }
+
+    function getOpenSeaCollectibleUrl(networkShortName, contractAddress, tokenId) {
+        let networkName = getOpenSeaNetworkName(networkShortName)
+        let baseLink = root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink
+        return "%1/assets/%2/%3/%4".arg(baseLink).arg(networkName).arg(contractAddress).arg(tokenId)
     }
 }
