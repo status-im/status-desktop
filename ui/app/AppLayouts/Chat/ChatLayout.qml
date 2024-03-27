@@ -60,6 +60,8 @@ StackLayout {
     Loader {
         id: mainViewLoader
         readonly property var sectionItem: root.rootStore.chatCommunitySectionModule
+        readonly property int accessType: sectionItem.requiresTokenPermissionToJoin ? Constants.communityChatOnRequestAccess
+                                                                                    : Constants.communityChatPublicAccess
 
         sourceComponent: {
             if (sectionItem.isCommunity() && !sectionItem.amIMember) {
@@ -97,7 +99,7 @@ StackLayout {
             color: communityData.color
             image: communityData.image
             membersCount: communityData.members.count
-            accessType: communityData.access
+            accessType: mainViewLoader.accessType
             joinCommunity: true
             amISectionAdmin: communityData.memberRole === Constants.memberRole.owner ||
                              communityData.memberRole === Constants.memberRole.admin ||
@@ -118,24 +120,13 @@ StackLayout {
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
             onRequestToJoinClicked: {
-                Global.openPopup(communityMembershipSetupDialogComponent, {
-                    communityId: joinCommunityView.communityId,
-                    isInvitationPending: joinCommunityView.isInvitationPending,
-                    communityName: communityData.name,
-                    introMessage: communityData.introMessage,
-                    communityIcon: communityData.image,
-                    accessType: communityData.access
-                })
+                Global.communityIntroPopupRequested(joinCommunityView.communityId, communityData.name, communityData.introMessage,
+                                                    communityData.image, root.rootStore.isMyCommunityRequestPending(communityId))
             }
             onInvitationPendingClicked: {
-                Global.openPopup(communityMembershipSetupDialogComponent, {
-                                     communityId: joinCommunityView.communityId,
-                                     isInvitationPending: joinCommunityView.isInvitationPending,
-                                     communityName: communityData.name,
-                                     introMessage: communityData.introMessage,
-                                     communityIcon: communityData.image,
-                                     accessType: communityData.access
-                                 })
+                Global.communityIntroPopupRequested(joinCommunityView.communityId, communityData.name, communityData.introMessage,
+                                                    communityData.image, root.rootStore.isMyCommunityRequestPending(communityId))
+                joinCommunityView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityId)
             }
 
             Connections {
@@ -192,24 +183,13 @@ StackLayout {
                 root.openAppSearch()
             }
             onRequestToJoinClicked: {
-                Global.openPopup(communityMembershipSetupDialogComponent, {
-                    communityId: chatView.communityId,
-                    isInvitationPending: root.rootStore.isMyCommunityRequestPending(chatView.communityId),
-                    communityName: root.sectionItemModel.name,
-                    introMessage: root.sectionItemModel.introMessage,
-                    communityIcon: root.sectionItemModel.image,
-                    accessType: root.sectionItemModel.access
-                })
+                Global.communityIntroPopupRequested(communityId, root.sectionItemModel.name, root.sectionItemModel.introMessage,
+                                                    root.sectionItemModel.image, root.rootStore.isMyCommunityRequestPending(chatView.communityId))
             }
             onInvitationPendingClicked: {
-                Global.openPopup(communityMembershipSetupDialogComponent, {
-                    communityId: chatView.communityId,
-                    isInvitationPending: root.rootStore.isMyCommunityRequestPending(chatView.communityId),
-                    communityName: root.sectionItemModel.name,
-                    introMessage: root.sectionItemModel.introMessage,
-                    communityIcon: root.sectionItemModel.image,
-                    accessType: root.sectionItemModel.access
-                })
+                Global.communityIntroPopupRequested(communityId, root.sectionItemModel.name, root.sectionItemModel.introMessage,
+                                                    root.sectionItemModel.image, root.rootStore.isMyCommunityRequestPending(chatView.communityId))
+                chatView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(dialogRoot.communityId)
             }
         }
     }
@@ -273,85 +253,6 @@ StackLayout {
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
-        }
-    }
-
-    Component {
-        id: communityMembershipSetupDialogComponent
-
-        CommunityMembershipSetupDialog {
-            id: dialogRoot
-
-            property string communityId
-
-            walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
-            canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
-
-            walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
-            requirementsCheckPending: root.rootStore.requirementsCheckPending
-            permissionsModel: {
-                root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
-                return root.rootStore.permissionsModel
-            }
-            assetsModel: root.rootStore.assetsModel
-            collectiblesModel: root.rootStore.collectiblesModel
-
-            getCurrencyAmount: function (balance, symbol){
-                return currencyStore.getCurrencyAmount(balance, symbol)
-            }
-
-            onPrepareForSigning: {
-                root.rootStore.prepareKeypairsForSigning(dialogRoot.communityId, dialogRoot.name, sharedAddresses, airdropAddress)
-
-                dialogRoot.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
-            }
-
-            onSignProfileKeypairAndAllNonKeycardKeypairs: {
-                root.rootStore.signProfileKeypairAndAllNonKeycardKeypairs()
-            }
-
-            onSignSharedAddressesForKeypair: {
-                root.rootStore.signSharedAddressesForKeypair(keyUid)
-            }
-
-            onJoinCommunity: {
-                root.rootStore.joinCommunityOrEditSharedAddresses()
-            }
-
-            onCancelMembershipRequest: {
-                root.rootStore.cancelPendingRequest(dialogRoot.communityId)
-                mainViewLoader.item.isInvitationPending = root.rootStore.isMyCommunityRequestPending(dialogRoot.communityId)
-            }
-
-            onSharedAddressesUpdated: {
-                root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
-            }
-
-            onClosed: {
-                root.rootStore.cleanJoinEditCommunityData()
-            }
-
-            Connections {
-                target: root.rootStore.communitiesModuleInst
-
-                function onAllSharedAddressesSigned() {
-                    if (dialogRoot.profileProvesOwnershipOfSelectedAddresses) {
-                        dialogRoot.joinCommunity()
-                        dialogRoot.close()
-                        return
-                    }
-
-                    if (dialogRoot.allAddressesToRevealBelongToSingleNonProfileKeypair) {
-                        dialogRoot.joinCommunity()
-                        dialogRoot.close()
-                        return
-                    }
-
-                    if (!!dialogRoot.replaceItem) {
-                        dialogRoot.replaceLoader.item.allSigned()
-                    }
-                }
-            }
         }
     }
 

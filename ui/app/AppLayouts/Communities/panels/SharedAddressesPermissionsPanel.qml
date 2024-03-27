@@ -18,6 +18,8 @@ import utils 1.0
 Rectangle {
     id: root
 
+    required property int /*PermissionTypes.Type*/ eligibleToJoinAs
+
     property bool isEditMode
 
     property string communityName
@@ -33,7 +35,7 @@ Rectangle {
     readonly property bool lostChannelPermissions: d.lostChannelPermissions
 
     implicitHeight: permissionsScrollView.contentHeight - permissionsScrollView.anchors.topMargin
-    color: Theme.palette.baseColor2
+    color: Theme.palette.baseColor4
 
     readonly property bool hasAnyVisiblePermission: root.permissionsModel && root.permissionsModel.count &&
                                                     (d.tokenMasterPermissionsModel.count > 0 || d.adminPermissionsModel.count > 0 ||
@@ -124,6 +126,8 @@ Rectangle {
         id: permissionsScrollView
         anchors.fill: parent
         anchors.topMargin: -Style.current.padding
+        bottomPadding: eligibilityHintBubble.visible ? eligibilityHintBubble.height + eligibilityHintBubble.anchors.bottomMargin*2
+                                                     : 16
         contentWidth: availableWidth
 
         ColumnLayout {
@@ -164,11 +168,6 @@ Rectangle {
 
             // permission types
             PermissionPanel {
-                id: tokenMasterPermissionPanel
-                permissionType: PermissionTypes.Type.TokenMaster
-                permissionsModel: d.tokenMasterPermissionsModel
-            }
-            PermissionPanel {
                 id: joinPermissionPanel
                 permissionType: PermissionTypes.Type.Member
                 permissionsModel: d.joinPermissionsModel
@@ -176,6 +175,11 @@ Rectangle {
             PermissionPanel {
                 permissionType: PermissionTypes.Type.Admin
                 permissionsModel: d.adminPermissionsModel
+            }
+            PermissionPanel {
+                id: tokenMasterPermissionPanel
+                permissionType: PermissionTypes.Type.TokenMaster
+                permissionsModel: d.tokenMasterPermissionsModel
             }
 
             Repeater { // channel repeater
@@ -194,6 +198,15 @@ Rectangle {
         }
     }
 
+    CommunityEligibilityTag {
+        id: eligibilityHintBubble
+        eligibleToJoinAs: root.eligibleToJoinAs
+        visible: !root.isEditMode
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 24
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
     component PanelBg: Rectangle {
         color: Theme.palette.statusListItem.backgroundColor
         border.width: 1
@@ -207,6 +220,8 @@ Rectangle {
         Layout.alignment: Qt.AlignTop
         asset.name: {
             switch (permissionType) {
+            case PermissionTypes.Type.TokenMaster:
+                return "arbitrator"
             case PermissionTypes.Type.Admin:
                 return "admin"
             case PermissionTypes.Type.Member:
@@ -252,6 +267,7 @@ Rectangle {
                     width: 16
                     height: 16
                     image.source: model.imageSource
+                    visible: !isError
                 }
                 StatusBaseText {
                     anchors.verticalCenter: parent.verticalCenter
@@ -352,6 +368,7 @@ Rectangle {
                             }
                             Row {
                                 Layout.alignment: Qt.AlignCenter
+                                spacing: 4
                                 StatusIcon {
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: 16
@@ -525,6 +542,7 @@ Rectangle {
                                 }
                                 Row {
                                     Layout.alignment: Qt.AlignCenter
+                                    spacing: 4
                                     StatusIcon {
                                         anchors.verticalCenter: parent.verticalCenter
                                         width: 16

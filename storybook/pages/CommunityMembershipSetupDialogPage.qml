@@ -23,49 +23,41 @@ SplitView {
             assetsWithFilteredBalances: groupedAccountsAssetsModel
         }
 
-        Item {
-            SplitView.fillWidth: true
-            SplitView.fillHeight: true
+        function openDialog() {
+            popupComponent.createObject(popupBg)
+        }
 
-            PopupBackground {
-                anchors.fill: parent
-            }
+        Component.onCompleted: openDialog()
 
-            Button {
-                anchors.centerIn: parent
-                text: "Reopen"
-
-                onClicked: dialog.open()
-            }
-
+        Component {
+            id: popupComponent
             CommunityMembershipSetupDialog {
-                id: dialog
-
                 anchors.centerIn: parent
-                visible: true
                 modal: false
+                visible: true
                 closePolicy: Popup.NoAutoClose
 
                 isEditMode: ctrlIsEditMode.checked
-                communityName: "Status"
-                communityIcon: ModelsData.icons.status
-                introMessage: "%1 sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                communityName: ctrlCommunityName.text
+                communityIcon: {
+                    if (ctrlIconStatus.checked)
+                        return ModelsData.icons.status
+                    if (ctrlIconCryptoPunks.checked)
+                        return ModelsData.icons.cryptPunks
+                    if (ctrlIconRarible.checked)
+                        return ModelsData.icons.rarible
+                    if (ctrlIconNone.checked)
+                        return ""
+                }
 
-1. Ut enim ad minim veniam
-2. Excepteur sint occaecat cupidatat non proident
-3. Duis aute irure
-4. Dolore eu fugiat nulla pariatur
-5. 🚗 consectetur adipiscing elit
-
-Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.".arg(dialog.communityName)
+                introMessage: ctrlIntro.text.arg(communityName)
 
                 isInvitationPending: ctrlIsInvitationPending.checked
                 requirementsCheckPending: ctrlRequirementsCheckPending.checked
 
                 walletAccountsModel: WalletAccountsModel {}
                 walletAssetsModel: root.walletAssetStore.groupedAccountAssetsModel
-                permissionsModel: dialog.accessType === Constants.communityChatOnRequestAccess ? PermissionsModel.complexPermissionsModel
-                                                                                               : null
+                permissionsModel: ctrlPermissionsModel.currentValue
                 assetsModel: AssetsModel {}
                 collectiblesModel: CollectiblesModel {}
 
@@ -85,6 +77,23 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                                 stripTrailingZeroes: false
                             })
                 }
+            }
+                }
+
+        Item {
+            SplitView.fillWidth: true
+            SplitView.fillHeight: true
+
+            PopupBackground {
+                id: popupBg
+                anchors.fill: parent
+            }
+
+            Button {
+                anchors.centerIn: parent
+                text: "Reopen"
+
+                onClicked: root.openDialog()
             }
         }
 
@@ -112,21 +121,29 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
             }
 
             TextField {
+                id: ctrlCommunityName
                 Layout.fillWidth: true
-                text: dialog.communityName
-                onTextChanged: dialog.communityName = text
+                text: "Status"
             }
 
             Label {
                 Layout.fillWidth: true
-                text: "Intro message"
+                text: "Intro"
                 font.weight: Font.Bold
             }
 
             TextField {
+                id: ctrlIntro
                 Layout.fillWidth: true
-                text: dialog.introMessage
-                onTextChanged: dialog.introMessage = text
+                text: "%1 sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+
+1. Ut enim ad minim veniam
+2. Excepteur sint occaecat cupidatat non proident
+3. Duis aute irure
+4. Dolore eu fugiat nulla pariatur
+5. 🚗 consectetur adipiscing elit
+
+Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
             }
 
             ColumnLayout {
@@ -136,21 +153,21 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     font.weight: Font.Bold
                 }
                 RadioButton {
+                    id: ctrlIconStatus
                     checked: true
                     text: "Status"
-                    onCheckedChanged: if(checked) dialog.communityIcon = ModelsData.icons.status
                 }
                 RadioButton {
+                    id: ctrlIconCryptoPunks
                     text: "Crypto Punks"
-                    onCheckedChanged: if(checked) dialog.communityIcon = ModelsData.icons.cryptPunks
                 }
                 RadioButton {
+                    id: ctrlIconRarible
                     text: "Rarible"
-                    onCheckedChanged: if(checked) dialog.communityIcon = ModelsData.icons.rarible
                 }
                 RadioButton {
+                    id: ctrlIconNone
                     text: "None"
-                    onCheckedChanged: if(checked) dialog.communityIcon = ""
                 }
             }
 
@@ -161,31 +178,41 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
 
             CheckBox {
                 id: ctrlIsEditMode
-                visible: !dialog.isInvitationPending
+                visible: !ctrlIsInvitationPending.checked
                 text: "Is edit mode"
             }
 
             ColumnLayout {
-                visible: !dialog.isInvitationPending
-                Label {
-                    Layout.fillWidth: true
-                    text: "Access type:"
-                }
+                visible: !ctrlIsInvitationPending.checked
 
-                RadioButton {
-                    checked: true
-                    text: qsTr("Public access")
-                    onCheckedChanged: dialog.accessType = Constants.communityChatPublicAccess
-                }
-                RadioButton {
-                    text: qsTr("On request")
-                    onCheckedChanged: dialog.accessType = Constants.communityChatOnRequestAccess
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 12
+                    Label {
+                        text: "Permissions:"
+                    }
+                    ComboBox {
+                        Layout.fillWidth: true
+                        id: ctrlPermissionsModel
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { value: PermissionsModel.complexCombinedPermissionsModel, text: "complexCombined" },
+                            { value: PermissionsModel.complexCombinedPermissionsModelNotMet, text: "complexCombinedNotMet" },
+                            { value: PermissionsModel.complexPermissionsModel, text: "complex" },
+                            { value: PermissionsModel.complexPermissionsModelNotMet, text: "complexNotMet" },
+                            { value: PermissionsModel.channelsOnlyPermissionsModel, text: "channelsOnly" },
+                            { value: PermissionsModel.channelsOnlyPermissionsModelNotMet, text: "channelsOnlyNotMet" },
+                            { value: null, text: "null" }
+                        ]
+                    }
                 }
             }
 
             CheckBox {
+                Layout.leftMargin: 12
                 id: ctrlRequirementsCheckPending
-                visible: !dialog.isInvitationPending && dialog.accessType == Constants.communityChatOnRequestAccess
+                visible: !ctrlIsInvitationPending.checked
                 text: "Requirements check pending"
             }
 

@@ -65,7 +65,7 @@ StatusSectionLayout {
     property var collectiblesModel
 
     readonly property var pendingViewOnlyPermissionsModel: SortFilterProxyModel {
-            sourceModel: root.viewOnlyPermissionsModel
+        sourceModel: root.viewOnlyPermissionsModel
         filters: [
             ValueFilter {
                 roleName: "permissionState"
@@ -75,7 +75,7 @@ StatusSectionLayout {
         ]
     }
     readonly property var pendingViewAndPostPermissionsModel: SortFilterProxyModel {
-            sourceModel: root.viewAndPostPermissionsModel
+        sourceModel: root.viewAndPostPermissionsModel
         filters: [
             ValueFilter {
                 roleName: "permissionState"

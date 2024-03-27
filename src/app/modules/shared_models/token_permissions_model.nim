@@ -137,6 +137,8 @@ QtObject:
 
     return self.items[idx]
 
+  proc tokenCriteriaUpdated(self: TokenPermissionsModel) {.signal.}
+
   proc updateItem*(self: TokenPermissionsModel, permissionId: string, item: TokenPermissionItem) =
     let idx = self.findIndexById(permissionId)
     if(idx == -1):
@@ -159,3 +161,4 @@ QtObject:
       ModelRole.TokenCriteriaMet.int,
       ModelRole.State.int
     ])
+    self.tokenCriteriaUpdated()

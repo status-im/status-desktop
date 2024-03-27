@@ -66,7 +66,6 @@ StatusListView {
         statusListItemTitle.font.weight: Font.Medium
         title: model.name
         tertiaryTitle: !walletAccountAssetsModel.count && root.hasPermissions ? qsTr("No relevant tokens") : ""
-        property string accountAddress: model.address
 
         SubmodelProxyModel {
             id: filteredBalances
@@ -75,7 +74,7 @@ StatusListView {
             delegateModel: SortFilterProxyModel {
                 sourceModel: submodel
                 filters: FastExpressionFilter {
-                    expression: listItem.accountAddress === model.account
+                    expression: listItem.address === model.account.toLowerCase()
                     expectedRoles: ["account"]
                 }
             }

@@ -497,21 +497,22 @@ Item {
             }
 
             onClicked: {
-                Global.openPopup(communityMembershipSetupDialogComponent);
+                Global.communityIntroPopupRequested(communityData.id, communityData.name, communityData.introMessage,
+                                                    communityData.image, d.invitationPending)
             }
 
             Connections {
                 enabled: d.joiningCommunityInProgress
                 target: root.store.communitiesModuleInst
                 function onCommunityAccessRequested(communityId: string) {
-                    if (communityId === communityData.id) {
-                        d.invitationPending = root.store.isMyCommunityRequestPending(communityData.id)
+                    if (communityId === root.communityData.id) {
+                        d.invitationPending = root.store.isMyCommunityRequestPending(communityId)
                         d.joiningCommunityInProgress = false
                     }
                 }
 
                 function onCommunityAccessFailed(communityId: string, error: string) {
-                    if (communityId === communityData.id) {
+                    if (communityId === root.communityData.id) {
                         d.invitationPending = false
                         d.joiningCommunityInProgress = false
                         Global.displayToastMessage(qsTr("Request to join failed"),
@@ -520,90 +521,6 @@ Item {
                                                    false,
                                                    Constants.ephemeralNotificationType.normal,
                                                    "")
-                    }
-                }
-            }
-
-            Component {
-                id: communityMembershipSetupDialogComponent
-
-                CommunityMembershipSetupDialog {
-                    id: dialogRoot
-
-                    isInvitationPending: d.invitationPending
-                    requirementsCheckPending: root.store.requirementsCheckPending
-                    communityName: communityData.name
-                    introMessage: communityData.introMessage
-                    communityIcon: communityData.image
-                    accessType: communityData.access
-
-                    walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
-                    canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
-
-                    walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
-                    permissionsModel: {
-                        root.store.prepareTokenModelForCommunity(communityData.id)
-                        return root.store.permissionsModel
-                    }
-                    assetsModel: root.store.assetsModel
-                    collectiblesModel: root.store.collectiblesModel
-
-                    getCurrencyAmount: function (balance, symbol){
-                        return currencyStore.getCurrencyAmount(balance, symbol)
-                    }
-
-                    onPrepareForSigning: {
-                        root.store.prepareKeypairsForSigning(communityData.id, root.store.userProfileInst.name, sharedAddresses, airdropAddress, false)
-
-                        dialogRoot.keypairSigningModel = root.store.communitiesModuleInst.keypairsSigningModel
-                    }
-
-                    onSignProfileKeypairAndAllNonKeycardKeypairs: {
-                        root.store.signProfileKeypairAndAllNonKeycardKeypairs()
-                    }
-
-                    onSignSharedAddressesForKeypair: {
-                        root.store.signSharedAddressesForKeypair(keyUid)
-                    }
-
-                    onJoinCommunity: {
-                        d.joiningCommunityInProgress = true
-                        root.store.joinCommunityOrEditSharedAddresses()
-                    }
-
-                    onCancelMembershipRequest: {
-                        root.store.cancelPendingRequest(communityData.id)
-                        d.invitationPending = root.store.isMyCommunityRequestPending(communityData.id)
-                    }
-
-                    onSharedAddressesUpdated: {
-                        root.store.updatePermissionsModel(communityData.id, sharedAddresses)
-                    }
-
-                    onClosed: {
-                        root.store.cleanJoinEditCommunityData()
-                    }
-
-                    Connections {
-                        target: root.store.communitiesModuleInst
-
-                        function onAllSharedAddressesSigned() {
-                            if (dialogRoot.profileProvesOwnershipOfSelectedAddresses) {
-                                dialogRoot.joinCommunity()
-                                dialogRoot.close()
-                                return
-                            }
-
-                            if (dialogRoot.allAddressesToRevealBelongToSingleNonProfileKeypair) {
-                                dialogRoot.joinCommunity()
-                                dialogRoot.close()
-                                return
-                            }
-
-                            if (!!dialogRoot.replaceItem) {
-                                dialogRoot.replaceLoader.item.allSigned()
-                            }
-                        }
                     }
                 }
             }
