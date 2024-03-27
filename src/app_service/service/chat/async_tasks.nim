@@ -9,7 +9,6 @@ const asyncGetActiveChatsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall
   let arg = decode[AsyncGetActiveChatsTaskArg](argEncoded)
   try:
     let response = status_chat.getActiveChats()
-    echo "Response ", response
 
     let responseJson = %*{
       "chats": response.result,

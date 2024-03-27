@@ -667,7 +667,6 @@ method onChatsLoaded*[T](
     networkService
   )
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(myPubKey)
-  echo "unviewedMessagesCount ", unviewedMessagesCount
   let personalChatSectionItem = initItem(
     myPubKey,
     sectionType = SectionType.Chat,

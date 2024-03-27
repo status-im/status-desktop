@@ -612,20 +612,11 @@ QtObject:
       var parsedImage = imageJson.parseJson
       parsedImage["imagePath"] = %singletonInstance.utils.formatImagePath(parsedImage["imagePath"].getStr)
       let response = status_chat.editChat(communityID, chatID, name, color, $parsedImage)
-      if (not response.error.isNil):
-        let msg = response.error.message & " chatId=" & chatId
-        error "error while editing group chat details", msg
-        return
 
-      let resultedChat = response.result.toChatDto()
+      discard self.processMessengerResponse(response)
 
-      var chat = self.chats[chatID]
-      chat.name = name
-      chat.color = color
-      chat.icon = resultedChat.icon
-      self.updateOrAddChat(chat)
-
-      self.events.emit(SIGNAL_GROUP_CHAT_DETAILS_UPDATED, ChatUpdateDetailsArgs(id: chatID, newName: name, newColor: color, newImage: resultedChat.icon))
+      let chat = self.chats[chatID]
+      self.events.emit(SIGNAL_GROUP_CHAT_DETAILS_UPDATED, ChatUpdateDetailsArgs(id: chatID, newName: name, newColor: color, newImage: chat.icon))
     except Exception as e:
       error "error while updating group chat: ", msg = e.msg
 
