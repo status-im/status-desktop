@@ -44,14 +44,14 @@ def test_change_own_display_name(main_screen: MainWindow, user_account, new_name
 @pytest.mark.parametrize('user_data_one, user_data_two', [
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
-def test_switch_state_to_offline_online_automatic(multiple_instance, user_data_one, user_data_two):
+def test_switch_state_to_offline_online_automatic(multiple_instances, user_data_one, user_data_two):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
     community_params = deepcopy(constants.community_params)
     community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
     main_screen = MainWindow()
 
-    with multiple_instance() as aut_one, multiple_instance() as aut_two:
+    with multiple_instances() as aut_one, multiple_instances() as aut_two:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()

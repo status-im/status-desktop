@@ -26,7 +26,6 @@ class AUT:
             app_path: system_path.SystemPath = configs.AUT_PATH,
             user_data: SystemPath = None
     ):
-        super(AUT, self).__init__()
         self.path = app_path
         self.ctx = None
         self.pid = None

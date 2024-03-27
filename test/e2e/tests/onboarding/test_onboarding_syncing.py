@@ -37,11 +37,11 @@ def sync_screen(main_window) -> SyncCodeView:
 @pytest.mark.case(703592)
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'user_account_one'])
 @pytest.mark.critical
-def test_sync_device_during_onboarding(multiple_instance, user_data):
+def test_sync_device_during_onboarding(multiple_instances, user_data):
     user: UserAccount = constants.user_account_one
     main_window = MainWindow()
 
-    with (multiple_instance() as aut_one, multiple_instance() as aut_two):
+    with (multiple_instances() as aut_one, multiple_instances() as aut_two):
         with step('Get syncing code in first instance'):
             aut_one.attach()
             main_window.prepare()

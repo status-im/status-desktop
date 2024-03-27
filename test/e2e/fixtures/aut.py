@@ -46,7 +46,7 @@ def aut(user_data) -> AUT:
 
 
 @pytest.fixture()
-def multiple_instance():
+def multiple_instances(user_data):
     def _aut(user_data: SystemPath = None) -> AUT:
         if not configs.AUT_PATH.exists():
             pytest.exit(f"Application not found: {configs.AUT_PATH}")

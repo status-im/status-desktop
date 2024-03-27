@@ -22,7 +22,7 @@ pytestmark = marks
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two',
      configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
-def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_three):
+def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_three):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
     user_three: UserAccount = constants.user_account_three
@@ -30,7 +30,7 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
     main_window = MainWindow()
     messages_screen = MessagesScreen()
 
-    with multiple_instance() as aut_one, multiple_instance() as aut_two, multiple_instance() as aut_three:
+    with multiple_instances() as aut_one, multiple_instances() as aut_two, multiple_instances() as aut_three:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two, aut_three], [user_one, user_two, user_three]):
                 aut.attach()
