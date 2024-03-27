@@ -117,7 +117,7 @@ StatusSectionLayout {
     signal profileButtonClicked()
     signal openAppSearch()
 
-    signal revealAddressClicked
+    signal requestToJoinClicked
     signal invitationPendingClicked
 
     Connections {
@@ -261,7 +261,7 @@ StatusSectionLayout {
             requirementsMet: (viewOnlyPermissionsSatisfied && viewOnlyPermissionsModel.count > 0) ||
                              (viewAndPostPermissionsSatisfied && viewAndPostPermissionsModel.count > 0)
             requirementsCheckPending: root.chatContentModule.permissionsCheckOngoing
-            onRevealAddressClicked: root.revealAddressClicked()
+            onRequestToJoinClicked: root.requestToJoinClicked()
             onInvitationPendingClicked: root.invitationPendingClicked()
         }
     }

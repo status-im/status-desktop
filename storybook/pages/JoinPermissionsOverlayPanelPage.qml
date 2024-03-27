@@ -86,7 +86,7 @@ SplitView {
                             viewAndPostHoldingsModel: d.viewAndPostHoldingsModel
                             moderateHoldingsModel: d.moderateHoldingsModel
 
-                            onRevealAddressClicked: logs.logEvent("JoinPermissionsOverlayPanel::onRevealAddressClicked()")
+                            onRequestToJoinClicked: logs.logEvent("JoinPermissionsOverlayPanel::onRequestToJoinClicked()")
                             onInvitationPendingClicked: logs.logEvent("JoinPermissionsOverlayPanel::onInvitationPendingClicked()")
                         }
                     }
