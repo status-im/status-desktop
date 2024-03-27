@@ -108,7 +108,7 @@ proc `$`*(self: ContractID): string =
     address:{self.address}
   )"""
 
-proc `==`*(a, b: ContractID): bool = 
+proc `==`*(a, b: ContractID): bool =
   result = a.chainID == b.chainID and
     a.address == b.address
 
@@ -116,7 +116,7 @@ proc `%`*(t: ContractID): JsonNode {.inline.} =
   result = newJObject()
   result["chainID"] = %(t.chainID)
   result["address"] = %(t.address)
-  
+
 proc `%`*(t: ref ContractID): JsonNode {.inline.} =
   return %(t[])
 
@@ -148,7 +148,7 @@ proc `$`*(self: CollectibleUniqueID): string =
     tokenID:{self.tokenID}
   )"""
 
-proc `==`*(a, b: CollectibleUniqueID): bool = 
+proc `==`*(a, b: CollectibleUniqueID): bool =
   result = a.contractID == b.contractID and
     a.tokenID == b.tokenID
 
@@ -156,7 +156,7 @@ proc `%`*(t: CollectibleUniqueID): JsonNode {.inline.} =
   result = newJObject()
   result["contractID"] = %(t.contractID)
   result["tokenID"] = %(t.tokenID.toString())
-  
+
 proc `%`*(t: ref CollectibleUniqueID): JsonNode {.inline.} =
   return %(t[])
 
@@ -176,7 +176,7 @@ proc toCollectibleUniqueID*(t: string): CollectibleUniqueID =
   var parts = t.split("+")
   return CollectibleUniqueID(
     contractID: ContractID(
-        chainID: parts[0].parseInt(), 
+        chainID: parts[0].parseInt(),
         address: parts[1]
       ),
     tokenID: stint.parse(parts[2], UInt256)
@@ -386,7 +386,7 @@ proc toIds(self: seq[Collectible]): seq[CollectibleUniqueID] =
 # CollectibleBalance
 proc `$`*(self: CollectibleBalance): string =
   return fmt"""CollectibleBalance(
-    tokenId:{self.tokenId}, 
+    tokenId:{self.tokenId},
     balance:{self.balance}
     """
 
@@ -402,7 +402,7 @@ proc getCollectibleBalances*(jsonAsset: JsonNode): seq[CollectibleBalance] =
 # CollectibleOwner
 proc `$`*(self: CollectibleOwner): string =
   return fmt"""CollectibleOwner(
-    address:{self.address}, 
+    address:{self.address},
     balances:{self.balances}
     """
 
@@ -426,7 +426,7 @@ proc getCollectibleOwners(jsonAsset: JsonNode): seq[CollectibleOwner] =
 # CollectibleContractOwnership
 proc `$`*(self: CollectibleContractOwnership): string =
   return fmt"""CollectibleContractOwnership(
-    contractAddress:{self.contractAddress}, 
+    contractAddress:{self.contractAddress},
     owners:{self.owners}
     """
 
@@ -439,9 +439,9 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleContractOwnership]): Collecti
 # CollectiblePreferences
 proc `$`*(self: CollectiblePreferences): string =
   return fmt"""CollectiblePreferences(
-    type:{self.itemType}, 
-    key:{self.key}, 
-    position:{self.position}, 
+    type:{self.itemType},
+    key:{self.key},
+    position:{self.position},
     visible:{self.visible}
     """
 
@@ -451,3 +451,10 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectiblePreferences]): CollectiblePre
   discard t.getProp("key", result.key)
   discard t.getProp("position", result.position)
   discard t.getProp("visible", result.visible)
+
+proc `%`*(cp: CollectiblePreferences): JsonNode {.inline.} =
+  result = newJObject()
+  result["type"] = %int(cp.itemType)
+  result["key"] = %cp.key
+  result["position"] = %cp.position
+  result["visible"] = %cp.visible
