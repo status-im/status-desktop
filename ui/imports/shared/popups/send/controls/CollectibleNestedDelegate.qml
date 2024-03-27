@@ -29,7 +29,7 @@ StatusListItem {
 
     title: name
     statusListItemTitleAside.font.pixelSize: 15
-    asset.name: iconUrl ? iconUrl : ""
+    asset.name: iconUrl ?? ""
     asset.isImage: true
     asset.width: 32
     asset.height: 32
@@ -41,28 +41,26 @@ StatusListItem {
 
     onClicked: d.selectItem()
 
-    property int numItems
-
     components: [
         StatusRoundedImage {
             width: 20
             height: 20
-            image.source: Style.svg("tiny/%1".arg(networkIconUrl))
-            visible: !isCollection && root.sensor.containsMouse
+            image.source: Style.svg("tiny/%1".arg(networkIconUrl)) ?? ""
+            visible: !isGroup && root.sensor.containsMouse 
         },
         StatusBaseText {
             id: label
-            text: root.numItems
+            text: count
             font.pixelSize: 13
             color: Theme.palette.baseColor1
-            visible: isCollection
+            visible: isGroup || (!root.sensor.containsMouse && count > 1)
         },
         StatusIcon {
             icon: "tiny/chevron-right"
             color: Theme.palette.baseColor1
             width: 16
             height: 16
-            visible: isCollection
+            visible: isGroup
         }
     ]
 }

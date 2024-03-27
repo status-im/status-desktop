@@ -358,9 +358,11 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
   self.view.switchReceiveAccountByAddress(addresses[0])
 
 proc updateCollectiblesFilter*(self: Module) =
-  let addresses = @[self.view.getSenderAddressByIndex(self.senderCurrentAccountIndex)]
+  let senderAddress = self.view.getSenderAddressByIndex(self.senderCurrentAccountIndex)
+  let addresses = @[senderAddress]
   let chainIds = self.controller.getChainIds()
   self.collectiblesController.setFilterAddressesAndChains(addresses, chainIds)
+  self.nestedCollectiblesModel.setAddress(senderAddress)
 
 method setSelectedSenderAccountIndex*(self: Module, index: int) =
   self.senderCurrentAccountIndex = index
