@@ -31,18 +31,30 @@ class LeftPanel(QObject):
         self._start_chat_button = Button(messaging_names.mainWindow_startChatButton_StatusIconTabButton)
         self._search_text_edit = TextEdit(messaging_names.mainWindow_search_edit_TextEdit)
         self._scroll = Scroll(messaging_names.scrollView_Flickable)
-        self._contacts_list = List(messaging_names.chatList_ListView)
-        self._contact_item = QObject(messaging_names.scrollView_StatusChatListItem)
+        self._chats_list = List(messaging_names.chatList_ListView)
+        self._chat_list_item = QObject(messaging_names.scrollView_StatusChatListItem)
 
     @property
     @allure.step('Get contacts')
-    def contacts(self) -> typing.List[str]:
-        return self._contacts_list.get_values('objectName')
+    def chats(self) -> typing.List[str]:
+        return self._chats_list.get_values('objectName')
 
     @allure.step('Open chat')
-    def open_chat(self, contact: str):
-        assert driver.waitFor(lambda: contact in self.contacts), f'Contact: {contact} not found in {self.contacts}'
-        self._contacts_list.select(contact, 'objectName')
+    def get_chats_list(self):
+        chats_list = []
+        for obj in driver.findAllObjects(self._chat_list_item.real_name):
+            chats_list.append(str(obj.name))
+
+        if len(chats_list) == 0:
+            raise LookupError(
+                'Chats list is empty')
+        else:
+            return chats_list
+
+    @allure.step('Click chat item')
+    def click_chat_by_name(self, chat_name: str):
+        self._chat_list_item.real_name['objectName'] = chat_name
+        self._chat_list_item.click()
         return ChatView()
 
     @allure.step('Click start chat button')
@@ -52,8 +64,8 @@ class LeftPanel(QObject):
 
     @allure.step('Open context menu group chat')
     def _open_context_menu_for_chat(self, chat_name: str) -> ContextMenu:
-        self._contact_item.real_name['objectName'] = chat_name
-        self._contact_item.right_click()
+        self._chat_list_item.real_name['objectName'] = chat_name
+        self._chat_list_item.right_click()
         return ContextMenu().wait_until_appears()
 
     @allure.step('Open leave popup')
