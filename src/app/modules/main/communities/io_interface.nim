@@ -16,6 +16,9 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method cleanJoinEditCommunityData*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onActivated*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

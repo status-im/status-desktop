@@ -18,6 +18,7 @@ import SortFilterProxyModel 0.2
 StatusStackModal {
     id: root
 
+    destroyOnClose: true
     property bool isEditMode: false
 
     required property string communityName

@@ -124,6 +124,9 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc cleanJoinEditCommunityData*(self: View) {.slot.} =
+    self.delegate.cleanJoinEditCommunityData()
+
   proc communityAdded*(self: View, communityId: string) {.signal.}
   proc communityChanged*(self: View, communityId: string) {.signal.}
   proc discordOldestMessageTimestampChanged*(self: View) {.signal.}

@@ -581,7 +581,7 @@ Item {
                     }
 
                     onClosed: {
-                        destroy()
+                        root.store.cleanJoinEditCommunityData()
                     }
 
                     Connections {

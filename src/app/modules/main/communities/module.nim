@@ -140,7 +140,7 @@ method delete*(self: Module) =
   self.controller.delete
   self.communityTokensModule.delete
 
-proc clean(self: Module) =
+method cleanJoinEditCommunityData*(self: Module) =
   self.joiningCommunityDetails.clear()
 
 method load*(self: Module) =
@@ -351,20 +351,20 @@ method communityMuted*(self: Module, communityId: string, muted: bool) =
   self.view.model().setMuted(communityId, muted)
 
 method communityAccessRequested*(self: Module, communityId: string) =
-  self.clean()
+  self.cleanJoinEditCommunityData()
   self.view.communityAccessRequested(communityId)
 
 method communityAccessFailed*(self: Module, communityId, err: string) =
   error "communities: ", err
-  self.clean()
+  self.cleanJoinEditCommunityData()
   self.view.communityAccessFailed(communityId, err)
 
 method communityEditSharedAddressesSucceeded*(self: Module, communityId: string) =
-  self.clean()
+  self.cleanJoinEditCommunityData()
   self.view.communityEditSharedAddressesSucceeded(communityId)
 
 method communityEditSharedAddressesFailed*(self: Module, communityId, error: string) =
-  self.clean()
+  self.cleanJoinEditCommunityData()
   self.view.communityEditSharedAddressesFailed(communityId, error)
 
 method communityHistoryArchivesDownloadStarted*(self: Module, communityId: string) =
@@ -723,7 +723,6 @@ proc anyProfileKeyPairAddressSelectedToBeRevealed(self: Module): bool =
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
   if password == "" and pin == "":
     info "unsuccesful authentication"
-    self.clean()
     return
 
   self.joiningCommunityDetails.profilePassword = password

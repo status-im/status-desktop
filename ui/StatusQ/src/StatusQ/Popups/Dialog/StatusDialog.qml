@@ -135,7 +135,8 @@ Dialog {
     }
 
     onClosed: {
-        if (root.destroyOnClose)
+        if (root.destroyOnClose) {
             root.destroy();
+        }
     }
 }
