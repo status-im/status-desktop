@@ -23,6 +23,8 @@ import models/showcase_contact_social_links_model
 
 export io_interface
 
+const COLLECTIBLES_CACHE_AGE_SECONDS = 60
+
 logScope:
   topics = "profile-section-contacts-module"
 
@@ -52,7 +54,11 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
     loadType = collectiblesc.LoadType.AutoLoadSingleUpdate,
     networkService = networkService,
-    events = events
+    events = events,
+    fetchCriteria = backend_collectibles.FetchCriteria(
+      fetchType: backend_collectibles.FetchType.FetchIfCacheOld,
+      maxCacheAgeSeconds: COLLECTIBLES_CACHE_AGE_SECONDS
+    )
   )
   result.moduleLoaded = false
   result.showcaseForAContactLoading = false
@@ -368,11 +374,13 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto, va
   self.view.loadProfileShowcaseContactAccounts(accountItems)
 
   var collectibleItems: seq[ShowcaseContactGenericItem] = @[]
+  var collectibleChainIds: seq[int] = @[]
   for collectible in profileShowcase.collectibles:
     collectibleItems.add(ShowcaseContactGenericItem(
       showcaseKey: collectible.toCombinedCollectibleId(),
       showcasePosition: collectible.order
     ))
+    collectibleChainIds.add(collectible.chainId)
   self.view.loadProfileShowcaseContactCollectibles(collectibleItems)
 
   var assetItems: seq[ShowcaseContactGenericItem] = @[]
@@ -397,13 +405,13 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto, va
     ))
   self.view.loadProfileShowcaseContactSocialLinks(socialLinkItems)
 
-  let chainIds = self.controller.getChainIds()
-  self.collectiblesController.setFilterAddressesAndChains(accountAddresses, chainIds)
-
   if validated:
     self.showcaseForAContactLoading = false
     self.view.emitShowcaseForAContactLoadingChangedSignal()
   else:
+    # NOTE: this implementation does not respect testnet setting
+    # to fix use SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED and getChainIds() to intersect with collectibleChainIds
+    self.collectiblesController.setFilterAddressesAndChains(accountAddresses, collectibleChainIds)
     self.controller.requestProfileShowcaseForContact(self.showcasePublicKey, true)
 
 method fetchProfileShowcaseAccountsByAddress*(self: Module, address: string) =

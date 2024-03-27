@@ -205,4 +205,4 @@ proc fetchProfileShowcaseAccountsByAddress*(self: Controller, address: string) =
   self.contactsService.fetchProfileShowcaseAccountsByAddress(address)
 
 proc getChainIds*(self: Controller): seq[int] =
-  self.networkService.getNetworks().map(n => n.chainId)
+  self.networkService.getCurrentNetworks().map(n => n.chainId)

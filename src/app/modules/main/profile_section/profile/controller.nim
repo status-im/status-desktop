@@ -84,9 +84,6 @@ proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   self.walletAccountService.getWalletAccounts(true)
 
-proc getChainIds*(self: Controller): seq[int] =
-  self.networkService.getCurrentNetworks().map(n => n.chainId)
-
 proc setSocialLinks*(self: Controller, links: SocialLinks) =
   self.settingsService.setSocialLinks(links)
 
