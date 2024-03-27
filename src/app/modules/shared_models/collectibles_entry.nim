@@ -234,11 +234,13 @@ QtObject:
     notify = traitsChanged
 
   proc ownershipChanged*(self: CollectiblesEntry) {.signal.}
-  proc getOwnershipModel*(self: CollectiblesEntry): QVariant {.slot.} =
+  proc getOwnershipModel*(self: CollectiblesEntry): OwnershipModel =
+    return self.ownership
+  proc getOwnershipModelAsVariant*(self: CollectiblesEntry): QVariant {.slot.} =
     return newQVariant(self.ownership)
 
   QtProperty[QVariant] ownership:
-    read = getOwnershipModel
+    read = getOwnershipModelAsVariant
     notify = ownershipChanged
 
   proc communityIdChanged*(self: CollectiblesEntry) {.signal.}
