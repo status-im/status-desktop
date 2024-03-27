@@ -30,33 +30,22 @@ Control {
     property var viewAndPostHoldingsModel
     property var moderateHoldingsModel
     property bool showOnlyPanels: false
-    property int loginType: Constants.LoginType.Password
 
     property var assetsModel
     property var collectiblesModel
 
-    signal revealAddressClicked
+    signal requestToJoinClicked
     signal invitationPendingClicked
 
     QtObject {
         id: d
 
         readonly property string communityRequirementsNotMetText: qsTr("Membership requirements not met")
-        readonly property string communityRevealAddressText: qsTr("Reveal your address to join")
-        readonly property string communityRevealAddressWithRequestText: qsTr("Reveal your address and request to join")
+        readonly property string communityRequestToJoinText: qsTr("Request to join Community")
         readonly property string communityMembershipRequestPendingText: qsTr("Membership Request Pending...")
         readonly property string channelRequirementsNotMetText: qsTr("Channel requirements not met")
-        readonly property string channelRevealAddressText: qsTr("Reveal your address to enter")
         readonly property string channelMembershipRequestPendingText: qsTr("Channel Membership Request Pending...")
         readonly property string memberchipRequestRejectedText: qsTr("Membership Request Rejected")
-
-        function getInvitationPendingText() {
-            return root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText
-        }
-
-        function getRevealAddressText() {
-            return root.joinCommunity ? (root.requiresRequest ? d.communityRevealAddressWithRequestText : d.communityRevealAddressText) : d.channelRevealAddressText
-        }
 
         function filterPermissions(model) {
             return !!model && (model.tokenCriteriaMet || !model.isPrivate)
@@ -150,11 +139,11 @@ Control {
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
             visible: !root.showOnlyPanels && !root.isJoinRequestRejected && root.requiresRequest
-            text: root.isInvitationPending ? d.getInvitationPendingText() : d.getRevealAddressText()
-            icon.name: root.isInvitationPending ? "" : Constants.authenticationIconByType[root.loginType]
+            text: root.isInvitationPending ? (root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText)
+                                           : d.communityRequestToJoinText
             font.pixelSize: 13
             enabled: root.requirementsMet || d.communityPermissionsModel.count === 0
-            onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.revealAddressClicked()
+            onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.requestToJoinClicked()
         }
 
         StatusBaseText {

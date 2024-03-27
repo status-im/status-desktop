@@ -37,7 +37,6 @@ StatusSectionLayout {
     property bool requirementsCheckPending: false
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
-    property alias loginType: joinCommunityCenterPanel.loginType
 
     property var communityHoldingsModel
     property var viewOnlyHoldingsModel
@@ -56,7 +55,7 @@ StatusSectionLayout {
 
     signal infoButtonClicked
     signal adHocChatButtonClicked
-    signal revealAddressClicked
+    signal requestToJoinClicked
     signal invitationPendingClicked
 
 
@@ -146,7 +145,7 @@ StatusSectionLayout {
         listUsersText: root.listUsersText
         messagesModel: root.messagesModel
 
-        onRevealAddressClicked: root.revealAddressClicked()
+        onRequestToJoinClicked: root.requestToJoinClicked()
         onInvitationPendingClicked: root.invitationPendingClicked()
     }
 
