@@ -1,5 +1,7 @@
 import NimQml, Tables, strutils, stew/shims/strformat, sequtils
+import stint
 
+import ./collectible_ownership_model
 import ./collectibles_model as flat_model
 import ./collectibles_entry as flat_item
 import ./collectibles_nested_item as nested_item
@@ -12,18 +14,22 @@ type
     ChainId
     Name
     IconUrl
-    CollectionUid
-    CollectionName
-    IsCollection
-    CommunityId
+    GroupId
+    GroupName
     TokenType
+    ItemType
+    Count
+
+type
+  CollectiblesPerGroupId = Table[string, seq[flat_item.CollectiblesEntry]]
 
 QtObject:
   type
     Model* = ref object of QAbstractListModel
       flatModel: flat_model.Model
       items: seq[nested_item.Item]
-      currentCollectionUid: string
+      currentGroupId: string
+      address: string
 
   proc delete(self: Model) =
     self.items = @[]
@@ -36,7 +42,7 @@ QtObject:
     new(result, delete)
     result.flatModel = flatModel
     result.items = @[]
-    result.currentCollectionUid = ""
+    result.currentGroupId = ""
     result.setup
 
     signalConnect(result.flatModel, "countChanged()", result, "refreshItems()")
@@ -48,7 +54,7 @@ QtObject:
   proc `$`*(self: Model): string =
     result = fmt"""CollectiblesNestedModel(
       flatModel: {self.flatModel},
-      currentCollectionUid: {self.currentCollectionUid},
+      currentGroupId: {self.currentGroupId},
       ]"""
 
   proc countChanged(self: Model) {.signal.}
@@ -59,13 +65,13 @@ QtObject:
     notify = countChanged
 
   proc getCurrentCollectionUid*(self: Model): string {.slot.} =
-    result = self.currentCollectionUid
+    result = self.currentGroupId
   proc currentCollectionUidChanged(self: Model) {.signal.}
-  proc setCurrentCollectionUid(self: Model, currentCollectionUid: string) {.slot.} =
-    self.currentCollectionUid = currentCollectionUid
+  proc setCurrentCollectionUid(self: Model, currentGroupId: string) {.slot.} =
+    self.currentGroupId = currentGroupId
     self.currentCollectionUidChanged()
     self.refreshItems()
-  QtProperty[string] currentCollectionUid:
+  QtProperty[string] currentGroupId:
     read = getCurrentCollectionUid
     write = setCurrentCollectionUid
     notify = currentCollectionUidChanged
@@ -79,11 +85,11 @@ QtObject:
       CollectiblesNestedRole.ChainId.int:"chainId",
       CollectiblesNestedRole.Name.int:"name",
       CollectiblesNestedRole.IconUrl.int:"iconUrl",
-      CollectiblesNestedRole.CollectionUid.int:"collectionUid",
-      CollectiblesNestedRole.CollectionName.int:"collectionName",
-      CollectiblesNestedRole.IsCollection.int:"isCollection",
-      CollectiblesNestedRole.CommunityId.int:"communityId",
+      CollectiblesNestedRole.GroupId.int:"groupId",
+      CollectiblesNestedRole.GroupName.int:"groupName",
       CollectiblesNestedRole.TokenType.int:"tokenType",
+      CollectiblesNestedRole.ItemType.int:"itemType",
+      CollectiblesNestedRole.Count.int:"count",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -105,16 +111,16 @@ QtObject:
       result = newQVariant(item.getName())
     of CollectiblesNestedRole.IconUrl:
       result = newQVariant(item.getIconUrl())
-    of CollectiblesNestedRole.CollectionUid:
-      result = newQVariant(item.getCollectionId())
-    of CollectiblesNestedRole.CollectionName:
-      result = newQVariant(item.getCollectionName())
-    of CollectiblesNestedRole.IsCollection:
-      result = newQVariant(item.getIsCollection())
-    of CollectiblesNestedRole.CommunityId:
-      result = newQVariant(item.getCommunityId())
+    of CollectiblesNestedRole.GroupId:
+      result = newQVariant(item.getGroupId())
+    of CollectiblesNestedRole.GroupName:
+      result = newQVariant(item.getGroupName())
     of CollectiblesNestedRole.TokenType:
-        result = newQVariant(item.getTokenType())
+      result = newQVariant(item.getTokenType())
+    of CollectiblesNestedRole.ItemType:
+      result = newQVariant(item.getItemType())
+    of CollectiblesNestedRole.Count:
+      result = newQVariant(item.getCountAsString())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -125,12 +131,15 @@ QtObject:
       of "chainId": result = $item.getChainId()
       of "name": result = item.getName()
       of "iconUrl": result = item.getIconUrl()
-      of "collectionUid": result = item.getCollectionId()
-      of "collectionName": result = item.getCollectionName()
-      of "isCollection": result = $item.getIsCollection()
-      of "communityId": result = item.getCommunityId()
+      of "groupId": result = item.getGroupId()
+      of "groupName": result = item.getGroupName()
+      of "itemType": result = $item.getItemType()
+      of "count": result = item.getCountAsString()
 
-  proc getCollectiblesPerCollectionId(items: seq[flat_item.CollectiblesEntry]): Table[string, seq[flat_item.CollectiblesEntry]] =
+  # Groups collectibles by CommunityID if available, or CollectionID otherwise. 
+  # Returns pair (collectiblesPerCommunity, collectiblesPerCollection)
+  proc getCollectiblesPerGroupId(items: seq[flat_item.CollectiblesEntry]): (CollectiblesPerGroupId, CollectiblesPerGroupId) =
+    var collectiblesPerCommunity = initTable[string, seq[flat_item.CollectiblesEntry]]()
     var collectiblesPerCollection = initTable[string, seq[flat_item.CollectiblesEntry]]()
 
     for item in items:
@@ -140,50 +149,30 @@ QtObject:
         if not collectiblesPerCollection.hasKey(collectionId):
           collectiblesPerCollection[collectionId] = @[]
         collectiblesPerCollection[collectionId].add(item)
-
-    return collectiblesPerCollection
-
-  proc getCollectiblesPerCommunityId(items: seq[flat_item.CollectiblesEntry]): Table[string, seq[flat_item.CollectiblesEntry]] =
-    var collectiblesPerCommunity = initTable[string, seq[flat_item.CollectiblesEntry]]()
-
-    for item in items:
-      let communityId = item.getCommunityId()
-      if communityId != "":
+      else:
         if not collectiblesPerCommunity.hasKey(communityId):
           collectiblesPerCommunity[communityId] = @[]
         collectiblesPerCommunity[communityId].add(item)
-
-    return collectiblesPerCommunity
-
-  proc getNumberOfCollectiblesInCommunity*(self: Model, commId: string): int {.slot.} =
-    if commId != "":
-      var collectiblesPerCommunity = getCollectiblesPerCommunityId(self.flatModel.getItems())
-      if collectiblesPerCommunity.hasKey(commId):
-        result = collectiblesPerCommunity[commId].len
-
-  proc getNumberOfCollectiblesInCollection*(self: Model, collUid: string): int {.slot.} =
-    if collUid != "":
-      var collectiblesPerCollection = getCollectiblesPerCollectionId(self.flatModel.getItems())
-      if collectiblesPerCollection.hasKey(collUid):
-        result = collectiblesPerCollection[collUid].len
+    return (collectiblesPerCommunity, collectiblesPerCollection)
 
   proc refreshItems*(self: Model) {.slot.} =
+    let (collectiblesPerCommunity, collectiblesPerCollection) = getCollectiblesPerGroupId(self.flatModel.getItems())
+
     self.beginResetModel()
     self.items = @[]
 
     var addCollections = true
     # Add communities
-    var collectiblesPerCommunity = getCollectiblesPerCommunityId(self.flatModel.getItems())
     for communityId, communityCollectibles in collectiblesPerCommunity.pairs:
-      if self.currentCollectionUid == "":
+      if self.currentGroupId == "":
         # No collection selected
         if communityCollectibles.len > 0:
-          let communityItem = collectibleToCollectionNestedItem(communityCollectibles[0])
+          let communityItem = collectibleToCommunityNestedItem(communityCollectibles[0], stint.u256(communityCollectibles.len))
           self.items.add(communityItem)
       else:
-        if self.currentCollectionUid == communityId:
+        if self.currentGroupId == communityId:
           for collectible in communityCollectibles:
-            let collectibleItem = collectibleToCollectibleNestedItem(collectible)
+            let collectibleItem = collectibleToCommunityCollectibleNestedItem(collectible, collectible.getOwnershipModel().getBalance(self.address))
             self.items.add(collectibleItem)
 
           # Inside community folder we dont add collection items
@@ -192,23 +181,22 @@ QtObject:
 
     if addCollections:
       # Add collections and collection items
-      var collectiblesPerCollection = getCollectiblesPerCollectionId(self.flatModel.getItems())
       for collectionId, collectionCollectibles in collectiblesPerCollection.pairs:
-        if self.currentCollectionUid == "":
+        if self.currentGroupId == "":
           # No collection selected
           # If the collection contains more than 1 collectible, we add a single collection item
           # Otherwise, we add the collectible
           if collectionCollectibles.len > 1:
-            let collectionItem = collectibleToCollectionNestedItem(collectionCollectibles[0])
+            let collectionItem = collectibleToCollectionNestedItem(collectionCollectibles[0], stint.u256(collectionCollectibles.len))
             self.items.add(collectionItem)
           else:
             for collectible in collectionCollectibles:
-              let collectibleItem = collectibleToCollectibleNestedItem(collectible)
+              let collectibleItem = collectibleToNonCommunityCollectibleNestedItem(collectible, collectible.getOwnershipModel().getBalance(self.address))
               self.items.add(collectibleItem)
         else:
-          if self.currentCollectionUid == collectionId:
+          if self.currentGroupId == collectionId:
             for collectible in collectionCollectibles:
-              let collectibleItem = collectibleToCollectibleNestedItem(collectible)
+              let collectibleItem = collectibleToNonCommunityCollectibleNestedItem(collectible, collectible.getOwnershipModel().getBalance(self.address))
               self.items.add(collectibleItem)
             # No need to keep looking
             break
@@ -221,3 +209,7 @@ QtObject:
     self.items = @[]
     self.endResetModel()
     self.countChanged()
+
+  proc setAddress*(self: Model, address: string) {.slot.} =
+    self.address = address
+    self.refreshItems()
