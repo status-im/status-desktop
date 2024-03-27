@@ -788,3 +788,21 @@ proc addressWasShown*(self: Service, address: string) =
       raise newException(CatchableError, response.error.message)
   except Exception as e:
     error "error: ", procName="addressWasShown", errName=e.name, errDesription=e.msg
+
+proc getNumOfAddressesToGenerateForKeypair*(self: Service, keyUid: string): int =
+  try:
+    let response = status_go_accounts.getNumOfAddressesToGenerateForKeypair(keyUid)
+    if not response.error.isNil:
+      raise newException(CatchableError, response.error.message)
+    return response.result.getInt
+  except Exception as e:
+    error "error: ", procName="getNumOfAddressesToGenerateForKeypair", errName=e.name, errDesription=e.msg
+
+proc resolveSuggestedPathForKeypair*(self: Service, keyUid: string): string =
+  try:
+    let response = status_go_accounts.resolveSuggestedPathForKeypair(keyUid)
+    if not response.error.isNil:
+      raise newException(CatchableError, response.error.message)
+    return response.result.getStr
+  except Exception as e:
+    error "error: ", procName="resolveSuggestedPathForKeypair", errName=e.name, errDesription=e.msg

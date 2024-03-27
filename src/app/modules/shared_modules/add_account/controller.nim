@@ -245,3 +245,9 @@ proc fetchAddressesFromKeycard*(self: Controller, bip44Paths: seq[string]) =
   self.connectKeycardReponseSignal()
   self.tmpPaths = bip44Paths
   self.keycardService.startExportPublicFlow(bip44Paths, exportMasterAddr=true, exportPrivateAddr=false, pin=self.getPin())
+
+proc getNumOfAddressesToGenerateForKeypair*(self: Controller, keyUid: string): int =
+  return self.walletAccountService.getNumOfAddressesToGenerateForKeypair(keyUid)
+
+proc resolveSuggestedPathForKeypair*(self: Controller, keyUid: string): string =
+  return self.walletAccountService.resolveSuggestedPathForKeypair(keyUid)
