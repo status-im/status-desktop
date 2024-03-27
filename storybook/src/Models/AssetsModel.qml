@@ -66,6 +66,24 @@ ListModel {
             symbol: "SNT",
             category: TokenCategories.Category.General,
             communityId: ""
+        },
+        {
+            key: "stt",
+            iconSource: ModelsData.assets.snt,
+            name: "stt",
+            shortName: "stt",
+            symbol: "STT",
+            category: TokenCategories.Category.Own,
+            communityId: ""
+        },
+        {
+            key: "eth",
+            iconSource: ModelsData.assets.eth,
+            name: "eth",
+            shortName: "eth",
+            symbol: "ETH",
+            category: TokenCategories.Category.General,
+            communityId: ""
         }
     ]
 

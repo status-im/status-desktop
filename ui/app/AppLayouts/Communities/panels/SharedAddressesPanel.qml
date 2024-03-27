@@ -31,6 +31,7 @@ Control {
     required property int totalNumOfAddressesForSharing
     required property bool profileProvesOwnershipOfSelectedAddresses
     required property bool allAddressesToRevealBelongToSingleNonProfileKeypair
+    required property int /*PermissionTypes.Type*/ eligibleToJoinAs
 
     property bool requirementsCheckPending: false
 
@@ -135,6 +136,7 @@ Control {
 
         readonly property var shareAddressesButton: StatusButton {
             visible: !root.isEditMode
+            enabled: root.eligibleToJoinAs !== PermissionTypes.Type.None
             text: {
                 if (d.selectedSharedAddressesCount === root.totalNumOfAddressesForSharing) {
                     return qsTr("Share all addresses to join")
@@ -177,7 +179,8 @@ Control {
             text: d.lostCommunityPermission ? qsTr("Selected addresses have insufficient tokens to maintain %1 membership").arg(root.communityName) :
                                               d.lostChannelPermissions ? qsTr("By deselecting these addresses, you will lose channel permissions") :
                                                                          ""
-            visible: d.lostCommunityPermission || d.lostChannelPermissions
+            active: d.lostCommunityPermission || d.lostChannelPermissions
+            visible: active
             closeBtnVisible: false
         }
 
@@ -202,7 +205,7 @@ Control {
                 root.airdropAddressSelected(address)
             }
 
-            getCurrencyAmount: function (balance, symbol){
+            getCurrencyAmount: function (balance, symbol) {
                 return root.getCurrencyAmount(balance, symbol)
             }
         }
@@ -211,7 +214,7 @@ Control {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: Style.current.padding * 2
-            color: Theme.palette.baseColor2
+            color: permissionsView.color
             radius: Style.current.padding
             border.width: 1
             border.color: Theme.palette.baseColor3
@@ -237,6 +240,7 @@ Control {
             requirementsCheckPending: root.requirementsCheckPending
             communityName: root.communityName
             communityIcon: root.communityIcon
+            eligibleToJoinAs: root.eligibleToJoinAs
 
             Layout.fillHeight: true
             Layout.fillWidth: true

@@ -260,13 +260,12 @@ QtObject {
     }
 
     function openCommunityIntroPopup(communityId, name, introMessage,
-                                     imageSrc, accessType, isInvitationPending) {
+                                     imageSrc, isInvitationPending) {
         openPopup(communityJoinDialogPopup,
                   {communityId: communityId,
                    communityName: name,
                    introMessage: introMessage,
                    communityIcon: imageSrc,
-                   accessType: accessType,
                    isInvitationPending: isInvitationPending
                   })
     }
@@ -278,7 +277,6 @@ QtObject {
                    communityName: name,
                    introMessage: qsTr("Share addresses to rejoin %1").arg(name),
                    communityIcon: imageSrc,
-                   accessType: Constants.communityChatOnRequestAccess,
                    isInvitationPending: false
                   })
     }
@@ -698,7 +696,7 @@ QtObject {
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
 
-                getCurrencyAmount: function (balance, symbol){
+                getCurrencyAmount: function (balance, symbol) {
                     return currencyStore.getCurrencyAmount(balance, symbol)
                 }
 
@@ -720,7 +718,10 @@ QtObject {
                     root.rootStore.joinCommunityOrEditSharedAddresses()
                 }
 
-                onCancelMembershipRequest: root.rootStore.cancelPendingRequest(dialogRoot.communityId)
+                onCancelMembershipRequest: {
+                    root.rootStore.cancelPendingRequest(dialogRoot.communityId)
+                }
+
                 Connections {
                     target: root.communitiesStore.communitiesModuleInst
                     function onCommunityAccessRequested(communityId: string) {
@@ -931,6 +932,8 @@ QtObject {
                 communityName: chatStore.sectionDetails.name
                 communityIcon: chatStore.sectionDetails.image
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
+
+                introMessage: chatStore.sectionDetails.introMessage
 
                 canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
