@@ -22,7 +22,10 @@ group_chat_user_2 = UserAccount('group_chat_user_2', '521/97Qv\:', [
     'opera', 'great', 'open', 'sight', 'still', 'quantum', 'flight', 'torch', 'mule', 'cage', 'noise', 'horn'
 
 ], '0x472078f0110d0bb0dfc73389ce89d8a83c8c0502')
-group_chat_user_3 = UserAccount()
+group_chat_user_3 = UserAccount('group_chat_user_3', '29T\I8Cv_G', [
+    'bless', 'enter', 'wet', 'foot', 'lazy', 'will', 'reform', 'enemy', 'rubber', 'void', 'journey', 'fence'
+
+], '0x4b04b8e22e8295d0ae3177774e4acfd0badacf09')
 
 user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345', [], '')
 user_account_one_changed_name = UserAccount('NewUserName', '0000000000', [], '')
