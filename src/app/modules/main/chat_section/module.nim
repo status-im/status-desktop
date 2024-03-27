@@ -641,7 +641,7 @@ proc addNewChat(
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
   ): chat_item.Item =
-  let hasNotification =chatDto.unviewedMessagesCount > 0
+  let hasNotification = chatDto.unviewedMessagesCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
 
   var chatName = chatDto.name
@@ -675,7 +675,6 @@ proc addNewChat(
   if memberRole == MemberRole.None and len(chatDto.communityId) != 0:
     memberRole = community.memberRole
     if memberRole == MemberRole.None:
-      let community = communityService.getCommunityById(chatDto.communityId)
       memberRole = community.memberRole
 
   var categoryOpened = true
@@ -693,6 +692,16 @@ proc addNewChat(
         error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
       else:
         categoryPosition = category.position
+
+  var canPostReactions = true
+  var hideIfPermissionsNotMet = false
+  var viewersCanPostReactions = true
+  if self.controller.isCommunity:
+    let communityChat = community.getSpecificCommunityChat(chatDto.id)
+    # Some properties are only available on CommunityChat (they are useless for normal chats)
+    canPostReactions = communityChat.canPostReactions
+    hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
+    viewersCanPostReactions = communityChat.viewersCanPostReactions
 
   result = chat_item.initItem(
     chatDto.id,
@@ -726,9 +735,9 @@ proc addNewChat(
         self.controller.checkChatHasPermissions(self.controller.getMySectionId(), chatDto.id)
       else:
         false,
-    canPostReactions = chatDto.canPostReactions,
-    viewersCanPostReactions = chatDto.viewersCanPostReactions,
-    hideIfPermissionsNotMet = chatDto.hideIfPermissionsNotMet,
+    canPostReactions = canPostReactions,
+    viewersCanPostReactions = viewersCanPostReactions,
+    hideIfPermissionsNotMet = hideIfPermissionsNotMet,
     viewOnlyPermissionsSatisfied = true, # will be updated in async call
     viewAndPostPermissionsSatisfied = true # will be updated in async call
   )
@@ -1363,8 +1372,8 @@ proc addOrUpdateChat(self: Module,
   ): chat_item.Item =
 
   let sectionId = self.controller.getMySectionId()
-  if(belongsToCommunity and sectionId != chat.communityId or
-    not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey()):
+  if belongsToCommunity and sectionId != chat.communityId or
+    not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():
     return
 
   let chatExists = self.doesCatOrChatExist(chat.id)
