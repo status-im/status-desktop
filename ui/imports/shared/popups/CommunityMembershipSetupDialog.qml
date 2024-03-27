@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import utils 1.0
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -12,6 +13,8 @@ import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.helpers 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -26,7 +29,6 @@ StatusStackModal {
     required property bool requirementsCheckPending
 
     property string introMessage
-    property int accessType
 
     property bool isInvitationPending: false
 
@@ -71,13 +73,63 @@ StatusStackModal {
 
     width: 640 // by design
     padding: 0
-    stackTitle: root.accessType === Constants.communityChatOnRequestAccess ?
+    stackTitle: d.accessType === Constants.communityChatOnRequestAccess ?
                     qsTr("Request to join %1").arg(root.communityName)
                   : qsTr("Welcome to %1").arg(root.communityName)
 
     rightButtons: [d.shareButton, finishButton]
 
-    finishButton: root.isInvitationPending ? d.cancelRequestButton : d.shareAddressesButton
+    finishButton: StatusButton {
+        enabled: {
+            if (root.isInvitationPending || d.accessType !== Constants.communityChatOnRequestAccess)
+                return true
+
+            return d.eligibleToJoinAs !== PermissionTypes.Type.None
+        }
+        text: {
+            if (root.isInvitationPending) {
+                return qsTr("Cancel Membership Request")
+            }
+            if (d.selectedSharedAddressesCount === d.totalNumOfAddressesForSharing) {
+                return qsTr("Share all addresses to join")
+            }
+            return qsTr("Share %n address(s) to join", "", d.selectedSharedAddressesCount)
+        }
+        type: root.isInvitationPending ? StatusBaseButton.Type.Danger
+                                       : StatusBaseButton.Type.Normal
+
+        icon.name: {
+            if (root.isInvitationPending)
+                return ""
+
+            if (root.profileProvesOwnershipOfSelectedAddresses) {
+                if (userProfile.usingBiometricLogin) {
+                    return "touch-id"
+                }
+
+                if (userProfile.isKeycardUser) {
+                    return "keycard"
+                }
+
+                return "password"
+            }
+            if (root.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                return "keycard"
+            }
+
+            return ""
+        }
+
+        onClicked: {
+            if (root.isInvitationPending) {
+                root.cancelMembershipRequest()
+                root.close()
+                return
+            }
+
+            d.proceedToSigningOrSubmitRequest(d.communityIntroUid)
+        }
+    }
 
     backButton: StatusBackButton {
         visible: !!root.replaceLoader.item
@@ -117,17 +169,29 @@ StatusStackModal {
 
         readonly property int selectedSharedAddressesCount: d.selectedSharedAddressesMap.size
 
+        readonly property int accessType: d.eligibleToJoinAs !== - 1 ? Constants.communityChatOnRequestAccess
+                                                                     : Constants.communityChatPublicAccess
+        property int eligibleToJoinAs: PermissionsHelpers.isEligibleToJoinAs(root.permissionsModel)
+        readonly property var _con: Connections {
+            target: root.permissionsModel
+            function onTokenCriteriaUpdated() {
+                d.eligibleToJoinAs = PermissionsHelpers.isEligibleToJoinAs(root.permissionsModel)
+            }
+        }
+
         property var initialAddressesModel: SortFilterProxyModel {
             sourceModel: root.walletAccountsModel
             sorters: [
-                ExpressionSorter {
-                    function isGenerated(modelData) {
-                        return modelData.walletType === Constants.generatedWalletType
+                FastExpressionSorter {
+                    function sortPredicate(lhs, rhs) {
+                        if (lhs.walletType === rhs.walletType) return 0
+                        return lhs.walletType === Constants.generatedWalletType ? -1 : 1
                     }
 
                     expression: {
-                        return isGenerated(modelLeft)
+                        return sortPredicate(modelLeft, modelRight)
                     }
+                    expectedRoles: ["walletType"]
                 },
                 RoleSorter {
                     roleName: "position"
@@ -136,50 +200,6 @@ StatusStackModal {
                     roleName: "name"
                 }
             ]
-        }
-
-        readonly property StatusFlatButton cancelRequestButton: StatusFlatButton {
-            text: qsTr("Cancel Membership Request")
-            type: StatusBaseButton.Type.Danger
-            onClicked: {
-                if (root.isInvitationPending) {
-                    root.cancelMembershipRequest()
-                    root.close()
-                    return
-                }
-            }
-        }
-
-        readonly property StatusButton shareAddressesButton: StatusButton {
-            text: {
-                if (d.selectedSharedAddressesCount === d.totalNumOfAddressesForSharing) {
-                    return qsTr("Share all addresses to join")
-                }
-
-                return qsTr("Share %n address(s) to join", "", d.selectedSharedAddressesCount)
-            }
-            type: StatusBaseButton.Type.Normal
-            icon.name: {
-                if (root.profileProvesOwnershipOfSelectedAddresses) {
-                    if (userProfile.usingBiometricLogin) {
-                        return "touch-id"
-                    }
-
-                    if (userProfile.isKeycardUser) {
-                        return "keycard"
-                    }
-
-                    return "password"
-                }
-
-                if (root.allAddressesToRevealBelongToSingleNonProfileKeypair) {
-                    return "keycard"
-                }
-
-                return ""
-            }
-
-            onClicked: d.proceedToSigningOrSubmitRequest(d.communityIntroUid)
         }
 
         function proceedToSigningOrSubmitRequest(uidOfComponentThisFunctionIsCalledFrom) {
@@ -340,6 +360,7 @@ StatusStackModal {
             currentSharedAddressesMap: d.currentSharedAddressesMap
 
             totalNumOfAddressesForSharing: d.totalNumOfAddressesForSharing
+            eligibleToJoinAs: d.eligibleToJoinAs
 
             profileProvesOwnershipOfSelectedAddresses: root.profileProvesOwnershipOfSelectedAddresses
             allAddressesToRevealBelongToSingleNonProfileKeypair: root.allAddressesToRevealBelongToSingleNonProfileKeypair
@@ -377,7 +398,6 @@ StatusStackModal {
     Component {
         id: sharedAddressesSigningPanelComponent
         SharedAddressesSigningPanel {
-
             componentUid: d.signingPanelUid
             isEditMode: root.isEditMode
             totalNumOfAddressesForSharing: d.totalNumOfAddressesForSharing
@@ -429,6 +449,12 @@ StatusStackModal {
                     text: root.introMessage || qsTr("Community <b>%1</b> has no intro message...").arg(root.communityName)
                     color: Theme.palette.directColor1
                     wrapMode: Text.WordWrap
+                }
+
+                CommunityEligibilityTag {
+                    Layout.alignment: Qt.AlignHCenter
+                    eligibleToJoinAs: d.eligibleToJoinAs
+                    visible: !root.isEditMode && !root.isInvitationPending && d.accessType === Constants.communityChatOnRequestAccess
                 }
             }
         }

@@ -17,6 +17,10 @@ int roleByName(QAbstractItemModel* model, const QString &roleName)
 }
 }
 
+Q_DECL_CONST_FUNCTION Q_DECL_CONSTEXPR inline uint qHash(PermissionTypes::Type key, uint seed = 0) noexcept {
+    return qHash(static_cast<int>(key), seed);
+}
+
 PermissionUtilsInternal::PermissionUtilsInternal(QObject* parent)
     : QObject(parent)
 {
@@ -123,4 +127,56 @@ QJsonArray PermissionUtilsInternal::getUniquePermissionChannels(QAbstractItemMod
     });
 
     return result;
+}
+
+int /*PermissionTypes::Type*/ PermissionUtilsInternal::isEligibleToJoinAs(QAbstractItemModel *permissionsModel) const
+{
+    if (!permissionsModel)
+        return PermissionTypes::Type::NoPermissions;
+
+    const auto permissionTypeRole = roleByName(permissionsModel, QStringLiteral("permissionType"));
+    if (permissionTypeRole == -1) {
+        qWarning() << Q_FUNC_INFO << "Requested roleName 'permissionType' not found; no permissions at all";
+        return PermissionTypes::Type::NoPermissions;
+    }
+
+    const auto tokenCriteriaMetRole = roleByName(permissionsModel, QStringLiteral("tokenCriteriaMet"));
+    if (tokenCriteriaMetRole == -1) {
+        qWarning() << Q_FUNC_INFO << "Requested roleName 'tokenCriteriaMet' not found; no permissions at all";
+        return PermissionTypes::Type::NoPermissions;
+    }
+
+    QSet<PermissionTypes::Type> tmpRes;
+    bool hasAnyJoinPermission{false};
+    constexpr auto isJoinTypePermission = [](PermissionTypes::Type type) {
+        return type == PermissionTypes::Type::TokenMaster ||
+               type == PermissionTypes::Type::Admin ||
+               type == PermissionTypes::Type::Member;
+    };
+
+    const auto permissionsCount = permissionsModel->rowCount();
+    for (int i = 0; i < permissionsCount; i++) {
+        const auto permissionType = static_cast<PermissionTypes::Type>(permissionsModel->data(permissionsModel->index(i, 0), permissionTypeRole).toInt());
+        if (isJoinTypePermission(permissionType)) {
+            hasAnyJoinPermission = true;
+            const auto tokenCriteriaMet = permissionsModel->data(permissionsModel->index(i, 0), tokenCriteriaMetRole).toBool();
+            if (tokenCriteriaMet) {
+                tmpRes.insert(permissionType);
+            }
+        }
+    }
+
+    if (!hasAnyJoinPermission)
+        return PermissionTypes::Type::Member;
+
+    if (tmpRes.contains(PermissionTypes::Type::TokenMaster))
+        return PermissionTypes::Type::TokenMaster;
+
+    if (tmpRes.contains(PermissionTypes::Type::Admin))
+        return PermissionTypes::Type::Admin;
+
+    if (tmpRes.contains(PermissionTypes::Type::Member))
+        return PermissionTypes::Type::Member;
+
+    return PermissionTypes::Type::None;
 }

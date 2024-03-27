@@ -52,7 +52,7 @@ StatusListView {
         readonly property bool isOwner: model.memberRole === Constants.memberRole.owner
         readonly property bool isAdmin: model.memberRole === Constants.memberRole.admin
         readonly property bool isTokenMaster: model.memberRole === Constants.memberRole.tokenMaster
-        readonly property bool isInvitationPending: root.rootStore.isMyCommunityRequestPending(model.id)
+        property bool isInvitationPending: root.rootStore.isMyCommunityRequestPending(model.id)
 
         components: [
             StatusFlatButton {
@@ -153,9 +153,10 @@ StatusListView {
                         enabled: !listItem.isOwner
                         onTriggered: {
                             moreMenu.close()
-                            if (listItem.isInvitationPending)
+                            if (listItem.isInvitationPending) {
                                 root.cancelMembershipRequest(model.id)
-                            else if (listItem.isSpectator)
+                                listItem.isInvitationPending = root.rootStore.isMyCommunityRequestPending(model.id)
+                            } else if (listItem.isSpectator)
                                 root.closeCommunityClicked(model.id)
                             else
                                 root.leaveCommunityClicked(model.name, model.id, model.outroMessage)

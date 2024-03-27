@@ -208,100 +208,10 @@ SettingsContentBase {
                                                      null)
         }
         onShowCommunityMembershipSetupDialog: {
-            Global.openPopup(communityMembershipSetupDialogComponent, {
-                communityId: communityId,
-                isInvitationPending: root.rootStore.isMyCommunityRequestPending(communityId),
-                communityName: name,
-                introMessage: introMessage,
-                communityIcon: imageSrc,
-                accessType: accessType
-            })
+            Global.communityIntroPopupRequested(communityId, name, introMessage, imageSrc, root.rootStore.isMyCommunityRequestPending(communityId))
         }
         onCancelMembershipRequest: {
             root.rootStore.cancelPendingRequest(communityId)
-        }
-    }
-
-    readonly property var communityMembershipSetupDialogComponent: Component {
-        id: communityMembershipSetupDialogComponent
-
-        CommunityMembershipSetupDialog {
-            id: dialogRoot
-
-            property string communityId
-
-            readonly property var chatStore: ChatStore.RootStore {
-                chatCommunitySectionModule: {
-                    root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(dialogRoot.communityId)
-                    return root.rootStore.mainModuleInst.getCommunitySectionModule()
-                }
-            }
-
-            walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
-            canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
-
-            walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
-            requirementsCheckPending: root.rootStore.requirementsCheckPending
-            permissionsModel: {
-                root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
-                return root.rootStore.permissionsModel
-            }
-            assetsModel: chatStore.assetsModel
-            collectiblesModel: chatStore.collectiblesModel
-
-            getCurrencyAmount: function (balance, symbol){
-                return currencyStore.getCurrencyAmount(balance, symbol)
-            }
-
-            onPrepareForSigning: {
-                chatStore.prepareKeypairsForSigning(dialogRoot.communityId, root.rootStore.userProfileInst.name, sharedAddresses, airdropAddress, false)
-
-                dialogRoot.keypairSigningModel = chatStore.communitiesModuleInst.keypairsSigningModel
-            }
-
-            onSignProfileKeypairAndAllNonKeycardKeypairs: {
-                chatStore.signProfileKeypairAndAllNonKeycardKeypairs()
-            }
-
-            onSignSharedAddressesForKeypair: {
-                chatStore.signSharedAddressesForKeypair(keyUid)
-            }
-
-            onJoinCommunity: {
-                chatStore.joinCommunityOrEditSharedAddresses()
-            }
-
-            onCancelMembershipRequest: root.rootStore.cancelPendingRequest(dialogRoot.communityId)
-
-            onSharedAddressesUpdated: {
-                root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
-            }
-
-            onClosed: {
-                chatStore.cleanJoinEditCommunityData()
-            }
-
-            Connections {
-                target: chatStore.communitiesModuleInst
-
-                function onAllSharedAddressesSigned() {
-                    if (dialogRoot.profileProvesOwnershipOfSelectedAddresses) {
-                        dialogRoot.joinCommunity()
-                        dialogRoot.close()
-                        return
-                    }
-
-                    if (dialogRoot.allAddressesToRevealBelongToSingleNonProfileKeypair) {
-                        dialogRoot.joinCommunity()
-                        dialogRoot.close()
-                        return
-                    }
-
-                    if (!!dialogRoot.replaceItem) {
-                        dialogRoot.replaceLoader.item.allSigned()
-                    }
-                }
-            }
         }
     }
 }
