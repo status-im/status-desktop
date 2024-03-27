@@ -1,6 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.13
+import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
@@ -28,6 +30,7 @@ Item {
     required property var collectible
     property var activityModel
     property bool isCollectibleLoading
+    required property string addressFilters
 
     // Community related token props:
     readonly property bool isCommunityCollectible: !!collectible ? collectible.communityId !== "" : false
@@ -38,9 +41,34 @@ Item {
 
     QtObject {
         id: d
-        readonly property string collectibleLink: root.walletRootStore.getOpenSeaCollectibleUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId)
-        readonly property string collectionLink: root.walletRootStore.getOpenSeaCollectionUrl(collectible.networkShortName, collectible.contractAddress)
-        readonly property string blockExplorerLink: root.walletRootStore.getExplorerUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId)
+        readonly property string collectibleLink: !!collectible ? root.walletRootStore.getOpenSeaCollectibleUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId): ""
+        readonly property string collectionLink: !!collectible ? root.walletRootStore.getOpenSeaCollectionUrl(collectible.networkShortName, collectible.contractAddress): ""
+        readonly property string blockExplorerLink: !!collectible ? root.walletRootStore.getExplorerUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId): ""
+        readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
+        readonly property int imageStackSpacing: 4
+
+        property Component balanceTag: Component {
+            CollectibleBalanceTag {
+                balance: d.balanceAggregator.value
+            }
+        }
+        property SortFilterProxyModel filteredBalances: SortFilterProxyModel {
+            sourceModel: !!collectible ? collectible.ownership : null
+            filters: [
+                FastExpressionFilter {
+                    expression: {
+                        d.addrFilters
+                        return d.addrFilters.includes(model.accountAddress.toLowerCase())
+                    }
+                    expectedRoles: ["accountAddress"]
+                }
+            ]
+        }
+
+        property SumAggregator balanceAggregator: SumAggregator {
+            model: d.filteredBalances
+            roleName: "balance"
+        }
     }
 
     CollectibleDetailsHeader {
@@ -48,16 +76,16 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        collectibleName: !!collectible.name ? collectible.name : qsTr("Unknown")
-        collectibleId: "#" + collectible.tokenId
+        collectibleName: !!collectible && !!collectible.name ? collectible.name : qsTr("Unknown")
+        collectibleId: !!collectible ? "#" + collectible.tokenId : ""
         communityName: !!communityDetails ? communityDetails.name : ""
-        communityId: collectible.communityId
-        collectionName: collectible.collectionName
-        communityImage: !!communityDetails ? communityDetails.image: ""
-        networkShortName: collectible.networkShortName
-        networkColor: collectible.networkColor
-        networkIconURL: collectible.networkIconUrl
-        networkExplorerName: root.walletRootStore.getExplorerNameForNetwork(collectible.networkShortName)
+        communityId: !!collectible ? collectible.communityId : ""
+        collectionName: !!collectible ? collectible.collectionName : ""
+        communityImage: !!communityDetails ? communityDetails.image : ""
+        networkShortName: !!collectible ? collectible.networkShortName : ""
+        networkColor: !!collectible ?collectible.networkColor : ""
+        networkIconURL: !!collectible ? collectible.networkIconUrl : ""
+        networkExplorerName: !!collectible ? root.walletRootStore.getExplorerNameForNetwork(collectible.networkShortName): ""
         collectibleLinkEnabled: Utils.getUrlStatus(d.collectibleLink)
         collectionLinkEnabled: (!!communityDetails && communityDetails.name)  || Utils.getUrlStatus(d.collectionLink)
         explorerLinkEnabled: Utils.getUrlStatus(d.blockExplorerLink)
@@ -78,7 +106,6 @@ Item {
         anchors.top: collectibleHeader.bottom
         anchors.topMargin: 25
         anchors.left: parent.left
-        anchors.leftMargin: 52
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
@@ -87,62 +114,41 @@ Item {
         Row {
             id: collectibleImageDetails
 
-            readonly property real visibleImageHeight: (collectibleimage.visible ? collectibleimage.height : privilegedCollectibleImage.height)
-            readonly property real visibleImageWidth: (collectibleimage.visible ? collectibleimage.width : privilegedCollectibleImage.width)
+            readonly property real visibleImageHeight: artwork.height
+            readonly property real visibleImageWidth: artwork.width
 
             height: collectibleImageDetails.visibleImageHeight
             width: parent.width
             spacing: 24
 
-            // Special artwork representation for community `Owner and Master Token` token types:
-            PrivilegedTokenArtworkPanel {
-                id: privilegedCollectibleImage
-
-                visible: root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType)
-                size: PrivilegedTokenArtworkPanel.Size.Large
-                artwork: root.collectible.imageUrl
-                color: !!root.collectible && !!root.communityDetails ? root.communityDetails.color : "transparent"
-                isOwner: root.isOwnerTokenType
-            }
-
-            StatusRoundedMedia {
-                id: collectibleimage
-
-                readonly property bool isEmpty: !mediaUrl.toString() && !fallbackImageUrl.toString()
-                visible: !privilegedCollectibleImage.visible
-                width: 248
-                height: width
-                radius: Style.current.radius
-                color: isError || isEmpty ? Theme.palette.baseColor5 : collectible.backgroundColor
-                border.color: Theme.palette.directColor8
-                border.width: 1
-                mediaUrl: collectible.mediaUrl ?? ""
-                mediaType: collectible.mediaType ?? ""
-                fallbackImageUrl: collectible.imageUrl
-
-                Column {
-                    anchors.centerIn: parent
-                    visible: collectibleimage.isError || collectibleimage.isEmpty
-                    spacing: 10
-
-                    StatusIcon {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        icon: "frowny"
-                        opacity: 0.1
-                        color: Theme.palette.directColor1
-                    }
-                    StatusBaseText {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        horizontalAlignment: Qt.AlignHCenter
-                        color: Theme.palette.directColor6
-                        text: {
-                            if (collectibleimage.isError && collectibleimage.componentMediaType === StatusRoundedMedia.MediaType.Unkown) {
-                                return qsTr("Unsupported\nfile format")
-                            }
-                            if (!collectible.description && !collectible.name) {
-                                return qsTr("Info can't\nbe fetched")
-                            }
-                            return qsTr("Failed\nto load")
+            ColumnLayout {
+                id: artwork
+                spacing: 0
+                Repeater {
+                    id: repeater
+                    model: Math.min(3, d.balanceAggregator.value)                  
+                    Item {
+                        Layout.preferredWidth: childrenRect.width
+                        Layout.preferredHeight: childrenRect.height
+                        Layout.leftMargin: index * d.imageStackSpacing
+                        Layout.topMargin: index === 0 ? 0 : -Layout.preferredHeight + d.imageStackSpacing
+                        opacity: index === 0 ? 1: 0.4/index
+                        // so that the first item remains on top in the stack
+                        z: -index
+                        Loader {
+                            property int modelIndex: index
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            sourceComponent: root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType) ? privilegedCollectibleImage: collectibleimage
+                            active: root.visible
+                        }
+                        Loader {
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.margins: Style.current.padding
+                            sourceComponent: d.balanceTag
+                            // only show balance tag on top of the first image in stack
+                            active: index === 0 && d.balanceAggregator.value > 1 && root.visible
                         }
                     }
                 }
@@ -159,7 +165,8 @@ Item {
                     width: parent.width
                     height: 24
 
-                    text: root.isCommunityCollectible && !!communityDetails ? qsTr("Minted by %1").arg(root.communityDetails.name):  root.collectible.collectionName
+                    text: root.isCommunityCollectible && !!communityDetails ? qsTr("Minted by %1").arg(root.communityDetails.name):
+                                                                              !!collectible ? collectible.collectionName: ""
                     color: Theme.palette.directColor1
                     font.pixelSize: 17
                     lineHeight: 24
@@ -174,7 +181,7 @@ Item {
                     height: collectibleImageDetails.height - collectibleName.height - parent.spacing
 
                     clip: true
-                    text: collectible.description
+                    text: !!collectible ? collectible.description : ""
                     textFormat: Text.MarkdownText
                     color: Theme.palette.directColor4
                     font.pixelSize: 15
@@ -190,7 +197,7 @@ Item {
             id: collectiblesDetailsTab
             width: parent.width
             topPadding: Style.current.xlPadding
-            visible: collectible.traits.count > 0
+            visible: !!collectible && collectible.traits.count > 0
 
             StatusTabButton {
                 leftPadding: 0
@@ -228,7 +235,7 @@ Item {
                         width: scrollView.availableWidth
                         spacing: 10
                         Repeater {
-                            model: collectible.traits
+                            model: !!collectible ? collectible.traits: null
                             InformationTile {
                                 maxWidth: parent.width
                                 primaryText: model.traitType
@@ -240,7 +247,7 @@ Item {
 
                 Component {
                     id: activityView
-                        StatusListView {
+                    StatusListView {
                         width: scrollView.availableWidth
                         height: scrollView.availableHeight
                         model: root.activityModel
@@ -268,5 +275,59 @@ Item {
                 }
             }
         }
+    }
+    Component {
+        id: privilegedCollectibleImage
+        // Special artwork representation for community `Owner and Master Token` token types:
+        PrivilegedTokenArtworkPanel {
+            size: PrivilegedTokenArtworkPanel.Size.Large
+            artwork: collectible.imageUrl ?? ""
+            color: !!root.collectible && !!root.communityDetails ? root.communityDetails.color : "transparent"
+            isOwner: root.isOwnerTokenType
+        }
+    }
+
+    Component {
+        id: collectibleimage
+         StatusRoundedMedia {
+                id: collectibleImage
+                readonly property bool isEmpty: !mediaUrl.toString() && !fallbackImageUrl.toString()
+                width: 248
+                height: width
+                radius: Style.current.radius
+                color: isError || isEmpty ? Theme.palette.baseColor5 : collectible.backgroundColor
+                border.color: Theme.palette.directColor8
+                border.width: 1
+                mediaUrl: collectible.mediaUrl ?? ""
+                mediaType: modelIndex === 0 && !!collectible ? collectible.mediaType : ""
+                fallbackImageUrl: collectible.imageUrl
+
+                Column {
+                    anchors.centerIn: parent
+                    visible: collectibleImage.isError || collectibleImage.isEmpty
+                    spacing: 10
+
+                    StatusIcon {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        icon: "frowny"
+                        opacity: 0.1
+                        color: Theme.palette.directColor1
+                    }
+                    StatusBaseText {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        horizontalAlignment: Qt.AlignHCenter
+                        color: Theme.palette.directColor6
+                        text: {
+                            if (collectibleImage.isError && collectibleImage.componentMediaType === StatusRoundedMedia.MediaType.Unkown) {
+                                return qsTr("Unsupported\nfile format")
+                            }
+                            if (!collectible.description && !collectible.name) {
+                                return qsTr("Info can't\nbe fetched")
+                            }
+                            return qsTr("Failed\nto load")
+                        }
+                    }
+                }
+            }
     }
 }

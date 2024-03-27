@@ -20,9 +20,22 @@ SplitView {
     id: root
 
     QtObject {
+        function isValidURL(url) {
+            return true
+        }
+
+        Component.onCompleted: {
+            Utils.globalUtilsInst = this
+        }
+        Component.onDestruction: {
+            Utils.globalUtilsInst = {}
+        }
+    }
+
+    QtObject {
         id: d
 
-        readonly property QtObject collectiblesModel: WalletCollectiblesModel {
+        readonly property QtObject collectiblesModel: ManageCollectiblesModel {
             Component.onCompleted: {
                 d.refreshCurrentCollectible()
             }
@@ -34,6 +47,15 @@ SplitView {
         }
 
         readonly property QtObject transactionsModel: WalletTransactionsModel{}
+
+        readonly property string addressesSelected: {
+            let supportedAddresses = ""
+            for (let i =0; i< accountsRepeater.count; i++) {
+                if (accountsRepeater.itemAt(i).checked && accountsRepeater.itemAt(i).visible)
+                    supportedAddresses += accountsRepeater.itemAt(i).address + ":"
+            }
+            return supportedAddresses
+        }
     }
 
     SplitView {
@@ -62,6 +84,7 @@ SplitView {
                     collectible: d.currentCollectible
                     isCollectibleLoading: isLoadingCheckbox.checked
                     activityModel: d.transactionsModel
+                    addressFilters: d.addressesSelected
                     rootStore: QtObject {
                         readonly property string currentCurrency: "EUR"
 
@@ -83,6 +106,26 @@ SplitView {
                         }
 
                         readonly property bool showAllAccounts: true
+
+                        function getExplorerUrl(networkShortName, contractAddress, tokenId) {
+                            let link = Constants.networkExplorerLinks.etherscan
+                            if (networkShortName === Constants.networkShortChainNames.mainnet) {
+                                return "%1/nft/%2/%3".arg(link).arg(contractAddress).arg(tokenId)
+                            }
+                            else {
+                                return "%1/token/%2?a=%3".arg(link).arg(contractAddress).arg(tokenId)
+                            }
+                        }
+
+                        function getOpenSeaCollectionUrl(networkShortName, contractAddress) {
+                            let baseLink = root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink
+                            return "%1/assets/%2/%3".arg(baseLink).arg(networkShortName).arg(contractAddress)
+                        }
+
+                        function getOpenSeaCollectibleUrl(networkShortName, contractAddress, tokenId) {
+                            let baseLink = root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink
+                            return "%1/assets/%2/%3/%4".arg(baseLink).arg(networkShortName).arg(contractAddress).arg(tokenId)
+                        }
                     }
                     communitiesStore: QtObject {
                         function getCommunityDetailsAsJson(communityId) {
@@ -129,6 +172,23 @@ SplitView {
                 id: isLoadingCheckbox
                 text: "isLoading"
                 checked: false
+            }
+            ColumnLayout {
+                Layout.fillWidth: true
+                Text {
+                    text: "select account(s)"
+                }
+                Repeater {
+                    id: accountsRepeater
+                    model: WalletAccountsModel {}
+                    delegate: CheckBox {
+                        property string address: model.address
+                        checked: true
+                        visible: index<2
+                        width: parent.width
+                        text: name
+                    }
+                }
             }
         }
     }

@@ -28,7 +28,7 @@ QtObject {
     property var fromNetworksModel: NetworksModel.sendFromNetworks
     property var toNetworksModel: NetworksModel.sendToNetworks
     property var selectedSenderAccount: senderAccounts.get(0)
-    readonly property QtObject collectiblesModel: WalletCollectiblesModel {}
+    readonly property QtObject collectiblesModel: ManageCollectiblesModel {}
     readonly property QtObject nestedCollectiblesModel: WalletNestedCollectiblesModel {}
 
     readonly property QtObject walletSectionSendInst: QtObject {
