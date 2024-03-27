@@ -404,10 +404,10 @@ QtObject:
     self.settings.currentUserStatus
 
   proc getPinnedMailserver*(self: Service, fleet: Fleet): string =
-    if (fleet == Fleet.WakuV2Prod):
-      return self.settings.pinnedMailserver.wakuv2Prod
-    elif (fleet == Fleet.WakuV2Test):
-      return self.settings.pinnedMailserver.wakuv2Test
+    if (fleet == Fleet.WakuSandbox):
+      return self.settings.pinnedMailserver.wakuSandbox
+    elif (fleet == Fleet.WakuTest):
+      return self.settings.pinnedMailserver.wakuTest
     elif (fleet == Fleet.ShardsTest):
       return self.settings.pinnedMailserver.shardsTest
     elif (fleet == Fleet.ShardsStaging):
@@ -420,10 +420,10 @@ QtObject:
     var newMailserverJsonObj = self.settings.pinnedMailserver.pinnedMailserverToJsonNode()
     newMailserverJsonObj[$fleet] = %* mailserverID
     if(self.saveSetting(KEY_PINNED_MAILSERVERS, newMailserverJsonObj)):
-      if (fleet == Fleet.WakuV2Prod):
-        self.settings.pinnedMailserver.wakuv2Prod = mailserverID
-      elif (fleet == Fleet.WakuV2Test):
-        self.settings.pinnedMailserver.wakuv2Test = mailserverID
+      if (fleet == Fleet.WakuSandbox):
+        self.settings.pinnedMailserver.wakuSandbox = mailserverID
+      elif (fleet == Fleet.WakuTest):
+        self.settings.pinnedMailserver.wakuTest = mailserverID
       elif (fleet == Fleet.ShardsTest):
         self.settings.pinnedMailserver.shardsTest = mailserverID
       elif (fleet == Fleet.ShardsStaging):
