@@ -735,11 +735,17 @@ QtObject {
                         dialogRoot.close();
                     }
                 }
+
                 onSharedAddressesUpdated: {
                     root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
                 }
+
                 onAboutToShow: { root.rootStore.communityKeyToImport = dialogRoot.communityId; }
-                onClosed: { root.rootStore.communityKeyToImport = ""; destroy(); }
+
+                onClosed: {
+                    root.rootStore.communityKeyToImport = "";
+                    root.rootStore.cleanJoinEditCommunityData()
+                }
 
                 Connections {
                     target: root.rootStore.communitiesModuleInst
@@ -963,7 +969,9 @@ QtObject {
                     root.rootStore.joinCommunityOrEditSharedAddresses()
                 }
 
-                onClosed: destroy()
+                onClosed: {
+                    root.rootStore.cleanJoinEditCommunityData()
+                }
 
                 Connections {
                     target: root.rootStore.communitiesModuleInst

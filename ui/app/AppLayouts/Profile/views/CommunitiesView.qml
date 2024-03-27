@@ -277,7 +277,9 @@ SettingsContentBase {
                 root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
             }
 
-            onClosed: destroy()
+            onClosed: {
+                chatStore.cleanJoinEditCommunityData()
+            }
 
             Connections {
                 target: chatStore.communitiesModuleInst
