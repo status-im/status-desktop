@@ -152,13 +152,11 @@ StatusStackModal {
 
         readonly property StatusButton shareAddressesButton: StatusButton {
             text: {
-                if (root.accessType === Constants.communityChatOnRequestAccess) {
-                    if (d.selectedSharedAddressesCount === d.totalNumOfAddressesForSharing) {
-                        return qsTr("Share all addresses to join")
-                    }
-                    return qsTr("Share %n address(s) to join", "", d.selectedSharedAddressesCount)
+                if (d.selectedSharedAddressesCount === d.totalNumOfAddressesForSharing) {
+                    return qsTr("Share all addresses to join")
                 }
-                return qsTr("Join %1").arg(root.communityName)
+
+                return qsTr("Share %n address(s) to join", "", d.selectedSharedAddressesCount)
             }
             type: StatusBaseButton.Type.Normal
             icon.name: {
