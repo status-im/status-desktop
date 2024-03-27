@@ -19,8 +19,8 @@ pytestmark = marks
 @pytest.mark.case(703014)
 @pytest.mark.timeout(timeout=315)
 @pytest.mark.parametrize('user_data_one, user_data_two, user_data_three', [
-    (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two',
-     configs.testpath.TEST_USER_DATA / 'user_account_two')
+    (configs.testpath.TEST_USER_DATA / 'group_chat_user_1', configs.testpath.TEST_USER_DATA / 'group_chat_user_2',
+     configs.testpath.TEST_USER_DATA / 'group_chat_user_3')
 ])
 def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_three):
     user_one: UserAccount = constants.user_account_one
