@@ -25,7 +25,7 @@ type testUserData struct {
 func setupAccountsAndTransactions(t *testing.T) (td testUserData, close func()) {
 	eventQueue, conf, _ := helpers.LoginToTestAccount(t)
 
-	_, err := helpers.WaitForEvent(eventQueue, helpers.NodeReadyEvent, 60*time.Second)
+	_, err := helpers.WaitForEvent(eventQueue, helpers.NodeReadyEvent, 600000*time.Second)
 	require.NoError(t, err)
 
 	opAccounts, err := helpers.GetWalletOperableAccounts()

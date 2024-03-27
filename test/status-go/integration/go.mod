@@ -21,7 +21,8 @@ replace github.com/mutecomm/go-sqlcipher/v4 v4.4.2 => github.com/status-im/go-sq
 
 require (
 	github.com/ethereum/go-ethereum v1.10.26
-	github.com/status-im/status-go v0.171.7
+	// See status-go/VERSION
+	github.com/status-im/status-go v0.177.0
 	github.com/stretchr/testify v1.8.4
 )
 
@@ -241,7 +242,7 @@ require (
 	github.com/urfave/cli/v2 v2.24.4 // indirect
 	github.com/waku-org/go-discover v0.0.0-20240129014929-85f2c00b96a3 // indirect
 	github.com/waku-org/go-libp2p-rendezvous v0.0.0-20230628220917-7b4e5ae4c0e7 // indirect
-	github.com/waku-org/go-waku v0.8.1-0.20240130093642-77ea359ef873 // indirect
+	github.com/waku-org/go-waku v0.8.1-0.20240322182925-dd81e1d46971 // indirect
 	github.com/waku-org/go-zerokit-rln v0.1.14-0.20240102145250-fa738c0bdf59 // indirect
 	github.com/waku-org/go-zerokit-rln-apple v0.0.0-20230916172309-ee0ee61dde2b // indirect
 	github.com/waku-org/go-zerokit-rln-arm v0.0.0-20230916171929-1dd9494ff065 // indirect
