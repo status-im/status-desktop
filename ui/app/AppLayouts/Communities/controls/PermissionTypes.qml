@@ -32,6 +32,21 @@ QtObject {
         return ""
     }
 
+    function getJoinEligibilityHint(type) {
+        const template = qsTr("You are eligible to join as")
+        switch (type) {
+        case PermissionTypes.Type.TokenMaster:
+            return [template, qsTr("TokenMaster"), "tiny/token-master"]
+        case PermissionTypes.Type.Admin:
+            return [template, qsTr("Admin"), "tiny/public-chat"]
+        case PermissionTypes.Type.Member:
+            return [template, qsTr("Member"), "tiny/group"]
+        case PermissionTypes.Type.None:
+            return [qsTr("Not eligible to join with current address selections"), "", ""]
+        }
+        return ["", "", ""]
+    }
+
     function getIcon(type) {
         switch (type) {
             case PermissionTypes.Type.Admin:

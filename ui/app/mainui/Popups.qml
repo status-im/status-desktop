@@ -932,6 +932,9 @@ QtObject {
                 communityIcon: chatStore.sectionDetails.image
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
 
+                introMessage: chatStore.sectionDetails.introMessage
+                accessType: chatStore.sectionDetails.access
+
                 canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
                 walletAccountsModel: root.rootStore.walletAccountsModel

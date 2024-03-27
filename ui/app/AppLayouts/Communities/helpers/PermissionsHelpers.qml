@@ -78,8 +78,8 @@ QtObject {
         return Internal.PermissionUtils.getUniquePermissionChannels(model, permissionsTypesArray)
     }
 
-    function getUniqueChannelPermission(model, channelKey) {
-        return Internal.PermissionUtils.getUniquePermissionChannels(model, channelKey)
+    function isEligibleToJoinAs(model) {
+        return Internal.PermissionUtils.isEligibleToJoinAs(model)
     }
 
     function setHoldingsTextFormat(type, name, amount, decimals) {
