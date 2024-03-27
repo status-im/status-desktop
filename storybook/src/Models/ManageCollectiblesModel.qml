@@ -21,7 +21,7 @@ ListModel {
             chainId: 5,
             name: "Punx not dead!",
             collectionUid: "",
-            collectionName: "",
+            collectionName: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
             communityId: "",
             communityName: "",
             communityImage: "",
@@ -39,7 +39,26 @@ ListModel {
                     balance: "1",
                     txTimestamp: 2
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Punx not dead is a very rare CryptoKitty. It's a Gen 0 and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Fur",
+                    value: "White"
+                },
+                {
+                    traitType: "Eyes",
+                    value: "Blue"
+                },
+                {
+                    traitType: "Pattern",
+                    value: "Tigerpunk"
+                }
+            ],
+            tokenId: "403"
         },
         {
             uid: "pp23",
@@ -59,7 +78,26 @@ ListModel {
                     balance: "8",
                     txTimestamp: 3
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "pepepunk not dead is a very rare CryptoKitty. It's a Gen 0 and has a lot of special traits.",
+            traits: [
+                 {
+                     traitType: "Fur",
+                     value: "White"
+                 },
+                 {
+                     traitType: "Eyes",
+                     value: "Green"
+                 },
+                 {
+                     traitType: "Pattern",
+                     value: "Tigerpunk"
+                 }
+             ],
+            tokenId: "123"
         },
         {
             uid: "34545656768",
@@ -79,7 +117,26 @@ ListModel {
                     balance: "1",
                     txTimestamp: 3
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Furbeard is a very rare CryptoKitty. It's a Gen 0 cat and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Fur",
+                    value: "White"
+                },
+                {
+                    traitType: "Eyes",
+                    value: "Green"
+                },
+                {
+                    traitType: "Pattern",
+                    value: "Tigerpunk"
+                }
+            ],
+            tokenId: "7123"
         },
         {
             uid: "123456",
@@ -99,7 +156,29 @@ ListModel {
                     balance: "1",
                     txTimestamp: 6
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Furbeard is a very rare CryptoKitty. It's a Gen 0 cat and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Fur",
+                    value: "White"
+                },
+                {
+                    traitType: "Eyes",
+                    value: "Green"
+                },
+                {
+                    traitType: "Pattern",
+                    value: "Tigerpunk"
+                }
+            ],
+            tokenId: "403123"
         },
         {
             uid: "12345645459537432",
@@ -124,7 +203,26 @@ ListModel {
                     balance: "1",
                     txTimestamp: 10
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Big Kitty is a very rare CryptoKitty. It's a Gen 0 cat and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Fur",
+                    value: "White"
+                },
+                {
+                    traitType: "Eyes",
+                    value: "Blue"
+                },
+                {
+                    traitType: "Pattern",
+                    value: "Tigerpunk"
+                }
+            ],
+            tokenId: "1"
         },
         {
             uid: "pp21",
@@ -144,7 +242,18 @@ ListModel {
                     balance: "1",
                     txTimestamp: 16
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "pepepunk not dead is a very rare nft. It's a Gen 0 and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Type",
+                    value: "Special"
+                }
+            ],
+            tokenId: "12568"
         },
         {
             uid: "lp#666a",
@@ -164,7 +273,18 @@ ListModel {
                     balance: "1",
                     txTimestamp: 19
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Lonely Panda #666 is a very rare NFT. It's a Gen 0 and has a lot of special traits.likie sjasja sajhash jhasjas",
+            traits: [
+                {
+                    traitType: "Type",
+                    value: "Rare"
+                }
+            ],
+            tokenId: "1445"
         },
     ]
 
@@ -187,7 +307,13 @@ ListModel {
                     balance: "15",
                     txTimestamp: 20
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "4"
         },
         {
             uid: "691",
@@ -207,7 +333,13 @@ ListModel {
                     balance: "4",
                     txTimestamp: 21
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "3"
         },
         {
             uid: "8876",
@@ -227,7 +359,13 @@ ListModel {
                     balance: "1",
                     txTimestamp: 22
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "341"
         },
         {
             uid: "fp#3195",
@@ -247,7 +385,13 @@ ListModel {
                     balance: "1",
                     txTimestamp: 23
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "765"
         },
         {
             uid: "fp#4297",
@@ -267,7 +411,13 @@ ListModel {
                     balance: "1000",
                     txTimestamp: 25
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "166"
         },
         {
             uid: "fp#909",
@@ -287,7 +437,13 @@ ListModel {
                     balance: "1",
                     txTimestamp: 26
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "1111"
         },
         {
             uid: "lb#666",
@@ -312,7 +468,13 @@ ListModel {
                     balance: "70",
                     txTimestamp: 60
                 }
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy",
+            traits: [],
+            tokenId: "6"
         },
         {
             uid: "lb#777",
@@ -332,7 +494,13 @@ ListModel {
                     balance: "1",
                     txTimestamp: 27
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Lonely Turtle is a community for all of us to talk and communicate! Welcome onboard and enjoy",
+            traits: [],
+            tokenId: "7"
         },
     ]
 
