@@ -367,7 +367,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
 
 proc initContactRequestsModel(self: Module) =
   var contactsWhoAddedMe: seq[UserItem]
-  let contacts =  self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
+  let contacts = self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
   for c in contacts:
     let item = self.createItemFromPublicKey(c.id)
     contactsWhoAddedMe.add(item)
@@ -378,7 +378,7 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
   let community = self.controller.getMyCommunity()
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
-  for id, tokenPermission in community.tokenPermissions:
+  for _, tokenPermission in community.tokenPermissions:
     let chats = community.getCommunityChats(tokenPermission.chatIds)
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
@@ -388,12 +388,12 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
 
 proc reevaluateRequiresTokenPermissionToJoin(self: Module) =
   let community = self.controller.getMyCommunity()
-  var hasBecomeMemberOrBecomeAdminPermissions = false
-  for id, tokenPermission in community.tokenPermissions:
-    if tokenPermission.`type` == TokenPermissionType.BecomeMember or tokenPermission.`type` == TokenPermissionType.BecomeAdmin:
-      hasBecomeMemberOrBecomeAdminPermissions = true
-
-  self.view.setRequiresTokenPermissionToJoin(hasBecomeMemberOrBecomeAdminPermissions)
+  var joinPermissionsChanged = false
+  for _, tokenPermission in community.tokenPermissions:
+    if tokenPermission.`type` == TokenPermissionType.BecomeMember or tokenPermission.`type` == TokenPermissionType.BecomeAdmin or tokenPermission.`type` == TokenPermissionType.BecomeTokenMaster:
+      joinPermissionsChanged = true
+      break
+  self.view.setRequiresTokenPermissionToJoin(joinPermissionsChanged)
 
 proc initCommunityTokenPermissionsModel(self: Module, channelGroup: ChannelGroupDto) =
   self.rebuildCommunityTokenPermissionsModel()
