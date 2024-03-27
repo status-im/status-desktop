@@ -551,8 +551,13 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
           self.controller.tryToObtainDataFromKeychain()
         return
       self.view.setCurrentState(newEnterPasswordState(flowToRun, nil))
-      self.authenticationPopupIsAlreadyRunning = true
-      self.controller.readyToDisplayPopup()
+      if singletonInstance.userProfile.getUsingBiometricLogin():
+        self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+        self.controller.connectKeychainSignals()
+        self.controller.tryToObtainDataFromKeychain()
+      else:
+        self.authenticationPopupIsAlreadyRunning = true
+        self.controller.readyToDisplayPopup()
       return
     else:
       self.prepareKeyPairItemForAuthentication(keyUid)

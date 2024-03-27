@@ -10,6 +10,8 @@ import shared.stores 1.0 as SharedStores
 import shared.popups.keycard 1.0
 import shared.stores.send 1.0
 
+import StatusQ.Core.Theme 0.1
+
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.stores 1.0
 
