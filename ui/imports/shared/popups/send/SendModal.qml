@@ -328,7 +328,7 @@ StatusDialog {
                         maxInputBalance: d.maxInputBalance
                         currentCurrency: d.currencyStore.currentCurrency
 
-                        multiplierIndex: !!holdingSelector.selectedItem
+                        multiplierIndex: d.isSelectedHoldingValidAsset
                                          ? holdingSelector.selectedItem.decimals
                                          : 0
 

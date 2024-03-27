@@ -1,5 +1,5 @@
-import QtQuick 2.15
 import QtQml 2.15
+import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
 import SortFilterProxyModel 0.2
@@ -36,8 +36,8 @@ Item {
 
     onVisibleChanged: {
         if(!visible) {
-            if (root.collectibles)
-                root.collectibles.currentCollectionUid = ""
+            if (!!root.collectibles)
+                root.collectibles.currentGroupId = ""
             tokenList.headerItem.input.edit.clear()
         }
     }
@@ -62,7 +62,7 @@ Item {
                                              [qsTr("Assets")] :
                                              [qsTr("Assets"), qsTr("Collectibles")]
 
-        property string currentBrowsingCollectionName
+        property string currentBrowsingGroupName
 
         readonly property RolesRenamingModel renamedAllNetworksModel: RolesRenamingModel {
             sourceModel: root.networksModel
@@ -79,7 +79,17 @@ Item {
         }
 
         readonly property bool isBrowsingTypeERC20: root.browsingHoldingType === Constants.TokenType.ERC20
-        readonly property bool isBrowsingCollection: !isBrowsingTypeERC20 && !!root.collectibles && root.collectibles.currentCollectionUid !== ""
+        readonly property bool isBrowsingGroup: !isBrowsingTypeERC20 && !!root.collectibles && root.collectibles.currentGroupId !== ""
+
+        function isCommunityItem(type) {
+            return type === Constants.CollectiblesNestedItemType.CommunityCollectible ||
+                   type === Constants.CollectiblesNestedItemType.Community
+        }
+
+        function isGroupItem(type) {
+            return type === Constants.CollectiblesNestedItemType.Collection ||
+                   type === Constants.CollectiblesNestedItemType.Community
+        }
     }
 
     StatusBaseText {
@@ -151,7 +161,7 @@ Item {
                         required property bool section
                         width: parent.width
                         height: !!text ? 52 : 0 // if we bind to some property instead of hardcoded value it wont work nice when switching tabs or going inside collection and back
-                        text: Helpers.assetsSectionTitle(section, tokenList.hasCommunityTokens, d.isBrowsingCollection, d.isBrowsingTypeERC20)
+                        text: Helpers.assetsSectionTitle(section, tokenList.hasCommunityTokens, d.isBrowsingGroup, d.isBrowsingTypeERC20)
                         onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
                     }
                 }
@@ -164,8 +174,13 @@ Item {
         proxyRoles: [
             FastExpressionRole {
                 name: "isCommunityAsset"
-                expression: !!model.communityId
-                expectedRoles: ["communityId"]
+                expression: d.isCommunityItem(model.itemType)
+                expectedRoles: ["itemType"]
+            },
+            FastExpressionRole {
+                name: "isGroup"
+                expression: d.isGroupItem(model.itemType)
+                expectedRoles: ["itemType"]
             }
         ]
         filters: [
@@ -181,7 +196,7 @@ Item {
                 sortOrder: Qt.DescendingOrder
             },
             RoleSorter {
-                roleName: "isCollection"
+                roleName: "isGroup"
                 sortOrder: Qt.DescendingOrder
             }
         ]
@@ -221,17 +236,11 @@ Item {
         id: collectiblesDelegate
         CollectibleNestedDelegate {
             width: ListView.view.width
-            numItems: isCollection ? (!!communityId ?
-                root.collectibles.getNumberOfCollectiblesInCommunity(communityId) :
-                root.collectibles.getNumberOfCollectiblesInCollection(collectionUid)) : 0
             onItemHovered: root.tokenHovered(selectedItem.uid, tokenType, hovered)
             onItemSelected: {
-                if (isCollection) {
-                    d.currentBrowsingCollectionName = collectionName
-                    if (!!communityId)
-                        root.collectibles.currentCollectionUid = communityId
-                    else
-                        root.collectibles.currentCollectionUid = collectionUid
+                if (isGroup) {
+                    d.currentBrowsingGroupName = groupName
+                    root.collectibles.currentGroupId = groupId
                 } else {
                     root.tokenSelected(selectedItem.uid, tokenType)
                 }
@@ -245,12 +254,12 @@ Item {
             spacing: 0
             CollectibleBackButtonWithInfo {
                 Layout.fillWidth: true
-                visible: d.isBrowsingCollection
+                visible: d.isBrowsingGroup
                 count: root.collectibles.count
-                name: d.currentBrowsingCollectionName
+                name: d.currentBrowsingGroupName
                 onBackClicked: {
                     searchBox.reset()
-                    root.collectibles.currentCollectionUid = ""
+                    root.collectibles.currentGroupId = ""
                 }
             }
             SearchBoxWithRightIcon {

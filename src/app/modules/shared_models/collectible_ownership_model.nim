@@ -71,3 +71,11 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+  
+  proc getBalance*(self: OwnershipModel, address: string): UInt256 =
+    var balance = stint.u256(0)
+    for item in self.items:
+      if item.address.toUpper == address.toUpper:
+        balance += item.balance
+        break
+    return balance

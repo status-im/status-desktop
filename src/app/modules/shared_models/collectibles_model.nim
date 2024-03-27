@@ -190,7 +190,7 @@ QtObject:
       of CollectibleRole.IsLoading:
         result = newQVariant(false)
       of CollectibleRole.Ownership:
-        result = newQVariant(item.getOwnershipModel())
+        result = item.getOwnershipModelAsVariant()
       of CollectibleRole.CommunityId:
         result = newQVariant(item.getCommunityId())
       of CollectibleRole.CommunityName:
