@@ -47,7 +47,7 @@ Control {
         readonly property string communityMembershipRequestPendingText: qsTr("Membership Request Pending...")
         readonly property string channelRequirementsNotMetText: qsTr("Channel requirements not met")
         readonly property string channelMembershipRequestPendingText: qsTr("Channel Membership Request Pending...")
-        readonly property string memberchipRequestRejectedText: qsTr("Membership Request Rejected")
+        readonly property string membershipRequestRejectedText: qsTr("Membership Request Rejected")
         readonly property string allChannelsAreHiddenBecauseNotPermittedText: qsTr("Sorry, you don't hodl the necessary tokens to view or post in any of <b>%1</b> channels").arg(root.communityName)
 
         readonly property bool onlyPrivateNotMetPermissions: (d.visiblePermissionsModel.count === 0) && root.communityHoldingsModel.count > 0
@@ -160,12 +160,11 @@ Control {
                                  && root.requiresRequest
                                  && !d.onlyPrivateNotMetPermissions
                                  && !root.allChannelsAreHiddenBecauseNotPermitted
-                        text: root.isInvitationPending ? (root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText)
-                                                       : d.communityRequestToJoinText
-                        font.pixelSize: 13
-                        enabled: root.requirementsMet || (root.joinCommunity && d.visiblePermissionsModel.count === 0)
+            text: root.isInvitationPending ? (root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText)
+                                           : d.communityRequestToJoinText
+            font.pixelSize: 13
 
-                        onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.requestToJoinClicked()
+            onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.requestToJoinClicked()
         }
 
         StatusBaseText {
@@ -175,8 +174,8 @@ Control {
                      && (root.isJoinRequestRejected || !root.requirementsMet)
                      && !d.onlyPrivateNotMetPermissions
                      && !root.allChannelsAreHiddenBecauseNotPermitted
-            text: root.isJoinRequestRejected ? d.memberchipRequestRejectedText :
-                                          (root.joinCommunity ? d.communityRequirementsNotMetText : d.channelRequirementsNotMetText)
+            text: root.isJoinRequestRejected ? d.membershipRequestRejectedText
+                                             : (root.joinCommunity ? d.communityRequirementsNotMetText : d.channelRequirementsNotMetText)
             color: Theme.palette.dangerColor1
         }
 

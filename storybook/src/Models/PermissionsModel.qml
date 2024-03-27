@@ -240,6 +240,22 @@ QtObject {
             tokenCriteriaMet: false
         },
         {
+            id: "tmaster1",
+            holdingsListModel: root.createHoldingsModel2(),
+            permissionType: PermissionTypes.Type.TokenMaster,
+            permissionState: PermissionTypes.State.Approved,
+            isPrivate: false,
+            tokenCriteriaMet: true
+        },
+        {
+            id: "tmaster2",
+            holdingsListModel: root.createHoldingsModel3(),
+            permissionType: PermissionTypes.Type.TokenMaster,
+            permissionState: PermissionTypes.State.Approved,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
             id: "member1",
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
@@ -273,6 +289,14 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Admin,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "tmaster1",
+            holdingsListModel: root.createHoldingsModel2(),
+            permissionType: PermissionTypes.Type.TokenMaster,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         },
