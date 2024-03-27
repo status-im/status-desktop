@@ -157,8 +157,8 @@ StatusSectionLayout {
 
     centerPanel: Loader {
         anchors.fill: parent
-        sourceComponent: root.allChannelsAreHiddenBecauseNotPermitted ? allChatsAreHiddenComponent :
-                                      (root.contentLocked ? joinCommunityCenterPanelComponent : chatColumnViewComponent)
+        sourceComponent: (root.allChannelsAreHiddenBecauseNotPermitted || root.contentLocked) ?
+                             joinCommunityCenterPanelComponent : chatColumnViewComponent
     }
 
     showRightPanel: {
@@ -251,6 +251,7 @@ StatusSectionLayout {
 
         JoinCommunityCenterPanel {
             joinCommunity: false
+            allChannelsAreHiddenBecauseNotPermitted: root.allChannelsAreHiddenBecauseNotPermitted
             name: sectionItemModel.name
             channelName: root.chatContentModule.chatDetails.name
             viewOnlyHoldingsModel: root.viewOnlyPermissionsModel
@@ -264,18 +265,6 @@ StatusSectionLayout {
             requirementsCheckPending: root.chatContentModule.permissionsCheckOngoing
             onRevealAddressClicked: root.revealAddressClicked()
             onInvitationPendingClicked: root.invitationPendingClicked()
-        }
-    }
-
-    Component {
-        id: allChatsAreHiddenComponent
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            visible: root.allChannelsAreHiddenBecauseNotPermitted
-            text: qsTr("Sorry, you don't hodl the necessary tokens to view or post in any of <b>%1</b> channels").arg(sectionItemModel.name)
-            color: Theme.palette.dangerColor1
         }
     }
 

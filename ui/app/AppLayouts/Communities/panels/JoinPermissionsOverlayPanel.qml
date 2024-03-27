@@ -19,6 +19,7 @@ Control {
     id: root
 
     property bool joinCommunity: true // Otherwise it means join channel action
+    property bool allChannelsAreHiddenBecauseNotPermitted: false
     property bool requirementsMet: false
     property bool requirementsCheckPending: false
     property bool requiresRequest: false
@@ -50,6 +51,8 @@ Control {
         readonly property string channelRevealAddressText: qsTr("Reveal your address to enter")
         readonly property string channelMembershipRequestPendingText: qsTr("Channel Membership Request Pending...")
         readonly property string memberchipRequestRejectedText: qsTr("Membership Request Rejected")
+        readonly property string allChannelsAreHiddenBecauseNotPermittedText: qsTr("Sorry, you don't hodl the necessary tokens to view or post in any of <b>%1</b> channels").arg(root.communityName)
+
         readonly property bool onlyPrivateNotMetPermissions: (d.visiblePermissionsModel.count === 0) && root.communityHoldingsModel.count > 0
 
         function getInvitationPendingText() {
@@ -135,10 +138,10 @@ Control {
         }
 
         CustomHoldingsListPanel {
-            visible: !root.joinCommunity && d.viewAndPostPermissionsModel.count > 0
-            introText: root.requiresRequest ? 
-                qsTr("To view and post in the <b>#%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
-                qsTr("To view and post in the <b>#%1</b> channel you need to hold").arg(root.channelName)
+            visible: (!root.joinCommunity && d.viewAndPostPermissionsModel.count > 0) || root.allChannelsAreHiddenBecauseNotPermitted
+            introText: root.allChannelsAreHiddenBecauseNotPermitted ? d.allChannelsAreHiddenBecauseNotPermittedText :
+                           root.requiresRequest ? qsTr("To view and post in the <b>#%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
+                                                  qsTr("To view and post in the <b>#%1</b> channel you need to hold").arg(root.channelName)
             model: d.viewAndPostPermissionsModel
         }
 
@@ -150,7 +153,11 @@ Control {
 
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
-            visible: !root.showOnlyPanels && !root.isJoinRequestRejected && root.requiresRequest && !d.onlyPrivateNotMetPermissions
+            visible: !root.showOnlyPanels
+                     && !root.isJoinRequestRejected
+                     && root.requiresRequest
+                     && !d.onlyPrivateNotMetPermissions
+                     && !root.allChannelsAreHiddenBecauseNotPermitted
             text: root.isInvitationPending ? d.getInvitationPendingText() : d.getRevealAddressText()
             icon.name: root.isInvitationPending ? "" : Constants.authenticationIconByType[root.loginType]
             font.pixelSize: 13
@@ -165,6 +172,7 @@ Control {
                      && !root.requirementsCheckPending
                      && (root.isJoinRequestRejected || !root.requirementsMet)
                      && !d.onlyPrivateNotMetPermissions
+                     && !root.allChannelsAreHiddenBecauseNotPermitted
             text: root.isJoinRequestRejected ? d.memberchipRequestRejectedText :
                                           (root.joinCommunity ? d.communityRequirementsNotMetText : d.channelRequirementsNotMetText)
             color: Theme.palette.dangerColor1
