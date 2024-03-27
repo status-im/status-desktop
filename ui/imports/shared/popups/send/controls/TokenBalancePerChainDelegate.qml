@@ -40,7 +40,7 @@ StatusListItem {
     }
 
     title: name
-    titleAsideText: symbol
+    titleAsideText: symbol ?? ""
     statusListItemTitleAside.font.pixelSize: 15
     statusListItemTitleAside.width: statusListItemTitleArea.width - statusListItemTitle.width
     statusListItemTitleAside.elide: Text.ElideRight

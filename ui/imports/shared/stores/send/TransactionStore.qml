@@ -157,14 +157,24 @@ QtObject {
     }
 
     function collectibleToSelectorCollectible(collectible) {
+        var groupId = collectible.collectionUid
+        var groupName = collectible.collectionName
+        var itemType = Constants.CollectiblesNestedItemType.Collectible
+        if (collectible.communityId !== "") {
+            groupId = collectible.communityId
+            groupName = collectible.communityName
+            itemType = Constants.CollectiblesNestedItemType.CommunityCollectible
+        }
         return {
             uid: collectible.uid,
             chainId: collectible.chainId,
             name: collectible.name,
             iconUrl: collectible.imageUrl,
-            collectionUid: collectible.collectionUid,
-            collectionName: collectible.collectionName,
-            isCollection: false
+            groupId: groupId,
+            groupName: groupName,
+            tokenType: collectible.tokenType,
+            itemType: itemType,
+            count: 1 // TODO: Properly handle count
         }
     }
 
