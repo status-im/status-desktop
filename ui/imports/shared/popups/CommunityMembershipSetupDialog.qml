@@ -195,7 +195,7 @@ StatusStackModal {
                     console.error("selected shared addresses must not be empty")
                     return
                 }
-                const keyUid = d.selectedSharedAddressesMap.values()[0].keyUid
+                const keyUid = d.selectedSharedAddressesMap.values().next().value.keyUid
                 root.signSharedAddressesForKeypair(keyUid)
                 return
             }
