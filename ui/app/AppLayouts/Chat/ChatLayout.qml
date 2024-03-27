@@ -115,10 +115,9 @@ StackLayout {
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
             openCreateChat: rootStore.openCreateChat
-            loginType: root.rootStore.loginType
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
-            onRevealAddressClicked: {
+            onRequestToJoinClicked: {
                 Global.openPopup(communityIntroDialogPopup, {
                     communityId: joinCommunityView.communityId,
                     isInvitationPending: joinCommunityView.isInvitationPending,
@@ -186,7 +185,7 @@ StackLayout {
             onOpenAppSearch: {
                 root.openAppSearch()
             }
-            onRevealAddressClicked: {
+            onRequestToJoinClicked: {
                 Global.openPopup(communityIntroDialogPopup, {
                     communityId: chatView.communityId,
                     isInvitationPending: root.rootStore.isMyCommunityRequestPending(chatView.communityId),
