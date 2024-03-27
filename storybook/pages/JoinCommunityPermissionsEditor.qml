@@ -125,6 +125,16 @@ ColumnLayout {
             text: "Long model"
             onCheckedChanged: if(checked) root.communityHoldingsModel = PermissionsModel.longPermissionsModel
         }
+
+        RadioButton {
+            text: "Private met model"
+            onCheckedChanged: if(checked) root.communityHoldingsModel = PermissionsModel.privatePermissionsModel
+        }
+
+        RadioButton {
+            text: "Private not met model"
+            onCheckedChanged: if(checked) root.communityHoldingsModel = PermissionsModel.privatePermissionsNotMetModel
+        }
     }
 
     ColumnLayout {

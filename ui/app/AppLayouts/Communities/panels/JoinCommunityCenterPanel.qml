@@ -12,6 +12,7 @@ ColumnLayout {
     id: root
 
     property bool joinCommunity: true // Otherwise it means join channel action
+    property bool allChannelsAreHiddenBecauseNotPermitted: false
 
     property string name
     property string channelName
@@ -139,6 +140,7 @@ ColumnLayout {
 
                     topPadding: 2 * bottomPadding
                     joinCommunity: root.joinCommunity
+                    allChannelsAreHiddenBecauseNotPermitted: root.allChannelsAreHiddenBecauseNotPermitted
                     requirementsMet: root.requirementsMet
                     requirementsCheckPending: root.requirementsCheckPending
                     isInvitationPending: root.isInvitationPending

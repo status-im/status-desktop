@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -18,6 +19,7 @@ Control {
     id: root
 
     property bool joinCommunity: true // Otherwise it means join channel action
+    property bool allChannelsAreHiddenBecauseNotPermitted: false
     property bool requirementsMet: false
     property bool requirementsCheckPending: false
     property bool requiresRequest: false
@@ -46,16 +48,18 @@ Control {
         readonly property string channelRequirementsNotMetText: qsTr("Channel requirements not met")
         readonly property string channelMembershipRequestPendingText: qsTr("Channel Membership Request Pending...")
         readonly property string memberchipRequestRejectedText: qsTr("Membership Request Rejected")
+        readonly property string allChannelsAreHiddenBecauseNotPermittedText: qsTr("Sorry, you don't hodl the necessary tokens to view or post in any of <b>%1</b> channels").arg(root.communityName)
 
-        function filterPermissions(model) {
-            return !!model && (model.tokenCriteriaMet || !model.isPrivate)
-        }
+        readonly property bool onlyPrivateNotMetPermissions: (d.visiblePermissionsModel.count === 0) && root.communityHoldingsModel.count > 0
 
-        readonly property var communityPermissionsModel: SortFilterProxyModel {
+        readonly property var visiblePermissionsModel: SortFilterProxyModel {
             sourceModel: root.communityHoldingsModel
+
             filters: [
-                ExpressionFilter {
-                    expression: d.filterPermissions(model)
+                // The only permissions to be discarded are if they are private and NOT met
+                FastExpressionFilter {
+                    expression: { return !!model && !(!model.tokenCriteriaMet && model.isPrivate) }
+                    expectedRoles: ["tokenCriteriaMet", "isPrivate"]
                 }
             ]
         }
@@ -108,10 +112,10 @@ Control {
             id: communityRequirements
 
             visible: root.joinCommunity
-            introText: d.communityPermissionsModel.count > 0 ? 
+            introText: !d.onlyPrivateNotMetPermissions ?
                 qsTr("To join <b>%1</b> you need to prove that you hold").arg(root.communityName) : 
                 qsTr("Sorry, you can't join <b>%1</b> because it's a private, closed community").arg(root.communityName)
-            model: d.communityPermissionsModel
+            model: d.visiblePermissionsModel
         }
 
         CustomHoldingsListPanel {
@@ -123,10 +127,10 @@ Control {
         }
 
         CustomHoldingsListPanel {
-            visible: !root.joinCommunity && d.viewAndPostPermissionsModel.count > 0
-            introText: root.requiresRequest ? 
-                qsTr("To view and post in the <b>#%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
-                qsTr("To view and post in the <b>#%1</b> channel you need to hold").arg(root.channelName)
+             visible: (!root.joinCommunity && d.viewAndPostPermissionsModel.count > 0) || root.allChannelsAreHiddenBecauseNotPermitted
+            introText: root.allChannelsAreHiddenBecauseNotPermitted ? d.allChannelsAreHiddenBecauseNotPermittedText :
+                           root.requiresRequest ? qsTr("To view and post in the <b>#%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
+                                                  qsTr("To view and post in the <b>#%1</b> channel you need to hold").arg(root.channelName)
             model: d.viewAndPostPermissionsModel
         }
 
@@ -138,17 +142,26 @@ Control {
 
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
-            visible: !root.showOnlyPanels && !root.isJoinRequestRejected && root.requiresRequest
-            text: root.isInvitationPending ? (root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText)
-                                           : d.communityRequestToJoinText
-            font.pixelSize: 13
-            enabled: root.requirementsMet || (joinCommunity && d.communityPermissionsModel.count === 0)
-            onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.requestToJoinClicked()
+            visible: !root.showOnlyPanels
+                                 && !root.isJoinRequestRejected
+                                 && root.requiresRequest
+                                 && !d.onlyPrivateNotMetPermissions
+                                 && !root.allChannelsAreHiddenBecauseNotPermitted
+                        text: root.isInvitationPending ? (root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText)
+                                                       : d.communityRequestToJoinText
+                        font.pixelSize: 13
+                        enabled: root.requirementsMet || (root.joinCommunity && d.visiblePermissionsModel.count === 0)
+
+                        onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.requestToJoinClicked()
         }
 
         StatusBaseText {
             Layout.alignment: Qt.AlignHCenter
-            visible: !root.showOnlyPanels && !root.requirementsCheckPending && (root.isJoinRequestRejected || !root.requirementsMet)
+            visible: !root.showOnlyPanels
+                     && !root.requirementsCheckPending
+                     && (root.isJoinRequestRejected || !root.requirementsMet)
+                     && !d.onlyPrivateNotMetPermissions
+                     && !root.allChannelsAreHiddenBecauseNotPermitted
             text: root.isJoinRequestRejected ? d.memberchipRequestRejectedText :
                                           (root.joinCommunity ? d.communityRequirementsNotMetText : d.channelRequirementsNotMetText)
             color: Theme.palette.dangerColor1
