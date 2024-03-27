@@ -47,13 +47,52 @@ QtObject {
         }
     ]
 
-    readonly property var shortPermissionsModelData: [
+    readonly property var privatePermissionsModelData: [
         {
-            holdingsListModel: root.createHoldingsModel4(),
+            holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
             permissionState: PermissionTypes.State.Approved,
-            isPrivate: true
+            isPrivate: true,
+            tokenCriteriaMet: false
+        },
+        {
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Approved,
+            isPrivate: true,
+            tokenCriteriaMet: true
+        }
+    ]
+
+    readonly property var privatePermissionsModelNotMetData: [
+        {
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Approved,
+            isPrivate: true,
+            tokenCriteriaMet: false
+        },
+        {
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Approved,
+            isPrivate: true,
+            tokenCriteriaMet: false
+        }
+    ]
+
+
+    readonly property var shortPermissionsModelData: [
+        {
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Approved,
+            isPrivate: false
         }
     ]
 
@@ -69,13 +108,6 @@ QtObject {
     ]
 
     readonly property var longPermissionsModelData: [
-        {
-            holdingsListModel: root.createHoldingsModel4(),
-            channelsListModel: root.createChannelsModel1(),
-            permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Approved,
-            isPrivate: true
-        },
         {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
@@ -460,6 +492,28 @@ QtObject {
         }
     }
 
+    readonly property ListModel privatePermissionsModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.privatePermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(privatePermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property ListModel privatePermissionsNotMetModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.privatePermissionsNotMetModel
+        }
+
+        Component.onCompleted: {
+            append(privatePermissionsModelNotMetData)
+            guard.enabled = true
+        }
+    }
+
     readonly property var shortPermissionsModel: ListModel {
         readonly property ModelChangeGuard guard: ModelChangeGuard {
             model: root.shortPermissionsModel
@@ -663,12 +717,6 @@ QtObject {
 
     function createHoldingsModel3() {
         return [
-                    {
-                        type: Constants.TokenType.ERC20,
-                        key: "eth",
-                        amount: 15,
-                        available: true
-                    },
                     {
                         type: Constants.TokenType.ERC721,
                         key: "Kitty4",

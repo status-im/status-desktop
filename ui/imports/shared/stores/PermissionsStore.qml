@@ -96,16 +96,15 @@ QtObject {
     readonly property var becomeMemberPermissionsModel: SortFilterProxyModel {
         id: becomeMemberPermissionsModel
         sourceModel: root.permissionsModel
-        function filterPredicate(modelData) {
-            return (modelData.permissionType === Constants.permissionType.member ||
-                    modelData.permissionType === Constants.permissionType.admin ||
-                    modelData.permissionType === Constants.permissionType.becomeTokenMaster) &&
-                (modelData.tokenCriteriaMet || !modelData.isPrivate)
+        function filterPredicate(permissionType) {
+            return (permissionType === Constants.permissionType.member ||
+                    permissionType === Constants.permissionType.admin ||
+                    permissionType === Constants.permissionType.becomeTokenMaster)
         }
         filters: [
             FastExpressionFilter {
-                expression: becomeMemberPermissionsModel.filterPredicate(model)
-                expectedRoles: ["permissionType", "tokenCriteriaMet", "isPrivate"]
+                expression: { return becomeMemberPermissionsModel.filterPredicate(model.permissionType) }
+                expectedRoles: ["permissionType"]
             }
         ]
     }
