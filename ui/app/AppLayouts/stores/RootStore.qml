@@ -253,6 +253,10 @@ QtObject {
         communitiesModuleInst.joinCommunityOrEditSharedAddresses()
     }
 
+    function cleanJoinEditCommunityData() {
+        communitiesModuleInst.cleanJoinEditCommunityData()
+    }
+
     function updatePermissionsModel(communityId, sharedAddresses) {
         communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
