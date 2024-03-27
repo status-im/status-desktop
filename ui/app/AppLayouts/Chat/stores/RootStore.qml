@@ -415,6 +415,10 @@ QtObject {
         communitiesModuleInst.joinCommunityOrEditSharedAddresses()
     }
 
+    function cleanJoinEditCommunityData() {
+        communitiesModuleInst.cleanJoinEditCommunityData()
+    }
+
     function getLatestBlockNumber(chainId) {
         return walletSection.getChainIdForSend(chainId)
     }

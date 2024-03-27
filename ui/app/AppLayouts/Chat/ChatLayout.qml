@@ -317,7 +317,7 @@ StackLayout {
             }
 
             onClosed: {
-                destroy()
+                root.rootStore.cleanJoinEditCommunityData()
             }
 
             Connections {
