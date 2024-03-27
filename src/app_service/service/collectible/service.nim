@@ -12,7 +12,7 @@ logScope:
 # Signals which may be emitted by this service:
 const SIGNAL_COLLECTIBLE_PREFERENCES_UPDATED* = "collectiblePreferencesUpdated"
 
-type 
+type
   ResultArgs* = ref object of Args
     success*: bool
 

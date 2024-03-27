@@ -42,7 +42,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
     self.delegate.refreshWalletAccounts()
-    
+
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.refreshNetworks()
 
