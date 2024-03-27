@@ -19,7 +19,6 @@ ColumnLayout {
     property bool isInvitationPending: false
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
-    property alias loginType: overlayPanel.loginType
 
     property bool requirementsMet: true
     property bool requirementsCheckPending: false
@@ -35,7 +34,7 @@ ColumnLayout {
     property string listUsersText
     property var messagesModel
 
-    signal revealAddressClicked
+    signal requestToJoinClicked
     signal invitationPendingClicked
 
     spacing: 0
@@ -155,7 +154,7 @@ ColumnLayout {
                     assetsModel: root.assetsModel
                     collectiblesModel: root.collectiblesModel
 
-                    onRevealAddressClicked: root.revealAddressClicked()
+                    onRequestToJoinClicked: root.requestToJoinClicked()
                     onInvitationPendingClicked: root.invitationPendingClicked()
                 }
             }
