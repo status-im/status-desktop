@@ -23,74 +23,20 @@ pytestmark = marks
      configs.testpath.TEST_USER_DATA / 'group_chat_user_3')
 ])
 def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_three):
-    user_one: UserAccount = constants.user_account_one
-    user_two: UserAccount = constants.user_account_two
-    user_three: UserAccount = constants.user_account_three
+    user_one: UserAccount = constants.group_chat_user_1
+    user_two: UserAccount = constants.group_chat_user_2
+    user_three: UserAccount = constants.group_chat_user_3
     members = [user_two.name, user_three.name]
     main_window = MainWindow()
     messages_screen = MessagesScreen()
 
-    with multiple_instances() as aut_one, multiple_instances() as aut_two, multiple_instances() as aut_three:
+    with multiple_instances(user_data_one) as aut_one, multiple_instances(user_data_two) as aut_two, multiple_instances(user_data_three) as aut_three:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two, aut_three], [user_one, user_two, user_three]):
                 aut.attach()
                 main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
                 main_window.authorize_user(account)
                 main_window.hide()
-
-        with step(f'User {user_two.name}, get chat key'):
-            aut_two.attach()
-            main_window.prepare()
-            profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
-            main_window.hide()
-
-        with step(f'User {user_one.name}, send contact request to {user_two.name}'):
-            aut_one.attach()
-            main_window.prepare()
-            settings = main_window.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
-            main_window.hide()
-
-        with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
-            aut_two.attach()
-            main_window.prepare()
-            settings = main_window.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contacts_settings.accept_contact_request(user_one.name)
-            main_window.hide()
-
-        with step(f'User {user_three.name}, get chat key'):
-            aut_three.attach()
-            main_window.prepare()
-            profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
-            main_window.hide()
-
-        with step(f'User {user_one.name}, send contact request to {user_three.name}'):
-            aut_one.attach()
-            main_window.prepare()
-            settings = main_window.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_three.name}')
-            main_window.hide()
-
-        with step(f'User {user_three.name}, accept contact request from {user_one.name}'):
-            aut_three.attach()
-            main_window.prepare()
-            settings = main_window.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contacts_settings.accept_contact_request(user_one.name)
-            main_window.hide()
 
         with step(f'User {user_one.name}, start chat and add {user_two.name}'):
             aut_one.attach()
