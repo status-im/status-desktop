@@ -650,17 +650,6 @@ QtObject:
               chat.emoji != prevChat.emoji or chat.viewersCanPostReactions != prevChat.viewersCanPostReactions or
               chat.hideIfPermissionsNotMet != prevChat.hideIfPermissionsNotMet:
             var updatedChat = chat
-
-            # TODO improve this in https://github.com/status-im/status-desktop/issues/12595
-            # Currently, status-go only sends canPostReactions on app start (getChannelGroups)
-            # so here, we need to imply it. If viewersCanPostReactions is true, then everyone can post reactions
-            # admins can also always post reactions
-            if chat.viewersCanPostReactions or
-                (not chat.viewersCanPostReactions and community.memberRole != MemberRole.None):
-              updatedChat.canPostReactions = true
-            elif not chat.viewersCanPostReactions and community.memberRole == MemberRole.None:
-              updatedChat.canPostReactions = false
-
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
 
             let data = CommunityChatArgs(chat: updatedChat)
