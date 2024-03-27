@@ -18,7 +18,10 @@ user_account_three = UserAccount('nervous', '0000000000', [], '')
 group_chat_user_1 = UserAccount('group_chat_user_1', '77_80Y+2Eh', [
     'trophy', 'math', 'robust', 'lake', 'extend', 'cabbage', 'bicycle', 'begin', 'either', 'car', 'race', 'cousin'],
              '0xcd488381c1664c9585b7940f1c4b20f884b8b4a9')
-group_chat_user_2 = UserAccount()
+group_chat_user_2 = UserAccount('group_chat_user_2', '521/97Qv\:', [
+    'opera', 'great', 'open', 'sight', 'still', 'quantum', 'flight', 'torch', 'mule', 'cage', 'noise', 'horn'
+
+], '0x472078f0110d0bb0dfc73389ce89d8a83c8c0502')
 group_chat_user_3 = UserAccount()
 
 user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345', [], '')
