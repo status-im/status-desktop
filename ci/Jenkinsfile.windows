@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.3'
+library 'status-jenkins-lib@v1.8.11'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -54,7 +54,7 @@ pipeline {
   }
 
   environment {
-    TARGET = "windows/${getArch()}"
+    PLATFORM = "windows/${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Explicitly set the QT version */

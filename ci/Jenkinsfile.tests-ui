@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.3'
+library 'status-jenkins-lib@v1.8.11'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -34,7 +34,7 @@ pipeline {
   }
 
   environment {
-    TARGET = 'tests/ui'
+    PLATFORM = 'tests/ui'
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Makefile assumes the compiler folder is included */

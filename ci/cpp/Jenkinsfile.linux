@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.0'
+library 'status-jenkins-lib@v1.8.11'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -45,7 +45,7 @@ pipeline {
   }
 
   environment {
-    TARGET = 'linux-cpp'
+    PLATFORM = 'linux-cpp'
     /* Control output the filename */
     STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage')}"
     CONAN_USER_HOME = "${env.WORKSPACE}/build/conan/conan_home"

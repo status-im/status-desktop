@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.0'
+library 'status-jenkins-lib@v1.8.11'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -42,7 +42,7 @@ pipeline {
   }
 
   environment {
-    TARGET = 'windows-cpp'
+    PLATFORM = 'windows-cpp'
     /* Control output the filename */
     STATUS_CLIENT_ZIP = "pkg/${utils.pkgFilename(ext: 'zip')}"
   }
