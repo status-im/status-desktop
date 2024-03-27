@@ -22,7 +22,7 @@ ListModel {
             userHas: 9,
             name: "Punx not dead!",
             collectionUid: "",
-            collectionName: "",
+            collectionName: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
             communityId: "",
             communityName: "",
             communityImage: ModelsData.icons.status,
@@ -40,7 +40,26 @@ ListModel {
                     balance: "1",
                     txTimestamp: 2
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Punx not dead is a very rare CryptoKitty. It's a Gen 0 and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Fur",
+                    value: "White"
+                },
+                {
+                    traitType: "Eyes",
+                    value: "Blue"
+                },
+                {
+                    traitType: "Pattern",
+                    value: "Tigerpunk"
+                }
+            ],
+            tokenId: "403"
         },
         {
             uid: "pp23",
@@ -61,7 +80,26 @@ ListModel {
                     balance: "8",
                     txTimestamp: 3
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "pepepunk not dead is a very rare CryptoKitty. It's a Gen 0 and has a lot of special traits.",
+            traits: [
+                 {
+                     traitType: "Fur",
+                     value: "White"
+                 },
+                 {
+                     traitType: "Eyes",
+                     value: "Green"
+                 },
+                 {
+                     traitType: "Pattern",
+                     value: "Tigerpunk"
+                 }
+             ],
+            tokenId: "123"
         },
         {
             uid: "34545656768",
@@ -82,7 +120,26 @@ ListModel {
                     balance: "1",
                     txTimestamp: 3
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Furbeard is a very rare CryptoKitty. It's a Gen 0 cat and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Fur",
+                    value: "White"
+                },
+                {
+                    traitType: "Eyes",
+                    value: "Green"
+                },
+                {
+                    traitType: "Pattern",
+                    value: "Tigerpunk"
+                }
+            ],
+            tokenId: "7123"
         },
         {
             uid: "123456",
@@ -103,7 +160,29 @@ ListModel {
                     balance: "1",
                     txTimestamp: 6
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Furbeard is a very rare CryptoKitty. It's a Gen 0 cat and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Fur",
+                    value: "White"
+                },
+                {
+                    traitType: "Eyes",
+                    value: "Green"
+                },
+                {
+                    traitType: "Pattern",
+                    value: "Tigerpunk"
+                }
+            ],
+            tokenId: "403123"
         },
         {
             uid: "12345645459537432",
@@ -129,7 +208,26 @@ ListModel {
                     balance: "1",
                     txTimestamp: 10
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Big Kitty is a very rare CryptoKitty. It's a Gen 0 cat and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Fur",
+                    value: "White"
+                },
+                {
+                    traitType: "Eyes",
+                    value: "Blue"
+                },
+                {
+                    traitType: "Pattern",
+                    value: "Tigerpunk"
+                }
+            ],
+            tokenId: "1"
         },
         {
             uid: "pp21",
@@ -150,7 +248,18 @@ ListModel {
                     balance: "1",
                     txTimestamp: 16
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "pepepunk not dead is a very rare nft. It's a Gen 0 and has a lot of special traits.",
+            traits: [
+                {
+                    traitType: "Type",
+                    value: "Special"
+                }
+            ],
+            tokenId: "12568"
         },
         {
             uid: "lp#666a",
@@ -171,7 +280,18 @@ ListModel {
                     balance: "1",
                     txTimestamp: 19
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Lonely Panda #666 is a very rare NFT. It's a Gen 0 and has a lot of special traits.likie sjasja sajhash jhasjas",
+            traits: [
+                {
+                    traitType: "Type",
+                    value: "Rare"
+                }
+            ],
+            tokenId: "1445"
         },
     ]
 
@@ -194,7 +314,13 @@ ListModel {
                     balance: "15",
                     txTimestamp: 20
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "4"
         },
         {
             uid: "691",
@@ -214,7 +340,13 @@ ListModel {
                     balance: "4",
                     txTimestamp: 21
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "3"
         },
         {
             uid: "8876",
@@ -234,7 +366,13 @@ ListModel {
                     balance: "1",
                     txTimestamp: 22
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "341"
         },
         {
             uid: "fp#3195",
@@ -254,7 +392,13 @@ ListModel {
                     balance: "1",
                     txTimestamp: 23
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "765"
         },
         {
             uid: "fp#4297",
@@ -274,7 +418,13 @@ ListModel {
                     balance: "1000",
                     txTimestamp: 25
                 },
-            ]
+            ],
+            networkShortName: "ETH",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.ethereum,
+            description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "166"
         },
         {
             uid: "fp#909",
@@ -294,7 +444,13 @@ ListModel {
                     balance: "1",
                     txTimestamp: 26
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
+            traits: [],
+            tokenId: "1111"
         },
         {
             uid: "lb#666",
@@ -319,7 +475,13 @@ ListModel {
                     balance: "70",
                     txTimestamp: 60
                 }
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy",
+            traits: [],
+            tokenId: "6"
         },
         {
             uid: "lb#777",
@@ -339,8 +501,114 @@ ListModel {
                     balance: "1",
                     txTimestamp: 27
                 },
-            ]
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "Lonely Turtle is a community for all of us to talk and communicate! Welcome onboard and enjoy",
+            traits: [],
+            tokenId: "7"
         },
+        {
+            uid: "ID-Custom",
+            chainId: 1,
+            contractAddress: "0x04",
+            tokenId: "403",
+            name: "Custom Collectible",
+            imageUrl: ModelsData.collectibles.custom,
+            backgroundColor: "transparent",
+            description: "This is a custom collectible. It's a unique piece of art.",
+            collectionUid: "custom",
+            collectionName: "Custom",
+            collectionImageUrl: "",
+            traits: [],
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: "1",
+                    txTimestamp: 27
+                },
+            ],
+            communityId: "",
+            networkShortName: "ARB",
+            networkColor: "blue",
+            networkIconUrl: ModelsData.networks.arbitrum
+        },
+        {
+            uid: "ID-MissingMetadata",
+            chainId: 1,
+            contractAddress: "0x05",
+            tokenId: "405",
+            name: "",
+            imageUrl: "",
+            backgroundColor: "transparent",
+            description: "",
+            collectionUid: "missing",
+            collectionName: "",
+            collectionImageUrl: "",
+            traits: [],
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: "1",
+                    txTimestamp: 27
+                },
+            ],
+            communityId: "",
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism
+        },
+        {
+            uid: "ID-Community1",
+            chainId: 1,
+            contractAddress: "0x06",
+            tokenId: "406",
+            name: "Community Admin Token",
+            imageUrl: ModelsData.collectibles.mana,
+            backgroundColor: "transparent",
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            collectionUid: "community-uid-1",
+            collectionName: "",
+            collectionImageUrl: "",
+            traits: [],
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: "1",
+                    txTimestamp: 27
+                },
+            ],
+            communityId: "community-id-1",
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism
+        },
+        {
+            uid: "ID-Community-Unknown",
+            chainId: 1,
+            contractAddress: "0x07",
+            tokenId: "407",
+            name: "Removed community token",
+            imageUrl: ModelsData.collectibles.mana,
+            backgroundColor: "transparent",
+            description: "This is unkown community community token",
+            collectionUid: "community-uid-unknown",
+            collectionName: "",
+            collectionImageUrl: "",
+            traits: [],
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: "1",
+                    txTimestamp: 27
+                },
+            ],
+            communityId: "community-id-unknown",
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism
+        }
     ]
 
     Component.onCompleted: {

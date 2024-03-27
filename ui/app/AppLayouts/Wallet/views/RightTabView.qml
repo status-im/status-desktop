@@ -232,6 +232,7 @@ RightTabBaseView {
             collectible: RootStore.collectiblesStore.detailedCollectible
             isCollectibleLoading: RootStore.collectiblesStore.isDetailedCollectibleLoading
             activityModel: d.detailedCollectibleActivityController.model
+            addressFilters: RootStore.addressFilters
             rootStore: SharedStores.RootStore
             walletRootStore: RootStore
             communitiesStore: root.communitiesStore

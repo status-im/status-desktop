@@ -117,7 +117,7 @@ Item {
             const lvOther = findChild(controlUnderTest, "otherTokensListView")
             verify(!!lvOther)
 
-            tryCompare(lvOther, "count", 7)
+            tryCompare(lvOther, "count", 9)
             const delegate0 = findChild(lvOther, "manageTokensDelegate-0")
             verify(!!delegate0)
             const title = delegate0.title
@@ -127,7 +127,7 @@ Item {
             tryCompare(notificationSpy, "count", 1)
 
             // verify we now have -1 regular tokens after the "hide" operation
-            tryCompare(lvOther, "count", 6)
+            tryCompare(lvOther, "count", 8)
         }
 
         function test_showHideCommunityGroup() {
@@ -149,7 +149,7 @@ Item {
             verify(!!lvCommunity)
 
             // verify we have 2 community collectible groups
-            tryCompare(lvCommunity, "count", 4)
+            tryCompare(lvCommunity, "count", 6)
             tryCompare(notificationSpy, "count", 0)
             triggerDelegateMenuAction(lvCommunity, 0, "miHideTokenGroup", true)
             // verify the signal to show the notification toast got fired
@@ -157,7 +157,7 @@ Item {
 
             // verify we have one less group
             waitForItemPolished(lvCommunity)
-            tryCompare(lvCommunity, "count", 3)
+            tryCompare(lvCommunity, "count", 5)
         }
 
         function test_dnd() {
@@ -200,7 +200,7 @@ Item {
             const lvCommunity = findChild(controlUnderTest, "communityTokensListView")
             verify(!!lvCommunity)
             waitForItemPolished(lvCommunity)
-            tryCompare(lvCommunity, "count", 4)
+            tryCompare(lvCommunity, "count", 6)
 
             const group0 = findChild(lvCommunity, "manageTokensGroupDelegate-0")
             const title0 = group0.title
@@ -235,7 +235,7 @@ Item {
             const lvCommunity = findChild(controlUnderTest, "communityTokensListView")
             verify(!!lvCommunity)
             waitForItemPolished(lvCommunity)
-            tryCompare(lvCommunity, "count", 4)
+            tryCompare(lvCommunity, "count", 6)
 
             // get the "Bearz" group at index 1
             var bearzGroupTokenDelegate = findChild(lvCommunity, "manageTokensGroupDelegate-1")

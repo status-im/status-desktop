@@ -15,7 +15,7 @@ Control {
     horizontalPadding: 8
 
     background: Rectangle {
-        color: Theme.palette.indirectColor4
+        color: Theme.palette.indirectColor2
         radius: height / 2
     }
 
