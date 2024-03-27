@@ -1,7 +1,7 @@
 {
     "meta": {
         "hostname": "node-01.do-ams3.sites.misc",
-        "timestamp": "2024-02-02T14:48:22.521541",
+        "timestamp": "2024-03-19T00:00:36.403976",
         "warning": "Auto generated from Consul. Should only be used at build time."
     },
     "fleets": {
@@ -101,19 +101,19 @@
         },
         "wakuv2.test": {
             "tcp/p2p/waku": {
-                "node-01.do-ams3.wakuv2.test": "/dns4/node-01.do-ams3.wakuv2.test.statusim.net/tcp/30303/p2p/16Uiu2HAmPLe7Mzm8TsYUubgCAW1aJoeFScxrLj8ppHFivPo97bUZ",
-                "node-01.gc-us-central1-a.wakuv2.test": "/dns4/node-01.gc-us-central1-a.wakuv2.test.statusim.net/tcp/30303/p2p/16Uiu2HAmJb2e28qLXxT5kZxVUUoJt72EMzNGXB47Rxx5hw3q4YjS",
-                "node-01.ac-cn-hongkong-c.wakuv2.test": "/dns4/node-01.ac-cn-hongkong-c.wakuv2.test.statusim.net/tcp/30303/p2p/16Uiu2HAkvWiyFsgRhuJEb9JfjYxEkoHLgnUQmr1N5mKWnYjxYRVm"
+                "node-01.do-ams3.wakuv2.test": "/dns4/node-01.do-ams3.wakuv2.test.status.im/tcp/30303/p2p/16Uiu2HAmPLe7Mzm8TsYUubgCAW1aJoeFScxrLj8ppHFivPo97bUZ",
+                "node-01.gc-us-central1-a.wakuv2.test": "/dns4/node-01.gc-us-central1-a.wakuv2.test.status.im/tcp/30303/p2p/16Uiu2HAmJb2e28qLXxT5kZxVUUoJt72EMzNGXB47Rxx5hw3q4YjS",
+                "node-01.ac-cn-hongkong-c.wakuv2.test": "/dns4/node-01.ac-cn-hongkong-c.wakuv2.test.status.im/tcp/30303/p2p/16Uiu2HAkvWiyFsgRhuJEb9JfjYxEkoHLgnUQmr1N5mKWnYjxYRVm"
             },
             "enr/p2p/waku": {
-                "node-01.do-ams3.wakuv2.test": "enr:-P-4QPLMQ1zIYRAs4-F0mYmMxMihSySRtEIuGHJ_Qd_GL8XqUE78hpVUE97rgwlXnxPkzMJHkWyiNq7DT1fdZSy3QcgBgmlkgnY0gmlwhIbRi9KKbXVsdGlhZGRyc7hgAC02KG5vZGUtMDEuZG8tYW1zMy53YWt1djIudGVzdC5zdGF0dXNpbS5uZXQGdl8ALzYobm9kZS0wMS5kby1hbXMzLndha3V2Mi50ZXN0LnN0YXR1c2ltLm5ldAYfQN4DiXNlY3AyNTZrMaEDnr03Tuo77930a7sYLikftxnuG3BbC3gCFhA4632ooDaDdGNwgnZfg3VkcIIjKIV3YWt1Mg8",
-                "node-01.gc-us-central1-a.wakuv2.test": "enr:-QERuEDZcXS5tjppj4TIlOm-TLanjmqx3-uk2kGFvvAQR1NVrklUhiN1JCb5dWucEQ_oDADOb6nG_1mJ5goF5CHneZ-VAYJpZIJ2NIJpcIRomu-Aim11bHRpYWRkcnO4cgA2NjFub2RlLTAxLmdjLXVzLWNlbnRyYWwxLWEud2FrdXYyLnRlc3Quc3RhdHVzaW0ubmV0BnZfADg2MW5vZGUtMDEuZ2MtdXMtY2VudHJhbDEtYS53YWt1djIudGVzdC5zdGF0dXNpbS5uZXQGH0DeA4lzZWNwMjU2azGhA1giYsmWV9r2yJZYAiMGHJfjLlLeqAuTAokUGPN__pkxg3RjcIJ2X4N1ZHCCIyiFd2FrdTIP",
-                "node-01.ac-cn-hongkong-c.wakuv2.test": "enr:-QERuEC2LyiXKURIKxNHa7Mj7frsM-lZiAGJ-2mopR3w8LMn2UhKmahZ9RHKV5ehBN1fXbRYqAeiXuOxD9t2igF4PIizAYJpZIJ2NIJpcIQv8tJJim11bHRpYWRkcnO4cgA2NjFub2RlLTAxLmFjLWNuLWhvbmdrb25nLWMud2FrdXYyLnRlc3Quc3RhdHVzaW0ubmV0BnZfADg2MW5vZGUtMDEuYWMtY24taG9uZ2tvbmctYy53YWt1djIudGVzdC5zdGF0dXNpbS5uZXQGH0DeA4lzZWNwMjU2azGhAhAm-P4q6mWONKcGnbLPU8WXZJ4Qs3AxIbrycvc7PVKsg3RjcIJ2X4N1ZHCCIyiFd2FrdTIP"
+                "node-01.do-ams3.wakuv2.test": "enr:-Pm4QDki0lH-N_NkCb9MOpABNIzJ8ietDRQpSug4xmdR-owsRkJMfGnpSVJF69U7SSh0-Zx92RYQNxuGW5m0YkBZCJkBgmlkgnY0gmlwhIbRi9KKbXVsdGlhZGRyc7haACo2JW5vZGUtMDEuZG8tYW1zMy53YWt1djIudGVzdC5zdGF0dXMuaW0Gdl8ALDYlbm9kZS0wMS5kby1hbXMzLndha3V2Mi50ZXN0LnN0YXR1cy5pbQYfQN4DiXNlY3AyNTZrMaEDnr03Tuo77930a7sYLikftxnuG3BbC3gCFhA4632ooDaDdGNwgnZfg3VkcIIjKIV3YWt1Mg8",
+                "node-01.gc-us-central1-a.wakuv2.test": "enr:-QELuEBzrZEOumbR9javv0QJcz0HwRw3h-SXkAkV0i9wUzjZbX6Bzs5njLCpJo_9fCKtC_B4_kTqouH3koCfPktF88l0AYJpZIJ2NIJpcIRomu-Aim11bHRpYWRkcnO4bAAzNi5ub2RlLTAxLmdjLXVzLWNlbnRyYWwxLWEud2FrdXYyLnRlc3Quc3RhdHVzLmltBnZfADU2Lm5vZGUtMDEuZ2MtdXMtY2VudHJhbDEtYS53YWt1djIudGVzdC5zdGF0dXMuaW0GH0DeA4lzZWNwMjU2azGhA1giYsmWV9r2yJZYAiMGHJfjLlLeqAuTAokUGPN__pkxg3RjcIJ2X4N1ZHCCIyiFd2FrdTIP",
+                "node-01.ac-cn-hongkong-c.wakuv2.test": "enr:-QELuEC7P3wANyauGi-pSFH2XZZ3VUk0FDqlu6pHFVedH9IdoDKRV6vIKjEe3JCPPcx1r8vRIHsqbEEgJLVdLqrp0g88AYJpZIJ2NIJpcIQv8tJJim11bHRpYWRkcnO4bAAzNi5ub2RlLTAxLmFjLWNuLWhvbmdrb25nLWMud2FrdXYyLnRlc3Quc3RhdHVzLmltBnZfADU2Lm5vZGUtMDEuYWMtY24taG9uZ2tvbmctYy53YWt1djIudGVzdC5zdGF0dXMuaW0GH0DeA4lzZWNwMjU2azGhAhAm-P4q6mWONKcGnbLPU8WXZJ4Qs3AxIbrycvc7PVKsg3RjcIJ2X4N1ZHCCIyiFd2FrdTIP"
             },
             "wss/p2p/waku": {
-                "node-01.do-ams3.wakuv2.test": "/dns4/node-01.do-ams3.wakuv2.test.statusim.net/tcp/8000/wss/p2p/16Uiu2HAmPLe7Mzm8TsYUubgCAW1aJoeFScxrLj8ppHFivPo97bUZ",
-                "node-01.gc-us-central1-a.wakuv2.test": "/dns4/node-01.gc-us-central1-a.wakuv2.test.statusim.net/tcp/8000/wss/p2p/16Uiu2HAmJb2e28qLXxT5kZxVUUoJt72EMzNGXB47Rxx5hw3q4YjS",
-                "node-01.ac-cn-hongkong-c.wakuv2.test": "/dns4/node-01.ac-cn-hongkong-c.wakuv2.test.statusim.net/tcp/8000/wss/p2p/16Uiu2HAkvWiyFsgRhuJEb9JfjYxEkoHLgnUQmr1N5mKWnYjxYRVm"
+                "node-01.do-ams3.wakuv2.test": "/dns4/node-01.do-ams3.wakuv2.test.status.im/tcp/8000/wss/p2p/16Uiu2HAmPLe7Mzm8TsYUubgCAW1aJoeFScxrLj8ppHFivPo97bUZ",
+                "node-01.gc-us-central1-a.wakuv2.test": "/dns4/node-01.gc-us-central1-a.wakuv2.test.status.im/tcp/8000/wss/p2p/16Uiu2HAmJb2e28qLXxT5kZxVUUoJt72EMzNGXB47Rxx5hw3q4YjS",
+                "node-01.ac-cn-hongkong-c.wakuv2.test": "/dns4/node-01.ac-cn-hongkong-c.wakuv2.test.status.im/tcp/8000/wss/p2p/16Uiu2HAkvWiyFsgRhuJEb9JfjYxEkoHLgnUQmr1N5mKWnYjxYRVm"
             }
         },
         "waku.test": {
@@ -131,6 +131,23 @@
                 "node-01.do-ams3.waku.test": "/dns4/node-01.do-ams3.waku.test.statusim.net/tcp/8000/wss/p2p/16Uiu2HAkykgaECHswi3YKJ5dMLbq2kPVCo89fcyTd38UcQD6ej5W",
                 "node-01.gc-us-central1-a.waku.test": "/dns4/node-01.gc-us-central1-a.waku.test.statusim.net/tcp/8000/wss/p2p/16Uiu2HAmDCp8XJ9z1ev18zuv8NHekAsjNyezAvmMfFEJkiharitG",
                 "node-01.ac-cn-hongkong-c.waku.test": "/dns4/node-01.ac-cn-hongkong-c.waku.test.statusim.net/tcp/8000/wss/p2p/16Uiu2HAkzHaTP5JsUwfR9NR8Rj9HC24puS6ocaU8wze4QrXr9iXp"
+            }
+        },
+        "waku.sandbox": {
+            "tcp/p2p/waku": {
+                "node-01.do-ams3.waku.sandbox": "/dns4/node-01.do-ams3.waku.sandbox.status.im/tcp/30303/p2p/16Uiu2HAmQSMNExfUYUqfuXWkD5DaNZnMYnigRxFKbk3tcEFQeQeE",
+                "node-01.gc-us-central1-a.waku.sandbox": "/dns4/node-01.gc-us-central1-a.waku.sandbox.status.im/tcp/30303/p2p/16Uiu2HAm6fyqE1jB5MonzvoMdU8v76bWV8ZeNpncDamY1MQXfjdB",
+                "node-01.ac-cn-hongkong-c.waku.sandbox": "/dns4/node-01.ac-cn-hongkong-c.waku.sandbox.status.im/tcp/30303/p2p/16Uiu2HAmSJvSJphxRdbnigUV5bjRRZFBhTtWFTSyiKaQByCjwmpV"
+            },
+            "enr/p2p/waku": {
+                "node-01.do-ams3.waku.sandbox": "enr:-QESuEB4Dchgjn7gfAvwB00CxTA-nGiyk-aALI-H4dYSZD3rUk7bZHmP8d2U6xDiQ2vZffpo45Jp7zKNdnwDUx6g4o6XAYJpZIJ2NIJpcIRA4VDAim11bHRpYWRkcnO4XAArNiZub2RlLTAxLmRvLWFtczMud2FrdS5zYW5kYm94LnN0YXR1cy5pbQZ2XwAtNiZub2RlLTAxLmRvLWFtczMud2FrdS5zYW5kYm94LnN0YXR1cy5pbQYfQN4DgnJzkwABCAAAAAEAAgADAAQABQAGAAeJc2VjcDI1NmsxoQOvD3S3jUNICsrOILlmhENiWAMmMVlAl6-Q8wRB7hidY4N0Y3CCdl-DdWRwgiMohXdha3UyDw",
+                "node-01.gc-us-central1-a.waku.sandbox": "enr:-QEkuEBIkb8q8_mrorHndoXH9t5N6ZfD-jehQCrYeoJDPHqT0l0wyaONa2-piRQsi3oVKAzDShDVeoQhy0uwN1xbZfPZAYJpZIJ2NIJpcIQiQlleim11bHRpYWRkcnO4bgA0Ni9ub2RlLTAxLmdjLXVzLWNlbnRyYWwxLWEud2FrdS5zYW5kYm94LnN0YXR1cy5pbQZ2XwA2Ni9ub2RlLTAxLmdjLXVzLWNlbnRyYWwxLWEud2FrdS5zYW5kYm94LnN0YXR1cy5pbQYfQN4DgnJzkwABCAAAAAEAAgADAAQABQAGAAeJc2VjcDI1NmsxoQKnGt-GSgqPSf3IAPM7bFgTlpczpMZZLF3geeoNNsxzSoN0Y3CCdl-DdWRwgiMohXdha3UyDw",
+                "node-01.ac-cn-hongkong-c.waku.sandbox": "enr:-QEkuEB3WHNS-xA3RDpfu9A2Qycr3bN3u7VoArMEiDIFZJ66F1EB3d4wxZN1hcdcOX-RfuXB-MQauhJGQbpz3qUofOtLAYJpZIJ2NIJpcIQI2SVcim11bHRpYWRkcnO4bgA0Ni9ub2RlLTAxLmFjLWNuLWhvbmdrb25nLWMud2FrdS5zYW5kYm94LnN0YXR1cy5pbQZ2XwA2Ni9ub2RlLTAxLmFjLWNuLWhvbmdrb25nLWMud2FrdS5zYW5kYm94LnN0YXR1cy5pbQYfQN4DgnJzkwABCAAAAAEAAgADAAQABQAGAAeJc2VjcDI1NmsxoQPK35Nnz0cWUtSAhBp7zvHEhyU_AqeQUlqzLiLxfP2L4oN0Y3CCdl-DdWRwgiMohXdha3UyDw"
+            },
+            "wss/p2p/waku": {
+                "node-01.do-ams3.waku.sandbox": "/dns4/node-01.do-ams3.waku.sandbox.status.im/tcp/8000/wss/p2p/16Uiu2HAmQSMNExfUYUqfuXWkD5DaNZnMYnigRxFKbk3tcEFQeQeE",
+                "node-01.gc-us-central1-a.waku.sandbox": "/dns4/node-01.gc-us-central1-a.waku.sandbox.status.im/tcp/8000/wss/p2p/16Uiu2HAm6fyqE1jB5MonzvoMdU8v76bWV8ZeNpncDamY1MQXfjdB",
+                "node-01.ac-cn-hongkong-c.waku.sandbox": "/dns4/node-01.ac-cn-hongkong-c.waku.sandbox.status.im/tcp/8000/wss/p2p/16Uiu2HAmSJvSJphxRdbnigUV5bjRRZFBhTtWFTSyiKaQByCjwmpV"
             }
         },
         "status.prod": {
@@ -161,60 +178,101 @@
         },
         "status.test": {
             "tcp/p2p/waku": {
-                "node-01.do-ams3.status.test": "/dns4/node-01.do-ams3.status.test.statusim.net/tcp/30303/p2p/16Uiu2HAkukebeXjTQ9QDBeNDWuGfbaSg79wkkhK4vPocLgR6QFDf",
-                "node-01.gc-us-central1-a.status.test": "/dns4/node-01.gc-us-central1-a.status.test.statusim.net/tcp/30303/p2p/16Uiu2HAmGDX3iAFox93PupVYaHa88kULGqMpJ7AEHGwj3jbMtt76",
-                "node-01.ac-cn-hongkong-c.status.test": "/dns4/node-01.ac-cn-hongkong-c.status.test.statusim.net/tcp/30303/p2p/16Uiu2HAm2BjXxCp1sYFJQKpLLbPbwd5juxbsYofu3TsS3auvT9Yi"
+                "node-01.do-ams3.status.test": "/dns4/node-01.do-ams3.status.test.status.im/tcp/30303/p2p/16Uiu2HAkukebeXjTQ9QDBeNDWuGfbaSg79wkkhK4vPocLgR6QFDf",
+                "node-01.gc-us-central1-a.status.test": "/dns4/node-01.gc-us-central1-a.status.test.status.im/tcp/30303/p2p/16Uiu2HAmGDX3iAFox93PupVYaHa88kULGqMpJ7AEHGwj3jbMtt76",
+                "node-01.ac-cn-hongkong-c.status.test": "/dns4/node-01.ac-cn-hongkong-c.status.test.status.im/tcp/30303/p2p/16Uiu2HAm2BjXxCp1sYFJQKpLLbPbwd5juxbsYofu3TsS3auvT9Yi"
             },
             "enr/p2p/waku": {
-                "node-01.do-ams3.status.test": "enr:-P-4QOg_CbInUakb3TEQBeCICyC-QDPeWK-CGtV9-nWp1W5DOKE2va63re3nPw-_hgvJfJkvshTaV0VmditigxKxT_kBgmlkgnY0gmlwhEDhUe2KbXVsdGlhZGRyc7hgAC02KG5vZGUtMDEuZG8tYW1zMy5zdGF0dXMudGVzdC5zdGF0dXNpbS5uZXQGdl8ALzYobm9kZS0wMS5kby1hbXMzLnN0YXR1cy50ZXN0LnN0YXR1c2ltLm5ldAYBu94DiXNlY3AyNTZrMaECBNx5Erw5Jdsw-uI9pBjB_V2R6brvuVWE-MJwYCQKVv6DdGNwgnZfg3VkcIIjKIV3YWt1Mg8",
-                "node-01.gc-us-central1-a.status.test": "enr:-QERuED3i2Oj7jWVR6QyPE_R0WO4Kec4CuUf8Pf6YrEXB6mvFwW_Y2wyHExqajqKR-ke-129TwAwovz2QjErTUga6rM8AYJpZIJ2NIJpcIQievx2im11bHRpYWRkcnO4cgA2NjFub2RlLTAxLmdjLXVzLWNlbnRyYWwxLWEuc3RhdHVzLnRlc3Quc3RhdHVzaW0ubmV0BnZfADg2MW5vZGUtMDEuZ2MtdXMtY2VudHJhbDEtYS5zdGF0dXMudGVzdC5zdGF0dXNpbS5uZXQGAbveA4lzZWNwMjU2azGhAzToWxPoQnnubNH_CIu7YHPV0RHadQVIKlpfMJxxC2eFg3RjcIJ2X4N1ZHCCIyiFd2FrdTIP",
-                "node-01.ac-cn-hongkong-c.status.test": "enr:-QERuEDoxPEax-hctqp6vg2cmvd2UNPjgdf6iWmgvShX2-hL_Wj2JHpjVua9buZTYLsLD-Or5e71hwlgZlFaceEfopnzAYJpZIJ2NIJpcIQv8ukkim11bHRpYWRkcnO4cgA2NjFub2RlLTAxLmFjLWNuLWhvbmdrb25nLWMuc3RhdHVzLnRlc3Quc3RhdHVzaW0ubmV0BnZfADg2MW5vZGUtMDEuYWMtY24taG9uZ2tvbmctYy5zdGF0dXMudGVzdC5zdGF0dXNpbS5uZXQGAbveA4lzZWNwMjU2azGhAmRvsjqPlfX7OOJ4x4F3GAOpBa4y4NQSoNHjX2XIo1lvg3RjcIJ2X4N1ZHCCIyiFd2FrdTIP"
+                "node-01.do-ams3.status.test": "enr:-Pm4QE-rdAE-X76ruaDgYa5te0eHZ1tNtT7s2hsk0OE-06pCS5Rc4cYF_izHLHyEUUTzYmInLzB7xxhgrsYa9OUzDhQBgmlkgnY0gmlwhEDhUe2KbXVsdGlhZGRyc7haACo2JW5vZGUtMDEuZG8tYW1zMy5zdGF0dXMudGVzdC5zdGF0dXMuaW0Gdl8ALDYlbm9kZS0wMS5kby1hbXMzLnN0YXR1cy50ZXN0LnN0YXR1cy5pbQYBu94DiXNlY3AyNTZrMaECBNx5Erw5Jdsw-uI9pBjB_V2R6brvuVWE-MJwYCQKVv6DdGNwgnZfg3VkcIIjKIV3YWt1Mg8",
+                "node-01.gc-us-central1-a.status.test": "enr:-QELuEA5PjqjeMw4Uv7hti0d3hw4jc2vANqlFq9ko6mbUo6bHC_ugxLdNMVhjOKIMtHvQjcwc6vy0ZWHnbDvVZIQrFD4AYJpZIJ2NIJpcIQievx2im11bHRpYWRkcnO4bAAzNi5ub2RlLTAxLmdjLXVzLWNlbnRyYWwxLWEuc3RhdHVzLnRlc3Quc3RhdHVzLmltBnZfADU2Lm5vZGUtMDEuZ2MtdXMtY2VudHJhbDEtYS5zdGF0dXMudGVzdC5zdGF0dXMuaW0GAbveA4lzZWNwMjU2azGhAzToWxPoQnnubNH_CIu7YHPV0RHadQVIKlpfMJxxC2eFg3RjcIJ2X4N1ZHCCIyiFd2FrdTIP",
+                "node-01.ac-cn-hongkong-c.status.test": "enr:-QELuEAbXz6W8UgujhK2lktjDCg9kjgB0wmPuRDlQz4-PQubnRCJlhDIrwhOuJ6Ecz4m_Rb5qkvHOT4Dg-V33nr1vlIYAYJpZIJ2NIJpcIQv8ukkim11bHRpYWRkcnO4bAAzNi5ub2RlLTAxLmFjLWNuLWhvbmdrb25nLWMuc3RhdHVzLnRlc3Quc3RhdHVzLmltBnZfADU2Lm5vZGUtMDEuYWMtY24taG9uZ2tvbmctYy5zdGF0dXMudGVzdC5zdGF0dXMuaW0GAbveA4lzZWNwMjU2azGhAmRvsjqPlfX7OOJ4x4F3GAOpBa4y4NQSoNHjX2XIo1lvg3RjcIJ2X4N1ZHCCIyiFd2FrdTIP"
             },
             "wss/p2p/waku": {
-                "node-01.do-ams3.status.test": "/dns4/node-01.do-ams3.status.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAkukebeXjTQ9QDBeNDWuGfbaSg79wkkhK4vPocLgR6QFDf",
-                "node-01.gc-us-central1-a.status.test": "/dns4/node-01.gc-us-central1-a.status.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAmGDX3iAFox93PupVYaHa88kULGqMpJ7AEHGwj3jbMtt76",
-                "node-01.ac-cn-hongkong-c.status.test": "/dns4/node-01.ac-cn-hongkong-c.status.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAm2BjXxCp1sYFJQKpLLbPbwd5juxbsYofu3TsS3auvT9Yi"
+                "node-01.do-ams3.status.test": "/dns4/node-01.do-ams3.status.test.status.im/tcp/443/wss/p2p/16Uiu2HAkukebeXjTQ9QDBeNDWuGfbaSg79wkkhK4vPocLgR6QFDf",
+                "node-01.gc-us-central1-a.status.test": "/dns4/node-01.gc-us-central1-a.status.test.status.im/tcp/443/wss/p2p/16Uiu2HAmGDX3iAFox93PupVYaHa88kULGqMpJ7AEHGwj3jbMtt76",
+                "node-01.ac-cn-hongkong-c.status.test": "/dns4/node-01.ac-cn-hongkong-c.status.test.status.im/tcp/443/wss/p2p/16Uiu2HAm2BjXxCp1sYFJQKpLLbPbwd5juxbsYofu3TsS3auvT9Yi"
+            }
+        },
+        "shards.staging": {
+            "tcp/p2p/waku/boot": {
+                "boot-01.do-ams3.shards.staging": "/dns4/boot-01.do-ams3.shards.staging.status.im/tcp/30303/p2p/16Uiu2HAmEqqio4UR1SWqAc7KY19t6qyDvtmyjreZpzUBJvb4u65R",
+                "boot-01.gc-us-central1-a.shards.staging": "/dns4/boot-01.gc-us-central1-a.shards.staging.status.im/tcp/30303/p2p/16Uiu2HAmGAA54bBTE78MYidSy3P7Q9yAWFNTAEReJYD69VRvtL5r",
+                "boot-01.ac-cn-hongkong-c.shards.staging": "/dns4/boot-01.ac-cn-hongkong-c.shards.staging.status.im/tcp/30303/p2p/16Uiu2HAmNTpGnyZ8W1BK2sXEmgSCNWiyDKgRU3NBR2DXST2HzxRU"
+            },
+            "enr/p2p/waku/boot": {
+                "boot-01.do-ams3.shards.staging": "enr:-QEQuEDsh6FgAb_36cReaX7W4gWx_7_GNpsUki7bXMoMrrrWij5pDEyV3guR-urDW_6GJTAzpQiJV61F-CfNn_NxPbY-AYJpZIJ2NIJpcISPxvrpim11bHRpYWRkcnO4YAAtNihib290LTAxLmRvLWFtczMuc2hhcmRzLnN0YWdpbmcuc3RhdHVzLmltBnZfAC82KGJvb3QtMDEuZG8tYW1zMy5zaGFyZHMuc3RhZ2luZy5zdGF0dXMuaW0GAbveA4Jyc40AEAUAAQAgAEAAgAEAiXNlY3AyNTZrMaEDIH8BcuEzgnmwPQTu7BPYyg4u4om7K9qekKA2gT_H2wSDdGNwgnZfg3VkcIIjKIV3YWt1Mg0",
+                "boot-01.gc-us-central1-a.shards.staging": "enr:-QEiuECWCuk1CoefbPYUV_cff27t-471k_QhJ_MvgOUQmRE4vgI6h9fD4LgXy7TZNSFXeBBP9haWJB7lx8Wujx-LPmhrAYJpZIJ2NIJpcIRoxQVgim11bHRpYWRkcnO4cgA2NjFib290LTAxLmdjLXVzLWNlbnRyYWwxLWEuc2hhcmRzLnN0YWdpbmcuc3RhdHVzLmltBnZfADg2MWJvb3QtMDEuZ2MtdXMtY2VudHJhbDEtYS5zaGFyZHMuc3RhZ2luZy5zdGF0dXMuaW0GAbveA4Jyc40AEAUAAQAgAEAAgAEAiXNlY3AyNTZrMaEDNAvlGjekD1YV4WpmjwArGAH2g9kHFJnMRfgUhcIkoA2DdGNwgnZfg3VkcIIjKIV3YWt1Mg0",
+                "boot-01.ac-cn-hongkong-c.shards.staging": "enr:-QEiuEAcHWW7aNBtJhigTCAnKu9-H1b98SWpBJkGm3PAxth5QjJA0kdiabOfou4HgCD6RuyZEnFE5L8ymahouw3kWRiWAYJpZIJ2NIJpcIQvTKi6im11bHRpYWRkcnO4cgA2NjFib290LTAxLmFjLWNuLWhvbmdrb25nLWMuc2hhcmRzLnN0YWdpbmcuc3RhdHVzLmltBnZfADg2MWJvb3QtMDEuYWMtY24taG9uZ2tvbmctYy5zaGFyZHMuc3RhZ2luZy5zdGF0dXMuaW0GAbveA4Jyc40AEAUAAQAgAEAAgAEAiXNlY3AyNTZrMaEDkbgV7oqPNmFtX5FzSPi9WH8kkmrPB1R3n9xRXge91M-DdGNwgnZfg3VkcIIjKIV3YWt1Mg0"
+            },
+            "wss/p2p/waku/boot": {
+                "boot-01.do-ams3.shards.staging": "/dns4/boot-01.do-ams3.shards.staging.status.im/tcp/443/wss/p2p/16Uiu2HAmEqqio4UR1SWqAc7KY19t6qyDvtmyjreZpzUBJvb4u65R",
+                "boot-01.gc-us-central1-a.shards.staging": "/dns4/boot-01.gc-us-central1-a.shards.staging.status.im/tcp/443/wss/p2p/16Uiu2HAmGAA54bBTE78MYidSy3P7Q9yAWFNTAEReJYD69VRvtL5r",
+                "boot-01.ac-cn-hongkong-c.shards.staging": "/dns4/boot-01.ac-cn-hongkong-c.shards.staging.status.im/tcp/443/wss/p2p/16Uiu2HAmNTpGnyZ8W1BK2sXEmgSCNWiyDKgRU3NBR2DXST2HzxRU"
+            },
+            "tcp/p2p/waku/store": {
+                "store-01.do-ams3.shards.staging": "/dns4/store-01.do-ams3.shards.staging.status.im/tcp/30303/p2p/16Uiu2HAm3xVDaz6SRJ6kErwC21zBJEZjavVXg7VSkoWzaV1aMA3F",
+                "store-02.do-ams3.shards.staging": "/dns4/store-02.do-ams3.shards.staging.status.im/tcp/30303/p2p/16Uiu2HAmCDSnT8oNpMR9HH6uipD71KstYuDCAQGpek9XDAVmqdEr",
+                "store-01.gc-us-central1-a.shards.staging": "/dns4/store-01.gc-us-central1-a.shards.staging.status.im/tcp/30303/p2p/16Uiu2HAmB7Ur9HQqo3cWDPovRQjo57fxWWDaQx27WxSzDGhN4JKg",
+                "store-02.gc-us-central1-a.shards.staging": "/dns4/store-02.gc-us-central1-a.shards.staging.status.im/tcp/30303/p2p/16Uiu2HAmKBd6crqQNZ6nKCSCpHCAwUPn3DUDmkcPSWUTyVXpxKsW",
+                "store-01.ac-cn-hongkong-c.shards.staging": "/dns4/store-01.ac-cn-hongkong-c.shards.staging.status.im/tcp/30303/p2p/16Uiu2HAmMU7Y29oL6DmoJfBFv8J4JhYzYgazPL7nGKJFBV3qcj2E",
+                "store-02.ac-cn-hongkong-c.shards.staging": "/dns4/store-02.ac-cn-hongkong-c.shards.staging.status.im/tcp/30303/p2p/16Uiu2HAmU7xtcwytXpGpeDrfyhJkiFvTkQbLB9upL5MXPLGceG9K"
+            },
+            "enr/p2p/waku/store": {
+                "store-01.do-ams3.shards.staging": "enr:-QESuEBbUJK4M7wLejjM7J7db98Cmj1Kpw34laIqAjzrUe7-vUP2ZcODAjcygfL68UchouYzTY8pQu_4lPelvCLULb0XAYJpZIJ2NIJpcIQYkE53im11bHRpYWRkcnO4YgAuNilzdG9yZS0wMS5kby1hbXMzLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQZ2XwAwNilzdG9yZS0wMS5kby1hbXMzLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQJ-wlTnBcknPNUG72hag4NXSa6SeozscHKtYg1Ss3pldoN0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-02.do-ams3.shards.staging": "enr:-QESuEB02PjklRMAnwJn5ZBNZF1cXTMgABVlSQ0lvDsBQ-4VzQ7VLaGNeR2oNmjTbexZUp_tyEOyeYJZYgK0gs8xAXqoAYJpZIJ2NIJpcIQYkE54im11bHRpYWRkcnO4YgAuNilzdG9yZS0wMi5kby1hbXMzLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQZ2XwAwNilzdG9yZS0wMi5kby1hbXMzLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQL5dMmr5GzH0Fton8NGBlUW_rZG8-f3Ph0XhvMUMeVIM4N0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-01.gc-us-central1-a.shards.staging": "enr:-QEkuEDmoxYCHlMz5ruZVRTeLHvmxEJzkSi9YGGEsLRxMjTEF2zh-yuH_Uh_bSVs628asyyUq6nurBLPYd_JMjv4i_-eAYJpZIJ2NIJpcIQj4OfRim11bHRpYWRkcnO4dAA3NjJzdG9yZS0wMS5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQZ2XwA5NjJzdG9yZS0wMS5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQLpEfMK4rQu4Vj5p2mH3YpiNCaiB8Q9JWuCa5sHA1BoJ4N0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-02.gc-us-central1-a.shards.staging": "enr:-QEkuEBLGAmhGv8Oa3hIPgtv-vVEBD_pLS2pP4GxyKfFS60XMwB5GklIr7WgFJV82STuI7v4TCIbkvsZQsxn8e1gPK42AYJpZIJ2NIJpcIQiSIy3im11bHRpYWRkcnO4dAA3NjJzdG9yZS0wMi5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQZ2XwA5NjJzdG9yZS0wMi5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQNg_xiKKSUfqa798Ay2GZzh1iRx58F7v5TQBfzFb9T0QYN0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-01.ac-cn-hongkong-c.shards.staging": "enr:-QEkuEDE7UJakM6jmzIPK0-dFwZ6It160yuEPPaJApuVHn7bogXvOYlklh1XdEz9K6QeSiZwk2GAJHqnX023Xi8GA7B2AYJpZIJ2NIJpcIQI2s6Gim11bHRpYWRkcnO4dAA3NjJzdG9yZS0wMS5hYy1jbi1ob25na29uZy1jLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQZ2XwA5NjJzdG9yZS0wMS5hYy1jbi1ob25na29uZy1jLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQOC7-rlGZ1POquzYNLxqu1_RddP7HXIGafRaEKM934p54N0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-02.ac-cn-hongkong-c.shards.staging": "enr:-QEkuEATTXRamOFShcCt-ViPcEAo_fkqbVjFiuHGgXEk602hURuXG4Qoei9z6Zt4X_HJ2vYoeygBla10RZJxU0Kw7P7dAYJpZIJ2NIJpcIQvTLKkim11bHRpYWRkcnO4dAA3NjJzdG9yZS0wMi5hYy1jbi1ob25na29uZy1jLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQZ2XwA5NjJzdG9yZS0wMi5hYy1jbi1ob25na29uZy1jLnNoYXJkcy5zdGFnaW5nLnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQPlyFXKktjIFNaZtTIFI_4ZfNyt3RKWxSPEyH_nb7-YFoN0Y3CCdl-DdWRwgiMohXdha3UyAw"
+            },
+            "wss/p2p/waku/store": {
+                "store-01.do-ams3.shards.staging": "/dns4/store-01.do-ams3.shards.staging.status.im/tcp/443/wss/p2p/16Uiu2HAm3xVDaz6SRJ6kErwC21zBJEZjavVXg7VSkoWzaV1aMA3F",
+                "store-02.do-ams3.shards.staging": "/dns4/store-02.do-ams3.shards.staging.status.im/tcp/443/wss/p2p/16Uiu2HAmCDSnT8oNpMR9HH6uipD71KstYuDCAQGpek9XDAVmqdEr",
+                "store-01.gc-us-central1-a.shards.staging": "/dns4/store-01.gc-us-central1-a.shards.staging.status.im/tcp/443/wss/p2p/16Uiu2HAmB7Ur9HQqo3cWDPovRQjo57fxWWDaQx27WxSzDGhN4JKg",
+                "store-02.gc-us-central1-a.shards.staging": "/dns4/store-02.gc-us-central1-a.shards.staging.status.im/tcp/443/wss/p2p/16Uiu2HAmKBd6crqQNZ6nKCSCpHCAwUPn3DUDmkcPSWUTyVXpxKsW",
+                "store-01.ac-cn-hongkong-c.shards.staging": "/dns4/store-01.ac-cn-hongkong-c.shards.staging.status.im/tcp/443/wss/p2p/16Uiu2HAmMU7Y29oL6DmoJfBFv8J4JhYzYgazPL7nGKJFBV3qcj2E",
+                "store-02.ac-cn-hongkong-c.shards.staging": "/dns4/store-02.ac-cn-hongkong-c.shards.staging.status.im/tcp/443/wss/p2p/16Uiu2HAmU7xtcwytXpGpeDrfyhJkiFvTkQbLB9upL5MXPLGceG9K"
             }
         },
         "shards.test": {
             "tcp/p2p/waku/boot": {
-                "boot-01.do-ams3.shards.test": "/dns4/boot-01.do-ams3.shards.test.statusim.net/tcp/30303/p2p/16Uiu2HAmAR24Mbb6VuzoyUiGx42UenDkshENVDj4qnmmbabLvo31",
-                "boot-01.gc-us-central1-a.shards.test": "/dns4/boot-01.gc-us-central1-a.shards.test.statusim.net/tcp/30303/p2p/16Uiu2HAm8mUZ18tBWPXDQsaF7PbCKYA35z7WB2xNZH2EVq1qS8LJ",
-                "boot-01.ac-cn-hongkong-c.shards.test": "/dns4/boot-01.ac-cn-hongkong-c.shards.test.statusim.net/tcp/30303/p2p/16Uiu2HAmGwcE8v7gmJNEWFtZtojYpPMTHy2jBLL6xRk33qgDxFWX"
+                "boot-01.do-ams3.shards.test": "/dns4/boot-01.do-ams3.shards.test.status.im/tcp/30303/p2p/16Uiu2HAmAR24Mbb6VuzoyUiGx42UenDkshENVDj4qnmmbabLvo31",
+                "boot-01.gc-us-central1-a.shards.test": "/dns4/boot-01.gc-us-central1-a.shards.test.status.im/tcp/30303/p2p/16Uiu2HAm8mUZ18tBWPXDQsaF7PbCKYA35z7WB2xNZH2EVq1qS8LJ",
+                "boot-01.ac-cn-hongkong-c.shards.test": "/dns4/boot-01.ac-cn-hongkong-c.shards.test.status.im/tcp/30303/p2p/16Uiu2HAmGwcE8v7gmJNEWFtZtojYpPMTHy2jBLL6xRk33qgDxFWX"
             },
             "enr/p2p/waku/boot": {
-                "boot-01.do-ams3.shards.test": "enr:-QEOuEAuAK49evunDoidpHqcmeVqZz73wt4jwHnHJlmCVBFj6EdIbZ9uH5BnCYKOEPJTns2QJKUR2XLtWyzIspPAfJF9AYJpZIJ2NIJpcISnYxMvim11bHRpYWRkcnO4YAAtNihib290LTAxLmRvLWFtczMuc2hhcmRzLnRlc3Quc3RhdHVzaW0ubmV0BnZfAC82KGJvb3QtMDEuZG8tYW1zMy5zaGFyZHMudGVzdC5zdGF0dXNpbS5uZXQGAbveA4Jyc4sAEAQAIABAAIABAIlzZWNwMjU2azGhAt60bRUEoHNuLlnsM12sU2PIQwBwfLIJ8a_ZPEY2-Rnkg3RjcIJ2X4N1ZHCCIyiFd2FrdTIN",
-                "boot-01.gc-us-central1-a.shards.test": "enr:-QEguEC3wjzOk7U5rIqiX32CCD-0_J1cYYGK_YwKSah5di2NTxJUaKQ9B7NMiEQ_-YGm-Eus4SzHtxN_fXEuVaNHql9aAYJpZIJ2NIJpcIQihw1Xim11bHRpYWRkcnO4cgA2NjFib290LTAxLmdjLXVzLWNlbnRyYWwxLWEuc2hhcmRzLnRlc3Quc3RhdHVzaW0ubmV0BnZfADg2MWJvb3QtMDEuZ2MtdXMtY2VudHJhbDEtYS5zaGFyZHMudGVzdC5zdGF0dXNpbS5uZXQGAbveA4Jyc4sAEAQAIABAAIABAIlzZWNwMjU2azGhAsY6oA0NFskUjopWFN9gwOZP1zZQ4rN5tVXV5CvcTOpDg3RjcIJ2X4N1ZHCCIyiFd2FrdTIN",
-                "boot-01.ac-cn-hongkong-c.shards.test": "enr:-QEguEBb4rlxsdYCIZ8NcAlcjnb2zp4C9JbDsz-01Ix2sKNdWzI79KRFnhlakX-4F8gRYcviDvQL5eEZDOxHTupUW7VXAYJpZIJ2NIJpcIQI2hdMim11bHRpYWRkcnO4cgA2NjFib290LTAxLmFjLWNuLWhvbmdrb25nLWMuc2hhcmRzLnRlc3Quc3RhdHVzaW0ubmV0BnZfADg2MWJvb3QtMDEuYWMtY24taG9uZ2tvbmctYy5zaGFyZHMudGVzdC5zdGF0dXNpbS5uZXQGAbveA4Jyc4sAEAQAIABAAIABAIlzZWNwMjU2azGhAz-wm0ZPmCicDhRTOGfZ3stBj3O1jyWgsBpKTUcpWu5gg3RjcIJ2X4N1ZHCCIyiFd2FrdTIN"
+                "boot-01.do-ams3.shards.test": "enr:-QEKuECA0zhRJej2eaOoOPddNcYr7-5NdRwuoLCe2EE4wfEYkAZhFotg6Kkr8K15pMAGyUyt0smHkZCjLeld0BUzogNtAYJpZIJ2NIJpcISnYxMvim11bHRpYWRkcnO4WgAqNiVib290LTAxLmRvLWFtczMuc2hhcmRzLnRlc3Quc3RhdHVzLmltBnZfACw2JWJvb3QtMDEuZG8tYW1zMy5zaGFyZHMudGVzdC5zdGF0dXMuaW0GAbveA4Jyc40AEAUAAQAgAEAAgAEAiXNlY3AyNTZrMaEC3rRtFQSgc24uWewzXaxTY8hDAHB8sgnxr9k8Rjb5GeSDdGNwgnZfg3VkcIIjKIV3YWt1Mg0",
+                "boot-01.gc-us-central1-a.shards.test": "enr:-QEcuEAgXDqrYd_TrpUWtn3zmxZ9XPm7O3GS6lV7aMJJOTsbOAAeQwSd_eoHcCXqVzTUtwTyB4855qtbd8DARnExyqHPAYJpZIJ2NIJpcIQihw1Xim11bHRpYWRkcnO4bAAzNi5ib290LTAxLmdjLXVzLWNlbnRyYWwxLWEuc2hhcmRzLnRlc3Quc3RhdHVzLmltBnZfADU2LmJvb3QtMDEuZ2MtdXMtY2VudHJhbDEtYS5zaGFyZHMudGVzdC5zdGF0dXMuaW0GAbveA4Jyc40AEAUAAQAgAEAAgAEAiXNlY3AyNTZrMaECxjqgDQ0WyRSOilYU32DA5k_XNlDis3m1VdXkK9xM6kODdGNwgnZfg3VkcIIjKIV3YWt1Mg0",
+                "boot-01.ac-cn-hongkong-c.shards.test": "enr:-QEcuEAX6Qk-vVAoJLxR4A_4UVogGhvQrqKW4DFKlf8MA1PmCjgowL-LBtSC9BLjXbb8gf42FdDHGtSjEvvWKD10erxqAYJpZIJ2NIJpcIQI2hdMim11bHRpYWRkcnO4bAAzNi5ib290LTAxLmFjLWNuLWhvbmdrb25nLWMuc2hhcmRzLnRlc3Quc3RhdHVzLmltBnZfADU2LmJvb3QtMDEuYWMtY24taG9uZ2tvbmctYy5zaGFyZHMudGVzdC5zdGF0dXMuaW0GAbveA4Jyc40AEAUAAQAgAEAAgAEAiXNlY3AyNTZrMaEDP7CbRk-YKJwOFFM4Z9ney0GPc7WPJaCwGkpNRyla7mCDdGNwgnZfg3VkcIIjKIV3YWt1Mg0"
             },
             "wss/p2p/waku/boot": {
-                "boot-01.do-ams3.shards.test": "/dns4/boot-01.do-ams3.shards.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAmAR24Mbb6VuzoyUiGx42UenDkshENVDj4qnmmbabLvo31",
-                "boot-01.gc-us-central1-a.shards.test": "/dns4/boot-01.gc-us-central1-a.shards.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAm8mUZ18tBWPXDQsaF7PbCKYA35z7WB2xNZH2EVq1qS8LJ",
-                "boot-01.ac-cn-hongkong-c.shards.test": "/dns4/boot-01.ac-cn-hongkong-c.shards.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAmGwcE8v7gmJNEWFtZtojYpPMTHy2jBLL6xRk33qgDxFWX"
+                "boot-01.do-ams3.shards.test": "/dns4/boot-01.do-ams3.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAmAR24Mbb6VuzoyUiGx42UenDkshENVDj4qnmmbabLvo31",
+                "boot-01.gc-us-central1-a.shards.test": "/dns4/boot-01.gc-us-central1-a.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAm8mUZ18tBWPXDQsaF7PbCKYA35z7WB2xNZH2EVq1qS8LJ",
+                "boot-01.ac-cn-hongkong-c.shards.test": "/dns4/boot-01.ac-cn-hongkong-c.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAmGwcE8v7gmJNEWFtZtojYpPMTHy2jBLL6xRk33qgDxFWX"
             },
             "tcp/p2p/waku/store": {
-                "store-01.do-ams3.shards.test": "/dns4/store-01.do-ams3.shards.test.statusim.net/tcp/30303/p2p/16Uiu2HAmAUdrQ3uwzuE4Gy4D56hX6uLKEeerJAnhKEHZ3DxF1EfT",
-                "store-02.do-ams3.shards.test": "/dns4/store-02.do-ams3.shards.test.statusim.net/tcp/30303/p2p/16Uiu2HAm9aDJPkhGxc2SFcEACTFdZ91Q5TJjp76qZEhq9iF59x7R",
-                "store-01.gc-us-central1-a.shards.test": "/dns4/store-01.gc-us-central1-a.shards.test.statusim.net/tcp/30303/p2p/16Uiu2HAmMELCo218hncCtTvC2Dwbej3rbyHQcR8erXNnKGei7WPZ",
-                "store-02.gc-us-central1-a.shards.test": "/dns4/store-02.gc-us-central1-a.shards.test.statusim.net/tcp/30303/p2p/16Uiu2HAmJnVR7ZzFaYvciPVafUXuYGLHPzSUigqAmeNw9nJUVGeM",
-                "store-01.ac-cn-hongkong-c.shards.test": "/dns4/store-01.ac-cn-hongkong-c.shards.test.statusim.net/tcp/30303/p2p/16Uiu2HAm2M7xs7cLPc3jamawkEqbr7cUJX11uvY7LxQ6WFUdUKUT",
-                "store-02.ac-cn-hongkong-c.shards.test": "/dns4/store-02.ac-cn-hongkong-c.shards.test.statusim.net/tcp/30303/p2p/16Uiu2HAm9CQhsuwPR54q27kNj9iaQVfyRzTGKrhFmr94oD8ujU6P"
+                "store-01.do-ams3.shards.test": "/dns4/store-01.do-ams3.shards.test.status.im/tcp/30303/p2p/16Uiu2HAmAUdrQ3uwzuE4Gy4D56hX6uLKEeerJAnhKEHZ3DxF1EfT",
+                "store-02.do-ams3.shards.test": "/dns4/store-02.do-ams3.shards.test.status.im/tcp/30303/p2p/16Uiu2HAm9aDJPkhGxc2SFcEACTFdZ91Q5TJjp76qZEhq9iF59x7R",
+                "store-01.gc-us-central1-a.shards.test": "/dns4/store-01.gc-us-central1-a.shards.test.status.im/tcp/30303/p2p/16Uiu2HAmMELCo218hncCtTvC2Dwbej3rbyHQcR8erXNnKGei7WPZ",
+                "store-02.gc-us-central1-a.shards.test": "/dns4/store-02.gc-us-central1-a.shards.test.status.im/tcp/30303/p2p/16Uiu2HAmJnVR7ZzFaYvciPVafUXuYGLHPzSUigqAmeNw9nJUVGeM",
+                "store-01.ac-cn-hongkong-c.shards.test": "/dns4/store-01.ac-cn-hongkong-c.shards.test.status.im/tcp/30303/p2p/16Uiu2HAm2M7xs7cLPc3jamawkEqbr7cUJX11uvY7LxQ6WFUdUKUT",
+                "store-02.ac-cn-hongkong-c.shards.test": "/dns4/store-02.ac-cn-hongkong-c.shards.test.status.im/tcp/30303/p2p/16Uiu2HAm9CQhsuwPR54q27kNj9iaQVfyRzTGKrhFmr94oD8ujU6P"
             },
             "enr/p2p/waku/store": {
-                "store-01.do-ams3.shards.test": "enr:-QEQuEDom7vBcLEP3ZCvRGPyBVTUJUO5YIyXvxcibag_iq6s5Ux6Zd1_nnqEXqynppYMNOTaTzSetRhmV9IH83j72umYAYJpZIJ2NIJpcISf3_Jeim11bHRpYWRkcnO4YgAuNilzdG9yZS0wMS5kby1hbXMzLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAZ2XwAwNilzdG9yZS0wMS5kby1hbXMzLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAYBu94DgnJziwAQBAAgAEAAgAEAiXNlY3AyNTZrMaEC36GkB96EmFufcsRAX3gGW5bZlJwuAc2JB6nq9lUDE8qDdGNwgnZfg3VkcIIjKIV3YWt1MgM",
-                "store-02.do-ams3.shards.test": "enr:-QEQuEAmPituRLmZuwA6z0AT_Vl-KWbb7kpyX7qcWwbjygv_Oxrdu_0kmpShNtauWxhRmaOMOYddv9IwiIS8HujxHvpbAYJpZIJ2NIJpcISf3_Kaim11bHRpYWRkcnO4YgAuNilzdG9yZS0wMi5kby1hbXMzLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAZ2XwAwNilzdG9yZS0wMi5kby1hbXMzLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAYBu94DgnJziwAQBAAgAEAAgAEAiXNlY3AyNTZrMaEC0jOth5qhqWd_NmDOAsiPjAiJZMTD-2WzsKsET75PcLCDdGNwgnZfg3VkcIIjKIV3YWt1MgM",
-                "store-01.gc-us-central1-a.shards.test": "enr:-QEiuEBW0x-NQAwfFIgwrwtMRbPpWYRbWzsQ6nMDQK5K8vT8uAph5mlAw-TaeIxw9K2Vc0QuEYzf8-MnOESVyQ-C6ywcAYJpZIJ2NIJpcIQiqsAnim11bHRpYWRkcnO4dAA3NjJzdG9yZS0wMS5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAZ2XwA5NjJzdG9yZS0wMS5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAYBu94DgnJziwAQBAAgAEAAgAEAiXNlY3AyNTZrMaEDf2gcTbDga3Hgy8gu-bwRUbs7_7Vn2hxudCXPQ0M7cJCDdGNwgnZfg3VkcIIjKIV3YWt1MgM",
-                "store-02.gc-us-central1-a.shards.test": "enr:-QEiuEDjbS1EbRmNA7Gl1F3z_NsTHloyfZp4h0tm5cQmTvo5SlFGIBPPpmB6oycGnVGCHFPmqV_XbJJRO5pObWa5dOHgAYJpZIJ2NIJpcIQiqpoCim11bHRpYWRkcnO4dAA3NjJzdG9yZS0wMi5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAZ2XwA5NjJzdG9yZS0wMi5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAYBu94DgnJziwAQBAAgAEAAgAEAiXNlY3AyNTZrMaEDWxINW5DCQgYg-U43t2f9dUfpHfZrp2RdL-IomGWtY4KDdGNwgnZfg3VkcIIjKIV3YWt1MgM",
-                "store-01.ac-cn-hongkong-c.shards.test": "enr:-QEiuEDkMIJT5pVMmtzHD5RATLyU0kAG0tKcC3AE3BQe0O6S9R6OsA7PEVaaUg52fA4_I2pwjoW2GroE6uR9a-7Vdfy-AYJpZIJ2NIJpcIQI2kpJim11bHRpYWRkcnO4dAA3NjJzdG9yZS0wMS5hYy1jbi1ob25na29uZy1jLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAZ2XwA5NjJzdG9yZS0wMS5hYy1jbi1ob25na29uZy1jLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAYBu94DgnJziwAQBAAgAEAAgAEAiXNlY3AyNTZrMaECZtdI3Wq88fYXHYUShn7AMktB3OaVo98ock70-RSMChiDdGNwgnZfg3VkcIIjKIV3YWt1MgM",
-                "store-02.ac-cn-hongkong-c.shards.test": "enr:-QEiuEBzOdkswwOBobEe-nUvdtALMP8sjV9b_v9rQS4E0QOv2TVdrXRKKrBzOgk8TIXFtdry3RrowN5pTH7vBWl8TPKUAYJpZIJ2NIJpcIQI2nnoim11bHRpYWRkcnO4dAA3NjJzdG9yZS0wMi5hYy1jbi1ob25na29uZy1jLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAZ2XwA5NjJzdG9yZS0wMi5hYy1jbi1ob25na29uZy1jLnNoYXJkcy50ZXN0LnN0YXR1c2ltLm5ldAYBu94DgnJziwAQBAAgAEAAgAEAiXNlY3AyNTZrMaECzJ3LruqSdw0Ec2FKpAdT22kcWVyBiYvMGim2wRWzkjSDdGNwgnZfg3VkcIIjKIV3YWt1MgM"
+                "store-01.do-ams3.shards.test": "enr:-QEMuECnqjg1zLOojy1kFMed-XwW9EWdJC4xMpUX7eu88iua0RCoNW3P9NpIpEvIAM2NhByh2WKJhhly45bgnMnRlRMYAYJpZIJ2NIJpcISf3_Jeim11bHRpYWRkcnO4XAArNiZzdG9yZS0wMS5kby1hbXMzLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQZ2XwAtNiZzdG9yZS0wMS5kby1hbXMzLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQLfoaQH3oSYW59yxEBfeAZbltmUnC4BzYkHqer2VQMTyoN0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-02.do-ams3.shards.test": "enr:-QEMuECpoJZkEMRV_n6v3vX7vRYr5v6zFaTiqXCD5vwM9pZDaAVvwF9Ya8snhePUvaAqxENTAcJzB3JrWT5Y7A8Xt12hAYJpZIJ2NIJpcISf3_Kaim11bHRpYWRkcnO4XAArNiZzdG9yZS0wMi5kby1hbXMzLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQZ2XwAtNiZzdG9yZS0wMi5kby1hbXMzLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQLSM62HmqGpZ382YM4CyI-MCIlkxMP7ZbOwqwRPvk9wsIN0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-01.gc-us-central1-a.shards.test": "enr:-QEeuEDv5g_0Hszm2xv8VYxcgRpMXIOyELY5kZXwwA-OBOhxcWE7bza7D-9zW5zgCD09LW3wBqKymelRAuyYHfJIsH7MAYJpZIJ2NIJpcIQiqsAnim11bHRpYWRkcnO4bgA0Ni9zdG9yZS0wMS5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQZ2XwA2Ni9zdG9yZS0wMS5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQN_aBxNsOBrceDLyC75vBFRuzv_tWfaHG50Jc9DQztwkIN0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-02.gc-us-central1-a.shards.test": "enr:-QEeuECPnGIyDXTzgrsZhVYeoer9WrxIw9C2FpN1wdCLuavmtWyiCKAobJD7ksIjFg5A1K-xeti5lmQbisc351iXvpQwAYJpZIJ2NIJpcIQiqpoCim11bHRpYWRkcnO4bgA0Ni9zdG9yZS0wMi5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQZ2XwA2Ni9zdG9yZS0wMi5nYy11cy1jZW50cmFsMS1hLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQNbEg1bkMJCBiD5Tje3Z_11R-kd9munZF0v4iiYZa1jgoN0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-01.ac-cn-hongkong-c.shards.test": "enr:-QEeuED6AQJ3dfY3sK5fiX3XwLn7FwfucG8Se5aMgHfdaUWiz2SvpAlLbxJFOQOlCYB5YpHO-0RZOY-zhSEiQ6r86zNgAYJpZIJ2NIJpcIQI2kpJim11bHRpYWRkcnO4bgA0Ni9zdG9yZS0wMS5hYy1jbi1ob25na29uZy1jLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQZ2XwA2Ni9zdG9yZS0wMS5hYy1jbi1ob25na29uZy1jLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQJm10jdarzx9hcdhRKGfsAyS0Hc5pWj3yhyTvT5FIwKGIN0Y3CCdl-DdWRwgiMohXdha3UyAw",
+                "store-02.ac-cn-hongkong-c.shards.test": "enr:-QEeuEAYtigUojOmT1QO3RvINpthiFMsv147q9Uz2bk0sGlvERqb8i4OaNujlA8ywHa_cfnEygq2D5DNoo6g-o3KQ_srAYJpZIJ2NIJpcIQI2nnoim11bHRpYWRkcnO4bgA0Ni9zdG9yZS0wMi5hYy1jbi1ob25na29uZy1jLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQZ2XwA2Ni9zdG9yZS0wMi5hYy1jbi1ob25na29uZy1jLnNoYXJkcy50ZXN0LnN0YXR1cy5pbQYBu94DgnJzjQAQBQABACAAQACAAQCJc2VjcDI1NmsxoQLMncuu6pJ3DQRzYUqkB1PbaRxZXIGJi8waKbbBFbOSNIN0Y3CCdl-DdWRwgiMohXdha3UyAw"
             },
             "wss/p2p/waku/store": {
-                "store-01.do-ams3.shards.test": "/dns4/store-01.do-ams3.shards.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAmAUdrQ3uwzuE4Gy4D56hX6uLKEeerJAnhKEHZ3DxF1EfT",
-                "store-02.do-ams3.shards.test": "/dns4/store-02.do-ams3.shards.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAm9aDJPkhGxc2SFcEACTFdZ91Q5TJjp76qZEhq9iF59x7R",
-                "store-01.gc-us-central1-a.shards.test": "/dns4/store-01.gc-us-central1-a.shards.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAmMELCo218hncCtTvC2Dwbej3rbyHQcR8erXNnKGei7WPZ",
-                "store-02.gc-us-central1-a.shards.test": "/dns4/store-02.gc-us-central1-a.shards.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAmJnVR7ZzFaYvciPVafUXuYGLHPzSUigqAmeNw9nJUVGeM",
-                "store-01.ac-cn-hongkong-c.shards.test": "/dns4/store-01.ac-cn-hongkong-c.shards.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAm2M7xs7cLPc3jamawkEqbr7cUJX11uvY7LxQ6WFUdUKUT",
-                "store-02.ac-cn-hongkong-c.shards.test": "/dns4/store-02.ac-cn-hongkong-c.shards.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAm9CQhsuwPR54q27kNj9iaQVfyRzTGKrhFmr94oD8ujU6P"
+                "store-01.do-ams3.shards.test": "/dns4/store-01.do-ams3.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAmAUdrQ3uwzuE4Gy4D56hX6uLKEeerJAnhKEHZ3DxF1EfT",
+                "store-02.do-ams3.shards.test": "/dns4/store-02.do-ams3.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAm9aDJPkhGxc2SFcEACTFdZ91Q5TJjp76qZEhq9iF59x7R",
+                "store-01.gc-us-central1-a.shards.test": "/dns4/store-01.gc-us-central1-a.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAmMELCo218hncCtTvC2Dwbej3rbyHQcR8erXNnKGei7WPZ",
+                "store-02.gc-us-central1-a.shards.test": "/dns4/store-02.gc-us-central1-a.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAmJnVR7ZzFaYvciPVafUXuYGLHPzSUigqAmeNw9nJUVGeM",
+                "store-01.ac-cn-hongkong-c.shards.test": "/dns4/store-01.ac-cn-hongkong-c.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAm2M7xs7cLPc3jamawkEqbr7cUJX11uvY7LxQ6WFUdUKUT",
+                "store-02.ac-cn-hongkong-c.shards.test": "/dns4/store-02.ac-cn-hongkong-c.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAm9CQhsuwPR54q27kNj9iaQVfyRzTGKrhFmr94oD8ujU6P"
             }
         },
         "notify.prod": {
