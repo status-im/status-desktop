@@ -76,50 +76,7 @@ StatusStackModal {
 
     rightButtons: [d.shareButton, finishButton]
 
-    finishButton: StatusButton {
-        text: {
-            if (root.isInvitationPending) {
-                  return qsTr("Cancel Membership Request")
-            } else if (root.accessType === Constants.communityChatOnRequestAccess) {
-                if (d.selectedSharedAddressesCount === d.totalNumOfAddressesForSharing) {
-                    return qsTr("Share all addresses to join")
-                }
-                return qsTr("Share %n address(s) to join", "", d.selectedSharedAddressesCount)
-            }
-            return qsTr("Join %1").arg(root.communityName)
-        }
-        type: root.isInvitationPending ? StatusBaseButton.Type.Danger
-                                       : StatusBaseButton.Type.Normal
-
-        icon.name: {
-            if (root.profileProvesOwnershipOfSelectedAddresses) {
-                if (userProfile.usingBiometricLogin) {
-                    return "touch-id"
-                }
-
-                if (userProfile.isKeycardUser) {
-                    return "keycard"
-                }
-
-                return "password"
-            }
-            if (root.allAddressesToRevealBelongToSingleNonProfileKeypair) {
-                return "keycard"
-            }
-
-            return ""
-        }
-
-        onClicked: {
-            if (root.isInvitationPending) {
-                root.cancelMembershipRequest()
-                root.close()
-                return
-            }
-
-            d.proceedToSigningOrSubmitRequest(d.communityIntroUid)
-        }
-    }
+    finishButton: root.isInvitationPending ? d.cancelRequestButton : d.shareAddressesButton
 
     backButton: StatusBackButton {
         visible: !!root.replaceLoader.item
@@ -178,6 +135,52 @@ StatusStackModal {
                     roleName: "name"
                 }
             ]
+        }
+
+        readonly property StatusFlatButton cancelRequestButton: StatusFlatButton {
+            text: qsTr("Cancel Membership Request")
+            type: StatusBaseButton.Type.Danger
+            onClicked: {
+                if (root.isInvitationPending) {
+                    root.cancelMembershipRequest()
+                    root.close()
+                    return
+                }
+            }
+        }
+
+        readonly property StatusButton shareAddressesButton: StatusButton {
+            text: {
+                if (root.accessType === Constants.communityChatOnRequestAccess) {
+                    if (d.selectedSharedAddressesCount === d.totalNumOfAddressesForSharing) {
+                        return qsTr("Share all addresses to join")
+                    }
+                    return qsTr("Share %n address(s) to join", "", d.selectedSharedAddressesCount)
+                }
+                return qsTr("Join %1").arg(root.communityName)
+            }
+            type: StatusBaseButton.Type.Normal
+            icon.name: {
+                if (root.profileProvesOwnershipOfSelectedAddresses) {
+                    if (userProfile.usingBiometricLogin) {
+                        return "touch-id"
+                    }
+
+                    if (userProfile.isKeycardUser) {
+                        return "keycard"
+                    }
+
+                    return "password"
+                }
+
+                if (root.allAddressesToRevealBelongToSingleNonProfileKeypair) {
+                    return "keycard"
+                }
+
+                return ""
+            }
+
+            onClicked: d.proceedToSigningOrSubmitRequest(d.communityIntroUid)
         }
 
         function proceedToSigningOrSubmitRequest(uidOfComponentThisFunctionIsCalledFrom) {
@@ -405,7 +408,7 @@ StatusStackModal {
 
     stackItems: [
         StatusScrollView {
-           id: scrollView
+            id: scrollView
             contentWidth: availableWidth
 
             ColumnLayout {
@@ -417,7 +420,7 @@ StatusStackModal {
                     Layout.preferredWidth: 64
                     Layout.preferredHeight: Layout.preferredWidth
                     visible: ((image.status == Image.Loading) ||
-                             (image.status == Image.Ready)) &&
+                              (image.status == Image.Ready)) &&
                              !image.isError
                     image.source: root.communityIcon
                 }

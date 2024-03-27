@@ -128,8 +128,14 @@ StackLayout {
                 })
             }
             onInvitationPendingClicked: {
-                root.rootStore.cancelPendingRequest(communityId)
-                joinCommunityView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityId)
+                Global.openPopup(communityMembershipSetupDialogComponent, {
+                                     communityId: joinCommunityView.communityId,
+                                     isInvitationPending: joinCommunityView.isInvitationPending,
+                                     communityName: communityData.name,
+                                     introMessage: communityData.introMessage,
+                                     communityIcon: communityData.image,
+                                     accessType: communityData.access
+                                 })
             }
 
             Connections {
@@ -196,8 +202,14 @@ StackLayout {
                 })
             }
             onInvitationPendingClicked: {
-                root.rootStore.cancelPendingRequest(chatView.communityId)
-                chatView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(chatView.communityId)
+                Global.openPopup(communityMembershipSetupDialogComponent, {
+                    communityId: chatView.communityId,
+                    isInvitationPending: root.rootStore.isMyCommunityRequestPending(chatView.communityId),
+                    communityName: root.sectionItemModel.name,
+                    introMessage: root.sectionItemModel.introMessage,
+                    communityIcon: root.sectionItemModel.image,
+                    accessType: root.sectionItemModel.access
+                })
             }
         }
     }
