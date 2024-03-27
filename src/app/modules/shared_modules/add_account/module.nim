@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, sequtils, sugar, chronicles
+import NimQml, Tables, strutils, sequtils, chronicles
 
 import io_interface
 import view, controller
@@ -28,10 +28,6 @@ const Label_Existing = "LABEL-EXISTING"
 const Label_ImportNew = "LABEL-IMPORT-NEW"
 const Label_OptionAddNewMasterKey = "LABEL-OPTION-ADD-NEW-MASTER-KEY"
 const Label_OptionAddWatchOnlyAcc = "LABEL-OPTION-ADD-WATCH-ONLY-ACC"
-
-const MaxNumOfGeneratedAddresses = 100
-const NumOfGeneratedAddressesRegular = MaxNumOfGeneratedAddresses
-const NumOfGeneratedAddressesKeycard = 10
 
 
 logScope:
@@ -266,16 +262,7 @@ proc isKeyPairAlreadyAdded[T](self: Module[T], keyUid: string): bool =
 
 proc getNumOfAddressesToGenerate[T](self: Module[T]): int =
   let selectedOrigin = self.view.getSelectedOrigin()
-  if selectedOrigin.getMigratedToKeycard():
-    var indexOfLastDefaultCreatedAcc = 0
-    let keypair = self.controller.getKeypairByKeyUid(selectedOrigin.getKeyUid())
-    if not keypair.isNil:
-      indexOfLastDefaultCreatedAcc = keypair.lastUsedDerivationIndex
-    let final = NumOfGeneratedAddressesKeycard + indexOfLastDefaultCreatedAcc # In case of a Keycard keypair always offer 10 addresses more then the last used derivation index
-    if final < MaxNumOfGeneratedAddresses:
-      return final
-    return MaxNumOfGeneratedAddresses
-  return NumOfGeneratedAddressesRegular
+  return self.controller.getNumOfAddressesToGenerateForKeypair(selectedOrigin.getKeyUid())
 
 proc fetchAddressForDerivationPath[T](self: Module[T]) =
   let derivationPath = self.view.getDerivationPath()
@@ -360,23 +347,12 @@ method changeDerivationPath*[T](self: Module[T], derivationPath: string) =
     return
   self.fetchAddressForDerivationPath()
 
-proc resolveSuggestedPathForSelectedOrigin[T](self: Module[T]): tuple[suggestedPath: string, usedIndex: int] =
-  var nextIndex = 0
+proc resolveSuggestedPathForSelectedOrigin[T](self: Module[T]): string =
   let selectedOrigin = self.view.getSelectedOrigin()
-  let keypair = self.controller.getKeypairByKeyUid(selectedOrigin.getKeyUid())
-  if keypair.isNil:
-    let suggestedPath = account_constants.PATH_WALLET_ROOT & "/" & $nextIndex
-    return (suggestedPath, nextIndex)
-  nextIndex = selectedOrigin.getLastUsedDerivationIndex() + 1
-  for i in nextIndex ..< self.getNumOfAddressesToGenerate():
-    let suggestedPath = account_constants.PATH_WALLET_ROOT & "/" & $i
-    if keypair.accounts.filter(x => x.path == suggestedPath).len == 0:
-      return (suggestedPath, i)
-  error "we couldn't find available path for new account"
+  return self.controller.resolveSuggestedPathForKeypair(selectedOrigin.getKeyUid())
 
 method resetDerivationPath*[T](self: Module[T]) =
-  let selectedOrigin = self.view.getSelectedOrigin()
-  let (suggestedPath, _) = self.resolveSuggestedPathForSelectedOrigin()
+  let suggestedPath = self.resolveSuggestedPathForSelectedOrigin()
   self.changeDerivationPath(suggestedPath)
 
 proc setItemForSelectedOrigin[T](self: Module[T], item: KeyPairItem) =
@@ -390,7 +366,7 @@ proc setItemForSelectedOrigin[T](self: Module[T], item: KeyPairItem) =
     self.view.setWatchOnlyAccAddress(newDerivedAddressItem())
     return
 
-  let (suggestedPath, _) = self.resolveSuggestedPathForSelectedOrigin()
+  let suggestedPath = self.resolveSuggestedPathForSelectedOrigin()
   self.view.setSuggestedDerivationPath(suggestedPath)
   self.view.setDerivationPath(suggestedPath)
 

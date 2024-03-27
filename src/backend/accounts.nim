@@ -499,3 +499,11 @@ proc getProfileShowcaseEntriesLimit*(): RpcResponse[JsonNode] =
 proc addressWasShown*(address: string): RpcResponse[JsonNode] =
   let payload = %* [address]
   return core.callPrivateRPC("accounts_addressWasShown", payload)
+
+proc getNumOfAddressesToGenerateForKeypair*(keyUID: string): RpcResponse[JsonNode] =
+  let payload = %* [keyUID]
+  result = core.callPrivateRPC("accounts_getNumOfAddressesToGenerateForKeypair", payload)
+
+proc resolveSuggestedPathForKeypair*(keyUID: string): RpcResponse[JsonNode] =
+  let payload = %* [keyUID]
+  result = core.callPrivateRPC("accounts_resolveSuggestedPathForKeypair", payload)
