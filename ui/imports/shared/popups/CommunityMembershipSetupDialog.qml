@@ -24,6 +24,7 @@ StatusStackModal {
     destroyOnClose: true
     property bool isEditMode: false
 
+    required property string communityId
     required property string communityName
     required property string communityIcon
     required property bool requirementsCheckPending
@@ -33,7 +34,10 @@ StatusStackModal {
     property bool isInvitationPending: false
 
     required property var walletAccountsModel // name, address, emoji, colorId
+
     required property var walletAssetsModel
+    required property var walletCollectiblesModel
+
     required property var permissionsModel  // id, key, permissionType, holdingsListModel, channelsListModel, isPrivate, tokenCriteriaMet
     required property var assetsModel
     required property var collectiblesModel
@@ -351,11 +355,14 @@ StatusStackModal {
         SharedAddressesPanel {
             componentUid: d.shareAddressesUid
             isEditMode: root.isEditMode
+
+            communityId: root.communityId
             communityName: root.communityName
             communityIcon: root.communityIcon
             requirementsCheckPending: root.requirementsCheckPending
 
             walletAccountsModel: d.initialAddressesModel
+
             selectedSharedAddressesMap: d.selectedSharedAddressesMap
             currentSharedAddressesMap: d.currentSharedAddressesMap
 
@@ -366,6 +373,8 @@ StatusStackModal {
             allAddressesToRevealBelongToSingleNonProfileKeypair: root.allAddressesToRevealBelongToSingleNonProfileKeypair
 
             walletAssetsModel: root.walletAssetsModel
+            walletCollectiblesModel: root.walletCollectiblesModel
+
             permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel

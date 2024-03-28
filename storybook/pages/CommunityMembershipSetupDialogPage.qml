@@ -38,6 +38,7 @@ SplitView {
                 closePolicy: Popup.NoAutoClose
 
                 isEditMode: ctrlIsEditMode.checked
+                communityId: "community_id"
                 communityName: ctrlCommunityName.text
                 communityIcon: {
                     if (ctrlIconStatus.checked)
@@ -57,6 +58,7 @@ SplitView {
 
                 walletAccountsModel: WalletAccountsModel {}
                 walletAssetsModel: root.walletAssetStore.groupedAccountAssetsModel
+                walletCollectiblesModel: ListModel {}
                 permissionsModel: ctrlPermissionsModel.currentValue
                 assetsModel: AssetsModel {}
                 collectiblesModel: CollectiblesModel {}
