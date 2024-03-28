@@ -53,10 +53,7 @@ Item {
         communityData.memberRole === Constants.memberRole.admin ||
         communityData.memberRole === Constants.memberRole.tokenMaster
 
-    readonly property var permissionsModel: {
-        root.store.prepareTokenModelForCommunity(communityData.id)
-        return root.store.permissionsModel
-    }
+    readonly property var permissionsModel: root.communitySectionModule.permissionsModel
 
     signal infoButtonClicked
     signal manageButtonClicked
@@ -546,10 +543,7 @@ Item {
                     canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
                     walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
-                    permissionsModel: {
-                        root.store.prepareTokenModelForCommunity(communityData.id)
-                        return root.store.permissionsModel
-                    }
+                    permissionsModel: root.permissionsModel
                     assetsModel: root.store.assetsModel
                     collectiblesModel: root.store.collectiblesModel
 
@@ -582,7 +576,7 @@ Item {
                     }
 
                     onSharedAddressesUpdated: {
-                        root.store.updatePermissionsModel(communityData.id, sharedAddresses)
+                        root.store.updatePermissionsModel(sharedAddresses)
                     }
 
                     onClosed: {

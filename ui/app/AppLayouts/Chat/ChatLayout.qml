@@ -104,7 +104,7 @@ StackLayout {
                              communityData.memberRole === Constants.memberRole.tokenMaster
             communityItemsModel: root.rootStore.communityItemsModel
             requirementsMet: root.permissionsStore.allTokenRequirementsMet
-            requirementsCheckPending: root.rootStore.permissionsCheckOngoing
+            requirementsCheckPending: sectionItem.requirementsCheckPending
             requiresRequest: !communityData.amIMember
             communityHoldingsModel: root.permissionsStore.becomeMemberPermissionsModel
             viewOnlyHoldingsModel: root.permissionsStore.viewOnlyPermissionsModel
@@ -124,7 +124,10 @@ StackLayout {
                     communityName: communityData.name,
                     introMessage: communityData.introMessage,
                     communityIcon: communityData.image,
-                    accessType: communityData.access
+                    accessType: communityData.access,
+                    permissionsModel: sectionItem.permissionsModel,
+                    requirementsCheckPending: sectionItem.requirementsCheckPending,
+                    //onSharedAddressesUpdated: sectionItem.updatePermissionsModel(sharedAddresses)
                 })
             }
             onInvitationPendingClicked: {
@@ -198,7 +201,10 @@ StackLayout {
                     communityName: root.sectionItemModel.name,
                     introMessage: root.sectionItemModel.introMessage,
                     communityIcon: root.sectionItemModel.image,
-                    accessType: root.sectionItemModel.access
+                    accessType: root.sectionItemModel.access,
+                    permissionsModel: chatView.sectionItem.permissionsModel,
+                    requirementsCheckPending: chatView.sectionItem.requirementsCheckPending,
+                    //onSharedAddressesUpdated: chatView.sectionItem.updatePermissionsModel(sharedAddresses)
                 })
             }
             onInvitationPendingClicked: {
@@ -288,11 +294,6 @@ StackLayout {
             canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
             walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
-            requirementsCheckPending: root.rootStore.requirementsCheckPending
-            permissionsModel: {
-                root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
-                return root.rootStore.permissionsModel
-            }
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
 
@@ -321,10 +322,6 @@ StackLayout {
             onCancelMembershipRequest: {
                 root.rootStore.cancelPendingRequest(dialogRoot.communityId)
                 mainViewLoader.item.isInvitationPending = root.rootStore.isMyCommunityRequestPending(dialogRoot.communityId)
-            }
-
-            onSharedAddressesUpdated: {
-                root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
             }
 
             onClosed: {

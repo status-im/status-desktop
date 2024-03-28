@@ -35,7 +35,9 @@ QtObject:
       allChannelsAreHiddenBecauseNotPermitted: bool
       memberMessagesModel: member_msg_model.Model
       memberMessagesModelVariant: QVariant
-
+      myRevealedAddressesStringForCurrentCommunity: string
+      myRevealedAirdropAddressForCurrentCommunity: string
+      checkingPermissionsInProgress: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -534,3 +536,51 @@ QtObject:
 
   proc openCommunityChatAndScrollToMessage*(self: View, chatId: string, messageId: string) {.slot.} =
     self.delegate.openCommunityChatAndScrollToMessage(chatId, messageId)
+
+  proc myRevealedAirdropAddressesForCurrentCommunityChanged*(self: View) {.signal.}
+
+  proc setMyRevealedAddressesForCurrentCommunity*(self: View, revealedAddress, airdropAddress: string) =
+    self.myRevealedAddressesStringForCurrentCommunity = revealedAddress
+    self.myRevealedAirdropAddressForCurrentCommunity = airdropAddress
+    self.myRevealedAirdropAddressesForCurrentCommunityChanged()
+
+  proc getMyRevealedAddressesStringForCurrentCommunity*(self: View): string {.slot.} =
+    return self.myRevealedAddressesStringForCurrentCommunity
+
+  QtProperty[string] myRevealedAddressesStringForCurrentCommunity:
+    read = getMyRevealedAddressesStringForCurrentCommunity
+    notify = myRevealedAirdropAddressesForCurrentCommunityChanged
+
+
+  proc getMyRevealedAirdropAddressStringForCurrentCommunity*(self: View): string {.slot.} =
+    return self.myRevealedAirdropAddressForCurrentCommunity
+
+  QtProperty[string] myRevealedAirdropAddressForCurrentCommunity:
+    read = getMyRevealedAirdropAddressStringForCurrentCommunity
+    notify = myRevealedAirdropAddressesForCurrentCommunityChanged
+
+  proc requestRevealedAddresses(self: View) {.slot.} =
+    self.delegate.requestRevealedAddresses()
+
+  proc checkPermissions*(self: View, addressesToShare: string) {.slot.} =
+    if not self.isCommunity():
+      return
+    try:
+      let sharedAddresses = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
+      self.delegate.checkPermissions(sharedAddresses)
+    except Exception as e:
+      echo "Error updating token model with addresses: ", e.msg
+
+  proc checkingPermissionsInProgressChanged*(self: View) {.signal.}
+
+  proc setCheckingPermissionsInProgress*(self: View, inProgress: bool) =
+    if (self.checkingPermissionsInProgress == inProgress): return
+    self.checkingPermissionsInProgress = inProgress
+    self.checkingPermissionsInProgressChanged()
+
+  proc getCheckingPermissionsInProgress*(self: View): bool {.slot.} =
+    return self.checkingPermissionsInProgress
+
+  QtProperty[bool] requirementsCheckPending:
+    read = getCheckingPermissionsInProgress
+    notify = checkingPermissionsInProgressChanged
