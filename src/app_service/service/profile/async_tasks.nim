@@ -11,7 +11,7 @@ const asyncGetProfileShowcasePreferencesTask: Task = proc(argEncoded: string) {.
     let response = status_accounts.getProfileShowcasePreferences()
     arg.finish(%* {
       "response": response,
-      "error": nil,
+      "error": "",
     })
   except Exception as e:
     arg.finish(%* {
@@ -28,7 +28,7 @@ const saveProfileShowcasePreferencesTask: Task = proc(argEncoded: string) {.gcsa
     let response = status_accounts.setProfileShowcasePreferences(arg.preferences.toJsonNode())
     arg.finish(%* {
       "response": response,
-      "error": nil,
+      "error": "",
     })
   except Exception as e:
     arg.finish(%* {
