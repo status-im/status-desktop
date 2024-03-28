@@ -177,9 +177,10 @@ Item {
         id: validationErrorText
         visible: !!validationError
         text: validationError
+        anchors.left: inputField.left
+        anchors.leftMargin: 2
         anchors.top: inputField.bottom
         anchors.topMargin: validationErrorTopMargin
-        width: parent.width
         horizontalAlignment: Text.AlignRight
         font.pixelSize: 12
         height: 16

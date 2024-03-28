@@ -425,6 +425,7 @@ StatusDropdown {
                         name: chainName,
                         icon: chainIcon,
                         amount: asset.remainingSupply,
+                        decimals: asset.decimals,
                         multiplierIndex: asset.multiplierIndex,
                         infiniteAmount: asset.infiniteSupply
                     })

@@ -88,6 +88,7 @@ ColumnLayout {
             spacing: 10
 
             property alias currentAmount: inlineNetworksComboBox.currentAmount
+            property alias decimals: inlineNetworksComboBox.decimals
             property alias currentMultiplierIndex:
                 inlineNetworksComboBox.currentMultiplierIndex
             property alias currentInfiniteAmount:
@@ -130,7 +131,8 @@ ColumnLayout {
 
         maximumAmount: !!networksComboBoxLoader.item
                        ? networksComboBoxLoader.item.currentAmount : "0"
-
+        tokenDecimals: !!networksComboBoxLoader.item
+                       ? networksComboBoxLoader.item.decimals : 0
         multiplierIndex: !!networksComboBoxLoader.item
                          ? networksComboBoxLoader.item.currentMultiplierIndex : 0
 

@@ -14,6 +14,7 @@ StatusComboBox {
 
     readonly property string currentName: control.currentText
     readonly property alias currentAmount: instantiator.amount
+    readonly property alias decimals: instantiator.decimals
     readonly property alias currentMultiplierIndex: instantiator.multiplierIndex
     readonly property alias currentInfiniteAmount: instantiator.infiniteAmount
     readonly property alias currentIcon: instantiator.icon
@@ -103,6 +104,7 @@ StatusComboBox {
         property string amount
         property int multiplierIndex
         property bool infiniteAmount
+        property int decimals
 
         model: SortFilterProxyModel {
             sourceModel: root.model
@@ -116,6 +118,7 @@ StatusComboBox {
             readonly property list<Binding> bindings: [
                 Bind { property: "icon"; value: model.icon },
                 Bind { property: "amount"; value: model.amount },
+                Bind { property: "decimals"; value: model.decimals },
                 Bind { property: "multiplierIndex"; value: model.multiplierIndex },
                 Bind { property: "infiniteAmount"; value: model.infiniteAmount }
             ]

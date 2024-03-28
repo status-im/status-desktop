@@ -10,7 +10,6 @@ import utils 1.0
 Input {
     id: root
 
-    property int maximumLength: 10
     property var locale: Qt.locale()
 
     readonly property alias amount: d.amount
@@ -18,6 +17,7 @@ Input {
 
     readonly property bool valid: validationError.length === 0
     property bool allowDecimals: true
+    property int tokenDecimals: 0
 
     property bool validateMaximumAmount: false
     property string maximumAmount: "0"
@@ -72,15 +72,17 @@ Input {
                 return
             }
 
-            if (d.getEffectiveDigitsCount(text) > root.maximumLength) {
-                root.validationError = qsTr("The maximum number of characters is %1").arg(root.maximumLength)
-                return
-            }
-
             const amountNumber = LocaleUtils.numberFromLocaleString(root.text, root.locale)
             if (isNaN(amountNumber)) {
                 d.amount = "0"
                 root.validationError = qsTr("Invalid amount format")
+                return
+            }
+
+            const fractionalPartLength = LocaleUtils.fractionalPartLength(amountNumber)
+            if (fractionalPartLength > root.tokenDecimals) {
+                d.amount = "0"
+                root.validationError = qsTr("Max. %1 decimal places for this asset").arg(root.tokenDecimals)
                 return
             }
 
@@ -93,14 +95,14 @@ Input {
             const amount = SQUtils.AmountsArithmetic.fromNumber(
                              amountNumber, d.multiplierIndex)
 
-            if (root.validateMaximumAmount) {
+            if (root.validateMaximumAmount && root.maximumAmount && root.maximumAmount.length > 0) {
                 const maximumAmount = SQUtils.AmountsArithmetic.fromString(
                                         root.maximumAmount)
 
                 const maxExceeded = SQUtils.AmountsArithmetic.cmp(
                                       amount, maximumAmount) === 1
 
-                if (SQUtils.AmountsArithmetic.cmp(amount, maximumAmount) === 1) {
+                if (maxExceeded) {
                     root.validationError = root.maximumExceededErrorText
                     return
                 }
@@ -110,7 +112,7 @@ Input {
             // As a target amount should be always integer number
             if (!Number.isInteger(amountNumber) && d.multiplierIndex === 0) {
                 d.amount = amount.toString()
-             } else {
+            } else {
                 d.amount = amount.toFixed(0)
             }
 

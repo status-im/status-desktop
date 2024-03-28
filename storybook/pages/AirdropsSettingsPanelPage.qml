@@ -178,6 +178,10 @@ SplitView {
                             expression: model.index ? "Ethereum Mainnet" : "Goerli"
                         },
                         ExpressionRole {
+                            name: "decimals"
+                            expression: decimalsText.text
+                        },
+                        ExpressionRole {
 
                             readonly property string icon1: "network/Network=Ethereum"
                             readonly property string icon2: "network/Network=Testnet"
@@ -191,7 +195,6 @@ SplitView {
                         roleName: "category"
                         value: TokenCategories.Category.Community
                     }
-
 
                     Component.onCompleted: {
                         Qt.callLater(() => airdropsSettingsPanel.assetsModel = this)
@@ -249,6 +252,19 @@ SplitView {
                 checked: false
 
                 text: "Owner and TMaster tokens deployed"
+            }
+
+            Row {
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Assets Decimals"
+                }
+
+                TextField {
+                    id: decimalsText
+                    text: "2"
+                    width: 50
+                }
             }
         }
     }
