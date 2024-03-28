@@ -220,18 +220,20 @@ QtObject:
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)
 
-  proc sectionUnreadMessagesAndMentionsCount*(self: Service, communityId: string):
+  proc sectionUnreadMessagesAndMentionsCount*(self: Service, sectionId: string):
       tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
 
     result.unviewedMentionsCount = 0
     result.unviewedMessagesCount = 0
 
     let myPubKey = singletonInstance.userProfile.getPubKey()
-    var commId = communityId
-    if communityId == myPubKey:
-      commId = ""
+    var seactionIdToFind = sectionId
+    if sectionId == myPubKey:
+      # If the section is the personal one (ID == pubKey), then we set the seactionIdToFind to ""
+      # because personal chats have communityId == ""
+      seactionIdToFind = ""
     for _, chat in self.chats:
-      if chat.communityId != commId:
+      if chat.communityId != seactionIdToFind:
         continue
       result.unviewedMentionsCount += chat.unviewedMentionsCount
       # We count the unread messages if we are unmuted and it's not a mention, we want to show a badge on mentions
@@ -693,7 +695,6 @@ QtObject:
       let chatId = rpcResponseObj{"chatId"}.getStr()
       let checkChannelPermissionsResponse = rpcResponseObj["response"]["result"].toCheckChannelPermissionsResponseDto()
 
-      # TODO need to save permissions somewhere?
       self.events.emit(SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE, CheckChannelPermissionsResponseArgs(communityId: communityId, chatId: chatId, checkChannelPermissionsResponse: checkChannelPermissionsResponse))
     except Exception as e:
       let errMsg = e.msg

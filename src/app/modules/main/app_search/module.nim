@@ -162,7 +162,7 @@ method searchMessages*(self: Module, searchTerm: string) =
 
   self.controller.searchMessages(searchTerm)
 
-proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto]): seq[result_item.Item] =
+proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto], sectionName: string): seq[result_item.Item] =
   if (self.controller.searchSubLocation().len == 0 and self.controller.searchLocation().len == 0) or
       self.controller.searchLocation() == sectionId:
     
@@ -209,7 +209,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
   # Add Personal section chats
   let myPubKey = singletonInstance.userProfile.getPubKey()
-  let personalItems = self.getResultItemFromChats(myPubKey, self.controller.getChatsForPersonalSection())
+  let personalItems = self.getResultItemFromChats(myPubKey, self.controller.getChatsForPersonalSection(), SEARCH_RESULT_CHATS_SECTION_NAME)
   var channels = personalItems
 
   # Add Communities
@@ -238,7 +238,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       items.add(item)
 
     # Add channels
-    let communityChatItems = self.getResultItemFromChats(community.id, community.chats)
+    let communityChatItems = self.getResultItemFromChats(community.id, community.chats, SEARCH_RESULT_CHANNELS_SECTION_NAME)
     if communityChatItems.len > 0:
       channels = channels.concat(channels, communityChatItems)
 

@@ -260,7 +260,7 @@ proc removeSubmodule(self: Module, chatId: string) =
 
 
 proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, communityId: string, insertIntoModel: bool = true): chat_item.Item =
-  let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(communityId, category.id)
+  let hasUnreadMessages = self.controller.categoryHasUnreadMessages(communityId, category.id)
   result = chat_item.initItem(
         id = category.id,
         category.name,
@@ -589,7 +589,7 @@ proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bo
       self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
 
     if chat.categoryId != "":
-      let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chat.communityId, chat.categoryId)
+      let hasUnreadMessages = self.controller.categoryHasUnreadMessages(chat.communityId, chat.categoryId)
       self.view.chatsModel().setCategoryHasUnreadMessages(chat.categoryId, hasUnreadMessages)
 
   self.updateParentBadgeNotifications()
@@ -697,7 +697,7 @@ proc addNewChat(
   var hideIfPermissionsNotMet = false
   var viewersCanPostReactions = true
   if self.controller.isCommunity:
-    let communityChat = community.getSpecificCommunityChat(chatDto.id)
+    let communityChat = community.getCommunityChat(chatDto.id)
     # Some properties are only available on CommunityChat (they are useless for normal chats)
     canPostReactions = communityChat.canPostReactions
     hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
