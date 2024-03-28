@@ -1,4 +1,6 @@
 import json, stint
+import ../../../../backend/interpret/cropped_image
+import ../../../common/types
 
 type
   DeploymentParameters* = object
@@ -9,9 +11,14 @@ type
     transferable*: bool
     remoteSelfDestruct*: bool
     tokenUri*: string
-    decimals*: int
     ownerTokenAddress*: string
     masterTokenAddress*: string
+    description*: string
+    communityId*: string
+    croppedImageJson*: string
+    base64image*: string
+    tokenType*: TokenType
+    decimals*: int
 
 proc `%`*(x: DeploymentParameters): JsonNode =
   result = newJobject()
@@ -25,3 +32,9 @@ proc `%`*(x: DeploymentParameters): JsonNode =
   result["decimals"] = %x.decimals
   result["ownerTokenAddress"] = %x.ownerTokenAddress
   result["masterTokenAddress"] = %x.masterTokenAddress
+  result["description"] = %x.description
+  result["communityId"] = %x.communityId
+  if x.croppedImageJson != "":
+    result["croppedImage"] = %newCroppedImage(x.croppedImageJson)
+  result["base64image"] = %x.base64image
+  result["tokenType"] = %x.tokenType
