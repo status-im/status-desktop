@@ -1,16 +1,17 @@
 #################################################
-# Async get chats (channel groups)
+# Async get chats
 #################################################
-type
-  AsyncGetChannelGroupsTaskArg = ref object of QObjectTaskArg
 
-const asyncGetChannelGroupsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AsyncGetChannelGroupsTaskArg](argEncoded)
+type
+  AsyncGetActiveChatsTaskArg = ref object of QObjectTaskArg
+
+const asyncGetActiveChatsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetActiveChatsTaskArg](argEncoded)
   try:
-    let response = status_chat.getChannelGroups()
+    let response = status_chat.getActiveChats()
 
     let responseJson = %*{
-      "channelGroups": response.result,
+      "chats": response.result,
       "error": "",
     }
     arg.finish(responseJson)

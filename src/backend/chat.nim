@@ -35,13 +35,9 @@ proc saveChat*(
     }
   ])
 
-proc getChannelGroups*(): RpcResponse[JsonNode] =
+proc getActiveChats*(): RpcResponse[JsonNode] =
   let payload = %* []
-  result = callPrivateRPC("chat_getChannelGroups", payload)
-
-proc getChannelGroupById*(channelGroupId: string): RpcResponse[JsonNode] =
-  let payload = %* [channelGroupId]
-  result = callPrivateRPC("chat_getChannelGroupByID", payload)
+  result = callPrivateRPC("activeChats".prefix, payload)
 
 proc createOneToOneChat*(chatId: string, ensName: string = ""): RpcResponse[JsonNode] =
   let communityId = ""
@@ -145,9 +141,6 @@ proc createGroupChat*(communityID: string, groupName: string, pubKeys: seq[strin
 proc createGroupChatFromInvitation*(groupName: string, chatId: string, adminPK: string): RpcResponse[JsonNode] =
   let payload = %* [groupName, chatId, adminPK]
   result = callPrivateRPC("createGroupChatFromInvitation".prefix, payload)
-
-proc getMembers*(communityId, chatId: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("chat_getMembers", %* [communityId, chatId])
 
 proc editChat*(communityID: string, chatID: string, name: string, color: string, imageJson: string): RpcResponse[JsonNode] =
   let croppedImage = newCroppedImage(imageJson)
