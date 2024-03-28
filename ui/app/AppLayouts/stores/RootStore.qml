@@ -17,7 +17,6 @@ QtObject {
     property var aboutModuleInst: aboutModule
     property var communitiesModuleInst: communitiesModule
     property bool newVersionAvailable: false
-    readonly property bool requirementsCheckPending: communitiesModuleInst.requirementsCheckPending
     property string latestVersion
     property string downloadURL
 
@@ -32,32 +31,6 @@ QtObject {
             return Constants.LoginType.Keycard
         return Constants.LoginType.Password
     }
-
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
-    }
-
-    property string communityKeyToImport
-    onCommunityKeyToImportChanged: {
-        if (!!communityKeyToImport)
-            root.prepareTokenModelForCommunity(communityKeyToImport);
-    }
-
-    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
-                                     root.communitiesModuleInst.spectatedCommunityPermissionModel : null
-
-    readonly property var myRevealedAddressesForCurrentCommunity: {
-        try {
-            let revealedAddresses = root.communitiesModuleInst.myRevealedAddressesStringForCurrentCommunity
-            let revealedAddressArray = JSON.parse(revealedAddresses)
-            return revealedAddressArray.map(addr => addr.toLowerCase())
-        } catch (e) {
-            console.error("Error parsing my revealed addresses", e)
-        }
-        return []
-    }
-    readonly property string myRevealedAirdropAddressForCurrentCommunity:
-        root.communitiesModuleInst.myRevealedAirdropAddressForCurrentCommunity.toLowerCase()
 
     property var walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
     
@@ -270,10 +243,6 @@ QtObject {
 
     function cleanJoinEditCommunityData() {
         communitiesModuleInst.cleanJoinEditCommunityData()
-    }
-
-    function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 
     function promoteSelfToControlNode(communityId) {

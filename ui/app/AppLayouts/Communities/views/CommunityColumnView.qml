@@ -53,10 +53,7 @@ Item {
         communityData.memberRole === Constants.memberRole.admin ||
         communityData.memberRole === Constants.memberRole.tokenMaster
 
-    readonly property var permissionsModel: {
-        root.store.prepareTokenModelForCommunity(communityData.id)
-        return root.store.permissionsModel
-    }
+    readonly property var permissionsModel: root.communitySectionModule.permissionsModel
 
     signal infoButtonClicked
     signal manageButtonClicked

@@ -106,7 +106,7 @@ StackLayout {
                              communityData.memberRole === Constants.memberRole.tokenMaster
             communityItemsModel: root.rootStore.communityItemsModel
             requirementsMet: root.permissionsStore.allTokenRequirementsMet
-            requirementsCheckPending: root.rootStore.permissionsCheckOngoing
+            requirementsCheckPending: sectionItem.requirementsCheckPending
             requiresRequest: !communityData.amIMember
             communityHoldingsModel: root.permissionsStore.becomeMemberPermissionsModel
             viewOnlyHoldingsModel: root.permissionsStore.viewOnlyPermissionsModel

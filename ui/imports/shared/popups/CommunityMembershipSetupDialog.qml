@@ -408,6 +408,7 @@ StatusStackModal {
                 if (root.isEditMode) {
                     root.editRevealedAddresses()
                 } else {
+                    print ("Joining community")
                     root.joinCommunity()
                 }
                 root.close()

@@ -12,8 +12,8 @@ import ./models/discord_channels_model
 import ./models/discord_file_list_model
 import ./models/discord_import_task_item
 import ./models/discord_import_tasks_model
-import app/modules/shared_models/[member_item, section_model, section_item, token_permissions_model, token_permission_item,
-  token_list_item, token_list_model, token_criteria_item, token_criteria_model, token_permission_chat_list_model, keypair_model]
+import app/modules/shared_models/[member_item, section_model, section_item, token_permission_item,
+  token_list_item, token_list_model, keypair_model]
 import app/global/global_singleton
 import app/global/app_signals
 import app/core/eventemitter
@@ -61,7 +61,6 @@ type
   JoiningCommunityDetails = object
     communityId: string
     communityIdForPermissions: string
-    communityIdForRevealedAccounts: string
     ensName: string
     addressesToShare: OrderedTable[string, AddressToShareDetails] ## [address, AddressToShareDetails]
     profilePassword: string
@@ -87,8 +86,6 @@ type
     events: EventEmitter
     curatedCommunitiesLoaded: bool
     communityTokensModule: community_tokens_module.AccessInterface
-    checkingPermissionToJoinInProgress: bool
-    checkingAllChannelPermissionsInProgress: bool
     joiningCommunityDetails: JoiningCommunityDetails
 
 # Forward declaration
@@ -131,8 +128,6 @@ proc newModule*(
   result.moduleLoaded = false
   result.events = events
   result.curatedCommunitiesLoaded = false
-  result.checkingPermissionToJoinInProgress = false
-  result.checkingAllChannelPermissionsInProgress = false
 
 method delete*(self: Module) =
   self.view.delete
@@ -858,130 +853,6 @@ method joinCommunityOrEditSharedAddresses*(self: Module) =
 
 method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: string): string =
   result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
-
-method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq[string]) =
-  self.joiningCommunityDetails.communityIdForPermissions = communityId
-
-  self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
-  self.checkingPermissionToJoinInProgress = true
-
-  self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
-  self.checkingAllChannelPermissionsInProgress = true
-
-  self.view.setCheckingPermissionsInProgress(inProgress = true)
-
-method prepareTokenModelForCommunity*(self: Module, communityId: string) =
-  self.joiningCommunityDetails.communityIdForRevealedAccounts = communityId
-  self.controller.asyncGetRevealedAccountsForMember(communityId, singletonInstance.userProfile.getPubKey())
-
-  let community = self.controller.getCommunityById(communityId)
-  var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
-
-  for id, tokenPermission in community.tokenPermissions:
-    let chats = community.getCommunityChats(tokenPermission.chatIds)
-    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
-    tokenPermissionsItems.add(tokenPermissionItem)
-
-  self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
-  self.checkPermissions(communityId, @[])
-
-proc applyPermissionResponse*(self: Module, communityId: string, permissions: Table[string, CheckPermissionsResultDto]) =
-  let community = self.controller.getCommunityById(communityId)
-  for id, criteriaResult in permissions:
-    if not community.tokenPermissions.hasKey(id):
-      warn "unknown permission", id
-      continue
-
-    let tokenPermissionItem = self.view.spectatedCommunityPermissionModel.getItemById(id)
-    if tokenPermissionItem.id == "":
-      warn "no permission in model", id
-      continue
-
-    var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
-    var permissionSatisfied = true
-
-    for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
-
-      let updatedTokenCriteriaItem = initTokenCriteriaItem(
-        tokenCriteriaItem.symbol,
-        tokenCriteriaItem.name,
-        tokenCriteriaItem.amount,
-        tokenCriteriaItem.`type`,
-        tokenCriteriaItem.ensPattern,
-        criteriaResult.criteria[index]
-      )
-
-      if criteriaResult.criteria[index] == false:
-        permissionSatisfied = false
-
-      updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
-
-    let updatedTokenPermissionItem = initTokenPermissionItem(
-        tokenPermissionItem.id,
-        tokenPermissionItem.`type`,
-        updatedTokenCriteriaItems,
-        tokenPermissionItem.getChatList().getItems(),
-        tokenPermissionItem.isPrivate,
-        permissionSatisfied,
-        tokenPermissionItem.state
-    )
-    self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)
-
-proc updateCheckingPermissionsInProgressIfNeeded(self: Module, inProgress = false) =
-  if self.checkingPermissionToJoinInProgress != self.checkingAllChannelPermissionsInProgress:
-    # Wait until both join and channel permissions have returned to update the loading
-    return
-  self.view.setCheckingPermissionsInProgress(inProgress)
-
-method onCommunityCheckPermissionsToJoinFailed*(self: Module, communityId: string, error: string) =
-  # TODO show error
-  self.checkingPermissionToJoinInProgress = false
-  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
-
-method onCommunityCheckAllChannelPermissionsFailed*(self: Module, communityId: string, error: string) =
-  # TODO show error
-  self.checkingAllChannelPermissionsInProgress = false
-  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
-
-method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string,
-    checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
-  if not self.checkingPermissionToJoinInProgress and
-      self.joiningCommunityDetails.communityIdForPermissions != communityId:
-    return
-  self.applyPermissionResponse(communityId, checkPermissionsToJoinResponse.permissions)
-  self.checkingPermissionToJoinInProgress = false
-  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
-
-method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId: string,
-    checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) =
-  if not self.checkingAllChannelPermissionsInProgress and
-      self.joiningCommunityDetails.communityIdForPermissions != communityId:
-    return
-  self.checkingAllChannelPermissionsInProgress = false
-  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
-  for _, channelPermissionResponse in checkChannelPermissionsResponse.channels:
-    self.applyPermissionResponse(
-      communityId,
-      channelPermissionResponse.viewOnlyPermissions.permissions,
-    )
-    self.applyPermissionResponse(
-      communityId,
-      channelPermissionResponse.viewAndPostPermissions.permissions,
-    )
-
-method onCommunityMemberRevealedAccountsLoaded*(self: Module, communityId, memberPubkey: string,
-    revealedAccounts: seq[RevealedAccount]) =
-  if self.joiningCommunityDetails.communityIdForRevealedAccounts != communityId:
-    return
-  if memberPubkey == singletonInstance.userProfile.getPubKey():
-    var addresses: seq[string] = @[]
-    var airdropAddress = ""
-    for revealedAccount in revealedAccounts:
-      addresses.add(revealedAccount.address)
-      if revealedAccount.isAirdropAddress:
-        airdropAddress = revealedAccount.address
-
-    self.view.setMyRevealedAddressesForCurrentCommunity($(%*addresses), airdropAddress)
 
 method promoteSelfToControlNode*(self: Module, communityId: string) =
   self.controller.promoteSelfToControlNode(communityId)

@@ -695,8 +695,13 @@ QtObject {
 
             CommunityMembershipSetupDialog {
                 id: dialogRoot
+                
+                readonly property var chatCommunitySectionModule: {
+                    root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(communityId)
+                    return root.rootStore.mainModuleInst.getCommunitySectionModule()
+                }
 
-                requirementsCheckPending: root.rootStore.requirementsCheckPending
+                requirementsCheckPending: chatCommunitySectionModule.requirementsCheckPending
 
                 walletAccountsModel: root.rootStore.walletAccountsModel
                 walletCollectiblesModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
@@ -704,10 +709,7 @@ QtObject {
                 canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
-                permissionsModel: {
-                    root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
-                    return root.rootStore.permissionsModel
-                }
+                permissionsModel: chatCommunitySectionModule.permissionsModel
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
 
@@ -737,29 +739,11 @@ QtObject {
                     root.rootStore.cancelPendingRequest(dialogRoot.communityId)
                 }
 
-                Connections {
-                    target: root.communitiesStore.communitiesModuleInst
-                    function onCommunityAccessRequested(communityId: string) {
-                        if (communityId !== dialogRoot.communityId)
-                            return
-                        root.communitiesStore.spectateCommunity(communityId);
-                        dialogRoot.close();
-                    }
-                    function onCommunityAccessFailed(communityId: string, error: string) {
-                        if (communityId !== dialogRoot.communityId)
-                            return
-                        dialogRoot.close();
-                    }
-                }
-
                 onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
+                    chatCommunitySectionModule.checkPermissions(JSON.stringify(sharedAddresses))
                 }
-
-                onAboutToShow: { root.rootStore.communityKeyToImport = dialogRoot.communityId; }
 
                 onClosed: {
-                    root.rootStore.communityKeyToImport = "";
                     root.rootStore.cleanJoinEditCommunityData()
                 }
 
@@ -782,6 +766,19 @@ QtObject {
                         if (!!dialogRoot.replaceItem) {
                             dialogRoot.replaceLoader.item.allSigned()
                         }
+                    }
+
+                    function onCommunityAccessRequested(communityId: string) {
+                        if (communityId !== dialogRoot.communityId)
+                            return
+                        root.communitiesStore.spectateCommunity(communityId);
+                        dialogRoot.close();
+                    }
+                    
+                    function onCommunityAccessFailed(communityId: string, error: string) {
+                        if (communityId !== dialogRoot.communityId)
+                            return
+                        dialogRoot.close();
                     }
                 }
             }
@@ -939,12 +936,12 @@ QtObject {
 
                 isEditMode: true
 
-                currentSharedAddresses: root.rootStore.myRevealedAddressesForCurrentCommunity
-                currentAirdropAddress: root.rootStore.myRevealedAirdropAddressForCurrentCommunity
+                currentSharedAddresses: chatStore.myRevealedAddressesForCurrentCommunity
+                currentAirdropAddress: chatStore.myRevealedAirdropAddressForCurrentCommunity
 
                 communityName: chatStore.sectionDetails.name
                 communityIcon: chatStore.sectionDetails.image
-                requirementsCheckPending: root.rootStore.requirementsCheckPending
+                requirementsCheckPending: chatStore.requirementsCheckPending
 
                 introMessage: chatStore.sectionDetails.introMessage
 
@@ -967,7 +964,7 @@ QtObject {
                 }
 
                 onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(editSharedAddressesPopup.communityId, sharedAddresses)
+                    chatStore.updatePermissionsModel(sharedAddresses)
                 }
 
                 onPrepareForSigning: {
@@ -990,6 +987,10 @@ QtObject {
 
                 onClosed: {
                     root.rootStore.cleanJoinEditCommunityData()
+                }
+
+                Component.onCompleted: {
+                    chatStore.requestRevealedAddresses()
                 }
 
                 Connections {
