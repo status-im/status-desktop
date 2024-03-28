@@ -226,15 +226,29 @@ Item {
               property var groupName: model.groupName
               property var isGroup: model.isGroup
               property var count: model.count
-
-              sourceComponent: d.isCurrentBrowsingTypeAsset ? assetComboBoxDelegate : collectibleComboBoxDelegate
           }
         }
+
+        // Switch models and delegate in the right order not to mix different models and delegates
+        function updateComponents() {
+            holdingItemSelector.comboBoxModel = []
+            sourceComponent: d.isCurrentBrowsingTypeAsset ? assetComboBoxDelegate : collectibleComboBoxDelegate
+            holdingItemSelector.comboBoxModel = d.isCurrentBrowsingTypeAsset
+                                                    ? root.assetsModel
+                                                    : d.collectibleComboBoxModel
+        }
+        Component.onCompleted: updateComponents()
+        Connections {
+            target: d
+            function onIsCurrentBrowsingTypeAssetChanged() {
+                holdingItemSelector.updateComponents()
+            }
+        }
+        comboBoxModel: null
 
         comboBoxPopupHeader: headerComponent
         itemTextFn: d.isCurrentBrowsingTypeAsset ? d.assetTextFn : d.collectibleTextFn
         itemIconSourceFn: d.isCurrentBrowsingTypeAsset ? d.assetIconSourceFn : d.collectibleIconSourceFn
-        comboBoxModel: d.isCurrentBrowsingTypeAsset ? root.assetsModel : d.collectibleComboBoxModel
         onComboBoxModelChanged: updateHasCommunityTokens()
 
         function updateHasCommunityTokens() {
@@ -348,7 +362,7 @@ Item {
                 rightModel: root.networksModel
                 joinRole: "chainId"
             }
-            onTokenSelected: {
+            onTokenSelected: function (selectedToken) {
                 holdingItemSelector.selectedItem = selectedToken
                 d.currentHoldingType = Constants.TokenType.ERC20
                 root.itemSelected(selectedToken.symbol, Constants.TokenType.ERC20)

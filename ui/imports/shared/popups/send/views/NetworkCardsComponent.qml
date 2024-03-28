@@ -33,7 +33,8 @@ Item {
     QtObject {
         id: d
         property double customAmountToSend: 0
-        readonly property string selectedSymbol: !!selectedAsset ? selectedAsset.symbol : ""
+        // Collectibles don't have a symbol
+        readonly property string selectedSymbol: !!selectedAsset && !!selectedAsset.symbol ? selectedAsset.symbol : ""
 
         function resetAllSetValues() {
             for(var i = 0; i<fromNetworksRepeater.count; i++) {

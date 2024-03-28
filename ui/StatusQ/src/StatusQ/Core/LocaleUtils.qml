@@ -62,6 +62,7 @@ QtObject {
             return 0
         }
 
+        console.assert(typeof num !== "undefined", "passed number should not be undefined")
         return num.toString().split('.')[1].length
     }
 

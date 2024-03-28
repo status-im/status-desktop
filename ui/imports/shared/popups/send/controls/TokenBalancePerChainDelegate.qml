@@ -12,6 +12,12 @@ import utils 1.0
 StatusListItem {
     id: root
 
+    required property var model
+    required property string name
+    required property string symbol
+    required property int decimals
+    required property var balances
+
     signal tokenSelected(var selectedToken)
     signal tokenHovered(var selectedToken, bool hovered)
     property var formatCurrentCurrencyAmount: function(balance){}
