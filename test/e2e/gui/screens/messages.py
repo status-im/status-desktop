@@ -41,15 +41,15 @@ class LeftPanel(QObject):
 
     @allure.step('Open chat')
     def get_chats_list(self):
+        started_at = time.monotonic()
         chats_list = []
-        for obj in driver.findAllObjects(self._chat_list_item.real_name):
-            chats_list.append(str(obj.name))
-
-        if len(chats_list) == 0:
-            raise LookupError(
-                'Chats list is empty')
-        else:
-            return chats_list
+        while True:
+            for obj in driver.findAllObjects(self._chat_list_item.real_name):
+                chats_list.append(str(obj.name))
+            if time.monotonic() - started_at > 10 and len(chats_list) == 0:
+                raise LookupError('Chats list is empty')
+            else:
+                return chats_list
 
     @allure.step('Click chat item')
     def click_chat_by_name(self, chat_name: str):
