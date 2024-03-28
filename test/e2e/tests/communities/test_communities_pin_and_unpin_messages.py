@@ -26,11 +26,11 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
 @pytest.mark.case(703255, 703256, 703510)
 @pytest.mark.parametrize('user_data_one, user_data_two', [
-    (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
+    (configs.testpath.TEST_USER_DATA / 'community_user_1', configs.testpath.TEST_USER_DATA / 'community_user_2')
 ])
 def test_join_community_and_pin_unpin_message(multiple_instances, user_data_one, user_data_two):
-    user_one: UserAccount = constants.user_account_one
-    user_two: UserAccount = constants.user_account_two
+    user_one: UserAccount = constants.community_user_1
+    user_two: UserAccount = constants.community_user_2
     community_params = deepcopy(constants.community_params)
     community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
     main_screen = MainWindow()
@@ -43,33 +43,9 @@ def test_join_community_and_pin_unpin_message(multiple_instances, user_data_one,
                 main_screen.authorize_user(account)
                 main_screen.hide()
 
-        with step(f'User {user_two.name}, get chat key'):
-            aut_two.attach()
-            main_screen.prepare()
-            profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
-            main_screen.hide()
-
-        with step(f'User {user_one.name}, send contact request to {user_two.name}'):
-            aut_one.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
-            main_screen.hide()
-
-        with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
-            aut_two.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contacts_settings.accept_contact_request(user_one.name)
-
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
+            aut_two.attach()
+            main_screen.prepare()
             main_screen.create_community(community_params['name'], community_params['description'],
                                          community_params['intro'], community_params['outro'],
                                          community_params['logo']['fp'], community_params['banner']['fp'])
@@ -80,14 +56,14 @@ def test_join_community_and_pin_unpin_message(multiple_instances, user_data_one,
             aut_one.attach()
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
-            chat = messages_view.left_panel.open_chat(user_two.name)
+            chat = messages_view.left_panel.click_chat_by_name(user_two.name)
             community_screen = chat.accept_community_invite(community_params['name'], '0')
 
         with step(f'User {user_one.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
             assert community_params['name'] in welcome_popup.title
             assert community_params['intro'] == welcome_popup.intro
-            welcome_popup.join().authenticate(user_two.password)
+            welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
 
@@ -115,10 +91,10 @@ def test_join_community_and_pin_unpin_message(multiple_instances, user_data_one,
             messages_screen.group_chat.send_message_to_group_chat(message_text)
             second_message_text = "Hi again"
             messages_screen.group_chat.send_message_to_group_chat(second_message_text)
-            message_objects = messages_screen.chat.messages('0')
-            message_items = [message.text for message in message_objects]
+            newest_message_object = messages_screen.chat.messages('0')
+            message_items = [message.text for message in newest_message_object]
             for message_item in message_items:
-                assert message_text in message_item, f'Message {message_text} is not visible'
+                assert second_message_text in message_item, f'Message {message_text} is not visible'
 
         with step(f'Hover message {second_message_text} and pin it'):
             message = messages_screen.chat.find_message_by_text(second_message_text, '0')

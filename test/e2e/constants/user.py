@@ -14,18 +14,23 @@ user_account_two = UserAccount('athletic', '0000000000', [
 user_account_three = UserAccount('nervous', '0000000000', [], '')
 
 # users for group chat test
-
 group_chat_user_1 = UserAccount('group_chat_user_1', '77_80Y+2Eh', [
-    'trophy', 'math', 'robust', 'lake', 'extend', 'cabbage', 'bicycle', 'begin', 'either', 'car', 'race', 'cousin'],
-             '0xcd488381c1664c9585b7940f1c4b20f884b8b4a9')
+    'trophy', 'math', 'robust', 'lake', 'extend', 'cabbage', 'bicycle', 'begin', 'either', 'car', 'race', 'cousin'], '0xcd488381c1664c9585b7940f1c4b20f884b8b4a9')
 group_chat_user_2 = UserAccount('group_chat_user_2', '521/97Qv\:', [
     'opera', 'great', 'open', 'sight', 'still', 'quantum', 'flight', 'torch', 'mule', 'cage', 'noise', 'horn'
 
 ], '0x472078f0110d0bb0dfc73389ce89d8a83c8c0502')
 group_chat_user_3 = UserAccount('group_chat_user_3', '29T\I8Cv_G', [
     'bless', 'enter', 'wet', 'foot', 'lazy', 'will', 'reform', 'enemy', 'rubber', 'void', 'journey', 'fence'
-
 ], '0x4b04b8e22e8295d0ae3177774e4acfd0badacf09')
+
+# user names and passwords for join community test
+community_user_1 = UserAccount('community_user_1', '|Br2w547YN', [
+    'skirt', 'tired', 'finger', 'dinosaur', 'equal', 'garlic', 'snap', 'tired', 'friend', 'rack', 'net', 'imitate'
+], '0x21371358f1ba09204475e87444962ea4519771e1')
+community_user_2 = UserAccount('community_user_2', 'vSq5T702_p', [
+    'will', 'horn', 'tail', 'stock', 'puzzle', 'warfare', 'pledge', 'uniform', 'ozone', 'taste', 'someone', 'silk'
+], '0x935034600f2ba486324cee6ae3f96ad8c8915ac6')
 
 user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345', [], '')
 user_account_one_changed_name = UserAccount('NewUserName', '0000000000', [], '')
