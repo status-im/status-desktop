@@ -72,6 +72,11 @@ type
     categoryId*: string
     position*: int
 
+  CommunityCategoryCollapsedArgs* = ref object of Args
+    communityId*: string
+    categoryId*: string
+    collapsed*: bool
+
   CommunityCategoryArgs* = ref object of Args
     communityId*: string
     category*: Category
@@ -194,6 +199,7 @@ const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
 const SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED* = "communityCategoryNameEdited"
 const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
+const SIGNAL_COMMUNITY_CATEGORY_COLLAPSED_TOGGLED* = "communityCategoryCollapsedToggled"
 const SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED* = "communityChannelCategoryChanged"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 const SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED* = "communityMemberStatusChanged"
@@ -805,6 +811,28 @@ QtObject:
       self.threadpool.start(arg)
     except Exception as e:
       error "Error requesting communities data", msg = e.msg
+
+  proc isCommunityCategoryExpanded*(self: Service, categoryId: string) : bool =
+    try:
+      let response = status_go.collapsedCommunityCategories()
+
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error requesting the collapsed community categories data: " & error.message)
+
+      if response.result.isNil or response.result.kind == JNull:
+        return false
+
+      var expandedCategory: bool = false
+
+      for _, expandedCategoryItem in response.result.getElems():
+        if expandedCategoryItem["categoryId"].getStr == categoryId:
+          expandedCategory = true
+          break
+      return expandedCategory
+
+    except Exception as e:
+      error "Error requesting the collapsed community categories data ", msg = e.msg
 
   proc asyncCommunitiesDataLoaded(self: Service, response: string) {.slot.} =
     try:
@@ -1468,6 +1496,20 @@ QtObject:
             CommunityCategoryArgs(communityId: communityId, category: category, chats: chats))
     except Exception as e:
       error "Error creating community category", msg = e.msg, communityId, name
+
+  proc toggleCollapsedCommunityCategory*(self: Service, communityId: string, categoryId: string, collapsed: bool) =
+    try:
+      let response = status_go.toggleCollapsedCommunityCategory(communityId, categoryId, collapsed)
+      
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error toggling collapsed community category: " & error.message)
+
+      self.events.emit(SIGNAL_COMMUNITY_CATEGORY_COLLAPSED_TOGGLED, CommunityCategoryCollapsedArgs(
+          communityId: communityId, categoryId: categoryId, collapsed: collapsed))
+
+    except Exception as e:
+      error "Error toggling collapsed community category ", msg = e.msg, communityId, collapsed
 
   proc editCommunityCategory*(
       self: Service,

@@ -392,6 +392,10 @@ QtObject {
         chatCommunitySectionModule.reorderCommunityCategories(categoryId, to)
     }
 
+    function toggleCollapsedCommunityCategory(categoryId, collapsed) {
+        chatCommunitySectionModule.toggleCollapsedCommunityCategory(categoryId, collapsed)
+    }
+
     function reorderCommunityChat(categoryId, chatId, to) {
         chatCommunitySectionModule.reorderCommunityChat(categoryId, chatId, to)
     }
