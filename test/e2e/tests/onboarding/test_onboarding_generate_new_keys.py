@@ -37,7 +37,7 @@ def keys_screen(main_window) -> KeysView:
     pytest.param(
         ''.join((random.choice(
             string.ascii_letters + string.digits + random.choice('_- '))
-                for i in range(5, 21))
+                for i in range(5, 25))
         ).strip(' '),
         ''.join((random.choice(
             string.ascii_letters + string.digits + string.punctuation)

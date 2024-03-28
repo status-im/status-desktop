@@ -1,4 +1,6 @@
 import os
+import random
+import string
 import time
 
 import allure
@@ -72,7 +74,9 @@ def test_login_with_wrong_password(aut: AUT, keys_screen, main_window, error: st
 @pytest.mark.parametrize('user_name, error', [
     pytest.param('Athl', OnboardingMessages.WRONG_LOGIN_LESS_LETTERS.value),
     pytest.param('Gra', OnboardingMessages.WRONG_LOGIN_LESS_LETTERS.value),
-    pytest.param('tester3@', OnboardingMessages.WRONG_LOGIN_SYMBOLS_NOT_ALLOWED.value)
+    pytest.param('tester3@', OnboardingMessages.WRONG_LOGIN_SYMBOLS_NOT_ALLOWED.value),
+    pytest.param(''.join(random.choice(string.punctuation) for i in range(5, 25)),
+                 OnboardingMessages.WRONG_LOGIN_SYMBOLS_NOT_ALLOWED.value)
 ])
 def test_sign_up_with_wrong_name(keys_screen, user_name: str, error: str):
     with step(f'Input name {user_name}'):
