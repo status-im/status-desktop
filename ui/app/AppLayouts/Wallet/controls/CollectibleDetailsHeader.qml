@@ -15,10 +15,13 @@ ColumnLayout {
 
     property alias collectibleName: collectibleName.text
     property alias collectibleId: collectibleId.text
-    property alias collectionTag: collectionTag
-    property string isCollection
 
+    property string collectionName
+
+    property string communityName
+    property string communityId
     property string communityImage
+
     property string networkShortName
     property string networkColor
     property string networkIconURL
@@ -80,18 +83,96 @@ ColumnLayout {
 
         InformationTag {
             id: collectionTag
-            asset.name: !!root.communityImage ? root.communityImage: !sensor.containsMouse ? root.isCollection ? "tiny/folder" : "tiny/profile" : "tiny/external"
+            readonly property bool isCollection: !!root.collectionName && !root.communityId
+            readonly property bool isUnkownCommunity: !!root.communityId && !root.communityName
+            property bool copySuccess: false
+            asset.name: {
+                if (!!root.communityImage) {
+                    return root.communityImage
+                }
+                if (sensor.containsMouse) {
+                    return "tiny/external"
+                }
+                if (root.isCollection) {
+                    return "tiny/folder"
+                }
+                return "tiny/profile"
+            }
             asset.isImage: !!root.communityImage
-            enabled: root.collectionLinkEnabled
+            enabled: root.collectionLinkEnabled || !!root.communityId
+            tagPrimaryLabel.text: !!root.communityName ? root.communityName : root.collectionName
+            backgroundColor: sensor.containsMouse ? Theme.palette.baseColor5 : Theme.palette.baseColor4
+            states: [
+                State {
+                    name: "copiedCommunity"
+                    extend: "unkownCommunityHover"
+                    when: collectionTag.copySuccess && collectionTag.isUnkownCommunity
+                    PropertyChanges {
+                        target: collectionTag
+                        asset.name: "tiny/checkmark"
+                        asset.color: Theme.palette.successColor1
+                    }
+                    PropertyChanges {
+                        target: statusToolTip
+                        text: qsTr("Community address copied")
+                    }
+                },
+                State {
+                    name: "unkownCommunityHover"
+                    when: collectionTag.isUnkownCommunity && sensor.containsMouse
+                    PropertyChanges {
+                        target: collectionTag
+                        asset.name: "tiny/copy"
+                        tagPrimaryLabel.text: qsTr("Community %1").arg(Utils.compactAddress(root.communityId, 4))
+                    }
+                    PropertyChanges {
+                        target: statusToolTip
+                        visible: true
+                        text: qsTr("Community name could not be fetched")
+                    }
+                },
+                State {
+                    name: "unkownCommunity"
+                    when: collectionTag.isUnkownCommunity
+                    PropertyChanges {
+                        target: collectionTag
+                        asset.name: "tiny/help"
+                        asset.color: Theme.palette.baseColor1
+                        tagPrimaryLabel.text: qsTr("Unknown community")
+                    }
+                }
+            ]
+
             MouseArea {
                 id: sensor
                 anchors.fill: parent
-                hoverEnabled: root.collectionLinkEnabled
-                cursorShape: root.collectionLinkEnabled ? Qt.PointingHandCursor: undefined
-                enabled: root.collectionLinkEnabled
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onContainsMouseChanged: {
+                    if (!containsMouse)
+                        collectionTag.copySuccess = false
+                }
                 onClicked: {
+                    if (collectionTag.isUnkownCommunity) {
+                        collectionTag.copySuccess = true
+                        debounceTimer.restart()
+                        Utils.copyToClipboard(root.communityId)
+                        return
+                    }
                     root.collectionTagClicked()
                 }
+                Timer {
+                    id: debounceTimer
+                    interval: 2000
+                    running: collectionTag.copySuccess
+                    onTriggered: collectionTag.copySuccess = false
+                }
+            }
+            StatusToolTip {
+                id: statusToolTip
+                visible: false
+                delay: 0
+                orientation: StatusToolTip.Orientation.Top
             }
         }
 
