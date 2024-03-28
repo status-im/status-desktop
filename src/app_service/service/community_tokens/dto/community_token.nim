@@ -25,7 +25,6 @@ type
     infiniteSupply*: bool
     transferable*: bool
     remoteSelfDestruct*: bool
-    tokenUri*: string
     chainId*: int
     deployState*: DeployState
     image*: string
@@ -45,7 +44,6 @@ proc toJsonNode*(self: CommunityTokenDto): JsonNode =
     "infiniteSupply": self.infiniteSupply,
     "transferable": self.transferable,
     "remoteSelfDestruct": self.remoteSelfDestruct,
-    "tokenUri": self.tokenUri,
     "chainId": self.chainId,
     "deployState": self.deployState.int,
     "image": self.image,
@@ -70,7 +68,6 @@ proc toCommunityTokenDto*(jsonObj: JsonNode): CommunityTokenDto =
   discard jsonObj.getProp("infiniteSupply", result.infiniteSupply)
   discard jsonObj.getProp("transferable", result.transferable)
   discard jsonObj.getProp("remoteSelfDestruct", result.remoteSelfDestruct)
-  discard jsonObj.getProp("tokenUri", result.tokenUri)
   discard jsonObj.getProp("chainId", result.chainId)
   var deployStateInt: int
   discard jsonObj.getProp("deployState", deployStateInt)

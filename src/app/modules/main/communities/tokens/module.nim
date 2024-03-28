@@ -37,16 +37,12 @@ type
     tempChainId: int
     tempContractAddress: string
     tempDeploymentParams: DeploymentParameters
-    tempTokenMetadata: CommunityTokensMetadataDto
-    tempTokenImageCropInfoJson: string
     tempWalletAddresses: seq[string]
     tempContractAction: ContractAction
     tempContractUniqueKey: string
     tempAmount: Uint256
     tempOwnerDeploymentParams: DeploymentParameters
     tempMasterDeploymentParams: DeploymentParameters
-    tempOwnerTokenMetadata: CommunityTokensMetadataDto
-    tempMasterTokenMetadata: CommunityTokensMetadataDto
     tempOwnerTokenCommunity: CommunityDto
 
 proc newCommunityTokensModule*(
@@ -71,8 +67,6 @@ method resetTempValues(self:Module) =
   self.tempAddressFrom = ""
   self.tempCommunityId = ""
   self.tempDeploymentParams = DeploymentParameters()
-  self.tempTokenMetadata = CommunityTokensMetadataDto()
-  self.tempTokenImageCropInfoJson = ""
   self.tempChainId = 0
   self.tempContractAddress = ""
   self.tempWalletAddresses = @[]
@@ -80,6 +74,8 @@ method resetTempValues(self:Module) =
   self.tempTokenAndAmountList = @[]
   self.tempWalletAndAmountList = @[]
   self.tempContractUniqueKey = ""
+  self.tempOwnerDeploymentParams = DeploymentParameters()
+  self.tempMasterDeploymentParams = DeploymentParameters()
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("communityTokensModule", self.viewVariant)
@@ -186,9 +182,10 @@ method deployCollectibles*(self: Module, communityId: string, fromAddress: strin
   self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
   self.tempDeploymentParams.ownerTokenAddress = ownerTokenAddress
   self.tempDeploymentParams.masterTokenAddress = masterTokenAddress
-  self.tempTokenMetadata.tokenType = TokenType.ERC721
-  self.tempTokenMetadata.description = description
-  self.tempTokenImageCropInfoJson = imageCropInfoJson
+  self.tempDeploymentParams.tokenType = TokenType.ERC721
+  self.tempDeploymentParams.description = description
+  self.tempDeploymentParams.croppedImageJson = imageCropInfoJson
+  self.tempDeploymentParams.communityId = communityId
   self.tempContractAction = ContractAction.Deploy
   self.authenticate()
 
@@ -196,8 +193,12 @@ proc createOwnerAndMasterDeploymentParams(self: Module, communityId: string): (D
   let communityDto = self.controller.getCommunityById(communityId)
   let commName = communityDto.name
   let commNameShort = try: commName[0 .. 2].toUpper except: commName.toUpper
-  return (DeploymentParameters(name: "Owner-" & commName, symbol: "OWN" & commNameShort, supply: stint.u256("1"), infiniteSupply: false, transferable: true, remoteSelfDestruct: false, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/"),
-          DeploymentParameters(name: "TMaster-" & commName, symbol: "TM" & commNameShort, infiniteSupply: true, transferable: false, remoteSelfDestruct: true, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/"))
+  return (DeploymentParameters(name: "Owner-" & commName, symbol: "OWN" & commNameShort, supply: stint.u256("1"),
+                                infiniteSupply: false, transferable: true, remoteSelfDestruct: false,
+                                tokenUri: utl.changeCommunityKeyCompression(communityId) & "/", communityId: communityId),
+          DeploymentParameters(name: "TMaster-" & commName, symbol: "TM" & commNameShort, infiniteSupply: true,
+                                transferable: false, remoteSelfDestruct: true,
+                                tokenUri: utl.changeCommunityKeyCompression(communityId) & "/", communityId: communityId))
 
 method deployOwnerToken*(self: Module, communityId: string, fromAddress: string, ownerName: string, ownerSymbol: string, ownerDescription: string,
                         masterName: string, masterSymbol: string, masterDescription: string, chainId: int, imageCropInfoJson: string) =
@@ -209,12 +210,15 @@ method deployOwnerToken*(self: Module, communityId: string, fromAddress: string,
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
   self.tempChainId = chainId
+  let croppedImage = imageCropInfoJson.parseJson
+  let base65Image = singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr)
   (self.tempOwnerDeploymentParams, self.tempMasterDeploymentParams) = self.createOwnerAndMasterDeploymentParams(communityId)
-  self.tempOwnerTokenMetadata.description = ownerDescription
-  self.tempOwnerTokenMetadata.tokenType = TokenType.ERC721
-  self.tempMasterTokenMetadata.description = masterDescription
-  self.tempMasterTokenMetadata.tokenType = TokenType.ERC721
-  self.tempTokenImageCropInfoJson = imageCropInfoJson
+  self.tempOwnerDeploymentParams.description = ownerDescription
+  self.tempOwnerDeploymentParams.tokenType = TokenType.ERC721
+  self.tempOwnerDeploymentParams.base64image = base65Image
+  self.tempMasterDeploymentParams.description = masterDescription
+  self.tempMasterDeploymentParams.tokenType = TokenType.ERC721
+  self.tempMasterDeploymentParams.base64image = base65Image
   self.tempContractAction = ContractAction.DeployOwnerToken
   self.authenticate()
 
@@ -235,9 +239,10 @@ method deployAssets*(self: Module, communityId: string, fromAddress: string, nam
   self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
   self.tempDeploymentParams.ownerTokenAddress = ownerTokenAddress
   self.tempDeploymentParams.masterTokenAddress = masterTokenAddress
-  self.tempTokenMetadata.tokenType = TokenType.ERC20
-  self.tempTokenMetadata.description = description
-  self.tempTokenImageCropInfoJson = imageCropInfoJson
+  self.tempDeploymentParams.tokenType = TokenType.ERC20
+  self.tempDeploymentParams.description = description
+  self.tempDeploymentParams.croppedImageJson = imageCropInfoJson
+  self.tempDeploymentParams.communityId = communityId
   self.tempContractAction = ContractAction.Deploy
   self.authenticate()
 
@@ -251,7 +256,7 @@ method onUserAuthenticated*(self: Module, password: string) =
     #TODO signalize somehow
   else:
     if self.tempContractAction == ContractAction.Deploy:
-      self.controller.deployContract(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempTokenMetadata, self.tempTokenImageCropInfoJson, self.tempChainId)
+      self.controller.deployContract(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempChainId)
     elif self.tempContractAction == ContractAction.Airdrop:
       self.controller.airdropTokens(self.tempCommunityId, password, self.tempTokenAndAmountList, self.tempWalletAddresses, self.tempAddressFrom)
     elif self.tempContractAction == ContractAction.SelfDestruct:
@@ -260,9 +265,7 @@ method onUserAuthenticated*(self: Module, password: string) =
       self.controller.burnTokens(self.tempCommunityId, password, self.tempContractUniqueKey, self.tempAmount, self.tempAddressFrom)
     elif self.tempContractAction == ContractAction.DeployOwnerToken:
       self.controller.deployOwnerContracts(self.tempCommunityId, self.tempAddressFrom, password,
-                self.tempOwnerDeploymentParams, self.tempOwnerTokenMetadata,
-                self.tempMasterDeploymentParams, self.tempMasterTokenMetadata,
-                self.tempTokenImageCropInfoJson, self.tempChainId)
+                self.tempOwnerDeploymentParams, self.tempMasterDeploymentParams, self.tempChainId)
     elif self.tempContractAction == ContractAction.SetSigner:
       self.controller.setSigner(password, self.tempCommunityId, self.tempChainId, self.tempContractAddress, self.tempAddressFrom)
 

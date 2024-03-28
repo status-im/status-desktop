@@ -44,11 +44,7 @@ const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gc
     let response = eth.suggestedFees(arg.chainId).result
     feeTable[arg.chainId] = response.toSuggestedFeesDto()
 
-    # get deployment signature
-    let signatureResponse = community_tokens.createCommunityTokenDeploymentSignature(arg.chainId, arg.addressFrom, arg.communityId)
-    let signature = signatureResponse.result.getStr()
-
-    let deployGas = community_tokens.deployOwnerTokenEstimate(arg.chainId, arg.addressFrom, arg.ownerParams, arg.masterParams, signature, arg.communityId, arg.signerPubKey).result.getInt
+    let deployGas = community_tokens.deployOwnerTokenEstimate(arg.chainId, arg.addressFrom, arg.ownerParams, arg.masterParams, arg.communityId, arg.signerPubKey).result.getInt
     gasTable[(arg.chainId, "")] = deployGas
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),

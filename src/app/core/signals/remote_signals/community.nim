@@ -2,6 +2,7 @@ import json, tables
 import base
 
 import ../../../../app_service/service/community/dto/[community]
+import ../../../../app_service/service/community_tokens/dto/community_token
 import ../../../../app_service/service/chat/dto/[chat]
 import signal_type
 
@@ -62,6 +63,15 @@ type DiscordChannelImportCancelledSignal* = ref object of Signal
 type DiscordChannelImportFinishedSignal* = ref object of Signal
   communityId*: string
   channelId*: string
+
+type CommunityTokenTransactionStatusChangedSignal* = ref object of Signal
+  transactionType*: string
+  success*: bool
+  hash*: string
+  communityToken*: CommunityTokenDto
+  ownerToken*: CommunityTokenDto
+  masterToken*: CommunityTokenDto
+  errorString*: string
 
 proc fromEvent*(T: type CommunitySignal, event: JsonNode): CommunitySignal =
   result = CommunitySignal()
@@ -226,3 +236,17 @@ proc downloadingHistoryArchivesFinishedFromEvent*(T: type HistoryArchivesSignal,
   result = HistoryArchivesSignal()
   result.communityId = event["event"]{"communityId"}.getStr()
   result.signalType = SignalType.DownloadingHistoryArchivesFinished
+
+proc fromEvent*(T: type CommunityTokenTransactionStatusChangedSignal, event: JsonNode): CommunityTokenTransactionStatusChangedSignal =
+  result = CommunityTokenTransactionStatusChangedSignal()
+  result.transactionType = event["event"]{"transactionType"}.getStr()
+  result.success = event["event"]{"success"}.getBool()
+  result.hash = event["event"]{"hash"}.getStr()
+  if event["event"].hasKey("communityToken"):
+    result.communityToken = toCommunityTokenDto(event["event"]{"communityToken"})
+  if event["event"].hasKey("ownerToken"):
+    result.ownerToken = toCommunityTokenDto(event["event"]{"ownerToken"})
+  if event["event"].hasKey("masterToken"):
+    result.masterToken = toCommunityTokenDto(event["event"]{"masterToken"})
+  result.errorString = event["event"]{"errorString"}.getStr()
+  result.signalType = SignalType.CommunityTokenTransactionStatusChanged

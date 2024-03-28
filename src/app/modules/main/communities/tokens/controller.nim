@@ -106,15 +106,13 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_TOKENS_CHANGED) do(e:Args):
     self.communityTokensService.getAllCommunityTokensAsync()
 
-proc deployContract*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, tokenImageCropInfoJson: string, chainId: int) =
-  self.communityTokensService.deployContract(communityId, addressFrom, password, deploymentParams, tokenMetadata, tokenImageCropInfoJson, chainId)
+proc deployContract*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, chainId: int) =
+  self.communityTokensService.deployContract(communityId, addressFrom, password, deploymentParams, chainId)
 
 proc deployOwnerContracts*(self: Controller, communityId: string, addressFrom: string, password: string,
-      ownerDeploymentParams: DeploymentParameters, ownerTokenMetadata: CommunityTokensMetadataDto,
-      masterDeploymentParams: DeploymentParameters, masterTokenMetadata: CommunityTokensMetadataDto,
-      tokenImageCropInfoJson: string, chainId: int) =
-  self.communityTokensService.deployOwnerContracts(communityId, addressFrom, password, ownerDeploymentParams, ownerTokenMetadata,
-      masterDeploymentParams, masterTokenMetadata, tokenImageCropInfoJson, chainId)
+      ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters, chainId: int) =
+  self.communityTokensService.deployOwnerContracts(communityId, addressFrom, password, ownerDeploymentParams,
+      masterDeploymentParams, chainId)
 
 proc removeCommunityToken*(self: Controller, communityId: string, chainId: int, address: string) =
   self.communityTokensService.removeCommunityToken(communityId, chainId, address)
