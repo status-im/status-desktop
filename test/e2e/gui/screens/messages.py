@@ -219,7 +219,7 @@ class ChatView(QObject):
                     message = _message
                     break
             if time.monotonic() - started_at > configs.timeouts.MESSAGING_TIMEOUT_SEC:
-                raise LookupError(f'Invitation not found')
+                raise LookupError(f'Community invitation was not found')
 
         return message.open_community_invitation()
 

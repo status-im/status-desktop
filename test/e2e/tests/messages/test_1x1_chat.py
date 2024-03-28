@@ -67,7 +67,7 @@ def test_1x1_chat(multiple_instances, user_data_one, user_data_two):
         with step(f'User {user_one.name} send another message to {user_two.name}, edit it and verify it was changed'):
             aut_one.attach()
             main_window.prepare()
-            chat = main_window.left_panel.open_messages_screen().left_panel.open_chat(user_two.name)
+            chat = main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_two.name)
             ChatMessagesView().send_message_to_group_chat('How are you')
             message = chat.find_message_by_text(f'How are you', 0)
             additional_text = '?'
@@ -83,7 +83,7 @@ def test_1x1_chat(multiple_instances, user_data_one, user_data_two):
         with step(f'User {user_two.name} opens 1x1 chat with {user_one.name}'):
             aut_two.attach()
             main_window.prepare()
-            messages_screen.left_panel.open_chat(user_one.name)
+            messages_screen.left_panel.click_chat_by_name(user_one.name)
 
         with step(f'User {user_two.name} send reply to {user_one.name}'):
             messages_screen.group_chat.send_message_to_group_chat('Hello squisher')

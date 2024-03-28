@@ -96,7 +96,7 @@ def test_switch_state_to_offline_online_automatic(multiple_instances, user_data_
             aut_one.attach()
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
-            chat = messages_view.left_panel.open_chat(user_two.name)
+            chat = messages_view.left_panel.click_chat_by_name(user_two.name)
             community_screen = chat.accept_community_invite(community_params['name'], '0')
 
         with step(f'User {user_one.name}, verify welcome community popup'):
