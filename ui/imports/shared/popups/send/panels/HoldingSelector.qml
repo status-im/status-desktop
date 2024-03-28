@@ -98,7 +98,15 @@ Item {
         }
 
         property var assetIconSourceFn: function (asset) {
-            return !!asset && asset.symbol ? Style.png("tokens/%1".arg(asset.symbol)) : ""
+            if (!asset) {
+                return ""
+            } else if (asset.image) {
+                // Community assets have a dedicated image streamed from status-go
+                return asset.image
+            } else {
+                return Constants.tokenIcon(asset.symbol)
+            }
+            return ""
         }
 
         property var collectibleTextFn: function (item) {
