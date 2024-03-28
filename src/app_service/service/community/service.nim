@@ -1621,7 +1621,7 @@ QtObject:
       if rpcResponseObj["response"]{"error"}.kind != JNull:
         let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
         raise newException(RpcException, error.message)
-
+      echo "rpcResponseObj: ", $rpcResponseObj
       let checkPermissionsToJoinResponse = rpcResponseObj["response"]["result"].toCheckPermissionsToJoinResponseDto
       self.events.emit(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE, CheckPermissionsToJoinResponseArgs(
         communityId: communityId,

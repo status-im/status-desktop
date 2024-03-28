@@ -1,6 +1,5 @@
 import tables
 import ../../../../app_service/service/community/service as community_service
-import ../../../../app_service/service/chat/service as chat_service
 import app_service/common/types
 import ../../shared_models/section_item
 
@@ -236,30 +235,7 @@ method signSharedAddressesForKeypair*(self: AccessInterface, keyUid: string, pin
 method joinCommunityOrEditSharedAddresses*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method prepareTokenModelForCommunity*(self: AccessInterface, communityId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getCommunityPublicKeyFromPrivateKey*(self: AccessInterface, communityPrivateKey: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method checkPermissions*(self: AccessInterface, communityId: string, sharedAddresses: seq[string]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, communityId: string, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onCommunityCheckAllChannelsPermissionsResponse*(self: AccessInterface, communityId: string,
-    checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onCommunityCheckPermissionsToJoinFailed*(self: AccessInterface, communityId: string, ValueErrorerror: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onCommunityCheckAllChannelPermissionsFailed*(self: AccessInterface, communityId: string, ValueErrorerror: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, communityId: string, memberPubkey: string,
-    revealedAccounts: seq[RevealedAccount]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method removeCommunityChat*(self: AccessInterface, communityId: string, channelId: string) {.base.} =
