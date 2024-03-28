@@ -241,11 +241,8 @@ SettingsContentBase {
             canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
             walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
-            requirementsCheckPending: root.rootStore.requirementsCheckPending
-            permissionsModel: {
-                root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
-                return root.rootStore.permissionsModel
-            }
+            requirementsCheckPending: chatStore.requirementsCheckPending
+            permissionsModel: chatStore.chatCommunitySectionModule.permissionsModel
             assetsModel: chatStore.assetsModel
             collectiblesModel: chatStore.collectiblesModel
 
@@ -274,7 +271,7 @@ SettingsContentBase {
             onCancelMembershipRequest: root.rootStore.cancelPendingRequest(dialogRoot.communityId)
 
             onSharedAddressesUpdated: {
-                root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
+                chatStore.updatePermissionsModel(sharedAddresses)
             }
 
             onClosed: {
