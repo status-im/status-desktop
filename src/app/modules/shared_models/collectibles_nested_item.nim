@@ -1,37 +1,46 @@
 import stew/shims/strformat
 import app_service/common/types
+import stint
+
+type
+  ItemType* {.pure.} = enum
+    CommunityCollectible = 0,
+    NonCommunityCollectible = 1,
+    Collection = 2,
+    Community = 3
 
 type
   Item* = object
-    id: string  # Collectible ID if isCollection=false, Collection Slug otherwise
+    id: string  # CollectibleID if single collectible, GroupID (CollectionID/CommunityID) otherwise
     chainId: int
     name: string
     iconUrl: string
-    collectionId: string
-    collectionName: string
-    isCollection: bool
-    communityId: string
+    groupId: string
+    groupName: string
     tokenType: TokenType
+    itemType: ItemType
+    count: UInt256
 
 proc initItem*(
   id: string,
   chainId: int,
   name: string,
   iconUrl: string,
-  collectionId: string,
-  collectionName: string,
-  isCollection: bool,
-  communityId: string,
-  tokenType: TokenType
+  groupId: string,
+  groupName: string,
+  tokenType: TokenType,
+  itemType: ItemType,
+  count: UInt256,
 ): Item =
   result.id = id
   result.chainId = chainId
   result.name = name
   result.iconUrl = iconUrl
-  result.collectionId = collectionId
-  result.collectionName = collectionName
-  result.isCollection = isCollection
+  result.groupId = groupId
+  result.groupName = groupName
   result.tokenType = tokenType
+  result.itemType = itemType
+  result.count = count
 
 proc `$`*(self: Item): string =
   result = fmt"""CollectiblesNestedEntry(
@@ -39,11 +48,11 @@ proc `$`*(self: Item): string =
     chainId: {self.chainId},
     name: {self.name},
     iconUrl: {self.iconUrl},
-    collectionId: {self.collectionId},
-    collectionName: {self.collectionName},
-    isCollection: {self.isCollection},
-    communityId: {self.communityId},
+    groupId: {self.groupId},
+    groupName: {self.groupName},
     tokenType: {self.tokenType},
+    itemType: {self.itemType},
+    count: {self.count},
     ]"""
 
 proc getId*(self: Item): string =
@@ -58,17 +67,20 @@ proc getName*(self: Item): string =
 proc getIconUrl*(self: Item): string =
   return self.iconUrl
 
-proc getCollectionId*(self: Item): string =
-  return self.collectionId
+proc getGroupId*(self: Item): string =
+  return self.groupId
 
-proc getCollectionName*(self: Item): string =
-  return self.collectionName
-
-proc getIsCollection*(self: Item): bool =
-  return self.isCollection
-
-proc getCommunityId*(self: Item): string =
-  return self.communityId
+proc getGroupName*(self: Item): string =
+  return self.groupName
 
 proc getTokenType*(self: Item): int =
   return self.tokenType.int
+
+proc getItemType*(self: Item): int =
+  return self.itemType.int
+
+proc getCount*(self: Item): UInt256 =
+  return self.count
+
+proc getCountAsString*(self: Item): string =
+  return $self.count

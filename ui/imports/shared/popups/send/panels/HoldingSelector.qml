@@ -1,12 +1,7 @@
 
 import QtQml 2.15
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
-
-import shared.controls 1.0
-import shared.popups 1.0
-import shared.popups.send 1.0
-import utils 1.0
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import SortFilterProxyModel 0.2
 
@@ -14,7 +9,13 @@ import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 
+import utils 1.0
+
+import shared.controls 1.0
+import shared.popups 1.0
+import shared.popups.send 1.0
 import "../controls"
 
 Item {
@@ -73,10 +74,20 @@ Item {
             return type === Constants.TokenType.ERC20
         }
 
+        function isCommunityItem(type) {
+            return type === Constants.CollectiblesNestedItemType.CommunityCollectible ||
+                   type === Constants.CollectiblesNestedItemType.Community
+        }
+
+        function isGroupItem(type) {
+            return type === Constants.CollectiblesNestedItemType.Collection ||
+                   type === Constants.CollectiblesNestedItemType.Community
+        }
+
         property int browsingHoldingType: Constants.TokenType.ERC20
         readonly property bool isCurrentBrowsingTypeAsset: isAsset(browsingHoldingType)
-        readonly property bool isBrowsingCollection: !isCurrentBrowsingTypeAsset && !!collectiblesModel && collectiblesModel.currentCollectionUid !== ""
-        property string currentBrowsingCollectionName
+        readonly property bool isBrowsingGroup: !isCurrentBrowsingTypeAsset && !!root.collectiblesModel && root.collectiblesModel.currentGroupId !== ""
+        property string currentBrowsingGroupName
 
         property var currentHoldingType: Constants.TokenType.Unknown
 
@@ -92,7 +103,7 @@ Item {
 
         property var collectibleTextFn: function (item) {
             if (!!item) {
-                return !!item.collectionName ? item.collectionName + ": " + item.name : item.name
+                return !!item.groupName ? item.groupName + ": " + item.name : item.name
             }
             return ""
         }
@@ -120,8 +131,13 @@ Item {
             proxyRoles: [
                 FastExpressionRole {
                     name: "isCommunityAsset"
-                    expression: !!model.communityId
-                    expectedRoles: ["communityId"]
+                    expression: d.isCommunityItem(model.itemType)
+                    expectedRoles: ["itemType"]
+                },
+                FastExpressionRole {
+                    name: "isGroup"
+                    expression: d.isGroupItem(model.itemType)
+                    expectedRoles: ["itemType"]
                 }
             ]
             filters: [
@@ -137,7 +153,7 @@ Item {
                     sortOrder: Qt.DescendingOrder
                 },
                 RoleSorter {
-                    roleName: "isCollection"
+                    roleName: "isGroup"
                     sortOrder: Qt.DescendingOrder
                 }
             ]
@@ -146,8 +162,8 @@ Item {
         readonly property string searchPlaceholderText: {
             if (isCurrentBrowsingTypeAsset) {
                 return qsTr("Search for token or enter token address")
-            } else if (isBrowsingCollection) {
-                return qsTr("Search %1").arg(d.currentBrowsingCollectionName ?? qsTr("collectibles in collection"))
+            } else if (isBrowsingGroup) {
+                return qsTr("Search %1").arg(d.currentBrowsingGroupName ?? qsTr("collectibles in collection"))
             } else {
                 return qsTr("Search collectibles")
             }
@@ -187,6 +203,7 @@ Item {
               property var model: itemModel
               property var chainId: model.chainId
               property var name: model.name
+              property var tokenType: model.tokenType
               // asset
               property var symbol: model.symbol
               property var totalBalance: model.totalBalance
@@ -197,10 +214,10 @@ Item {
               property var uid: model.uid
               property var iconUrl: model.iconUrl
               property var networkIconUrl: model.networkIconUrl
-              property var collectionUid: model.collectionUid
-              property var communityId: model.communityId
-              property var collectionName: model.collectionName
-              property var isCollection: model.isCollection
+              property var groupId: model.groupId
+              property var groupName: model.groupName
+              property var isGroup: model.isGroup
+              property var count: model.count
 
               sourceComponent: d.isCurrentBrowsingTypeAsset ? assetComboBoxDelegate : collectibleComboBoxDelegate
           }
@@ -223,7 +240,7 @@ Item {
                             height: !!text ? 52 : 0 // if we bind to some property instead of hardcoded value it wont work nice when switching tabs or going inside collection and back
                             width: ListView.view.width
                             required property bool section
-                            text: Helpers.assetsSectionTitle(section, holdingItemSelector.hasCommunityTokens, d.isBrowsingCollection, d.isCurrentBrowsingTypeAsset)
+                            text: Helpers.assetsSectionTitle(section, holdingItemSelector.hasCommunityTokens, d.isBrowsingGroup, d.isCurrentBrowsingTypeAsset)
                             onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
                         }
         comboBoxControl.popup.onClosed: comboBoxControl.popup.contentItem.headerItem.clear()
@@ -275,13 +292,13 @@ Item {
             }
             CollectibleBackButtonWithInfo {
                 Layout.fillWidth: true
-                visible: d.isBrowsingCollection
+                visible: d.isBrowsingGroup
                 count: collectiblesModel.count
-                name: d.currentBrowsingCollectionName
+                name: d.currentBrowsingGroupName
                 onBackClicked: {
                     if (!d.isCurrentBrowsingTypeAsset) {
                         searchInput.reset()
-                        root.collectiblesModel.currentCollectionUid = ""
+                        root.collectiblesModel.currentGroupId = ""
                     }
                 }
             }
@@ -341,18 +358,12 @@ Item {
     Component {
         id: collectibleComboBoxDelegate
         CollectibleNestedDelegate {
-            objectName: "CollectibleSelector_ItemDelegate_" + collectionUid
+            objectName: "CollectibleSelector_ItemDelegate_" + groupId
             width: holdingItemSelector.comboBoxControl.popup.width
-            numItems: isCollection ? (!!communityId ?
-                root.collectiblesModel.getNumberOfCollectiblesInCommunity(communityId) :
-                root.collectiblesModel.getNumberOfCollectiblesInCollection(collectionUid)) : 0
             onItemSelected: {
-                if (isCollection) {
-                    d.currentBrowsingCollectionName = collectionName
-                    if (!!communityId)
-                        root.collectiblesModel.currentCollectionUid = communityId
-                    else
-                        root.collectiblesModel.currentCollectionUid = collectionUid
+                if (isGroup) {
+                    d.currentBrowsingGroupName = groupName
+                    root.collectiblesModel.currentGroupId = groupId
                 } else {
                     holdingItemSelector.selectedItem = selectedItem
                     d.currentHoldingType = tokenType
