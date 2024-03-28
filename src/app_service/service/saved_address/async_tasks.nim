@@ -40,7 +40,7 @@ proc checkForEnsNameAndUpdate(chainId: int, savedAddress: var SavedAddressDto, u
   except Exception as e:
     raise newException(RpcException, e.msg)
 
-const fetchSavedAddressesAndResolveEnsNamesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchSavedAddressesAndResolveEnsNamesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[SavedAddressesTaskArg](argEncoded)
   var response = %* {
     "response": [],
@@ -65,7 +65,7 @@ const fetchSavedAddressesAndResolveEnsNamesTask: Task = proc(argEncoded: string)
     response["error"] = %* e.msg
   arg.finish(response)
 
-const upsertSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc upsertSavedAddressTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[SavedAddressTaskArg](argEncoded)
   var response = %* {
     "response": "",
@@ -93,7 +93,7 @@ const upsertSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     response["error"] = %* e.msg
   arg.finish(response)
 
-const deleteSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc deleteSavedAddressTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[SavedAddressTaskArg](argEncoded)
   var response = %* {
     "response": "",

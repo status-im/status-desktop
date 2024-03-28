@@ -7,7 +7,7 @@ type
     timeoutInMilliseconds: int
     reason: string
 
-const timerTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc timerTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[TimerTaskArg](argEncoded)
   sleep(arg.timeoutInMilliseconds)
   arg.finish(arg.reason)

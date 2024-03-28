@@ -68,7 +68,7 @@ QtObject:
 
   proc runTimer(self: Service) =
     let arg = TimerTaskArg(
-      tptr: cast[ByteAddress](timerTask),
+      tptr: timerTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onTimeout",
       timeoutInMilliseconds: TimerIntervalInMilliseconds

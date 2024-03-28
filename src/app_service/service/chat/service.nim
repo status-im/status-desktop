@@ -184,7 +184,7 @@ QtObject:
 
   proc asyncGetActiveChats*(self: Service) =
     let arg = AsyncGetActiveChatsTaskArg(
-      tptr: cast[ByteAddress](asyncGetActiveChatsTask),
+      tptr: asyncGetActiveChatsTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncGetActiveChatsResponse",
     )
@@ -677,7 +677,7 @@ QtObject:
 
   proc asyncCheckChannelPermissions*(self: Service, communityId: string, chatId: string) =
     let arg = AsyncCheckChannelPermissionsTaskArg(
-      tptr: cast[ByteAddress](asyncCheckChannelPermissionsTask),
+      tptr: asyncCheckChannelPermissionsTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckChannelPermissionsDone",
       communityId: communityId,
@@ -704,7 +704,7 @@ QtObject:
 
   proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string, addresses: seq[string]) =
     let arg = AsyncCheckAllChannelsPermissionsTaskArg(
-      tptr: cast[ByteAddress](asyncCheckAllChannelsPermissionsTask),
+      tptr: asyncCheckAllChannelsPermissionsTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckAllChannelsPermissionsDone",
       communityId: communityId,

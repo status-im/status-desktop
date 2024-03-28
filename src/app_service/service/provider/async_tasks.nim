@@ -7,7 +7,7 @@ type
     requestType: string
     message: string
 
-const postMessageTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc postMessageTask(argEncoded: string) {.gcsafe, nimcall.} =
   var chainId = ""
   let arg = decode[PostMessageTaskArg](argEncoded)
   try:

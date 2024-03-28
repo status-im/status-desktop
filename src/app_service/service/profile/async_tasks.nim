@@ -5,7 +5,7 @@ include ../../../app/core/tasks/common
 
 import ../../../backend/accounts as status_accounts
 
-const asyncGetProfileShowcasePreferencesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetProfileShowcasePreferencesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[QObjectTaskArg](argEncoded)
   try:
     let response = status_accounts.getProfileShowcasePreferences()
@@ -22,7 +22,7 @@ type
   SaveProfileShowcasePreferencesTaskArg = ref object of QObjectTaskArg
     preferences: ProfileShowcasePreferencesDto
 
-const saveProfileShowcasePreferencesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc saveProfileShowcasePreferencesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[SaveProfileShowcasePreferencesTaskArg](argEncoded)
   try:
     let response = status_accounts.setProfileShowcasePreferences(arg.preferences.toJsonNode())

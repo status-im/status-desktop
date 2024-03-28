@@ -592,7 +592,7 @@ QtObject:
     let arg = FetchAddressesFromNotImportedMnemonicArg(
       mnemonic: mnemonic,
       paths: paths,
-      tptr: cast[ByteAddress](fetchAddressesFromNotImportedMnemonicTask),
+      tptr: fetchAddressesFromNotImportedMnemonicTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAddressesFromNotImportedMnemonicFetched",
     )
@@ -698,7 +698,7 @@ QtObject:
 
         # Start a 1 second timer for the loading screen to appear
         let arg = TimerTaskArg(
-          tptr: cast[ByteAddress](timerTask),
+          tptr: timerTask,
           vptr: cast[ByteAddress](self.vptr),
           slot: "onWaitForReencryptionTimeout",
           timeoutInMilliseconds: 1000
@@ -765,7 +765,7 @@ QtObject:
 
     let hashedCurrentPassword = hashPassword(currentPassword)
     let arg = ConvertRegularProfileKeypairToKeycardTaskArg(
-      tptr: cast[ByteAddress](convertRegularProfileKeypairToKeycardTask),
+      tptr: convertRegularProfileKeypairToKeycardTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onConvertRegularProfileKeypairToKeycard",
       accountDataJson: accountDataJson,
@@ -795,7 +795,7 @@ QtObject:
   proc convertKeycardProfileKeypairToRegular*(self: Service, mnemonic: string, currentPassword: string, newPassword: string) =
     let hashedNewPassword = hashPassword(newPassword)
     let arg = ConvertKeycardProfileKeypairToRegularTaskArg(
-      tptr: cast[ByteAddress](convertKeycardProfileKeypairToRegularTask),
+      tptr: convertKeycardProfileKeypairToRegularTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onConvertKeycardProfileKeypairToRegular",
       mnemonic: mnemonic,

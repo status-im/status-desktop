@@ -115,7 +115,7 @@ QtObject:
 
   proc requestProfileShowcasePreferences*(self: Service) =
     let arg = QObjectTaskArg(
-      tptr: cast[ByteAddress](asyncGetProfileShowcasePreferencesTask),
+      tptr: asyncGetProfileShowcasePreferencesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "asyncProfileShowcasePreferencesLoaded",
     )
@@ -138,7 +138,7 @@ QtObject:
   proc saveProfileShowcasePreferences*(self: Service, preferences: ProfileShowcasePreferencesDto) =
     let arg = SaveProfileShowcasePreferencesTaskArg(
       preferences: preferences,
-      tptr: cast[ByteAddress](saveProfileShowcasePreferencesTask),
+      tptr: saveProfileShowcasePreferencesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "asyncProfileShowcasePreferencesSaved",
     )

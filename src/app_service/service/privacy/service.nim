@@ -111,7 +111,7 @@ QtObject:
 
       let loggedInAccount = self.accountsService.getLoggedInAccount()
       let arg = ChangeDatabasePasswordTaskArg(
-        tptr: cast[ByteAddress](changeDatabasePasswordTask),
+        tptr: changeDatabasePasswordTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onChangeDatabasePasswordResponse",
         accountId: loggedInAccount.keyUid,

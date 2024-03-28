@@ -6,7 +6,7 @@ type
     currentPassword: string
     newPassword: string
 
-const changeDatabasePasswordTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc changeDatabasePasswordTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ChangeDatabasePasswordTaskArg](argEncoded)
   let output = %* {
     "error": "",
