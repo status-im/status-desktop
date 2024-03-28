@@ -33,6 +33,25 @@ QtObject {
 
     property var communityItemsModel: chatCommunitySectionModule.model
 
+    readonly property var myRevealedAddressesForCurrentCommunity: {
+        try {
+            let revealedAddresses = root.chatCommunitySectionModule.myRevealedAddressesStringForCurrentCommunity
+            let revealedAddressArray = JSON.parse(revealedAddresses)
+            return revealedAddressArray.map(addr => addr.toLowerCase())
+        } catch (e) {
+            console.error("Error parsing my revealed addresses", e)
+        }
+        return []
+    }
+    readonly property string myRevealedAirdropAddressForCurrentCommunity:
+        root.chatCommunitySectionModule.myRevealedAirdropAddressForCurrentCommunity.toLowerCase()
+    
+    property var selectedAddressesForPermissionsModel
+    onSelectedAddressesForPermissionsModelChanged: {
+        root.chatCommunitySectionModule.selectedAddressesForPermissionsModel = selectedAddressesForPermissionsModel
+    }
+    readonly property var permissionsModelWithSelectedAddresses: root.chatCommunitySectionModule.permissionsModelWithSelectedAddresses
+    
     property var assetsModel: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.tokenList
 
@@ -57,17 +76,8 @@ QtObject {
         }
     }
 
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
-    }
-
     readonly property bool allChannelsAreHiddenBecauseNotPermitted: root.chatCommunitySectionModule.allChannelsAreHiddenBecauseNotPermitted &&
                                                                     !root.chatCommunitySectionModule.requiresTokenPermissionToJoin
-
-    readonly property bool requirementsCheckPending: root.communitiesModuleInst.requirementsCheckPending
-
-    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
-                                     root.communitiesModuleInst.spectatedCommunityPermissionModel : null
 
     readonly property string overviewChartData: chatCommunitySectionModule.overviewChartData
 
@@ -695,7 +705,13 @@ QtObject {
         }
     }
 
-    function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
+    function requestRevealedAddresses() {
+        print ("requestRevealedAddresses")
+        console.trace()
+        root.chatCommunitySectionModule.requestRevealedAddresses()
+    }
+
+    function updatePermissionsModel(sharedAddresses) {
+        root.chatCommunitySectionModule.checkPermissions(JSON.stringify(sharedAddresses))
     }
 }

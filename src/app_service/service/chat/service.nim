@@ -98,8 +98,15 @@ type
     checkAllChannelsPermissionsResponse*: CheckAllChannelsPermissionsResponseDto
 
   CheckChannelsPermissionsErrorArgs* = ref object of Args
+     communityId*: string
+     error*: string
+
+  CheckPermissionsWithSelectedAddresesResponseArgs* = ref object of Args
     communityId*: string
     error*: string
+    selectedAddresses*: seq[string]
+    channelPermissions*: CheckAllChannelsPermissionsResponseDto
+    communityPermissions*: community_dto.CheckPermissionsToJoinResponseDto
 
 # Signals which may be emitted by this service:
 const SIGNAL_CHANNEL_GROUPS_LOADED* = "channelGroupsLoaded"
@@ -125,6 +132,7 @@ const SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND* = "chatRequestUpdateAfterSend"
 const SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE* = "checkChannelPermissionsResponse"
 const SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE* = "checkAllChannelsPermissionsResponse"
 const SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED* = "checkAllChannelsPermissionsFailed"
+const SIGNAL_CHECK_PERMISSIONS_WITH_SELECTED_ADDRESES_RESPONSE* = "checkPermissionsWithSelectedAddresesResponse"
 
 QtObject:
   type Service* = ref object of QObject
@@ -861,6 +869,7 @@ QtObject:
   proc onAsyncCheckAllChannelsPermissionsDone*(self: Service, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson
     let communityId = rpcResponseObj{"communityId"}.getStr()
+    echo "onAsyncCheckAllChannelsPermissionsDone: ", rpcResponseObj
     try:
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj["error"].getStr)
@@ -877,5 +886,46 @@ QtObject:
       error "error checking all channels permissions: ", errMsg
       self.events.emit(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED, CheckChannelsPermissionsErrorArgs(
         communityId: communityId,
+        error: errMsg,
+      ))
+
+  proc asyncCheckPermissionsWithSelectedAddreses*(self: Service, communityId: string, addresses: seq[string]) =
+    let arg = AsyncCheckPermissionsWithSelectedAddresesTaskArg(
+      tptr: cast[ByteAddress](asyncCheckPermissionsWithSelectedAddresesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncCheckPermissionsWithSelectedAddresesDone",
+      communityId: communityId,
+      addresses: addresses,
+    )
+    self.threadpool.start(arg)
+
+  proc onAsyncCheckPermissionsWithSelectedAddresesDone*(self: Service, rpcResponse: string) {.slot.} =
+
+    echo "onAsyncCheckPermissionsWithSelectedAddresesDone: ", rpcResponse
+    let rpcResponseObj = rpcResponse.parseJson
+    let communityId = rpcResponseObj{"communityId"}.getStr()
+    let addresses = rpcResponseObj{"addresses"}.getStr().split(",")
+    let error = rpcResponseObj{"error"}.getStr()
+
+    if error != "":
+      error "error checking permissions with selected addresses: ", error
+      self.events.emit(SIGNAL_CHECK_PERMISSIONS_WITH_SELECTED_ADDRESES_RESPONSE, CheckPermissionsWithSelectedAddresesResponseArgs(
+        communityId: communityId,
+        selectedAddresses: addresses,
+        error: error,
+      ))
+      return
+
+    try:
+      let channelPermissionsResponse = rpcResponseObj{"channelsResponse"}.toCheckAllChannelsPermissionsResponseDto()
+      let communityPermissionsResponse = rpcResponseObj{"communityResponse"}.toCheckPermissionsToJoinResponseDto()
+
+      self.events.emit(SIGNAL_CHECK_PERMISSIONS_WITH_SELECTED_ADDRESES_RESPONSE, CheckPermissionsWithSelectedAddresesResponseArgs(communityId: communityId, channelPermissions: channelPermissionsResponse, communityPermissions: communityPermissionsResponse, selectedAddresses: addresses, error: ""))
+    except Exception as e:
+      let errMsg = e.msg
+      error "error checking permissions with selected addresses: ", errMsg
+      self.events.emit(SIGNAL_CHECK_PERMISSIONS_WITH_SELECTED_ADDRESES_RESPONSE, CheckPermissionsWithSelectedAddresesResponseArgs(
+        communityId: communityId,
+        selectedAddresses: addresses,
         error: errMsg,
       ))

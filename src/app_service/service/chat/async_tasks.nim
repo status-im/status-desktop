@@ -60,3 +60,28 @@ const asyncCheckAllChannelsPermissionsTask: Task = proc(argEncoded: string) {.gc
       "communityId": arg.communityId,
       "error": e.msg,
     })
+
+type
+  AsyncCheckPermissionsWithSelectedAddresesTaskArg = ref object of QObjectTaskArg
+    communityId: string
+    addresses: seq[string]
+
+const asyncCheckPermissionsWithSelectedAddresesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncCheckPermissionsWithSelectedAddresesTaskArg](argEncoded)
+  try:
+    let channelsPermissionsResponse = status_communities.checkAllCommunityChannelsPermissions(arg.communityId, arg.addresses)
+    let communityPermissionsResponse = status_communities.checkPermissionsToJoinCommunity(arg.communityId, arg.addresses)
+
+    arg.finish(%* {
+      "channelsResponse": channelsPermissionsResponse.result,
+      "communityResponse": communityPermissionsResponse.result,
+      "communityId": arg.communityId,
+      "addresses": arg.addresses,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "addresses": arg.addresses,
+      "error": e.msg,
+    })

@@ -53,6 +53,8 @@ type
     chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
     chatsLoaded: bool
+    checkingPermissionsWithSelectedAddresses: bool
+    selectedAddressesToCheckPermissions: seq[string]
 
 # Forward declaration
 proc buildChatSectionUI(
@@ -120,6 +122,8 @@ proc newModule*(
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
   result.chatsLoaded = false
+  result.checkingPermissionsWithSelectedAddresses = false
+  result.selectedAddressesToCheckPermissions = @[]
 
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
 
@@ -1555,3 +1559,125 @@ method openCommunityChatAndScrollToMessage*(self: Module, chatId: string, messag
   if chatId in self.chatContentModules:
     self.setActiveItem(chatId)
     self.chatContentModules[chatId].scrollToMessage(messageId)
+
+method requestRevealedAddresses*(self: Module) =
+  if(not self.controller.isCommunity()):
+    return
+  self.controller.asyncGetRevealedAccountsForMember(singletonInstance.userProfile.getPubKey())
+
+method onCommunityMemberRevealedAccountsLoaded*(self: Module, memberPubkey: string,
+    revealedAccounts: seq[RevealedAccount]) =
+
+  if memberPubkey == singletonInstance.userProfile.getPubKey():
+    var addresses: seq[string] = @[]
+    var airdropAddress = ""
+    for revealedAccount in revealedAccounts:
+      addresses.add(revealedAccount.address)
+      if revealedAccount.isAirdropAddress:
+        airdropAddress = revealedAccount.address
+
+    self.view.setMyRevealedAddressesForCurrentCommunity($(%*addresses), airdropAddress)
+
+proc checkPermissionsForSelectedAddresses(self: Module, sharedAddresses: seq[string]) =
+  if(not self.controller.isCommunity()):
+    return
+
+  self.selectedAddressesToCheckPermissions = sharedAddresses
+
+  let community = self.controller.getMyCommunity()
+  var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
+
+  for id, tokenPermission in community.tokenPermissions:
+    let chats = community.getCommunityChats(tokenPermission.chatIds)
+    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
+    tokenPermissionsItems.add(tokenPermissionItem)
+
+  self.view.tokenPermissionsModelWithSelectedAddresses.setItems(tokenPermissionsItems)
+
+  self.controller.asyncCheckPermissionsWithSelectedAddresses(sharedAddresses)
+  self.checkingPermissionsWithSelectedAddresses = true
+
+  self.view.setCheckingPermissionsWithSelectedAddresses(inProgress = true)
+
+method getSelectedAddressesForPermissionsCheck*(self: Module): seq[string] =
+  return self.selectedAddressesToCheckPermissions
+
+method setSelectedAddressesForPermissionsCheck*(self: Module, addresses: seq[string]) =
+  if self.selectedAddressesToCheckPermissions == addresses: return
+
+  self.selectedAddressesToCheckPermissions = addresses
+  self.view.emitSelectedAddressesForPermissionsModelChanged()
+  self.checkPermissionsForSelectedAddresses(addresses)
+
+proc applyPermissionsWithSelectedAddresses(self: Module, permissions: Table[string, CheckPermissionsResultDto]) =
+  let community = self.controller.getMyCommunity()
+  for id, criteriaResult in permissions:
+    if not community.tokenPermissions.hasKey(id):
+      warn "unknown permission", id
+      continue
+
+    let tokenPermissionItem = self.view.tokenPermissionsModelWithSelectedAddresses.getItemById(id)
+    if tokenPermissionItem.id == "":
+      warn "no permission in model", id
+      continue
+
+    var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
+    var permissionSatisfied = true
+
+    for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
+
+      let updatedTokenCriteriaItem = initTokenCriteriaItem(
+        tokenCriteriaItem.symbol,
+        tokenCriteriaItem.name,
+        tokenCriteriaItem.amount,
+        tokenCriteriaItem.`type`,
+        tokenCriteriaItem.ensPattern,
+        criteriaResult.criteria[index]
+      )
+
+      if criteriaResult.criteria[index] == false:
+        permissionSatisfied = false
+
+      updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
+
+    let updatedTokenPermissionItem = initTokenPermissionItem(
+        tokenPermissionItem.id,
+        tokenPermissionItem.`type`,
+        updatedTokenCriteriaItems,
+        tokenPermissionItem.getChatList().getItems(),
+        tokenPermissionItem.isPrivate,
+        permissionSatisfied,
+        tokenPermissionItem.state
+    )
+    discard updatedTokenPermissionItem
+    self.view.tokenPermissionsModelWithSelectedAddresses.updateItem(id, updatedTokenPermissionItem)
+
+proc onCommunityCheckPermissionsWithSelectedAddressesFailed(self: Module) =
+  self.checkingPermissionsWithSelectedAddresses = false
+  self.view.setCheckingPermissionsWithSelectedAddresses(inProgress = false)
+  self.view.emitFailedToCheckPermissionsWithSelectedAddresses()
+
+method onCommunityCheckPermissionsWithSelectedAddressesResponse*(self: Module,
+                                                                addresses: seq[string],
+                                                                communityPermissions: CheckPermissionsToJoinResponseDto,
+                                                                channelPermissions: CheckAllChannelsPermissionsResponseDto,
+                                                                error: string) =
+  echo "onCommunityCheckPermissionsWithSelectedAddressesResponse", $addresses, $communityPermissions, $channelPermissions, error
+  if not self.checkingPermissionsWithSelectedAddresses and self.selectedAddressesToCheckPermissions != addresses:
+    return
+
+  if error.len > 0:
+    self.onCommunityCheckPermissionsWithSelectedAddressesFailed()
+    return
+
+  self.applyPermissionsWithSelectedAddresses(communityPermissions.permissions)
+  for _, channelPermissionResponse in channelPermissions.channels:
+    self.applyPermissionsWithSelectedAddresses(
+      channelPermissionResponse.viewOnlyPermissions.permissions,
+    )
+    self.applyPermissionsWithSelectedAddresses(
+      channelPermissionResponse.viewAndPostPermissions.permissions,
+    )
+
+  self.checkingPermissionsWithSelectedAddresses = false
+  self.view.setCheckingPermissionsWithSelectedAddresses(inProgress = false)

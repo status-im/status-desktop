@@ -421,3 +421,35 @@ method communityContainsChat*(self: AccessInterface, chatId: string): bool {.bas
 
 method openCommunityChatAndScrollToMessage*(self: AccessInterface, chatId: string, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method requestRevealedAddresses*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, memberPubkey: string,
+    revealedAccounts: seq[RevealedAccount]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkPermissions*(self: AccessInterface, sharedAddresses: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckPermissionsToJoinFailed*(self: AccessInterface, ValueErrorerror: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckAllChannelPermissionsFailed*(self: AccessInterface, ValueErrorerror: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getSelectedAddressesForPermissionsCheck*(self: AccessInterface): seq[string] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setSelectedAddressesForPermissionsCheck*(self: AccessInterface, addresses: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckPermissionsWithSelectedAddressesResponse*(self: AccessInterface, 
+    addresses: seq[string],
+    communityPermissions: CheckPermissionsToJoinResponseDto,
+    channelPermissions: CheckAllChannelsPermissionsResponseDto,
+    error: string ) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckPermissionsWithSelectedAddressesFailed*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

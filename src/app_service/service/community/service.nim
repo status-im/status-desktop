@@ -1614,6 +1614,8 @@ QtObject:
   proc onAsyncCheckPermissionsToJoinDone*(self: Service, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson
     let communityId = rpcResponseObj{"communityId"}.getStr()
+
+    echo "Check permissions to join rpcResponseObj: ", $rpcResponseObj
     try:
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj["error"].getStr)

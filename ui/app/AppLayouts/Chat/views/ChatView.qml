@@ -262,7 +262,7 @@ StatusSectionLayout {
             requiresRequest: !root.amIMember
             requirementsMet: (viewOnlyPermissionsSatisfied && viewOnlyPermissionsModel.count > 0) ||
                              (viewAndPostPermissionsSatisfied && viewAndPostPermissionsModel.count > 0)
-            requirementsCheckPending: root.chatContentModule.permissionsCheckOngoing
+            requirementsCheckPending: root.rootStore.permissionsCheckOngoing
             onRequestToJoinClicked: root.requestToJoinClicked()
             onInvitationPendingClicked: root.invitationPendingClicked()
         }

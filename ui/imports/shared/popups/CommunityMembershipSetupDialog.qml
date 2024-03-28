@@ -49,6 +49,8 @@ StatusStackModal {
     property string currentAirdropAddress: ""
     onCurrentAirdropAddressChanged: d.reEvaluateModels()
 
+    property var selectedAddresses: d.getSelectedAddresses().addresses
+
     property var getCurrencyAmount: function (balance, symbol){}
 
     property var canProfileProveOwnershipOfProvidedAddressesFn: function(addresses) { return false }
@@ -183,8 +185,27 @@ StatusStackModal {
             }
         }
 
-        readonly property var initialAddressesModel: SortFilterProxyModel {
+        property var initialAddressesModel: SortFilterProxyModel {
             sourceModel: root.walletAccountsModel
+            sorters: [
+                FastExpressionSorter {
+                    function sortPredicate(lhs, rhs) {
+                        if (lhs.walletType === rhs.walletType) return 0
+                        return lhs.walletType === Constants.generatedWalletType ? -1 : 1
+                    }
+
+                    expression: {
+                        return sortPredicate(modelLeft, modelRight)
+                    }
+                    expectedRoles: ["walletType"]
+                },
+                RoleSorter {
+                    roleName: "position"
+                },
+                RoleSorter {
+                    roleName: "name"
+                }
+            ]
         }
 
         function proceedToSigningOrSubmitRequest(uidOfComponentThisFunctionIsCalledFrom) {

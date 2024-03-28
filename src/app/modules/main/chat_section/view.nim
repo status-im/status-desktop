@@ -24,6 +24,8 @@ QtObject:
       loadingHistoryMessagesInProgress: bool
       tokenPermissionsModel: TokenPermissionsModel
       tokenPermissionsVariant: QVariant
+      tokenPermissionsModelWithSelectedAddresses: TokenPermissionsModel
+      tokenPermissionsVariantWithSelectedAddresses: QVariant
       allTokenRequirementsMet: bool
       requiresTokenPermissionToJoin: bool
       amIMember: bool
@@ -35,7 +37,10 @@ QtObject:
       allChannelsAreHiddenBecauseNotPermitted: bool
       memberMessagesModel: member_msg_model.Model
       memberMessagesModelVariant: QVariant
-
+      myRevealedAddressesStringForCurrentCommunity: string
+      myRevealedAirdropAddressForCurrentCommunity: string
+      checkingPermissionsInProgress: bool
+      checkingPermissionsWithSelectedAddresses: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -49,6 +54,7 @@ QtObject:
     self.editCategoryChannelsModel.delete
     self.editCategoryChannelsVariant.delete
     self.tokenPermissionsModel.delete
+    self.tokenPermissionsModelWithSelectedAddresses.delete
     self.tokenPermissionsVariant.delete
     self.memberMessagesModel.delete
     self.memberMessagesModelVariant.delete
@@ -72,6 +78,8 @@ QtObject:
     result.loadingHistoryMessagesInProgress = false
     result.tokenPermissionsModel = newTokenPermissionsModel()
     result.tokenPermissionsVariant = newQVariant(result.tokenPermissionsModel)
+    result.tokenPermissionsModelWithSelectedAddresses = newTokenPermissionsModel()
+    result.tokenPermissionsVariantWithSelectedAddresses = newQVariant(result.tokenPermissionsModelWithSelectedAddresses)
     result.amIMember = false
     result.requiresTokenPermissionToJoin = false
     result.chatsLoaded = false
@@ -79,6 +87,7 @@ QtObject:
     result.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin = false
     result.memberMessagesModel = member_msg_model.newModel()
     result.memberMessagesModelVariant = newQVariant(result.memberMessagesModel)
+    result.checkingPermissionsWithSelectedAddresses = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -381,6 +390,18 @@ QtObject:
   QtProperty[QVariant] permissionsModel:
     read = getTokenPermissionsModel
 
+  proc tokenPermissionsModelWithSelectedAddresses*(self: View): TokenPermissionsModel =
+    result = self.tokenPermissionsModelWithSelectedAddresses
+  
+  proc getTokenPermissionsModelWithSelectedAddresses(self: View): QVariant{.slot.} =  
+    if not self.isCommunity():
+      return newQVariant()
+    
+    return self.tokenPermissionsVariantWithSelectedAddresses
+
+  QtProperty[QVariant] permissionsModelWithSelectedAddresses:
+    read = getTokenPermissionsModelWithSelectedAddresses
+
   proc createOrEditCommunityTokenPermission*(self: View, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: string, isPrivate: bool) {.slot.} =
 
     let chatIDs = channelIDs.split(',')
@@ -534,3 +555,61 @@ QtObject:
 
   proc openCommunityChatAndScrollToMessage*(self: View, chatId: string, messageId: string) {.slot.} =
     self.delegate.openCommunityChatAndScrollToMessage(chatId, messageId)
+
+  proc myRevealedAirdropAddressesForCurrentCommunityChanged*(self: View) {.signal.}
+
+  proc setMyRevealedAddressesForCurrentCommunity*(self: View, revealedAddress, airdropAddress: string) =
+    self.myRevealedAddressesStringForCurrentCommunity = revealedAddress
+    self.myRevealedAirdropAddressForCurrentCommunity = airdropAddress
+    self.myRevealedAirdropAddressesForCurrentCommunityChanged()
+
+  proc getMyRevealedAddressesStringForCurrentCommunity*(self: View): string {.slot.} =
+    return self.myRevealedAddressesStringForCurrentCommunity
+
+  QtProperty[string] myRevealedAddressesStringForCurrentCommunity:
+    read = getMyRevealedAddressesStringForCurrentCommunity
+    notify = myRevealedAirdropAddressesForCurrentCommunityChanged
+
+
+  proc getMyRevealedAirdropAddressStringForCurrentCommunity*(self: View): string {.slot.} =
+    return self.myRevealedAirdropAddressForCurrentCommunity
+
+  QtProperty[string] myRevealedAirdropAddressForCurrentCommunity:
+    read = getMyRevealedAirdropAddressStringForCurrentCommunity
+    notify = myRevealedAirdropAddressesForCurrentCommunityChanged
+
+  proc checkingPermissionsWithSelectedAddressesChanged*(self: View) {.signal.}
+
+  proc setCheckingPermissionsWithSelectedAddresses*(self: View, inProgress: bool) =
+    if (self.checkingPermissionsWithSelectedAddresses == inProgress): return
+    self.checkingPermissionsWithSelectedAddresses = inProgress
+    self.checkingPermissionsWithSelectedAddressesChanged()
+
+  proc getCheckingPermissionsWithSelectedAddresses*(self: View): bool {.slot.} =
+    return self.checkingPermissionsWithSelectedAddresses
+
+  QtProperty[bool] checkingPermissionsWithSelectedAddressesInProgress:
+    read = getCheckingPermissionsWithSelectedAddresses
+    notify = checkingPermissionsWithSelectedAddressesChanged
+
+  proc failedToCheckPermissionsWithSelectedAddresses*(self: View) {.signal.}
+  proc emitFailedToCheckPermissionsWithSelectedAddresses*(self: View) =
+    self.failedToCheckPermissionsWithSelectedAddresses()
+
+  proc selectedAddressesForPermissionsModelChanged*(self: View) {.signal.}
+  proc emitSelectedAddressesForPermissionsModelChanged*(self: View) =
+    self.selectedAddressesForPermissionsModelChanged()
+
+  proc getSelectedAddressesForPermissionsModel*(self: View): string {.slot.} =
+    let addresses = self.delegate.getSelectedAddressesForPermissionsCheck()
+    return $(%*addresses)
+  
+  proc setSelectedAddressesForPermissionsModel*(self: View, addressesToShare: string) {.slot.} =
+    echo "setSelectedAddressesForPermissionsModel", addressesToShare
+    let addresses = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
+    self.delegate.setSelectedAddressesForPermissionsCheck(addresses)
+
+  QtProperty[QVariant] selectedAddressesForPermissionsModel:
+    read = getSelectedAddressesForPermissionsModel
+    write = setSelectedAddressesForPermissionsModel
+    notify = selectedAddressesForPermissionsModelChanged

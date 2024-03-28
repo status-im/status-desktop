@@ -298,6 +298,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED) do(e: Args):
       let args = CheckPermissionsToJoinFailedArgs(e)
       if (args.communityId == self.sectionId):
+        self.delegate.onCommunityCheckPermissionsToJoinFailed(args.error)
         self.delegate.setPermissionsToJoinCheckOngoing(false)
 
     self.events.on(SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE) do(e: Args):
@@ -313,6 +314,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
       let args = CheckChannelsPermissionsErrorArgs(e)
       if args.communityId == self.sectionId:
+       self.delegate.onCommunityCheckAllChannelPermissionsFailed(args.error)
        self.delegate.setPermissionsToJoinCheckOngoing(false)
 
     self.events.on(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN) do(e: Args):
@@ -410,6 +412,19 @@ proc init*(self: Controller) =
         if isSectionEmpty and not self.delegate.communityContainsChat(chatId):
           continue
         self.delegate.onCommunityMemberMessagesDeleted(messagesIds)
+
+  self.events.on(SIGNAL_COMMUNITY_MEMBER_REVEALED_ACCOUNTS_LOADED) do(e: Args):
+    let args = CommunityMemberRevealedAccountsArgs(e)
+    if args.communityId == self.sectionId:
+      self.delegate.onCommunityMemberRevealedAccountsLoaded(
+        args.memberPubkey,
+        args.memberRevealedAccounts,
+      )
+
+  self.events.on(SIGNAL_CHECK_PERMISSIONS_WITH_SELECTED_ADDRESES_RESPONSE) do(e: Args):
+    let args = CheckPermissionsWithSelectedAddresesResponseArgs(e)
+    if args.communityId == self.sectionId:
+      self.delegate.onCommunityCheckPermissionsWithSelectedAddressesResponse(args.selectedAddresses, args.communityPermissions, args.channelPermissions, args.error)
 
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
@@ -750,3 +765,15 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 
 proc deleteCommunityMemberMessages*(self: Controller, memberPubKey: string, messageId: string, chatId: string) =
   self.messageService.deleteCommunityMemberMessages(self.getMySectionId(), memberPubKey, messageId, chatId)
+
+proc asyncGetRevealedAccountsForMember*(self: Controller, memberPubkey: string) =
+  self.communityService.asyncGetRevealedAccountsForMember(self.getMySectionId(), memberPubkey)
+
+proc asyncCheckPermissionsToJoin*(self: Controller, addressesToShare: seq[string]) =
+  self.communityService.asyncCheckPermissionsToJoin(self.getMySectionId(), addressesToShare)
+
+proc asyncCheckAllChannelsPermissions*(self: Controller, sharedAddresses: seq[string]) =
+  self.chatService.asyncCheckAllChannelsPermissions(self.getMySectionId(), sharedAddresses)
+
+proc asyncCheckPermissionsWithSelectedAddresses*(self: Controller, addresses: seq[string]) =
+  self.chatService.asyncCheckPermissionsWithSelectedAddreses(self.getMySectionId(), addresses)

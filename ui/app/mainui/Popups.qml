@@ -695,8 +695,16 @@ QtObject {
 
             CommunityMembershipSetupDialog {
                 id: dialogRoot
+                
+                readonly property var chatStore: ChatStore.RootStore {
+                    contactsStore: root.rootStore.contactStore
+                    chatCommunitySectionModule: {
+                        root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(dialogRoot.communityId)
+                        return root.rootStore.mainModuleInst.getCommunitySectionModule()
+                    }
+                }
 
-                requirementsCheckPending: root.rootStore.requirementsCheckPending
+                requirementsCheckPending: chatStore.chatCommunitySectionModule.requirementsCheckPending
 
                 walletAccountsModel: root.rootStore.walletAccountsModel
                 walletCollectiblesModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
@@ -704,12 +712,19 @@ QtObject {
                 canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
-                permissionsModel: {
-                    root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
-                    return root.rootStore.permissionsModel
-                }
+                permissionsModel: chatStore.permissionsModelWithSelectedAddresses
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
+
+                Binding {
+                    target: chatStore
+                    property: "selectedAddressesForPermissionsModel"
+                    value: {
+                        let sorted = selectedAddresses
+                        sorted.sort((a, b) => a.localeCompare(b))
+                        return JSON.stringify(sorted)
+                    }
+                }
 
                 getCurrencyAmount: function (balance, symbol) {
                     return currencyStore.getCurrencyAmount(balance, symbol)
@@ -737,29 +752,7 @@ QtObject {
                     root.rootStore.cancelPendingRequest(dialogRoot.communityId)
                 }
 
-                Connections {
-                    target: root.communitiesStore.communitiesModuleInst
-                    function onCommunityAccessRequested(communityId: string) {
-                        if (communityId !== dialogRoot.communityId)
-                            return
-                        root.communitiesStore.spectateCommunity(communityId);
-                        dialogRoot.close();
-                    }
-                    function onCommunityAccessFailed(communityId: string, error: string) {
-                        if (communityId !== dialogRoot.communityId)
-                            return
-                        dialogRoot.close();
-                    }
-                }
-
-                onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
-                }
-
-                onAboutToShow: { root.rootStore.communityKeyToImport = dialogRoot.communityId; }
-
                 onClosed: {
-                    root.rootStore.communityKeyToImport = "";
                     root.rootStore.cleanJoinEditCommunityData()
                 }
 
@@ -782,6 +775,19 @@ QtObject {
                         if (!!dialogRoot.replaceItem) {
                             dialogRoot.replaceLoader.item.allSigned()
                         }
+                    }
+
+                    function onCommunityAccessRequested(communityId: string) {
+                        if (communityId !== dialogRoot.communityId)
+                            return
+                        root.communitiesStore.spectateCommunity(communityId);
+                        dialogRoot.close();
+                    }
+                    
+                    function onCommunityAccessFailed(communityId: string, error: string) {
+                        if (communityId !== dialogRoot.communityId)
+                            return
+                        dialogRoot.close();
                     }
                 }
             }
@@ -939,12 +945,12 @@ QtObject {
 
                 isEditMode: true
 
-                currentSharedAddresses: root.rootStore.myRevealedAddressesForCurrentCommunity
-                currentAirdropAddress: root.rootStore.myRevealedAirdropAddressForCurrentCommunity
+                currentSharedAddresses: chatStore.myRevealedAddressesForCurrentCommunity
+                currentAirdropAddress: chatStore.myRevealedAirdropAddressForCurrentCommunity
 
                 communityName: chatStore.sectionDetails.name
                 communityIcon: chatStore.sectionDetails.image
-                requirementsCheckPending: root.rootStore.requirementsCheckPending
+                requirementsCheckPending: chatStore.requirementsCheckPending
 
                 introMessage: chatStore.sectionDetails.introMessage
 
@@ -955,19 +961,22 @@ QtObject {
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                 walletCollectiblesModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
 
-                permissionsModel: {
-                    root.rootStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
-                    return root.rootStore.permissionsModel
-                }
+                permissionsModel: chatStore.permissionsModelWithSelectedAddresses
                 assetsModel: chatStore.assetsModel
                 collectiblesModel: chatStore.collectiblesModel
+
+                Binding {
+                    target: chatStore
+                    property: "selectedAddressesForPermissionsModel"
+                    value: JSON.stringify(selectedAddresses)
+                }
 
                 getCurrencyAmount: function (balance, symbol) {
                     return root.currencyStore.getCurrencyAmount(balance, symbol)
                 }
 
                 onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(editSharedAddressesPopup.communityId, sharedAddresses)
+                    chatStore.updatePermissionsModel(sharedAddresses)
                 }
 
                 onPrepareForSigning: {
@@ -985,11 +994,15 @@ QtObject {
                 }
 
                 onEditRevealedAddresses: {
-                    root.rootStore.joinCommunityOrEditSharedAddresses()
+                    root.rootStore.chatCommunitySectionModule.checkPermissionsForSelectedAddresses(JSON.stringify(sharedAddresses))
                 }
 
                 onClosed: {
                     root.rootStore.cleanJoinEditCommunityData()
+                }
+
+                Component.onCompleted: {
+                    chatStore.requestRevealedAddresses()
                 }
 
                 Connections {

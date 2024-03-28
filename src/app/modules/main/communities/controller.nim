@@ -168,25 +168,6 @@ proc init*(self: Controller) =
     let args = CommunityTokenMetadataArgs(e)
     self.delegate.onCommunityTokenMetadataAdded(args.communityId, args.tokenMetadata)
 
-  self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE) do(e: Args):
-    let args = CheckPermissionsToJoinResponseArgs(e)
-    self.delegate.onCommunityCheckPermissionsToJoinResponse(args.communityId, args.checkPermissionsToJoinResponse)
-
-  self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE) do(e: Args):
-    let args = CheckAllChannelsPermissionsResponseArgs(e)
-    self.delegate.onCommunityCheckAllChannelsPermissionsResponse(
-      args.communityId,
-      args.checkAllChannelsPermissionsResponse,
-    )
-
-  self.events.on(SIGNAL_COMMUNITY_MEMBER_REVEALED_ACCOUNTS_LOADED) do(e: Args):
-    let args = CommunityMemberRevealedAccountsArgs(e)
-    self.delegate.onCommunityMemberRevealedAccountsLoaded(
-      args.communityId,
-      args.memberPubkey,
-      args.memberRevealedAccounts,
-    )
-
   self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e: Args):
     self.delegate.onWalletAccountTokensRebuilt()
 
@@ -198,14 +179,6 @@ proc init*(self: Controller) =
     if args.uniqueIdentifier != UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER:
       return
     self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
-
-    self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED) do(e: Args):
-      let args = CheckPermissionsToJoinFailedArgs(e)
-      self.delegate.onCommunityCheckPermissionsToJoinFailed(args.communityId, args.error)
-
-    self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
-      let args = CheckChannelsPermissionsErrorArgs(e)
-      self.delegate.onCommunityCheckAllChannelPermissionsFailed(args.communityId, args.error)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
@@ -406,15 +379,6 @@ proc authenticate*(self: Controller) =
 
 proc getCommunityPublicKeyFromPrivateKey*(self: Controller, communityPrivateKey: string): string =
   result = self.communityService.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
-
-proc asyncCheckPermissionsToJoin*(self: Controller, communityId: string, addressesToShare: seq[string]) =
-  self.communityService.asyncCheckPermissionsToJoin(communityId, addressesToShare)
-
-proc asyncCheckAllChannelsPermissions*(self: Controller, communityId: string, sharedAddresses: seq[string]) =
-  self.chatService.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
-
-proc asyncGetRevealedAccountsForMember*(self: Controller, communityId, memberPubkey: string) =
-  self.communityService.asyncGetRevealedAccountsForMember(communityId, memberPubkey)
 
 proc generateJoiningCommunityRequestsForSigning*(self: Controller, memberPubKey: string, communityId: string,
   addressesToReveal: seq[string]): seq[SignParamsDto] =
