@@ -76,6 +76,7 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703271', 'Member role cannot delete channels')
 @pytest.mark.case(703269, 703270, 703271)
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/618")
 def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow):
     with step('Choose community user is not owner of'):
         community_screen = main_screen.left_panel.select_community('Super community')
