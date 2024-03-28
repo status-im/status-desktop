@@ -11,7 +11,6 @@ import constants
 import driver
 from constants import UserAccount
 from constants.syncing import SyncingSettings
-from gui.components.community.authenticate_popup import AuthenticatePopup
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.settings.sync_new_device_popup import SyncNewDevicePopup
@@ -35,13 +34,12 @@ def sync_screen(main_window) -> SyncCodeView:
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
 @pytest.mark.case(703592)
-@pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'user_account_one'])
 @pytest.mark.critical
-def test_sync_device_during_onboarding(multiple_instances, user_data):
-    user: UserAccount = constants.user_account_one
+def test_sync_device_during_onboarding(multiple_instances):
+    user: UserAccount = constants.user_for_syncing
     main_window = MainWindow()
 
-    with (multiple_instances() as aut_one, multiple_instances() as aut_two):
+    with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
         with step('Get syncing code in first instance'):
             aut_one.attach()
             main_window.prepare()

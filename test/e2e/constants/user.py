@@ -24,13 +24,16 @@ group_chat_user_3 = UserAccount('group_chat_user_3', '29T\I8Cv_G', [
     'bless', 'enter', 'wet', 'foot', 'lazy', 'will', 'reform', 'enemy', 'rubber', 'void', 'journey', 'fence'
 ], '0x4b04b8e22e8295d0ae3177774e4acfd0badacf09')
 
-# user names and passwords for join community test
+# usernames and passwords for join community test
 community_user_1 = UserAccount('community_user_1', '|Br2w547YN', [
     'skirt', 'tired', 'finger', 'dinosaur', 'equal', 'garlic', 'snap', 'tired', 'friend', 'rack', 'net', 'imitate'
 ], '0x21371358f1ba09204475e87444962ea4519771e1')
 community_user_2 = UserAccount('community_user_2', 'vSq5T702_p', [
     'will', 'horn', 'tail', 'stock', 'puzzle', 'warfare', 'pledge', 'uniform', 'ozone', 'taste', 'someone', 'silk'
 ], '0x935034600f2ba486324cee6ae3f96ad8c8915ac6')
+
+user_for_syncing = UserAccount(''.join((random.choices(string.ascii_letters +
+                                   string.digits, k=24))), '1vTC2,4R1=', [], '')
 
 user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345', [], '')
 user_account_one_changed_name = UserAccount('NewUserName', '0000000000', [], '')

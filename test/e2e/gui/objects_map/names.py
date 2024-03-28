@@ -658,7 +658,7 @@ mainWindow_SyncCodeView = {"container": statusDesktop_mainWindow, "type": "SyncC
 mainWindow_switchTabBar_StatusSwitchTabBar_2 = {"container": statusDesktop_mainWindow, "id": "switchTabBar", "type": "StatusSwitchTabBar", "unnamed": 1, "visible": True}
 switchTabBar_Enter_sync_code_StatusSwitchTabButton = {"checkable": True, "container": mainWindow_switchTabBar_StatusSwitchTabBar_2, "text": "Enter sync code", "type": "StatusSwitchTabButton", "unnamed": 1, "visible": True}
 mainWindow_statusBaseInput_StatusBaseInput = {"container": statusDesktop_mainWindow, "id": "statusBaseInput", "type": "StatusBaseInput", "unnamed": 1, "visible": True}
-mainWindow_Paste_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "text": "Paste", "type": "StatusButton", "unnamed": 1, "visible": True}
+mainWindow_Paste_StatusButton = {"container": statusDesktop_mainWindow, "text": "Paste", "type": "StatusButton", "unnamed": 1, "visible": True}
 mainWindow_syncingEnterCode_SyncingEnterCode = {"container": mainWindow_StatusWindow, "objectName": "syncingEnterCode", "type": "SyncingEnterCode", "visible": True}
 
 # SyncDevice View
