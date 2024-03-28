@@ -342,6 +342,19 @@ QtObject:
     result.tokenOwners1SecTimer.setSingleShot(true)
     signalConnect(result.tokenOwners1SecTimer, "timeout()", result, "onFetchTempTokenOwners()", 2)
 
+  # cache functions
+  proc updateCommunityTokenCache(self: Service, chainId: int, address: string, tokenToUpdate: CommunityTokenDto) =
+    for i in 0..self.communityTokensCache.len-1:
+      if self.communityTokensCache[i].chainId == chainId and self.communityTokensCache[i].address == address:
+        self.communityTokensCache[i] = tokenToUpdate
+        return
+
+  proc removeCommunityTokenAndUpdateCache(self: Service, chainId: int, contractAddress: string) =
+    discard tokens_backend.removeCommunityToken(chainId, contractAddress)
+    self.communityTokensCache = self.communityTokensCache.filter(x => ((x.chainId != chainId) or (x.address != contractAddress)))
+  
+  # end of cache functions
+
   proc processReceivedCollectiblesWalletEvent(self: Service, jsonMessage: string, accounts: seq[string]) =
     try:
       let dataMessageJson = parseJson(jsonMessage)
@@ -458,65 +471,104 @@ QtObject:
     except Exception as e:
       error "Error registering community token received notification", msg=e.msg
 
-  proc processSetSignerTransactionEvent(self: Service, transactionArgs: TransactionMinedArgs) =
+  proc processSetSignerTransactionEvent(self: Service, signalArgs: CommunityTokenTransactionStatusChangedSignal) =
     try:
-      if not transactionArgs.success:
-        error "Signer not set"
-      let contractDetails = transactionArgs.data.parseJson().toContractDetails()
-      if transactionArgs.success:
-        # promoteSelfToControlNode will be moved to status-go in next phase
-        discard communities_backend.promoteSelfToControlNode(contractDetails.communityId)
-        let finaliseStatusArgs = FinaliseOwnershipStatusArgs(isPending: false, communityId: contractDetails.communityId)
-        self.events.emit(SIGNAL_FINALISE_OWNERSHIP_STATUS, finaliseStatusArgs)
+      let chainId = signalArgs.communityToken.chainId
+      let communityId = signalArgs.communityToken.communityId
 
-      let data = SetSignerArgs(status: if transactionArgs.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed,
-                              chainId: transactionArgs.chainId,
-                              transactionHash: transactionArgs.transactionHash,
-                              communityId: contractDetails.communityId)
+      if signalArgs.success:
+        let finaliseStatusArgs = FinaliseOwnershipStatusArgs(isPending: false, communityId: communityId)
+        self.events.emit(SIGNAL_FINALISE_OWNERSHIP_STATUS, finaliseStatusArgs)
+      else:
+        error "Signer not set"
+
+      let data = SetSignerArgs(status: if signalArgs.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed,
+                              chainId: chainId,
+                              transactionHash: signalArgs.hash,
+                              communityId: communityId)
       self.events.emit(SIGNAL_SET_SIGNER_STATUS, data)
 
-      let response = if transactionArgs.success: tokens_backend.registerReceivedOwnershipNotification(contractDetails.communityId) else: tokens_backend.registerSetSignerFailedNotification(contractDetails.communityId)
+      # TODO move AC notifications to status-go
+      let response = if signalArgs.success: tokens_backend.registerReceivedOwnershipNotification(communityId) else: tokens_backend.registerSetSignerFailedNotification(communityId)
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
-      let notificationToSetRead = self.acService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, contractDetails.communityId)
+      let notificationToSetRead = self.acService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, communityId)
       if notificationToSetRead != nil:
         self.acService.markActivityCenterNotificationRead(notificationToSetRead.id)
     except Exception as e:
       error "Error processing set signer transaction", msg=e.msg
 
-  # cache functions
-  proc saveCommunityTokenAndUpdateCache(self: Service, tokenToSave: CommunityTokenDto, croppedImageJson: string): CommunityTokenDto =
-    let savedTokenJson = tokens_backend.saveCommunityToken(tokenToSave, croppedImageJson)
-    let savedToken = savedTokenJson.result.toCommunityTokenDto()
-    self.communityTokensCache.add(savedToken)
-    return savedToken
+  proc processAirdropTransactionEvent(self: Service, signalArgs: CommunityTokenTransactionStatusChangedSignal) =
+    try:
+      let transactionStatus = if signalArgs.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
+      let data = AirdropArgs(communityToken: signalArgs.communityToken, transactionHash: signalArgs.hash, status: transactionStatus)
+      self.events.emit(SIGNAL_AIRDROP_STATUS, data)
 
-  proc updateCommunityTokenSupplyAndUpdateCache(self: Service, chainId: int, contractAddress: string, supply: Uint256) =
-    discard updateCommunityTokenSupply(chainId, contractAddress, supply)
-    for i in 0..self.communityTokensCache.len-1:
-      if self.communityTokensCache[i].chainId == chainId and self.communityTokensCache[i].address == contractAddress:
-        self.communityTokensCache[i].supply = supply
-        return
+      # update owners list if airdrop was successfull
+      if signalArgs.success:
+        self.tempTokenOwnersToFetch = signalArgs.communityToken
+        self.tokenOwners1SecTimer.start()
+    except Exception as e:
+        error "Error processing airdrop pending transaction event", msg=e.msg
 
-  proc updateCommunityTokenStateAndUpdateCache(self: Service, chainId: int, contractAddress: string, deployState: DeployState) =
-    discard updateCommunityTokenState(chainId, contractAddress, deployState)
-    for i in 0..self.communityTokensCache.len-1:
-      if self.communityTokensCache[i].chainId == chainId and self.communityTokensCache[i].address == contractAddress:
-        self.communityTokensCache[i].deployState = deployState
-        return
+  proc processRemoteDestructEvent(self: Service, signalArgs: CommunityTokenTransactionStatusChangedSignal) = 
+    try:
+      let transactionStatus = if signalArgs.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
+      let data = RemoteDestructArgs(communityToken: signalArgs.communityToken, transactionHash: signalArgs.hash, status: transactionStatus, remoteDestructAddresses: @[])
+      self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
 
-  proc updateCommunityTokenAddressAndUpdateCache(self: Service, chainId: int, contractAddress: string, newAddress: string) =
-    discard updateCommunityTokenAddress(chainId, contractAddress, newAddress)
-    for i in 0..self.communityTokensCache.len-1:
-      if self.communityTokensCache[i].chainId == chainId and self.communityTokensCache[i].address == contractAddress:
-        self.communityTokensCache[i].address = newAddress
-        return
+      # update owners list if remote destruct was successfull
+      if signalArgs.success:
+        self.tempTokenOwnersToFetch = signalArgs.communityToken
+        self.tokenOwners1SecTimer.start()
+    except Exception as e:
+      error "Error processing collectible self destruct pending transaction event", msg=e.msg
 
-  proc removeCommunityTokenAndUpdateCache(self: Service, chainId: int, contractAddress: string) =
-    discard tokens_backend.removeCommunityToken(chainId, contractAddress)
-    self.communityTokensCache = self.communityTokensCache.filter(x => ((x.chainId != chainId) or (x.address != contractAddress)))
-  
-  # end of cache functions
+  proc processBurnEvent(self: Service, signalArgs: CommunityTokenTransactionStatusChangedSignal) =
+    try:
+      let transactionStatus = if signalArgs.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
+      if signalArgs.success:
+        self.updateCommunityTokenCache(signalArgs.communityToken.chainId, signalArgs.communityToken.address, signalArgs.communityToken)
+      let data = RemoteDestructArgs(communityToken: signalArgs.communityToken, transactionHash: signalArgs.hash, status: transactionStatus)
+      self.events.emit(SIGNAL_BURN_STATUS, data)
+    except Exception as e:
+      error "Error processing collectible burn pending transaction event", msg=e.msg
+
+  proc processDeployCommunityToken(self: Service, signalArgs: CommunityTokenTransactionStatusChangedSignal) =
+    try:
+      let deployState = if signalArgs.success: DeployState.Deployed else: DeployState.Failed
+      let tokenDto = signalArgs.communityToken
+      if not signalArgs.success:
+        error "Community contract not deployed", chainId=tokenDto.chainId, address=tokenDto.address
+      self.updateCommunityTokenCache(tokenDto.chainId, tokenDto.address, tokenDto)
+      let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address,
+                                                  deployState: deployState, chainId: tokenDto.chainId,
+                                                  transactionHash: signalArgs.hash)
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
+    except Exception as e:
+      error "Error processing community token deployment pending transaction event", msg=e.msg
+
+  proc processDeployOwnerToken(self: Service, signalArgs: CommunityTokenTransactionStatusChangedSignal) =
+    try:
+      let deployState = if signalArgs.success: DeployState.Deployed else: DeployState.Failed
+      let ownerToken = signalArgs.ownerToken
+      let masterToken = signalArgs.masterToken
+      if not signalArgs.success:
+        error "Owner token contract not deployed", chainId=ownerToken.chainId, address=ownerToken.address
+      
+      let temporaryMasterContractAddress = signalArgs.hash & "-master"
+      let temporaryOwnerContractAddress = signalArgs.hash & "-owner"
+      self.updateCommunityTokenCache(ownerToken.chainId, temporaryOwnerContractAddress, ownerToken)
+      self.updateCommunityTokenCache(ownerToken.chainId, temporaryMasterContractAddress, masterToken)
+
+      let data = OwnerTokenDeployedStatusArgs(communityId: ownerToken.communityId, chainId: ownerToken.chainId,
+                                                ownerContractAddress: ownerToken.address,
+                                                masterContractAddress: masterToken.address,
+                                                deployState: deployState,
+                                                transactionHash: signalArgs.hash)
+      self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS, data)
+    except Exception as e:
+      error "Error processing owner token deployment pending transaction event", msg=e.msg
 
   proc tryFetchOwners(self: Service) =
     # both communities and tokens should be loaded
@@ -538,133 +590,23 @@ QtObject:
       self.communityDataLoaded = true
       self.tryFetchOwners()
 
-    self.events.on(PendingTransactionTypeDto.SetSignerPublicKey.event) do(e: Args):
-      let receivedData = TransactionMinedArgs(e)
-      self.processSetSignerTransactionEvent(receivedData)
-
-    self.events.on(PendingTransactionTypeDto.DeployCommunityToken.event) do(e: Args):
-      var receivedData = TransactionMinedArgs(e)
-      try:
-        let deployState = if receivedData.success: DeployState.Deployed else: DeployState.Failed
-        let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
-        if not receivedData.success:
-          error "Community contract not deployed", chainId=tokenDto.chainId, address=tokenDto.address
-        try:
-          self.updateCommunityTokenStateAndUpdateCache(tokenDto.chainId, tokenDto.address, deployState)
-          # now add community token to community and publish update
-          let response = tokens_backend.addCommunityToken(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
-          if response.error != nil:
-            let error = Json.decode($response.error, RpcError)
-            raise newException(RpcException, "error adding community token: " & error.message)
-        except RpcException:
-          error "Error updating community contract state", message = getCurrentExceptionMsg()
-        let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address,
-                                                    deployState: deployState, chainId: tokenDto.chainId,
-                                                    transactionHash: receivedData.transactionHash)
-        self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
-      except Exception as e:
-        error "Error processing community token deployment pending transaction event", msg=e.msg, receivedData
-
-    self.events.on(PendingTransactionTypeDto.DeployOwnerToken.event) do(e: Args):
-      var receivedData = TransactionMinedArgs(e)
-      try:
-        let deployState = if receivedData.success: DeployState.Deployed else: DeployState.Failed
-        let ownerTransactionDetails = toOwnerTokenDeploymentTransactionDetails(parseJson(receivedData.data))
-        if not receivedData.success:
-          warn "Owner contracts not deployed", chainId=ownerTransactionDetails.ownerToken.chainId, address=ownerTransactionDetails.ownerToken.address
-        var masterContractAddress = ownerTransactionDetails.masterToken.address
-        var ownerContractAddress = ownerTransactionDetails.ownerToken.address
-
-        try:
-          # get master token address from transaction logs
-          if receivedData.success:
-            var response = tokens_backend.getOwnerTokenContractAddressFromHash(ownerTransactionDetails.ownerToken.chainId, receivedData.transactionHash)
-            ownerContractAddress = response.result.getStr()
-            if ownerContractAddress == "":
-              raise newException(RpcException, "owner contract address is empty")
-            response = tokens_backend.getMasterTokenContractAddressFromHash(ownerTransactionDetails.masterToken.chainId, receivedData.transactionHash)
-            masterContractAddress = response.result.getStr()
-            if masterContractAddress == "":
-              raise newException(RpcException, "master contract address is empty")
-
-          debug "Minted owner token contract address:", ownerContractAddress
-          debug "Minted master token contract address:", masterContractAddress
-
-          # update master token address
-          self.updateCommunityTokenAddressAndUpdateCache(ownerTransactionDetails.masterToken.chainId, ownerTransactionDetails.masterToken.address, masterContractAddress)
-          # update owner token address
-          self.updateCommunityTokenAddressAndUpdateCache(ownerTransactionDetails.ownerToken.chainId, ownerTransactionDetails.ownerToken.address, ownerContractAddress)
-          #update db state for owner and master token
-          self.updateCommunityTokenStateAndUpdateCache(ownerTransactionDetails.ownerToken.chainId, ownerContractAddress, deployState)
-          self.updateCommunityTokenStateAndUpdateCache(ownerTransactionDetails.masterToken.chainId, masterContractAddress, deployState)
-          # now add owner token to community and publish update
-          var response = tokens_backend.addCommunityToken(ownerTransactionDetails.communityId, ownerTransactionDetails.ownerToken.chainId, ownerContractAddress)
-          if response.error != nil:
-            let error = Json.decode($response.error, RpcError)
-            raise newException(RpcException, "error adding owner token: " & error.message)
-
-          # now add master token to community and publish update
-          response = tokens_backend.addCommunityToken(ownerTransactionDetails.communityId, ownerTransactionDetails.masterToken.chainId, masterContractAddress)
-          if response.error != nil:
-            let error = Json.decode($response.error, RpcError)
-            raise newException(RpcException, "error adding master token: " & error.message)
-        except RpcException:
-          error "Error updating owner contracts state", message = getCurrentExceptionMsg()
-
-        let data = OwnerTokenDeployedStatusArgs(communityId: ownerTransactionDetails.communityId, chainId: ownerTransactionDetails.ownerToken.chainId,
-                                                ownerContractAddress: ownerContractAddress,
-                                                masterContractAddress: masterContractAddress,
-                                                deployState: deployState,
-                                                transactionHash: receivedData.transactionHash)
-        self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS, data)
-      except Exception as e:
-        error "Error processing Owner token deployment pending transaction event", msg=e.msg, receivedData
-
-    self.events.on(PendingTransactionTypeDto.AirdropCommunityToken.event) do(e: Args):
-      let receivedData = TransactionMinedArgs(e)
-      try:
-        let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
-        let transactionStatus = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
-        let data = AirdropArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus)
-        self.events.emit(SIGNAL_AIRDROP_STATUS, data)
-
-        # update owners list if airdrop was successfull
-        if receivedData.success:
-          self.tempTokenOwnersToFetch = tokenDto
-          self.tokenOwners1SecTimer.start()
-      except Exception as e:
-        error "Error processing Collectible airdrop pending transaction event", msg=e.msg, receivedData
-
-    self.events.on(PendingTransactionTypeDto.RemoteDestructCollectible.event) do(e: Args):
-      let receivedData = TransactionMinedArgs(e)
-      try:
-        let remoteDestructTransactionDetails = toRemoteDestroyTransactionDetails(parseJson(receivedData.data))
-        let tokenDto = self.getCommunityToken(remoteDestructTransactionDetails.chainId, remoteDestructTransactionDetails.contractAddress)
-        let transactionStatus = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
-        let data = RemoteDestructArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus, remoteDestructAddresses: @[])
-        self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
-
-        # update owners list if remote destruct was successfull
-        if receivedData.success:
-          self.tempTokenOwnersToFetch = tokenDto
-          self.tokenOwners1SecTimer.start()
-      except Exception as e:
-        error "Error processing Collectible self destruct pending transaction event", msg=e.msg, receivedData
-
-    self.events.on(PendingTransactionTypeDto.BurnCommunityToken.event) do(e: Args):
-      let receivedData = TransactionMinedArgs(e)
-      try:
-        let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
-        let transactionStatus = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
-        if receivedData.success:
-          try:
-            self.updateCommunityTokenSupplyAndUpdateCache(tokenDto.chainId, tokenDto.address, tokenDto.supply)
-          except RpcException:
-            error "Error updating collectibles supply", message = getCurrentExceptionMsg()
-        let data = RemoteDestructArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus)
-        self.events.emit(SIGNAL_BURN_STATUS, data)
-      except Exception as e:
-        error "Error processing Collectible burn pending transaction event", msg=e.msg, receivedData
+    self.events.on(SignalType.CommunityTokenTransactionStatusChanged.event) do(e: Args):
+      let receivedData = CommunityTokenTransactionStatusChangedSignal(e)
+      if receivedData.errorString != "":
+        error "Community token transaction has finished but the system error occured. Probably state of the token in database is broken.",
+              errorString=receivedData.errorString, transactionHash=receivedData.hash, transactionSuccess=receivedData.success
+      if receivedData.transactionType == $PendingTransactionTypeDto.SetSignerPublicKey:
+        self.processSetSignerTransactionEvent(receivedData)
+      elif receivedData.transactionType == $PendingTransactionTypeDto.AirdropCommunityToken:
+        self.processAirdropTransactionEvent(receivedData)
+      elif receivedData.transactionType == $PendingTransactionTypeDto.RemoteDestructCollectible:
+        self.processRemoteDestructEvent(receivedData)
+      elif receivedData.transactionType == $PendingTransactionTypeDto.BurnCommunityToken:
+        self.processBurnEvent(receivedData)
+      elif receivedData.transactionType == $PendingTransactionTypeDto.DeployCommunityToken:
+        self.processDeployCommunityToken(receivedData)
+      elif receivedData.transactionType == $PendingTransactionTypeDto.DeployOwnerToken:
+        self.processDeployOwnerToken(receivedData)
 
   proc buildTransactionDataDto(self: Service, addressFrom: string, chainId: int, contractAddress: string): TransactionDataDto =
     let gasUnits = self.tempGasTable.getOrDefault((chainId, contractAddress), 0)
@@ -677,45 +619,6 @@ QtObject:
       if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
       if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
 
-  proc createCommunityToken(self: Service, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto,
-    chainId: int, contractAddress: string, communityId: string, addressFrom: string, privilegesLevel: PrivilegesLevel): CommunityTokenDto =
-      result.tokenType = tokenMetadata.tokenType
-      result.communityId = communityId
-      result.address = contractAddress
-      result.name = deploymentParams.name
-      result.symbol = deploymentParams.symbol
-      result.description = tokenMetadata.description
-      result.supply = stint.parse($deploymentParams.supply, Uint256)
-      result.infiniteSupply = deploymentParams.infiniteSupply
-      result.transferable = deploymentParams.transferable
-      result.remoteSelfDestruct = deploymentParams.remoteSelfDestruct
-      result.tokenUri = deploymentParams.tokenUri
-      result.chainId = chainId
-      result.deployState = DeployState.InProgress
-      result.decimals = deploymentParams.decimals
-      result.deployer = addressFrom
-      result.privilegesLevel = privilegesLevel
-
-  proc saveTokenToDbAndWatchTransaction*(self:Service, communityToken: CommunityTokenDto, croppedImageJson: string,
-    transactionHash: string, addressFrom: string, watchTransaction: bool) =
-    var croppedImage = croppedImageJson.parseJson
-    croppedImage{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr))
-
-    let addedCommunityToken = self.saveCommunityTokenAndUpdateCache(communityToken, $croppedImage)
-    let data = CommunityTokenDeploymentArgs(communityToken: addedCommunityToken, transactionHash: transactionHash)
-    self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED, data)
-
-    if watchTransaction:
-      # observe transaction state
-      self.transactionService.watchTransaction(
-        transactionHash,
-        addressFrom,
-        addedCommunityToken.address,
-        $PendingTransactionTypeDto.DeployCommunityToken,
-        $addedCommunityToken.toJsonNode(),
-        addedCommunityToken.chainId,
-      )
-
   proc temporaryMasterContractAddress*(ownerContractTransactionHash: string): string =
     return ownerContractTransactionHash & "-master"
 
@@ -723,9 +626,7 @@ QtObject:
     return ownerContractTransactionHash & "-owner"
 
   proc deployOwnerContracts*(self: Service, communityId: string, addressFrom: string, password: string,
-      ownerDeploymentParams: DeploymentParameters, ownerTokenMetadata: CommunityTokensMetadataDto,
-      masterDeploymentParams: DeploymentParameters, masterTokenMetadata: CommunityTokensMetadataDto,
-      croppedImageJson: string, chainId: int) =
+      ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters, chainId: int) =
     try:
       let txData = self.buildTransactionDataDto(addressFrom, chainId, "")
       if txData.source == parseAddress(ZERO_ADDRESS):
@@ -734,70 +635,52 @@ QtObject:
       # set my pub key as signer
       let signerPubKey = singletonInstance.userProfile.getPubKey()
 
-      # get deployment signature
-      let signatureResponse = tokens_backend.createCommunityTokenDeploymentSignature(chainId, addressFrom, communityId)
-      let signature = signatureResponse.result.getStr()
-
       # deploy contract
       let response = tokens_backend.deployOwnerToken(chainId, %ownerDeploymentParams, %masterDeploymentParams,
-          signature, communityId, signerPubKey, %txData, common_utils.hashPassword(password))
+          signerPubKey, %txData, common_utils.hashPassword(password))
       let transactionHash = response.result["transactionHash"].getStr()
+      let deployedOwnerToken = toCommunityTokenDto(response.result["ownerToken"])
+      let deployedMasterToken = toCommunityTokenDto(response.result["masterToken"])
       debug "Deployment transaction hash ", transactionHash=transactionHash
 
-      var ownerToken = self.createCommunityToken(ownerDeploymentParams, ownerTokenMetadata, chainId, temporaryOwnerContractAddress(transactionHash), communityId, addressFrom, PrivilegesLevel.Owner)
-      var masterToken = self.createCommunityToken(masterDeploymentParams, masterTokenMetadata, chainId, temporaryMasterContractAddress(transactionHash), communityId, addressFrom, PrivilegesLevel.Master)
+      self.communityTokensCache.add(deployedOwnerToken)
+      self.communityTokensCache.add(deployedMasterToken)
 
-      var croppedImage = croppedImageJson.parseJson
-      ownerToken.image = croppedImage{"imagePath"}.getStr
-      masterToken.image = croppedImage{"imagePath"}.getStr
-
-      let addedOwnerToken = self.saveCommunityTokenAndUpdateCache(ownerToken, "")
-      let addedMasterToken = self.saveCommunityTokenAndUpdateCache(masterToken, "")
-
-      let data = OwnerTokenDeploymentArgs(ownerToken: addedOwnerToken, masterToken: addedMasterToken, transactionHash: transactionHash)
+      let data = OwnerTokenDeploymentArgs(ownerToken: deployedOwnerToken, masterToken: deployedMasterToken, transactionHash: transactionHash)
       self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED, data)
 
-      let transactionDetails = OwnerTokenDeploymentTransactionDetails(ownerToken: (chainId, addedOwnerToken.address),
-        masterToken: (chainId, addedMasterToken.address), communityId: addedOwnerToken.communityId)
-
-      self.transactionService.watchTransaction(
-          transactionHash,
-          addressFrom,
-          addedOwnerToken.address,
-          $PendingTransactionTypeDto.DeployOwnerToken,
-          $(%transactionDetails),
-          chainId,
-        )
     except RpcException:
       error "Error deploying owner contract", message = getCurrentExceptionMsg()
       let data = OwnerTokenDeployedStatusArgs(communityId: communityId,
                                               deployState: DeployState.Failed)
       self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS, data)
 
-  proc deployContract*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, croppedImageJson: string, chainId: int) =
+  proc deployContract*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, chainId: int) =
     try:
       let txData = self.buildTransactionDataDto(addressFrom, chainId, "")
       if txData.source == parseAddress(ZERO_ADDRESS):
         return
 
       var response: RpcResponse[JsonNode]
-      case tokenMetadata.tokenType
+      case deploymentParams.tokenType
       of TokenType.ERC721:
         response = tokens_backend.deployCollectibles(chainId, %deploymentParams, %txData, common_utils.hashPassword(password))
       of TokenType.ERC20:
         response = tokens_backend.deployAssets(chainId, %deploymentParams, %txData, common_utils.hashPassword(password))
       else:
-        error "Contract deployment error - unknown token type", tokenType=tokenMetadata.tokenType
+        error "Contract deployment error - unknown token type", tokenType=deploymentParams.tokenType
         return
 
       let contractAddress = response.result["contractAddress"].getStr()
       let transactionHash = response.result["transactionHash"].getStr()
+      let deployedCommunityToken = toCommunityTokenDto(response.result["communityToken"])
       debug "Deployed contract address ", contractAddress=contractAddress
       debug "Deployment transaction hash ", transactionHash=transactionHash
 
-      var communityToken = self.createCommunityToken(deploymentParams, tokenMetadata, chainId, contractAddress, communityId, addressFrom, PrivilegesLevel.Community)
-
-      self.saveTokenToDbAndWatchTransaction(communityToken, croppedImageJson, transactionHash, addressFrom, true)
+      # add to cache
+      self.communityTokensCache.add(deployedCommunityToken)
+      let data = CommunityTokenDeploymentArgs(communityToken: deployedCommunityToken, transactionHash: transactionHash)
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED, data)
 
     except RpcException:
       error "Error deploying contract", message = getCurrentExceptionMsg()
@@ -896,8 +779,7 @@ QtObject:
     let burnTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.BurnCommunityToken)
     for transaction in burnTransactions:
       try:
-        let communityToken = toCommunityTokenDto(parseJson(transaction.additionalData))
-        if communityToken.chainId == chainId and communityToken.address == contractAddress:
+        if transaction.chainId == chainId and transaction.to == contractAddress:
           return ContractTransactionStatus.InProgress
       except Exception:
         discard
@@ -907,9 +789,9 @@ QtObject:
     try:
       let remoteDestructTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.RemoteDestructCollectible)
       for transaction in remoteDestructTransactions:
-        let remoteDestructTransactionDetails = toRemoteDestroyTransactionDetails(parseJson(transaction.additionalData))
-        if remoteDestructTransactionDetails.chainId == chainId and remoteDestructTransactionDetails.contractAddress == contractAddress:
-          return remoteDestructTransactionDetails.addresses
+        if transaction.chainId == chainId and transaction.to == contractAddress:
+          let burntAddresses = to(transaction.additionalData.parseJson(), seq[string])
+          return burntAddresses
     except Exception:
       error "Error getting contract owner", message = getCurrentExceptionMsg()
 
@@ -924,18 +806,23 @@ QtObject:
       error "Error getting contract owner name", message = getCurrentExceptionMsg()
 
   proc getRemainingSupply*(self: Service, chainId: int, contractAddress: string): Uint256 =
+    let token = self.getCommunityToken(chainId, contractAddress)
+    if token.deployState != DeployState.Deployed:
+      return token.supply
     try:
       let response = tokens_backend.remainingSupply(chainId, contractAddress)
       return stint.parse(response.result.getStr(), Uint256)
     except RpcException:
       error "Error getting remaining supply", message = getCurrentExceptionMsg()
     # if there is an exception probably community token is not minted yet
-    return self.getCommunityToken(chainId, contractAddress).supply
+    return token.supply
 
   proc getRemoteDestructedAmount*(self: Service, chainId: int, contractAddress: string): Uint256 =
     try:
-      let tokenType = self.getCommunityToken(chainId, contractAddress).tokenType
-      if tokenType != TokenType.ERC721:
+      let token = self.getCommunityToken(chainId, contractAddress)
+      let tokenType = token.tokenType
+      let tokenState = token.deployState
+      if tokenType != TokenType.ERC721 or tokenState != DeployState.Deployed:
         return stint.parse("0", Uint256)
       let response = tokens_backend.remoteDestructedAmount(chainId, contractAddress)
       return stint.parse(response.result.getStr(), Uint256)
@@ -955,16 +842,6 @@ QtObject:
 
         var data = AirdropArgs(communityToken: collectibleAndAmount.communityToken, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress)
         self.events.emit(SIGNAL_AIRDROP_STATUS, data)
-
-        # observe transaction state
-        self.transactionService.watchTransaction(
-          transactionHash,
-          addressFrom,
-          collectibleAndAmount.communityToken.address,
-          $PendingTransactionTypeDto.AirdropCommunityToken,
-          $collectibleAndAmount.communityToken.toJsonNode(),
-          collectibleAndAmount.communityToken.chainId,
-        )
     except RpcException:
       error "Error airdropping tokens", message = getCurrentExceptionMsg()
 
@@ -1087,29 +964,20 @@ QtObject:
       let contract = self.findContractByUniqueId(contractUniqueKey)
       let tokenIds = self.getTokensToBurn(walletAndAmounts, contract)
       if len(tokenIds) == 0:
+        debug "No token ids to remote burn", walletAndAmounts=walletAndAmounts
         return
+      var addresses: seq[string] = @[]
+      for walletAndAmount in walletAndAmounts:
+        addresses.add(walletAndAmount.walletAddress)
       let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
       debug "Remote destruct collectibles ", chainId=contract.chainId, address=contract.address, tokens=tokenIds
-      let response = tokens_backend.remoteBurn(contract.chainId, contract.address, %txData, common_utils.hashPassword(password), tokenIds)
+      let response = tokens_backend.remoteBurn(contract.chainId, contract.address, %txData, common_utils.hashPassword(password),
+                                                tokenIds, $(%addresses))
       let transactionHash = response.result.getStr()
       debug "Remote destruct transaction hash ", transactionHash=transactionHash
 
-      var transactionDetails = RemoteDestroyTransactionDetails(chainId: contract.chainId, contractAddress: contract.address)
-      for walletAndAmount in walletAndAmounts:
-        transactionDetails.addresses.add(walletAndAmount.walletAddress)
-
-      var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress, remoteDestructAddresses: transactionDetails.addresses)
+      var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress, remoteDestructAddresses: addresses)
       self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
-
-      # observe transaction state
-      self.transactionService.watchTransaction(
-        transactionHash,
-        addressFrom,
-        contract.address,
-        $PendingTransactionTypeDto.RemoteDestructCollectible,
-        $(%transactionDetails),
-        contract.chainId,
-      )
     except Exception as e:
       error "Remote self destruct error", msg = e.msg
 
@@ -1161,17 +1029,6 @@ QtObject:
 
       var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress)
       self.events.emit(SIGNAL_BURN_STATUS, data)
-
-      contract.supply = contract.supply - amount # save with changed supply
-      # observe transaction state
-      self.transactionService.watchTransaction(
-        transactionHash,
-        addressFrom,
-        contract.address,
-        $PendingTransactionTypeDto.BurnCommunityToken,
-        $contract.toJsonNode(),
-        contract.chainId,
-      )
     except Exception as e:
       error "Burn error", msg = e.msg
 
