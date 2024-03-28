@@ -58,7 +58,7 @@ Control {
             filters: [
                 // The only permissions to be discarded are if they are private and NOT met
                 FastExpressionFilter {
-                    expression: { return !!model && !(!model.tokenCriteriaMet && model.isPrivate) }
+                    expression: d.filterPermissions(model)
                     expectedRoles: ["tokenCriteriaMet", "isPrivate"]
                 }
             ]
@@ -90,6 +90,10 @@ Control {
                 }
             ]
         }
+
+        function filterPermissions(model) {
+            return !!model && (model.tokenCriteriaMet || !model.isPrivate)
+        }
     }
 
     padding: 35 // default by design
@@ -118,8 +122,18 @@ Control {
             model: d.visiblePermissionsModel
         }
 
+        StatusBaseText {
+            Layout.fillWidth: true
+
+            visible: root.allChannelsAreHiddenBecauseNotPermitted
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            text: d.allChannelsAreHiddenBecauseNotPermittedText
+            textFormat: Text.StyledText
+        }
+
         CustomHoldingsListPanel {
-            visible: !root.joinCommunity && d.viewOnlyPermissionsModel.count > 0
+            visible: (!root.joinCommunity && d.viewOnlyPermissionsModel.count > 0) && !root.allChannelsAreHiddenBecauseNotPermitted
             introText: root.requiresRequest ? 
                 qsTr("To view the <b>#%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
                 qsTr("To view the <b>#%1</b> channel you need to hold").arg(root.channelName)
@@ -127,10 +141,9 @@ Control {
         }
 
         CustomHoldingsListPanel {
-             visible: (!root.joinCommunity && d.viewAndPostPermissionsModel.count > 0) || root.allChannelsAreHiddenBecauseNotPermitted
-            introText: root.allChannelsAreHiddenBecauseNotPermitted ? d.allChannelsAreHiddenBecauseNotPermittedText :
-                           root.requiresRequest ? qsTr("To view and post in the <b>#%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
-                                                  qsTr("To view and post in the <b>#%1</b> channel you need to hold").arg(root.channelName)
+            visible: (!root.joinCommunity && d.viewAndPostPermissionsModel.count > 0) && !root.allChannelsAreHiddenBecauseNotPermitted
+            introText: root.requiresRequest ? qsTr("To view and post in the <b>#%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
+                                              qsTr("To view and post in the <b>#%1</b> channel you need to hold").arg(root.channelName)
             model: d.viewAndPostPermissionsModel
         }
 
