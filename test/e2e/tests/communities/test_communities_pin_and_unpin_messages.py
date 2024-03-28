@@ -35,7 +35,7 @@ def test_join_community_and_pin_unpin_message(multiple_instances, user_data_one,
     community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
     main_screen = MainWindow()
 
-    with multiple_instances(user_data_one) as aut_one, multiple_instances(user_data_two) as aut_two:
+    with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(user_data=user_data_two) as aut_two:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()

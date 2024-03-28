@@ -20,17 +20,14 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703087', '1-1 Chat')
 @pytest.mark.case(703087)
-@pytest.mark.parametrize('user_data_one, user_data_two', [
-    (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
-])
-def test_1x1_chat(multiple_instances, user_data_one, user_data_two):
+def test_1x1_chat(multiple_instances):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
     main_window = MainWindow()
     messages_screen = MessagesScreen()
     emoji = 'sunglasses'
 
-    with (multiple_instances() as aut_one, multiple_instances() as aut_two):
+    with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()

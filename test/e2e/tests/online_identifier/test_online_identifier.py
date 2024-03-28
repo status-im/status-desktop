@@ -41,17 +41,14 @@ def test_change_own_display_name(main_screen: MainWindow, user_account, new_name
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703003', 'Switch state to online')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703004', 'Switch state to automatic')
 @pytest.mark.case(703002, 703003, 703004)
-@pytest.mark.parametrize('user_data_one, user_data_two', [
-    (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
-])
-def test_switch_state_to_offline_online_automatic(multiple_instances, user_data_one, user_data_two):
+def test_switch_state_to_offline_online_automatic(multiple_instances):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
     community_params = deepcopy(constants.community_params)
     community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
     main_screen = MainWindow()
 
-    with multiple_instances() as aut_one, multiple_instances() as aut_two:
+    with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()

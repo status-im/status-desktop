@@ -37,8 +37,8 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
     main_window = MainWindow()
     messages_screen = MessagesScreen()
 
-    with multiple_instances(user_data_one) as aut_one, multiple_instances(user_data_two) as aut_two, multiple_instances(
-            user_data_three) as aut_three:
+    with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(user_data=user_data_two) as aut_two, multiple_instances(
+            user_data=user_data_three) as aut_three:
         with step(f'Launch multiple instances with authorized users {user_one.name}, {user_two.name}, {user_three}'):
             for aut, account in zip([aut_one, aut_two, aut_three], [user_one, user_two, user_three]):
                 aut.attach()
