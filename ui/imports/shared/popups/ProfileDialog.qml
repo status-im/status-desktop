@@ -11,6 +11,10 @@ StatusDialog {
 
     property string publicKey
 
+    property var socialLinks
+    property var assetsModel
+    property var enabledNetworks
+    property var collectiblesModel
     property var profileStore
     property var contactsStore
     property var networkConnectionStore
@@ -26,6 +30,10 @@ StatusDialog {
 
     contentItem: ProfileDialogView {
         publicKey: root.publicKey
+        socialLinks: root.socialLinks
+        assetsModel: root.assetsModel
+        enabledNetworks: root.enabledNetworks
+        collectiblesModel: root.collectiblesModel
         profileStore: root.profileStore
         contactsStore: root.contactsStore
         networkConnectionStore: root.networkConnectionStore

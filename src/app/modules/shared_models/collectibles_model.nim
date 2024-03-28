@@ -25,6 +25,7 @@ type
     CommunityName
     CommunityColor
     CommunityPrivilegesLevel
+    CommunityImage
     TokenType
 
 QtObject:
@@ -146,6 +147,7 @@ QtObject:
       CollectibleRole.CommunityName.int:"communityName",
       CollectibleRole.CommunityColor.int:"communityColor",
       CollectibleRole.CommunityPrivilegesLevel.int:"communityPrivilegesLevel",
+      CollectibleRole.CommunityImage.int:"communityImage",
       CollectibleRole.TokenType.int:"tokenType",
     }.toTable
 
@@ -197,6 +199,8 @@ QtObject:
         result = newQVariant(item.getCommunityColor())
       of CollectibleRole.CommunityPrivilegesLevel:
         result = newQVariant(item.getCommunityPrivilegesLevel())
+      of CollectibleRole.CommunityImage:
+        result = newQVariant(item.getCommunityImage())
       of CollectibleRole.TokenType:
         result = newQVariant(item.getTokenType())
 
@@ -222,6 +226,7 @@ QtObject:
       of "communityName": result = item.getCommunityName()
       of "communityColor": result = item.getCommunityColor()
       of "communityPrivilegesLevel": result = $item.getCommunityPrivilegesLevel()
+      of "communityImage": result = item.getCommunityImage()
 
   proc resetCollectibleItems(self: Model, newItems: seq[CollectiblesEntry] = @[]) =
     self.beginResetModel()

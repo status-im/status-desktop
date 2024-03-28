@@ -897,6 +897,7 @@ QtObject {
         readonly property string mainnet: "eth"
         readonly property string arbitrum: "arb"
         readonly property string optimism: "opt"
+        readonly property string coingecko: "opt"
     }
 
     readonly property QtObject networkExplorerLinks: QtObject {
