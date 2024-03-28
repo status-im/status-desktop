@@ -49,8 +49,8 @@ Control {
         visible: !root.loading
         StatusSmartIdenticon {
             id: identicon
-            Layout.preferredWidth: visible ? 16 : 0
-            Layout.preferredHeight: visible ? 16 : 0
+            Layout.preferredWidth: visible ? asset.width : 0
+            Layout.preferredHeight: visible ? asset.width : 0
             asset.width: 16
             asset.height: 16
             visible: root.useLongTextDescription && !!asset.source
@@ -64,7 +64,7 @@ Control {
 
             StatusBaseText {
                 Layout.fillWidth: true
-
+                visible: (!!root.communityName || d.unknownCommunityName)
                 font.pixelSize: Style.current.tertiaryTextFontSize
                 font.weight: Font.Medium
                 text:  {
