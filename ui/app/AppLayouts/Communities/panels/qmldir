@@ -29,6 +29,7 @@ ProfilePopupInviteFriendsPanel 1.0 ProfilePopupInviteFriendsPanel.qml
 ProfilePopupInviteMessagePanel 1.0 ProfilePopupInviteMessagePanel.qml
 ProfilePopupOverviewPanel 1.0 ProfilePopupOverviewPanel.qml
 RequirementsCheckPendingLoader 1.0 RequirementsCheckPendingLoader.qml
+SharedAddressesAccountSelector 1.0 SharedAddressesAccountSelector.qml
 SharedAddressesPanel 1.0 SharedAddressesPanel.qml
 SharedAddressesSigningPanel 1.0 SharedAddressesSigningPanel.qml
 SortableTokenHoldersList 1.0 SortableTokenHoldersList.qml

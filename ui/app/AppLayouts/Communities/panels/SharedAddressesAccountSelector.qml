@@ -19,7 +19,13 @@ StatusListView {
 
     property var walletAssetsModel
     property bool hasPermissions
-    property var uniquePermissionTokenKeys
+
+    property var uniquePermissionAssetsKeys
+    property var uniquePermissionCollectiblesKeys
+
+    property var walletCollectiblesModel
+    property var communityCollectiblesModel
+    property string communityId
 
     property var getCurrencyAmount: function (balance, symbol){}
 
@@ -31,8 +37,56 @@ StatusListView {
     rightMargin: Style.current.padding
     bottomMargin: Style.current.padding
 
+
+    ModelChangeTracker {
+        id: communityCollectiblesModelTracker
+
+        model: communityCollectiblesModel
+
+        onRevisionChanged: {
+            const collectibles = ModelUtils.modelToArray(
+                                   communityCollectiblesModel,
+                                   ["key", "name", "symbol", "icon", "communityId"])
+                .filter(e => e.communityId === communityId)
+
+            const keysToNames = {}
+
+            for (const c of collectibles)
+                keysToNames[c.key] = {
+                    name: c.name,
+                    symbol: c.symbol,
+                    icon: c.icon
+                }
+
+            d.collectiblesMetadata
+                    = uniquePermissionCollectiblesKeys.map(k => keysToNames[k])
+            d.collectiblesNames = d.collectiblesMetadata.map(c => c.name)
+
+            const namesToSymbols = {}
+            d.collectiblesMetadata.forEach(c => namesToSymbols[c.name] = c.symbol)
+            d.collectiblesNamesToSymbols = namesToSymbols
+
+            const namesToImages = {}
+            d.collectiblesMetadata.forEach(c => namesToImages[c.name] = c.icon)
+            d.collectiblesNamesToImages = namesToImages
+        }
+
+        Component.onCompleted: revisionChanged()
+    }
+
+    ModelChangeTracker {
+        id: filteredWalletCollectiblesTracker
+
+        model: filteredWalletCollectibles
+    }
+
     QtObject {
         id: d
+
+        property var collectiblesMetadata: []
+        property var collectiblesNames: []
+        property var collectiblesNamesToSymbols: ({})
+        property var collectiblesNamesToImages: ({})
 
         readonly property int selectedSharedAddressesCount: root.selectedSharedAddressesMap.size
 
@@ -47,13 +101,69 @@ StatusListView {
             exclusive: false
         }
 
-        function getTotalBalance(balances, decimals, symbol) {
+        function getTotalBalance(balances, decimals) {
             let totalBalance = 0
-            for(let i=0; i<balances.count; i++) {
+            for(let i = 0; i < balances.count; i++) {
                 let balancePerAddressPerChain = ModelUtils.get(balances, i)
                 totalBalance += AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
             }
             return totalBalance
+        }
+    }
+
+    SortFilterProxyModel {
+        id: filteredWalletCollectibles
+
+        sourceModel: walletCollectiblesModel
+
+        filters: [
+            ValueFilter {
+                roleName: "communityId"
+                value: root.communityId
+            },
+            FastExpressionFilter {
+                expression: d.collectiblesNames.includes(model.name)
+                expectedRoles: ["name"]
+            }
+        ]
+    }
+
+    ListModel {
+        id: walletAccountCollectiblesModel
+
+        readonly property var data: {
+            filteredWalletCollectiblesTracker.revision
+            const usedCollectibles = ModelUtils.modelToArray(filteredWalletCollectibles)
+
+            const collectiblesGroupingMap = {}
+
+            for (const c of usedCollectibles) {
+                const key = `${c.name}_${c.ownership[0].accountAddress}`
+
+                if (!collectiblesGroupingMap[key])
+                    collectiblesGroupingMap[key] = []
+
+                collectiblesGroupingMap[key].push(c)
+            }
+
+            const collectiblesGrouped = Object.values(collectiblesGroupingMap).map(e => {
+                const firstEntry = e[0]
+
+                return {
+                    symbol: d.collectiblesNamesToSymbols[firstEntry.name] || "",
+                    enabledNetworkBalance: e.length,
+                    account: firstEntry.ownership[0].accountAddress,
+                    type: Constants.TokenType.ERC721,
+                    imageUrl: d.collectiblesNamesToImages[firstEntry.name] || ""
+                }
+            })
+
+            return collectiblesGrouped
+        }
+
+        onDataChanged: {
+            clear()
+            append(data)
         }
     }
 
@@ -65,7 +175,7 @@ StatusListView {
         width: ListView.view.width - ListView.view.leftMargin - ListView.view.rightMargin
         statusListItemTitle.font.weight: Font.Medium
         title: model.name
-        tertiaryTitle: !walletAccountAssetsModel.count && root.hasPermissions ? qsTr("No relevant tokens") : ""
+        tertiaryTitle: root.hasPermissions && !tagsCount ? qsTr("No relevant tokens") : ""
 
         SubmodelProxyModel {
             id: filteredBalances
@@ -73,54 +183,123 @@ StatusListView {
             submodelRoleName: "balances"
             delegateModel: SortFilterProxyModel {
                 sourceModel: submodel
-                filters: FastExpressionFilter {
-                    expression: listItem.address === model.account.toLowerCase()
-                    expectedRoles: ["account"]
+
+                filters: RegExpFilter {
+                    roleName: "account"
+                    pattern: listItem.address
+                    syntax: RegExpFilter.FixedString
+                    caseSensitivity: Qt.CaseInsensitive
                 }
             }
         }
+
+        SortFilterProxyModel {
+            id: accountCollectiblesModel
+
+            sourceModel: walletAccountCollectiblesModel
+
+            filters: RegExpFilter {
+                roleName: "account"
+                pattern: listItem.address
+                syntax: RegExpFilter.FixedString
+                caseSensitivity: Qt.CaseInsensitive
+            }
+        }
+
+        ConcatModel {
+            id: concatModel
+
+            sources: [
+                SourceModel {
+                    // During initialization sfpm provides rowCount not taking
+                    // filtering into account, deferring model assignment as
+                    // a workaround
+                    Component.onCompleted: model = walletAccountAssetsModel
+                },
+                SourceModel {
+                    Component.onCompleted: model = accountCollectiblesModel
+                }
+            ]
+        }
+
         tagsModel: SortFilterProxyModel {
+            sourceModel: concatModel
+
+            filters: ValueFilter {
+                roleName: "enabledNetworkBalance"
+                value: 0
+                inverted: true
+            }
+
+            sorters: RoleSorter {
+                roleName: "symbol"
+            }
+        }
+
+        SortFilterProxyModel {
             id: walletAccountAssetsModel
+
             sourceModel: filteredBalances
 
             function filterPredicate(symbol) {
-                return root.uniquePermissionTokenKeys.includes(symbol.toUpperCase())
+                return root.uniquePermissionAssetsKeys.includes(symbol.toUpperCase())
             }
 
-            proxyRoles: FastExpressionRole {
-                name: "enabledNetworkBalance"
-                expression: d.getTotalBalance(model.balances, model.decimals, model.symbol)
-                expectedRoles: ["balances", "decimals", "symbol"]
-            }
+            proxyRoles: [
+                FastExpressionRole {
+                    name: "enabledNetworkBalance"
+                    expression: d.getTotalBalance(model.balances, model.decimals)
+                    expectedRoles: ["balances", "decimals"]
+                },
+                FastExpressionRole {
+                    name: "type"
+
+                    readonly property int typeVal: Constants.TokenType.ERC20
+
+                    // Singletons cannot be used directly in sfpm's expressions
+                    expression: typeVal
+                },
+                FastExpressionRole {
+                    name: "imageUrl"
+
+                    function getIcon(symbol) {
+                        return Constants.tokenIcon(symbol.toUpperCase())
+                    }
+
+                    // Singletons cannot be used directly in sfpm's expressions
+                    expression: getIcon(model.symbol)
+                    expectedRoles: ["symbol"]
+                }
+            ]
+
             filters: FastExpressionFilter {
                 expression: walletAccountAssetsModel.filterPredicate(model.symbol)
                 expectedRoles: ["symbol"]
             }
-            sorters: FastExpressionSorter {
-                expression: {
-                    if (modelLeft.enabledNetworkBalance > modelRight.enabledNetworkBalance)
-                        return -1 // descending, biggest first
-                    else if (modelLeft.enabledNetworkBalance < modelRight.enabledNetworkBalance)
-                        return 1
-                    else
-                        return 0
-                }
-                expectedRoles: ["enabledNetworkBalance"]
-            }
         }
+
         statusListItemInlineTagsSlot.spacing: Style.current.padding
+
         tagsDelegate: Row {
             spacing: 4
             StatusRoundedImage {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 16
                 height: 16
-                image.source: Constants.tokenIcon(model.symbol.toUpperCase())
+                image.source: model.imageUrl
             }
             StatusBaseText {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: Theme.tertiaryTextFontSize
-                text: LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(model.enabledNetworkBalance, model.symbol))
+                text: {
+                    if (model.type === Constants.TokenType.ERC20)
+                        return LocaleUtils.currencyAmountToLocaleString(
+                                    root.getCurrencyAmount(model.enabledNetworkBalance,
+                                                           model.symbol))
+
+                    return LocaleUtils.numberToLocaleString(model.enabledNetworkBalance)
+                            + " " + model.symbol
+                }
             }
         }
 
@@ -137,10 +316,11 @@ StatusListView {
                 anchors.verticalCenter: parent.verticalCenter
                 icon.name: "airdrop"
                 icon.color: hovered ? Theme.palette.primaryColor3 :
-                                      checked ? Theme.palette.primaryColor1 : disabledTextColor
+                                      checked ? Theme.palette.primaryColor1
+                                              : disabledTextColor
                 checkable: true
                 checked: {
-                    let obj = root.selectedSharedAddressesMap.get(listItem.address)
+                    const obj = root.selectedSharedAddressesMap.get(listItem.address)
                     if (!!obj) {
                         return obj.isAirdrop
                     }
@@ -150,9 +330,7 @@ StatusListView {
                 visible: shareAddressCheckbox.checked
                 opacity: enabled ? 1.0 : 0.3
 
-                onToggled: {
-                    root.airdropAddressSelected(listItem.address)
-                }
+                onToggled: root.airdropAddressSelected(listItem.address)
 
                 StatusToolTip {
                     text: qsTr("Use this address for any Community airdrops")
@@ -162,15 +340,14 @@ StatusListView {
             },
             StatusCheckBox {
                 id: shareAddressCheckbox
+
                 ButtonGroup.group: d.addressesGroup
                 anchors.verticalCenter: parent.verticalCenter
                 checkable: true
                 checked: root.selectedSharedAddressesMap.has(listItem.address)
                 enabled: !(d.selectedSharedAddressesCount === 1 && checked) // last cannot be unchecked
 
-                onToggled: {
-                    root.toggleAddressSelection(model.keyUid, listItem.address)
-                }
+                onToggled: root.toggleAddressSelection(model.keyUid, listItem.address)
             }
         ]
     }

@@ -26,7 +26,7 @@ PermissionUtilsInternal::PermissionUtilsInternal(QObject* parent)
 {
 }
 
-QStringList PermissionUtilsInternal::getUniquePermissionTokenKeys(QAbstractItemModel* model) const
+QStringList PermissionUtilsInternal::getUniquePermissionTokenKeys(QAbstractItemModel* model, int tokenType) const
 {
     if (!model)
         return {};
@@ -53,13 +53,27 @@ QStringList PermissionUtilsInternal::getUniquePermissionTokenKeys(QAbstractItemM
                 continue;
             }
             const auto holdingItemsCount = holdingItems->rowCount();
+            const auto keyRole = roleByName(holdingItems, QStringLiteral("key"));
+
+            if (keyRole == -1) {
+                qWarning() << Q_FUNC_INFO << "Requested roleName 'key' not found!";
+                continue;
+            }
+
+            const auto typeRole = roleByName(holdingItems, QStringLiteral("type"));
+
+            if (typeRole == -1) {
+                qWarning() << Q_FUNC_INFO << "Requested roleName 'type' not found!";
+                continue;
+            }
+
             for (int j = 0; j < holdingItemsCount; j++) {
-                const auto keyRole = roleByName(holdingItems, QStringLiteral("key"));
-                if (keyRole == -1) {
-                    qWarning() << Q_FUNC_INFO << "Requested roleName 'key' not found!";
-                    continue;
-                }
-                result.insert(holdingItems->data(holdingItems->index(j, 0), keyRole).toString().toUpper());
+                auto idx = holdingItems->index(j, 0);
+                QString key = holdingItems->data(idx, keyRole).toString().toUpper();
+                int type  = holdingItems->data(idx, typeRole).toInt();
+
+                if (type == tokenType)
+                    result.insert(key);
             }
         }
     }
