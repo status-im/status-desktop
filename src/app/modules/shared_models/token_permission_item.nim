@@ -42,11 +42,8 @@ proc initTokenPermissionItem*(
   result.tokenCriteriaMet = tokenCriteriaMet
   result.state = state
 
-  for tcItem in tokenCriteria:
-    result.tokenCriteria.addItem(tcItem)
-
-  for clItem in chatList:
-    result.chatList.addItem(clItem)
+  result.tokenCriteria.setItems(tokenCriteria)
+  result.chatList.setItems(chatList)
 
 proc addTokenCriteria*(self: TokenPermissionItem, tokenCriteria: TokenCriteriaItem) =
   self.tokenCriteria.addItem(tokenCriteria)

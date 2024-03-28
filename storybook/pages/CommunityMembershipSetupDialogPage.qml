@@ -64,7 +64,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
 
                 walletAccountsModel: WalletAccountsModel {}
                 walletAssetsModel: root.walletAssetStore.groupedAccountAssetsModel
-                permissionsModel: dialog.accessType === Constants.communityChatOnRequestAccess ? PermissionsModel.complexPermissionsModel
+                permissionsModel: dialog.accessType === Constants.communityChatOnRequestAccess ? ctrlPermissionsModel.currentValue
                                                                                                : null
                 assetsModel: AssetsModel {}
                 collectiblesModel: CollectiblesModel {}
@@ -170,6 +170,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 Label {
                     Layout.fillWidth: true
                     text: "Access type:"
+                    font.weight: Font.Bold
                 }
 
                 RadioButton {
@@ -181,9 +182,33 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     text: qsTr("On request")
                     onCheckedChanged: dialog.accessType = Constants.communityChatOnRequestAccess
                 }
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: dialog.accessType === Constants.communityChatOnRequestAccess
+                    Layout.leftMargin: 12
+                    Label {
+                        text: "Permissions:"
+                    }
+                    ComboBox {
+                        Layout.fillWidth: true
+                        id: ctrlPermissionsModel
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { value: PermissionsModel.complexCombinedPermissionsModel, text: "complexCombined" },
+                            { value: PermissionsModel.complexCombinedPermissionsModelNotMet, text: "complexCombinedNotMet" },
+                            { value: PermissionsModel.complexPermissionsModel, text: "complex" },
+                            { value: PermissionsModel.complexPermissionsModelNotMet, text: "complexNotMet" },
+                            { value: PermissionsModel.channelsOnlyPermissionsModel, text: "channelsOnly" },
+                            { value: PermissionsModel.channelsOnlyPermissionsModelNotMet, text: "channelsOnlyNotMet" },
+                            { value: null, text: "null" }
+                        ]
+                    }
+                }
             }
 
             CheckBox {
+                Layout.leftMargin: 12
                 id: ctrlRequirementsCheckPending
                 visible: !dialog.isInvitationPending && dialog.accessType == Constants.communityChatOnRequestAccess
                 text: "Requirements check pending"
