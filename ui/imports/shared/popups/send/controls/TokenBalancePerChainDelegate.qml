@@ -48,7 +48,10 @@ StatusListItem {
         let balance = !!model && !!model.currentCurrencyBalance ? model.currentCurrencyBalance : 0
         return root.formatCurrentCurrencyAmount(balance)
     }
-    asset.name: symbol ? Style.png("tokens/" + symbol) : ""
+    // Community assets have a dedicated image streamed from status-go
+    asset.name: !!model.image
+                ? model.image
+                : Constants.tokenIcon(symbol)
     asset.isImage: true
     asset.width: 32
     asset.height: 32
