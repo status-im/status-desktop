@@ -170,17 +170,6 @@ StatusMenu {
     }
 
     StatusAction {
-        id: clearHistoryMenuItem
-        objectName: "clearHistoryMenuItem"
-        text: qsTr("Clear History")
-        icon.name: "close-circle"
-        type: deleteOrLeaveMenuItem.enabled ? StatusAction.Type.Normal : StatusAction.Type.Danger
-        onTriggered: {
-            Global.openPopup(clearChatConfirmationDialogComponent);
-        }
-    }
-
-    StatusAction {
         id: deleteOrLeaveMenuItem
         objectName: "deleteOrLeaveMenuItem"
         text: {
@@ -194,7 +183,7 @@ StatusMenu {
                         qsTr("Close Chat") :
                         qsTr("Leave Chat")
         }
-        icon.name: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? "delete" : "arrow-left"
+        icon.name: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? "close-circle" : "arrow-left"
         icon.width: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? 18 : 14
 
         type: StatusAction.Type.Danger
@@ -207,6 +196,17 @@ StatusMenu {
         }
 
         enabled: !root.isCommunityChat || root.amIChatAdmin
+    }
+
+    StatusAction {
+        id: clearHistoryMenuItem
+        objectName: "clearHistoryMenuItem"
+        text: qsTr("Clear History")
+        icon.name: "delete"
+        type: StatusAction.Type.Danger
+        onTriggered: {
+            Global.openPopup(clearChatConfirmationDialogComponent);
+        }
     }
 
     FileDialog {
@@ -227,8 +227,8 @@ StatusMenu {
         ConfirmationDialog {
             confirmButtonObjectName: "clearChatConfirmationDialogClearButton"
             headerSettings.title: qsTr("Clear chat history")
-            confirmationText: qsTr("Are you sure you want to clear chat history for <b>%1</b>?").arg(root.chatName)
-            confirmButtonLabel: qsTr("Clear")
+            confirmationText: qsTr("Are you sure you want to clear your chat history with <b>%1</b>? All messages will be deleted on your side and will be unrecoverable.?").arg(root.chatName)
+            confirmButtonLabel: qsTr("Clear chat history")
             showCancelButton: true
             cancelBtnType: "normal"
 
@@ -279,7 +279,7 @@ StatusMenu {
             confirmButtonLabel: root.isCommunityChat ? qsTr("Delete") : headerSettings.title
             confirmationText: root.isCommunityChat ? qsTr("Are you sure you want to delete #%1 channel?").arg(root.chatName) :
                                                 root.chatType === Constants.chatType.oneToOne ?
-                                                qsTr("Are you sure you want to close this chat?"):
+                                                qsTr("Are you sure you want to close this chat? This will remove the chat from the list. Your chat history will be retained and shown the next time you message each other. "):
                                                 qsTr("Are you sure you want to leave this chat?")
             showCancelButton: true
             cancelBtnType: "normal"
