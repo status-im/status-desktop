@@ -38,7 +38,9 @@ Item {
         if(!visible) {
             if (!!root.collectibles)
                 root.collectibles.currentGroupId = ""
-            tokenList.headerItem.input.edit.clear()
+            // Send Modal doesn't open with a valid headerItem
+            if (!!tokenList.headerItem && !!tokenList.headerItem.input)
+                tokenList.headerItem.input.edit.clear()
         }
     }
 
@@ -145,9 +147,21 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                header: d.isBrowsingTypeERC20 ? tokenHeader : collectibleHeader
-                model: d.isBrowsingTypeERC20 ? root.assets : collectiblesModel
-                delegate: d.isBrowsingTypeERC20 ? tokenDelegate : collectiblesDelegate
+                // Control order of components not to mix models and delegates
+                function resetComponents() {
+                    tokenList.model = []
+                    tokenList.delegate = d.isBrowsingTypeERC20 ? tokenDelegate : collectiblesDelegate
+                    tokenList.header = d.isBrowsingTypeERC20 ? tokenHeader : collectibleHeader
+                    tokenList.model = d.isBrowsingTypeERC20 ? root.assets : root.collectiblesModel
+                }
+
+                Component.onCompleted: resetComponents()
+                Connections {
+                    target: d
+                    function onIsBrowsingTypeERC20Changed() {
+                        tokenList.resetComponents()
+                    }
+                }
 
                 property bool hasCommunityTokens: false
                 function updateHasCommunityTokens() {
@@ -205,14 +219,17 @@ Item {
     Component {
         id: tokenDelegate
         TokenBalancePerChainDelegate {
-            width: ListView.view.width
+            width: tokenList.width
+
             selectedSenderAccount: root.selectedSenderAccount
             balancesModel: LeftJoinModel {
                 leftModel: !!model & !!model.balances ? model.balances : null
                 rightModel: root.networksModel
                 joinRole: "chainId"
             }
-            onTokenSelected: root.tokenSelected(symbol, Constants.TokenType.ERC20)
+            onTokenSelected: function (selectedToken) {
+                root.tokenSelected(selectedToken.symbol, Constants.TokenType.ERC20)
+            }
             onTokenHovered: root.tokenHovered(symbol, Constants.TokenType.ERC20, hovered)
             formatCurrentCurrencyAmount: function(balance){
                 return root.formatCurrentCurrencyAmount(balance)
@@ -227,7 +244,7 @@ Item {
         SearchBoxWithRightIcon {
             showTopBorder: !root.onlyAssets
             showBottomBorder: false
-            width: ListView.view.width
+            width: tokenList.width
             placeholderText: qsTr("Search for token or enter token address")
             onTextChanged: Qt.callLater(d.updateAssetSearchText, text)
         }
@@ -235,7 +252,7 @@ Item {
     Component {
         id: collectiblesDelegate
         CollectibleNestedDelegate {
-            width: ListView.view.width
+            width: tokenList.width
             onItemHovered: root.tokenHovered(selectedItem.uid, tokenType, hovered)
             onItemSelected: {
                 if (isGroup) {
@@ -250,7 +267,7 @@ Item {
     Component {
         id: collectibleHeader
         ColumnLayout {
-            width: parent.width
+            width: tokenList.width
             spacing: 0
             CollectibleBackButtonWithInfo {
                 Layout.fillWidth: true

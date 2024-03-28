@@ -328,7 +328,8 @@ StatusDialog {
                         maxInputBalance: d.maxInputBalance
                         currentCurrency: d.currencyStore.currentCurrency
 
-                        multiplierIndex: d.isSelectedHoldingValidAsset
+                        // Collectibles do not have decimals
+                        multiplierIndex: d.isSelectedHoldingValidAsset && !!holdingSelector.selectedItem && !!holdingSelector.selectedItem.decimals
                                          ? holdingSelector.selectedItem.decimals
                                          : 0
 
@@ -402,8 +403,8 @@ StatusDialog {
             collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
             networksModel: popup.store.flatNetworksModel
             onlyAssets: holdingSelector.onlyAssets
-            onTokenSelected: {
-                d.setSelectedHoldingId(symbol, holdingType)
+            onTokenSelected: function (symbolOrTokenKey, holdingType) {
+                d.setSelectedHoldingId(symbolOrTokenKey, holdingType)
             }
             onTokenHovered: {
                 if(hovered) {
@@ -502,7 +503,15 @@ StatusDialog {
             if (!!d.selectedHolding && !!d.selectedHolding.marketDetails && !!d.selectedHolding.marketDetails.currencyPrice)
                 totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * d.selectedHolding.marketDetails.currencyPrice.amount
             d.totalFeesInFiat = d.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
-            d.totalAmountToReceive = popup.store.getWei2Eth(txRoutes.amountToReceive, d.selectedHolding.decimals)
+
+            if (!!d.selectedHolding.type && (d.selectedHolding.type === Constants.TokenType.ERC20
+                                             || d.selectedHolding.type === Constants.TokenType.ETH)) {
+                // If assets
+                d.totalAmountToReceive = popup.store.getWei2Eth(txRoutes.amountToReceive, d.selectedHolding.decimals)
+            } else {
+                // If collectible
+                d.totalAmountToReceive = txRoutes.amountToReceive
+            }
             networkSelector.toNetworksList = txRoutes.toNetworksModel
             popup.isLoading = false
         }

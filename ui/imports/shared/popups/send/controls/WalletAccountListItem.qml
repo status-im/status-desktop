@@ -56,13 +56,13 @@ StatusListItem {
                     width: !!icon ? 15: 0
                     height: !!icon ? 15 : 0
                     color: Theme.palette.directColor1
-                    icon: modelData.walletType === Constants.watchWalletType ? "show" : ""
+                    icon: !!modelData && modelData.walletType === Constants.watchWalletType ? "show" : ""
                 }
                 StatusIcon {
                     width: !!icon ? 15: 0
                     height: !!icon ? 15 : 0
                     color: Theme.palette.directColor1
-                    icon: modelData.migratedToKeycard ? "keycard" : ""
+                    icon: !!modelData && modelData.migratedToKeycard ? "keycard" : ""
                 }
             }
         },

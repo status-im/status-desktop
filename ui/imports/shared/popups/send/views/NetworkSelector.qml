@@ -88,7 +88,8 @@ Item {
                 errorMode: root.errorMode
                 errorType: root.errorType
                 toNetworksList: root.toNetworksList
-                selectedSymbol: !!root.selectedAsset ? root.selectedAsset.symbol: ""
+                // Collectibles don't have a symbol
+                selectedSymbol: !!root.selectedAsset && !!root.selectedAsset.symbol ? root.selectedAsset.symbol: ""
                 weiToEth: function(wei) {
                     if(!!selectedAsset && root.selectedAsset !== undefined)
                         return parseFloat(store.getWei2Eth(wei, root.selectedAsset.decimals))
@@ -124,8 +125,13 @@ Item {
                 isBridgeTx: root.isBridgeTx
                 errorType: root.errorType
                 weiToEth: function(wei) {
-                    if(!!selectedAsset && selectedAsset !== undefined)
+                    if(!!selectedAsset && !!selectedAsset.type
+                        && (selectedAsset.type === Constants.TokenType.Native
+                           || selectedAsset.type === Constants.TokenType.ERC20)
+                    ) {
                         return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
+                    }
+                    return 0
                 }
             }
         }
