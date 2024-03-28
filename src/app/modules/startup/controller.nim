@@ -1,4 +1,4 @@
-import Tables, chronicles, strutils
+import Tables, chronicles, strutils, sequtils
 import uuids
 import io_interface
 
@@ -13,19 +13,17 @@ import app_service/service/profile/service as profile_service
 import app_service/service/keycard/service as keycard_service
 import app_service/service/devices/service as devices_service
 import app_service/common/[account_constants, utils]
-
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
+
+import app_service/service/accounts/dto/create_account_request
 
 logScope:
   topics = "startup-controller"
 
 type ProfileImageDetails = object
   url*: string
-  croppedImage*: string
-  x1*: int
-  y1*: int
-  x2*: int
-  y2*: int
+  croppedImage*: string # TODO: Remove after https://github.com/status-im/status-go/issues/4977
+  cropRectangle*: ImageCropRectangle
 
 type
   Controller* = ref object of RootObj
@@ -116,12 +114,6 @@ proc connectToFetchingFromWakuEvents*(self: Controller) =
       self.delegate.onFetchingFromWakuMessageReceived(receivedData.clock, k, v.totalNumber, v.dataNumber)
   self.connectionIds.add(handlerId)
 
-proc connectToTimeoutEventAndStratTimer*(self: Controller, timeoutInMilliseconds: int) =
-  var handlerId = self.events.onWithUUID(SIGNAL_GENERAL_TIMEOUT) do(e: Args):
-    self.delegate.startAppAfterDelay()
-  self.connectionIds.add(handlerId)
-  self.generalService.runTimer(timeoutInMilliseconds)
-
 proc disconnect*(self: Controller) =
   self.disconnectKeychain()
   for id in self.connectionIds:
@@ -134,7 +126,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
-    self.delegate.onNodeLogin(signal.error)
+    self.delegate.onNodeLogin(signal.error, signal.account, signal.settings)
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SignalType.NodeStopped.event) do(e:Args):
@@ -196,6 +188,8 @@ proc init*(self: Controller) =
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
+# This is used when fetching backup failed and we create a new displayName and profileImage.
+# At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
   discard self.profileService.setDisplayName(self.tmpDisplayName)
@@ -221,11 +215,15 @@ proc clearImage*(self: Controller) =
 proc generateImage*(self: Controller, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string =
   let formatedImg = singletonInstance.utils.formatImagePath(imageUrl)
   let images = self.generalService.generateImages(formatedImg, aX, aY, bX, bY)
-  if(images.len == 0):
+  if images.len == 0:
     return
   for img in images:
-    if(img.imgType == "large"):
-      self.tmpProfileImageDetails = ProfileImageDetails(url: imageUrl, croppedImage: img.uri, x1: aX, y1: aY, x2: bX, y2: bY)
+    if img.imgType == "large":
+      self.tmpProfileImageDetails = ProfileImageDetails(
+        url: formatedImg, 
+        croppedImage: img.uri, 
+        cropRectangle: ImageCropRectangle(ax: aX, ay: aY, bx: bX, by: bY)
+      )
       return img.uri
 
 proc fetchWakuMessages*(self: Controller) =
@@ -349,22 +347,46 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   let selectedAccount = self.getSelectedLoginAccount()
   self.keychainService.tryToObtainData(selectedAccount.keyUid)
 
+# FIXME: Remove with new login endpoint
 proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:
     return
   let account = self.accountsService.getLoggedInAccount()
   let image = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
-  result = self.profileService.storeIdentityImage(account.keyUid, image, self.tmpProfileImageDetails.x1,
-  self.tmpProfileImageDetails.y1, self.tmpProfileImageDetails.x2, self.tmpProfileImageDetails.y2)
+  result = self.profileService.storeIdentityImage(
+    account.keyUid, 
+    image, 
+    self.tmpProfileImageDetails.cropRectangle.aX,
+    self.tmpProfileImageDetails.cropRectangle.aY,
+    self.tmpProfileImageDetails.cropRectangle.bX,
+    self.tmpProfileImageDetails.cropRectangle.bY,
+  )
   self.tmpProfileImageDetails = ProfileImageDetails()
 
+# validMnemonic only checks if mnemonic is valid
+# This is used from UI.
 proc validMnemonic*(self: Controller, mnemonic: string): bool =
-  let err = self.accountsService.validateMnemonic(mnemonic)
+  let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
   if err.len == 0:
     self.setSeedPhrase(mnemonic)
     return true
   return false
 
+# validateMnemonicForImport checks if mnemonic is valid and not yet saved in local database
+proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
+  let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
+  if err.len != 0:
+    self.delegate.emitStartupError(err, StartupErrorType.ImportAccError)
+    return false
+
+  if keyUID in self.accountsService.openedAccounts.mapIt(it.keyUid):
+    self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
+    return false
+
+  self.setSeedPhrase(mnemonic)
+  return true
+
+# TODO: Remove after https://github.com/status-im/status-go/issues/4977
 proc importMnemonic*(self: Controller): bool =
   let error = self.accountsService.importMnemonic(self.tmpSeedPhrase)
   if(error.len == 0):
@@ -380,25 +402,35 @@ proc setupKeychain(self: Controller, store: bool) =
   else:
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
 
-proc setupAccount(self: Controller, accountId: string, removeMnemonic: bool, storeToKeychain: bool, recoverAccount: bool = false) =
-  self.delegate.moveToLoadingAppState()
-  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName, removeMnemonic, recoverAccount)
+proc processCreateAccountResult*(self: Controller, error: string, storeToKeychain: bool) =
   if error != "":
     self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
   else:
     self.setupKeychain(storeToKeychain)
 
-proc storeGeneratedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
-  let accounts = self.getGeneratedAccounts()
-  if accounts.len == 0:
-    error "list of generated accounts is empty"
-    return
-  let accountId = accounts[0].id
-  self.setupAccount(accountId, removeMnemonic=false, storeToKeychain)
+proc createAccountAndLogin*(self: Controller, storeToKeychain: bool) =
+  self.delegate.moveToLoadingAppState()
+  let error = self.accountsService.createAccountAndLogin(
+    self.tmpPassword, 
+    self.tmpDisplayName, 
+    self.tmpProfileImageDetails.url, 
+    self.tmpProfileImageDetails.cropRectangle
+  )
+  self.processCreateAccountResult(error, storeToKeychain)
 
-proc storeImportedAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
-  let accountId = self.getImportedAccount().id
-  self.setupAccount(accountId, removeMnemonic=true, storeToKeychain, recoverAccount)
+proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
+  if recoverAccount:
+    self.delegate.prepareAndInitFetchingData()
+    self.connectToFetchingFromWakuEvents()
+  let error = self.accountsService.importAccountAndLogin(
+    self.tmpSeedPhrase, 
+    self.tmpPassword, 
+    recoverAccount, 
+    self.tmpDisplayName, 
+    self.tmpProfileImageDetails.url,
+    self.tmpProfileImageDetails.cropRectangle,
+  )
+  self.processCreateAccountResult(error, storeToKeychain)
 
 proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
   if self.importMnemonic():
@@ -611,3 +643,6 @@ proc validateLocalPairingConnectionString*(self: Controller, connectionString: s
 
 proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string): string =
   return self.devicesService.inputConnectionStringForBootstrapping(connectionString)
+
+proc setLoggedInAccount*(self: Controller, account: AccountDto) =
+  self.accountsService.setLoggedInAccount(account)

@@ -44,33 +44,36 @@ method getNextPrimaryState*(self: UserProfileEnterSeedPhraseState, controller: C
 method executePrimaryCommand*(self: UserProfileEnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserImportSeedPhrase or
     self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
-      self.successfulImport = controller.importMnemonic()
-  else:
-    self.successfulImport = controller.validMnemonic(controller.getSeedPhrase())
-    if self.successfulImport:
-      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
-      let keyUid = controller.getKeyUidForSeedPhrase(controller.getSeedPhrase())
+      self.successfulImport = controller.validateMnemonicForImport(controller.getSeedPhrase())
+      return
 
-      if self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-        controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
-      if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-        self.enteredMnemonicMatchTargetedKeyUid = keyUid == controller.getKeyUid()
-        if not self.enteredMnemonicMatchTargetedKeyUid:
-          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))  
-      if self.flowType == FlowType.AppLogin:
-        self.enteredMnemonicMatchTargetedKeyUid = controller.keyUidMatchSelectedLoginAccount(keyUid)
-        if not self.enteredMnemonicMatchTargetedKeyUid:
-          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
-      if self.flowType == FlowType.LostKeycardReplacement:
-        self.enteredMnemonicMatchTargetedKeyUid = controller.keyUidMatchSelectedLoginAccount(keyUid)
-        if self.enteredMnemonicMatchTargetedKeyUid:
-          controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
-        else:
-          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
-      if self.flowType == FlowType.LostKeycardConvertToRegularAccount:
-        self.enteredMnemonicMatchTargetedKeyUid = controller.keyUidMatchSelectedLoginAccount(keyUid)
-        if not self.enteredMnemonicMatchTargetedKeyUid:
-          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
+  self.successfulImport = controller.validMnemonic(controller.getSeedPhrase())
+  if not self.successfulImport:
+    return
+
+  controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
+  let keyUid = controller.getKeyUidForSeedPhrase(controller.getSeedPhrase())
+
+  if self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+    controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
+  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
+    self.enteredMnemonicMatchTargetedKeyUid = keyUid == controller.getKeyUid()
+    if not self.enteredMnemonicMatchTargetedKeyUid:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))  
+  if self.flowType == FlowType.AppLogin:
+    self.enteredMnemonicMatchTargetedKeyUid = controller.keyUidMatchSelectedLoginAccount(keyUid)
+    if not self.enteredMnemonicMatchTargetedKeyUid:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
+  if self.flowType == FlowType.LostKeycardReplacement:
+    self.enteredMnemonicMatchTargetedKeyUid = controller.keyUidMatchSelectedLoginAccount(keyUid)
+    if self.enteredMnemonicMatchTargetedKeyUid:
+      controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
+    else:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
+  if self.flowType == FlowType.LostKeycardConvertToRegularAccount:
+    self.enteredMnemonicMatchTargetedKeyUid = controller.keyUidMatchSelectedLoginAccount(keyUid)
+    if not self.enteredMnemonicMatchTargetedKeyUid:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
 
 method resolveKeycardNextState*(self: UserProfileEnterSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
