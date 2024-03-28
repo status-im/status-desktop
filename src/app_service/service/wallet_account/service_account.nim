@@ -467,7 +467,7 @@ proc migrateNonProfileKeycardKeypairToAppAsync*(self: Service, keyUid, seedPhras
   if doPasswordHashing:
     finalPassword = utils.hashPassword(password)
   let arg = MigrateNonProfileKeycardKeypairToAppTaskArg(
-    tptr: cast[ByteAddress](migrateNonProfileKeycardKeypairToAppTask),
+    tptr: migrateNonProfileKeycardKeypairToAppTask,
     vptr: cast[ByteAddress](self.vptr),
     slot: "onNonProfileKeycardKeypairMigratedToApp",
     keyUid: keyUid,
@@ -645,7 +645,7 @@ proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string
     password: if hashPassword: utils.hashPassword(password) else: password,
     derivedFrom: derivedFrom,
     paths: paths,
-    tptr: cast[ByteAddress](fetchDerivedAddressesTask),
+    tptr: fetchDerivedAddressesTask,
     vptr: cast[ByteAddress](self.vptr),
     slot: "onDerivedAddressesFetched",
   )
@@ -665,7 +665,7 @@ proc fetchDerivedAddressesForMnemonic*(self: Service, mnemonic: string, paths: s
   let arg = FetchDerivedAddressesForMnemonicTaskArg(
     mnemonic: mnemonic,
     paths: paths,
-    tptr: cast[ByteAddress](fetchDerivedAddressesForMnemonicTask),
+    tptr: fetchDerivedAddressesForMnemonicTask,
     vptr: cast[ByteAddress](self.vptr),
     slot: "onDerivedAddressesForMnemonicFetched",
   )
@@ -687,7 +687,7 @@ proc fetchDetailsForAddresses*(self: Service, uniqueId: string, addresses: seq[s
     uniqueId: uniqueId,
     chainId: network.chainId,
     addresses: addresses,
-    tptr: cast[ByteAddress](fetchDetailsForAddressesTask),
+    tptr: fetchDetailsForAddressesTask,
     vptr: cast[ByteAddress](self.vptr),
     slot: "onAddressDetailsFetched",
   )
@@ -752,7 +752,7 @@ proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.} =
 
 proc fetchChainIdForUrl*(self: Service, url: string, isMainUrl: bool) =
   let arg = FetchChainIdForUrlTaskArg(
-    tptr: cast[ByteAddress](fetchChainIdForUrlTask),
+    tptr: fetchChainIdForUrlTask,
     vptr: cast[ByteAddress](self.vptr),
     slot: "onFetchChainIdForUrl",
     url: url,

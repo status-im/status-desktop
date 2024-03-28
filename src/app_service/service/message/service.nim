@@ -235,7 +235,7 @@ QtObject:
     msgCursor.setPending()
 
     let arg = AsyncFetchChatMessagesTaskArg(
-      tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
+      tptr: asyncFetchChatMessagesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncLoadMoreMessagesForChat",
       chatId: chatId,
@@ -259,7 +259,7 @@ QtObject:
     pinnedMsgCursor.setPending()
 
     let arg = AsyncFetchChatMessagesTaskArg(
-      tptr: cast[ByteAddress](asyncFetchPinnedChatMessagesTask),
+      tptr: asyncFetchPinnedChatMessagesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncLoadPinnedMessagesForChat",
       chatId: chatId,
@@ -284,7 +284,7 @@ QtObject:
     let arg = AsyncLoadCommunityMemberAllMessagesTaskArg(
       communityId: communityId,
       memberPubKey: memberPublicKey,
-      tptr: cast[ByteAddress](asyncLoadCommunityMemberAllMessagesTask),
+      tptr: asyncLoadCommunityMemberAllMessagesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncLoadCommunityMemberAllMessages"
     )
@@ -655,7 +655,7 @@ QtObject:
       return
 
     let arg = AsyncMarkMessageAsUnreadTaskArg(
-      tptr: cast[ByteAddress](asyncMarkMessageAsUnreadTask),
+      tptr: asyncMarkMessageAsUnreadTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncMarkMessageAsUnread",
       messageId: messageId,
@@ -706,7 +706,7 @@ QtObject:
   proc asyncGetMessageById*(self: Service, messageId: string): UUID =
     let requestId = genUUID()
     let arg = AsyncGetMessageByMessageIdTaskArg(
-      tptr: cast[ByteAddress](asyncGetMessageByMessageIdTask),
+      tptr: asyncGetMessageByMessageIdTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncGetMessageById",
       requestId: $requestId,
@@ -758,7 +758,7 @@ QtObject:
       return
 
     let arg = AsyncSearchMessagesInChatTaskArg(
-      tptr: cast[ByteAddress](asyncSearchMessagesInChatTask),
+      tptr: asyncSearchMessagesInChatTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncSearchMessages",
       chatId: chatId,
@@ -781,7 +781,7 @@ QtObject:
       return
 
     let arg = AsyncSearchMessagesInChatsAndCommunitiesTaskArg(
-      tptr: cast[ByteAddress](asyncSearchMessagesInChatsAndCommunitiesTask),
+      tptr: asyncSearchMessagesInChatsAndCommunitiesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncSearchMessages",
       communityIds: communityIds,
@@ -816,7 +816,7 @@ QtObject:
       return
 
     let arg = AsyncMarkAllMessagesReadTaskArg(
-      tptr: cast[ByteAddress](asyncMarkAllMessagesReadTask),
+      tptr: asyncMarkAllMessagesReadTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onMarkAllMessagesRead",
       chatId: chatId
@@ -903,7 +903,7 @@ QtObject:
       return
 
     let arg = AsyncMarkCertainMessagesReadTaskArg(
-      tptr: cast[ByteAddress](asyncMarkCertainMessagesReadTask),
+      tptr: asyncMarkCertainMessagesReadTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onMarkCertainMessagesRead",
       chatId: chatId,
@@ -914,7 +914,7 @@ QtObject:
 
   proc getAsyncFirstUnseenMessageId*(self: Service, chatId: string) =
     let arg = AsyncGetFirstUnseenMessageIdForTaskArg(
-      tptr: cast[ByteAddress](asyncGetFirstUnseenMessageIdForTaskArg),
+      tptr: asyncGetFirstUnseenMessageIdForTaskArg,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onGetFirstUnseenMessageIdFor",
       chatId: chatId,
@@ -981,7 +981,7 @@ QtObject:
   proc asyncGetTextURLsToUnfurl*(self: Service, text: string): string =
     let uuid = $genUUID()
     let arg = AsyncGetTextURLsToUnfurlTaskArg(
-      tptr: cast[ByteAddress](asyncGetTextURLsToUnfurlTask),
+      tptr: asyncGetTextURLsToUnfurlTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncGetTextURLsToUnfurl",
       text: text,
@@ -1037,7 +1037,7 @@ QtObject:
       return ""
     let uuid = $genUUID()
     let arg = AsyncUnfurlUrlsTaskArg(
-      tptr: cast[ByteAddress](asyncUnfurlUrlsTask),
+      tptr: asyncUnfurlUrlsTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncUnfurlUrlsFinished",
       urls: urls,

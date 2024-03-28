@@ -96,7 +96,7 @@ QtObject:
 
   proc fetchAllCurrencyFormats(self: Service) =
     let arg = FetchAllCurrencyFormatsTaskArg(
-      tptr: cast[ByteAddress](fetchAllCurrencyFormatsTaskArg),
+      tptr: fetchAllCurrencyFormatsTaskArg,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAllCurrencyFormatsFetched",
     )

@@ -7,27 +7,27 @@ type
     packId*: string
     fromAddress*: string
     uuid*: string
-  
+
   ObtainMarketStickerPacksTaskArg = ref object of QObjectTaskArg
     chainId*: int
   InstallStickerPackTaskArg = ref object of QObjectTaskArg
     packId*: string
     chainId*: int
-  
+
   AsyncGetRecentStickersTaskArg* = ref object of QObjectTaskArg
   AsyncGetInstalledStickerPacksTaskArg* = ref object of QObjectTaskArg
 
-const asyncGetRecentStickersTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetRecentStickersTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetRecentStickersTaskArg](argEncoded)
   let response = status_stickers.recent()
   arg.finish(response)
 
-const asyncGetInstalledStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetInstalledStickerPacksTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetInstalledStickerPacksTaskArg](argEncoded)
   let response = status_stickers.installed()
   arg.finish(response)
 
-proc getMarketStickerPacks*(chainId: int): 
+proc getMarketStickerPacks*(chainId: int):
     tuple[stickers: Table[string, StickerPackDto], error: string] =
   result = (initTable[string, StickerPackDto](), "")
   try:
@@ -44,7 +44,7 @@ proc getMarketStickerPacks*(chainId: int):
 # to accept unsafe code, rather they work in conjunction with the proc
 # signature for `type Task` in tasks/common.nim to ensure that the proc really
 # is gcsafe and that a helpful error message is displayed
-const estimateTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc estimateTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[EstimateTaskArg](argEncoded)
   var estimate = 325000
   try:
@@ -58,7 +58,7 @@ const estimateTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let tpl: tuple[estimate: int, uuid: string] = (estimate, arg.uuid)
   arg.finish(tpl)
 
-const obtainMarketStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc obtainMarketStickerPacksTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ObtainMarketStickerPacksTaskArg](argEncoded)
   let (marketStickerPacks, error) = getMarketStickerPacks(arg.chainId)
   var packs: seq[StickerPackDto] = @[]
@@ -67,7 +67,7 @@ const obtainMarketStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, ni
   let tpl: tuple[packs: seq[StickerPackDto], error: string] = (packs, error)
   arg.finish(tpl)
 
-const installStickerPackTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc installStickerPackTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[InstallStickerPackTaskArg](argEncoded)
 
   var installed = false

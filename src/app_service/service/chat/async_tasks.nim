@@ -4,7 +4,7 @@
 type
   AsyncGetChannelGroupsTaskArg = ref object of QObjectTaskArg
 
-const asyncGetChannelGroupsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetChannelGroupsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetChannelGroupsTaskArg](argEncoded)
   try:
     let response = status_chat.getChannelGroups()
@@ -24,7 +24,7 @@ type
     communityId: string
     chatId: string
 
-const asyncCheckChannelPermissionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncCheckChannelPermissionsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCheckChannelPermissionsTaskArg](argEncoded)
   try:
     let response = status_communities.checkCommunityChannelPermissions(arg.communityId, arg.chatId)
@@ -46,7 +46,7 @@ type
     communityId: string
     addresses: seq[string]
 
-const asyncCheckAllChannelsPermissionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncCheckAllChannelsPermissionsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCheckAllChannelsPermissionsTaskArg](argEncoded)
   try:
     let response = status_communities.checkAllCommunityChannelsPermissions(arg.communityId, arg.addresses)

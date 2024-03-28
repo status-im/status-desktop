@@ -9,7 +9,7 @@ include app_service/common/json_utils
 const DAYS_IN_WEEK = 7
 const HOURS_IN_DAY = 24
 
-const getSupportedTokenList*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc getSupportedTokenList*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[QObjectTaskArg](argEncoded)
   var output = %*{
     "supportedTokensJson": "",
@@ -27,7 +27,7 @@ type
     symbols: seq[string]
     currency: string
 
-const fetchTokensMarketValuesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchTokensMarketValuesTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchTokensMarketValuesTaskArg](argEncoded)
   var output = %*{
     "tokenMarketValues": "",
@@ -44,7 +44,7 @@ type
   FetchTokensDetailsTaskArg = ref object of QObjectTaskArg
     symbols: seq[string]
 
-const fetchTokensDetailsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchTokensDetailsTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchTokensDetailsTaskArg](argEncoded)
   var output = %*{
     "tokensDetails": "",
@@ -62,7 +62,7 @@ type
     symbols: seq[string]
     currencies: seq[string]
 
-const fetchTokensPricesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchTokensPricesTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchTokensPricesTaskArg](argEncoded)
   var output = %*{
     "tokensPrices": "",
@@ -81,7 +81,7 @@ type
     currency: string
     range: int
 
-const getTokenHistoricalDataTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc getTokenHistoricalDataTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetTokenHistoricalDataTaskArg](argEncoded)
   var response = %*{}
   try:

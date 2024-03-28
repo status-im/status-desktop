@@ -25,7 +25,7 @@ type
     msgCursor: string
     limit: int
 
-const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncFetchChatMessagesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncFetchChatMessagesTaskArg](argEncoded)
 
   var responseJson = %*{
@@ -52,7 +52,7 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
 #################################################
 # Async load pinned messages
 #################################################
-const asyncFetchPinnedChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncFetchPinnedChatMessagesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncFetchChatMessagesTaskArg](argEncoded)
 
   var responseJson = %*{
@@ -86,7 +86,7 @@ type
   AsyncSearchMessagesInChatTaskArg = ref object of AsyncSearchMessagesTaskArg
     chatId: string
 
-const asyncSearchMessagesInChatTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncSearchMessagesInChatTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSearchMessagesInChatTaskArg](argEncoded)
 
   let response = status_go.fetchAllMessagesFromChatWhichMatchTerm(arg.chatId, arg.searchTerm, arg.caseSensitive)
@@ -105,7 +105,7 @@ type
     communityIds: seq[string]
     chatIds: seq[string]
 
-const asyncSearchMessagesInChatsAndCommunitiesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncSearchMessagesInChatsAndCommunitiesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSearchMessagesInChatsAndCommunitiesTaskArg](argEncoded)
 
   let response = status_go.fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm(arg.communityIds, arg.chatIds,
@@ -125,7 +125,7 @@ type
   AsyncMarkAllMessagesReadTaskArg = ref object of QObjectTaskArg
     chatId: string
 
-const asyncMarkAllMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncMarkAllMessagesReadTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncMarkAllMessagesReadTaskArg](argEncoded)
 
   let response =  status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
@@ -149,7 +149,7 @@ type
     chatId: string
     messagesIds: seq[string]
 
-const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncMarkCertainMessagesReadTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncMarkCertainMessagesReadTaskArg](argEncoded)
 
   let response = status_go.markCertainMessagesFromChatWithIdAsRead(arg.chatId, arg.messagesIds)
@@ -184,7 +184,7 @@ type
   AsyncGetFirstUnseenMessageIdForTaskArg = ref object of QObjectTaskArg
     chatId: string
 
-const asyncGetFirstUnseenMessageIdForTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetFirstUnseenMessageIdForTaskArg(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetFirstUnseenMessageIdForTaskArg](argEncoded)
 
   let responseJson = %*{
@@ -218,7 +218,7 @@ type
     text*: string
     requestUuid*: string
 
-const asyncGetTextURLsToUnfurlTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetTextURLsToUnfurlTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetTextURLsToUnfurlTaskArg](argEncoded)
   var output = %*{
     "error": "",
@@ -245,7 +245,7 @@ type
     urls*: seq[string]
     requestUuid*: string
 
-const asyncUnfurlUrlsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncUnfurlUrlsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncUnfurlUrlsTaskArg](argEncoded)
   try:
     let response = status_go.unfurlUrls(arg.urls)
@@ -276,7 +276,7 @@ type
     requestId*: string
     messageId*: string
 
-const asyncGetMessageByMessageIdTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetMessageByMessageIdTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetMessageByMessageIdTaskArg](argEncoded)
   try:
     let response = status_go.getMessageByMessageId(arg.messageId)
@@ -306,7 +306,7 @@ type
       messageId*: string
       chatId*: string
 
-const asyncMarkMessageAsUnreadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncMarkMessageAsUnreadTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncMarkMessageAsUnreadTaskArg](argEncoded)
 
   var responseJson = %*{

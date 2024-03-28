@@ -68,7 +68,7 @@ QtObject:
     self.events.emit(SIGNAL_LOAD_RECENT_GIFS_STARTED, Args())
     try:
       let arg = AsyncGetRecentGifsTaskArg(
-        tptr: cast[ByteAddress](asyncGetRecentGifsTask),
+        tptr: asyncGetRecentGifsTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onAsyncGetRecentGifsDone"
       )
@@ -94,7 +94,7 @@ QtObject:
     self.events.emit(SIGNAL_LOAD_FAVORITE_GIFS_STARTED, Args())
     try:
       let arg = AsyncGetFavoriteGifsTaskArg(
-        tptr: cast[ByteAddress](asyncGetFavoriteGifsTask),
+        tptr: asyncGetFavoriteGifsTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onAsyncGetFavoriteGifsDone"
       )
@@ -123,7 +123,7 @@ QtObject:
     try:
       self.events.emit(SIGNAL_SEARCH_GIFS_STARTED, Args())
       let arg = AsyncTenorQueryArg(
-        tptr: cast[ByteAddress](asyncTenorQuery),
+        tptr: asyncTenorQuery,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onAsyncTenorQueryDone",
         apiKeySet: self.apiKeySet,
@@ -143,7 +143,7 @@ QtObject:
     try:
       self.events.emit(SIGNAL_LOAD_TRENDING_GIFS_STARTED, Args())
       let arg = AsyncTenorQueryArg(
-        tptr: cast[ByteAddress](asyncTenorQuery),
+        tptr: asyncTenorQuery,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onAsyncTenorQueryDone",
         apiKeySet: self.apiKeySet,

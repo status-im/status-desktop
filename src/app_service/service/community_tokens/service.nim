@@ -170,7 +170,7 @@ type
     chainId*: int
     contractAddress*: string
 
-type 
+type
   CommunityTokenReceivedArgs* =  ref object of Args
     name*: string
     image*: string
@@ -395,11 +395,11 @@ QtObject:
 
           let tokenReceivedArgs = CommunityTokenReceivedArgs(
             collectibleId: id,
-            communityId: communityId, 
-            communityName: communityData.name, 
-            chainId: id.contractID.chainID, 
+            communityId: communityId,
+            communityName: communityData.name,
+            chainId: id.contractID.chainID,
             txHash: txHash,
-            name: collectibleName, 
+            name: collectibleName,
             amount: amount,
             image: collectibleImage,
             isFirst: isFirst,
@@ -408,7 +408,7 @@ QtObject:
             accountName: accountName
           )
           self.events.emit(SIGNAL_COMMUNITY_TOKEN_RECEIVED, tokenReceivedArgs)
-          
+
           let response = tokens_backend.registerReceivedCommunityTokenNotification(communityId, isFirst, tokenReceivedArgs.toTokenData())
           checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
     except Exception as e:
@@ -449,7 +449,7 @@ QtObject:
         isWatchOnlyAccount: any(watchOnlyAccounts, proc (x: WalletAccountDto): bool = x.address == accounts[0])
       )
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_RECEIVED, tokenReceivedArgs)
-      
+
       let response = tokens_backend.registerReceivedCommunityTokenNotification(communityId, tokenDataPayload.isFirst, tokenReceivedArgs.toTokenData())
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
     except Exception as e:
@@ -512,7 +512,7 @@ QtObject:
   proc removeCommunityTokenAndUpdateCache(self: Service, chainId: int, contractAddress: string) =
     discard tokens_backend.removeCommunityToken(chainId, contractAddress)
     self.communityTokensCache = self.communityTokensCache.filter(x => ((x.chainId != chainId) or (x.address != contractAddress)))
-  
+
   # end of cache functions
 
   proc init*(self: Service) =
@@ -802,7 +802,7 @@ QtObject:
 
   proc getCommunityTokensDetailsAsync*(self: Service, communityId: string) =
     let arg = GetCommunityTokensDetailsArg(
-      tptr: cast[ByteAddress](getCommunityTokensDetailsTaskArg),
+      tptr: getCommunityTokensDetailsTaskArg,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onCommunityTokensDetailsLoaded",
       communityId: communityId
@@ -830,7 +830,7 @@ QtObject:
 
   proc getAllCommunityTokensAsync*(self: Service) =
     let arg = GetAllCommunityTokensArg(
-      tptr: cast[ByteAddress](getAllCommunityTokensTaskArg),
+      tptr: getAllCommunityTokensTaskArg,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onGotAllCommunityTokens",
     )
@@ -958,7 +958,7 @@ QtObject:
     try:
       self.tempTokensAndAmounts = collectiblesAndAmounts
       let arg = AsyncGetMintFees(
-        tptr: cast[ByteAddress](asyncGetMintFeesTask),
+        tptr: asyncGetMintFeesTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onAirdropFees",
         collectiblesAndAmounts: collectiblesAndAmounts,
@@ -991,7 +991,7 @@ QtObject:
         error "Error loading fees: unknown token type", tokenType = tokenType
         return
       let arg = AsyncGetDeployFeesArg(
-        tptr: cast[ByteAddress](asyncGetDeployFeesTask),
+        tptr: asyncGetDeployFeesTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onDeployFees",
         chainId: chainId,
@@ -1007,7 +1007,7 @@ QtObject:
   proc computeSetSignerFee*(self: Service, chainId: int, contractAddress: string, accountAddress: string, requestId: string) =
     try:
       let arg = AsyncSetSignerFeesArg(
-        tptr: cast[ByteAddress](asyncSetSignerFeesTask),
+        tptr: asyncSetSignerFeesTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onSetSignerFees",
         chainId: chainId,
@@ -1025,7 +1025,7 @@ QtObject:
   proc computeDeployOwnerContractsFee*(self: Service, chainId: int, accountAddress: string, communityId: string, ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters, requestId: string) =
     try:
       let arg = AsyncDeployOwnerContractsFeesArg(
-        tptr: cast[ByteAddress](asyncGetDeployOwnerContractsFeesTask),
+        tptr: asyncGetDeployOwnerContractsFeesTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onDeployOwnerContractsFees",
         chainId: chainId,
@@ -1107,7 +1107,7 @@ QtObject:
         warn "token list is empty"
         return
       let arg = AsyncGetRemoteBurnFees(
-        tptr: cast[ByteAddress](asyncGetRemoteBurnFeesTask),
+        tptr: asyncGetRemoteBurnFeesTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onSelfDestructFees",
         chainId: contract.chainId,
@@ -1194,7 +1194,7 @@ QtObject:
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
       let arg = AsyncGetBurnFees(
-        tptr: cast[ByteAddress](asyncGetBurnFeesTask),
+        tptr: asyncGetBurnFeesTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onBurnFees",
         chainId: contract.chainId,
@@ -1388,7 +1388,7 @@ QtObject:
 
     if communityToken.tokenType == TokenType.ERC20:
       let arg = FetchAssetOwnersArg(
-        tptr: cast[ByteAddress](fetchAssetOwnersTaskArg),
+        tptr: fetchAssetOwnersTaskArg,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onCommunityTokenOwnersFetched",
         chainId: communityToken.chainId,
@@ -1399,7 +1399,7 @@ QtObject:
       return
     elif communityToken.tokenType == TokenType.ERC721:
       let arg = FetchCollectibleOwnersArg(
-        tptr: cast[ByteAddress](fetchCollectibleOwnersTaskArg),
+        tptr: fetchCollectibleOwnersTaskArg,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onCommunityTokenOwnersFetched",
         chainId: communityToken.chainId,
@@ -1474,7 +1474,7 @@ QtObject:
 
   proc asyncGetOwnerTokenOwnerAddress*(self: Service, chainId: int, contractAddress: string) =
     let arg = GetOwnerTokenOwnerAddressArgs(
-      tptr: cast[ByteAddress](getOwnerTokenOwnerAddressTask),
+      tptr: getOwnerTokenOwnerAddressTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onGetOwnerTokenOwner",
       chainId: chainId,

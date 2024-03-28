@@ -18,7 +18,7 @@ type
     chainId: int
     reason: string
 
-const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc lookupContactTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[LookupContactTaskArg](argEncoded)
   var output = %*{
     "id": "",
@@ -61,7 +61,7 @@ type
   AsyncRequestContactInfoTaskArg = ref object of QObjectTaskArg
     pubkey: string
 
-const asyncRequestContactInfoTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncRequestContactInfoTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestContactInfoTaskArg](argEncoded)
   try:
     let response = status_go.requestContactInfo(arg.pubkey)

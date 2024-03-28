@@ -10,7 +10,7 @@ type
     hashedCurrentPassword: string
     newPassword: string
 
-const convertRegularProfileKeypairToKeycardTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc convertRegularProfileKeypairToKeycardTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ConvertRegularProfileKeypairToKeycardTaskArg](argEncoded)
   try:
     var errMsg: string
@@ -46,7 +46,7 @@ type
     currentPassword: string
     hashedNewPassword: string
 
-const convertKeycardProfileKeypairToRegularTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc convertKeycardProfileKeypairToRegularTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ConvertKeycardProfileKeypairToRegularTaskArg](argEncoded)
   try:
     var response: RpcResponse[JsonNode]
@@ -76,7 +76,7 @@ type
     mnemonic: string
     paths: seq[string]
 
-const fetchAddressesFromNotImportedMnemonicTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchAddressesFromNotImportedMnemonicTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchAddressesFromNotImportedMnemonicArg](argEncoded)
   var output = %*{
     "derivedAddress": "",

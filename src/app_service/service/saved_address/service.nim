@@ -95,7 +95,7 @@ QtObject:
   proc fetchSavedAddressesAndResolveEnsNames(self: Service) =
     let arg = SavedAddressTaskArg(
       chainId: self.networkService.getAppNetwork().chainId,
-      tptr: cast[ByteAddress](fetchSavedAddressesAndResolveEnsNamesTask),
+      tptr: fetchSavedAddressesAndResolveEnsNamesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onSavedAddressesFetched",
     )
@@ -124,7 +124,7 @@ QtObject:
       colorId: colorId,
       chainShortNames: chainShortNames,
       isTestAddress: self.areTestNetworksEnabled(),
-      tptr: cast[ByteAddress](upsertSavedAddressTask),
+      tptr: upsertSavedAddressTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onSavedAddressCreatedOrUpdated",
     )
@@ -151,7 +151,7 @@ QtObject:
     let arg = SavedAddressTaskArg(
       address: address,
       isTestAddress: self.areTestNetworksEnabled(),
-      tptr: cast[ByteAddress](deleteSavedAddressTask),
+      tptr: deleteSavedAddressTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onDeleteSavedAddress",
     )

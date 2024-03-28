@@ -5,7 +5,7 @@ include ../../../app/core/tasks/common
 
 import ../../../backend/accounts as status_accounts
 
-const asyncGetProfileShowcasePreferencesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetProfileShowcasePreferencesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[QObjectTaskArg](argEncoded)
   try:
     let response = status_accounts.getProfileShowcasePreferences()
@@ -22,7 +22,7 @@ type
   AsyncGetProfileShowcaseForContactTaskArg = ref object of QObjectTaskArg
     pubkey: string
 
-const asyncGetProfileShowcaseForContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetProfileShowcaseForContactTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetProfileShowcaseForContactTaskArg](argEncoded)
   try:
     let response = status_accounts.getProfileShowcaseForContact(arg.pubkey)
@@ -41,7 +41,7 @@ type
   FetchProfileShowcaseAccountsTaskArg = ref object of QObjectTaskArg
     address: string
 
-const fetchProfileShowcaseAccountsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchProfileShowcaseAccountsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchProfileShowcaseAccountsTaskArg](argEncoded)
   var response = %* {
     "response": "",
@@ -60,7 +60,7 @@ type
   SaveProfileShowcasePreferencesTaskArg = ref object of QObjectTaskArg
     preferences: ProfileShowcasePreferencesDto
 
-const saveProfileShowcasePreferencesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc saveProfileShowcasePreferencesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[SaveProfileShowcasePreferencesTaskArg](argEncoded)
   try:
     let response = status_accounts.setProfileShowcasePreferences(arg.preferences.toJsonNode())

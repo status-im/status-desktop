@@ -209,7 +209,7 @@ QtObject:
 
   proc asyncGetChannelGroups*(self: Service) =
     let arg = AsyncGetChannelGroupsTaskArg(
-      tptr: cast[ByteAddress](asyncGetChannelGroupsTask),
+      tptr: asyncGetChannelGroupsTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncGetChannelGroupsResponse",
     )
@@ -823,7 +823,7 @@ QtObject:
 
   proc asyncCheckChannelPermissions*(self: Service, communityId: string, chatId: string) =
     let arg = AsyncCheckChannelPermissionsTaskArg(
-      tptr: cast[ByteAddress](asyncCheckChannelPermissionsTask),
+      tptr: asyncCheckChannelPermissionsTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckChannelPermissionsDone",
       communityId: communityId,
@@ -850,7 +850,7 @@ QtObject:
 
   proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string, addresses: seq[string]) =
     let arg = AsyncCheckAllChannelsPermissionsTaskArg(
-      tptr: cast[ByteAddress](asyncCheckAllChannelsPermissionsTask),
+      tptr: asyncCheckAllChannelsPermissionsTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckAllChannelsPermissionsDone",
       communityId: communityId,

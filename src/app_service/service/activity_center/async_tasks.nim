@@ -8,7 +8,7 @@ type
     group: ActivityCenterGroup
     readType: ActivityCenterReadType
 
-const asyncActivityNotificationLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncActivityNotificationLoadTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncActivityNotificationLoadTaskArg](argEncoded)
   let activityTypes = activityCenterNotificationTypesByGroup(arg.group)
   let activityNotificationsCallResult = backend.activityCenterNotifications(

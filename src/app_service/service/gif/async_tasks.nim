@@ -4,7 +4,7 @@ include ../../../app/core/tasks/common
 type
   AsyncGetRecentGifsTaskArg = ref object of QObjectTaskArg
 
-const asyncGetRecentGifsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetRecentGifsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetRecentGifsTaskArg](argEncoded)
   let response = status_go.getRecentGifs()
   arg.finish(response)
@@ -12,7 +12,7 @@ const asyncGetRecentGifsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
 type
   AsyncGetFavoriteGifsTaskArg = ref object of QObjectTaskArg
 
-const asyncGetFavoriteGifsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetFavoriteGifsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetFavoriteGifsTaskArg](argEncoded)
   let response = status_go.getFavoriteGifs()
   arg.finish(response)
@@ -25,7 +25,7 @@ type
     event: string
     errorEvent: string
 
-const asyncTenorQuery: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncTenorQuery(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncTenorQueryArg](argEncoded)
   try:
 
@@ -50,7 +50,7 @@ const asyncTenorQuery: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 
   except Exception as e:
     error "error: ", procName="asyncTenorQuery", query = arg.query, errDesription = e.msg
-    
+
     arg.finish(%* {
       "error": e.msg,
       "event": arg.event,
