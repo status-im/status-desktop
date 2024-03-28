@@ -1,6 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.13
+import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
@@ -28,6 +30,7 @@ Item {
     required property var collectible
     property var activityModel
     property bool isCollectibleLoading
+    required property string addressFilters
 
     // Community related token props:
     readonly property bool isCommunityCollectible: !!collectible ? collectible.communityId !== "" : false
@@ -38,9 +41,34 @@ Item {
 
     QtObject {
         id: d
-        readonly property string collectibleLink: root.walletRootStore.getOpenSeaCollectibleUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId)
-        readonly property string collectionLink: root.walletRootStore.getOpenSeaCollectionUrl(collectible.networkShortName, collectible.contractAddress)
-        readonly property string blockExplorerLink: root.walletRootStore.getExplorerUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId)
+        readonly property string collectibleLink: !!collectible ? root.walletRootStore.getOpenSeaCollectibleUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId): ""
+        readonly property string collectionLink: !!collectible ? root.walletRootStore.getOpenSeaCollectionUrl(collectible.networkShortName, collectible.contractAddress): ""
+        readonly property string blockExplorerLink: !!collectible ? root.walletRootStore.getExplorerUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId): ""
+        readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
+        readonly property int imageStackSpacing: 4
+
+        property Component balanceTag: Component {
+            CollectibleBalanceTag {
+                balance: d.balanceAggregator.value
+            }
+        }
+        property SortFilterProxyModel filteredBalances: SortFilterProxyModel {
+            sourceModel: collectible.ownership ?? null
+            filters: [
+                FastExpressionFilter {
+                    expression: {
+                        d.addrFilters
+                        return d.addrFilters.includes(model.accountAddress)
+                    }
+                    expectedRoles: ["accountAddress"]
+                }
+            ]
+        }
+
+        property SumAggregator balanceAggregator: SumAggregator {
+            model: d.filteredBalances
+            roleName: "balance"
+        }
     }
 
     CollectibleDetailsHeader {
@@ -48,15 +76,15 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        collectibleName: collectible.name
-        collectibleId: "#" + collectible.tokenId
+        collectibleName: collectible.name ?? ""
+        collectibleId: "#" + collectible.tokenId ?? ""
         collectionTag.tagPrimaryLabel.text: !!communityDetails ? communityDetails.name : collectible.collectionName
         isCollection: !!collectible.collectionName
-        communityImage: !!communityDetails ? communityDetails.image: ""
-        networkShortName: collectible.networkShortName
-        networkColor: collectible.networkColor
-        networkIconURL: collectible.networkIconUrl
-        networkExplorerName: root.walletRootStore.getExplorerNameForNetwork(collectible.networkShortName)
+        communityImage: !!communityDetails ? communityDetails.image : ""
+        networkShortName: collectible.networkShortName ?? ""
+        networkColor: collectible.networkColor ?? ""
+        networkIconURL: collectible.networkIconUrl ?? ""
+        networkExplorerName: !!collectible ? root.walletRootStore.getExplorerNameForNetwork(collectible.networkShortName): ""
         collectibleLinkEnabled: Utils.getUrlStatus(d.collectibleLink)
         collectionLinkEnabled: (!!communityDetails && communityDetails.name)  || Utils.getUrlStatus(d.collectionLink)
         explorerLinkEnabled: Utils.getUrlStatus(d.blockExplorerLink)
@@ -86,37 +114,45 @@ Item {
         Row {
             id: collectibleImageDetails
 
-            readonly property real visibleImageHeight: (collectibleimage.visible ? collectibleimage.height : privilegedCollectibleImage.height)
-            readonly property real visibleImageWidth: (collectibleimage.visible ? collectibleimage.width : privilegedCollectibleImage.width)
+            readonly property real visibleImageHeight: artwork.height
+            readonly property real visibleImageWidth: artwork.width
 
             height: collectibleImageDetails.visibleImageHeight
             width: parent.width
             spacing: 24
 
-            // Special artwork representation for community `Owner and Master Token` token types:
-            PrivilegedTokenArtworkPanel {
-                id: privilegedCollectibleImage
-
-                visible: root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType)
-                size: PrivilegedTokenArtworkPanel.Size.Large
-                artwork: collectible.imageUrl
-                color: !!collectible && root.isCommunityCollectible? collectible.communityColor : "transparent"
-                isOwner: root.isOwnerTokenType
-            }
-
-            StatusRoundedMedia {
-                id: collectibleimage
-
-                visible: !privilegedCollectibleImage.visible
-                width: 248
-                height: width
-                radius: Style.current.radius
-                color: collectible.backgroundColor
-                border.color: Theme.palette.directColor8
-                border.width: 1
-                mediaUrl: collectible.mediaUrl ?? ""
-                mediaType: collectible.mediaType ?? ""
-                fallbackImageUrl: collectible.imageUrl
+            ColumnLayout {
+                id: artwork
+                width: 248 + (repeater.count*d.imageStackSpacing)
+                spacing: 0
+                Repeater {
+                    id: repeater
+                    width: parent.width
+                    model: 3//d.balanceAggregator.value < 2 ? 1 : d.balanceAggregator.value === 2 ? 2 : 3
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: childrenRect.height
+                        Layout.leftMargin: index * d.imageStackSpacing
+                        Layout.topMargin: index === 0 ? 0 : -Layout.preferredHeight + d.imageStackSpacing
+                        opacity: index === 0 ? 1: 0.4/index
+                        // so that the first item remains on top in the stack
+                        z: -index
+                        Loader {
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            sourceComponent: root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType) ? privilegedCollectibleImage: collectibleimage
+                            active: root.visible
+                        }
+                        Loader {
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.margins: Style.current.padding
+                            sourceComponent: d.balanceTag
+                            // only show balance tag on top of the first image in stack
+                            active: index === 0 && d.balanceAggregator.value > 1 && root.visible
+                        }
+                    }
+                }
             }
 
             Column {
@@ -211,7 +247,7 @@ Item {
 
                 Component {
                     id: activityView
-                        StatusListView {
+                    StatusListView {
                         width: scrollView.availableWidth
                         height: scrollView.availableHeight
                         model: root.activityModel
@@ -238,6 +274,31 @@ Item {
                     }
                 }
             }
+        }
+    }
+    Component {
+        id: privilegedCollectibleImage
+        // Special artwork representation for community `Owner and Master Token` token types:
+        PrivilegedTokenArtworkPanel {
+            size: PrivilegedTokenArtworkPanel.Size.Large
+            artwork: collectible.imageUrl ?? ""
+            color: !!collectible && root.isCommunityCollectible? collectible.communityColor : "transparent"
+            isOwner: root.isOwnerTokenType
+        }
+    }
+
+    Component {
+        id: collectibleimage
+        StatusRoundedMedia {
+            width: 248
+            height: width
+            radius: Style.current.radius
+            color: collectible.backgroundColor
+            border.color: Theme.palette.directColor8
+            border.width: 1
+            mediaUrl: collectible.mediaUrl ?? ""
+            mediaType: collectible.mediaType ?? ""
+            fallbackImageUrl: collectible.imageUrl
         }
     }
 }
