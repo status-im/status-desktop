@@ -17,7 +17,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703029', 'Manage a private key imported account')
 @pytest.mark.case(703029)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
 @pytest.mark.parametrize('address_pair', [constants.user.private_key_address_pair_1])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
                          'new_name, new_color, new_emoji, new_emoji_unicode', [

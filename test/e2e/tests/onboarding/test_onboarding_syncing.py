@@ -36,7 +36,7 @@ def sync_screen(main_window) -> SyncCodeView:
 @pytest.mark.case(703592)
 @pytest.mark.critical
 def test_sync_device_during_onboarding(multiple_instances):
-    user: UserAccount = constants.user_for_syncing
+    user: UserAccount = constants.user_with_random_attributes_1
     main_window = MainWindow()
 
     with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:

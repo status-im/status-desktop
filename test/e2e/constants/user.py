@@ -32,8 +32,27 @@ community_user_2 = UserAccount('community_user_2', 'vSq5T702_p', [
     'will', 'horn', 'tail', 'stock', 'puzzle', 'warfare', 'pledge', 'uniform', 'ozone', 'taste', 'someone', 'silk'
 ], '0x935034600f2ba486324cee6ae3f96ad8c8915ac6')
 
-user_for_syncing = UserAccount(''.join((random.choices(string.ascii_letters +
-                                   string.digits, k=24))), '1vTC2,4R1=', [], '')
+user_with_random_attributes_1 = UserAccount(
+''.join((random.choice(
+            string.ascii_letters + string.digits + random.choice('_- '))
+                for i in range(5, 25))
+        ).strip(' '),
+        ''.join((random.choice(
+            string.ascii_letters + string.digits + string.punctuation)
+                for _ in range(10, 28))
+        ), [], ''
+)
+
+user_with_random_attributes_2 = UserAccount(
+''.join((random.choice(
+            string.ascii_letters + string.digits + random.choice('_- '))
+                for i in range(5, 25))
+        ).strip(' '),
+        ''.join((random.choice(
+            string.ascii_letters + string.digits + string.punctuation)
+                for _ in range(10, 28))
+        ), [], ''
+)
 
 user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345', [], '')
 user_account_one_changed_name = UserAccount('NewUserName', '0000000000', [], '')

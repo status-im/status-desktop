@@ -15,11 +15,13 @@ from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
 
 pytestmark = marks
+
+
 @pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704454',
                  'Account view interactions: Delete generated account')
 @pytest.mark.case(704454)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
 @pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
                          [
                              pytest.param(''.join(random.choices(string.ascii_letters +

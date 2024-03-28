@@ -20,8 +20,8 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703087', '1-1 Chat')
 @pytest.mark.case(703087)
 def test_1x1_chat(multiple_instances):
-    user_one: UserAccount = constants.user_account_one
-    user_two: UserAccount = constants.user_account_two
+    user_one: UserAccount = constants.user_with_random_attributes_1
+    user_two: UserAccount = constants.user_with_random_attributes_2
     main_window = MainWindow()
     messages_screen = MessagesScreen()
     emoji = 'sunglasses'

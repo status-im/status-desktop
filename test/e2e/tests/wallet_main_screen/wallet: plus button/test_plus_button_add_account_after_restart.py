@@ -13,10 +13,12 @@ from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704459',
                  'User can add  one more account after restarting the app')
 @pytest.mark.case(704459)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode,',
                          [
                              pytest.param('GenAcc1', '#2a4af5', 'sunglasses', '1f60e')
@@ -79,4 +81,3 @@ def test_add_generated_account_restart_add_again(
             time.sleep(1)
             if time.monotonic() - started_at > 15:
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
-            

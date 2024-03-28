@@ -17,8 +17,8 @@ pytestmark = marks
 @pytest.mark.case(703011)
 # TODO: reason='https://github.com/status-im/desktop-qa-automation/issues/346'
 def test_messaging_settings_accepting_request(multiple_instances):
-    user_one: UserAccount = constants.user_account_one
-    user_two: UserAccount = constants.user_account_two
+    user_one: UserAccount = constants.user_with_random_attributes_1
+    user_two: UserAccount = constants.user_with_random_attributes_2
     main_window = MainWindow()
 
     with (multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two):

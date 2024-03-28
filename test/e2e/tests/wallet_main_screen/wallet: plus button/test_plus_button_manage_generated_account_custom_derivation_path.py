@@ -8,7 +8,6 @@ from tests.wallet_main_screen import marks
 import constants
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -16,7 +15,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703028', 'Manage a custom generated account')
 @pytest.mark.case(703028)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
 @pytest.mark.parametrize('derivation_path, generated_address_index, name, color, emoji, emoji_unicode, new_name, new_color, new_emoji, new_emoji_unicode',
                          [
                             pytest.param('Ethereum', '5', 'Ethereum', '#216266', 'sunglasses', '1f60e', 'EthEdited', '#216266', 'thumbsup', '1f44d'),

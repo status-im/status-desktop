@@ -13,9 +13,11 @@ from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703033', 'Manage a generated account')
 @pytest.mark.case(703033)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
                          'new_name, new_color, new_emoji, new_emoji_unicode', [
                              pytest.param('GenAcc1', '#2a4af5', 'sunglasses', '1f60e',
@@ -23,7 +25,8 @@ pytestmark = marks
                          ])
 def test_plus_button_manage_generated_account(main_screen: MainWindow, user_account,
                                               color: str, emoji: str, emoji_unicode: str,
-                                              name: str, new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str):
+                                              name: str, new_name: str, new_color: str, new_emoji: str,
+                                              new_emoji_unicode: str):
     with step('Create generated wallet account'):
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()

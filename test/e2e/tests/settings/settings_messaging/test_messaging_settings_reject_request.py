@@ -11,11 +11,13 @@ from gui.main_window import MainWindow
 
 pytestmark = marks
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704610', 'Reject a contact request with a chat key')
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704610',
+                 'Reject a contact request with a chat key')
 @pytest.mark.case(704610)
 def test_messaging_settings_rejecting_request(multiple_instances):
-    user_one: UserAccount = constants.user_account_one
-    user_two: UserAccount = constants.user_account_two
+    user_one: UserAccount = constants.user_with_random_attributes_1
+    user_two: UserAccount = constants.user_with_random_attributes_2
     main_window = MainWindow()
 
     with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:

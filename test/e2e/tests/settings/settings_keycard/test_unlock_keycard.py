@@ -16,7 +16,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704607', 'Unlock Keycard')
 @pytest.mark.case(704607)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/274")
 def test_unlock_keycard_using_correct_puk(main_screen: MainWindow, user_account):
     main_screen.prepare()
@@ -90,7 +90,7 @@ def test_unlock_keycard_using_correct_puk(main_screen: MainWindow, user_account)
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704608', 'Unlock Keycard: incorrect PUK')
 @pytest.mark.case(704608)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/274")
 def test_unlock_keycard_using_incorrect_puk(main_screen: MainWindow, user_account):
     main_screen.prepare()

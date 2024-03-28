@@ -20,7 +20,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703007',
                  'Change own display name from online identifier')
 @pytest.mark.case(703007)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
 @pytest.mark.parametrize('new_name', [pytest.param('NewUserName')])
 def test_change_own_display_name(main_screen: MainWindow, user_account, new_name):
     with step('Open own profile popup and check name of user is correct'):
@@ -42,8 +42,8 @@ def test_change_own_display_name(main_screen: MainWindow, user_account, new_name
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703004', 'Switch state to automatic')
 @pytest.mark.case(703002, 703003, 703004)
 def test_switch_state_to_offline_online_automatic(multiple_instances):
-    user_one: UserAccount = constants.user_account_one
-    user_two: UserAccount = constants.user_account_two
+    user_one: UserAccount = constants.user_with_random_attributes_1
+    user_two: UserAccount = constants.user_with_random_attributes_2
     community_params = deepcopy(constants.community_params)
     community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
     main_screen = MainWindow()
