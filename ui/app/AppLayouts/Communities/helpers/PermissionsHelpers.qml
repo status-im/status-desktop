@@ -70,8 +70,8 @@ QtObject {
                                                item.multiplierIndex))
     }
 
-    function getUniquePermissionTokenKeys(model) {
-        return Internal.PermissionUtils.getUniquePermissionTokenKeys(model)
+    function getUniquePermissionTokenKeys(model, tokenType) {
+        return Internal.PermissionUtils.getUniquePermissionTokenKeys(model, tokenType)
     }
 
     function getUniquePermissionChannels(model, permissionsTypesArray = []) {
