@@ -1,14 +1,14 @@
 import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, stew/shims/strformat, algorithm
 
-import ../../../backend/collectibles as collectibles
-import ../../../backend/transactions as transactions
-import ../../../backend/backend
-import ../../../backend/eth
+import backend/collectibles as collectibles
+import backend/transactions as transactions
+import backend/backend
+import backend/eth
 
-import ../ens/utils as ens_utils
-import ../../common/conversion as common_conversion
-import ../../common/utils as common_utils
-import ../../common/types as common_types
+import app_service/service/ens/utils as ens_utils
+import app_service/common/conversion as common_conversion
+import app_service/common/utils as common_utils
+import app_service/common/types as common_types
 
 import app/core/[main]
 import app/core/signals/types
@@ -16,16 +16,16 @@ import app/core/tasks/[qt, threadpool]
 import app/global/global_singleton
 import app/global/app_signals
 
-import ../wallet_account/service as wallet_account_service
-import ../network/service as network_service
-import ../token/service as token_service
-import ../settings/service as settings_service
-import ../eth/dto/transaction as transaction_data_dto
-import ../eth/dto/[coder, method_dto]
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/network/service as network_service
+import app_service/service/token/service as token_service
+import app_service/service/settings/service as settings_service
+import app_service/service/eth/dto/transaction as transaction_data_dto
+import app_service/service/eth/dto/[coder, method_dto]
 import ./dto as transaction_dto
 import ./cryptoRampDto
-import ../eth/utils as eth_utils
-import ../../common/conversion
+import app_service/service/eth/utils as eth_utils
+import app_service/common/conversion
 
 
 export transaction_dto
@@ -35,10 +35,7 @@ logScope:
   topics = "transaction-service"
 
 include async_tasks
-include ../../common/json_utils
-
-# Maximum number of collectibles to be fetched at a time
-const collectiblesLimit = 200
+include app_service/common/json_utils
 
 # Signals which may be emitted by this service:
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
