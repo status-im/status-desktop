@@ -25,10 +25,9 @@ proc `$`*(self: Filter): string =
     chainIds: {self.chainIds},
     )"""
 
-proc setFillterAllAddresses*(self: Filter) = 
+proc setFillterAllAddresses*(self: Filter) =
   self.allAddresses = true
-
-  self.addresses = self.controller.getWalletAccounts().filter(a => not a.hideFromTotalBalance).map(a => a.address)
+  self.addresses = self.controller.getWalletAccounts().map(a => a.address)
 
 proc setAddress*(self: Filter, address: string) =
   self.allAddresses = false
