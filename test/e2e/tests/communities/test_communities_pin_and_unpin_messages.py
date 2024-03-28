@@ -28,6 +28,7 @@ pytestmark = marks
 @pytest.mark.parametrize('user_data_one, user_data_two', [
     (configs.testpath.TEST_USER_DATA / 'community_user_1', configs.testpath.TEST_USER_DATA / 'community_user_2')
 ])
+@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/618')
 def test_join_community_and_pin_unpin_message(multiple_instances, user_data_one, user_data_two):
     user_one: UserAccount = constants.community_user_1
     user_two: UserAccount = constants.community_user_2

@@ -26,7 +26,7 @@ pytestmark = marks
     (configs.testpath.TEST_USER_DATA / 'group_chat_user_1', configs.testpath.TEST_USER_DATA / 'group_chat_user_2',
      configs.testpath.TEST_USER_DATA / 'group_chat_user_3')
 ])
-@pytest.mark.skip
+@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/618')
 # TODO: https://github.com/status-im/status-desktop/issues/14191
 # TODO: https://github.com/status-im/status-desktop/issues/14193
 def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_three):

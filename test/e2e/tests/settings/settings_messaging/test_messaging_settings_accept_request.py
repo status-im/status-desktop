@@ -102,4 +102,4 @@ def test_messaging_settings_accepting_request(multiple_instances):
             aut_two.attach()
             main_window.prepare()
             messages_screen = main_window.left_panel.open_messages_screen()
-            assert user_one.name in messages_screen.left_panel.contacts
+            assert user_one.name in messages_screen.left_panel.get_chats_list()
