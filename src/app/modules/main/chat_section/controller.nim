@@ -459,12 +459,7 @@ proc getChatsAndBuildUI*(self: Controller) =
   var community: CommunityDto
   if self.isCommunity():
     community = self.getMyCommunity()
-    # chats = community.chats
     chats = self.chatService.getChatsForCommunity(community.id)
-    echo "name ", community.name
-    echo "CHATS LEN ", chats.len
-    # Fetch community chat members as we lazy load them
-    # TODO add fetch
   else:
     community = CommunityDto()
     chats = self.chatService.getChatsForPersonalSection()
@@ -497,8 +492,8 @@ proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[Ch
 proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] =
   return self.chatService.getChatsByIds(chatIds)
 
-proc chatsWithCategoryHaveUnreadMessages*(self: Controller, communityId: string, categoryId: string): bool =
-  return self.communityService.chatsWithCategoryHaveUnreadMessages(communityId, categoryId)
+proc categoryHasUnreadMessages*(self: Controller, communityId: string, categoryId: string): bool =
+  return self.communityService.categoryHasUnreadMessages(communityId, categoryId)
 
 proc getCommunityCategoryDetails*(self: Controller, communityId: string, categoryId: string): Category =
   return self.communityService.getCategoryById(communityId, categoryId)

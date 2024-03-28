@@ -2482,7 +2482,7 @@ QtObject:
     except Exception as e:
       error "error promoting self to control node", msg = e.msg
 
-  proc chatsWithCategoryHaveUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
+  proc categoryHasUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
     if communityId == "" or categoryId == "":
       return false
 

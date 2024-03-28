@@ -604,10 +604,10 @@ proc getCommunityChats*(self: CommunityDto, chatIds: seq[string]): seq[ChatDto] 
         break
   return chats
 
-proc getSpecificCommunityChat*(self: CommunityDto, chatId: string): ChatDto =
-  for communityChat in self.chats:
-    if chatId == communityChat.id:
-      return communityChat
+proc getCommunityChat*(self: CommunityDto, chatId: string): ChatDto =
+  let chats = self.getCommunityChats(@[chatId])
+  if chats.len > 0:
+    return chats[0]
 
 proc isOwner*(self: CommunityDto): bool =
   return self.memberRole == MemberRole.Owner

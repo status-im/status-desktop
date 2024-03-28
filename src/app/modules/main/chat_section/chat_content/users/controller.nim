@@ -124,7 +124,7 @@ proc getChat*(self: Controller): ChatDto =
 proc getChatMembers*(self: Controller): seq[ChatMember] =
   if self.belongsToCommunity:
     let myCommunity = self.getMyCommunity()
-    return myCommunity.getSpecificCommunityChat(self.chatId).members
+    return myCommunity.getCommunityChat(self.chatId).members
   else:
     return self.chatService.getChatById(self.chatId).members
 
