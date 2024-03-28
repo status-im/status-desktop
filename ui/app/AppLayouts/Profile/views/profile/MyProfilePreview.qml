@@ -8,9 +8,16 @@ import StatusQ.Core.Theme 0.1
 Item {
     property alias profileStore: profilePreview.profileStore
     property alias contactsStore: profilePreview.contactsStore
-    property alias networkConnectionStore: profilePreview.networkConnectionStore
+    property alias sendToAccountEnabled: profilePreview.sendToAccountEnabled
     property alias dirtyValues: profilePreview.dirtyValues
     property alias dirty: profilePreview.dirty
+
+    property alias showcaseCommunitiesModel: profilePreview.showcaseCommunitiesModel
+    property alias showcaseAccountsModel: profilePreview.showcaseAccountsModel
+    property alias showcaseCollectiblesModel: profilePreview.showcaseCollectiblesModel
+    property alias showcaseSocialLinksModel: profilePreview.showcaseSocialLinksModel
+    property alias showcaseAssetsModel: profilePreview.showcaseAssetsModel
+
 
     implicitHeight: profilePreview.implicitHeight 
                         + profilePreview.anchors.topMargin 

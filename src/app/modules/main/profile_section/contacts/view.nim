@@ -3,6 +3,10 @@ import NimQml
 import ../../../shared_models/user_model
 import ./io_interface
 
+import models/showcase_contact_generic_model
+import models/showcase_contact_accounts_model
+import models/showcase_contact_social_links_model
+
 QtObject:
   type
     View* = ref object of QObject
@@ -20,6 +24,17 @@ QtObject:
       # receivedButRejectedContactRequestsModelVariant: QVariant
       # sentButRejectedContactRequestsModel: Model
       # sentButRejectedContactRequestsModelVariant: QVariant
+      showcaseContactCommunitiesModel: ShowcaseContactGenericModel
+      showcaseContactCommunitiesModelVariant: QVariant
+      showcaseContactAccountsModel: ShowcaseContactAccountModel
+      showcaseContactAccountsModelVariant: QVariant
+      showcaseContactCollectiblesModel: ShowcaseContactGenericModel
+      showcaseContactCollectiblesModelVariant: QVariant
+      showcaseContactAssetsModel: ShowcaseContactGenericModel
+      showcaseContactAssetsModelVariant: QVariant
+      showcaseContactSocialLinksModel: ShowcaseContactSocialLinkModel
+      showcaseContactSocialLinksModelVariant: QVariant
+
 
   proc delete*(self: View) =
     self.myMutualContactsModel.delete
@@ -35,6 +50,16 @@ QtObject:
     # self.receivedButRejectedContactRequestsModelVariant.delete
     # self.sentButRejectedContactRequestsModelVariant.delete
     # self.sentButRejectedContactRequestsModel.delete
+    self.showcaseContactCommunitiesModel.delete
+    self.showcaseContactCommunitiesModelVariant.delete
+    self.showcaseContactAccountsModel.delete
+    self.showcaseContactAccountsModelVariant.delete
+    self.showcaseContactCollectiblesModel.delete
+    self.showcaseContactCollectiblesModelVariant.delete
+    self.showcaseContactAssetsModel.delete
+    self.showcaseContactAssetsModelVariant.delete
+    self.showcaseContactSocialLinksModel.delete
+    self.showcaseContactSocialLinksModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -54,6 +79,16 @@ QtObject:
     # result.receivedButRejectedContactRequestsModelVariant = newQVariant(result.receivedButRejectedContactRequestsModel)
     # result.sentButRejectedContactRequestsModel = newModel()
     # result.sentButRejectedContactRequestsModelVariant = newQVariant(result.sentButRejectedContactRequestsModel)
+    result.showcaseContactCommunitiesModel = newShowcaseContactGenericModel()
+    result.showcaseContactCommunitiesModelVariant = newQVariant(result.showcaseContactCommunitiesModel)
+    result.showcaseContactAccountsModel = newShowcaseContactAccountModel()
+    result.showcaseContactAccountsModelVariant = newQVariant(result.showcaseContactAccountsModel)
+    result.showcaseContactCollectiblesModel = newShowcaseContactGenericModel()
+    result.showcaseContactCollectiblesModelVariant = newQVariant(result.showcaseContactCollectiblesModel)
+    result.showcaseContactAssetsModel = newShowcaseContactGenericModel()
+    result.showcaseContactAssetsModelVariant = newQVariant(result.showcaseContactAssetsModel)
+    result.showcaseContactSocialLinksModel = newShowcaseContactSocialLinkModel()
+    result.showcaseContactSocialLinksModelVariant = newQVariant(result.showcaseContactSocialLinksModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -205,3 +240,78 @@ QtObject:
 
   proc onContactInfoRequestFinished*(self: View, publicKey: string, ok: bool) {.slot.} =
     self.contactInfoRequestFinished(publicKey, ok)
+
+  # Showcase models for a contact
+  proc getShowcaseContactCommunitiesModel(self: View): QVariant {.slot.} =
+    return self.showcaseContactCommunitiesModelVariant
+  QtProperty[QVariant] showcaseContactCommunitiesModel:
+    read = getShowcaseContactCommunitiesModel
+
+  proc getShowcaseContactAccountsModel(self: View): QVariant {.slot.} =
+    return self.showcaseContactAccountsModelVariant
+  QtProperty[QVariant] showcaseContactAccountsModel:
+    read = getShowcaseContactAccountsModel
+
+  proc getShowcaseContactCollectiblesModel(self: View): QVariant {.slot.} =
+    return self.showcaseContactCollectiblesModelVariant
+  QtProperty[QVariant] showcaseContactCollectiblesModel:
+    read = getShowcaseContactCollectiblesModel
+
+  proc getShowcaseContactAssetsModel(self: View): QVariant {.slot.} =
+    return self.showcaseContactAssetsModelVariant
+  QtProperty[QVariant] showcaseContactAssetsModel:
+    read = getShowcaseContactAssetsModel
+
+  proc getShowcaseContactSocialLinksModel(self: View): QVariant {.slot.} =
+    return self.showcaseContactSocialLinksModelVariant
+  QtProperty[QVariant] showcaseContactSocialLinksModel:
+    read = getShowcaseContactSocialLinksModel
+
+  # Support models for showcase for a contact
+  proc showcaseCollectiblesModelChanged*(self: View) {.signal.}
+  proc getShowcaseCollectiblesModel(self: View): QVariant {.slot.} =
+    return self.delegate.getShowcaseCollectiblesModel()
+  QtProperty[QVariant] showcaseCollectiblesModel:
+    read = getShowcaseCollectiblesModel
+    notify = showcaseCollectiblesModelChanged
+
+  proc showcaseForAContactLoadingChanged*(self: View) {.signal.}
+  proc emitShowcaseForAContactLoadingChangedSignal*(self: View) =
+    self.showcaseForAContactLoadingChanged()
+  proc isShowcaseForAContactLoading*(self: View): bool {.signal.} =
+    return self.delegate.isShowcaseForAContactLoading()
+  QtProperty[QVariant] showcaseForAContactLoading:
+    read = isShowcaseForAContactLoading
+    notify = showcaseForAContactLoadingChanged
+
+  proc fetchProfileShowcaseAccountsByAddress*(self: View, address: string) {.slot.} =
+    self.delegate.fetchProfileShowcaseAccountsByAddress(address)
+
+  proc profileShowcaseAccountsByAddressFetched*(self: View, accounts: string) {.signal.}
+  proc emitProfileShowcaseAccountsByAddressFetchedSignal*(self: View, accounts: string) =
+    self.profileShowcaseAccountsByAddressFetched(accounts)
+
+  proc requestProfileShowcase(self: View, publicKey: string) {.slot.} =
+    self.delegate.requestProfileShowcase(publicKey)
+
+  proc clearShowcaseModels*(self: View) {.slot.} =
+    self.showcaseContactCommunitiesModel.clear()
+    self.showcaseContactAccountsModel.clear()
+    self.showcaseContactCollectiblesModel.clear()
+    self.showcaseContactAssetsModel.clear()
+    self.showcaseContactSocialLinksModel.clear()
+
+  proc loadProfileShowcaseContactCommunities*(self: View, items: seq[ShowcaseContactGenericItem]) =
+    self.showcaseContactCommunitiesModel.setItems(items)
+
+  proc loadProfileShowcaseContactAccounts*(self: View, items: seq[ShowcaseContactAccountItem]) =
+    self.showcaseContactAccountsModel.setItems(items)
+
+  proc loadProfileShowcaseContactCollectibles*(self: View, items: seq[ShowcaseContactGenericItem]) =
+    self.showcaseContactCollectiblesModel.setItems(items)
+
+  proc loadProfileShowcaseContactAssets*(self: View, items: seq[ShowcaseContactGenericItem]) =
+    self.showcaseContactAssetsModel.setItems(items)
+
+  proc loadProfileShowcaseContactSocialLinks*(self: View, items: seq[ShowcaseContactSocialLinkItem]) =
+    self.showcaseContactSocialLinksModel.setItems(items)

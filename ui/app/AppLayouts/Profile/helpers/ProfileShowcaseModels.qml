@@ -23,8 +23,7 @@ QObject {
     // COMMUNITIES
 
     // Input models
-    property alias communitiesSourceModel: modelAdapter.communitiesSourceModel
-    property alias communitiesShowcaseModel: communities.showcaseModel
+    property alias communitiesSourceModel: communities.sourceModel
     property string communitiesSearcherText
 
     // Output models
@@ -47,8 +46,7 @@ QObject {
     // ACCOUNTS
 
     // Input models
-    property alias accountsSourceModel: modelAdapter.accountsSourceModel
-    property alias accountsShowcaseModel: accounts.showcaseModel
+    property alias accountsSourceModel: accounts.sourceModel
     property string accountsSearcherText
 
     // Output models
@@ -78,8 +76,7 @@ QObject {
     // COLLECTIBLES
 
     // Input models
-    property alias collectiblesSourceModel: modelAdapter.collectiblesSourceModel
-    property alias collectiblesShowcaseModel: collectibles.showcaseModel
+    property alias collectiblesSourceModel: collectiblesFilter.sourceModel
     property string collectiblesSearcherText
 
     // Output models
@@ -102,7 +99,7 @@ QObject {
     // SOCIAL LINKS
 
     // Input models
-    property alias socialLinksSourceModel: modelAdapter.socialLinksSourceModel
+    property alias socialLinksSourceModel: socialLinks.sourceModel
 
     // Output models
     readonly property alias socialLinksVisibleModel: socialLinks.visibleModel
@@ -139,10 +136,6 @@ QObject {
         })
     }
 
-    ProfileShowcaseModelAdapter {
-        id: modelAdapter
-    }
-
     ProfileShowcaseDirtyState {
         id: communities
 
@@ -150,7 +143,6 @@ QObject {
             return ProfileUtils.getMemberRoleText(memberRole)
         }
 
-        sourceModel: modelAdapter.adaptedCommunitiesSourceModel
         searcherFilter: FastExpressionFilter {
             expression: {
                 root.communitiesSearcherText
@@ -164,7 +156,6 @@ QObject {
     ProfileShowcaseDirtyState {
         id: accounts
 
-        sourceModel: modelAdapter.adaptedAccountsSourceModel
         searcherFilter: FastExpressionFilter {
             expression: {
                 root.accountsSearcherText
@@ -194,9 +185,6 @@ QObject {
 
     ProfileShowcaseDirtyState {
         id: socialLinks
-
-        sourceModel: modelAdapter.adaptedSocialLinksSourceModel
-        singleModelMode: true
     }
 
 
@@ -204,7 +192,6 @@ QObject {
         id: collectiblesFilter
 
         delayed: true
-        sourceModel: modelAdapter.adaptedCollectiblesSourceModel
         proxyRoles: FastExpressionRole {
             name: "maxVisibility"
 

@@ -68,10 +68,51 @@ const asyncRequestContactInfoTask: Task = proc(argEncoded: string) {.gcsafe, nim
     arg.finish(%* {
       "publicKey": arg.pubkey,
       "response": response,
-      "error": nil,
+      "error": "",
     })
   except Exception as e:
     arg.finish(%* {
       "publicKey": arg.pubkey,
       "error": e.msg,
     })
+
+type
+  AsyncGetProfileShowcaseForContactTaskArg = ref object of QObjectTaskArg
+    pubkey: string
+    validate: bool
+
+const asyncGetProfileShowcaseForContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetProfileShowcaseForContactTaskArg](argEncoded)
+  try:
+    let response = status_go.getProfileShowcaseForContact(arg.pubkey, arg.validate)
+    arg.finish(%* {
+      "publicKey": arg.pubkey,
+      "validated": arg.validate,
+      "response": response,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "publicKey": arg.pubkey,
+      "validated": arg.validate,
+      "error": e.msg,
+    })
+
+type
+  FetchProfileShowcaseAccountsTaskArg = ref object of QObjectTaskArg
+    address: string
+
+const fetchProfileShowcaseAccountsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchProfileShowcaseAccountsTaskArg](argEncoded)
+  var response = %* {
+    "response": "",
+    "error": "",
+  }
+  try:
+    let rpcResponse = status_accounts.getProfileShowcaseAccountsByAddress(arg.address)
+    if not rpcResponse.error.isNil:
+      raise newException(CatchableError, rpcResponse.error.message)
+    response["response"] = rpcResponse.result
+  except Exception as e:
+    response["error"] = %* e.msg
+  arg.finish(response)

@@ -29,19 +29,11 @@ QtObject {
 
     readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 
-    readonly property var collectiblesModel: profileModule.collectiblesModel
-
     readonly property var showcasePreferencesCommunitiesModel: profileModule.showcasePreferencesCommunitiesModel
     readonly property var showcasePreferencesAccountsModel: profileModule.showcasePreferencesAccountsModel
     readonly property var showcasePreferencesCollectiblesModel: profileModule.showcasePreferencesCollectiblesModel
     readonly property var showcasePreferencesAssetsModel: profileModule.showcasePreferencesAssetsModel
     readonly property var showcasePreferencesSocialLinksModel: profileModule.showcasePreferencesSocialLinksModel
-
-    // TODO: remove old models
-    readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
-    readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
-    readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
-    readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
 
     readonly property bool isFirstShowcaseInteraction: localAccountSettings.isFirstShowcaseInteraction
 
@@ -116,10 +108,6 @@ QtObject {
 
     function requestProfileShowcasePreferences() {
         root.profileModule.requestProfileShowcasePreferences()
-    }
-
-    function requestProfileShowcase(publicKey) {
-        root.profileModule.requestProfileShowcase(publicKey)
     }
 
     function setIsFirstShowcaseInteraction() {

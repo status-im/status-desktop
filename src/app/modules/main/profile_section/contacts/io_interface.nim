@@ -2,6 +2,8 @@ import NimQml
 import ../../../../../app_service/service/contacts/dto/contacts as contacts
 import ../../../../../app_service/service/contacts/dto/status_update
 
+import app_service/service/contacts/dto/profile_showcase
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -138,4 +140,25 @@ method shareUserUrlWithChatKey*(self: AccessInterface, pubkey: string): string {
   raise newException(ValueError, "No implementation available")
 
 method shareUserUrlWithENS*(self: AccessInterface, pubkey: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestProfileShowcase*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onProfileShowcaseUpdated*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadProfileShowcase*(self: AccessInterface, profileShowcase: ProfileShowcaseDto, validated: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method fetchProfileShowcaseAccountsByAddress*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onProfileShowcaseAccountsByAddressFetched*(self: AccessInterface, accounts: seq[ProfileShowcaseAccount]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getShowcaseCollectiblesModel*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isShowcaseForAContactLoading*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
