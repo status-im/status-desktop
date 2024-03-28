@@ -1,18 +1,17 @@
+import random
+import string
 import time
 
 import allure
 import pytest
 from allure_commons._allure import step
 
-import driver
-from gui.components.activity_center import ContactRequest
 from gui.screens.messages import MessagesScreen, ToolBar, ChatMessagesView
 from tests.settings.settings_messaging import marks
 
 import configs.testpath
 import constants
 from constants import UserAccount
-from constants.messaging import Messaging
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -65,8 +64,10 @@ def test_1x1_chat(multiple_instances):
             aut_one.attach()
             main_window.prepare()
             chat = main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_two.name)
-            ChatMessagesView().send_message_to_group_chat('How are you')
-            message = chat.find_message_by_text(f'How are you', 0)
+            chat_message1 = \
+                ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
+            ChatMessagesView().send_message_to_group_chat(chat_message1)
+            message = chat.find_message_by_text(chat_message1, 0)
             additional_text = '?'
             time.sleep(5)
             message_actions = message.hover_message()
@@ -74,7 +75,7 @@ def test_1x1_chat(multiple_instances):
             message_objects = messages_screen.chat.messages(0)
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
-                assert 'How are you?' in message_item
+                assert chat_message1+additional_text in message_item
             main_window.hide()
 
         with step(f'User {user_two.name} opens 1x1 chat with {user_one.name}'):
@@ -83,15 +84,17 @@ def test_1x1_chat(multiple_instances):
             messages_screen.left_panel.click_chat_by_name(user_one.name)
 
         with step(f'User {user_two.name} send reply to {user_one.name}'):
-            messages_screen.group_chat.send_message_to_group_chat('Hello squisher')
+            chat_message2 = \
+                ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
+            messages_screen.group_chat.send_message_to_group_chat(chat_message2)
             message_objects = messages_screen.chat.messages(0)
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
-                assert 'Hello squisher' in message_item
+                assert chat_message2 in message_item
             message_objects = messages_screen.chat.messages(1)
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
-                assert 'How are you?' in message_item
+                assert chat_message1 in message_item
 
         with step(f'User {user_two.name} send emoji to {user_one.name}'):
             messages_screen.group_chat.send_emoji_to_chat(emoji)
@@ -107,7 +110,7 @@ def test_1x1_chat(multiple_instances):
             message_objects = messages_screen.chat.messages(1)
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
-                assert 'Hello squisher' in message_item
+                assert chat_message2 in message_item
 
         with step(f'User {user_one.name}, received emoji from {user_two.name}'):
             time.sleep(2)
@@ -117,10 +120,10 @@ def test_1x1_chat(multiple_instances):
                 assert '😎' in message_item
 
         with step(f'User {user_one.name}, delete own message and verify it was deleted'):
-            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text('How are you?', 2)
+            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(chat_message1, 2)
             message.hover_message().delete_message()
 
         with step(f'User {user_one.name}, cannot delete {user_two.name} message'):
-            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text('Hello squisher', 1)
+            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(chat_message2, 1)
             assert not message.hover_message().is_delete_button_visible()
             main_window.hide()
