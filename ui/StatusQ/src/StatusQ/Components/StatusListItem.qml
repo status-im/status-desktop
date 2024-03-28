@@ -32,6 +32,7 @@ Rectangle {
     property var bottomModel: []
     property Component bottomDelegate
     property alias tagsModel: tagsRepeater.model
+    readonly property int tagsCount: tagsRepeater.count
     property Component tagsDelegate
     property var inlineTagModel: []
     property Component inlineTagDelegate

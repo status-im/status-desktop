@@ -17,7 +17,7 @@ public:
     explicit PermissionUtilsInternal(QObject* parent = nullptr);
 
     //!< traverse the permissions @p model, and look for unique token keys recursively under holdingsListModel->key
-    Q_INVOKABLE QStringList getUniquePermissionTokenKeys(QAbstractItemModel *model) const;
+    Q_INVOKABLE QStringList getUniquePermissionTokenKeys(QAbstractItemModel *model, int type) const;
 
     //!< traverse the permissions @p model, and look for unique channels recursively under channelsListModel->key; filtering out @p permissionTypes ([PermissionTypes.Type.FOO])
     //! @return an array of `array<key,channelName>`, sorted by `channelName`

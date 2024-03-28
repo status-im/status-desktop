@@ -681,11 +681,11 @@ QtObject {
             CommunityMembershipSetupDialog {
                 id: dialogRoot
 
-                property string communityId
-
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
 
                 walletAccountsModel: root.rootStore.walletAccountsModel
+                walletCollectiblesModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
+
                 canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
@@ -914,8 +914,6 @@ QtObject {
             CommunityMembershipSetupDialog {
                 id: editSharedAddressesPopup
 
-                property string communityId
-
                 readonly property var chatStore: ChatStore.RootStore {
                     contactsStore: root.rootStore.contactStore
                     chatCommunitySectionModule: {
@@ -938,7 +936,10 @@ QtObject {
                 canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
                 walletAccountsModel: root.rootStore.walletAccountsModel
+
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
+                walletCollectiblesModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
+
                 permissionsModel: {
                     root.rootStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
                     return root.rootStore.permissionsModel

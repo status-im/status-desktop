@@ -35,12 +35,16 @@ Control {
 
     property bool requirementsCheckPending: false
 
+    required property string communityId
     required property string communityName
     required property string communityIcon
 
     required property var walletAssetsModel
+    required property var walletCollectiblesModel
+
     required property var walletAccountsModel // name, address, emoji, colorId, assets
     required property var permissionsModel  // id, key, permissionType, holdingsListModel, channelsListModel, isPrivate, tokenCriteriaMet
+
     required property var assetsModel
     required property var collectiblesModel
 
@@ -188,13 +192,27 @@ Control {
         SharedAddressesAccountSelector {
             id: accountSelector
             hasPermissions: d.hasPermissions
-            uniquePermissionTokenKeys: PermissionsHelpers.getUniquePermissionTokenKeys(root.permissionsModel)
+
             Layout.fillWidth: true
             Layout.preferredHeight: contentHeight + topMargin + bottomMargin
             Layout.maximumHeight: hasPermissions ? permissionsView.implicitHeight > root.availableHeight / 2 ? root.availableHeight / 2 : root.availableHeight : -1
             Layout.fillHeight: !hasPermissions
+
+            uniquePermissionAssetsKeys:
+                PermissionsHelpers.getUniquePermissionTokenKeys(
+                    root.permissionsModel, Constants.TokenType.ERC20)
+
+            uniquePermissionCollectiblesKeys:
+                PermissionsHelpers.getUniquePermissionTokenKeys(
+                    root.permissionsModel, Constants.TokenType.ERC721)
+
             model: root.walletAccountsModel
             walletAssetsModel: root.walletAssetsModel
+            walletCollectiblesModel: root.walletCollectiblesModel
+
+            communityId: root.communityId
+            communityCollectiblesModel: root.collectiblesModel
+
             selectedSharedAddressesMap: root.selectedSharedAddressesMap
 
             onToggleAddressSelection: {
