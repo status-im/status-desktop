@@ -95,11 +95,11 @@ def test_messaging_settings_accepting_request(multiple_instances):
 
         with step(f'Verify that 1X1 chat with {user_two.name} appeared for {user_one.name}'):
             messages_screen = main_window.left_panel.open_messages_screen()
-            assert user_two.name in messages_screen.left_panel.get_chats_list()
+            assert user_two.name in messages_screen.left_panel.get_chats_names
             main_window.hide()
 
         with step(f'Verify that 1X1 chat with {user_one.name} appeared for {user_two.name}'):
             aut_two.attach()
             main_window.prepare()
             messages_screen = main_window.left_panel.open_messages_screen()
-            assert user_one.name in messages_screen.left_panel.get_chats_list()
+            assert user_one.name in messages_screen.left_panel.get_chats_names

@@ -35,21 +35,9 @@ class LeftPanel(QObject):
         self._chat_list_item = QObject(messaging_names.scrollView_StatusChatListItem)
 
     @property
-    @allure.step('Get contacts')
-    def chats(self) -> typing.List[str]:
+    @allure.step('Get chats by chats list')
+    def get_chats_names(self) -> typing.List[str]:
         return self._chats_list.get_values('objectName')
-
-    @allure.step('Open chat')
-    def get_chats_list(self):
-        started_at = time.monotonic()
-        chats_list = []
-        while True:
-            for obj in driver.findAllObjects(self._chat_list_item.real_name):
-                chats_list.append(str(obj.name))
-            if time.monotonic() - started_at > 10 and len(chats_list) == 0:
-                raise LookupError('Chats list is empty')
-            else:
-                return chats_list
 
     @allure.step('Click chat item')
     def click_chat_by_name(self, chat_name: str):

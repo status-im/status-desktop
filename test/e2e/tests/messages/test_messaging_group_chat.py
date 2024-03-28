@@ -37,7 +37,8 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
     main_window = MainWindow()
     messages_screen = MessagesScreen()
 
-    with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(user_data=user_data_two) as aut_two, multiple_instances(
+    with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(
+            user_data=user_data_two) as aut_two, multiple_instances(
             user_data=user_data_three) as aut_three:
         with step(f'Launch multiple instances with authorized users {user_one.name}, {user_two.name}, {user_three}'):
             for aut, account in zip([aut_one, aut_two, aut_three], [user_one, user_two, user_three]):
@@ -100,7 +101,7 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
         with step(f'Check group members and message for {user_two.name}'):
             aut_two.attach()
             main_window.prepare()
-            assert group_chat_new_name in messages_screen.left_panel.get_chats_list(), \
+            assert group_chat_new_name in messages_screen.left_panel.get_chats_names, \
                 f'{group_chat_new_name} is not present in chats list for {aut_two}'
             messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
 
@@ -123,7 +124,7 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
                 messages_screen.left_panel.open_leave_group_popup(group_chat_new_name).confirm_leaving()
 
             with step('Check that group name is not displayed on left panel'):
-                assert group_chat_new_name not in messages_screen.left_panel.get_chats_list()
+                assert group_chat_new_name not in messages_screen.left_panel.get_chats_names
             main_window.hide()
 
         with step(f'Check group members and message for {user_three.name}'):
@@ -131,7 +132,7 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
             main_window.prepare()
 
             with step(f'Check that {user_three.name} is not a member of a group'):
-                assert group_chat_new_name in messages_screen.left_panel.get_chats_list(), \
+                assert group_chat_new_name in messages_screen.left_panel.get_chats_names, \
                     f'{group_chat_new_name} is not present in chats list for {aut_three}'
                 messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
                 gray_message_text = messages_screen.group_chat.gray_text_from_message_area
@@ -140,22 +141,22 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
 
             with step('Verify members in a group members list'):
                 assert user_one.name in messages_screen.right_panel.members
-                assert user_two.name in messages_screen.right_panel.members is False
+                assert user_two.name in messages_screen.right_panel.members
                 assert user_three.name in messages_screen.right_panel.members is False
-                assert len(messages_screen.right_panel.members) == 2 # it has to be 2 since user3 is kicked and not
+                assert len(messages_screen.right_panel.members) == 2  # it has to be 2 since user3 is kicked and not
                 # receiving any updates from that moment
 
             with step('Leave group'):
                 messages_screen.group_chat.leave_group().confirm_leaving()
 
             with step('Check that group name is not displayed on left panel'):
-                assert group_chat_new_name not in messages_screen.left_panel.get_chats_list()
+                assert group_chat_new_name not in messages_screen.left_panel.get_chats_names
             main_window.hide()
 
         with step(f'Get back to {aut_one} and check members list'):
             aut_one.attach()
             main_window.prepare()
-            assert group_chat_new_name in messages_screen.left_panel.get_chats_list(), \
+            assert group_chat_new_name in messages_screen.left_panel.get_chats_names, \
                 f'{group_chat_new_name} is not present in chats list for {aut_one}'
             messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
             assert user_one.name in messages_screen.right_panel.members
@@ -165,4 +166,4 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
                 messages_screen.group_chat.leave_group().confirm_leaving()
 
             with step('Check that group name is not displayed on left panel'):
-                assert group_chat_new_name in messages_screen.left_panel.get_chats_list() is False
+                assert group_chat_new_name in messages_screen.left_panel.get_chats_names is False
