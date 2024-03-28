@@ -38,8 +38,8 @@ Item {
     Connections {
         target: walletSection
 
-        function onFilterChanged(address, allAddresses) {
-            RootStore.selectedAddress = allAddresses ? "" : address
+        function onFilterChanged(address) {
+            RootStore.selectedAddress = address == "" ? "" : address
         }
 
         function onDisplayKeypairImportPopup() {
@@ -139,7 +139,6 @@ Item {
         function displayAllAddresses() {
             RootStore.showSavedAddresses = false
             RootStore.selectedAddress = ""
-            RootStore.setFillterAllAddresses()
         }
 
         function displayAddress(address) {

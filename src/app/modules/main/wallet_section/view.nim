@@ -67,7 +67,7 @@ QtObject:
     read = getCurrentCurrency
     notify = currentCurrencyChanged
 
-  proc filterChanged*(self: View, addresses: string, allAddresses: bool)  {.signal.}
+  proc filterChanged*(self: View, addresses: string)  {.signal.}
 
   proc totalCurrencyBalanceChanged*(self: View) {.signal.}
 
@@ -102,9 +102,6 @@ QtObject:
 
   proc setFilterAddress(self: View, address: string) {.slot.} =
     self.delegate.setFilterAddress(address)
-
-  proc setFillterAllAddresses(self: View) {.slot.} =
-    self.delegate.setFillterAllAddresses()
 
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: CurrencyAmount) =
     self.totalCurrencyBalance = totalCurrencyBalance

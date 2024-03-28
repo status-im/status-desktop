@@ -18,7 +18,7 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
 
         # Delete all existing entries for the account for whom assets were requested,
         # for a new account the balances per address per chain will simply be appended later
-        var tokensToBeDeleted: seq[string] = @[]        
+        var tokensToBeDeleted: seq[string] = @[]
         for tokenkey, token in groupedAccountsTokensBalances:
           token.balancesPerAccount = token.balancesPerAccount.filter(balanceItem => balanceItem.account != accountAddress)
           if token.balancesPerAccount.len == 0:
@@ -96,6 +96,7 @@ proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
   self.threadpool.start(arg)
 
 proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], chainIds: seq[int]): float64 =
+  echo "+++++++ getTotalCurrencyBalance, addresses ", addresses, " chainIds: ", chainIds
   var totalBalance: float64 = 0.0
   for token in self.groupedAccountsTokensList:
     let price = self.tokenService.getPriceBySymbol(token.symbol)
