@@ -50,8 +50,9 @@ Item {
         anchors.right: parent.right
         collectibleName: collectible.name
         collectibleId: "#" + collectible.tokenId
-        collectionTag.tagPrimaryLabel.text: !!communityDetails ? communityDetails.name : collectible.collectionName
-        isCollection: !!collectible.collectionName
+        communityName: !!communityDetails ? communityDetails.name : ""
+        communityId: collectible.communityId
+        collectionName: collectible.collectionName
         communityImage: !!communityDetails ? communityDetails.image: ""
         networkShortName: collectible.networkShortName
         networkColor: collectible.networkColor
@@ -99,8 +100,8 @@ Item {
 
                 visible: root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType)
                 size: PrivilegedTokenArtworkPanel.Size.Large
-                artwork: collectible.imageUrl
-                color: !!collectible && root.isCommunityCollectible? collectible.communityColor : "transparent"
+                artwork: root.collectible.imageUrl
+                color: !!root.collectible && !!root.communityDetails ? root.communityDetails.color : "transparent"
                 isOwner: root.isOwnerTokenType
             }
 
