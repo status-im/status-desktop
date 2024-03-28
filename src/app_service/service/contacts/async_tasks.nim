@@ -68,7 +68,7 @@ const asyncRequestContactInfoTask: Task = proc(argEncoded: string) {.gcsafe, nim
     arg.finish(%* {
       "publicKey": arg.pubkey,
       "response": response,
-      "error": nil,
+      "error": "",
     })
   except Exception as e:
     arg.finish(%* {
@@ -89,7 +89,7 @@ const asyncGetProfileShowcaseForContactTask: Task = proc(argEncoded: string) {.g
       "publicKey": arg.pubkey,
       "validated": arg.validate,
       "response": response,
-      "error": nil,
+      "error": "",
     })
   except Exception as e:
     arg.finish(%* {
