@@ -4,8 +4,12 @@
 #include <QUrl>
 #include <QDebug>
 
+#include <QGuiApplication>
+#include <QFileOpenEvent>
+
 #import <AppKit/NSApplication.h>
 #import <objc/runtime.h>
+
 
 @interface StatusApplicationDelegate: NSObject <NSApplicationDelegate>
 - (BOOL)application:(NSApplication *)application
@@ -24,8 +28,9 @@ continueUserActivity:(NSUserActivity *)userActivity
         QUrl deeplink = QUrl::fromNSURL(url);
 
         // TODO #12434: Check if WalletConnect link and redirect the workflow to Pair or Authenticate
-
-        // TODO #12245: set it to nim
+        
+        QFileOpenEvent event(deeplink);
+        QGuiApplication::sendEvent(qGuiApp, &event);
         return TRUE;
     }
     return FALSE;
