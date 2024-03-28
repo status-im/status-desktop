@@ -257,7 +257,6 @@ RightTabBaseView {
 
             allNetworksModel: RootStore.filteredFlatModel
             address: RootStore.overview.mixedcaseAddress
-            showAllAccounts: RootStore.showAllAccounts
             currencyStore: RootStore.currencyStore
             networkFilters: RootStore.networkFilters
 

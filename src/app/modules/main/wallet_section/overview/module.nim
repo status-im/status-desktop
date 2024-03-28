@@ -62,36 +62,22 @@ proc getWalletAccoutColors(self: Module, walletAccounts: seq[WalletAccountDto]) 
     colors.add(account.colorId)
   return colors
 
-method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], allAddresses: bool) =
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
   let walletAccount = walletAccounts[0]
   let loading = walletAccounts[0].assetsLoading or self.controller.getTokensMarketValuesLoading()
-  if allAddresses:
-    let item = initItem(
-      "",
-      "",
-      "",
-      loading,
-      "",
-      "",
-      isWatchOnlyAccount=false,
-      isAllAccounts=true,
-      self.getWalletAccoutColors(walletAccounts)
-    )
-    self.view.setData(item)
-  else:
-    let isWatchOnlyAccount = walletAccount.walletType == "watch"
-    let item = initItem(
-      walletAccount.name,
-      walletAccount.mixedCaseAddress,
-      walletAccount.ens,
-      loading,
-      walletAccount.colorId,
-      walletAccount.emoji,
-      isWatchOnlyAccount=isWatchOnlyAccount,
-      canSend=not isWatchOnlyAccount and (walletAccount.operable==AccountFullyOperable or walletAccount.operable==AccountPartiallyOperable)
-    )
-    self.view.setData(item)
+  let isWatchOnlyAccount = walletAccount.walletType == "watch"
+  let item = initItem(
+    walletAccount.name,
+    walletAccount.mixedCaseAddress,
+    walletAccount.ens,
+    loading,
+    walletAccount.colorId,
+    walletAccount.emoji,
+    isWatchOnlyAccount=isWatchOnlyAccount,
+    canSend=not isWatchOnlyAccount and (walletAccount.operable==AccountFullyOperable or walletAccount.operable==AccountPartiallyOperable)
+  )
+  self.view.setData(item)
 
   if loading:
     self.view.setCurrencyBalance(newCurrencyAmount())

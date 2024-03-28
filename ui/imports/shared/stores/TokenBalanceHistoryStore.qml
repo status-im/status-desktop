@@ -10,7 +10,6 @@ ChartStoreBase {
     readonly property alias address: d.address
     readonly property alias tokenSymbol: d.tokenSymbol
     readonly property alias currencySymbol: d.currencySymbol
-    readonly property alias allAddresses: d.allAddresses
 
     QtObject {
         id: d
@@ -18,18 +17,17 @@ ChartStoreBase {
         // Data identity received from backend
         property var chainIds: []
         property string address
-        property bool allAddresses: false
         property string tokenSymbol
         property string currencySymbol
     }
 
-    function hasData(address, allAddresses, tokenSymbol, currencySymbol, timeRangeEnum) {
-        return address === d.address && allAddresses === d.allAddresses && tokenSymbol === d.tokenSymbol && currencySymbol === d.currencySymbol
+    function hasData(address, tokenSymbol, currencySymbol, timeRangeEnum) {
+        return address === d.address && tokenSymbol === d.tokenSymbol && currencySymbol === d.currencySymbol
                 && root.dataRange[root.timeRangeEnumToTimeIndex(timeRangeEnum)][root.timeRangeEnumToStr(timeRangeEnum)].length > 0
     }
 
     /// \arg timeRange: of type ChartStoreBase.TimeRange
-    function setData(address, allAddresses, tokenSymbol, currencySymbol, timeRange, timeRangeData, balanceData) {
+    function setData(address, tokenSymbol, currencySymbol, timeRange, timeRangeData, balanceData) {
         switch(timeRange) {
             case ChartStoreBase.TimeRange.Weekly:
                 root.weeklyData = balanceData
@@ -57,16 +55,15 @@ ChartStoreBase {
         }
 
         d.address = address
-        d.allAddresses = allAddresses
         d.tokenSymbol = tokenSymbol
         d.currencySymbol = currencySymbol
 
         root.newDataReady(address, tokenSymbol, currencySymbol, timeRange)
     }
 
-    function resetAllData(address, allAddresses, tokenSymbol, currencySymbol) {
+    function resetAllData(address, tokenSymbol, currencySymbol) {
         for (let tR = ChartStoreBase.TimeRange.Weekly; tR <= ChartStoreBase.TimeRange.All; tR++) {
-            root.setData(address, allAddresses, tokenSymbol, currencySymbol, tR, [], [])
+            root.setData(address, tokenSymbol, currencySymbol, tR, [], [])
         }
     }
 
@@ -81,14 +78,14 @@ ChartStoreBase {
                 return
             }
 
-            if (!response.allAddresses && response.addresses.length > 0) {
-                response.address = response.addresses[0]
-            } else {
+            if (response.addresses.length > 1) {
                 response.address = ""
+            } else {
+                response.address = response.addresses[0]
             }
 
-            if(d.allAddresses != response.allAddresses || d.address != response.address || d.tokenSymbol != response.tokenSymbol || d.currencySymbol != response.currencySymbol) {
-                root.resetAllData(response.address, response.allAddresses, response.tokenSymbol, response.currencySymbol)
+            if(d.address != response.address || d.tokenSymbol != response.tokenSymbol || d.currencySymbol != response.currencySymbol) {
+                root.resetAllData(response.address, response.tokenSymbol, response.currencySymbol)
             }
 
             if(typeof response.historicalData === "undefined" || response.historicalData === null || response.historicalData.length == 0) {
@@ -102,7 +99,7 @@ ChartStoreBase {
                 tmpDataValues.push({ x: new Date(dataEntry.time * 1000), y: dataEntry.value })
             }
 
-            root.setData(response.address, response.allAddresses, response.tokenSymbol, response.currencySymbol, response.timeInterval, [], tmpDataValues)
+            root.setData(response.address, response.tokenSymbol, response.currencySymbol, response.timeInterval, [], tmpDataValues)
         }
     }
 }

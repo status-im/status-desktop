@@ -66,8 +66,8 @@ proc init*(self: Controller) =
 proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =
   self.tokenService.getHistoricalDataForToken(symbol, currency, range)
 
-proc fetchHistoricalBalanceForTokenAsJson*(self: Controller, addresses: seq[string], allAddresses: bool, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
-  self.walletAccountService.fetchHistoricalBalanceForTokenAsJson(addresses, allAddresses, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum))
+proc fetchHistoricalBalanceForTokenAsJson*(self: Controller, addresses: seq[string], tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
+  self.walletAccountService.fetchHistoricalBalanceForTokenAsJson(addresses, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum))
 
 proc getSourcesOfTokensList*(self: Controller): var seq[SupportedSourcesItem] =
   return self.tokenService.getSourcesOfTokensList()

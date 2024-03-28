@@ -198,30 +198,27 @@ method setTotalCurrencyBalance*(self: Module) =
   self.view.setTotalCurrencyBalance(self.controller.getTotalCurrencyBalance(addresses, self.filter.chainIds))
 
 proc notifyFilterChanged(self: Module) =
-  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allAddresses)
+  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
-  self.activityController.globalFilterChanged(self.filter.addresses, self.filter.allAddresses, self.filter.chainIds, self.filter.allChainsEnabled)
+  self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.allTokensModule.filterChanged(self.filter.addresses)
   self.view.setAddressFilters(self.filter.addresses.join(":"))
   if self.filter.addresses.len > 0:
-    self.view.filterChanged(self.filter.addresses[0], self.filter.allAddresses)
+    self.view.filterChanged(self.filter.addresses[0])
 
 method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
   return self.controller.getCurrencyAmount(amount, symbol)
 
-method setFilterAddress*(self: Module, address: string) =
+proc setKeypairOperabilityForObservedAccount(self: Module, address: string) =
   let keypair = self.controller.getKeypairByAccountAddress(address)
   if keypair.isNil:
     self.view.setKeypairOperabilityForObservedAccount("")
   else:
     self.view.setKeypairOperabilityForObservedAccount(keypair.getOperability())
-  self.filter.setAddress(address)
-  self.notifyFilterChanged()
 
-method setFillterAllAddresses*(self: Module) =
-  self.view.setKeypairOperabilityForObservedAccount("")
-  self.filter.setFillterAllAddresses()
+method setFilterAddress*(self: Module, address: string) =
+  self.filter.setAddress(address)
   self.notifyFilterChanged()
 
 method load*(self: Module) =
@@ -288,7 +285,6 @@ method load*(self: Module) =
     let data = LocalPairingStatus(e)
     self.onLocalPairingStatusUpdate(data)
   self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
-    self.filter.setFillterAllAddresses()
     self.notifyFilterChanged()
     self.setTotalCurrencyBalance()
 

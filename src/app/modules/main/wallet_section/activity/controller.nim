@@ -58,7 +58,6 @@ QtObject:
       filterTokenCodes: HashSet[string]
 
       addresses: seq[string]
-      allAddressesSelected: bool
       # call updateAssetsIdentities after updating chainIds
       chainIds: seq[int]
 
@@ -145,7 +144,7 @@ QtObject:
       self.eventsHandler.clearSessionId()
 
     # start a new filter session
-    let (sessionId, ok) = backend_activity.newActivityFilterSession(self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, FETCH_BATCH_COUNT_DEFAULT)
+    let (sessionId, ok) = backend_activity.newActivityFilterSession(self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, FETCH_BATCH_COUNT_DEFAULT)
     if not ok:
       self.status.setLoadingData(false)
       return
@@ -339,7 +338,6 @@ QtObject:
     result.filterTokenCodes = initHashSet[string]()
 
     result.addresses = @[]
-    result.allAddressesSelected = false
     result.chainIds = @[]
 
     result.setup()
@@ -424,12 +422,11 @@ QtObject:
     self.updateAssetsIdentities()
 
   # Requires self.newFilterSession() to be called after this
-  proc setFilterAddresses(self: Controller, addresses: seq[string], allAddressesSelected: bool) =
+  proc setFilterAddresses*(self: Controller, addresses: seq[string]) =
     self.addresses = addresses
-    self.allAddressesSelected = allAddressesSelected
     self.status.setIsFilterDirty(true)
 
-  proc setFilterAddressesJson*(self: Controller, jsonArray: string, allAddressesSelected: bool) {.slot.}  =
+  proc setFilterAddressesJson*(self: Controller, jsonArray: string) {.slot.}  =
     let addressesJson = parseJson(jsonArray)
     if addressesJson.kind != JArray:
       error "invalid array of json strings"
@@ -442,7 +439,7 @@ QtObject:
         return
       addresses.add(addressesJson[i].getStr())
 
-    self.setFilterAddresses(addresses, allAddressesSelected)
+    self.setFilterAddresses(addresses)
 
     # Every change of addresses have to start a new session to get incremental updates when filter is cleared
     self.newFilterSession()
@@ -508,11 +505,11 @@ QtObject:
   QtProperty[QVariant] status:
     read = getStatus
 
-  proc globalFilterChanged*(self: Controller, addresses: seq[string], allAddressesSelected: bool, chainIds: seq[int], allChainsEnabled: bool) =
-    if (self.addresses == addresses and self.allAddressesSelected == allAddressesSelected and self.chainIds == chainIds):
+  proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int], allChainsEnabled: bool) =
+    if (self.addresses == addresses and self.chainIds == chainIds):
       return
 
-    self.setFilterAddresses(addresses, allAddressesSelected)
+    self.setFilterAddresses(addresses)
     self.setFilterChains(chainIds, allChainsEnabled)
 
     # Every change of chains and addresses have to start a new session to get incremental updates when filter is cleared

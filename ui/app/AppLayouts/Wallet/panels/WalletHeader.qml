@@ -13,7 +13,6 @@ import SortFilterProxyModel 0.2
 import utils 1.0
 
 import "../controls"
-import "../stores"
 
 Item {
     id: root
