@@ -53,6 +53,19 @@ ListView {
         Component.onCompleted: initialize()
     }
 
+    Connections {
+        target: root.model
+
+        function onRowsInserted() {
+            if (rowModel.count === 0)
+                rowModel.initialize()
+        }
+
+        function onModelReset() {
+            rowModel.initialize()
+        }
+    }
+
     Rectangle {
         border.color: "lightgray"
         color: "transparent"
