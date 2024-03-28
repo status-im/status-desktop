@@ -117,10 +117,10 @@ def test_1x1_chat(multiple_instances):
                 assert '😎' in message_item
 
         with step(f'User {user_one.name}, delete own message and verify it was deleted'):
-            message = messages_screen.left_panel.open_chat(user_two.name).find_message_by_text('How are you?', 2)
+            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text('How are you?', 2)
             message.hover_message().delete_message()
 
         with step(f'User {user_one.name}, cannot delete {user_two.name} message'):
-            message = messages_screen.left_panel.open_chat(user_two.name).find_message_by_text('Hello squisher', 1)
+            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text('Hello squisher', 1)
             assert not message.hover_message().is_delete_button_visible()
             main_window.hide()
