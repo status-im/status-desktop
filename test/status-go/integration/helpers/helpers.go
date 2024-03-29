@@ -366,7 +366,11 @@ func CallPrivateMethod(method string, params []interface{}) (string, error) {
 }
 
 func CallPrivateMethodAndGetT[T any](method string, params []interface{}) (*T, error) {
-	resJson, err := CallPrivateMethodWithTimeout(method, params, 60*time.Second)
+	return CallPrivateMethodAndGetTWithTimeout[T](method, params, 60*time.Second)
+}
+
+func CallPrivateMethodAndGetTWithTimeout[T any](method string, params []interface{}, timeout time.Duration) (*T, error) {
+	resJson, err := CallPrivateMethodWithTimeout(method, params, timeout)
 	if err != nil {
 		return nil, err
 	}

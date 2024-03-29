@@ -24,7 +24,7 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 	td, close := setupAccountsAndTransactions(t)
 	defer close()
 
-	rawSessionID, err := helpers.CallPrivateMethodAndGetT[int32]("wallet_startActivityFilterSession", []interface{}{[]types.Address{td.sender.Address}, false, []common.ChainID{5}, activity.Filter{}, 3})
+	rawSessionID, err := helpers.CallPrivateMethodAndGetT[int32]("wallet_startActivityFilterSession", []interface{}{[]types.Address{td.operableAccounts[0].Address}, false, []common.ChainID{5}, activity.Filter{}, 3})
 	require.NoError(t, err)
 	require.NotNil(t, rawSessionID)
 	sessionID := activity.SessionID(*rawSessionID)
@@ -51,10 +51,10 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 	// require.True(t, *update.HasNewOnTop)
 
 	// Start history download to cleanup pending transactions
-	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{5}, []types.Address{td.sender.Address, td.recipient.Address}})
+	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{5}, []types.Address{td.operableAccounts[0].Address, td.watchAccounts[0].Address}})
 	require.NoError(t, err)
 
-	downloadDoneFn := helpers.WaitForTxDownloaderToFinishForAccountsCondition(t, []eth.Address{eth.Address(td.sender.Address), eth.Address(td.recipient.Address)})
+	downloadDoneFn := helpers.WaitForTxDownloaderToFinishForAccountsCondition(t, []eth.Address{eth.Address(td.operableAccounts[0].Address), eth.Address(td.watchAccounts[0].Address)})
 
 	update = nil
 	// Wait for EventRecentHistoryReady.
