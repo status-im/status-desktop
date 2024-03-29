@@ -288,6 +288,14 @@ SplitView {
 
                         onCloseRequested: logs.logEvent("closeRequested()")
 
+                        sendToAccountEnabled: true
+
+                        showcaseCommunitiesModel: CommunitiesModel {}
+                        showcaseAccountsModel: WalletAccountsModel {}
+                        showcaseCollectiblesModel: ManageCollectiblesModel {}
+                        showcaseSocialLinksModel: assetsStore.groupedAccountAssetsModel
+                        // TODO: showcaseAssetsModel
+
                         profileStore: QtObject {
                             readonly property string pubkey: "0xdeadbeef"
                             readonly property string ensName: name.text
@@ -298,14 +306,6 @@ SplitView {
                             function copyToClipboard(text) {
                                 logs.logEvent("profileStore::copyToClipboard", ["text"], arguments)
                             }
-                            function requestProfileShowcase(publicKey) {
-                                logs.logEvent("profileStore::requestProfileShowcase", ["publicKey"], arguments)
-                            }
-
-                            readonly property var profileShowcaseCommunitiesModel: CommunitiesModel {}
-                            readonly property var profileShowcaseAccountsModel: WalletAccountsModel {}
-                            readonly property var profileShowcaseCollectiblesModel: ManageCollectiblesModel {}
-                            readonly property var profileShowcaseAssetsModel: assetsStore.groupedAccountAssetsModel
                         }
 
                         contactsStore: QtObject {
@@ -364,32 +364,10 @@ SplitView {
                                 logs.logEvent("contactsStore::changeContactNickname", ["publicKey", "newNickname", "displayName", "isEdit"], arguments)
                                 localNickname.text = newNickname
                             }
-                        }
 
-                        walletStore: QtObject {
-                            function setFilterAddress(address) {
-                                logs.logEvent("walletStore::setFilterAddress", ["address"], arguments)
+                            function requestProfileShowcase(publicKey) {
+                                logs.logEvent("contactsStore::requestProfileShowcase", ["publicKey"], arguments)
                             }
-
-                            function getSavedAddress(address) {
-                                return {
-                                    name: "My Status Saved Account",
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000",
-                                    ens: false,
-                                    colorId: Constants.walletAccountColors.primary,
-                                    chainShortNames: "",
-                                    isTest: false
-                                }
-                            }
-
-                            function createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames) {
-                                logs.logEvent("walletStore::createOrUpdateSavedAddress", ["name", "address", "ens", "colorId", "chainShortNames"],
-                                              arguments)
-                            }
-                        }
-
-                        networkConnectionStore: QtObject {
-                            readonly property bool sendBuyBridgeEnabled: true
                         }
                     }
                 }

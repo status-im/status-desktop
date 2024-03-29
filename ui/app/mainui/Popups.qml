@@ -533,10 +533,22 @@ QtObject {
             id: profilePopupComponent
             ProfileDialog {
                 id: profilePopup
+
+                property bool isCurrentUser: publicKey === rootStore.profileSectionStore.profileStore.pubkey
+
                 profileStore: rootStore.profileSectionStore.profileStore
                 contactsStore: rootStore.profileSectionStore.contactsStore
-                networkConnectionStore: root.networkConnectionStore
+                sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
 
+                showcaseCommunitiesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCommunitiesModel : rootStore.profileSectionStore.contactShowcaseCommunitiesModel
+                showcaseAccountsModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseAccountsModel : rootStore.profileSectionStore.contactShowcaseAccountsModel
+                showcaseCollectiblesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCollectiblesModel : rootStore.profileSectionStore.contactShowcaseCollectiblesModel
+                showcaseSocialLinksModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseSocialLinksModel : rootStore.profileSectionStore.contactShowcaseSocialLinksModel
+                
+                onOpened: {
+                    isCurrentUser ? rootStore.profileSectionStore.requestOwnShowcase()
+                                  : rootStore.profileSectionStore.requestContactShowcase(publicKey)
+                }
                 onClosed: {
                     if (profilePopup.parentPopup) {
                         profilePopup.parentPopup.close()
