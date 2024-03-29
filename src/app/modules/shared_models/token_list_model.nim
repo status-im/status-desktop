@@ -14,6 +14,7 @@ type
     Supply
     InfiniteSupply
     Decimals
+    PrivilegesLevel
 
 QtObject:
   type TokenListModel* = ref object of QAbstractListModel
@@ -93,6 +94,7 @@ QtObject:
       ModelRole.Supply.int:"supply",
       ModelRole.InfiniteSupply.int:"infiniteSupply",
       ModelRole.Decimals.int:"decimals",
+      ModelRole.PrivilegesLevel.int:"privilegesLevel",
     }.toTable
 
   method rowCount(self: TokenlistModel, index: QModelIndex = nil): int =
@@ -128,3 +130,5 @@ QtObject:
         result = newQVariant(item.getInfiniteSupply())
       of ModelRole.Decimals:
         result = newQVariant(item.getDecimals())
+      of ModelRole.PrivilegesLevel:
+        result = newQVariant(item.getPrivilegesLevel())
