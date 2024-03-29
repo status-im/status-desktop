@@ -10,7 +10,7 @@ from . import marks
 
 import constants
 import driver
-from constants.community_settings import ToastMessages
+from constants.community_settings import ToastMessages, LimitWarnings
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -31,7 +31,6 @@ pytestmark = marks
         pytest.param(True, 'Ether', 'Dai Stablecoin', '10', 'viewOnly', '#general', '10 ETH', '10 DAI', 'View only'),
         pytest.param(False, False, False, False, 'becomeAdmin', False, False, False, 'Become an admin')
     ])
-# TODO: (reason='https://github.com/status-im/status-desktop/issues/13621')
 def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkbox_state: bool, first_asset,
                                          second_asset, amount, allowed_to: str, in_channel, asset_title,
                                          second_asset_title, allowed_to_title: str):
@@ -123,3 +122,91 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkb
         messages = main_screen.wait_for_notification()
         assert ToastMessages.DELETE_PERMISSION_TOAST.value in messages, \
             f"Toast message is incorrect, current message is {message}"
+
+
+@pytest.mark.parametrize('params', [constants.community_params])
+def test_add_5_member_role_permissions(main_screen: MainWindow, params):
+    main_screen.create_community(params['name'], params['description'],
+                                 params['intro'], params['outro'],
+                                 params['logo']['fp'], params['banner']['fp'])
+
+    permission_data = [
+        {
+            'checkbox_state': True,
+            'first_asset': 'Dai Stablecoin',
+            'amount': '1',
+            'allowed_to': 'becomeMember',
+            'asset_title': '1 DAI',
+            'allowed_to_title': 'Become member'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': 'Aragon',
+            'amount': '2',
+            'allowed_to': 'becomeMember',
+            'asset_title': '2 ANT',
+            'allowed_to_title': 'Become member'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': '1inch',
+            'amount': '3',
+            'allowed_to': 'becomeMember',
+            'asset_title': '3 1INCH',
+            'allowed_to_title': 'Become member'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': 'ABYSS',
+            'amount': '4',
+            'allowed_to': 'becomeMember',
+            'asset_title': '4 ABYSS',
+            'allowed_to_title': 'Become member'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': 'Bytom',
+            'amount': '5',
+            'allowed_to': 'becomeMember',
+            'asset_title': '5 BTM',
+            'allowed_to_title': 'Become member'
+        }
+    ]
+
+    with step('Open add new permission page'):
+        community_screen = main_screen.left_panel.select_community(params['name'])
+        community_setting = community_screen.left_panel.open_community_settings()
+        permissions_intro_view = community_setting.left_panel.open_permissions()
+
+    with step('Create new permission'):
+        for index, item in enumerate(permission_data):
+            permissions_settings = permissions_intro_view.add_new_permission()
+            permissions_settings.set_who_holds_checkbox_state(permission_data[index]['checkbox_state'])
+            permissions_settings.set_who_holds_asset_and_amount(permission_data[index]['first_asset'],
+                                                                permission_data[index]['amount'])
+            permissions_settings.set_is_allowed_to(permission_data[index]['allowed_to'])
+            permissions_settings.create_permission()
+
+        with step('Created permission is displayed on permission page'):
+            if permission_data[index]['asset_title'] is not False:
+                assert driver.waitFor(
+                    lambda: permission_data[index]['asset_title'] in permissions_settings.get_who_holds_tags_titles(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+    with step('Open form to create 6th member role permission and validate it is not allowed'):
+        extra_permission_data = {
+            'checkbox_state': True,
+            'first_asset': 'Bytom',
+            'amount': '6',
+            'allowed_to': 'becomeMember'
+        }
+        permissions_settings = permissions_intro_view.add_new_permission()
+        permissions_settings.set_who_holds_checkbox_state(extra_permission_data['checkbox_state'])
+        permissions_settings.set_who_holds_asset_and_amount(extra_permission_data['first_asset'],
+                                                            extra_permission_data['amount'])
+        permissions_settings.set_is_allowed_to(extra_permission_data['allowed_to'])
+
+        assert permissions_settings.is_member_role_warning_text_present(), 'Member role limit warning is not displayed'
+        assert permissions_settings.get_member_role_limit_warning_text() \
+               == LimitWarnings.MEMBER_ROLE_LIMIT_WARNING.value, \
+            f'Warning text about become a member limit reached is incorrect'

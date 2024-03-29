@@ -32,4 +32,8 @@ class AirdropsElements(Enum):
 class ToastMessages(Enum):
     CREATE_PERMISSION_TOAST = 'Community permission created'
     UPDATE_PERMISSION_TOAST = 'Community permission updated'
-    DELETE_PERMISSION_TOAST = 'Community permission updated'
+    DELETE_PERMISSION_TOAST = 'Community permission deleted'
+
+
+class LimitWarnings(Enum):
+    MEMBER_ROLE_LIMIT_WARNING = 'Max of 5 ‘become member’ permissions for this Community has been reached. You will need to delete an existing ‘become member’ permission before you can add a new one.'

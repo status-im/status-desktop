@@ -30,7 +30,8 @@ class LeftPanel(QObject):
 
     def __init__(self):
         super().__init__(communities_names.mainWindow_communityColumnView_CommunityColumnView)
-        self._back_to_community_button = Button(communities_names.mainWindow_communitySettingsBackToCommunityButton_StatusBaseText)
+        self._back_to_community_button = Button(
+            communities_names.mainWindow_communitySettingsBackToCommunityButton_StatusBaseText)
         self._overview_button = Button(communities_names.overview_StatusNavigationListItem)
         self._members_button = Button(communities_names.members_StatusNavigationListItem)
         self._permissions_button = Button(communities_names.permissions_StatusNavigationListItem)
@@ -74,7 +75,8 @@ class OverviewView(QObject):
     def __init__(self):
         super().__init__(communities_names.mainWindow_OverviewSettingsPanel)
         self._name_text_label = TextLabel(communities_names.communityOverviewSettingsCommunityName_StatusBaseText)
-        self._description_text_label = TextLabel(communities_names.communityOverviewSettingsCommunityDescription_StatusBaseText)
+        self._description_text_label = TextLabel(
+            communities_names.communityOverviewSettingsCommunityDescription_StatusBaseText)
         self._edit_button = Button(communities_names.mainWindow_Edit_Community_StatusButton)
 
     @property
@@ -106,7 +108,8 @@ class EditCommunityView(QObject):
         super().__init__(communities_names.mainWindow_communityEditPanelScrollView_EditSettingsPanel)
         self._scroll = Scroll(communities_names.communityEditPanelScrollView_Flickable)
         self._name_text_edit = TextEdit(communities_names.communityEditPanelScrollView_communityNameInput_TextEdit)
-        self._description_text_edit = TextEdit(communities_names.communityEditPanelScrollView_communityDescriptionInput_TextEdit)
+        self._description_text_edit = TextEdit(
+            communities_names.communityEditPanelScrollView_communityDescriptionInput_TextEdit)
         self._logo = QObject(communities_names.communityEditPanelScrollView_image_StatusImage)
         self._add_logo_button = Button(communities_names.communityEditPanelScrollView_editButton_StatusRoundButton)
         self._banner = QObject(communities_names.communityEditPanelScrollView_image_StatusImage_2)
@@ -116,10 +119,14 @@ class EditCommunityView(QObject):
         self._tag_item = QObject(communities_names.communityEditPanelScrollView_StatusCommunityTag)
         self._archive_support_checkbox = CheckBox(
             communities_names.communityEditPanelScrollView_archiveSupportToggle_StatusCheckBox)
-        self._request_to_join_checkbox = CheckBox(communities_names.communityEditPanelScrollView_requestToJoinToggle_StatusCheckBox)
-        self._pin_messages_checkbox = CheckBox(communities_names.communityEditPanelScrollView_pinMessagesToggle_StatusCheckBox)
-        self._intro_text_edit = TextEdit(communities_names.communityEditPanelScrollView_editCommunityIntroInput_TextEdit)
-        self._outro_text_edit = TextEdit(communities_names.communityEditPanelScrollView_editCommunityOutroInput_TextEdit)
+        self._request_to_join_checkbox = CheckBox(
+            communities_names.communityEditPanelScrollView_requestToJoinToggle_StatusCheckBox)
+        self._pin_messages_checkbox = CheckBox(
+            communities_names.communityEditPanelScrollView_pinMessagesToggle_StatusCheckBox)
+        self._intro_text_edit = TextEdit(
+            communities_names.communityEditPanelScrollView_editCommunityIntroInput_TextEdit)
+        self._outro_text_edit = TextEdit(
+            communities_names.communityEditPanelScrollView_editCommunityOutroInput_TextEdit)
         self._save_changes_button = Button(names.mainWindow_Save_changes_StatusButton)
         self._cropped_image_edit_logo_item = QObject(communities_names.croppedImageEditLogo)
         self._cropped_image_edit_banner_item = QObject(communities_names.croppedImageEditBanner)
@@ -153,7 +160,8 @@ class EditCommunityView(QObject):
     def logo(self, kwargs: dict):
         self._add_logo_button.click()
         OpenFileDialog().wait_until_appears().open_file(kwargs['fp'])
-        PictureEditPopup().wait_until_appears().set_zoom_shift_for_picture(kwargs.get('zoom', None), kwargs.get('shift', None))
+        PictureEditPopup().wait_until_appears().set_zoom_shift_for_picture(kwargs.get('zoom', None),
+                                                                           kwargs.get('shift', None))
 
     @property
     @allure.step('Get community banner')
@@ -164,7 +172,8 @@ class EditCommunityView(QObject):
     def banner(self, kwargs: dict):
         self._add_banner_button.click()
         OpenFileDialog().wait_until_appears().open_file(kwargs['fp'])
-        PictureEditPopup().wait_until_appears().set_zoom_shift_for_picture(kwargs.get('zoom', None), kwargs.get('shift', None))
+        PictureEditPopup().wait_until_appears().set_zoom_shift_for_picture(kwargs.get('zoom', None),
+                                                                           kwargs.get('shift', None))
 
     @allure.step('Set community logo without file upload dialog')
     def set_logo_without_file_upload_dialog(self, path):
@@ -451,6 +460,15 @@ class PermissionsSettingsView(QObject):
         self._is_allowed_tag = QObject(communities_names.isAllowedTagListItem)
         self._in_community_in_channel_tag = QObject(communities_names.inCommunityTagListItem)
         self._is_allowed_to_edit_tag = QObject(communities_names.isAllowedToEditPermissionView_StatusListItemTag)
+        self._member_role_limit_warning = QObject(communities_names.memberRoleLimitWarning)
+
+    @allure.step('Verify member role limit warning is present')
+    def is_member_role_warning_text_present(self):
+        return self._member_role_limit_warning.exists
+
+    @allure.step('Get warning text')
+    def get_member_role_limit_warning_text(self):
+        return str(self._member_role_limit_warning.object.text)
 
     @allure.step('Get titles of Who holds tags')
     def get_who_holds_tags_titles(self, attempt: int = 2) -> typing.List[str]:
@@ -544,7 +562,7 @@ class PermissionsSettingsView(QObject):
                 raise LookupError('Add button for who holds not found')
 
     @allure.step('Open Is allowed to context menu')
-    def open_is_allowed_to_context_menu(self,  attempt: int = 2):
+    def open_is_allowed_to_context_menu(self, attempt: int = 2):
         try:
             for child in walk_children(self._is_allowed_to_list_item.object):
                 if getattr(child, 'objectName', '') == 'addItemButton':
