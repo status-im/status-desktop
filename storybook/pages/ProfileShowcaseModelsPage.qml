@@ -18,162 +18,91 @@ ColumnLayout {
     ListModel {
         id: accountsModel
 
-        ListElement { address: "1"; name: "Crypto Kitties" }
-        ListElement { address: "2"; name: "Status" }
-        ListElement { address: "3"; name: "Fun Stuff" }
-        ListElement { address: "4"; name: "Other Stuff" }
+        ListElement {
+            address: "1"
+            name: "Crypto Kitties"
+            showcaseKey: "1"
+            showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+            showcasePosition: 0
+        }
+        ListElement {
+            address: "2"
+            name: "Status"
+            showcaseKey: "2"
+            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+        }
+        ListElement {
+            address: "3";
+            name: "Fun Stuff"
+            showcaseKey: "3"
+            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+        }
+        ListElement {
+            address: "4"
+            name: "Other Stuff"
+            showcaseKey: "4"
+            showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+        }
     }
 
     ListModel {
         id: socialLinksModel
 
-        ListElement { uuid: "1"; text: "Twitter"; url: "https://twitter.com/status" }
-        ListElement { uuid: "2"; text: "Personal Site"; url: "https://status.im" }
-        ListElement { uuid: "3"; text: "Github"; url: "https://github.com" }
-        ListElement { uuid: "4"; text: "Youtube"; url: "https://youtube.com" }
-        ListElement { uuid: "5"; text: "Discord"; url: "https://discord.com" }
-        ListElement { uuid: "6"; text: "Telegram"; url: "https://t.me/status" }
-        ListElement { uuid: "7"; text: "Custom"; url: "https://status.im" }
+        ListElement { showcaseKey: "1"; showcasePosition: 0; text: "Twitter"; url: "https://twitter.com/status" }
+        ListElement { showcaseKey: "2"; showcasePosition: 1; text: "Personal Site"; url: "https://status.im" }
+        ListElement { showcaseKey: "3"; showcasePosition: 2; text: "Github"; url: "https://github.com" }
+        ListElement { showcaseKey: "4"; showcasePosition: 3; text: "Youtube"; url: "https://youtube.com" }
+        ListElement { showcaseKey: "5"; showcasePosition: 4; text: "Discord"; url: "https://discord.com" }
+        ListElement { showcaseKey: "6"; showcasePosition: 5; text: "Telegram"; url: "https://t.me/status" }
+        ListElement { showcaseKey: "7"; showcasePosition: 6; text: "Custom"; url: "https://status.im" }
     }
 
     ListModel {
-        id: accountsShowcaseModel
-        ListElement {
-            address: "1"
-            showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-            order: 0
-            name: "name"
-            colorId: "colorId"
-            emoji: "emoji"
-        }
-        ListElement {
-            address: "2"
-            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
-            order: 1
-            name: "name"
-            colorId: "colorId"
-            emoji: "emoji"
-        }
-        ListElement {
-            address: "3"
-            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
-            order: 2
-            name: "name"
-            colorId: "colorId"
-            emoji: "emoji"
-        }
-    }
-
-    ListModel {
-        id: accounts13
-        ListElement { accountAddress: "1" }
-        ListElement { accountAddress: "3" }
-    }
-
-    ListModel {
-        id: accounts3
-        ListElement { accountAddress: "3" }
-    }
-
-    ListModel {
-        id: accounts123
-        ListElement { accountAddress: "1" }
-        ListElement { accountAddress: "2" }
-        ListElement { accountAddress: "3" }
-    }
-
-    ListModel {
-        id: accounts14
-        ListElement { accountAddress: "1" }
-        ListElement { accountAddress: "4" }
-    }
-
-    ListModel {
-        id: collectiblesListModel
-
-        ListElement { item: 1 }
-        ListElement { item: 2 }
-        ListElement { item: 3 }
-        ListElement { item: 4 }
-    }
-
-    SortFilterProxyModel {
         id: collectiblesModel
-        sourceModel: collectiblesListModel
-        proxyRoles: [
-            FastExpressionRole {
-                name: "ownership"
-                expression: {
-                    if (index == 0) {
-                        return accounts13
-                    } else if (index == 1) {
-                        return accounts3
-                    } else if (index == 2) {
-                        return accounts123
-                    } else if (index == 3) {
-                        return accounts14
-                    }
-                    return undefined
-                }
-            },
-            FastExpressionRole {
-                name: "uid"
-                expression: {
-                    return index + 1
-                }
-            },
-            FastExpressionRole {
-                name: "name"
-                expression: {
-                    return "Collectible " + (index + 1)
-                }
-            }
-        ]
-    }
 
-    ListModel {
-        id: collectiblesShowcaseModel
         ListElement {
-            uid: "1"
+            uid: 1
+            name: "Collectible 1"
+            showcaseKey: "1"
             showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-            order: 0
-            name: "name"
-            backgroundColor: "backgroundColor"
-            chainId: "chainId"
-            communityId: "communityId"
-            collectionName: "collectionName"
-            imageUrl: "imageUrl"
-            isLoading: "isLoading"
-            contractAddress: "contractAddress"
-            tokenId: "tokenId"
+            showcasePosition: 0
+            ownership: [
+                ListElement { accountAddress: "1" },
+                ListElement { accountAddress: "3" }
+            ]
         }
         ListElement {
-            uid: "2"
+            uid: 2
+            name: "Collectible 2"
+            showcaseKey: "2"
             showcaseVisibility: Constants.ShowcaseVisibility.Contacts
-            order: 2
-            name: "name"
-            backgroundColor: "backgroundColor"
-            chainId: "chainId"
-            communityId: "communityId"
-            collectionName: "collectionName"
-            imageUrl: "imageUrl"
-            isLoading: "isLoading"
-            contractAddress: "contractAddress"
-            tokenId: "tokenId"
+            showcasePosition: 2
+            ownership: [
+                ListElement { accountAddress: "1" },
+                ListElement { accountAddress: "2" },
+                ListElement { accountAddress: "3" }
+            ]
         }
         ListElement {
-            uid: "3"
+            uid: 3
+            name: "Collectible 3"
+            showcaseKey: "3"
             showcaseVisibility: Constants.ShowcaseVisibility.Contacts
-            order: 1
-            name: "name"
-            backgroundColor: "backgroundColor"
-            chainId: "chainId"
-            communityId: "communityId"
-            collectionName: "collectionName"
-            imageUrl: "imageUrl"
-            isLoading: "isLoading"
-            contractAddress: "contractAddress"
-            tokenId: "tokenId"
+            showcasePosition: 1
+            ownership: [
+                ListElement { accountAddress: "3" }
+            ]
+        }
+        ListElement {
+            uid: 4
+            name: "Collectible 4"
+            showcaseKey: "4"
+            showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+            showcasePosition: 3
+            ownership: [
+                ListElement { accountAddress: "1" },
+                ListElement { accountAddress: "4" }
+            ]
         }
     }
 
@@ -181,11 +110,7 @@ ColumnLayout {
         id: showcaseModels
 
         accountsSourceModel: accountsModel
-        accountsShowcaseModel: accountsShowcaseModel
-
         collectiblesSourceModel: collectiblesModel
-        collectiblesShowcaseModel: collectiblesShowcaseModel
-
         socialLinksSourceModel: socialLinksModel
     }
 
@@ -220,25 +145,17 @@ ColumnLayout {
         Layout.margins: 10
 
         initialItem: collectiblesView
-        
+
         Component {
             id: collectiblesView
-            Flickable {
+            RowLayout {
+                id: grid
+                spacing: 10
+                //anchors.fill: parent
 
-                contentWidth: grid.width
-                contentHeight: grid.height
-
-                clip: true
-
-                Grid {
-                    id: grid
-
-                    rows: 3
-                    columns: 4
-
-                    spacing: 10
-
-                    flow: Grid.TopToBottom
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
                     Label {
                         text: "Backend models"
@@ -247,21 +164,17 @@ ColumnLayout {
                     }
 
                     GenericListView {
-                        width: 300
-                        height: 300
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
                         model: accountsModel
                         label: "ACCOUNTS MODEL"
                     }
+                }
 
-                    GenericListView {
-                        width: 300
-                        height: 300
-
-                        model: accountsShowcaseModel
-                        label: "SHOWCASE MODEL"
-                        roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
-                    }
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
                     Label {
                         text: "Display models"
@@ -270,8 +183,8 @@ ColumnLayout {
                     }
 
                     GenericListView {
-                        width: 420
-                        height: 300
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
                         model: showcaseModels.accountsVisibleModel
                         label: "IN SHOWCASE"
@@ -288,8 +201,8 @@ ColumnLayout {
                             RoundButton {
                                 text: "❌"
                                 onClicked: showcaseModels.setAccountVisibility(
-                                            model.showcaseKey,
-                                            Constants.ShowcaseVisibility.NoOne)
+                                    model.showcaseKey,
+                                    Constants.ShowcaseVisibility.NoOne)
                             }
 
                             VisibilityComboBox {
@@ -300,7 +213,7 @@ ColumnLayout {
                                         return
 
                                     showcaseModels.setAccountVisibility(
-                                                topModel.showcaseKey, currentValue)
+                                        topModel.showcaseKey, currentValue)
                                 }
 
                                 Component.onCompleted: {
@@ -312,8 +225,8 @@ ColumnLayout {
                     }
 
                     GenericListView {
-                        width: 420
-                        height: 300
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
                         model: showcaseModels.accountsHiddenModel
 
@@ -330,30 +243,28 @@ ColumnLayout {
                                     Constants.ShowcaseVisibility.IdVerifiedContacts)
                         }
                     }
+                }
+                ColumnLayout {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
 
                     Label {
                         text: "Backend models"
                         font.pixelSize: 22
                         padding: 10
                     }
-
                     GenericListView {
-                        width: 270
-                        height: 300
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
                         model: collectiblesModel
                         label: "COLLECTIBLES MODEL"
                     }
+                }
 
-                    GenericListView {
-                        width: 270
-                        height: 300
-
-                        model: collectiblesShowcaseModel
-                        label: "SHOWCASE MODEL"
-                        roles: ["uid", "showcaseVisibility", "order"]
-                    }
-
+                ColumnLayout {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     Label {
                         text: "Display models"
                         font.pixelSize: 22
@@ -361,13 +272,13 @@ ColumnLayout {
                     }
 
                     GenericListView {
-                        width: 610
-                        height: 300
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
 
                         model: showcaseModels.collectiblesVisibleModel
                         label: "IN SHOWCASE"
                         movable: true
-                        roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
+                        roles: ["showcaseKey", "showcaseVisibility", "showcasePosition", "maxVisibility"]
 
                         onMoveRequested: {
                             showcaseModels.changeCollectiblePosition(from, to);
@@ -379,8 +290,8 @@ ColumnLayout {
                             RoundButton {
                                 text: "❌"
                                 onClicked: showcaseModels.setCollectibleVisibility(
-                                            model.showcaseKey,
-                                            Constants.ShowcaseVisibility.NoOne)
+                                    model.showcaseKey,
+                                    Constants.ShowcaseVisibility.NoOne)
                             }
 
                             VisibilityComboBox {
@@ -391,7 +302,7 @@ ColumnLayout {
                                         return
 
                                     showcaseModels.setCollectibleVisibility(
-                                                topModel.showcaseKey, currentValue)
+                                        topModel.showcaseKey, currentValue)
                                 }
 
                                 Component.onCompleted: {
@@ -403,8 +314,8 @@ ColumnLayout {
                     }
 
                     GenericListView {
-                        width: 610
-                        height: 300
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
 
                         model: showcaseModels.collectiblesHiddenModel
 
@@ -425,7 +336,7 @@ ColumnLayout {
                 }
             }
         }
-        
+
         Component {
             id: webView
             Flickable {
@@ -524,18 +435,28 @@ ColumnLayout {
 
     Button {
         text: "SAVE"
-        //TODO: enable when showcaseModels backend APIs is integrated
-        enabled: false
 
         onClicked: {
             const accountsToBeSaved = showcaseModels.accountsCurrentState()
             const collectiblesToBeSaved = showcaseModels.collectiblesCurrentState()
 
-            accountsShowcaseModel.clear()
-            accountsShowcaseModel.append(accountsToBeSaved)
+            for (let index = 0; index < accountsModel.count; index++) {
+                let account = accountsModel.get(index)
+                const showcaseAccount = accountsToBeSaved.find(item => item.showcaseKey === account.showcaseKey)
 
-            collectiblesShowcaseModel.clear()
-            collectiblesShowcaseModel.append(collectiblesToBeSaved)
+                account.showcasePosition = !!showcaseAccount ? showcaseAccount.showcasePosition : 0
+                account.showcaseVisibility = !!showcaseAccount ? showcaseAccount.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
+                accountsModel.set(index, account)
+            }
+
+            for (let index = 0; index < collectiblesModel.count; index++) {
+                let collectible = collectiblesModel.get(index)
+                const showcaseCollectible = collectiblesToBeSaved.find(item => item.showcaseKey === collectible.showcaseKey)
+
+                collectible.showcasePosition = !!showcaseCollectible ? showcaseCollectible.showcasePosition : 0
+                collectible.showcaseVisibility = !!showcaseCollectible ? showcaseCollectible.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
+                collectiblesModel.set(index, collectible)
+            }
         }
 
         Layout.alignment: Qt.AlignHCenter

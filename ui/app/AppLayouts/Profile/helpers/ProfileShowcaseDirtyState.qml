@@ -18,16 +18,7 @@ import utils 1.0
 QObject {
     id: root
 
-    property alias sourceModel: joined.leftModel
-    property alias showcaseModel: joined.rightModel
-
-    /**
-      * True if the showcase model is in single model mode, i.e. the showcase
-      * model is part of the source model. False if the showcase model is a
-      * separate model.
-      */
-    property bool singleModelMode: !joined.rightModel
-
+    property alias sourceModel: writable.sourceModel
     /**
       * Model holding elements from 'sourceModel' intended to be visible in the
       * showcase, sorted by 'position' role. Includes roles from both input models.
@@ -95,7 +86,6 @@ QObject {
 
     // internals, debug purpose only
     readonly property alias writable_: writable
-    readonly property alias joined_: joined
 
     component HiddenFilter: AnyOf {
         UndefinedFilter {
@@ -108,16 +98,9 @@ QObject {
         }
     }
 
-    LeftJoinModel {
-        id: joined
-
-        joinRole: "showcaseKey"
-    }
-
     VisibilityAndPositionDirtyStateModel {
         id: writable
 
-        sourceModel: root.singleModelMode ? root.sourceModel : joined
         visibilityHidden: Constants.ShowcaseVisibility.NoOne
     }
 
