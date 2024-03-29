@@ -1,9 +1,11 @@
+import sugar, sequtils
 import io_interface
 
 import ../../../../core/eventemitter
-import ../../../../../app_service/service/contacts/service as contacts_service
-import ../../../../../app_service/service/chat/service as chat_service
-import ../../../../../app_service/service/message/dto/message as message_dto
+import app_service/service/contacts/service as contacts_service
+import app_service/service/chat/service as chat_service
+import app_service/service/network/service as network_service
+import app_service/service/message/dto/message as message_dto
 
 type
   Controller* = ref object of RootObj
@@ -11,16 +13,19 @@ type
     events: EventEmitter
     contactsService: contacts_service.Service
     chatService: chat_service.Service
+    networkService: network_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   contactsService: contacts_service.Service,
-  chatService: chat_service.Service): Controller =
+  chatService: chat_service.Service,
+  networkService: network_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.contactsService = contactsService
   result.chatService = chatService
+  result.networkService = networkService
 
 proc delete*(self: Controller) =
   discard
@@ -89,6 +94,18 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_CONTACT_INFO_REQUEST_FINISHED) do(e: Args):
     let args = ContactInfoRequestArgs(e)
     self.delegate.onContactInfoRequestFinished(args.publicKey, args.ok)
+
+  self.events.on(SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED) do(e: Args):
+    let args = ProfileShowcaseContactIdArgs(e)
+    self.delegate.onProfileShowcaseUpdated(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_PROFILE_SHOWCASE_LOADED) do(e: Args):
+    let args = ProfileShowcaseForContactArgs(e)
+    self.delegate.loadProfileShowcase(args.profileShowcase, args.validated)
+
+  self.events.on(SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED) do(e: Args):
+    let args = ProfileShowcaseForContactArgs(e)
+    self.delegate.onProfileShowcaseAccountsByAddressFetched(args.profileShowcase.accounts)
 
 proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
   return self.contactsService.getContactsByGroup(group)
@@ -180,3 +197,12 @@ proc shareUserUrlWithChatKey*(self: Controller, pubkey: string): string =
 
 proc shareUserUrlWithENS*(self: Controller, pubkey: string): string =
   self.contactsService.shareUserUrlWithENS(pubkey)
+
+proc requestProfileShowcaseForContact*(self: Controller, contactId: string, validated: bool) =
+  self.contactsService.requestProfileShowcaseForContact(contactId, validated)
+
+proc fetchProfileShowcaseAccountsByAddress*(self: Controller, address: string) =
+  self.contactsService.fetchProfileShowcaseAccountsByAddress(address)
+
+proc getChainIds*(self: Controller): seq[int] =
+  self.networkService.getCurrentNetworks().map(n => n.chainId)

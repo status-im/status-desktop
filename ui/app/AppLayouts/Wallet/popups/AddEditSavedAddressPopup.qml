@@ -173,7 +173,7 @@ StatusModal {
             mainModule.resolveENS(name, d.uuid)
         });
 
-        property var profileModuleInst: SharedStores.RootStore.profileSectionModuleInst.profileModule
+        property var contactsModuleInst: SharedStores.RootStore.profileSectionModuleInst.contactsModule
 
         /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
         property bool initialized: false
@@ -215,7 +215,7 @@ StatusModal {
 
                 d.checkingContactsAddressInProgress = true
                 d.contactsWithSameAddress = 0
-                d.profileModuleInst.fetchProfileShowcaseAccountsByAddress(d.address)
+                d.contactsModuleInst.fetchProfileShowcaseAccountsByAddress(d.address)
                 return
             }
 
@@ -294,7 +294,7 @@ StatusModal {
     }
 
     Connections {
-        target: d.profileModuleInst
+        target: d.contactsModuleInst
         function onProfileShowcaseAccountsByAddressFetched(accounts: string) {
             d.cardsModel.clear()
             d.checkingContactsAddressInProgress = false

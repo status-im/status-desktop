@@ -474,10 +474,6 @@ proc verifyKeystoreFileForAccount*(address, password: string): RpcResponse[JsonN
   let payload = %* [address, password]
   return core.callPrivateRPC("accounts_verifyKeystoreFileForAccount", payload)
 
-proc getProfileShowcaseForContact*(contactId: string): RpcResponse[JsonNode] =
-  let payload = %* [contactId]
-  result = callPrivateRPC("getProfileShowcaseForContact".prefix, payload)
-
 proc getProfileShowcaseAccountsByAddress*(address: string): RpcResponse[JsonNode] =
   let payload = %* [address]
   result = callPrivateRPC("getProfileShowcaseAccountsByAddress".prefix, payload)

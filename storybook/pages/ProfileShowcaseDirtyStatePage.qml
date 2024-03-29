@@ -17,25 +17,10 @@ Item {
     ListModel {
         id: communitiesModel
 
-        ListElement { showcaseKey: "1"; name: "Crypto Kitties" }
+        ListElement { showcaseKey: "1"; name: "Crypto Kitties"; showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts; showcasePosition: 0 }
         ListElement { showcaseKey: "2"; name: "Status" }
-        ListElement { showcaseKey: "3"; name: "Fun Stuff" }
+        ListElement { showcaseKey: "3"; name: "Fun Stuff"; showcaseVisibility: Constants.ShowcaseVisibility.Contacts; showcasePosition: 9}
         ListElement { showcaseKey: "4"; name: "Other Stuff" }
-    }
-
-    ListModel {
-        id: communitiesShowcaseModel
-
-        ListElement {
-            showcaseKey: "1"
-            showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-            showcasePosition: 0
-        }
-        ListElement {
-            showcaseKey: "3"
-            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
-            showcasePosition: 9
-        }
     }
 
     ListModel {
@@ -59,7 +44,6 @@ Item {
         id: dirtyState
 
         sourceModel: communitiesModel
-        showcaseModel: communitiesShowcaseModel
     }
 
     MovableModel {
@@ -77,72 +61,36 @@ Item {
             Layout.fillHeight: true
             Layout.margins: 10
 
-            rows: 3
-            columns: 3
+            rows: 2
+            columns: 2
 
             spacing: 10
 
             flow: Grid.TopToBottom
 
-            Label {
-                text: "Backend models"
-                font.pixelSize: 22
-                padding: 10
-            }
-
             GenericListView {
-                width: grid.width / 3 - grid.spacing
+                width: grid.width / 2 - grid.spacing
                 height: 300
 
                 model: communitiesModel
-                label: "COMMUNITIES MODEL"
+                label: "COMMUNITIES MODEL - Backend model"
             }
 
             GenericListView {
-                width: grid.width / 3 - grid.spacing
-                height: 300
-
-                model: communitiesShowcaseModel
-                label: "SHOWCASE MODEL"
-                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
-            }
-
-            Label {
-                text: "Internal models"
-                font.pixelSize: 22
-                padding: 10
-            }
-
-            GenericListView {
-                width: grid.width / 3 - grid.spacing
-                height: 300
-
-                model: dirtyState.joined_
-                label: "JOINED MODEL"
-            }
-
-            GenericListView {
-                width: grid.width / 3 - grid.spacing
+                width: grid.width / 2 - grid.spacing
                 height: 300
 
                 model: dirtyState.writable_
-                label: "WRITABLE MODEL"
+                label: "WRITABLE MODEL - Internal Model"
                 roles: ["showcaseKey", "showcaseVisibility", "showcasePosition", "name"]
             }
 
-
-            Label {
-                text: "Display models"
-                font.pixelSize: 22
-                padding: 10
-            }
-
             GenericListView {
-                width: grid.width / 3 - grid.spacing
+                width: grid.width / 2 - grid.spacing
                 height: 300
 
                 model: movableModel
-                label: "IN SHOWCASE"
+                label: "IN SHOWCASE - output"
                 movable: true
                 roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
 
@@ -185,11 +133,11 @@ Item {
             }
 
             GenericListView {
-                width: grid.width / 3 - grid.spacing
+                width: grid.width / 2 - grid.spacing
                 height: 300
 
                 model: dirtyState.hiddenModel
-                label: "HIDDEN"
+                label: "HIDDEN - output"
 
                 roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
 
@@ -208,8 +156,13 @@ Item {
             onClicked: {
                 const toBeSaved = dirtyState.currentState()
 
-                communitiesShowcaseModel.clear()
-                communitiesShowcaseModel.append(toBeSaved)
+                for (let i = 0; i < communitiesModel.count; i++) {
+                    const item = communitiesModel.get(i)
+                    const found = toBeSaved.find((x) => x.showcaseKey === item.showcaseKey)
+
+                    item.showcaseVisibility = !!found ? found.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
+                    item.showcasePosition = !!found ? found.showcasePosition : 0
+                }
             }
 
             Layout.alignment: Qt.AlignHCenter

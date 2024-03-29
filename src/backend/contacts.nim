@@ -144,3 +144,7 @@ proc shareUserUrlWithChatKey*(pubkey: string): RpcResponse[JsonNode] =
 
 proc shareUserUrlWithENS*(pubkey: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("shareUserURLWithENS".prefix, %*[pubkey])
+
+proc getProfileShowcaseForContact*(contactId: string, validate: bool): RpcResponse[JsonNode] =
+  let payload = %* [contactId, validate]
+  result = callPrivateRPC("getProfileShowcaseForContact".prefix, payload)
