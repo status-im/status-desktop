@@ -85,9 +85,9 @@ QtObject:
     self.setMarketHistoryIsLoading(false)
     self.tokenHistoricalDataReady(tokenDetails)
 
-  proc fetchHistoricalBalanceForTokenAsJson*(self: View, address: string, allAddresses: bool, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) {.slot.} =
+  proc fetchHistoricalBalanceForTokenAsJson*(self: View, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) {.slot.} =
     self.setBalanceHistoryIsLoading(true)
-    self.delegate.fetchHistoricalBalanceForTokenAsJson(address, allAddresses, tokenSymbol, currencySymbol, timeIntervalEnum)
+    self.delegate.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)
 
   proc tokenBalanceHistoryDataReady*(self: View, balanceHistoryJson: string) {.signal.}
 

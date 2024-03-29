@@ -7,7 +7,6 @@ type Filter* = ref object
   addresses*: seq[string]
   chainIds*: seq[int]
   allChainsEnabled*: bool
-  allAddresses*: bool
 
 proc initFilter*(
   controller: controller.Controller
@@ -17,7 +16,6 @@ proc initFilter*(
   result.addresses = @[]
   result.chainIds = @[]
   result.allChainsEnabled = true
-  result.allAddresses = false
 
 proc `$`*(self: Filter): string =
   result = fmt"""WalletFilter(
@@ -25,12 +23,7 @@ proc `$`*(self: Filter): string =
     chainIds: {self.chainIds},
     )"""
 
-proc setFillterAllAddresses*(self: Filter) =
-  self.allAddresses = true
-  self.addresses = self.controller.getWalletAccounts().map(a => a.address)
-
 proc setAddress*(self: Filter, address: string) =
-  self.allAddresses = false
   self.addresses = @[address]
 
 proc removeAddress*(self: Filter, address: string) =
@@ -48,5 +41,4 @@ proc updateNetworks*(self: Filter) =
   self.allChainsEnabled = (self.chainIds.len == self.controller.getNetworks().len)
 
 proc load*(self: Filter) =
-  self.setFillterAllAddresses()
   self.updateNetworks()

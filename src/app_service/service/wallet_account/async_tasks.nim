@@ -225,7 +225,6 @@ type
   GetTokenBalanceHistoryDataTaskArg = ref object of QObjectTaskArg
     chainIds: seq[int]
     addresses: seq[string]
-    allAddresses: bool
     tokenSymbol: string
     currencySymbol: string
     timeInterval: BalanceHistoryTimeInterval
@@ -240,7 +239,6 @@ const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe,
     let output = %* {
         "chainIds": arg.chainIds,
         "addresses": arg.addresses,
-        "allAddresses": arg.allAddresses,
         "tokenSymbol": arg.tokenSymbol,
         "currencySymbol": arg.currencySymbol,
         "timeInterval": int(arg.timeInterval),
@@ -253,7 +251,6 @@ const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe,
     let output = %* {
       "chainIds": arg.chainIds,
       "addresses": arg.addresses,
-      "allAddresses": arg.allAddresses,
       "tokenSymbol": arg.tokenSymbol,
       "currencySymbol": arg.currencySymbol,
       "timeInterval": int(arg.timeInterval),

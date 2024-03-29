@@ -8,7 +8,7 @@ proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.} 
     result: response
   ))
 
-proc fetchHistoricalBalanceForTokenAsJson*(self: Service, addresses: seq[string], allAddresses: bool, tokenSymbol: string, currencySymbol: string, timeInterval: BalanceHistoryTimeInterval) =
+proc fetchHistoricalBalanceForTokenAsJson*(self: Service, addresses: seq[string], tokenSymbol: string, currencySymbol: string, timeInterval: BalanceHistoryTimeInterval) =
   # create an empty list of chain ids
   var chainIds: seq[int] = self.networkService.getNetworks().filter(n => n.enabled and n.nativeCurrencySymbol == tokenSymbol).map(n => n.chainId)
   if chainIds.len == 0:
@@ -25,7 +25,6 @@ proc fetchHistoricalBalanceForTokenAsJson*(self: Service, addresses: seq[string]
     slot: "tokenBalanceHistoryDataResolved",
     chainIds: chainIds,
     addresses: addresses,
-    allAddresses: allAddresses,
     tokenSymbol: tokenSymbol,
     currencySymbol: currencySymbol,
     timeInterval: timeInterval

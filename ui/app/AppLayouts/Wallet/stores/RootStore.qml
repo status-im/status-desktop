@@ -49,6 +49,7 @@ QtObject {
     property var walletSectionInst: walletSection
     property var walletSectionSavedAddressesInst: walletSectionSavedAddresses
     property var totalCurrencyBalance: walletSectionInst.totalCurrencyBalance
+    onTotalCurrencyBalanceChanged: console.log("============= totalCurrencyBalance", totalCurrencyBalance.amount)
     property var activityController: walletSectionInst.activityController
     property var tmpActivityController0: walletSectionInst.tmpActivityController0
     property var tmpActivityController1: walletSectionInst.tmpActivityController1
@@ -225,10 +226,6 @@ QtObject {
 
     function setFilterAddress(address) {
         walletSection.setFilterAddress(address)
-    }
-
-    function setFillterAllAddresses() {
-        walletSection.setFillterAllAddresses()
     }
 
     function deleteAccount(address) {

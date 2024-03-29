@@ -10,7 +10,6 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import utils 1.0
 
 import "../controls"
-import "../stores"
 
 Item {
     id: root
@@ -124,6 +123,18 @@ Item {
                             !!root.overview?
                                 LocaleUtils.currencyAmountToLocaleString(root.overview.currencyBalance) : ""
                 loading: !!root.overview && root.overview.balanceLoading
+                // text: {
+                //     if (loading || !root.overview) {
+                //         return Constants.dummyText
+                //     }
+                //
+                //     if (root.overview.isAllAccounts) {
+                //         return LocaleUtils.currencyAmountToLocaleString(root.walletStore.totalCurrencyBalance)
+                //     }
+                //
+                //     return LocaleUtils.currencyAmountToLocaleString(root.overview.currencyBalance)
+                // }
+                // loading: !!root.walletStore && root.walletStore.balanceLoading && !!root.overview && root.overview.balanceLoading
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 38
             }

@@ -561,7 +561,6 @@ proc fromJson*(e: JsonNode, T: typedesc[SessionUpdate]): T {.inline.} =
 
 rpc(startActivityFilterSession, "wallet"):
   addresses: seq[string]
-  allAddresses: bool
   chainIds: seq[ChainId]
   filter: ActivityFilter
   count: int
@@ -585,13 +584,12 @@ rpc(stopActivityFilterSession, "wallet"):
 # returns (sessionId, success)
 proc newActivityFilterSession*(
   addresses: seq[string],
-  allAddresses: bool,
   chainIds: seq[ChainId],
   filter: ActivityFilter,
   count: int,
 ): (int32, bool) {.inline.} =
   try:
-    let res = startActivityFilterSession(addresses, allAddresses, chainIds, filter, count)
+    let res = startActivityFilterSession(addresses, chainIds, filter, count)
     if res.error != nil:
       error "error starting a new session of activity fitlering: ", res.error
       return (int32(-1), false)
