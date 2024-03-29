@@ -45,10 +45,10 @@ func TestPendingTx_NotificationStatus(t *testing.T) {
 	}
 
 	// Start history download ...
-	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{5}, []types.Address{td.sender.Address, td.recipient.Address}})
+	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{5}, []types.Address{td.operableAccounts[0].Address, td.watchAccounts[0].Address}})
 	require.NoError(t, err)
 
-	downloadDoneFn := helpers.WaitForTxDownloaderToFinishForAccountsCondition(t, []eth.Address{eth.Address(td.sender.Address), eth.Address(td.recipient.Address)})
+	downloadDoneFn := helpers.WaitForTxDownloaderToFinishForAccountsCondition(t, []eth.Address{eth.Address(td.operableAccounts[0].Address), eth.Address(td.watchAccounts[0].Address)})
 
 	// ... and wait for the new transaction download to trigger deletion from pending_transactions
 	_, err = helpers.WaitForWalletEventsWithOptionals(

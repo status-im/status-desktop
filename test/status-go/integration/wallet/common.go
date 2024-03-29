@@ -16,16 +16,20 @@ import (
 )
 
 type testUserData struct {
-	sender         accounts.Account
-	recipient      accounts.Account
-	hashedPassword string
-	eventQueue     chan helpers.GoEvent
+	operableAccounts []accounts.Account
+	watchAccounts    []accounts.Account
+	hashedPassword   string
+	eventQueue       chan helpers.GoEvent
 }
 
 func setupAccountsAndTransactions(t *testing.T) (td testUserData, close func()) {
+	return setupAccountsAndTransactionsWithTimeout(t, 60*time.Second)
+}
+
+func setupAccountsAndTransactionsWithTimeout(t *testing.T, timeout time.Duration) (td testUserData, close func()) {
 	eventQueue, conf, _ := helpers.LoginToTestAccount(t)
 
-	_, err := helpers.WaitForEvent(eventQueue, helpers.NodeReadyEvent, 60*time.Second)
+	_, err := helpers.WaitForEvent(eventQueue, helpers.NodeReadyEvent, timeout)
 	require.NoError(t, err)
 
 	opAccounts, err := helpers.GetWalletOperableAccounts()
@@ -37,8 +41,8 @@ func setupAccountsAndTransactions(t *testing.T) (td testUserData, close func()) 
 	require.Greater(t, len(watchAccounts), 0)
 
 	return testUserData{
-			opAccounts[0],
-			watchAccounts[0],
+			opAccounts,
+			watchAccounts,
 			conf.HashedPassword,
 			eventQueue,
 		}, func() {
@@ -49,8 +53,8 @@ func setupAccountsAndTransactions(t *testing.T) (td testUserData, close func()) 
 // sendTransaction generates multi_transactions and pending entries then it creates and publishes a transaction
 func sendTransaction(t *testing.T, td testUserData) {
 	mTCommand := transfer.MultiTransactionCommand{
-		FromAddress: common.Address(td.sender.Address),
-		ToAddress:   common.Address(td.recipient.Address),
+		FromAddress: common.Address(td.operableAccounts[0].Address),
+		ToAddress:   common.Address(td.watchAccounts[0].Address),
 		FromAsset:   "ETH",
 		ToAsset:     "ETH",
 		FromAmount:  (*hexutil.Big)(new(big.Int).SetUint64(100000)),
@@ -61,8 +65,8 @@ func sendTransaction(t *testing.T, td testUserData) {
 			BridgeName: "Transfer",
 			ChainID:    5,
 			TransferTx: &transactions.SendTxArgs{
-				From:  td.sender.Address,
-				To:    &td.recipient.Address,
+				From:  td.operableAccounts[0].Address,
+				To:    &td.watchAccounts[0].Address,
 				Value: (*hexutil.Big)(new(big.Int).Set(mTCommand.FromAmount.ToInt())),
 			},
 		},
