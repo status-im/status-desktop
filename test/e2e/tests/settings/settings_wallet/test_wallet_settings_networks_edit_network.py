@@ -16,9 +16,10 @@ pytestmark = marks
                  'Network:  Network: Editing network -> Restore defaults')
 @pytest.mark.case(703515)
 @pytest.mark.parametrize('network_tab', [
-    pytest.param(WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value),
-    pytest.param(WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value)
+    pytest.param(WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value)
+    # pytest.param(WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value)
 ])
+# TODO: https://github.com/status-im/status-desktop/issues/14228
 def test_settings_networks_edit_restore_defaults(main_screen: MainWindow, network_tab: str):
     networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
 

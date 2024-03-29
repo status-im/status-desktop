@@ -31,16 +31,19 @@ class AddSavedAddressPopup(BasePopup):
 
     @allure.step('Set ethereum mainnet network checkbox')
     def set_ethereum_mainnet_network(self, value: bool):
+        assert self._ethereum_mainnet_checkbox.exists
         self._ethereum_mainnet_checkbox.set(value)
         return self
 
     @allure.step('Set optimism mainnet network checkbox')
     def set_optimism_mainnet_network(self, value: bool):
+        assert self._optimism_mainnet_checkbox.exists
         self._optimism_mainnet_checkbox.set(value)
         return self
 
     @allure.step('Set arbitrum mainnet network checkbox')
     def set_arbitrum_mainnet_network(self, value: bool):
+        assert self._arbitrum_mainnet_checkbox.exists
         self._arbitrum_mainnet_checkbox.set(value)
         return self
 
