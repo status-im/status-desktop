@@ -193,6 +193,8 @@ ColumnLayout {
     }
 
     ColumnLayout {
+        visible: !root.createNewPsw
+
         StatusBaseText {
             text: qsTr("Current password")
         }
@@ -204,7 +206,6 @@ ColumnLayout {
             property bool showPassword
 
             z: root.zFront
-            visible: !root.createNewPsw
             Layout.fillWidth: true
             Layout.alignment: root.contentAlignment
             placeholderText: qsTr("Enter current password")
@@ -229,12 +230,12 @@ ColumnLayout {
     }
 
     StatusModalDivider {
+        visible: !root.createNewPsw
         Layout.fillWidth: true
         Layout.alignment: root.contentAlignment
     }
 
     ColumnLayout {
-        spacing: 4
         z: root.zFront
         Layout.fillWidth: true
         Layout.alignment: root.contentAlignment
@@ -370,7 +371,6 @@ ColumnLayout {
     ColumnLayout {
         StatusBaseText {
             text: qsTr("Confirm new password")
-            color: Theme.palette.baseColor1
         }
 
         StatusPasswordInput {
