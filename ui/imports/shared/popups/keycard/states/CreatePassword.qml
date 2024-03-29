@@ -17,12 +17,13 @@ Item {
         anchors.fill: parent
         anchors.topMargin: Style.current.xlPadding
         anchors.bottomMargin: Style.current.halfPadding
-        anchors.leftMargin: 2*(Style.current.xlPadding + Style.current.bigPadding)
-        anchors.rightMargin: 2*(Style.current.xlPadding + Style.current.bigPadding)
+        anchors.leftMargin: Style.current.xlPadding
+        anchors.rightMargin: Style.current.xlPadding
         spacing: Style.current.padding
 
         PasswordView {
             Layout.minimumWidth: 460
+            Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
             Layout.fillHeight: true
             passwordStrengthScoreFunction: RootStore.getPasswordStrengthScore

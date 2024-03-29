@@ -165,7 +165,6 @@ StatusDialog {
             StatusFlatButton {
                 text: qsTr("Cancel")
                 visible: !d.dbEncryptionInProgress && !d.passwordChanged
-                textColor: Style.current.darkGrey
                 onClicked: { root.close(); }
             }
         }
@@ -173,7 +172,7 @@ StatusDialog {
             StatusButton {
                 id: submitBtn
                 objectName: "changePasswordModalSubmitButton"
-                text: !d.dbEncryptionInProgress && !d.passwordChanged ? qsTr("Re-encrypt data using new password") : qsTr("Restart status")
+                text: !d.dbEncryptionInProgress && !d.passwordChanged ? qsTr("Re-encrypt data using new password") : qsTr("Restart Status")
                 enabled: !d.dbEncryptionInProgress
                 onClicked: {
                     if (d.passwordChanged) {
