@@ -202,10 +202,9 @@ QtObject:
       if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
-      if(rpcResponseObj["chats"].kind == JNull):
-        raise newException(RpcException, "No chats returned")
+      if rpcResponseObj["chats"].kind != JNull:
+        self.hydrateChats(rpcResponseObj["chats"])
 
-      self.hydrateChats(rpcResponseObj["chats"])
       self.events.emit(SIGNAL_ACTIVE_CHATS_LOADED, Args())
     except Exception as e:
       let errDesription = e.msg
