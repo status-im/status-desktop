@@ -48,7 +48,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        collectibleName: collectible.name
+        collectibleName: !!collectible.name ? collectible.name : qsTr("Unknown")
         collectibleId: "#" + collectible.tokenId
         collectionTag.tagPrimaryLabel.text: !!communityDetails ? communityDetails.name : collectible.collectionName
         isCollection: !!collectible.collectionName
@@ -107,16 +107,44 @@ Item {
             StatusRoundedMedia {
                 id: collectibleimage
 
+                readonly property bool isEmpty: !mediaUrl.toString() && !fallbackImageUrl.toString()
                 visible: !privilegedCollectibleImage.visible
                 width: 248
                 height: width
                 radius: Style.current.radius
-                color: collectible.backgroundColor
+                color: isError || isEmpty ? Theme.palette.baseColor5 : collectible.backgroundColor
                 border.color: Theme.palette.directColor8
                 border.width: 1
                 mediaUrl: collectible.mediaUrl ?? ""
                 mediaType: collectible.mediaType ?? ""
                 fallbackImageUrl: collectible.imageUrl
+
+                Column {
+                    anchors.centerIn: parent
+                    visible: collectibleimage.isError || collectibleimage.isEmpty
+                    spacing: 10
+
+                    StatusIcon {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        icon: "frowny"
+                        opacity: 0.1
+                        color: Theme.palette.directColor1
+                    }
+                    StatusBaseText {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        horizontalAlignment: Qt.AlignHCenter
+                        color: Theme.palette.directColor6
+                        text: {
+                            if (collectibleimage.isError && collectibleimage.componentMediaType === StatusRoundedMedia.MediaType.Unkown) {
+                                return qsTr("Unsupported\nfile format")
+                            }
+                            if (!collectible.description && !collectible.name) {
+                                return qsTr("Info can't\nbe fetched")
+                            }
+                            return qsTr("Failed\nto load")
+                        }
+                    }
+                }
             }
 
             Column {
