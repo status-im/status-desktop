@@ -390,7 +390,9 @@ proc reevaluateRequiresTokenPermissionToJoin(self: Module) =
   let community = self.controller.getMyCommunity()
   var joinPermissionsChanged = false
   for _, tokenPermission in community.tokenPermissions:
-    if tokenPermission.`type` == TokenPermissionType.BecomeMember or tokenPermission.`type` == TokenPermissionType.BecomeAdmin or tokenPermission.`type` == TokenPermissionType.BecomeTokenMaster:
+    if tokenPermission.`type` == TokenPermissionType.BecomeMember or
+        tokenPermission.`type` == TokenPermissionType.BecomeAdmin or
+        tokenPermission.`type` == TokenPermissionType.BecomeTokenMaster:
       joinPermissionsChanged = true
       break
   self.view.setRequiresTokenPermissionToJoin(joinPermissionsChanged)
@@ -412,7 +414,6 @@ method initListOfMyContacts*(self: Module, pubKeys: string) =
 
 method clearListOfMyContacts*(self: Module) =
   self.view.listOfMyContacts().clear()
-
 
 method load*(self: Module) =
   self.controller.init()
