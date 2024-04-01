@@ -183,27 +183,8 @@ StatusStackModal {
             }
         }
 
-        property var initialAddressesModel: SortFilterProxyModel {
+        readonly property var initialAddressesModel: SortFilterProxyModel {
             sourceModel: root.walletAccountsModel
-            sorters: [
-                FastExpressionSorter {
-                    function sortPredicate(lhs, rhs) {
-                        if (lhs.walletType === rhs.walletType) return 0
-                        return lhs.walletType === Constants.generatedWalletType ? -1 : 1
-                    }
-
-                    expression: {
-                        return sortPredicate(modelLeft, modelRight)
-                    }
-                    expectedRoles: ["walletType"]
-                },
-                RoleSorter {
-                    roleName: "position"
-                },
-                RoleSorter {
-                    roleName: "name"
-                }
-            ]
         }
 
         function proceedToSigningOrSubmitRequest(uidOfComponentThisFunctionIsCalledFrom) {
