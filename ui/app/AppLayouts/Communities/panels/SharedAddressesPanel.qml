@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -42,7 +43,7 @@ Control {
     required property var walletAssetsModel
     required property var walletCollectiblesModel
 
-    required property var walletAccountsModel // name, address, emoji, colorId, assets
+    required property var walletAccountsModel // name, address, emoji, colorId
     required property var permissionsModel  // id, key, permissionType, holdingsListModel, channelsListModel, isPrivate, tokenCriteriaMet
 
     required property var assetsModel
@@ -81,6 +82,13 @@ Control {
                 }
             }
             return false
+        }
+
+        property var tokenCountMap: new Map()
+        function getTokenCount(address) {
+            if (d.tokenCountMap.has(address))
+                return d.tokenCountMap.get(address)
+            return 0
         }
 
         // warning states
@@ -197,6 +205,7 @@ Control {
             Layout.preferredHeight: contentHeight + topMargin + bottomMargin
             Layout.maximumHeight: hasPermissions ? permissionsView.implicitHeight > root.availableHeight / 2 ? root.availableHeight / 2 : root.availableHeight : -1
             Layout.fillHeight: !hasPermissions
+            implicitHeight: contentHeight
 
             uniquePermissionAssetsKeys:
                 PermissionsHelpers.getUniquePermissionTokenKeys(
@@ -206,7 +215,28 @@ Control {
                 PermissionsHelpers.getUniquePermissionTokenKeys(
                     root.permissionsModel, Constants.TokenType.ERC721)
 
-            model: root.walletAccountsModel
+            model: SortFilterProxyModel {
+                sourceModel: root.walletAccountsModel
+                proxyRoles: FastExpressionRole {
+                    name: "tokenCount"
+                    expression: {
+                        d.tokenCountMap
+                        return d.getTokenCount(model.address.toLowerCase())
+                    }
+                    expectedRoles: ["address"]
+                }
+
+                sorters: [
+                    // FIXME add sort token-relevant accounts first; https://github.com/status-im/status-desktop/issues/14192
+                    RoleSorter {
+                        roleName: "tokenCount"
+                        sortOrder: Qt.DescendingOrder
+                    },
+                    RoleSorter {
+                        roleName: "name"
+                    }
+                ]
+            }
             walletAssetsModel: root.walletAssetsModel
             walletCollectiblesModel: root.walletCollectiblesModel
 
@@ -225,6 +255,17 @@ Control {
 
             getCurrencyAmount: function (balance, symbol) {
                 return root.getCurrencyAmount(balance, symbol)
+            }
+
+            Component.onCompleted: {
+                const tmpTokenCountMap = new Map()
+                for (let i = 0; i < accountSelector.count; i++) {
+                    const item = accountSelector.itemAtIndex(i)
+                    if (!!item) {
+                        tmpTokenCountMap.set(item.address.toLowerCase(), item.tokenCount)
+                    }
+                }
+                d.tokenCountMap = tmpTokenCountMap
             }
         }
 

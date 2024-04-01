@@ -170,6 +170,7 @@ StatusListView {
     spacing: Style.current.halfPadding
     delegate: StatusListItem {
         readonly property string address: model.address.toLowerCase()
+        readonly property int tokenCount: tagsCount
 
         id: listItem
         width: ListView.view.width - ListView.view.leftMargin - ListView.view.rightMargin
@@ -231,9 +232,11 @@ StatusListView {
                 inverted: true
             }
 
-            sorters: RoleSorter {
-                roleName: "symbol"
-            }
+            sorters: [
+                RoleSorter {
+                    roleName: "symbol"
+                }
+            ]
         }
 
         SortFilterProxyModel {
