@@ -258,6 +258,7 @@ StatusListView {
 
                     // Singletons cannot be used directly in sfpm's expressions
                     expression: typeVal
+                    expectedRoles: []
                 },
                 FastExpressionRole {
                     name: "imageUrl"
