@@ -2,6 +2,8 @@ import QtQuick 2.13
 
 import utils 1.0
 
+import StatusQ 0.1
+
 import SortFilterProxyModel 0.2
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
@@ -60,12 +62,13 @@ QtObject {
     property var walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
     property var assetsModel: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.tokenList
-        proxyRoles: ExpressionRole {
+        proxyRoles: FastExpressionRole {
             function tokenIcon(symbol) {
                 return Constants.tokenIcon(symbol)
             }
             name: "iconSource"
             expression: !!model.icon ? model.icon : tokenIcon(model.symbol)
+            expectedRoles: ["icon", "symbol"]
         }
         filters: [
             AnyOf {
@@ -84,12 +87,13 @@ QtObject {
     }
     property var collectiblesModel: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.collectiblesModel
-        proxyRoles: ExpressionRole {
+        proxyRoles: FastExpressionRole {
             function collectibleIcon(icon) {
                 return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
             }
             name: "iconSource"
             expression: collectibleIcon(model.icon)
+            expectedRoles: ["icon"]
         }
         filters: [
             AnyOf {
