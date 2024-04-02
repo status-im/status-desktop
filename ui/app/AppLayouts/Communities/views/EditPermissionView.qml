@@ -276,7 +276,7 @@ StatusScrollView {
                     const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.assetsModel, key)
 
-                    addItem(Constants.TokenType.ERC20, modelItem, String(AmountsArithmetic.fromNumber(amount, modelItem.decimals)))
+                    addItem(Constants.TokenType.ERC20, modelItem, AmountsArithmetic.fromNumber(amount, modelItem.decimals).toFixed())
                     dropdown.close()
                 }
 
@@ -299,7 +299,7 @@ StatusScrollView {
                     const modelItem = PermissionsHelpers.getTokenByKey(root.assetsModel, key)
 
                     d.dirtyValues.selectedHoldingsModel.set(
-                                itemIndex, { type: Constants.TokenType.ERC20, key, amount: String(AmountsArithmetic.fromNumber(amount, modelItem.decimals)) })
+                                itemIndex, { type: Constants.TokenType.ERC20, key, amount: AmountsArithmetic.fromNumber(amount, modelItem.decimals).toFixed() })
                     dropdown.close()
                 }
 
