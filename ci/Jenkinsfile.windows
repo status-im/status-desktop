@@ -52,7 +52,7 @@ pipeline {
       abortPrevious: isPRBuild
     )
     // This is required if you want to clean before build
-    skipDefaultCheckout(true)
+//    skipDefaultCheckout(true)
   }
 
   environment {
@@ -71,9 +71,9 @@ pipeline {
   stages {
     stage('Deps') {
       steps {
-        cleanWs()
+ //       cleanWs()
         // We need to explicitly checkout from SCM here
-        checkout scm
+  //      checkout scm
         //script {
         //  /* Control output the filename */
         //  env.STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch())}"
@@ -125,7 +125,7 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    cleanup { cleanWs() }
+    always { cleanWs() }
   }
 }
 
