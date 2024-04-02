@@ -58,6 +58,13 @@ QObject {
                 name: "membersCount"
                 expression: model.members.count
                 expectedRoles: ["members"]
+            },
+            FastExpressionRole {
+                name: "showcaseVisibility"
+                expression: getShowcaseVisibility()
+                function getShowcaseVisibility() {
+                    return Constants.ShowcaseVisibility.Everyone
+                }
             }
         ]
     }
@@ -79,6 +86,13 @@ QObject {
                 name: "saved"
                 expression: root.isAddressSaved(model.address)
                 expectedRoles: ["address"]
+            },
+            FastExpressionRole {
+                name: "showcaseVisibility"
+                expression: getShowcaseVisibility()
+                function getShowcaseVisibility() {
+                    return Constants.ShowcaseVisibility.Everyone
+                }
             }
         ]
     }
@@ -92,6 +106,13 @@ QObject {
                 name: "showcaseKey"
                 expression: model.uid
                 expectedRoles: ["uid"]
+            },
+            FastExpressionRole {
+                name: "showcaseVisibility"
+                expression: getShowcaseVisibility()
+                function getShowcaseVisibility() {
+                    return Constants.ShowcaseVisibility.Everyone
+                }
             }
         ]
     }
