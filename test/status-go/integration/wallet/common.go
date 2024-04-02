@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
+	eth "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/status-im/status-desktop/test/status-go/integration/helpers"
 	"github.com/status-im/status-go/multiaccounts/accounts"
@@ -50,11 +50,12 @@ func setupAccountsAndTransactionsWithTimeout(t *testing.T, timeout time.Duration
 		}
 }
 
-// sendTransaction generates multi_transactions and pending entries then it creates and publishes a transaction
-func sendTransaction(t *testing.T, td testUserData) {
+// sendTransaction generates a Multi Transaction and Bridge entry then
+// calls createMultiTransaction which creates a pending entry and publishes a transaction
+func sendTransaction(t *testing.T, td testUserData, chainID uint64) {
 	mTCommand := transfer.MultiTransactionCommand{
-		FromAddress: common.Address(td.operableAccounts[0].Address),
-		ToAddress:   common.Address(td.watchAccounts[0].Address),
+		FromAddress: eth.Address(td.operableAccounts[0].Address),
+		ToAddress:   eth.Address(td.watchAccounts[0].Address),
 		FromAsset:   "ETH",
 		ToAsset:     "ETH",
 		FromAmount:  (*hexutil.Big)(new(big.Int).SetUint64(100000)),
@@ -63,7 +64,7 @@ func sendTransaction(t *testing.T, td testUserData) {
 	data := []*bridge.TransactionBridge{
 		{
 			BridgeName: "Transfer",
-			ChainID:    5,
+			ChainID:    chainID,
 			TransferTx: &transactions.SendTxArgs{
 				From:  td.operableAccounts[0].Address,
 				To:    &td.watchAccounts[0].Address,

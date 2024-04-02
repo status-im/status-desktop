@@ -24,7 +24,8 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 	td, close := setupAccountsAndTransactions(t)
 	defer close()
 
-	rawSessionID, err := helpers.CallPrivateMethodAndGetT[int32]("wallet_startActivityFilterSession", []interface{}{[]types.Address{td.operableAccounts[0].Address}, false, []common.ChainID{5}, activity.Filter{}, 3})
+	chainID := common.OptimismSepolia
+	rawSessionID, err := helpers.CallPrivateMethodAndGetT[int32]("wallet_startActivityFilterSession", []interface{}{[]types.Address{td.operableAccounts[0].Address}, false, []common.ChainID{common.ChainID(chainID)}, activity.Filter{}, 3})
 	require.NoError(t, err)
 	require.NotNil(t, rawSessionID)
 	sessionID := activity.SessionID(*rawSessionID)
@@ -36,7 +37,7 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 	require.Equal(t, 3, len(res.Activities))
 
 	// Trigger updating of activity results
-	sendTransaction(t, td)
+	sendTransaction(t, td, chainID)
 
 	// Wait for EventActivitySessionUpdated signal triggered by the first EventPendingTransactionUpdate
 	update, err := helpers.WaitForWalletEventGetPayload[activity.SessionUpdate](td.eventQueue, activity.EventActivitySessionUpdated, 60*time.Second)
@@ -51,7 +52,7 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 	// require.True(t, *update.HasNewOnTop)
 
 	// Start history download to cleanup pending transactions
-	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{5}, []types.Address{td.operableAccounts[0].Address, td.watchAccounts[0].Address}})
+	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{chainID}, []types.Address{td.operableAccounts[0].Address, td.watchAccounts[0].Address}})
 	require.NoError(t, err)
 
 	downloadDoneFn := helpers.WaitForTxDownloaderToFinishForAccountsCondition(t, []eth.Address{eth.Address(td.operableAccounts[0].Address), eth.Address(td.watchAccounts[0].Address)})
@@ -61,7 +62,7 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 	// It is expected that downloading will generate a  EventPendingTransactionUpdate that in turn will generate a second EventActivitySessionUpdated signal marked by the update non nil value
 	_, err = helpers.WaitForWalletEventsWithOptionals(
 		td.eventQueue,
-		[]walletevent.EventType{transfer.EventRecentHistoryReady},
+		[]walletevent.EventType{activity.EventActivitySessionUpdated},
 		120*time.Second,
 		func(e *walletevent.Event) bool {
 			if e.Type == activity.EventActivitySessionUpdated {
@@ -72,16 +73,16 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 				require.True(t, *update.HasNewOnTop)
 				//require.NotNil(t, update.Removed)
 				//require.True(t, *update.Removed)
-				return false
+				return true
 			} else if e.Type == transfer.EventFetchingHistoryError {
 				require.Fail(t, "History download failed")
 				return false
 			} else if downloadDoneFn(e) {
-				return true
+				return false
 			}
 			return false
 		},
-		[]walletevent.EventType{activity.EventActivitySessionUpdated, transfer.EventFetchingHistoryError},
+		[]walletevent.EventType{transfer.EventFetchingHistoryError},
 	)
 	require.NoError(t, err)
 	require.NotNil(t, update, "EventActivitySessionUpdated signal was triggered by the second EventPendingTransactionUpdate during history download")
