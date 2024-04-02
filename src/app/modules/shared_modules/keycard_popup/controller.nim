@@ -107,27 +107,7 @@ proc newController*(delegate: io_interface.AccessInterface,
 
 ## Forward declaration:
 proc finishFlowTermination(self: Controller)
-
-proc serviceApplicable[T](service: T): bool =
-  if not service.isNil:
-    return true
-  when (service is keycard_service.Service):
-    error "KeycardService is mandatory for using shared keycard popup module"
-    return
-  var serviceName = ""
-  when (service is wallet_account_service.Service):
-    serviceName = "WalletAccountService"
-  when (service is privacy_service.Service):
-    serviceName = "PrivacyService"
-  when (service is settings_service.Service):
-    serviceName = "SettingsService"
-  when (service is network_service.Service):
-    serviceName = "NetworkService"
-  when (service is accounts_service.Service):
-    serviceName = "AccountsService"
-  when (service is keychain_service.Service):
-    serviceName = "KeychainService"
-  debug "service is not set, check the context shared keycard popup module is used", service=serviceName
+proc serviceApplicable[T](service: T): bool
 
 proc disconnectKeycardReponseSignal(self: Controller) =
   self.events.disconnect(self.connectionKeycardResponse)
@@ -855,3 +835,29 @@ proc getTotalCurrencyBalance*(self: Controller, address: string, chainIds: seq[i
 
 proc parseCurrencyValueByTokensKey*(self: Controller, tokensKey: string, amountInt: UInt256): float64 =
   return self.walletAccountService.parseCurrencyValueByTokensKey(tokensKey, amountInt)
+
+# Keep this function at the end of the file.
+# There's a bug in Nim: https://github.com/nim-lang/Nim/issues/23002
+# that blocks us from enabling back the warning pragma.
+
+{.warning[UnreachableCode]: off.}
+proc serviceApplicable[T](service: T): bool =
+  if not service.isNil:
+    return true
+  when (service is keycard_service.Service):
+    error "KeycardService is mandatory for using shared keycard popup module"
+    return
+  var serviceName = ""
+  when (service is wallet_account_service.Service):
+    serviceName = "WalletAccountService"
+  when (service is privacy_service.Service):
+    serviceName = "PrivacyService"
+  when (service is settings_service.Service):
+    serviceName = "SettingsService"
+  when (service is network_service.Service):
+    serviceName = "NetworkService"
+  when (service is accounts_service.Service):
+    serviceName = "AccountsService"
+  when (service is keychain_service.Service):
+    serviceName = "KeychainService"
+  debug "service is not set, check the context shared keycard popup module is used", service=serviceName
