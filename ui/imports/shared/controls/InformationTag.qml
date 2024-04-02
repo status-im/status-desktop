@@ -18,10 +18,11 @@ Control {
     property alias rightComponent: rightComponent.sourceComponent
     property bool loading: false
     property int secondarylabelMaxWidth: 100
+    property color backgroundColor: "transparent"
 
     property Component customBackground: Component {
         Rectangle {
-            color: "transparent"
+            color: root.backgroundColor
             border.width: 1
             border.color: Theme.palette.baseColor2
             radius: 36

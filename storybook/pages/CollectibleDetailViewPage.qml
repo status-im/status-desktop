@@ -86,6 +86,9 @@ SplitView {
                     }
                     communitiesStore: QtObject {
                         function getCommunityDetailsAsJson(communityId) {
+                            if (communityId.indexOf("unknown") >= 0) {
+                                return { name : "", image : "", color : "" }
+                            }
                             return {
                                 name : "Mock Community",
                                 image : Style.png("tokens/UNI"),

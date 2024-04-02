@@ -259,6 +259,24 @@ ListModel {
             networkShortName: "OPT",
             networkColor: "red",
             networkIconUrl: ModelsData.networks.optimism
+        },
+        {
+            uid: "ID-Community-Unknown",
+            chainId: 1,
+            contractAddress: "0x07",
+            tokenId: "407",
+            name: "Removed community token",
+            imageUrl: ModelsData.collectibles.mana,
+            backgroundColor: "transparent",
+            description: "This is unkown community community token",
+            collectionUid: "community-uid-unknown",
+            collectionName: "",
+            collectionImageUrl: "",
+            traits: [],
+            communityId: "community-id-unknown",
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism
         }
     ]
 
