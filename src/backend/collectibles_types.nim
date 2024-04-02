@@ -47,6 +47,7 @@ type
     name*: string
     slug*: string
     imageUrl*: string
+    socials*: CollectionSocials
 
   CommunityData* = ref object of RootObj
     id*: string
@@ -72,6 +73,14 @@ type
     latestTxHash*: Option[string]
     receivedAmount*: Option[float64]
     contractType*: Option[ContractType]
+
+  CollectionSocials* = ref object of RootObj
+    website*: string
+    twitterHandle*: string
+
+  CollectionSocialsMessage* = ref object of RootObj
+    socials*: CollectionSocials
+    id*: ContractID
 
   # Mirrors services/wallet/thirdparty/collectible_types.go TokenBalance
   CollectibleBalance* = ref object
@@ -209,6 +218,15 @@ proc `$`*(self: CollectionData): string =
     name:{self.name},
     slug:{self.slug},
     imageUrl:{self.imageUrl}
+    website:{self.socials.website}
+    twitterHandle:{self.socials.twitterHandle}
+  )"""
+
+# CollectionSocials
+proc `$`*(self: CollectionSocials): string =
+  return fmt"""CollectionSocials(
+    website:{self.website},
+    twitterHandle:{self.twitterHandle},
   )"""
 
 proc fromJson*(t: JsonNode, T: typedesc[CollectionData]): CollectionData =
@@ -216,6 +234,7 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectionData]): CollectionData =
   result.name = t["name"].getStr()
   result.slug = t["slug"].getStr()
   result.imageUrl = t["image_url"].getStr()
+  result.socials = fromJson(t["socials"], CollectionSocials)
 
 proc fromJson*(t: JsonNode, T: typedesc[ref CollectionData]): ref CollectionData =
   result = new(CollectionData)
@@ -465,3 +484,14 @@ proc `%`*(cp: CollectiblePreferences): JsonNode {.inline.} =
   result["key"] = %cp.key
   result["position"] = %cp.position
   result["visible"] = %cp.visible
+
+proc fromJson*(t: JsonNode, T: typedesc[CollectionSocials]): CollectionSocials {.inline.} =
+  result = CollectionSocials()
+  if t.kind != JNull:
+    result.website = t["website"].getStr()
+    result.twitterHandle = t["twitter_handle"].getStr()
+
+proc fromJson*(t: JsonNode, T: typedesc[CollectionSocialsMessage]): CollectionSocialsMessage {.inline.} =
+  result = CollectionSocialsMessage()
+  result.socials = fromJson(t["socials"], CollectionSocials)
+  result.id = fromJson(t["id"], ContractID)

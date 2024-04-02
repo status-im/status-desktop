@@ -23,6 +23,7 @@ ListModel {
             name: "Punx not dead!",
             collectionUid: "",
             collectionName: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+            collectionImageUrl: ModelsData.collectibles.cryptoPunks,
             communityId: "",
             communityName: "",
             communityImage: ModelsData.icons.status,
@@ -61,7 +62,9 @@ ListModel {
                     value: "Tigerpunk"
                 }
             ],
-            tokenId: "403"
+            tokenId: "403",
+            twitterHandle: "@punxNotDead",
+            website: "www.punxnotdead.com"
         },
         {
             uid: "pp23",
@@ -70,6 +73,7 @@ ListModel {
             name: "pepepunk#23",
             collectionUid: "pepepunks",
             collectionName: "Pepepunks",
+            collectionImageUrl: "https://i.seadn.io/s/raw/files/ba2811bb5cd0bed67529d69fa92ef5aa.jpg?auto=format&dpr=1&w=1000",
             communityId: "",
             communityName: "",
             communityImage: "",
@@ -103,7 +107,9 @@ ListModel {
                      value: "Tigerpunk"
                  }
              ],
-            tokenId: "123"
+            tokenId: "123",
+            twitterHandle: "@pepepunks",
+            website: "www.pepepunks.com"
         },
         {
             uid: "34545656768",
@@ -112,6 +118,7 @@ ListModel {
             name: "Kitty 1",
             collectionUid: "KT",
             collectionName: "Kitties",
+            collectionImageUrl: ModelsData.collectibles.kitty1Big,
             communityId: "",
             communityName: "",
             communityImage: "",
@@ -145,7 +152,9 @@ ListModel {
                     value: "Tigerpunk"
                 }
             ],
-            tokenId: "7123"
+            tokenId: "7123",
+            twitterHandle: "@kitties",
+            website: "www.kitties.com"
         },
         {
             uid: "123456",
@@ -154,6 +163,7 @@ ListModel {
             name: "Kitty 2",
             collectionUid: "KT",
             collectionName: "Kitties",
+            collectionImageUrl: ModelsData.collectibles.kitty2Big,
             communityId: "",
             communityName: "",
             communityImage: "",
@@ -190,7 +200,9 @@ ListModel {
                     value: "Tigerpunk"
                 }
             ],
-            tokenId: "403123"
+            tokenId: "403123",
+            twitterHandle: "",
+            website: "www.kitties.com"
         },
         {
             uid: "12345645459537432",
@@ -199,6 +211,7 @@ ListModel {
             name: "Big Kitty",
             collectionUid: "KT",
             collectionName: "Kitties",
+            collectionImageUrl: ModelsData.collectibles.kitty3Big,
             communityId: "",
             communityName: "",
             communityImage: "",
@@ -237,7 +250,9 @@ ListModel {
                     value: "Tigerpunk"
                 }
             ],
-            tokenId: "1"
+            tokenId: "1",
+            twitterHandle: "@kitties",
+            website: ""
         },
         {
             uid: "pp21",
@@ -246,6 +261,7 @@ ListModel {
             name: "pepepunk#21",
             collectionUid: "pepepunks",
             collectionName: "Pepepunks",
+            collectionImageUrl: "https://i.seadn.io/s/raw/files/cfa559bb63e4378f17649c1e3b8f18fe.jpg?auto=format&dpr=1&w=1000",
             communityId: "",
             communityName: "",
             communityImage: "",
@@ -271,7 +287,9 @@ ListModel {
                     value: "Special"
                 }
             ],
-            tokenId: "12568"
+            tokenId: "12568",
+            twitterHandle: "@pepepunks",
+            website: "www.pepepunks.com"
         },
         {
             uid: "lp#666a",
@@ -280,6 +298,7 @@ ListModel {
             name: "Lonely Panda #666",
             collectionUid: "lpan_collection",
             collectionName: "Lonely Panda Collection",
+            collectionImageUrl: "",
             communityId: "",
             communityName: "",
             communityImage: "",
@@ -305,7 +324,9 @@ ListModel {
                     value: "Rare"
                 }
             ],
-            tokenId: "1445"
+            tokenId: "1445",
+            twitterHandle: "@lonelyPanda",
+            website: "www.lonelyPanda.com"
         },
     ]
 
@@ -316,6 +337,7 @@ ListModel {
             name: "Frenly Panda #9140",
             collectionUid: "",
             collectionName: "",
+            collectionImageUrl: "",
             communityId: "fpan",
             communityName: "Frenly Pandas",
             communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
@@ -342,6 +364,7 @@ ListModel {
             name: "KILLABEAR #691",
             collectionUid: "",
             collectionName: "",
+            collectionImageUrl: "",
             communityId: "bbrz",
             communityName: "Bearz",
             communityImage: "https://i.seadn.io/gcs/files/4a875f997063f4f3772190852c1c44f0.png?w=128&auto=format",
@@ -368,6 +391,7 @@ ListModel {
             name: "KILLABEAR #2385",
             collectionUid: "",
             collectionName: "",
+            collectionImageUrl: "",
             communityId: "bbrz",
             communityName: "Bearz",
             communityImage: "https://i.seadn.io/gcs/files/4a875f997063f4f3772190852c1c44f0.png?w=128&auto=format",
@@ -394,6 +418,7 @@ ListModel {
             name: "Frenly Panda #3195324354654756756756784234523",
             collectionUid: "",
             collectionName: "",
+            collectionImageUrl: "",
             communityId: "fpan",
             communityName: "Frenly Pandas",
             communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
@@ -420,6 +445,7 @@ ListModel {
             name: "Frenly Panda #4297",
             collectionUid: "",
             collectionName: "",
+            collectionImageUrl: "",
             communityId: "fpan",
             communityName: "Frenly Pandas",
             communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
@@ -446,6 +472,7 @@ ListModel {
             name: "Frenly Panda #909",
             collectionUid: "",
             collectionName: "",
+            collectionImageUrl: "",
             communityId: "fpan",
             communityName: "Frenly Pandas",
             communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
@@ -472,6 +499,7 @@ ListModel {
             name: "Lonely Bear #666",
             collectionUid: "",
             collectionName: "",
+            collectionImageUrl: "",
             communityId: "lbear",
             communityName: "Lonely Bearz Community 0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
             communityImage: "",
@@ -503,6 +531,7 @@ ListModel {
             name: "Lonely Turtle #777",
             collectionUid: "",
             collectionName: "",
+            collectionImageUrl: "",
             communityId: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
             communityName: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
             communityImage: "",

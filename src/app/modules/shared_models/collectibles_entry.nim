@@ -58,7 +58,7 @@ QtObject:
       ownership:{self.ownership},
       generatedId:{self.generatedId},
       generatedCollectionId:{self.generatedCollectionId},
-      tokenType:{self.tokenType}
+      tokenType:{self.tokenType},
     )"""
 
   proc hasCollectibleData(self: CollectiblesEntry): bool =
@@ -330,6 +330,24 @@ QtObject:
     read = getSoulbound
     notify = soulboundChanged
 
+  proc websiteChanged*(self: CollectiblesEntry) {.signal.}
+  proc getWebsite*(self: CollectiblesEntry): string {.slot.} =
+    if not self.hasCollectionData():
+      return ""
+    return self.getCollectionData().socials.website
+  QtProperty[string] website:
+    read = getWebsite
+    notify = websiteChanged
+
+  proc twitterHandleChanged*(self: CollectiblesEntry) {.signal.}
+  proc getTwitterHandle*(self: CollectiblesEntry): string {.slot.} =
+    if not self.hasCollectionData():
+      return ""
+    return self.getCollectionData().socials.twitterHandle
+  QtProperty[string] twitterHandle:
+    read = getTwitterHandle
+    notify = twitterHandleChanged
+
   proc updateDataIfSameID*(self: CollectiblesEntry, update: backend.Collectible): bool =
     if self.id != update.id:
       return false
@@ -393,3 +411,17 @@ QtObject:
     )
     let extradata = ExtraData()
     return newCollectibleDetailsBasicEntry(id, extradata)
+
+  proc updateDataIfSameID*(self: CollectiblesEntry, update: backend.CollectionSocialsMessage) =
+    if self.id.contractID != update.id:
+      return
+
+    if not self.hasCollectionData():
+      return
+
+    self.getCollectionData().socials.website = update.socials.website
+    self.getCollectionData().socials.twitterHandle = update.socials.twitterHandle
+
+    # Notify changes for all properties
+    self.twitterHandleChanged()
+    self.websiteChanged()

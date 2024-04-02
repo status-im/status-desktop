@@ -46,6 +46,7 @@ Item {
         readonly property string blockExplorerLink: !!collectible ? root.walletRootStore.getExplorerUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId): ""
         readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
         readonly property int imageStackSpacing: 4
+        property bool activityLoading: walletRootStore.tmpActivityController0.status.loadingData
 
         property Component balanceTag: Component {
             CollectibleBalanceTag {
@@ -68,6 +69,15 @@ Item {
         property SumAggregator balanceAggregator: SumAggregator {
             model: d.filteredBalances
             roleName: "balance"
+        }
+
+        function getCurrentTab() {
+            for (let i =0; i< collectiblesDetailsTab.contentChildren.length; i++) {
+                if(collectiblesDetailsTab.contentChildren[i].visible) {
+                    return i
+                }
+            }
+            return 0
         }
     }
 
@@ -101,7 +111,7 @@ Item {
         onOpenCollectibleOnExplorer: Global.openLinkWithConfirmation(d.blockExplorerLink, root.walletRootStore.getExplorerDomain(networkShortName))
     }
 
-    Column {
+    ColumnLayout {
         id: collectibleBody
         anchors.top: collectibleHeader.bottom
         anchors.topMargin: 25
@@ -117,8 +127,8 @@ Item {
             readonly property real visibleImageHeight: artwork.height
             readonly property real visibleImageWidth: artwork.width
 
-            height: collectibleImageDetails.visibleImageHeight
-            width: parent.width
+            Layout.preferredHeight: collectibleImageDetails.visibleImageHeight
+            Layout.fillWidth: true
             spacing: 24
 
             ColumnLayout {
@@ -126,7 +136,7 @@ Item {
                 spacing: 0
                 Repeater {
                     id: repeater
-                    model: Math.min(3, d.balanceAggregator.value)                  
+                    model: Math.min(3, d.balanceAggregator.value)
                     Item {
                         Layout.preferredWidth: childrenRect.width
                         Layout.preferredHeight: childrenRect.height
@@ -139,7 +149,11 @@ Item {
                             property int modelIndex: index
                             anchors.top: parent.top
                             anchors.left: parent.left
-                            sourceComponent: root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType) ? privilegedCollectibleImage: collectibleimage
+                            sourceComponent: isCollectibleLoading ?
+                                                 collectibleimage:
+                                                 root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType) ?
+                                                     privilegedCollectibleImage:
+                                                     collectibleimage
                             active: root.visible
                         }
                         Loader {
@@ -195,44 +209,62 @@ Item {
 
         StatusTabBar {
             id: collectiblesDetailsTab
-            width: parent.width
-            topPadding: Style.current.xlPadding
-            visible: !!collectible && collectible.traits.count > 0
+            Layout.fillWidth: true
+            topPadding: 52
+
+            currentIndex: d.getCurrentTab()
 
             StatusTabButton {
-                leftPadding: 0
-                width: implicitWidth
                 text: qsTr("Properties")
+                width: visible ? implicitWidth: 0
+                visible: root.isCommunityCollectible
+                enabled: visible
             }
+
             StatusTabButton {
-                rightPadding: 0
-                width: implicitWidth
+                text: qsTr("Traits")
+                width: visible ? implicitWidth: 0
+                visible: !root.isCommunityCollectible && !!collectible && collectible.traits.count > 0
+                enabled: visible
+            }
+
+            StatusTabButton {
                 text: qsTr("Activity")
+                width: visible ? implicitWidth: 0
+            }
+
+            StatusTabButton {
+                text: qsTr("Links")
+                width: visible ? implicitWidth: 0
+                visible: !root.isCommunityCollectible && (!!collectible &&
+                                                          ((!!collectible.website && !!collectible.collectionName) ||
+                                                          collectible.twitterHandle))
+                enabled: visible
             }
         }
 
         StatusScrollView {
             id: scrollView
-            width: parent.width
-            height: parent.height
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             contentWidth: availableWidth
+            padding: 0
 
             Loader {
                 id: tabLoader
-                width: parent.width
-                height: parent.height
-
+                width: scrollView.availableWidth
                 sourceComponent: {
                     switch (collectiblesDetailsTab.currentIndex) {
                     case 0: return traitsView
-                    case 1: return activityView
+                    case 1: return traitsView
+                    case 2: return activityView
+                    case 3: return linksView
                     }
                 }
 
                 Component {
                     id: traitsView
                     Flow {
-                        width: scrollView.availableWidth
                         spacing: 10
                         Repeater {
                             model: !!collectible ? collectible.traits: null
@@ -248,9 +280,15 @@ Item {
                 Component {
                     id: activityView
                     StatusListView {
-                        width: scrollView.availableWidth
                         height: scrollView.availableHeight
                         model: root.activityModel
+                        header: ShapeRectangle {
+                            width: parent.width
+                            height: visible ? 42: 0
+                            visible: !root.activityModel.count && !d.activityLoading
+                            font.pixelSize: Style.current.primaryTextFontSize
+                            text: qsTr("Activity will appear here")
+                        }
                         delegate: TransactionDelegate {
                             required property var model
                             required property int index
@@ -270,6 +308,36 @@ Item {
                                     root.launchTransactionDetail(modelData.id)
                                 }
                             }
+                        }
+                    }
+                }
+
+                Component {
+                    id: linksView
+                    Flow {
+                        spacing: 10
+                        CollectibleLinksTags {
+                            asset.name: !!collectible ? collectible.collectionImageUrl: ""
+                            asset.isImage: true
+                            primaryText: !!collectible ? collectible.collectionName : ""
+                            secondaryText: !!collectible ? collectible.website : ""
+                            visible: !!collectible && !!collectible.website && !!collectible.collectionName
+                            enabled: !!collectible ? Utils.getUrlStatus(collectible.website): false
+                            onClicked: Global.openLinkWithConfirmation(collectible.website, collectible.website)
+                        }
+                        CollectibleLinksTags {
+                            asset.name: "tiny/opensea"
+                            primaryText: qsTr("Opensea")
+                            secondaryText: d.collectionLink
+                            visible: Utils.getUrlStatus(d.collectionLink)
+                            onClicked: Global.openLinkWithConfirmation(d.collectionLink, root.walletRootStore.getOpenseaDomainName())
+                        }
+                        CollectibleLinksTags {
+                            asset.name: "xtwitter"
+                            primaryText: qsTr("Twitter")
+                            secondaryText: !!collectible ? collectible.twitterHandle : ""
+                            visible: !!collectible && collectible.twitterHandle
+                            onClicked: Global.openLinkWithConfirmation(root.walletRootStore.getTwitterLink(collectible.twitterHandle), Constants.socialLinkPrefixesByType[Constants.socialLinkType.twitter])
                         }
                     }
                 }

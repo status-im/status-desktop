@@ -10418,5 +10418,6 @@
         <file>assets/img/icons/tiny/help.svg</file>
         <file>assets/img/icons/tiny/copy.svg</file>
         <file>assets/img/icons/tiny/profile.svg</file>
+        <file>assets/img/icons/tiny/opensea.svg</file>
     </qresource>
 </RCC>
