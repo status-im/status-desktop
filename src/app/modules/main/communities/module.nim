@@ -554,7 +554,7 @@ method requestCancelDiscordChannelImport*(self: Module, discordChannelId: string
   self.controller.requestCancelDiscordChannelImport(discordChannelId)
 
 proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, communityId: string, supply: string,
-    infiniteSupply: bool): TokenListItem =
+    infiniteSupply: bool, privilegesLevel: int): TokenListItem =
   let communityTokenDecimals = if token.tokenType == TokenType.ERC20: 18 else: 0
   result = initTokenListItem(
     key = token.symbol,
@@ -566,8 +566,23 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
     communityId = communityId,
     supply,
     infiniteSupply,
-    communityTokenDecimals
+    communityTokenDecimals,
+    privilegesLevel
   )
+
+proc buildCommunityTokenItemFallback(self: Module, communityTokens: seq[CommunityTokenDto],
+    token: CommunityTokensMetadataDto, communityId: string): TokenListItem =
+  # Set fallback supply to infinite in case we don't have it
+  var supply = "1"
+  var infiniteSupply = true
+  var privilegesLevel = PrivilegesLevel.Community.int
+  for communityToken in communityTokens:
+    if communityToken.symbol == token.symbol:
+      supply = communityToken.supply.toString(10)
+      infiniteSupply = communityToken.infiniteSupply
+      privilegesLevel = communityToken.privilegesLevel.int
+      break
+  return self.createCommunityTokenItem(token, communityId, supply, infiniteSupply, privilegesLevel)
 
 proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto]) =
   var tokenListItems: seq[TokenListItem]
@@ -576,21 +591,7 @@ proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[Co
   let communityTokens = self.controller.getAllCommunityTokens()
   for community in communities:
     for tokenMetadata in community.communityTokensMetadata:
-      # Set fallback supply to infinite in case we don't have it
-      var supply = "1"
-      var infiniteSupply = true
-      for communityToken in communityTokens:
-        if communityToken.symbol == tokenMetadata.symbol:
-          supply = communityToken.supply.toString(10)
-          infiniteSupply = communityToken.infiniteSupply
-          break
-
-      var communityTokenItem = self.createCommunityTokenItem(
-        tokenMetadata,
-        community.id,
-        supply,
-        infiniteSupply,
-      )
+      var communityTokenItem = self.buildCommunityTokenItemFallback(communityTokens, tokenMetadata, community.id)
 
       if tokenMetadata.tokenType == TokenType.ERC20 and
         not self.view.tokenListModel().hasItem(tokenMetadata.symbol, community.id):
@@ -619,6 +620,13 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
     return filteredChains.len != 0
     ))
   for token in erc20Tokens:
+    let communityTokens = self.controller.getCommunityTokens(token.communityId)
+    var privilegesLevel = PrivilegesLevel.Community.int
+    for communityToken in communityTokens:
+      if communityToken.symbol == token.symbol:
+        privilegesLevel = communityToken.privilegesLevel.int
+        break
+
     let tokenListItem = initTokenListItem(
       key = token.symbol,
       name = token.name,
@@ -627,7 +635,8 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
       communityId = token.communityId,
       image = "",
       category = ord(TokenListItemCategory.General),
-      decimals = token.decimals
+      decimals = token.decimals,
+      privilegesLevel = privilegesLevel
     )
     tokenListItems.add(tokenListItem)
 
@@ -638,21 +647,7 @@ method onWalletAccountTokensRebuilt*(self: Module) =
 
 method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) =
   let communityTokens = self.controller.getCommunityTokens(communityId)
-  var tokenListItem: TokenListItem
-  # Set fallback supply to infinite in case we don't have it
-  var supply = "1"
-  var infiniteSupply = true
-  for communityToken in communityTokens:
-    if communityToken.symbol == tokenMetadata.symbol:
-      supply = communityToken.supply.toString(10)
-      infiniteSupply = communityToken.infiniteSupply
-      break
-  tokenListItem = self.createCommunityTokenItem(
-    tokenMetadata,
-    communityId,
-    supply,
-    infiniteSupply,
-  )
+  var tokenListItem = self.buildCommunityTokenItemFallback(communityTokens, tokenMetadata, communityId)
 
   if tokenMetadata.tokenType == TokenType.ERC721 and
       not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol, communityId):

@@ -17,6 +17,7 @@ type
     supply*: string
     infiniteSupply*: bool
     decimals*: int
+    privilegesLevel*: int
 
 proc initTokenListItem*(
   key: string,
@@ -28,7 +29,8 @@ proc initTokenListItem*(
   communityId: string = "",
   supply: string = "1",
   infiniteSupply: bool = true,
-  decimals: int
+  decimals: int,
+  privilegesLevel: int
 ): TokenListItem =
   result.key = key
   result.symbol = symbol
@@ -40,6 +42,7 @@ proc initTokenListItem*(
   result.supply = supply
   result.infiniteSupply = infiniteSupply
   result.decimals = decimals
+  result.privilegesLevel = privilegesLevel
 
 proc `$`*(self: TokenListItem): string =
   result = fmt"""TokenListItem(
@@ -52,6 +55,7 @@ proc `$`*(self: TokenListItem): string =
     supply: {self.supply},
     infiniteSupply: {self.infiniteSupply},
     decimals: {self.decimals},
+    privilegesLevel: {self.privilegesLevel}
     ]"""
 
 proc getKey*(self: TokenListItem): string =
@@ -83,3 +87,6 @@ proc getInfiniteSupply*(self: TokenListItem): bool =
 
 proc getDecimals*(self: TokenListItem): int =
   return self.decimals
+
+proc getPrivilegesLevel*(self: TokenListItem): int =
+  return self.privilegesLevel
