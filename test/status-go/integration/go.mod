@@ -225,7 +225,7 @@ require (
 	github.com/status-im/doubleratchet v3.0.0+incompatible // indirect
 	github.com/status-im/go-multiaddr-ethv4 v1.2.5 // indirect
 	github.com/status-im/keycard-go v0.0.0-20200402102358-957c09536969 // indirect
-	github.com/status-im/markdown v0.0.0-20231114210825-6c2d15b5dc57 // indirect
+	github.com/status-im/markdown v0.0.0-20240404192634-b7e33c6ac3d4 // indirect
 	github.com/status-im/migrate/v4 v4.6.2-status.3 // indirect
 	github.com/status-im/mvds v0.0.27-0.20240111144448-92d364e4be82 // indirect
 	github.com/status-im/rendezvous v1.3.7 // indirect

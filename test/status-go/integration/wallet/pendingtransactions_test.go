@@ -7,13 +7,12 @@ import (
 	"testing"
 	"time"
 
-	eth "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 
 	"github.com/status-im/status-desktop/test/status-go/integration/helpers"
 
 	"github.com/status-im/status-go/eth-node/types"
-	"github.com/status-im/status-go/services/wallet/transfer"
+	"github.com/status-im/status-go/services/wallet/common"
 	"github.com/status-im/status-go/services/wallet/walletevent"
 	"github.com/status-im/status-go/transactions"
 )
@@ -23,7 +22,8 @@ func TestPendingTx_NotificationStatus(t *testing.T) {
 	td, close := setupAccountsAndTransactions(t)
 	defer close()
 
-	sendTransaction(t, td)
+	chainID := common.OptimismSepolia
+	sendTransaction(t, td, chainID)
 
 	// Wait for transaction to be included in block
 	confirmationPayloads, err := helpers.WaitForWalletEventsGetMap(
@@ -45,24 +45,13 @@ func TestPendingTx_NotificationStatus(t *testing.T) {
 	}
 
 	// Start history download ...
-	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{5}, []types.Address{td.operableAccounts[0].Address, td.watchAccounts[0].Address}})
+	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{chainID}, []types.Address{td.operableAccounts[0].Address, td.watchAccounts[0].Address}})
 	require.NoError(t, err)
 
-	downloadDoneFn := helpers.WaitForTxDownloaderToFinishForAccountsCondition(t, []eth.Address{eth.Address(td.operableAccounts[0].Address), eth.Address(td.watchAccounts[0].Address)})
-
-	// ... and wait for the new transaction download to trigger deletion from pending_transactions
-	_, err = helpers.WaitForWalletEventsWithOptionals(
-		td.eventQueue,
-		[]walletevent.EventType{transfer.EventRecentHistoryReady},
-		60*time.Second,
-		func(e *walletevent.Event) bool {
-			if e.Type == transfer.EventFetchingHistoryError {
-				require.Fail(t, "History download failed")
-				return false
-			}
-			return downloadDoneFn(e)
-		},
-		[]walletevent.EventType{transfer.EventFetchingHistoryError},
-	)
+	// Wait for transaction to be included in block
+	pendingUpdated, err := helpers.WaitForWalletEventGetPayload[transactions.PendingTxUpdatePayload](
+		td.eventQueue, transactions.EventPendingTransactionUpdate, 60*time.Second)
 	require.NoError(t, err)
+
+	require.True(t, pendingUpdated.Deleted)
 }

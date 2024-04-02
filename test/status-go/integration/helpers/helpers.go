@@ -230,21 +230,14 @@ func WaitForWalletEventGetPayload[T any](eventQueue chan GoEvent, eventName wall
 	return newPayload, nil
 }
 
-// WaitForTxDownloaderToFinishForAccountsCondition returns a state-full condition function that records every account that has been seen with the events until the entire list is seen
+// WaitForTxDownloaderToFinishForAccountsCondition returns a stateful condition function that checks that at least on account that has been seen with the events until the entire list is seen.
+// The loadBlocksAndTransfersCommand.fetchHistoryBlocksForAccount reports only for one account history ready, even though the downloaded history might contain other accounts.
 func WaitForTxDownloaderToFinishForAccountsCondition(t *testing.T, accounts []common.Address) func(walletEvent *walletevent.Event) bool {
-	accs := make([]common.Address, len(accounts))
-	copy(accs, accounts)
-
 	return func(walletEvent *walletevent.Event) bool {
-	eventAccountsLoop:
 		for _, acc := range walletEvent.Accounts {
-			for i, a := range accs {
+			for _, a := range accounts {
 				if acc == a {
-					if len(accs) == 1 {
-						return true
-					}
-					accs = append(accs[:i], accs[i+1:]...)
-					continue eventAccountsLoop
+					return true
 				}
 			}
 		}
@@ -386,6 +379,28 @@ func CallPrivateMethodAndGetTWithTimeout[T any](method string, params []interfac
 	}
 
 	return &res, nil
+}
+func CallPrivateMethodAndGetSliceOfT[T any](method string, params []interface{}) ([]T, error) {
+	return CallPrivateMethodAndGetSliceOfTWithTimeout[T](method, params, 60*time.Second)
+}
+
+func CallPrivateMethodAndGetSliceOfTWithTimeout[T any](method string, params []interface{}, timeout time.Duration) ([]T, error) {
+	resJson, err := CallPrivateMethodWithTimeout(method, params, timeout)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]T, 0)
+	rawJson, err := GetRPCAPIResponseRaw(resJson)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(rawJson, &res); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
+	}
+
+	return res, nil
 }
 
 type Config struct {
