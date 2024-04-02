@@ -55,7 +55,8 @@ QtObject:
 
   proc getExtraData(self: Controller, chainID: int): ExtraData =
     let network = self.networkService.getNetworkByChainId(chainID)
-    return getExtraData(network)
+    if not network.isNil:
+      return getExtraData(network)
 
   proc processGetCollectiblesDetailsResponse(self: Controller, response: JsonNode) =
     defer: self.setIsDetailedEntryLoading(false)
