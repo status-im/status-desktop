@@ -598,7 +598,9 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
     self.controller.setIsCurrentSectionActive(false)
     return
 
+  var firstLoad = false
   if not self.view.getChatsLoaded:
+    firstLoad = true
     self.controller.getChatsAndBuildUI()
 
   self.controller.setIsCurrentSectionActive(true)
@@ -612,7 +614,8 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
     let community = self.controller.getMyCommunity()
     if not community.isPrivilegedUser:
       self.controller.asyncCheckPermissionsToJoin()
-      self.controller.asyncCheckAllChannelsPermissions()
+      if firstLoad:
+        self.controller.asyncCheckAllChannelsPermissions()
 
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
 
@@ -919,6 +922,7 @@ method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tok
     singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
 
 proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckPermissionsResultDto], community: CommunityDto) =
+  var thereWasAnUpdate = false
   for id, criteriaResult in permissions:
     if community.tokenPermissions.hasKey(id):
       let tokenPermissionItem = self.view.tokenPermissionsModel.getItemById(id)
@@ -929,6 +933,10 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
       var permissionSatisfied = true
 
       for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
+        let criteriaMet = criteriaResult.criteria[index]
+
+        if tokenCriteriaItem.criteriaMet == criteriaMet:
+          continue
 
         let updatedTokenCriteriaItem = initTokenCriteriaItem(
           tokenCriteriaItem.symbol,
@@ -944,6 +952,10 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
 
         updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
 
+      if updatedTokenCriteriaItems.len == 0:
+        continue
+
+      thereWasAnUpdate = true
       let updatedTokenPermissionItem = initTokenPermissionItem(
           tokenPermissionItem.id,
           tokenPermissionItem.`type`,
@@ -954,6 +966,9 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
           tokenPermissionItem.state
       )
       self.view.tokenPermissionsModel().updateItem(id, updatedTokenPermissionItem)
+
+  if not thereWasAnUpdate:
+    return
 
   let tokenPermissionsItems = self.view.tokenPermissionsModel().getItems()
 
@@ -986,12 +1001,19 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
   self.view.setAllTokenRequirementsMet(tokenRequirementsMet)
   self.view.setRequiresTokenPermissionToJoin(requiresPermissionToJoin)
 
+proc updateChannelPermissionViewData*(
+    self: Module,
+    chatId: string,
+    viewOnlyPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto,
+    viewAndPostPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto,
+    community: CommunityDto
+  ) =
 
-proc updateChannelPermissionViewData*(self: Module, chatId: string, viewOnlyPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto, viewAndPostPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto, community: CommunityDto) =
   self.updateTokenPermissionModel(viewOnlyPermissions.permissions, community)
   self.updateTokenPermissionModel(viewAndPostPermissions.permissions, community)
   self.updateChatRequiresPermissions(chatId)
   self.updateChatLocked(chatId)
+
   if self.chatContentModules.hasKey(chatId):
     self.chatContentModules[chatId].onUpdateViewOnlyPermissionsSatisfied(viewOnlyPermissions.satisfied)
     self.chatContentModules[chatId].onUpdateViewAndPostPermissionsSatisfied(viewAndPostPermissions.satisfied)

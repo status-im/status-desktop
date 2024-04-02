@@ -907,6 +907,11 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
     var permissionSatisfied = true
 
     for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
+      let criteriaMet = criteriaResult.criteria[index]
+
+      if tokenCriteriaItem.criteriaMet == criteriaMet:
+        continue
+
 
       let updatedTokenCriteriaItem = initTokenCriteriaItem(
         tokenCriteriaItem.symbol,
@@ -922,6 +927,8 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
 
       updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
 
+    if updatedTokenCriteriaItems.len == 0:
+      continue
     let updatedTokenPermissionItem = initTokenPermissionItem(
         tokenPermissionItem.id,
         tokenPermissionItem.`type`,
