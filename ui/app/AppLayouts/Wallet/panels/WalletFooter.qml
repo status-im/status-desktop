@@ -28,6 +28,11 @@ Rectangle {
 
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
+    QtObject {
+        id: d
+        readonly property int collectibleTransferableTrait: !!walletStore.currentViewedCollectible && sendButton.visible ? walletStore.findCollectibleTrait(walletStore.currentViewedCollectible, Constants.collectibleTrait.transferable, Constants.collectibleTrait.transferableNoValue) : -1
+    }
+
     StatusModalDivider {
         anchors.top: parent.top
         width: parent.width
@@ -39,12 +44,13 @@ Rectangle {
         spacing:  Style.current.padding
 
         StatusFlatButton {
+            id: sendButton
             objectName: "walletFooterSendButton"
             icon.name: "send"
             text: root.isCommunityOwnershipTransfer ? qsTr("Send Owner token to transfer %1 Community ownership").arg(root.communityName) : qsTr("Send")
-            interactive: networkConnectionStore.sendBuyBridgeEnabled
+            interactive: d.collectibleTransferableTrait != 1 && networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchSendModal()
-            tooltip.text: networkConnectionStore.sendBuyBridgeToolTipText
+            tooltip.text: d.collectibleTransferableTrait == 1 ? qsTr("Soulbound collectibles cannot be sent to another wallet") : networkConnectionStore.sendBuyBridgeToolTipText
             visible: !walletStore.overview.isWatchOnlyAccount && walletStore.overview.canSend
         }
 

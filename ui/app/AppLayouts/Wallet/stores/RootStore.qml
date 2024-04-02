@@ -601,4 +601,19 @@ QtObject {
         let baseLink = root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink
         return "%1/assets/%2/%3/%4".arg(baseLink).arg(networkName).arg(contractAddress).arg(tokenId)
     }
+
+    function findCollectibleTrait(collectible, trait, value) {
+        // Return values:
+        // -1: Trait does not exist
+        // 0: Trait found but value is different
+        // 1: Trait found and Value is the the same
+        if (!collectible || !value || !trait) {
+            return -1
+        }
+        const index = SQUtils.ModelUtils.indexOf(collectible.traits, "traitType", trait)
+        if (index < 0)
+            return -1
+
+        return SQUtils.ModelUtils.get(collectible.traits, index, "value") === value ? 1 : 0
+    }
 }

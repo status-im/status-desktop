@@ -758,6 +758,11 @@ QtObject {
         }
     }
 
+    readonly property QtObject collectibleTrait: QtObject {
+        readonly property string transferable: "Transferable"
+        readonly property string transferableNoValue: "No"
+    }
+
     readonly property QtObject keypairImportPopup: QtObject {
         readonly property int popupWidth: 480
         readonly property int contentHeight: 626
