@@ -423,7 +423,8 @@ QtObject:
 
     self.updateAssetsIdentities()
 
-  proc setFilterAddresses*(self: Controller, addresses: seq[string], allAddressesSelected: bool) =
+  # Requires self.newFilterSession() to be called after this
+  proc setFilterAddresses(self: Controller, addresses: seq[string], allAddressesSelected: bool) =
     self.addresses = addresses
     self.allAddressesSelected = allAddressesSelected
     self.status.setIsFilterDirty(true)
@@ -443,10 +444,13 @@ QtObject:
 
     self.setFilterAddresses(addresses, allAddressesSelected)
 
+    # Every change of addresses have to start a new session to get incremental updates when filter is cleared
+    self.newFilterSession()
+
   proc setFilterToAddresses*(self: Controller, addresses: seq[string]) =
     self.currentActivityFilter.counterpartyAddresses = addresses
 
-  proc setFilterChains*(self: Controller, chainIds: seq[int], allEnabled: bool) =
+  proc setFilterChains(self: Controller, chainIds: seq[int], allEnabled: bool) =
     self.chainIds = chainIds
     self.status.setIsFilterDirty(true)
     self.status.emitFilterChainsChanged()
@@ -468,6 +472,9 @@ QtObject:
       chains.add(chainsJson[i].getInt())
 
     self.setFilterChains(chains, allChainsSelected)
+
+    # Every change of chains have to start a new session to get incremental updates when filter is cleared
+    self.newFilterSession()
 
   proc updateRecipientsModel*(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)
