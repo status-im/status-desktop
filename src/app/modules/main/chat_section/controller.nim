@@ -45,6 +45,8 @@ type
     sharedUrlsService: shared_urls_service.Service
     networkService: network_service.Service
 
+# Forward declarations
+proc getMyCommunity*(self: Controller): CommunityDto
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
     settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service,
@@ -106,6 +108,9 @@ proc asyncCheckChannelPermissions*(self: Controller, communityId: string, chatId
   self.chatService.asyncCheckChannelPermissions(communityId, chatId)
 
 proc asyncCheckPermissions*(self: Controller) =
+  let community = self.getMyCommunity()
+  if community.isPrivilegedUser:
+    return
   self.asyncCheckPermissionsToJoin()
   self.asyncCheckAllChannelsPermissions()
 
