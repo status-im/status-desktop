@@ -241,8 +241,6 @@ Control {
                         }
 
                         onClicked: {
-                                                    print ("!!communitiesProxyModel", JSON.stringify(StatusQUtils.ModelUtils.modelToArray(communitiesProxyModel)))
-
                             if (root.readOnly)
                                 return
                             root.closeRequested()
