@@ -31,7 +31,7 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.walletAccountService.buildAllTokens(self.walletAccountService.getWalletAddresses(), store = true)
+  self.walletAccountService.buildAllTokens(self.walletAccountService.getWalletAddresses(), TokensRequestID.WalletAccounts, store = true)
   discard
 
 proc getChainIds*(self: Controller): seq[int] =

@@ -327,7 +327,9 @@ proc init*(self: Controller) =
     )
 
     self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
-      self.asyncCheckPermissions()
+      let arg = TokensPerAccountArgs(e)
+      if arg.requestId == TokensRequestID.WalletAccounts:
+        self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_COMMUNITY_KICKED) do (e: Args):
       let args = CommunityArgs(e)

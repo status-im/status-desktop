@@ -251,8 +251,10 @@ method load*(self: Module) =
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
-    self.setTotalCurrencyBalance()
-    self.notifyFilterChanged()
+    let arg = TokensPerAccountArgs(e)
+    if arg.requestId == TokensRequestID.WalletAccounts:
+      self.setTotalCurrencyBalance()
+      self.notifyFilterChanged()
   self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()

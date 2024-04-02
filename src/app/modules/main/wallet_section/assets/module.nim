@@ -42,9 +42,11 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAssets", newQVariant(self.view))
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
-    self.view.modelsUpdated()
-    self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
-    self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
+    let arg = TokensPerAccountArgs(e)
+    if arg.requestId == TokensRequestID.WalletAccounts:
+      self.view.modelsUpdated()
+      self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
+      self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
 
   self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e:Args):
     self.view.setHasBalanceCache(self.controller.getHasBalanceCache())

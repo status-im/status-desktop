@@ -108,13 +108,15 @@ QtObject:
               self.updateMultichainStatus(COLLECTIBLES, allDown, chainsDown, at)
 
     self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
-      if self.connectionStatus.hasKey(MARKET):
-        let connectionStatus = self.connectionStatus[MARKET]
-        self.updateSimpleStatus(MARKET, connectionStatus.completelyDown, connectionStatus.lastCheckedAt)
+      let arg = TokensPerAccountArgs(e)
+      if arg.requestId == TokensRequestID.WalletAccounts:
+        if self.connectionStatus.hasKey(MARKET):
+          let connectionStatus = self.connectionStatus[MARKET]
+          self.updateSimpleStatus(MARKET, connectionStatus.completelyDown, connectionStatus.lastCheckedAt)
 
-      if self.connectionStatus.hasKey(BLOCKCHAINS):
-        let connectionStatus = self.connectionStatus[BLOCKCHAINS]
-        self.updateMultichainStatus(BLOCKCHAINS, connectionStatus.completelyDown, connectionStatus.chainIds, connectionStatus.lastCheckedAt)
+        if self.connectionStatus.hasKey(BLOCKCHAINS):
+          let connectionStatus = self.connectionStatus[BLOCKCHAINS]
+          self.updateMultichainStatus(BLOCKCHAINS, connectionStatus.completelyDown, connectionStatus.chainIds, connectionStatus.lastCheckedAt)
 
   proc getIsDown(message: string): bool =
     result = message == "down"

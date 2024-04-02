@@ -82,6 +82,7 @@ const fetchDetailsForAddressesTask*: Task = proc(argEncoded: string) {.gcsafe, n
 type
   BuildTokensTaskArg = ref object of QObjectTaskArg
     accounts: seq[string]
+    requestId: TokensRequestID
     storeResult: bool
 
 const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
@@ -93,6 +94,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   try:
     let response = backend.fetchOrGetCachedWalletBalances(arg.accounts)
     output["result"] = response.result
+    output["requestId"] = %* arg.requestId
     output["storeResult"] = %* arg.storeResult
   except Exception as e:
     let err = fmt"Error getting wallet tokens"

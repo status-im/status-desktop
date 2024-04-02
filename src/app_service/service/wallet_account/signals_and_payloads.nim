@@ -69,7 +69,13 @@ type DerivedAddressesArgs* = ref object of Args
   derivedAddresses*: seq[DerivedAddressDto]
   error*: string
 
+type
+  TokensRequestID* = enum
+    WalletAccounts
+    ProfileShowcase
+
 type TokensPerAccountArgs* = ref object of Args
+  requestId*: TokensRequestID
   accountAddresses*: seq[string]
   accountTokens*: seq[GroupedTokenItem]
 

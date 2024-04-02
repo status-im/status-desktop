@@ -172,11 +172,11 @@ proc init*(self: Service) =
     case data.eventType:
       of "wallet-tick-reload":
         let addresses = self.getWalletAddresses()
-        self.buildAllTokens(addresses, store = true)
+        self.buildAllTokens(addresses, TokensRequestID.WalletAccounts, store = true)
         self.checkRecentHistory(addresses)
 
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
-    self.buildAllTokens(self.getWalletAddresses(), store = true)
+    self.buildAllTokens(self.getWalletAddresses(), TokensRequestID.WalletAccounts, store = true)
 
   self.events.on(SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS) do(e: Args):
     let args = ImportAccountsArgs(e)
@@ -197,7 +197,7 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
       continue
     woAccDb.ens = getEnsName(woAccDb.address, chainId)
     self.storeWatchOnlyAccount(woAccDb)
-    self.buildAllTokens(@[woAccDb.address], store = true)
+    self.buildAllTokens(@[woAccDb.address], TokensRequestID.WalletAccounts, store = true)
     if notify:
       self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: woAccDb))
   # check if there is new keypair or any account added to an existing keypair
@@ -207,7 +207,7 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
     if localKp.isNil:
       self.storeKeypair(kpDb)
       let addresses = kpDb.accounts.map(a => a.address)
-      self.buildAllTokens(addresses, store = true)
+      self.buildAllTokens(addresses, TokensRequestID.WalletAccounts, store = true)
       for acc in kpDb.accounts:
         acc.ens = getEnsName(acc.address, chainId)
         if acc.isChat:
@@ -227,7 +227,7 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
         self.storeAccountToKeypair(accDb)
         if accDb.isChat:
           continue
-        self.buildAllTokens(@[accDb.address], store = true)
+        self.buildAllTokens(@[accDb.address], TokensRequestID.WalletAccounts, store = true)
         if notify:
           self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: accDb))
 
@@ -525,7 +525,7 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
 proc toggleTestNetworksEnabled*(self: Service) =
   discard self.settingsService.toggleTestNetworksEnabled()
   let addresses = self.getWalletAddresses()
-  self.buildAllTokens(addresses, store = true)
+  self.buildAllTokens(addresses, TokensRequestID.WalletAccounts, store = true)
   self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
@@ -533,7 +533,7 @@ proc toggleIsGoerliEnabled*(self: Service) =
   discard self.settingsService.toggleIsGoerliEnabled()
   self.networkService.resetNetworks()
   let addresses = self.getWalletAddresses()
-  self.buildAllTokens(addresses, store = true)
+  self.buildAllTokens(addresses, TokensRequestID.WalletAccounts, store = true)
   self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 

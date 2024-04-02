@@ -2,13 +2,24 @@
 proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   var accountAddresses: seq[string] = @[]
   var accountTokens: seq[GroupedTokenItem] = @[]
-  defer: self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(accountAddresses:accountAddresses, accountTokens: accountTokens))
+  var requestId: TokensRequestID
+  defer: self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(
+    accountAddresses: accountAddresses,
+    accountTokens: accountTokens,
+    requestId: requestId
+  ))
   try:
     let responseObj = response.parseJson
     var storeResult: bool
     var resultObj: JsonNode
     discard responseObj.getProp("storeResult", storeResult)
     discard responseObj.getProp("result", resultObj)
+
+    var requestIdInt: int
+    if (responseObj.getProp("membershipStatus", requestIdInt) and
+      (requestIdInt >= ord(low(TokensRequestID)) and
+      requestIdInt <= ord(high(TokensRequestID)))):
+      requestId = TokensRequestID(requestIdInt)
 
     var groupedAccountsTokensBalances = self.groupedAccountsTokensTable
     var allTokensHaveError: bool = true
@@ -77,7 +88,7 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   except Exception as e:
     error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
-proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
+proc buildAllTokens*(self: Service, accounts: seq[string], requestId: TokensRequestID, store: bool) =
   if not main_constants.WALLET_ENABLED or
     accounts.len == 0:
       return
@@ -91,7 +102,8 @@ proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
     vptr: cast[ByteAddress](self.vptr),
     slot: "onAllTokensBuilt",
     accounts: accounts,
-    storeResult: store
+    requestId: requestId,
+    storeResult: store,
   )
   self.threadpool.start(arg)
 
@@ -128,7 +140,7 @@ proc getCurrency*(self: Service): string =
 proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Service, address: string): tuple[balance: float64, fetched: bool] =
   let acc = self.getAccountByAddress(address)
   if acc.isNil:
-    self.buildAllTokens(@[address], store = false)
+    self.buildAllTokens(@[address], TokensRequestID.WalletAccounts, store = false)
     result.balance = 0.0
     result.fetched = false
     return
@@ -167,7 +179,7 @@ proc checkRecentHistory*(self: Service, addresses: seq[string]) =
 
 proc reloadAccountTokens*(self: Service) =
   let addresses = self.getWalletAddresses()
-  self.buildAllTokens(addresses, store = true)
+  self.buildAllTokens(addresses, TokensRequestID.WalletAccounts, store = true)
   self.checkRecentHistory(addresses)
 
 proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =

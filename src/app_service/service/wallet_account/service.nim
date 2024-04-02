@@ -50,7 +50,7 @@ QtObject:
     hasBalanceCache: bool
 
   # Forward declaration
-  proc buildAllTokens*(self: Service, accounts: seq[string], store: bool)
+  proc buildAllTokens*(self: Service, accounts: seq[string], requestId: TokensRequestID, store: bool)
   proc checkRecentHistory*(self: Service, addresses: seq[string])
   proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true)
   proc handleKeypair(self: Service, keypair: KeypairDto)

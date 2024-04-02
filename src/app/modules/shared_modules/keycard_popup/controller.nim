@@ -210,7 +210,8 @@ proc init*(self: Controller, fullConnect = true) =
 
     handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
       let arg = TokensPerAccountArgs(e)
-      self.delegate.onTokensRebuilt(arg.accountAddresses, arg.accountTokens)
+      if arg.requestId == TokensRequestID.WalletAccounts:
+        self.delegate.onTokensRebuilt(arg.accountAddresses, arg.accountTokens)
     self.connectionIds.add(handlerId)
 
 proc switchToWalletSection*(self: Controller) =
