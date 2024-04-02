@@ -59,6 +59,10 @@ QObject {
                 expectedRoles: ["members"]
             }
         ]
+        filters: ValueFilter {
+            roleName: "joined"
+            value: true
+        }
     }
 
     JoinModel {
