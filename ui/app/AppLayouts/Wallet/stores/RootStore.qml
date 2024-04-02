@@ -600,4 +600,9 @@ QtObject {
         let baseLink = root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink
         return "%1/assets/%2/%3/%4".arg(baseLink).arg(networkName).arg(contractAddress).arg(tokenId)
     }
+
+    function getTwitterLink(twitterHandle) {
+        const prefix = Constants.socialLinkPrefixesByType[Constants.socialLinkType.twitter]
+        return prefix + twitterHandle
+    }
 }
