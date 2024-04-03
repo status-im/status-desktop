@@ -204,5 +204,5 @@ proc requestProfileShowcaseForContact*(self: Controller, contactId: string, vali
 proc fetchProfileShowcaseAccountsByAddress*(self: Controller, address: string) =
   self.contactsService.fetchProfileShowcaseAccountsByAddress(address)
 
-proc getChainIds*(self: Controller): seq[int] =
-  self.networkService.getCurrentNetworks().map(n => n.chainId)
+proc getEnabledChainIds*(self: Controller): seq[int] =
+  return self.networkService.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
