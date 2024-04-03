@@ -1,8 +1,9 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
-import StatusQ.Core 0.1
+import StatusQ 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 
 import SortFilterProxyModel 0.2
 import shared.status 1.0
@@ -70,6 +71,7 @@ ColumnLayout {
         ]
     }
 
+
     Repeater {
         id: repeater
 
@@ -87,14 +89,15 @@ ColumnLayout {
             permissionType: model.permissionType
             permissionState: model.permissionState // TODO: Backend!
 
-            ChannelsSelectionModel {
+            LeftJoinModel {
                 id: channelsSelectionModel
 
-                selectedChannels: model.channelsListModel ?? null
-                allChannels: root.channelsModel
+                leftModel: model.channelsListModel ?? null
+                rightModel: root.channelsModel
+                joinRole: "key"
             }
 
-            channelsListModel: channelsSelectionModel.count
+            channelsListModel: model.channelsListModel.rowCount()
                                     ? channelsSelectionModel : communityItemModel
             isPrivate: model.isPrivate
 
