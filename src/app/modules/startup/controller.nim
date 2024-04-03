@@ -347,7 +347,7 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   let selectedAccount = self.getSelectedLoginAccount()
   self.keychainService.tryToObtainData(selectedAccount.keyUid)
 
-# FIXME: Remove with new login endpoint
+# TODO: Remove whn implemented https://github.com/status-im/status-go/issues/4977
 proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:
     return
