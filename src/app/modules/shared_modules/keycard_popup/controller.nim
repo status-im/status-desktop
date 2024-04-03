@@ -650,7 +650,7 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool, nex
         exportedEncryptionPubKey = flowEvent.generatedWalletAccounts[0].publicKey # encryption key is at position 0
         if exportedEncryptionPubKey.len > 0:
           self.tmpFlowData.password = exportedEncryptionPubKey
-          for i in 0..< self.tmpRequestedPathsAlongWithAuthentication.len:
+          for i in 0..<self.tmpRequestedPathsAlongWithAuthentication.len:
             var path = self.tmpRequestedPathsAlongWithAuthentication[i]
             self.tmpFlowData.additinalPathsDetails[path] = KeyDetails(
               address: flowEvent.generatedWalletAccounts[i].address,

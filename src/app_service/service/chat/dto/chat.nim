@@ -13,6 +13,7 @@ type ChatType* {.pure.}= enum
   Public = 2,
   PrivateGroupChat = 3,
   Profile = 4,
+  Timeline {.deprecated.} = 5,
   CommunityChat = 6
 
 type ChannelGroupType* {.pure.}= enum
