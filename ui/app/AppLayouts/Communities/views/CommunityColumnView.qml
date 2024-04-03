@@ -53,11 +53,6 @@ Item {
         communityData.memberRole === Constants.memberRole.admin ||
         communityData.memberRole === Constants.memberRole.tokenMaster
 
-    readonly property var permissionsModel: {
-        root.store.prepareTokenModelForCommunity(communityData.id)
-        return root.store.permissionsModel
-    }
-
     signal infoButtonClicked
     signal manageButtonClicked
 
@@ -635,7 +630,10 @@ Item {
             communitiesStore: root.communitiesStore
             assetsModel: root.store.assetsModel
             collectiblesModel: root.store.collectiblesModel
-            permissionsModel: root.store.permissionsModel
+            permissionsModel: {
+                root.store.prepareTokenModelForCommunity(communityData.id)
+                return root.store.permissionsModel
+            }
             channelsModel: root.store.chatCommunitySectionModule.model
             emojiPopup: root.emojiPopup
             activeCommunity: root.communityData

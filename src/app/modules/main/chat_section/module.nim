@@ -921,7 +921,8 @@ method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tok
   if tokenPermission.state == TokenPermissionState.Approved:
     singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
 
-proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckPermissionsResultDto], community: CommunityDto) =
+# Returns true if there was an update
+proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckPermissionsResultDto], community: CommunityDto): bool =
   var thereWasAnUpdate = false
   for id, criteriaResult in permissions:
     if community.tokenPermissions.hasKey(id):
@@ -968,7 +969,7 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
       self.view.tokenPermissionsModel().updateItem(id, updatedTokenPermissionItem)
 
   if not thereWasAnUpdate:
-    return
+    return false
 
   let tokenPermissionsItems = self.view.tokenPermissionsModel().getItems()
 
@@ -1001,6 +1002,8 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
   self.view.setAllTokenRequirementsMet(tokenRequirementsMet)
   self.view.setRequiresTokenPermissionToJoin(requiresPermissionToJoin)
 
+  return true
+
 proc updateChannelPermissionViewData*(
     self: Module,
     chatId: string,
@@ -1009,10 +1012,11 @@ proc updateChannelPermissionViewData*(
     community: CommunityDto
   ) =
 
-  self.updateTokenPermissionModel(viewOnlyPermissions.permissions, community)
-  self.updateTokenPermissionModel(viewAndPostPermissions.permissions, community)
-  self.updateChatRequiresPermissions(chatId)
-  self.updateChatLocked(chatId)
+  let viewOnlyUpdated = self.updateTokenPermissionModel(viewOnlyPermissions.permissions, community)
+  let viewAndPostUpdated = self.updateTokenPermissionModel(viewAndPostPermissions.permissions, community)
+  if viewOnlyUpdated or viewAndPostUpdated:
+    self.updateChatRequiresPermissions(chatId)
+    self.updateChatLocked(chatId)
 
   if self.chatContentModules.hasKey(chatId):
     self.chatContentModules[chatId].onUpdateViewOnlyPermissionsSatisfied(viewOnlyPermissions.satisfied)
@@ -1025,7 +1029,7 @@ proc updateChannelPermissionViewData*(
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
   let community = self.controller.getMyCommunity()
   self.view.setAllTokenRequirementsMet(checkPermissionsToJoinResponse.satisfied)
-  self.updateTokenPermissionModel(checkPermissionsToJoinResponse.permissions, community)
+  discard self.updateTokenPermissionModel(checkPermissionsToJoinResponse.permissions, community)
   self.setPermissionsToJoinCheckOngoing(false)
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
