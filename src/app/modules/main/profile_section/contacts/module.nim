@@ -8,6 +8,7 @@ import ../../../../global/global_singleton
 
 import ../../../../core/eventemitter
 import app_service/common/types
+import app_service/common/utils as utils
 import app_service/service/contacts/dto/contacts as contacts_dto
 import app_service/service/contacts/service as contacts_service
 import app_service/service/chat/service as chat_service
@@ -380,7 +381,8 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto, va
       showcaseKey: collectible.toCombinedCollectibleId(),
       showcasePosition: collectible.order
     ))
-    collectibleChainIds.add(collectible.chainId)
+    if not collectibleChainIds.contains(collectible.chainId):
+      collectibleChainIds.add(collectible.chainId)
   self.view.loadProfileShowcaseContactCollectibles(collectibleItems)
 
   var assetItems: seq[ShowcaseContactGenericItem] = @[]
@@ -409,9 +411,10 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto, va
     self.showcaseForAContactLoading = false
     self.view.emitShowcaseForAContactLoadingChangedSignal()
   else:
-    # NOTE: this implementation does not respect testnet setting
-    # to fix use SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED and getChainIds() to intersect with collectibleChainIds
-    self.collectiblesController.setFilterAddressesAndChains(accountAddresses, collectibleChainIds)
+    let enabledChainIds = self.controller.getEnabledChainIds()
+
+    let combinedNetworks = utils.intersectSeqs(collectibleChainIds, enabledChainIds)
+    self.collectiblesController.setFilterAddressesAndChains(accountAddresses, combinedNetworks)
     self.controller.requestProfileShowcaseForContact(self.showcasePublicKey, true)
 
 method fetchProfileShowcaseAccountsByAddress*(self: Module, address: string) =
