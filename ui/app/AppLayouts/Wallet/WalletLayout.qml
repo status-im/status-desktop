@@ -39,6 +39,7 @@ Item {
         target: walletSection
 
         function onFilterChanged(address) {
+            console.log("onFilterChanged:", address)
             RootStore.selectedAddress = address == "" ? "" : address
         }
 
@@ -139,6 +140,7 @@ Item {
         function displayAllAddresses() {
             RootStore.showSavedAddresses = false
             RootStore.selectedAddress = ""
+            RootStore.setFilterAllAddresses()
         }
 
         function displayAddress(address) {

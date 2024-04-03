@@ -228,6 +228,14 @@ QtObject {
         walletSection.setFilterAddress(address)
     }
 
+    function setFilterAllAddresses() {
+        walletSectionInst.setFilterAllAddresses()
+    }
+
+    function setFilterAddresses(addresses) {
+        walletSection.setFilterAddresses(addresses)
+    }
+
     function deleteAccount(address) {
         return walletSectionAccounts.deleteAccount(address)
     }

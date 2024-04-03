@@ -177,7 +177,7 @@ RightTabBaseView {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
                             RootStore.setCurrentViewedHolding(uid, tokenType)
                             d.detailedCollectibleActivityController.resetFilter()
-                            d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")), RootStore.showAllAccounts)
+                            d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")))
                             d.detailedCollectibleActivityController.setFilterChainsJson(JSON.stringify([chainId]), false)
                             d.detailedCollectibleActivityController.setFilterCollectibles(JSON.stringify([uid]))
                             d.detailedCollectibleActivityController.updateFilter()

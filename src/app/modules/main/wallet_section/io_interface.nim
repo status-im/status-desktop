@@ -18,6 +18,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method setFilterAddress*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setFilterAllAddresses*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

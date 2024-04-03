@@ -103,6 +103,7 @@ QtObject:
     self.detailsController.setActivityEntry(entry)
 
   proc processResponse(self: Controller, response: JsonNode) =
+    echo "activity.controller.onFilteringDone:", pretty(response)
     defer: self.status.setLoadingData(false)
 
     let res = fromJson(response, backend_activity.FilterResponse)
@@ -143,6 +144,7 @@ QtObject:
         error "error stopping the previous session of activity fitlering: ", res.error
       self.eventsHandler.clearSessionId()
 
+    echo "newFilterSession, addresses:", self.addresses
     # start a new filter session
     let (sessionId, ok) = backend_activity.newActivityFilterSession(self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, FETCH_BATCH_COUNT_DEFAULT)
     if not ok:
@@ -497,6 +499,7 @@ QtObject:
     read = getStatus
 
   proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int], allChainsEnabled: bool) =
+    echo "globalFilterChanged:", addresses
     if (self.addresses == addresses and self.chainIds == chainIds):
       return
 

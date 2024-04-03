@@ -192,32 +192,58 @@ method updateCurrency*(self: Module, currency: string) =
 method getCurrentCurrency*(self: Module): string =
   self.controller.getCurrency()
 
-method setTotalCurrencyBalance*(self: Module) =
+proc getWalletAddressesNotHidden(self: Module): seq[string] =
   let walletAccounts = self.controller.getWalletAccounts()
-  var addresses = walletAccounts.filter(a => not a.hideFromTotalBalance).map(a => a.address)
+  return walletAccounts.filter(a => not a.hideFromTotalBalance).map(a => a.address)
+
+method setTotalCurrencyBalance*(self: Module) =
+  let addresses = self.getWalletAddressesNotHidden()
   self.view.setTotalCurrencyBalance(self.controller.getTotalCurrencyBalance(addresses, self.filter.chainIds))
 
-proc notifyFilterChanged(self: Module) =
+proc notifyModulesOnFilterChanged(self: Module) =
+  echo "notifyModulesOnFilterChanged"
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.allTokensModule.filterChanged(self.filter.addresses)
-  self.view.setAddressFilters(self.filter.addresses.join(":"))
-  if self.filter.addresses.len > 0:
-    self.view.filterChanged(self.filter.addresses[0])
+
+proc updateViewWithAddressFilterChanged(self: Module) =
+  echo "updateViewWithAddressFilterChanged"
+  if self.overviewModule.getIsAllAccounts():
+    self.view.filterChanged("")
+  else:
+    self.view.filterChanged(self.view.getAddressFilters())
+
+proc notifyFilterChanged(self: Module) =
+  self.notifyModulesOnFilterChanged()
+  self.updateViewWithAddressFilterChanged()
 
 method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
   return self.controller.getCurrencyAmount(amount, symbol)
 
-method setFilterAddress*(self: Module, address: string) =
+method setKeypairOperabilityForObservedAccount(self: Module, address: string) =
   let keypair = self.controller.getKeypairByAccountAddress(address)
   if keypair.isNil:
     self.view.setKeypairOperabilityForObservedAccount("")
   else:
     self.view.setKeypairOperabilityForObservedAccount(keypair.getOperability())
+
+method setFilterAddress*(self: Module, address: string) =
+  echo "setFilterAddress:", address
+  self.setKeypairOperabilityForObservedAccount(address)
   self.filter.setAddress(address)
+  self.view.setAddressFilters(address)
+  self.overviewModule.setIsAllAccounts(false)
   self.notifyFilterChanged()
+
+method setFilterAllAddresses*(self: Module) =
+  echo "setFilterAllAddress"
+  self.view.setKeypairOperabilityForObservedAccount("")
+  self.filter.setAddresses(self.getWalletAddressesNotHidden())
+  self.view.setAddressFilters(self.filter.addresses.join(":"))
+  self.overviewModule.setIsAllAccounts(true)
+  self.notifyModulesOnFilterChanged()
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))
@@ -230,6 +256,7 @@ method load*(self: Module) =
         self.filter.removeAddress(acc.address)
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
+    echo "SIGNAL_WALLET_ACCOUNT_UPDATED"
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
     let args = AccountArgs(e)
@@ -283,6 +310,9 @@ method load*(self: Module) =
     let data = LocalPairingStatus(e)
     self.onLocalPairingStatusUpdate(data)
   self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
+    echo "SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED"
+    if self.overviewModule.getIsAllAccounts():
+      self.filter.setAddresses(self.getWalletAddressesNotHidden())
     self.notifyFilterChanged()
     self.setTotalCurrencyBalance()
 
@@ -337,6 +367,7 @@ proc checkIfModuleDidLoad(self: Module) =
   let mnemonicBackedUp = self.controller.isMnemonicBackedUp()
   self.view.setData(signingPhrase, mnemonicBackedUp)
   self.setTotalCurrencyBalance()
+  self.filter.setAddresses(self.getWalletAddressesNotHidden())
   self.filter.load()
   self.notifyFilterChanged()
   self.moduleLoaded = true
