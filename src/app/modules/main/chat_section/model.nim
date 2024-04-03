@@ -357,6 +357,10 @@ QtObject:
     let index = self.getItemIdxById(id)
     if index == -1:
       return
+
+    if (self.items[index].isLocked == locked):
+      return
+
     self.items[index].locked = locked
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
@@ -366,6 +370,10 @@ QtObject:
     let index = self.getItemIdxById(id)
     if index == -1:
       return
+
+    if (self.items[index].viewOnlyPermissionsSatisfied == satisfied):
+      return
+
     self.items[index].viewOnlyPermissionsSatisfied = satisfied
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
@@ -377,6 +385,10 @@ QtObject:
     let index = self.getItemIdxById(id)
     if index == -1:
       return
+
+    if (self.items[index].viewAndPostPermissionsSatisfied == satisfied):
+      return
+
     self.items[index].viewAndPostPermissionsSatisfied = satisfied
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
@@ -388,6 +400,10 @@ QtObject:
     let index = self.getItemIdxById(id)
     if index == -1:
       return
+
+    if (self.items[index].requiresPermissions == value):
+      return
+
     self.items[index].requiresPermissions = value
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
