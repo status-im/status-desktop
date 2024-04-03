@@ -221,7 +221,7 @@ proc trustStatus*(self: ContactsDto): TrustStatus =
   result = self.trustStatus
 
 proc isContactVerified*(self: ContactsDto): bool =
-  return self.verificationStatus == VerificationStatus.Verified
+  return self.verificationStatus == VerificationStatus.Verified or self.trustStatus == TrustStatus.Trusted
 
 proc isContactUntrustworthy*(self: ContactsDto): bool =
   return self.trustStatus == TrustStatus.Untrustworthy
