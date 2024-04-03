@@ -163,11 +163,7 @@ QtObject:
       error "error: ", procName="openedAccounts", errName = e.name, errDesription = e.msg
 
   proc openedAccountsContainsKeyUid*(self: Service, keyUid: string): bool =
-    let openedAccounts = self.openedAccounts()
-    for acc in openedAccounts:
-      if acc.keyUid == keyUid:
-        return true
-    return false
+    return (keyUID in self.openedAccounts().mapIt(it.keyUid))
 
   proc saveKeycardAccountAndLogin(self: Service, chatKey, password: string, account, subaccounts, settings,
     config: JsonNode): AccountDto =

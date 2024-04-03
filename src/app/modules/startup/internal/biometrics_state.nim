@@ -11,7 +11,8 @@ proc delete*(self: BiometricsState) =
   self.State.delete
 
 method getNextPrimaryState*(self: BiometricsState, controller: Controller): State =
-  if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
+  if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
+    self.flowType == FlowType.FirstRunOldUserKeycardImport:
     return createState(StateType.ProfileFetching, self.flowType, self)
   return nil
 

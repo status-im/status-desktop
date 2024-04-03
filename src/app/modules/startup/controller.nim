@@ -1,4 +1,4 @@
-import Tables, chronicles, strutils, sequtils
+import Tables, chronicles, strutils
 import uuids
 import io_interface
 
@@ -379,7 +379,7 @@ proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
     self.delegate.emitStartupError(err, StartupErrorType.ImportAccError)
     return false
 
-  if keyUID in self.accountsService.openedAccounts.mapIt(it.keyUid):
+  if self.accountsService.openedAccountsContainsKeyUid(keyUID):
     self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
     return false
 
@@ -451,6 +451,9 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccoun
     self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
       self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
       return
+  if recoverAccount:
+    self.delegate.prepareAndInitFetchingData()
+    self.connectToFetchingFromWakuEvents()
   if self.tmpSeedPhrase.len > 0:
     # if `tmpSeedPhrase` is not empty means user has recovered keycard via seed phrase
     let accFromSeedPhrase = self.accountsService.createAccountFromMnemonic(self.tmpSeedPhrase, includeEncryption = true,
@@ -473,7 +476,7 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccoun
     self.tmpKeycardEvent.encryptionKey.privateKey = accFromSeedPhrase.derivedAccounts.encryption.privateKey
     self.tmpKeycardEvent.encryptionKey.publicKey = accFromSeedPhrase.derivedAccounts.encryption.publicKey
     self.tmpKeycardEvent.encryptionKey.address = accFromSeedPhrase.derivedAccounts.encryption.address
-  self.delegate.moveToLoadingAppState()
+
   self.syncKeycardBasedOnAppWalletStateAfterLogin()
   self.accountsService.setupAccountKeycard(self.tmpKeycardEvent, self.tmpDisplayName, useImportedAcc = false, recoverAccount)
   self.setupKeychain(storeToKeychain)
