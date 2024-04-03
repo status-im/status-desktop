@@ -5,12 +5,15 @@ import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.views 1.0
 
-import StatusQ.Core 0.1
+import StatusQ 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 import shared.popups 1.0
+
+import SortFilterProxyModel 0.2
 
 StackView {
     id: root
@@ -46,6 +49,40 @@ StackView {
         root.push(newPermissionView, properties, StackView.Immediate);
     }
 
+    SortFilterProxyModel {
+        id: allChannelsTransformed
+
+        sourceModel: root.channelsModel
+
+        proxyRoles: [
+            FastExpressionRole {
+                name: "key"
+                expression: model.itemId ?? ""
+                expectedRoles: ["itemId"]
+            },
+            FastExpressionRole {
+                name: "text"
+                expression: "#" + model.name
+                expectedRoles: ["name"]
+            },
+            FastExpressionRole {
+                name: "imageSource"
+                expression: model.icon
+                expectedRoles: ["icon"]
+            },
+            FastExpressionRole {
+                name: "operator"
+
+                // Direct call for singleton enum is not handled properly by SortFilterProxyModel.
+                readonly property int none: OperatorsUtils.Operators.None
+
+                expression: none
+                expectedRoles: []
+            }
+        ]
+    }
+
+
     // Community Permissions possible view contents:
     initialItem: SettingsPage {
         id: initialItem
@@ -70,7 +107,8 @@ StackView {
                 permissionsModel: root.permissionsModel
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
-                channelsModel: root.channelsModel
+                channelsModel: allChannelsTransformed
+
                 communityDetails: root.communityDetails
 
                 viewWidth: root.viewWidth
@@ -148,7 +186,7 @@ StackView {
 
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
-                channelsModel: root.channelsModel
+                channelsModel: allChannelsTransformed
                 communityDetails: root.communityDetails
                 showChannelSelector: root.showChannelSelector
                 isEditState: newPermissionViewPage.isEditState
