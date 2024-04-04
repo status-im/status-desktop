@@ -954,3 +954,26 @@ QtObject:
     except Exception as e:
       error "onProfileShowcaseAccountsByAddressFetched", msg = e.msg
     self.events.emit(SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED, data)
+
+  proc fetchProfileShowcaseAssetsForAContact*(self: Service, chainIds: seq[int], accountsAddresses, contractAddresses: seq[string]) =
+    let arg = FetchAssetsForAContactShowcaseArg(
+      chainIds: chainIds,
+      accountsAddresses: accountsAddresses,
+      contractAddresses: contractAddresses,
+      tptr: cast[ByteAddress](fetchAssetsForAContactShowcaseTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onProfileShowcaseAssetsForAContactFetched",
+    )
+    self.threadpool.start(arg)
+
+  proc onProfileShowcaseAssetsForAContactFetched*(self: Service, rpcResponse: string) {.slot.} =
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        error "Error fetching assets for a contact", msg = rpcResponseObj{"error"}
+        return
+
+      # TODO: get tokens data from the response
+      echo "-------------------->", rpcResponseObj["response"]["result"]
+    except Exception as e:
+      error "Error fetching assets for a contact", msg = e.msg

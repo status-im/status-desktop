@@ -391,11 +391,16 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto, va
       showcaseKey: token.symbol,
       showcasePosition: token.order
     ))
+  var tokenChainIds: seq[int] = @[]
+  var tokenContractAddresses: seq[string] = @[]
   for token in profileShowcase.unverifiedTokens:
     assetItems.add(ShowcaseContactGenericItem(
       showcaseKey: token.toCombinedTokenId(),
       showcasePosition: token.order
     ))
+    tokenContractAddresses.add(token.contractAddress)
+    if not tokenChainIds.contains(token.chainId):
+      tokenChainIds.add(token.chainId)
   self.view.loadProfileShowcaseContactAssets(assetItems)
 
   var socialLinkItems: seq[ShowcaseContactSocialLinkItem] = @[]
@@ -413,8 +418,14 @@ method loadProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto, va
   else:
     let enabledChainIds = self.controller.getEnabledChainIds()
 
-    let combinedNetworks = utils.intersectSeqs(collectibleChainIds, enabledChainIds)
-    self.collectiblesController.setFilterAddressesAndChains(accountAddresses, combinedNetworks)
+    # fetch collectibles for contact's accounts
+    let combinedCollectibleChainIds = utils.intersectSeqs(collectibleChainIds, enabledChainIds)
+    self.collectiblesController.setFilterAddressesAndChains(accountAddresses, combinedCollectibleChainIds)
+
+    # fetch assets for contact's accounts
+    let combinedTokenChainIds = utils.intersectSeqs(tokenChainIds, enabledChainIds)
+    self.controller.fetchProfileShowcaseAssetsForAContact(combinedTokenChainIds, accountAddresses, tokenContractAddresses)
+
     self.controller.requestProfileShowcaseForContact(self.showcasePublicKey, true)
 
 method fetchProfileShowcaseAccountsByAddress*(self: Module, address: string) =

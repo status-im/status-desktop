@@ -6,6 +6,7 @@ from ../../common/conversion import isCompressedPubKey
 include ../../../app/core/tasks/common
 
 import ../../../backend/contacts as status_go
+import ../../../backend/backend as backend
 
 #################################################
 # Async lookup ENS contact
@@ -110,6 +111,27 @@ const fetchProfileShowcaseAccountsTask: Task = proc(argEncoded: string) {.gcsafe
   }
   try:
     let rpcResponse = status_accounts.getProfileShowcaseAccountsByAddress(arg.address)
+    if not rpcResponse.error.isNil:
+      raise newException(CatchableError, rpcResponse.error.message)
+    response["response"] = rpcResponse.result
+  except Exception as e:
+    response["error"] = %* e.msg
+  arg.finish(response)
+
+type
+  FetchAssetsForAContactShowcaseArg = ref object of QObjectTaskArg
+    chainIds*: seq[int]
+    accountsAddresses*: seq[string]
+    contractAddresses*: seq[string]
+
+const fetchAssetsForAContactShowcaseTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchAssetsForAContactShowcaseArg](argEncoded)
+  var response = %* {
+    "response": "",
+    "error": "",
+  }
+  try:
+    let rpcResponse = backend.getBalancesByChain(arg.chainIds, arg.accountsAddresses, arg.contractAddresses)
     if not rpcResponse.error.isNil:
       raise newException(CatchableError, rpcResponse.error.message)
     response["response"] = rpcResponse.result
