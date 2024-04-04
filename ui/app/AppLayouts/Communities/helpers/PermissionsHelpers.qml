@@ -12,26 +12,7 @@ import utils 1.0
 
 QtObject {
     function getTokenByKey(model, key) {
-        if (!model)
-            return null
-
-        const count = model.rowCount()
-
-        for (let i = 0; i < count; i++) {
-            const item = ModelUtils.get(model, i)
-
-            if (item.key === key)
-                return item
-
-            if (item.subItems) {
-                const subitem = getTokenByKey(item.subItems, key)
-
-                if (subitem !== null)
-                    return subitem
-            }
-        }
-
-        return null
+        return Internal.PermissionUtils.getTokenByKey(model, key)
     }
 
     function getTokenNameByKey(model, key) {
