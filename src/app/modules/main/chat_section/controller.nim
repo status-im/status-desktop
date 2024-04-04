@@ -97,7 +97,9 @@ proc asyncCheckPermissionsToJoin*(self: Controller) =
 proc asyncCheckAllChannelsPermissions*(self: Controller) =
   if self.delegate.getPermissionsToJoinCheckOngoing():
     return
-  self.chatService.asyncCheckAllChannelsPermissions(self.getMySectionId(), addresses = @[])
+
+  let addresses = self.communityService.getSharedAddresses()
+  self.chatService.asyncCheckAllChannelsPermissions(self.getMySectionId(), addresses)
   self.delegate.setChannelsPermissionsCheckOngoing(true)
 
 proc asyncCheckChannelPermissions*(self: Controller, communityId: string, chatId: string) =
@@ -466,6 +468,7 @@ proc setActiveItem*(self: Controller, itemId: string) =
   let isSectionActive = self.getIsCurrentSectionActive()
   if not isSectionActive:
     return
+
   if self.activeItemId != "":
     self.messageService.asyncLoadInitialMessagesForChat(self.activeItemId)
 

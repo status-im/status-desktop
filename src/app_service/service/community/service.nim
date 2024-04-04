@@ -262,6 +262,7 @@ QtObject:
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
       communityMetrics: Table[string, CommunityMetricsDto]
       communityInfoRequests: Table[string, Time]
+      sharedAddresses: seq[string]
 
   # Forward declaration
   proc asyncLoadCuratedCommunities*(self: Service)
@@ -1601,13 +1602,22 @@ QtObject:
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
     self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
+  proc getSharedAddresses*(self: Service): seq[string] =
+    return self.sharedAddresses
+
   proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string]) =
+
+    if addresses.len == 0:
+      debug "Addresses received cannot be empty"
+      return
+    self.sharedAddresses = addresses
+
     let arg = AsyncCheckPermissionsToJoinTaskArg(
       tptr: cast[ByteAddress](asyncCheckPermissionsToJoinTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckPermissionsToJoinDone",
       communityId: communityId,
-      addresses: addresses
+      addresses: self.sharedAddresses
     )
     self.threadpool.start(arg)
 
@@ -1717,12 +1727,19 @@ QtObject:
 
   proc asyncEditSharedAddresses*(self: Service, communityId: string, addressesToShare: seq[string], airdropAddress: string,
     signatures: seq[string]) =
+
+    if addressesToShare.len == 0 and airdropAddress.len == 0:
+      debug "Addresses received cannot be empty"
+      return
+
+    self.sharedAddresses = addressesToShare
+
     let arg = AsyncEditSharedAddressesTaskArg(
       tptr: cast[ByteAddress](asyncEditSharedAddressesTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncEditSharedAddressesDone",
       communityId: communityId,
-      addressesToShare: addressesToShare,
+      addressesToShare: self.sharedAddresses,
       signatures: signatures,
       airdropAddress: airdropAddress,
     )
