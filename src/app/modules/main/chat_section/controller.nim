@@ -29,6 +29,7 @@ type
     isCommunitySection: bool
     activeItemId: string
     isCurrentSectionActive: bool
+    allChannelsPermissionCheckOngoing: bool
     events: UniqueUUIDEventEmitter
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
@@ -44,6 +45,8 @@ type
     sharedUrlsService: shared_urls_service.Service
     networkService: network_service.Service
 
+# Forward declarations
+proc getMyCommunity*(self: Controller): CommunityDto
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
     settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service,
@@ -95,8 +98,9 @@ proc asyncCheckPermissionsToJoin*(self: Controller) =
   self.delegate.setPermissionsToJoinCheckOngoing(true)
 
 proc asyncCheckAllChannelsPermissions*(self: Controller) =
-  if self.delegate.getPermissionsToJoinCheckOngoing():
+  if self.allChannelsPermissionCheckOngoing:
     return
+  self.allChannelsPermissionCheckOngoing = true
   self.chatService.asyncCheckAllChannelsPermissions(self.getMySectionId(), addresses = @[])
   self.delegate.setChannelsPermissionsCheckOngoing(true)
 
@@ -104,6 +108,9 @@ proc asyncCheckChannelPermissions*(self: Controller, communityId: string, chatId
   self.chatService.asyncCheckChannelPermissions(communityId, chatId)
 
 proc asyncCheckPermissions*(self: Controller) =
+  let community = self.getMyCommunity()
+  if community.isPrivilegedUser:
+    return
   self.asyncCheckPermissionsToJoin()
   self.asyncCheckAllChannelsPermissions()
 
@@ -308,12 +315,14 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE) do(e: Args):
       let args = CheckAllChannelsPermissionsResponseArgs(e)
       if args.communityId == self.sectionId:
+        self.allChannelsPermissionCheckOngoing = false
         self.delegate.onCommunityCheckAllChannelsPermissionsResponse(args.checkAllChannelsPermissionsResponse)
 
     self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
       let args = CheckChannelsPermissionsErrorArgs(e)
       if args.communityId == self.sectionId:
-       self.delegate.setPermissionsToJoinCheckOngoing(false)
+        self.allChannelsPermissionCheckOngoing = false
+        self.delegate.setPermissionsToJoinCheckOngoing(false)
 
     self.events.on(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN) do(e: Args):
       let args = CommunityIdArgs(e)
