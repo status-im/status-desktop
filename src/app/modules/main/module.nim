@@ -409,11 +409,11 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     bannedMembers,
     # pendingMemberRequests
     communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
     ),
     # declinedMemberRequests
     communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
     ),
     communityDetails.encrypted,
     communityTokensItems,
@@ -1690,8 +1690,8 @@ method openSectionChatAndMessage*[T](self: Module[T], sectionId: string, chatId:
     self.chatSectionModules[sectionId].openCommunityChatAndScrollToMessage(chatId, messageId)
 
 method updateRequestToJoinState*[T](self: Module[T], sectionId: string, requestToJoinState: RequestToJoinState) =
-  if sectionId in self.channelGroupModules:
-    self.channelGroupModules[sectionId].updateRequestToJoinState(requestToJoinState)
+  if sectionId in self.chatSectionModules:
+    self.chatSectionModules[sectionId].updateRequestToJoinState(requestToJoinState)
 
 proc createMemberItem*[T](self: Module[T], memberId: string, requestId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)

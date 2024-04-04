@@ -451,7 +451,7 @@ method onChatsLoaded*(
       requestToJoinState = RequestToJoinState.Requested
 
     self.view.setRequestToJoinState(requestToJoinState)
-    self.initCommunityTokenPermissionsModel(community)
+    self.initCommunityTokenPermissionsModel()
     self.onCommunityCheckAllChannelsPermissionsResponse(community.channelPermissions)
     self.controller.asyncCheckPermissionsToJoin()
 
