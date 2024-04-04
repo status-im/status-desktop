@@ -89,8 +89,6 @@ proc contractUniqueKey*(chainId: int, contractAddress: string): string =
   return $chainId & "_" & contractAddress
 
 proc intersectSeqs*[T](seq1, seq2: seq[T]): seq[T] =
-  var result: seq[T] = @[]
   for item in seq1:
     if item in seq2:
       result.add(item)
-  return result
