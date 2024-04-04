@@ -194,3 +194,36 @@ int /*PermissionTypes::Type*/ PermissionUtilsInternal::isEligibleToJoinAs(QAbstr
 
     return PermissionTypes::Type::None;
 }
+
+QVariantMap PermissionUtilsInternal::getTokenByKey(QAbstractItemModel *model,
+                                                   const QVariant &keyValue) const
+{
+    if (!model)
+        return {};
+
+    const auto roles = model->roleNames();
+    const auto keyRole = roles.key(QByteArrayLiteral("key"), -1);
+    const auto subItemsRole = roles.key(QByteArrayLiteral("subItems"), -1);
+
+    const auto count = model->rowCount();
+    for (int i = 0; i < count; i++) {
+        const auto modelIndex = model->index(i, 0);
+        if (keyRole != -1 && modelIndex.data(keyRole) == keyValue) {
+            QVariantMap result;
+            for (auto it = roles.cbegin(); it != roles.cend(); ++it)
+                result.insert(it.value(), modelIndex.data(it.key()));
+            return result;
+        }
+
+        if (subItemsRole != -1) {
+            const auto subItemModel = qvariant_cast<QAbstractItemModel *>(modelIndex.data(subItemsRole));
+            if (subItemModel) {
+                const auto subItem = getTokenByKey(subItemModel, keyValue);
+                if (!subItem.isEmpty())
+                    return subItem;
+            }
+        }
+    }
+
+    return {};
+}

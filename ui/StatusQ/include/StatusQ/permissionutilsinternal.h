@@ -16,6 +16,8 @@ class PermissionUtilsInternal : public QObject
 public:
     explicit PermissionUtilsInternal(QObject* parent = nullptr);
 
+    Q_INVOKABLE QVariantMap getTokenByKey(QAbstractItemModel *model, const QVariant& keyValue) const;
+
     //!< traverse the permissions @p model, and look for unique token keys recursively under holdingsListModel->key
     Q_INVOKABLE QStringList getUniquePermissionTokenKeys(QAbstractItemModel *model, int type) const;
 
