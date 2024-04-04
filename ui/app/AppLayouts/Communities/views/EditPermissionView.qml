@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -516,11 +517,12 @@ StatusScrollView {
                 }
             }
 
-            ChannelsSelectionModel {
+            LeftJoinModel {
                 id: channelsSelectionModel
 
-                selectedChannels: d.dirtyValues.selectedChannelsModel
-                allChannels: root.channelsModel
+                leftModel: d.dirtyValues.selectedChannelsModel
+                rightModel: root.channelsModel
+                joinRole: "key"
             }
 
             InDropdown {
