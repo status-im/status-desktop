@@ -75,6 +75,7 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
 
 method contactUpdated*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
+  let isMe = publicKey == singletonInstance.userProfile.getPubKey()
   self.view.model().updateItem(
     pubKey = publicKey,
     displayName = contactDetails.dto.displayName,
@@ -84,7 +85,7 @@ method contactUpdated*(self: Module, publicKey: string) =
     alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
-    isVerified = contactDetails.dto.isContactVerified(),
+    isVerified = not isMe and contactDetails.dto.isContactVerified(),
     isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
   )
 
@@ -129,7 +130,7 @@ proc addChatMember(self: Module,  member: ChatMember) =
     colorHash = contactDetails.colorHash,
     onlineStatus = status,
     isContact = contactDetails.dto.isContact,
-    isVerified = contactDetails.dto.isContactVerified(),
+    isVerified = not isMe and contactDetails.dto.isContactVerified(),
     memberRole = member.role,
     joined = member.joined,
     isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
@@ -156,6 +157,7 @@ method onMembersChanged*(self: Module,  members: seq[ChatMember]) =
 
 method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberRole, joined: bool) =
   let contactDetails = self.controller.getContactDetails(publicKey)
+  let isMe = publicKey == singletonInstance.userProfile.getPubKey()
   self.view.model().updateItem(
     pubKey = publicKey,
     displayName = contactDetails.dto.displayName,
@@ -165,7 +167,7 @@ method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberR
     alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
-    isVerified = contactDetails.dto.isContactVerified(),
+    isVerified = not isMe and contactDetails.dto.isContactVerified(),
     memberRole = memberRole,
     joined = joined,
     isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,

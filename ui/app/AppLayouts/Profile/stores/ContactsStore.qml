@@ -127,6 +127,10 @@ QtObject {
         root.contactsModule.removeTrustStatus(pubKey)
     }
 
+    function removeTrustVerificationStatus(pubKey) {
+        root.contactsModule.removeTrustVerificationStatus(pubKey)
+    }
+
     function sendVerificationRequest(pubKey, challenge) {
         root.contactsModule.sendVerificationRequest(pubKey, challenge);
         Global.displaySuccessToastMessage(qsTr("ID verification request sent"))

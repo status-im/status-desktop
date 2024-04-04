@@ -714,18 +714,30 @@ QtObject:
       error "error verified untrustworthy request", msg=e.msg
 
   proc removeTrustStatus*(self: Service, publicKey: string) =
-    let response = status_contacts.removeTrustStatus(publicKey)
-    if not response.error.isNil:
-      error "error removing trust status", msg = response.error.message
-      return
+    try:
+      let response = status_contacts.removeTrustStatus(publicKey)
+      if not response.error.isNil:
+        error "error removing trust status", msg = response.error.message
+        return
 
-    if self.contacts.hasKey(publicKey):
-      self.contacts[publicKey].dto.trustStatus = TrustStatus.Unknown
-      if self.contacts[publicKey].dto.verificationStatus == VerificationStatus.Verified:
-        self.contacts[publicKey].dto.verificationStatus = VerificationStatus.Unverified
+      self.parseContactsResponse(response)
+      self.parseContactsResponse(response)
+      self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+    except Exception as e:
+      error "error in removeTrustStatus request", msg = e.msg
 
-    self.events.emit(SIGNAL_REMOVED_TRUST_STATUS,
-      TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+  proc removeTrustVerificationStatus*(self: Service, publicKey: string) =
+    try:
+      let response = status_contacts.removeTrustVerificationStatus(publicKey)
+      if not response.error.isNil:
+        error "error removing trust status", msg = response.error.message
+        return
+
+      self.parseContactsResponse(response)
+      self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+      self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
+    except Exception as e:
+      error "error removeTrustVerificationStatus request", msg = e.msg
 
   proc getVerificationRequestSentTo*(self: Service, publicKey: string): VerificationRequest =
     try:

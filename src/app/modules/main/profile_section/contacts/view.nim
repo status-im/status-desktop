@@ -202,6 +202,9 @@ QtObject:
   proc removeTrustStatus*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeTrustStatus(publicKey)
 
+  proc removeTrustVerificationStatus*(self: View, publicKey: string) {.slot.} =
+    self.delegate.removeTrustVerificationStatus(publicKey)
+
   proc getSentVerificationDetailsAsJson(self: View, publicKey: string): string {.slot.} =
     return self.delegate.getSentVerificationDetailsAsJson(publicKey)
 
