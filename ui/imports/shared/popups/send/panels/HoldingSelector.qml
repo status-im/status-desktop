@@ -200,52 +200,40 @@ Item {
         property bool hasCommunityTokens: false
 
         comboBoxDelegate: Item {
-          property var itemModel: model // read 'model' from the delegate's context
-          width: loader.width
-          height: loader.height
-          Loader {
-              id: loader
+            property var itemModel: model // read 'model' from the delegate's context
+            width: loader.width
+            height: loader.height
+            Loader {
+                id: loader
 
-              // inject model properties to the loaded item's context
-              // common
-              property var model: itemModel
-              property var chainId: model.chainId
-              property var name: model.name
-              property var tokenType: model.tokenType
-              // asset
-              property var symbol: model.symbol
-              property var totalBalance: model.totalBalance
-              property var marketDetails: model.marketDetails
-              property var decimals: model.decimals
-              property var balances: model.balances
-              // collectible
-              property var uid: model.uid
-              property var iconUrl: model.iconUrl
-              property var networkIconUrl: model.networkIconUrl
-              property var groupId: model.groupId
-              property var groupName: model.groupName
-              property var isGroup: model.isGroup
-              property var count: model.count
-          }
-        }
+                // inject model properties to the loaded item's context
+                // common
+                property var model: itemModel
+                property var chainId: model.chainId
+                property var name: model.name
+                property var tokenType: model.tokenType
+                // asset
+                property var symbol: model.symbol
+                property var totalBalance: model.totalBalance
+                property var marketDetails: model.marketDetails
+                property var decimals: model.decimals
+                property var balances: model.balances
+                // collectible
+                property var uid: model.uid
+                property var iconUrl: model.iconUrl
+                property var networkIconUrl: model.networkIconUrl
+                property var groupId: model.groupId
+                property var groupName: model.groupName
+                property var isGroup: model.isGroup
+                property var count: model.count
 
-        // Switch models and delegate in the right order not to mix different models and delegates
-        function updateComponents() {
-            holdingItemSelector.comboBoxModel = []
-            sourceComponent: d.isCurrentBrowsingTypeAsset ? assetComboBoxDelegate : collectibleComboBoxDelegate
-            holdingItemSelector.comboBoxModel = d.isCurrentBrowsingTypeAsset
-                                                    ? root.assetsModel
-                                                    : d.collectibleComboBoxModel
-        }
-        Component.onCompleted: updateComponents()
-        Connections {
-            target: d
-            function onIsCurrentBrowsingTypeAssetChanged() {
-                holdingItemSelector.updateComponents()
+                sourceComponent: d.isCurrentBrowsingTypeAsset ? assetComboBoxDelegate : collectibleComboBoxDelegate
             }
         }
-        comboBoxModel: null
 
+        comboBoxModel: d.isCurrentBrowsingTypeAsset
+                        ? root.assetsModel
+                        : d.collectibleComboBoxModel
         comboBoxPopupHeader: headerComponent
         itemTextFn: d.isCurrentBrowsingTypeAsset ? d.assetTextFn : d.collectibleTextFn
         itemIconSourceFn: d.isCurrentBrowsingTypeAsset ? d.assetIconSourceFn : d.collectibleIconSourceFn

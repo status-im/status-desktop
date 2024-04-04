@@ -12,12 +12,6 @@ import utils 1.0
 StatusListItem {
     id: root
 
-    required property var model
-    required property string name
-    required property string symbol
-    required property int decimals
-    required property var balances
-
     signal tokenSelected(var selectedToken)
     signal tokenHovered(var selectedToken, bool hovered)
     property var formatCurrentCurrencyAmount: function(balance){}
@@ -55,7 +49,7 @@ StatusListItem {
         return root.formatCurrentCurrencyAmount(balance)
     }
     // Community assets have a dedicated image streamed from status-go
-    asset.name: !!model.image
+    asset.name: !!model && !!model.image
                 ? model.image
                 : Constants.tokenIcon(symbol)
     asset.isImage: true
