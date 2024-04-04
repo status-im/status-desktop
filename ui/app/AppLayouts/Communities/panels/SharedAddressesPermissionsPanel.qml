@@ -53,7 +53,7 @@ Rectangle {
         readonly property bool lostPermissionToJoin: root.isEditMode && joinPermissionsModel.count && !joinPermissionPanel.tokenCriteriaMet
 
         readonly property var uniquePermissionChannels:
-            root.permissionsModel && root.permissionsModel.count ?
+            d.channelsPermissionsModel.count ?
                 PermissionsHelpers.getUniquePermissionChannels(root.permissionsModel, [PermissionTypes.Type.Read, PermissionTypes.Type.ViewAndPost])
               : []
 
@@ -74,51 +74,102 @@ Rectangle {
         readonly property var tokenMasterPermissionsModel: SortFilterProxyModel {
             id: tokenMasterPermissionsModel
             sourceModel: root.permissionsModel
-            function filterPredicate(permissionType, tokenCriteriaMet) {
-                return (permissionType === Constants.permissionType.becomeTokenMaster) && tokenCriteriaMet
-            }
-            filters: FastExpressionFilter {
-                expression: tokenMasterPermissionsModel.filterPredicate(model.permissionType, model.tokenCriteriaMet)
-                expectedRoles: ["permissionType", "tokenCriteriaMet"]
-            }
+            filters: [
+                ValueFilter {
+                    roleName: "permissionType"
+                    value: Constants.permissionType.becomeTokenMaster
+                },
+                ValueFilter {
+                    roleName: "tokenCriteriaMet"
+                    value: true
+                }
+            ]
         }
         readonly property var adminPermissionsModel: SortFilterProxyModel {
             id: adminPermissionsModel
             sourceModel: root.permissionsModel
-            function filterPredicate(permissionType, tokenCriteriaMet, isPrivate) {
-                return (permissionType === Constants.permissionType.admin) &&
-                        (!isPrivate || (tokenCriteriaMet && isPrivate)) // visible or (hidden & met)
-            }
-            filters: FastExpressionFilter {
-                expression: adminPermissionsModel.filterPredicate(model.permissionType, model.tokenCriteriaMet, model.isPrivate)
-                expectedRoles: ["permissionType", "tokenCriteriaMet", "isPrivate"]
-            }
+            filters: [
+                ValueFilter {
+                    roleName: "permissionType"
+                    value: Constants.permissionType.admin
+                },
+                AnyOf {
+                    ValueFilter {
+                        roleName: "isPrivate"
+                        value: false
+                    }
+                    AllOf {
+                        ValueFilter {
+                            roleName: "tokenCriteriaMet"
+                            value: true
+                        }
+                        ValueFilter {
+                            roleName: "isPrivate"
+                            value: true
+                        }
+                    }
+                }
+            ]
         }
         readonly property var joinPermissionsModel: SortFilterProxyModel {
             id: joinPermissionsModel
             sourceModel: root.permissionsModel
-            function filterPredicate(permissionType, tokenCriteriaMet, isPrivate) {
-                return (permissionType === Constants.permissionType.member) &&
-                        (!isPrivate || (tokenCriteriaMet && isPrivate)) // visible or (hidden & met)
-            }
-            filters: FastExpressionFilter {
-                expression: joinPermissionsModel.filterPredicate(model.permissionType, model.tokenCriteriaMet, model.isPrivate)
-                expectedRoles: ["permissionType", "tokenCriteriaMet", "isPrivate"]
-            }
+            filters: [
+                ValueFilter {
+                    roleName: "permissionType"
+                    value: Constants.permissionType.member
+                },
+                AnyOf {
+                    ValueFilter {
+                        roleName: "isPrivate"
+                        value: false
+                    }
+                    AllOf {
+                        ValueFilter {
+                            roleName: "tokenCriteriaMet"
+                            value: true
+                        }
+                        ValueFilter {
+                            roleName: "isPrivate"
+                            value: true
+                        }
+                    }
+                }
+            ]
         }
 
         // used to check if there are any visible channel permissions
         readonly property var channelsPermissionsModel: SortFilterProxyModel {
             id: channelsPermissionsModel
             sourceModel: root.permissionsModel
-            function filterPredicate(permissionType, tokenCriteriaMet, isPrivate) {
-                return (permissionType === Constants.permissionType.read || permissionType === Constants.permissionType.viewAndPost) &&
-                        (!isPrivate || (tokenCriteriaMet && isPrivate)) // visible or (hidden & met)
-            }
-            filters: FastExpressionFilter {
-                expression: channelsPermissionsModel.filterPredicate(model.permissionType, model.tokenCriteriaMet, model.isPrivate)
-                expectedRoles: ["permissionType", "tokenCriteriaMet", "isPrivate"]
-            }
+            filters: [
+                AnyOf {
+                    ValueFilter {
+                        roleName: "permissionType"
+                        value: Constants.permissionType.read
+                    }
+                    ValueFilter {
+                        roleName: "permissionType"
+                        value: Constants.permissionType.viewAndPost
+                    }
+                },
+                AnyOf {
+                    ValueFilter {
+                        roleName: "isPrivate"
+                        value: false
+                    }
+                    AllOf {
+                        ValueFilter {
+                            roleName: "tokenCriteriaMet"
+                            value: true
+                        }
+                        ValueFilter {
+                            roleName: "isPrivate"
+                            value: true
+                        }
+                    }
+                }
+            ]
         }
     }
 
@@ -277,7 +328,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: Theme.tertiaryTextFontSize
                     text: model.text
-                    color: model.available ? Theme.palette.successColor1 : Theme.palette.directColor1
+                    color: model.available ? Theme.palette.successColor1 : Theme.palette.baseColor1
                 }
             }
         }
@@ -488,17 +539,22 @@ Rectangle {
 
                                 model: SortFilterProxyModel {
                                     id: channelPermissionsModel
-                                    sourceModel: root.permissionsModel
-                                    function filterPredicate(permissionType, tokenCriteriaMet, isPrivate, channelsListModel) {
-                                        return permissionType === channelPermsSubPanel.permissionType &&
-                                                (!isPrivate || (tokenCriteriaMet && isPrivate)) &&
-                                                ModelUtils.contains(channelsListModel, "key", channelPermsPanel.channelKey) // filter and group by channel "key"
+                                    sourceModel: d.channelsPermissionsModel
+
+                                    function filterPredicate(channelsListModel) {
+                                        return ModelUtils.contains(channelsListModel, "key", channelPermsPanel.channelKey)
                                     }
-                                    filters: FastExpressionFilter {
-                                        expression: channelPermissionsModel.filterPredicate(model.permissionType, model.tokenCriteriaMet,
-                                                                                            model.isPrivate, model.channelsListModel)
-                                        expectedRoles: ["permissionType", "tokenCriteriaMet", "isPrivate", "channelsListModel"]
-                                    }
+
+                                    filters: [
+                                        ValueFilter {
+                                            roleName: "permissionType"
+                                            value: channelPermsSubPanel.permissionType
+                                        },
+                                        FastExpressionFilter {
+                                            expression: channelPermissionsModel.filterPredicate(model.channelsListModel) // filter and group by channel "key"
+                                            expectedRoles: ["channelsListModel"]
+                                        }
+                                    ]
                                 }
                                 delegate: ColumnLayout {
                                     Layout.column: 0
