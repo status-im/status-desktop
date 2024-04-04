@@ -9,6 +9,7 @@ import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/shared_urls/service as shared_urls_service
+import ../../../../app_service/common/types
 
 import model as chats_model
 import item as chat_item
@@ -420,4 +421,7 @@ method communityContainsChat*(self: AccessInterface, chatId: string): bool {.bas
   raise newException(ValueError, "No implementation available")
 
 method openCommunityChatAndScrollToMessage*(self: AccessInterface, chatId: string, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateRequestToJoinState*(self: AccessInterface, state: RequestToJoinState) {.base.} =
   raise newException(ValueError, "No implementation available")

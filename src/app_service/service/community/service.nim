@@ -2055,7 +2055,7 @@ QtObject:
 
           community.pendingRequestsToJoin.delete(i)
           self.communities[communityId] = community
-          self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, Args())
+          self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, CommunityIdArgs(communityId: communityId))
           checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
           return
 

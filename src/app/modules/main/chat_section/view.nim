@@ -4,6 +4,7 @@ import item, active_item
 import ../../shared_models/user_model as user_model
 import ../../shared_models/message_model as member_msg_model
 import ../../shared_models/token_permissions_model
+import ../../../../app_service/common/types
 import io_interface
 
 QtObject:
@@ -35,6 +36,7 @@ QtObject:
       allChannelsAreHiddenBecauseNotPermitted: bool
       memberMessagesModel: member_msg_model.Model
       memberMessagesModelVariant: QVariant
+      requestToJoinState: RequestToJoinState
 
 
   proc delete*(self: View) =
@@ -79,6 +81,7 @@ QtObject:
     result.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin = false
     result.memberMessagesModel = member_msg_model.newModel()
     result.memberMessagesModelVariant = newQVariant(result.memberMessagesModel)
+    result.requestToJoinState = RequestToJoinState.None
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -534,3 +537,18 @@ QtObject:
 
   proc openCommunityChatAndScrollToMessage*(self: View, chatId: string, messageId: string) {.slot.} =
     self.delegate.openCommunityChatAndScrollToMessage(chatId, messageId)
+
+  proc requestToJoinStateChanged*(self: View) {.signal.}
+
+  proc getRequestToJoinState*(self: View): int {.slot.} =
+    return self.requestToJoinState.int
+
+  QtProperty[int] requestToJoinState:
+    read = getRequestToJoinState
+    notify = requestToJoinStateChanged
+
+  proc setRequestToJoinState*(self: View, requestToJoinState: RequestToJoinState) =
+    if self.requestToJoinState == requestToJoinState:
+      return
+    self.requestToJoinState = requestToJoinState
+    self.requestToJoinStateChanged()

@@ -16,7 +16,7 @@ import app_service/service/community_tokens/community_collectible_owner
 import app_service/service/shared_urls/service as urls_service
 import app_service/service/network/service as network_service
 import app_service/service/network/network_item
-from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState, Shard
+from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState, Shard, RequestToJoinState
 
 import app/global/app_signals
 import app/core/eventemitter
@@ -422,6 +422,9 @@ method checkIfAddressWasCopied*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method openSectionChatAndMessage*(self: AccessInterface, sectionId: string, chatId: string, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateRequestToJoinState*(self: AccessInterface, sectionId: string, requestToJoinState: RequestToJoinState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
