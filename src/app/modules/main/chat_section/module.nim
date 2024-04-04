@@ -53,6 +53,8 @@ type
     chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
     chatsLoaded: bool
+    checkingPermissionToJoinInProgress: bool
+    checkingAllChannelPermissionsInProgress: bool
 
 # Forward declaration
 proc buildChatSectionUI(
@@ -120,6 +122,8 @@ proc newModule*(
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
   result.chatsLoaded = false
+  result.checkingPermissionToJoinInProgress = false
+  result.checkingAllChannelPermissionsInProgress = false
 
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
 
@@ -1002,12 +1006,24 @@ proc updateChannelPermissionViewData*(self: Module, chatId: string, viewOnlyPerm
   self.updateViewAndPostPermissionsSatisfied(chatId, viewAndPostPermissions.satisfied)
   self.refreshHiddenBecauseNotPermittedState()
 
+proc updateCheckingPermissionsInProgressIfNeeded(self: Module, inProgress = false) =
+  if self.checkingPermissionToJoinInProgress != self.checkingAllChannelPermissionsInProgress:
+    # Wait until both join and channel permissions have returned to update the loading
+    return
+  self.view.setCheckingPermissionsInProgress(inProgress)
+
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
   let community = self.controller.getMyCommunity()
   self.view.setAllTokenRequirementsMet(checkPermissionsToJoinResponse.satisfied)
   self.updateTokenPermissionModel(checkPermissionsToJoinResponse.permissions, community)
   self.updateCommunityPermissionsView()
   self.setPermissionsToJoinCheckOngoing(false)
+
+  if not self.checkingPermissionToJoinInProgress:
+    return
+  #self.applyPermissionResponse(checkPermissionsToJoinResponse.permissions)
+  self.checkingPermissionToJoinInProgress = false
+  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   let community = self.controller.getMyCommunity()
@@ -1040,6 +1056,18 @@ method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, checkAllCha
 
   for chatId, permissionResult in checkAllChannelsPermissionsResponse.channels:
     self.updateChannelPermissionViewData(chatId, permissionResult.viewOnlyPermissions, permissionResult.viewAndPostPermissions, community)
+
+  if not self.checkingAllChannelPermissionsInProgress:
+    return
+  self.checkingAllChannelPermissionsInProgress = false
+  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
+  #for _, channelPermissionResponse in checkChannelPermissionsResponse.channels:
+    #self.applyPermissionResponse(
+    #  channelPermissionResponse.viewOnlyPermissions.permissions,
+    #)
+    #self.applyPermissionResponse(
+    #  channelPermissionResponse.viewAndPostPermissions.permissions,
+    #)
 
 method onKickedFromCommunity*(self: Module) =
   self.view.setAmIMember(false)
@@ -1555,3 +1583,43 @@ method openCommunityChatAndScrollToMessage*(self: Module, chatId: string, messag
   if chatId in self.chatContentModules:
     self.setActiveItem(chatId)
     self.chatContentModules[chatId].scrollToMessage(messageId)
+
+method requestRevealedAddresses*(self: Module) =
+  if(not self.controller.isCommunity()):
+    return
+  self.controller.asyncGetRevealedAccountsForMember(singletonInstance.userProfile.getPubKey())
+
+method onCommunityMemberRevealedAccountsLoaded*(self: Module, memberPubkey: string,
+    revealedAccounts: seq[RevealedAccount]) =
+
+  if memberPubkey == singletonInstance.userProfile.getPubKey():
+    var addresses: seq[string] = @[]
+    var airdropAddress = ""
+    for revealedAccount in revealedAccounts:
+      addresses.add(revealedAccount.address)
+      if revealedAccount.isAirdropAddress:
+        airdropAddress = revealedAccount.address
+
+    self.view.setMyRevealedAddressesForCurrentCommunity($(%*addresses), airdropAddress)
+
+method checkPermissions*(self: Module, sharedAddresses: seq[string]) =
+  if(not self.controller.isCommunity()):
+    return
+
+  self.controller.asyncCheckPermissionsToJoin(sharedAddresses)
+  self.checkingPermissionToJoinInProgress = true
+
+  self.controller.asyncCheckAllChannelsPermissions(sharedAddresses)
+  self.checkingAllChannelPermissionsInProgress = true
+
+  self.view.setCheckingPermissionsInProgress(inProgress = true)
+
+method onCommunityCheckPermissionsToJoinFailed*(self: Module, error: string) =
+  # TODO show error
+  self.checkingPermissionToJoinInProgress = false
+  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
+
+method onCommunityCheckAllChannelPermissionsFailed*(self: Module, error: string) =
+  # TODO show error
+  self.checkingAllChannelPermissionsInProgress = false
+  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)

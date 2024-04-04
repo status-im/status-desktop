@@ -1,8 +1,7 @@
 import NimQml, json, strutils, sequtils
 
 import ./io_interface
-import ../../shared_models/[section_model, section_item, token_list_model, token_list_item,
-  token_permissions_model, keypair_model]
+import ../../shared_models/[section_model, section_item, token_list_model, token_list_item, keypair_model]
 import ./models/curated_community_model
 import ./models/discord_file_list_model
 import ./models/discord_file_item
@@ -18,8 +17,6 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: SectionModel
       modelVariant: QVariant
-      spectatedCommunityPermissionModel: TokenPermissionsModel
-      spectatedCommunityPermissionModelVariant: QVariant
       curatedCommunitiesModel: CuratedCommunityModel
       curatedCommunitiesModelVariant: QVariant
       curatedCommunitiesLoading: bool
@@ -54,17 +51,12 @@ QtObject:
       discordImportedChannelCommunityId: string
       discordImportHasCommunityImage: bool
       downloadingCommunityHistoryArchives: bool
-      checkingPermissionsInProgress: bool
-      myRevealedAddressesStringForCurrentCommunity: string
-      myRevealedAirdropAddressForCurrentCommunity: string
       keypairsSigningModel: KeyPairModel
       keypairsSigningModelVariant: QVariant
 
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
-    self.spectatedCommunityPermissionModel.delete
-    self.spectatedCommunityPermissionModelVariant.delete
     self.curatedCommunitiesModel.delete
     self.curatedCommunitiesModelVariant.delete
     self.discordFileListModel.delete
@@ -93,8 +85,6 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
-    result.spectatedCommunityPermissionModel = newTokenPermissionsModel()
-    result.spectatedCommunityPermissionModelVariant = newQVariant(result.spectatedCommunityPermissionModel)
     result.curatedCommunitiesModel = newCuratedCommunityModel()
     result.curatedCommunitiesModelVariant = newQVariant(result.curatedCommunitiesModel)
     result.curatedCommunitiesLoading = false
@@ -336,12 +326,6 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
 
-  proc spectatedCommunityPermissionModel*(self: View): TokenPermissionsModel =
-    result = self.spectatedCommunityPermissionModel
-
-  proc prepareTokenModelForCommunity(self: View, communityId: string) {.slot.} =
-    self.delegate.prepareTokenModelForCommunity(communityId)
-
   proc signProfileKeypairAndAllNonKeycardKeypairs*(self: View) {.slot.} =
     self.delegate.signProfileKeypairAndAllNonKeycardKeypairs()
 
@@ -350,19 +334,6 @@ QtObject:
 
   proc joinCommunityOrEditSharedAddresses*(self: View) {.slot.} =
     self.delegate.joinCommunityOrEditSharedAddresses()
-
-  proc checkPermissions*(self: View, communityId: string, addressesToShare: string) {.slot.} =
-    try:
-      let sharedAddresses = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
-      self.delegate.checkPermissions(communityId, sharedAddresses)
-    except Exception as e:
-      echo "Error updating token model with addresses: ", e.msg
-
-  proc getSpectatedCommunityPermissionModel(self: View): QVariant {.slot.} =
-    return self.spectatedCommunityPermissionModelVariant
-
-  QtProperty[QVariant] spectatedCommunityPermissionModel:
-    read = getSpectatedCommunityPermissionModel
 
   proc curatedCommunitiesModel*(self: View): CuratedCommunityModel =
     result = self.curatedCommunitiesModel
@@ -763,42 +734,6 @@ QtObject:
 
   proc getCommunityPublicKeyFromPrivateKey*(self: View, communityPrivateKey: string): string {.slot.} =
     result = self.delegate.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
-
-  proc myRevealedAirdropAddressesForCurrentCommunityChanged*(self: View) {.signal.}
-
-  proc setMyRevealedAddressesForCurrentCommunity*(self: View, revealedAddress, airdropAddress: string) =
-    self.myRevealedAddressesStringForCurrentCommunity = revealedAddress
-    self.myRevealedAirdropAddressForCurrentCommunity = airdropAddress
-    self.myRevealedAirdropAddressesForCurrentCommunityChanged()
-
-  proc getMyRevealedAddressesStringForCurrentCommunity*(self: View): string {.slot.} =
-    return self.myRevealedAddressesStringForCurrentCommunity
-
-  QtProperty[string] myRevealedAddressesStringForCurrentCommunity:
-    read = getMyRevealedAddressesStringForCurrentCommunity
-    notify = myRevealedAirdropAddressesForCurrentCommunityChanged
-
-
-  proc getMyRevealedAirdropAddressStringForCurrentCommunity*(self: View): string {.slot.} =
-    return self.myRevealedAirdropAddressForCurrentCommunity
-
-  QtProperty[string] myRevealedAirdropAddressForCurrentCommunity:
-    read = getMyRevealedAirdropAddressStringForCurrentCommunity
-    notify = myRevealedAirdropAddressesForCurrentCommunityChanged
-
-  proc checkingPermissionsInProgressChanged*(self: View) {.signal.}
-
-  proc setCheckingPermissionsInProgress*(self: View, inProgress: bool) =
-    if (self.checkingPermissionsInProgress == inProgress): return
-    self.checkingPermissionsInProgress = inProgress
-    self.checkingPermissionsInProgressChanged()
-
-  proc getCheckingPermissionsInProgress*(self: View): bool {.slot.} =
-    return self.checkingPermissionsInProgress
-
-  QtProperty[bool] requirementsCheckPending:
-    read = getCheckingPermissionsInProgress
-    notify = checkingPermissionsInProgressChanged
 
   proc keypairsSigningModel*(self: View): KeyPairModel =
     return self.keypairsSigningModel
