@@ -8,6 +8,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Layout 0.1
 
+import utils 1.0
+
 ColumnLayout {
     id: root
 
@@ -17,7 +19,7 @@ ColumnLayout {
     property string name
     property string channelName
 
-    property bool isInvitationPending: false
+    property int requestToJoinState: Constants.RequestToJoinState.None
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
 
@@ -143,7 +145,7 @@ ColumnLayout {
                     allChannelsAreHiddenBecauseNotPermitted: root.allChannelsAreHiddenBecauseNotPermitted
                     requirementsMet: root.requirementsMet
                     requirementsCheckPending: root.requirementsCheckPending
-                    isInvitationPending: root.isInvitationPending
+                    requestToJoinState: root.requestToJoinState
                     isJoinRequestRejected: root.isJoinRequestRejected
                     requiresRequest: root.requiresRequest
                     communityName: root.name

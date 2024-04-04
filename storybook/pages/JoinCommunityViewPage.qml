@@ -38,7 +38,9 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
 
         // Overlay component:
         property bool requirementsMet: true
-        property bool isInvitationPending: true
+        property int requestToJoinState: Constants.RequestToJoinState.None
+        property bool isInvitationPending: requestToJoinState !== Constants.RequestToJoinState.None
+
         property bool isJoinRequestRejected: false
         property bool requiresRequest: false
 
@@ -115,7 +117,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 channelDesc: d.channelDesc
                 joinCommunity: d.joinCommunity
                 accessType: d.accessType
-                isInvitationPending: d.isInvitationPending
+                requestToJoinState: d.requestToJoinState
 
                 // Blur background properties:
                 membersCount: d.membersCount
@@ -226,12 +228,15 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
 
                     CheckBox {
                         checked: d.isInvitationPending
-                        onCheckedChanged:  d.isInvitationPending = checked
+                        onCheckedChanged: {
+                            d.isInvitationPending = checked
+                            d.requestToJoinState = d.isInvitationPending ? Constants.RequestToJoinState.Requested : Constants.RequestToJoinState.None
+                        }
                     }
                 }
 
                 ColumnLayout {
-                    visible: !d.isInvitationPending
+                    visible: d.requestToJoinState === Constants.RequestToJoinState.None
                     Label {
                         Layout.fillWidth: true
                         text: "Access type:"
@@ -260,7 +265,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     channelName: d.chanelName
                     joinCommunity: d.joinCommunity
                     requirementsMet: d.requirementsMet
-                    isInvitationPending: d.isInvitationPending
+                    isInvitationPending: d.requestToJoinState !== Constants.RequestToJoinState.None
                     isJoinRequestRejected: d.isJoinRequestRejected
                     requiresRequest: d.requiresRequest
 

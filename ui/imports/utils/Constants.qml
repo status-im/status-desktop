@@ -1300,4 +1300,10 @@ QtObject {
         Collection = 2,
         Community = 3
     }
+
+    enum RequestToJoinState {
+        None = 0,
+        InProgress = 1,
+        Requested = 2
+    }
 }

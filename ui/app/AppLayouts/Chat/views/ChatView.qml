@@ -57,7 +57,7 @@ StatusSectionLayout {
     property bool amISectionAdmin: false
     readonly property bool allChannelsAreHiddenBecauseNotPermitted: rootStore.allChannelsAreHiddenBecauseNotPermitted
 
-    property bool isInvitationPending: false
+    property int requestToJoinState: Constants.RequestToJoinState.None
 
     property var viewOnlyPermissionsModel
     property var viewAndPostPermissionsModel
@@ -258,7 +258,7 @@ StatusSectionLayout {
             viewAndPostHoldingsModel: root.viewAndPostPermissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
-            isInvitationPending: root.isInvitationPending
+            requestToJoinState: root.requestToJoinState
             requiresRequest: !root.amIMember
             requirementsMet: (viewOnlyPermissionsSatisfied && viewOnlyPermissionsModel.count > 0) ||
                              (viewAndPostPermissionsSatisfied && viewAndPostPermissionsModel.count > 0)
