@@ -26,9 +26,6 @@ pytestmark = marks
     (configs.testpath.TEST_USER_DATA / 'group_chat_user_1', configs.testpath.TEST_USER_DATA / 'group_chat_user_2',
      configs.testpath.TEST_USER_DATA / 'group_chat_user_3')
 ])
-@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/618')
-# TODO: https://github.com/status-im/status-desktop/issues/14191
-# TODO: https://github.com/status-im/status-desktop/issues/14193
 def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_three):
     user_one: UserAccount = constants.group_chat_user_1
     user_two: UserAccount = constants.group_chat_user_2
@@ -39,7 +36,7 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
 
     with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(
             user_data=user_data_two) as aut_two, multiple_instances(
-            user_data=user_data_three) as aut_three:
+        user_data=user_data_three) as aut_three:
         with step(f'Launch multiple instances with authorized users {user_one.name}, {user_two.name}, {user_three}'):
             for aut, account in zip([aut_one, aut_two, aut_three], [user_one, user_two, user_three]):
                 aut.attach()
@@ -94,21 +91,23 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
                 assert driver.waitFor(lambda: user_one.name in messages_screen.right_panel.members,
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 assert user_two.name in messages_screen.right_panel.members
-                assert user_three.name not in messages_screen.right_panel.members
+                assert driver.waitFor(lambda: user_three.name not in messages_screen.right_panel.members,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 assert len(messages_screen.right_panel.members) == 2
                 main_window.hide()
 
         with step(f'Check group members and message for {user_two.name}'):
             aut_two.attach()
             main_window.prepare()
-            assert group_chat_new_name in messages_screen.left_panel.get_chats_names, \
-                f'{group_chat_new_name} is not present in chats list for {aut_two}'
+            assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'{group_chat_new_name} is not present in chats list for {aut_two}'
             messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
 
             with step('Verify members in a group members list'):
                 assert user_one.name in messages_screen.right_panel.members
                 assert user_two.name in messages_screen.right_panel.members
-                assert user_three.name not in messages_screen.right_panel.members
+                assert driver.waitFor(lambda: user_three.name not in messages_screen.right_panel.members,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 assert len(messages_screen.right_panel.members) == 2
 
             with step('Send message to group chat after user removal and verify it'):
@@ -132,8 +131,8 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
             main_window.prepare()
 
             with step(f'Check that {user_three.name} is not a member of a group'):
-                assert group_chat_new_name in messages_screen.left_panel.get_chats_names, \
-                    f'{group_chat_new_name} is not present in chats list for {aut_three}'
+                assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'{group_chat_new_name} is not present in chats list for {aut_three}'
                 messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
                 gray_message_text = messages_screen.group_chat.gray_text_from_message_area
                 assert gray_message_text == Messaging.YOU_NEED_TO_BE_A_MEMBER.value
@@ -142,7 +141,8 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
             with step('Verify members in a group members list'):
                 assert user_one.name in messages_screen.right_panel.members
                 assert user_two.name in messages_screen.right_panel.members
-                assert user_three.name in messages_screen.right_panel.members is False
+                assert driver.waitFor(lambda: user_three.name not in messages_screen.right_panel.members,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 assert len(messages_screen.right_panel.members) == 2  # it has to be 2 since user3 is kicked and not
                 # receiving any updates from that moment
 
@@ -166,4 +166,4 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
                 messages_screen.group_chat.leave_group().confirm_leaving()
 
             with step('Check that group name is not displayed on left panel'):
-                assert group_chat_new_name in messages_screen.left_panel.get_chats_names is False
+                assert group_chat_new_name not in messages_screen.left_panel.get_chats_names
