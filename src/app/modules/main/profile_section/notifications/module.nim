@@ -85,7 +85,7 @@ method initModel(self: Module) =
     items.add(item)
 
   # Add communities
-  let communities = self.controller.getJoinedCommunities()
+  let communities = self.controller.getJoinedAndSpectatedCommunities()
   for community in communities:
     let item = self.createItem(
       community.id,

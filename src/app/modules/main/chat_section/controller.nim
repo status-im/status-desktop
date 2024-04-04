@@ -459,7 +459,18 @@ proc getChatsAndBuildUI*(self: Controller) =
   var community: CommunityDto
   if self.isCommunity():
     community = self.getMyCommunity()
-    chats = self.chatService.getChatsForCommunity(community.id)
+    let normalChats = self.chatService.getChatsForCommunity(community.id)
+
+    # TODO remove this once we do this refactor https://github.com/status-im/status-desktop/issues/14219
+    var fullChats: seq[ChatDto] = @[]
+    for communityChat in community.chats:
+      for chat in normalChats:
+        if chat.id == communityChat.id:
+          var c = chat
+          c.updateMissingFields(communityChat)
+          fullChats.add(c)
+          break
+    chats = fullChats
   else:
     community = CommunityDto()
     chats = self.chatService.getChatsForPersonalSection()

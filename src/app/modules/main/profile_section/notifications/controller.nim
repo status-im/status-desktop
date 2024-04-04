@@ -122,5 +122,5 @@ proc getChatDetails*(self: Controller, chatId: string): ChatDto =
 proc getContactDetails*(self: Controller, id: string): ContactDetails =
   return self.contactService.getContactDetails(id)
 
-proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
-  return self.communityService.getJoinedCommunities()
+proc getJoinedAndSpectatedCommunities*(self: Controller): seq[CommunityDto] =
+  return self.communityService.getJoinedAndSpectatedCommunities()

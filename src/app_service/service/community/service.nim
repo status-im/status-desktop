@@ -306,10 +306,10 @@ QtObject:
     result.communityMetrics = initTable[string, CommunityMetricsDto]()
     result.communityInfoRequests = initTable[string, Time]()
 
-  proc getFilteredJoinedCommunities(self: Service): Table[string, CommunityDto] =
+  proc getFilteredJoinedAndSpectatedCommunities(self: Service): Table[string, CommunityDto] =
     result = initTable[string, CommunityDto]()
     for communityId, community in self.communities.pairs:
-      if community.joined:
+      if community.joined or community.spectated:
         result[communityId] = community
 
   proc getFilteredCuratedCommunities(self: Service): Table[string, CommunityDto] =
@@ -863,8 +863,8 @@ QtObject:
   proc getCommunityTags*(self: Service): string =
     return self.communityTags
 
-  proc getJoinedCommunities*(self: Service): seq[CommunityDto] =
-    return toSeq(self.getFilteredJoinedCommunities().values)
+  proc getJoinedAndSpectatedCommunities*(self: Service): seq[CommunityDto] =
+    return toSeq(self.getFilteredJoinedAndSpectatedCommunities().values)
 
   proc getAllCommunities*(self: Service): seq[CommunityDto] =
     return toSeq(self.communities.values)
@@ -1048,9 +1048,6 @@ QtObject:
 
       let ownerTokenNotification = self.activityCenterService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, communityId)
 
-      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
-      self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true, isPendingOwnershipRequest: (ownerTokenNotification != nil)))
-
       for k, chat in updatedCommunity.chats:
         var fullChatId = chat.id
         if not chat.id.startsWith(communityId):
@@ -1065,6 +1062,9 @@ QtObject:
         # TODO find a way to populate missing infos like the color
         self.chatService.updateOrAddChat(chatDto)
         self.messageService.asyncLoadInitialMessagesForChat(fullChatId)
+
+      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
+      self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true, isPendingOwnershipRequest: (ownerTokenNotification != nil)))
     except Exception as e:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"

@@ -120,7 +120,7 @@ method prepareLocationMenuModel*(self: Module) =
   items.add(personalItem)
 
   # Community sections
-  let communities = self.controller.getJoinedCommunities()
+  let communities = self.controller.getJoinedAndSpectatedCommunities()
   for c in communities:
     items.add(self.buildLocationMenuForCommunity(c))
 
@@ -213,7 +213,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   var channels = personalItems
 
   # Add Communities
-  let communities = self.controller.getJoinedCommunities()
+  let communities = self.controller.getJoinedAndSpectatedCommunities()
 
   let searchTerm = self.controller.searchTerm().toLower
   for community in communities:

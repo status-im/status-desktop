@@ -688,7 +688,7 @@ method onChatsLoaded*[T](
 
   self.chatSectionModules[myPubKey].load()
 
-  let communities = self.controller.getJoinedCommunities()
+  let communities = self.controller.getJoinedAndSpectatedCommunities()
   # Create Community sections
   for community in communities:
     self.chatSectionModules[community.id] = chat_section_module.newModule(
