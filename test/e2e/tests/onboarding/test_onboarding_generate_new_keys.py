@@ -107,9 +107,9 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
             f'Display name in online identifier is wrong, current: {online_identifier.get_user_name}, expected: {user_name}'
         assert online_identifier.is_identicon_ring_visible, \
             f'Identicon ring is not present when it should'
-        assert online_identifier.object.pubkey is not None, \
+        assert str(online_identifier.object.pubkey) is not None, \
             f'Public key is not present'
-        assert online_identifier.object.pubkey == emoji_hash_public_key, f'Public keys should match when they dont'
+        assert str(online_identifier.object.pubkey) == emoji_hash_public_key, f'Public keys should match when they dont'
 
     with step('Open user profile from online identifier and check the data'):
         profile_popup = online_identifier.open_profile_popup_from_online_identifier()
