@@ -38,10 +38,6 @@ QtObject {
     }
 
     property string communityKeyToImport
-    onCommunityKeyToImportChanged: {
-        if (!!communityKeyToImport)
-            root.prepareTokenModelForCommunity(communityKeyToImport);
-    }
 
     readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
                                      root.communitiesModuleInst.spectatedCommunityPermissionModel : null
