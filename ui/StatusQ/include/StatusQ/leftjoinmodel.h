@@ -16,6 +16,9 @@ class LeftJoinModel : public QAbstractListModel
     Q_PROPERTY(QString joinRole READ joinRole
                WRITE setJoinRole NOTIFY joinRoleChanged)
 
+    Q_PROPERTY(QStringList rolesToJoin READ rolesToJoin
+               WRITE setRolesToJoin NOTIFY rolesToJoinChanged)
+
 public:
     explicit LeftJoinModel(QObject* parent = nullptr);
 
@@ -28,6 +31,9 @@ public:
     void setJoinRole(const QString& joinRole);
     const QString& joinRole() const;
 
+    void setRolesToJoin(const QStringList& roles);
+    const QStringList& rolesToJoin() const;
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
     QVariant data(const QModelIndex& index, int role) const override;
@@ -36,6 +42,7 @@ signals:
     void leftModelChanged();
     void rightModelChanged();
     void joinRoleChanged();
+    void rolesToJoinChanged();
 
 private:
     void initializeIfReady(bool reset);
@@ -51,6 +58,7 @@ private:
     QVector<int> m_joinedRoles;
 
     QString m_joinRole;
+    QStringList m_rolesToJoin;
     int m_leftModelJoinRole = 0;
     int m_rightModelJoinRole = 0;
 
