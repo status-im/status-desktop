@@ -82,6 +82,86 @@ ListModel {
         colorId: 4
     }
     ListElement {
+        itemId: "_report-scam2"
+        isCategory: false
+        categoryId: "_support"
+        name: "report-scam2"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 4
+    }
+    ListElement {
+        itemId: "_report-scam3"
+        isCategory: false
+        categoryId: "_support"
+        name: "report-scam3"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 4
+    }
+    ListElement {
+        itemId: "_report-scam4"
+        isCategory: false
+        categoryId: "_support"
+        name: "report-scam4"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 4
+    }
+    ListElement {
+        itemId: "_report-scam5"
+        isCategory: false
+        categoryId: "_support"
+        name: "report-scam5"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 4
+    }
+    ListElement {
+        itemId: "_report-scam6"
+        isCategory: false
+        categoryId: "_support"
+        name: "report-scam6"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 4
+    }
+    ListElement {
+        itemId: "_report-scam7"
+        isCategory: false
+        categoryId: "_support"
+        name: "report-scam7"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 4
+    }
+    ListElement {
+        itemId: "_report-scam8"
+        isCategory: false
+        categoryId: "_support"
+        name: "report-scam8"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 4
+    }
+    ListElement {
+        itemId: "_report-scam9"
+        isCategory: false
+        categoryId: "_support"
+        name: "report-scam9"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 4
+    }
+    ListElement {
         itemId: ""
         isCategory: true
         categoryId: "_faq"
