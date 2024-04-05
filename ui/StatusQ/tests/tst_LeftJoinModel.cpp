@@ -942,6 +942,75 @@ private slots:
         QCOMPARE(modelResetSpy.count(), 1);
         QCOMPARE(dataChangedSpy.count(), 0);
     }
+
+    void invalidRolesToJoinTest()
+    {
+        TestModel leftModel({
+           { "title", { "Token 1", "Token 2", "Token 3"}},
+           { "communityId", { "community_1", "community_2", "community_1" }}
+        });
+
+        TestModel rightModel({
+           { "name", { "Community 1", "Community 2" }},
+           { "communityId", { "community_1", "community_2" }},
+           { "other", { "other_1", "other_1" }}
+        });
+
+        LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
+        QTest::ignoreMessage(
+                    QtWarningMsg,
+                    "Role to join notExisting not found in the right model!");
+
+        model.setLeftModel(&leftModel);
+        model.setRightModel(&rightModel);
+
+        model.setRolesToJoin({ "name", "notExisting" });
+        model.setJoinRole("communityId");
+
+        QCOMPARE(model.roleNames(), {});
+        QCOMPARE(model.rowCount(), 0);
+    }
+
+    void rolesToJoinTest()
+    {
+        TestModel leftModel({
+           { "title", { "Token 1", "Token 2", "Token 3"}},
+           { "communityId", { "community_1", "community_2", "community_1" }}
+        });
+
+        TestModel rightModel({
+           { "name", { "Community 1", "Community 2" }},
+           { "communityId", { "community_1", "community_2" }},
+           { "other", { "other_1", "other_1" }}
+        });
+
+        LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
+        model.setLeftModel(&leftModel);
+        model.setRightModel(&rightModel);
+
+        model.setRolesToJoin({ "name" });
+        model.setJoinRole("communityId");
+
+        QHash<int, QByteArray> roles{{0, "title" }, {1, "communityId"}, {2, "name"}};
+
+        QCOMPARE(model.roleNames(), roles);
+        QCOMPARE(model.rowCount(), 3);
+
+        QCOMPARE(model.rowCount(), 3);
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(2, 0), 0), QString("Token 3"));
+        QCOMPARE(model.data(model.index(0, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(1, 0), 1), QString("community_2"));
+        QCOMPARE(model.data(model.index(2, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(0, 0), 2), QString("Community 1"));
+        QCOMPARE(model.data(model.index(1, 0), 2), QString("Community 2"));
+        QCOMPARE(model.data(model.index(2, 0), 2), QString("Community 1"));
+    }
 };
 
 QTEST_MAIN(TestLeftJoinModel)

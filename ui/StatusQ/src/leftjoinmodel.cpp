@@ -23,7 +23,35 @@ void LeftJoinModel::initialize(bool reset)
     auto rightRoleNames = m_rightModel->roleNames();
 
     auto leftNames = leftRoleNames.values();
-    auto rightNames = rightRoleNames.values();
+    QList<QByteArray> rightNames;
+
+    if (m_rolesToJoin.empty()) {
+        rightNames = rightRoleNames.values();
+    } else {
+        QHash<int, QByteArray> tmpRightRoleNames;
+
+        auto rolesToJoin = m_rolesToJoin;
+
+        if (rolesToJoin.indexOf(m_joinRole) == -1)
+            rolesToJoin << m_joinRole;
+
+        for (auto& roleName : qAsConst(rolesToJoin)) {
+            auto name = roleName.toUtf8();
+            auto roles = rightRoleNames.keys(name);
+
+            if (roles.empty()) {
+                qWarning().noquote()
+                        << QString("Role to join %1 not found in the right model!")
+                           .arg(roleName);
+                return;
+            }
+
+            rightNames << name;
+            tmpRightRoleNames.insert(roles.front(), name);
+        }
+
+        rightRoleNames = tmpRightRoleNames;
+    }
 
     QSet<QByteArray> leftNamesSet(leftNames.cbegin(), leftNames.cend());
     QSet<QByteArray> rightNamesSet(rightNames.cbegin(), rightNames.cend());
@@ -345,6 +373,20 @@ void LeftJoinModel::setJoinRole(const QString& joinRole)
 const QString& LeftJoinModel::joinRole() const
 {
     return m_joinRole;
+}
+
+void LeftJoinModel::setRolesToJoin(const QStringList& roles)
+{
+    if (m_rolesToJoin == roles)
+        return;
+
+    m_rolesToJoin = roles;
+    emit rolesToJoinChanged();
+}
+
+const QStringList &LeftJoinModel::rolesToJoin() const
+{
+    return m_rolesToJoin;
 }
 
 int LeftJoinModel::rowCount(const QModelIndex &parent) const
