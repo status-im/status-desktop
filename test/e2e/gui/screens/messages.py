@@ -198,7 +198,7 @@ class ChatView(QObject):
         return message
 
     @allure.step('Accept community invitation')
-    def accept_community_invite(self, community: str, index: bool) -> 'CommunityScreen':
+    def accept_community_invite(self, community: str, index: int) -> 'CommunityScreen':
         message = None
         started_at = time.monotonic()
         while message is None:
@@ -206,7 +206,7 @@ class ChatView(QObject):
                 if _message.community_invitation.get('name', '') == community:
                     message = _message
                     break
-            if time.monotonic() - started_at > configs.timeouts.MESSAGING_TIMEOUT_SEC:
+            if time.monotonic() - started_at > 80:
                 raise LookupError(f'Community invitation was not found')
 
         return message.open_community_invitation()
@@ -329,16 +329,21 @@ class MessageQuickActions(QObject):
     def __init__(self):
         super().__init__(messaging_names.chatMessageViewDelegate_StatusMessageQuickActions)
         self._pin_button = Button(
-            messaging_names.chatMessageViewDelegate_MessageView_toggleMessagePin_StatusFlatRoundButton)
+            messaging_names.chatMessageViewDelegate_pin_icon_StatusIcon)
+        self._unpin_button = Button(messaging_names.chatMessageViewDelegate_unpin_icon_StatusIcon)
         self._edit_button = Button(messaging_names.chatMessageViewDelegate_editMessageButton_StatusFlatRoundButton)
         self._delete_button = Button(
             messaging_names.chatMessageViewDelegate_chatDeleteMessageButton_StatusFlatRoundButton)
         self._edit_message_field = TextEdit(messaging_names.edit_inputScrollView_messageInputField_TextArea)
         self._save_text_button = Button(messaging_names.chatMessageViewDelegate_Save_StatusButton)
 
-    @allure.step('Toggle pin button')
-    def toggle_pin(self):
+    @allure.step('Click pin button')
+    def pin_message(self):
         self._pin_button.click()
+
+    @allure.step('Click unpin button')
+    def unpin_message(self):
+        self._unpin_button.click()
 
     @allure.step('Edit message and save changes')
     def edit_message(self, text: str):
