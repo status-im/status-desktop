@@ -34,6 +34,7 @@ type TmpSendTransactionDetails = object
   fromAddrPath: string
   toAddr: string
   assetKey: string
+  toAssetKey: string
   paths: seq[TransactionPathDto]
   uuid: string
   sendType: SendType
@@ -256,11 +257,12 @@ method viewDidLoad*(self: Module) =
 method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount =
   return self.controller.getTokenBalance(address, chainId, tokensKey)
 
-method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, assetKey: string, uuid: string,
+method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, assetKey: string, toAssetKey: string, uuid: string,
   sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) =
   self.tmpSendTransactionDetails.fromAddr = fromAddr
   self.tmpSendTransactionDetails.toAddr = toAddr
   self.tmpSendTransactionDetails.assetKey = assetKey
+  self.tmpSendTransactionDetails.toAssetKey = toAssetKey
   self.tmpSendTransactionDetails.uuid = uuid
   self.tmpSendTransactionDetails.sendType = sendType
   self.tmpSendTransactionDetails.fromAddrPath = ""
@@ -288,7 +290,7 @@ method onUserAuthenticated*(self: Module, password: string, pin: string) =
     let usePassword = self.tmpSendTransactionDetails.fromAddrPath.len == 0
     self.controller.transfer(
       self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
-      self.tmpSendTransactionDetails.assetKey, self.tmpSendTransactionDetails.uuid,
+      self.tmpSendTransactionDetails.assetKey, self.tmpSendTransactionDetails.toAssetKey, self.tmpSendTransactionDetails.uuid,
       self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType, usePassword, doHashing,
       self.tmpSendTransactionDetails.tokenName, self.tmpSendTransactionDetails.isOwnerToken
     )
@@ -330,9 +332,10 @@ method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: stri
     return
   self.view.sendTransactionSentSignal(chainId, txHash, uuid, error)
 
-method suggestedRoutes*(self: Module, accountFrom: string, accountTo: string, amount: UInt256, token: string, disabledFromChainIDs,
-  disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
-  return self.controller.suggestedRoutes(accountFrom, accountTo, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
+method suggestedRoutes*(self: Module, accountFrom: string, accountTo: string, amount: UInt256, token: string, toToken: string,
+  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
+  return self.controller.suggestedRoutes(accountFrom, accountTo, amount, token, toToken, disabledFromChainIDs,
+    disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
 
 method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) =
   self.tmpSendTransactionDetails.paths = suggestedRoutes.best

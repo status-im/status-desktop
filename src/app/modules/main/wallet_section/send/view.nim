@@ -21,6 +21,7 @@ QtObject:
       toNetworksModel: NetworkModel
       transactionRoutes: TransactionRoutes
       selectedAssetKey: string
+      selectedToAssetKey: string
       showUnPreferredChains: bool
       sendType: transaction_dto.SendType
       selectedTokenIsOwnerToken: bool
@@ -138,6 +139,18 @@ QtObject:
     read = getSelectedAssetKey
     notify = selectedAssetKeyChanged
 
+  proc selectedToAssetKeyChanged*(self: View) {.signal.}
+  proc getSelectedToAssetKey*(self: View): string {.slot.} =
+    return self.selectedToAssetKey
+  proc setSelectedToAssetKey(self: View, assetKey: string) {.slot.} =
+    self.selectedToAssetKey = assetKey
+    self.updateNetworksTokenBalance()
+    self.selectedToAssetKeyChanged()
+  QtProperty[string] selectedToAssetKey:
+    write = setSelectedToAssetKey
+    read = getSelectedToAssetKey
+    notify = selectedToAssetKeyChanged
+
   proc showUnPreferredChainsChanged*(self: View) {.signal.}
   proc getShowUnPreferredChains(self: View): bool {.slot.} =
     return self.showUnPreferredChains
@@ -207,7 +220,7 @@ QtObject:
 
   proc authenticateAndTransfer*(self: View, uuid: string) {.slot.} =
     self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetKey,
-      uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
+      self.selectedToAssetKey, uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes) =
@@ -222,9 +235,9 @@ QtObject:
       discard
 
     return self.delegate.suggestedRoutes(self.selectedSenderAccount.address(), self.selectedRecipient,
-      parsedAmount, self.selectedAssetKey, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
+      parsedAmount, self.selectedAssetKey, self.selectedToAssetKey, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
       self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(),
-      self.sendType,  self.fromNetworksModel.getRouteLockedChainIds())
+      self.sendType, self.fromNetworksModel.getRouteLockedChainIds())
 
   proc switchSenderAccountByAddress*(self: View, address: string) =
     let (account, index) = self.senderAccounts.getItemByAddress(address)

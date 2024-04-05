@@ -50,6 +50,7 @@ const SIMPLE_TX_BRIDGE_NAME = "Transfer"
 const HOP_TX_BRIDGE_NAME = "Hop"
 const ERC721_TRANSFER_NAME = "ERC721Transfer"
 const ERC1155_TRANSFER_NAME = "ERC1155Transfer"
+const SWAP_PARASWAP_NAME = "Paraswap"
 
 type TokenTransferMetadata* = object
   tokenName*: string
@@ -263,6 +264,7 @@ QtObject:
     var cbridgeTx = TransactionDataDto()
     var eRC721TransferTx = TransactionDataDto()
     var eRC1155TransferTx = TransactionDataDto()
+    var swapTx = TransactionDataDto()
 
     if(route.bridgeName == SIMPLE_TX_BRIDGE_NAME):
       path.transferTx = txData
@@ -287,6 +289,10 @@ QtObject:
       eRC1155TransferTx.tokenID = stint.u256(tokenSymbol).some
       eRC1155TransferTx.amount = route.amountIn.some
       path.eRC1155TransferTx = eRC1155TransferTx
+    elif(route.bridgeName == SWAP_PARASWAP_NAME):
+      swapTx = txData
+      swapTx.chainID =  route.toNetwork.chainId.some
+      path.swapTx = swapTx
     else:
       cbridgeTx = txData
       cbridgeTx.chainID =  route.toNetwork.chainId.some
@@ -324,9 +330,11 @@ QtObject:
     from_addr: string,
     to_addr: string,
     tokenSymbol: string,
+    toTokenSymbol: string,
     uuid: string,
     routes: seq[TransactionPathDto],
-    password: string
+    password: string,
+    sendType: SendType
   ) =
     try:
       var paths: seq[TransactionBridgeDto] = @[]
@@ -350,15 +358,20 @@ QtObject:
 
         paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
 
+      var mtCommand = MultiTransactionCommandDto(
+        fromAddress: from_addr,
+        toAddress: to_addr,
+        fromAsset: tokenSymbol,
+        toAsset: toTokenSymbol,
+        fromAmount:  "0x" & totalAmountToSend.toHex,
+        multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
+      )
+
+      if sendType == Swap:
+        mtCommand.multiTxType = transactions.MultiTransactionType.MultiTransactionSwap
+
       let response = transactions.createMultiTransaction(
-        MultiTransactionCommandDto(
-          fromAddress: from_addr,
-          toAddress: to_addr,
-          fromAsset: tokenSymbol,
-          toAsset: tokenSymbol,
-          fromAmount:  "0x" & totalAmountToSend.toHex,
-          multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
-        ),
+        mtCommand,
         paths,
         password,
       )
@@ -376,6 +389,8 @@ QtObject:
     to_addr: string,
     assetKey: string,
     asset: TokenBySymbolItem,
+    toAssetKey: string,
+    toAsset: TokenBySymbolItem,
     uuid: string,
     routes: seq[TransactionPathDto],
     password: string,
@@ -391,7 +406,7 @@ QtObject:
         fromAddress: from_addr,
         toAddress: to_addr,
         fromAsset: if not asset.isNil: asset.symbol else: assetKey,
-        toAsset: if not asset.isNil: asset.symbol else: assetKey,
+        toAsset: if not toAsset.isNil: toAsset.symbol else: toAssetKey,
         multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
       )
 
@@ -405,6 +420,9 @@ QtObject:
       else:
         error "Invalid assetKey for collectibles transfer", assetKey=assetKey
         return
+
+    if sendType == Swap:
+      mtCommand.multiTxType = transactions.MultiTransactionType.MultiTransactionSwap
 
     try:
       for route in routes:
@@ -466,6 +484,7 @@ QtObject:
     fromAddr: string,
     toAddr: string,
     assetKey: string,
+    toAssetKey: string,
     uuid: string,
     selectedRoutes: seq[TransactionPathDto],
     password: string,
@@ -487,20 +506,29 @@ QtObject:
         chainID = selectedRoutes[0].fromNetwork.chainID
 
       # asset == nil means transferToken is executed for a collectibles transfer
-      var asset: TokenBySymbolItem
+      var
+        asset: TokenBySymbolItem
+        toAsset: TokenBySymbolItem
       if not self.isCollectiblesTransfer(sendType):
         asset = self.tokenService.getTokenBySymbolByTokensKey(assetKey)
-        if not asset.isNil:
-          let network = self.networkService.getNetworkByChainId(chainID)
-          if not network.isNil and network.nativeCurrencySymbol == asset.symbol:
-            self.transferEth(fromAddr, toAddr, asset.symbol, uuid, selectedRoutes, finalPassword)
-            return
-          # else continue with asset transfer
-        else:
+        if asset.isNil:
           error "Asset not found for", assetKey=assetKey
           return
 
-      self.transferToken(fromAddr, toAddr, assetKey, asset, uuid, selectedRoutes, finalPassword, sendType, tokenName, isOwnerToken)
+        toAsset = asset
+        if sendType == Swap:
+          toAsset = self.tokenService.getTokenBySymbolByTokensKey(toAssetKey)
+          if toAsset.isNil:
+            error "Asset not found for", assetKey=assetKey
+            return
+
+        let network = self.networkService.getNetworkByChainId(chainID)
+        if not network.isNil and network.nativeCurrencySymbol == asset.symbol:
+          self.transferEth(fromAddr, toAddr, asset.symbol, toAsset.symbol, uuid, selectedRoutes, finalPassword, sendType)
+          return
+
+      self.transferToken(fromAddr, toAddr, assetKey, asset, toAssetKey, toAsset, uuid, selectedRoutes, finalPassword,
+        sendType, tokenName, isOwnerToken)
 
     except Exception as e:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
@@ -529,15 +557,21 @@ QtObject:
       error "error handling suggestedRoutesReady response", errDesription=e.msg
     self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutesDto))
 
-  proc suggestedRoutes*(self: Service, accountFrom: string, accountTo: string, amount: Uint256, token: string, disabledFromChainIDs,
-    disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): SuggestedRoutesDto =
-    var tokenId: string = ""
+  proc suggestedRoutes*(self: Service, accountFrom: string, accountTo: string, amount: Uint256, token: string, toToken: string,
+    disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): SuggestedRoutesDto =
+    var
+      tokenId: string
+      toTokenId: string
+
     if self.isCollectiblesTransfer(sendType):
       tokenId = token
     else:
       let token = self.tokenService.getTokenBySymbolByTokensKey(token)
       if token != nil:
         tokenId = token.symbol
+      let toToken = self.tokenService.getTokenBySymbolByTokensKey(toToken)
+      if toToken != nil:
+        toTokenId = toToken.symbol
     let arg = GetSuggestedRoutesTaskArg(
       tptr: cast[ByteAddress](getSuggestedRoutesTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -546,6 +580,7 @@ QtObject:
       accountTo: accountTo,
       amount: amount,
       token: tokenId,
+      toToken: toTokenId,
       disabledFromChainIDs: disabledFromChainIDs,
       disabledToChainIDs: disabledToChainIDs,
       preferredChainIDs: preferredChainIDs,
