@@ -1,19 +1,27 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Popups 0.1
 
-import shared.controls 1.0
-import SortFilterProxyModel 0.2
-
 import AppLayouts.Communities.controls 1.0
+import shared.controls 1.0
+
+import SortFilterProxyModel 0.2
 
 StatusDropdown {
     id: root
+
+    width: 289
+    padding: 8
+
+    // force keeping within the bounds of the enclosing window
+    margins: 0
 
     property bool allowChoosingEntireCommunity: false
     property bool showAddChannelButton: false
@@ -30,23 +38,97 @@ StatusDropdown {
         Add, Update
     }
 
-    width: 289
-    padding: 8
-
-    // force keeping within the bounds of the enclosing window
-    margins: 0
-
     signal addChannelClicked
     signal communitySelected
     signal channelsSelected(var channels)
 
     function setSelectedChannels(channels) {
-        d.setSelectedChannels(channels)
+        d.selectedChannels.clear()
+        channels.forEach(c => d.selectedChannels.add(c))
+        d.selectedChannelsChanged()
     }
 
-    onAboutToHide: searcher.text = ""
-    onAboutToShow: scrollView.Layout.preferredHeight = Math.min(
-                       scrollView.implicitHeight, 420)
+    onAboutToHide: {
+        searcher.text = ""
+        listView.positionViewAtBeginning()
+    }
+
+    onAboutToShow: listView.Layout.preferredHeight = Math.min(
+                       listView.implicitHeight, 420)
+
+    // only channels (no entries representing categories), sorted according to
+    // category position and position
+    SortFilterProxyModel {
+        id: onlyChannelsModel
+
+        sourceModel: root.model
+
+        filters: ValueFilter {
+            roleName: "isCategory"
+            value: false
+        }
+
+        sorters: [
+            RoleSorter {
+                roleName: "categoryPosition"
+                priority: 2 // Higher number -> higher priority
+            },
+            RoleSorter {
+                roleName: "position"
+                priority: 1
+            }
+        ]
+    }
+
+    // only items representing categories
+    SortFilterProxyModel {
+        id: categoriesModel
+
+        sourceModel: root.model
+
+        filters: ValueFilter {
+            roleName: "isCategory"
+            value: true
+        }
+    }
+
+    // categories, name role renamed to categoryName
+    RolesRenamingModel {
+        id: categoriesModelRenamed
+
+        sourceModel: categoriesModel
+
+        mapping: RoleRename {
+            from: "name"
+            to: "categoryName"
+        }
+    }
+
+    // categories joined to channels model in order to provide channelName,
+    // in order to be used in section.property.
+    LeftJoinModel {
+        id: joined
+
+        leftModel: onlyChannelsModel
+        rightModel: categoriesModelRenamed
+
+        joinRole: "categoryId"
+        rolesToJoin: "categoryName"
+    }
+
+    // final filtering based on user's input in search bar
+    SortFilterProxyModel {
+        id: filtered
+
+        sourceModel: joined
+
+        filters: RegExpFilter {
+            roleName: "name"
+            pattern: `*${searcher.text}*`
+            caseSensitivity : Qt.CaseInsensitive
+            syntax: RegExpFilter.Wildcard
+        }
+    }
 
     QtObject {
         id: d
@@ -56,28 +138,12 @@ StatusDropdown {
         readonly property int itemStandardHeight: 44
         readonly property var selectedChannels: new Set()
 
-        signal setSelectedChannels(var channels)
-
-        function search(text, searcherText) {
-            return text.toLowerCase().includes(searcherText.toLowerCase())
-        }
-
         function resolveEmoji(emoji) {
             return !!emoji ? emoji : ""
         }
 
         function resolveColor(color, colorId) {
             return !!color ? color : Theme.palette.userCustomizationColors[colorId]
-        }
-
-        function addToSelectedChannels(model) {
-            selectedChannels.add(model.itemId)
-            selectedChannelsChanged()
-        }
-
-        function removeFromSelectedChannels(model) {
-            selectedChannels.delete(model.itemId)
-            selectedChannelsChanged()
         }
     }
 
@@ -150,26 +216,25 @@ StatusDropdown {
 
             visible: root.allowChoosingEntireCommunity
         }
-        StatusScrollView {
-            id: scrollView
+
+        StatusListView {
+            id: listView
+
+            model: filtered
+
             Layout.fillWidth: true
-            Layout.minimumHeight: Math.min(d.maxHeightCountNo * d.itemStandardHeight, contentHeight)
+            Layout.minimumHeight: Math.min(d.maxHeightCountNo * d.itemStandardHeight,
+                                           contentHeight)
             Layout.maximumHeight: Layout.minimumHeight
-            contentWidth: availableWidth
             Layout.bottomMargin: d.defaultVMargin
-            Layout.topMargin:
-                !root.allowChoosingEntireCommunity && !root.allowChoosingEntireCommunity ? d.defaultVMargin : 0
+            Layout.topMargin: !root.allowChoosingEntireCommunity
+                              && !root.allowChoosingEntireCommunity ? d.defaultVMargin : 0
 
-            padding: 0
-
-            ColumnLayout {
-                id: scrollableColumn
-                width: scrollView.availableWidth
-                spacing: 0
+            Component {
+                id: addChannelButtonComponent
 
                 StatusIconTextButton {
-                    Layout.preferredHeight: 36
-                    visible: root.showAddChannelButton
+                    height: 36
                     leftPadding: 8
                     spacing: 8
                     statusIcon: "add"
@@ -179,240 +244,63 @@ StatusDropdown {
                     text: qsTr("Add channel")
                     onClicked: root.addChannelClicked()
                 }
+            }
 
-                Repeater {
-                    id: topRepeater
-                    model: SortFilterProxyModel {
-                        id: topLevelModel
+            header: root.showAddChannelButton ? addChannelButtonComponent : null
 
-                        sourceModel: root.model
+            section.delegate: CategoryListItem {
+                title: section
 
-                        filters: AnyOf {
-                            ValueFilter {
-                                roleName: "categoryId"
-                                value: ""
-                            }
-                            ValueFilter {
-                                roleName: "isCategory"
-                                value: true
-                            }
-                        }
+                width: ListView.view.width
 
-                        sorters: [
-                            RoleSorter {
-                                roleName: "categoryPosition"
-                                priority: 2 // Higher number === higher priority
-                            },
-                            RoleSorter {
-                                roleName: "position"
-                                priority: 1
-                            }
-                        ]
-                    }
+                MouseArea {
+                    anchors.fill: parent
 
-                    ColumnLayout {
-                        id: column
+                    onClicked: {
+                        const categoryId = ModelUtils.getByKey(
+                                             categoriesModel, "name", section, "categoryId")
+                        const allKeys = ModelUtils.modelToArray(
+                                          filtered, ["itemId", "categoryId"])
+                        const inCategoryKeys = allKeys.filter(
+                                                 e => e.categoryId === categoryId)
+                        const allSelected = inCategoryKeys.every(
+                                              e => d.selectedChannels.has(e.itemId))
 
-                        readonly property var topModel: model
-                        readonly property alias checkBox: loader.item
-                        property int checkedCount: 0
+                        if (allSelected)
+                            inCategoryKeys.forEach(
+                                        e => d.selectedChannels.delete(e.itemId))
+                        else
+                            inCategoryKeys.forEach(
+                                        e => d.selectedChannels.add(e.itemId))
 
-                        readonly property bool isCategory: model.isCategory
-                        readonly property string categoryId: model.categoryId
-
-                        Layout.fillWidth: true
-                        spacing: 0
-
-                        visible: {
-                            if (!isCategory)
-                                return d.search(model.name, searcher.text)
-
-                            const subItemsCount = subItemsRepeater.count
-
-                            for (let i = 0; i < subItemsCount; i++)
-                                if (subItemsRepeater.itemAt(i).show)
-                                    return true
-
-                            return false
-                        }
-
-                        Loader {
-                            id: loader
-
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: d.itemStandardHeight
-                            Layout.topMargin: isCategory ? d.defaultVMargin : 0
-                            sourceComponent: isCategory
-                                             ? communityCategoryDelegate
-                                             : communityDelegate
-
-                            Connections {
-                                target: radioButton
-
-                                function onToggled() {
-                                    const checkBox = loader.item.checkBox
-                                    checkBox.checked = false
-                                    checkBox.onToggled()
-                                }
-                            }
-
-                            Component {
-                                id: communityDelegate
-
-                                CommunityListItem {
-                                    id: communityItem
-
-                                    title: "#" + model.name
-
-                                    asset.name: model.icon ?? ""
-                                    asset.emoji: d.resolveEmoji(model.emoji)
-                                    asset.color: d.resolveColor(model.color,
-                                                                model.colorId)
-
-                                    checkBox.onToggled: {
-                                        if (checked)
-                                            radioButton.checked = false
-                                    }
-
-                                    checkBox.onCheckedChanged: {
-                                        if (checkBox.checked)
-                                            d.addToSelectedChannels(model)
-                                        else
-                                            d.removeFromSelectedChannels(model)
-                                    }
-
-                                    Connections {
-                                        target: d
-
-                                        function onSetSelectedChannels(channels) {
-                                            communityItem.checked = channels.includes(
-                                                        model.itemId)
-                                        }
-                                    }
-                                }
-                            }
-
-                            Component {
-                                id: communityCategoryDelegate
-
-                                CategoryListItem {
-                                    title: model.name
-
-                                    checkState: {
-                                        if (checkedCount === subItems.count)
-                                            return Qt.Checked
-                                        else if (checkedCount === 0)
-                                            return Qt.Unchecked
-
-                                        return Qt.PartiallyChecked
-                                    }
-
-                                    checkBox.onToggled: {
-                                        if (checked)
-                                            radioButton.checked = false
-
-                                        subItemsRepeater.setAll(checkState)
-                                    }
-                                }
-                            }
-                        }
-
-                        SortFilterProxyModel {
-                            id: subItems
-
-                            sourceModel: isCategory ? root.model : null
-
-                            filters: AllOf {
-                                ValueFilter {
-                                    roleName: "categoryId"
-                                    value: column.categoryId
-                                }
-                                ValueFilter {
-                                    roleName: "isCategory"
-                                    value: false
-                                }
-                            }
-
-                            sorters: RoleSorter {
-                                roleName: "position"
-                            }
-                        }
-
-                        Repeater {
-                            id: subItemsRepeater
-
-                            model: subItems
-
-                            function setAll(checkState) {
-                                const subItemsCount = count
-
-                                for (let i = 0; i < subItemsCount; i++) {
-                                    itemAt(i).checkState = checkState
-                                }
-                            }
-
-                            CommunityListItem {
-                                id: communitySubItem
-
-                                readonly property bool show:
-                                    d.search(model.name, searcher.text)
-
-                                Layout.fillWidth: true
-
-                                visible: show
-
-                                title: "#" + model.name
-
-                                asset.name: model.icon ?? ""
-                                asset.emoji: d.resolveEmoji(model.emoji)
-                                asset.color: d.resolveColor(model.color,
-                                                            model.colorId)
-
-                                onCheckedChanged: {
-                                    if (checked) {
-                                        radioButton.checked = false
-                                        d.addToSelectedChannels(model)
-                                    } else {
-                                        d.removeFromSelectedChannels(model)
-                                    }
-
-                                    Qt.callLater(() => checkedCount += checked ? 1 : -1)
-                                }
-
-                                Connections {
-                                    target: d
-
-                                    function onSetSelectedChannels(channels) {
-                                        communitySubItem.checked = channels.includes(
-                                                    model.itemId)
-                                    }
-                                }
-                            }
-                        }
+                        d.selectedChannelsChanged()
                     }
                 }
+            }
 
-                StatusBaseText {
-                    id: noContactsText
+            section.property: "categoryName"
 
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
+            delegate: CommunityListItem {
+                id: communitySubItem
 
-                    visible: {
-                        for (let i = 0; i < topRepeater.count; i++) {
-                            const item = topRepeater.itemAt(i)
-                            if (item && item.visible)
-                                return false
-                        }
+                width: ListView.view.width
+                visible: show
 
-                        return true
-                    }
+                title: "#" + model.name
 
-                    text: qsTr("No channels found")
-                    color: Theme.palette.baseColor1
-                    font.pixelSize: Theme.tertiaryTextFontSize
-                    elide: Text.ElideRight
-                    lineHeight: 1.2
+                asset.name: model.icon ?? ""
+                asset.emoji: d.resolveEmoji(model.emoji)
+                asset.color: d.resolveColor(model.color, model.colorId)
+
+                checked: d.selectedChannels.has(model.itemId)
+
+                checkBox.onToggled: {
+                    if (checked)
+                        d.selectedChannels.add(model.itemId)
+                    else
+                        d.selectedChannels.delete(model.itemId)
+
+                    d.selectedChannelsChanged()
                 }
             }
         }
