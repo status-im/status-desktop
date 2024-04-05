@@ -19,6 +19,7 @@ RowLayout {
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false
+    property bool isSwapTx: false
     property bool isCollectiblesTransfer: false
     property var toNetworksList
     property var weiToEth: function(wei) {}
@@ -51,8 +52,13 @@ RowLayout {
             Layout.maximumWidth: parent.width
             font.pixelSize: 15
             color: Theme.palette.baseColor1
-            text: isBridgeTx ? qsTr("Choose the network to bridge token to") :
-                              qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
+            text: {
+                if (root.isBridgeTx)
+                    return qsTr("Choose the network to bridge token to")
+                if (root.isSwapTx)
+                    return qsTr("Choose the network to swap on")
+                return qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
+            }
             wrapMode: Text.WordWrap
         }
         ScrollView {
@@ -64,15 +70,15 @@ RowLayout {
             ScrollBar.vertical.policy: ScrollBar.AlwaysOff
             ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             clip: true
-            visible: root.isBridgeTx ? true : !root.isLoading ? root.errorType === Constants.NoError : false
+            visible: root.isBridgeTx || root.isSwapTx? true : !root.isLoading ? root.errorType === Constants.NoError : false
             Column {
                 id: row
                 spacing: Style.current.padding
                 Repeater {
                     id: repeater
                     objectName: "networksList"
-                    model: isBridgeTx ? store.fromNetworksModel : root.toNetworksList
-                    delegate: isBridgeTx ? networkItem : routeItem
+                    model: root.isBridgeTx || root.isSwapTx? store.fromNetworksModel : root.toNetworksList
+                    delegate: root.isBridgeTx || root.isSwapTx? networkItem : routeItem
                 }
             }
         }
@@ -140,7 +146,12 @@ RowLayout {
                 onClicked: gasRectangle.toggle()
             }
             onCheckedChanged: {
-                store.setRouteDisabledChains(chainId, !gasRectangle.checked)
+                if (root.isSwapTx) {
+                    store.setRouteDisabledFromChains(chainId, !gasRectangle.checked)
+                }
+
+                store.setRouteDisabledToChains(chainId, !gasRectangle.checked)
+
                 if(checked)
                     root.reCalculateSuggestedRoute()
             }
@@ -150,7 +161,12 @@ RowLayout {
                 height: card.height
             }
             Component.onCompleted: {
-                store.setRouteDisabledChains(chainId, !gasRectangle.checked)
+                if (root.isSwapTx) {
+                    store.setRouteDisabledFromChains(chainId, !gasRectangle.checked)
+                }
+
+                store.setRouteDisabledToChains(chainId, !gasRectangle.checked)
+
                 if(index === (repeater.count -1))
                     root.reCalculateSuggestedRoute()
             }

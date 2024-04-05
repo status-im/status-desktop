@@ -28,6 +28,7 @@ Item {
     property bool errorMode: advancedNetworkRoutingPage.errorMode
     property bool interactive: true
     property bool isBridgeTx: false
+    property bool isSwapTx: false
     property bool isCollectiblesTransfer: false
     property var toNetworksList
     property int errorType: Constants.NoError
@@ -54,9 +55,11 @@ Item {
         }
         StatusSwitchTabButton {
             text: qsTr("Advanced")
+            enabled: !root.isSwapTx
         }
         StatusSwitchTabButton {
             text: qsTr("Custom")
+            enabled: !root.isSwapTx
         }
     }
 
@@ -80,6 +83,7 @@ Item {
                 anchors.right: parent.right
                 anchors.margins: Style.current.padding
                 isBridgeTx: root.isBridgeTx
+                isSwapTx: root.isSwapTx
                 isCollectiblesTransfer: root.isCollectiblesTransfer
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 isLoading: root.isLoading

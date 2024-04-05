@@ -331,13 +331,22 @@ Item {
                 root.sendModalPopup.onlyAssets = true
                 root.sendModalPopup.open()
             }
+
             onLaunchSwapModal: {
+                /*
                 d.swapFormData.fromTokensKey =  ""
                 d.swapFormData.selectedAccountIndex = d.selectedAccountIndex
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
                 }
                 Global.openSwapModalRequested(d.swapFormData)
+                */
+
+                root.sendModalPopup.preSelectedSendType = Constants.SendType.Swap
+                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
+                root.sendModalPopup.onlyAssets = true
+                root.sendModalPopup.open()
             }
         }
     }
