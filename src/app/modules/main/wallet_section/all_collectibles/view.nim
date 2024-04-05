@@ -32,10 +32,6 @@ QtObject:
   proc updateCollectiblePreferences*(self: View, collectiblePreferencesJson: string) {.slot.} =
     self.delegate.updateCollectiblePreferences(collectiblePreferencesJson)
 
-  proc clearCollectiblePreferences*(self: View) {.slot.} =
-    # There is no requirements of clearing the preferences yet but controller is expected to expose it
-    discard
-
   proc getCollectiblePreferencesJson(self: View): QVariant {.slot.} =
     let preferences = self.delegate.getCollectiblePreferencesJson()
     return newQVariant(preferences)
