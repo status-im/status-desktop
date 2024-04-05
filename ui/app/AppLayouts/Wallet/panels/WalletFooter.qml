@@ -25,6 +25,7 @@ Rectangle {
     signal launchShareAddressModal()
     signal launchSendModal()
     signal launchBridgeModal()
+    signal launchSwapModal()
 
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
@@ -61,6 +62,15 @@ Rectangle {
             text: qsTr("Bridge")
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchBridgeModal()
+            tooltip.text: networkConnectionStore.sendBuyBridgeToolTipText
+            visible: !walletStore.overview.isWatchOnlyAccount && !root.isCommunityOwnershipTransfer && walletStore.overview.canSend
+        }
+
+        StatusFlatButton {
+            icon.name: "swap"
+            text: qsTr("Swap")
+            interactive: networkConnectionStore.sendBuyBridgeEnabled
+            onClicked: root.launchSwapModal()
             tooltip.text: networkConnectionStore.sendBuyBridgeToolTipText
             visible: !walletStore.overview.isWatchOnlyAccount && !root.isCommunityOwnershipTransfer && walletStore.overview.canSend
         }

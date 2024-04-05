@@ -33,6 +33,8 @@ ColumnLayout {
     property double maxInputBalance
 
     property bool isBridgeTx: false
+    property bool isSwapTx: false
+
     property bool interactive: false
     property bool inputIsFiat: false
 
@@ -110,8 +112,13 @@ ColumnLayout {
     StatusBaseText {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
-        text: root.isBridgeTx ? qsTr("Amount to bridge")
-                              : qsTr("Amount to send")
+        text: {
+            if (root.isBridgeTx)
+                return qsTr("Amount to bridge")
+            if (root.isSwapTx)
+                return qsTr("Amount to swap")
+            return qsTr("Amount to send")
+        }
         font.pixelSize: 13
         lineHeight: 18
         lineHeightMode: Text.FixedHeight

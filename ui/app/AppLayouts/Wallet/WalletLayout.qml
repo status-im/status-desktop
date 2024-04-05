@@ -301,6 +301,14 @@ Item {
                 root.sendModalPopup.onlyAssets = true
                 root.sendModalPopup.open()
             }
+
+            onLaunchSwapModal: {
+                root.sendModalPopup.preSelectedSendType = Constants.SendType.Swap
+                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
+                root.sendModalPopup.onlyAssets = true
+                root.sendModalPopup.open()
+            }
         }
     }
 
