@@ -12,6 +12,8 @@ import utils 1.0
 StatusListItem {
     id: root
 
+    objectName: "tokenBalancePerChainDelegate"
+
     signal tokenSelected(var selectedToken)
     signal tokenHovered(var selectedToken, bool hovered)
     property var formatCurrentCurrencyAmount: function(balance){}
