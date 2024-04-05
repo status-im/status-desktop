@@ -2,8 +2,9 @@
 
 #include <QAbstractListModel>
 #include <QPointer>
+#include <QQmlParserStatus>
 
-class LeftJoinModel : public QAbstractListModel
+class LeftJoinModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -37,6 +38,9 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
     QVariant data(const QModelIndex& index, int role) const override;
+
+    void classBegin() override;
+    void componentComplete() override;
 
 signals:
     void leftModelChanged();
