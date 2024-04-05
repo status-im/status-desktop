@@ -271,6 +271,16 @@ QVariant LeftJoinModel::data(const QModelIndex& index, int role) const
     return match.first().data(role - m_rightModelRolesOffset);
 }
 
+void LeftJoinModel::classBegin()
+{
+}
+
+void LeftJoinModel::componentComplete()
+{
+    if (!m_initialized)
+        initializeIfReady(false);
+}
+
 void LeftJoinModel::setLeftModel(QAbstractItemModel* model)
 {
     if (m_leftModel == model)
