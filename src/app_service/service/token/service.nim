@@ -524,6 +524,7 @@ QtObject:
       if preferencesJson.kind == JArray:
         for preferences in preferencesJson:
           add(tokenPreferences, fromJson(preferences, TokenPreferences))
+
       let response = backend.updateTokenPreferences(tokenPreferences)
       if not response.error.isNil:
         raise newException(CatchableError, response.error.message)

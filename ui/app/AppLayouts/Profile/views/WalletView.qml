@@ -289,7 +289,7 @@ SettingsContentBase {
             userProfilePublicKey: walletStore.userProfilePublicKey
             onGoBack: stackContainer.currentIndex = mainViewIndex
             onVisibleChanged: {
-                if (!visible) {
+                if (!visible && !!root.walletStore) {
                     root.walletStore.selectedAccount = null
                     keyPair = null
                 }

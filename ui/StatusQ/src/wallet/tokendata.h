@@ -19,7 +19,7 @@ struct TokenData {
 // mirrors CollectiblePreferencesItemType from src/backend/collectibles_types.nim
 enum class CollectiblePreferencesItemType { NonCommunityCollectible = 1, CommunityCollectible, Collection, Community };
 
-CollectiblePreferencesItemType tokenDataToCollectiblePreferencesItemType(const TokenData& tokenData, bool isCommunity, bool itemsAreGroups);
+CollectiblePreferencesItemType tokenDataToCollectiblePreferencesItemType(bool isCommunity, bool itemsAreGroups);
 
 struct TokenOrder {
     QString symbol;
@@ -47,7 +47,8 @@ struct TokenOrder {
     {
         return symbol == rhs.symbol && sortOrder == rhs.sortOrder && visible == rhs.visible &&
                isCommunityGroup == rhs.isCommunityGroup && (!isCommunityGroup || communityId == rhs.communityId) &&
-               isCollectionGroup == rhs.isCollectionGroup && (!isCollectionGroup || collectionUid == rhs.collectionUid) && type == rhs.type;
+               isCollectionGroup == rhs.isCollectionGroup &&
+               (!isCollectionGroup || collectionUid == rhs.collectionUid) && type == rhs.type;
     }
 
     QString getGroupId() const { return !communityId.isEmpty() ? communityId : collectionUid; }

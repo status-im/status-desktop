@@ -136,4 +136,12 @@ QtObject {
             root.displayAssetsBelowBalanceThresholdChanged()
         }
     }
+
+    function updateTokenPreferences(jsonData) {
+        root._allTokensModule.updateTokenPreferences(jsonData)
+    }
+
+    function getTokenPreferencesJson(jsonData) {
+        return root._allTokensModule.getTokenPreferencesJson(jsonData)
+    }
 }

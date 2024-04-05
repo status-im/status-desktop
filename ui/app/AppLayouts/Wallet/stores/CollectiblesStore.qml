@@ -41,11 +41,6 @@ QtObject {
             let jsonData = _allCollectiblesModule.getCollectiblePreferencesJson()
             loadingFinished(jsonData)
         }
-        onRequestClearSettings: {
-            savingStarted()
-            _allCollectiblesModule.clearCollectiblePreferences()
-            savingFinished()
-        }
 
         onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
                                          qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",

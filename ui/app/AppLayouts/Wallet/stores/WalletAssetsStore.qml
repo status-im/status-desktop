@@ -20,21 +20,15 @@ QtObject {
         settingsKey: "WalletAssets"
         serializeAsCollectibles: false
 
-        // TODO #13312: call the assets controller for all events
         onRequestSaveSettings: (jsonData) => {
-            // savingStarted()
-            saveToQSettings(jsonData)
-            // savingFinished()
+            savingStarted()
+            walletTokensStore.updateTokenPreferences(jsonData)
+            savingFinished()
         }
         onRequestLoadSettings: {
-            // loadingStarted()
-            loadFromQSettings()
-            // loadingFinished()
-        }
-        onRequestClearSettings: {
-            // savingStarted()
-            clearQSettings()
-            // savingFinished()
+            loadingStarted()
+            let jsonData = walletTokensStore.getTokenPreferencesJson()
+            loadingFinished(jsonData)
         }
 
         onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(

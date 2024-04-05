@@ -146,11 +146,11 @@ QtObject:
   proc updateTokenPreferences*(self: View, tokenPreferencesJson: string) {.slot.} =
     self.delegate.updateTokenPreferences(tokenPreferencesJson)
 
-  proc getTokenPreferencesJson(self: View): QVariant {.slot.} =
+  proc getTokenPreferencesJson(self: View): string {.slot.} =
     let preferences = self.delegate.getTokenPreferencesJson()
-    return newQVariant(preferences)
+    return preferences
 
-  QtProperty[QVariant] tokenPreferencesJson:
+  QtProperty[string] tokenPreferencesJson:
     read = getTokenPreferencesJson
 
   proc tokenGroupByCommunityChanged*(self: View) {.signal.}

@@ -5,7 +5,10 @@
 #include <QJsonObject>
 #include <QList>
 
-CollectiblePreferencesItemType tokenDataToCollectiblePreferencesItemType(const TokenData& token, bool isCommunity, bool itemsAreGroups)
+// This is used by he collectibles to deconflict types saved. However, the UX ignores them on restore/load
+// and relies on the fact that all identities ("key" in backend and "symbol" in frontend) are unique between all
+// types
+CollectiblePreferencesItemType tokenDataToCollectiblePreferencesItemType(bool isCommunity, bool itemsAreGroups)
 {
     if (itemsAreGroups) {
         if (isCommunity) {
@@ -19,6 +22,28 @@ CollectiblePreferencesItemType tokenDataToCollectiblePreferencesItemType(const T
         } else {
             return CollectiblePreferencesItemType::NonCommunityCollectible;
         }
+    }
+}
+
+struct GroupingInfo {
+    bool isCommunity = false;
+    bool itemsAreGroups = false;
+};
+
+GroupingInfo collectiblePreferencesItemTypeToGroupsInfo(CollectiblePreferencesItemType type)
+{
+    switch (type) {
+    case CollectiblePreferencesItemType::Community:
+        return {true /* isCommunity */, true /*itemsAreGroups*/};
+    case CollectiblePreferencesItemType::Collection:
+        return {false /* isCommunity */, true /*itemsAreGroups*/};
+    case CollectiblePreferencesItemType::CommunityCollectible:
+        return {true /* isCommunity */, false /*itemsAreGroups*/};
+    case CollectiblePreferencesItemType::NonCommunityCollectible:
+        return {false /* isCommunity */, false /*itemsAreGroups*/};
+    default:
+        qFatal("Unknown collectible type");
+        return {false, false};
     }
 }
 
@@ -53,25 +78,27 @@ QString tokenOrdersToJson(const SerializedTokenData& dataList, bool areCollectib
     QJsonArray jsonArray;
     for (const TokenOrder& data : dataList) {
         QJsonObject obj;
+        // The  collectibles group ordering is handled in the backend.
         obj["key"] = data.symbol;
         obj["position"] = data.sortOrder;
         obj["visible"] = data.visible;
-        if (data.isCommunityGroup) {
-            obj["isCommunityGroup"] = true;
-            obj["communityId"] = data.communityId;
-        }
-        if (data.isCollectionGroup) {
-            obj["isCollectionGroup"] = true;
-            obj["collectionUid"] = data.collectionUid;
-        }
 
         if (areCollectible) {
+            // ignore communityId and collectionId which are embedded in key for collectibles
+            // ignore isCommunityGroup and isCollectionGroup that are embedded in type for collectibles
+            // by providing the required separation of groups and collectibles which are not yet used
+
             // see CollectiblePreferences in src/backend/collectibles_types.nim
-            // type cover separation of groups and collectibles
             obj["type"] = static_cast<int>(data.type);
         } else { // is asset
+            // We ignore isCollectionGroup that doesn't exist for assets
             // see TokenPreferences in src/backend/backend.nim
-            // TODO #13312: handle "groupPosition" for asset
+
+            // isCommunityGroup is true only if communityId is valid
+            if (data.isCommunityGroup) {
+                obj["groupPosition"] = data.sortOrder;
+                obj["communityId"] = data.communityId;
+            }
         }
         jsonArray.append(obj);
     }
@@ -100,21 +127,24 @@ SerializedTokenData tokenOrdersFromJson(const QString& json_string, bool areColl
         data.symbol = obj["key"].toString();
         data.sortOrder = obj["position"].toInt();
         data.visible = obj["visible"].toBool();
-        if (obj.contains("isCommunityGroup")) {
-            data.isCommunityGroup = obj["isCommunityGroup"].toBool();
-            data.communityId = obj["communityId"].toString();
-        }
-        if (obj.contains("isCollectionGroup")) {
-            data.isCollectionGroup = obj["isCollectionGroup"].toBool();
-            data.collectionUid = obj["collectionUid"].toString();
-        }
-
         if (areCollectibles) {
             // see CollectiblePreferences in src/backend/collectibles_types.nim
             data.type = static_cast<CollectiblePreferencesItemType>(obj["type"].toInt());
+            auto groupingInfo = collectiblePreferencesItemTypeToGroupsInfo(data.type);
+            data.isCommunityGroup = groupingInfo.isCommunity;
+            if (data.isCommunityGroup) {
+                data.communityId = data.symbol;
+            }
+            data.isCollectionGroup = groupingInfo.itemsAreGroups;
+            if (data.isCollectionGroup) {
+                data.collectionUid = data.symbol;
+            }
         } else { // is asset
             // see TokenPreferences in src/backend/backend.nim
-            // TODO #13312: handle "groupPosition" for assets
+            if (obj.contains("groupPosition")) {
+                data.isCommunityGroup = true;
+                data.communityId = obj["communityId"].toString();
+            }
         }
 
         dataList.insert(data.symbol, data);

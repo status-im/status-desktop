@@ -102,7 +102,7 @@ SerializedTokenData ManageTokensModel::save(bool isVisible, bool itemsAreGroups)
                                  token.communityId,
                                  isCollectionGroup,
                                  token.collectionUid,
-                                 tokenDataToCollectiblePreferencesItemType(token, isCommunityGroup, itemsAreGroups)});
+                                 tokenDataToCollectiblePreferencesItemType(isCommunityGroup, itemsAreGroups)});
     }
     setDirty(false);
     return result;
