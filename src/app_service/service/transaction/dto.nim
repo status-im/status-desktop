@@ -196,7 +196,8 @@ proc decodeSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
   result.maxFeePerGasL = jsonObj{"maxFeePerGasL"}.getFloat
   result.maxFeePerGasM = jsonObj{"maxFeePerGasM"}.getFloat
   result.maxFeePerGasH = jsonObj{"maxFeePerGasH"}.getFloat
-  result.l1GasFee = jsonObj{"l1GasFee"}.getFloat
+  if jsonObj.hasKey("l1GasFee"):
+    result.l1GasFee = jsonObj{"l1GasFee"}.getFloat
   result.eip1559Enabled = jsonObj{"eip1559Enabled"}.getbool
 
 proc toSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
@@ -207,7 +208,8 @@ proc toSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
   result.maxFeePerGasL = parseFloat(jsonObj{"maxFeePerGasLow"}.getStr)
   result.maxFeePerGasM = parseFloat(jsonObj{"maxFeePerGasMedium"}.getStr)
   result.maxFeePerGasH = parseFloat(jsonObj{"maxFeePerGasHigh"}.getStr)
-  result.l1GasFee = parseFloat(jsonObj{"l1GasFee"}.getStr)
+  if jsonObj.hasKey("l1GasFee"):
+    result.l1GasFee = parseFloat(jsonObj{"l1GasFee"}.getStr)
   result.eip1559Enabled = jsonObj{"eip1559Enabled"}.getbool
 
 proc `$`*(self: SuggestedFeesDto): string =
