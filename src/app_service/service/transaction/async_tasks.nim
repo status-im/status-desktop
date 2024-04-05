@@ -17,6 +17,7 @@ type
     accountTo: string
     amount: Uint256
     token: string
+    toToken: string # used for swap only
     disabledFromChainIDs: seq[int]
     disabledToChainIDs: seq[int]
     preferredChainIDs: seq[int]
@@ -89,17 +90,18 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
     except:
       discard
 
-    let response = eth.suggestedRoutes(arg.accountFrom, arg.accountTo, amountAsHex, arg.token, arg.disabledFromChainIDs,
+    let response = eth.suggestedRoutes(arg.accountFrom, arg.accountTo, amountAsHex, arg.token, arg.toToken, arg.disabledFromChainIDs,
       arg.disabledToChainIDs, arg.preferredChainIDs, ord(arg.sendType), lockedInAmounts).result
     var bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     # retry along with unpreferred chains incase no route is possible with preferred chains
-    if(bestPaths.len == 0 and arg.preferredChainIDs.len > 0):
-      let response = eth.suggestedRoutes(arg.accountFrom, arg.accountTo, amountAsHex, arg.token, arg.disabledFromChainIDs,
+    if arg.sendType != SendType.Swap and bestPaths.len == 0 and arg.preferredChainIDs.len > 0:
+      let response = eth.suggestedRoutes(arg.accountFrom, arg.accountTo, amountAsHex, arg.token, arg.toToken, arg.disabledFromChainIDs,
         arg.disabledToChainIDs, @[], ord(arg.sendType), lockedInAmounts).result
       bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     bestPaths.sort(sortAsc[TransactionPathDto])
+
     let output = %*{
       "suggestedRoutes": SuggestedRoutesDto(
         best: addFirstSimpleBridgeTxFlag(bestPaths),

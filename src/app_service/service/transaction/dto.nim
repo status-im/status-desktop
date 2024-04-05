@@ -19,6 +19,7 @@ type
     Bridge
     ERC721Transfer
     ERC1155Transfer
+    Swap
 
 type
   PendingTransactionTypeDto* {.pure.} = enum
@@ -202,14 +203,21 @@ proc decodeSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
 
 proc toSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
   result = SuggestedFeesDto()
-  result.gasPrice = parseFloat(jsonObj["gasPrice"].getStr)
-  result.baseFee = parseFloat(jsonObj["baseFee"].getStr)
-  result.maxPriorityFeePerGas = parseFloat(jsonObj{"maxPriorityFeePerGas"}.getStr)
-  result.maxFeePerGasL = parseFloat(jsonObj{"maxFeePerGasLow"}.getStr)
-  result.maxFeePerGasM = parseFloat(jsonObj{"maxFeePerGasMedium"}.getStr)
-  result.maxFeePerGasH = parseFloat(jsonObj{"maxFeePerGasHigh"}.getStr)
-  if jsonObj.hasKey("l1GasFee"):
-    result.l1GasFee = parseFloat(jsonObj{"l1GasFee"}.getStr)
+  var stringValue: string
+  if jsonObj.getProp("gasPrice", stringValue) and stringValue.len > 0:
+    result.gasPrice = parseFloat(stringValue)
+  if jsonObj.getProp("baseFee", stringValue) and stringValue.len > 0:
+    result.baseFee = parseFloat(stringValue)
+  if jsonObj.getProp("maxPriorityFeePerGas", stringValue) and stringValue.len > 0:
+    result.maxPriorityFeePerGas = parseFloat(stringValue)
+  if jsonObj.getProp("maxFeePerGasLow", stringValue) and stringValue.len > 0:
+    result.maxFeePerGasL = parseFloat(stringValue)
+  if jsonObj.getProp("maxFeePerGasMedium", stringValue) and stringValue.len > 0:
+    result.maxFeePerGasM = parseFloat(stringValue)
+  if jsonObj.getProp("maxFeePerGasHigh", stringValue) and stringValue.len > 0:
+    result.maxFeePerGasH = parseFloat(stringValue)
+  if jsonObj.getProp("l1GasFee", stringValue) and stringValue.len > 0:
+    result.l1GasFee = parseFloat(stringValue)
   result.eip1559Enabled = jsonObj{"eip1559Enabled"}.getbool
 
 proc `$`*(self: SuggestedFeesDto): string =
@@ -275,8 +283,11 @@ proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.fromNetwork = Json.decode($jsonObj["From"], NetworkDto, allowUnknownFields = true)
   result.toNetwork = Json.decode($jsonObj["To"], NetworkDto, allowUnknownFields = true)
   result.gasFees = jsonObj["GasFees"].toSuggestedFeesDto()
-  result.cost = parseFloat(jsonObj{"Cost"}.getStr)
-  result.tokenFees = parseFloat(jsonObj{"TokenFees"}.getStr)
+  var stringValue: string
+  if jsonObj.getProp("Cost", stringValue) and stringValue.len > 0:
+    result.cost = parseFloat(stringValue)
+  if jsonObj.getProp("TokenFees", stringValue) and stringValue.len > 0:
+    result.tokenFees = parseFloat(stringValue)
   result.bonderFees = jsonObj{"BonderFees"}.getStr
   result.maxAmountIn = stint.fromHex(UInt256, jsonObj{"MaxAmountIn"}.getStr)
   result.amountIn = stint.fromHex(UInt256, jsonObj{"AmountIn"}.getStr)
@@ -288,7 +299,8 @@ proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.isFirstBridgeTx = false
   discard jsonObj.getProp("ApprovalRequired", result.approvalRequired)
   result.approvalAmountRequired = stint.fromHex(UInt256, jsonObj{"ApprovalAmountRequired"}.getStr)
-  result.approvalGasFees = parseFloat(jsonObj{"ApprovalGasFees"}.getStr)
+  if jsonObj.getProp("ApprovalGasFees", stringValue) and stringValue.len > 0:
+    result.approvalGasFees = parseFloat(stringValue)
   discard jsonObj.getProp("ApprovalContractAddress", result.approvalContractAddress)
 
 proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =

@@ -109,16 +109,16 @@ proc authenticate*(self: Controller, keyUid = "") =
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-proc suggestedRoutes*(self: Controller, accountFrom: string, accountTo: string, amount: Uint256, token: string, disabledFromChainIDs,
-  disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
-  let suggestedRoutes = self.transactionService.suggestedRoutes(accountFrom, accountTo, amount, token, disabledFromChainIDs,
+proc suggestedRoutes*(self: Controller, accountFrom: string, accountTo: string, amount: Uint256, token: string, toToken: string,
+  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
+  let suggestedRoutes = self.transactionService.suggestedRoutes(accountFrom, accountTo, amount, token, toToken, disabledFromChainIDs,
     disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
   return suggestedRoutes.toJson()
 
-proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string,
+proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string, toAssetKey: string,
     uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,
     usePassword: bool, doHashing: bool, tokenName: string, isOwnerToken: bool) =
-  self.transactionService.transfer(from_addr, to_addr, assetKey, uuid, selectedRoutes, password, sendType,
+  self.transactionService.transfer(from_addr, to_addr, assetKey, toAssetKey, uuid, selectedRoutes, password, sendType,
     usePassword, doHashing, tokenName, isOwnerToken)
 
 proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAddr: string, uuid: string,
