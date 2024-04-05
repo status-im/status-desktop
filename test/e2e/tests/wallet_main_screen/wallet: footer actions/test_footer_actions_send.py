@@ -31,7 +31,6 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.parametrize('receiver_account_address, amount, asset', [
     pytest.param(constants.user.user_account_one.status_address, 0, 'Ether')
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12987")
 def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_account_address, amount, asset):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
@@ -52,7 +51,7 @@ def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_acco
 
     with step('Verify that restored account reveals correct status wallet address'):
         wallet_settings = main_window.left_panel.open_settings().left_panel.open_wallet_settings()
-        status_acc_view = wallet_settings.open_status_account_in_settings()
+        status_acc_view = wallet_settings.open_account_in_settings('Account 1', '0')
         address = status_acc_view.get_account_address_value()
         assert address == user_account.status_address, \
             f"Recovered account should have address {user_account.status_address}, but has {address}"
@@ -66,7 +65,7 @@ def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_acco
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         assert driver.waitFor(lambda: wallet.left_panel.is_total_balance_visible, configs.timeouts.UI_LOAD_TIMEOUT_SEC)
         f"Total balance is not visible"
-        wallet_account = wallet.left_panel.select_account('Status account')
+        wallet_account = wallet.left_panel.select_account('Account 1')
         send_popup = wallet_account.open_send_popup()
 
     with step('Enter asset, amount and address and click send and verify Mainnet network is shown'):

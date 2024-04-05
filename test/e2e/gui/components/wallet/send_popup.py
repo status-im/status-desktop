@@ -1,4 +1,5 @@
 import allure
+import typing
 
 import driver
 from driver.objects_access import wait_for_template
@@ -28,11 +29,17 @@ class SendPopup(BasePopup):
         self._send_button = Button(names.send_StatusFlatButton)
 
     def _select_asset(self, asset: str):
-        for item in driver.findAllObjects(self._asset_list_item.real_name):
-            if str(getattr(item, 'title', '')) == asset:
-                driver.mouseClick(item)
-            else:
-                raise LookupError(f"Chosen asset didn't appear")
+        assets = self.get_assets_list()
+        for index, item in enumerate(assets):
+            if str(item.title) == asset:
+                QObject(item).click()
+
+    @allure.step('Get chats by chats list')
+    def get_assets_list(self) -> typing.List[str]:
+        assets_list = []
+        for asset in driver.findAllObjects(self._asset_list_item.real_name):
+            assets_list.append(asset)
+        return assets_list
 
     def _open_tab(self, name: str):
         assets_tab = wait_for_template(self._tab_item_template.real_name, name, 'text')
@@ -41,7 +48,6 @@ class SendPopup(BasePopup):
     @allure.step('Send {2} {3} to {1}')
     def send(self, address: str, amount: int, asset: str):
         self._open_tab('Assets')
-        self._search_field.type_text(asset)
         self._select_asset(asset)
         assert driver.waitFor(lambda: self._amount_text_edit.is_visible, timeout_msec=6000)
         self._amount_text_edit.text = str(amount)

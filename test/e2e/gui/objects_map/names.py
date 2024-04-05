@@ -408,7 +408,7 @@ secondary_StatusButton = {"checkable": False, "container": statusDesktop_mainWin
 # Send Popup
 o_StatusTabBar = {"container": statusDesktop_mainWindow_overlay, "type": "StatusTabBar", "unnamed": 1, "visible": True}
 tab_Status_template = {"container": o_StatusTabBar, "type": "StatusBaseText", "unnamed": 1, "visible": True}
-o_TokenBalancePerChainDelegate_template = {"container": statusDesktop_mainWindow_overlay, "type": "TokenBalancePerChainDelegate", "unnamed": 1, "visible": True}
+o_TokenBalancePerChainDelegate_template = {"container": statusDesktop_mainWindow_overlay, "objectName": "tokenBalancePerChainDelegate", "type": "TokenBalancePerChainDelegate", "visible": True}
 amountInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "amountInput", "type": "TextEdit", "visible": True}
 paste_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 ens_or_address_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
@@ -753,7 +753,7 @@ savedAddresses_area = {"container": mainWindow_SavedAddressesView_2, "objectName
 # Wallet Account View
 mainWindow_RightTabView = {"container": statusDesktop_mainWindow, "type": "RightTabView", "unnamed": 1, "visible": True}
 mainWallet_Account_Name = {"container": mainWindow_RightTabView, "objectName": "walletHeaderTitle", "type": "StatusBaseText", "visible": True}
-mainWindow_Send_Button = {"container": mainWindow_StatusWindow, "type": "DisabledTooltipButton", "icon": "send", "visible": True}
+mainWindow_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "walletFooterSendButton", "type": "StatusFlatButton", "visible": True}
 mainWindow_RightTabView = {"container": mainWindow_StatusWindow, "type": "RightTabView", "unnamed": 1, "visible": True}
 filterButton_StatusFlatButton = {"checkable": True, "container": mainWindow_RightTabView, "objectName": "filterButton", "type": "StatusFlatButton", "visible": True}
 cmbTokenOrder_SortOrderComboBox = {"container": mainWindow_RightTabView, "objectName": "cmbTokenOrder", "type": "SortOrderComboBox", "visible": True}

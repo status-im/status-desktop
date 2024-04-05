@@ -75,11 +75,6 @@ class WalletSettingsView(QObject):
         self._account_order_button.click()
         return EditAccountOrderSettings().wait_until_appears()
 
-    @allure.step('Open Status account view in wallet settings')
-    def open_status_account_in_settings(self):
-        self._status_account_in_keypair.click()
-        return AccountDetailsView().wait_until_appears()
-
     @allure.step('Get keypair names')
     def get_keypairs_names(self):
         keypair_names = []
