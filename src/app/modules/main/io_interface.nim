@@ -6,7 +6,6 @@ import app_service/service/contacts/service as contacts_service
 import app_service/service/chat/service as chat_service
 import app_service/service/community/service as community_service
 import app_service/service/message/service as message_service
-import app_service/service/gif/service as gif_service
 import app_service/service/mailservers/service as mailservers_service
 import app_service/service/community_tokens/service as community_token_service
 import app_service/service/wallet_account/service as wallet_account_service
@@ -39,7 +38,6 @@ method load*(
   chatService: chat_service.Service,
   communityService: community_service.Service,
   messageService: message_service.Service,
-  gifService: gif_service.Service,
   mailserversService: mailservers_service.Service)
   {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -57,6 +55,9 @@ method appSearchDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method stickersDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method gifsDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method activityCenterDidLoad*(self: AccessInterface) {.base.} =
@@ -93,7 +94,6 @@ method onChannelGroupsLoaded*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     walletAccountService: wallet_account_service.Service,
     tokenService: token_service.Service,
@@ -112,7 +112,6 @@ method onCommunityDataLoaded*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     walletAccountService: wallet_account_service.Service,
     tokenService: token_service.Service,
@@ -164,7 +163,6 @@ method communityJoined*(self: AccessInterface, community: CommunityDto, events: 
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     walletAccountService: wallet_account_service.Service,
     tokenService: token_service.Service,

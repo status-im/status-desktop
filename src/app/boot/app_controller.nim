@@ -342,7 +342,6 @@ proc delete*(self: AppController) =
   self.generalService.delete
   self.ensService.delete
   self.tokensService.delete
-  self.gifService.delete
   self.keycardService.delete
   self.networkConnectionService.delete
 
@@ -467,7 +466,6 @@ proc load(self: AppController) =
     self.chatService,
     self.communityService,
     self.messageService,
-    self.gifService,
     self.mailserversService,
   )
 

@@ -6,7 +6,6 @@ import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
-import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../app_service/common/types
@@ -34,7 +33,6 @@ method onChatsLoaded*(self: AccessInterface,
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
   ) {.base.} =
@@ -77,7 +75,6 @@ method addOrUpdateChat*(self: AccessInterface,
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,

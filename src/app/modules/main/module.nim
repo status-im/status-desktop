@@ -20,6 +20,7 @@ import browser_section/module as browser_section_module
 import profile_section/module as profile_section_module
 import app_search/module as app_search_module
 import stickers/module as stickers_module
+import gifs/module as gifs_module
 import activity_center/module as activity_center_module
 import communities/module as communities_module
 import node_section/module as node_section_module
@@ -105,6 +106,7 @@ type
     browserSectionModule: browser_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
     stickersModule: stickers_module.AccessInterface
+    gifsModule: gifs_module.AccessInterface
     activityCenterModule: activity_center_module.AccessInterface
     communitiesModule: communities_module.AccessInterface
     appSearchModule: app_search_module.AccessInterface
@@ -226,6 +228,7 @@ proc newModule*[T](
   )
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService,
     networkService, tokenService, keycardService)
+  result.gifsModule = gifs_module.newModule(result, events, gifService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService, communityService)
   result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService,
@@ -240,6 +243,7 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
   self.profileSectionModule.delete
   self.stickersModule.delete
+  self.gifsModule.delete
   self.activityCenterModule.delete
   self.communitiesModule.delete
   for cModule in self.channelGroupModules.values:
@@ -468,7 +472,6 @@ method load*[T](
   chatService: chat_service.Service,
   communityService: community_service.Service,
   messageService: message_service.Service,
-  gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
 ) =
   singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
@@ -587,6 +590,7 @@ method load*[T](
   self.browserSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
+  self.gifsModule.load()
   self.activityCenterModule.load()
   self.communitiesModule.load()
   self.appSearchModule.load()
@@ -629,7 +633,6 @@ method onChannelGroupsLoaded*[T](
   chatService: chat_service.Service,
   communityService: community_service.Service,
   messageService: message_service.Service,
-  gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
@@ -657,7 +660,6 @@ method onChannelGroupsLoaded*[T](
       chatService,
       communityService,
       messageService,
-      gifService,
       mailserversService,
       walletAccountService,
       tokenService,
@@ -692,7 +694,6 @@ method onCommunityDataLoaded*[T](
   chatService: chat_service.Service,
   communityService: community_service.Service,
   messageService: message_service.Service,
-  gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
@@ -713,7 +714,6 @@ method onCommunityDataLoaded*[T](
     chatService,
     communityService,
     messageService,
-    gifService,
     mailserversService,
     walletAccountService,
     tokenService,
@@ -751,6 +751,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.stickersModule.isLoaded()):
     return
 
+  if not self.gifsModule.isLoaded():
+    return
+
   if(not self.activityCenterModule.isLoaded()):
     return
 
@@ -776,6 +779,9 @@ method appSearchDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method stickersDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method gifsDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method activityCenterDidLoad*[T](self: Module[T]) =
@@ -971,7 +977,6 @@ method communityJoined*[T](
   chatService: chat_service.Service,
   communityService: community_service.Service,
   messageService: message_service.Service,
-  gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
@@ -997,7 +1002,6 @@ method communityJoined*[T](
       chatService,
       communityService,
       messageService,
-      gifService,
       mailserversService,
       walletAccountService,
       tokenService,

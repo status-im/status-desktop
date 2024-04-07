@@ -73,50 +73,49 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    property var chatSectionChatContentInputAreaInst: typeof chatSectionChatContentInputArea !== "undefined" ? chatSectionChatContentInputArea
-                                                                                                             : null
-    property var gifColumnA: chatSectionChatContentInputAreaInst ? chatSectionChatContentInputArea.gifColumnA
+    property var gifsModuleInst: typeof gifsModule !== "undefined" ? gifsModule : null
+    property var gifColumnA: gifsModuleInst ? gifsModuleInst.gifColumnA
                                                                  : null
-    property var gifColumnB: chatSectionChatContentInputAreaInst ? chatSectionChatContentInputArea.gifColumnB
+    property var gifColumnB: gifsModuleInst ? gifsModuleInst.gifColumnB
                                                                  : null
-    property var gifColumnC: chatSectionChatContentInputAreaInst ? chatSectionChatContentInputArea.gifColumnC
+    property var gifColumnC: gifsModuleInst ? gifsModuleInst.gifColumnC
                                                                  : null
-    property bool gifLoading: chatSectionChatContentInputAreaInst ? chatSectionChatContentInputArea.gifLoading
+    property bool gifLoading: gifsModuleInst ? gifsModuleInst.gifLoading
                                                                  : false
 
     function searchGifs(query) {
-        if (chatSectionChatContentInputAreaInst)
-            chatSectionChatContentInputAreaInst.searchGifs(query)
+        if (gifsModuleInst)
+            gifsModuleInst.searchGifs(query)
     }
 
     function getTrendingsGifs() {
-        if (chatSectionChatContentInputAreaInst)
-            chatSectionChatContentInputAreaInst.getTrendingsGifs()
+        if (gifsModuleInst)
+            gifsModuleInst.getTrendingsGifs()
     }
 
     function getRecentsGifs() {
-        if (chatSectionChatContentInputAreaInst)
-            chatSectionChatContentInputAreaInst.getRecentsGifs()
+        if (gifsModuleInst)
+            gifsModuleInst.getRecentsGifs()
     }
 
     function getFavoritesGifs() {
-        return chatSectionChatContentInputAreaInst ? chatSectionChatContentInputAreaInst.getFavoritesGifs()
+        return gifsModuleInst ? gifsModuleInst.getFavoritesGifs()
                                                    : null
     }
 
     function isFavorite(id) {
-        return chatSectionChatContentInputAreaInst ? chatSectionChatContentInputAreaInst.isFavorite(id)
+        return gifsModuleInst ? gifsModuleInst.isFavorite(id)
                                                    : null
     }
 
     function toggleFavoriteGif(id, reload) {
-        if (chatSectionChatContentInputAreaInst)
-            chatSectionChatContentInputAreaInst.toggleFavoriteGif(id, reload)
+        if (gifsModuleInst)
+            gifsModuleInst.toggleFavoriteGif(id, reload)
     }
 
     function addToRecentsGif(id) {
-        if (chatSectionChatContentInputAreaInst)
-            chatSectionChatContentInputAreaInst.addToRecentsGif(id)
+        if (gifsModuleInst)
+            gifsModuleInst.addToRecentsGif(id)
     }
 
     function getPasswordStrengthScore(password) {

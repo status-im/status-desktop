@@ -14,7 +14,7 @@ Pane {
     }
 
     QtObject {
-        id: chatSectionChatContentInputArea
+        id: gifsModule
     }
 
     QtObject {
