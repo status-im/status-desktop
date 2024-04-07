@@ -26,6 +26,7 @@ QObject {
 
     //helpers
     property var isAddressSaved: (address) => false
+    property bool isShowcaseLoading: false
 
     // Collectibles input models
     property alias collectiblesSourceModel: collectiblesSFPM.sourceModel
@@ -65,6 +66,10 @@ QObject {
                 function getShowcaseVisibility() {
                     return Constants.ShowcaseVisibility.Everyone
                 }
+            },
+            FastExpressionRole {
+                name: "isShowcaseLoading"
+                expression: root.isShowcaseLoading
             }
         ]
     }
