@@ -201,6 +201,7 @@ QtObject {
             isAddressSaved: (address) => {
                 return false
             }
+            isShowcaseLoading: root.contactsStore.isShowcaseForAContactLoading
         }
     }
 
