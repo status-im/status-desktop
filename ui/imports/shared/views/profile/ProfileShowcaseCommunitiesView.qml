@@ -54,7 +54,7 @@ Item {
             implicitHeight: GridView.view.cellHeight - Style.current.padding
             titleFontSize: 15
             communityId: model.id ?? ""
-            loaded: !!model.id
+            loaded: !!model.id && !model.isShowcaseLoading
             asset.source: model.image ?? ""
             asset.isImage: !!model.image
             asset.width: 32

@@ -278,9 +278,9 @@ QtObject:
   proc showcaseForAContactLoadingChanged*(self: View) {.signal.}
   proc emitShowcaseForAContactLoadingChangedSignal*(self: View) =
     self.showcaseForAContactLoadingChanged()
-  proc isShowcaseForAContactLoading*(self: View): bool {.signal.} =
+  proc isShowcaseForAContactLoading*(self: View): bool {.slot.} =
     return self.delegate.isShowcaseForAContactLoading()
-  QtProperty[QVariant] showcaseForAContactLoading:
+  QtProperty[bool] showcaseForAContactLoading:
     read = isShowcaseForAContactLoading
     notify = showcaseForAContactLoadingChanged
 
