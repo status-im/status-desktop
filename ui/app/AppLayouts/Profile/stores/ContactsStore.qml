@@ -25,6 +25,8 @@ QtObject {
     readonly property var showcaseContactAssetsModel: contactsModule.showcaseContactAssetsModel
     readonly property var showcaseContactSocialLinksModel: contactsModule.showcaseContactSocialLinksModel
 
+    readonly property bool isShowcaseForAContactLoading: contactsModule.showcaseForAContactLoading
+
     // Support models for showcase for a contact with showcasePublicKey
     readonly property var showcaseCollectiblesModel: contactsModule.showcaseCollectiblesModel
 

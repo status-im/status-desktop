@@ -338,9 +338,9 @@ method requestProfileShowcase*(self: Module, publicKey: string) =
   if self.showcasePublicKey != publicKey:
     self.view.clearShowcaseModels()
     self.showcasePublicKey = publicKey
-    self.showcaseForAContactLoading = true
-    self.view.emitShowcaseForAContactLoadingChangedSignal()
 
+  self.showcaseForAContactLoading = true
+  self.view.emitShowcaseForAContactLoadingChangedSignal()
   self.controller.requestProfileShowcaseForContact(publicKey, false)
 
 method onProfileShowcaseUpdated(self: Module, publicKey: string) =
