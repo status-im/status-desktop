@@ -100,12 +100,14 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
             aut_two.attach()
             main_window.prepare()
             assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'{group_chat_new_name} is not present in chats list for {aut_two}'
+                                  10000), f'{group_chat_new_name} is not present in chats list for {aut_two}'
             messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
 
             with step('Verify members in a group members list'):
-                assert user_one.name in messages_screen.right_panel.members
-                assert user_two.name in messages_screen.right_panel.members
+                assert driver.waitFor(lambda: user_one.name in messages_screen.right_panel.members,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                assert driver.waitFor(lambda: user_two.name in messages_screen.right_panel.members,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 assert driver.waitFor(lambda: user_three.name not in messages_screen.right_panel.members,
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 assert len(messages_screen.right_panel.members) == 2
@@ -123,7 +125,8 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
                 messages_screen.left_panel.open_leave_group_popup(group_chat_new_name).confirm_leaving()
 
             with step('Check that group name is not displayed on left panel'):
-                assert group_chat_new_name not in messages_screen.left_panel.get_chats_names
+                assert driver.waitFor(lambda: group_chat_new_name not in messages_screen.left_panel.get_chats_names,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             main_window.hide()
 
         with step(f'Check group members and message for {user_three.name}'):

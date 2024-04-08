@@ -33,11 +33,16 @@ class LeftPanel(QObject):
         self._scroll = Scroll(messaging_names.scrollView_Flickable)
         self._chats_list = List(messaging_names.chatList_ListView)
         self._chat_list_item = QObject(messaging_names.scrollView_StatusChatListItem)
+        self._chats_scroll = QObject(messaging_names.mainWindow_scrollView_StatusScrollView)
 
     @property
     @allure.step('Get chats by chats list')
     def get_chats_names(self) -> typing.List[str]:
-        return self._chats_list.get_values('objectName')
+        chats_list = []
+        for child in walk_children(driver.waitForObjectExists(self._chats_list.real_name)):
+            if getattr(child, 'id', '') == 'statusChatListItem':
+                chats_list.append(str(child.objectName))
+        return chats_list
 
     @allure.step('Click chat item')
     def click_chat_by_name(self, chat_name: str):
