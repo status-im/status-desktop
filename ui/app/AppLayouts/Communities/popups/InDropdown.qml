@@ -283,6 +283,8 @@ StatusDropdown {
             delegate: CommunityListItem {
                 id: communitySubItem
 
+                objectName: "communityListItem_" + model.name
+
                 width: ListView.view.width
                 visible: show
 
