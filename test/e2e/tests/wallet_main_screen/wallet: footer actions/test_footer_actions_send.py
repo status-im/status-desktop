@@ -27,6 +27,7 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704527',
                  'Send: can send 0 ETH to address pasted into receiver field with Simple flow')
 @pytest.mark.case(704527)
+@pytest.mark.transaction
 @pytest.mark.parametrize('user_account', [constants.user.user_with_funds])
 @pytest.mark.parametrize('receiver_account_address, amount, asset', [
     pytest.param(constants.user.user_account_one.status_address, 0, 'Ether')

@@ -30,6 +30,7 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704597',
                  'Settings -> ENS usernames: buy ENS name on testnet')
 @pytest.mark.case(704597)
+@pytest.mark.transaction
 @pytest.mark.parametrize('user_account', [constants.user.user_with_funds])
 @pytest.mark.parametrize('ens_name', [pytest.param(constants.user.ens_user_name)])
 def test_ens_name_purchase(keys_screen, main_window, user_account, ens_name):
