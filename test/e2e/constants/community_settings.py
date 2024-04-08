@@ -33,6 +33,7 @@ class ToastMessages(Enum):
     CREATE_PERMISSION_TOAST = 'Community permission created'
     UPDATE_PERMISSION_TOAST = 'Community permission updated'
     DELETE_PERMISSION_TOAST = 'Community permission deleted'
+    KICKED_USER_TOAST = ' was kicked from '
 
 
 class LimitWarnings(Enum):

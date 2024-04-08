@@ -159,6 +159,9 @@ join_StatusButton = { "container": statusDesktop_mainWindow_overlay, "type": "St
 welcome_authenticate_StatusButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 share_your_addresses_to_join_StatusButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 
+# Kick member popup
+confirm_kick_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
+
 """ Settings """
 
 # Send Contact Request

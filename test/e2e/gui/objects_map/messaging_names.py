@@ -65,6 +65,7 @@ groupUserListPanel_StatusMemberListItem = {"container": mainWindow_userListPanel
 # Message quick actions
 mainWindow_chatLogView_StatusListView = {"container":  statusDesktop_mainWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
 chatLogView_chatMessageViewDelegate_MessageView = {"container": mainWindow_chatLogView_StatusListView, "index": 0, "objectName": "chatMessageViewDelegate", "type": "MessageView", "visible": True}
+chatMessageViewDelegate_deletedMessage_RowLayout = {"container": chatLogView_chatMessageViewDelegate_MessageView, "id": "deletedMessage", "type": "RowLayout", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_StatusMessageQuickActions = {"container": chatLogView_chatMessageViewDelegate_MessageView, "type": "StatusMessageQuickActions", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_pin_icon_StatusIcon = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "pin-icon", "type": "StatusIcon", "visible": True}
 chatMessageViewDelegate_unpin_icon_StatusIcon = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "unpin-icon", "type": "StatusIcon", "visible": True}

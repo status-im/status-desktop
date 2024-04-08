@@ -50,11 +50,7 @@ class LeftPanel(QObject):
         for obj in driver.findAllObjects(self._community_template_button.real_name):
             community_names.append(obj.name)
 
-        if len(community_names) == 0:
-            raise LookupError(
-                'Communities not found')
-        else:
-            return community_names
+        return community_names
 
     @property
     @allure.step('Get user badge color')

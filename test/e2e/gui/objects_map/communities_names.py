@@ -72,8 +72,9 @@ communityOverviewSettingsCommunityDescription_StatusBaseText = {"container": mai
 mainWindow_Edit_Community_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "communityOverviewSettingsEditCommunityButton", "type": "StatusButton", "visible": True}
 # Members Settings View
 mainWindow_MembersSettingsPanel = {"container": mainWindow_communityLoader_Loader, "type": "MembersSettingsPanel", "unnamed": 1, "visible": True}
-embersListViews_ListView = {"container": mainWindow_MembersSettingsPanel, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
-memberItem_StatusMemberListItem = {"container": embersListViews_ListView, "id": "memberItem", "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
+membersListViews_ListView = {"container": mainWindow_MembersSettingsPanel, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
+memberItem_StatusMemberListItem = {"container": membersListViews_ListView, "id": "memberItem", "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
+communitySettings_MembersTab_Member_Kick_Button = {"container": membersListViews_ListView, "objectName": "MemberListItem_KickButton", "type": "StatusButton", "visible": True}
 
 # Tokens View
 mainWindow_mintPanel_MintTokensSettingsPanel = {"container": mainWindow_StatusWindow, "id": "mintPanel", "type": "MintTokensSettingsPanel", "unnamed": 1, "visible": True}

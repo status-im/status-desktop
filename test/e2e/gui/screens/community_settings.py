@@ -6,6 +6,7 @@ import allure
 import driver
 from driver.objects_access import walk_children
 from gui.components.community.color_select_popup import ColorSelectPopup
+from gui.components.community.kick_member_popup import KickMemberPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
@@ -260,11 +261,31 @@ class MembersView(QObject):
     def __init__(self):
         super().__init__(communities_names.mainWindow_MembersSettingsPanel)
         self._member_list_item = QObject(communities_names.memberItem_StatusMemberListItem)
+        self._kick_member_button = Button(communities_names.communitySettings_MembersTab_Member_Kick_Button)
 
     @property
     @allure.step('Get community members')
     def members(self) -> typing.List[str]:
         return [str(member.title) for member in driver.findAllObjects(self._member_list_item.real_name)]
+
+    @allure.step('Get community member object')
+    def get_member_object(self, member_name: str):
+        for item in driver.findAllObjects(self._member_list_item.real_name):
+            if str(getattr(item, 'title', '')) == str(member_name):
+                return item
+            else:
+                raise LookupError(f'Member not found')
+
+    @allure.step('Kick community member')
+    def kick_member(self, member_name: str):
+        time.sleep(3)
+        member = self.get_member_object(member_name)
+        QObject(real_name=driver.objectMap.realName(member)).hover()
+        self._kick_member_button.click()
+        kick_member_popup = KickMemberPopup()
+        assert kick_member_popup.exists
+        kick_member_popup.confirm_kicking()
+
 
 
 class TokensView(QObject):

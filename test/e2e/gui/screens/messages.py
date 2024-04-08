@@ -173,6 +173,7 @@ class ChatView(QObject):
     def __init__(self):
         super().__init__(messaging_names.mainWindow_ChatColumnView)
         self._message_list_item = QObject(messaging_names.chatLogView_chatMessageViewDelegate_MessageView)
+        self._deleted_message = QObject(messaging_names.chatMessageViewDelegate_deletedMessage_RowLayout)
 
     @allure.step('Get messages')
     def messages(self, index: int) -> typing.List[Message]:
@@ -184,6 +185,10 @@ class ChatView(QObject):
             if getattr(item, 'isMessage', False):
                 _messages.append(Message(item))
         return _messages
+
+    @allure.step('Get deleted message state')
+    def get_deleted_message_state(self):
+        return self._deleted_message.exists
 
     def find_message_by_text(self, message_text: str, index: int):
         message = None
