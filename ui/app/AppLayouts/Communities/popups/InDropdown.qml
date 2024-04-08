@@ -262,6 +262,8 @@ StatusDropdown {
                                 CommunityListItem {
                                     id: communityItem
 
+                                    objectName: 'communityListItem_' + model.name
+
                                     title: "#" + model.name
 
                                     asset.name: model.icon ?? ""
