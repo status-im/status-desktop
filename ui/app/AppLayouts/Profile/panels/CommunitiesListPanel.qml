@@ -122,9 +122,7 @@ StatusListView {
                         text: qsTr("Edit Shared Addresses")
                         icon.name: "wallet"
                         enabled: {
-                            if (listItem.isOwner)
-                                return false
-                            if (listItem.isSpectator && !listItem.isInvitationPending)
+                            if (listItem.isOwner || listItem.isSpectator)
                                 return false
                             return true
                         }
