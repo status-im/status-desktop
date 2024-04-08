@@ -469,7 +469,7 @@ class PermissionsSettingsView(QObject):
         self._who_holds_amount_field = TextEdit(communities_names.inputValue_StyledTextField)
         self._asset_item = QObject(communities_names.o_TokenItem)
         self._is_allowed_to_option_button = Button(communities_names.customPermissionListItem)
-        self._in_general_button = Button(communities_names.communityItem_CommunityListItem)
+        self._in_general_checkbox = Button(communities_names.checkBox_StatusCheckBox)
         self._hide_permission_checkbox = CheckBox(communities_names.editPermissionView_switchItem_StatusSwitch)
         self._create_permission_button = Button(communities_names.editPermissionView_Create_permission_StatusButton)
         self._add_button = Button(communities_names.add_StatusButton)
@@ -550,7 +550,7 @@ class PermissionsSettingsView(QObject):
     def set_in(self, in_general):
         if in_general == '#general':
             self.open_in_context_menu()
-            self._in_general_button.wait_until_appears().click()
+            self._in_general_checkbox.wait_until_appears().click()
             self.click_add_button()
 
     @allure.step('Click add button')
