@@ -264,9 +264,10 @@ SettingsContentBase {
             Layout.fillWidth: true
             networksModule: root.walletStore.networksModuleInst
             networkRPCChanged: root.walletStore.networkRPCChanged
+            areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
             onEvaluateRpcEndPoint: root.walletStore.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: {
-                root.walletStore.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+                root.walletStore.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
                 stackContainer.currentIndex = networksViewIndex
             }
         }

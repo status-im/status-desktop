@@ -38,7 +38,7 @@ method setNetworksState*(self: AccessInterface, chainIds: seq[int], enable: bool
 method refreshNetworks*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateNetworkEndPointValues*(self: AccessInterface, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) {.base.} =
+method updateNetworkEndPointValues*(self: AccessInterface, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method fetchChainIdForUrl*(self: AccessInterface, url: string, isMainUrl: bool) {.base.} =

@@ -64,8 +64,8 @@ proc isGoerliEnabled*(self: Controller): bool =
 proc toggleIsGoerliEnabled*(self: Controller) =
   self.walletAccountService.toggleIsGoerliEnabled()
 
-proc updateNetworkEndPointValues*(self: Controller, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
-  self.networkService.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+proc updateNetworkEndPointValues*(self: Controller, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
+  self.networkService.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
 
 proc fetchChainIdForUrl*(self: Controller, url: string, isMainUrl: bool) =
   self.walletAccountService.fetchChainIdForUrl(url, isMainUrl)

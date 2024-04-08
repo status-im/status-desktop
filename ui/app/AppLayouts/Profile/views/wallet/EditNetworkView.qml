@@ -13,9 +13,15 @@ ColumnLayout {
     property var networksModule
     property var combinedNetwork
     property var networkRPCChanged
+    property bool areTestNetworksEnabled: false
 
     signal evaluateRpcEndPoint(string url, bool isMainUrl)
-    signal updateNetworkValues(int chainId, string newMainRpcInput, string newFailoverRpcUrl, bool revertToDefault)
+    signal updateNetworkValues(int chainId, bool testNetwork, string newMainRpcInput, string newFailoverRpcUrl, bool revertToDefault)
+
+    onVisibleChanged: {
+        if (visible)
+            editPreviwTabBar.currentIndex = root.areTestNetworksEnabled ? 1 : 0
+    }
 
     StatusTabBar {
         id: editPreviwTabBar
@@ -47,7 +53,7 @@ ColumnLayout {
             networksModule: root.networksModule
             networkRPCChanged: root.networkRPCChanged
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)
-            onUpdateNetworkValues: root.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+            onUpdateNetworkValues: root.updateNetworkValues(chainId, false, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
         }
     }
 
@@ -58,7 +64,7 @@ ColumnLayout {
             networksModule: root.networksModule
             networkRPCChanged: root.networkRPCChanged
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)
-            onUpdateNetworkValues: root.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+            onUpdateNetworkValues: root.updateNetworkValues(chainId, true, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
         }
     }
 }
