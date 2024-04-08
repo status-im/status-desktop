@@ -15,9 +15,6 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-# method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
-#   raise newException(ValueError, "No implementation available")
-
 method searchGifs*(self: AccessInterface, query: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
