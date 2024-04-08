@@ -6,6 +6,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+import driver
 from gui.screens.messages import MessagesScreen, ToolBar, ChatMessagesView
 from tests.settings.settings_messaging import marks
 
@@ -110,14 +111,14 @@ def test_1x1_chat(multiple_instances):
             message_objects = messages_screen.chat.messages(1)
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
-                assert chat_message2 in message_item
+                assert driver.waitFor(lambda: chat_message2 in message_item, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
         with step(f'User {user_one.name}, received emoji from {user_two.name}'):
             time.sleep(2)
             message_objects = messages_screen.chat.messages(0)
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
-                assert '😎' in message_item
+                assert driver.waitFor(lambda: '😎' in message_item, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
         with step(f'User {user_one.name}, delete own message and verify it was deleted'):
             message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(chat_message1, 2)
