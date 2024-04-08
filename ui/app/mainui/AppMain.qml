@@ -606,7 +606,6 @@ Item {
                         StatusAction {
                             text: qsTr("Invite People")
                             icon.name: "share-ios"
-                            enabled: model.canManageUsers
                             objectName: "invitePeople"
                             onTriggered: {
                                 popups.openInviteFriendsToCommunityPopup(model,
@@ -645,9 +644,7 @@ Item {
                             text: qsTr("Edit Shared Addresses")
                             icon.name: "wallet"
                             enabled: {
-                                if (model.memberRole === Constants.memberRole.owner)
-                                    return false
-                                if (communityContextMenu.isSpectator && !appMain.rootStore.isMyCommunityRequestPending(model.id))
+                                if (model.memberRole === Constants.memberRole.owner || communityContextMenu.isSpectator)
                                     return false
                                 return true
                             }
