@@ -122,7 +122,7 @@ ColumnLayout {
         readonly property var nwFilters: root.networkFilters.split(":")
         readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
 
-        function getLatestTimestmap(ownership, filterList) {
+        function getLatestTimestamp(ownership, filterList) {
             let latest = 0
 
             if (!!ownership) {
@@ -174,12 +174,18 @@ ColumnLayout {
             },
             FastExpressionRole {
                 name: "balance"
-                expression: d.addrFilters, d.getBalance(model.ownership, d.addrFilters)
+                expression: {
+                    d.addrFilters
+                    return d.getBalance(model.ownership, d.addrFilters)
+                }
                 expectedRoles: ["ownership"]
             },
             FastExpressionRole {
                 name: "lastTxTimestamp"
-                expression: d.addrFilters, d.getLatestTimestmap(model.ownership, d.addrFilters)
+                expression: {
+                    d.addrFilters
+                    return d.getLatestTimestamp(model.ownership, d.addrFilters)
+                }
                 expectedRoles: ["ownership"]
             }
         ]
@@ -293,10 +299,10 @@ ColumnLayout {
                 id: cmbTokenOrder
                 hasCustomOrderDefined: root.controller.hasSettings
                 model: [
-                    { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "calendar", sortRoleName: "lastTxTimestamp" }, // Custom SFPM role
-                    { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Collectible name"), icon: "bold", sortRoleName: "name" },
-                    { value: SortOrderComboBox.TokenOrderGroupName, text: qsTr("Collection/community name"), icon: "group", sortRoleName: "groupName" }, // Custom SFPM role communityName || collectionName
-                    { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "exchange", sortRoleName: "" },
+                    { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "", sortRoleName: "lastTxTimestamp" }, // Custom SFPM role
+                    { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Collectible name"), icon: "", sortRoleName: "name" },
+                    { value: SortOrderComboBox.TokenOrderGroupName, text: qsTr("Collection/community name"), icon: "", sortRoleName: "groupName" }, // Custom SFPM role communityName || collectionName
+                    { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "", sortRoleName: "" },
                     { value: SortOrderComboBox.TokenOrderNone, text: "---", icon: "", sortRoleName: "" }, // separator
                     { value: SortOrderComboBox.TokenOrderCreateCustom, text: hasCustomOrderDefined ? qsTr("Edit custom order →") : qsTr("Create custom order →"),
                         icon: "", sortRoleName: "" }
@@ -405,18 +411,18 @@ ColumnLayout {
             title: model.name ? model.name : "..."
             subTitle: model.collectionName ? model.collectionName : model.collectionUid ? model.collectionUid : ""
             mediaUrl: model.mediaUrl ?? ""
-                                        mediaType: model.mediaType ?? ""
-                                                                      fallbackImageUrl: model.imageUrl ?? ""
-                                                                                                          backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
+            mediaType: model.mediaType ?? ""
+            fallbackImageUrl: model.imageUrl ?? ""
+            backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
             isLoading: !!model.isLoading
             privilegesLevel: model.communityPrivilegesLevel ?? Constants.TokenPrivilegesLevel.Community
-                                                               ornamentColor: model.communityColor ?? "transparent"
-                                                                                                      communityId: model.communityId ?? ""
-                                                                                                                                        communityName: model.communityName ?? ""
-                                                                                                                                                                              communityImage: model.communityImage ?? ""
-                                                                                                                                                                                                                      balance: model.balance ?? 1
+            ornamentColor: model.communityColor ?? "transparent"
+            communityId: model.communityId ?? ""
+            communityName: model.communityName ?? ""
+            communityImage: model.communityImage ?? ""
+            balance: model.balance ?? 1
 
-                                                                                                                                                                                                                                                onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType)
+            onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType)
             onRightClicked: {
                 Global.openMenu(tokenContextMenu, this,
                                 {symbol: model.symbol, tokenName: model.name, tokenImage: model.imageUrl,

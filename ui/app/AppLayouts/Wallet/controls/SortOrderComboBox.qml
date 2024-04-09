@@ -169,7 +169,6 @@ ComboBox {
                 elide: Text.ElideRight
                 color: isEditAction ? Theme.palette.primaryColor1 : root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
                 font.pixelSize: root.font.pixelSize
-                font.weight: root.currentIndex === menuIndex ? Font.DemiBold : Font.Normal
             }
 
             Item { Layout.fillWidth: true }
@@ -242,7 +241,7 @@ ComboBox {
         font: root.font
         text: root.textRole ? (Array.isArray(root.model) ? modelData[root.textRole] : model[root.textRole])
                             : modelData
-        icon.name: modelData["icon"]
+        icon.name: !!modelData["icon"] ? modelData["icon"] : ""
         icon.color: Theme.palette.primaryColor1
         background: Rectangle {
             implicitHeight: parent.isSeparator ? 3 : d.defaultDelegateHeight
