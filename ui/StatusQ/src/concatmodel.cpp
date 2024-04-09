@@ -569,19 +569,71 @@ void ConcatModel::connectModelSlots(int index, QAbstractItemModel *model)
                             {}, destinationRow + prefix);
     });
 
-    connect(model, &QAbstractItemModel::rowsMoved, this,
-            [this, index]
+    connect(model, &QAbstractItemModel::rowsMoved, this, [this]
     {
         this->endMoveRows();
     });
 
-    connect(model, &QAbstractItemModel::layoutAboutToBeChanged, this, [this]
+    connect(model, &QAbstractItemModel::layoutAboutToBeChanged, this,
+            [this, model, index]
     {
         emit this->layoutAboutToBeChanged();
+
+        const auto persistentIndexes = persistentIndexList();
+        auto prefix = this->countPrefix(index);
+        auto count = this->m_rowCounts[index];
+
+        for (const QModelIndex& persistentIndex : persistentIndexes) {
+            if (persistentIndex.row() < prefix || persistentIndex.row() >= count + prefix)
+                continue;
+
+            m_proxyIndexes << persistentIndex;
+            Q_ASSERT(persistentIndex.isValid());
+            const auto srcIndex = model->index(
+                        persistentIndex.row() - prefix,
+                        persistentIndex.column());
+
+            Q_ASSERT(srcIndex.isValid());
+            m_layoutChangePersistentIndexes << srcIndex;
+        }
     });
 
-    connect(model, &QAbstractItemModel::layoutChanged, this, [this]
+    connect(model, &QAbstractItemModel::layoutChanged, this, [this, model, index]
     {
+        auto prefix = this->countPrefix(index);
+        auto oldCount = m_rowCounts[index];
+        auto newCount = model->rowCount();
+        auto countDiff = oldCount - newCount;
+
+        // Update row count if necessary as it can change along with layout
+        // change
+        if (countDiff != 0)
+            m_rowCounts[index] = newCount;
+
+        for (int i = 0; i < m_proxyIndexes.size(); ++i) {
+            auto p = m_layoutChangePersistentIndexes.at(i);
+
+            changePersistentIndex(m_proxyIndexes.at(i), this->index(
+                                      p.row() + prefix, p.column(), p.parent()));
+        }
+
+        // If count has changed, it's necessary to update all indexes relating
+        // to the following source models (shift by countDiff).
+        if (countDiff != 0) {
+            const auto persistentIndexes = persistentIndexList();
+
+            for (const QModelIndex& p : persistentIndexes) {
+                if (p.row() < prefix + oldCount)
+                    continue;
+
+                changePersistentIndex(p, this->index(p.row() - countDiff,
+                                                     p.column(), p.parent()));
+            }
+        }
+
+        m_layoutChangePersistentIndexes.clear();
+        m_proxyIndexes.clear();
+
         emit this->layoutChanged();
     });
 
