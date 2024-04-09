@@ -45,8 +45,8 @@ StatusComboBox {
 
         readonly property string selectedChainName: NetworkModelHelpers.getChainName(root.flatNetworks, d.currentIndex)
         readonly property string selectedIconUrl: NetworkModelHelpers.getChainIconUrl(root.flatNetworks, d.currentIndex)
-        readonly property bool allSelected: enabledFlatNetworks.len === root.flatNetworks.count
-        readonly property bool noneSelected: enabledFlatNetworks.len === 0
+        readonly property bool allSelected: enabledFlatNetworks.count === root.flatNetworks.count
+        readonly property bool noneSelected: enabledFlatNetworks.count === 0
 
         // Persist selection between selectPopupLoader reloads
         property int currentIndex: 0
