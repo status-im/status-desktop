@@ -216,6 +216,27 @@ method insertMockedKeycardAction*(self: AccessInterface, cardIndex: int) {.base.
 method removeMockedKeycardAction*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method proceedToApp*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method biometricsSupported*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method notificationsNeedsEnable*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getLoggedInAccountPublicKey*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getLoggedInAccountDisplayName*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getLoggedInAccountImage*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method notifyLoggedInAccountChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

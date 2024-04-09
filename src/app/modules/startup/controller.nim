@@ -55,6 +55,7 @@ type
     tmpRecoverKeycardUsingSeedPhraseWhileLoggingIn: bool
     tmpConnectionString: string
     localPairingStatus: LocalPairingStatus
+    loggedInPofilePublicKey: string
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -190,12 +191,15 @@ proc shouldStartWithOnboardingScreen*(self: Controller): bool =
 
 # This is used when fetching backup failed and we create a new displayName and profileImage.
 # At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
+# FIXME: This might be not needed anymore, as we save the account details in `onNodeLogin`.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
+  debug "<<< storeProfileDataAndProceedWithAppLoading"
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
   discard self.profileService.setDisplayName(self.tmpDisplayName)
   let images = self.storeIdentityImage()
   self.accountsService.updateLoggedInAccount(self.tmpDisplayName, images)
-  self.delegate.finishAppLoading()
+  self.delegate.notifyLoggedInAccountChanged()
+  # self.delegate.finishAppLoading()
 
 proc checkFetchingStatusAndProceed*(self: Controller) =
   self.delegate.checkFetchingStatusAndProceed()
@@ -422,6 +426,8 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
   if recoverAccount:
     self.delegate.prepareAndInitFetchingData()
     self.connectToFetchingFromWakuEvents()
+  else:
+    self.delegate.moveToLoadingAppState()
   let error = self.accountsService.importAccountAndLogin(
     self.tmpSeedPhrase, 
     self.tmpPassword, 
@@ -649,3 +655,30 @@ proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: 
 
 proc setLoggedInAccount*(self: Controller, account: AccountDto) =
   self.accountsService.setLoggedInAccount(account)
+
+proc setLoggedInProfile*(self: Controller, publicKey: string) =
+  debug "<<< setLoggedInProfile", publicKey
+  self.loggedInPofilePublicKey = publicKey
+
+proc getLoggedInAccountPublicKey*(self: Controller): string =
+  return self.loggedInPofilePublicKey
+
+proc getLoggedInAccountDisplayName*(self: Controller): string =
+  return self.accountsService.getLoggedInAccount().name
+
+proc getLoggedInAccountImage*(self: Controller): string =
+  let iamges = self.accountsService.getLoggedInAccount().images
+  for img in iamges:
+    if img.imgType == "large":
+      return img.uri
+  return ""
+
+proc biometricsSupported*(self: Controller): bool =
+  return main_constants.IS_MACOS
+
+proc notificationsNeedsEnable*(self: Controller): bool = 
+  return main_constants.IS_MACOS
+
+proc proceedToApp*(self: Controller) =
+  debug "<<< controller.proceedToApp"
+  self.delegate.finishAppLoading()

@@ -68,7 +68,7 @@ Item {
         leftPadding: Style.current.padding
         rightPadding: Style.current.padding
         font.weight: Font.Medium
-        text: qsTr("Ok, got it")
+        text: qsTr("Start using Status")
         onClicked: {
             root.startupStore.doPrimaryAction()
         }

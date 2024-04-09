@@ -22,56 +22,34 @@ import "../shared"
 Item {
     id: root
     objectName: "onboardingInsertDetailsView"
+
     property StartupStore startupStore
 
-    property string pubKey
-    property string address
-    property string displayName
-    signal createPassword()
+//    property string publicKey //: root.startupStore.startupModuleInst.loggedInAccountPublicKey
+//    property string displayName //: root.startupStore.startupModuleInst.getLoggedInAccountDisplayName
+//    property string image
 
     Component.onCompleted: {
-        if (!!root.startupStore.startupModuleInst.importedAccountPubKey) {
-            root.address = root.startupStore.startupModuleInst.importedAccountAddress ;
-            root.pubKey = root.startupStore.startupModuleInst.importedAccountPubKey;
-        }
+//        if (root.startupStore.startupModuleInst.importedAccountPubKey) {
+//            root.publicKey = root.startupStore.startupModuleInst.loggedInAccountPublicKey;
+//        } else {
+//            root.publicKey = root.startupStore.startupModuleInst.importedAccountPubKey;
+//        }
         nameInput.text = root.startupStore.getDisplayName();
         userImage.asset.name = root.startupStore.getCroppedProfileImage();
-    }
 
-    onStateChanged: {
-        if (state === Constants.startupState.userProfileCreate) {
-            nameInput.input.edit.forceActiveFocus()
-            return
-        }
-        nextBtn.forceActiveFocus()
-    }
-
-    Loader {
-        active: !root.startupStore.startupModuleInst.importedAccountPubKey
-        sourceComponent: StatusListView {
-            model: root.startupStore.startupModuleInst.generatedAccountsModel
-            delegate: Item {
-                Component.onCompleted: {
-                    if (index === 0) {
-                        root.address = model.address;
-                        root.pubKey = model.pubKey;
-                    }
-                }
-            }
-        }
+        nameInput.input.edit.forceActiveFocus()
     }
 
     QtObject {
         id: d
 
         function doAction() {
-            if(!nextBtn.enabled) {
+            if (!nextBtn.enabled) {
                 return
             }
-            if (root.state === Constants.startupState.userProfileCreate) {
-                root.startupStore.setDisplayName(nameInput.text)
-                root.displayName = nameInput.text;
-            }
+            root.startupStore.setDisplayName(nameInput.text)
+//            root.displayName = nameInput.text;
             root.startupStore.doPrimaryAction()
         }
     }
@@ -109,19 +87,16 @@ Item {
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.topMargin: Style.current.bigPadding
             StatusSmartIdenticon {
-                anchors.left: parent.left
                 id: userImage
                 objectName: "welcomeScreenUserProfileImage"
+                anchors.left: parent.left
                 asset.width: 86
                 asset.height: 86
                 asset.letterSize: 32
-                asset.color: Utils.colorForPubkey(root.pubKey)
+                asset.color: Utils.colorForColorId(0)
                 asset.charactersLen: 2
                 asset.isImage: !!asset.name
                 asset.imgIsIdenticon: false
-                ringSettings {
-                    ringSpecModel: Utils.getColorHashAsJson(root.pubKey)
-                }
             }
             StatusRoundButton {
                 id: updatePicButton
@@ -165,54 +140,6 @@ Item {
             }
         }
 
-        StyledText {
-            id: chatKeyTxt
-            objectName: "insertDetailsViewChatKeyTxt"
-            Layout.preferredHeight: 22
-            color: Style.current.secondaryText
-            text: qsTr("Chatkey:") + " " + Utils.getCompressedPk(root.pubKey)
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.topMargin: 13
-            font.pixelSize: 15
-        }
-
-        Item {
-            id: chainsChatKeyImg
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.topMargin: Style.current.padding
-            Layout.preferredWidth: 215
-            Layout.preferredHeight: 77
-
-            Image {
-                id: imgChains
-                anchors.horizontalCenter: parent.horizontalCenter
-                source: Style.svg("onboarding/chains")
-                cache: false
-            }
-            EmojiHash {
-                anchors {
-                    bottom: parent.bottom
-                    left: parent.left
-                }
-                publicKey: root.pubKey
-                objectName: "publicKeyEmojiHash"
-            }
-            StatusSmartIdenticon {
-                id: userImageCopy
-                anchors {
-                    bottom: parent.bottom
-                    right: parent.right
-                    rightMargin: 25
-                }
-                asset.width: 44
-                asset.height: 44
-                asset.color: "transparent"
-                ringSettings { ringSpecModel: Utils.getColorHashAsJson(root.pubKey) }
-            }
-        }
-
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -252,92 +179,4 @@ Item {
             }
         }
     }
-
-    states: [
-        State {
-            name: Constants.startupState.userProfileCreate
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileCreate
-            PropertyChanges {
-                target: usernameText
-                text: qsTr("Your profile")
-            }
-            PropertyChanges {
-                target: txtDesc
-                text: qsTr("Longer and unusual names are better as they are less likely to be used by someone else.")
-            }
-            PropertyChanges {
-                target: chatKeyTxt
-                visible: false
-            }
-            PropertyChanges {
-                target: chainsChatKeyImg
-                opacity: 0.0
-            }
-            PropertyChanges {
-                target: userImageCopy
-                opacity: 0.0
-            }
-            PropertyChanges {
-                target: updatePicButton
-                opacity: 1.0
-            }
-            PropertyChanges {
-                target: nameInputItem
-                enabled: true
-                visible: true
-            }
-        },
-        State {
-            name: Constants.startupState.userProfileChatKey
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileChatKey
-            PropertyChanges {
-                target: usernameText
-                text: qsTr("Your emojihash and identicon ring")
-            }
-            PropertyChanges {
-                target: txtDesc
-                text: qsTr("This set of emojis and coloured ring around your avatar are unique and represent your chat key, so your friends can easily distinguish you from potential impersonators.")
-            }
-            PropertyChanges {
-                target: chatKeyTxt
-                visible: true
-            }
-            PropertyChanges {
-                target: chainsChatKeyImg
-                opacity: 1.0
-            }
-            PropertyChanges {
-                target: userImageCopy
-                opacity: 1.0
-            }
-            PropertyChanges {
-                target: updatePicButton
-                opacity: 0.0
-            }
-            PropertyChanges {
-                target: nameInputItem
-                enabled: false
-                visible: false
-            }
-        }
-    ]
-
-    transitions: [
-        Transition {
-            from: "*"
-            to: "*"
-            SequentialAnimation {
-                PropertyAction {
-                    target: root
-                    property: "opacity"
-                    value: 0.0
-                }
-                PropertyAction {
-                    target: root
-                    property: "opacity"
-                    value: 1.0
-                }
-            }
-        }
-    ]
 }
