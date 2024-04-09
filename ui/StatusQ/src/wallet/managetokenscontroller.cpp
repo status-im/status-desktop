@@ -165,24 +165,7 @@ void ManageTokensController::showHideCollectionGroup(const QString& groupId, boo
     requestSaveSettings(serializeSettingsAsJson());
 }
 
-void ManageTokensController::saveToQSettings(const QString& json)
-{
-    Q_ASSERT(!m_settingsKey.isEmpty());
-
-    savingStarted();
-
-    // save to QSettings
-    m_settings.beginGroup(settingsGroupName());
-
-    // data
-    m_settings.setValue(m_settingsKey, json);
-
-    m_settings.endGroup();
-    m_settings.sync();
-
-    savingFinished();
-}
-
+// Used in testing
 void ManageTokensController::clearQSettings()
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
@@ -196,19 +179,6 @@ void ManageTokensController::clearQSettings()
     emit settingsDirtyChanged(false);
 }
 
-void ManageTokensController::loadFromQSettings()
-{
-    Q_ASSERT(!m_settingsKey.isEmpty());
-
-    loadingStarted();
-
-    // load from QSettings
-    m_settings.beginGroup(settingsGroupName());
-    const auto jsonData = m_settings.value(m_settingsKey).toString();
-    m_settings.endGroup();
-
-    loadingFinished(jsonData);
-}
 
 void ManageTokensController::setSettingsDirty(bool dirty)
 {
@@ -238,13 +208,14 @@ void ManageTokensController::revert() { requestLoadSettings(); }
 
 void ManageTokensController::savingStarted()
 {
-    setSettingsDirty(true); // save to QSettings
+    setSettingsDirty(true);
     m_settings.beginGroup(settingsGroupName());
 
     m_settings.setValue(QStringLiteral("ArrangeByCommunity"), m_arrangeByCommunity);
     m_settings.setValue(QStringLiteral("ArrangeByCollection"), m_arrangeByCollection);
 
     m_settings.endGroup();
+    m_settings.sync();
 }
 
 void ManageTokensController::savingFinished()
@@ -265,19 +236,6 @@ void ManageTokensController::loadingStarted()
 
     m_settings.beginGroup(settingsGroupName());
 
-    // hidden groups
-    const auto groups = m_settings.value(QStringLiteral("HiddenCommunityGroups")).toStringList();
-    if (!groups.isEmpty()) {
-        m_hiddenCommunityGroups = {groups.constBegin(), groups.constEnd()};
-        emit hiddenCommunityGroupsChanged();
-    }
-    const auto collections = m_settings.value(QStringLiteral("HiddenCollectionGroups")).toStringList();
-    if (!collections.isEmpty()) {
-        m_hiddenCollectionGroups = {collections.constBegin(), collections.constEnd()};
-        emit hiddenCollectionGroupsChanged();
-    }
-
-    // arrange by
     setArrangeByCommunity(m_settings.value(QStringLiteral("ArrangeByCommunity"), false).toBool());
     setArrangeByCollection(m_settings.value(QStringLiteral("ArrangeByCollection"), false).toBool());
 
@@ -558,6 +516,16 @@ void ManageTokensController::rebuildCommunityTokenGroupsModel()
     for (const auto& group : std::as_const(result))
         m_communityTokenGroupsModel->addItem(group);
 
+    // rebuild hidden community groups
+    m_hiddenCommunityGroups.clear();
+    for (auto i = 0; i < m_communityTokenGroupsModel->rowCount(); i++) {
+        const auto& group = m_communityTokenGroupsModel->itemAt(i);
+        if (m_settingsData.contains(group.communityId) && !m_settingsData.value(group.communityId).visible) {
+            m_hiddenCommunityGroups.insert(group.communityId);
+        }
+    }
+    emit hiddenCommunityGroupsChanged();
+
     qCDebug(manageTokens) << "!!! GROUPS MODEL REBUILT WITH GROUPS:" << communityIds;
 }
 
@@ -648,6 +616,17 @@ void ManageTokensController::rebuildCollectionGroupsModel()
     m_collectionGroupsModel->clear();
     for (const auto& group : std::as_const(result))
         m_collectionGroupsModel->addItem(group);
+
+    // rebuild hidden collection groups
+    m_hiddenCollectionGroups.clear();
+    for (auto i = 0; i < m_collectionGroupsModel->rowCount(); i++) {
+        const auto& group = m_collectionGroupsModel->itemAt(i);
+        if (m_settingsData.contains(group.collectionUid) && !m_settingsData.value(group.collectionUid).visible) {
+            m_hiddenCollectionGroups.insert(group.collectionUid);
+        }
+    }
+    emit hiddenCollectionGroupsChanged();
+
 
     qCDebug(manageTokens) << "!!! COLLECTION MODEL REBUILT WITH GROUPS:" << collectionIds;
 }

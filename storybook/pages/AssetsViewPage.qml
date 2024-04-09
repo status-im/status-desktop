@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
+import Qt.labs.settings 1.0
+
 import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
@@ -99,9 +101,19 @@ SplitView {
                 settingsKey: "WalletAssets"
                 serializeAsCollectibles: false
 
-                onRequestSaveSettings: (jsonData) => saveToQSettings(jsonData)
-                onRequestLoadSettings: loadFromQSettings()
-                onRequestClearSettings: clearQSettings()
+                onRequestSaveSettings: (jsonData) => {
+                    savingStarted()
+                    settingsStore.setValue(settingsKey, jsonData)
+                    savingFinished()
+                }
+                onRequestLoadSettings: {
+                    loadingStarted()
+                    const jsonData = settingsStore.value(settingsKey, null)
+                    loadingFinished(jsonData)
+                }
+                onRequestClearSettings: {
+                    settingsStore.setValue(settingsKey, null)
+                }
 
                 onTokenHidden: (symbol, name) => Global.displayToastMessage(
                                    qsTr("%1 (%2) was successfully hidden").arg(name).arg(symbol), "", "checkmark-circle",
@@ -132,6 +144,11 @@ SplitView {
             onReceiveRequested: logs.logEvent("onReceiveRequested", ["symbol"], arguments)
             onSwitchToCommunityRequested: logs.logEvent("onSwitchToCommunityRequested", ["communityId"], arguments)
             onManageTokensRequested: logs.logEvent("onManageTokensRequested")
+
+            Settings {
+                id: settingsStore
+                category: "ManageTokens-" + assetsView.controller.settingsKey
+            }
         }
 
         ColumnLayout {

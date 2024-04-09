@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
+import Qt.labs.settings 1.0
+
 import StatusQ 0.1
 import StatusQ.Models 0.1
 import StatusQ.Core 0.1
@@ -84,9 +86,19 @@ SplitView {
             settingsKey: "WalletCollectibles"
             serializeAsCollectibles: true
 
-            onRequestSaveSettings: (jsonData) => saveToQSettings(jsonData)
-            onRequestLoadSettings: loadFromQSettings()
-            onRequestClearSettings: clearQSettings()
+            onRequestSaveSettings: (jsonData) => {
+                savingStarted()
+                settingsStore.setValue(settingsKey, jsonData)
+                savingFinished()
+            }
+            onRequestLoadSettings: {
+                loadingStarted()
+                const jsonData = settingsStore.value(settingsKey, null)
+                loadingFinished(jsonData)
+            }
+            onRequestClearSettings: {
+                settingsStore.setValue(settingsKey, null)
+            }
 
             onTokenHidden: (symbol, name) => Global.displayToastMessage(
                                qsTr("%1 was successfully hidden").arg(name), "", "checkmark-circle",
@@ -111,6 +123,11 @@ SplitView {
         isUpdating: ctrlUpdatingCheckbox.checked
         isFetching: ctrlFetchingCheckbox.checked
         isError: ctrlErrorCheckbox.checked
+
+        Settings {
+            id: settingsStore
+            category: "ManageTokens-" + collectiblesView.controller.settingsKey
+        }
     }
 
     LogsAndControlsPanel {
