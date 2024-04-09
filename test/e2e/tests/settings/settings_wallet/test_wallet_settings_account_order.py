@@ -21,7 +21,6 @@ pytestmark = marks
         pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'Account 1',
                      'WatchOnly', '#2a4af5', 'sunglasses', '😎 ', 'Generated', '#216266', 'thumbsup', '👍 ')
     ])
-@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/519')
 def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account, address: str, default_name,
                                                name: str, color: str, emoji: str, acc_emoji: str, second_name: str,
                                                second_color: str, second_emoji: str, second_acc_emoji: str):
