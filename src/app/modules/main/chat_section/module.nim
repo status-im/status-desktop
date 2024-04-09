@@ -1183,13 +1183,17 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   elif(message.isGlobalMention()):
     notificationType = notification_details.NotificationType.NewMessageWithGlobalMention
 
-  let contactDetails = self.controller.getContactDetails(message.`from`)
+  var senderDisplayName = self.controller.getContactDetails(message.`from`).defaultDisplayName
   let communityChats = self.controller.getMyCommunity().chats
   let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
   var plainText = singletonInstance.utils.plainText(renderedMessageText)
   if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(plainText) == 0):
     plainText = "🖼️"
-  var notificationTitle = contactDetails.defaultDisplayName
+  if message.contentType == ContentType.BridgeMessage:
+    senderDisplayName = message.bridgeMessage.userName
+    plainText = message.bridgeMessage.content
+
+  var notificationTitle = senderDisplayName
 
   case chatDetails.chatType:
     of ChatType.PrivateGroupChat:
