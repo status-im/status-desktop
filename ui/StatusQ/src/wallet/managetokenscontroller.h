@@ -52,14 +52,13 @@ public:
     Q_INVOKABLE void showHideGroup(const QString& groupId, bool flag);
     Q_INVOKABLE void showHideCollectionGroup(const QString& groupId, bool flag);
 
-    Q_INVOKABLE void loadFromQSettings();
-    Q_INVOKABLE void saveToQSettings(const QString& json);
     Q_INVOKABLE void clearQSettings();
     Q_INVOKABLE void revert();
 
-    /// required to be called before the saving is started
+    /// required to call and guard the saving process
     Q_INVOKABLE void savingStarted();
     Q_INVOKABLE void savingFinished();
+    /// required to call and guard the loading process
     Q_INVOKABLE void loadingStarted();
     Q_INVOKABLE void loadingFinished(const QString& jsonData);
 

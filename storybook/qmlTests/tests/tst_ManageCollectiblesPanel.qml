@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtTest 1.15
 
+import Qt.labs.settings 1.0
+
 import StatusQ 0.1
 import StatusQ.Models 0.1
 
@@ -32,6 +34,7 @@ Item {
     Component {
         id: componentUnderTest
         ManageCollectiblesPanel {
+            id: panel
             width: 500
             height: contentHeight
             controller: ManageTokensController {
@@ -39,9 +42,17 @@ Item {
                 settingsKey: "WalletCollectibles"
                 serializeAsCollectibles: true
 
-                onRequestSaveSettings: (jsonData) => saveToQSettings(jsonData)
-                onRequestLoadSettings: loadFromQSettings()
-                onRequestClearSettings: clearQSettings()
+                onRequestSaveSettings: (jsonData) => {
+                    savingStarted()
+                    settingsStore.setValue(settingsKey, jsonData)
+                    savingFinished()
+                }
+                onRequestLoadSettings: {
+                    loadingStarted()
+                    const jsonData = settingsStore.value(settingsKey, null)
+                    loadingFinished(jsonData)
+                }
+                onRequestClearSettings: panel.clearSettings()
 
                 onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
                                                  qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
@@ -50,6 +61,12 @@ Item {
 
             function clearSettings() {
                 controller.clearQSettings()
+                settingsStore.setValue(panel.controller.settingsKey, null)
+            }
+
+            Settings {
+                id: settingsStore
+                category: "ManageTokens-" + panel.controller.settingsKey
             }
         }
     }
