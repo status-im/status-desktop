@@ -112,9 +112,8 @@ SplitView {
                             currentIndex: singleSelectionPopupPlaceholder.currentIndex
                         }
 
-                        onToggleNetwork: (network, networkModel, index) => {
+                        onToggleNetwork: (network, index) => {
                             lastSingleSelectionLabel.text = `[${network.chainName}] - ID: ${network.chainId}, Icon: ${network.iconUrl}`
-                            singleSelectionPopupPlaceholder.currentModel = networkModel
                             singleSelectionPopupPlaceholder.currentIndex = index
                         }
 

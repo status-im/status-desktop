@@ -204,12 +204,12 @@ ColumnLayout {
                 objectName: "cmbTokenOrder"
                 hasCustomOrderDefined: root.controller.hasSettings
                 model: [
-                    { value: SortOrderComboBox.TokenOrderCurrencyBalance, text: qsTr("Asset balance value"), icon: "token-sale", sortRoleName: "currentCurrencyBalance" }, // custom SFPM ExpressionRole on "enabledNetworkCurrencyBalance" amount
-                    { value: SortOrderComboBox.TokenOrderBalance, text: qsTr("Asset balance"), icon: "channel", sortRoleName: "currentBalance" }, // custom SFPM ExpressionRole on "enabledNetworkBalance" amount
-                    { value: SortOrderComboBox.TokenOrderCurrencyPrice, text: qsTr("Asset value"), icon: "token", sortRoleName: "tokenPrice" }, // custom SFPM ExpressionRole on "currencyPrice" amount
-                    { value: SortOrderComboBox.TokenOrder1DChange, text: qsTr("1d change: balance value"), icon: "history", sortRoleName: "change1DayFiat" }, // custom SFPM ExpressionRole
-                    { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Asset name"), icon: "bold", sortRoleName: "name" },
-                    { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "exchange", sortRoleName: "" },
+                    { value: SortOrderComboBox.TokenOrderCurrencyBalance, text: qsTr("Asset balance value"), icon: "", sortRoleName: "currentCurrencyBalance" }, // custom SFPM ExpressionRole on "enabledNetworkCurrencyBalance" amount
+                    { value: SortOrderComboBox.TokenOrderBalance, text: qsTr("Asset balance"), icon: "", sortRoleName: "currentBalance" }, // custom SFPM ExpressionRole on "enabledNetworkBalance" amount
+                    { value: SortOrderComboBox.TokenOrderCurrencyPrice, text: qsTr("Asset value"), icon: "", sortRoleName: "tokenPrice" }, // custom SFPM ExpressionRole on "currencyPrice" amount
+                    { value: SortOrderComboBox.TokenOrder1DChange, text: qsTr("1d change: balance value"), icon: "", sortRoleName: "change1DayFiat" }, // custom SFPM ExpressionRole
+                    { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Asset name"), icon: "", sortRoleName: "name" },
+                    { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "", sortRoleName: "" },
                     { value: SortOrderComboBox.TokenOrderNone, text: "---", icon: "", sortRoleName: "" }, // separator
                     { value: SortOrderComboBox.TokenOrderCreateCustom, text: hasCustomOrderDefined ? qsTr("Edit custom order →") : qsTr("Create custom order →"),
                         icon: "", sortRoleName: "" }

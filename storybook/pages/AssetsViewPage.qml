@@ -180,7 +180,7 @@ SplitView {
                     id: networksRepeater
                     model: NetworksModel.flatNetworks
                     delegate: CheckBox {
-                        property int chainID: chainId
+                        readonly property int chainID: chainId
                         width: parent.width
                         text: chainName
                         visible: isTest
@@ -201,7 +201,7 @@ SplitView {
                     id: accountsRepeater
                     model: WalletAccountsModel {}
                     delegate: CheckBox {
-                        property string address: model.address
+                        readonly property string address: model.address
                         checked: true
                         visible: index<2
                         width: parent.width
