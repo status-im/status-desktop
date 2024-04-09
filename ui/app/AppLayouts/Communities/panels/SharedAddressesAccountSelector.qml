@@ -153,7 +153,6 @@ StatusListView {
                     symbol: d.collectiblesNamesToSymbols[firstEntry.name] || "",
                     enabledNetworkBalance: e.length,
                     account: firstEntry.ownership[0].accountAddress,
-                    type: Constants.TokenType.ERC721,
                     imageUrl: d.collectiblesNamesToImages[firstEntry.name] || ""
                 }
             })
@@ -210,15 +209,16 @@ StatusListView {
         ConcatModel {
             id: concatModel
 
+            markerRoleName: "type"
+
             sources: [
                 SourceModel {
-                    // During initialization sfpm provides rowCount not taking
-                    // filtering into account, deferring model assignment as
-                    // a workaround
-                    Component.onCompleted: model = walletAccountAssetsModel
+                    model: walletAccountAssetsModel
+                    markerRoleValue: Constants.TokenType.ERC20
                 },
                 SourceModel {
-                    Component.onCompleted: model = accountCollectiblesModel
+                    model: accountCollectiblesModel
+                    markerRoleValue: Constants.TokenType.ERC721
                 }
             ]
         }
@@ -255,15 +255,6 @@ StatusListView {
                     expectedRoles: ["balances", "decimals"]
                 },
                 FastExpressionRole {
-                    name: "type"
-
-                    readonly property int typeVal: Constants.TokenType.ERC20
-
-                    // Singletons cannot be used directly in sfpm's expressions
-                    expression: typeVal
-                    expectedRoles: []
-                },
-                FastExpressionRole {
                     name: "imageUrl"
 
                     function getIcon(symbol) {
@@ -295,8 +286,11 @@ StatusListView {
             StatusBaseText {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: Theme.tertiaryTextFontSize
+
+                readonly property int type: model.type
+
                 text: {
-                    if (model.type === Constants.TokenType.ERC20)
+                    if (type === Constants.TokenType.ERC20)
                         return LocaleUtils.currencyAmountToLocaleString(
                                     root.getCurrencyAmount(model.enabledNetworkBalance,
                                                            model.symbol))
