@@ -55,7 +55,7 @@ QVariant ModelUtilsInternal::get(QAbstractItemModel *model,
                                  int row, const QString &roleName) const
 {
     if (auto role = roleByName(model, roleName); role != -1)
-        return model->data(model->index(row, 0), roleByName(model, roleName));
+        return model->data(model->index(row, 0), role);
 
     return {};
 }
