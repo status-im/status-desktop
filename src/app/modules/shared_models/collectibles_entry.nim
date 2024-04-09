@@ -320,6 +320,16 @@ QtObject:
     read = getTokenType
     notify = tokenTypeChanged
 
+  proc soulboundChanged*(self: CollectiblesEntry) {.signal.}
+  proc getSoulbound*(self: CollectiblesEntry): bool {.slot.} =
+    if not self.hasCollectibleData() or isNone(self.getCollectibleData().soulbound):
+      return false
+    return self.getCollectibleData().soulbound.get()
+
+  QtProperty[bool] soulbound:
+    read = getSoulbound
+    notify = soulboundChanged
+
   proc updateDataIfSameID*(self: CollectiblesEntry, update: backend.Collectible): bool =
     if self.id != update.id:
       return false
