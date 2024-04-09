@@ -236,11 +236,26 @@ ItemDelegate {
     */
     readonly property bool dragActive: dragHandler.drag.active
     onDragActiveChanged: {
-        if (dragActive)
+        if (dragActive) {
             Drag.start()
-        else
-            Drag.drop()
+            root.dragStarted()
+            return
+        }
+        Drag.drop()
+        root.dragFinished()
     }
+
+    /*!
+        \qmlsignal
+        This signal is emitted when dragging the StatusDraggableListItem item started.
+    */
+    signal dragStarted()
+
+    /*!
+        \qmlsignal
+        This signal is emitted when dragging the StatusDraggableListItem item finished.
+    */
+    signal dragFinished()
 
     states: [
         State {

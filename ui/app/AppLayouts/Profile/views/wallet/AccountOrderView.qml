@@ -74,14 +74,6 @@ ColumnLayout {
                 drag.accept()
             }
 
-            onDropped: function(drop) {
-                let from = d.indexMoveFrom
-                let to = d.indexMoveTo
-                d.indexMoveFrom = -1
-                d.indexMoveTo = -1
-                root.walletStore.moveAccountFinally(from, to)
-            }
-
             StatusDraggableListItem {
                 id: draggableDelegate
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -102,6 +94,14 @@ ColumnLayout {
                 icon.height: 40
                 icon.name: model.emoji
                 icon.color: Utils.getColorForId(model.colorId)
+
+                onDragFinished: {
+                    let from = d.indexMoveFrom
+                    let to = d.indexMoveTo
+                    d.indexMoveFrom = -1
+                    d.indexMoveTo = -1
+                    root.walletStore.moveAccountFinally(from, to)
+                }
             }
         }
     }
