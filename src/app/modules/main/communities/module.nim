@@ -945,12 +945,12 @@ proc updateCheckingPermissionsInProgressIfNeeded(self: Module, inProgress = fals
   self.view.setCheckingPermissionsInProgress(inProgress)
 
 method onCommunityCheckPermissionsToJoinFailed*(self: Module, communityId: string, error: string) =
-  # TODO show error
+  self.view.emitCommunityCheckPermissionsToJoinFailedSignal(error)
   self.checkingPermissionToJoinInProgress = false
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
 method onCommunityCheckAllChannelPermissionsFailed*(self: Module, communityId: string, error: string) =
-  # TODO show error
+  self.view.emitCommunityCheckAllChannelPermissionsFailedSignal(error)
   self.checkingAllChannelPermissionsInProgress = false
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 

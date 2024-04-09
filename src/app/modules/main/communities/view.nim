@@ -824,3 +824,11 @@ QtObject:
 
   proc promoteSelfToControlNode*(self: View, communityId: string) {.slot.} =
     self.delegate.promoteSelfToControlNode(communityId)
+
+  proc communityCheckPermissionsToJoinFailed*(self: View, error: string) {.signal.}
+  proc emitCommunityCheckPermissionsToJoinFailedSignal*(self: View, error: string) =
+    self.communityCheckPermissionsToJoinFailed(error)
+
+  proc communityCheckAllChannelPermissionsFailed*(self: View, error: string) {.signal.}
+  proc emitCommunityCheckAllChannelPermissionsFailedSignal*(self: View, error: string) =
+    self.communityCheckAllChannelPermissionsFailed(error)
