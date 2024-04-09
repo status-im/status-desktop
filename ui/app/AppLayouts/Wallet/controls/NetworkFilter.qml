@@ -1,5 +1,6 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.13
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -72,6 +73,9 @@ StatusComboBox {
         radius: 8
         color: root.control.hovered ? Theme.palette.baseColor2 : "transparent"
         border.color: Theme.palette.directColor7
+        HoverHandler {
+            cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
+        }
     }
 
     contentItem: RowLayout {
