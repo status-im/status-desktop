@@ -20,7 +20,6 @@ import ../../../../../app_service/service/node_configuration/service as node_con
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
-import ../../../../../app_service/service/gif/service as gif_service
 import ../../../../../app_service/service/message/service as message_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../../app_service/service/shared_urls/service as shared_urls_service
@@ -46,7 +45,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
     belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service, contactService: contact_service.Service,
     chatService: chat_service.Service, communityService: community_service.Service,
-    messageService: message_service.Service, gifService: gif_service.Service,
+    messageService: message_service.Service,
     mailserversService: mailservers_service.Service, sharedUrlsService: shared_urls_service.Service):
   Module =
   result = Module()
@@ -59,7 +58,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
-    chatService, communityService, contactService, gifService, messageService, settingsService)
+    chatService, communityService, contactService, messageService, settingsService)
   result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
     contactService, communityService, chatService, messageService, mailserversService, sharedUrlsService)
   result.usersModule = users_module.newModule(events, sectionId, chatId, belongsToCommunity,

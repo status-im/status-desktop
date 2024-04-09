@@ -31,7 +31,6 @@ import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
-import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
@@ -65,7 +64,6 @@ proc buildChatSectionUI(
   chatService: chat_service.Service,
   communityService: community_service.Service,
   messageService: message_service.Service,
-  gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
   sharedUrlsService: shared_urls_service.Service,
 )
@@ -85,7 +83,6 @@ proc addOrUpdateChat(self: Module,
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
@@ -103,7 +100,6 @@ proc newModule*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     walletAccountService: wallet_account_service.Service,
     tokenService: token_service.Service,
@@ -114,7 +110,7 @@ proc newModule*(
   result = Module()
   result.delegate = delegate
   result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService,
-    nodeConfigurationService, contactService, chatService, communityService, messageService, gifService,
+    nodeConfigurationService, contactService, chatService, communityService, messageService,
     mailserversService, walletAccountService, tokenService, communityTokensService, sharedUrlsService, networkService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
@@ -244,13 +240,12 @@ proc addSubmodule(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
   ) =
   self.chatContentModules[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
     belongToCommunity, isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService,
-    messageService, gifService, mailserversService, sharedUrlsService)
+    messageService, mailserversService, sharedUrlsService)
 
 proc removeSubmodule(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -295,7 +290,6 @@ proc buildChatSectionUI(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
   ) =
@@ -335,7 +329,6 @@ proc buildChatSectionUI(
       chatService,
       communityService,
       messageService,
-      gifService,
       mailserversService,
       sharedUrlsService,
       setChatAsActive = false,
@@ -429,13 +422,12 @@ method onChatsLoaded*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
   ) =
   self.chatsLoaded = true
   self.buildChatSectionUI(channelGroup, events, settingsService, nodeConfigurationService,
-    contactService, chatService, communityService, messageService, gifService, mailserversService, sharedUrlsService)
+    contactService, chatService, communityService, messageService, mailserversService, sharedUrlsService)
 
   if(not self.controller.isCommunity()):
     # we do this only in case of chat section (not in case of communities)
@@ -641,7 +633,6 @@ proc addNewChat(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
@@ -750,7 +741,6 @@ proc addNewChat(
     chatService,
     communityService,
     messageService,
-    gifService,
     mailserversService,
     sharedUrlsService,
   )
@@ -1387,7 +1377,6 @@ proc addOrUpdateChat(self: Module,
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
@@ -1434,7 +1423,6 @@ proc addOrUpdateChat(self: Module,
       chatService,
       communityService,
       messageService,
-      gifService,
       mailserversService,
       sharedUrlsService,
       setChatAsActive,
@@ -1451,7 +1439,6 @@ method addOrUpdateChat*(self: Module,
     chatService: chat_service.Service,
     communityService: community_service.Service,
     messageService: message_service.Service,
-    gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
@@ -1468,7 +1455,6 @@ method addOrUpdateChat*(self: Module,
     chatService,
     communityService,
     messageService,
-    gifService,
     mailserversService,
     sharedUrlsService,
     setChatAsActive,

@@ -11,9 +11,6 @@ import ../../../../../../app_service/service/message/dto/link_preview
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/contacts/service as contact_service
-import ../../../../../../app_service/service/gif/service as gif_service
-import ../../../../../../app_service/service/gif/dto
-
 export io_interface
 
 type
@@ -33,7 +30,6 @@ proc newModule*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     contactService: contact_service.Service,
-    gifService: gif_service.Service,
     messageService: message_service.Service,
     settingsService: settings_service.Service
     ):
@@ -42,7 +38,7 @@ proc newModule*(
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, contactService, gifService, messageService, settingsService)
+  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, contactService, messageService, settingsService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -98,63 +94,6 @@ method acceptRequestAddressForTransaction*(self: Module, messageId: string, addr
 
 method acceptRequestTransaction*(self: Module, transactionHash: string, messageId: string, signature: string) =
   self.controller.acceptRequestTransaction(transactionHash, messageId, signature)
-
-method searchGifs*(self: Module, query: string) =
-  self.controller.searchGifs(query)
-
-method getTrendingsGifs*(self: Module) =
-  self.controller.getTrendingsGifs()
-
-method getRecentsGifs*(self: Module): seq[GifDto] =
-  return self.controller.getRecentsGifs()
-
-method loadRecentGifs*(self: Module) =
-  self.controller.loadRecentGifs()
-
-method loadRecentGifsDone*(self: Module, gifs: seq[GifDto]) =
-  self.view.updateGifColumns(gifs)
-
-method loadTrendingGifsStarted*(self: Module) =
-  self.view.updateGifColumns(@[])
-  self.view.setGifLoading(true)
-
-method loadTrendingGifsError*(self: Module) =
-  # Just setting loading to false works because the UI shows an error when there are no gifs
-  self.view.setGifLoading(false)
-
-method loadTrendingGifsDone*(self: Module, gifs: seq[GifDto]) =
-  self.view.setGifLoading(false)
-  self.view.updateGifColumns(gifs)
-
-method searchGifsStarted*(self: Module) =
-  self.view.updateGifColumns(@[])
-  self.view.setGifLoading(true)
-
-method searchGifsError*(self: Module) =
-  # Just setting loading to false works because the UI shows an error when there are no gifs
-  self.view.setGifLoading(false)
-
-method serachGifsDone*(self: Module, gifs: seq[GifDto]) =
-  self.view.setGifLoading(false)
-  self.view.updateGifColumns(gifs)
-
-method getFavoritesGifs*(self: Module): seq[GifDto] =
-  return self.controller.getFavoritesGifs()
-
-method loadFavoriteGifs*(self: Module) =
-  self.controller.loadFavoriteGifs()
-
-method loadFavoriteGifsDone*(self: Module, gifs: seq[GifDto]) =
-  self.view.updateGifColumns(gifs)
-
-method toggleFavoriteGif*(self: Module, item: GifDto) =
-  self.controller.toggleFavoriteGif(item)
-
-method addToRecentsGif*(self: Module, item: GifDto) =
-  self.controller.addToRecentsGif(item)
-
-method isFavorite*(self: Module, item: GifDto): bool =
-  return self.controller.isFavorite(item)
 
 method setText*(self: Module, text: string, unfurlNewUrls: bool) =
   self.controller.setText(text, unfurlNewUrls)
