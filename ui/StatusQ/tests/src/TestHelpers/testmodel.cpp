@@ -85,6 +85,9 @@ void TestModel::remove(int index)
 
 void TestModel::invert()
 {
+    if (m_data.size() < 2)
+        return;
+
     emit layoutAboutToBeChanged();
 
     for (auto& entry : m_data)
@@ -95,6 +98,32 @@ void TestModel::invert()
 
     for (const QModelIndex& index: persistentIndexes)
         changePersistentIndex(index, createIndex(count - index.row() - 1, 0));
+
+    emit layoutChanged();
+}
+
+void TestModel::removeEverySecond()
+{
+    if (m_data.empty())
+        return;
+
+    emit layoutAboutToBeChanged();
+
+    for (auto& entry : m_data) {
+        QVariantList& data = entry.second;
+
+        for (auto i = 0; i < data.size(); i++)
+            data.removeAt(i);
+    }
+
+    const auto persistentIndexes = persistentIndexList();
+
+    for (const QModelIndex& index : persistentIndexes) {
+        if (index.row() % 2 == 0)
+            changePersistentIndex(index, {});
+        else
+            changePersistentIndex(index, createIndex(index.row() / 2, 0));
+    }
 
     emit layoutChanged();
 }

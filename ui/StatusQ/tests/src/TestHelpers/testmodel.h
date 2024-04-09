@@ -19,6 +19,13 @@ public:
     // inverts order of items, emits layoutAboutToBeChanged / layoutChanged
     void invert();
 
+    // removes every second item from the model but doesn't emit
+    // rowsAboutToBeRemoved/rowsRemoved. The update is notified via
+    // layoutAboutToBeChanged/layoutChanged. It's useful for testing proxy
+    // models against that scenario, which may occur in some circumstances, e.g.
+    // during SFPM initialization where initial filtering is notified this way.
+    void removeEverySecond();
+
 private:
     void initRoles();
 
