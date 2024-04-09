@@ -113,4 +113,8 @@ private:
     std::vector<std::unordered_map<int, int>> m_rolesMappingToSource;
     std::vector<bool> m_rolesMappingInitializationFlags;
     std::vector<int> m_rowCounts;
+
+    // helpers for handling layoutChanged from source
+    QList<QPersistentModelIndex> m_layoutChangePersistentIndexes;
+    QModelIndexList m_proxyIndexes;
 };

@@ -10,6 +10,12 @@
 
 #include <StatusQ/concatmodel.h>
 #include <TestHelpers/listmodelwrapper.h>
+#include <TestHelpers/modelsignalsspy.h>
+#include <TestHelpers/persistentindexestester.h>
+#include <TestHelpers/testmodel.h>
+
+#include <qqmlsortfilterproxymodel.h>
+#include <filters/valuefilter.h>
 
 namespace {
 // Workaround for https://bugreports.qt.io/browse/QTBUG-57971 (ListModel doesn't
@@ -2026,6 +2032,255 @@ private slots:
 
             QCOMPARE(dataChangedSpy.count(), 0);
         }
+    }
+
+    void sortingTest() {
+        QQmlEngine engine;
+
+        auto source1 = R"([
+            { "name": "D", "subname": "d1" },
+            { "name": "A", "subname": "a1" },
+            { "name": "B", "subname": "b1" },
+            { "name": "C", "subname": "c1" },
+            { "name": "B", "subname": "b2" },
+            { "name": "C", "subname": "c2" }
+        ])";
+
+        auto source2 = R"([
+            { "name": "A", "subname": "a1" },
+            { "name": "G", "subname": "g1" },
+            { "name": "F", "subname": "f1" },
+            { "name": "C", "subname": "c1" }
+        ])";
+
+        ListModelWrapper sourceModel1(engine, source1);
+        ListModelWrapper sourceModel2(engine, source2);
+
+        QSortFilterProxyModel sfpm1;
+        sfpm1.setSourceModel(sourceModel1);
+
+        QSortFilterProxyModel sfpm2;
+        sfpm2.setSourceModel(sourceModel2);
+
+        ConcatModel model;
+
+        QQmlListProperty<SourceModel> sources = model.sources();
+
+        SourceModel sm1, sm2;
+        sm1.setModel(&sfpm1);
+        sm2.setModel(&sfpm2);
+
+        sources.append(&sources, &sm1);
+        sources.append(&sources, &sm2);
+
+        model.componentComplete();
+
+        ModelSignalsSpy signalsSpy(&model);
+        PersistentIndexesTester indexesTester(&model);
+
+        sfpm1.setSortRole(1);
+        sfpm1.sort(0, Qt::AscendingOrder);
+
+        sfpm2.setSortRole(1);
+        sfpm2.sort(0, Qt::DescendingOrder);
+
+        auto roles = model.roleNames();
+
+        QCOMPARE(model.data(model.index(0), roleForName(roles, "subname")), "a1");
+        QCOMPARE(model.data(model.index(1), roleForName(roles, "subname")), "b1");
+        QCOMPARE(model.data(model.index(2), roleForName(roles, "subname")), "b2");
+        QCOMPARE(model.data(model.index(3), roleForName(roles, "subname")), "c1");
+        QCOMPARE(model.data(model.index(4), roleForName(roles, "subname")), "c2");
+        QCOMPARE(model.data(model.index(5), roleForName(roles, "subname")), "d1");
+        QCOMPARE(model.data(model.index(6), roleForName(roles, "subname")), "g1");
+        QCOMPARE(model.data(model.index(7), roleForName(roles, "subname")), "f1");
+        QCOMPARE(model.data(model.index(8), roleForName(roles, "subname")), "c1");
+        QCOMPARE(model.data(model.index(9), roleForName(roles, "subname")), "a1");
+
+        QCOMPARE(sfpm1.roleNames().value(1), "subname");
+        QVERIFY(indexesTester.compare());
+    }
+
+    void layoutChangeWithRemovalTest() {
+        ConcatModel model;
+
+        TestModel sourceModel1({
+            { "name", { "name 1_1", "name 1_2", "name 1_3", "name 1_4" }}
+        });
+
+        TestModel sourceModel2({
+            { "name", { "name 2_1", "name 2_2", "name 2_3" }}
+        });
+
+        QQmlListProperty<SourceModel> sources = model.sources();
+
+        SourceModel source1, source2;
+        source1.setModel(&sourceModel1);
+        source2.setModel(&sourceModel2);
+
+        sources.append(&sources, &source1);
+        sources.append(&sources, &source2);
+
+        model.componentComplete();
+        QCOMPARE(model.rowCount(), 7);
+
+        QPersistentModelIndex pmi1 = model.index(0);
+        QPersistentModelIndex pmi2 = model.index(1);
+        QPersistentModelIndex pmi3 = model.index(2);
+        QPersistentModelIndex pmi4 = model.index(3);
+        QPersistentModelIndex pmi5 = model.index(4);
+        QPersistentModelIndex pmi6 = model.index(5);
+        QPersistentModelIndex pmi7 = model.index(6);
+
+        sourceModel1.removeEverySecond();
+        QCOMPARE(model.rowCount(), 5);
+
+        QCOMPARE(pmi1.isValid(), false);
+        QCOMPARE(pmi2.isValid(), true);
+        QCOMPARE(pmi3.isValid(), false);
+        QCOMPARE(pmi4.isValid(), true);
+        QCOMPARE(pmi5.isValid(), true);
+        QCOMPARE(pmi6.isValid(), true);
+        QCOMPARE(pmi7.isValid(), true);
+
+        QCOMPARE(pmi2.row(), 0);
+        QCOMPARE(pmi4.row(), 1);
+        QCOMPARE(pmi5.row(), 2);
+        QCOMPARE(pmi6.row(), 3);
+        QCOMPARE(pmi7.row(), 4);
+
+        sourceModel2.removeEverySecond();
+        QCOMPARE(model.rowCount(), 3);
+
+        auto roles = model.roleNames();
+
+        QCOMPARE(model.data(model.index(0), roleForName(roles, "name")), "name 1_2");
+        QCOMPARE(model.data(model.index(1), roleForName(roles, "name")), "name 1_4");
+        QCOMPARE(model.data(model.index(2), roleForName(roles, "name")), "name 2_2");
+
+        QCOMPARE(pmi1.isValid(), false);
+        QCOMPARE(pmi2.isValid(), true);
+        QCOMPARE(pmi3.isValid(), false);
+        QCOMPARE(pmi4.isValid(), true);
+        QCOMPARE(pmi5.isValid(), false);
+        QCOMPARE(pmi6.isValid(), true);
+        QCOMPARE(pmi7.isValid(), false);
+
+        QCOMPARE(pmi2.row(), 0);
+        QCOMPARE(pmi4.row(), 1);
+        QCOMPARE(pmi6.row(), 2);
+    }
+
+    void sfpmTest() {
+        // This test reproduces in C++ situation that happens in the following
+        // QML code. The initial filtering is notified from a SFPM as
+        // a layoutAboutToBeChanged/layoutChanged signals with row count change.
+        // Concat model must manage properly row count update and persistent
+        // indexes.
+        //
+        //    import QtQuick 2.15
+        //    import QtQuick.Controls 2.15
+
+        //    import StatusQ 0.1
+        //    import SortFilterProxyModel 0.2
+
+        //    Item {
+        //        ListModel {
+        //            id: src
+        //            ListElement { name: "A" }
+        //            ListElement { name: "D" }
+        //            ListElement { name: "A" }
+        //            ListElement { name: "Z" }
+        //            ListElement { name: "A" }
+        //        }
+        //        SortFilterProxyModel {
+        //            id: sfpm
+        //            sourceModel: src
+        //            filters: ValueFilter {
+        //                roleName: "name"
+        //                value: "A"
+        //            }
+        //        }
+        //        ConcatModel {
+        //            id: concat
+        //            sources: SourceModel { model: sfpm }
+        //        }
+        //        Flow {
+        //            Repeater {
+        //                model: concat
+        //                Button { text: model.name }
+        //            }
+        //        }
+        //    }
+
+        QQmlEngine engine;
+
+        TestModel sourceModel({
+            { "name", { "A", "B", "A" }},
+            { "subname", { "a1", "b1", "a2" }}
+        });
+
+        qqsfpm::QQmlSortFilterProxyModel sfpm;
+        ConcatModel model;
+
+        ModelSignalsSpy signalsSpy(&sfpm);
+
+        sfpm.classBegin();
+        model.classBegin();
+
+        qqsfpm::ValueFilter filter;
+        filter.setRoleName("name");
+        filter.setValue("A");
+        sfpm.appendFilter(&filter);
+
+        QList<int> layoutAboutToBeChangedSizes;
+        QList<int> layoutChangedSizes;
+
+        connect(&sfpm, &QAbstractItemModel::layoutAboutToBeChanged, this,
+                [&sfpm, &layoutAboutToBeChangedSizes]() {
+              layoutAboutToBeChangedSizes << sfpm.rowCount();
+        });
+
+        connect(&sfpm, &QAbstractItemModel::layoutChanged, this,
+                [&sfpm, &layoutChangedSizes]() {
+            layoutChangedSizes << sfpm.rowCount();
+        });
+
+        QQmlListProperty<SourceModel> sources = model.sources();
+        SourceModel sm;
+        sm.setModel(&sfpm);
+        sources.append(&sources, &sm);
+        sfpm.setSourceModel(&sourceModel);
+
+        // The crucial part is the fact that concat model is completed before
+        // SFPM. It triggers filtering reported via
+        // layoutAboutToBeChanged/layoutChanged. The same behavior can be observed
+        // also for two SFPMs, it's not specific to ConcatModel.
+        model.componentComplete();
+        sfpm.componentComplete();
+
+        QVERIFY(layoutAboutToBeChangedSizes.size() > 0);
+        QVERIFY(layoutAboutToBeChangedSizes.size()
+                == layoutChangedSizes.size());
+
+        // Checking whether the assumed circumstances have occurred. There should
+        // be at least one pair of layoutAboutToBeChanged/layoutChanged where
+        // on layoutAboutToBeChanged the count is smaller than in the following
+        // layoutChanged.
+        QList<int> diffs;
+
+        for (auto i = 0; i < layoutAboutToBeChangedSizes.size(); i++)
+            diffs << std::abs(layoutAboutToBeChangedSizes[i]
+                              - layoutChangedSizes[i]);
+
+        QVERIFY(std::accumulate(diffs.cbegin(), diffs.cend(), 0) != 0);
+
+        QCOMPARE(model.rowCount(), 2);
+
+        auto roles = model.roleNames();
+
+        QCOMPARE(model.data(model.index(0), roleForName(roles, "subname")), "a1");
+        QCOMPARE(model.data(model.index(1), roleForName(roles, "subname")), "a2");
     }
 };
 
