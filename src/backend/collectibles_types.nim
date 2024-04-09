@@ -41,6 +41,7 @@ type
     animationMediaType*: Option[string]
     traits*: Option[seq[CollectibleTrait]]
     backgroundColor*: Option[string]
+    soulbound*: Option[bool]
 
   CollectionData* = ref object of RootObj
     name*: string
@@ -229,7 +230,8 @@ proc `$`*(self: CollectibleData): string =
     animationUrl:{self.animationUrl},
     animationMediaType:{self.animationMediaType},
     traits:{self.traits},
-    backgroundColor:{self.backgroundColor}
+    backgroundColor:{self.backgroundColor},
+    soulbound:{self.soulbound}
   )"""
 
 proc getCollectibleTraits*(t: JsonNode): Option[seq[CollectibleTrait]] =
@@ -256,7 +258,7 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleData]): CollectibleData =
   else:
     result.imageUrl = none(string)
   let animationUrlNode = t{"animation_url"}
-  if animationUrlNode != nil and animationUrlNode.kind != JNull:
+  if animationUrlNode != nil and animationUrlNode.kind != JBool:
     result.animationUrl = some(animationUrlNode.getStr())
   else:
     result.animationUrl = none(string)
@@ -265,6 +267,11 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleData]): CollectibleData =
     result.animationMediaType = some(animationMediaTypeNode.getStr())
   else:
     result.animationMediaType = none(string)
+  let soulboundNode = t{"soulbound"}
+  if soulboundNode != nil and soulboundNode.kind != JNull:
+    result.soulbound = some(soulboundNode.getBool())
+  else:
+    result.soulbound = none(bool)
   result.traits = getCollectibleTraits(t{"traits"})
   let backgroundColorNode = t{"background_color"}
   if backgroundColorNode != nil and backgroundColorNode.kind != JNull:

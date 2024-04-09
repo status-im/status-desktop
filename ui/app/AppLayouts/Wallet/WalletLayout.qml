@@ -262,7 +262,15 @@ Item {
             walletStore: RootStore
             networkConnectionStore: root.networkConnectionStore
             isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible
-            communityName: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityName : ""
+            communityName: {
+                if (!walletStore.currentViewedCollectible)
+                    return ""
+                const name = walletStore.currentViewedCollectible.communityName
+                const id = walletStore.currentViewedCollectible.communityId
+                if (name === id)
+                    return Utils.compactAddress(id, 4)
+                return name
+            }
             onLaunchShareAddressModal: Global.openShowQRPopup({
                                                                   switchingAccounsEnabled: true,
                                                                   changingPreferredChainsEnabled: true,

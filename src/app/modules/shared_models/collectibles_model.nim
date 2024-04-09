@@ -27,6 +27,7 @@ type
     CommunityPrivilegesLevel
     CommunityImage
     TokenType
+    Soulbound
 
 QtObject:
   type
@@ -149,6 +150,7 @@ QtObject:
       CollectibleRole.CommunityPrivilegesLevel.int:"communityPrivilegesLevel",
       CollectibleRole.CommunityImage.int:"communityImage",
       CollectibleRole.TokenType.int:"tokenType",
+      CollectibleRole.Soulbound.int:"soulbound"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -203,6 +205,8 @@ QtObject:
         result = newQVariant(item.getCommunityImage())
       of CollectibleRole.TokenType:
         result = newQVariant(item.getTokenType())
+      of CollectibleRole.Soulbound:
+        result = newQVariant(item.getSoulbound())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
