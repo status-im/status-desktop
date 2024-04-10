@@ -118,7 +118,6 @@ RightTabBaseView {
                     }
                 }
                 StatusFlatButton {
-                    Layout.alignment: Qt.AlignTop
                     id: filterButton
                     objectName: "filterButton"
                     icon.name: "filter"
