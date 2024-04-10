@@ -5,7 +5,7 @@ import ./activity/details_controller as activity_detailsc
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import ./io_interface
 import ../../shared_models/currency_amount
-import ./wallet_connect/controller as wcc
+import ./poc_wallet_connect/controller as wcc
 
 type
   ActivityControllerArray* = array[2, activityc.Controller]

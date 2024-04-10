@@ -24,10 +24,10 @@ import "../controls"
 import "../popups"
 import "../panels"
 
-// TODO: remove DEV import
-import AppLayouts.Wallet.stores 1.0 as WalletStores
-import AppLayouts.Wallet.views.walletconnect 1.0
-// TODO end
+/////////////////////////////////////////////////////
+// WalletConnect POC - to remove
+import AppLayouts.Wallet.views.pocwalletconnect 1.0
+/////////////////////////////////////////////////////
 
 SettingsContentBase {
     id: root
@@ -171,16 +171,19 @@ SettingsContentBase {
                 }
             }
 
+            /////////////////////////////////////////////////////
+            // WalletConnect POC - to remove
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
-                text: qsTr("Debug Wallet Connect")
+                text: qsTr("POC Wallet Connect")
                 visible: root.advancedStore.isDebugEnabled
 
                 onClicked: {
                     Global.popupWalletConnect()
                 }
             }
+            /////////////////////////////////////////////////////
 
             Separator {
                 width: parent.width

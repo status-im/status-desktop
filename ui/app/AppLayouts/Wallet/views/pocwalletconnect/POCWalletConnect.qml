@@ -1,6 +1,12 @@
+/////////////////////////////////////////////////////
+// WalletConnect POC - to remove this file
+/////////////////////////////////////////////////////
+
 import QtQuick 2.15
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
+
+import shared.popups.walletconnect 1.0
 
 Item {
     id: root
@@ -11,7 +17,7 @@ Item {
     property alias sdk: sdk
     property alias url: sdk.url
 
-    WalletConnectModal {
+    POCWalletConnectModal {
         id: modal
 
         controller: root.controller

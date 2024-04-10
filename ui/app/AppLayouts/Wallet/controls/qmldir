@@ -13,3 +13,4 @@ ManageTokensGroupDelegate 1.0 ManageTokensGroupDelegate.qml
 InformationTileAssetDetails 1.0 InformationTileAssetDetails.qml
 StatusNetworkListItemTag 1.0 StatusNetworkListItemTag.qml
 CollectibleBalanceTag 1.0 CollectibleBalanceTag.qml
+ConnectedDappsButton 1.0 ConnectedDappsButton.qml

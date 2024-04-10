@@ -1,3 +1,7 @@
+/////////////////////////////////////////////////////
+// WalletConnect POC - to remove this file
+/////////////////////////////////////////////////////
+
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
@@ -5,6 +9,8 @@ import QtQuick.Layouts 1.15
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
+
+import shared.popups.walletconnect 1.0
 
 Popup {
     id: root
@@ -147,7 +153,7 @@ Popup {
                         id: selAccBtnGroup
                     }
 
-                    SelectAccount {
+                    POCSelectAccount {
                         Layout.fillWidth: true
                         Layout.preferredHeight: contentHeight
 
@@ -201,7 +207,7 @@ Popup {
                 ColumnLayout {
                     Layout.fillWidth: true
 
-                    Sessions {
+                    POCSessions {
                         Layout.fillWidth: true
                         Layout.preferredHeight: contentHeight
 
@@ -220,7 +226,7 @@ Popup {
                 ColumnLayout {
                     Layout.fillWidth: true
 
-                    Pairings {
+                    POCPairings {
                         Layout.fillWidth: true
                         Layout.preferredHeight: contentHeight
 
