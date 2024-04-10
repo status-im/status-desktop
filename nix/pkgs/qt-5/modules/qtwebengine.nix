@@ -76,8 +76,8 @@ qtModule {
   ''
   # Patch library paths in Chromium sources
   + lib.optionalString (!stdenv.isDarwin) ''
-    sed -i -e '/lib_loader.*Load/s!"\(libudev\.so\)!"${lib.getLib systemd}/lib/\1!' \
-      src/3rdparty/chromium/device/udev_linux/udev?_loader.cc
+    #sed -i -e '/lib_loader.*Load/s!"\(libudev\.so\)!"${lib.getLib systemd}/lib/\1!' \
+    #  src/3rdparty/chromium/device/udev_linux/udev?_loader.cc
 
     sed -i -e '/libpci_loader.*Load/s!"\(libpci\.so\)!"${pciutils}/lib/\1!' \
       src/3rdparty/chromium/gpu/config/gpu_info_collector_linux.cc
