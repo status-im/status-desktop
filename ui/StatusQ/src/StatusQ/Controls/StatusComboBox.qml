@@ -1,8 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Window 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -101,11 +101,8 @@ Item {
                     return "transparent"
                 }
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    acceptedButtons: Qt.NoButton
-                    enabled: root.enabled
+                HoverHandler {
+                    cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
                 }
             }
 
@@ -136,7 +133,7 @@ Item {
 
             popup: Popup {
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                y: comboBox.height + 8
+                y: comboBox.height + 4
 
                 implicitWidth: comboBox.width
                 height: Math.min(implicitContentHeight + topPadding + bottomPadding,

@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components.private 0.1 as SQP
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
@@ -74,14 +75,8 @@ ComboBox {
         property int currentIndex: 0
     }
 
-    background: Rectangle {
-        border.width: 1
-        border.color: Theme.palette.directColor7
-        radius: Style.current.radius
-        color: root.down ? Theme.palette.baseColor2 : "transparent"
-        HoverHandler {
-            cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
-        }
+    background: SQP.StatusComboboxBackground {
+        active: root.down || root.hovered
     }
 
     contentItem: StatusBaseText {
@@ -95,13 +90,9 @@ ComboBox {
         color: Theme.palette.baseColor1
     }
 
-    indicator: StatusIcon {
+    indicator: SQP.StatusComboboxIndicator {
         x: root.mirrored ? root.horizontalPadding : root.width - width - root.horizontalPadding
         y: root.topPadding + (root.availableHeight - height) / 2
-        width: 16
-        height: width
-        icon: "chevron-down"
-        color: Theme.palette.baseColor1
     }
 
     popup: Popup {
