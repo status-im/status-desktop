@@ -412,6 +412,7 @@ secondary_StatusButton = {"checkable": False, "container": statusDesktop_mainWin
 o_StatusTabBar = {"container": statusDesktop_mainWindow_overlay, "type": "StatusTabBar", "unnamed": 1, "visible": True}
 tab_Status_template = {"container": o_StatusTabBar, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 o_TokenBalancePerChainDelegate_template = {"container": statusDesktop_mainWindow_overlay, "objectName": "tokenBalancePerChainDelegate", "type": "TokenBalancePerChainDelegate", "visible": True}
+o_CollectibleNestedDelegate_template = {"container": statusDesktop_mainWindow_overlay, "type": "CollectibleNestedDelegate", "unnamed": 1, "visible": True}
 amountInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "amountInput", "type": "TextEdit", "visible": True}
 paste_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 ens_or_address_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
