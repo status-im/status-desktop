@@ -779,7 +779,6 @@ Item {
                         root.sendModal.preSelectedAccount = req.preSelectedAccount
                         root.sendModal.preSelectedRecipient = req.preSelectedRecipient
                         root.sendModal.preSelectedRecipientType = req.preSelectedRecipientType
-                        root.sendModal.preSelectedHolding = req.preSelectedHolding
                         root.sendModal.preSelectedHoldingID = req.preSelectedHoldingID
                         root.sendModal.preSelectedHoldingType = req.preSelectedHoldingType
                         root.sendModal.preSelectedSendType = req.preSelectedSendType
