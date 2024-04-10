@@ -3,6 +3,7 @@ import typing
 
 import allure
 
+import configs
 import driver
 from driver.objects_access import walk_children
 from gui.components.community.color_select_popup import ColorSelectPopup
@@ -268,17 +269,28 @@ class MembersView(QObject):
     def members(self) -> typing.List[str]:
         return [str(member.title) for member in driver.findAllObjects(self._member_list_item.real_name)]
 
-    @allure.step('Get community member object')
-    def get_member_object(self, member_name: str):
+    @allure.step('Get community member objects')
+    def get_member_objects(self) -> typing.List:
+        member_objects = []
         for item in driver.findAllObjects(self._member_list_item.real_name):
-            if str(getattr(item, 'title', '')) == str(member_name):
-                return item
-            else:
+            member_objects.append(item)
+        return member_objects
+
+    @allure.step('Find community member by name')
+    def get_member_object(self, member_name: str):
+        member = None
+        started_at = time.monotonic()
+        while member is None:
+            for _member in self.get_member_objects():
+                if member_name in str(_member.userName):
+                    member = _member
+                    break
+            if time.monotonic() - started_at > configs.timeouts.MESSAGING_TIMEOUT_SEC:
                 raise LookupError(f'Member not found')
+        return member
 
     @allure.step('Kick community member')
     def kick_member(self, member_name: str):
-        time.sleep(3)
         member = self.get_member_object(member_name)
         QObject(real_name=driver.objectMap.realName(member)).hover()
         self._kick_member_button.click()

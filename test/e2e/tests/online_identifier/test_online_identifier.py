@@ -102,7 +102,7 @@ def test_switch_state_to_offline_online_automatic(multiple_instances):
             assert community_params['intro'] == welcome_popup.intro
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
+                                  8000), 'Join community button not hidden'
             main_screen.hide()
 
         with step(f'User {user_two.name}, switch state to offline'):

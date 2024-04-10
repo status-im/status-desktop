@@ -228,7 +228,7 @@ class LeftPanel(QObject):
     @property
     @allure.step('Get Join button visible attribute')
     def is_join_community_visible(self) -> bool:
-        return self._join_community_button.is_visible
+        return self._join_community_button.exists
 
     @property
     @allure.step('Get channels')

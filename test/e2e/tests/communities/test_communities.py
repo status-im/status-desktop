@@ -201,7 +201,7 @@ def test_community_admin_kick_member_and_delete_message(multiple_instances):
             assert community_params['intro'] == welcome_popup.intro
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
+                                  8000), 'Join community button not hidden'
             messages_screen = MessagesScreen()
             message_text = "Hi"
             messages_screen.group_chat.send_message_to_group_chat(message_text)
