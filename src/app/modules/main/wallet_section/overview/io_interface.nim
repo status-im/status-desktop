@@ -19,3 +19,9 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 
 method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int]) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method setIsAllAccounts*(self: AccessInterface, value: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getIsAllAccounts*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

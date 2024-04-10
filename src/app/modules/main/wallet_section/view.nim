@@ -94,7 +94,7 @@ QtObject:
   proc setAddressFilters*(self: View, address: string) =
     self.addressFilters = address
     self.addressFiltersChanged()
-  proc getAddressFilters(self: View): string {.slot.} =
+  proc getAddressFilters*(self: View): string {.slot.} =
     return self.addressFilters
   QtProperty[string] addressFilters:
     read = getAddressFilters
@@ -102,6 +102,9 @@ QtObject:
 
   proc setFilterAddress(self: View, address: string) {.slot.} =
     self.delegate.setFilterAddress(address)
+
+  proc setFilterAllAddresses*(self: View) {.slot.} =
+    self.delegate.setFilterAllAddresses()
 
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: CurrencyAmount) =
     self.totalCurrencyBalance = totalCurrencyBalance

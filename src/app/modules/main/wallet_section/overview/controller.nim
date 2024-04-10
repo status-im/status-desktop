@@ -27,6 +27,9 @@ proc init*(self: Controller) =
 proc getWalletAccountsByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getAccountsByAddresses(addresses)
 
+proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+  return self.walletAccountService.getWalletAccounts()
+
 proc getTotalCurrencyBalance*(self: Controller, addresses: seq[string], chainIds: seq[int]): float64 =
   return self.walletAccountService.getTotalCurrencyBalance(addresses, chainIds)
 

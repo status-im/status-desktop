@@ -96,7 +96,6 @@ proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
   self.threadpool.start(arg)
 
 proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], chainIds: seq[int]): float64 =
-  echo "+++++++ getTotalCurrencyBalance, addresses ", addresses, " chainIds: ", chainIds
   var totalBalance: float64 = 0.0
   for token in self.groupedAccountsTokensList:
     let price = self.tokenService.getPriceBySymbol(token.symbol)

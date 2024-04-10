@@ -30,8 +30,12 @@ proc newController*(
 proc delete*(self: Controller) =
   discard
 
+proc buildAllTokens*(self: Controller, addresses: seq[string]) =
+  self.walletAccountService.buildAllTokens(addresses, store = true)
+
 proc init*(self: Controller) =
-  self.walletAccountService.buildAllTokens(self.walletAccountService.getWalletAddresses(), store = true)
+  let walletAddresses = self.walletAccountService.getWalletAddresses()
+  self.buildAllTokens(walletAddresses)
   discard
 
 proc getChainIds*(self: Controller): seq[int] =
