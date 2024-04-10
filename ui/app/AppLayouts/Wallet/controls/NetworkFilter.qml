@@ -65,6 +65,8 @@ StatusComboBox {
     control.spacing: 0
     control.rightPadding: 36
     control.topPadding: 7
+
+    control.popup.x: root.width - control.popup.width
     control.popup.width: 430
 
     size: StatusComboBox.Size.Small
@@ -79,7 +81,7 @@ StatusComboBox {
         y: root.control.topPadding + (root.control.availableHeight - height) / 2
     }
 
-    contentItem: RowLayout {
+    control.contentItem: RowLayout {
         spacing: Style.current.padding
         StatusSmartIdenticon {
             Layout.alignment: Qt.AlignVCenter
