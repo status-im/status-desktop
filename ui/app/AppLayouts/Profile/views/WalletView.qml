@@ -68,10 +68,10 @@ SettingsContentBase {
     toast.changesDetectedText: manageTokensView.advancedTabVisible ? toast.defaultChangesDetectedText : qsTr("New custom sort order created")
 
     onSaveForLaterClicked: {
-        manageTokensView.saveChanges()
+        manageTokensView.saveChanges(false /* update */)
     }
     onSaveChangesClicked: {
-        manageTokensView.saveChanges()
+        manageTokensView.saveChanges(true /* update */)
 
         if (manageTokensView.advancedTabVisible) {
             // don't emit toasts when the Advanced tab is visible

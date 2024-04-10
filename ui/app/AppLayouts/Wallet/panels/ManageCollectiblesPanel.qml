@@ -18,9 +18,12 @@ DoubleFlickableWithFolding {
     readonly property bool dirty: root.controller.dirty
     readonly property bool hasSettings: root.controller.hasSettings
 
-    function saveSettings() {
+    function saveSettings(update) {
         let jsonSettings = root.controller.serializeSettingsAsJson()
         root.controller.requestSaveSettings(jsonSettings)
+        if(update) {
+            root.controller.requestLoadSettings();
+        }
     }
 
     function revert() {
