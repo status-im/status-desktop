@@ -80,7 +80,7 @@ SplitView {
             Button {
                 enabled: showcasePanel.dirty
                 text: "Save"
-                onClicked: showcasePanel.saveSettings()
+                onClicked: showcasePanel.saveSettings(false /* update */)
             }
 
             Button {

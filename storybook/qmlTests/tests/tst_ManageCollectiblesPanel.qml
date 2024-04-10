@@ -357,7 +357,7 @@ Item {
 
             // save
             verify(controlUnderTest.dirty)
-            controlUnderTest.saveSettings()
+            controlUnderTest.saveSettings(false /* update */)
             verify(!controlUnderTest.dirty)
 
             // load the settings and check BigKitty is still on top

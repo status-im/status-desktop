@@ -21,9 +21,12 @@ DoubleFlickableWithFolding {
     property var getCurrencyAmount: function (balance, symbol) {}
     property var getCurrentCurrencyAmount: function(balance) {}
 
-    function saveSettings() {
+    function saveSettings(update) {
         let jsonSettings = root.controller.serializeSettingsAsJson()
         root.controller.requestSaveSettings(jsonSettings);
+        if(update) {
+            root.controller.requestLoadSettings();
+        }
     }
 
     function revert() {
