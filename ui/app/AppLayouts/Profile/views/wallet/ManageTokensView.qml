@@ -42,8 +42,8 @@ Item {
     readonly property bool dirty: !!loader.item && loader.item.dirty
     readonly property bool advancedTabVisible: tabBar.currentIndex === d.advancedTabIndex
 
-    function saveChanges() {
-        loader.item.saveSettings()
+    function saveChanges(update) {
+        loader.item.saveSettings(update)
     }
 
     function resetChanges() {
