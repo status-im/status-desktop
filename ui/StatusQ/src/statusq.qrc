@@ -65,6 +65,8 @@
         <file>StatusQ/Components/StatusVideo.qml</file>
         <file>StatusQ/Components/StatusWizardStepper.qml</file>
         <file>StatusQ/Components/WebEngineLoader.qml</file>
+        <file>StatusQ/Components/private/StatusComboboxBackground.qml</file>
+        <file>StatusQ/Components/private/StatusComboboxIndicator.qml</file>
         <file>StatusQ/Components/private/chart/Chart.js</file>
         <file>StatusQ/Components/private/chart/Chart.qml</file>
         <file>StatusQ/Components/private/chart/LICENSE</file>

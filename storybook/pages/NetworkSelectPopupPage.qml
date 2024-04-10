@@ -69,7 +69,7 @@ SplitView {
                     closePolicy: Popup.NoAutoClose
 
                     // Simulates a network toggle
-                    onToggleNetwork: (network, networkModel, index) => simulatedNimModel.toggleNetwork(network)
+                    onToggleNetwork: (network, index) => simulatedNimModel.toggleNetwork(network)
                 }
             }
 

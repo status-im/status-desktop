@@ -5,6 +5,7 @@ import QtQml 2.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components.private 0.1 as SQP
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import SortFilterProxyModel 0.2
@@ -33,10 +34,8 @@ StatusComboBox {
     control.currentIndex: 0
     control.indicator.visible: !d.oneItem
 
-    control.background: Rectangle {
-        radius: d.radius
-        color: "transparent"
-        border.color: Theme.palette.directColor7
+    control.background: SQP.StatusComboboxBackground {
+        active: false
         visible: !d.oneItem
     }
 

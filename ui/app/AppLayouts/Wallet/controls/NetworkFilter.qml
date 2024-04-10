@@ -7,6 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
+import StatusQ.Components.private 0.1 as SQP
 import StatusQ.Controls 0.1
 
 import SortFilterProxyModel 0.2
@@ -54,7 +55,7 @@ StatusComboBox {
 
         property SortFilterProxyModel enabledFlatNetworks: SortFilterProxyModel {
             sourceModel: root.flatNetworks
-            filters: ValueFilter { roleName: "isEnabled"; value: true; enabled: !root.preferredNetworksMode}
+            filters: ValueFilter { roleName: "isEnabled"; value: true; enabled: !root.preferredNetworksMode }
         }
     }
 
@@ -68,18 +69,18 @@ StatusComboBox {
 
     size: StatusComboBox.Size.Small
 
-    control.background: Rectangle {
+    control.background: SQP.StatusComboboxBackground {
         height: 38
-        radius: 8
-        color: root.control.hovered ? Theme.palette.baseColor2 : "transparent"
-        border.color: Theme.palette.directColor7
-        HoverHandler {
-            cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
-        }
+        active: root.control.down || root.control.hovered
+    }
+
+    control.indicator: SQP.StatusComboboxIndicator {
+        x: root.control.mirrored ? root.control.horizontalPadding : root.width - width - root.control.horizontalPadding
+        y: root.control.topPadding + (root.control.availableHeight - height) / 2
     }
 
     contentItem: RowLayout {
-        spacing: 16
+        spacing: Style.current.padding
         StatusSmartIdenticon {
             Layout.alignment: Qt.AlignVCenter
             asset.height: 24
@@ -92,7 +93,7 @@ StatusComboBox {
         StatusBaseText {
             Layout.alignment: Qt.AlignVCenter
             Layout.fillWidth: true
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             font.weight: Font.Medium
             elide: Text.ElideRight
             lineHeight: 24
