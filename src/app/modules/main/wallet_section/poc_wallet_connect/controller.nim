@@ -1,7 +1,11 @@
+################################################################################
+# WalletConnect POC - to remove this file
+################################################################################
+
 import NimQml, strutils, json, chronicles
 
 import backend/wallet as backend_wallet
-import backend/wallet_connect as backend_wallet_connect
+import backend/poc_wallet_connect as backend_wallet_connect
 
 import app/global/global_singleton
 import app/global/app_signals

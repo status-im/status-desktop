@@ -65,6 +65,9 @@ StatusSectionLayout {
         case Constants.settingsSubsection.keycard:
             keycardView.item.handleBackAction()
             break;
+        case Constants.settingsSubsection.dapps:
+            dappsView.item.handleBackAction()
+            break;
         }
         Global.settingsSubSubsection = -1
     }
@@ -130,6 +133,8 @@ StatusSectionLayout {
                 walletView.item.resetStack()
             } else if (currentIndex === Constants.settingsSubsection.keycard) {
                 keycardView.item.handleBackAction()
+            } else if (currentIndex === Constants.settingsSubsection.dapps) {
+                dappsView.item.handleBackAction()
             }
         }
 
@@ -252,6 +257,21 @@ StatusSectionLayout {
                 collectiblesStore: root.collectiblesStore
                 emojiPopup: root.emojiPopup
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
+                contentWidth: d.contentWidth
+            }
+            onLoaded: root.store.backButtonName = ""
+        }
+
+        Loader {
+            id: dappsView
+            active: false
+            asynchronous: true
+            sourceComponent: DappsView {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+                profileSectionStore: root.store
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.dapps)
+                mainSectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.dapps)
                 contentWidth: d.contentWidth
             }
             onLoaded: root.store.backButtonName = ""
