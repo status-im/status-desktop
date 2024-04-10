@@ -103,10 +103,6 @@ type
     communityId*: string
     tokenMetadata*: CommunityTokensMetadataDto
 
-  CommunityTokenPermissionRemovedArgs* = ref object of Args
-    communityId*: string
-    permissionId*: string
-
   DiscordCategoriesAndChannelsArgs* = ref object of Args
     categories*: seq[DiscordCategoryDto]
     channels*: seq[DiscordChannelDto]
@@ -687,8 +683,7 @@ QtObject:
           if not community.tokenPermissions.hasKey(id):
             self.communities[community.id].tokenPermissions.del(id)
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
-            CommunityTokenPermissionRemovedArgs(communityId: community.id, permissionId: id))
-
+            CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: prvTokenPermission))
       else:
         for id, tokenPermission in community.tokenPermissions:
           if not prevCommunity.tokenPermissions.hasKey(id):

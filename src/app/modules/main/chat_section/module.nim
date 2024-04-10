@@ -396,6 +396,9 @@ proc initCommunityTokenPermissionsModel(self: Module, channelGroup: ChannelGroup
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
   return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
 
+proc showPermissionUpdateNotification(self: Module, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto): bool =
+  return tokenPermission.state == TokenPermissionState.Approved and (community.isControlNode or not tokenPermission.isPrivate) and community.isMember
+
 method initListOfMyContacts*(self: Module, pubKeys: string) =
   var myContacts: seq[UserItem]
   let contacts =  self.controller.getContacts(ContactsGroup.MyMutualContacts)
@@ -904,9 +907,11 @@ method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
 proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewersCanPostReactions: bool) =
   self.view.chatsModel().changeCanPostValues(chatId, canPostReactions, viewersCanPostReactions)
 
-method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, permissionId: string) =
+method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   self.rebuildCommunityTokenPermissionsModel()
-  singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
+  let community = self.controller.getMyCommunity()
+  if self.showPermissionUpdateNotification(community, tokenPermission):
+    singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   let community = self.controller.getMyCommunity()
@@ -915,7 +920,7 @@ method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tok
 
   self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
-  if tokenPermission.state == TokenPermissionState.Approved:
+  if self.showPermissionUpdateNotification(community, tokenPermission):
     singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
 
 # Returns true if there was an update
@@ -1036,7 +1041,7 @@ method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tok
   self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
 
-  if tokenPermission.state == TokenPermissionState.Approved:
+  if self.showPermissionUpdateNotification(community, tokenPermission):
     singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
 
 method onCommunityTokenPermissionCreationFailed*(self: Module, communityId: string) =

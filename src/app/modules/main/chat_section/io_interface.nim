@@ -354,7 +354,7 @@ method onCommunityTokenPermissionUpdated*(self: AccessInterface, communityId: st
 method onCommunityTokenPermissionUpdateFailed*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenPermissionDeleted*(self: AccessInterface, communityId: string, permissionId: string) {.base.} =
+method onCommunityTokenPermissionDeleted*(self: AccessInterface, communityId: string, tokenPermission: CommunityTokenPermissionDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenPermissionDeletionFailed*(self: AccessInterface, communityId: string) {.base.} =
