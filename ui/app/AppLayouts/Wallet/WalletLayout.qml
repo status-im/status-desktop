@@ -70,9 +70,7 @@ Item {
 
         d.displayAllAddresses()
 
-        if (rightPanelStackView.currentItem && !!rightPanelStackView.currentItem.resetView) {
-            rightPanelStackView.currentItem.resetView()
-        }
+        d.resetRightPanelStackView()
 
         if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
             signPhrasePopup.open();
@@ -139,17 +137,25 @@ Item {
         function displayAllAddresses() {
             RootStore.showSavedAddresses = false
             RootStore.selectedAddress = ""
+            RootStore.setFilterAllAddresses()
         }
 
         function displayAddress(address) {
             RootStore.showSavedAddresses = false
             RootStore.selectedAddress = address
+            d.resetRightPanelStackView() // Avoids crashing on asset items being destroyed while in signal handler
             RootStore.setFilterAddress(address)
         }
 
         function displaySavedAddresses() {
             RootStore.showSavedAddresses = true
             RootStore.selectedAddress = ""
+        }
+
+        function resetRightPanelStackView() {
+            if (rightPanelStackView.currentItem && !!rightPanelStackView.currentItem.resetView) {
+                rightPanelStackView.currentItem.resetView()
+            }
         }
     }
 

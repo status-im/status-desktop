@@ -20,6 +20,7 @@ type
     view: View
     controller: Controller
     moduleLoaded: bool
+    isAllAccounts: bool
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -33,6 +34,7 @@ proc newModule*(
   result.view = newView(result)
   result.controller = newController(result, walletAccountService, currencyService)
   result.moduleLoaded = false
+  result.isAllAccounts = false
 
 method delete*(self: Module) =
   self.view.delete
@@ -66,20 +68,40 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
   let walletAccount = walletAccounts[0]
   let loading = walletAccounts[0].assetsLoading or self.controller.getTokensMarketValuesLoading()
-  let isWatchOnlyAccount = walletAccount.walletType == "watch"
-  let item = initItem(
-    walletAccount.name,
-    walletAccount.mixedCaseAddress,
-    walletAccount.ens,
-    loading,
-    walletAccount.colorId,
-    walletAccount.emoji,
-    isWatchOnlyAccount=isWatchOnlyAccount,
-    canSend=not isWatchOnlyAccount and (walletAccount.operable==AccountFullyOperable or walletAccount.operable==AccountPartiallyOperable)
-  )
-  self.view.setData(item)
+  if self.isAllAccounts:
+    let item = initItem(
+      "",
+      "",
+      "",
+      loading,
+      "",
+      "",
+      isWatchOnlyAccount=false,
+      isAllAccounts=true,
+      self.getWalletAccoutColors(walletAccounts)
+    )
+    self.view.setData(item)
+  else:
+    let isWatchOnlyAccount = walletAccount.walletType == "watch"
+    let item = initItem(
+      walletAccount.name,
+      walletAccount.mixedCaseAddress,
+      walletAccount.ens,
+      loading,
+      walletAccount.colorId,
+      walletAccount.emoji,
+      isWatchOnlyAccount=isWatchOnlyAccount,
+      canSend=not isWatchOnlyAccount and (walletAccount.operable==AccountFullyOperable or walletAccount.operable==AccountPartiallyOperable)
+    )
+    self.view.setData(item)
 
   if loading:
     self.view.setCurrencyBalance(newCurrencyAmount())
   else:
     self.setBalance(addresses, chainIds)
+
+method setIsAllAccounts(self: Module, value: bool) =
+  self.isAllAccounts = value
+
+method getIsAllAccounts(self: Module): bool =
+  return self.isAllAccounts

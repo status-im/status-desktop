@@ -24,10 +24,8 @@ RightTabBaseView {
     signal launchShareAddressModal()
 
     function resetView() {
-        stack.currentIndex = 0
+        resetStack()
         root.currentTabIndex = 0
-        if (walletTabBar.currentIndex === 2)
-            mainViewLoader.item.resetView()
     }
 
     function resetStack() {
@@ -182,7 +180,7 @@ RightTabBaseView {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
                             RootStore.setCurrentViewedHolding(uid, tokenType)
                             d.detailedCollectibleActivityController.resetFilter()
-                            d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")), RootStore.showAllAccounts)
+                            d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")))
                             d.detailedCollectibleActivityController.setFilterChainsJson(JSON.stringify([chainId]), false)
                             d.detailedCollectibleActivityController.setFilterCollectibles(JSON.stringify([uid]))
                             d.detailedCollectibleActivityController.updateFilter()

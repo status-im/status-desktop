@@ -23,13 +23,16 @@ proc `$`*(self: Filter): string =
     chainIds: {self.chainIds},
     )"""
 
+proc setAddresses*(self: Filter, addresses: seq[string]) =
+  self.addresses = addresses
+
 proc setAddress*(self: Filter, address: string) =
-  self.addresses = @[address]
+  self.setAddresses(@[address])
 
 proc removeAddress*(self: Filter, address: string) =
   if len(self.addresses) == 1 and self.addresses[0] == address:
     let accounts = self.controller.getWalletAccounts()
-    self.addresses = @[accounts[0].address]
+    self.setAddresses(@[accounts[0].address])
     return
 
   let ind = self.addresses.find(address)

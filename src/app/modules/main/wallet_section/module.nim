@@ -192,20 +192,32 @@ method updateCurrency*(self: Module, currency: string) =
 method getCurrentCurrency*(self: Module): string =
   self.controller.getCurrency()
 
-method setTotalCurrencyBalance*(self: Module) =
+proc getWalletAddressesNotHidden(self: Module): seq[string] =
   let walletAccounts = self.controller.getWalletAccounts()
-  var addresses = walletAccounts.filter(a => not a.hideFromTotalBalance).map(a => a.address)
+  return walletAccounts.filter(a => not a.hideFromTotalBalance).map(a => a.address)
+
+method setTotalCurrencyBalance*(self: Module) =
+  let addresses = self.getWalletAddressesNotHidden()
   self.view.setTotalCurrencyBalance(self.controller.getTotalCurrencyBalance(addresses, self.filter.chainIds))
 
-proc notifyFilterChanged(self: Module) =
+proc notifyModulesOnFilterChanged(self: Module) =
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.allTokensModule.filterChanged(self.filter.addresses)
-  self.view.setAddressFilters(self.filter.addresses.join(":"))
-  if self.filter.addresses.len > 0:
-    self.view.filterChanged(self.filter.addresses[0])
+  self.allCollectiblesModule.refreshWalletAccounts()
+  self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+
+proc updateViewWithAddressFilterChanged(self: Module) =
+  if self.overviewModule.getIsAllAccounts():
+    self.view.filterChanged("")
+  else:
+    self.view.filterChanged(self.view.getAddressFilters())
+
+proc notifyFilterChanged(self: Module) =
+  self.updateViewWithAddressFilterChanged()
+  self.notifyModulesOnFilterChanged()
 
 method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
   return self.controller.getCurrencyAmount(amount, symbol)
@@ -218,7 +230,17 @@ proc setKeypairOperabilityForObservedAccount(self: Module, address: string) =
     self.view.setKeypairOperabilityForObservedAccount(keypair.getOperability())
 
 method setFilterAddress*(self: Module, address: string) =
+  self.setKeypairOperabilityForObservedAccount(address)
   self.filter.setAddress(address)
+  self.overviewModule.setIsAllAccounts(false)
+  self.view.setAddressFilters(address)
+  self.notifyFilterChanged()
+
+method setFilterAllAddresses*(self: Module) =
+  self.view.setKeypairOperabilityForObservedAccount("")
+  self.filter.setAddresses(self.getWalletAddressesNotHidden())
+  self.view.setAddressFilters(self.filter.addresses.join(":"))
+  self.overviewModule.setIsAllAccounts(true)
   self.notifyFilterChanged()
 
 method load*(self: Module) =
@@ -249,7 +271,7 @@ method load*(self: Module) =
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.setTotalCurrencyBalance()
-    self.notifyFilterChanged()
+    # self.notifyFilterChanged()
   self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
@@ -285,6 +307,9 @@ method load*(self: Module) =
     let data = LocalPairingStatus(e)
     self.onLocalPairingStatusUpdate(data)
   self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
+    if self.overviewModule.getIsAllAccounts():
+      self.filter.setAddresses(self.getWalletAddressesNotHidden())
+      self.view.setAddressFilters(self.filter.addresses.join(":"))
     self.notifyFilterChanged()
     self.setTotalCurrencyBalance()
 
@@ -339,6 +364,7 @@ proc checkIfModuleDidLoad(self: Module) =
   let mnemonicBackedUp = self.controller.isMnemonicBackedUp()
   self.view.setData(signingPhrase, mnemonicBackedUp)
   self.setTotalCurrencyBalance()
+  self.filter.setAddresses(self.getWalletAddressesNotHidden())
   self.filter.load()
   self.notifyFilterChanged()
   self.moduleLoaded = true
