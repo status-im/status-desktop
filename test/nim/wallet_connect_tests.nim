@@ -1,6 +1,6 @@
 import unittest
 
-import app/modules/main/wallet_section/wallet_connect/helpers
+import app/modules/main/wallet_section/poc_wallet_connect/helpers
 
 suite "wallet connect":
 

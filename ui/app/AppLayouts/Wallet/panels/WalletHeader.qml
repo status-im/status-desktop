@@ -7,6 +7,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Popups 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -72,6 +73,19 @@ Item {
             spacing: 16
             Layout.alignment: Qt.AlignTrailing
             Layout.topMargin: 5
+
+            ConnectedDappsButton {
+                Layout.preferredHeight: 38
+                Layout.alignment: Qt.AlignTop
+
+                spacing: 8
+                size: StatusBaseButton.Size.Small
+                visible: !root.walletStore.showSavedAddresses
+
+                onConnectDapp: {
+                    console.warn("TODO: run ConnectDappPopup...")
+                }
+            }
 
             StatusButton {
                 id: headerButton

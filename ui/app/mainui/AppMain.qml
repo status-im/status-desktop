@@ -42,7 +42,11 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
-import AppLayouts.Wallet.views.walletconnect 1.0
+
+/////////////////////////////////////////////////////
+// WalletConnect POC - to remove
+import AppLayouts.Wallet.views.pocwalletconnect 1.0
+/////////////////////////////////////////////////////
 
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
@@ -2029,13 +2033,15 @@ Item {
         }
     }
 
-    WalletConnect {
+    /////////////////////////////////////////////////////
+    // WalletConnect POC - to remove
+    POCWalletConnect {
         id: walletConnect
         anchors.top: parent.bottom
         width: 100
         height: 100
 
-        controller: WalletStore.RootStore.walletConnectController
+        controller: WalletStore.RootStore.walletSectionInst.walletConnectController
 
         Connections {
             target: Global
@@ -2044,4 +2050,5 @@ Item {
             }
         }
     }
+    /////////////////////////////////////////////////////
 }

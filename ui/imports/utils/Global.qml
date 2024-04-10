@@ -97,7 +97,10 @@ QtObject {
 
     signal openTestnetPopup()
 
+    /////////////////////////////////////////////////////
+    // WalletConnect POC - to remove
     signal popupWalletConnect()
+    /////////////////////////////////////////////////////
 
     signal openAddEditSavedAddressesPopup(var params)
     signal openDeleteSavedAddressesPopup(var params)

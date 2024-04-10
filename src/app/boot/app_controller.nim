@@ -1,49 +1,50 @@
 import NimQml, sequtils, sugar, chronicles, uuids
 
-import ../../app_service/service/general/service as general_service
-import ../../app_service/service/keychain/service as keychain_service
-import ../../app_service/service/keycard/service as keycard_service
-import ../../app_service/service/accounts/service as accounts_service
-import ../../app_service/service/contacts/service as contacts_service
-import ../../app_service/service/language/service as language_service
-import ../../app_service/service/chat/service as chat_service
-import ../../app_service/service/community/service as community_service
-import ../../app_service/service/message/service as message_service
-import ../../app_service/service/token/service as token_service
-import ../../app_service/service/collectible/service as collectible_service
-import ../../app_service/service/currency/service as currency_service
-import ../../app_service/service/transaction/service as transaction_service
-import ../../app_service/service/wallet_account/service as wallet_account_service
-import ../../app_service/service/bookmarks/service as bookmark_service
-import ../../app_service/service/dapp_permissions/service as dapp_permissions_service
-import ../../app_service/service/privacy/service as privacy_service
-import ../../app_service/service/provider/service as provider_service
-import ../../app_service/service/node/service as node_service
-import ../../app_service/service/profile/service as profile_service
-import ../../app_service/service/settings/service as settings_service
-import ../../app_service/service/stickers/service as stickers_service
-import ../../app_service/service/about/service as about_service
-import ../../app_service/service/node_configuration/service as node_configuration_service
-import ../../app_service/service/network/service as network_service
-import ../../app_service/service/activity_center/service as activity_center_service
-import ../../app_service/service/saved_address/service as saved_address_service
-import ../../app_service/service/devices/service as devices_service
-import ../../app_service/service/mailservers/service as mailservers_service
-import ../../app_service/service/gif/service as gif_service
-import ../../app_service/service/ens/service as ens_service
-import ../../app_service/service/community_tokens/service as tokens_service
-import ../../app_service/service/network_connection/service as network_connection_service
-import ../../app_service/service/shared_urls/service as shared_urls_service
+import app_service/service/general/service as general_service
+import app_service/service/keychain/service as keychain_service
+import app_service/service/keycard/service as keycard_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/contacts/service as contacts_service
+import app_service/service/language/service as language_service
+import app_service/service/chat/service as chat_service
+import app_service/service/community/service as community_service
+import app_service/service/message/service as message_service
+import app_service/service/token/service as token_service
+import app_service/service/collectible/service as collectible_service
+import app_service/service/currency/service as currency_service
+import app_service/service/transaction/service as transaction_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/wallet_connect/service as wallet_connect_service
+import app_service/service/bookmarks/service as bookmark_service
+import app_service/service/dapp_permissions/service as dapp_permissions_service
+import app_service/service/privacy/service as privacy_service
+import app_service/service/provider/service as provider_service
+import app_service/service/node/service as node_service
+import app_service/service/profile/service as profile_service
+import app_service/service/settings/service as settings_service
+import app_service/service/stickers/service as stickers_service
+import app_service/service/about/service as about_service
+import app_service/service/node_configuration/service as node_configuration_service
+import app_service/service/network/service as network_service
+import app_service/service/activity_center/service as activity_center_service
+import app_service/service/saved_address/service as saved_address_service
+import app_service/service/devices/service as devices_service
+import app_service/service/mailservers/service as mailservers_service
+import app_service/service/gif/service as gif_service
+import app_service/service/ens/service as ens_service
+import app_service/service/community_tokens/service as tokens_service
+import app_service/service/network_connection/service as network_connection_service
+import app_service/service/shared_urls/service as shared_urls_service
 
-import ../modules/shared_modules/keycard_popup/module as keycard_shared_module
-import ../modules/startup/module as startup_module
-import ../modules/main/module as main_module
-import ../core/notifications/notifications_manager
-import ../../constants as main_constants
+import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
+import app/modules/startup/module as startup_module
+import app/modules/main/module as main_module
+import app/core/notifications/notifications_manager
 import app/global/global_singleton
 import app/global/app_signals
+import app/core/[main]
 
-import ../core/[main]
+import constants as main_constants
 
 logScope:
   topics = "app-controller"
@@ -80,6 +81,7 @@ type
     currencyService: currency_service.Service
     transactionService: transaction_service.Service
     walletAccountService: wallet_account_service.Service
+    walletConnectService: wallet_connect_service.Service
     bookmarkService: bookmark_service.Service
     dappPermissionsService: dapp_permissions_service.Service
     providerService: provider_service.Service
@@ -190,6 +192,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.accountsService,
     result.tokenService, result.networkService, result.currencyService
   )
+  result.walletConnectService = wallet_connect_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.messageService = message_service.newService(
     statusFoundation.events,
     statusFoundation.threadpool,
@@ -324,6 +327,7 @@ proc delete*(self: AppController) =
   self.tokenService.delete
   self.transactionService.delete
   self.walletAccountService.delete
+  self.walletConnectService.delete
   self.aboutService.delete
   self.networkService.delete
   self.activityCenterService.delete
@@ -451,6 +455,7 @@ proc load(self: AppController) =
   self.collectibleService.init()
   self.currencyService.init()
   self.walletAccountService.init()
+  self.walletConnectService.init()
 
   # Apply runtime log level settings
   if not main_constants.runtimeLogLevelSet():

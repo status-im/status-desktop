@@ -16,7 +16,7 @@ import ./send/module as send_module
 
 import ./activity/controller as activityc
 import ./activity/details_controller as activity_detailsc
-import ./wallet_connect/controller as wcc
+import ./poc_wallet_connect/controller as wcc
 
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 
