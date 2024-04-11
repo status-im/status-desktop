@@ -285,9 +285,9 @@ proc init*(self: Controller) =
         self.delegate.onCommunityTokenPermissionUpdateFailed(args.communityId)
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED) do(e: Args):
-      let args = CommunityTokenPermissionRemovedArgs(e)
+      let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.onCommunityTokenPermissionDeleted(args.communityId, args.permissionId)
+        self.delegate.onCommunityTokenPermissionDeleted(args.communityId, args.tokenPermission)
         self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED) do(e: Args):
