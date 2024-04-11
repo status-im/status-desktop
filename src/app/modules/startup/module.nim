@@ -336,12 +336,10 @@ method emitObtainingPasswordSuccess*[T](self: Module[T], password: string) =
   self.view.emitObtainingPasswordSuccess(password)
 
 method finishAppLoading*[T](self: Module[T]) =
-  debug "<<< finishAppLoading"
   self.delegate.finishAppLoading()
   self.delegate.appReady()
 
 method checkFetchingStatusAndProceed*[T](self: Module[T]) =
-  debug "<<< checkFetchingStatusAndProceed"
   if self.view.fetchingDataModel().isEntityLoaded(FetchingFromWakuProfile):
     self.finishAppLoading()
     return
@@ -404,8 +402,6 @@ method onProfileConverted*[T](self: Module[T], success: bool) =
   self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
 
 method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, settings: SettingsDto) =
-  debug "<<< onNodeLogin", error
-
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot determine current startup state", procName="onNodeLogin"
@@ -436,13 +432,9 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
       return
     return
 
-    # FirstRunNewUserImportSeedPhrase
-
   if currStateObj.flowType() == state.FlowType.LostKeycardConvertToRegularAccount:
     self.controller.convertKeycardProfileKeypairToRegular()
     return
-
-  debug "<<< onNodeLogin - 1"
 
   let err = self.delegate.userLoggedIn()
   if err.len > 0:
@@ -453,12 +445,12 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
     self.finishAppLoading()
     return
 
-  # FIXME: in FirstRunNewUserNewKeycardKeys image is not saved.
-  
-  # if currStateObj.flowType() == FlowType.FirstRunNewUserNewKeycardKeys:
-  #   let images = self.controller.storeIdentityImage()
-  #   self.accountsService.updateLoggedInAccount(self.getDisplayName, images)
-  #   self.view.notifyLoggedInAccountChanged()
+  # TODO: Remove this block when implemented https://github.com/status-im/status-go/issues/4977
+  if currStateObj.flowType() == FlowType.FirstRunNewUserNewKeycardKeys or
+    currStateObj.flowType() == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+    let images = self.controller.storeIdentityImage()
+    self.accountsService.updateLoggedInAccount(self.getDisplayName, images)
+    self.view.notifyLoggedInAccountChanged()
 
   let nextState = newUserProfileChatKeyState(currStateObj.flowType(), nil)
   self.view.setCurrentStartupState(nextState)
@@ -591,9 +583,6 @@ method insertMockedKeycardAction*[T](self: Module[T], cardIndex: int) =
 
 method removeMockedKeycardAction*[T](self: Module[T]) =
   self.keycardService.removeMockedKeycardAction()
-
-method biometricsSupported*[T](self: Module[T]): bool =
-  return self.controller.biometricsSupported()
 
 method notificationsNeedsEnable*[T](self: Module[T]): bool = 
   return self.controller.notificationsNeedsEnable()

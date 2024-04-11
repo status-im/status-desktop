@@ -390,11 +390,6 @@ QtObject:
   proc removeMockedKeycardAction*(self: View) {.slot.} =
     self.delegate.removeMockedKeycardAction()
 
-  proc getBiometricsSupported*(self: View): bool {.slot.} =
-    return self.delegate.biometricsSupported()
-  QtProperty[bool] biometricsSupported:
-    read = getBiometricsSupported
-
   proc getNotificationsNeedsEnable*(self: View): bool {.slot.} =
     return self.delegate.notificationsNeedsEnable()
   QtProperty[bool] notificationsNeedsEnable:

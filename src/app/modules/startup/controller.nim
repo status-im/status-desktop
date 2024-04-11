@@ -191,15 +191,12 @@ proc shouldStartWithOnboardingScreen*(self: Controller): bool =
 
 # This is used when fetching backup failed and we create a new displayName and profileImage.
 # At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
-# FIXME: This might be not needed anymore, as we save the account details in `onNodeLogin`.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
-  debug "<<< storeProfileDataAndProceedWithAppLoading"
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
   discard self.profileService.setDisplayName(self.tmpDisplayName)
   let images = self.storeIdentityImage()
   self.accountsService.updateLoggedInAccount(self.tmpDisplayName, images)
   self.delegate.notifyLoggedInAccountChanged()
-  # self.delegate.finishAppLoading()
 
 proc checkFetchingStatusAndProceed*(self: Controller) =
   self.delegate.checkFetchingStatusAndProceed()
@@ -351,7 +348,7 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   let selectedAccount = self.getSelectedLoginAccount()
   self.keychainService.tryToObtainData(selectedAccount.keyUid)
 
-# TODO: Remove whn implemented https://github.com/status-im/status-go/issues/4977
+# TODO: Remove when implemented https://github.com/status-im/status-go/issues/4977
 proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:
     return
@@ -657,7 +654,6 @@ proc setLoggedInAccount*(self: Controller, account: AccountDto) =
   self.accountsService.setLoggedInAccount(account)
 
 proc setLoggedInProfile*(self: Controller, publicKey: string) =
-  debug "<<< setLoggedInProfile", publicKey
   self.loggedInPofilePublicKey = publicKey
 
 proc getLoggedInAccountPublicKey*(self: Controller): string =
@@ -673,12 +669,10 @@ proc getLoggedInAccountImage*(self: Controller): string =
       return img.uri
   return ""
 
-proc biometricsSupported*(self: Controller): bool =
-  return main_constants.IS_MACOS
-
+# NOTE: This could be a constant now, but in future we should check if the user
+# has already enabled notifications and return corresponding result from this function.
 proc notificationsNeedsEnable*(self: Controller): bool = 
   return main_constants.IS_MACOS
 
 proc proceedToApp*(self: Controller) =
-  debug "<<< controller.proceedToApp"
   self.delegate.finishAppLoading()

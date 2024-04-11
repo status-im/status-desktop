@@ -18,10 +18,6 @@ method getNextPrimaryState*(self: UserProfileCreateState, controller: Controller
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
     self.flowType == FlowType.FirstRunOldUserKeycardImport:
     return createState(StateType.UserProfileChatKey, self.flowType, self)
-
-  # FirstRunNewUserNewKeys      -> CreatePassword
-  # Keycard new keys            -> ChatKey        -> Biometrics
-  # Keycard seed phrase import  -> ChatKey        -> Biometrics
   
   if self.flowType == FlowType.FirstRunNewUserNewKeys or
     self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
@@ -29,10 +25,9 @@ method getNextPrimaryState*(self: UserProfileCreateState, controller: Controller
   
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
     self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-    if controller.biometricsSupported():
+    if main_constants.SUPPORTS_FINGERPRINT:
       return createState(StateType.Biometrics, self.flowType, self)
-    else:
-      return createState(StateType.UserProfileChatKey, self.flowType, self)
+    return createState(StateType.UserProfileChatKey, self.flowType, self)
 
   return nil
 

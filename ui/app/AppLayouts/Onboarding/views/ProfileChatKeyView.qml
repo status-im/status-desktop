@@ -32,9 +32,9 @@ Item {
     QtObject {
         id: d
 
-        property string publicKey: root.startupStore.startupModuleInst.loggedInAccountPublicKey
-        property string displayName: root.startupStore.startupModuleInst.loggedInAccountDisplayName
-        property string image: root.startupStore.startupModuleInst.loggedInAccountImage
+        readonly property string publicKey: root.startupStore.startupModuleInst.loggedInAccountPublicKey
+        readonly property string displayName: root.startupStore.startupModuleInst.loggedInAccountDisplayName
+        readonly property string image: root.startupStore.startupModuleInst.loggedInAccountImage
 
         function doAction() {
             if (!nextBtn.enabled) {

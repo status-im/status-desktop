@@ -95,7 +95,6 @@ QtObject:
     self.setLocalAccountSettingsFile()
 
   proc updateLoggedInAccount*(self: Service, displayName: string, images: seq[Image]) =
-    debug "<<< updateLoggedInAccount", displayName, imagesCount = $images.len
     self.loggedInAccount.name = displayName
     self.loggedInAccount.images = images
     singletonInstance.localAccountSettings.setFileName(displayName)

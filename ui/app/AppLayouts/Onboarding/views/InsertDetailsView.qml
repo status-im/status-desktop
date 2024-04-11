@@ -25,19 +25,9 @@ Item {
 
     property StartupStore startupStore
 
-//    property string publicKey //: root.startupStore.startupModuleInst.loggedInAccountPublicKey
-//    property string displayName //: root.startupStore.startupModuleInst.getLoggedInAccountDisplayName
-//    property string image
-
     Component.onCompleted: {
-//        if (root.startupStore.startupModuleInst.importedAccountPubKey) {
-//            root.publicKey = root.startupStore.startupModuleInst.loggedInAccountPublicKey;
-//        } else {
-//            root.publicKey = root.startupStore.startupModuleInst.importedAccountPubKey;
-//        }
         nameInput.text = root.startupStore.getDisplayName();
         userImage.asset.name = root.startupStore.getCroppedProfileImage();
-
         nameInput.input.edit.forceActiveFocus()
     }
 
@@ -49,7 +39,6 @@ Item {
                 return
             }
             root.startupStore.setDisplayName(nameInput.text)
-//            root.displayName = nameInput.text;
             root.startupStore.doPrimaryAction()
         }
     }
@@ -93,7 +82,7 @@ Item {
                 asset.width: 86
                 asset.height: 86
                 asset.letterSize: 32
-                asset.color: Utils.colorForColorId(0)
+                asset.color: Utils.colorForColorId(0) // We haven't generated the keys yet, show default color
                 asset.charactersLen: 2
                 asset.isImage: !!asset.name
                 asset.imgIsIdenticon: false
