@@ -92,6 +92,7 @@ Control {
             fallbackImageUrl: root.fallbackImageUrl
             showLoadingIndicator: true
             color: root.isLoading ? "transparent" : root.backgroundColor
+            fillMode: Image.PreserveAspectCrop
 
             Loader {
                 anchors.fill: parent
@@ -119,6 +120,7 @@ Control {
             size: PrivilegedTokenArtworkPanel.Size.Medium
             artwork: root.fallbackImageUrl
             color: root.ornamentColor
+            fillMode: Image.PreserveAspectCrop
             isOwner: root.privilegesLevel === Constants.TokenPrivilegesLevel.Owner
 
             Loader {
