@@ -139,6 +139,7 @@ type
     currentChunk*: int
 
   CheckPermissionsToJoinResponseArgs* = ref object of Args
+    requestId*: CommunityPermissionsCheckRequestID
     communityId*: string
     checkPermissionsToJoinResponse*: CheckPermissionsToJoinResponseDto
 
@@ -1618,19 +1619,28 @@ QtObject:
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
     self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
-  proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string]) =
+  proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string], requestId: CommunityPermissionsCheckRequestID) =
     let arg = AsyncCheckPermissionsToJoinTaskArg(
       tptr: cast[ByteAddress](asyncCheckPermissionsToJoinTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckPermissionsToJoinDone",
       communityId: communityId,
-      addresses: addresses
+      addresses: addresses,
+      requestId: requestId
     )
     self.threadpool.start(arg)
 
   proc onAsyncCheckPermissionsToJoinDone*(self: Service, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson
     let communityId = rpcResponseObj{"communityId"}.getStr()
+
+    var requestId: CommunityPermissionsCheckRequestID
+    var requestIdInt: int
+    if (rpcResponseObj.getProp("requestId", requestIdInt) and 
+      (requestIdInt >= ord(low(CommunityPermissionsCheckRequestID)) and
+      requestIdInt <= ord(high(CommunityPermissionsCheckRequestID)))):
+      requestId = CommunityPermissionsCheckRequestID(requestIdInt)
+
     try:
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj["error"].getStr)
@@ -1642,7 +1652,8 @@ QtObject:
       let checkPermissionsToJoinResponse = rpcResponseObj["response"]["result"].toCheckPermissionsToJoinResponseDto
       self.events.emit(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE, CheckPermissionsToJoinResponseArgs(
         communityId: communityId,
-        checkPermissionsToJoinResponse: checkPermissionsToJoinResponse
+        checkPermissionsToJoinResponse: checkPermissionsToJoinResponse,
+        requestId: requestId
       ))
     except Exception as e:
       let errMsg = e.msg

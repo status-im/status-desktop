@@ -356,10 +356,10 @@ QtObject:
   proc joinCommunityOrEditSharedAddresses*(self: View) {.slot.} =
     self.delegate.joinCommunityOrEditSharedAddresses()
 
-  proc checkPermissions*(self: View, communityId: string, addressesToShare: string) {.slot.} =
+  proc checkPermissions*(self: View, communityId: string, addressesToShare: string, temporary: bool) {.slot.} =
     try:
       let sharedAddresses = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
-      self.delegate.checkPermissions(communityId, sharedAddresses)
+      self.delegate.checkPermissions(communityId, sharedAddresses, temporary)
     except Exception as e:
       echo "Error updating token model with addresses: ", e.msg
 

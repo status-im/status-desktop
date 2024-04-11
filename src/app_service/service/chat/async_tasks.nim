@@ -45,6 +45,7 @@ type
   AsyncCheckAllChannelsPermissionsTaskArg = ref object of QObjectTaskArg
     communityId: string
     addresses: seq[string]
+    requestId: CommunityPermissionsCheckRequestID
 
 const asyncCheckAllChannelsPermissionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCheckAllChannelsPermissionsTaskArg](argEncoded)
@@ -53,10 +54,12 @@ const asyncCheckAllChannelsPermissionsTask: Task = proc(argEncoded: string) {.gc
     arg.finish(%* {
       "response": response,
       "communityId": arg.communityId,
+      "requestId": arg.requestId,
       "error": "",
     })
   except Exception as e:
     arg.finish(%* {
       "communityId": arg.communityId,
+      "requestId": arg.requestId,
       "error": e.msg,
     })

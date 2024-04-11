@@ -94,6 +94,7 @@ type
     checkChannelPermissionsResponse*: CheckChannelPermissionsResponseDto
 
   CheckAllChannelsPermissionsResponseArgs* = ref object of Args
+    requestId*: CommunityPermissionsCheckRequestID
     communityId*: string
     checkAllChannelsPermissionsResponse*: CheckAllChannelsPermissionsResponseDto
 
@@ -848,19 +849,28 @@ QtObject:
       let errMsg = e.msg
       error "error checking all channel permissions: ", errMsg
 
-  proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string, addresses: seq[string]) =
+  proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string, addresses: seq[string], requestId: CommunityPermissionsCheckRequestID) =
     let arg = AsyncCheckAllChannelsPermissionsTaskArg(
       tptr: cast[ByteAddress](asyncCheckAllChannelsPermissionsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckAllChannelsPermissionsDone",
       communityId: communityId,
       addresses: addresses,
+      requestId: requestId
     )
     self.threadpool.start(arg)
 
   proc onAsyncCheckAllChannelsPermissionsDone*(self: Service, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson
     let communityId = rpcResponseObj{"communityId"}.getStr()
+
+    var requestId: CommunityPermissionsCheckRequestID
+    var requestIdInt: int
+    if (rpcResponseObj.getProp("requestId", requestIdInt) and 
+      (requestIdInt >= ord(low(CommunityPermissionsCheckRequestID)) and
+      requestIdInt <= ord(high(CommunityPermissionsCheckRequestID)))):
+      requestId = CommunityPermissionsCheckRequestID(requestIdInt)
+
     try:
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj["error"].getStr)
@@ -871,7 +881,11 @@ QtObject:
 
       let checkAllChannelsPermissionsResponse = rpcResponseObj["response"]["result"].toCheckAllChannelsPermissionsResponseDto()
       self.channelGroups[communityId].channelPermissions = checkAllChannelsPermissionsResponse
-      self.events.emit(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE, CheckAllChannelsPermissionsResponseArgs(communityId: communityId, checkAllChannelsPermissionsResponse: checkAllChannelsPermissionsResponse))
+      self.events.emit(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE, CheckAllChannelsPermissionsResponseArgs(
+        communityId: communityId,
+        checkAllChannelsPermissionsResponse: checkAllChannelsPermissionsResponse,
+        requestId: requestId
+      ))
     except Exception as e:
       let errMsg = e.msg
       error "error checking all channels permissions: ", errMsg

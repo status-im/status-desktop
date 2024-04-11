@@ -43,6 +43,11 @@ type
     KickPending,
     BannedWithAllMessagesDelete
 
+type
+  CommunityPermissionsCheckRequestID* = enum
+    GeneralCommunity = 0,
+    SharedAddressesCheck
+
 proc isBanned*(state: CommunityMemberPendingBanOrKick): bool =
   return state == CommunityMemberPendingBanOrKick.Banned or state == CommunityMemberPendingBanOrKick.BannedWithAllMessagesDelete
 
