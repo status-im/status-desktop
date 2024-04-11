@@ -1362,7 +1362,7 @@ QtObject:
           dataToEmit.errorCode = ComputeFeeErrorCode.Balance # set total error code to balance error
         var args = self.createComputeFeeArgsFromEthAndBalance(ethValue, balance)
         totalEthVal = totalEthVal + ethValue
-        totalFiatVal = totalFiatVal + args.fiatCurrency.getAmountFloat()
+        totalFiatVal = totalFiatVal + args.fiatCurrency.getAmount()
         args.contractUniqueKey = common_utils.contractUniqueKey(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
         allComputeFeeArgs.add(args)
 
