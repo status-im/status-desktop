@@ -497,11 +497,14 @@ method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardU
     item.setIcon("keycard")
   self.view.setKeyPairForProcessing(item)
 
-proc displayReadingState[T](self: Module[T], flowType: FlowType, backState: State) =
+proc displayKeycardFlowStartedState[T](self: Module[T], flowType: FlowType, backState: State, displayStartedState: bool = true) =
   self.tmpLocalState = newReadingKeycardState(flowType, backState)
-  self.view.setCurrentState(self.tmpLocalState)
+  if not displayStartedState:
+    return
+  let keycardFlowStartedState = newKeycardFlowStartedState(flowType, backState)
+  self.view.setCurrentState(keycardFlowStartedState)
   self.controller.readyToDisplayPopup()
-  debug "sm_cannot - display reading state", setCurrFlow=self.tmpLocalState.flowType(), setCurrState=self.tmpLocalState.stateType()
+  debug "sm_cannot - display reading state", setCurrFlow=keycardFlowStartedState.flowType(), setCurrState=keycardFlowStartedState.stateType()
 
 method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "", forceFlow = false, returnToFlow = FlowType.General) =
   ## In case of `Authentication` or `Sign` flow, if keyUid is provided, that keypair will be authenticated,
@@ -525,7 +528,7 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
   if flowToRun == FlowType.FactoryReset:
     if keyUid.len > 0:
       self.prepareKeyPairForProcessing(keyUid)
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.SetupNewKeycard:
@@ -542,7 +545,7 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
         self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
         return
       self.setSelectedKeyPair(filteredItems[0])
-      self.displayReadingState(flowToRun, nil)
+      self.displayKeycardFlowStartedState(flowToRun, nil)
       self.controller.runLoadAccountFlow()
     return
   if flowToRun == FlowType.Authentication:
@@ -550,7 +553,7 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
     if keyUid.len == 0 or keyUid == singletonInstance.userProfile.getKeyUid():
       if singletonInstance.userProfile.getIsKeycardUser():
         self.prepareKeyPairItemForAuthentication(singletonInstance.userProfile.getKeyUid())
-        self.displayReadingState(flowToRun, nil)
+        self.displayKeycardFlowStartedState(flowToRun, nil)
         self.controller.runAuthenticationFlow(singletonInstance.userProfile.getKeyUid(), bip44Paths)
         if singletonInstance.userProfile.getUsingBiometricLogin():
           self.controller.connectKeychainSignals()
@@ -558,7 +561,7 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
         return
       self.view.setCurrentState(newEnterPasswordState(flowToRun, nil))
       if singletonInstance.userProfile.getUsingBiometricLogin():
-        self.displayReadingState(flowToRun, nil)
+        self.displayKeycardFlowStartedState(flowToRun, nil, displayStartedState = false)
         self.controller.connectKeychainSignals()
         self.controller.tryToObtainDataFromKeychain()
       else:
@@ -567,7 +570,7 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
       return
     else:
       self.prepareKeyPairItemForAuthentication(keyUid)
-      self.displayReadingState(flowToRun, nil)
+      self.displayKeycardFlowStartedState(flowToRun, nil)
       self.controller.runAuthenticationFlow(keyUid, bip44Paths)
       return
   if flowToRun == FlowType.Sign:
@@ -593,7 +596,7 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
       return
     self.runningFlow = flowToRun
     self.prepareKeyPairItemForAuthentication(keyUid)
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runSignFlow(keyUid, bip44Paths[0], txHash)
     if finalKeyUid == singletonInstance.userProfile.getKeyUid() and
       singletonInstance.userProfile.getUsingBiometricLogin():
@@ -604,48 +607,48 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
     ## since we can run unlock keycard flow from an already running flow, in order to avoid changing displayed keypair
     ## (locked keypair) we have to set keycard uid of a keycard used in the flow we're jumping from to `UnlockKeycard` flow.
     self.prepareKeyPairForProcessing(keyUid, self.controller.getKeycardUid())
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.DisplayKeycardContent:
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.RenameKeycard:
     self.prepareKeyPairForProcessing(keyUid)
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true) # we're firstly displaying the keycard content
     return
   if flowToRun == FlowType.ChangeKeycardPin:
     self.prepareKeyPairForProcessing(keyUid)
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runChangePinFlow()
     return
   if flowToRun == FlowType.ChangeKeycardPuk:
     self.prepareKeyPairForProcessing(keyUid)
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runChangePukFlow()
     return
   if flowToRun == FlowType.ChangePairingCode:
     self.prepareKeyPairForProcessing(keyUid)
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runChangePairingFlow()
     return
   if flowToRun == FlowType.CreateCopyOfAKeycard:
     self.prepareKeyPairForProcessing(keyUid)
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.SetupNewKeycardNewSeedPhrase:
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runLoadAccountFlow()
     return
   if flowToRun == FlowType.SetupNewKeycardOldSeedPhrase:
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runLoadAccountFlow()
     return
   if flowToRun == FlowType.ImportFromKeycard:
-    self.displayReadingState(flowToRun, nil)
+    self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true, exportMasterAddr = true)
     return
   if flowToRun == FlowType.MigrateFromKeycardToApp:

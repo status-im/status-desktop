@@ -119,6 +119,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newCreatingAccountOldSeedPhraseFailureState(flowType, backState)
   if stateToBeCreated == StateType.CreatingAccountOldSeedPhraseSuccess:
     return newCreatingAccountOldSeedPhraseSuccessState(flowType, backState)
+  if stateToBeCreated == StateType.KeycardFlowStarted:
+    return newKeycardFlowStartedState(flowType, backState)
   if stateToBeCreated == StateType.KeycardInserted:
     return newKeycardInsertedState(flowType, backState)
   if stateToBeCreated == StateType.KeycardEmptyMetadata:

@@ -41,7 +41,8 @@ Item {
 
         readonly property bool hideKeyPair: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.hideKeyPair
         readonly property bool copyFromAKeycardPartDone: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.copyFromAKeycardPartDone
-        readonly property bool continuousProcessingAnimation: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
+        readonly property bool continuousProcessingAnimation: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardFlowStarted ||
+                                                              root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
@@ -637,7 +638,8 @@ Item {
         },
         State {
             name: d.processingStateName
-            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardFlowStarted ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
@@ -652,6 +654,9 @@ Item {
             PropertyChanges {
                 target: title
                 text: {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardFlowStarted) {
+                        return qsTr("Starting...")
+                    }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard) {
                         return qsTr("Reading Keycard...")
                     }
