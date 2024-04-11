@@ -29,7 +29,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     QT_PATH=/opt/qt \
     QT_PLATFORM=gcc_64 \
     QT_VERSION=$QT_VERSION
-    
+
 ENV PATH=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/bin:$PATH \
     QTDIR=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}
 
@@ -77,7 +77,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1
  && chmod +x cmake-3.22.1-linux-x86_64.sh \
  && sudo mkdir /opt/cmake \
  && sudo sh cmake-3.22.1-linux-x86_64.sh --prefix=/opt/cmake --exclude-subdir --skip-license \
- && rm -f cmake-3.22.1-linux-x86_64.sh 
+ && rm -f cmake-3.22.1-linux-x86_64.sh
 ENV PATH="/opt/cmake/bin:${PATH}"
 
 # Installing Golang
@@ -89,11 +89,17 @@ RUN GOLANG_SHA256="698ef3243972a51ddb4028e4a1ac63dc6d60821bf18e59a807e051fee0a38
  && rm "${GOLANG_TARBALL}" \
  && sudo ln -s /usr/local/go/bin/go /usr/local/bin
 
+# Create Nix directory as root.
+RUN mkdir /nix && chown 1001:1001 /nix
+
 # Jenkins user needs a specific UID/GID to work
 RUN sudo groupadd -g 1001 jenkins \
  && sudo useradd --create-home -u 1001 -g 1001 jenkins
 USER jenkins
 ENV HOME="/home/jenkins"
+
+# Nix for jenkins user to build status-go.
+RUN curl -s https://nixos.org/releases/nix/nix-2.19.3/install | sh -s -- --no-daemon
 
 LABEL maintainer="jakub@status.im"
 LABEL source="https://github.com/status-im/status-desktop"
