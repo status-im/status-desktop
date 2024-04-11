@@ -658,7 +658,6 @@ method onChatsLoaded*[T](
     chatService,
     communityService,
     messageService,
-    gifService,
     mailserversService,
     walletAccountService,
     tokenService,

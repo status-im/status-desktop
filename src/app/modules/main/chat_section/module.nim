@@ -434,10 +434,8 @@ method onChatsLoaded*(
     sharedUrlsService: shared_urls_service.Service,
   ) =
   self.chatsLoaded = true
-  self.buildChatSectionUI(channelGroup, events, settingsService, nodeConfigurationService,
-    contactService, chatService, communityService, messageService, mailserversService, sharedUrlsService)
   self.buildChatSectionUI(community, chats, events, settingsService, nodeConfigurationService,
-    contactService, chatService, communityService, messageService, gifService, mailserversService, sharedUrlsService)
+    contactService, chatService, communityService, messageService, mailserversService, sharedUrlsService)
 
   if(not self.controller.isCommunity()):
     # we do this only in case of chat section (not in case of communities)
