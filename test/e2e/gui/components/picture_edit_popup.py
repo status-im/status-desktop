@@ -50,3 +50,4 @@ class PictureEditPopup(BasePopup):
                 time.sleep(1)
 
         self._make_picture_button.click()
+        self._make_picture_button.wait_until_hidden()
