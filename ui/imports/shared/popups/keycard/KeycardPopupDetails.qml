@@ -23,6 +23,7 @@ QtObject {
 
         switch (root.sharedKeycardModule.currentState.stateType) {
 
+        case Constants.keycardSharedState.keycardFlowStarted:
         case Constants.keycardSharedState.keycardInserted:
         case Constants.keycardSharedState.readingKeycard:
         case Constants.keycardSharedState.recognizedKeycard:
@@ -104,6 +105,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -130,6 +132,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -157,6 +160,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.importFromKeycard:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -176,6 +180,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.factoryReset:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -198,6 +203,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.authentication:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -224,6 +230,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.sign:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -245,6 +252,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.unlockKeycard:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -265,6 +273,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.displayKeycardContent:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -283,6 +292,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.renameKeycard:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -302,6 +312,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.changeKeycardPin:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -322,6 +333,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.changeKeycardPuk:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -342,6 +354,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.changePairingCode:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -361,6 +374,7 @@ QtObject {
 
                 case Constants.keycardSharedFlow.createCopyOfAKeycard:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -435,6 +449,7 @@ QtObject {
                         case Constants.keycardSharedState.wrongPin:
                             return qsTr("Use biometrics")
 
+                        case Constants.keycardSharedState.keycardFlowStarted:
                         case Constants.keycardSharedState.pluginReader:
                         case Constants.keycardSharedState.insertKeycard:
                         case Constants.keycardSharedState.keycardInserted:
@@ -461,6 +476,7 @@ QtObject {
                         case Constants.keycardSharedState.wrongPin:
                             return qsTr("Use biometrics")
 
+                        case Constants.keycardSharedState.keycardFlowStarted:
                         case Constants.keycardSharedState.pluginReader:
                         case Constants.keycardSharedState.insertKeycard:
                         case Constants.keycardSharedState.keycardInserted:
@@ -622,6 +638,7 @@ QtObject {
                 case Constants.keycardSharedFlow.setupNewKeycard:
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -831,6 +848,7 @@ QtObject {
                 case Constants.keycardSharedFlow.authentication:
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -870,6 +888,7 @@ QtObject {
                 case Constants.keycardSharedFlow.sign:
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
+                    case Constants.keycardSharedState.keycardFlowStarted:
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
@@ -1364,6 +1383,7 @@ QtObject {
                     if (userProfile.usingBiometricLogin) {
                         switch (root.sharedKeycardModule.currentState.stateType) {
 
+                        case Constants.keycardSharedState.keycardFlowStarted:
                         case Constants.keycardSharedState.pluginReader:
                         case Constants.keycardSharedState.insertKeycard:
                         case Constants.keycardSharedState.keycardInserted:
@@ -1383,6 +1403,7 @@ QtObject {
                     if (userProfile.usingBiometricLogin) {
                         switch (root.sharedKeycardModule.currentState.stateType) {
 
+                        case Constants.keycardSharedState.keycardFlowStarted:
                         case Constants.keycardSharedState.pluginReader:
                         case Constants.keycardSharedState.insertKeycard:
                         case Constants.keycardSharedState.keycardInserted:

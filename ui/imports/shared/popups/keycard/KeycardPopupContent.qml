@@ -23,6 +23,7 @@ Item {
         anchors.fill: parent
         sourceComponent: {
             switch (root.sharedKeycardModule.currentState.stateType) {
+            case Constants.keycardSharedState.keycardFlowStarted:
             case Constants.keycardSharedState.biometrics:
             case Constants.keycardSharedState.noPCSCService:
             case Constants.keycardSharedState.pluginReader:

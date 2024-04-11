@@ -129,6 +129,7 @@ QtObject {
     }
 
     readonly property QtObject keycardSharedState: QtObject {
+        readonly property string keycardFlowStarted: "KeycardFlowStarted"
         readonly property string biometrics: "Biometrics"
         readonly property string noPCSCService: "NoPCSCService"
         readonly property string noState: "NoState"
