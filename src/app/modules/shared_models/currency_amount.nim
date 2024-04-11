@@ -39,13 +39,11 @@ QtObject:
       stripTrailingZeroes: {self.stripTrailingZeroes}
       )"""
 
-  proc getAmount*(self: CurrencyAmount): float64 =
+  proc getAmount*(self: CurrencyAmount): float {.slot.} =
     return self.amount
 
-  proc getAmountFloat*(self: CurrencyAmount): float {.slot.}  =
-    return self.amount
   QtProperty[float] amount:
-    read = getAmountFloat
+    read = getAmount
 
   proc getSymbol*(self: CurrencyAmount): string {.slot.} =
     return self.symbol
