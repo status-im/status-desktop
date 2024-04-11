@@ -51,7 +51,7 @@ Loader {
                 id: statusRoundImage
                 width: parent.width
                 height: parent.height
-                image.source: root.asset.name
+                image.source: root.asset.isImage ? root.asset.name : ""
                 showLoadingIndicator: true
                 border.width: root.asset.imgIsIdenticon ? 1 : 0
                 border.color: Theme.palette.directColor7

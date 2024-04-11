@@ -54,8 +54,23 @@ Control {
             asset.width: 16
             asset.height: 16
             visible: root.useLongTextDescription && !!asset.source
-            asset.name: !!root.communityImage ? root.communityImage : "help"
-            asset.isImage: !!root.communityImage
+
+            Component.onCompleted: {
+                updateCommunityImage()
+            }
+            Connections {
+                target: root
+                function onCommunityImageChanged() {
+                    identicon.updateCommunityImage()
+                }
+            }
+
+            function updateCommunityImage() {
+                // Ensure we keep the flag in sync with the type of asset otherwise we generate warnings
+                identicon.asset.name = ""
+                identicon.asset.isImage = !!root.communityImage
+                identicon.asset.name = !!root.communityImage ? root.communityImage : "help"
+            }
         }
 
         RowLayout {
