@@ -25,18 +25,21 @@ private slots:
         auto delegateData = R"(
             import QtQml 2.15
             QtObject {
-                property var sub: submodel
+                property var count: submodel.count
             }
         )";
 
         delegate.setData(delegateData, QUrl());
 
         SubmodelProxyModel model;
-        ListModelWrapper sourceModel(engine, QJsonArray {
-            QJsonObject {{ "balances", 11 }, { "name", "name 1" }},
-            QJsonObject {{ "balances", 12 }, { "name", "name 2" }},
-            QJsonObject {{ "balances", 123}, { "name", "name 3" }},
-        });
+
+        auto source = R"([
+            { balances: [ { balance: 4 } ], name: "name 1" },
+            { balances: [ { balance: 4 }, {balance: 43} ], name: "name 2" },
+            { balances: [], name: "name 3" }
+        ])";
+
+        ListModelWrapper sourceModel(engine, source);
 
         QSignalSpy sourceModelChangedSpy(
                     &model, &SubmodelProxyModel::sourceModelChanged);
@@ -68,13 +71,47 @@ private slots:
         QVERIFY(object);
 
         auto context = QQmlEngine::contextForObject(object);
-        QCOMPARE(context->contextProperty("submodel"), 11);
 
-        QCOMPARE(object->property("sub"), 11);
+        QVERIFY(context->contextProperty("submodel").value<QObject*>() != nullptr);
+        QCOMPARE(object->property("count"), 1);
         QCOMPARE(QQmlEngine::objectOwnership(object),
-                 QQmlEngine::JavaScriptOwnership);
+                 QQmlEngine::CppOwnership);
+    }
 
-        object->deleteLater();
+    void usingNonObjectSubmodelRoleTest() {
+        QQmlEngine engine;
+        QQmlComponent delegate(&engine);
+
+        auto delegateData = R"(
+            import QtQml 2.15
+            QtObject {
+                property var count: submodel.count
+            }
+        )";
+
+        delegate.setData(delegateData, QUrl());
+
+        SubmodelProxyModel model;
+
+        auto source = R"([
+            { balances: 1, name: "name 1" },
+            { balances: 2, name: "name 2" },
+            { balances: 3, name: "name 3" }
+        ])";
+
+        ListModelWrapper sourceModel(engine, source);
+
+        QTest::ignoreMessage(QtWarningMsg,
+                             "Submodel must be a QObject-based type!");
+
+        model.setSourceModel(sourceModel);
+        model.setDelegateModel(&delegate);
+        model.setSubmodelRoleName(QStringLiteral("balances"));
+
+        QCOMPARE(model.rowCount(), 3);
+
+        QVERIFY(model.data(model.index(0, 0),
+                           sourceModel.role("balances")).isValid());
     }
 
     void deletingDelegateTest() {
@@ -149,7 +186,7 @@ private slots:
         QCOMPARE(model.data(model.index(0, 0), 0), {});
     }
 
-    void resetSubmodelRoleNameText() {
+    void settingUndefinedSubmodelRoleNameText() {
         QQmlEngine engine;
         auto delegate = std::make_unique<QQmlComponent>(&engine);
 

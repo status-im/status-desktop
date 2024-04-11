@@ -12,21 +12,49 @@ SubmodelProxyModel::SubmodelProxyModel(QObject* parent)
 
 QVariant SubmodelProxyModel::data(const QModelIndex &index, int role) const
 {
+    static constexpr auto attachementPropertyName = "_attachement";
+
     if (!checkIndex(index, CheckIndexOption::IndexIsValid))
         return {};
 
     if (m_initialized && m_delegateModel && role == m_submodelRole) {
         auto submodel = QIdentityProxyModel::data(index, role);
 
+        QObject* submodelObj = submodel.value<QObject*>();
+
+        if (submodelObj == nullptr) {
+            qWarning("Submodel must be a QObject-based type!");
+            return submodel;
+        }
+
+        QVariant attachement = submodelObj->property(attachementPropertyName);
+
+        if (attachement.isValid())
+            return attachement;
+
+        // Make sure that wrapper is destroyed before it receives signal related
+        // to submodel's destruction. Otherwise injected context property may
+        // be cleared causing warnings related to accessing null from qml.
+        connect(submodelObj, &QObject::destroyed, this, [](auto obj) {
+            QVariant attachement = obj->property(attachementPropertyName);
+
+            if (attachement.isValid())
+                delete attachement.value<QObject*>();
+        });
+
         auto creationContext = m_delegateModel->creationContext();
         auto parentContext = creationContext
                 ? creationContext : m_delegateModel->engine()->rootContext();
 
-        auto context = new QQmlContext(parentContext, parentContext);
+        auto context = new QQmlContext(parentContext, submodelObj);
         context->setContextProperty(QStringLiteral("submodel"), submodel);
 
         QObject* instance = m_delegateModel->create(context);
-        QQmlEngine::setObjectOwnership(instance, QQmlEngine::JavaScriptOwnership);
+
+        instance->setParent(submodelObj);
+
+        submodelObj->setProperty(attachementPropertyName,
+                                 QVariant::fromValue(QPointer(instance)));
 
         return QVariant::fromValue(instance);
     }
