@@ -16,6 +16,7 @@ Control {
 
     property bool showTag: false
     property int size: PrivilegedTokenArtworkPanel.Size.Small
+    property int fillMode: Image.PreserveAspectFit
 
     property alias artwork: image.source
     property alias color: icon.color
@@ -86,7 +87,7 @@ Control {
             anchors.centerIn: parent
             width: d.imageSize
             height: width
-            fillMode: Image.PreserveAspectFit
+            fillMode: root.fillMode
             layer.enabled: true
             layer.effect: OpacityMask {
                 maskSource: Rectangle {

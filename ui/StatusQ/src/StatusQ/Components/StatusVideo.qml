@@ -33,6 +33,7 @@ Item {
 
     property alias player: player
     property alias output: output
+    property alias fillMode: output.fillMode
 
     MediaPlayer {
         id: player

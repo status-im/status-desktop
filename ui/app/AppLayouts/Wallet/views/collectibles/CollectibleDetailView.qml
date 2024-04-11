@@ -292,15 +292,12 @@ Item {
          StatusRoundedMedia {
                 id: collectibleImage
                 readonly property bool isEmpty: !mediaUrl.toString() && !fallbackImageUrl.toString()
-                width: 248
-                height: width
                 radius: Style.current.radius
                 color: isError || isEmpty ? Theme.palette.baseColor5 : collectible.backgroundColor
-                border.color: Theme.palette.directColor8
-                border.width: 1
                 mediaUrl: collectible.mediaUrl ?? ""
-                mediaType: modelIndex === 0 && !!collectible ? collectible.mediaType : ""
+                mediaType: !!collectible ? (modelIndex > 0 && collectible.mediaType.startsWith("video")) ? "" : collectible.mediaType: ""
                 fallbackImageUrl: collectible.imageUrl
+                manualMaxDimension: 240
 
                 Column {
                     anchors.centerIn: parent

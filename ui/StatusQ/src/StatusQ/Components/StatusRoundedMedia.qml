@@ -71,6 +71,20 @@ StatusRoundedComponent {
     */
     property url fallbackImageUrl
 
+    /*!
+        \qmlproperty url StatusRoundedMedia::fillMode
+        helps set fillModel for the Media file loaded
+    */
+    property int fillMode: Image.PreserveAspectFit
+
+    /*!
+        \qmlproperty url StatusRoundedMedia::maxDimension
+        is used to set dimension for the image in case of portrait or landscape
+        when fillMode = Image.PreserveAspectFit
+        if not set the width/height of parent will be considered
+    */
+    property int manualMaxDimension: 0
+
     readonly property int componentMediaType: {
         if (root.mediaType.startsWith("image")) {
             return StatusRoundedMedia.MediaType.Image
@@ -112,11 +126,19 @@ StatusRoundedComponent {
         }
     }
 
-    Loader {
-        id: mediaLoader
-        anchors.fill: parent
-        asynchronous: true
-        visible: !root.isError && !root.isLoading
+    implicitWidth: {
+        // Use Painted width so that the rectangle follow width of the image actually painted
+        if(!!mediaLoader.item && (mediaLoader.item.paintedWidth > 0 || mediaLoader.item.paintedHeight > 0)) {
+            return mediaLoader.item.paintedWidth
+        }
+        else return root.manualMaxDimension
+    }
+    implicitHeight: {
+        // Use Painted height so that the rectangle follows height of the image actually painted
+        if(!!mediaLoader.item && (mediaLoader.item.paintedWidth > 0 || mediaLoader.item.paintedHeight > 0)) {
+            return mediaLoader.item.paintedHeight
+        }
+        else return root.manualMaxDimension
     }
 
     Component.onCompleted: updateMediaLoader()
@@ -124,19 +146,31 @@ StatusRoundedComponent {
     onComponentMediaTypeChanged: updateMediaLoader()
     onFallbackImageUrlChanged: updateMediaLoader()
 
+    Loader {
+        id: mediaLoader
+        anchors.centerIn: parent
+        // In case manualMaxDimension is not defined then use parent width and height instead
+        width: root.manualMaxDimension === 0 ? parent.width : root.manualMaxDimension
+        height: root.manualMaxDimension === 0 ? parent.height : root.manualMaxDimension
+        asynchronous: true
+        visible: !root.isError && !root.isLoading
+    }
+
     function updateMediaLoader() {
         d.reset()
         if (root.mediaUrl !== "") {
             if (componentMediaType === StatusRoundedMedia.MediaType.Image) {
                 mediaLoader.setSource("StatusAnimatedImage.qml",
                                     {
-                                        "source": root.mediaUrl
+                                        "source": root.mediaUrl,
+                                        "fillMode": root.fillMode
                                     });
                 return
             } else if (componentMediaType === StatusRoundedMedia.MediaType.Video) {
                 mediaLoader.setSource("StatusVideo.qml",
                                     {
-                                        "player.source": root.mediaUrl
+                                        "player.source": root.mediaUrl,
+                                        "fillMode": root.fillMode
                                     });
                 return
             }
@@ -150,7 +184,8 @@ StatusRoundedComponent {
             if (componentMediaType === StatusRoundedMedia.MediaType.Image && d.errorCounter <= 1) {
                 mediaLoader.setSource("StatusImage.qml",
                                     {
-                                        "source": root.mediaUrl
+                                        "source": root.mediaUrl,
+                                        "fillMode": root.fillMode
                                     })
                 return
             } else if (root.fallbackImageUrl !== "") {
@@ -165,14 +200,16 @@ StatusRoundedComponent {
         d.isFallback = true
         mediaLoader.setSource("StatusImage.qml",
                             {
-                                "source": root.fallbackImageUrl
+                                "source": root.fallbackImageUrl,
+                                "fillMode": root.fillMode
                             })
     }
 
     function setEmptyComponent() {
         mediaLoader.setSource("StatusImage.qml",
                             {
-                                "source": ""
+                                "source": "",
+                                "fillMode": root.fillMode
                             });
     }
 }
