@@ -836,6 +836,8 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   let activeChatId = self.controller.getActiveChatId()
   if chatId == activeChatId:
     self.setFirstChannelAsActive()
+  
+  self.updateParentBadgeNotifications()
 
 proc refreshHiddenBecauseNotPermittedState(self: Module) =
   self.view.refreshAllChannelsAreHiddenBecauseNotPermittedChanged()
@@ -1393,11 +1395,7 @@ proc addOrUpdateChat(self: Module,
     not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey()):
     return
 
-  let chatExists = self.doesCatOrChatExist(chat.id)
-
-  if not self.chatsLoaded or chatExists:
-    # Update badges
-    self.updateBadgeNotifications(chat, chat.unviewedMessagesCount > 0, chat.unviewedMentionsCount)
+  self.updateBadgeNotifications(chat, chat.unviewedMessagesCount > 0, chat.unviewedMentionsCount)
 
   if not self.chatsLoaded:
     return
@@ -1406,7 +1404,7 @@ proc addOrUpdateChat(self: Module,
   if chat.id == activeChatId:
     self.updateActiveChatMembership()
 
-  if chatExists:
+  if self.doesCatOrChatExist(chat.id):
     self.changeMutedOnChat(chat.id, chat.muted)
     self.changeCanPostValues(chat.id, chat.canPostReactions, chat.viewersCanPostReactions)
     self.updateChatRequiresPermissions(chat.id)
