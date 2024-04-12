@@ -504,8 +504,7 @@ StatusDialog {
                 totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * d.selectedHolding.marketDetails.currencyPrice.amount
             d.totalFeesInFiat = d.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
 
-            if (!!d.selectedHolding.type && (d.selectedHolding.type === Constants.TokenType.ERC20
-                                             || d.selectedHolding.type === Constants.TokenType.ETH)) {
+            if (d.selectedHolding.type === Constants.TokenType.ERC20 || d.selectedHolding.type === Constants.TokenType.Native) {
                 // If assets
                 d.totalAmountToReceive = popup.store.getWei2Eth(txRoutes.amountToReceive, d.selectedHolding.decimals)
             } else {

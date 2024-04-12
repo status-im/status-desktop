@@ -273,6 +273,13 @@ Item {
     */
     signal editingFinished()
 
+    function insert(position, text) {
+        let pos = edit.cursorVisible ? edit.cursorPosition : -1
+        edit.insert(position, text)
+        if (pos >= 0)
+            edit.cursorPosition = position <= pos ? pos + 1 : pos
+    }
+
     onFocusChanged: {
         if(focus) edit.forceActiveFocus()
     }
@@ -369,7 +376,7 @@ Item {
                         focus: true
                         font.pixelSize: 15
                         font.family: Theme.palette.baseFont.name
-                        color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1 
+                        color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
                         wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
 
                         Keys.onReturnPressed: {

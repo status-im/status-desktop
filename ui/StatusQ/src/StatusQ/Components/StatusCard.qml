@@ -279,7 +279,7 @@ Rectangle {
                 color: Theme.palette.pinColor1
             }
         }
-        StatusInput {
+        StatusAmountInput {
             id: advancedInput
             Layout.preferredWidth: layout.width
             maximumHeight: 32
@@ -287,6 +287,7 @@ Rectangle {
             bottomPadding: 0
             leftPadding: 8
             rightPadding: 5
+            locale: root.locale
             input.edit.color: { // crash workaround, https://bugreports.qt.io/browse/QTBUG-107795
                 if (root.state === "error")
                     return Theme.palette.dangerColor1
