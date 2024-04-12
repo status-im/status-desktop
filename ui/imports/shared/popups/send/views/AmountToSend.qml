@@ -131,7 +131,7 @@ ColumnLayout {
             id: topAmountToSendInput
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             Layout.maximumWidth: 250
-            Layout.preferredWidth: !!text ? input.edit.paintedWidth
+            Layout.preferredWidth: !!text ? input.edit.paintedWidth + 2
                                           : textMetrics.advanceWidth
             placeholderText: d.zeroString
             input.edit.color: input.valid ? Theme.palette.directColor1
@@ -143,7 +143,7 @@ ColumnLayout {
                     id: floatValidator
                     bottom: 0
                     errorMessage: ""
-                    locale: LocaleUtils.userInputLocale
+                    locale: topAmountToSendInput.locale
                 },
                 StatusValidator {
                     errorMessage: ""
@@ -168,7 +168,7 @@ ColumnLayout {
             Keys.onReleased: {
                 const amount = LocaleUtils.numberFromLocaleString(
                                  topAmountToSendInput.text,
-                                 LocaleUtils.userInputLocale)
+                                 locale)
                 if (!isNaN(amount))
                     d.waitTimer.restart()
             }

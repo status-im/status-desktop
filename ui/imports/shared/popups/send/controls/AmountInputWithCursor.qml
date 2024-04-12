@@ -7,7 +7,7 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
-StatusInput {
+StatusAmountInput {
     id: cursorInput
 
     leftPadding: 0
@@ -16,7 +16,6 @@ StatusInput {
     bottomPadding: 0
 
     placeholderText: ""
-    input.edit.objectName: "amountInput"
     input.edit.cursorVisible: true
     input.edit.font.pixelSize: Utils.getFontSizeBasedOnLetterCount(text)
     input.placeholderFont.pixelSize: 34
