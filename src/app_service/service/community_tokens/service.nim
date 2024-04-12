@@ -297,9 +297,12 @@ QtObject:
 
       communityTokensCache: seq[CommunityTokenDto]
 
+      communityDataLoaded: bool
+      allCommunityTokensLoaded: bool
+
   # Forward declaration
   proc getAllCommunityTokensAsync*(self: Service)
-  proc fetchAllTokenOwners*(self: Service)
+  proc fetchAllTokenOwners(self: Service)
   proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner]
   proc getCommunityToken*(self: Service, chainId: int, address: string): CommunityTokenDto
   proc findContractByUniqueId*(self: Service, contractUniqueKey: string): CommunityTokenDto
@@ -515,10 +518,14 @@ QtObject:
   
   # end of cache functions
 
+  proc tryFetchOwners(self: Service) =
+    # both communities and tokens should be loaded
+    if self.allCommunityTokensLoaded and self.communityDataLoaded:
+      self.fetchAllTokenOwners()
+      self.tokenOwnersTimer.start()
+
   proc init*(self: Service) =
     self.getAllCommunityTokensAsync()
-    self.fetchAllTokenOwners()
-    self.tokenOwnersTimer.start()
 
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
@@ -526,6 +533,10 @@ QtObject:
         self.processReceivedCollectiblesWalletEvent(data.message, data.accounts)
       elif data.eventType == tokens_backend.eventCommunityTokenReceived:
         self.processReceivedCommunityTokenWalletEvent(data.message, data.accounts)
+
+    self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
+      self.communityDataLoaded = true
+      self.tryFetchOwners()
 
     self.events.on(PendingTransactionTypeDto.SetSignerPublicKey.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)
@@ -841,6 +852,9 @@ QtObject:
       let responseJson = parseJson(response)
       self.communityTokensCache = map(responseJson["response"]["result"].getElems(),
         proc(x: JsonNode): CommunityTokenDto = x.toCommunityTokenDto())
+
+      self.allCommunityTokensLoaded = true
+      self.tryFetchOwners()
     except RpcException as e:
       error "Error getting all community tokens async", message = e.msg
 
@@ -1382,7 +1396,7 @@ QtObject:
   proc isTokenDeployed(self: Service, token: CommunityTokenDto): bool =
     return token.deployState == DeployState.Deployed
 
-  proc fetchCommunityOwners*(self: Service,  communityToken: CommunityTokenDto) =
+  proc fetchCommunityOwners(self: Service,  communityToken: CommunityTokenDto) =
     if not self.isTokenDeployed(communityToken):
       return
 
@@ -1429,21 +1443,33 @@ QtObject:
   proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner] =
     return self.tokenOwnersCache.getOrDefault((chainId: chainId, address: contractAddress))
 
+  proc iAmCommunityPrivilegedUser(self:Service, communityId: string): bool =
+    let community = self.communityService.getCommunityById(communityId)
+    return community.isPrivilegedUser()
+
+  # update in 5 minute intervals, only transferable tokens
   proc onRefreshTransferableTokenOwners*(self:Service) {.slot.} =
     let allTokens = self.getAllCommunityTokens()
     for token in allTokens:
-      if token.transferable:
+      if token.transferable and self.iAmCommunityPrivilegedUser(token.communityId):
         self.fetchCommunityOwners(token)
 
+  # used after airdrop or remote destruct
   proc onFetchTempTokenOwners*(self: Service) {.slot.} =
     self.fetchCommunityOwners(self.tempTokenOwnersToFetch)
 
-  proc fetchAllTokenOwners*(self: Service) =
+  # used in init
+  proc fetchAllTokenOwners(self: Service) =
     let allTokens = self.getAllCommunityTokens()
     for token in allTokens:
+      if not self.iAmCommunityPrivilegedUser(token.communityId):
+        continue
       self.fetchCommunityOwners(token)
 
+  # used when community members changed
   proc fetchCommunityTokenOwners*(self: Service, communityId: string) =
+    if not self.iAmCommunityPrivilegedUser(communityId):
+      return
     let tokens = self.getCommunityTokens(communityId)
     for token in tokens:
       self.fetchCommunityOwners(token)
