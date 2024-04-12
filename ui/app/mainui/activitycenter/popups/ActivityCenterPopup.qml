@@ -144,6 +144,8 @@ Popup {
                     return communityBannedNotificationComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.CommunityUnbanned:
                     return communityUnbannedNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.NewPrivateGroupChat:
+                    return groupChatInvitationNotificationComponent
                 default:
                     return null
                 }
@@ -350,6 +352,18 @@ Popup {
             onOpenShareAccountsClicked: {
                 Global.communityShareAddressesPopupRequested(notification.communityId, communityName, communityImage)
             }
+        }
+    }
+
+    Component {
+        id: groupChatInvitationNotificationComponent
+
+        ActivityNotificationUnknownGroupChatInvitation {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
         }
     }
 }

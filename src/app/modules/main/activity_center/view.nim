@@ -90,6 +90,18 @@ QtObject:
     self.delegate.markAsSeenActivityCenterNotifications()
     self.hasUnseenActivityCenterNotificationsChanged()
 
+  proc acceptActivityCenterNotification(self: View, notificationId: string): void {.slot.} =
+    self.delegate.acceptActivityCenterNotification(notificationId)
+
+  proc dismissActivityCenterNotification(self: View, notificationId: string): void {.slot.} =
+    self.delegate.dismissActivityCenterNotification(notificationId)
+
+  proc acceptActivityCenterNotificationDone*(self: View, notificationId: string) =
+    self.model.activityCenterNotificationAccepted(notificationId)
+
+  proc dismissActivityCenterNotificationDone*(self: View, notificationId: string) =
+    self.model.activityCenterNotificationDismissed(notificationId)
+
   proc addActivityCenterNotifications*(self: View, activityCenterNotifications: seq[Item]) =
     self.model.upsertActivityCenterNotifications(activityCenterNotifications)
 

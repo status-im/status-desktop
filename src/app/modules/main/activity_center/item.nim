@@ -126,8 +126,14 @@ proc `read=`*(self: Item, value: bool) =
 proc dismissed*(self: Item): bool =
   return self.dismissed
 
+proc `dismissed=`*(self: Item, value: bool) =
+  self.dismissed = value
+
 proc accepted*(self: Item): bool =
   return self.accepted
+
+proc `accepted=`*(self: Item, value: bool) =
+  self.accepted = value
 
 proc messageItem*(self: Item): MessageItem =
   return self.messageItem
