@@ -452,7 +452,14 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
     self.accountsService.updateLoggedInAccount(self.getDisplayName, images)
     self.view.notifyLoggedInAccountChanged()
 
-  let nextState = newUserProfileChatKeyState(currStateObj.flowType(), nil)
+  var nextState: state.State
+  if currStateObj.flowType() == FlowType.LostKeycardReplacement:
+    if not self.controller.notificationsNeedsEnable():
+      self.finishAppLoading()
+      return
+    nextState = newNotificationState(currStateObj.flowType(), nil)
+  else:
+    nextState = newUserProfileChatKeyState(currStateObj.flowType(), nil)
   self.view.setCurrentStartupState(nextState)
   self.moveToStartupState()
 
