@@ -663,8 +663,8 @@ proc getLoggedInAccountDisplayName*(self: Controller): string =
   return self.accountsService.getLoggedInAccount().name
 
 proc getLoggedInAccountImage*(self: Controller): string =
-  let iamges = self.accountsService.getLoggedInAccount().images
-  for img in iamges:
+  let images = self.accountsService.getLoggedInAccount().images
+  for img in images:
     if img.imgType == "large":
       return img.uri
   return ""
