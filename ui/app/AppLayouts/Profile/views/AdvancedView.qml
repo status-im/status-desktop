@@ -606,7 +606,7 @@ SettingsContentBase {
                         text: qsTr("Choose a number between 1 and 100")
                     }
 
-                    StatusInput {
+                    StatusAmountInput {
                         id: numberInput
                         anchors.left: parent.left
                         anchors.right: parent.right
@@ -616,7 +616,7 @@ SettingsContentBase {
                         input.text: root.advancedStore.logMaxBackups
                         placeholderText: qsTr("Number between 1 and 100")
                         validators: [
-                            StatusFloatValidator {
+                            StatusIntValidator {
                                 bottom: 1
                                 top: 100
                                 errorMessage: qsTr("Number needs to be between 1 and 100")
