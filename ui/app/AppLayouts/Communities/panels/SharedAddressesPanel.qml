@@ -20,7 +20,6 @@ import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.helpers 1.0
 
 import utils 1.0
-import shared.panels 1.0
 
 Control {
     id: root
@@ -185,15 +184,24 @@ Control {
         spacing: 0
 
         // warning panel
-        ModuleWarning {
+        Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 32
-            text: d.lostCommunityPermission ? qsTr("Selected addresses have insufficient tokens to maintain %1 membership").arg(root.communityName) :
-                                              d.lostChannelPermissions ? qsTr("By deselecting these addresses, you will lose channel permissions") :
-                                                                         ""
-            active: d.lostCommunityPermission || d.lostChannelPermissions
-            visible: active
-            closeBtnVisible: false
+            color: Theme.palette.dangerColor1
+            visible: d.lostCommunityPermission || d.lostChannelPermissions
+
+            StatusBaseText {
+                width: parent.width
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Qt.AlignHCenter
+                elide: Text.ElideRight
+                text: d.lostCommunityPermission ? qsTr("Selected addresses have insufficient tokens to maintain %1 membership").arg(root.communityName) :
+                                                  d.lostChannelPermissions ? qsTr("By deselecting these addresses, you will lose channel permissions") :
+                                                                             ""
+                font.pixelSize: Style.current.additionalTextSize
+                font.weight: Font.Medium
+                color: Theme.palette.indirectColor1
+            }
         }
 
         // addresses
@@ -293,6 +301,7 @@ Control {
         SharedAddressesPermissionsPanel {
             id: permissionsView
             isEditMode: root.isEditMode
+            isDirty: d.dirty
             permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel

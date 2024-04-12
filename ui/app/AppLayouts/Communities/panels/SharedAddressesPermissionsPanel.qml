@@ -22,6 +22,7 @@ Rectangle {
     required property int /*PermissionTypes.Type*/ eligibleToJoinAs
 
     property bool isEditMode
+    property bool isDirty
 
     property string communityName
     property string communityIcon
@@ -256,7 +257,8 @@ Rectangle {
     CommunityEligibilityTag {
         id: eligibilityHintBubble
         eligibleToJoinAs: root.eligibleToJoinAs
-        visible: !root.isEditMode
+        isEditMode: root.isEditMode
+        isDirty: root.isDirty
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 24
         anchors.horizontalCenter: parent.horizontalCenter
@@ -327,7 +329,7 @@ Rectangle {
                 StatusBaseText {
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: Theme.tertiaryTextFontSize
-                    text: model.text
+                    text: !!model.text ? model.text : ""
                     color: model.available ? Theme.palette.successColor1 : Theme.palette.baseColor1
                 }
             }

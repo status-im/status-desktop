@@ -173,8 +173,8 @@ StatusStackModal {
 
         readonly property int selectedSharedAddressesCount: d.selectedSharedAddressesMap.size
 
-        readonly property int accessType: d.eligibleToJoinAs !== - 1 ? Constants.communityChatOnRequestAccess
-                                                                     : Constants.communityChatPublicAccess
+        readonly property int accessType: d.eligibleToJoinAs !== -1 ? Constants.communityChatOnRequestAccess
+                                                                    : Constants.communityChatPublicAccess
         property int eligibleToJoinAs: PermissionsHelpers.isEligibleToJoinAs(root.permissionsModel)
         readonly property var _con: Connections {
             target: root.permissionsModel
@@ -444,7 +444,7 @@ StatusStackModal {
                 CommunityEligibilityTag {
                     Layout.alignment: Qt.AlignHCenter
                     eligibleToJoinAs: d.eligibleToJoinAs
-                    visible: !root.isEditMode && !root.isInvitationPending && d.accessType === Constants.communityChatOnRequestAccess
+                    visible: !root.isInvitationPending && d.accessType === Constants.communityChatOnRequestAccess
                 }
             }
         }
