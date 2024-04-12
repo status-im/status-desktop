@@ -178,6 +178,8 @@ StatusListView {
         title: model.name
         tertiaryTitle: root.hasPermissions && !tagsCount ? qsTr("No relevant tokens") : ""
 
+        onClicked: shareAddressCheckbox.toggle()
+
         SubmodelProxyModel {
             id: filteredBalances
             sourceModel: root.walletAssetsModel

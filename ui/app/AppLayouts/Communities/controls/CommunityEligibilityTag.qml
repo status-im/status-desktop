@@ -12,6 +12,8 @@ Rectangle {
     id: root
 
     required property int /*PermissionTypes.Type*/ eligibleToJoinAs
+    property bool isEditMode
+    property bool isDirty
 
     implicitWidth: hintRow.implicitWidth + 2*Style.current.padding
     implicitHeight: 40
@@ -22,7 +24,7 @@ Rectangle {
 
     QtObject {
         id: d
-        readonly property var joinHint: PermissionTypes.getJoinEligibilityHint(root.eligibleToJoinAs)
+        readonly property var joinHint: PermissionTypes.getJoinEligibilityHint(root.eligibleToJoinAs, root.isEditMode, root.isDirty)
     }
 
     RowLayout {

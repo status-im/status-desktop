@@ -32,8 +32,12 @@ QtObject {
         return ""
     }
 
-    function getJoinEligibilityHint(type) {
-        const template = qsTr("You are eligible to join as")
+    function getJoinEligibilityHint(type, isEditMode = false, isDirty = false) {
+        var template = qsTr("You are eligible to join as")
+        if (isEditMode) {
+            template = isDirty ? qsTr("You'll be a") : qsTr("You're a")
+        }
+
         switch (type) {
         case PermissionTypes.Type.TokenMaster:
             return [template, qsTr("TokenMaster"), "tiny/token-master"]
@@ -42,6 +46,8 @@ QtObject {
         case PermissionTypes.Type.Member:
             return [template, qsTr("Member"), "tiny/group"]
         case PermissionTypes.Type.None:
+            if (isEditMode)
+                return [qsTr("You'll no longer be a"), qsTr("Member"), "tiny/group"]
             return [qsTr("Not eligible to join with current address selections"), "", ""]
         }
         return ["", "", ""]
