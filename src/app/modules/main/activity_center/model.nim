@@ -112,27 +112,55 @@ QtObject:
       NotifRoles.TokenData.int: "tokenData"
     }.toTable
 
+  proc findNotificationIndex(self: Model, notificationId: string): int =
+    if notificationId.len == 0:
+      return -1
+    for i in 0 ..< self.activityCenterNotifications.len:
+      if self.activityCenterNotifications[i].id == notificationId:
+        return i
+    return -1
+
   proc markActivityCenterNotificationUnread*(self: Model, notificationId: string) =
-    var i = 0
-    for acnViewItem in self.activityCenterNotifications:
-      if (acnViewItem.id == notificationId):
-        acnViewItem.read = false
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[NotifRoles.Read.int])
-        break
-      i.inc
+    let i = self.findNotificationIndex(notificationId)
+    if i == -1:
+      return
+
+    self.activityCenterNotifications[i].read = false
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[NotifRoles.Read.int])
 
   proc markActivityCenterNotificationRead*(self: Model, notificationId: string) =
-    var i = 0
-    for acnViewItem in self.activityCenterNotifications:
-      if (acnViewItem.id == notificationId):
-        acnViewItem.read = true
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[NotifRoles.Read.int])
-        break
-      i.inc
+    let i = self.findNotificationIndex(notificationId)
+    if i == -1:
+      return
+
+    self.activityCenterNotifications[i].read = true
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[NotifRoles.Read.int])
+
+  proc activityCenterNotificationAccepted*(self: Model, notificationId: string) =
+    let i = self.findNotificationIndex(notificationId)
+    if i == -1:
+      return
+
+    self.activityCenterNotifications[i].read = true
+    self.activityCenterNotifications[i].accepted = true
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[NotifRoles.Accepted.int, NotifRoles.Read.int])
+
+  proc activityCenterNotificationDismissed*(self: Model, notificationId: string) =
+    let i = self.findNotificationIndex(notificationId)
+    if i == -1:
+      return
+
+    self.activityCenterNotifications[i].read = true
+    self.activityCenterNotifications[i].dismissed = true
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[NotifRoles.Dismissed.int, NotifRoles.Read.int])
 
   proc removeNotifications*(self: Model, ids: seq[string]) =
     var i = 0

@@ -76,6 +76,14 @@ proc init*(self: Controller) =
     if (evArgs.notificationIds.len > 0):
       self.delegate.removeActivityCenterNotifications(evArgs.notificationIds)
 
+  self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_ACCEPTED) do(e: Args):
+    var evArgs = ActivityCenterNotificationIdArgs(e)
+    self.delegate.acceptActivityCenterNotificationDone(evArgs.notificationId)
+
+  self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_DISMISSED) do(e: Args):
+    var evArgs = ActivityCenterNotificationIdArgs(e)
+    self.delegate.dismissActivityCenterNotificationDone(evArgs.notificationId)
+
 proc hasMoreToShow*(self: Controller): bool =
   return self.activityCenterService.hasMoreToShow()
 
@@ -108,6 +116,12 @@ proc markActivityCenterNotificationUnread*(self: Controller,notificationId: stri
 
 proc markAsSeenActivityCenterNotifications*(self: Controller) =
   self.activityCenterService.markAsSeenActivityCenterNotifications()
+
+proc acceptActivityCenterNotification*(self: Controller,notificationId: string) =
+  self.activityCenterService.acceptActivityCenterNotification(notificationId)
+
+proc dismissActivityCenterNotification*(self: Controller,notificationId: string) =
+  self.activityCenterService.dismissActivityCenterNotification(notificationId)
 
 proc replacePubKeysWithDisplayNames*(self: Controller, message: string): string =
   return self.messageService.replacePubKeysWithDisplayNames(message)

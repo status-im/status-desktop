@@ -110,4 +110,12 @@ QtObject {
     function fetchActivityCenterNotifications() {
         root.activityCenterModuleInst.fetchActivityCenterNotifications()
     }
+
+    function acceptActivityCenterNotification(notification) {
+        root.activityCenterModuleInst.acceptActivityCenterNotification(notification.id)
+    }
+
+    function dismissActivityCenterNotification(notification) {
+        root.activityCenterModuleInst.dismissActivityCenterNotification(notification.id)
+    }
 }

@@ -244,6 +244,18 @@ method resetActivityCenterNotifications*(self: Module, activityCenterNotificatio
 method markActivityCenterNotificationUnread*(self: Module, notificationId: string) =
   self.controller.markActivityCenterNotificationUnread(notificationId)
 
+method acceptActivityCenterNotification*(self: Module, notificationId: string) =
+  self.controller.acceptActivityCenterNotification(notificationId)
+
+method dismissActivityCenterNotification*(self: Module, notificationId: string) =
+  self.controller.dismissActivityCenterNotification(notificationId)
+
+method acceptActivityCenterNotificationDone*(self: Module, notificationId: string) =
+  self.view.acceptActivityCenterNotificationDone(notificationId)
+
+method dismissActivityCenterNotificationDone*(self: Module, notificationId: string) =
+  self.view.dismissActivityCenterNotificationDone(notificationId)
+
 method markActivityCenterNotificationUnreadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationUnreadDone(notificationId)

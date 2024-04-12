@@ -100,6 +100,7 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("chatId", result.chatId)
   discard jsonObj.getProp("communityId", result.communityId)
+  discard jsonObj.getProp("name", result.name)
 
   result.membershipStatus = ActivityCenterMembershipStatus.Idle
   var membershipStatusInt: int

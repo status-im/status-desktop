@@ -63,6 +63,18 @@ method markActivityCenterNotificationUnread*(self: AccessInterface, notification
 method markAsSeenActivityCenterNotifications*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method acceptActivityCenterNotification*(self: AccessInterface, notificationId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method dismissActivityCenterNotification*(self: AccessInterface, notificationId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method acceptActivityCenterNotificationDone*(self: AccessInterface, notificationId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method dismissActivityCenterNotificationDone*(self: AccessInterface, notificationId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method addActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 

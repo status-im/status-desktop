@@ -13,6 +13,7 @@ import ./dto/notification
 import ../../common/activity_center
 import ../message/service
 import ../message/dto/seen_unseen_messages
+import ../chat/service as chat_service
 
 export notification
 
@@ -28,6 +29,9 @@ type
   ActivityCenterNotificationIdsArgs* = ref object of Args
     notificationIds*: seq[string]
 
+  ActivityCenterNotificationIdArgs* = ref object of Args
+    notificationId*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED* = "activityCenterNotificationsLoaded"
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED* = "activityCenterNotificationsCountMayChanged"
@@ -35,6 +39,8 @@ const SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_READ* = "activityCenterMarkNo
 const SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_UNREAD* = "activityCenterMarkNotificationsAsUnread"
 const SIGNAL_ACTIVITY_CENTER_MARK_ALL_NOTIFICATIONS_AS_READ* = "activityCenterMarkAllNotificationsAsRead"
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED* = "activityCenterNotificationsRemoved"
+const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_ACCEPTED* = "activityCenterNotificationsAccepted"
+const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_DISMISSED* = "activityCenterNotificationsDismissed"
 
 const DEFAULT_LIMIT = 20
 
@@ -55,6 +61,7 @@ QtObject:
     cursor*: string
     activeGroup: ActivityCenterGroup
     readType: ActivityCenterReadType
+    chatService: chat_service.Service
 
   # Forward declaration
   proc asyncActivityNotificationLoad*(self: Service)
@@ -64,7 +71,8 @@ QtObject:
 
   proc newService*(
       events: EventEmitter,
-      threadpool: ThreadPool
+      threadpool: ThreadPool,
+      chatService: chat_service.Service,
       ): Service =
     new(result, delete)
     result.QObject.setup
@@ -73,6 +81,7 @@ QtObject:
     result.cursor = ""
     result.activeGroup = ActivityCenterGroup.All
     result.readType = ActivityCenterReadType.All
+    result.chatService = chatService
 
   proc handleNewNotificationsLoaded(self: Service, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
     # For now status-go notify about every notification update regardless active group so we need filter manulay on the desktop side
@@ -151,6 +160,7 @@ QtObject:
           readType: self.readType.int
         )
       )
+
       let activityCenterNotificationsTuple = parseActivityCenterNotifications(response.result)
 
       self.cursor = activityCenterNotificationsTuple[0];
@@ -231,7 +241,10 @@ QtObject:
   proc markActivityCenterNotificationUnread*(self: Service, notificationId: string) =
     try:
       let notificationIds = @[notificationId]
-      discard backend.markActivityCenterNotificationsUnread(notificationIds)
+      let response =  backend.markActivityCenterNotificationsUnread(notificationIds)
+      if response.error != nil:
+        raise newException(RpcException, response.error.message)
+
       self.events.emit(SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_UNREAD, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
     except Exception as e:
       error "Error marking as unread", msg = e.msg
@@ -273,7 +286,10 @@ QtObject:
 
   proc deleteActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
     try:
-      discard backend.deleteActivityCenterNotifications(notificationIds)
+      let response = backend.deleteActivityCenterNotifications(notificationIds)
+      if response.error != nil:
+        raise newException(RpcException, response.error.message)
+
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
@@ -285,3 +301,34 @@ QtObject:
     for acNotification in acNotifications:
       if acNotification.notificationType == notificationType and acNotification.communityId == communityId:
         return acNotification
+
+  proc acceptActivityCenterNotification*(self: Service, notificationId: string) =
+    try:
+      let notificationIds = @[notificationId]
+      let response = backend.acceptActivityCenterNotifications(notificationIds)
+      if response.error != nil:
+        raise newException(RpcException, response.error.message)
+
+      if response.result.kind != JNull:
+        if response.result.contains("chats"):
+          for jsonChat in response.result["chats"]:
+            let chat = toChatDto(jsonChat)
+            self.chatService.updateOrAddChat(chat)
+            self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: @[chat]))
+
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_ACCEPTED, ActivityCenterNotificationIdArgs(notificationId: notificationId))
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+    except Exception as e:
+      error "Error accepting activity center notification", msg = e.msg
+
+  proc dismissActivityCenterNotification*(self: Service, notificationId: string) =
+    try:
+      let notificationIds = @[notificationId]
+      let response = backend.dismissActivityCenterNotifications(notificationIds)
+      if response.error != nil:
+        raise newException(RpcException, response.error.message)
+
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_DISMISSED, ActivityCenterNotificationIdArgs(notificationId: notificationId))
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+    except Exception as e:
+      error "Error dismissing activity center notification", msg = e.msg
