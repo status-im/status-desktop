@@ -138,8 +138,17 @@ ColumnLayout {
             if(!addOrUpdateButton.enabled)
                 return
 
-            if(event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
+            // additionally accept dot (.) and convert it to the correct decimal point char
+            if (event.key === Qt.Key_Period || event.key === Qt.Key_Comma) {
+                // Only one decimal point is allowed
+                if(amountInput.text.indexOf(amountInput.locale.decimalPoint) === -1)
+                  amountInput.textField.insert(amountInput.textField.cursorPosition, amountInput.locale.decimalPoint)
+                event.accepted = true
+            } else if ((event.key > Qt.Key_9 && event.key <= Qt.Key_BraceRight) || event.key === Qt.Key_Space) {
+                event.accepted = true
+            } else if(event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
                 addOrUpdateButton.clicked()
+            }
         }
         onVisibleChanged: {
             if(visible)
