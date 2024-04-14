@@ -160,7 +160,7 @@ private:
     void setSerializeAsCollectibles(const bool newSerializeAsCollectibles);
 
     QSettings m_settings;
-    SerializedTokenData m_settingsData; // symbol -> {sortOrder, visible, groupId, isCommunityGroup, isCollectionGroup}
+    SerializedTokenData m_settingsData;
     bool hasSettings() const;
     void loadSettingsData(bool withGroup = false);
 

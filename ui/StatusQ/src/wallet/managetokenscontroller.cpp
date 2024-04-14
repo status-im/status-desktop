@@ -276,9 +276,7 @@ QString ManageTokensController::settingsGroupName() const
 
 bool ManageTokensController::hasSettings() const
 {
-    Q_ASSERT(!m_settingsKey.isEmpty());
-    const auto groups = m_settings.childGroups();
-    return groups.contains(settingsGroupName());
+    return !m_settingsData.isEmpty();
 }
 
 int ManageTokensController::compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const
