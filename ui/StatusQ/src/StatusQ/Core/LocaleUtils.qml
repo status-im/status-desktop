@@ -6,7 +6,7 @@ import Qt.labs.settings 1.0
 QtObject {
     id: root
 
-    readonly property var userInputLocale: Qt.locale("en_US")
+    readonly property var userInputLocale: Qt.locale()
 
     function integralPartLength(num) {
         num = Math.abs(num)

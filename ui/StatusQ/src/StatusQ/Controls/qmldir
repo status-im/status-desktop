@@ -27,6 +27,7 @@ StatusLabeledSlider 0.1 StatusLabeledSlider.qml
 StatusSelect 0.1 StatusSelect.qml
 StatusBaseInput 0.1 StatusBaseInput.qml
 StatusInput 0.1 StatusInput.qml
+StatusAmountInput 0.1 StatusAmountInput.qml
 StatusPickerButton 0.1 StatusPickerButton.qml
 StatusPinInput 0.1 StatusPinInput.qml
 StatusProgressBar 0.1 StatusProgressBar.qml
