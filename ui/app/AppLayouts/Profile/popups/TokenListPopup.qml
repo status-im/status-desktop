@@ -31,6 +31,7 @@ StatusDialog {
         readonly property int symbolColumnWidth: 90
         readonly property int addressColumnWidth: 106
         readonly property int externalLinkBtnWidth: 32
+        readonly property string tokenListTemplate: qsTr("Token List")
     }
 
     width: 521 // by design
@@ -65,7 +66,9 @@ StatusDialog {
     }
 
     header: StatusDialogHeader {
-        headline.title: qsTr("%1 Token List").arg(root.sourceName)
+        
+        headline.title: "%1 %2".arg(root.sourceName)
+                               .arg(root.sourceName && root.sourceName.endsWith(d.tokenListTemplate) ? "" : d.tokenListTemplate)
         headline.subtitle: qsTr("%n token(s)", "", root.tokensCount)
         actions.closeButton.onClicked: root.close()
         leftComponent: StatusSmartIdenticon {
