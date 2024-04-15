@@ -391,6 +391,11 @@ proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipReq
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("our", result.our)
 
+proc toCategoryDto*(jsonObj: JsonNode): Category =
+  result = Category()
+  discard jsonObj.getProp("categoryId", result.id)
+  discard jsonObj.getProp("collapsed", result.categoryOpened)
+
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
   discard jsonObj.getProp("id", result.id)
@@ -493,9 +498,18 @@ proc toCommunitySettingsDto*(jsonObj: JsonNode): CommunitySettingsDto =
   discard jsonObj.getProp("communityId", result.id)
   discard jsonObj.getProp("historyArchiveSupportEnabled", result.historyArchiveSupportEnabled)
 
-proc parseCommunities*(response: JsonNode): seq[CommunityDto] =
-  result = map(response["result"].getElems(),
-    proc(x: JsonNode): CommunityDto = x.toCommunityDto())
+proc parseCommunities*(response: JsonNode, categories: seq[Category]): seq[CommunityDto] =
+  var categoryMap = initTable[string, bool]()
+  for category in categories:
+    categoryMap[category.id] = true
+
+  result = newSeq[CommunityDto]()
+  for communityNode in response["result"].getElems():
+    var community = communityNode.toCommunityDto()
+    for category in community.categories.mitems:
+      if categoryMap.hasKey(category.id):
+        category.categoryOpened = true
+      result.add(community)
 
 proc parseKnownCuratedCommunities(jsonCommunities: JsonNode): seq[CommunityDto] =
   for _, communityJson in jsonCommunities.pairs():

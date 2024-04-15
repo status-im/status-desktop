@@ -200,6 +200,8 @@ Item {
                                                              categoryId: id
                                                          })
 
+            onToggleCollapsedCommunityCategory: root.store.toggleCollapsedCommunityCategory(categoryId, collapsed)
+
             popupMenu: StatusMenu {
                 hideDisabledItems: false
                 StatusAction {

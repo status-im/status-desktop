@@ -408,6 +408,17 @@ proc editCommunityCategory*(
       "chatIds": channels
     }])
 
+proc toggleCollapsedCommunityCategory*(communityId: string, categoryId: string, collapsed: bool): RpcResponse[JsonNode] =
+  result = callPrivateRPC("toggleCollapsedCommunityCategory".prefix, %*[
+    {
+      "communityId": communityId,
+      "categoryId": categoryId,
+      "collapsed": collapsed
+    }])
+
+proc collapsedCommunityCategories*(): RpcResponse[JsonNode] =
+  result = callPrivateRPC("collapsedCommunityCategories".prefix, %*[])
+
 proc deleteCommunityCategory*(
     communityId: string,
     categoryId: string

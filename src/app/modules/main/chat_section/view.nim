@@ -354,6 +354,9 @@ QtObject:
   proc reorderCommunityCategories*(self: View, categoryId: string, categoryPosition: int) {.slot} =
     self.delegate.reorderCommunityCategories(categoryId, categoryPosition)
 
+  proc toggleCollapsedCommunityCategory*(self: View, categoryId: string, collapsed: bool) {.slot} =
+    self.delegate.toggleCollapsedCommunityCategory(categoryId, collapsed)
+
   proc reorderCommunityChat*(self: View, categoryId: string, chatId: string, position: int) {.slot} =
     self.delegate.reorderCommunityChat(categoryId, chatId, position)
 

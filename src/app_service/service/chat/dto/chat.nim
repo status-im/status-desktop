@@ -25,6 +25,7 @@ type Category* = object
   id*: string
   name*: string
   position*: int
+  categoryOpened*: bool
 
 type
   Permission* = object
@@ -217,6 +218,7 @@ proc toCategory*(jsonObj: JsonNode): Category =
     discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("position", result.position)
+  discard jsonObj.getProp("categoryOpened", result.categoryOpened)
 
 proc toChatMember*(jsonObj: JsonNode, memberId: string): ChatMember =
   # Parse status-go "Member" type
