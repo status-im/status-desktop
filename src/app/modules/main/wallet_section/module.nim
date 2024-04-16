@@ -236,6 +236,7 @@ proc setKeypairOperabilityForObservedAccount(self: Module, address: string) =
 method setFilterAddress*(self: Module, address: string) =
   self.setKeypairOperabilityForObservedAccount(address)
   self.filter.setAddress(address)
+  self.allCollectiblesModule.setSelectedAccount(address)
   self.overviewModule.setIsAllAccounts(false)
   self.view.setAddressFilters(address)
   self.notifyFilterChanged()
@@ -243,6 +244,7 @@ method setFilterAddress*(self: Module, address: string) =
 method setFilterAllAddresses*(self: Module) =
   self.view.setKeypairOperabilityForObservedAccount("")
   self.filter.setAddresses(self.getWalletAddressesNotHidden())
+  self.allCollectiblesModule.setSelectedAccount("")
   self.view.setAddressFilters(self.filter.addresses.join(":"))
   self.overviewModule.setIsAllAccounts(true)
   self.notifyFilterChanged()
