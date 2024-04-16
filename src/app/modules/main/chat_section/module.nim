@@ -679,7 +679,7 @@ proc addNewChat(
       memberRole = community.memberRole
 
   var categoryOpened = true
-  if chatDto.categoryId != "":
+  if chatDto.categoryId != "" and self.doesCatOrChatExist(chatDto.categoryId):
     let categoryItem = self.view.chatsModel.getItemById(chatDto.categoryId)
     categoryOpened = categoryItem.categoryOpened
     if channelGroup.id != "":
