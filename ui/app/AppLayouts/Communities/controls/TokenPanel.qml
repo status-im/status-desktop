@@ -116,8 +116,6 @@ ColumnLayout {
     AmountInput {
         id: amountInput
 
-        locale: LocaleUtils.userInputLocale
-
         Layout.fillWidth: true
         Layout.bottomMargin: (validationError !== "") ? root.spacing * 2 : 0
         customHeight: d.defaultHeight

@@ -9,6 +9,7 @@ StatusInput {
     id: root
 
     property var locale: LocaleUtils.userInputLocale
+    validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
 
     input.edit.objectName: "amountInput"
 
@@ -16,7 +17,7 @@ StatusInput {
         StatusFloatValidator {
             bottom: 0
             errorMessage: ""
-            locale: LocaleUtils.userInputLocale
+            locale: root.locale
         }
     ]
 
@@ -27,7 +28,7 @@ StatusInput {
                           if(root.text.indexOf(root.locale.decimalPoint) === -1)
                             root.input.insert(root.input.cursorPosition, root.locale.decimalPoint)
                           event.accepted = true
-                      } else if ((event.key > Qt.Key_9 && event.key <= Qt.Key_BraceRight) || event.key === Qt.Key_Space) {
+                      } else if ((event.key > Qt.Key_9 && event.key <= Qt.Key_BraceRight) || event.key === Qt.Key_Space || event.key === Qt.Key_Tab) {
                           event.accepted = true
                       }
                   }

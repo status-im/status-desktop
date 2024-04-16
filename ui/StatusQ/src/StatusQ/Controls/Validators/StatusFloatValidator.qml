@@ -49,7 +49,10 @@ StatusValidator {
        \qmlproperty DoubleValidator StatusFloatValidator::qmlDoubleValidator
        This property holds a default qml double validator instance.
     */
-    readonly property DoubleValidator qmlDoubleValidator: DoubleValidator {}
+    readonly property DoubleValidator qmlDoubleValidator: DoubleValidator {
+        notation: DoubleValidator.StandardNotation
+        locale: root.locale.name
+    }
 
     name: "floatValidator"
     errorMessage: qsTr("Please enter a valid numeric value.")
