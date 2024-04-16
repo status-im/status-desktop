@@ -1,12 +1,16 @@
 pragma Singleton
 
-import QtQml 2.14
-import Qt.labs.settings 1.0
+import QtQml 2.15
+import Qt.labs.settings 1.1
 
 QtObject {
     id: root
 
-    readonly property var userInputLocale: Qt.locale()
+    readonly property var userInputLocale: {
+        const loc = Qt.locale()
+        loc.numberOptions |= Locale.OmitGroupSeparator // no thousands separator in number-to-string functions
+        return loc
+    }
 
     function integralPartLength(num) {
         num = Math.abs(num)

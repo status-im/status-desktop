@@ -20,6 +20,7 @@ SplitView {
         StatusAmountInput {
             id: input
             anchors.centerIn: parent
+            locale: Qt.locale(ctrlLocaleName.text)
         }
     }
 
@@ -34,12 +35,10 @@ SplitView {
             RowLayout {
                 Layout.fillWidth: true
                 Label {
-                    text: "Valid:"
+                    text: "Valid:\t"
                 }
                 Label {
                     Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignRight
-                    horizontalAlignment: Text.AlignRight
                     font.bold: true
                     text: input.valid ? "true" : "false"
                 }
@@ -47,14 +46,11 @@ SplitView {
             RowLayout {
                 Layout.fillWidth: true
                 Label {
-                    text: "Locale:"
+                    text: "Locale:\t"
                 }
-                Label {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignRight
-                    horizontalAlignment: Text.AlignRight
-                    font.bold: true
-                    text: input.locale.name
+                TextField {
+                    id: ctrlLocaleName
+                    placeholderText: "Default locale: %1".arg(input.locale.name)
                 }
             }
         }

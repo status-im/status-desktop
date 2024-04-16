@@ -14,11 +14,12 @@ SplitView {
     readonly property var tokensBySymbolModel: TokensBySymbolModel {}
 
     readonly property double maxCryptoBalance: parseFloat(maxCryptoBalanceText.text)
-    readonly property double rate: parseFloat(rateText.text)
     readonly property int decimals: parseInt(decimalsText.text)
 
     Logs { id: logs }
-    
+
+    Component.onCompleted: amountToSendInput.input.forceActiveFocus()
+
     SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
@@ -38,14 +39,14 @@ SplitView {
                 maxInputBalance: inputIsFiat ? root.maxCryptoBalance*amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount
                                              : root.maxCryptoBalance
                 currentCurrency: "Fiat"
-                formatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
+                formatCurrencyAmount: function(amount, symbol, options, locale) {
                     const currencyAmount = {
-                      amount: amount,
-                      symbol: symbol,
-                      displayDecimals: root.decimals,
-                      stripTrailingZeroes: true
+                        amount: amount,
+                        symbol: symbol,
+                        displayDecimals: root.decimals,
+                        stripTrailingZeroes: true
                     }
-                    return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options)
+                    return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
                 }
                 onReCalculateSuggestedRoute: function() {
                     logs.logEvent("onReCalculateSuggestedRoute")
@@ -78,19 +79,6 @@ SplitView {
                 background: Rectangle { border.color: 'lightgrey' }
                 Layout.preferredWidth: 200
                 text: "1000000"
-            }
-
-            Label {
-                Layout.topMargin: 10
-                Layout.fillWidth: true
-                text: "Fiat/Crypto rate"
-            }
-
-            TextField {
-                id: rateText
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
-                text: "10"
             }
 
             Label {

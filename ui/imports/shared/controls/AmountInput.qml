@@ -11,7 +11,7 @@ Input {
     id: root
 
     property int maximumLength: 10
-    property var locale: Qt.locale()
+    property var locale: LocaleUtils.userInputLocale
 
     readonly property alias amount: d.amount
     property alias multiplierIndex: d.multiplierIndex
@@ -59,7 +59,7 @@ Input {
 
         function getEffectiveDigitsCount(str) {
             const digits = LocaleUtils.getLocalizedDigitsCount(text, root.locale)
-            return str.startsWith(locale.decimalPoint) ? digits + 1 : digits
+            return str.startsWith(root.locale.decimalPoint) ? digits + 1 : digits
         }
 
         function validate() {
@@ -119,8 +119,6 @@ Input {
     }
 
     validator: DoubleValidator {
-        id: doubleValidator
-
         decimals: root.allowDecimals ? 100 : 0
         bottom: 0
         notation: DoubleValidator.StandardNotation
