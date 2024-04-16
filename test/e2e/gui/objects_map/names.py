@@ -380,6 +380,12 @@ save_changes_StatusButton = {"checkable": False, "container": statusDesktop_main
 # Leave group popup
 leave_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "leaveGroupConfirmationDialogLeaveButton", "type": "StatusButton", "visible": True}
 
+# Clear chat history popup
+clear_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "clearChatConfirmationDialogClearButton", "type": "StatusButton", "visible": True}
+
+# Close chat popup
+close_chat_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "deleteChatConfirmationDialogDeleteButton", "text": "Close chat", "type": "StatusButton", "visible": True}
+
 # Create Keycard account with new seed phrase popup
 cancel_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "cancelButton", "type": "StatusButton", "visible": True}
 image_KeycardImage = {"container": statusDesktop_mainWindow_overlay, "id": "image", "type": "KeycardImage", "unnamed": 1, "visible": True}

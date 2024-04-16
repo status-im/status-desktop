@@ -11,6 +11,8 @@ from gui.components.activity_center import ActivityCenter
 from gui.components.context_menu import ContextMenu
 from gui.components.delete_popup import DeleteMessagePopup
 from gui.components.emoji_popup import EmojiPopup
+from gui.components.messaging.clear_chat_history_popup import ClearChatHistoryPopup
+from gui.components.messaging.close_chat_popup import CloseChatPopup
 from gui.components.messaging.edit_group_name_and_image_popup import EditGroupNameAndImagePopup
 from gui.components.messaging.leave_group_popup import LeaveGroupPopup
 from gui.elements.button import Button
@@ -139,6 +141,8 @@ class Message:
                         self.time = str(child.text)
                     case 'chatText':
                         self.text = str(child.text)
+                    case 'replyCorner':
+                        self.reply_corner = QObject(real_name=driver.objectMap.realName(child))
                     case 'delegate':
                         self.delegate_button = Button(real_name=driver.objectMap.realName(child))
 
@@ -185,7 +189,8 @@ class ChatView(QObject):
         _messages = []
         time.sleep(1)
         # message_list_item has different indexes if we run multiple instances, so we pass index
-        self._message_list_item.real_name['index'] = index
+        if index is not None:
+            self._message_list_item.real_name['index'] = index
         for item in driver.findAllObjects(self._message_list_item.real_name):
             if getattr(item, 'isMessage', False):
                 _messages.append(Message(item))
@@ -259,6 +264,8 @@ class ChatMessagesView(QObject):
         self._edit_menu_item = QObject(messaging_names.edit_name_and_image_StatusMenuItem)
         self._leave_group_item = QObject(messaging_names.leave_group_StatusMenuItem)
         self._add_remove_item = QObject(messaging_names.add_remove_from_group_StatusMenuItem)
+        self._clear_history_item = QObject(messaging_names.clear_History_StatusMenuItem)
+        self._close_chat_item = QObject(messaging_names.close_Chat_StatusMenuItem)
         self._message_input_area = QObject(messaging_names.inputScrollView_messageInputField_TextArea)
         self._message_field = TextEdit(messaging_names.inputScrollView_Message_PlaceholderText)
         self._emoji_button = Button(messaging_names.mainWindow_statusChatInputEmojiButton_StatusFlatRoundButton)
@@ -334,6 +341,22 @@ class ChatMessagesView(QObject):
         tool_bar.confirm_action_in_toolbar()
         time.sleep(1)
 
+    @allure.step('Clear chat history option')
+    def clear_history(self):
+        time.sleep(2)
+        self.open_more_options()
+        time.sleep(2)
+        self._clear_history_item.click()
+        ClearChatHistoryPopup().wait_until_appears().confirm_clearing_chat()
+
+    @allure.step('Close chat')
+    def close_chat(self):
+        time.sleep(2)
+        self.open_more_options()
+        time.sleep(2)
+        self._close_chat_item.click()
+        CloseChatPopup().wait_until_appears().confirm_closing_chat()
+
 
 class MessageQuickActions(QObject):
     def __init__(self):
@@ -344,8 +367,11 @@ class MessageQuickActions(QObject):
         self._edit_button = Button(messaging_names.chatMessageViewDelegate_editMessageButton_StatusFlatRoundButton)
         self._delete_button = Button(
             messaging_names.chatMessageViewDelegate_chatDeleteMessageButton_StatusFlatRoundButton)
+        self._reply_button = Button(messaging_names.chatMessageViewDelegate_reply_icon_StatusIcon)
         self._edit_message_field = TextEdit(messaging_names.edit_inputScrollView_messageInputField_TextArea)
+        self._reply_area = QObject(messaging_names.mainWindow_replyArea_StatusChatInputReplyArea)
         self._save_text_button = Button(messaging_names.chatMessageViewDelegate_Save_StatusButton)
+        self._message_input_area = TextEdit(messaging_names.inputScrollView_messageInputField_TextArea)
 
     @allure.step('Click pin button')
     def pin_message(self):
@@ -365,6 +391,14 @@ class MessageQuickActions(QObject):
     def delete_message(self):
         self._delete_button.click()
         DeleteMessagePopup().delete()
+
+    @allure.step('Reply to own message')
+    def reply_own_message(self, text: str):
+        self._reply_button.click()
+        assert self._reply_area.exists
+        self._message_input_area.type_text(text)
+        for i in range(2):
+            driver.nativeType('<Return>')
 
     @allure.step('Delete button is visible')
     def is_delete_button_visible(self) -> bool:

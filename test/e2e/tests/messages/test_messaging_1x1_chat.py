@@ -76,7 +76,7 @@ def test_1x1_chat(multiple_instances):
             message_objects = messages_screen.chat.messages(0)
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
-                assert chat_message1+additional_text in message_item
+                assert chat_message1 + additional_text in message_item
             main_window.hide()
 
         with step(f'User {user_two.name} opens 1x1 chat with {user_one.name}'):
@@ -120,11 +120,48 @@ def test_1x1_chat(multiple_instances):
             for message_item in message_items:
                 assert driver.waitFor(lambda: '😎' in message_item, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
+        with step(f'User {user_one.name}, reply to own message and verify that message displayed as a reply'):
+            chat_message_reply = \
+                ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
+            message.hover_message().reply_own_message(chat_message_reply)
+            chat = main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_two.name)
+            message = chat.find_message_by_text(chat_message_reply, 0)
+            assert message.reply_corner.exists
+
         with step(f'User {user_one.name}, delete own message and verify it was deleted'):
-            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(chat_message1, 2)
+            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(
+                chat_message_reply, 0)
             message.hover_message().delete_message()
 
         with step(f'User {user_one.name}, cannot delete {user_two.name} message'):
-            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(chat_message2, 1)
+            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(chat_message2,
+                                                                                                        2)
             assert not message.hover_message().is_delete_button_visible()
+
+        with step(f'User {user_one.name}, clears chat history'):
+            ChatMessagesView().clear_history()
+            messages = messages_screen.chat.messages(index=None)
+            assert len(messages) == 0
+            assert user_two.name in messages_screen.left_panel.get_chats_names, f'{chat} is not present in chats list'
+            main_window.hide()
+
+        with step(f'Verify chat history was not cleared for {user_two.name} '):
+            aut_two.attach()
+            main_window.prepare()
+            messages_screen.left_panel.click_chat_by_name(user_one.name)
+            messages = messages_screen.chat.messages(index=None)
+            assert len(messages) != 0
+
+        with step(f'User {user_two.name} close chat'):
+            aut_two.attach()
+            main_window.prepare()
+            ChatMessagesView().close_chat()
+            assert user_one.name not in messages_screen.left_panel.get_chats_names, f'{chat} is present in chats list'
+            main_window.hide()
+
+        with step(f'User {user_one.name} sees chat in the list'):
+            aut_one.attach()
+            main_window.prepare()
+            assert driver.waitFor(lambda: user_two.name in messages_screen.left_panel.get_chats_names,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'{chat} is present in chats list'
             main_window.hide()

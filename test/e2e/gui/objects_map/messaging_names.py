@@ -53,6 +53,9 @@ add_remove_from_group_StatusMenuItem = {"checkable": False, "container": mainWin
 mainWindow_inputScrollView_StatusScrollView = {"container": statusDesktop_mainWindow, "id": "inputScrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 inputScrollView_messageInputField_TextArea = {"container": mainWindow_inputScrollView_StatusScrollView, "objectName": "messageInputField", "type": "TextArea", "visible": True}
 mainWindow_statusChatInputEmojiButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputEmojiButton", "type": "StatusFlatRoundButton", "visible": True}
+mark_as_Read_StatusMenuItem = {"checkable": False, "container": mainWindow_Overlay, "enabled": True, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItem", "visible": True}
+clear_History_StatusMenuItem = {"checkable": False, "container": mainWindow_Overlay, "enabled": True, "objectName": "clearHistoryMenuItem", "type": "StatusMenuItem", "visible": True}
+close_Chat_StatusMenuItem = {"checkable": False, "container": mainWindow_Overlay, "enabled": True, "objectName": "deleteOrLeaveMenuItem", "type": "StatusMenuItem", "visible": True}
 
 # User List Panel
 mainWindow_UserListPanel = {"container": mainWindow_chatView_ChatView, "type": "UserListPanel", "unnamed": 1, "visible": True}
@@ -64,15 +67,16 @@ groupUserListPanel_StatusMemberListItem = {"container": mainWindow_userListPanel
 
 # Message quick actions
 mainWindow_chatLogView_StatusListView = {"container":  statusDesktop_mainWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
-chatLogView_chatMessageViewDelegate_MessageView = {"container": mainWindow_chatLogView_StatusListView, "index": 0, "objectName": "chatMessageViewDelegate", "type": "MessageView", "visible": True}
+chatLogView_chatMessageViewDelegate_MessageView = {"container": mainWindow_chatLogView_StatusListView, "objectName": "chatMessageViewDelegate", "type": "MessageView", "visible": True}
 chatMessageViewDelegate_deletedMessage_RowLayout = {"container": chatLogView_chatMessageViewDelegate_MessageView, "id": "deletedMessage", "type": "RowLayout", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_StatusMessageQuickActions = {"container": chatLogView_chatMessageViewDelegate_MessageView, "type": "StatusMessageQuickActions", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_pin_icon_StatusIcon = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "pin-icon", "type": "StatusIcon", "visible": True}
 chatMessageViewDelegate_unpin_icon_StatusIcon = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "unpin-icon", "type": "StatusIcon", "visible": True}
-chatMessageViewDelegate_replyToMessageButton_StatusFlatRoundButton = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "replyToMessageButton", "type": "StatusFlatRoundButton", "visible": True}
 chatMessageViewDelegate_editMessageButton_StatusFlatRoundButton = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "editMessageButton", "type": "StatusFlatRoundButton", "visible": True}
 chatMessageViewDelegate_markAsUnreadButton_StatusFlatRoundButton = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "markAsUnreadButton", "type": "StatusFlatRoundButton", "visible": True}
 chatMessageViewDelegate_chatDeleteMessageButton_StatusFlatRoundButton = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "chatDeleteMessageButton", "type": "StatusFlatRoundButton", "visible": True}
 chatMessageViewDelegate_inputScrollView_StatusScrollView = {"container": chatLogView_chatMessageViewDelegate_MessageView, "id": "inputScrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 edit_inputScrollView_messageInputField_TextArea = {"container": chatMessageViewDelegate_inputScrollView_StatusScrollView, "objectName": "messageInputField", "type": "TextArea", "visible": True}
 chatMessageViewDelegate_Save_StatusButton = {"checkable": False, "container": chatLogView_chatMessageViewDelegate_MessageView, "id": "saveBtn", "type": "StatusButton", "unnamed": 1, "visible": True}
+chatMessageViewDelegate_reply_icon_StatusIcon = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "reply-icon", "type": "StatusIcon", "visible": True}
+mainWindow_replyArea_StatusChatInputReplyArea = {"container": statusDesktop_mainWindow, "id": "replyArea", "type": "StatusChatInputReplyArea", "unnamed": 1, "visible": True}
