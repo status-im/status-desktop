@@ -183,24 +183,22 @@ Item {
                                     LocaleUtils.getDayMonth(value) :
                                     LocaleUtils.getMonthYear(value)
                     }
-                    chart.chartType: 'line'
-                    chart.chartData: {
-                        return {
-                            labels: RootStore.marketHistoryIsLoading ? [] : graphDetail.labelsData,
-                            datasets: [{
-                                    xAxisId: 'x-axis-1',
-                                    yAxisId: 'y-axis-1',
-                                    backgroundColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 0.2)' : 'rgba(67, 96, 223, 0.2)',
-                                    borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
-                                    borderWidth: graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? 3 : 2,
-                                    pointRadius: 0,
-                                    data: RootStore.marketHistoryIsLoading ? [] : graphDetail.dataRange,
-                                    parsing: false,
-                                }]
-                        }
+                    chart.type: 'line'
+                    chart.labels: RootStore.marketHistoryIsLoading ? [] : graphDetail.labelsData
+                    chart.datasets: {
+                        return [{
+                            xAxisId: 'x-axis-1',
+                            yAxisId: 'y-axis-1',
+                            backgroundColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 0.2)' : 'rgba(67, 96, 223, 0.2)',
+                            borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
+                            borderWidth: graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? 3 : 2,
+                            pointRadius: 0,
+                            data: RootStore.marketHistoryIsLoading ? [] : graphDetail.dataRange,
+                            parsing: false,
+                        }]
                     }
 
-                    chart.chartOptions: {
+                    chart.options: {
                         return {
                             maintainAspectRatio: false,
                             responsive: true,

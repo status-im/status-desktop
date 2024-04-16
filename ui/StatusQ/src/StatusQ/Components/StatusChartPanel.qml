@@ -170,7 +170,7 @@ Page {
     }
 
     contentItem: Item {
-        Chart {
+        ChartCanvas {
             id: graphComponent
             anchors.fill: parent
         }
