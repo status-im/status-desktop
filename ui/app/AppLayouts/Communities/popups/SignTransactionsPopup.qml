@@ -48,6 +48,7 @@ StatusDialog {
         spacing: Style.current.padding
         rightButtons: ObjectModel {
             StatusButton {
+                objectName: "cancelButton"
                 text: qsTr("Cancel")
                 type: StatusBaseButton.Type.Danger
                 onClicked: {
@@ -56,6 +57,7 @@ StatusDialog {
                 }
             }
             StatusButton {
+                objectName: "signTransactionButton"
                 enabled: root.errorText === "" && !root.isFeeLoading
                 icon.name: "password"
                 text: qsTr("Sign transaction")
