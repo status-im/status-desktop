@@ -22,6 +22,9 @@ StackLayout {
     id: root
 
     required property bool isOwner
+    required property bool isAdmin
+    required property bool isTokenMaster
+
     property string communityId
     property string name
     property string description
@@ -176,7 +179,7 @@ StackLayout {
 
             Rectangle {
                 Layout.fillWidth: true
-
+                visible: mainSettingsPage.footer.active
                 implicitHeight: 1
                 color: Theme.palette.statusMenu.separatorColor
             }
@@ -223,6 +226,7 @@ StackLayout {
     }
 
     SettingsPage {
+        id: mainSettingsPage
         Layout.fillWidth: !root.communitySettingsDisabled
         Layout.preferredWidth: root.communitySettingsDisabled ? 560 + leftPadding + rightPadding : -1
         Layout.fillHeight: !root.communitySettingsDisabled
@@ -236,7 +240,13 @@ StackLayout {
 
         footer: Loader {
             sourceComponent: overviewSettingsFooterComp
-            active: !root.communitySettingsDisabled
+            active: {
+                if (root.communitySettingsDisabled)
+                    return false
+                if (root.isAdmin || root.isTokenMaster)
+                    return root.isPendingOwnershipRequest // not allowed for admin or TM unless there's the pending request
+                return true
+            }
         }
     }
 
@@ -329,6 +339,7 @@ StackLayout {
 
             active: !!editSettingsPanelLoader.item &&
                     editSettingsPanelLoader.item.dirty
+            visible: active
 
             saveChangesButtonEnabled:
                 !!editSettingsPanelLoader.item &&
