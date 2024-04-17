@@ -227,6 +227,7 @@ void ManageTokensController::savingFinished()
     incRevision();
 
     setSettingsDirty(false);
+    requestLoadSettings();
 }
 
 void ManageTokensController::loadingStarted()
