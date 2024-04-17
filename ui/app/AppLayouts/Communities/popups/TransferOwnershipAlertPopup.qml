@@ -68,7 +68,6 @@ StatusDialog {
 
             StatusButton {
                 text: qsTr("Mint %1 Owner token").arg(root.communityName)
-                type: StatusBaseButton.Type.Normal
 
                 onClicked: {
                     root.mintClicked()

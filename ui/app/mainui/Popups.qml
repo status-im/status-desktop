@@ -41,7 +41,7 @@ QtObject {
 
     signal openExternalLink(string link)
     signal saveDomainToUnfurledWhitelist(string domain)
-    signal ownershipDeclined
+    signal ownershipDeclined(string communityId, string communityName)
 
     property var activePopupComponents: []
 
@@ -1109,9 +1109,9 @@ QtObject {
 
                 Connections {
                     target: root
-                    onOwnershipDeclined: {
+                    function onOwnershipDeclined(communityId: string, communityName: string) {
                         finalisePopup.close()
-                        root.rootStore.communityTokensStore.ownershipDeclined(communityId, communityName)
+                        root.communityTokensStore.ownershipDeclined(communityId, communityName)
                     }
                 }
             }
@@ -1122,7 +1122,7 @@ QtObject {
             FinaliseOwnershipDeclinePopup {
                 destroyOnClose: true
 
-                onDeclineClicked: root.ownershipDeclined()
+                onDeclineClicked: root.ownershipDeclined(communityId, communityName)
             }
         },
         // End of components related to transfer community ownership flow.

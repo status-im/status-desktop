@@ -93,11 +93,9 @@ SplitView {
                 font.bold: true
             }
 
-            TextInput {
+            TextField {
                 id: communityNameText
-
                 text: "Doodles"
-
             }
 
             Label {
@@ -105,7 +103,7 @@ SplitView {
                 font.bold: true
             }
 
-            TextInput {
+            TextField {
                 id: communitySymbolText
 
                 text: "OWNDOO"
@@ -116,7 +114,7 @@ SplitView {
                 font.bold: true
             }
 
-            TextInput {
+            TextField {
                 id: tokenChainText
 
                 text: "Optimism"
