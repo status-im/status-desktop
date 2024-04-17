@@ -867,9 +867,11 @@ method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq
   self.joiningCommunityDetails.communityIdForPermissions = communityId
 
   self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
+  self.view.setJoinPermissionsCheckSuccessful(false)
   self.checkingPermissionToJoinInProgress = true
 
   self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
+  self.view.setChannelsPermissionsCheckSuccessful(false)
   self.checkingAllChannelPermissionsInProgress = true
 
   self.view.setCheckingPermissionsInProgress(inProgress = true)
@@ -945,12 +947,12 @@ proc updateCheckingPermissionsInProgressIfNeeded(self: Module, inProgress = fals
   self.view.setCheckingPermissionsInProgress(inProgress)
 
 method onCommunityCheckPermissionsToJoinFailed*(self: Module, communityId: string, error: string) =
-  self.view.emitCommunityCheckPermissionsToJoinFailedSignal(error)
+  self.view.setJoinPermissionsCheckSuccessful(false)
   self.checkingPermissionToJoinInProgress = false
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
 method onCommunityCheckAllChannelPermissionsFailed*(self: Module, communityId: string, error: string) =
-  self.view.emitCommunityCheckAllChannelPermissionsFailedSignal(error)
+  self.view.setChannelsPermissionsCheckSuccessful(false)
   self.checkingAllChannelPermissionsInProgress = false
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
@@ -961,6 +963,7 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: str
     return
   self.applyPermissionResponse(communityId, checkPermissionsToJoinResponse.permissions)
   self.checkingPermissionToJoinInProgress = false
+  self.view.setJoinPermissionsCheckSuccessful(true)
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
 method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId: string,
@@ -969,6 +972,7 @@ method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId
       self.joiningCommunityDetails.communityIdForPermissions != communityId:
     return
   self.checkingAllChannelPermissionsInProgress = false
+  self.view.setChannelsPermissionsCheckSuccessful(true)
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
   for _, channelPermissionResponse in checkChannelPermissionsResponse.channels:
     self.applyPermissionResponse(
