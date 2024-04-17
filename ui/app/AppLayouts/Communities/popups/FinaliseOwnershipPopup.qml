@@ -236,14 +236,11 @@ StatusDialog {
                 components: [
                     RowLayout {
                         StatusIcon {
-                            Layout.alignment: Qt.AlignVCenter
-
                             icon: "arrow-right"
                             color: Theme.palette.primaryColor1
                         }
 
                         StatusBaseText {
-                            Layout.alignment: Qt.AlignVCenter
                             Layout.rightMargin: Style.current.padding
 
                             text: qsTr("Visit Community")
