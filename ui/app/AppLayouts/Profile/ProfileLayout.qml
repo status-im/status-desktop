@@ -20,11 +20,14 @@ import "popups"
 import "views"
 import "views/profile"
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
+
+import SortFilterProxyModel 0.2
 
 StatusSectionLayout {
     id: root
@@ -148,8 +151,28 @@ StatusSectionLayout {
 
                 communitiesShowcaseModel: root.store.ownShowcaseCommunitiesModel
                 accountsShowcaseModel: root.store.ownShowcaseAccountsModel
-                collectiblesShowcaseModel: root.store.ownShowcaseCollectiblesModel
                 socialLinksShowcaseModel: root.store.ownShowcaseSocialLinksModel
+                collectiblesShowcaseModel: SortFilterProxyModel {
+                    sourceModel: root.store.ownShowcaseCollectiblesModel
+                    sorters: [
+                        FastExpressionSorter {
+                            expression: {
+                                root.collectiblesStore.collectiblesController.revision
+                                return root.collectiblesStore.collectiblesController.compareTokens(modelLeft.uid, modelRight.uid)
+                            }
+                            expectedRoles: ["uid"]
+                        }
+                    ]
+                    filters: [
+                        FastExpressionFilter {
+                            expression: {
+                                root.collectiblesStore.collectiblesController.revision
+                                return root.collectiblesStore.collectiblesController.filterAcceptsSymbol(model.uid)
+                            }
+                            expectedRoles: ["uid"]
+                        }
+                    ]
+                }
 
                 assetsModel: root.globalStore.globalAssetsModel
                 collectiblesModel: root.globalStore.globalCollectiblesModel
