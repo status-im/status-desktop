@@ -8,7 +8,6 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
 
 import utils 1.0
 
@@ -49,7 +48,7 @@ StatusChartPanel {
         readonly property var hoveredModelMetadata: modelMetadata[root.timeRangeTabBarIndex].modelItems[hoveredBarIndex]
         readonly property var tooltipConfig: modelMetadata[root.timeRangeTabBarIndex].tooltipConfig
         readonly property var graphTabsModel: [{text: messagesLabel, enabled: true}]
-        property var now: Date.now()
+        property double now: Date.now()
         property var lastRequestModelMetadata: null
 
         readonly property var chartData: selectedTabInfo.modelItems.map(x => d.itemsCountInRange(root.model, x.start, x.end))
@@ -210,9 +209,8 @@ StatusChartPanel {
         }
 
         function monthStr(before = 0, timeReference = now, roundCurrentTime = true, shortFormat = true) {
-            const format = shortFormat ? "MMM" : "MMMM"
             const timeStamp = LocaleUtils.months(before, timeReference, roundCurrentTime)
-            return LocaleUtils.formatDate(timeStamp, format)
+            return Qt.locale().standaloneMonthName(new Date(timeStamp).getMonth(), shortFormat ? Locale.ShortFormat : Locale.LongFormat)
         }
 
         function yearsStr(before = 0, timeReference = now, roundCurrentTime = true) {
@@ -254,7 +252,7 @@ StatusChartPanel {
         }
 
         function getAdjustedTooltipPosition(event) {
-            // By defaullt the popup is displayed on the right of the cursor
+            // By default the popup is displayed on the right of the cursor
             // If there is not enough space on the right, display it on the left
             const relativeMousePoint = event.target.mapToItem(toolTip.parent, event.x, event.y) // relative to tooltip parent
             const leftPositon = (toolTip.parent.width - (toolTip.width + toolTip.rightPadding + relativeMousePoint.x + 15)) < 0
@@ -375,7 +373,6 @@ StatusChartPanel {
                 Layout.fillWidth: true
                 StatusBaseText {
                     elide: Qt.ElideRight
-                    font.pixelSize: Style.current.primaryTextFontSize
                     color: Theme.palette.baseColor1
                     text: d.tooltipConfig.timeRangeString
                 }
@@ -385,8 +382,6 @@ StatusChartPanel {
                 StatusBaseText {
                     Layout.alignment: Qt.AlignRight
                     elide: Qt.ElideRight
-                    font.pixelSize: Style.current.primaryTextFontSize
-                    color: Theme.palette.directColor1
                     text: d.hoveredModelMetadata ? d.tooltipConfig.timeRangeFormatter(d.hoveredModelMetadata.start, d.hoveredModelMetadata.end)
                                                  : ""
                 }
