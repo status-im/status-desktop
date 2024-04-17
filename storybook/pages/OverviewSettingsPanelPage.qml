@@ -2,11 +2,18 @@ import QtQuick 2.14
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import mainui 1.0
 import AppLayouts.Communities.panels 1.0
 
 SplitView {
     id: root
     SplitView.fillWidth: true
+
+    Popups {
+        popupParent: root
+        rootStore: QtObject {}
+        communityTokensStore: QtObject {}
+    }
 
     OverviewSettingsPanel {
         SplitView.fillWidth: true
@@ -18,8 +25,11 @@ SplitView {
         color: communityEditor.color
         bannerImageData: communityEditor.banner
 
-        editable: communityEditor.isCommunityEditable
         isOwner: communityEditor.amISectionAdmin
+        isAdmin: ctrlIsAdmin.checked
+        isTokenMaster: ctrlIsTM.checked
+
+        editable: communityEditor.isCommunityEditable
         communitySettingsDisabled: !editable
 
         shardingEnabled: communityEditor.shardingEnabled
@@ -32,16 +42,27 @@ SplitView {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
 
-        ColumnLayout {
-            CommunityInfoEditor{
-                id: communityEditor
-                anchors.fill: parent
-            }
+        ScrollView {
+            anchors.fill: parent
+            contentWidth: availableWidth
 
-            Switch {
-                id: pendingOwnershipSwitch
-                text: "Is there a pending transfer ownership request?"
-                checked: true
+            CommunityInfoEditor {
+                id: communityEditor
+
+                Switch {
+                    id: pendingOwnershipSwitch
+                    text: "Pending transfer ownership request?"
+                }
+
+                Switch {
+                    id: ctrlIsAdmin
+                    text: "Is admin?"
+                }
+
+                Switch {
+                    id: ctrlIsTM
+                    text: "Is token master?"
+                }
             }
         }
     }

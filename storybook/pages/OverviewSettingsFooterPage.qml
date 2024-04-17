@@ -44,24 +44,19 @@ SplitView {
             SplitView.preferredHeight: 150
 
             logsView.logText: logs.logText
-        }
-    }
-    
-    Pane {
-        SplitView.preferredWidth: 300
-        SplitView.fillHeight: true
 
-        ColumnLayout {
-            Switch {
-                id: controlNodeSwitch
-                text: "Control node on/off"
-                checked: true
-            }
+            ColumnLayout {
+                Switch {
+                    id: controlNodeSwitch
+                    text: "Control node on/off"
+                    checked: true
+                }
 
-            Switch {
-                id: pendingOwnershipSwitch
-                text: "Is there a pending transfer ownership request?"
-                checked: true
+                Switch {
+                    id: pendingOwnershipSwitch
+                    text: "Is there a pending transfer ownership request?"
+                    checked: true
+                }
             }
         }
     }

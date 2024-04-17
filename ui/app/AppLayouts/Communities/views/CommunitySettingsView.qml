@@ -168,6 +168,8 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
 
             isOwner: root.isOwner
+            isAdmin: root.isAdmin
+            isTokenMaster: root.isTokenMasterOwner
             communityId: root.community.id
             name: root.community.name
             description: root.community.description
@@ -187,7 +189,7 @@ StatusSectionLayout {
             isControlNode: root.isControlNode
             communitySettingsDisabled: root.communitySettingsDisabled
             overviewChartData: rootStore.overviewChartData
-            shardingEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
+            shardingEnabled: !isAdmin && !isTokenMaster && localAppSettings.wakuV2ShardedCommunitiesEnabled
             shardIndex: root.community.shardIndex
             shardingInProgress: root.chatCommunitySectionModule.shardingInProgress
             pubsubTopic: root.community.pubsubTopic

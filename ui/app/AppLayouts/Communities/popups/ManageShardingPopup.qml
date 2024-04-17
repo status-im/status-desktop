@@ -82,6 +82,7 @@ StatusDialog {
 
     ConfirmationDialog {
         id: confirmationPopup
+        width: root.width - root.margins
         anchors.centerIn: parent
         headerSettings.title: qsTr("Are you sure you want to disable sharding?")
         showCancelButton: true

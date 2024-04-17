@@ -20,7 +20,7 @@ ColumnLayout {
     readonly property bool shardingEnabled: ctrlShardingEnabled.checked
     property alias shardIndex: ctrlShardIndex.value
 
-    spacing: 24
+    spacing: 12
 
     ColumnLayout {
         Label {

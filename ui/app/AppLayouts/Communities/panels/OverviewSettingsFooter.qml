@@ -13,7 +13,7 @@ import utils 1.0
 Control {
     id: root
 
-    property bool isControlNode: true   
+    property bool isControlNode: true
     property string communityName: ""
     property string communityColor: ""
 
