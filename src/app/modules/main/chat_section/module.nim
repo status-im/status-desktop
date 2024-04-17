@@ -933,12 +933,13 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
 
       var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
       var permissionSatisfied = true
+      var aCriteriaChanged = false
 
       for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
         let criteriaMet = criteriaResult.criteria[index]
 
-        if tokenCriteriaItem.criteriaMet == criteriaMet:
-          continue
+        if tokenCriteriaItem.criteriaMet != criteriaMet:
+          aCriteriaChanged = true
 
         let updatedTokenCriteriaItem = initTokenCriteriaItem(
           tokenCriteriaItem.symbol,
@@ -954,7 +955,7 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
 
         updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
 
-      if updatedTokenCriteriaItems.len == 0:
+      if not aCriteriaChanged:
         continue
 
       thereWasAnUpdate = true
