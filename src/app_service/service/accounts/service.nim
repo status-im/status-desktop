@@ -390,6 +390,7 @@ QtObject:
         imagePath: imagePath,
         imageCropRectangle: imageCropRectangle,
         customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
+        emoji: self.defaultWalletEmoji,
         logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
         wakuV2LightClient: false,
         previewPrivacy: true,
