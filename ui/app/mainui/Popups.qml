@@ -714,8 +714,8 @@ QtObject {
 
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                 permissionsModel: {
-                    root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
-                    return root.rootStore.permissionsModel
+                    root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId, true)
+                    return root.rootStore.dedicatedPermissionsModel
                 }
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
@@ -762,7 +762,7 @@ QtObject {
                 }
 
                 onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
+                    root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses, true)
                 }
 
                 onAboutToShow: { root.rootStore.communityKeyToImport = dialogRoot.communityId; }
@@ -978,7 +978,7 @@ QtObject {
                 }
 
                 onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(editSharedAddressesPopup.communityId, sharedAddresses)
+                    root.rootStore.updatePermissionsModel(editSharedAddressesPopup.communityId, sharedAddresses, false)
                 }
 
                 onPrepareForSigning: {

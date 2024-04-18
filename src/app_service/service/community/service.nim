@@ -144,6 +144,7 @@ type
     checkPermissionsToJoinResponse*: CheckPermissionsToJoinResponseDto
 
   CheckPermissionsToJoinFailedArgs* = ref object of Args
+    requestId*: CommunityPermissionsCheckRequestID
     communityId*: string
     error*: string
 
@@ -1661,6 +1662,7 @@ QtObject:
       self.events.emit(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED, CheckPermissionsToJoinFailedArgs(
         communityId: communityId,
         error: errMsg,
+        requestId: requestId
       ))
 
   proc generateJoiningCommunityRequestsForSigning*(self: Service, memberPubKey: string, communityId: string,

@@ -865,8 +865,11 @@ method joinCommunityOrEditSharedAddresses*(self: Module) =
 method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: string): string =
   result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
 
-method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq[string], temporary: bool) =
-  let requestId = if temporary: CommunityPermissionsCheckRequestID.SharedAddressesCheck else: CommunityPermissionsCheckRequestID.GeneralCommunity
+method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq[string], dedicated: bool) =
+  let requestId = if dedicated:
+      CommunityPermissionsCheckRequestID.SharedAddressesCheck
+    else:
+      CommunityPermissionsCheckRequestID.GeneralCommunity
 
   self.joiningCommunityDetails.communityIdForPermissions = communityId
 
@@ -880,7 +883,7 @@ method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq
   self.view.setCheckingPermissionsInProgress(inProgress = true)
   self.view.setChannelsPermissionsCheckSuccessful(false)
 
-method prepareTokenModelForCommunity*(self: Module, communityId: string) =
+method prepareTokenModelForCommunity*(self: Module, communityId: string, dedicated: bool) =
   self.joiningCommunityDetails.communityIdForRevealedAccounts = communityId
   self.controller.asyncGetRevealedAccountsForMember(communityId, singletonInstance.userProfile.getPubKey())
 
@@ -892,17 +895,21 @@ method prepareTokenModelForCommunity*(self: Module, communityId: string) =
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
-  self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
-  self.checkPermissions(communityId, @[], false)
+  if dedicated:
+    self.view.dedicatedCommunityPermissionModel.setItems(tokenPermissionsItems)
+  else:
+    self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
+  self.checkPermissions(communityId, @[], dedicated)
 
-proc applyPermissionResponse*(self: Module, communityId: string, permissions: Table[string, CheckPermissionsResultDto]) =
+proc applyPermissionResponse*(self: Module, communityId: string, permissions: Table[string, CheckPermissionsResultDto], dedicated: bool) =
   let community = self.controller.getCommunityById(communityId)
+  let permissionsModel = if dedicated: self.view.dedicatedCommunityPermissionModel else: self.view.spectatedCommunityPermissionModel
   for id, criteriaResult in permissions:
     if not community.tokenPermissions.hasKey(id):
       warn "unknown permission", id
       continue
 
-    let tokenPermissionItem = self.view.spectatedCommunityPermissionModel.getItemById(id)
+    let tokenPermissionItem = permissionsModel.getItemById(id)
     if tokenPermissionItem.id == "":
       warn "no permission in model", id
       continue
@@ -943,7 +950,7 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
         permissionSatisfied,
         tokenPermissionItem.state
     )
-    self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)
+    permissionsModel.updateItem(id, updatedTokenPermissionItem)
 
 proc updateCheckingPermissionsInProgressIfNeeded(self: Module, inProgress = false) =
   if self.checkingPermissionToJoinInProgress != self.checkingAllChannelPermissionsInProgress:
@@ -962,17 +969,17 @@ method onCommunityCheckAllChannelPermissionsFailed*(self: Module, communityId: s
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string,
-    checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
+    checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto, dedicated: bool) =
   if not self.checkingPermissionToJoinInProgress and
       self.joiningCommunityDetails.communityIdForPermissions != communityId:
     return
-  self.applyPermissionResponse(communityId, checkPermissionsToJoinResponse.permissions)
+  self.applyPermissionResponse(communityId, checkPermissionsToJoinResponse.permissions, dedicated)
   self.checkingPermissionToJoinInProgress = false
   self.view.setJoinPermissionsCheckSuccessful(true)
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
 method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId: string,
-    checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) =
+    checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto, dedicated: bool) =
   if not self.checkingAllChannelPermissionsInProgress and
       self.joiningCommunityDetails.communityIdForPermissions != communityId:
     return
@@ -983,10 +990,12 @@ method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId
     self.applyPermissionResponse(
       communityId,
       channelPermissionResponse.viewOnlyPermissions.permissions,
+      dedicated,
     )
     self.applyPermissionResponse(
       communityId,
       channelPermissionResponse.viewAndPostPermissions.permissions,
+      dedicated,
     )
 
 method onCommunityMemberRevealedAccountsLoaded*(self: Module, communityId, memberPubkey: string,

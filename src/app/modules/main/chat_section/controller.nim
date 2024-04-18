@@ -303,12 +303,12 @@ proc init*(self: Controller) =
 
     self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE) do(e: Args):
       let args = CheckPermissionsToJoinResponseArgs(e)
-      if (args.communityId == self.sectionId):
+      if (args.communityId == self.sectionId and args.requestId == CommunityPermissionsCheckRequestID.GeneralCommunity):
         self.delegate.onCommunityCheckPermissionsToJoinResponse(args.checkPermissionsToJoinResponse)
 
     self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED) do(e: Args):
       let args = CheckPermissionsToJoinFailedArgs(e)
-      if (args.communityId == self.sectionId):
+      if (args.communityId == self.sectionId and args.requestId == CommunityPermissionsCheckRequestID.GeneralCommunity):
         self.delegate.setPermissionsToJoinCheckOngoing(false)
 
     self.events.on(SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE) do(e: Args):
@@ -318,13 +318,13 @@ proc init*(self: Controller) =
 
     self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE) do(e: Args):
       let args = CheckAllChannelsPermissionsResponseArgs(e)
-      if args.communityId == self.sectionId:
+      if args.communityId == self.sectionId and args.requestId == CommunityPermissionsCheckRequestID.GeneralCommunity:
         self.allChannelsPermissionCheckOngoing = false
         self.delegate.onCommunityCheckAllChannelsPermissionsResponse(args.checkAllChannelsPermissionsResponse)
 
     self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
       let args = CheckChannelsPermissionsErrorArgs(e)
-      if args.communityId == self.sectionId:
+      if args.communityId == self.sectionId and args.requestId == CommunityPermissionsCheckRequestID.GeneralCommunity:
         self.allChannelsPermissionCheckOngoing = false
         self.delegate.setPermissionsToJoinCheckOngoing(false)
 

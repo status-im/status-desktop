@@ -35,8 +35,8 @@ QtObject {
         return Constants.LoginType.Password
     }
 
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
+    function prepareTokenModelForCommunity(publicKey, dedicated) {
+        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey, dedicated)
     }
 
     property string communityKeyToImport
@@ -270,8 +270,8 @@ QtObject {
         communitiesModuleInst.cleanJoinEditCommunityData()
     }
 
-    function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses), false)
+    function updatePermissionsModel(communityId, sharedAddresses, dedicated) {
+        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses), dedicated)
     }
 
     function promoteSelfToControlNode(communityId) {

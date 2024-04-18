@@ -99,6 +99,7 @@ type
     checkAllChannelsPermissionsResponse*: CheckAllChannelsPermissionsResponseDto
 
   CheckChannelsPermissionsErrorArgs* = ref object of Args
+    requestId*: CommunityPermissionsCheckRequestID
     communityId*: string
     error*: string
 
@@ -892,4 +893,5 @@ QtObject:
       self.events.emit(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED, CheckChannelsPermissionsErrorArgs(
         communityId: communityId,
         error: errMsg,
+        requestId: requestId
       ))

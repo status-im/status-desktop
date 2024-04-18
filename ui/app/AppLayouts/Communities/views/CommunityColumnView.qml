@@ -542,7 +542,7 @@ Item {
             assetsModel: root.store.assetsModel
             collectiblesModel: root.store.collectiblesModel
             permissionsModel: {
-                root.store.prepareTokenModelForCommunity(communityData.id)
+                root.store.prepareTokenModelForCommunity(communityData.id, false)
                 return root.store.permissionsModel
             }
             channelsModel: root.store.chatCommunitySectionModule.model

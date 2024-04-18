@@ -20,6 +20,8 @@ QtObject:
       modelVariant: QVariant
       spectatedCommunityPermissionModel: TokenPermissionsModel
       spectatedCommunityPermissionModelVariant: QVariant
+      dedicatedCommunityPermissionModel: TokenPermissionsModel
+      dedicatedCommunityPermissionModelVariant: QVariant
       curatedCommunitiesModel: CuratedCommunityModel
       curatedCommunitiesModelVariant: QVariant
       curatedCommunitiesLoading: bool
@@ -67,6 +69,8 @@ QtObject:
     self.modelVariant.delete
     self.spectatedCommunityPermissionModel.delete
     self.spectatedCommunityPermissionModelVariant.delete
+    self.dedicatedCommunityPermissionModel.delete
+    self.dedicatedCommunityPermissionModelVariant.delete
     self.curatedCommunitiesModel.delete
     self.curatedCommunitiesModelVariant.delete
     self.discordFileListModel.delete
@@ -97,6 +101,8 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.spectatedCommunityPermissionModel = newTokenPermissionsModel()
     result.spectatedCommunityPermissionModelVariant = newQVariant(result.spectatedCommunityPermissionModel)
+    result.dedicatedCommunityPermissionModel = newTokenPermissionsModel()
+    result.dedicatedCommunityPermissionModelVariant = newQVariant(result.dedicatedCommunityPermissionModel)
     result.curatedCommunitiesModel = newCuratedCommunityModel()
     result.curatedCommunitiesModelVariant = newQVariant(result.curatedCommunitiesModel)
     result.curatedCommunitiesLoading = false
@@ -344,8 +350,11 @@ QtObject:
   proc spectatedCommunityPermissionModel*(self: View): TokenPermissionsModel =
     result = self.spectatedCommunityPermissionModel
 
-  proc prepareTokenModelForCommunity(self: View, communityId: string) {.slot.} =
-    self.delegate.prepareTokenModelForCommunity(communityId)
+  proc dedicatedCommunityPermissionModel*(self: View): TokenPermissionsModel =
+    result = self.dedicatedCommunityPermissionModel
+
+  proc prepareTokenModelForCommunity(self: View, communityId: string, dedicated: bool) {.slot.} =
+    self.delegate.prepareTokenModelForCommunity(communityId, dedicated)
 
   proc signProfileKeypairAndAllNonKeycardKeypairs*(self: View) {.slot.} =
     self.delegate.signProfileKeypairAndAllNonKeycardKeypairs()
@@ -356,10 +365,10 @@ QtObject:
   proc joinCommunityOrEditSharedAddresses*(self: View) {.slot.} =
     self.delegate.joinCommunityOrEditSharedAddresses()
 
-  proc checkPermissions*(self: View, communityId: string, addressesToShare: string, temporary: bool) {.slot.} =
+  proc checkPermissions*(self: View, communityId: string, addressesToShare: string, dedicated: bool) {.slot.} =
     try:
       let sharedAddresses = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
-      self.delegate.checkPermissions(communityId, sharedAddresses, temporary)
+      self.delegate.checkPermissions(communityId, sharedAddresses, dedicated)
     except Exception as e:
       echo "Error updating token model with addresses: ", e.msg
 
@@ -368,6 +377,12 @@ QtObject:
 
   QtProperty[QVariant] spectatedCommunityPermissionModel:
     read = getSpectatedCommunityPermissionModel
+
+  proc getDedicatedCommunityPermissionModel(self: View): QVariant {.slot.} =
+    return self.dedicatedCommunityPermissionModelVariant
+
+  QtProperty[QVariant] dedicatedCommunityPermissionModel:
+    read = getDedicatedCommunityPermissionModel
 
   proc curatedCommunitiesModel*(self: View): CuratedCommunityModel =
     result = self.curatedCommunitiesModel

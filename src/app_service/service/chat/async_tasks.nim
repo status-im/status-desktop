@@ -54,12 +54,12 @@ const asyncCheckAllChannelsPermissionsTask: Task = proc(argEncoded: string) {.gc
     arg.finish(%* {
       "response": response,
       "communityId": arg.communityId,
-      "requestId": arg.requestId,
+      "requestId": arg.requestId.int,
       "error": "",
     })
   except Exception as e:
     arg.finish(%* {
       "communityId": arg.communityId,
-      "requestId": arg.requestId,
+      "requestId": arg.requestId.int,
       "error": e.msg,
     })

@@ -116,8 +116,8 @@ QtObject {
         root.communitiesModuleInst.spectateCommunity(publicKey, "");
     }
 
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey);
+    function prepareTokenModelForCommunity(publicKey, dedicated) {
+        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey, dedicated);
     }
 
     function getCommunityDetails(communityId) {

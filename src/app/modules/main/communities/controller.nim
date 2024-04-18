@@ -170,13 +170,18 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE) do(e: Args):
     let args = CheckPermissionsToJoinResponseArgs(e)
-    self.delegate.onCommunityCheckPermissionsToJoinResponse(args.communityId, args.checkPermissionsToJoinResponse)
+    self.delegate.onCommunityCheckPermissionsToJoinResponse(
+      args.communityId,
+      args.checkPermissionsToJoinResponse,
+      args.requestId == CommunityPermissionsCheckRequestID.SharedAddressesCheck
+    )
 
   self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE) do(e: Args):
     let args = CheckAllChannelsPermissionsResponseArgs(e)
     self.delegate.onCommunityCheckAllChannelsPermissionsResponse(
       args.communityId,
       args.checkAllChannelsPermissionsResponse,
+      args.requestId == CommunityPermissionsCheckRequestID.SharedAddressesCheck
     )
 
   self.events.on(SIGNAL_COMMUNITY_MEMBER_REVEALED_ACCOUNTS_LOADED) do(e: Args):

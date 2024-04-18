@@ -57,8 +57,8 @@ QtObject {
         }
     }
 
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
+    function prepareTokenModelForCommunity(publicKey, dedicated) {
+        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey, dedicated)
     }
 
     readonly property bool allChannelsAreHiddenBecauseNotPermitted: root.chatCommunitySectionModule.allChannelsAreHiddenBecauseNotPermitted &&
@@ -68,6 +68,8 @@ QtObject {
 
     readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
                                      root.communitiesModuleInst.spectatedCommunityPermissionModel : null
+
+    readonly property var dedicatedPermissionsModel: root.communitiesModuleInst.dedicatedPermissionsModel
 
     readonly property string overviewChartData: chatCommunitySectionModule.overviewChartData
 
@@ -700,7 +702,7 @@ QtObject {
         }
     }
 
-    function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses), false)
+    function updatePermissionsModel(communityId, sharedAddresses, dedicated) {
+        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses), dedicated)
     }
 }
