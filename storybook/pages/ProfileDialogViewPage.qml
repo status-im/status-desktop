@@ -264,6 +264,13 @@ SplitView {
                     ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
                 }
 
+                function removeTrustVerificationStatus(publicKey) {
+                    logs.logEvent("rootStore::contactStore::removeTrustVerificationStatus", ["publicKey"], arguments)
+                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                }
+
                 function cancelVerificationRequest(pubKey) {
                     logs.logEvent("rootStore::contactStore::cancelVerificationRequest", ["pubKey"], arguments)
                     ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
@@ -397,6 +404,11 @@ SplitView {
 
                             function removeTrustStatus(publicKey) {
                                 logs.logEvent("contactsStore::removeTrustStatus", ["publicKey"], arguments)
+                                ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
+                            }
+
+                            function removeTrustVerificationStatus(publicKey) {
+                                logs.logEvent("contactsStore::removeTrustVerificationStatus", ["publicKey"], arguments)
                                 ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
                             }
 

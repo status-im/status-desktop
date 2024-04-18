@@ -168,6 +168,9 @@ proc sendVerificationRequest*(self: Controller, publicKey: string, challenge: st
 proc cancelVerificationRequest*(self: Controller, publicKey: string) =
   self.contactsService.cancelVerificationRequest(publicKey)
 
+proc removeTrustVerificationStatus*(self: Controller, publicKey: string) =
+  self.contactsService.removeTrustVerificationStatus(publicKey)
+
 proc verifiedTrusted*(self: Controller, publicKey: string) =
   self.contactsService.verifiedTrusted(publicKey)
 

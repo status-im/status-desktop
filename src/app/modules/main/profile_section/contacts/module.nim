@@ -245,6 +245,9 @@ method markUntrustworthy*(self: Module, publicKey: string): void =
 method removeTrustStatus*(self: Module, publicKey: string): void =
   self.controller.removeTrustStatus(publicKey)
 
+method removeTrustVerificationStatus*(self: Module, publicKey: string): void =
+  self.controller.removeTrustVerificationStatus(publicKey)
+
 method getSentVerificationDetailsAsJson*(self: Module, publicKey: string): string =
   let verificationRequest = self.controller.getVerificationRequestSentTo(publicKey)
   let (name, image, largeImage) = self.controller.getContactNameAndImage(publicKey)

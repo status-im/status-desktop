@@ -91,6 +91,9 @@ method markUntrustworthy*(self: AccessInterface, publicKey: string): void {.base
 method removeTrustStatus*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method removeTrustVerificationStatus*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getSentVerificationDetailsAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
