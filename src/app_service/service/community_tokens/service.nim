@@ -614,10 +614,7 @@ QtObject:
     if suggestedFees == nil:
       error "Can't find suggested fees for chainId", chainId=chainId
       return
-    return ens_utils.buildTransaction(parseAddress(addressFrom), 0.u256, $gasUnits,
-      if suggestedFees.eip1559Enabled: "" else: $suggestedFees.gasPrice, suggestedFees.eip1559Enabled,
-      if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
-      if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
+    return ens_utils.buildTransactionDataDto(gasUnits, suggestedFees, addressFrom, chainId, contractAddress)
 
   proc temporaryMasterContractAddress*(ownerContractTransactionHash: string): string =
     return ownerContractTransactionHash & "-master"
@@ -1083,13 +1080,15 @@ QtObject:
     let (ethCurrency, fiatCurrency) = self.create0CurrencyAmounts()
     return ComputeFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode)
 
+  # Returns eth value with l1 fee included
   proc computeEthValue(self:Service, gasUnits: int, suggestedFees: SuggestedFeesDto): float =
     try:
       let maxFees = suggestedFees.maxFeePerGasM
       let gasPrice = if suggestedFees.eip1559Enabled: maxFees else: suggestedFees.gasPrice
 
       let weiValue = gwei2Wei(gasPrice) * gasUnits.u256
-      let ethValueStr = wei2Eth(weiValue)
+      let l1FeeInWei = gwei2Wei(suggestedFees.l1GasFee)
+      let ethValueStr = wei2Eth(weiValue + l1FeeInWei)
       return parseFloat(ethValueStr)
     except Exception as e:
       error "Error computing eth value", msg = e.msg
@@ -1115,7 +1114,7 @@ QtObject:
   proc createComputeFeeArgs(self: Service, gasUnits: int, suggestedFees: SuggestedFeesDto, chainId: int, walletAddress: string): ComputeFeeArgs =
     let ethValue = self.computeEthValue(gasUnits, suggestedFees)
     let balance = self.getWalletBalanceForChain(walletAddress, chainId)
-    debug "computing fees", walletBalance=balance, ethValue=ethValue
+    debug "computing fees", walletBalance=balance, ethValueWithL1Fee=ethValue, l1Fee=gwei2Eth(suggestedFees.l1GasFee)
     return self.createComputeFeeArgsFromEthAndBalance(ethValue, balance)
 
   # convert json returned from async task into gas table

@@ -41,11 +41,11 @@ const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gc
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
     var feeTable: Table[int, SuggestedFeesDto] # fees for chain
-    let response = eth.suggestedFees(arg.chainId).result
-    feeTable[arg.chainId] = response.toSuggestedFeesDto()
 
-    let deployGas = community_tokens.deployOwnerTokenEstimate(arg.chainId, arg.addressFrom, arg.ownerParams, arg.masterParams, arg.communityId, arg.signerPubKey).result.getInt
-    gasTable[(arg.chainId, "")] = deployGas
+    let estimations = community_tokens.deployOwnerTokenEstimate(arg.chainId, arg.addressFrom, arg.ownerParams, arg.masterParams, arg.communityId, arg.signerPubKey).result
+    gasTable[(arg.chainId, "")] = estimations{"gasUnits"}.getInt
+    feeTable[arg.chainId] = estimations{"suggestedFees"}.toSuggestedFeesDto()
+
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
@@ -72,12 +72,12 @@ const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
     var feeTable: Table[int, SuggestedFeesDto] # fees for chain
-    let response = eth.suggestedFees(arg.chainId).result
-    feeTable[arg.chainId] = response.toSuggestedFeesDto()
-    let deployGas = if arg.tokenType == TokenType.ERC721: community_tokens.deployCollectiblesEstimate(arg.chainId, arg.addressFrom).result.getInt
-      else: community_tokens.deployAssetsEstimate(arg.chainId, arg.addressFrom).result.getInt
-    
-    gasTable[(arg.chainId, "")] = deployGas
+
+    let estimations = if arg.tokenType == TokenType.ERC721: community_tokens.deployCollectiblesEstimate(arg.chainId, arg.addressFrom).result
+      else: community_tokens.deployAssetsEstimate(arg.chainId, arg.addressFrom).result
+    gasTable[(arg.chainId, "")] = estimations{"gasUnits"}.getInt
+    feeTable[arg.chainId] = estimations{"suggestedFees"}.toSuggestedFeesDto()
+
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
@@ -105,10 +105,11 @@ const asyncSetSignerFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
     var feeTable: Table[int, SuggestedFeesDto] # fees for chain
-    let response = eth.suggestedFees(arg.chainId).result
-    feeTable[arg.chainId] = response.toSuggestedFeesDto()
-    let gasUsed = community_tokens.estimateSetSignerPubKey(arg.chainId, arg.contractAddress, arg.addressFrom, arg.newSignerPubKey).result.getInt
-    gasTable[(arg.chainId, "")] = gasUsed
+
+    let estimations = community_tokens.estimateSetSignerPubKey(arg.chainId, arg.contractAddress, arg.addressFrom, arg.newSignerPubKey).result
+    gasTable[(arg.chainId, arg.contractAddress)] = estimations{"gasUnits"}.getInt
+    feeTable[arg.chainId] = estimations{"suggestedFees"}.toSuggestedFeesDto()
+
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
@@ -136,10 +137,11 @@ const asyncGetRemoteBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
     var feeTable: Table[int, SuggestedFeesDto] # fees for chain
-    let fee = eth.suggestedFees(arg.chainId).result.toSuggestedFeesDto()
-    let burnGas = community_tokens.estimateRemoteBurn(arg.chainId, arg.contractAddress, arg.addressFrom, arg.tokenIds).result.getInt
-    feeTable[arg.chainId] = fee
-    gasTable[(arg.chainId, arg.contractAddress)] = burnGas
+
+    let estimations = community_tokens.estimateRemoteBurn(arg.chainId, arg.contractAddress, arg.addressFrom, arg.tokenIds).result
+    gasTable[(arg.chainId, arg.contractAddress)] = estimations{"gasUnits"}.getInt
+    feeTable[arg.chainId] = estimations{"suggestedFees"}.toSuggestedFeesDto()
+
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
@@ -167,10 +169,11 @@ const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
     var feeTable: Table[int, SuggestedFeesDto] # fees for chain
-    let fee = eth.suggestedFees(arg.chainId).result.toSuggestedFeesDto()
-    let burnGas = community_tokens.estimateBurn(arg.chainId, arg.contractAddress, arg.addressFrom, arg.amount).result.getInt
-    feeTable[arg.chainId] = fee
-    gasTable[(arg.chainId, arg.contractAddress)] = burnGas
+
+    let estimations = community_tokens.estimateBurn(arg.chainId, arg.contractAddress, arg.addressFrom, arg.amount).result
+    gasTable[(arg.chainId, arg.contractAddress)] = estimations{"gasUnits"}.getInt
+    feeTable[arg.chainId] = estimations{"suggestedFees"}.toSuggestedFeesDto()
+
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
@@ -200,15 +203,12 @@ const asyncGetMintFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
     for collectibleAndAmount in arg.collectiblesAndAmounts:
       # get fees if we do not have for this chain yet
       let chainId = collectibleAndAmount.communityToken.chainId
-      if not feeTable.hasKey(chainId):
-        let feesResponse = eth.suggestedFees(chainId).result
-        feeTable[chainId] = feesResponse.toSuggestedFeesDto()
-
       # get gas for smart contract
-      let gas = community_tokens.estimateMintTokens(chainId,
+      let estimations = community_tokens.estimateMintTokens(chainId,
         collectibleAndAmount.communityToken.address, arg.addressFrom,
-        arg.walletAddresses, collectibleAndAmount.amount).result.getInt
-      gasTable[(chainId, collectibleAndAmount.communityToken.address)] = gas
+        arg.walletAddresses, collectibleAndAmount.amount).result
+      gasTable[(chainId, collectibleAndAmount.communityToken.address)] = estimations{"gasUnits"}.getInt
+      feeTable[chainId] = estimations{"suggestedFees"}.toSuggestedFeesDto()
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
@@ -311,7 +311,6 @@ const fetchAssetOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall
     }
     arg.finish(output)
   except Exception as e:
-    echo "Exception", e.msg
     let output = %* {
       "chainId": arg.chainId,
       "contractAddress": arg.contractAddress,
