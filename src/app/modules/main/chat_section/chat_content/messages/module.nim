@@ -604,6 +604,8 @@ method editMessage*(self: Module, messageId: string, contentType: int, updatedMs
 method onMessageEdited*(self: Module, message: MessageDto) =
   let itemBeforeChange = self.view.model().getItemWithMessageId(message.id)
   if(itemBeforeChange.isNil):
+    # We received the edited message before we received the real message. Just show the final message as is
+    self.messagesAdded(@[message])
     return
 
   let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
