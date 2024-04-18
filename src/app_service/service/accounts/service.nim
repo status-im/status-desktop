@@ -370,8 +370,6 @@ QtObject:
       openseaApiKey: OPENSEA_API_KEY_RESOLVED,
       raribleMainnetApiKey: RARIBLE_MAINNET_API_KEY_RESOLVED,
       raribleTestnetApiKey: RARIBLE_TESTNET_API_KEY_RESOLVED,
-
-      # ganacheURL:
       alchemyEthereumMainnetToken: ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
       alchemyEthereumGoerliToken: ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
       alchemyEthereumSepoliaToken: ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,

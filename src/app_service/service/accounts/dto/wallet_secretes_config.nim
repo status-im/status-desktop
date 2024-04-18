@@ -8,8 +8,6 @@ type
     openseaApiKey*: string
     raribleMainnetApiKey*: string
     raribleTestnetApiKey*: string
-
-    # ganacheURL: string // WARNING: is this used?
     alchemyEthereumMainnetToken*: string
     alchemyEthereumGoerliToken*: string
     alchemyEthereumSepoliaToken*: string
@@ -28,7 +26,6 @@ proc toJson*(self: WalletSecretsConfig): JsonNode =
     "openseaApiKey": self.openseaApiKey,
     "raribleMainnetApiKey": self.raribleMainnetApiKey,
     "raribleTestnetApiKey": self.raribleTestnetApiKey,
-    # "ganacheURL": self.ganacheURL,
     "alchemyEthereumMainnetToken": self.alchemyEthereumMainnetToken,
     "alchemyEthereumGoerliToken": self.alchemyEthereumGoerliToken,
     "alchemyEthereumSepoliaToken": self.alchemyEthereumSepoliaToken,
