@@ -61,6 +61,10 @@ proc wei2Eth*(input: Stuint[256], decimals: int = 18): string =
 
   fmt"{eth}.{leading_zeros}{remainder}"
 
+proc gwei2Eth*(gwei: float): string =
+  let weis = gwei2Wei(gwei)
+  return wei2Eth(weis)
+
 proc wei2Eth*(input: string, decimals: int): string =
   try:
     var input256: Stuint[256]

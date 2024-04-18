@@ -7,6 +7,7 @@ import ../eth/dto/transaction as eth_transaction_dto
 import ../../../backend/ens as status_ens
 import ../../common/account_constants
 import ../../common/utils
+import ../../service/transaction/dto
 
 logScope:
   topics = "ens-utils"
@@ -86,6 +87,15 @@ proc buildTransaction*(
     result.maxFeePerGas = (if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxFeePerGas)).some)
   else:
     result.txType = "0x00"
+
+proc buildTransactionDataDto*(gasUnits: int, suggestedFees: SuggestedFeesDto, addressFrom: string, chainId: int, contractAddress: string): TransactionDataDto =
+    if suggestedFees == nil:
+      error "Can't find suggested fees for chainId", chainId=chainId
+      return
+    return buildTransaction(parseAddress(addressFrom), 0.u256, $gasUnits,
+      if suggestedFees.eip1559Enabled: "" else: $suggestedFees.gasPrice, suggestedFees.eip1559Enabled,
+      if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
+      if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
 
 proc buildTokenTransaction*(
   source, contractAddress: Address, gas = "", gasPrice = "", isEIP1559Enabled = false,
