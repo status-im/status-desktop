@@ -200,7 +200,8 @@ Item {
 
             StyledText {
                 objectName: "ProfileHeader_displayName"
-                Layout.maximumWidth: root.width - Style.current.xlPadding
+                Layout.maximumWidth: root.width - verificationIcons.width - contentContainer.anchors.leftMargin - contentContainer.anchors.rightMargin -
+                                     (editButtonLoader.active ? editButtonLoader.item.width : 0)
                 text: root.displayName
                 elide: Text.ElideRight
                 font {
@@ -210,7 +211,7 @@ Item {
             }
 
             StatusContactVerificationIcons {
-                Layout.alignment: Qt.AlignVCenter
+                id: verificationIcons
                 visible: !root.isCurrentUser && !root.isBridgedAccount
                 isContact: root.isContact
                 trustIndicator: root.trustStatus
@@ -218,6 +219,7 @@ Item {
             }
 
             Loader {
+                id: editButtonLoader
                 sourceComponent: SVGImage {
                     objectName: "ProfileHeader_displayNameEditIcon"
                     height: compact ? 10 : 16
