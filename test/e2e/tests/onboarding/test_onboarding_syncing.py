@@ -34,7 +34,7 @@ def sync_screen(main_window) -> SyncCodeView:
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
 @pytest.mark.case(703592)
-@pytest.mark.critical
+# @pytest.mark.critical TODO: fix the locator to use object name for button paste
 def test_sync_device_during_onboarding(multiple_instances):
     user: UserAccount = constants.user_with_random_attributes_1
     main_window = MainWindow()
