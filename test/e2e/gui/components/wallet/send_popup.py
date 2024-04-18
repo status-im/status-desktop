@@ -1,6 +1,9 @@
+import time
+
 import allure
 import typing
 
+import configs.timeouts
 import driver
 from driver.objects_access import wait_for_template
 from gui.components.base_popup import BasePopup
@@ -30,11 +33,20 @@ class SendPopup(BasePopup):
         self._send_button = Button(names.send_StatusFlatButton)
 
     @allure.step('Select asset or collectible by name')
-    def _select_asset_or_collectible(self, name: str, tab: str):
+    def _select_asset_or_collectible(self, name: str, tab: str, attempts: int = 2):
+        time.sleep(3)
         assets = self.get_assets_or_collectibles_list(tab)
         for index, item in enumerate(assets):
             if str(item.title) == name:
                 QObject(item).click()
+                break
+        try:
+            return self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        except AssertionError as err:
+            if attempts:
+                self._select_asset_or_collectible(attempts-1)
+            else:
+                raise err
 
     @allure.step('Get assets or collectibles list')
     def get_assets_or_collectibles_list(self, tab: str) -> typing.List[str]:

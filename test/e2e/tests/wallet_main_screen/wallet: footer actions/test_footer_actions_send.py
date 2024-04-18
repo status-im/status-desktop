@@ -91,6 +91,7 @@ allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704602',
 @pytest.mark.parametrize('tab, receiver_account_address, amount, collectible', [
     pytest.param('Collectibles', constants.user.user_with_funds.status_address, 1, 'Panda')
 ])
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14466")
 def test_wallet_send_nft(keys_screen, main_window, user_account, tab, receiver_account_address, amount, collectible):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()

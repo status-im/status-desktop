@@ -22,7 +22,7 @@ class PictureEditPopup(BasePopup):
         self._make_picture_button = Button(names.make_picture_StatusButton)
         self._slider_handler = QObject(names.o_DropShadow)
 
-    @allure.step('Make picture')
+    @allure.step('Set zoom shift for picture and make picture')
     def set_zoom_shift_for_picture(
             self,
             zoom: int = None,
@@ -48,6 +48,15 @@ class PictureEditPopup(BasePopup):
                 driver.mouse.press_and_move(
                     self._view.object, 1, self._view.height, 1, self._view.height - shift.bottom, step=1)
                 time.sleep(1)
+        self.make_picture()
 
+    @allure.step('Make picture')
+    def make_picture(self, attempts: int = 2):
         self._make_picture_button.click()
-        self._make_picture_button.wait_until_hidden()
+        try:
+            self._make_picture_button.wait_until_hidden()
+        except AssertionError as err:
+            if attempts:
+                self.make_picture(attempts - 1)
+            else:
+                raise err
