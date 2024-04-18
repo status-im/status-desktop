@@ -55,6 +55,8 @@ QtObject:
       discordImportHasCommunityImage: bool
       downloadingCommunityHistoryArchives: bool
       checkingPermissionsInProgress: bool
+      joinPermissionsCheckSuccessful: bool
+      channelsPermissionsCheckSuccessful: bool
       myRevealedAddressesStringForCurrentCommunity: string
       myRevealedAirdropAddressForCurrentCommunity: string
       keypairsSigningModel: KeyPairModel
@@ -120,6 +122,9 @@ QtObject:
     result.tokenListModelVariant = newQVariant(result.tokenListModel)
     result.collectiblesListModel = newTokenListModel()
     result.collectiblesListModelVariant = newQVariant(result.collectiblesListModel)
+    result.checkingPermissionsInProgress = false
+    result.joinPermissionsCheckSuccessful = false
+    result.channelsPermissionsCheckSuccessful = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -799,6 +804,34 @@ QtObject:
   QtProperty[bool] requirementsCheckPending:
     read = getCheckingPermissionsInProgress
     notify = checkingPermissionsInProgressChanged
+
+  proc joinPermissionsCheckSuccessfulChanged*(self: View) {.signal.}
+
+  proc setJoinPermissionsCheckSuccessful*(self: View, successful: bool) =
+    if (self.joinPermissionsCheckSuccessful == successful): return
+    self.joinPermissionsCheckSuccessful = successful
+    self.joinPermissionsCheckSuccessfulChanged()
+
+  proc getJoinPermissionsCheckSuccessful*(self: View): bool {.slot.} =
+    return self.joinPermissionsCheckSuccessful
+
+  QtProperty[bool] joinPermissionsCheckSuccessful:
+    read = getJoinPermissionsCheckSuccessful
+    notify = joinPermissionsCheckSuccessfulChanged
+
+  proc channelsPermissionsCheckSuccessfulChanged*(self: View) {.signal.}
+
+  proc setChannelsPermissionsCheckSuccessful*(self: View, successful: bool) =
+    if (self.channelsPermissionsCheckSuccessful == successful): return
+    self.channelsPermissionsCheckSuccessful = successful
+    self.channelsPermissionsCheckSuccessfulChanged()
+
+  proc getChannelsPermissionsCheckSuccessful*(self: View): bool {.slot.} =
+    return self.channelsPermissionsCheckSuccessful
+
+  QtProperty[bool] channelsPermissionsCheckSuccessful:
+    read = getChannelsPermissionsCheckSuccessful
+    notify = channelsPermissionsCheckSuccessfulChanged
 
   proc keypairsSigningModel*(self: View): KeyPairModel =
     return self.keypairsSigningModel
