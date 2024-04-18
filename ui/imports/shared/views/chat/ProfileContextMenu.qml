@@ -148,8 +148,9 @@ StatusMenu {
     SendContactRequestMenuItem {
         id: sendContactRequestMenuItem
         objectName: "sendContactRequest_StatusItem"
-        enabled: !root.isMe && !root.isContact
-                                && !root.isBlockedContact && !root.hasPendingContactRequest && !root.isBridgedAccount
+        enabled: !root.isMe && !root.isContact && !root.isBlockedContact
+                 && (contactDetails.contactRequestState === Constants.ContactRequestState.None || contactDetails.contactRequestState === Constants.ContactRequestState.Dismissed)
+                 && !root.isBridgedAccount
         onTriggered: Global.openContactRequestPopup(root.selectedUserPublicKey, root.contactDetails, null)
     }
 
