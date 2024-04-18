@@ -114,6 +114,7 @@ Loader {
     property double nextMessageTimestamp: nextMessageAsJsonObj ? nextMessageAsJsonObj.timestamp : 0
     property var nextMessageAsJsonObj
 
+    readonly property bool editRestricted: root.isSticker
     property bool editModeOn: false
     property bool isEdited: false
 
@@ -178,7 +179,7 @@ Loader {
             messageContentType: root.messageContentType,
             pinnedMessage: root.pinnedMessage,
             canPin: !!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins,
-            editRestricted: root.isSticker || root.isImage,
+            editRestricted: root.editRestricted,
         }
 
         Global.openMenu(messageContextMenuComponent, this, params)
@@ -946,7 +947,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
+                        active: !root.isInPinnedPopup && !root.editRestricted && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
                                 && !root.isViewMemberMessagesePopup && root.rootStore.permissionsStore.viewAndPostCriteriaMet
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
