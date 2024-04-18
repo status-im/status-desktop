@@ -93,17 +93,6 @@ SplitView {
                                       incomingVerificationStatus: ctrlIncomingVerificationStatus.currentValue,
                                       contactRequestState: ctrlContactRequestState.currentValue,
                                       bio: bio.text,
-                                      socialLinks: JSON.stringify
-                                                   ([{
-                                                         text: "__twitter",
-                                                         url: "https://twitter.com/ethstatus",
-                                                         icon: "twitter"
-                                                     },
-                                                     {
-                                                         text: "__github",
-                                                         url: "https://github.com/status-im",
-                                                         icon: "github"
-                                                     }]),
                                       onlineStatus: ctrlOnlineStatus.currentValue
                                   })
         }
@@ -639,11 +628,20 @@ SplitView {
                         Layout.fillWidth: true
                         id: bio
                         selectByMouse: true
-                        text: "Hi, I am Alex. I'm an indie developer who mainly works on web products.
+                        text: "
+
+
+Hi, I am Alex. I'm an indie developer who mainly works on web products.
+
+
 
 I worked for several different companies and created a couple of my own products from scratch. Currently building Telescope and Prepacked.
 
-Say hi, or find me on Twitter, GitHub, or Mastodon."
+Say hi, or find me on Twitter, GitHub, or Mastodon.
+
+
+
+"
                     }
                 }
             }
