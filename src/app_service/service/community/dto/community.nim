@@ -503,13 +503,13 @@ proc parseCommunities*(response: JsonNode, categories: seq[Category]): seq[Commu
   for category in categories:
     categoryMap[category.id] = true
 
-  result = newSeq[CommunityDto]()
   for communityNode in response["result"].getElems():
     var community = communityNode.toCommunityDto()
+
     for category in community.categories.mitems:
       if categoryMap.hasKey(category.id):
         category.categoryOpened = true
-      result.add(community)
+    result.add(community)
 
 proc parseKnownCuratedCommunities(jsonCommunities: JsonNode): seq[CommunityDto] =
   for _, communityJson in jsonCommunities.pairs():

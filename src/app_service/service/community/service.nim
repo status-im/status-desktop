@@ -423,11 +423,6 @@ QtObject:
           # but implement a solution for individual updates
           self.events.emit(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED, CommunityIdArgs(communityId: receivedData.communityId))
 
-  proc findChatById(id: string, chats: seq[ChatDto]): ChatDto =
-    for chat in chats:
-      if(chat.id == id):
-        return chat
-
   proc findIndexById(id: string, chats: seq[ChatDto]): int =
     var idx = -1
     for chat in chats:
