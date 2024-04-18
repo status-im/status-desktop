@@ -140,7 +140,7 @@ class SyncCodeView(OnboardingView):
         return self
 
     @allure.step('Paste sync code')
-    def paste_sync_code(self):
+    def click_paste_button(self):
         self._paste_sync_code_button.click()
 
     @property

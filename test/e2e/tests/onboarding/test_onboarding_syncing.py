@@ -71,7 +71,8 @@ def test_sync_device_during_onboarding(multiple_instances):
 
         with step('Paste sync code on second instance and wait until device is synced'):
             sync_start = sync_view.open_enter_sync_code_form()
-            sync_start.paste_sync_code()
+            pyperclip.copy(sync_code)
+            sync_start.click_paste_button()
             sync_device_found = SyncDeviceFoundView()
             assert driver.waitFor(
                 lambda: 'Device found!' in sync_device_found.device_found_notifications, 15000)
@@ -106,9 +107,9 @@ def test_wrong_sync_code(sync_screen, wrong_sync_code):
     with step('Open sync code form'):
         sync_view = sync_screen.open_enter_sync_code_form()
 
-    with step('Paste wrong sync code on second instance and check that error message appears'):
+    with step('Paste wrong sync code and check that error message appears'):
         pyperclip.copy(wrong_sync_code)
-        sync_view.paste_sync_code()
+        sync_view.click_paste_button()
         assert SyncingSettings.SYNC_CODE_IS_WRONG_TEXT.value == sync_view.sync_code_error_message, f'Wrong sync code message did not appear'
 
 
