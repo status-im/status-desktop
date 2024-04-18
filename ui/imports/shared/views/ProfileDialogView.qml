@@ -464,6 +464,7 @@ Pane {
                         enabled: d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy && !d.isBlocked
                         onTriggered: {
                             root.contactsStore.removeTrustStatus(root.publicKey)
+                            d.reload()
                         }
                     }
                     StatusAction {
@@ -556,12 +557,21 @@ Pane {
                     }
                 }
             }
-            StatusBaseText {
+            StatusScrollView {
+                id: bioScrollView
                 Layout.fillWidth: true
+                Layout.preferredHeight: 116
+                contentWidth: availableWidth
                 Layout.topMargin: Style.current.halfPadding
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                text: root.dirty ? root.dirtyValues.bio : d.contactDetails.bio
-                visible: !!text
+                padding: 0
+                rightPadding: Style.current.padding
+                visible: !!bioText.text
+                StatusBaseText {
+                    id: bioText
+                    width: bioScrollView.availableWidth
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    text: root.dirty ? root.dirtyValues.bio.trim() : d.contactDetails.bio.trim()
+                }
             }
             EmojiHash {
                 Layout.topMargin: Style.current.halfPadding
