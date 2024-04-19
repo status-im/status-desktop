@@ -426,6 +426,7 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
+                objectName: "manageCommunitiesOnTestnetButton"
                 text: qsTr("Manage communities on testnet")
                 isSwitch: true
                 switchChecked: root.advancedStore.isManageCommunityOnTestModeEnabled

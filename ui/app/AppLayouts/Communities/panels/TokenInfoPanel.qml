@@ -168,6 +168,7 @@ Control {
 
             CustomPreviewBox {
                 id: symbolBox
+                objectName: "symbolBox"
 
                 label: qsTr("Symbol")
                 value: token.symbol
@@ -175,6 +176,7 @@ Control {
 
             CustomPreviewBox {
                 id: totalbox
+                objectName: "totalBox"
 
                 label: qsTr("Total")
                 value: token.infiniteSupply
@@ -189,6 +191,7 @@ Control {
 
             CustomPreviewBox {
                 id: remainingBox
+                objectName: "remainingBox"
 
                 readonly property int remainingTokens: root.preview ? token.supply : token.remainingTokens
 
@@ -208,12 +211,14 @@ Control {
             }
 
             CustomPreviewBox {
+                objectName: "transferableBox"
                 visible: !root.isAssetPanel
                 label: qsTr("Transferable")
                 value: token.transferable ? qsTr("Yes") : qsTr("No")
             }
 
             CustomPreviewBox {
+                objectName: "destructibleBox"
                 visible: !root.isAssetPanel
 
                 label: qsTr("Destructible")
