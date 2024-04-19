@@ -30,4 +30,14 @@ ProfileShowcasePanel {
         icon.color: model && model.colorId ? Utils.getColorForId(model.colorId) : Theme.palette.primaryColor3
         highlighted: model ? model.address === root.currentWallet : false
     }
+    filter: FastExpressionFilter {
+        readonly property string lowerCaseSearchText: root.searcherText.toLowerCase()
+        expression: {
+            lowerCaseSearchText
+            return (address.toLowerCase().includes(lowerCaseSearchText) ||
+                    name.toLowerCase().includes(lowerCaseSearchText) ||
+                    preferredSharingChainShortNames.toLowerCase().includes(lowerCaseSearchText))
+        }
+        expectedRoles: ["address", "name", "preferredSharingChainShortNames"]
+    }
 }

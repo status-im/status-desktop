@@ -53,6 +53,18 @@ ProfileShowcasePanel {
         }
     }
 
+    filter: FastExpressionFilter {
+        readonly property string lowerCaseSearchText: root.searcherText.toLowerCase()
+        expression: {
+            lowerCaseSearchText
+            return (name.toLowerCase().includes(lowerCaseSearchText) ||
+                    uid.toLowerCase().includes(lowerCaseSearchText) ||
+                    (!!communityName && communityName.toLowerCase().includes(lowerCaseSearchText)) ||
+                    (!!collectionName && collectionName.toLowerCase().includes(lowerCaseSearchText)))
+        }
+        expectedRoles: ["name", "uid", "collectionName", "communityName"]
+    }
+
     Component {
         id: addMoreAccountsComponent
 

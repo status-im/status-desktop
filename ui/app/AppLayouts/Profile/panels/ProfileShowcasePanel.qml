@@ -39,7 +39,10 @@ DoubleFlickableWithFolding {
 
     // Searcher related properties:
     property string searchPlaceholderText
-    property string searcherText: ""
+    readonly property alias searcherText: d.searcherText
+
+    //SFPM filters to apply to both in showcase and hidden models
+    property FastExpressionFilter filter
 
     // Signal to request position change of the visible items
     signal changePositionRequested(int from, int to)
@@ -57,11 +60,19 @@ DoubleFlickableWithFolding {
 
         readonly property bool limitReached: root.showcaseLimit === inShowcaseCounterTracker.count
         readonly property bool searchActive: root.searcherText !== ""
+        property string searcherText: ""
 
         readonly property var dragHiddenItemKey: ["x-status-draggable-showcase-item-hidden"]
         readonly property var dragShowcaseItemKey: ["x-status-draggable-showcase-item"]
 
         property bool isAnyShowcaseDragActive: false
+        onIsAnyShowcaseDragActiveChanged: {
+            if(!isAnyShowcaseDragActive) {
+                // Sync the order of the visible items when the drag is finished
+                // MovableModel is used only for DND operations. No interference needed when the DND is not active
+                visibleModel.syncOrder()
+            }
+        }
         property bool isAnyHiddenDragActive: false
 
         property int additionalHeaderComponentWidth: 350 // by design
@@ -91,12 +102,34 @@ DoubleFlickableWithFolding {
         model: root.inShowcaseModel
     }
 
+    SortFilterProxyModel {
+        id: inShowcaseSFPM
+
+        sourceModel: root.inShowcaseModel
+        delayed: true
+        filters: root.filter
+    }
+
+    SortFilterProxyModel {
+        id: hiddenSFPM
+
+        sourceModel: root.hiddenModel
+        delayed: true
+        filters: root.filter
+    }
+
+    MovableModel {
+        id: visibleModel
+
+        sourceModel: inShowcaseSFPM
+    }
+
     clip: true
 
     flickable1: EmptyShapeRectangleFooterListView {
         id: inShowcaseListView
 
-        model: root.inShowcaseModel
+        model: visibleModel
         width: root.width
         placeholderText: d.searchActive ? root.emptySearchPlaceholderText : root.emptyInShowcasePlaceholderText
         footerHeight: ProfileUtils.defaultDelegateHeight
@@ -137,7 +170,7 @@ DoubleFlickableWithFolding {
                 ]
 
                 Binding {
-                    target: root
+                    target: d
                     property: "searcherText"
                     value: searcher.text
                     restoreMode: Binding.RestoreBindingOrValue
@@ -254,7 +287,7 @@ DoubleFlickableWithFolding {
     flickable2: EmptyShapeRectangleFooterListView {
         id: hiddenListView
 
-        model: root.hiddenModel
+        model: hiddenSFPM
         width: root.width
         placeholderText: d.searchActive ? root.emptySearchPlaceholderText : root.emptyHiddenPlaceholderText
         footerHeight: ProfileUtils.defaultDelegateHeight
@@ -442,7 +475,11 @@ DoubleFlickableWithFolding {
                     var to = visualIndex
                     if (to === from)
                         return
-                    root.changePositionRequested(drag.source.visualIndex, to)
+                    
+                    const sourceIndex = inShowcaseSFPM.mapToSource(visibleModel.order()[from])
+                    const targetPosition = showcaseDelegateRoot.model.showcasePosition
+                    visibleModel.move(from, to)
+                    root.changePositionRequested(sourceIndex, targetPosition)
                 }
                 drag.accept()
             }

@@ -66,6 +66,30 @@ WritableProxyModel {
         set(sourceIdx, { showcaseVisibility: visibility })
     }
 
+
+    /* Sets the showcasePosition of the item. The "toShowcasePosition" is the
+        * new position of the item. All items in between the previous and the
+        * new position are moved accordingly.
+     */
+    function changePosition(index, toShowcasePosition) {
+        // changing the position of the items in between
+        const fromShowcasePosition = get(index).showcasePosition
+        const minPosition = Math.min(fromShowcasePosition, toShowcasePosition)
+        const maxPosition = Math.max(fromShowcasePosition, toShowcasePosition)
+        const visible = d.getVisibleEntries()
+
+        visible.sort((a, b) => a.showcasePosition - b.showcasePosition)
+               .filter(e => e.showcasePosition >= minPosition && e.showcasePosition <= maxPosition && e.index !== index)
+               .forEach(e => {
+                    e.showcasePosition += (fromShowcasePosition > toShowcasePosition ? 1 : -1)  
+                    set(e.index, { showcasePosition: e.showcasePosition })
+                })
+
+        //changing the position of the item
+        set(index, { showcasePosition: toShowcasePosition })
+    }
+
+
     syncedRemovals: true
 
     readonly property QtObject d_: QtObject {
@@ -83,6 +107,7 @@ WritableProxyModel {
                 roleNames.push("showcaseVisibility")
 
             const keysAndPos = ModelUtils.modelToArray(root, roleNames)
+            keysAndPos.forEach((e, i) => e.index = i)
 
             return keysAndPos.filter(p => p.showcaseVisibility
                                      && p.showcaseVisibility !== root.visibilityHidden)
