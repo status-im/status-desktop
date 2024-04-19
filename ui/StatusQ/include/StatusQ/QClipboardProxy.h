@@ -54,6 +54,7 @@ public:
 
     Q_INVOKABLE bool isValidImageUrl(const QUrl &url, const QStringList &acceptedExtensions) const;
     Q_INVOKABLE qint64 getFileSize(const QUrl &url) const;
+    Q_INVOKABLE void copyTextToClipboard(const QString& text);
 
 signals:
     void contentChanged();

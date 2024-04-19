@@ -59,7 +59,7 @@ QString QClipboardProxy::imageBase64() const
     QByteArray byteArray;
     QBuffer buffer(&byteArray);
     img.save(&buffer, "JPG");
-    return QStringLiteral("data:image/jpeg;base64,") + byteArray.toBase64();
+    return QByteArrayLiteral("data:image/jpeg;base64,") + byteArray.toBase64();
 }
 
 bool QClipboardProxy::hasUrls() const
@@ -86,4 +86,9 @@ qint64 QClipboardProxy::getFileSize(const QUrl& url) const
         return QFile(url.toLocalFile()).size();
     }
     return 0;
+}
+
+void QClipboardProxy::copyTextToClipboard(const QString &text)
+{
+    m_clipboard->setText(text);
 }
