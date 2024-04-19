@@ -32,6 +32,7 @@ SplitView {
             emoji: "🇨🇿"
             walletType: ""
             showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+            preferredSharingChainShortNames: "eth:opt:"
         }
         ListElement {
             name: "testing (no emoji, colored, seed)"
@@ -41,6 +42,7 @@ SplitView {
             emoji: ""
             walletType: "seed"
             showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+            preferredSharingChainShortNames: "arb:xdai:"
         }
         ListElement {
             name: "My Bro's Account"
@@ -50,6 +52,7 @@ SplitView {
             emoji: "🇸🇰"
             walletType: "watch"
             showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+            preferredSharingChainShortNames: "eth:opt:"
         }
     }
 
@@ -65,6 +68,7 @@ SplitView {
             walletType: ""
             showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             showcasePosition: 0
+            preferredSharingChainShortNames: "eth:opt:"
         }
         ListElement {
             name: "testing (no emoji, colored, seed)"
@@ -75,6 +79,7 @@ SplitView {
             walletType: "seed"
             showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             showcasePosition: 1
+            preferredSharingChainShortNames: "eth:opt:arb:"
         }
         ListElement {
             name: "My Bro's Account"
@@ -85,6 +90,7 @@ SplitView {
             walletType: "watch"
             showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             showcasePosition: 2
+            preferredSharingChainShortNames: "eth:opt:"
         }
     }
 

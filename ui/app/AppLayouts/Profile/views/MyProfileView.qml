@@ -138,10 +138,6 @@ SettingsContentBase {
 
         property ProfileShowcaseModels showcaseModels: ProfileShowcaseModels {
             id: showcaseModels
-
-            communitiesSearcherText: profileShowcaseCommunitiesPanel.searcherText
-            accountsSearcherText: profileShowcaseAccountsPanel.searcherText
-            collectiblesSearcherText: profileShowcaseCollectiblesPanel.searcherText
         }
 
         // Used to track which are the expected backend responses (they can be 0, 1 or 2) depending on the dirty changes

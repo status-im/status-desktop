@@ -23,7 +23,7 @@ QObject {
       * Model holding elements from 'sourceModel' intended to be visible in the
       * showcase, sorted by 'position' role. Includes roles from both input models.
       */
-    readonly property alias visibleModel: visible
+    readonly property alias visibleModel: visibleSFPM
 
     /**
       * Model holding elements from 'sourceModel' intended to be hidden, no
@@ -36,13 +36,7 @@ QObject {
       */
     readonly property bool dirty: writable.dirty
 
-    /**
-      * It sets up a searcher filter on top of both the visible and hidden models.
-      */
-    property FastExpressionFilter searcherFilter
-
     function revert() {
-        visible.syncOrder()
         writable.revert()
     }
 
@@ -55,19 +49,8 @@ QObject {
     }
 
     function changePosition(from, to) {
-        visible.move(from, to)
-
-        // Sync writable with movable new positions:
-        const newOrder = visible.order()
-        let writableIndexes = []
-
-        for (var i = 0; i < newOrder.length; i++) {
-            writableIndexes.push(visibleSFPM.mapToSource(newOrder[i]))
-        }
-
-        for (var i = 0; i < newOrder.length; i++) {
-            writable.set(writableIndexes[i], { "showcasePosition": i})
-        }
+        const writableIndex = d.visibleIndexToWritable(from)
+        writable.changePosition(writableIndex, to)
     }
 
     function append(obj) {
@@ -115,31 +98,9 @@ QObject {
     }
 
     SortFilterProxyModel {
-        id: searcherVisibleSFPM
-
-        sourceModel: visibleSFPM
-        delayed: true
-        filters: root.searcherFilter
-    }
-
-    MovableModel {
-        id: visible
-
-        sourceModel: searcherVisibleSFPM
-    }
-
-    SortFilterProxyModel {
-        id: searcherHiddenSFPM
-
-        sourceModel: writable
-        delayed: true
-        filters: root.searcherFilter
-    }
-
-    SortFilterProxyModel {
         id: hidden
 
-        sourceModel: searcherHiddenSFPM
+        sourceModel: writable
         delayed: true
 
         filters: HiddenFilter {}
@@ -149,10 +110,7 @@ QObject {
         id: d
 
         function visibleIndexToWritable(index) {
-            const newOrder = visible.order()
-            const sfpmIndex = newOrder[index]
-
-            return visibleSFPM.mapToSource(sfpmIndex)
+            return visibleSFPM.mapToSource(index)
         }
     }
 }

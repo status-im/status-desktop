@@ -24,7 +24,6 @@ QObject {
 
     // Input models
     property alias communitiesSourceModel: communities.sourceModel
-    property string communitiesSearcherText
 
     // Output models
     readonly property alias communitiesVisibleModel: communities.visibleModel
@@ -39,15 +38,14 @@ QObject {
         communities.setVisibility(key, visibility)
     }
 
-    function changeCommunityPosition(key, to) {
-        communities.changePosition(key, to)
+    function changeCommunityPosition(from, to) {
+        communities.changePosition(from, to)
     }
 
     // ACCOUNTS
 
     // Input models
     property alias accountsSourceModel: accounts.sourceModel
-    property string accountsSearcherText
 
     // Output models
     readonly property alias accountsVisibleModel: accounts.visibleModel
@@ -62,8 +60,8 @@ QObject {
         accounts.setVisibility(key, visibility)
     }
 
-    function changeAccountPosition(key, to) {
-        accounts.changePosition(key, to)
+    function changeAccountPosition(from, to) {
+        accounts.changePosition(from, to)
     }
 
     // Other
@@ -77,7 +75,6 @@ QObject {
 
     // Input models
     property alias collectiblesSourceModel: collectiblesFilter.sourceModel
-    property string collectiblesSearcherText
 
     // Output models
     readonly property alias collectiblesVisibleModel: collectibles.visibleModel
@@ -138,49 +135,16 @@ QObject {
 
     ProfileShowcaseDirtyState {
         id: communities
-
-        function getMemberRole(memberRole) {
-            return ProfileUtils.getMemberRoleText(memberRole)
-        }
-
-        searcherFilter: FastExpressionFilter {
-            expression: {
-                root.communitiesSearcherText
-                return (name.toLowerCase().includes(root.communitiesSearcherText.toLowerCase()) ||
-                        communities.getMemberRole(memberRole).toLowerCase().includes(root.communitiesSearcherText.toLowerCase()))
-            }
-            expectedRoles: ["name", "memberRole"]
-        }
     }
 
     ProfileShowcaseDirtyState {
         id: accounts
-
-        searcherFilter: FastExpressionFilter {
-            expression: {
-                root.accountsSearcherText
-                return (address.toLowerCase().includes(root.accountsSearcherText.toLowerCase()) ||
-                        name.toLowerCase().includes(root.accountsSearcherText.toLowerCase()) ||
-                        preferredSharingChainShortNames.toLowerCase().includes(root.accountsSearcherText.toLowerCase()))
-            }
-            expectedRoles: ["address", "name", "preferredSharingChainShortNames"]
-        }
     }
 
     ProfileShowcaseDirtyState {
         id: collectibles
 
         sourceModel: collectiblesFilter
-        searcherFilter: FastExpressionFilter {
-            expression: {
-                root.collectiblesSearcherText
-                return (name.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()) ||
-                        uid.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()) ||
-                        communityName.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()) ||
-                        collectionName.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()))
-            }
-            expectedRoles: ["name", "uid", "collectionName", "communityName"]
-        }
     }
 
     ProfileShowcaseDirtyState {

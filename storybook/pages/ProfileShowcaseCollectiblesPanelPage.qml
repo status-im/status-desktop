@@ -27,6 +27,7 @@ SplitView {
         id: hiddenModelItem
         readonly property var data: [
             {
+                uid: "1234",
                 showcaseKey: "1234",
                 name: "SNTT",
                 collectionName: "Super Nitro Toluen (with pink bg)",
@@ -34,18 +35,22 @@ SplitView {
                 imageUrl: ModelsData.collectibles.custom,
                 isLoading: false,
                 communityId: "ddls",
-                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne,
+                maxVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
+                uid: "34545656768",
                 showcaseKey: "3454565676",
                 name: "Kitty 3",
                 collectionName: "Kitties",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty1Big,
                 isLoading: false,
-                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne,
+                maxVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
+                uid: "123456",
                 showcaseKey: "12345",
                 name: "Kitty 4",
                 collectionName: "",
@@ -53,9 +58,11 @@ SplitView {
                 imageUrl: ModelsData.collectibles.kitty2Big,
                 isLoading: false,
                 communityId: "sox",
-                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne,
+                maxVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
+                uid: "12345645459537432",
                 showcaseKey: "123456454595374",
                 name: "",
                 collectionName: "Super Kitties",
@@ -63,18 +70,22 @@ SplitView {
                 imageUrl: ModelsData.collectibles.kitty3Big,
                 isLoading: false,
                 communityId: "ast",
-                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne,
+                maxVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
+                uid: "6912",
                 showcaseKey: "6912",
                 name: "KILLABEAR",
                 collectionName: "KILLABEARS",
                 backgroundColor: "#807c56",
                 imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
                 isLoading: true,
-                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne,
+                maxVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
             },
             {
+                uid: "8876",
                 showcaseKey: "8876",
                 name: "AIORBIT",
                 description: "",
@@ -82,7 +93,8 @@ SplitView {
                 backgroundColor: "",
                 imageUrl: "https://dl.openseauserdata.com/cache/originImage/files/8b14ef530b28853445c27d6693c4e805.svg",
                 isLoading: false,
-                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne,
+                maxVisibility: Constants.ShowcaseVisibility.Contacts
             }
         ]
         Component.onCompleted: append(data)
@@ -101,7 +113,8 @@ SplitView {
                 imageUrl: ModelsData.collectibles.custom,
                 isLoading: false,
                 communityId: "ddls",
-                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Contacts,
+                maxVisibility: Constants.ShowcaseVisibility.Contacts
             },
             {
                 uid: "34545656768",
@@ -111,7 +124,8 @@ SplitView {
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty1Big,
                 isLoading: false,
-                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Contacts,
+                maxVisibility: Constants.ShowcaseVisibility.Contacts
             },
             {
                 uid: "123456",
@@ -122,7 +136,8 @@ SplitView {
                 imageUrl: ModelsData.collectibles.kitty2Big,
                 isLoading: false,
                 communityId: "sox",
-                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts,
+                maxVisibility: Constants.ShowcaseVisibility.Contacts
             },
             {
                 uid: "12345645459537432",
@@ -133,7 +148,8 @@ SplitView {
                 imageUrl: ModelsData.collectibles.kitty3Big,
                 isLoading: false,
                 communityId: "ast",
-                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone,
+                maxVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
                 uid: "691",
@@ -143,7 +159,8 @@ SplitView {
                 backgroundColor: "#807c56",
                 imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
                 isLoading: true,
-                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone,
+                maxVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
                 uid: "8876",
@@ -154,7 +171,8 @@ SplitView {
                 backgroundColor: "",
                 imageUrl: "https://dl.openseauserdata.com/cache/originImage/files/8b14ef530b28853445c27d6693c4e805.svg",
                 isLoading: false,
-                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone,
+                maxVisibility: Constants.ShowcaseVisibility.Everyone
             }
         ]
         Component.onCompleted: append(data)
