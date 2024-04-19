@@ -66,8 +66,13 @@ proc getWalletAccoutColors(self: Module, walletAccounts: seq[WalletAccountDto]) 
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
-  let walletAccount = walletAccounts[0]
-  let loading = walletAccounts[0].assetsLoading or self.controller.getTokensMarketValuesLoading()
+  if walletAccounts.len == 0:
+    return
+  var loading = self.controller.getTokensMarketValuesLoading()
+  for account in walletAccounts:
+    if account.assetsLoading:
+      loading = true
+      break 
   if self.isAllAccounts:
     let item = initItem(
       "",
@@ -82,6 +87,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
     )
     self.view.setData(item)
   else:
+    let walletAccount = walletAccounts[0]
     let isWatchOnlyAccount = walletAccount.walletType == "watch"
     let item = initItem(
       walletAccount.name,
