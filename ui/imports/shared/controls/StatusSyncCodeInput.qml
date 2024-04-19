@@ -35,6 +35,7 @@ StatusInput {
         id: copyButtonComponent
 
         StatusButton {
+            objectName: "syncCodeCopyButton"
             size: StatusBaseButton.Size.Tiny
             text: qsTr("Copy")
             onClicked: {
@@ -49,6 +50,7 @@ StatusInput {
         id: pasteButtonComponent
 
         StatusButton {
+            objectName: "syncCodePasteButton"
             size: StatusBaseButton.Size.Tiny
             enabled: !root.readOnly && root.input.edit.canPaste
             text: qsTr("Paste")
