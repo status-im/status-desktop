@@ -226,23 +226,6 @@ const asyncCheckPermissionsToJoinTask: Task = proc(argEncoded: string) {.gcsafe,
     })
 
 type
-  AsyncImportCommunityTaskArg = ref object of QObjectTaskArg
-    communityKey: string
-
-const asyncImportCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AsyncImportCommunityTaskArg](argEncoded)
-  try:
-    let response = status_go.importCommunity(arg.communityKey)
-    arg.finish(%* {
-      "response": response,
-      "error": "",
-    })
-  except Exception as e:
-    arg.finish(%* {
-      "error": e.msg,
-    })
-
-type
   AsyncGetRevealedAccountsArg = ref object of QObjectTaskArg
     communityId: string
     memberPubkey: string
