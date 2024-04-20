@@ -446,9 +446,6 @@ proc requestCommunityInfo*(communityId: string, tryDatabase: bool, shardCluster:
       "waitForResponse": true
     }])
 
-proc importCommunity*(communityKey: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("importCommunity".prefix, %*[communityKey])
-
 proc exportCommunity*(communityId: string): RpcResponse[JsonNode]  =
   result = callPrivateRPC("exportCommunity".prefix, %*[communityId])
 

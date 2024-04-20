@@ -92,10 +92,6 @@ QtObject {
                     args.bannerJsonStr, args.options.encrypted);
     }
 
-    function importCommunity(communityKey) {
-        root.communitiesModuleInst.importCommunity(communityKey);
-    }
-
     function getCommunityPublicKeyFromPrivateKey(privateKey) {
         return root.communitiesModuleInst.getCommunityPublicKeyFromPrivateKey(privateKey);
     }

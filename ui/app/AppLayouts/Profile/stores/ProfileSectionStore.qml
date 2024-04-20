@@ -205,10 +205,6 @@ QtObject {
         }
     }
 
-    function importCommunity(communityKey) {
-        root.communitiesModuleInst.importCommunity(communityKey);
-    }
-
     function getCurrentVersion() {
         return aboutModuleInst.getCurrentVersion()
     }

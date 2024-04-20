@@ -302,10 +302,6 @@ QtObject {
                     args.bannerJsonStr, args.options.encrypted);
     }
 
-    function importCommunity(communityKey) {
-        root.communitiesModuleInst.importCommunity(communityKey);
-    }
-
     function createCommunityCategory(categoryName, channels) {
         chatCommunitySectionModule.createCommunityCategory(categoryName, channels)
     }

@@ -598,9 +598,6 @@ QtObject:
   proc isMyCommunityRequestPending*(self: View, communityId: string): bool {.slot.} =
     self.delegate.isMyCommunityRequestPending(communityId)
 
-  proc importCommunity*(self: View, communityKey: string) {.slot.} =
-    self.delegate.importCommunity(communityKey)
-
   proc importingCommunityStateChanged*(self:View, communityId: string, state: int, errorMsg: string) {.signal.}
   proc emitImportingCommunityStateChangedSignal*(self: View, communityId: string, state: int, errorMsg: string) =
     self.importingCommunityStateChanged(communityId, state, errorMsg)
