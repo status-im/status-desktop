@@ -212,7 +212,7 @@ QtObject:
     return self.discordImportedChannelId
 
   QtProperty[int] discordImportedChannelId:
-    read = getDiscordImportedChannelIdCount
+    read = getDiscordImportedChannelId
     notify = discordImportedChannelIdChanged
 
   proc setDiscordImportErrorsCount*(self: View, count: int) =
@@ -838,7 +838,8 @@ QtObject:
 
   proc keypairsSigningModelChanged*(self: View) {.signal.}
   proc getKeypairsSigningModel(self: View): QVariant {.slot.} =
-    return newQVariant(self.keypairsSigningModel)
+    return (if self.keypairsSigningModel.isNil: newQVariant() else: newQVariant(self.keypairsSigningModel))
+
   QtProperty[QVariant] keypairsSigningModel:
     read = getKeypairsSigningModel
     notify = keypairsSigningModelChanged
