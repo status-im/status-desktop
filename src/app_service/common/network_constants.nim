@@ -124,8 +124,8 @@ var NETWORKS* = %* [
    {
     "chainId": 11155420,
     "chainName": "Optimism",
-    "rpcUrl": "https://optimism-sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
-    "fallbackUrl": "",
+    "rpcUrl": "https://optimism-sepolia-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
+    "fallbackUrl": "https://optimism-sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://sepolia-optimism.etherscan.io/",
     "iconUrl": "network/Network=Optimism",
     "chainColor": "#E90101",
@@ -141,8 +141,8 @@ var NETWORKS* = %* [
    {
     "chainId": 421614,
     "chainName": "Arbitrum",
-    "rpcUrl": "https://arbitrum-sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
-    "fallbackUrl": "",
+    "rpcUrl": "https://arbitrum-sepolia-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
+    "fallbackUrl": "https://arbitrum-sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://sepolia-explorer.arbitrum.io/",
     "iconUrl": "network/Network=Arbitrum",
     "chainColor": "#51D0F0",
