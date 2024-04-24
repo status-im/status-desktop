@@ -19,7 +19,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703508',
                  'Watched addresses: Excl. / Include in total balance functionality for watched address')
 @pytest.mark.case(703508)
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14427")
 @pytest.mark.parametrize('watched_address, name', [
     pytest.param('0x7f1502605A2f2Cc01f9f4E7dd55e549954A8cD0C', ''.join(random.choices(string.ascii_letters +
                                                                                       string.digits, k=20)))
