@@ -50,13 +50,13 @@ QVariant SubmodelProxyModel::data(const QModelIndex &index, int role) const
         context->setContextProperty(QStringLiteral("submodel"), submodel);
 
         QObject* instance = m_delegateModel->create(context);
-
         instance->setParent(submodelObj);
 
-        submodelObj->setProperty(attachementPropertyName,
-                                 QVariant::fromValue(QPointer(instance)));
+        QVariant wrappedInstance = QVariant::fromValue(instance);
 
-        return QVariant::fromValue(instance);
+        submodelObj->setProperty(attachementPropertyName, wrappedInstance);
+
+        return QVariant::fromValue(wrappedInstance);
     }
 
     return QIdentityProxyModel::data(index, role);
