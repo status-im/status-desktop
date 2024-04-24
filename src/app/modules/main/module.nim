@@ -1546,10 +1546,11 @@ proc runStartUsingKeycardForProfilePopup[T](self: Module[T]) =
 ################################################################################
 
 method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
+  let keyUid = singletonInstance.userProfile.getKeyUid()
   let migrationNeeded = self.settingsService.getProfileMigrationNeeded()
-  let profileKeypair = self.walletAccountService.getKeypairByKeyUid(singletonInstance.userProfile.getKeyUid())
+  let profileKeypair = self.walletAccountService.getKeypairByKeyUid(keyUid)
   if profileKeypair.isNil:
-    info "quit the app because of unresolved profile keypair"
+    info "quit the app because of unresolved profile keypair", keyUid
     quit() # quit the app
   if not migrationNeeded:
     if not self.keycardSharedModule.isNil:

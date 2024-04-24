@@ -20,6 +20,7 @@ QtObject {
     readonly property string localPairingInstallationId: startupModuleInst ? startupModuleInst.localPairingInstallationId : ""
     readonly property string localPairingInstallationName: startupModuleInst ? startupModuleInst.localPairingInstallationName : ""
     readonly property string localPairingInstallationDeviceType: startupModuleInst ? startupModuleInst.localPairingInstallationDeviceType : ""
+    readonly property bool notificationsNeedsEnable: startupModuleInst ? startupModuleInst.notificationsNeedsEnable : false
 
     function backAction() {
         root.currentStartupState.backAction()

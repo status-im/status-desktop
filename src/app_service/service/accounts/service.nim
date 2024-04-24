@@ -1,9 +1,13 @@
-import NimQml, Tables, os, json, stew/shims/strformat, sequtils, strutils, uuids, times
+import NimQml, Tables, os, json, stew/shims/strformat, sequtils, strutils, uuids, times, std/options
 import json_serialization, chronicles
 
 import ../../../app/global/global_singleton
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
+import ./dto/login_request
+import ./dto/create_account_request
+import ./dto/restore_account_request
+
 from ../keycard/service import KeycardEvent, KeyDetails
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
@@ -29,7 +33,7 @@ const DEFAULT_WALLET_ACCOUNT_NAME = "Account 1"
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET, PATH_ENCRYPTION]
 const ACCOUNT_ALREADY_EXISTS_ERROR* =  "account already exists"
 const KDF_ITERATIONS* {.intdefine.} = 256_000
-const DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT = "primary" # to match `CustomizationColor` on the go side
+const DEFAULT_CUSTOMIZATION_COLOR = "primary"  # to match `CustomizationColor` on the go side
 
 # allow runtime override via environment variable. core contributors can set a
 # specific peer to set for testing messaging and mailserver functionality with squish.
@@ -66,8 +70,6 @@ QtObject:
     defaultWalletEmoji: string
     tmpAccount: AccountDto
     tmpHashedPassword: string
-    tmpThumbnailImage: string
-    tmpLargeImage: string
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -81,8 +83,16 @@ QtObject:
     result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
     result.defaultWalletEmoji = ""
 
+  proc setLocalAccountSettingsFile(self: Service) =
+    if self.loggedInAccount.isValid():
+      singletonInstance.localAccountSettings.setFileName(self.loggedInAccount.name)
+
   proc getLoggedInAccount*(self: Service): AccountDto =
     return self.loggedInAccount
+
+  proc setLoggedInAccount*(self: Service, account: AccountDto) =
+    self.loggedInAccount = account
+    self.setLocalAccountSettingsFile()
 
   proc updateLoggedInAccount*(self: Service, displayName: string, images: seq[Image]) =
     self.loggedInAccount.name = displayName
@@ -125,12 +135,12 @@ QtObject:
     self.loggedInAccount = AccountDto()
     self.importedAccount = GeneratedAccountDto()
 
-  proc validateMnemonic*(self: Service, mnemonic: string): string =
+  proc validateMnemonic*(self: Service, mnemonic: string): (string, string) =
     try:
       let response = status_general.validateMnemonic(mnemonic)
       if response.result.contains("error"):
-        return response.result["error"].getStr
-      return ""
+        return ("", response.result["error"].getStr)
+      return (response.result["keyUID"].getStr, "")
     except Exception as e:
       error "error: ", procName="validateMnemonic", errName = e.name, errDesription = e.msg
 
@@ -153,47 +163,7 @@ QtObject:
       error "error: ", procName="openedAccounts", errName = e.name, errDesription = e.msg
 
   proc openedAccountsContainsKeyUid*(self: Service, keyUid: string): bool =
-    let openedAccounts = self.openedAccounts()
-    for acc in openedAccounts:
-      if acc.keyUid == keyUid:
-        return true
-    return false
-
-  proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
-    paths: seq[string]): DerivedAccounts =
-    let response = status_account.storeDerivedAccounts(accountId, hashedPassword, paths)
-
-    if response.result.contains("error"):
-      raise newException(Exception, response.result["error"].getStr)
-
-    result = toDerivedAccounts(response.result)
-
-  proc storeAccount(self: Service, accountId, hashedPassword: string): GeneratedAccountDto =
-    let response = status_account.storeAccounts(accountId, hashedPassword)
-
-    if response.result.contains("error"):
-      raise newException(Exception, response.result["error"].getStr)
-
-    result = toGeneratedAccountDto(response.result)
-
-  proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
-    subaccounts, settings, config: JsonNode): AccountDto =
-    try:
-      let response = status_account.saveAccountAndLogin(hashedPassword, account, subaccounts, settings, config)
-
-      var error = "response doesn't contain \"error\""
-      if(response.result.contains("error")):
-        error = response.result["error"].getStr
-        if error == "":
-          debug "Account saved succesfully"
-          result = toAccountDto(account)
-          return
-
-      let err = "Error saving account and logging in: " & error
-      error "error: ", procName="saveAccountAndLogin", errDesription = err
-
-    except Exception as e:
-      error "error: ", procName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
+    return (keyUID in self.openedAccounts().mapIt(it.keyUid))
 
   proc saveKeycardAccountAndLogin(self: Service, chatKey, password: string, account, subaccounts, settings,
     config: JsonNode): AccountDto =
@@ -214,31 +184,13 @@ QtObject:
     except Exception as e:
       error "error: ", procName="saveKeycardAccountAndLogin", errName = e.name, errDesription = e.msg
 
-  proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string): JsonNode =
-    result = %* {
-      "name": if displayName == "": account.alias else: displayName,
-      "address": account.address,
-      "key-uid": account.keyUid,
-      "keycard-pairing": nil,
-      "kdfIterations": KDF_ITERATIONS,
-    }
-
-  proc getAccountDataForAccountId(self: Service, accountId: string, displayName: string): JsonNode =
-    for acc in self.generatedAccounts:
-      if(acc.id == accountId):
-        return self.prepareAccountJsonObject(acc, displayName)
-
-    if(self.importedAccount.isValid()):
-      if(self.importedAccount.id == accountId):
-        return self.prepareAccountJsonObject(self.importedAccount, displayName)
-
   proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string):
     JsonNode =
     result = %* [
       {
         "public-key": account.derivedAccounts.defaultWallet.publicKey,
         "address": account.derivedAccounts.defaultWallet.address,
-        "colorId": DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT,
+        "colorId": DEFAULT_CUSTOMIZATION_COLOR,
         "wallet": true,
         "path": PATH_DEFAULT_WALLET,
         "name": DEFAULT_WALLET_ACCOUNT_NAME,
@@ -312,6 +264,7 @@ QtObject:
       if(self.importedAccount.id == accountId):
         return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName, withoutMnemonic)
 
+  # TODO: Remove after https://github.com/status-im/status-go/issues/4977
   proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
     let fleet = Fleet.ShardsTest
     let dnsDiscoveryURL = "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.test.shards.nodes.status.im"
@@ -352,6 +305,7 @@ QtObject:
     result["KeycardPairingDataFile"] = newJString(main_constants.KEYCARDPAIRINGDATAFILE)
     result["ProcessBackedupMessages"] = newJBool(recoverAccount)
 
+  # TODO: Remove after https://github.com/status-im/status-go/issues/4977
   proc getLoginNodeConfig(self: Service): JsonNode =
     # To create appropriate NodeConfig for Login we set only params that maybe be set via env variables or cli flags
     result = %*{}
@@ -394,10 +348,6 @@ QtObject:
     if STATUS_PORT != 0:
       result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
 
-  proc setLocalAccountSettingsFile(self: Service) =
-    if self.getLoggedInAccount.isValid():
-      singletonInstance.localAccountSettings.setFileName(self.getLoggedInAccount.name)
-
   proc addKeycardDetails(self: Service, kcInstance: string, settingsJson: var JsonNode, accountData: var JsonNode) =
     let keycardPairingJsonString = readFile(main_constants.KEYCARDPAIRINGDATAFILE)
     let keycardPairingJsonObj = keycardPairingJsonString.parseJSON
@@ -412,38 +362,87 @@ QtObject:
       if not accountData.isNil:
         accountData["keycard-pairing"] = kcDataObj{"key"}
 
-  proc setupAccount*(self: Service, accountId, password, displayName: string, removeMnemonic: bool, recoverAccount: bool = false): string =
+  proc buildWalletSecrets(self: Service): WalletSecretsConfig =
+    return WalletSecretsConfig(
+      poktToken: POKT_TOKEN_RESOLVED,
+      infuraToken: INFURA_TOKEN_RESOLVED,
+      infuraSecret: INFURA_TOKEN_SECRET_RESOLVED,
+      openseaApiKey: OPENSEA_API_KEY_RESOLVED,
+      raribleMainnetApiKey: RARIBLE_MAINNET_API_KEY_RESOLVED,
+      raribleTestnetApiKey: RARIBLE_TESTNET_API_KEY_RESOLVED,
+      alchemyEthereumMainnetToken: ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
+      alchemyEthereumGoerliToken: ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
+      alchemyEthereumSepoliaToken: ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,
+      alchemyArbitrumMainnetToken: ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
+      alchemyArbitrumGoerliToken: ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
+      alchemyArbitrumSepoliaToken: ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
+      alchemyOptimismMainnetToken: ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
+      alchemyOptimismGoerliToken: ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
+      alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
+    )
+
+  proc buildCreateAccountRequest(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
+    return CreateAccountRequest(
+        backupDisabledDataDir: main_constants.STATUSGODIR,
+        kdfIterations: KDF_ITERATIONS,
+        password: hashPassword(password),
+        displayName: displayName,
+        imagePath: imagePath,
+        imageCropRectangle: imageCropRectangle,
+        customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
+        emoji: self.defaultWalletEmoji,
+        logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
+        wakuV2LightClient: false,
+        previewPrivacy: true,
+        torrentConfigEnabled: some(true),
+        torrentConfigPort: some(TORRENT_CONFIG_PORT),
+        walletSecretsConfig: self.buildWalletSecrets(),
+      )
+
+  proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
     try:
-      let installationId = $genUUID()
-      var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
-      self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr) # must be called before `getDefaultNodeConfig`
-      let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
-      var settingsJson = self.getAccountSettings(accountId, installationId, displayName, removeMnemonic)
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId, recoverAccount)
+      let request = self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
+      let response = status_account.createAccountAndLogin(request)
+      
+      if not response.result.contains("error"):
+        error "invalid status-go response", response
+        return "invalid response: no error field found"
 
-      if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
-        nodeConfigJson.isNil):
-        let description = "at least one json object is not prepared well"
-        error "error: ", procName="setupAccount", errDesription = description
-        return description
-
-      let hashedPassword = hashPassword(password)
-      discard self.storeAccount(accountId, hashedPassword)
-      discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
-      self.loggedInAccount = self.saveAccountAndLogin(hashedPassword,
-        accountDataJson,
-        subaccountDataJson,
-        settingsJson,
-        nodeConfigJson)
-
-      self.setLocalAccountSettingsFile()
-
-      if self.getLoggedInAccount.isValid():
+      let error = response.result["error"].getStr
+      if error == "":
+        debug "Account saved succesfully"
         return ""
-      else:
-        return "logged in account is not valid"
+      
+      error "createAccountAndLogin status-go error: ", error
+      return "createAccountAndLogin failed: " & error
+
     except Exception as e:
-      error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
+      error "failed to create account or login", procName="createAccountAndLogin", errName = e.name, errDesription = e.msg
+      return e.msg
+
+  proc importAccountAndLogin*(self: Service, mnemonic: string, password: string, recoverAccount: bool, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
+    try:
+      let request = RestoreAccountRequest(
+        mnemonic: mnemonic,
+        fetchBackup: recoverAccount,
+        createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
+      )
+      let response = status_account.restoreAccountAndLogin(request)
+
+      if not response.result.contains("error"):
+        error "invalid status-go response", response
+        return "invalid response: no error field found"
+
+      let error = response.result["error"].getStr
+      if error == "":
+        debug "Account saved succesfully"
+        return ""
+
+      error "importAccountAndLogin status-go error: ", error
+      return "importAccountAndLogin failed: " & error
+
+    except Exception as e:
+      error "failed to import account or login", procName="importAccountAndLogin", errName = e.name, errDesription = e.msg
       return e.msg
 
   proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool,
@@ -491,7 +490,7 @@ QtObject:
         {
           "public-key": walletPublicKey,
           "address": walletAddress,
-          "colorId": DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT,
+          "colorId": DEFAULT_CUSTOMIZATION_COLOR,
           "wallet": true,
           "path": PATH_DEFAULT_WALLET,
           "name": DEFAULT_WALLET_ACCOUNT_NAME,
@@ -658,35 +657,28 @@ QtObject:
     except Exception as e:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
-  proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
-    let nodeConfigJson = self.getLoginNodeConfig()
-    let response = status_account.login(
-      account.name,
-      account.keyUid,
-      account.kdfIterations,
-      hashedPassword,
-      thumbnailImage,
-      largeImage,
-      $nodeConfigJson
+  proc doLogin(self: Service, account: AccountDto, passwordHash: string) =
+    var request = LoginAccountRequest(
+      keyUid: account.keyUid,
+      kdfIterations: account.kdfIterations,
+      passwordHash: passwordHash,
+      walletSecretsConfig: self.buildWalletSecrets(),
     )
+
+    if main_constants.runtimeLogLevelSet():
+      request.runtimeLogLevel = toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)
+
+    let response = status_account.loginAccount(request)
+
     if response.result{"error"}.getStr != "":
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr))
       return
 
-    debug "Account logged in"
-    self.loggedInAccount = account
+    debug "account logged in"
     self.setLocalAccountSettingsFile()
 
   proc login*(self: Service, account: AccountDto, hashedPassword: string) =
     try:
-      var thumbnailImage: string
-      var largeImage: string
-      for img in account.images:
-        if(img.imgType == "thumbnail"):
-          thumbnailImage = img.uri
-        elif(img.imgType == "large"):
-          largeImage = img.uri
-
       let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
       if not dirExists(keyStoreDir):
         os.createDir(keyStoreDir)
@@ -698,11 +690,11 @@ QtObject:
 
       let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPasswordToUpperCase(hashedPassword))
       if isOldHashPassword:
+        debug "database reencryption scheduled"
+
         # Save tmp properties so that we can login after the timer
         self.tmpAccount = account
         self.tmpHashedPassword = hashedPassword
-        self.tmpThumbnailImage = thumbnailImage
-        self.tmpLargeImage = largeImage
 
         # Start a 1 second timer for the loading screen to appear
         let arg = TimerTaskArg(
@@ -714,24 +706,25 @@ QtObject:
         self.threadpool.start(arg)
         return
 
-      self.doLogin(account, hashedPassword, thumbnailImage, largeImage)
+      self.doLogin(account, hashedPassword)
+
     except Exception as e:
-      error "error: ", procName="login", errName = e.name, errDesription = e.msg
+      error "login failed", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: e.msg))
 
   proc onWaitForReencryptionTimeout(self: Service, response: string) {.slot.} =
+    debug "starting database reencryption"
+
     # Reencryption (can freeze and take up to 30 minutes)
     let oldHashedPassword = hashedPasswordToUpperCase(self.tmpHashedPassword)
     discard status_privacy.changeDatabasePassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
 
     # Normal login after reencryption
-    self.doLogin(self.tmpAccount, self.tmpHashedPassword, self.tmpThumbnailImage, self.tmpLargeImage)
+    self.doLogin(self.tmpAccount, self.tmpHashedPassword)
 
     # Clear out the temp properties
     self.tmpAccount = AccountDto()
     self.tmpHashedPassword = ""
-    self.tmpThumbnailImage = ""
-    self.tmpLargeImage = ""
 
   proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string =
     try:
@@ -758,7 +751,7 @@ QtObject:
           self.setLocalAccountSettingsFile()
           return
     except Exception as e:
-      error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
+      error "keycard login failed", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
       return e.msg
 
   proc convertRegularProfileKeypairToKeycard*(self: Service, keycardUid, currentPassword: string, newPassword: string) =

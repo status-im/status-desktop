@@ -22,6 +22,11 @@ Item {
 
         property int counter: Constants.onboarding.profileFetching.timeout
 
+        // NOTE: This block can be removed when fetching backup is optimized
+        // https://github.com/status-im/status-go/issues/5022
+        readonly property bool minimumWaitingTimePassed: (Constants.onboarding.profileFetching.timeout - counter) > 30000
+        readonly property bool fetching: root.startupStore.currentStartupState.stateType === Constants.startupState.profileFetching || !d.minimumWaitingTimePassed
+
         readonly property string fetchingDataText: qsTr("Fetching data...")
         readonly property string continueText: qsTr("Continue")
     }
@@ -147,12 +152,12 @@ Item {
             id: button
             Layout.alignment: Qt.AlignHCenter
             focus: true
-            enabled: root.state !== Constants.startupState.profileFetching
+            enabled: !d.fetching
 
             Timer {
                 id: timer
                 interval: 1000
-                running: root.state === Constants.startupState.profileFetching
+                running: d.fetching
                 repeat: true
                 onTriggered: {
                     d.counter = d.counter - 1000 // decrease 1000 ms
@@ -176,7 +181,7 @@ Item {
     states: [
         State {
             name: Constants.startupState.profileFetching
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.profileFetching
+            when: d.fetching
             PropertyChanges {
                 target: title
                 text: d.fetchingDataText

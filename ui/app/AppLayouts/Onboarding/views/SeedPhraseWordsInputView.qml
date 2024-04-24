@@ -174,7 +174,7 @@ Item {
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
             enabled: d.allEntriesValid
-            text: qsTr("Finish")
+            text: qsTr("Next")
             onClicked: {
                 root.startupStore.doPrimaryAction()
             }

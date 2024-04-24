@@ -9,4 +9,4 @@ proc delete*(self: NotificationState) =
   self.State.delete
 
 method getNextPrimaryState*(self: NotificationState, controller: Controller): State =
-  return createState(StateType.Welcome, FlowType.General, nil)
+  controller.proceedToApp()

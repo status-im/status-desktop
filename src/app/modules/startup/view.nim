@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, chronicles
 import io_interface
 import selected_login_account
 import internal/[state, state_wrapper]
@@ -127,6 +127,7 @@ QtObject:
   proc setAppState*(self: View, state: AppState) =
     if(self.appState == state):
       return
+    debug "app state changed ", state
     self.appState = state
     self.appStateChanged(self.appState.int)
   QtProperty[int] appState:
@@ -206,10 +207,8 @@ QtObject:
   proc validMnemonic*(self: View, mnemonic: string): bool {.slot.} =
     return self.delegate.validMnemonic(mnemonic)
 
-  proc accountImportSuccess*(self: View) {.signal.}
   proc importAccountSuccess*(self: View) =
     self.importedAccountChanged()
-    self.accountImportSuccess()
 
   proc selectedLoginAccountChanged*(self: View) {.signal.}
   proc getSelectedLoginAccount(self: View): QVariant {.slot.} =
@@ -390,3 +389,30 @@ QtObject:
 
   proc removeMockedKeycardAction*(self: View) {.slot.} =
     self.delegate.removeMockedKeycardAction()
+
+  proc getNotificationsNeedsEnable*(self: View): bool {.slot.} =
+    return self.delegate.notificationsNeedsEnable()
+  QtProperty[bool] notificationsNeedsEnable:
+    read = getNotificationsNeedsEnable
+
+  proc getLoggedInAccountPublicKey*(self: View): string {.slot.} =
+    return self.delegate.getLoggedInAccountPublicKey()
+  proc loggedInAccountChanged*(self: View) {.signal.}
+  QtProperty[string] loggedInAccountPublicKey:
+    read = getLoggedInAccountPublicKey
+    notify = loggedInAccountChanged
+
+  proc getLoggedInAccountDisplayName*(self: View): string {.slot.} =
+    return self.delegate.getLoggedInAccountDisplayName()
+  QtProperty[string] loggedInAccountDisplayName:
+    read = getLoggedInAccountDisplayName
+    notify = loggedInAccountChanged
+
+  proc getLoggedInAccountImage*(self: View): string {.slot.} =
+    return self.delegate.getLoggedInAccountImage()
+  QtProperty[string] loggedInAccountImage:
+    read = getLoggedInAccountImage
+    notify = loggedInAccountChanged
+
+  proc notifyLoggedInAccountChanged*(self: View) =
+    self.loggedInAccountChanged()

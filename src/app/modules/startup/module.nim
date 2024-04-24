@@ -21,6 +21,7 @@ import app_service/service/general/service as general_service
 import app_service/service/profile/service as profile_service
 import app_service/service/keycard/service as keycard_service
 import app_service/service/devices/service as devices_service
+from app_service/service/settings/dto/settings import SettingsDto
 
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 
@@ -124,11 +125,8 @@ method load*[T](self: Module[T]) =
     accounts.add(gen_acc_item.initItem(acc.id, acc.alias, acc.address, acc.derivedAccounts.whisper.publicKey, acc.keyUid))
   self.view.setGeneratedAccountList(accounts)
 
-  if(self.controller.shouldStartWithOnboardingScreen()):
-    if main_constants.IS_MACOS:
-      self.view.setCurrentStartupState(newNotificationState(state.FlowType.General, nil))
-    else:
-      self.view.setCurrentStartupState(newWelcomeState(state.FlowType.General, nil))
+  if self.controller.shouldStartWithOnboardingScreen():
+    self.view.setCurrentStartupState(newWelcomeState(state.FlowType.General, nil))
   else:
     let openedAccounts = self.controller.getOpenedAccounts()
     var items: seq[login_acc_item.Item]
@@ -349,7 +347,8 @@ method checkFetchingStatusAndProceed*[T](self: Module[T]) =
   if currStateObj.isNil:
     error "cannot resolve current state in order to resolve next state"
     return
-  self.view.setCurrentStartupState(newProfileFetchingAnnouncementState(currStateObj.flowType(), nil))
+  let nextState = newProfileFetchingAnnouncementState(currStateObj.flowType(), nil)
+  self.view.setCurrentStartupState(nextState)
 
 method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: uint64, section: string,
   totalMessages: int, receivedMessageAtPosition: int) =
@@ -374,25 +373,9 @@ method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: 
   if self.view.fetchingDataModel().allMessagesLoaded():
     self.view.setCurrentStartupState(newProfileFetchingSuccessState(currStateObj.flowType(), nil))
 
-proc prepareAndInitFetchingData[T](self: Module[T]) =
+method prepareAndInitFetchingData*[T](self: Module[T]) =
   # fetching data from waku starts when messenger starts
   self.view.createAndInitFetchingDataModel(listOfEntitiesWeExpectToBeSynced)
-
-proc delayStartingApp[T](self: Module[T]) =
-  ## In the following 2 cases:
-  ## - FlowType.FirstRunOldUserImportSeedPhrase
-  ## - FlowType.FirstRunOldUserKeycardImport
-  ## we want to delay app start just to be sure that messages from waku will be received
-  self.controller.connectToTimeoutEventAndStratTimer(timeoutInMilliseconds = 30000) # delay for 30 seconds
-
-method startAppAfterDelay*[T](self: Module[T]) =
-  if not self.view.fetchingDataModel().allMessagesLoaded():
-    let currStateObj = self.view.currentStartupStateObj()
-    if currStateObj.isNil:
-      error "cannot determine current startup state", procName="startAppAfterDelay"
-      quit() # quit the app
-    self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
-  self.moveToStartupState()
 
 proc logoutAndDisplayError[T](self: Module[T], error: string, errType: StartupErrorType) =
   self.delegate.logout()
@@ -418,35 +401,13 @@ method onProfileConverted*[T](self: Module[T], success: bool) =
   self.moveToStartupState()
   self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
 
-method onNodeLogin*[T](self: Module[T], error: string) =
+method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, settings: SettingsDto) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot determine current startup state", procName="onNodeLogin"
     quit() # quit the app
 
-  if error.len == 0:
-    if currStateObj.flowType() == state.FlowType.FirstRunOldUserImportSeedPhrase or
-      currStateObj.flowType() == state.FlowType.FirstRunOldUserKeycardImport:
-        self.prepareAndInitFetchingData()
-        self.controller.connectToFetchingFromWakuEvents()
-        self.delayStartingApp()
-        let err = self.delegate.userLoggedIn()
-        if err.len > 0:
-          self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
-          return
-    elif currStateObj.flowType() == state.FlowType.LostKeycardConvertToRegularAccount:
-      self.controller.convertKeycardProfileKeypairToRegular()
-      return
-    else:
-      let err = self.delegate.userLoggedIn()
-      if err.len > 0:
-        self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
-        return
-      if currStateObj.flowType() != FlowType.AppLogin:
-        let images = self.controller.storeIdentityImage()
-        self.accountsService.updateLoggedInAccount(self.getDisplayName, images)
-      self.finishAppLoading()
-  else:
+  if error.len != 0:
     self.moveToStartupState()
     if currStateObj.flowType() == state.FlowType.AppLogin:
       if self.controller.isSelectedLoginAccountKeycardAccount():
@@ -456,6 +417,51 @@ method onNodeLogin*[T](self: Module[T], error: string) =
     else:
       self.emitStartupError(error, StartupErrorType.SetupAccError)
     error "login error", methodName="onNodeLogin", errDesription =error
+    return
+
+  self.controller.setLoggedInAccount(account)
+  self.accountsService.updateLoggedInAccount(account.name, account.images)
+  self.controller.setLoggedInProfile(settings.publicKey)
+  self.view.notifyLoggedInAccountChanged()
+
+  if currStateObj.flowType() == state.FlowType.FirstRunOldUserImportSeedPhrase or
+    currStateObj.flowType() == state.FlowType.FirstRunOldUserKeycardImport:
+    let err = self.delegate.userLoggedIn()
+    if err.len > 0:
+      self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
+      return
+    return
+
+  if currStateObj.flowType() == state.FlowType.LostKeycardConvertToRegularAccount:
+    self.controller.convertKeycardProfileKeypairToRegular()
+    return
+
+  let err = self.delegate.userLoggedIn()
+  if err.len > 0:
+    self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
+    return
+
+  if currStateObj.flowType() == FlowType.AppLogin:
+    self.finishAppLoading()
+    return
+
+  # TODO: Remove this block when implemented https://github.com/status-im/status-go/issues/4977
+  if currStateObj.flowType() == FlowType.FirstRunNewUserNewKeycardKeys or
+    currStateObj.flowType() == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+    let images = self.controller.storeIdentityImage()
+    self.accountsService.updateLoggedInAccount(self.getDisplayName, images)
+    self.view.notifyLoggedInAccountChanged()
+
+  var nextState: state.State
+  if currStateObj.flowType() == FlowType.LostKeycardReplacement:
+    if not self.controller.notificationsNeedsEnable():
+      self.finishAppLoading()
+      return
+    nextState = newNotificationState(currStateObj.flowType(), nil)
+  else:
+    nextState = newUserProfileChatKeyState(currStateObj.flowType(), nil)
+  self.view.setCurrentStartupState(nextState)
+  self.moveToStartupState()
 
 method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent) =
   if self.isSharedKeycardModuleFlowRunning():
@@ -584,5 +590,20 @@ method insertMockedKeycardAction*[T](self: Module[T], cardIndex: int) =
 
 method removeMockedKeycardAction*[T](self: Module[T]) =
   self.keycardService.removeMockedKeycardAction()
+
+method notificationsNeedsEnable*[T](self: Module[T]): bool = 
+  return self.controller.notificationsNeedsEnable()
+
+method getLoggedInAccountPublicKey*[T](self: Module[T]): string =
+  return self.controller.getLoggedInAccountPublicKey()
+
+method getLoggedInAccountDisplayName*[T](self: Module[T]): string =
+  return self.controller.getLoggedInAccountDisplayName()
+
+method getLoggedInAccountImage*[T](self: Module[T]): string =
+  return self.controller.getLoggedInAccountImage()
+
+method notifyLoggedInAccountChanged*[T](self: Module[T]) =
+  self.view.notifyLoggedInAccountChanged()
 
 {.pop.}

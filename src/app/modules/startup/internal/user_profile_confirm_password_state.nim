@@ -9,23 +9,21 @@ proc delete*(self: UserProfileConfirmPasswordState) =
   self.State.delete
 
 method getNextPrimaryState*(self: UserProfileConfirmPasswordState, controller: Controller): State =
-  if not main_constants.IS_MACOS:
+  if not main_constants.SUPPORTS_FINGERPRINT:
     return nil
   return createState(StateType.Biometrics, self.flowType, self)
 
 method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller: Controller) =
-  if main_constants.IS_MACOS:
+  if main_constants.SUPPORTS_FINGERPRINT:
     return
   let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeys:
-    controller.storeGeneratedAccountAndLogin(storeToKeychain)
+    controller.createAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
-    controller.storeImportedAccountAndLogin(storeToKeychain)
+    controller.importAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
-    controller.storeImportedAccountAndLogin(storeToKeychain, recoverAccount = true)
+    controller.importAccountAndLogin(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.LostKeycardConvertToRegularAccount:
     controller.loginAccountKeycardUsingSeedPhrase(storeToKeychain)
-
-  

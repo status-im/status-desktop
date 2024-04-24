@@ -51,8 +51,10 @@ OnboardingBasePage {
                 return keysMainViewComponent
 
             case Constants.startupState.userProfileCreate:
-            case Constants.startupState.userProfileChatKey:
                 return insertDetailsViewComponent
+
+            case Constants.startupState.userProfileChatKey:
+                return profileChatKeyViewComponent
 
             case Constants.startupState.userProfileCreatePassword:
                 return createPasswordViewComponent
@@ -237,6 +239,13 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
     Component {
         id: insertDetailsViewComponent
         InsertDetailsView {
+            startupStore: root.startupStore
+        }
+    }
+
+    Component {
+        id: profileChatKeyViewComponent
+        ProfileChatKeyView {
             startupStore: root.startupStore
         }
     }

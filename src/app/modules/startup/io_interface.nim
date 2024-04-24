@@ -3,6 +3,7 @@ import ../../../app_service/service/accounts/service as accounts_service
 import models/login_account_item as login_acc_item
 from ../../../app_service/service/keycard/service import KeycardEvent, KeyDetails
 from ../../../app_service/service/devices/dto/local_pairing_status import LocalPairingStatus
+from ../../../app_service/service/settings/dto/settings import SettingsDto
 
 const UNIQUE_STARTUP_MODULE_IDENTIFIER* = "SartupModule"
 
@@ -115,7 +116,7 @@ method importAccountSuccess*(self: AccessInterface) {.base.} =
 method setSelectedLoginAccount*(self: AccessInterface, item: login_acc_item.Item) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onNodeLogin*(self: AccessInterface, error: string) {.base.} =
+method onNodeLogin*(self: AccessInterface, error: string, account: AccountDto, settings: SettingsDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onProfileConverted*(self: AccessInterface, success: bool) {.base.} =
@@ -171,13 +172,13 @@ method onFetchingFromWakuMessageReceived*(self: AccessInterface, backedUpMsgCloc
   totalMessages: int, loadedMessages: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method prepareAndInitFetchingData*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method finishAppLoading*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkFetchingStatusAndProceed*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method startAppAfterDelay*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getConnectionString*(self: AccessInterface): string {.base} =
@@ -213,6 +214,21 @@ method insertMockedKeycardAction*(self: AccessInterface, cardIndex: int) {.base.
   raise newException(ValueError, "No implementation available")
 
 method removeMockedKeycardAction*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method notificationsNeedsEnable*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getLoggedInAccountPublicKey*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getLoggedInAccountDisplayName*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getLoggedInAccountImage*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method notifyLoggedInAccountChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
