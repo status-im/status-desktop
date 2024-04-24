@@ -99,9 +99,15 @@ class LeftPanel(QObject):
         return self.user_badge_color == '#4ebc60'
 
     @allure.step('Open community portal')
-    def open_communities_portal(self) -> CommunitiesPortal:
+    def open_communities_portal(self, attempts: int = 2) -> CommunitiesPortal:
         self._communities_portal_button.click()
-        return CommunitiesPortal().wait_until_appears()
+        try:
+            return CommunitiesPortal().wait_until_appears()
+        except Exception as ex:
+            if attempts:
+                self.open_communities_portal(attempts - 1)
+            else:
+                raise ex
 
     def _get_community(self, name: str):
         community_names = []
