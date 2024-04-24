@@ -1,5 +1,9 @@
+import time
+
 import allure
 
+import configs
+import driver
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
@@ -17,11 +21,11 @@ class AddSavedAddressPopup(BasePopup):
         self._add_networks_selector = QObject(names.mainWallet_Saved_Addreses_Popup_Add_Network_Selector_Tag)
         self._add_networks_button = Button(names.mainWallet_Saved_Addreses_Popup_Add_Network_Button)
         self._ethereum_mainnet_checkbox = CheckBox(
-            names.mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Mainnet_checkbox)
+            names.networkSelectionCheckbox_Ethereum_Mainnet_StatusCheckBox)
         self._optimism_mainnet_checkbox = CheckBox(
-            names.mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Optimism_checkbox)
+            names.networkSelectionCheckbox_Optimism_StatusCheckBox)
         self._arbitrum_mainnet_checkbox = CheckBox(
-            names.mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Arbitrum_checkbox)
+            names.networkSelectionCheckbox_Arbitrum_StatusCheckBox)
         self._ethereum_mainnet_network_tag = QObject(
             names.mainWallet_Saved_Addresses_Popup_Network_Selector_Mainnet_network_tag)
         self._optimism_mainnet_network_tag = QObject(
@@ -31,7 +35,7 @@ class AddSavedAddressPopup(BasePopup):
 
     @allure.step('Set ethereum mainnet network checkbox')
     def set_ethereum_mainnet_network(self, value: bool):
-        assert self._ethereum_mainnet_checkbox.exists
+        assert driver.waitFor(lambda: self._ethereum_mainnet_checkbox.exists, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         self._ethereum_mainnet_checkbox.set(value)
         return self
 
@@ -77,6 +81,7 @@ class AddressPopup(AddSavedAddressPopup):
         if address.startswith("0x"):
             self.verify_network_selector_enabled()
             self._add_networks_selector.click()
+            time.sleep(0.1)
             self.set_ethereum_mainnet_network(True)
             self.set_optimism_mainnet_network(True)
             self.set_arbitrum_mainnet_network(True)

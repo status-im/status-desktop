@@ -81,7 +81,7 @@ class AccountPopup(BasePopup):
     @allure.step('Set emoji for account')
     def set_emoji(self, value: str):
         self._emoji_button.click()
-        EmojiPopup().wait_until_appears().select(value)
+        EmojiPopup().wait_until_appears(timeout_msec=10000).select(value)
         return self
 
     @allure.step('Set eth address for account added from context menu')

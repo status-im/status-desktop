@@ -129,7 +129,8 @@ def test_switch_state_to_offline_online_automatic(multiple_instances):
             aut_one.attach()
             main_screen.prepare()
             time.sleep(2)
-            assert community_screen.right_panel.member_is_online(1)
+            assert driver.waitFor(lambda: community_screen.right_panel.member_is_online(1),
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             main_screen.hide()
 
         with step(f'User {user_two.name}, switch state to automatic'):

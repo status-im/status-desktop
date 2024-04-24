@@ -13,7 +13,8 @@ from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.picture_edit_popup import shift_image, PictureEditPopup
 from gui.components.splash_screen import SplashScreen
-from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, KeysView
+from gui.screens.onboarding import WelcomeToStatusView, BiometricsView, KeysView, \
+    YourEmojihashAndIdenticonRingView
 
 pytestmark = marks
 
@@ -21,8 +22,6 @@ pytestmark = marks
 @pytest.fixture
 def keys_screen(main_window) -> KeysView:
     with step('Open Generate new keys view'):
-        if configs.system.IS_MAC:
-            AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
         welcome_screen = WelcomeToStatusView().wait_until_appears()
         return welcome_screen.get_keys()
@@ -47,8 +46,8 @@ def keys_screen(main_window) -> KeysView:
         5,
         shift_image(0, 1000, 1000, 0))
 ])
-def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen, user_name: str, password, user_image: str, zoom: int, shift):
-
+def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen, user_name: str, password,
+                                                  user_image: str, zoom: int, shift):
     with step('Click generate new keys and open profile view'):
         profile_view = keys_screen.generate_new_keys()
         assert profile_view.is_next_button_enabled is False, \
@@ -66,18 +65,11 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         PictureEditPopup().set_zoom_shift_for_picture(zoom=zoom, shift=shift)
         # TODO: find a way to verify the picture is there (changed to the custom one)
         assert profile_view.get_profile_image is not None, f'Profile picture was not set / applied'
-        assert profile_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
         assert profile_view.is_next_button_enabled is True, \
             f'Next button is not enabled on profile screen'
 
-    with step('Open emojihash and identicon ring profile screen and capture the details'):
-        details_view = profile_view.next()
-        chat_key = details_view.get_chat_key
-        emoji_hash_public_key = details_view.get_emoji_hash
-        assert details_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
-
     with step('Open password set up view, fill in the form and click back'):
-        create_password_view = details_view.next()
+        create_password_view = profile_view.next()
         assert not create_password_view.is_create_password_button_enabled, \
             f'Create password button is enabled when it should not'
         confirm_password_view = create_password_view.create_password(password)
@@ -97,6 +89,18 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         if configs.system.IS_MAC:
             assert BiometricsView().is_touch_id_button_visible(), f"TouchID button is not found"
             BiometricsView().wait_until_appears().prefer_password()
+        SplashScreen().wait_until_appears().wait_until_hidden()
+
+    with step('Verify emojihash and identicon ring profile screen appeared and capture the details'):
+        emoji_hash_identicon_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present()
+        chat_key = emoji_hash_identicon_view.get_chat_key
+        emoji_hash_public_key = emoji_hash_identicon_view.get_emoji_hash
+        assert emoji_hash_identicon_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
+
+    with step('Click Start using Status'):
+        next_view = emoji_hash_identicon_view.next()
+        if configs.system.IS_MAC:
+            next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()

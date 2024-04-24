@@ -11,6 +11,7 @@ from constants.onboarding import OnboardingScreensHeaders
 import driver
 from constants import ColorCodes
 from driver.objects_access import walk_children
+from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.components.splash_screen import SplashScreen
@@ -29,11 +30,11 @@ class AllowNotificationsView(QObject):
 
     def __init__(self):
         super(AllowNotificationsView, self).__init__(names.mainWindow_AllowNotificationsView)
-        self._allow_button = Button(names.mainWindow_allowNotificationsOnboardingOkButton)
+        self._start_using_status_button = Button(names.mainWindow_Start_using_Status_StatusButton)
 
-    @allure.step("Allow Notifications")
-    def allow(self):
-        self._allow_button.click()
+    @allure.step("Start using Status")
+    def start_using_status(self):
+        self._start_using_status_button.click()
         self.wait_until_hidden()
 
 
@@ -260,7 +261,7 @@ class YourProfileView(OnboardingView):
     def __init__(self):
         super(YourProfileView, self).__init__(names.mainWindow_InsertDetailsView)
         self._upload_picture_button = Button(names.updatePicButton_StatusRoundButton)
-        self._profile_image = QObject(names.mainWindow_CanvasItem)
+        self._profile_image = QObject(names.mainWindow_statusRoundImage_StatusRoundedImage)
         self._display_name_text_field = TextEdit(names.mainWindow_statusBaseInput_StatusBaseInput)
         self._erros_text_label = TextLabel(names.mainWindow_errorMessage_StatusBaseText)
         self._next_button = Button(names.mainWindow_Next_StatusButton)
@@ -327,11 +328,11 @@ class YourProfileView(OnboardingView):
         file_dialog.open_file(fp)
         return PictureEditPopup().wait_until_appears()
 
-    @allure.step('Open Your Emoji hash and Identicon Ring View')
-    def next(self, attempts: int = 2) -> 'YourEmojihashAndIdenticonRingView':
+    @allure.step('Open Create Password View')
+    def next(self, attempts: int = 2) -> 'CreatePasswordView':
         self._next_button.click()
         try:
-            return YourEmojihashAndIdenticonRingView().verify_emojihash_view_present()
+            return CreatePasswordView()
         except Exception as err:
             if attempts:
                 return self.next(attempts - 1)
@@ -395,11 +396,12 @@ class YourEmojihashAndIdenticonRingView(OnboardingView):
     def is_identicon_ring_visible(self):
         return self._identicon_ring.is_visible
 
-    @allure.step('Open Create password view')
-    def next(self) -> 'CreatePasswordView':
+    @allure.step('Click next in your emojihash and identicon ring view')
+    def next(self):
         self._next_button.click()
         time.sleep(1)
-        return CreatePasswordView().wait_until_appears()
+        if configs.system.IS_MAC:
+            return AllowNotificationsView().wait_until_appears()
 
     @allure.step('Go back')
     def back(self):

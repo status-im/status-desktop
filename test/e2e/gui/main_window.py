@@ -23,7 +23,8 @@ from gui.objects_map import names
 from gui.screens.community import CommunityScreen
 from gui.screens.community_portal import CommunitiesPortal
 from gui.screens.messages import MessagesScreen
-from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, LoginView
+from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, LoginView, \
+    YourEmojihashAndIdenticonRingView
 from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
 from scripts.tools.image import Image
@@ -175,18 +176,19 @@ class MainWindow(Window):
 
     @allure.step('Sign Up user')
     def sign_up(self, user_account: UserAccount = constants.user.user_account_one):
-        if configs.system.IS_MAC:
-            AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
         wellcome_screen = WelcomeToStatusView().wait_until_appears()
         profile_view = wellcome_screen.get_keys().generate_new_keys()
         profile_view.set_display_name(user_account.name)
-        details_view = profile_view.next()
-        create_password_view = details_view.next()
+        create_password_view = profile_view.next()
         confirm_password_view = create_password_view.create_password(user_account.password)
         confirm_password_view.confirm_password(user_account.password)
         if configs.system.IS_MAC:
             BiometricsView().wait_until_appears().prefer_password()
+        SplashScreen().wait_until_appears().wait_until_hidden()
+        YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
+        if configs.system.IS_MAC:
+            AllowNotificationsView().start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
@@ -216,7 +218,7 @@ class MainWindow(Window):
         return app_screen
 
     @allure.step('Wait for notification and get text')
-    def wait_for_notification(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> list[str]:
+    def wait_for_notification(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> list[str]:
         started_at = time.monotonic()
         while True:
             try:

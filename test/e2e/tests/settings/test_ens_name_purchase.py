@@ -13,15 +13,14 @@ from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.components.wallet.send_popup import SendPopup
-from gui.screens.onboarding import KeysView, AllowNotificationsView, WelcomeToStatusView, BiometricsView
+from gui.screens.onboarding import KeysView, AllowNotificationsView, WelcomeToStatusView, BiometricsView, \
+    YourEmojihashAndIdenticonRingView
 from gui.screens.settings_ens_usernames import ENSRegisteredView
 
 pytestmark = marks
 @pytest.fixture
 def keys_screen(main_window) -> KeysView:
     with step('Open Generate new keys view'):
-        if configs.system.IS_MAC:
-            AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
         wellcome_screen = WelcomeToStatusView().wait_until_appears()
         return wellcome_screen.get_keys()
@@ -42,12 +41,15 @@ def test_ens_name_purchase(keys_screen, main_window, user_account, ens_name):
         profile_view.set_display_name(user_account.name)
 
     with step('Finalize onboarding and open main screen'):
-        details_view = profile_view.next()
-        create_password_view = details_view.next()
+        create_password_view = profile_view.next()
         confirm_password_view = create_password_view.create_password(user_account.password)
         confirm_password_view.confirm_password(user_account.password)
         if configs.system.IS_MAC:
             BiometricsView().wait_until_appears().prefer_password()
+        SplashScreen().wait_until_appears().wait_until_hidden()
+        next_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
+        if configs.system.IS_MAC:
+            next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()

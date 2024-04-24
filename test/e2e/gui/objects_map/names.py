@@ -202,10 +202,12 @@ mainWallet_Saved_Addreses_Popup_Address_Input_Edit = {"container": statusDesktop
 mainWallet_Saved_Addreses_Popup_Address_Add_Button = {"container": statusDesktop_mainWindow, "objectName": "addSavedAddress", "type": "StatusButton"}
 mainWallet_Saved_Addreses_Popup_Add_Network_Selector = {"container": statusDesktop_mainWindow, "objectName": "addSavedAddressNetworkSelector", "type": "StatusNetworkSelector", "visible": True}
 mainWallet_Saved_Addreses_Popup_Add_Network_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "addNetworkTagItemButton", "type": "StatusRoundButton", "visible": True}
+addNetworkTagItemButton_StatusRoundButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "addNetworkTagItemButton", "type": "StatusRoundButton", "visible": True}
+networkTagRectangle_Add_networks_Rectangle = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_Add networks", "type": "Rectangle", "visible": True}
 mainWallet_Saved_Addreses_Popup_Add_Network_Selector_Tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectorTag", "type": "StatusNetworkListItemTag"}
-mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Mainnet_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Mainnet", "type": "StatusCheckBox", "visible": True}
-mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Optimism_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Optimism", "type": "StatusCheckBox", "visible": True}
-mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Arbitrum_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Arbitrum", "type": "StatusCheckBox", "visible": True}
+networkSelectionCheckbox_Ethereum_Mainnet_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Mainnet", "type": "StatusCheckBox", "visible": True}
+networkSelectionCheckbox_Optimism_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Optimism", "type": "StatusCheckBox", "visible": True}
+networkSelectionCheckbox_Arbitrum_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Arbitrum", "type": "StatusCheckBox", "visible": True}
 mainWallet_Saved_Addresses_Popup_Network_Selector_Mainnet_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_eth", "type": "Rectangle", "visible": True}
 mainWallet_Saved_Addresses_Popup_Network_Selector_Optimism_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_opt", "type": "Rectangle", "visible": True}
 mainWallet_Saved_Addresses_Popup_Network_Selector_Arbitrum_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_arb", "type": "Rectangle", "visible": True}
@@ -630,7 +632,7 @@ mainWindow_onboardingBackButton_StatusRoundButton = {"container": statusDesktop_
 
 # Allow Notification View
 mainWindow_AllowNotificationsView = {"container": statusDesktop_mainWindow, "type": "AllowNotificationsView", "unnamed": 1, "visible": True}
-mainWindow_allowNotificationsOnboardingOkButton = {"container": mainWindow_AllowNotificationsView, "objectName": "allowNotificationsOnboardingOkButton", "type": "StatusButton", "visible": True}
+mainWindow_Start_using_Status_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "allowNotificationsOnboardingOkButton", "type": "StatusButton", "visible": True}
 
 # Welcome View
 mainWindow_WelcomeView = {"container": statusDesktop_mainWindow, "type": "WelcomeView", "unnamed": 1, "visible": True}
@@ -689,26 +691,26 @@ mainWindow_Plug_in_Keycard_reader_StatusBaseText = {"container": mainWindow_Keyc
 # Your Profile View
 mainWindow_InsertDetailsView = {"container": statusDesktop_mainWindow, "objectName": "onboardingInsertDetailsView", "type": "InsertDetailsView", "visible": True}
 updatePicButton_StatusRoundButton = {"container": mainWindow_InsertDetailsView, "id": "updatePicButton", "type": "StatusRoundButton", "unnamed": 1, "visible": True}
-mainWindow_CanvasItem = {"container": mainWindow_InsertDetailsView, "type": "CanvasItem", "unnamed": 1, "visible": True}
+mainWindow_statusRoundImage_StatusRoundedImage = {"container": statusDesktop_mainWindow, "id": "statusRoundImage", "type": "StatusRoundedImage", "unnamed": 1, "visible": True}
 mainWindow_IdenticonRing = {"container": statusDesktop_mainWindow, "type": "StatusIdenticonRing", "unnamed": 1, "visible": True}
-mainWindow_Next_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "onboardingDetailsViewNextButton", "type": "StatusButton", "visible": True}
+mainWindow_Next_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "objectName": "onboardingDetailsViewNextButton", "type": "StatusButton", "visible": True}
 mainWindow_inputLayout_ColumnLayout = {"container": statusDesktop_mainWindow, "id": "inputLayout", "type": "ColumnLayout", "unnamed": 1, "visible": True}
 mainWindow_statusBaseInput_StatusBaseInput = {"container": mainWindow_inputLayout_ColumnLayout, "objectName": "onboardingDisplayNameInput", "type": "TextEdit", "visible": True}
 mainWindow_errorMessage_StatusBaseText = {"container": mainWindow_inputLayout_ColumnLayout, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_nameInput_StatusInput = {"container": statusDesktop_mainWindow, "id": "nameInput", "type": "StatusInput", "unnamed": 1, "visible": True}
-mainWindow_clear_icon_StatusIcon = {"container": mainWindow_StatusWindow, "objectName": "clear-icon", "type": "StatusIcon"}
+mainWindow_clear_icon_StatusIcon = {"container": statusDesktop_mainWindow, "objectName": "clear-icon", "type": "StatusIcon"}
 
 # Your emojihash and identicon ring
 mainWindow_welcomeScreenUserProfileImage_StatusSmartIdenticon = {"container": mainWindow_InsertDetailsView, "objectName": "welcomeScreenUserProfileImage", "type": "StatusSmartIdenticon", "visible": True}
-mainWindow_insertDetailsViewChatKeyTxt_StyledText = {"container": mainWindow_InsertDetailsView, "objectName": "insertDetailsViewChatKeyTxt", "type": "StyledText", "visible": True}
+mainWindow_insertDetailsViewChatKeyTxt_StyledText = {"container": statusDesktop_mainWindow, "objectName": "profileChatKeyViewChatKeyTxt", "type": "StyledText", "visible": True}
 mainWindow_EmojiHash = {"container": statusDesktop_mainWindow, "objectName": "publicKeyEmojiHash", "type": "EmojiHash", "visible": True}
 mainWindow_Header_Title = {"container": statusDesktop_mainWindow, "objectName": "onboardingHeaderText", "type": "StyledText", "visible": True}
-mainWindow_userImageCopy_StatusSmartIdenticon = {"container": mainWindow_InsertDetailsView, "id": "userImageCopy", "type": "StatusSmartIdenticon", "unnamed": 1, "visible": True}
+mainWindow_userImageCopy_StatusSmartIdenticon = {"container": statusDesktop_mainWindow, "id": "userImageCopy", "type": "StatusSmartIdenticon", "unnamed": 1, "visible": True}
 profileImageCropper = {"container": statusDesktop_mainWindow, "objectName": "imageCropWorkflow", "type": "ImageCropWorkflow", "visible": True}
 
 # Create Password View
 mainWindow_CreatePasswordView = {"container": statusDesktop_mainWindow, "type": "CreatePasswordView", "unnamed": 1, "visible": True}
-mainWindow_passwordViewNewPassword = {"container": mainWindow_CreatePasswordView, "echoMode": 2, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
+mainWindow_passwordViewNewPassword = {"container": mainWindow_StatusWindow, "echoMode": 2, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
 mainWindow_passwordViewNewPasswordConfirm = {"container": mainWindow_CreatePasswordView, "echoMode": 2, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
 mainWindow_Create_password_StatusButton = {"checkable": False, "container": mainWindow_CreatePasswordView, "objectName": "onboardingCreatePasswordButton", "type": "StatusButton", "visible": True}
 mainWindow_view_PasswordView = {"container": statusDesktop_mainWindow, "id": "view", "type": "PasswordView", "unnamed": 1, "visible": True}

@@ -1,5 +1,3 @@
-import os
-
 import allure
 import pyperclip
 import pytest
@@ -17,7 +15,7 @@ from gui.components.settings.sync_new_device_popup import SyncNewDevicePopup
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import MainWindow
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView, \
-    SyncCodeView, SyncDeviceFoundView
+    SyncCodeView, SyncDeviceFoundView, YourEmojihashAndIdenticonRingView
 
 pytestmark = marks
 
@@ -25,8 +23,6 @@ pytestmark = marks
 @pytest.fixture
 def sync_screen(main_window) -> SyncCodeView:
     with step('Open Syncing view'):
-        if configs.system.IS_MAC:
-            AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
         wellcome_screen = WelcomeToStatusView().wait_until_appears()
         return wellcome_screen.sync_existing_user().open_sync_code_view()
@@ -63,8 +59,6 @@ def test_sync_device_during_onboarding(multiple_instances):
         with step('Open sync code form in second instance'):
             aut_two.attach()
             main_window.prepare()
-            if configs.system.IS_MAC:
-                AllowNotificationsView().wait_until_appears().allow()
             BeforeStartedPopUp().get_started()
             wellcome_screen = WelcomeToStatusView().wait_until_appears()
             sync_view = wellcome_screen.sync_existing_user().open_sync_code_view()
@@ -83,12 +77,16 @@ def test_sync_device_during_onboarding(multiple_instances):
                 raise ex
             sync_result = SyncResultView()
             assert driver.waitFor(
-                lambda: 'Device synced!' in sync_result.device_synced_notifications, 18000)
+                lambda: 'Device synced!' in sync_result.device_synced_notifications, 23000)
             assert user.name in sync_device_found.device_found_notifications
 
         with step('Sign in to synced account'):
             sync_result.sign_in()
             SplashScreen().wait_until_hidden()
+            YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
+            if configs.system.IS_MAC:
+                AllowNotificationsView().start_using_status()
+            SplashScreen().wait_until_appears().wait_until_hidden()
             if not configs.system.TEST_MODE:
                 BetaConsentPopup().confirm()
 

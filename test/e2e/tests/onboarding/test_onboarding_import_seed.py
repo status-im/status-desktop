@@ -1,5 +1,3 @@
-import os
-
 import allure
 import pytest
 from allure_commons._allure import step
@@ -7,13 +5,12 @@ from . import marks
 
 import configs.system
 import constants
-from driver.aut import AUT
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import LeftPanel
-from gui.mocked_keycard_controller import MockedKeycardController
-from gui.screens.onboarding import BiometricsView, AllowNotificationsView, WelcomeToStatusView, KeysView
+from gui.screens.onboarding import BiometricsView, WelcomeToStatusView, KeysView, \
+    YourEmojihashAndIdenticonRingView
 
 pytestmark = marks
 
@@ -21,11 +18,9 @@ pytestmark = marks
 @pytest.fixture
 def keys_screen(main_window) -> KeysView:
     with step('Open Generate new keys view'):
-        if configs.system.IS_MAC:
-            AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
-        wellcome_screen = WelcomeToStatusView().wait_until_appears()
-        return wellcome_screen.get_keys()
+        welcome_screen = WelcomeToStatusView().wait_until_appears()
+        return welcome_screen.get_keys()
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
@@ -35,7 +30,7 @@ def keys_screen(main_window) -> KeysView:
     pytest.param(False, 'Account 1'),
     pytest.param(True, 'Account 1', marks=pytest.mark.critical)
 ])
-def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, default_name: str, autocomplete: bool):
+def test_import_seed_phrase(keys_screen, main_window, user_account, default_name: str, autocomplete: bool):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         input_view.input_seed_phrase(user_account.seed_phrase, autocomplete)
@@ -43,12 +38,15 @@ def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, de
         profile_view.set_display_name(user_account.name)
 
     with step('Finalize onboarding and open main screen'):
-        details_view = profile_view.next()
-        create_password_view = details_view.next()
+        create_password_view = profile_view.next()
         confirm_password_view = create_password_view.create_password(user_account.password)
         confirm_password_view.confirm_password(user_account.password)
         if configs.system.IS_MAC:
             BiometricsView().wait_until_appears().prefer_password()
+        SplashScreen().wait_until_appears().wait_until_hidden()
+        next_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
+        if configs.system.IS_MAC:
+            next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()

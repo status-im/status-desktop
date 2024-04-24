@@ -88,14 +88,16 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
 
         with step(f'User {user_one.name}, see two members in community members list'):
-            assert driver.waitFor(lambda: user_two.name in community_screen.right_panel.members)
+            assert driver.waitFor(lambda: user_two.name in community_screen.right_panel.members,
+                                  10000)
             assert driver.waitFor(lambda: '2' in community_screen.left_panel.members)
             main_screen.hide()
 
         with step(f'User {user_two.name}, see two members in community members list'):
             aut_two.attach()
             main_screen.prepare()
-            assert driver.waitFor(lambda: user_one.name in community_screen.right_panel.members)
+            assert driver.waitFor(lambda: user_one.name in community_screen.right_panel.members,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             assert '2' in community_screen.left_panel.members
 
         with step(f'Go to edit community for {user_two.name} and check that pin message checkbox is not checked'):
