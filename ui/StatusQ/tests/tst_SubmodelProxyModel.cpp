@@ -78,6 +78,50 @@ private slots:
                  QQmlEngine::CppOwnership);
     }
 
+    void submodelTypeTest() {
+        QQmlEngine engine;
+        QQmlComponent delegate(&engine);
+
+        auto delegateData = R"(
+            import QtQml 2.15
+            QtObject {
+                property var count: submodel.count
+            }
+        )";
+
+        delegate.setData(delegateData, QUrl());
+
+        SubmodelProxyModel model;
+
+        auto source = R"([
+            { balances: [ { balance: 4 } ], name: "name 1" }
+        ])";
+
+        ListModelWrapper sourceModel(engine, source);
+        model.setSourceModel(sourceModel);
+        model.setDelegateModel(&delegate);
+        model.setSubmodelRoleName(QStringLiteral("balances"));
+
+        QCOMPARE(model.rowCount(), 1);
+
+        QVariant balances = model.data(model.index(0, 0),
+                                       sourceModel.role("balances"));
+
+        QVERIFY(balances.isValid());
+
+        QVariant balances2 = model.data(model.index(0, 0),
+                                       sourceModel.role("balances"));
+
+        // SubmodelProxyModel may create proxy objects on demand, then first
+        // call to data(...) returns freshly created object, the next calls
+        // related to the same row should return cached object. It's important
+        // to have QVariant type identical in both cases. E.g. returning raw
+        // pointer in first call and pointer wrapped into QPointer in the next
+        // one leads to problems in UI components in some scenarios even if
+        // those QVariant types are automatically convertible.
+        QCOMPARE(balances2.type(), balances.type());
+    }
+
     void usingNonObjectSubmodelRoleTest() {
         QQmlEngine engine;
         QQmlComponent delegate(&engine);
