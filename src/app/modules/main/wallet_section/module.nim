@@ -209,6 +209,10 @@ proc notifyModulesOnFilterChanged(self: Module) =
   self.allCollectiblesModule.refreshWalletAccounts()
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
 
+proc notifyModulesBalanceIsLoaded(self: Module) =
+  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+
 proc updateViewWithAddressFilterChanged(self: Module) =
   if self.overviewModule.getIsAllAccounts():
     self.view.filterChanged("")
@@ -271,7 +275,7 @@ method load*(self: Module) =
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.setTotalCurrencyBalance()
-    # self.notifyFilterChanged()
+    self.notifyModulesBalanceIsLoaded()
   self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
