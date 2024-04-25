@@ -142,9 +142,9 @@ StatusSectionLayout {
                     objectName: "createCommunityButton"
                     Layout.preferredHeight: 38
                     verticalPadding: 0
-                    text: qsTr("Create community")
+                    text: qsTr("Import existing community from Discord")
                     onClicked: {
-                        Global.openPopup(chooseCommunityCreationTypePopupComponent)
+                        Global.createCommunityPopupRequested(true /*isDiscordImport*/)
                     }
                 }
             }
