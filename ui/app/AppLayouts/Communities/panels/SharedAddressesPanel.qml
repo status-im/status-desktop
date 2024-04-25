@@ -34,6 +34,7 @@ Control {
     required property int /*PermissionTypes.Type*/ eligibleToJoinAs
 
     property bool requirementsCheckPending: false
+    property bool joinPermissionsCheckSuccessful
 
     required property string communityId
     required property string communityName
@@ -101,11 +102,27 @@ Control {
             onClicked: root.close()
         }
 
-        readonly property var saveButton: StatusButton {
-            enabled: d.dirty
-            type: d.lostCommunityPermission || d.lostChannelPermissions ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal
-            visible: root.isEditMode
+        readonly property string tooltipText: {
+            if (root.requirementsCheckPending)
+                return qsTr("Requirements check pending")
 
+            if (!root.joinPermissionsCheckSuccessful)
+                return qsTr("Checking permissions to join failed")
+
+            return ""
+        }
+
+        readonly property var saveButton: StatusButton {
+            visible: root.isEditMode
+            interactive: d.dirty && !root.requirementsCheckPending && root.joinPermissionsCheckSuccessful
+            loading: root.requirementsCheckPending
+            type: d.lostCommunityPermission || d.lostChannelPermissions ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal
+            tooltip.text: {
+                if (interactive)
+                    return ""
+
+                return d.tooltipText
+            }
             text: {
                 if (d.lostCommunityPermission) {
                     return qsTr("Save changes & leave %1").arg(root.communityName)
@@ -147,7 +164,14 @@ Control {
 
         readonly property var shareAddressesButton: StatusButton {
             visible: !root.isEditMode
-            enabled: root.eligibleToJoinAs !== PermissionTypes.Type.None
+            interactive: root.eligibleToJoinAs !== PermissionTypes.Type.None && root.joinPermissionsCheckSuccessful
+            loading: root.requirementsCheckPending
+            tooltip.text: {
+                if (interactive)
+                    return ""
+
+                return d.tooltipText
+            }
             text: {
                 if (d.selectedSharedAddressesCount === root.totalNumOfAddressesForSharing) {
                     return qsTr("Share all addresses to join")
@@ -306,6 +330,7 @@ Control {
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
             requirementsCheckPending: root.requirementsCheckPending
+            joinPermissionsCheckSuccessful: root.joinPermissionsCheckSuccessful
             communityName: root.communityName
             communityIcon: root.communityIcon
             eligibleToJoinAs: root.eligibleToJoinAs

@@ -618,6 +618,7 @@ QtObject {
                 readonly property string image: model.image
                 readonly property bool joined: model.joined
                 readonly property bool amIBanned: model.amIBanned
+                readonly property string introMessage: model.introMessage
                 // add others when needed..
             }
         }
