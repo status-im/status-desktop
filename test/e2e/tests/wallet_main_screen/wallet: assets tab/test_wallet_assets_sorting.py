@@ -27,7 +27,6 @@ pytestmark = marks
     pytest.param('0xFf58d746A67C2E42bCC07d6B3F58406E8837E883', 'AssetsCollectibles', 'Dai Stablecoin', 'WEENUS Token',
                  'Status Test Token', 'Ether')
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14427")
 def test_wallet_sort_assets(main_screen: MainWindow, address, name, dai, weenus, stt, eth):
     with step('Turn on Testnet mode'):
         networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
