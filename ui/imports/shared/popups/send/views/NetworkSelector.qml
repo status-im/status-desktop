@@ -138,7 +138,7 @@ Item {
         anchors.topMargin: Style.current.bigPadding
         visible: root.advancedOrCustomMode
 
-        selectedAsset: root.selectedAsset
+        selectedTokenSymbol: root.selectedAsset.symbol
         isLoading: root.isLoading
         bestRoutes: root.bestRoutes
         store: root.store

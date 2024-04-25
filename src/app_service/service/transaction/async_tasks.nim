@@ -39,7 +39,6 @@ proc getFeesTotal*(paths: seq[TransactionPathDto]): FeesDto =
       optimalPrice = path.gasFees.maxFeePerGasM
 
     fees.totalFeesInEth += getGasEthValue(optimalPrice, path.gasAmount)
-    fees.totalFeesInEth += parseFloat(service_conversion.wei2Eth(service_conversion.gwei2Wei(path.gasFees.l1GasFee)))
     fees.totalTokenFees += path.tokenFees
     fees.totalTime += path.estimatedTime
   return fees

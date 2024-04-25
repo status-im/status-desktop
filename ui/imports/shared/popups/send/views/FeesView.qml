@@ -19,7 +19,7 @@ Rectangle {
     property var bestRoutes
     property var store
     property var currencyStore: store.currencyStore
-    property var selectedAsset
+    property string selectedTokenSymbol
     property int errorType: Constants.NoError
 
     radius: 13
@@ -76,7 +76,7 @@ Rectangle {
                 currentCurrency: root.currencyStore.currentCurrency
                 visible: root.errorType === Constants.NoError && !root.isLoading
                 bestRoutes: root.bestRoutes
-                selectedAsset: root.selectedAsset
+                selectedTokenSymbol: root.selectedTokenSymbol
                 getNetworkName: root.store.getNetworkName
             }
             GasValidator {

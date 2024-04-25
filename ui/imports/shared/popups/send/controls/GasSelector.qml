@@ -14,7 +14,7 @@ import StatusQ.Core.Theme 0.1
 Item {
     id: root
 
-    property var selectedAsset
+    property string selectedTokenSymbol
     property string currentCurrency
 
     property var bestRoutes
@@ -49,27 +49,13 @@ Item {
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
                 title: qsTr("%1 transaction fee").arg(root.getNetworkName(modelData.fromNetwork))
-                subTitle: {
-                    let fee = root.formatCurrencyAmount(totalGasAmountEth, Constants.ethToken)
-                    if (modelData.gasFees.eip1559Enabled && modelData.gasFees.l1GasFee > 0) {
-                        fee += "\n(L1 %1)".arg(root.formatCurrencyAmount(totalGasAmountL1Eth, Constants.ethToken))
-                    }
-                    return fee
-                }
-                property double totalGasAmountL1Eth: {
-                    let maxFees = modelData.gasFees.maxFeePerGasM
-                    let gasPrice = modelData.gasFees.eip1559Enabled? maxFees : modelData.gasFees.gasPrice
-                    return root.getGasEthValue(gasPrice , modelData.gasFees.l1GasFee)
-                }
-
+                subTitle: root.formatCurrencyAmount(totalGasAmountEth, Constants.ethToken)
                 property double totalGasAmountEth: {
                     let maxFees = modelData.gasFees.maxFeePerGasM
                     let gasPrice = modelData.gasFees.eip1559Enabled ? maxFees : modelData.gasFees.gasPrice
                     return root.getGasEthValue(gasPrice , modelData.gasAmount)
                 }
-
-                property double totalGasAmountFiat: root.getFiatValue(totalGasAmountEth, Constants.ethToken) + root.getFiatValue(totalGasAmountL1Eth, Constants.ethToken)
-
+                property double totalGasAmountFiat: root.getFiatValue(totalGasAmountEth, Constants.ethToken)
                 statusListItemSubTitle.width: listItem.width/2 - Style.current.smallPadding
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 statusListItemSubTitle.wrapMode: Text.NoWrap
@@ -95,7 +81,7 @@ Item {
                 asset.color: Theme.palette.directColor1
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
-                title: qsTr("Approve %1 %2 Bridge").arg(root.getNetworkName(modelData.fromNetwork)).arg(root.selectedAsset.symbol)
+                title: qsTr("Approve %1 %2 Bridge").arg(root.getNetworkName(modelData.fromNetwork)).arg(root.selectedTokenSymbol)
                 property double approvalGasFees: modelData.approvalGasFees
                 property string approvalGasFeesSymbol: Constants.ethToken
                 property double approvalGasFeesFiat: root.getFiatValue(approvalGasFees, approvalGasFeesSymbol)
@@ -129,8 +115,8 @@ Item {
                 statusListItemIcon.opacity: modelData.isFirstBridgeTx
                 title: qsTr("%1 -> %2 bridge").arg(root.getNetworkName(modelData.fromNetwork)).arg(root.getNetworkName(modelData.toNetwork))
                 property double tokenFees: modelData.tokenFees
-                property double tokenFeesFiat: root.getFiatValue(tokenFees, root.selectedAsset.symbol)
-                subTitle: root.formatCurrencyAmount(tokenFees, root.selectedAsset.symbol)
+                property double tokenFeesFiat: root.getFiatValue(tokenFees, root.selectedTokenSymbol)
+                subTitle: root.formatCurrencyAmount(tokenFees, root.selectedTokenSymbol)
                 visible: modelData.bridgeName !== "Transfer"
                 statusListItemSubTitle.width: 100
                 statusListItemSubTitle.elide: Text.ElideMiddle
