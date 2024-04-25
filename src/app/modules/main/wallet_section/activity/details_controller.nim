@@ -49,12 +49,12 @@ QtObject:
     notify = activityDetailsChanged
 
   proc setActivityEntry*(self: Controller, entry: ActivityEntry) =
-    self.activityEntry = entry
-    self.activityEntryChanged()
-
     if self.activityDetails != nil:
       self.activityDetails = nil
-      self.activityDetailsChanged()    
+      self.activityDetailsChanged()
+      
+    self.activityEntry = entry
+    self.activityEntryChanged()
 
   proc resetActivityEntry*(self: Controller) {.slot.} =
     self.setActivityEntry(nil)

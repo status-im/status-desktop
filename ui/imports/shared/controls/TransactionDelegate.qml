@@ -863,14 +863,14 @@ StatusListItem {
                 width: 17
                 height: 17
             }
-            PropertyChanges {
-                target: d
-                titlePixelSize: 17
-                datePixelSize: 13
-                subtitlePixelSize: 15
-                loadingPixelSize: 14
-                showRetryButton: (!root.loading && root.transactionStatus === Constants.TransactionStatus.Failed && walletRootStore.isOwnedAccount(modelData.sender))
-            }
+            // PropertyChanges { // TODO uncomment when retry failed tx is implemented
+            //     target: d
+            //     titlePixelSize: 17
+            //     datePixelSize: 13
+            //     subtitlePixelSize: 15
+            //     loadingPixelSize: 14
+            //     showRetryButton: (!root.loading && root.transactionStatus === Constants.TransactionStatus.Failed && walletRootStore.isOwnedAccount(modelData.sender))
+            // }
         }
     ]
 
