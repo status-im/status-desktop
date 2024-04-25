@@ -439,13 +439,11 @@ class CreatePasswordView(OnboardingView):
         self._hide_icon = QObject(names.mainWindow_hide_icon_StatusIcon)
 
     @allure.step('Get password content from first field')
-    def get_password_from_first_field(self, echo_mode) -> str:
-        self._new_password_text_field.real_name['echoMode'] = echo_mode
+    def get_password_from_first_field(self) -> str:
         return str(self._new_password_text_field.object.displayText)
 
     @allure.step('Get password content from confirmation field')
-    def get_password_from_confirmation_field(self, echo_mode) -> str:
-        self._confirm_password_text_field.real_name['echoMode'] = echo_mode
+    def get_password_from_confirmation_field(self) -> str:
         return str(self._confirm_password_text_field.object.displayText)
 
     @property
@@ -561,8 +559,7 @@ class ConfirmPasswordView(OnboardingView):
         return CreatePasswordView().wait_until_appears()
 
     @allure.step('Get password content from confirmation again field')
-    def get_password_from_confirmation_again_field(self, echo_mode) -> str:
-        self._confirm_password_text_field.real_name['echoMode'] = echo_mode
+    def get_password_from_confirmation_again_field(self) -> str:
         return str(self._confirm_password_text_field.object.displayText)
 
 

@@ -1,14 +1,14 @@
 import allure
 import pytest
 from allure_commons._allure import step
+
 from . import marks
 
-import configs.system
 import constants
 from constants.onboarding import very_weak_lower_elements, very_weak_upper_elements, \
     very_weak_numbers_elements, very_weak_symbols_elements, weak_elements, so_so_elements, good_elements, great_elements
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, KeysView
+from gui.screens.onboarding import WelcomeToStatusView, KeysView
 
 pytestmark = marks
 
@@ -25,7 +25,6 @@ def keys_screen(main_window) -> KeysView:
                  'Strength of the password')
 @pytest.mark.case(702989)
 @pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/13783")
 def test_check_password_strength_and_login(keys_screen, main_window, user_account):
     values = [('abcdefghij', very_weak_lower_elements),
               ('ABCDEFGHIJ', very_weak_upper_elements),
@@ -57,18 +56,18 @@ def test_check_password_strength_and_login(keys_screen, main_window, user_accoun
         assert create_password_view.is_create_password_button_enabled
 
         create_password_view.click_show_icon(0)
-        assert create_password_view.get_password_from_first_field(0) == expected_password
+        assert create_password_view.get_password_from_first_field() == expected_password
 
         create_password_view.click_hide_icon(0)
         # we decided to comment it because this verification is not stable (always different format of dots)
-        # assert create_password_view.get_password_from_first_field(2) == '●●●●●●●●●●'
+        # assert create_password_view.get_password_from_first_field() == '●●●●●●●●●●'
 
         create_password_view.click_show_icon(1)
-        assert create_password_view.get_password_from_confirmation_field(0) == expected_password
+        assert create_password_view.get_password_from_confirmation_field() == expected_password
 
         create_password_view.click_hide_icon(0)
         # we decided to comment it because this verification is not stable (always different format of dots)
-        # assert create_password_view.get_password_from_confirmation_field(2) == '●●●●●●●●●●'
+        # assert create_password_view.get_password_from_confirmation_field() == '●●●●●●●●●●'
 
     with step('Confirm creation of password and set password in confirmation again field'):
         confirm_password_view = create_password_view.click_create_password()
@@ -79,9 +78,9 @@ def test_check_password_strength_and_login(keys_screen, main_window, user_accoun
 
     with step('Click show icon to show password and check that shown password is correct'):
         create_password_view.click_show_icon(0)
-        assert confirm_password_view.get_password_from_confirmation_again_field(0) == expected_password
+        assert confirm_password_view.get_password_from_confirmation_again_field() == expected_password
 
     with step('Click show icon to hide password and check that there are dots instead'):
         create_password_view.click_hide_icon(0)
         # we decided to comment it because this verification is not stable (always different format of dots)
-        # assert confirm_password_view.get_password_from_confirmation_again_field(2) == '●●●●●●●●●●'
+        # assert confirm_password_view.get_password_from_confirmation_again_field() == '●●●●●●●●●●'

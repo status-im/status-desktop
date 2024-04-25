@@ -616,7 +616,7 @@ signOutConfirmationButton = {"container": statusDesktop_mainWindow_overlay, "obj
 mainWindow_EnsWelcomeView = {"container": statusDesktop_mainWindow, "type": "EnsWelcomeView", "unnamed": 1, "visible": True}
 mainWindow_Start_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "ensStartButton", "type": "StatusButton", "visible": True}
 mainWindow_EnsSearchView = {"container": statusDesktop_mainWindow, "type": "EnsSearchView", "unnamed": 1, "visible": True}
-mainWindow_ensUsernameInput_StyledTextField = {"container": statusDesktop_mainWindow, "echoMode": 0, "objectName": "ensUsernameInput", "type": "StyledTextField", "visible": True}
+mainWindow_ensUsernameInput_StyledTextField = {"container": statusDesktop_mainWindow, "objectName": "ensUsernameInput", "type": "StyledTextField", "visible": True}
 mainWindow_ensNextButton_StatusRoundButton = {"container": statusDesktop_mainWindow, "objectName": "ensNextButton", "type": "StatusRoundButton", "visible": True}
 ens_StatusBaseText = {"container": mainWindow_EnsSearchView, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_EnsTermsAndConditionsView = {"container": statusDesktop_mainWindow, "type": "EnsTermsAndConditionsView", "unnamed": 1, "visible": True}
@@ -710,8 +710,8 @@ profileImageCropper = {"container": statusDesktop_mainWindow, "objectName": "ima
 
 # Create Password View
 mainWindow_CreatePasswordView = {"container": statusDesktop_mainWindow, "type": "CreatePasswordView", "unnamed": 1, "visible": True}
-mainWindow_passwordViewNewPassword = {"container": mainWindow_StatusWindow, "echoMode": 2, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
-mainWindow_passwordViewNewPasswordConfirm = {"container": mainWindow_CreatePasswordView, "echoMode": 2, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
+mainWindow_passwordViewNewPassword = {"container": mainWindow_CreatePasswordView, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
+mainWindow_passwordViewNewPasswordConfirm = {"container": mainWindow_CreatePasswordView, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
 mainWindow_Create_password_StatusButton = {"checkable": False, "container": mainWindow_CreatePasswordView, "objectName": "onboardingCreatePasswordButton", "type": "StatusButton", "visible": True}
 mainWindow_view_PasswordView = {"container": statusDesktop_mainWindow, "id": "view", "type": "PasswordView", "unnamed": 1, "visible": True}
 mainWindow_RowLayout = {"container": mainWindow_StatusWindow, "type": "RowLayout", "unnamed": 1, "visible": True}

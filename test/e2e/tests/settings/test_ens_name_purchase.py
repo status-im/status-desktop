@@ -13,8 +13,7 @@ from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.components.wallet.send_popup import SendPopup
-from gui.screens.onboarding import KeysView, AllowNotificationsView, WelcomeToStatusView, BiometricsView, \
-    YourEmojihashAndIdenticonRingView
+from gui.screens.onboarding import KeysView, WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
 from gui.screens.settings_ens_usernames import ENSRegisteredView
 
 pytestmark = marks
