@@ -8,7 +8,7 @@
 #include <algorithm>
 
 namespace {
-int roleByName(QAbstractItemModel* model, const QString &roleName)
+constexpr int roleByName(QAbstractItemModel* model, const QString &roleName)
 {
     if (!model)
         return -1;
@@ -161,18 +161,23 @@ int /*PermissionTypes::Type*/ PermissionUtilsInternal::isEligibleToJoinAs(QAbstr
     }
 
     QSet<PermissionTypes::Type> tmpRes;
-    bool hasAnyJoinPermission{false};
+    bool hasMemberPermission{false};
     constexpr auto isJoinTypePermission = [](PermissionTypes::Type type) {
         return type == PermissionTypes::Type::TokenMaster ||
                type == PermissionTypes::Type::Admin ||
                type == PermissionTypes::Type::Member;
     };
 
+    constexpr auto isMemberPermission = [](PermissionTypes::Type type) {
+        return type == PermissionTypes::Type::Member;
+    };
+
     const auto permissionsCount = permissionsModel->rowCount();
     for (int i = 0; i < permissionsCount; i++) {
         const auto permissionType = static_cast<PermissionTypes::Type>(permissionsModel->data(permissionsModel->index(i, 0), permissionTypeRole).toInt());
         if (isJoinTypePermission(permissionType)) {
-            hasAnyJoinPermission = true;
+            if (isMemberPermission(permissionType))
+                hasMemberPermission = true;
             const auto tokenCriteriaMet = permissionsModel->data(permissionsModel->index(i, 0), tokenCriteriaMetRole).toBool();
             if (tokenCriteriaMet) {
                 tmpRes.insert(permissionType);
@@ -180,16 +185,13 @@ int /*PermissionTypes::Type*/ PermissionUtilsInternal::isEligibleToJoinAs(QAbstr
         }
     }
 
-    if (!hasAnyJoinPermission)
-        return PermissionTypes::Type::Member;
-
     if (tmpRes.contains(PermissionTypes::Type::TokenMaster))
         return PermissionTypes::Type::TokenMaster;
 
     if (tmpRes.contains(PermissionTypes::Type::Admin))
         return PermissionTypes::Type::Admin;
 
-    if (tmpRes.contains(PermissionTypes::Type::Member))
+    if (tmpRes.contains(PermissionTypes::Type::Member) || !hasMemberPermission)
         return PermissionTypes::Type::Member;
 
     return PermissionTypes::Type::None;

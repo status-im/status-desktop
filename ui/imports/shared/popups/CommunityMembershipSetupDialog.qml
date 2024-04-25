@@ -29,6 +29,8 @@ StatusStackModal {
     required property string communityIcon
     required property bool requirementsCheckPending
 
+    property bool joinPermissionsCheckSuccessful
+
     property string introMessage
 
     property bool isInvitationPending: false
@@ -84,11 +86,30 @@ StatusStackModal {
     rightButtons: [d.shareButton, finishButton]
 
     finishButton: StatusButton {
-        enabled: {
-            if (root.isInvitationPending || d.accessType !== Constants.communityChatOnRequestAccess)
+        interactive: {
+            if (root.isInvitationPending)
+                return true
+
+            if (root.requirementsCheckPending || !root.joinPermissionsCheckSuccessful)
+                return false
+
+            if (d.accessType !== Constants.communityChatOnRequestAccess)
                 return true
 
             return d.eligibleToJoinAs !== PermissionTypes.Type.None
+        }
+        loading: root.requirementsCheckPending && !root.isInvitationPending
+        tooltip.text: {
+            if (interactive)
+                return ""
+
+            if (root.requirementsCheckPending)
+                return qsTr("Requirements check pending")
+
+            if (!root.joinPermissionsCheckSuccessful)
+                return qsTr("Checking permissions to join failed")
+
+            return ""
         }
         text: {
             if (root.isInvitationPending) {
@@ -269,7 +290,7 @@ StatusStackModal {
             d.selectedSharedAddressesMap = tmpMap
         }
 
-        // Returns an object containing all selected addresses and selected airdrop address.s
+        // Returns an object containing all selected addresses and selected airdrop address
         function getSelectedAddresses() {
             const result = {addresses: [], airdropAddress: ""}
             for (const [key, value] of d.selectedSharedAddressesMap) {
@@ -341,6 +362,7 @@ StatusStackModal {
             communityName: root.communityName
             communityIcon: root.communityIcon
             requirementsCheckPending: root.requirementsCheckPending
+            joinPermissionsCheckSuccessful: root.joinPermissionsCheckSuccessful
 
             walletAccountsModel: d.initialAddressesModel
 
@@ -416,36 +438,47 @@ StatusStackModal {
     }
 
     stackItems: [
-        StatusScrollView {
-            id: scrollView
-            contentWidth: availableWidth
+        Item {
+            implicitHeight: scrollView.contentHeight + scrollView.bottomPadding + eligibilityTag.anchors.bottomMargin
 
-            ColumnLayout {
-                spacing: 24
-                width: scrollView.availableWidth
+            StatusScrollView {
+                id: scrollView
+                anchors.fill: parent
+                contentWidth: availableWidth
+                bottomPadding: 80
 
-                StatusRoundedImage {
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.preferredWidth: 64
-                    Layout.preferredHeight: Layout.preferredWidth
-                    visible: ((image.status == Image.Loading) ||
-                              (image.status == Image.Ready)) &&
-                             !image.isError
-                    image.source: root.communityIcon
+                ColumnLayout {
+                    spacing: Style.current.bigPadding
+                    width: parent.width
+
+                    StatusRoundedImage {
+                        Layout.alignment: Qt.AlignHCenter
+                        Layout.preferredWidth: 64
+                        Layout.preferredHeight: Layout.preferredWidth
+                        visible: ((image.status == Image.Loading) ||
+                                  (image.status == Image.Ready)) &&
+                                 !image.isError
+                        image.source: root.communityIcon
+                    }
+
+                    StatusBaseText {
+                        Layout.fillWidth: true
+                        text: root.introMessage || qsTr("Community <b>%1</b> has no intro message...").arg(root.communityName)
+                        color: Theme.palette.directColor1
+                        wrapMode: Text.WordWrap
+                    }
                 }
+            }
 
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: root.introMessage || qsTr("Community <b>%1</b> has no intro message...").arg(root.communityName)
-                    color: Theme.palette.directColor1
-                    wrapMode: Text.WordWrap
-                }
-
-                CommunityEligibilityTag {
-                    Layout.alignment: Qt.AlignHCenter
-                    eligibleToJoinAs: d.eligibleToJoinAs
-                    visible: !root.isInvitationPending && d.accessType === Constants.communityChatOnRequestAccess
-                }
+            CommunityEligibilityTag {
+                id: eligibilityTag
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: Style.current.bigPadding
+                eligibleToJoinAs: d.eligibleToJoinAs
+                isEditMode: root.isEditMode
+                visible: !root.isInvitationPending && !root.requirementsCheckPending && root.joinPermissionsCheckSuccessful &&
+                         d.accessType === Constants.communityChatOnRequestAccess
             }
         }
     ]
