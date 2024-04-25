@@ -20,6 +20,7 @@ ToolTip {
 
     implicitWidth: Math.min(maxWidth, implicitContentWidth + 16)
     padding: 8
+    margins: 8
     delay: 200
     background: Item {
         id: statusToolTipBackground

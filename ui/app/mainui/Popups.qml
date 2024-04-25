@@ -705,6 +705,7 @@ QtObject {
                 id: dialogRoot
 
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
+                joinPermissionsCheckSuccessful: root.rootStore.joinPermissionsCheckSuccessful
 
                 walletAccountsModel: root.rootStore.walletAccountsModel
                 walletCollectiblesModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
@@ -952,7 +953,9 @@ QtObject {
 
                 communityName: chatStore.sectionDetails.name
                 communityIcon: chatStore.sectionDetails.image
+
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
+                joinPermissionsCheckSuccessful: root.rootStore.joinPermissionsCheckSuccessful
 
                 introMessage: chatStore.sectionDetails.introMessage
 

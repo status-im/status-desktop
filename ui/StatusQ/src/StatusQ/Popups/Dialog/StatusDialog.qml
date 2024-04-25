@@ -21,10 +21,11 @@ Dialog {
        \qmlproperty color backgroundColor
         This property decides the modal background color
     */
-    property string backgroundColor: Theme.palette.statusModal.backgroundColor
+    property color backgroundColor: Theme.palette.statusModal.backgroundColor
     /*!
        \qmlproperty closeHandler
         This property decides the action to be performed when the close button is clicked. It allows to define
+        a custom function to be called when the popup is closed by the user.
     */
     property var closeHandler: root.close
 
