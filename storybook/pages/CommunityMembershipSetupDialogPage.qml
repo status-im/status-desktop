@@ -55,6 +55,7 @@ SplitView {
 
                 isInvitationPending: ctrlIsInvitationPending.checked
                 requirementsCheckPending: ctrlRequirementsCheckPending.checked
+                joinPermissionsCheckSuccessful: ctrlJoinPermissionsCheckSuccessful.checked
 
                 walletAccountsModel: WalletAccountsModel {}
                 walletAssetsModel: root.walletAssetStore.groupedAccountAssetsModel
@@ -80,7 +81,7 @@ SplitView {
                             })
                 }
             }
-                }
+        }
 
         Item {
             SplitView.fillWidth: true
@@ -216,6 +217,14 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 id: ctrlRequirementsCheckPending
                 visible: !ctrlIsInvitationPending.checked
                 text: "Requirements check pending"
+            }
+
+            CheckBox {
+                Layout.leftMargin: 12
+                id: ctrlJoinPermissionsCheckSuccessful
+                visible: !ctrlIsInvitationPending.checked
+                text: "Join permission successful"
+                checked: true
             }
 
             Item {
