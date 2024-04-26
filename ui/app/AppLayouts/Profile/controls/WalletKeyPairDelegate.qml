@@ -108,12 +108,28 @@ Rectangle {
             spacing: 1
             model: d.relatedAccounts
             delegate: WalletAccountDelegate {
+                id: walletAccountDelegate
                 width: ListView.view.width
-                label: keyPair.pairType !== Constants.keypair.type.watchOnly ? "" : model.account.hideFromTotalBalance ? qsTr("Excl. from total balance"): qsTr("Incl. in total balance")
                 account: model.account
                 totalCount: ListView.view.count
                 getNetworkShortNames: root.getNetworkShortNames
                 onGoToAccountView: root.goToAccountView(model.account)
+
+                RowLayout {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: Style.current.padding + walletAccountDelegate.statusListItemComponentsSlot.width
+                    visible: keyPair.pairType === Constants.keypair.type.watchOnly
+
+                    StatusIcon {
+                        icon: "wallet"
+                        color: Theme.palette.baseColor1
+                    }
+                    StatusBaseText {
+                        text: model.account.hideFromTotalBalance ? qsTr("Excluded") : qsTr("Included")
+                        color: Theme.palette.baseColor1
+                    }
+                }
             }
         }
     }
