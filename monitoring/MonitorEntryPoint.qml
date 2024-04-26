@@ -84,6 +84,8 @@ Component {
                 property var model
                 readonly property var rootModel: model
 
+                property bool showControls: true
+
                 readonly property var roles: Monitor.modelRoles(model)
 
                 readonly property var rolesModelContent: roles.map(role => ({
@@ -92,13 +94,21 @@ Component {
                     width: Math.ceil(fontMetrics.advanceWidth(`  ${role.name}  `))
                 }))
 
+                onRolesModelContentChanged: {
+                    rolesModel.clear()
+                    rolesModel.append(rolesModelContent)
+                }
+
                 property int columnsTotalWidth:
                     rolesModelContent.reduce((a, x) => a + x.width, 0)
 
                 ListModel {
                     id: rolesModel
 
-                    Component.onCompleted: append(rolesModelContent)
+                    Component.onCompleted: {
+                        clear()
+                        append(rolesModelContent)
+                    }
                 }
 
                 Control {
@@ -119,6 +129,8 @@ Component {
                     RowLayout {
                         Layout.fillWidth: true
 
+                        visible: showControls
+
                         RoundButton {
                             text: "⬅️"
 
@@ -127,13 +139,16 @@ Component {
                             }
                         }
 
-                        Label {
+                        TextInput {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
 
                             text: name
                             font.pixelSize: 20
                             font.bold: true
+
+                            selectByMouse: true
+                            readOnly: true
                         }
                     }
 
@@ -142,6 +157,8 @@ Component {
                     }
 
                     Label {
+                        visible: showControls
+
                         text: "Hint: use right/left button click on a column " +
                               "header to ajust width, press cell content to " +
                               "see full value"
@@ -180,7 +197,19 @@ Component {
                                         width: model.width
                                         height: implicitHeight * 1.2
 
-                                        text: topModel[model.name].toString()
+                                        text: {
+                                            const value = topModel[model.name]
+                                            const isModel = Monitor.isModel(value)
+
+                                            let text = value.toString()
+
+                                            if (isModel) {
+                                                text += " (" + value.rowCount() + ")"
+                                            }
+
+                                            return text
+                                        }
+
                                         elide: Text.ElideRight
                                         maximumLineCount: 1
                                         verticalAlignment: Text.AlignVCenter
@@ -208,6 +237,37 @@ Component {
                                             id: labelMouseArea
 
                                             anchors.fill: parent
+
+                                            onClicked: {
+                                                const value = topModel[model.name]
+                                                const isModel = Monitor.isModel(value)
+
+                                                if (isModel)
+                                                    loader.active = true
+                                            }
+                                        }
+
+                                        Loader {
+                                            id: loader
+
+                                            active: false
+                                            sourceComponent: ApplicationWindow {
+                                                width: 500
+                                                height: 400
+                                                visible: true
+
+                                                onClosing: loader.active = false
+
+                                                Loader {
+                                                    anchors.fill: parent
+                                                    sourceComponent: modelInspectionComponent
+
+                                                    Component.onCompleted: {
+                                                        item.showControls = false
+                                                        item.model = topModel[model.name]
+                                                    }
+                                                }
+                                            }
                                         }
 
                                         ToolTip.visible: labelMouseArea.pressed
