@@ -7,6 +7,7 @@ from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
+from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
@@ -15,6 +16,7 @@ class BackUpYourSeedPhrasePopUp(BasePopup):
 
     def __init__(self):
         super(BackUpYourSeedPhrasePopUp, self).__init__()
+        self._scroll = Scroll(names.o_Flickable)
         self._i_have_a_pen_and_paper_check_box = CheckBox(names.mainWallet_AddEditAccountPopup_HavePenAndPaperCheckBox)
         self._i_know_where_i_ll_store_it_check_box = CheckBox(
             names.mainWallet_AddEditAccountPopup_StoringSeedPhraseConfirmedCheckBox)
@@ -41,6 +43,7 @@ class BackUpYourSeedPhrasePopUp(BasePopup):
 
     @allure.step('Set know where will store it checkbox')
     def set_know_where_store_it(self, value: bool):
+        self._scroll.vertical_down_to(self._i_know_where_i_ll_store_it_check_box)
         self._i_know_where_i_ll_store_it_check_box.set(value)
         return self
 
