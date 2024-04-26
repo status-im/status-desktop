@@ -64,7 +64,8 @@ SettingsContentBase {
     toast.type: SettingsDirtyToastMessage.Type.Info
     toast.cancelButtonVisible: manageTokensView.advancedTabVisible
     toast.saveForLaterButtonVisible: !manageTokensView.advancedTabVisible
-    toast.saveChangesText: manageTokensView.advancedTabVisible ? toast.defaultSaveChangesText : qsTr("Apply to my Wallet")
+    toast.saveForLaterText: qsTr("Save")
+    toast.saveChangesText: manageTokensView.advancedTabVisible ? toast.defaultSaveChangesText : qsTr("Save and apply")
     toast.changesDetectedText: manageTokensView.advancedTabVisible ? toast.defaultChangesDetectedText : qsTr("New custom sort order created")
 
     onSaveForLaterClicked: {
