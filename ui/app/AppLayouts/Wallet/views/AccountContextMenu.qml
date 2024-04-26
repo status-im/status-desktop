@@ -47,7 +47,8 @@ StatusMenu {
     StatusAction {
         objectName: "AccountMenu-HideFromTotalBalance-%1".arg(root.uniqueIdentifier)
         enabled: !!root.account && root.account.walletType === Constants.watchWalletType
-        text: !!root.account ? root.account.hideFromTotalBalance ? qsTr("Include in total balance"): qsTr("Exclude from total balance"): ""
+        text: !!root.account ? root.account.hideFromTotalBalance ? qsTr("Include in balances and activity")
+                                                                 : qsTr("Exclude from balances and activity") : ""
         icon.name: !!root.account ? root.account.hideFromTotalBalance ? "show" : "hide": ""
         onTriggered: root.hideFromTotalBalanceClicked(root.account.address, !root.account.hideFromTotalBalance)
     }
