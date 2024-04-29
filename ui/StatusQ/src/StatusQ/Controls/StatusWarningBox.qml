@@ -10,9 +10,9 @@ import StatusQ.Core.Theme 0.1
       \inqmlmodule StatusQ.Controls
       \since StatusQ.Controls 0.1
       \brief Displays a customizable WarningBox component.
-      Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-controls2-control.html}{Item}.
+      Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-controls2-control.html}{Control}.
 
-      The \c StatusWarningBox displays an customizable WarningBox for users to show an icon and text.
+      The \c StatusWarningBox displays a customizable WarningBox for users to show an icon and text.
       For example:
 
       \qml
@@ -30,7 +30,6 @@ import StatusQ.Core.Theme 0.1
 
 Control {
     id: root
-    implicitWidth: 614
     padding: 16
 
     /*!
@@ -70,6 +69,12 @@ Control {
     */
     property int textSize: Theme.primaryTextFontSize
 
+    /*!
+        \qmlproperty Component StatusWarningBox::extraContentComponent
+        This property lets you add some extra component on the trailing side (like a button)
+    */
+    property alias extraContentComponent: extraContent.sourceComponent
+
     background: Rectangle {
         radius: 8
         opacity: 0.5
@@ -93,12 +98,12 @@ Control {
         StatusBaseText {
             id: warningText
             Layout.fillWidth: true
-            Layout.preferredHeight: contentHeight
             wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignVCenter
             font.pixelSize: root.textSize
             color: root.textColor
         }
+        Loader {
+            id: extraContent
+        }
     }
 }
-
