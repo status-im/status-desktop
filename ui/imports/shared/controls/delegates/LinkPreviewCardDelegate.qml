@@ -73,6 +73,8 @@ LinkPreviewCard {
         membersCount: statusCommunityPreview ? statusCommunityPreview.membersCount : 0
         activeMembersCount: statusCommunityPreview && isLocalData ? statusCommunityPreview.activeMembersCount : -1
         color: statusCommunityPreview ? statusCommunityPreview.color : ""
+        encrypted: statusCommunityPreview ? statusCommunityPreview.encrypted : false
+        joined: statusCommunityPreview ? statusCommunityPreview.joined : false
     }
     channelData {
         name: statusCommunityChannelPreview ? statusCommunityChannelPreview.displayName : ""

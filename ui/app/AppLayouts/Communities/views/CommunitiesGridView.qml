@@ -83,6 +83,7 @@ StatusScrollView {
             activeUsers: model.activeMembers
             popularity: model.popularity
             categories: tagsJson.model
+            memberCountVisible: model.joined || !model.encrypted
 
 
             // Community restrictions

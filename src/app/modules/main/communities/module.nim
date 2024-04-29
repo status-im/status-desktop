@@ -274,7 +274,9 @@ proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedComm
     int(community.activeMembersCount),
     community.featuredInDirectory,
     tokenPermissionsItems,
-    amIbanned
+    amIbanned,
+    community.joined,
+    community.encrypted,
   )
 
 proc getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
