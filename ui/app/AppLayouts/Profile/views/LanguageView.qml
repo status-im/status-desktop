@@ -1,11 +1,12 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
@@ -23,6 +24,7 @@ SettingsContentBase {
 
     property LanguageStore languageStore
     property var currencyStore
+    property bool languageSelectionEnabled
 
     objectName: "languageView"
     onVisibleChanged: { if(!visible) root.setViewIdleState()}
@@ -93,6 +95,16 @@ SettingsContentBase {
             Item { Layout.fillWidth: true }
             StatusListPicker {
                 id: languagePicker
+
+                button.interactive: root.languageSelectionEnabled
+                StatusToolTip {
+                    y: parent.height + Style.current.padding
+                    margins: 0
+                    visible: !root.languageSelectionEnabled && languagePicker.button.hovered
+                    orientation: StatusToolTip.Orientation.Bottom
+                    text: qsTr("Translations coming soon")
+                }
+
                 property string newKey
 
                 function descriptionForState(state) {
@@ -105,13 +117,13 @@ SettingsContentBase {
                 inputList: SortFilterProxyModel {
                     sourceModel: root.languageStore.languageModel
 
-                    // !Don't use proxy roles cause they harm performance a lot!
                     // "category" is the only role that can't be mocked by StatusListPicker::proxy
                     // due to StatusListPicker internal implementation limitation (ListView's section.property)
                     proxyRoles: [
-                        ExpressionRole {
+                        FastExpressionRole {
                             name: "category"
                             expression: languagePicker.descriptionForState(model.state)
+                            expectedRoles: ["state"]
                         }
                     ]
 
@@ -129,7 +141,7 @@ SettingsContentBase {
                 proxy {
                     key: (model) => model.locale
                     name: (model) => model.name
-                    shortName: (model) => model.native
+                    shortName: (model) => model.native || model.shortName
                     symbol: (model) => ""
                     imageSource: (model) => StatusQUtils.Emoji.iconSource(model.flag)
                     selected: (model) => model.locale === root.languageStore.currentLanguage
@@ -143,10 +155,25 @@ SettingsContentBase {
                 onItemPickerChanged: {
                     if(selected && root.languageStore.currentLanguage !== key) {
                         root.changeLanguage(key)
-                        languageConfirmationDialog.active = true
-                        languageConfirmationDialog.item.open()
+                        Global.openPopup(languageConfirmationDialog)
                     }
                 }
+            }
+        }
+
+        StatusWarningBox {
+            Layout.fillWidth: true
+            Layout.bottomMargin: Style.current.padding
+            borderColor: Theme.palette.baseColor2
+            textColor: Theme.palette.directColor1
+            icon: "group-chat"
+            iconColor: Theme.palette.baseColor1
+            text: qsTr("We need your help to translate Status, so that together we can bring privacy and free speech to the people everywhere, including those who need it most.")
+            extraContentComponent: StatusFlatButton {
+                icon.name: "external-link"
+                text: qsTr("Learn more")
+                size: StatusBaseButton.Size.Small
+                onClicked: Global.openLinkWithConfirmation(Constants.externalStatusLinkWithHttps + '/translations',  Constants.externalStatusLinkWithHttps)
             }
         }
 
@@ -158,8 +185,7 @@ SettingsContentBase {
         // Time format options:
         Column {
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            spacing: Style.current.padding
+            spacing: Constants.settingsSection.itemSpacing
             StatusBaseText {
                 text: qsTr("Time Format")
             }
@@ -183,15 +209,14 @@ SettingsContentBase {
             }
         }
 
-        Loader {
+        Component {
             id: languageConfirmationDialog
-            active: false
-            sourceComponent: ConfirmationDialog {
+            ConfirmationDialog {
+                destroyOnClose: true
                 headerSettings.title: qsTr("Change language")
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
                 confirmButtonLabel: qsTr("Restart")
                 onConfirmButtonClicked: {
-                    languageConfirmationDialog.active = false
                     Utils.restartApplication()
                 }
             }

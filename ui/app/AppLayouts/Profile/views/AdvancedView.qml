@@ -339,6 +339,30 @@ SettingsContentBase {
                 width: parent.width
             }
 
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Enable translations")
+                isSwitch: true
+                switchChecked: localAppSettings.translationsEnabled
+                onClicked: {
+                    localAppSettings.translationsEnabled = !localAppSettings.translationsEnabled
+                    if (!checked)
+                        Global.openPopup(disableLanguagesPopupComponent)
+                }
+            }
+
+            Component {
+                id: disableLanguagesPopupComponent
+                ConfirmationDialog {
+                    destroyOnClose: true
+                    headerSettings.title: qsTr("Language reset")
+                    confirmationText: qsTr("Display language will be switched back to English. You must restart the application for changes to take effect.")
+                    confirmButtonLabel: qsTr("Restart")
+                    onConfirmButtonClicked: Utils.restartApplication()
+                }
+            }
+
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
@@ -478,7 +502,7 @@ SettingsContentBase {
                 onConfirmButtonClicked: {
                     root.advancedStore.toggleIsGoerliEnabled()
                     close()
-                    Qt.quit()
+                    Utils.restartApplication()
                 }
                 onCancelButtonClicked: {
                     close()

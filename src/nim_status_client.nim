@@ -6,6 +6,7 @@ import app/core/main
 import constants as main_constants
 
 import app/global/global_singleton
+import app/global/local_app_settings
 import app/boot/app_controller
 
 when defined(macosx) and defined(arm64):
@@ -131,6 +132,11 @@ proc mainProc() =
   installSelfSignedCertificate(imageCert)
 
   let app = newQGuiApplication()
+
+  # force default language ("en") if not "Settings/Advanced/Enable translations"
+  if not singletonInstance.localAppSettings.getTranslationsEnabled():
+    if singletonInstance.localAppSettings.getLanguage() != DEFAULT_LAS_KEY_LANGUAGE:
+      singletonInstance.localAppSettings.setLanguage(DEFAULT_LAS_KEY_LANGUAGE)
 
   # Required by the WalletConnectSDK view right after creating the QGuiApplication instance
   initializeWebView()

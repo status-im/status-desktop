@@ -118,9 +118,11 @@ Item {
     */
     property int menuAlignment: StatusListPicker.MenuAlignment.Right
 
+    readonly property alias button: btn
+
     /*!
        \qmlproperty enum StatusListPicker::MenuAlignment
-       This property holds the allignment of the menu in terms of the button
+       This property holds the alignment of the menu in terms of the button
        values can be Left, Right or Center
     */
     enum MenuAlignment {
@@ -216,7 +218,7 @@ Item {
         contentColor: Theme.palette.primaryColor1
         text: d.selectedItemsText
         font.pixelSize: 13
-        type: StatusPickerButton.Type.Down
+        type: StatusPickerButton.PickerType.Down
 
         onClicked: {
             picker.visible = !picker.visible
