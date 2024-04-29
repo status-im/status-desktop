@@ -391,7 +391,7 @@ Rectangle {
             // Bottom Row extra info component
             Loader {
                 id: bottomRowLoader
-                Layout.fillWidth: (!!item && item.width===0)
+                Layout.fillWidth: true
                 Layout.preferredHeight: 24
                 active: ((root.categories.count > 0) || !!root.bottomRowComponent)
                 sourceComponent: tagsListComponent

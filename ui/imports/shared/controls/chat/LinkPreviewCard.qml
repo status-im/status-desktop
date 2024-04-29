@@ -253,7 +253,7 @@ CalloutCard {
             PropertyChanges { target: title; text: root.communityData.name }
             PropertyChanges { target: description; text: root.communityData.description }
             PropertyChanges { target: d; bannerImageSource: root.communityData.banner }
-            PropertyChanges { target: footerLoader; active: true; visible: true; sourceComponent: communityFooterComponent }
+            PropertyChanges { target: footerLoader; active: true; visible: !root.communityData.encrypted || root.communityData.joined; sourceComponent: communityFooterComponent }
         },
         State {
             name: "channel"
