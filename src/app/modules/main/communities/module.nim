@@ -419,6 +419,9 @@ method communityDataImported*(self: Module, community: CommunityDto) =
 method communityInfoRequestFailed*(self: Module, communityId: string, errorMsg: string) =
   self.view.emitCommunityInfoRequestCompleted(communityId, errorMsg)
 
+method onImportCommunityErrorOccured*(self: Module, communityId: string, error: string) =
+  self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingError.int, error)
+
 method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: seq[string]) =
   self.view.setDiscordDataExtractionInProgress(true)
   self.controller.requestExtractDiscordChannelsAndCategories(filesToImport)
