@@ -278,6 +278,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
+                languageSelectionEnabled: localAppSettings.translationsEnabled
                 languageStore: root.store.languageStore
                 currencyStore: root.currencyStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.language)
