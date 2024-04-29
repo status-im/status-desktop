@@ -25,7 +25,6 @@ SettingsContentBase {
     id: root
 
     property MessagingStore messagingStore
-    property AdvancedStore advancedStore
     property ContactsStore contactsStore
 
     ColumnLayout {
