@@ -14,7 +14,7 @@ QVariant SumAggregator::calculateAggregation() {
 
     // Check if m_roleName is part of the roles of the model
     QHash<int, QByteArray> roles = model()->roleNames();
-    if (!roleExists()) {
+    if (!roleExists() && model()->rowCount()) {
         qWarning() << "Provided role name does not exist in the current model";
         return 0.0;
     }

@@ -756,6 +756,8 @@ private slots:
             { "name": "A", "subname": "a1" }
         ])");
 
+        QVERIFY(isSame(&sfpm, expectedSorted));
+
         QCOMPARE(model.synced(), true);
         QCOMPARE(signalsSpy.count(), signalsSpySfpm.count());
         QVERIFY(indexesTester.compare());
@@ -791,16 +793,6 @@ private slots:
         sfpm.sort(0, Qt::DescendingOrder);
 
         model.move(0, 1);
-
-        ListModelWrapper expectedSorted(engine, R"([
-            { "name": "C", "subname": "c3" },
-            { "name": "C", "subname": "c2" },
-            { "name": "C", "subname": "c1" },
-            { "name": "B", "subname": "b1" },
-            { "name": "A", "subname": "a2" },
-            { "name": "A", "subname": "a1" }
-        ])");
-
 
         auto source2 = R"([
             { "name": "E", "subname": "a1" },

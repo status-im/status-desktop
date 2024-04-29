@@ -131,8 +131,7 @@ void MovableModel::syncOrder()
 
 void MovableModel::syncOrderInternal()
 {
-    if (m_sourceModel)
-    {
+    if (m_sourceModel) {
         auto sourceModel = m_sourceModel;
 
         disconnect(m_sourceModel, nullptr, this, nullptr);
@@ -148,10 +147,9 @@ void MovableModel::syncOrderInternal()
         }
     }
 
-
     m_indexes.clear();
-    if (!m_synced)
-    {
+
+    if (!m_synced) {
         m_synced = true;
         emit syncedChanged();
     }
