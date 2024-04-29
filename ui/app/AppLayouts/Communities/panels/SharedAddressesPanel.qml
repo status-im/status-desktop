@@ -204,7 +204,8 @@ Control {
         }
     }
 
-    contentItem: ColumnLayout {
+    ColumnLayout {
+        anchors.fill: parent
         spacing: 0
 
         // warning panel
