@@ -18,6 +18,7 @@ QtObject {
     readonly property bool isWakuV2ShardedCommunitiesEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
     property int logMaxBackups: advancedModule ? advancedModule.logMaxBackups : 1
     property bool isRuntimeLogLevelSet: advancedModule ? advancedModule.isRuntimeLogLevelSet: false
+    readonly property bool archiveProtocolEnabled: advancedModule ? advancedModule.archiveProtocolEnabled : false
 
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
 
@@ -148,6 +149,17 @@ QtObject {
             return
 
         localAppSettings.createCommunityEnabled = !localAppSettings.createCommunityEnabled
+    }
+
+    function toggleArchiveProtocolEnabled() {
+        if(!advancedModule)
+            return
+
+        if (root.archiveProtocolEnabled) {
+            advancedModule.disableCommunityHistoryArchiveSupport()
+        } else {
+            advancedModule.enableCommunityHistoryArchiveSupport()
+        }
     }
 
     function toggleManageCommunityOnTestnet() {

@@ -31,11 +31,20 @@ ColumnLayout {
         StatusCheckBox {
             id: archiveSupportToggle
             width: (parent.width-12)
-            checked: true
+            checked: false
             leftSide: false
             padding: 0
             anchors.verticalCenter: parent.verticalCenter
             text: qsTr("Community history service")
+
+            StatusToolTip {
+                text: qsTr('For this Community Setting to work, you also need to activate "Archive Protocol Enabled" in Advanced Settings')
+                visible: hoverHandler.hovered
+            }
+            HoverHandler {
+                id: hoverHandler
+                enabled: true
+            }
         }
     }
 

@@ -142,3 +142,12 @@ proc toggleCommunitySection*(self: Controller) =
 
 proc toggleNodeManagementSection*(self: Controller) =
   self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.NodeManagement))
+
+proc isCommunityHistoryArchiveSupportEnabled*(self: Controller): bool =
+  self.nodeConfigurationService.isCommunityHistoryArchiveSupportEnabled()
+
+proc enableCommunityHistoryArchiveSupport*(self: Controller): bool =
+  self.nodeConfigurationService.enableCommunityHistoryArchiveSupport()
+
+proc disableCommunityHistoryArchiveSupport*(self: Controller): bool =
+  self.nodeConfigurationService.disableCommunityHistoryArchiveSupport()

@@ -56,14 +56,6 @@ proc adaptNodeSettingsForTheAppNeed(self: Service) =
   self.configuration.LogFile = "./geth.log"
   self.configuration.ShhextConfig.BackupDisabledDataDir = "./"
 
-  if (not self.isCommunityHistoryArchiveSupportEnabled()):
-    # Force community archive support true on Desktop
-    # TODO those lines can be removed in the future once we are sure no one has used a legacy client where it is off
-    if (self.enableCommunityHistoryArchiveSupport()):
-      self.configuration.TorrentConfig.Enabled = true
-    else:
-      error "Setting Community History Archive On failed"
-
 proc init*(self: Service) =
   try:
     let response = status_node_config.getNodeConfig()
@@ -123,6 +115,16 @@ proc enableCommunityHistoryArchiveSupport*(self: Service): bool =
     error "error enabling community history archive support: ", errDescription = response.error.message
     return false
 
+  self.configuration.TorrentConfig.Enabled = true
+  return true
+
+proc disableCommunityHistoryArchiveSupport*(self: Service): bool =
+  let response = status_node_config.disableCommunityHistoryArchiveSupport()
+  if(not response.error.isNil):
+    error "error disabling community history archive support: ", errDescription = response.error.message
+    return false
+
+  self.configuration.TorrentConfig.Enabled = false
   return true
 
 proc getFleet*(self: Service): Fleet =
