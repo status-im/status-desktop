@@ -14,6 +14,8 @@ QtObject:
     color: string
     icon: LinkPreviewThumbnail
     banner: LinkPreviewThumbnail
+    encrypted: bool
+    joined: bool
 
   proc setup*(self: StatusCommunityLinkPreview) =
     self.QObject.setup()
@@ -74,6 +76,22 @@ QtObject:
   proc getBanner*(self: StatusCommunityLinkPreview): LinkPreviewThumbnail =
     result = self.banner
 
+  proc getEncrypted*(self: StatusCommunityLinkPreview): bool {.slot.} =
+    result = self.encrypted
+  proc encryptedChanged*(self: StatusCommunityLinkPreview) {.signal.}
+
+  QtProperty[bool] encrypted:
+    read = getEncrypted
+    notify = encryptedChanged
+
+  proc getJoined*(self: StatusCommunityLinkPreview): bool {.slot.} =
+    result = self.joined
+  proc joinedChanged*(self: StatusCommunityLinkPreview) {.signal.}
+
+  QtProperty[bool] joined:
+    read = getJoined
+    notify = joinedChanged
+
   proc toStatusCommunityLinkPreview*(jsonObj: JsonNode): StatusCommunityLinkPreview =
     new(result, delete)
     result.setup()
@@ -108,7 +126,9 @@ QtObject:
       activeMembersCount: {self.activeMembersCount},
       color: {self.color},
       icon: {self.icon},
-      banner: {self.banner}
+      banner: {self.banner},
+      encrypted: {self.encrypted},
+      joined: {self.joined}
     )"""
 
   proc `%`*(self: StatusCommunityLinkPreview): JsonNode =
@@ -120,7 +140,9 @@ QtObject:
       "activeMembersCount": self.activeMembersCount,
       "color": self.color,
       "icon": self.icon,
-      "banner": self.banner
+      "banner": self.banner,
+      "encrypted": self.encrypted,
+      "joined": self.joined
     }
 
   proc empty*(self: StatusCommunityLinkPreview): bool =
@@ -154,5 +176,13 @@ QtObject:
 
     self.icon.update(0, 0, "", community.images.thumbnail)
     self.banner.update(0, 0, "", community.images.banner)
+
+    if self.encrypted != community.encrypted:
+      self.encrypted = community.encrypted
+      self.encryptedChanged()
+
+    if self.joined != community.joined:
+      self.joined = community.joined
+      self.joinedChanged()
 
     return true
