@@ -1,5 +1,13 @@
-# Status-desktop
+# Status Desktop
 
-Desktop client for the [Status Network](https://statusnetwork.com/) built with [Nim](https://nim-lang.org/) and [Qt](https://www.qt.io/)
+[Status](https://status.app/) Desktop client built with [Nim](https://nim-lang.org/) and [Qt](https://www.qt.io/). 
 
-![https://github.com/status-im/nim-status-client/blob/master/screenshot.png](https://github.com/status-im/nim-status-client/blob/master/screenshot.png)
+#### [Our Website](https://status.app/)
+
+#### [Need Help?](https://status.app/help)
+
+#### [Build Instructions](https://zealous-polka-dc7.notion.site/Building-ca1db4fb3baf4f15bab8da717832b743?pvs=74)
+
+#### [You have an idea for a cool feature or improvement?](https://status.app/feature-upvote)
+
+![screenshot of the app](screenshot.png)
