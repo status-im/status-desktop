@@ -176,6 +176,17 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
+                text: qsTr("Enable Community Creation")
+                isSwitch: true
+                switchChecked: root.advancedStore.createCommunityEnabled
+                onClicked: {
+                    root.advancedStore.toggleCreateCommunityEnabled()
+                }
+            }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("POC Wallet Connect")
                 visible: root.advancedStore.isDebugEnabled
 
