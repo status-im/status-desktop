@@ -125,6 +125,12 @@ method toggleCollapsedCommunityCategory*(self: AccessInterface, communityId:stri
 method communityInfoRequestFailed*(self: AccessInterface, communityId: string, errorMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onImportCommunityErrorOccured*(self: AccessInterface, communityId: string, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onImportCommunityCancelled*(self: AccessInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
