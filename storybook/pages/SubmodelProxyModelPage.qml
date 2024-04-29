@@ -7,8 +7,23 @@ import Storybook 1.0
 
 import SortFilterProxyModel 0.2
 
+import StatusQ.Core.Utils 0.1
+
 Item {
     id: root
+
+    readonly property string intro:
+        "The example uses two source models. The first model contains networks"
+        + " (id and metadata such as name and color), visible on the left. The"
+        + " second model contains tokens metadata and their balances per"
+        + " network in the submodel (network id, balance).\n"
+        + "The SubmodelProxyModel wrapping the tokens model joins the submodels"
+        + " to the network model. It also provides filtering and sorting via"
+        + " SFPM (slider and checkbox below). Additionally, SubmodelProxyModel"
+        + " calculates the summary balance and issues it as a role in the"
+        + " top-level model (via SumAggregator). This sum is then used to"
+        + " dynamically sort the tokens model.\nClick on balances to increase"
+        + " the amount."
 
     readonly property int numberOfTokens: 2000
 
@@ -95,6 +110,25 @@ Item {
         sourceModel: tokensModel
 
         delegateModel: SortFilterProxyModel {
+            id: delegateRoot
+
+            // properties exposed as roles to the top-level model
+            readonly property var balancesCountRole: submodel.count
+            readonly property int sumRole: aggregator.value
+
+            sourceModel: joinModel
+
+            filters: FastExpressionFilter {
+                expression: balance >= thresholdSlider.value
+
+                expectedRoles: "balance"
+            }
+
+            sorters: RoleSorter {
+                roleName: "name"
+                enabled: sortCheckBox.checked
+            }
+
             readonly property LeftJoinModel joinModel: LeftJoinModel {
                 leftModel: submodel
                 rightModel: networksModel
@@ -102,102 +136,50 @@ Item {
                 joinRole: "chainId"
             }
 
-            sourceModel: joinModel
+            readonly property SumAggregator aggregator: SumAggregator {
+                id: aggregator
 
-            filters: ExpressionFilter {
-                expression: balance >= thresholdSlider.value
-            }
-
-            sorters: RoleSorter {
-                roleName: "name"
-                enabled: sortCheckBox.checked
+                model: delegateRoot
+                roleName: "balance"
             }
         }
 
         submodelRoleName: "balances"
     }
 
+    SortFilterProxyModel {
+        id: sortBySumProxy
+
+        sourceModel: submodelProxyModel
+
+        sorters: RoleSorter {
+            roleName: "sum"
+            ascendingOrder: false
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 10
+
+        Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            lineHeight: 1.2
+            text: root.intro
+        }
+
+        MenuSeparator {
+            Layout.fillWidth: true
+        }
 
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            // ListView consuming model don't have to do any transformation
-            // of the submodels internally because it's handled externally via
-            // SubmodelProxyModel.
             ListView {
-                id: listView
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                reuseItems: true
-
-                ScrollBar.vertical: ScrollBar {}
-
-                clip: true
-                spacing: 18
-
-                model: submodelProxyModel
-
-                delegate: ColumnLayout {
-                    id: delegateRoot
-
-                    width: ListView.view.width
-                    height: 46
-                    spacing: 0
-
-                    readonly property var balances: model.balances
-
-                    Label {
-                        Layout.fillWidth: true
-                        text: model.name
-                        font.bold: true
-                    }
-
-                    RowLayout {
-                        spacing: 14
-
-                        Layout.fillWidth: true
-
-                        Repeater {
-                            model: delegateRoot.balances
-
-                            Rectangle {
-                                width: label.implicitWidth * 1.5
-                                height: label.implicitHeight * 2
-
-                                color: "transparent"
-                                border.width: 2
-                                border.color: model.color
-
-                                Label {
-                                    id: label
-
-                                    anchors.centerIn: parent
-
-                                    text: `${model.name} (${model.balance})`
-                                    font.pixelSize: 10
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            Rectangle {
-                Layout.preferredWidth: 1
-                Layout.fillHeight: true
-                Layout.rightMargin: 20
-
-                color: "lightgray"
-            }
-
-            ListView {
-                Layout.preferredWidth: 150
+                Layout.preferredWidth: 110
+                Layout.leftMargin: 10
                 Layout.fillHeight: true
 
                 spacing: 20
@@ -232,6 +214,98 @@ Item {
 
                             networksModel.setProperty(model.index, "color",
                                                       root.colors[nextIdx])
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.preferredWidth: 1
+                Layout.fillHeight: true
+                Layout.rightMargin: 20
+
+                color: "lightgray"
+            }
+
+            // ListView consuming model don't have to do any transformation
+            // of the submodels internally because it's handled externally via
+            // SubmodelProxyModel.
+            ListView {
+                id: listView
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                reuseItems: true
+
+                ScrollBar.vertical: ScrollBar {}
+
+                clip: true
+                spacing: 18
+
+                model: sortBySumProxy
+
+                delegate: ColumnLayout {
+                    id: delegateRoot
+
+                    width: ListView.view.width
+                    height: 46
+                    spacing: 0
+
+                    readonly property var balances: model.balances
+
+                    Label {
+                        id: tokenLabel
+
+                        Layout.fillWidth: true
+                        text: model.name
+                        font.bold: true
+                    }
+
+                    RowLayout {
+                        spacing: 14
+
+                        Layout.fillWidth: true
+
+                        Repeater {
+                            model: delegateRoot.balances
+
+                            Rectangle {
+                                width: label.implicitWidth * 1.5
+                                height: label.implicitHeight * 2
+
+                                color: "transparent"
+                                border.width: 2
+                                border.color: model.color
+
+                                Label {
+                                    id: label
+
+                                    anchors.centerIn: parent
+
+                                    text: `${model.name} (${model.balance})`
+                                    font.pixelSize: 10
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+
+                                    onClicked: {
+                                        const item = ModelUtils.getByKey(
+                                                       tokensModel, "name", tokenLabel.text)
+                                        const index = ModelUtils.indexOf(
+                                                        item.balances, "chainId", model.chainId)
+
+                                        item.balances.setProperty(
+                                                    index, "balance",
+                                                    item.balances.get(index).balance + 1)
+                                    }
+                                }
+                            }
+                        }
+
+                        Label {
+                            text: model.balancesCount + " / " + model.sum
                         }
                     }
                 }
