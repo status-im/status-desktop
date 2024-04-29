@@ -207,7 +207,6 @@ StatusSectionLayout {
             sourceComponent: MessagingView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                advancedStore: root.store.advancedStore
                 messagingStore: root.store.messagingStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
                 contactsStore: root.store.contactsStore

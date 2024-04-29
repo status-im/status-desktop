@@ -34,3 +34,10 @@ proc enableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] =
   except RpcException as e:
     error "error doing rpc request", methodName = "enableCommunityHistoryArchiveProtocol", exception=e.msg
     raise newException(RpcException, e.msg)
+
+proc disableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] =
+  try:
+    result = core.callPrivateRPC("disableCommunityHistoryArchiveProtocol".prefix)
+  except RpcException as e:
+    error "error doing rpc request", methodName = "disableCommunityHistoryArchiveProtocol", exception=e.msg
+    raise newException(RpcException, e.msg)
