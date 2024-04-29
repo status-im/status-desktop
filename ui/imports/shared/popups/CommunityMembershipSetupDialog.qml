@@ -465,7 +465,7 @@ StatusStackModal {
                         Layout.fillWidth: true
                         text: root.introMessage || qsTr("Community <b>%1</b> has no intro message...").arg(root.communityName)
                         color: Theme.palette.directColor1
-                        wrapMode: Text.WordWrap
+                        wrapMode: Text.Wrap
                     }
                 }
             }
