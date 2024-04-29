@@ -8,9 +8,18 @@ import AppLayouts.Profile.stores 1.0
 import Storybook 1.0
 
 import utils 1.0
+import mainui 1.0
 
 SplitView {
+    id: root
+
     Logs { id: logs }
+
+    Popups {
+        popupParent: root
+        rootStore: QtObject {}
+        communityTokensStore: QtObject {}
+    }
 
     SplitView {
         orientation: Qt.Vertical
@@ -19,8 +28,9 @@ SplitView {
         LanguageView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
-            contentWidth: parent.width
+            contentWidth: parent.width - 150
 
+            languageSelectionEnabled: ctrlLanguageSelectionEnabled.checked
             languageStore: LanguageStore {
                 property string currentLanguage: "en"
 
@@ -40,6 +50,14 @@ SplitView {
                         flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿"
                         state: 2
                         selected: true
+                    }
+                    ListElement {
+                        locale: "cs_CZ"
+                        name: "Czech"
+                        shortName: "čeština"
+                        flag: "🇨🇿"
+                        state: 1
+                        selected: false
                     }
                 }
 
@@ -92,16 +110,12 @@ SplitView {
             SplitView.preferredHeight: 200
 
             logsView.logText: logs.logText
+
+            Switch {
+                id: ctrlLanguageSelectionEnabled
+                text: "Language selection enabled"
+            }
         }
-    }
-
-    Control {
-        SplitView.minimumWidth: 300
-        SplitView.preferredWidth: 300
-
-        font.pixelSize: 13
-
-        // model editor will go here
     }
 }
 
