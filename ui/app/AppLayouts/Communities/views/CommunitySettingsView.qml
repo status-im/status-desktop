@@ -105,7 +105,8 @@ StatusSectionLayout {
                 Layout.leftMargin: Style.current.halfPadding
                 Layout.rightMargin: Style.current.halfPadding
                 type: StatusChatInfoButton.Type.OneToOneChat
-                hoverEnabled: false
+                hoverEnabled: true
+                onClicked: root.backToCommunityClicked()
             }
 
             StatusListView {
