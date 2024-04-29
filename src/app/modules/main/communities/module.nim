@@ -36,6 +36,13 @@ import app/modules/shared/keypairs
 export io_interface
 
 type
+  ImportCommunityState {.pure.} = enum
+    Imported = 0
+    ImportingInProgress
+    ImportingError
+    ImportingCanceled
+
+type
   Action {.pure.} = enum
     None = 0,
     JoinCommunity
