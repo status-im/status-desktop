@@ -18,6 +18,8 @@ type
     Tags
     Permissions
     AmIBanned
+    Joined
+    Encrypted
 
 QtObject:
   type CuratedCommunityModel* = ref object of QAbstractListModel
@@ -67,6 +69,8 @@ QtObject:
       ModelRole.Tags.int:"tags",
       ModelRole.Permissions.int:"permissionsModel",
       ModelRole.AmIBanned.int:"amIBanned",
+      ModelRole.Joined.int:"joined",
+      ModelRole.Encrypted.int:"encrypted"
     }.toTable
 
   method data(self: CuratedCommunityModel, index: QModelIndex, role: int): QVariant =
@@ -106,6 +110,10 @@ QtObject:
         result = newQVariant(item.getFeatured())
       of ModelRole.AmIBanned:
         result = newQVariant(item.getAmIBanned())
+      of ModelRole.Joined:
+        result = newQVariant(item.getJoined())
+      of ModelRole.Encrypted:
+        result = newQVariant(item.getEncrypted())
 
   proc findIndexById(self: CuratedCommunityModel, id: string): int =
     for i in 0 ..< self.items.len:
