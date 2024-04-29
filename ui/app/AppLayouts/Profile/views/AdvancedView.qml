@@ -196,6 +196,17 @@ SettingsContentBase {
             }
             /////////////////////////////////////////////////////
 
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Archive Protocol Enabled")
+                isSwitch: true
+                switchChecked: root.advancedStore.archiveProtocolEnabled
+                onClicked: {
+                    root.advancedStore.toggleArchiveProtocolEnabled()
+                }
+            }
+
             Separator {
                 width: parent.width
             }

@@ -394,7 +394,7 @@ QtObject:
         logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
         wakuV2LightClient: false,
         previewPrivacy: true,
-        torrentConfigEnabled: some(true),
+        torrentConfigEnabled: some(false),
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
         walletSecretsConfig: self.buildWalletSecrets(),
       )
