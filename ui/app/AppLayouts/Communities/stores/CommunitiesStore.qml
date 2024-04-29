@@ -35,6 +35,9 @@ QtObject {
     property bool downloadingCommunityHistoryArchives: root.communitiesModuleInst.downloadingCommunityHistoryArchives
     property var advancedModule: profileSectionModule.advancedModule
 
+    readonly property bool createCommunityEnabled: localAppSettings.createCommunityEnabled ?? false
+    readonly property bool testEnvironment: localAppSettings.testEnvironment ?? false
+
     // TODO: Could the backend provide directly 2 filtered models??
     //property var featuredCommunitiesModel: root.communitiesModuleInst.curatedFeaturedCommunities
     //property var popularCommunitiesModel: root.communitiesModuleInst.curatedPopularCommunities

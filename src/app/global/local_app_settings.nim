@@ -17,11 +17,13 @@ const LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED = "global/custom_mouse_scroll_enabl
 const DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED = false
 const DEFAULT_VISIBILITY = 2 #windowed visibility, from qml
 const LAS_KEY_FAKE_LOADING_SCREEN_ENABLED = "global/fake_loading_screen"
+const LAS_KEY_CREATE_COMMUNITIES_ENABLED = "global/create_communities"
 let DEFAULT_FAKE_LOADING_SCREEN_ENABLED = defined(production) and not TEST_MODE_ENABLED #enabled in production, disabled in development and e2e tests
 const LAS_KEY_SHARDED_COMMUNITIES_ENABLED = "global/sharded_communities"
 const DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED = false
 const LAS_KEY_TRANSLATIONS_ENABLED = "global/translations_enabled"
 const DEFAULT_LAS_KEY_TRANSLATIONS_ENABLED = false
+const DEFAULT_LAS_KEY_CREATE_COMMUNITIES_ENABLED = false
 
 QtObject:
   type LocalAppSettings* = ref object of QObject
@@ -147,6 +149,19 @@ QtObject:
     read = getFakeLoadingScreenEnabled
     write = setFakeLoadingScreenEnabled
     notify = fakeLoadingScreenEnabledChanged
+
+  proc createCommunityEnabledChanged*(self: LocalAppSettings) {.signal.}
+  proc getCreateCommunityEnabled*(self: LocalAppSettings): bool {.slot.} =
+    self.settings.value(LAS_KEY_CREATE_COMMUNITIES_ENABLED, newQVariant(DEFAULT_LAS_KEY_CREATE_COMMUNITIES_ENABLED)).boolVal
+
+  proc setCreateCommunityEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
+    self.settings.setValue(LAS_KEY_CREATE_COMMUNITIES_ENABLED, newQVariant(enabled))
+    self.createCommunityEnabledChanged()
+
+  QtProperty[bool] createCommunityEnabled:
+    read = getCreateCommunityEnabled
+    write = setCreateCommunityEnabled
+    notify = createCommunityEnabledChanged
 
   proc wakuV2ShardedCommunitiesEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getWakuV2ShardedCommunitiesEnabled*(self: LocalAppSettings): bool {.slot.} =
