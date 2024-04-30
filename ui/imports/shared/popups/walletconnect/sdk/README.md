@@ -1,10 +1,6 @@
 # Wallet Connect Integration
 
-## TODO
-
-- [ ] test namespaces implementation https://se-sdk-dapp.vercel.app/
-
-### Design questions
+## Questions
 
 - [ ] Do we report **disabled chains**? **Update session** in case of enabled/disabled chains?
 - [ ] User error workflow: retry?
