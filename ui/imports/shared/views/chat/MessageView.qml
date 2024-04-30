@@ -206,7 +206,9 @@ Loader {
 
 
     function startMessageFoundAnimation() {
-        root.item.startMessageFoundAnimation();
+        if (root.active && root.item.startMessageFoundAnimation) {
+            root.item.startMessageFoundAnimation()
+        }
     }
 
     signal openStickerPackPopup(string stickerPackId)
