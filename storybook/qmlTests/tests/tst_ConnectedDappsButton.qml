@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtTest 1.15
 
+import StatusQ 0.1 // See #10218
+
 import QtQuick.Controls 2.15
 
 import Storybook 1.0
@@ -15,7 +17,6 @@ Item {
     Component {
         id: componentUnderTest
         ConnectedDappsButton {
-            id: control
         }
     }
 

@@ -122,9 +122,6 @@ QtObject {
             append({subsection: Constants.settingsSubsection.wallet,
                        text: qsTr("Wallet"),
                        icon: "wallet"})
-            append({subsection: Constants.settingsSubsection.dapps,
-                       text: qsTr("dApps"),
-                       icon: "dapp"})
             append({subsection: Constants.settingsSubsection.browserSettings,
                        text: qsTr("Browser"),
                        icon: "browser"})
