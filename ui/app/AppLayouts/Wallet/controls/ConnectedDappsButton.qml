@@ -15,6 +15,10 @@ StatusButton {
 
     signal connectDapp()
 
+    implicitHeight: 38
+
+    size: StatusBaseButton.Size.Small
+
     borderColor: Theme.palette.directColor7
     normalColor: Theme.palette.transparent
     hoverColor: Theme.palette.baseColor2
@@ -40,6 +44,9 @@ StatusButton {
 
     Popup {
         id: popup
+
+        objectName: "dappsPopup"
+
         contentWidth: root.menuWidth
         contentHeight: list.height
         modal: false

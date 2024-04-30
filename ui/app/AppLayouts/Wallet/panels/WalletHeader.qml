@@ -75,11 +75,9 @@ Item {
             Layout.topMargin: 5
 
             ConnectedDappsButton {
-                Layout.preferredHeight: 38
                 Layout.alignment: Qt.AlignTop
 
                 spacing: 8
-                size: StatusBaseButton.Size.Small
                 visible: !root.walletStore.showSavedAddresses
 
                 onConnectDapp: {
