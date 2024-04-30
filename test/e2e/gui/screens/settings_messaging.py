@@ -26,7 +26,7 @@ class MessagingSettingsView(QObject):
     @allure.step('Open contacts settings')
     def open_contacts_settings(self) -> 'ContactsSettingsView':
         self._contacts_button.click()
-        return ContactsSettingsView().wait_until_appears()
+        return ContactsSettingsView()
 
 
 class ContactItem:
@@ -106,7 +106,14 @@ class ContactsSettingsView(QObject):
     @property
     @allure.step('Get contact items')
     def contact_items(self) -> typing.List[ContactItem]:
-        return [ContactItem(item) for item in self._contacts_items_list.items]
+        try:
+            contact_items = []
+            for i in range(2):
+                contact_items = [ContactItem(item) for item in self._contacts_items_list.items]
+            if len(contact_items) != 0:
+                return contact_items
+        except LookupError as err:
+            raise err
 
     @property
     @allure.step('Get title of list with sent pending requests')
@@ -181,7 +188,7 @@ class ContactsSettingsView(QObject):
 
     @allure.step('Open verify identity popup')
     def open_more_options_popup(
-            self, contact: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC, attempts: int = 2):
+            self, contact: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC):
         request = self.find_contact_in_list(contact, timeout_sec)
         request.open_more_options_popup()
         return self

@@ -63,8 +63,7 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         community_screen.verify_channel(
             'general',
             'General channel for the community',
-            None,
-            color
+            None
         )
 
     with step('Verify community parameters in community settings view'):
