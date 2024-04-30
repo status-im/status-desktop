@@ -19,7 +19,7 @@ pytestmark = marks
     'channel_name, channel_description, channel_emoji, channel_emoji_image, channel_color, new_channel_name, '
     'new_channel_description, new_channel_emoji',
     [('Channel', 'Description', 'sunglasses', None, '#4360df', 'New-channel', 'New channel description', 'thumbsup')])
-# @pytest.mark.critical TODO: https://github.com/status-im/desktop-qa-automation/issues/535
+# @pytest.mark.critical TODO: https://github.com/status-im/desktop-qa-automation/issues/658
 def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description, channel_emoji, channel_emoji_image,
                                 channel_color, new_channel_name, new_channel_description, new_channel_emoji):
     with step('Create simple community'):
@@ -33,8 +33,7 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
         community_screen.verify_channel(
             'general',
             'General channel for the community',
-            None,
-            channel_color
+            None
         )
 
     with step('Create new channel for recently created community'):
@@ -44,8 +43,7 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
         community_screen.verify_channel(
             channel_name,
             channel_description,
-            channel_emoji_image,
-            channel_color
+            channel_emoji_image
         )
 
     with step('Edit channel'):

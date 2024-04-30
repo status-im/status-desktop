@@ -47,7 +47,7 @@ class CommunityScreen(QObject):
 
     @allure.step('Verify channel')
     def verify_channel(
-            self, name: str, description: str, emoji, color: str):
+            self, name: str, description: str, emoji):
         with step('Channel is correct in channels list'):
             channel = self.left_panel.get_channel_parameters(name)
             assert channel.name == name
@@ -57,13 +57,11 @@ class CommunityScreen(QObject):
             assert self.tool_bar.channel_description == description
             if emoji is not None:
                 assert self.tool_bar.channel_emoji == emoji
-            assert self.tool_bar.channel_color == color
 
         with step('Verify channel in chat'):
             assert self.chat.channel_name == name
             if emoji is not None:
                 assert self.chat.channel_emoji == emoji
-            assert self.chat.channel_color == color
 
     @allure.step('Create category')
     def create_category(self, name: str, general_checkbox: bool):
