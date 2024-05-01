@@ -19,8 +19,7 @@ ColumnLayout {
     property url banner: ctrlCommunityBanner.checked ? Style.png("settings/communities@2x") : ""
     readonly property bool shardingEnabled: ctrlShardingEnabled.checked
     property alias shardIndex: ctrlShardIndex.value
-
-    spacing: 12
+    property bool adminControlsEnabled: true
 
     ColumnLayout {
         Label {
@@ -59,7 +58,7 @@ ColumnLayout {
         Slider {
             value: root.membersCount
             from: 0
-            to: 1000
+            to: 3000
             onValueChanged: root.membersCount = value
         }
     }
@@ -108,6 +107,7 @@ ColumnLayout {
     }
 
     RowLayout {
+        visible: root.adminControlsEnabled
         Label {
             text: "Is community admin:"
         }
@@ -118,6 +118,7 @@ ColumnLayout {
         }
     }
     RowLayout {
+        visible: root.adminControlsEnabled
         Label {
             text: "Is community editable:"
         }
@@ -142,6 +143,7 @@ ColumnLayout {
         }
     }
     RowLayout {
+        visible: root.adminControlsEnabled
         Layout.fillWidth: true
         CheckBox {
             id: ctrlShardingEnabled

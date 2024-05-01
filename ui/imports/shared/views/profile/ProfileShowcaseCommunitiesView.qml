@@ -132,12 +132,13 @@ Item {
             onClicked: {
                 if (root.readOnly)
                     return
-                if (mouse.button === Qt.LeftButton) {
-                    Global.switchToCommunity(model.id);
-                    root.closeRequested();
-                } else {
-                    Global.openMenu(delegatesActionsMenu, this, { communityId: model.id, url: Utils.getCommunityShareLink(model.id) });
-                }
+                Global.switchToCommunity(model.id)
+                root.closeRequested()
+            }
+            onRightClicked: {
+                if (root.readOnly)
+                    return
+                Global.openMenu(delegatesActionsMenu, this, { communityId: model.id, url: Utils.getCommunityShareLink(model.id) })
             }
         }
     }
