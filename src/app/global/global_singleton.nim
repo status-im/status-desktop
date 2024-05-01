@@ -7,6 +7,7 @@ import user_profile
 import utils
 import global_events
 import loader_deactivator
+import feature_flags
 
 export local_account_settings
 export local_account_sensitive_settings
@@ -71,6 +72,12 @@ proc loaderDeactivator*(self: GlobalSingleton): LoaderDeactivator =
     loaderDeactivator = newLoaderDeactivator()
   return loaderDeactivator
 
+proc featureFlags*(self: GlobalSingleton): FeatureFlags =
+  var featureFlags {.global.}: FeatureFlags
+  if (featureFlags.isNil):
+    featureFlags = newFeatureFlags()
+  return featureFlags
+
 proc delete*(self: GlobalSingleton) =
   self.engine.delete()
   self.localAccountSettings.delete()
@@ -78,3 +85,4 @@ proc delete*(self: GlobalSingleton) =
   self.localAppSettings.delete()
   self.userProfile.delete()
   self.loaderDeactivator.delete()
+  self.featureFlags.delete()

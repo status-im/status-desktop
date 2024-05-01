@@ -14,6 +14,9 @@ QtObject {
     property var userProfile
     property bool appIsReady: false
 
+    // avoid lookup of context property in QML
+    readonly property var featureFlags: featureFlagsRootContextProperty
+
     signal openPinnedMessagesPopupRequested(var store, var messageStore, var pinnedMessagesModel, string messageToPin, string chatId)
     signal openCommunityProfilePopupRequested(var store, var community, var chatCommunitySectionModule)
 
