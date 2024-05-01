@@ -93,6 +93,7 @@ StatusScrollView {
                 collectiblesModel: root.collectiblesModel
                 model: card.permissionsList
                 requirementsMet: card.requirementsMet
+                overlappingBorder: 0
             }
 
             onClicked: root.cardClicked(communityId)
