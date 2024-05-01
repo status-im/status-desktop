@@ -204,7 +204,7 @@ Control {
         }
     }
 
-    ColumnLayout {
+    contentItem: ColumnLayout {
         anchors.fill: parent
         spacing: 0
 
