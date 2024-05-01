@@ -1,6 +1,6 @@
 import NimQml, strutils, os
 
-import ../../constants
+import constants
 
 # Local App Settings keys:
 const LAS_KEY_LANGUAGE* = "global/language"
@@ -207,3 +207,9 @@ QtObject:
       of LAS_KEY_FAKE_LOADING_SCREEN_ENABLED: self.fakeLoadingScreenEnabledChanged()
       of LAS_KEY_SHARDED_COMMUNITIES_ENABLED: self.wakuV2ShardedCommunitiesEnabledChanged()
       of LAS_KEY_TRANSLATIONS_ENABLED: self.translationsEnabledChanged()
+
+  proc getWalletConnectProjectID*(self: LocalAppSettings): string {.slot.} =
+    return constants.WALLET_CONNECT_PROJECT_ID
+
+  QtProperty[string] walletConnectProjectID:
+    read = getWalletConnectProjectID

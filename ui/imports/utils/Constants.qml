@@ -788,11 +788,6 @@ QtObject {
         }
     }
 
-    readonly property QtObject dapps: QtObject {
-        readonly property int connectDappPopupWidth: 480
-        readonly property int footerButtonsHeight: 44
-    }
-
     readonly property QtObject localPairingAction: QtObject {
         readonly property int actionUnknown: 0
         readonly property int actionConnect: 1

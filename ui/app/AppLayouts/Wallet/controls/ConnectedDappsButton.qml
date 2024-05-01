@@ -90,6 +90,7 @@ StatusButton {
                 text: qsTr("Connect a dApp via WalletConnect")
                 onClicked: {
                     root.connectDapp()
+                    popup.close()
                 }
             }
         }

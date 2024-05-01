@@ -27,6 +27,7 @@ import shared.stores 1.0
 import shared.popups.send 1.0
 import shared.popups.send.views 1.0
 import shared.stores.send 1.0
+import shared.popups.walletconnect 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -42,11 +43,6 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
-
-/////////////////////////////////////////////////////
-// WalletConnect POC - to remove
-import AppLayouts.Wallet.views.pocwalletconnect 1.0
-/////////////////////////////////////////////////////
 
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
@@ -81,6 +77,18 @@ Item {
     readonly property TransactionStore transactionStore: TransactionStore {
         walletAssetStore: appMain.walletAssetsStore
         tokensStore: appMain.tokensStore
+    }
+    readonly property DAppsStore dappsStore: DAppsStore {
+        wCSDK: WalletConnectSDK {
+            active: WalletStore.RootStore.walletSectionInst.walletReady
+
+            projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
+
+            onSessionRequestEvent: (details) => {
+                // TODO #14556
+                console.debug(`@dd onSessionRequestEvent: ${JSON.stringify(details)}`)
+            }
+        }
     }
 
     // set from main.qml
@@ -2032,23 +2040,4 @@ Item {
             onClosed: userAgreementLoader.active = false
         }
     }
-
-    /////////////////////////////////////////////////////
-    // WalletConnect POC - to remove
-    POCWalletConnect {
-        id: walletConnect
-        anchors.top: parent.bottom
-        width: 100
-        height: 100
-
-        controller: WalletStore.RootStore.walletSectionInst.walletConnectController
-
-        Connections {
-            target: Global
-            function onPopupWalletConnect() {
-                walletConnect.modal.open()
-            }
-        }
-    }
-    /////////////////////////////////////////////////////
 }

@@ -46,6 +46,7 @@ Button {
     property color textHoverColor: textColor
     property color disabledTextColor
     property color borderColor: "transparent"
+    property int borderWidth: 0
     property bool textFillWidth: false
 
     property int radius: size === StatusBaseButton.Size.Tiny ? 6 : 8
@@ -126,6 +127,7 @@ Button {
     background: Rectangle {
         radius: root.radius
         border.color: root.borderColor
+        border.width: root.borderWidth
         color: {
             if (!root.enabled || !root.interactive)
                 return disabledColor
