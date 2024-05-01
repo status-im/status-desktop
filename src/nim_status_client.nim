@@ -173,6 +173,9 @@ proc mainProc() =
   singletonInstance.engine.setRootContextProperty("signals", signalsManagerQVariant)
   singletonInstance.engine.setRootContextProperty("production", isProductionQVariant)
 
+  # Ensure we have the featureFlags instance available from the start
+  singletonInstance.engine.setRootContextProperty("featureFlagsRootContextProperty", newQVariant(singletonInstance.featureFlags()))
+
   app.installEventFilter(osThemeEvent)
   app.installEventFilter(urlSchemeEvent)
 

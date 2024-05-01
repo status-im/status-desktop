@@ -78,7 +78,7 @@ Item {
                 Layout.alignment: Qt.AlignTop
 
                 spacing: 8
-                visible: !root.walletStore.showSavedAddresses
+                visible: !root.walletStore.showSavedAddresses && Global.featureFlags.dappsEnabled
 
                 onConnectDapp: {
                     console.warn("TODO: run ConnectDappPopup...")
