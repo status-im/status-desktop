@@ -1,23 +1,16 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 import Storybook 1.0
 
 SplitView {
     id: root
 
-    orientation: Qt.Vertical
-
-    readonly property string source: `
-        import QtQml 2.14
-        import StatusQ.Components 0.1
-        Component {
-            StatusCommunityCard {
-               name: nameTextField.text
-            }
-        }
-    `
+    orientation: Qt.Horizontal
 
     Logs { id: logs }
 
@@ -25,72 +18,60 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        HotLoader {
-            id: loader
-
+        StatusCommunityCard {
             anchors.centerIn: parent
-            source: sourceCodeBox.sourceCode
+            cardSize: ctrlSize.checked ? StatusCommunityCard.Size.Big : StatusCommunityCard.Size.Small
+            communityId: "community_id"
+            name: infoEditor.name
+            description: infoEditor.description
+            members: infoEditor.membersCount
+            activeUsers: members/2
+            //popularity: 4 // not visualized?
+            banner: infoEditor.banner
+            asset.source: infoEditor.image
+            asset.isImage: true
+            communityColor: infoEditor.color
+            loaded: !ctrlLoading.checked
 
-            Connections {
-                target: loader.item
-
-                function onClicked() {
-                    logs.logEvent("StatusCommunityCard::clicked",
-                                  ["communityId"], arguments)
-                }
+            categories: ListModel {
+                ListElement { name: "gaming"; emoji: "🎮"; selected: false }
+                ListElement { name: "art"; emoji: "🖼️️"; selected: false }
+                ListElement { name: "crypto"; emoji: "💸"; selected: true }
+                ListElement { name: "nsfw"; emoji: "🍆"; selected: false }
+                ListElement { name: "markets"; emoji: "💎"; selected: false }
             }
-        }
 
-        Pane {
-            anchors.fill: parent
-            visible: !!loader.errors
-
-            CompilationErrorsBox {
-                anchors.fill: parent
-                errors: loader.errors
-            }
+            onClicked: logs.logEvent("StatusCommunityCard::onClicked", ["communityId"], arguments)
+            onRightClicked: logs.logEvent("StatusCommunityCard::onRightClicked", ["communityId"], arguments)
         }
     }
 
     LogsAndControlsPanel {
-        id: logsAndControlsPanel
-
-        SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 200
+        SplitView.preferredWidth: 250
 
         logsView.logText: logs.logText
 
-        RowLayout {
-            anchors.fill: parent
+        CommunityInfoEditor {
+            id: infoEditor
+            colorVisible: true
+            adminControlsEnabled: false
 
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                ColumnLayout {
-                    anchors.fill: parent
-
-                    TextField {
-                        id: nameTextField
-                        text: "Card name!"
-                    }
-                }
+            Switch {
+                id: ctrlSize
+                text: "Big card"
+                checked: true
             }
 
-            SourceCodeBox {
-                id: sourceCodeBox
-
-                Layout.preferredWidth: root.width / 2
-                Layout.fillHeight: true
-
-                sourceCode: root.source
-                hasErrors: !!loader.errors
+            Switch {
+                id: ctrlLoading
+                text: "Loading"
+                checked: false
             }
         }
     }
 }
 
-// category: Panels
+// category: Components
 
 // https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416159
 // https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416160

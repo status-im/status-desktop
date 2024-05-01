@@ -1,5 +1,6 @@
 import QtQuick 2.14
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
@@ -53,19 +54,21 @@ Item {
                 }
 
                 filters: [
-                    ExpressionFilter {
+                    FastExpressionFilter {
                         enabled: root.filterString !== ""
                         expression: {
                             root.filterString
                             return model.name.toUpperCase().indexOf(root.filterString.toUpperCase()) !== -1
                         }
+                        expectedRoles: ["name"]
                     },
-                    ExpressionFilter {
+                    FastExpressionFilter {
                         enabled: root.mode !== StatusCommunityTags.Highlight
                         expression: {
                             root.mode
                             return filterModel.selectionPredicate(model.selected)
                         }
+                        expectedRoles: ["selected"]
                     }
                 ]
             }

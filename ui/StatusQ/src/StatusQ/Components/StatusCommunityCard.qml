@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -51,7 +51,7 @@ Rectangle {
        \qmlproperty bool StatusCommunityCard::hovered
        This property indicates whether the card contains mouse.
     */
-    property bool hovered: sensor.containsMouse
+    readonly property bool hovered: sensor.hovered
     /*!
        \qmlproperty int StatusCommunityCard::titleFontSize
        This property holds the title's font size.
@@ -61,7 +61,7 @@ Rectangle {
        \qmlproperty int StatusCommunityCard::descriptionFontSize
        This property holds the description's font size.
     */
-    property int descriptionFontSize: 15
+    property int descriptionFontSize: cardSize === StatusCommunityCard.Size.Big ? 15 : 13
     /*!
        \qmlproperty string StatusCommunityCard::communityId
        This property holds the community identifier value.
@@ -136,14 +136,14 @@ Rectangle {
     property url tokenLogo: ""
 
     /*!
-       \qmlproperty Item StatusCommunityCard::rigthHeaderComponent
+       \qmlproperty Component StatusCommunityCard::rigthHeaderComponent
        This property holds an extra info header component that will be displayed on top right of the card.
        Example: Community token permissions row.
     */
     property alias rigthHeaderComponent: rightHeaderLoader.sourceComponent
 
     /*!
-       \qmlproperty Item StatusCommunityCard::bottomRowComponent
+       \qmlproperty Component StatusCommunityCard::bottomRowComponent
        This property holds an extra info bottom row component that will be displayed on bottom left of the card.
        Example: Community token permissions row.
     */
@@ -168,7 +168,13 @@ Rectangle {
         \qmlsignal StatusCommunityCard::clicked(string communityId)
         This signal is emitted when the card item is clicked.
     */
-    signal clicked(var mouse, string communityId)
+    signal clicked(string communityId)
+
+    /*!
+        \qmlsignal StatusCommunityCard::rightClicked(string communityId)
+        This signal is emitted when the card item is clicked with RMB.
+    */
+    signal rightClicked(string communityId)
 
     QtObject {
         id: d
@@ -208,15 +214,16 @@ Rectangle {
     implicitHeight: d.totalHeigth
     radius: d.bannerRadius
     color: "transparent"
+    border.color: Theme.palette.directColor8
     layer.enabled: true
     layer.effect: DropShadow {
         source: root
         horizontalOffset: 0
         verticalOffset: 2
-        radius: sensor.containsMouse ? d.bannerRadiusHovered : d.bannerRadius
+        radius: root.hovered ? d.bannerRadiusHovered : d.bannerRadius
         samples: 25
         spread: 0
-        color: sensor.containsMouse ? Theme.palette.backdropColor : Theme.palette.dropShadow
+        color: root.hovered ? Theme.palette.backdropColor : Theme.palette.dropShadow
     }
 
     // Community banner:
@@ -293,8 +300,6 @@ Rectangle {
         height: d.cardHeigth
         color: d.cardColor
         radius: d.cardRadius
-        border.color: root.border.color
-        clip: true
 
         // Right header extra info component
         Loader {
@@ -315,8 +320,7 @@ Rectangle {
             anchors.rightMargin: d.margins
             spacing: (root.cardSize === StatusCommunityCard.Size.Big) ? 6 : 0
             StatusBaseText {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: (root.cardSize === StatusCommunityCard.Size.Big)
+                Layout.fillWidth: true
                 Layout.preferredHeight: 22
                 text: root.name
                 font.weight: d.titleFontWeight
@@ -326,16 +330,13 @@ Rectangle {
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.fillHeight: (root.cardSize === StatusCommunityCard.Size.Big)
-                Layout.preferredHeight: 16
                 text: root.description
                 font.pixelSize: root.descriptionFontSize
                 lineHeight: 1.2
                 color: root.descriptionFontColor
-                maximumLineCount: 2
+                maximumLineCount: root.cardSize === StatusCommunityCard.Size.Big ? 2 : 1
                 wrapMode: Text.WordWrap
                 elide: Text.ElideRight
-                clip: true
             }
         }
         ColumnLayout {
@@ -347,7 +348,6 @@ Rectangle {
             anchors.bottomMargin: d.margins
             spacing: (root.cardSize === StatusCommunityCard.Size.Big) ? 18 : 0
             Row {
-                Layout.alignment: Qt.AlignVCenter
                 spacing: 20
                 // Members
                 visible: root.memberCountVisible
@@ -364,7 +364,7 @@ Rectangle {
                         id: membersTxt
                         Layout.alignment: Qt.AlignVCenter
                         text: d.numberFormat(root.members)
-                        font.pixelSize: 15
+                        font.pixelSize: root.descriptionFontSize
                         color: d.fontColor
                     }
                 }
@@ -382,7 +382,7 @@ Rectangle {
                         id: activeUsersTxt
                         Layout.alignment: Qt.AlignVCenter
                         text: d.numberFormat(root.activeUsers)
-                        font.pixelSize: 15
+                        font.pixelSize: root.descriptionFontSize
                         color: d.fontColor
                     }
                 }
@@ -404,16 +404,16 @@ Rectangle {
 
                     // TODO: Replace by `StatusListItemTagRow` - To be done!
                     content: Row {
-                        spacing: 8
-                        clip: true
+                        spacing: 4
 
                         Repeater {
                             model: root.categories
                             delegate: StatusListItemTag {
                                 bgColor: "transparent"
                                 bgRadius: 20
-                                bgBorderColor: Theme.palette.baseColor2
+                                bgBorderColor: Theme.palette.directColor8
                                 height: 24
+                                spacing: 0
                                 closeButtonVisible: false
                                 asset.emoji: model.emoji
                                 asset.width: 24
@@ -421,7 +421,7 @@ Rectangle {
                                 asset.color: "transparent"
                                 asset.isLetterIdenticon: true
                                 title: model.name
-                                titleText.font.pixelSize: 13
+                                titleText.font.pixelSize: 12
                                 titleText.color: d.fontColor
                             }
                         }
@@ -514,14 +514,20 @@ Rectangle {
         }
     } // End of loading card
 
-    MouseArea {
+    HoverHandler {
         id: sensor
-        enabled: root.loaded
-        anchors.fill: parent
-        cursorShape: root.loaded ? Qt.PointingHandCursor : Qt.ArrowCursor
-        hoverEnabled: true
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        cursorShape: root.loaded ? Qt.PointingHandCursor : undefined
+    }
 
-        onClicked: root.clicked(mouse ,root.communityId)
+    TapHandler {
+        enabled: root.loaded
+        acceptedButtons: Qt.LeftButton
+        onTapped: root.clicked(root.communityId)
+        onLongPressed: root.rightClicked(root.communityId)
+    }
+    TapHandler {
+        enabled: root.loaded
+        acceptedButtons: Qt.RightButton
+        onTapped: root.rightClicked(root.communityId)
     }
 }
