@@ -104,6 +104,8 @@ QtObject {
     property color white: getColor('white')
     property color transparent: "#00000000"
 
+    property color green: getColor('green')
+
     property color blue: getColor('blue')
     property color darkBlue: getColor('blue2')
 
