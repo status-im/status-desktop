@@ -79,8 +79,6 @@ StatusComboBox {
 
                 Layout.preferredWidth: d.iconSize
                 Layout.preferredHeight: d.iconSize
-
-                mipmap: true
             }
 
             CustomText {

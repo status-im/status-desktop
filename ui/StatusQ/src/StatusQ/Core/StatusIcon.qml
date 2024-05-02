@@ -1,11 +1,10 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Controls.impl 2.15 // for ColorImage
 
-Image {
+ColorImage {
     property string icon: ""
-    property color color: "transparent"
 
-    id: statusIcon
     width: 24
     height: 24
     // SVGs must have sourceSize, PNGs not; otherwise blurry
@@ -21,12 +20,5 @@ Image {
             source = "../../assets/img/icons/" + icon+ ".svg";
             objectName = icon + "-icon"
         }
-    }
-
-    layer.smooth: true
-    layer.format: ShaderEffectSource.RGBA
-    layer.enabled: !Qt.colorEqual(statusIcon.color, "transparent")
-    layer.effect: ColorOverlay {
-        color: statusIcon.color
     }
 }
