@@ -160,11 +160,9 @@ SettingsContentBase {
 
         RowLayout {
             Layout.fillWidth: true
-            StatusLinkText {
+            StatusFlatButton {
                 text: qsTr("Clear & cancel")
-                onClicked: {
-                    choosePasswordForm.reset();
-                }
+                onClicked: choosePasswordForm.reset()
             }
             Item { Layout.fillWidth: true }
             StatusButton {
