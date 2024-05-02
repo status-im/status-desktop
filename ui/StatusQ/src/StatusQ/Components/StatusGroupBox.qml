@@ -44,11 +44,10 @@ GroupBox {
             StatusIcon {
                 sourceSize.width: width || undefined
                 sourceSize.height: height || undefined
-                mipmap: true
                 antialiasing: true
                 width: root.iconSize
                 height: width
-                source: root.icon
+                icon: root.icon
                 color: enabled ? "transparent" : Theme.palette.baseColor1
             }
 

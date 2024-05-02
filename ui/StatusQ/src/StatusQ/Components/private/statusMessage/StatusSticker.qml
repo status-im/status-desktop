@@ -78,7 +78,6 @@ Loader {
             StatusIcon {
                 icon: "refresh"
                 color: Theme.palette.directColor1
-                mipmap: false
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor

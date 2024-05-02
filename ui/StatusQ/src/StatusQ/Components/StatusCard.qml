@@ -255,7 +255,6 @@ Rectangle {
                 Layout.alignment: Qt.AlignTop | Qt.AlignRight
                 Layout.preferredHeight: 16
                 Layout.preferredWidth: 16
-                mipmap: true
             }
         }
         RowLayout {

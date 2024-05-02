@@ -315,9 +315,7 @@ StatusListView {
                 ButtonGroup.group: d.airdropGroup
                 anchors.verticalCenter: parent.verticalCenter
                 icon.name: "airdrop"
-                icon.color: hovered ? Theme.palette.primaryColor3 :
-                                      checked ? Theme.palette.primaryColor1
-                                              : disabledTextColor
+                icon.color: checked ? Theme.palette.primaryColor1 : disabledTextColor
                 checkable: true
                 checked: {
                     const obj = root.selectedSharedAddressesMap.get(listItem.address)
