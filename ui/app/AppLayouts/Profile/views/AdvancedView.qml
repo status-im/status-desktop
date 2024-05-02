@@ -176,6 +176,7 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
+                objectName: "enableCreateCommunityButton"
                 text: qsTr("Enable Community Creation")
                 isSwitch: true
                 switchChecked: root.advancedStore.createCommunityEnabled
