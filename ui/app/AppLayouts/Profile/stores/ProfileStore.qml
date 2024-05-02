@@ -77,21 +77,14 @@ QtObject {
         globalUtils.copyToClipboard(value)
     }
 
-    // Identity related:
-    function saveProfileIdentity(displayName, bio, source, aX, aY, bX, bY) {
-        var identityInfo = {
-            "displayName": displayName,
-            "bio": bio,
-            "image": source ? {
-                                  "source": source,
-                                  "aX": aX,
-                                  "aY": aY,
-                                  "bX": bX,
-                                  "bY": bY
-                              } : null
-        }
-        let json = JSON.stringify(identityInfo)
-        root.profileModule.saveProfileIdentity(json)
+    function saveProfileIdentityChanges(displayName, bio, imageInfo) {
+        const changes = Object.assign({},
+                                      displayName !== undefined && { displayName },
+                                      bio !== undefined && { bio },
+                                      imageInfo !== undefined && { image: imageInfo })
+
+        const json = JSON.stringify(changes)
+        root.profileModule.saveProfileIdentityChanges(json)
     }
 
     function getProfileShowcaseEntriesLimit() {
