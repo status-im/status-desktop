@@ -187,7 +187,6 @@ Control {
             communityImage: root.communityImage
             visible: root.isCommunityCollectible
             enabled: !root.isLoading
-            useLongTextDescription: false
             
             TapHandler {
                 enabled: !d.unknownCommunityName
