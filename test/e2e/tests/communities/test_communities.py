@@ -89,7 +89,7 @@ def test_create_community(user_account, main_screen: MainWindow, params):
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703057', 'Edit community')
 @pytest.mark.case(703057)
-@pytest.mark.critical
+# @pytest.mark.critical TODO: fix creation of community https://github.com/status-im/desktop-qa-automation/issues/658
 @pytest.mark.parametrize('params', [
     {
         'name': 'Updated Name',
