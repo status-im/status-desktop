@@ -204,10 +204,10 @@ QtObject:
   QtProperty[QVariant] showcasePreferencesSocialLinksModel:
     read = getShowcasePreferencesSocialLinksModel
 
-  proc saveProfileIdentity(self: View, profileData: string) {.slot.} =
-    let profileDataObj = profileData.parseJson
-    let identityInfo = profileDataObj.toIdentitySaveData()
-    self.delegate.saveProfileIdentity(identityInfo)
+  proc saveProfileIdentityChanges(self: View, profileDataChanges: string) {.slot.} =
+    let profileDataChangesObj = profileDataChanges.parseJson
+    let identityChangesInfo = profileDataChangesObj.toIdentityChangesSaveData()
+    self.delegate.saveProfileIdentityChanges(identityChangesInfo)
 
   proc saveProfileShowcasePreferences(self: View, profileData: string) {.slot.} =
     let profileDataObj = profileData.parseJson

@@ -1,4 +1,5 @@
 import json, strutils, sequtils
+import std/options
 
 include app_service/common/json_utils
 include app_service/common/utils
@@ -30,10 +31,12 @@ type IdentityImage* = ref object of RootObj
   bX*: int
   bY*: int
 
-type IdentitySaveData* = ref object of RootObj
-  displayName*: string
-  bio*: string
-  image*: IdentityImage
+# Struct that contains the profile changes
+# if field is none, it means that the user doesn't want to change it
+type IdentityChangesSaveData* = ref object of RootObj
+  displayName*: Option[string]
+  bio*: Option[string]
+  image*: Option[IdentityImage]
 
 proc toShowcaseSaveEntry*(jsonObj: JsonNode): ShowcaseSaveEntry =
   result = ShowcaseSaveEntry()
@@ -78,11 +81,11 @@ proc toIdentityImage*(jsonObj: JsonNode): IdentityImage =
   discard jsonObj.getProp("bX", result.bX)
   discard jsonObj.getProp("bY", result.bY)
 
-proc toIdentitySaveData*(jsonObj: JsonNode): IdentitySaveData =
-  result = IdentitySaveData()
-  discard jsonObj.getProp("displayName", result.displayName)
-  discard jsonObj.getProp("bio", result.bio)
+proc toIdentityChangesSaveData*(jsonObj: JsonNode): IdentityChangesSaveData =
+  result = IdentityChangesSaveData()
+  if jsonObj{"displayName"} != nil and jsonObj{"displayName"}.kind != JNull:
+    result.displayName = some(jsonObj{"displayName"}.getStr)
+  if jsonObj{"bio"} != nil and jsonObj{"bio"}.kind != JNull:
+    result.bio = some(jsonObj{"bio"}.getStr)
   if jsonObj{"image"} != nil and jsonObj{"image"}.kind != JNull:
-    result.image = jsonObj{"image"}.toIdentityImage()
-  else:
-    result.image = nil
+    result.image = some(jsonObj{"image"}.toIdentityImage())

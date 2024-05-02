@@ -231,15 +231,23 @@ SettingsContentBase {
                     root.profileStore.saveProfileShowcasePreferences(showcaseModels.buildJSONModelsCurrentState())
                 }
 
-                // Identity info
+                // Identity info. Update only those fields that have changed
                 if (isIdentityTabDirty) {
-                    root.profileStore.saveProfileIdentity(descriptionPanel.displayName.text,
-                                                          descriptionPanel.bio.text.trim(),
-                                                          profileHeader.icon,
-                                                          profileHeader.cropRect.x,
-                                                          profileHeader.cropRect.y,
-                                                          (profileHeader.cropRect.x + profileHeader.cropRect.width),
-                                                          (profileHeader.cropRect.y + profileHeader.cropRect.height))
+                    const imageChanged = profileHeader.icon !== profileStore.profileLargeImage
+                    const displayNameChanged = descriptionPanel.displayName.text !== profileStore.displayName
+                    const bioChanged = descriptionPanel.bio.text.trim() !== profileStore.bio.trim()
+
+                    root.profileStore.saveProfileIdentityChanges(
+                                displayNameChanged ? descriptionPanel.displayName.text : undefined,
+                                bioChanged ? descriptionPanel.bio.text.trim() : undefined,
+                                imageChanged ? {
+                                       source : profileHeader.icon,
+                                       aX: profileHeader.cropRect.x,
+                                       aY: profileHeader.cropRect.y,
+                                       bX: profileHeader.cropRect.x + profileHeader.cropRect.width,
+                                       bY: profileHeader.cropRect.y + profileHeader.cropRect.height
+                                   } : undefined
+                                )
                     profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
                 }
             }

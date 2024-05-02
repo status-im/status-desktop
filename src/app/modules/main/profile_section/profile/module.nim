@@ -116,13 +116,24 @@ proc deleteIdentityImage*(self: Module): bool =
   let keyUid = singletonInstance.userProfile.getKeyUid()
   self.controller.deleteIdentityImage(keyUid)
 
-method saveProfileIdentity*(self: Module, identity: IdentitySaveData) =
-  var ok = self.controller.setDisplayName(identity.displayName)
-  ok = ok and self.controller.setBio(identity.bio)
-  if identity.image != nil:
-    ok = ok and self.storeIdentityImage(identity.image)
-  else:
-    ok = ok and self.deleteIdentityImage()
+method saveProfileIdentityChanges*(self: Module, identityChanges: IdentityChangesSaveData) =
+  var ok = true
+
+  # Update only the fields that have changed
+  if identityChanges.displayName.isSome:
+    ok = self.controller.setDisplayName(identityChanges.displayName.get)
+
+  if identityChanges.bio.isSome:
+    ok = ok and self.controller.setBio(identityChanges.bio.get)
+
+  if identityChanges.image.isSome:
+    var image = identityChanges.image.get
+    # If the image source is empty, delete the image
+    if image.source.isEmptyOrWhitespace:
+      ok = ok and self.deleteIdentityImage()
+    else:
+      ok = ok and self.storeIdentityImage(image)
+
   if ok:
     self.view.emitProfileIdentitySaveSucceededSignal()
   else:
