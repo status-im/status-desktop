@@ -180,7 +180,7 @@ communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_over
 
 # Select Tag Popup
 o_StatusCommunityTag = {"container": statusDesktop_mainWindow_overlay, "type": "StatusCommunityTag", "unnamed": 1, "visible": True}
-confirm_Community_Tags_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+confirm_Community_Tags_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "confirmCommunityTagsButton", "type": "StatusButton", "visible": True}
 tags_edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 selected_tags_text = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
@@ -629,6 +629,12 @@ mainWindow_EnsRegisteredView = {"container": statusDesktop_mainWindow, "type": "
 
 # ONBOARDING NAMES
 mainWindow_onboardingBackButton_StatusRoundButton = {"container": statusDesktop_mainWindow, "objectName": "onboardingBackButton", "type": "StatusRoundButton", "visible": True}
+
+# Advanced view
+mainWindow_AdvancedView = {"container": mainWindow_StatusWindow, "type": "AdvancedView", "unnamed": 1, "visible": True}
+mainWindow_settingsContentBaseScrollView_StatusScrollView = {"container": mainWindow_StatusWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
+manageCommunitiesOnTestnetButton_StatusSettingsLineButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "manageCommunitiesOnTestnetButton", "type": "StatusSettingsLineButton", "visible": True}
+enableCreateCommunityButton_StatusSettingsLineButton = {"container": settingsContentBase_ScrollView, "objectName": "enableCreateCommunityButton", "type": "StatusSettingsLineButton", "visible": True}
 
 # Allow Notification View
 mainWindow_AllowNotificationsView = {"container": statusDesktop_mainWindow, "type": "AllowNotificationsView", "unnamed": 1, "visible": True}

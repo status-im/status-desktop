@@ -22,36 +22,24 @@ pytestmark = marks
 @pytest.mark.case(703630)
 @pytest.mark.parametrize('params', [constants.community_params])
 def test_create_community(user_account, main_screen: MainWindow, params):
-    tags_to_set = constants.community_tags[:2]
-    color = ColorCodes.ORANGE.value
+    with step('Enable creation of community option'):
+        settings = main_screen.left_panel.open_settings()
+        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+
     with step('Open create community popup'):
         communities_portal = main_screen.left_panel.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()
 
-    with step('Verify community popup fields'):
-        with step('Next button is disabled'):
-            assert not driver.waitFor(lambda: create_community_form.is_next_button_enabled,
-                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC), \
-                'Next button is enabled'
+    with step('Verify next button is disabled'):
+        assert not driver.waitFor(lambda: create_community_form.is_next_button_enabled(),
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Next button is enabled'
 
-        with step('Select color and verify that selected color is displayed in colorpicker field'):
-            create_community_form.color = color
-            assert create_community_form.color == color
-
-        with step(
-                'Select tags, verify that count of tags was changed and verify that selected tags are displayed in '
-                'tags field'):
-            create_community_form.tags = ['Activism', 'Art']
-            assert create_community_form.tags == tags_to_set
-
-        with step('Verify that checkboxes have correct default states'):
-            assert create_community_form.is_archive_checkbox_checked
-            assert not create_community_form.is_pin_messages_checkbox_checked
-            assert not create_community_form.is_request_to_join_checkbox_checked
-
+    with step('Verify fields of create community popup and create community'):
+        color = ColorCodes.ORANGE.value
         community_screen = create_community_form.create_community(params['name'], params['description'],
                                                                   params['intro'], params['outro'],
-                                                                  params['logo']['fp'], params['banner']['fp'])
+                                                                  params['logo']['fp'], params['banner']['fp'], color,
+                                                                  ['Activism', 'Art'], constants.community_tags[:2])
 
     with step('Verify community parameters in community overview'):
         with step('Name is correct'):
