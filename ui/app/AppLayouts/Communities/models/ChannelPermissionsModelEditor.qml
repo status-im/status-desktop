@@ -264,7 +264,7 @@ QtObject {
 
         // Channel permissions model containing the temporarely edited permissions
         property WritableProxyModel channelPermissionsModel: WritableProxyModel {
-            sourceModel: filteredPermissionsModel
+            sourceModel: d.filteredPermissionsModel
         }
 
         // Channels model containing the temporarely edited channel

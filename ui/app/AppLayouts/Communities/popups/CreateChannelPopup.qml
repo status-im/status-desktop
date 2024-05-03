@@ -41,7 +41,7 @@ StatusStackModal {
     property string channelName: ""
     property string channelDescription: ""
     property string channelEmoji: ""
-    property string channelColor: ""
+    property string channelColor: d.communityDetails.color !== "" ? d.communityDetails.color : ""
     property bool emojiPopupOpened: false
     property var emojiPopup: null
     readonly property int communityColorValidator: Utils.Validate.NoEmpty
@@ -103,7 +103,7 @@ StatusStackModal {
                                     d.hideIfPermissionsNotMet !== root.hideIfPermissionsNotMet ||
                                     nameInput.input.text !== root.channelName ||
                                     descriptionTextArea.text !== root.channelDescription ||
-                                    colorPanel.color.toString().toUpperCase() !== root.channelColor ||
+                                    !Qt.colorEqual(colorPanel.color, root.channelColor) ||
                                     nameInput.input.asset.emoji !== root.channelEmoji
 
         property int currentPage: CreateChannelPopup.CurrentPage.ChannelDetails
@@ -252,8 +252,6 @@ StatusStackModal {
 
     nextButton: StatusButton {
         objectName: "createOrEditCommunityChannelBtn"
-        font.weight: Font.Medium
-        height: 44
         visible: !d.colorPickerOpened
         enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
         text: !!currentItem.nextButtonText ? currentItem.nextButtonText :
@@ -271,8 +269,6 @@ StatusStackModal {
 
     finishButton: StatusButton {
         objectName: "createChannelNextBtn"
-        font.weight: Font.Medium
-        height: 44
         text: (typeof currentItem.nextButtonText !== "undefined") ? currentItem.nextButtonText :
                                                                     qsTr("Import chat history")
         enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
@@ -289,9 +285,7 @@ StatusStackModal {
     }
 
     readonly property StatusButton clearFilesButton: StatusButton {
-        font.weight: Font.Medium
         text: qsTr("Clear all")
-        height: 44
         type: StatusBaseButton.Type.Danger
         visible: typeof currentItem.isFileListView !== "undefined" && currentItem.isFileListView
         enabled: !fileListView.fileListModelEmpty && !root.communitiesStore.discordDataExtractionInProgress
@@ -348,7 +342,6 @@ StatusStackModal {
             if (root.channelEmoji) {
                 nameInput.input.asset.emoji = root.channelEmoji
             }
-            colorPanel.color = root.channelColor
         } else {
             nameInput.input.asset.isLetterIdenticon = true;
         }
@@ -452,7 +445,6 @@ StatusStackModal {
                             horizontalAlignment: Qt.AlignHCenter
                             text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md'>documentation</a> if you have any queries")
                             onLinkActivated: Global.openLink(link)
-                            onHoveredLinkChanged: print(hoveredLink)
                             MouseArea {
                                 anchors.fill: parent
                                 acceptedButtons: Qt.NoButton
@@ -705,7 +697,7 @@ StatusStackModal {
                             input.letterIconName = text
                         }
                     }
-                    input.asset.color: colorPanel.color.toString()
+                    input.asset.color: colorPanel.color
                     input.rightComponent: StatusRoundButton {
                         objectName: "StatusChannelPopup_emojiButton"
                         implicitWidth: 32
@@ -747,6 +739,7 @@ StatusStackModal {
 
                         property string validationError: ""
                         width: parent.width
+                        height: 44
                         anchors.bottom: parent.bottom
                         bgColor: colorPanel.colorSelected ? colorPanel.color : Theme.palette.baseColor2
                         contentColor: colorPanel.colorSelected ? Theme.palette.white : Theme.palette.baseColor1
@@ -909,8 +902,8 @@ StatusStackModal {
             leftPadding: 16
             rightPadding: 16
             height: Math.min(parent.height, 624)
-            property bool colorSelected: root.isEdit && root.channelColor
-            color: root.isEdit && root.channelColor ? root.channelColor : Theme.palette.primaryColor1
+            property bool colorSelected: !!root.channelColor && root.channelColor != Theme.palette.primaryColor1
+            color: root.channelColor || Theme.palette.primaryColor1
             onAccepted: {
                 colorSelected = true; d.colorPickerOpened = false; d.currentPage = CreateChannelPopup.CurrentPage.ChannelDetails;
             }

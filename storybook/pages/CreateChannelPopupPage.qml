@@ -49,18 +49,17 @@ SplitView {
                 id: dialog
                 anchors.centerIn: parent
                 destroyOnClose: true
-                isEdit: true
+                isEdit: ctrlIsEdit.checked
                 isDeleteable: isDeleteableCheckBox.checked
                 isDiscordImport: isDiscordCheckBox.checked
-                chatId: "_general"
-                channelName: "general"
-                channelDescription: "general discussion"
-                channelColor: "#4360DF"
+                chatId: isEdit ? "_general" : ""
+                channelName: isEdit ? "general" : ""
+                channelDescription: isEdit ? "general discussion" : ""
                 activeCommunity: QtObject {
                     readonly property string id: "0x039c47e9837a1a7dcd00a6516399d0eb521ab0a92d512ca20a44ac6278bfdbb5c5"
                     readonly property string name: "test-1"
                     readonly property string image: ModelsData.icons.superRare
-                    readonly property string color: "#4360DF"
+                    readonly property string color: dialog.isEdit ? "#4360DF" : "green"
                     readonly property int memberRole: 0
                 }
                 assetsModel: AssetsModel {}
@@ -68,9 +67,13 @@ SplitView {
                 collectiblesModel: CollectiblesModel {}
                 
                 permissionsModel: ListModel {
-                    id: permissionsModel
+                    function belongsToChat(permissionId, chatId) {
+                        return chatId === dialog.chatId
+                    }
+
                     Component.onCompleted: {
-                        append(PermissionsModel.channelsOnlyPermissionsModelData)
+                        if (dialog.isEdit)
+                            append(PermissionsModel.channelsOnlyPermissionsModelData)
                     }
                 }
 
@@ -159,19 +162,19 @@ SplitView {
                 }
 
 
-                onCreateCommunityChannel: function(chName, chDescription, chEmoji, chColor, chCategoryId) {
+                onCreateCommunityChannel: function(chName, chDescription, chEmoji, chColor, chCategoryId, viewOnlyCanAddReaction, hideIfPermissionsNotMet) {
                     logs.logEvent("onCreateCommunityChannel",
-                                  ["chName", "chDescription", "chEmoji", "chColor", "chCategoryId"], arguments)
+                                  ["chName", "chDescription", "chEmoji", "chColor", "chCategoryId",
+                                   "viewOnlyCanAddReaction", "hideIfPermissionsNotMet"], arguments)
                 }
 
-                onEditCommunityChannel: function(chName, chDescription, chEmoji, chColor, chCategoryId) {
+                onEditCommunityChannel: function(chName, chDescription, chEmoji, chColor, chCategoryId, viewOnlyCanAddReaction, hideIfPermissionsNotMet) {
                     logs.logEvent("onEditCommunityChannel",
-                                  ["chName", "chDescription", "chEmoji", "chColor", "chCategoryId"], arguments)
+                                  ["chName", "chDescription", "chEmoji", "chColor", "chCategoryId",
+                                   "viewOnlyCanAddReaction", "hideIfPermissionsNotMet"], arguments)
                 }
 
-                onDeleteCommunityChannel: () => {
-                                              logs.logEvent("onDeleteCommunityChannel")
-                                          }
+                onDeleteCommunityChannel: () => { logs.logEvent("onDeleteCommunityChannel") }
             }
         }
     }
@@ -182,18 +185,29 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        RowLayout {
-            CheckBox {
+        ColumnLayout {
+            RowLayout {
+                RadioButton {
+                    text: "Create mode"
+                    checked: true
+                }
+                RadioButton {
+                    id: ctrlIsEdit
+                    text: "Edit mode"
+                }
+                RadioButton {
+                    id: isDiscordCheckBox
+                    text: "isDiscordImport"
+                    onToggled: {
+                        if (!!dialog && dialog.opened)
+                            dialog.close()
+                    }
+                }
+            }
+            Switch {
                 id: isDeleteableCheckBox
                 text: "isDeleteable"
-            }
-            CheckBox {
-                id: isDiscordCheckBox
-                text: "isDiscordImport"
-                onToggled: {
-                    if (!!dialog && dialog.opened)
-                        dialog.close()
-                }
+                enabled: ctrlIsEdit.checked
             }
         }
     }
