@@ -25,6 +25,9 @@ pytestmark = marks
 def test_create_edit_remove_community_category(main_screen: MainWindow, category_name, general_checkbox, channel_name,
                                  channel_description, channel_emoji, second_channel_name, second_channel_description,
                                  second_channel_emoji):
+    with step('Enable creation of community option'):
+        settings = main_screen.left_panel.open_settings()
+        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
     with step('Create community and select it'):
         community_params = constants.community_params
         main_screen.create_community(community_params['name'], community_params['description'],
@@ -114,6 +117,10 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow)
 @pytest.mark.parametrize('category_name, general_checkbox',
                          [pytest.param('Category in general', True)])
 def test_clicking_community_category(main_screen: MainWindow, category_name, general_checkbox):
+    with step('Enable creation of community option'):
+        settings = main_screen.left_panel.open_settings()
+        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+
     with step('Create community and select it'):
         community_params = constants.community_params
         main_screen.create_community(community_params['name'], community_params['description'],

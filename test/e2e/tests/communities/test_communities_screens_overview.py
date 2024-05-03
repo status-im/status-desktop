@@ -20,6 +20,9 @@ pytestmark = marks
 @pytest.mark.case(703198, 703199, 703200)
 @pytest.mark.parametrize('params', [constants.community_params])
 def test_manage_community_screens_overview(main_screen: MainWindow, params):
+    with step('Enable creation of community option'):
+        settings = main_screen.left_panel.open_settings()
+        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
     with step('Create community'):
         main_screen.create_community(params['name'], params['description'],
                                      params['intro'], params['outro'],

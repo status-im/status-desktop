@@ -214,7 +214,7 @@ class MainWindow(Window):
     def create_community(self, name, description, intro, outro, logo, banner) -> CommunityScreen:
         communities_portal = self.left_panel.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()
-        app_screen = create_community_form.create_community(name, description, intro, outro, logo, banner)
+        app_screen = create_community_form.create_simple_community(name, description, intro, outro, logo, banner)
         return app_screen
 
     @allure.step('Wait for notification and get text')

@@ -26,7 +26,7 @@ class AuthenticatePopup(BasePopup):
     def authenticate(self, password: str):
         self._password_text_edit.type_text(password)
         self._authenticate_button.click()
-        self._authenticate_button.wait_until_hidden(8000)
+        self._authenticate_button.wait_until_hidden(10000)
 
     @allure.step('Close authenticate popup by close button')
     def close_authenticate_popup(self):

@@ -66,6 +66,9 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             contacts_settings.accept_contact_request(user_one.name)
 
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
+            with step('Enable creation of community option'):
+                settings = main_screen.left_panel.open_settings()
+                settings.left_panel.open_advanced_settings().enable_creation_of_communities()
             main_screen.create_community(community_params['name'], community_params['description'],
                                          community_params['intro'], community_params['outro'],
                                          community_params['logo']['fp'], community_params['banner']['fp'])

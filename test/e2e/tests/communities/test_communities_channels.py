@@ -22,6 +22,10 @@ pytestmark = marks
 # @pytest.mark.critical TODO: https://github.com/status-im/desktop-qa-automation/issues/658
 def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description, channel_emoji, channel_emoji_image,
                                 channel_color, new_channel_name, new_channel_description, new_channel_emoji):
+    with step('Enable creation of community option'):
+        settings = main_screen.left_panel.open_settings()
+        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+
     with step('Create simple community'):
         community_params = constants.community_params
         main_screen.create_community(community_params['name'], community_params['description'],

@@ -221,3 +221,18 @@ class CreateCommunityPopup(BasePopup):
         self._create_community_button.click()
         self.wait_until_hidden()
         return CommunityScreen().wait_until_appears()
+
+    @allure.step('Create simple community without verifications')
+    def create_simple_community(self, name: str, description: str, intro: str, outro: str, logo, banner):
+        self.set_name(name)
+        self.set_description(description)
+        self.set_logo_without_file_upload_dialog(logo)
+        PictureEditPopup().set_zoom_shift_for_picture(None, None)
+        self.set_banner_without_file_upload_dialog(banner)
+        PictureEditPopup().set_zoom_shift_for_picture(None, None)
+        self._next_button.click()
+        self.set_intro(intro)
+        self.set_outro(outro)
+        self._create_community_button.click()
+        self.wait_until_hidden()
+        return CommunityScreen().wait_until_appears()

@@ -21,6 +21,10 @@ pytestmark = marks
 @pytest.mark.case(703632, 705014, 705016)
 @pytest.mark.parametrize('params', [constants.community_params])
 def test_add_edit_and_remove_permissions(main_screen: MainWindow, params):
+    with step('Enable creation of community option'):
+        settings = main_screen.left_panel.open_settings()
+        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+
     main_screen.create_community(params['name'], params['description'],
                                  params['intro'], params['outro'],
                                  params['logo']['fp'], params['banner']['fp'])
@@ -92,8 +96,10 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params):
         with step('Create new permission'):
             permissions_settings = permissions_intro_view.add_new_permission()
             permissions_settings.set_who_holds_checkbox_state(permission_data[index]['checkbox_state'])
-            permissions_settings.set_who_holds_asset_and_amount(permission_data[index]['first_asset'], permission_data[index]['amount'])
-            permissions_settings.set_who_holds_asset_and_amount(permission_data[index]['second_asset'], permission_data[index]['amount'])
+            permissions_settings.set_who_holds_asset_and_amount(permission_data[index]['first_asset'],
+                                                                permission_data[index]['amount'])
+            permissions_settings.set_who_holds_asset_and_amount(permission_data[index]['second_asset'],
+                                                                permission_data[index]['amount'])
             permissions_settings.set_is_allowed_to(permission_data[index]['allowed_to'])
             permissions_settings.set_in(permission_data[index]['in_channel'])
             permissions_settings.create_permission()
@@ -106,25 +112,30 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params):
 
         with step('Created permission is displayed on permission page'):
             if permission_data[index]['asset_title'] is not False:
-                assert driver.waitFor(lambda: permission_data[index]['asset_title'] in permissions_settings.get_who_holds_tags_titles(),
-                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                assert driver.waitFor(
+                    lambda: permission_data[index]['asset_title'] in permissions_settings.get_who_holds_tags_titles(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             if permission_data[index]['second_asset_title'] is not False:
-                assert driver.waitFor(lambda: permission_data[index]['second_asset_title'] in permissions_settings.get_who_holds_tags_titles(),
+                assert driver.waitFor(lambda: permission_data[index][
+                                                  'second_asset_title'] in permissions_settings.get_who_holds_tags_titles(),
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             if permission_data[index]['allowed_to_title'] is not False:
-                assert driver.waitFor(lambda: permission_data[index]['allowed_to_title'] in permissions_settings.get_is_allowed_tags_titles(),
+                assert driver.waitFor(lambda: permission_data[index][
+                                                  'allowed_to_title'] in permissions_settings.get_is_allowed_tags_titles(),
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             if permission_data[index]['in_channel'] is False:
                 assert driver.waitFor(
                     lambda: params['name'] in permissions_settings.get_in_community_in_channel_tags_titles(),
                     configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             if permission_data[index]['in_channel']:
-                assert driver.waitFor(lambda: permission_data[index]['in_channel'] in permissions_settings.get_in_community_in_channel_tags_titles(),
+                assert driver.waitFor(lambda: permission_data[index][
+                                                  'in_channel'] in permissions_settings.get_in_community_in_channel_tags_titles(),
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
         with step('Edit permission'):
             edit_permission_view = permissions_intro_view.open_edit_permission_view()
-            if permission_data[index]['allowed_to'] is 'becomeAdmin' and permission_data[index]['checkbox_state'] is True:
+            if permission_data[index]['allowed_to'] is 'becomeAdmin' and permission_data[index][
+                'checkbox_state'] is True:
                 permissions_settings.set_who_holds_checkbox_state(False)
             elif permission_data[index]['checkbox_state'] is False:
                 permissions_settings.set_allowed_to_from_permission('becomeMember')
@@ -135,13 +146,16 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params):
 
         with step('Confirm changes and verify that permission was changed'):
             changes_popup.update_permission()
-            if permission_data[index]['allowed_to'] is 'becomeAdmin' and permission_data[index]['checkbox_state'] is True:
+            if permission_data[index]['allowed_to'] is 'becomeAdmin' and permission_data[index][
+                'checkbox_state'] is True:
                 if permission_data[index]['asset_title'] is not False:
-                    assert driver.waitFor(lambda: permission_data[index]['asset_title'] not in permissions_settings.get_who_holds_tags_titles(),
+                    assert driver.waitFor(lambda: permission_data[index][
+                                                      'asset_title'] not in permissions_settings.get_who_holds_tags_titles(),
                                           configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 if permission_data[index]['second_asset_title'] is not False:
                     assert driver.waitFor(
-                        lambda: permission_data[index]['second_asset_title'] not in permissions_settings.get_who_holds_tags_titles(),
+                        lambda: permission_data[index][
+                                    'second_asset_title'] not in permissions_settings.get_who_holds_tags_titles(),
                         configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             elif permission_data[index]['checkbox_state'] is False:
                 assert driver.waitFor(lambda: 'Become member' in permissions_settings.get_is_allowed_tags_titles(),
@@ -170,6 +184,10 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params):
 
 @pytest.mark.parametrize('params', [constants.community_params])
 def test_add_5_member_role_permissions(main_screen: MainWindow, params):
+    with step('Enable creation of community option'):
+        settings = main_screen.left_panel.open_settings()
+        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+
     main_screen.create_community(params['name'], params['description'],
                                  params['intro'], params['outro'],
                                  params['logo']['fp'], params['banner']['fp'])
