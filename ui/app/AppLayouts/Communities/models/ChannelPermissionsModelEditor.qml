@@ -246,26 +246,25 @@ QtObject {
             }
         }
         
+        readonly property var filteredPermissionsModel: SortFilterProxyModel {
+            sourceModel: root.permissionsModel
+
+            filters: [
+                FastExpressionFilter {
+                    function filterPredicate(id, permissionType) {
+                        return !PermissionTypes.isCommunityPermission(permissionType) && root.permissionsModel.belongsToChat(id, root.channelId)
+                    }
+                    expression: {
+                        return filterPredicate(model.id, model.permissionType)
+                    }
+                    expectedRoles: [ "id", "permissionType" ]
+                }
+            ]
+        }
 
         // Channel permissions model containing the temporarely edited permissions
         property WritableProxyModel channelPermissionsModel: WritableProxyModel {
-            sourceModel: SortFilterProxyModel {
-                id: filteredPermissionsModel
-
-                sourceModel: root.permissionsModel
-
-                filters: [
-                    FastExpressionFilter {
-                        function filterPredicate(id, permissionType) {
-                            return !PermissionTypes.isCommunityPermission(permissionType) && root.permissionsModel.belongsToChat(id, root.channelId)
-                        }
-                        expression: {
-                            return filterPredicate(model.id, model.permissionType)
-                        }
-                        expectedRoles: [ "id", "permissionType" ]
-                    }
-                ]
-            }
+            sourceModel: filteredPermissionsModel
         }
 
         // Channels model containing the temporarely edited channel
