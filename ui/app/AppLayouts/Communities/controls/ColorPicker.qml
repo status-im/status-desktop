@@ -28,6 +28,7 @@ ColumnLayout {
 
     StatusPickerButton {
         Layout.fillWidth: true
+        Layout.preferredHeight: 44
 
         property string validationError: ""
 
