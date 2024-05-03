@@ -57,7 +57,7 @@ class ActivityCenter(BasePopup):
         self._activity_center_button = Scroll(names.activityCenterStatusFlatButton)
         self._notification_contact_request = QObject(names.o_ActivityNotificationContactRequest)
         self._activity_center_panel = QObject(names.activityCenterTopBar_ActivityCenterPopupTopBarPanel)
-        self._contact_request_list = List(names.contacts_StatusListView)
+        self._contact_request_list = List(names.statusListView)
 
     @property
     @allure.step('Get contact items')

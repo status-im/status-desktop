@@ -456,7 +456,7 @@ activityCenterStatusFlatButton = {"checkable": False, "container": statusDesktop
 checkmark_circle_icon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "objectName": "checkmark-circle-icon", "type": "StatusIcon", "visible": True}
 o_ActivityNotificationContactRequest = {"container": statusDesktop_mainWindow_overlay, "type": "ActivityNotificationContactRequest", "unnamed": 1, "visible": True}
 activityCenterTopBar_ActivityCenterPopupTopBarPanel = {"container": statusDesktop_mainWindow_overlay, "id": "activityCenterTopBar", "type": "ActivityCenterPopupTopBarPanel", "unnamed": 1, "visible": True}
-contacts_StatusListView = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListView", "unnamed": 1, "visible": True}
+statusListView = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListView", "unnamed": 1, "visible": True}
 
 # OS NAMES
 # Open Files Dialog
