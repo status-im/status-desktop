@@ -21,6 +21,7 @@ StatusScrollView {
     property string title: qsTr("Community Tags")
 
     property var rightButtons: StatusButton {
+        objectName: "confirmCommunityTagsButton"
         text: qsTr("Confirm Community Tags")
         onClicked: {
             var selectedTags = [];
