@@ -61,9 +61,6 @@ Item {
             asset.height: 32
             name: model.name ?? ""
             memberCountVisible: false
-            layer.enabled: hovered
-            border.width: hovered ? 0 : 1
-            border.color: Theme.palette.baseColor2
             banner: model.bannerImageData ?? ""
             descriptionFontSize: 12
             descriptionFontColor: Theme.palette.baseColor1
