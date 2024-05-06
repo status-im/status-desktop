@@ -73,18 +73,25 @@ QtObject {
         while (stack.length) {
             const item = stack.pop()
 
-            if (!item.visible || item.opacity === 0)
-                continue
-
             const name = baseName(item)
+            if (name === "QQuickLoader") {
+                if(item.item)
+                    stack.push(item.item)
+            }
+
+            if (!item.visible || item.opacity === 0)
+               continue
 
             if (name === typeName) {
                 items.push(item)
                 continue
             }
 
-            for (let i = 0; i < item.children.length; i++)
-                stack.push(item.children[i])
+            let children = item.children ? item.children : item.contentChildren
+            if(children) {
+                for (let i = 0; i < children.length; i++)
+                    stack.push(children[i])
+            }
         }
 
         return items
