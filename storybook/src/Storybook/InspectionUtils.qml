@@ -67,24 +67,36 @@ QtObject {
     }
 
     function findItemsByTypeName(root, typeName) {
+        return findVisualsByTypeName(root, typeName, true)
+    }
+
+    function findVisualsByTypeName(root, typeName, onlyItems = false) {
         const items = []
         const stack = [root]
 
         while (stack.length) {
             const item = stack.pop()
 
-            if (!item.visible || item.opacity === 0)
-                continue
-
             const name = baseName(item)
+            if (!onlyItems && name === "QQuickLoader") {
+                if(item.item)
+                    stack.push(item.item)
+            }
+
+            if (!item.visible || item.opacity === 0)
+               continue
 
             if (name === typeName) {
                 items.push(item)
                 continue
             }
 
-            for (let i = 0; i < item.children.length; i++)
-                stack.push(item.children[i])
+            // Popup will have contentChildren instead of children
+            let children = onlyItems || item.children ? item.children : item.contentChildren
+            if(children) {
+                for (let i = 0; i < children.length; i++)
+                    stack.push(children[i])
+            }
         }
 
         return items
