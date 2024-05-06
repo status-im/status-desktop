@@ -9,15 +9,17 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 
-import "ConnectDappModal"
+import "PairWCModal"
 
 StatusDialog {
     id: root
 
-    signal pair(string uri)
-
     width: 480
     implicitHeight: 633
+
+    property bool isPairing: false
+
+    signal pair(string uri)
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
@@ -32,10 +34,12 @@ StatusDialog {
 
         WCUriInput {
             id: uriInput
+
+            onTextChanged: root.isPairing = false
         }
 
         // Spacer
-        ColumnLayout {}
+        Item { Layout.fillHeight: true }
 
         StatusLinkText {
             text: qsTr("How to copy the dApp URI")
@@ -58,7 +62,7 @@ StatusDialog {
                 height: 44
                 text: qsTr("Done")
 
-                enabled: uriInput.valid && uriInput.text.length > 0
+                enabled: uriInput.valid && !root.isPairing && uriInput.text.length > 0
 
                 onClicked: root.pair(uriInput.text)
             }

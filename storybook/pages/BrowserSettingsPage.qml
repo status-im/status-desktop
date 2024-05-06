@@ -56,8 +56,8 @@ SplitView {
 
             store: ProfileSectionStore {
                 property WalletStore walletStore: WalletStore {
-                    accountSensitiveSettings: mockData.accountSettings
-                    dappList: dappsModel
+                    property var accountSensitiveSettings: mockData.accountSettings
+                    property var dappList: dappsModel
 
                     function disconnect(dappName) {
                         for (let i = 0; i < dappsModel.count; i++) {

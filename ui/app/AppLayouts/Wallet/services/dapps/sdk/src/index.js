@@ -129,17 +129,17 @@ window.wc = {
         await window.wc.web3wallet.engine.signClient.ping({ topic });
     },
 
-    approveSession: async function (sessionProposal, supportedNamespaces) {
+    buildApprovedNamespaces: async function (params, supportedNamespaces) {
+        return buildApprovedNamespaces({
+            proposal: params,
+            supportedNamespaces: supportedNamespaces,
+        });
+    },
+
+    approveSession: async function (sessionProposal, approvedNamespaces) {
         const { id, params } = sessionProposal;
 
         const { relays } = params
-
-        const approvedNamespaces = buildApprovedNamespaces(
-            {
-                proposal: params,
-                supportedNamespaces: supportedNamespaces,
-            }
-        );
 
         return await window.wc.web3wallet.approveSession(
             {

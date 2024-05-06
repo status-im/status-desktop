@@ -11,6 +11,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import Models 1.0
 import Storybook 1.0
@@ -21,6 +22,7 @@ import AppLayouts.Wallet.services.dapps 1.0
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Profile.stores 1.0
 
 import utils 1.0
 import shared.stores 1.0
@@ -49,6 +51,8 @@ Item {
                     anchors.centerIn: parent
 
                     spacing: 8
+
+                    wcService: walletConnectService
                 }
             }
             ColumnLayout {}
@@ -62,8 +66,17 @@ Item {
                 Text {
                     id: projectIdText
                     readonly property string projectId: SystemUtils.getEnvVar("WALLET_CONNECT_PROJECT_ID")
-                    text: projectId.substring(0, 3) + "..." + projectId.substring(projectId.length - 3)
+                    text: SQUtils.Utils.elideText(projectId, 3)
                     font.bold: true
+                }
+            }
+
+            CheckBox {
+
+                text: "Testnet Mode"
+                checked: settings.testNetworks
+                onCheckedChanged: {
+                    settings.testNetworks = checked
                 }
             }
 
@@ -87,7 +100,7 @@ Item {
 
 
             CheckBox {
-                id: openPairCheckBox
+
                 text: "Open Pair"
                 checked: settings.openPair
                 onCheckedChanged: {
@@ -96,10 +109,11 @@ Item {
                         d.startPairing()
                     }
                 }
+
                 Connections {
                     target: dappsWorkflow
 
-                    // Open Pairing workflow if selected in the side bar
+                    // If Open Pair workflow if selected in the side bar
                     function onDAppsListReady() {
                         if (!d.startPairingWorkflowActive)
                             return
@@ -113,7 +127,7 @@ Item {
                         }
                     }
 
-                    function onConnectDappReady() {
+                    function onPairWCReady() {
                         if (!d.startPairingWorkflowActive)
                             return
 
@@ -121,25 +135,52 @@ Item {
                             let items = InspectionUtils.findVisualsByTypeName(dappsWorkflow, "StatusBaseInput")
                             if (items.length === 1) {
                                 items[0].text = pairUriInput.text
+
+                                clickDoneIfSDKReady()
                             }
                         }
-                        d.startPairingWorkflowActive = false
+                    }
+
+                    function clickDoneIfSDKReady() {
+                        if (!d.startPairingWorkflowActive) {
+                            return
+                        }
+
+                        let modals = InspectionUtils.findVisualsByTypeName(dappsWorkflow, "PairWCModal")
+                        if (modals.length === 1) {
+                            let buttons = InspectionUtils.findVisualsByTypeName(modals[0].footer, "StatusButton")
+                            if (buttons.length === 1 && walletConnectService.wcSDK.sdkReady) {
+                                d.startPairingWorkflowActive = false
+                                buttons[0].clicked()
+                                return
+                            }
+                        }
+
+                        Backpressure.debounce(dappsWorkflow, 250, clickDoneIfSDKReady)()
                     }
                 }
             }
         }
     }
 
-    DAppsStore {
-        wCSDK: WalletConnectSDK {
+    WalletConnectService {
+        id: walletConnectService
+
+        wcSDK: WalletConnectSDK {
             active: true
 
             projectId: projectIdText.projectId
+        }
 
-            onSessionRequestEvent: (details) => {
-                // TODO #14556
-                console.debug(`@dd onSessionRequestEvent: ${JSON.stringify(details)}`)
+        dappsStore: DAppsStore {
+        }
+
+        walletStore: WalletStore {
+            property var flatNetworks: SortFilterProxyModel {
+                sourceModel: NetworksModel.flatNetworks
+                filters: ValueFilter { roleName: "isTest"; value: settings.testNetworks; }
             }
+            property var accounts:  WalletAccountsModel{}
         }
     }
 
@@ -150,7 +191,7 @@ Item {
         property bool startPairingWorkflowActive: false
 
         function startPairing() {
-            startPairingWorkflowActive = true
+            d.startPairingWorkflowActive = true
             if(root.visible) {
                 dappsWorkflow.clicked()
             }
@@ -168,6 +209,7 @@ Item {
 
         property bool openPair: false
         property string pairUri: ""
+        property bool testNetworks: false
     }
 }
 
