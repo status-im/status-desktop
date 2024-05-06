@@ -88,16 +88,28 @@ QtObject:
     if metadata.symbolOut.isSome() or metadata.amountOut > 0:
       result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(""), metadata.amountOut)
 
-  proc newActivityEntry*(backendEntry: backend.ActivityEntry, addresses: seq[string], currencyService: Service): ActivityEntry =
-    var ae: entry.ActivityEntry
+  proc buildExtraData(backendEntry: backend.ActivityEntry, currencyService: Service): ExtraData =
+    var extraData: ExtraData
     case backendEntry.getPayloadType():
       of MultiTransaction:
-        let extraData = buildMultiTransactionExtraData(backendEntry, currencyService)
+        extraData = buildMultiTransactionExtraData(backendEntry, currencyService)
+      of SimpleTransaction, PendingTransaction:
+        extraData = buildTransactionExtraData(backendEntry, currencyService)
+    return extraData
+
+  proc newActivityEntry*(backendEntry: backend.ActivityEntry, addresses: seq[string], currencyService: Service): ActivityEntry =
+    var ae: entry.ActivityEntry
+    let extraData = buildExtraData(backendEntry, currencyService)
+    case backendEntry.getPayloadType():
+      of MultiTransaction:
         ae = newMultiTransactionActivityEntry(backendEntry, extraData, currencyService)
       of SimpleTransaction, PendingTransaction:
-        let extraData = buildTransactionExtraData(backendEntry, currencyService)
         ae = newTransactionActivityEntry(backendEntry, addresses, extraData, currencyService)
     return ae
+
+  proc resetAmountCurrency*(self: ActivityEntry, service: Service) =
+    self.extraData = buildExtraData(self.metadata, service)
+    self.amountCurrency = self.extractCurrencyAmount(service)
 
   proc isMultiTransaction*(self: ActivityEntry): bool {.slot.} =
     return self.metadata.getPayloadType() == backend.PayloadType.MultiTransaction
