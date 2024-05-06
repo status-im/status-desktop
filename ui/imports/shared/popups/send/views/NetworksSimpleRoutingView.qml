@@ -20,7 +20,6 @@ RowLayout {
     property bool isLoading: false
     property bool isBridgeTx: false
     property bool isCollectiblesTransfer: false
-    property var selectedAccount
     property var toNetworksList
     property var weiToEth: function(wei) {}
     property var formatCurrencyAmount: function () {}

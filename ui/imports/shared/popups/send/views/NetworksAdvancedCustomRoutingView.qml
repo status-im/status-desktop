@@ -16,7 +16,7 @@ ColumnLayout {
     id: root
 
     property var store
-    property var selectedAccount
+    property var selectedRecipient
     property string ensAddressOrEmpty: ""
     property double amountToSend
     property int minSendCryptoDecimals: 0
@@ -89,8 +89,8 @@ ColumnLayout {
                 sourceComponent: NetworkCardsComponent {
                     store: root.store
                     receiverIdentityText: root.ensAddressOrEmpty.length > 0 ?
-                                              root.ensAddressOrEmpty : !!root.selectedAccount ?
-                                                  StatusQUtils.Utils.elideText(root.selectedAccount.address, 6, 4).toUpperCase() :  ""
+                                              root.ensAddressOrEmpty : !!root.selectedRecipient ?
+                                                  StatusQUtils.Utils.elideText(root.selectedRecipient.address, 6, 4).toUpperCase() :  ""
                     amountToSend: root.amountToSend
                     minSendCryptoDecimals: root.minSendCryptoDecimals
                     minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
