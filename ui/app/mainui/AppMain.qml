@@ -78,8 +78,8 @@ Item {
         walletAssetStore: appMain.walletAssetsStore
         tokensStore: appMain.tokensStore
     }
-    readonly property DAppsStore dappsStore: DAppsStore {
-        wCSDK: WalletConnectSDK {
+    readonly property WalletConnectService walletConnectService: WalletConnectService {
+        wcSDK: WalletConnectSDK {
             active: WalletStore.RootStore.walletSectionInst.walletReady
 
             projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
@@ -89,6 +89,12 @@ Item {
                 console.debug(`@dd onSessionRequestEvent: ${JSON.stringify(details)}`)
             }
         }
+        dappsStore: DAppsStore {
+        }
+    }
+
+    Component.onCompleted: {
+        Global.walletConnectService = walletConnectService
     }
 
     // set from main.qml

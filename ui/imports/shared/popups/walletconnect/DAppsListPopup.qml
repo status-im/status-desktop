@@ -15,7 +15,7 @@ Popup {
 
     property int menuWidth: 312
 
-    signal connectDapp()
+    signal pairWCDapp()
 
     contentWidth: root.menuWidth
     contentHeight: list.height
@@ -60,7 +60,7 @@ Popup {
 
             text: qsTr("Connect a dApp via WalletConnect")
             onClicked: {
-                root.connectDapp()
+                root.pairWCDapp()
             }
         }
     }

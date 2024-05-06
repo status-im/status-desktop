@@ -5,12 +5,17 @@ import QtQuick.Layouts 1.15
 import AppLayouts.Wallet.controls 1.0
 
 import shared.popups.walletconnect 1.0
+import AppLayouts.Wallet.services.dapps 1.0
+
+import shared.stores 1.0
 
 ConnectedDappsButton {
     id: root
 
+    required property WalletConnectService wcService
+
     signal dAppsListReady()
-    signal connectDappReady()
+    signal pairWCReady()
 
     onClicked: {
         dappsListLoader.active = true
@@ -19,23 +24,23 @@ ConnectedDappsButton {
     highlighted: dappsListLoader.active
 
     Loader {
-        id: connectDappLoader
+        id: pairWCLoader
 
         active: false
 
         onLoaded: {
             item.open()
-            root.connectDappReady()
+            root.pairWCReady()
         }
 
-        sourceComponent: ConnectDappModal {
+        sourceComponent: PairWCModal {
             visible: true
 
-            onClosed: connectDappLoader.active = false
+            onClosed: pairWCLoader.active = false
 
             onPair: (uri) => {
                 this.close()
-                console.debug(`TODO(#14556): ConnectionRequestDappModal with ${uri}`)
+                root.wcService.pair(uri)
             }
         }
     }
@@ -53,8 +58,8 @@ ConnectedDappsButton {
         sourceComponent: DAppsListPopup {
             visible: true
 
-            onConnectDapp: {
-                connectDappLoader.active = true
+            onPairWCDapp: {
+                pairWCLoader.active = true
                 this.close()
             }
             onOpened: {
@@ -62,6 +67,35 @@ ConnectedDappsButton {
                 this.y = root.height + 4
             }
             onClosed: dappsListLoader.active = false
+        }
+    }
+
+    Loader {
+        id: connectDappLoader
+
+        active: false
+
+        onLoaded: item.openWithFilter(filterChains, filterAccounts, proposer)
+
+        property var filterChains: []
+        property var filterAccounts: []
+        property var proposer: null
+
+        sourceComponent: ConnectDAppModal {
+            visible: true
+
+            onClosed: connectDappLoader.active = false
+        }
+    }
+
+    Connections {
+        target: root.wcService
+
+        function onConnectDApp(chains, accounts, proposer) {
+            connectDappLoader.filterChains = chains
+            connectDappLoader.filterAccounts = accounts
+            connectDappLoader.proposer = proposer
+            connectDappLoader.active = true
         }
     }
 }

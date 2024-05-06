@@ -49,6 +49,8 @@ Item {
                     anchors.centerIn: parent
 
                     spacing: 8
+
+                    wcService: walletConnectService
                 }
             }
             ColumnLayout {}
@@ -113,7 +115,7 @@ Item {
                         }
                     }
 
-                    function onConnectDappReady() {
+                    function onPairWCReady() {
                         if (!d.startPairingWorkflowActive)
                             return
 
@@ -130,8 +132,10 @@ Item {
         }
     }
 
-    DAppsStore {
-        wCSDK: WalletConnectSDK {
+    WalletConnectService {
+        id: walletConnectService
+
+        wcSDK: WalletConnectSDK {
             active: true
 
             projectId: projectIdText.projectId
@@ -140,6 +144,9 @@ Item {
                 // TODO #14556
                 console.debug(`@dd onSessionRequestEvent: ${JSON.stringify(details)}`)
             }
+        }
+
+        dappsStore: DAppsStore {
         }
     }
 
