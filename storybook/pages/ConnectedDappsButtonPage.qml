@@ -15,6 +15,7 @@ import Models 1.0
 import Storybook 1.0
 
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.services.dapps 1.0
 
 import SortFilterProxyModel 0.2
 
