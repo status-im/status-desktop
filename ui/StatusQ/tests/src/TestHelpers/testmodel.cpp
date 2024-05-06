@@ -128,6 +128,12 @@ void TestModel::removeEverySecond()
     emit layoutChanged();
 }
 
+void TestModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 void TestModel::initRoles()
 {
     m_roles.reserve(m_data.size());

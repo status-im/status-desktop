@@ -35,5 +35,7 @@ private:
     QAbstractItemModel* m_model = nullptr;
     QVariant m_value;
 
+    int m_onLayoutToBeChangedCount = 0;
+
     void connectToModel();
 };

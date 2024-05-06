@@ -5,19 +5,26 @@
 
 namespace {
 
-class ChildAggregator : public Aggregator {
- Q_OBJECT
+class ChildAggregator : public Aggregator
+{
+    Q_OBJECT
 
 public:
-    explicit ChildAggregator(QObject *parent = nullptr) {}
+    explicit ChildAggregator(QObject* parent = nullptr) {}
 
 protected slots:
-    QVariant calculateAggregation() override {
-        return {counter++};
+    QVariant calculateAggregation() override
+    {
+        return {m_counter++};
+    }
+
+    bool acceptRoles(const QVector<int>& roles) override
+    {
+        return roles.contains(model()->roleNames().key("balance", -1));
     }
 
 private:
-    int counter = 0;
+    int m_counter = 0;
 };
 
 } // anonymous namespace
@@ -27,11 +34,14 @@ class TestAggregator : public QObject
     Q_OBJECT
 
 private:
-    QString m_roleNameWarningText = "Provided role name does not exist in the current model";
-    QString m_unsuportedTypeWarningText = "Unsupported type for given role (not convertible to double)";
+    static constexpr auto s_roleNameWarningText
+        = "Provided role name does not exist in the current model";
+    static constexpr auto s_unsuportedTypeWarningText
+        = "Unsupported type for given role (not convertible to double)";
 
 private slots:
-    void testModel() {
+    void testModel()
+    {
         ChildAggregator aggregator;
         TestModel sourceModel({
             { "chainId", { "12", "13", "1", "321" }},
@@ -53,7 +63,8 @@ private slots:
         QCOMPARE(valueChangedSpy.count(), 2);
     }
 
-    void testCalculateAggregationTrigger() {
+    void testCalculateAggregationTrigger()
+    {
         ChildAggregator aggregator;
         TestModel sourceModel({
             { "chainId", { "12", "13", "1", "321" }},
@@ -72,8 +83,26 @@ private slots:
         valueChangedSpyCount++;
         QCOMPARE(valueChangedSpy.count(), valueChangedSpyCount);
 
-        // Test 3 - Update value row:
+        // Test 3 - Update value row of accepted role:
         sourceModel.update(2, 1, 26.45);
+        valueChangedSpyCount++;
+        QCOMPARE(valueChangedSpy.count(), valueChangedSpyCount);
+
+        // Test 4 - Update value row of not accepted role:
+        sourceModel.update(2, 0, "3");
+        QCOMPARE(valueChangedSpy.count(), valueChangedSpyCount);
+
+        // Test 5 - Layout change, no removals:
+        sourceModel.invert();
+        QCOMPARE(valueChangedSpy.count(), valueChangedSpyCount);
+
+        // Test 6 - Layout change, with removing rows:
+        sourceModel.removeEverySecond();
+        valueChangedSpyCount++;
+        QCOMPARE(valueChangedSpy.count(), valueChangedSpyCount);
+
+        // Test 7 - Model reset:
+        sourceModel.reset();
         valueChangedSpyCount++;
         QCOMPARE(valueChangedSpy.count(), valueChangedSpyCount);
     }
