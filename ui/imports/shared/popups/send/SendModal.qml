@@ -466,7 +466,7 @@ StatusDialog {
 
                 store: popup.store
                 interactive: popup.interactive
-                selectedAccount: popup.preSelectedAccount
+                selectedRecipient: recipientLoader.selectedRecipient
                 ensAddressOrEmpty: recipientLoader.resolvedENSAddress
                 amountToSend: amountToSendInput.cryptoValueToSendFloat
                 minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals

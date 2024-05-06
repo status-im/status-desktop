@@ -17,7 +17,7 @@ Item {
 
     property var store
     property var currencyStore : store.currencyStore
-    property var selectedAccount
+    property var selectedRecipient
     property string ensAddressOrEmpty: ""
     property var selectedAsset
     property double amountToSend
@@ -84,7 +84,6 @@ Item {
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 isLoading: root.isLoading
                 store: root.store
-                selectedAccount: root.selectedAccount
                 errorMode: root.errorMode
                 errorType: root.errorType
                 toNetworksList: root.toNetworksList
@@ -113,7 +112,7 @@ Item {
                 anchors.margins: Style.current.padding
                 store: root.store
                 customMode: tabBar.currentIndex === 2
-                selectedAccount: root.selectedAccount
+                selectedRecipient: root.selectedRecipient
                 ensAddressOrEmpty: root.ensAddressOrEmpty
                 amountToSend: root.amountToSend
                 minSendCryptoDecimals: root.minSendCryptoDecimals
