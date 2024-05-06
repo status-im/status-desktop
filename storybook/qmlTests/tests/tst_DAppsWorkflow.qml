@@ -16,15 +16,15 @@ Item {
 
     Component {
         id: componentUnderTest
-        ConnectedDappsButton {
+        DAppsWorkflow {
         }
     }
 
     TestCase {
-        name: "ConnectedDappsButton"
+        name: "DAppsWorkflow"
         when: windowShown
 
-        property ConnectedDappsButton controlUnderTest: null
+        property DAppsWorkflow controlUnderTest: null
 
         function init() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)

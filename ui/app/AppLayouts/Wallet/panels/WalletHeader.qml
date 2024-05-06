@@ -11,8 +11,6 @@ import StatusQ.Popups 0.1
 
 import SortFilterProxyModel 0.2
 
-import shared.popups.walletconnect 1.0
-
 import utils 1.0
 
 import "../controls"
@@ -76,34 +74,12 @@ Item {
             Layout.alignment: Qt.AlignTrailing
             Layout.topMargin: 5
 
-            ConnectedDappsButton {
+            DAppsWorkflow {
                 Layout.alignment: Qt.AlignTop
 
                 spacing: 8
+
                 visible: !root.walletStore.showSavedAddresses && Global.featureFlags.dappsEnabled
-
-                onConnectDapp: {
-                    connectDappLoader.active = true
-                }
-
-                Loader {
-                    id: connectDappLoader
-
-                    active: false
-
-                    onLoaded: item.open()
-
-                    sourceComponent: ConnectDappModal {
-                        visible: true
-
-                        onClosed: connectDappLoader.active = false
-
-                        onPair: (uri) => {
-                            this.close()
-                            console.debug(`TODO(#14556): ConnectionRequestDappModal with ${uri}`)
-                        }
-                    }
-                }
             }
 
             StatusButton {
