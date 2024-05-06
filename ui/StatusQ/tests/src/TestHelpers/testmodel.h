@@ -26,6 +26,9 @@ public:
     // during SFPM initialization where initial filtering is notified this way.
     void removeEverySecond();
 
+    // emits modelAboutToBeReset/modelReset, content remains the same
+    void reset();
+
 private:
     void initRoles();
 
