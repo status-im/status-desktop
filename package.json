@@ -5,7 +5,7 @@
   "files": [],
   "devDependencies": {
     "create-dmg": "status-im/create-dmg#678fbd4",
-    "fileicon": "0.3.0"
+    "fileicon": "0.3.3"
   },
   "engines": {
     "node": ">=10",
