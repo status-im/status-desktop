@@ -557,10 +557,8 @@ ifeq ($(detected_OS),Darwin)
 		libkeycard.dylib \
 		@rpath/libkeycard.dylib \
 		bin/nim_status_client
-ifeq ("$(wildcard ./node_modules/.bin/fileicon)","")
-	echo -e "\033[92mInstalling:\033[39m fileicon"
-	yarn install
-endif
+	# Install or update package.json files
+	yarn install --check-files
 endif
 
 nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
