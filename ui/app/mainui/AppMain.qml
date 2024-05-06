@@ -14,6 +14,7 @@ import AppLayouts.Chat 1.0
 import AppLayouts.Chat.views 1.0
 import AppLayouts.Profile 1.0
 import AppLayouts.Communities 1.0
+import AppLayouts.Wallet.services.dapps 1.0
 
 import utils 1.0
 import shared 1.0
@@ -27,7 +28,6 @@ import shared.stores 1.0
 import shared.popups.send 1.0
 import shared.popups.send.views 1.0
 import shared.stores.send 1.0
-import shared.popups.walletconnect 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
