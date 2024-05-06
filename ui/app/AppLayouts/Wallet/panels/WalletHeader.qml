@@ -80,6 +80,9 @@ Item {
                 spacing: 8
 
                 visible: !root.walletStore.showSavedAddresses && Global.featureFlags.dappsEnabled
+                enabled: !!Global.walletConnectService
+
+                wcService: Global.walletConnectService
             }
 
             StatusButton {

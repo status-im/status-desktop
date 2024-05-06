@@ -78,18 +78,6 @@ Item {
         walletAssetStore: appMain.walletAssetsStore
         tokensStore: appMain.tokensStore
     }
-    readonly property DAppsStore dappsStore: DAppsStore {
-        wCSDK: WalletConnectSDK {
-            active: WalletStore.RootStore.walletSectionInst.walletReady
-
-            projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
-
-            onSessionRequestEvent: (details) => {
-                // TODO #14556
-                console.debug(`@dd onSessionRequestEvent: ${JSON.stringify(details)}`)
-            }
-        }
-    }
 
     // set from main.qml
     property var sysPalette
@@ -2038,6 +2026,29 @@ Item {
         sourceComponent: UserAgreementPopup {
             visible: appMain.visible
             onClosed: userAgreementLoader.active = false
+        }
+    }
+
+    Loader {
+        id: walletConnectServiceLoader
+
+        active: Global.featureFlags.dappsEnabled
+
+        sourceComponent: WalletConnectService {
+            id: walletConnectService
+
+            wcSDK: WalletConnectSDK {
+                active: WalletStore.RootStore.walletSectionInst.walletReady
+
+                projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
+            }
+            dappsStore: DAppsStore {
+            }
+            walletStore: appMain.rootStore.profileSectionStore.walletStore
+
+            Component.onCompleted: {
+                Global.walletConnectService = walletConnectService
+            }
         }
     }
 }

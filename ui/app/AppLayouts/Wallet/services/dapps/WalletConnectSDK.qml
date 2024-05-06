@@ -27,9 +27,11 @@ Item {
 
     signal statusChanged(string message)
     signal sdkInit(bool success, var result)
+    signal pairResponse(bool success)
     signal sessionProposal(var sessionProposal)
     signal sessionProposalExpired()
-    signal approveSessionResult(var session, string error)
+    signal buildApprovedNamespacesResult(var session, string error)
+    signal approveSessionResult(var approvedNamespaces, string error)
     signal rejectSessionResult(string error)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(bool accept, string error)
@@ -40,6 +42,8 @@ Item {
 
     signal sessionDelete(var topic, string error)
 
+    /// Generates \c pairResponse signal and expects to receive
+    /// a \c sessionProposal signal with the sessionProposal object
     function pair(pairLink) {
         wcCalls.pair(pairLink)
     }
@@ -62,6 +66,10 @@ Item {
 
     function ping(topic) {
         wcCalls.ping(topic)
+    }
+
+    function buildApprovedNamespaces(params, supportedNamespaces) {
+        wcCalls.buildApprovedNamespaces(params, supportedNamespaces)
     }
 
     function approveSession(sessionProposal, supportedNamespaces) {
@@ -222,6 +230,21 @@ Item {
                                     })
                                     .catch((e) => {
                                         wc.statusObject.onPairResponse(e.message)
+                                    })
+                                   `
+            )
+        }
+
+        function buildApprovedNamespaces(params, supportedNamespaces) {
+            console.debug(`WC WalletConnectSDK.wcCall.buildApprovedNamespaces; params: ${JSON.stringify(params)}, supportedNamespaces: ${JSON.stringify(supportedNamespaces)}`)
+
+            d.engine.runJavaScript(`
+                                    wc.buildApprovedNamespaces(${JSON.stringify(params)}, ${JSON.stringify(supportedNamespaces)})
+                                    .then((approvedNamespaces) => {
+                                        wc.statusObject.onBuildApprovedNamespacesResponse(approvedNamespaces, "")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onBuildApprovedNamespacesResponse("", e.message)
                                     })
                                    `
             )
@@ -413,6 +436,7 @@ Item {
 
         function onPairResponse(error) {
             console.debug(`WC WalletConnectSDK.onPairResponse; error: ${error}`)
+            root.pairResponse(error == "")
         }
 
         function onPingResponse(error) {
@@ -428,6 +452,11 @@ Item {
         function onDisconnectPairingResponse(topic, error) {
             console.debug(`WC WalletConnectSDK.onDisconnectPairingResponse; topic: ${topic}, error: ${error}`)
             d.resetPairingsModel()
+        }
+
+        function onBuildApprovedNamespacesResponse(approvedNamespaces, error) {
+            console.debug(`WC WalletConnectSDK.onBuildApprovedNamespacesResponse; approvedNamespaces: ${approvedNamespaces ? JSON.stringify(approvedNamespaces, null, 2) : "-"}, error: ${error}`)
+            root.buildApprovedNamespacesResult(approvedNamespaces, error)
         }
 
         function onApproveSessionResponse(session, error) {

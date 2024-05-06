@@ -17,7 +17,7 @@ Install dependencies steps by executing commands in this directory:
     - or to update to the latest run `ncu -u; npm install` in here
       - run `npm install -g npm-check-updates` for `ncu` command
   - these commands will also create or update a `package-lock.json` file and populate the `node_modules` directory
-- update the [`bundle.js`](./dist/main.js) file by running `npm run build`
+- update the [`bundle.js`](./generated/bundle.js) file by running `npm run build`
   - the result will be embedded with the app and loaded by [`WalletConnectSDK.qml`](../WalletConnectSDK.qml) component
 - add the newly generated files to index `git add --update .` to include in the commit
 

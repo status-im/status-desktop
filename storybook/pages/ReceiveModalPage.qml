@@ -98,6 +98,10 @@ SplitView {
                     }
                     return prefChains
                 }
+
+                function addressWasShown(account) {
+                    return true
+                }
             }
         }
     }
