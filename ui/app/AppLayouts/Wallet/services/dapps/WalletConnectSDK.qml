@@ -537,7 +537,7 @@ Item {
 
         anchors.fill: parent
 
-        url: "qrc:/imports/shared/popups/walletconnect/sdk/src/index.html"
+        url: "qrc:/app/AppLayouts/Wallet/services/dapps/sdk/src/index.html"
         webChannelObjects: [ statusObject ]
 
         onPageLoaded: function() {
