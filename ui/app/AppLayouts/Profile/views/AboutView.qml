@@ -57,7 +57,7 @@ SettingsContentBase {
                 id: statusIcon
                 width: 80
                 height: 80
-                icon: root.store.isProduction ? Style.svg("status-logo-circle") : Style.svg("status-logo-dev-circle")
+                icon: root.store.isProduction ? Style.png("status-logo-circle") : Style.png("status-logo-dev-circle")
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 

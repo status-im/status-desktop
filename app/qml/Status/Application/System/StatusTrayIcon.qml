@@ -17,7 +17,7 @@ SystemTrayIcon {
     visible: true
     icon.source: {
         if (production)
-            return Qt.platform.os === "osx" ? Resources.svg("status-logo-icon") : Resources.png("status-logo")
+            return Qt.platform.os === "osx" ? Resources.png("status-logo-icon") : Resources.png("status-logo")
         else
             return Resources.svg("status-logo-dark")
     }

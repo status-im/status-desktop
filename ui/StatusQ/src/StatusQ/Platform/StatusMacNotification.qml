@@ -52,7 +52,7 @@ Rectangle {
     Component {
         id: statusIdenticon
         Image {
-            source: "../../assets/img/status-logo-icon.svg"
+            source: "../../assets/img/status-logo-icon.png"
             width: 40
             height: 40
             sourceSize.width: width * 2
@@ -60,11 +60,6 @@ Rectangle {
             cache: true
             fillMode: Image.PreserveAspectFit
         }
-        /* SVGImage { */
-        /*     source: Style.svg("status-logo-icon") */
-        /*     width: 40 */
-        /*     height: 40 */
-        /* } */
     }
 
     StatusBaseText {
