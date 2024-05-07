@@ -9,6 +9,7 @@
 #include "StatusQ/fastexpressionrole.h"
 #include "StatusQ/fastexpressionsorter.h"
 #include "StatusQ/formatteddoubleproperty.h"
+#include "StatusQ/functionaggregator.h"
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/movablemodel.h"
@@ -56,6 +57,7 @@ public:
         qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
         qmlRegisterType<RolesRenamingModel>("StatusQ", 0, 1, "RolesRenamingModel");
         qmlRegisterType<SumAggregator>("StatusQ", 0, 1, "SumAggregator");
+        qmlRegisterType<FunctionAggregator>("StatusQ", 0, 1, "FunctionAggregator");
         qmlRegisterType<WritableProxyModel>("StatusQ", 0, 1, "WritableProxyModel");
         qmlRegisterType<FormattedDoubleProperty>("StatusQ", 0, 1, "FormattedDoubleProperty");
 

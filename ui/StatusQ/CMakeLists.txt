@@ -99,6 +99,7 @@ add_library(StatusQ SHARED
         include/StatusQ/fastexpressionrole.h
         include/StatusQ/fastexpressionsorter.h
         include/StatusQ/formatteddoubleproperty.h
+        include/StatusQ/functionaggregator.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/movablemodel.h
@@ -120,6 +121,7 @@ add_library(StatusQ SHARED
         src/fastexpressionrole.cpp
         src/fastexpressionsorter.cpp
         src/formatteddoubleproperty.cpp
+        src/functionaggregator.cpp
         src/leftjoinmodel.cpp
         src/modelutilsinternal.cpp
         src/movablemodel.cpp
