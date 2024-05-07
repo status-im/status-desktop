@@ -82,6 +82,10 @@ add_executable(SumAggregatorTest tst_SumAggregator.cpp)
 target_link_libraries(SumAggregatorTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME SumAggregatorTest COMMAND SumAggregatorTest)
 
+add_executable(FunctionAggregatorTest tst_FunctionAggregator.cpp)
+target_link_libraries(FunctionAggregatorTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME FunctionAggregatorTest COMMAND FunctionAggregatorTest)
+
 add_executable(ConcatModelTest tst_ConcatModel.cpp)
 target_link_libraries(ConcatModelTest PRIVATE StatusQ StatusQTestLib SortFilterProxyModel)
 add_test(NAME ConcatModelTest COMMAND ConcatModelTest)

@@ -37,6 +37,7 @@ ListView {
     bottomMargin: margin
 
     signal moveRequested(int from, int to)
+    signal rowClicked(int index, string role)
 
     ListModel {
         id: rowModel
@@ -154,6 +155,14 @@ ListView {
                         readonly property string separator: last ? "" : ","
 
                         text: `${roleName}: ${valueSanitized}${separator}`
+
+                        MouseArea {
+                            anchors.fill: parent
+
+                            onClicked: root.rowClicked(
+                                           delegateRoot.topModel.index,
+                                           roleName)
+                        }
                     }
                 }
             }
