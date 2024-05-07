@@ -80,6 +80,17 @@ Rectangle {
             onClicked: function () {
                 Global.openPopup(buySellModal);
             }
+        }        
+
+        StatusFlatButton {
+            id: swap
+
+            visible: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled && Global.featureFlags.swapEnabled
+            icon.name: "swap"
+            text: qsTr("Swap")
+            onClicked: function () {
+                console.warn("TODO: launch swap modal...")
+            }
         }
     }
 
