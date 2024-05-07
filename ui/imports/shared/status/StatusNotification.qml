@@ -52,7 +52,7 @@ Rectangle {
     Component {
         id: statusIdenticon
         SVGImage {
-            source: Style.svg("status-logo-icon")
+            source: Style.png("status-logo-icon")
             width: 40
             height: 40
         }
