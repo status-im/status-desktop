@@ -186,6 +186,7 @@ StatusSectionLayout {
             anchors.fill: parent
             store: root.rootStore
             label: qsTr("Members")
+            communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
             usersModel: root.chatContentModule && root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
         }
     }

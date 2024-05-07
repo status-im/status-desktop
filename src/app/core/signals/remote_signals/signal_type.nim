@@ -52,6 +52,7 @@ type SignalType* {.pure.} = enum
   DiscordChannelImportFinished = "community.discordChannelImportFinished"
   DiscordChannelImportProgress = "community.discordChannelImportProgress"
   DiscordChannelImportCancelled = "community.discordChannelImportCancelled"
+  MemberReevaluationStatus = "community.memberReevaluationStatus"
   WakuFetchingBackupProgress = "waku.fetching.backup.progress"
   WakuBackedUpProfile = "waku.backedup.profile"
   WakuBackedUpSettings = "waku.backedup.settings"

@@ -37,6 +37,7 @@ QtObject:
       memberMessagesModel: member_msg_model.Model
       memberMessagesModelVariant: QVariant
       requestToJoinState: RequestToJoinState
+      communityMemberReevaluationStatus: int
 
 
   proc delete*(self: View) =
@@ -82,6 +83,7 @@ QtObject:
     result.memberMessagesModel = member_msg_model.newModel()
     result.memberMessagesModelVariant = newQVariant(result.memberMessagesModel)
     result.requestToJoinState = RequestToJoinState.None
+    result.communityMemberReevaluationStatus = 0
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -555,3 +557,18 @@ QtObject:
       return
     self.requestToJoinState = requestToJoinState
     self.requestToJoinStateChanged()
+
+  proc communityMemberReevaluationStatusChanged*(self: View) {.signal.}
+
+  proc getCommunityMemberReevaluationStatus*(self: View): int {.slot.} =
+    return self.communityMemberReevaluationStatus
+
+  QtProperty[int] communityMemberReevaluationStatus:
+    read = getCommunityMemberReevaluationStatus
+    notify = communityMemberReevaluationStatusChanged
+
+  proc setCommunityMemberReevaluationStatus*(self: View, value: int) =
+    if self.communityMemberReevaluationStatus == value:
+      return
+    self.communityMemberReevaluationStatus = value
+    self.communityMemberReevaluationStatusChanged()

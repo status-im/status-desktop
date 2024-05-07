@@ -5,6 +5,8 @@ import ../../../../app_service/service/community/dto/[community]
 import ../../../../app_service/service/chat/dto/[chat]
 import signal_type
 
+include  app_service/common/json_utils
+
 type CommunitySignal* = ref object of Signal
   community*: CommunityDto
 
@@ -58,6 +60,16 @@ type DiscordCommunityImportFinishedSignal* = ref object of Signal
 
 type DiscordChannelImportCancelledSignal* = ref object of Signal
   channelId*: string
+
+type
+  CommunityMemberReevaluationStatus* {.pure.} = enum
+    None = 0,
+    InProgress,
+    Done,
+
+type CommunityMemberReevaluationStatusSignal* = ref object of Signal
+  communityId*: string
+  status*: CommunityMemberReevaluationStatus
 
 type DiscordChannelImportFinishedSignal* = ref object of Signal
   communityId*: string
@@ -173,6 +185,17 @@ proc fromEvent*(T: type DiscordChannelImportCancelledSignal, event: JsonNode): D
   result = DiscordChannelImportCancelledSignal()
   result.signalType = SignalType.DiscordChannelImportCancelled
   result.channelId = event["event"]{"channelId"}.getStr()
+
+proc fromEvent*(T: type CommunityMemberReevaluationStatusSignal, event: JsonNode): CommunityMemberReevaluationStatusSignal =
+  result = CommunityMemberReevaluationStatusSignal()
+  result.signalType = SignalType.MemberReevaluationStatus
+  result.communityId = event["event"]{"communityId"}.getStr()
+  
+  result.status = CommunityMemberReevaluationStatus.None
+  var statusInt: int
+  if (event["event"].getProp("status", statusInt) and (statusInt >= ord(low(CommunityMemberReevaluationStatus)) and
+      statusInt <= ord(high(CommunityMemberReevaluationStatus)))):
+    result.status = CommunityMemberReevaluationStatus(statusInt)
 
 proc createFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
   result = HistoryArchivesSignal()

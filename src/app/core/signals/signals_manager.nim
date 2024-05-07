@@ -121,6 +121,7 @@ QtObject:
       of SignalType.DiscordChannelImportFinished: DiscordChannelImportFinishedSignal.fromEvent(jsonSignal)
       of SignalType.DiscordChannelImportProgress: DiscordChannelImportProgressSignal.fromEvent(jsonSignal)
       of SignalType.DiscordChannelImportCancelled: DiscordChannelImportCancelledSignal.fromEvent(jsonSignal)
+      of SignalType.MemberReevaluationStatus: CommunityMemberReevaluationStatusSignal.fromEvent(jsonSignal)
       # sync from waku part
       of SignalType.WakuFetchingBackupProgress: WakuFetchingBackupProgressSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpProfile: WakuBackedUpProfileSignal.fromEvent(jsonSignal)
