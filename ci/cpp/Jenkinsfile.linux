@@ -71,7 +71,7 @@ pipeline {
 
     stage('Package') {
       steps {
-        sh "linuxdeploy --plugin qt --executable=${env.WORKSPACE}/build/status-desktop --appdir ${env.WORKSPACE}/build/AppDir --desktop-file=${env.WORKSPACE}/status.desktop --icon-file=${env.WORKSPACE}/status.svg --custom-apprun=${env.WORKSPACE}/AppRun-cpp"
+        sh "linuxdeploy --plugin qt --executable=${env.WORKSPACE}/build/status-desktop --appdir ${env.WORKSPACE}/build/AppDir --desktop-file=${env.WORKSPACE}/status.desktop --icon-file=${env.WORKSPACE}/status.png --custom-apprun=${env.WORKSPACE}/AppRun-cpp"
         sh "cmake --install ${env.WORKSPACE}/build --prefix=${env.WORKSPACE}/build/install"
         sh "cp ${env.WORKSPACE}/build/install/lib/* ${env.WORKSPACE}/build/AppDir/usr/lib/"
         // TODO enable after deploying appimage plugin in the corresponding docker

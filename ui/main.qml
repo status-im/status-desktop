@@ -315,14 +315,14 @@ StatusWindow {
         icon.source: {
             if (production) {
                 if (Qt.platform.os == Constants.mac)
-                    return "imports/assets/icons/status-logo-round-rect.svg"
+                    return "imports/assets/png/status-logo-round-rect.png"
                 else
-                    return "imports/assets/icons/status-logo-circle.svg"
+                    return "imports/assets/png/status-logo-circle.png"
             } else {
                 if (Qt.platform.os == Constants.mac)
-                    return "imports/assets/icons/status-logo-dev-round-rect.svg"
+                    return "imports/assets/png/status-logo-dev-round-rect.png"
                 else
-                    return "imports/assets/icons/status-logo-dev-circle.svg"
+                    return "imports/assets/png/status-logo-dev-circle.png"
             }
         }
 

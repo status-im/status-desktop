@@ -36,14 +36,14 @@ proc determineStatusAppIconPath(): string =
     if main_constants.IS_MACOS:
       return "" # not used in macOS
     elif defined(windows):
-      return "/../resources/status.svg"
+      return "/../resources/status.png"
     else:
-      return "/../status.svg"
+      return "/../status.png"
   else:
     if main_constants.IS_MACOS:
       return "" # not used in macOS
     else:
-      return "/../status-dev.svg"
+      return "/../status-dev.png"
 
 proc prepareLogging() =
   # Outputs logs in the node tab

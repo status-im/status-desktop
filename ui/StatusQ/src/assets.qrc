@@ -127,7 +127,7 @@
         <file>assets/img/icons/windows_titlebar/close.svg</file>
         <file>assets/img/icons/windows_titlebar/maximize.svg</file>
         <file>assets/img/icons/windows_titlebar/minimise.svg</file>
-        <file>assets/img/icons/windows_titlebar/status.svg</file>
+        <file>assets/img/icons/windows_titlebar/status.png</file>
         <file>assets/img/icons/activity.svg</file>
         <file>assets/img/icons/add-circle.svg</file>
         <file>assets/img/icons/add-contact.svg</file>
@@ -292,7 +292,7 @@
         <file>assets/img/icons/speech.svg</file>
         <file>assets/img/icons/star-icon-outline.svg</file>
         <file>assets/img/icons/star-icon.svg</file>
-        <file>assets/img/icons/status-logo-icon.svg</file>
+        <file>assets/img/icons/status-logo-icon.png</file>
         <file>assets/img/icons/status-update.svg</file>
         <file>assets/img/icons/status.svg</file>
         <file>assets/img/icons/stickers.svg</file>
@@ -324,7 +324,7 @@
         <file>assets/img/icons/wallet.svg</file>
         <file>assets/img/icons/warning.svg</file>
         <file>assets/img/icons/youtube.svg</file>
-        <file>assets/img/status-logo-icon.svg</file>
+        <file>assets/img/status-logo-icon.png</file>
         <file>assets/twemoji/26x26/1f004.png</file>
         <file>assets/twemoji/26x26/1f0cf.png</file>
         <file>assets/twemoji/26x26/1f170.png</file>

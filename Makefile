@@ -607,8 +607,8 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	# General Files
 	cp bin/nim_status_client tmp/linux/dist/usr/bin
 	cp nim-status.desktop tmp/linux/dist/.
-	cp status.svg tmp/linux/dist/status.svg
-	cp status.svg tmp/linux/dist/usr/.
+	cp status.png tmp/linux/dist/status.png
+	cp status.png tmp/linux/dist/usr/.
 	cp -R resources.rcc tmp/linux/dist/usr/.
 	cp -R $(FLEETS_FILE) tmp/linux/dist/usr/.
 	mkdir -p tmp/linux/dist/usr/i18n
@@ -739,7 +739,7 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	rm -rf pkg/*.exe tmp/windows/dist
 	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n $(OUTPUT)/bin/StatusQ
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
-	cp status.ico status.svg resources.rcc $(FLEETS_FILE) $(OUTPUT)/resources/
+	cp status.ico status.png resources.rcc $(FLEETS_FILE) $(OUTPUT)/resources/
 	cp bin/i18n/* $(OUTPUT)/resources/i18n
 	cp cacert.pem $(OUTPUT)/bin/cacert.pem
 	cp bin/StatusQ/* $(OUTPUT)/bin/StatusQ
