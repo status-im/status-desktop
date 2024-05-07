@@ -18,7 +18,7 @@ qt6_add_qml_module(${PROJECT_NAME}
     STATIC
     # TODO: temporary until we make qt_target_qml_sources work
     RESOURCES
-        icons/status-logo-icon.svg
+        icons/status-logo-icon.png
         icons/status-logo-dark.svg
         icons/status-logo-circle.svg
 

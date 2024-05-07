@@ -14,7 +14,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: 128
             Layout.preferredHeight: 128
-            source: Style.svg("status-logo-circle")
+            source: Style.png("status-logo")
         }
         StatusBaseText {
             id: loadingText
