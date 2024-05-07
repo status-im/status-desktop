@@ -5,6 +5,7 @@ import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 
 import shared 1.0
 import shared.panels 1.0
@@ -20,6 +21,7 @@ Item {
     property var store
     property var usersModel
     property string label
+    property int communityMemberReevaluationStatus: Constants.CommunityMemberReevaluationStatus.None
 
     StatusBaseText {
         id: titleText
@@ -35,9 +37,34 @@ Item {
         text: root.label
     }
 
+    StatusBaseText {
+        id: communityMemberReevaluationInProgressText
+        visible: root.communityMemberReevaluationStatus === Constants.CommunityMemberReevaluationStatus.InProgress
+        height: visible ? implicitHeight : 0 
+        anchors.top: titleText.bottom
+        anchors.topMargin: visible ? Style.current.padding : 0
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        font.pixelSize: Style.current.secondaryTextFontSize
+        color: Theme.palette.directColor1
+        text: qsTr("Member re-evaluation in progress...")
+        wrapMode: Text.WordWrap
+
+        StatusToolTip {
+            text: qsTr("Saving community edits might take longer than usual")
+            visible: hoverHandler.hovered
+        }
+        HoverHandler {
+            id: hoverHandler
+            enabled: communityMemberReevaluationInProgressText.visible
+        }
+    }
+
     Item {
         anchors {
-            top: titleText.bottom
+            top: communityMemberReevaluationInProgressText.bottom
             topMargin: Style.current.padding
             left: parent.left
             leftMargin: Style.current.halfPadding

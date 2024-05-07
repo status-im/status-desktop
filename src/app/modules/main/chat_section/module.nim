@@ -37,6 +37,7 @@ import ../../../../app_service/service/community_tokens/service as community_tok
 import ../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
+import ../../../../app/core/signals/types
 
 export io_interface
 
@@ -1588,3 +1589,6 @@ method openCommunityChatAndScrollToMessage*(self: Module, chatId: string, messag
 
 method updateRequestToJoinState*(self: Module, state: RequestToJoinState) =
   self.view.setRequestToJoinState(state)
+
+method communityMemberReevaluationStatusUpdated*(self: Module, status: CommunityMemberReevaluationStatus) =
+  self.view.setCommunityMemberReevaluationStatus(status.int)

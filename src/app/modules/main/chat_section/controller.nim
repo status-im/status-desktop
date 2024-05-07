@@ -367,6 +367,11 @@ proc init*(self: Controller) =
       if args.communityId == self.sectionId:
        self.delegate.setShardingInProgress(false)
 
+    self.events.on(SIGNAL_MEMBER_REEVALUATION_STATUS) do(e: Args):
+      let args = CommunityMemberReevaluationStatusArg(e)
+      if args.communityId == self.sectionId:
+        self.delegate.communityMemberReevaluationStatusUpdated(args.status)
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)

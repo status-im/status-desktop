@@ -167,6 +167,10 @@ type
   CommunityShardSetArgs* = ref object of Args
     communityId*: string
 
+  CommunityMemberReevaluationStatusArg* = ref object of Args
+    communityId*: string
+    status*: CommunityMemberReevaluationStatus  
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -219,6 +223,8 @@ const SIGNAL_DISCORD_COMMUNITY_IMPORT_CANCELED* = "discordCommunityImportCancele
 const SIGNAL_DISCORD_CHANNEL_IMPORT_FINISHED* = "discordChannelImportFinished"
 const SIGNAL_DISCORD_CHANNEL_IMPORT_PROGRESS* = "discordChannelImportProgress"
 const SIGNAL_DISCORD_CHANNEL_IMPORT_CANCELED* = "discordChannelImportCanceled"
+
+const SIGNAL_MEMBER_REEVALUATION_STATUS* = "communityMemberReevaluationStatus"
 
 const SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED* = "communityTokenPermissionCreated"
 const SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED* = "communityTokenPermissionCreationFailed"
@@ -422,6 +428,13 @@ QtObject:
           # Don't just emit this signal when all communities are done downloading history data,
           # but implement a solution for individual updates
           self.events.emit(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED, CommunityIdArgs(communityId: receivedData.communityId))
+    
+    self.events.on(SignalType.MemberReevaluationStatus.event) do(e: Args):
+      var receivedData = CommunityMemberReevaluationStatusSignal(e)
+      self.events.emit(SIGNAL_MEMBER_REEVALUATION_STATUS, CommunityMemberReevaluationStatusArg(
+        communityId: receivedData.communityId,
+        status: receivedData.status,
+      ))
 
   proc findIndexById(id: string, chats: seq[ChatDto]): int =
     var idx = -1

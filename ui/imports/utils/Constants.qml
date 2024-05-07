@@ -1312,4 +1312,10 @@ QtObject {
         InProgress = 1,
         Requested = 2
     }
+
+    enum CommunityMemberReevaluationStatus {
+        None = 0,
+        InProgress = 1,
+        Done = 2
+    }
 }

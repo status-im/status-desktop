@@ -64,6 +64,8 @@ QtObject {
     readonly property bool allChannelsAreHiddenBecauseNotPermitted: root.chatCommunitySectionModule.allChannelsAreHiddenBecauseNotPermitted &&
                                                                     !root.chatCommunitySectionModule.requiresTokenPermissionToJoin
 
+    readonly property int communityMemberReevaluationStatus: root.chatCommunitySectionModule && root.chatCommunitySectionModule.communityMemberReevaluationStatus
+
     readonly property bool requirementsCheckPending: root.communitiesModuleInst.requirementsCheckPending
 
     readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
