@@ -304,18 +304,7 @@ StatusSectionLayout {
 
             assetsModel: rootStore.assetsModel
 
-            SortFilterProxyModel {
-                id: nonOwnerCollectibles
-                sourceModel: rootStore.collectiblesModel
-                filters: [
-                    ValueFilter {
-                        roleName: "privilegesLevel"
-                        value: Constants.TokenPrivilegesLevel.Owner
-                        inverted: true
-                    }
-                ]
-            }
-            collectiblesModel: nonOwnerCollectibles
+            collectiblesModel: rootStore.collectiblesModel
             channelsModel: rootStore.chatCommunitySectionModule.model
 
             communityDetails: d.communityDetails

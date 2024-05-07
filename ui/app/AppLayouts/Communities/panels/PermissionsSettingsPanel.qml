@@ -184,8 +184,20 @@ StackView {
 
                 viewWidth: root.viewWidth
 
+                SortFilterProxyModel {
+                    id: nonOwnerCollectibles
+                    sourceModel: root.collectiblesModel
+                    filters: [
+                        ValueFilter {
+                            roleName: "privilegesLevel"
+                            value: Constants.TokenPrivilegesLevel.Owner
+                            inverted: true
+                        }
+                    ]
+                }
+
                 assetsModel: root.assetsModel
-                collectiblesModel: root.collectiblesModel
+                collectiblesModel: nonOwnerCollectibles
                 channelsModel: allChannelsTransformed
                 communityDetails: root.communityDetails
                 showChannelSelector: root.showChannelSelector
