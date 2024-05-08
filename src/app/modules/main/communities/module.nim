@@ -359,6 +359,7 @@ method communityAccessRequested*(self: Module, communityId: string) =
 method communityAccessFailed*(self: Module, communityId, err: string) =
   error "communities: ", err
   self.cleanJoinEditCommunityData()
+  self.delegate.updateRequestToJoinState(communityId, RequestToJoinState.None)
   self.view.communityAccessFailed(communityId, err)
 
 method communityEditSharedAddressesSucceeded*(self: Module, communityId: string) =
@@ -845,6 +846,9 @@ method joinCommunityOrEditSharedAddresses*(self: Module) =
       addressesToShare,
       airdropAddress,
       signatures)
+
+    self.delegate.updateRequestToJoinState(self.joiningCommunityDetails.communityId, RequestToJoinState.InProgress)
+
     # The user reveals address after sending join coummunity request, before that he sees only the name of the wallet account, not the address.
     self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: addressesToShare))
     return

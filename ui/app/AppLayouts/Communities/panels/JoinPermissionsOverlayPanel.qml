@@ -23,7 +23,9 @@ Control {
     property bool requirementsMet: false
     property bool requirementsCheckPending: false
     property bool requiresRequest: false
-    property bool isInvitationPending: false
+    property int requestToJoinState: Constants.RequestToJoinState.None
+    property bool isInvitationPending: root.requestToJoinState !== Constants.RequestToJoinState.None
+
     property bool isJoinRequestRejected: false
     property string communityName
     property var communityHoldingsModel
@@ -160,6 +162,7 @@ Control {
                                  && root.requiresRequest
                                  && !d.onlyPrivateNotMetPermissions
                                  && !root.allChannelsAreHiddenBecauseNotPermitted
+            loading: root.requestToJoinState === Constants.RequestToJoinState.InProgress
             text: root.isInvitationPending ? (root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText)
                                            : d.communityRequestToJoinText
             font.pixelSize: 13

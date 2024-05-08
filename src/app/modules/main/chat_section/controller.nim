@@ -16,6 +16,7 @@ import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 import ../../../../app_service/service/shared_urls/service as shared_urls_service
+import ../../../../app_service/common/types
 import backend/collectibles as backend_collectibles
 
 import ../../../core/signals/types
@@ -420,6 +421,16 @@ proc init*(self: Controller) =
           continue
         self.delegate.onCommunityMemberMessagesDeleted(messagesIds)
 
+  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e:Args):
+    let args = CommunityRequestArgs(e)
+    if args.communityRequest.communityId == self.sectionId:
+      self.delegate.updateRequestToJoinState(RequestToJoinState.Requested)
+
+  self.events.on(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED) do(e:Args):
+    let args = community_service.CommunityIdArgs(e)
+    if args.communityId == self.sectionId:
+      self.delegate.updateRequestToJoinState(RequestToJoinState.None)
+
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
@@ -759,3 +770,6 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 
 proc deleteCommunityMemberMessages*(self: Controller, memberPubKey: string, messageId: string, chatId: string) =
   self.messageService.deleteCommunityMemberMessages(self.getMySectionId(), memberPubKey, messageId, chatId)
+
+proc isMyCommunityRequestPending*(self: Controller): bool =
+  return self.communityService.isMyCommunityRequestPending(self.sectionId)

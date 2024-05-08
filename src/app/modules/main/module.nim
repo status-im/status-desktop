@@ -350,7 +350,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     let state = memberState.toMembershipRequestState()
     case state:
       of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete, MembershipRequestState.UnbannedPending:
-        bannedMembers.add(self.createMemberItem(memberId, state, MemberRole.None))
+        bannedMembers.add(self.createMemberItem(memberId, "", state, MemberRole.None))
       else:
         discard
 
@@ -392,7 +392,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
       elif not member.joined:
         state = MembershipRequestState.AwaitingAddress
 
-      result = self.createMemberItem(member.id, state, member.role)
+      result = self.createMemberItem(member.id, "", state, member.role)
     ),
     # pendingRequestsToJoin
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
@@ -408,11 +408,11 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     bannedMembers,
     # pendingMemberRequests
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
     ) else: @[],
     # declinedMemberRequests
     if (isCommunity): communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
     ) else: @[],
     channelGroup.encrypted,
     communityTokensItems,
@@ -1392,8 +1392,7 @@ method ephemeralNotificationClicked*[T](self: Module[T], id: int64) =
     self.osNotificationClicked(item.details)
 
 method onMyRequestAdded*[T](self: Module[T]) =
-    self.displayEphemeralNotification("Your Request has been submitted", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
-
+  self.displayEphemeralNotification("Your Request has been submitted", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
 
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) =
   let contact = self.controller.getContact(publicKey)
@@ -1644,7 +1643,11 @@ method openSectionChatAndMessage*[T](self: Module[T], sectionId: string, chatId:
   if sectionId in self.channelGroupModules:
     self.channelGroupModules[sectionId].openCommunityChatAndScrollToMessage(chatId, messageId)
 
-proc createMemberItem*[T](self: Module[T], memberId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
+method updateRequestToJoinState*[T](self: Module[T], sectionId: string, requestToJoinState: RequestToJoinState) =
+  if sectionId in self.channelGroupModules:
+    self.channelGroupModules[sectionId].updateRequestToJoinState(requestToJoinState)
+
+proc createMemberItem*[T](self: Module[T], memberId: string, requestId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)
   let status = self.controller.getStatusForContactWithId(memberId)
   return initMemberItem(
@@ -1662,6 +1665,7 @@ proc createMemberItem*[T](self: Module[T], memberId: string, state: MembershipRe
     isVerified = contactDetails.dto.isContactVerified(),
     memberRole = role,
     membershipRequestState = state,
+    requestToJoinId = requestId
   )
 
 {.pop.}

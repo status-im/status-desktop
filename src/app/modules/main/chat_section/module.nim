@@ -443,6 +443,11 @@ method onChatsLoaded*(
     let community = self.controller.getMyCommunity()
     self.view.setAmIMember(community.joined)
     self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(self.controller.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(community.id))
+    var requestToJoinState = RequestToJoinState.None
+    if self.controller.isMyCommunityRequestPending():
+      requestToJoinState = RequestToJoinState.Requested
+
+    self.view.setRequestToJoinState(requestToJoinState)
     self.initCommunityTokenPermissionsModel(channelGroup)
     self.onCommunityCheckAllChannelsPermissionsResponse(channelGroup.channelPermissions)
     self.controller.asyncCheckPermissionsToJoin()
@@ -1075,6 +1080,7 @@ method onJoinedCommunity*(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
   self.view.setAmIMember(true)
   self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(false)
+  self.view.setRequestToJoinState(RequestToJoinState.None)
 
 method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
   self.updateBadgeNotifications(chat, hasUnreadMessages=false, unviewedMentionsCount=0)
@@ -1580,3 +1586,6 @@ method openCommunityChatAndScrollToMessage*(self: Module, chatId: string, messag
   if chatId in self.chatContentModules:
     self.setActiveItem(chatId)
     self.chatContentModules[chatId].scrollToMessage(messageId)
+
+method updateRequestToJoinState*(self: Module, state: RequestToJoinState) =
+  self.view.setRequestToJoinState(state)
