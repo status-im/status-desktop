@@ -40,6 +40,7 @@ StackLayout {
     readonly property bool isTokenMasterOwner: sectionItemModel.memberRole === Constants.memberRole.tokenMaster
     readonly property bool isControlNode: sectionItemModel.isControlNode
     readonly property bool isPrivilegedUser: isControlNode || isOwner || isAdmin || isTokenMasterOwner
+    readonly property int isInvitationPending: root.rootStore.chatCommunitySectionModule.requestToJoinState !== Constants.RequestToJoinState.None
 
     property bool communitySettingsDisabled
 
@@ -113,29 +114,20 @@ StackLayout {
             viewAndPostHoldingsModel: root.permissionsStore.viewAndPostPermissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
-            isInvitationPending: root.rootStore.isMyCommunityRequestPending(communityId)
+            requestToJoinState: root.rootStore.chatCommunitySectionModule.requestToJoinState
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
             openCreateChat: rootStore.openCreateChat
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
             onRequestToJoinClicked: {
-                Global.communityIntroPopupRequested(joinCommunityView.communityId, communityData.name, communityData.introMessage,
-                                                    communityData.image, root.rootStore.isMyCommunityRequestPending(communityId))
+                Global.communityIntroPopupRequested(joinCommunityView.communityId, communityData.name,
+                                                    communityData.introMessage, communityData.image,
+                                                    root.isInvitationPending)
             }
             onInvitationPendingClicked: {
                 Global.communityIntroPopupRequested(joinCommunityView.communityId, communityData.name, communityData.introMessage,
-                                                    communityData.image, root.rootStore.isMyCommunityRequestPending(communityId))
-                joinCommunityView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityId)
-            }
-
-            Connections {
-                target: root.rootStore.communitiesModuleInst
-                function onCommunityAccessRequested(communityId: string) {
-                    if (communityId === joinCommunityView.communityId) {
-                        joinCommunityView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityId)
-                    }
-                }
+                                                    communityData.image, root.isInvitationPending)
             }
         }
     }
@@ -168,7 +160,7 @@ StackLayout {
             viewAndPostPermissionsModel: root.permissionsStore.viewAndPostPermissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
-            isInvitationPending: root.rootStore.isMyCommunityRequestPending(chatView.communityId)
+            requestToJoinState: sectionItem.requestToJoinState
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
@@ -184,12 +176,11 @@ StackLayout {
             }
             onRequestToJoinClicked: {
                 Global.communityIntroPopupRequested(communityId, root.sectionItemModel.name, root.sectionItemModel.introMessage,
-                                                    root.sectionItemModel.image, root.rootStore.isMyCommunityRequestPending(chatView.communityId))
+                                                    root.sectionItemModel.image, root.isInvitationPending)
             }
             onInvitationPendingClicked: {
                 Global.communityIntroPopupRequested(communityId, root.sectionItemModel.name, root.sectionItemModel.introMessage,
-                                                    root.sectionItemModel.image, root.rootStore.isMyCommunityRequestPending(chatView.communityId))
-                chatView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(dialogRoot.communityId)
+                                                    root.sectionItemModel.image, root.isInvitationPending)
             }
         }
     }
@@ -253,16 +244,6 @@ StackLayout {
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
-        }
-    }
-
-    Connections {
-        target: root.rootStore
-        enabled: mainViewLoader.item
-        function onCommunityAccessRequested(communityId: string) {
-            if (communityId === mainViewLoader.item.communityId) {
-                mainViewLoader.item.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityId)
-            }
         }
     }
 }

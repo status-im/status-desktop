@@ -44,6 +44,8 @@ Item {
     property var communityData
     property alias createChannelPopup: createChannelPopup
 
+    property int requestToJoinState: Constants.RequestToJoinState.None
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -64,11 +66,8 @@ Item {
         readonly property bool discordImportInProgress: (root.communitiesStore.discordImportProgress > 0 && root.communitiesStore.discordImportProgress < 100)
                                                         || root.communitiesStore.discordImportInProgress
 
-        property bool invitationPending: root.store.isMyCommunityRequestPending(communityData.id)
-
-        property bool joiningCommunityInProgress: false
-
-        onShowJoinButtonChanged: invitationPending = root.store.isMyCommunityRequestPending(communityData.id)
+        readonly property int requestToJoinState: root.communitySectionModule.requestToJoinState
+        readonly property bool invitationPending: d.requestToJoinState !== Constants.RequestToJoinState.None
     }
 
     ColumnHeaderPanel {
@@ -486,11 +485,11 @@ Item {
             anchors.bottomMargin: Style.current.halfPadding
             anchors.horizontalCenter: parent.horizontalCenter
             enabled: !root.communityData.amIBanned
-            loading: d.joiningCommunityInProgress
+            loading: d.requestToJoinState === Constants.RequestToJoinState.InProgress
 
             text: {
                 if (root.communityData.amIBanned) return qsTr("You were banned from community")
-                if (d.invitationPending) return qsTr("Membership request pending...")
+                if (d.requestToJoinState === Constants.RequestToJoinState.Requested) return qsTr("Membership request pending...")
 
                 return root.communityData.access === Constants.communityChatOnRequestAccess ?
                             qsTr("Request to join") : qsTr("Join Community")
@@ -502,19 +501,11 @@ Item {
             }
 
             Connections {
-                enabled: d.joiningCommunityInProgress
+                enabled: d.showJoinButton
                 target: root.store.communitiesModuleInst
-                function onCommunityAccessRequested(communityId: string) {
-                    if (communityId === root.communityData.id) {
-                        d.invitationPending = root.store.isMyCommunityRequestPending(communityId)
-                        d.joiningCommunityInProgress = false
-                    }
-                }
 
                 function onCommunityAccessFailed(communityId: string, error: string) {
                     if (communityId === root.communityData.id) {
-                        d.invitationPending = false
-                        d.joiningCommunityInProgress = false
                         Global.displayToastMessage(qsTr("Request to join failed"),
                                                    qsTr("Please try again later"),
                                                    "",

@@ -30,7 +30,7 @@ StatusSectionLayout {
     property string channelDesc
     property bool joinCommunity: true // Otherwise it means join channel action
     property int accessType
-    property bool isInvitationPending: false
+    property int requestToJoinState: Constants.RequestToJoinState.None
 
     // Permission overlay view properties:
     property bool requirementsMet: true
@@ -128,7 +128,7 @@ StatusSectionLayout {
         name: root.name
         channelName: root.channelName
 
-        isInvitationPending: root.isInvitationPending
+        requestToJoinState: root.requestToJoinState
         isJoinRequestRejected: root.isJoinRequestRejected
         requiresRequest: root.requiresRequest
         requirementsMet: root.requirementsMet

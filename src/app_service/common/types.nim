@@ -91,3 +91,8 @@ type TokenType* {.pure.} = enum
   ERC1155 = 3,
   Unknown = 4,
   ENS = 5
+
+type RequestToJoinState* {.pure.} = enum
+  None = 0
+  InProgress
+  Requested
