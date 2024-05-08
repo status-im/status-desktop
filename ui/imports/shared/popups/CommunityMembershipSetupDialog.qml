@@ -90,20 +90,20 @@ StatusStackModal {
             if (root.isInvitationPending)
                 return true
 
-            if (root.requirementsCheckPending || !root.joinPermissionsCheckSuccessful)
+            if (root.requirementsCheckPending && !root.joinPermissionsCheckSuccessful)
                 return false
 
-            if (d.accessType !== Constants.communityChatOnRequestAccess)
+            if (root.joinPermissionsCheckSuccessful || d.accessType !== Constants.communityChatOnRequestAccess)
                 return true
 
             return d.eligibleToJoinAs !== PermissionTypes.Type.None
         }
-        loading: root.requirementsCheckPending && !root.isInvitationPending
+        loading: root.requirementsCheckPending && !root.joinPermissionsCheckSuccessful && !root.isInvitationPending
         tooltip.text: {
             if (interactive)
                 return ""
 
-            if (root.requirementsCheckPending)
+            if (root.requirementsCheckPending && !root.joinPermissionsCheckSuccessful)
                 return qsTr("Requirements check pending")
 
             if (!root.joinPermissionsCheckSuccessful)
