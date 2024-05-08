@@ -469,6 +469,9 @@ o_ActivityNotificationContactRequest = {"container": statusDesktop_mainWindow_ov
 activityCenterTopBar_ActivityCenterPopupTopBarPanel = {"container": statusDesktop_mainWindow_overlay, "id": "activityCenterTopBar", "type": "ActivityCenterPopupTopBarPanel", "unnamed": 1, "visible": True}
 statusListView = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListView", "unnamed": 1, "visible": True}
 
+# Rename keypair popup
+save_changes_rename_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "saveRenameKeypairChangesButton", "type": "StatusButton", "visible": True}
+
 # OS NAMES
 # Open Files Dialog
 chooseAnImageALogo_QQuickWindow = {"title": RegularExpression("Choose.*"), "type": "QQuickWindow", "unnamed": 1, "visible": True}
@@ -566,6 +569,8 @@ settingsWalletAccountDelegate = {"container": settingsContentBase_ScrollView, "i
 settingsWalletKeyPairDelegate = {"container": settingsContentBase_ScrollView, "objectName": "walletKeyPairDelegate", "type": "StatusListItem", "visible": True}
 settingsWalletAccountTotalBalance = {"container": settingsContentBase_ScrollView, "objectName": "includeTotalBalanceListItem", "type": "StatusListItem", "visible": True}
 settingsWalletAccountTotalBalanceToggle = {"checkable": True, "container": settingsWalletAccountTotalBalance, "type": "StatusSwitch", "visible": True}
+settingsContentBaseScrollView_StatusFlatRoundButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "type": "StatusFlatRoundButton", "unnamed": 1, "visible": True}
+rename_keypair_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "renameKeypairMenuItem", "type": "StatusMenuItem", "visible": True}
 
 # Wallet Account Details view
 walletAccountViewEditAccountButton = {"container": statusDesktop_mainWindow, "objectName": "walletAccountViewEditAccountButton", "type": "StatusButton"}
