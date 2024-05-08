@@ -3,6 +3,7 @@ import NimQml, Tables, strutils, stew/shims/strformat, sequtils, logging, option
 import ./entry
 
 import app/modules/shared_models/currency_amount
+import app_service/service/currency/service
 import backend/activity as backend
 import backend/backend as importing_transactionidentity_comp
 
@@ -154,3 +155,7 @@ QtObject:
           let index = self.createIndex(i, 0, nil)
           defer: index.delete
           self.dataChanged(index, index, @[ModelRole.ActivityEntryRole.int])
+
+  proc refreshAmountCurrency*(self: Model, currencyService: Service) =
+    for i in 0..self.entries.high:
+      self.entries[i].resetAmountCurrency(currencyService)

@@ -244,6 +244,9 @@ QtObject:
       let args = SavedAddressArgs(e)
       self.model.refreshItemsContainingAddress(args.address)
 
+    events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e:Args):
+      self.model.refreshAmountCurrency(self.currencyService)
+
     # setup other event handlers
     self.eventsHandler.onFilteringDone(proc (jsonObj: JsonNode) =
       self.processResponse(jsonObj)
