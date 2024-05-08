@@ -13,6 +13,7 @@ import utils 1.0
 Control {
     id: root
 
+    property bool isPromoteSelfToControlNodeEnabled: false
     property bool isControlNode: true
     property string communityName: ""
     property string communityColor: ""
@@ -45,6 +46,7 @@ Control {
         id: mainGrid
         columnSpacing: 16
         rowSpacing: 16
+        visible: root.isPromoteSelfToControlNodeEnabled
 
         StatusRoundIcon {
             id: icon
