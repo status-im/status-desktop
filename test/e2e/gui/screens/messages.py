@@ -91,6 +91,10 @@ class ToolBar(QObject):
     def is_pin_message_tooltip_visible(self) -> bool:
         return self.pinned_message_tooltip.is_visible
 
+    @allure.step('Click on pin message tooltip')
+    def click_pin_message_tooltip(self):
+        return self.pinned_message_tooltip.click()
+
     @allure.step('Confirm action in toolbar')
     def confirm_action_in_toolbar(self):
         self.confirm_button.click()

@@ -163,6 +163,11 @@ share_your_addresses_to_join_StatusButton = {"container": statusDesktop_mainWind
 # Kick member popup
 confirm_kick_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
 
+# Pinned messages
+unpinButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay, "id": "unpinButton", "type": "StatusFlatRoundButton", "unnamed": 1, "visible": True}
+headerActionsCloseButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerActionsCloseButton", "type": "StatusFlatRoundButton", "visible": True}
+o_StatusPinMessageDetails = {"container": statusDesktop_mainWindow_overlay, "type": "StatusPinMessageDetails", "unnamed": 1, "visible": True}
+
 """ Settings """
 
 # Send Contact Request

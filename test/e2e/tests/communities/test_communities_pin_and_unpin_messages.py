@@ -7,6 +7,7 @@ import pytest
 from allure_commons._allure import step
 
 import driver
+from gui.components.community.pinned_messages_popup import PinnedMessagesPopup
 from gui.main_window import MainWindow
 from . import marks
 import configs
@@ -135,11 +136,11 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             assert message.get_message_color() == ColorCodes.ORANGE.value
             main_screen.hide()
 
-        with step(f'User {user_two.name} hover message and unpin it'):
+        with step(f'User {user_two.name} unpin message from pinned messages popup'):
             aut_two.attach()
             main_screen.prepare()
-            message = messages_screen.chat.find_message_by_text(second_message_text, 1)
-            message.hover_message().unpin_message()
+            messages_screen.tool_bar.click_pin_message_tooltip()
+            PinnedMessagesPopup().wait_until_appears().unpin_message().close()
 
         with step(f'User {user_one.name} see the {second_message_text} as unpinned'):
             aut_one.attach()
