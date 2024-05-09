@@ -4,8 +4,10 @@
 #include <QPointer>
 
 #include <limits>
+#include <optional>
 
 class QQmlComponent;
+class QQmlEngine;
 
 class SubmodelProxyModel : public QIdentityProxyModel
 {
@@ -34,27 +36,36 @@ signals:
     void delegateModelChanged();
     void submodelRoleNameChanged();
 
+protected slots:
+    void resetInternalData();
+
 private slots:
     void onCustomRoleChanged(QObject* source, int role);
     void emitAllDataChanged();
 
 private:
-    void initializeIfReady();
-    void initialize();
     void initRoles();
+    void updateRoleNames();
 
-    void onDelegateChanged();
+    QStringList fetchAdditionalRoles(QQmlComponent* delegateComponent);
+    QQmlComponent* buildConnectorComponent(
+            const QHash<QString, int>& additionalRoles,
+            QQmlEngine* engine, QObject* parent);
+
+    std::optional<int> findSubmodelRole(const QHash<int, QByteArray>& roleNames,
+                                        const QString& submodelRoleName);
 
     QPointer<QQmlComponent> m_delegateModel;
     QPointer<QQmlComponent> m_connector;
 
     QString m_submodelRoleName;
 
-    bool m_initialized = false;
     bool m_sourceModelDeleted = false;
-    int m_submodelRole = 0;
     bool m_dataChangedQueued = false;
 
+    std::optional<int> m_submodelRole = 0;
+
+    QStringList m_additionalRoles;
     QHash<int, QByteArray> m_roleNames;
     QHash<QString, int> m_additionalRolesMap;
     int m_additionalRolesOffset = std::numeric_limits<int>::max();
