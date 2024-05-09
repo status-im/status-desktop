@@ -24,14 +24,14 @@ SubmodelProxyModel::SubmodelProxyModel(QObject* parent)
 {
 }
 
-QVariant SubmodelProxyModel::data(const QModelIndex &index, int role) const
+QVariant SubmodelProxyModel::data(const QModelIndex& index, int role) const
 {
     static constexpr auto attachementPropertyName = "_attachement";
 
     if (!checkIndex(index, CheckIndexOption::IndexIsValid))
         return {};
 
-    if (m_initialized && m_delegateModel && role == m_submodelRole) {
+    if (m_delegateModel && m_submodelRole && role == m_submodelRole) {
         auto submodel = QIdentityProxyModel::data(index, role);
 
         QObject* submodelObj = submodel.value<QObject*>();
@@ -82,10 +82,10 @@ QVariant SubmodelProxyModel::data(const QModelIndex &index, int role) const
         return wrappedInstance;
     }
 
-    if (role >= m_additionalRolesOffset
+    if (m_submodelRole && role >= m_additionalRolesOffset
             && role < m_additionalRolesOffset + m_additionalRolesMap.size())
     {
-        auto submodel = data(index, m_submodelRole);
+        auto submodel = data(index, *m_submodelRole);
 
         auto submodelObj = submodel.value<QObject*>();
 
@@ -107,8 +107,11 @@ void SubmodelProxyModel::setSourceModel(QAbstractItemModel* model)
         return;
     }
 
+    if (sourceModel() == model)
+        return;
+
     // Workaround for QTBUG-57971
-    if (model && model->roleNames().isEmpty())
+    if (model->roleNames().isEmpty())
         connect(model, &QAbstractItemModel::rowsInserted,
                 this, &SubmodelProxyModel::initRoles);
 
@@ -116,13 +119,16 @@ void SubmodelProxyModel::setSourceModel(QAbstractItemModel* model)
         this->m_sourceModelDeleted = true;
     });
 
+    if (m_delegateModel)
+        m_additionalRoles = fetchAdditionalRoles(m_delegateModel);
+
     QIdentityProxyModel::setSourceModel(model);
-    initializeIfReady();
 }
 
 QHash<int, QByteArray> SubmodelProxyModel::roleNames() const
 {
-    return m_roleNames;
+    return m_roleNames.isEmpty() && sourceModel()
+            ? sourceModel()->roleNames() : m_roleNames;;
 }
 
 QQmlComponent* SubmodelProxyModel::delegateModel() const
@@ -132,22 +138,36 @@ QQmlComponent* SubmodelProxyModel::delegateModel() const
 
 void SubmodelProxyModel::setDelegateModel(QQmlComponent* delegateModel)
 {
+    if (m_delegateModel != nullptr) {
+        qWarning("Changing delegate model is not supported!");
+        return;
+    }
+
     if (m_delegateModel == delegateModel)
         return;
 
-    if (m_delegateModel)
-        disconnect(delegateModel, &QObject::destroyed,
-                   this, &SubmodelProxyModel::onDelegateChanged);
+    if (sourceModel() != nullptr) {
+        QStringList additionalRoles = fetchAdditionalRoles(delegateModel);
 
-    if (delegateModel)
-        connect(delegateModel, &QObject::destroyed,
-                this, &SubmodelProxyModel::onDelegateChanged);
+        if (m_additionalRoles == additionalRoles) {
+            m_delegateModel = delegateModel;
 
-    m_delegateModel = delegateModel;
+            if (m_submodelRole && rowCount() && columnCount()) {
+                emit dataChanged(index(0, 0),
+                                 index(rowCount() - 1, columnCount() - 1),
+                                 { *m_submodelRole });
+            }
+        } else {
+            beginResetModel();
+            m_delegateModel = delegateModel;
+            m_additionalRoles = additionalRoles;
+            endResetModel();
+        }
+    } else {
+        m_delegateModel = delegateModel;
+    }
 
-    onDelegateChanged();
-
-    initializeIfReady();
+    emit delegateModelChanged();
 }
 
 const QString& SubmodelProxyModel::submodelRoleName() const
@@ -166,9 +186,25 @@ void SubmodelProxyModel::setSubmodelRoleName(const QString& sumodelRoleName)
     }
 
     m_submodelRoleName = sumodelRoleName;
-    emit submodelRoleNameChanged();
 
-    initializeIfReady();
+    if (sourceModel()) {
+        m_submodelRole = findSubmodelRole(sourceModel()->roleNames(),
+                                          sumodelRoleName);
+
+        if (rowCount() && columnCount()) {
+            emit dataChanged(index(0, 0),
+                             index(rowCount() - 1, columnCount() - 1),
+                             { *m_submodelRole });
+        }
+    }
+
+    emit submodelRoleNameChanged();
+}
+
+void SubmodelProxyModel::resetInternalData()
+{
+    QIdentityProxyModel::resetInternalData();
+    updateRoleNames();
 }
 
 void SubmodelProxyModel::onCustomRoleChanged(QObject* source, int role)
@@ -193,61 +229,25 @@ void SubmodelProxyModel::emitAllDataChanged()
     emit this->dataChanged(index(0, 0), index(count - 1, 0), roles);
 }
 
-void SubmodelProxyModel::initializeIfReady()
+void SubmodelProxyModel::initRoles()
 {
-    if (!m_submodelRoleName.isEmpty() && sourceModel()
-            && !sourceModel()->roleNames().empty() && m_delegateModel)
-        initialize();
+    disconnect(sourceModel(), &QAbstractItemModel::rowsInserted,
+            this, &SubmodelProxyModel::initRoles);
+
+    resetInternalData();
 }
 
-void SubmodelProxyModel::initialize()
+void SubmodelProxyModel::updateRoleNames()
 {
+    if (sourceModel() == nullptr)
+        return;
+
     auto roles = sourceModel()->roleNames();
-    auto submodelKeys = roles.keys(m_submodelRoleName.toUtf8());
-    auto submodelKeysCount = submodelKeys.size();
 
-    if (submodelKeysCount == 1) {
-        m_submodelRole = submodelKeys.first();
-    } else if (submodelKeysCount == 0){
-        qWarning() << "Submodel role not found!";
+    if (roles.empty())
         return;
-    } else {
-        qWarning() << "Malformed source model - multiple roles found for given "
-                      "submodel role name!";
-        return;
-    }
 
-    auto creationContext = m_delegateModel->creationContext();
-    auto parentContext = creationContext
-            ? creationContext : m_delegateModel->engine()->rootContext();
-
-    QIdentityProxyModel emptyModel;
-
-    auto context = std::make_unique<QQmlContext>(parentContext);
-
-    // The delegate object is created in order to inspect properties. It may
-    // be not properly initialized because of e.g. lack of context properties
-    // containing submodel. To avoid warnings, they are muted by setting empty
-    // message handler temporarily.
-    QtMessageHandler originalHandler = qInstallMessageHandler(
-                emptyMessageHandler);
-    std::unique_ptr<QObject> instance(m_delegateModel->create(context.get()));
-    qInstallMessageHandler(originalHandler);
-
-    const QMetaObject* meta = instance->metaObject();
-
-    QStringList additionalRoles;
-
-    for (auto i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
-        const QLatin1String propertyName(meta->property(i).name());
-
-        bool isRole = propertyName.endsWith(QLatin1String(roleSuffix));
-
-        if (!isRole)
-            continue;
-
-        additionalRoles << propertyName.chopped(qstrlen(roleSuffix));
-    }
+    m_submodelRole = findSubmodelRole(roles, m_submodelRoleName);
 
     const auto keys = roles.keys();
     const auto maxElementIt = std::max_element(keys.begin(), keys.end());
@@ -257,7 +257,9 @@ void SubmodelProxyModel::initialize()
     auto maxRoleKey = *maxElementIt;
     m_additionalRolesOffset = maxRoleKey + 1;
 
-    for (auto& additionalRole : qAsConst(additionalRoles)) {
+    m_additionalRolesMap.clear();
+
+    for (auto& additionalRole : qAsConst(m_additionalRoles)) {
         auto roleKey = ++maxRoleKey;
 
         roles.insert(roleKey, additionalRole.toUtf8());
@@ -266,6 +268,53 @@ void SubmodelProxyModel::initialize()
 
     m_roleNames = roles;
 
+    if (m_delegateModel == nullptr)
+        return;
+
+    m_connector = buildConnectorComponent(m_additionalRolesMap,
+                                          m_delegateModel->engine(),
+                                          m_delegateModel);
+}
+
+QStringList SubmodelProxyModel::fetchAdditionalRoles(
+        QQmlComponent* delegateComponent)
+{
+    auto creationContext = delegateComponent->creationContext();
+    auto parentContext = creationContext
+            ? creationContext : delegateComponent->engine()->rootContext();
+
+    auto context = std::make_unique<QQmlContext>(parentContext);
+
+    // The delegate object is created in order to inspect properties. It may
+    // be not properly initialized because of e.g. lack of context properties
+    // containing submodel. To avoid warnings, they are muted by setting empty
+    // message handler temporarily.
+    QtMessageHandler originalHandler = qInstallMessageHandler(
+                emptyMessageHandler);
+    std::unique_ptr<QObject> instance(delegateComponent->create(context.get()));
+    qInstallMessageHandler(originalHandler);
+
+    const QMetaObject* meta = instance->metaObject();
+
+    QStringList additionalRoles;
+
+    for (auto i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
+        const QLatin1String propertyName(meta->property(i).name());
+        bool isRole = propertyName.endsWith(QLatin1String(roleSuffix));
+
+        if (!isRole)
+            continue;
+
+        additionalRoles << propertyName.chopped(qstrlen(roleSuffix));
+    }
+
+    return additionalRoles;
+}
+
+QQmlComponent* SubmodelProxyModel::buildConnectorComponent(
+        const QHash<QString, int>& additionalRoles, QQmlEngine* engine,
+        QObject* parent)
+{
     QString connectorCode = R"(
         import QtQml 2.15
 
@@ -273,10 +322,10 @@ void SubmodelProxyModel::initialize()
             signal customRoleChanged(source: QtObject, role: int)
     )";
 
-    for (auto& additionalRole : qAsConst(additionalRoles)) {
-        int role = m_additionalRolesMap[additionalRole];
+    for (auto i = additionalRoles.cbegin(); i != additionalRoles.cend(); ++i) {
+        int role = i.value();
 
-        auto upperCaseRole = additionalRole;
+        auto upperCaseRole = i.key();
         upperCaseRole[0] = upperCaseRole[0].toUpper();
 
         connectorCode += QString(R"(
@@ -286,27 +335,30 @@ void SubmodelProxyModel::initialize()
 
     connectorCode += "}";
 
-    m_connector = new QQmlComponent(m_delegateModel->engine(), m_delegateModel);
-    m_connector->setData(connectorCode.toUtf8(), {});
+    auto connector = new QQmlComponent(engine, parent);
+    connector->setData(connectorCode.toUtf8(), {});
 
-    m_initialized = true;
+    return connector;
 }
 
-void SubmodelProxyModel::initRoles()
+std::optional<int> SubmodelProxyModel::findSubmodelRole(
+        const QHash<int, QByteArray>& roleNames,
+        const QString& submodelRoleName)
 {
-    disconnect(sourceModel(), &QAbstractItemModel::rowsInserted,
-            this, &SubmodelProxyModel::initRoles);
+    if (roleNames.empty() || submodelRoleName.isEmpty())
+        return {};
 
-    resetInternalData();
-    initializeIfReady();
-}
+    auto submodelKeys = roleNames.keys(m_submodelRoleName.toUtf8());
+    auto submodelKeysCount = submodelKeys.size();
 
-void SubmodelProxyModel::onDelegateChanged()
-{
-    emit delegateModelChanged();
-
-    if (m_initialized && rowCount() && columnCount()) {
-        emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1),
-                         { m_submodelRole });
+    if (submodelKeysCount == 1) {
+        return submodelKeys.first();
+    } else if (submodelKeysCount == 0) {
+        qWarning() << "Submodel role not found!";
+        return {};
+    } else {
+        qWarning() << "Malformed source model - multiple roles found for given "
+                      "submodel role name!";
+        return {};
     }
 }

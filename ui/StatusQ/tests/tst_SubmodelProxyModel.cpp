@@ -204,8 +204,8 @@ private slots:
 
         delegate.reset();
 
-        QCOMPARE(delegateModelChangedSpy.count(), 1);
-        QCOMPARE(dataChangedSpy.count(), 1);
+        QCOMPARE(delegateModelChangedSpy.count(), 0);
+        QCOMPARE(dataChangedSpy.count(), 0);
 
         QCOMPARE(model.rowCount(), 3);
         QCOMPARE(model.data(model.index(0, 0),
@@ -302,6 +302,7 @@ private slots:
 
         model.setSourceModel(sourceModel);
         model.setDelegateModel(delegate.get());
+
         model.setSubmodelRoleName(QStringLiteral("balances"));
 
         ListModelWrapper expected(engine, R"([
@@ -398,6 +399,267 @@ private slots:
 
         QTest::qWait(100);
         QCOMPARE(signalsSpy.count(), 2);
+    }
+
+    void modelResetWhenRoleChangedTest() {
+        QQmlEngine engine;
+        auto delegateWithRole = std::make_unique<QQmlComponent>(&engine);
+
+        delegateWithRole->setData(QByteArrayLiteral(R"(
+            import QtQml.Models 2.15
+
+            ListModel {
+                property int extraValueRole: 0
+            }
+        )"), QUrl());
+
+        auto delegateNoRole = std::make_unique<QQmlComponent>(&engine);
+
+        delegateNoRole->setData(QByteArrayLiteral(R"(
+            import QtQml.Models 2.15
+
+            ListModel {}
+        )"), QUrl());
+
+        ListModelWrapper sourceModel(engine, R"([
+            { "balances": [], "name": "name 1" }
+        ])");
+
+        // 1. set source, 2. set delegate model, 3. set submodel role name
+        {
+            SubmodelProxyModel model;
+
+            ModelSignalsSpy signalsSpy(&model);
+
+            model.setSourceModel(sourceModel);
+
+            QCOMPARE(signalsSpy.count(), 2);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+            QCOMPARE(model.roleNames().count(), 2);
+
+            model.setDelegateModel(delegateWithRole.get());
+
+            QCOMPARE(signalsSpy.count(), 4);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 2);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 2);
+            QCOMPARE(model.roleNames().count(), 3);
+
+            model.setSubmodelRoleName(QStringLiteral("balances"));
+
+            QCOMPARE(signalsSpy.count(), 5);
+            QCOMPARE(signalsSpy.dataChangedSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 2);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 2);
+            QCOMPARE(model.roleNames().count(), 3);
+        }
+
+        // 1. set delegate model, 2. set source, 3. set submodel role name
+        {
+            SubmodelProxyModel model;
+
+            ModelSignalsSpy signalsSpy(&model);
+
+            model.setDelegateModel(delegateWithRole.get());
+
+            QCOMPARE(signalsSpy.count(), 0);
+            QCOMPARE(model.roleNames().count(), 0);
+
+            model.setSourceModel(sourceModel);
+
+            QCOMPARE(signalsSpy.count(), 2);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+            QCOMPARE(model.roleNames().count(), 3);
+
+            model.setSubmodelRoleName(QStringLiteral("balances"));
+
+            QCOMPARE(signalsSpy.count(), 3);
+            QCOMPARE(signalsSpy.dataChangedSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+            QCOMPARE(model.roleNames().count(), 3);
+        }
+
+        // 1. set submodel role name, 2. set delegate model, 3. set source
+        {
+            SubmodelProxyModel model;
+
+            ModelSignalsSpy signalsSpy(&model);
+
+            model.setSubmodelRoleName(QStringLiteral("balances"));
+            model.setDelegateModel(delegateWithRole.get());
+
+            QCOMPARE(signalsSpy.count(), 0);
+            QCOMPARE(model.roleNames().count(), 0);
+
+            model.setSourceModel(sourceModel);
+
+            QCOMPARE(signalsSpy.count(), 2);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+            QCOMPARE(model.roleNames().count(), 3);
+        }
+
+        // 1. set source, 2. set delegate model (no extra roles),
+        // 3. set submodel role name
+        {
+            SubmodelProxyModel model;
+
+            ModelSignalsSpy signalsSpy(&model);
+
+            model.setSourceModel(sourceModel);
+
+            QCOMPARE(signalsSpy.count(), 2);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+            QCOMPARE(model.roleNames().count(), 2);
+
+            model.setDelegateModel(delegateNoRole.get());
+
+            QCOMPARE(signalsSpy.count(), 2);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+            QCOMPARE(model.roleNames().count(), 2);
+
+            model.setSubmodelRoleName(QStringLiteral("balances"));
+
+            QCOMPARE(signalsSpy.count(), 3);
+            QCOMPARE(signalsSpy.dataChangedSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+            QCOMPARE(model.roleNames().count(), 2);
+        }
+    }
+
+    // SubmodelProxyModel instantiates delegate model in order to inspect
+    // extra roles. This instantiation must be deferred until model is,
+    // available. Otherwise it may lead to accessing uninitialized external
+    // data within a delegate instance.
+    void deferredDelegateInstantiationTest() {
+        QQmlEngine engine;
+
+        QObject controlObject;
+        engine.rootContext()->setContextProperty("control", &controlObject);
+
+        auto delegate = std::make_unique<QQmlComponent>(&engine);
+
+        delegate->setData(QByteArrayLiteral(R"(
+            import QtQml.Models 2.15
+            import QtQml 2.15
+
+            ListModel {
+                property int extraValueRole: 0
+
+                Component.onCompleted: control.objectName = "instantiated"
+            }
+        )"), QUrl());
+
+        ListModelWrapper sourceModel(engine, R"([
+            { "balances": [], "name": "name 1" }
+        ])");
+
+        {
+            SubmodelProxyModel model;
+            model.setSourceModel(sourceModel);
+            QCOMPARE(controlObject.objectName(), "");
+
+            model.setDelegateModel(delegate.get());
+            QCOMPARE(controlObject.objectName(), "instantiated");
+        }
+
+        controlObject.setObjectName("");
+
+        {
+            SubmodelProxyModel model;
+            model.setDelegateModel(delegate.get());
+            QCOMPARE(controlObject.objectName(), "");
+
+            model.setSourceModel(sourceModel);
+            QCOMPARE(controlObject.objectName(), "instantiated");
+        }
+    }
+
+    void sourceModelResetTest() {
+        class IdentityModel : public QIdentityProxyModel {};
+
+        QQmlEngine engine;
+        auto delegate = std::make_unique<QQmlComponent>(&engine);
+
+        delegate->setData(QByteArrayLiteral(R"(
+            import QtQml.Models 2.15
+
+            ListModel {
+                property int extraValueRole: 0
+            }
+        )"), QUrl());
+
+        ListModelWrapper sourceModel1(engine, R"([
+            { "balances": [], "name": "name 1" }
+        ])");
+
+        ListModelWrapper sourceModel2(engine, R"([
+            { "key": "1", "balances": [], "name": "name 1", "color": "red" }
+        ])");
+
+        IdentityModel identity;
+        identity.setSourceModel(sourceModel1);
+
+        SubmodelProxyModel model;
+        model.setSourceModel(&identity);
+        model.setDelegateModel(delegate.get());
+        model.setSubmodelRoleName(QStringLiteral("balances"));
+
+        QCOMPARE(model.rowCount(), 1);
+        auto roles = model.roleNames();
+        QCOMPARE(roles.size(), 3);
+
+        ModelSignalsSpy signalsSpy(&model);
+
+        identity.setSourceModel(sourceModel2);
+
+        QCOMPARE(signalsSpy.count(), 2);
+        QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+        QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+
+        QCOMPARE(model.rowCount(), 1);
+        roles = model.roleNames();
+        QCOMPARE(roles.size(), 5);
+    }
+
+    void sourceModelLateRolesInitTest() {
+        QQmlEngine engine;
+        auto delegate = std::make_unique<QQmlComponent>(&engine);
+
+        delegate->setData(QByteArrayLiteral(R"(
+            import QtQml.Models 2.15
+
+            ListModel {
+                property int extraValueRole: 0
+            }
+        )"), QUrl());
+
+        ListModelWrapper sourceModel(engine, R"([])");
+
+        SubmodelProxyModel model;
+        model.setSourceModel(sourceModel);
+        model.setDelegateModel(delegate.get());
+        model.setSubmodelRoleName(QStringLiteral("balances"));
+
+        QCOMPARE(model.rowCount(), 0);
+        auto roles = model.roleNames();
+        QCOMPARE(roles.size(), 0);
+
+        ModelSignalsSpy signalsSpy(&model);
+
+        sourceModel.append(QJsonArray {
+            QJsonObject {{ "name", "D"}, { "balances", "d1" }},
+            QJsonObject {{ "name", "D"}, { "balances", "d2" }}
+        });
+
+        QCOMPARE(model.rowCount(), 2);
+        roles = model.roleNames();
+        QCOMPARE(roles.size(), 3);
     }
 
     void multipleProxiesTest() {
