@@ -28,7 +28,7 @@ CalloutCard {
 
     borderWidth: 1
     implicitHeight: 290
-    implicitWidth: 305
+    implicitWidth: 324+2*borderWidth
     hoverEnabled: true
     dropShadow: d.highlight
     borderColor: d.highlight ? Style.current.background : Style.current.border
@@ -45,6 +45,7 @@ CalloutCard {
             Layout.rightMargin: d.bannerImageMargins
             Layout.topMargin: d.bannerImageMargins
             Layout.preferredHeight: 170
+            Layout.preferredWidth: 324
             active: !!d.bannerImageSource
             sourceComponent: StatusImage {
                 id: bannerImage
