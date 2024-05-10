@@ -680,6 +680,7 @@ QtObject:
       communityId: communityId,
       chatId: chatId
     )
+
     self.threadpool.start(arg)
 
   proc onAsyncCheckChannelPermissionsDone*(self: Service, rpcResponse: string) {.slot.} =
@@ -692,21 +693,22 @@ QtObject:
 
       let communityId = rpcResponseObj{"communityId"}.getStr()
       let chatId = rpcResponseObj{"chatId"}.getStr()
-      let checkChannelPermissionsResponse = rpcResponseObj["response"]["result"].toCheckChannelPermissionsResponseDto()
-
+      let checkChannelPermissionsResponse = rpcResponseObj["response"].toCheckChannelPermissionsResponseDto()
       self.events.emit(SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE, CheckChannelPermissionsResponseArgs(communityId: communityId, chatId: chatId, checkChannelPermissionsResponse: checkChannelPermissionsResponse))
     except Exception as e:
       let errMsg = e.msg
       error "error checking all channel permissions: ", errMsg
 
-  proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string, addresses: seq[string]) =
+  proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string, addresses: seq[string], fullCheck: bool) =
     let arg = AsyncCheckAllChannelsPermissionsTaskArg(
       tptr: cast[ByteAddress](asyncCheckAllChannelsPermissionsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckAllChannelsPermissionsDone",
       communityId: communityId,
       addresses: addresses,
+      fullCheck: fullCheck
     )
+
     self.threadpool.start(arg)
 
   proc onAsyncCheckAllChannelsPermissionsDone*(self: Service, rpcResponse: string) {.slot.} =
@@ -716,11 +718,7 @@ QtObject:
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj["error"].getStr)
 
-      if rpcResponseObj["response"]{"error"}.kind != JNull:
-        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
-        raise newException(RpcException, error.message)
-
-      let checkAllChannelsPermissionsResponse = rpcResponseObj["response"]["result"].toCheckAllChannelsPermissionsResponseDto()
+      let checkAllChannelsPermissionsResponse = rpcResponseObj["response"].toCheckAllChannelsPermissionsResponseDto()
       # TODO save it
       self.events.emit(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE, CheckAllChannelsPermissionsResponseArgs(communityId: communityId, checkAllChannelsPermissionsResponse: checkAllChannelsPermissionsResponse))
     except Exception as e:

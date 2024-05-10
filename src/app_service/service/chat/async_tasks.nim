@@ -28,7 +28,11 @@ type
 const asyncCheckChannelPermissionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCheckChannelPermissionsTaskArg](argEncoded)
   try:
-    let response = status_communities.checkCommunityChannelPermissions(arg.communityId, arg.chatId)
+    var response = status_communities.checkCommunityChannelPermissionsLight(arg.communityId, arg.chatId).result
+    let channelPermissions = response.toCheckChannelPermissionsResponseDto()
+    if  not channelPermissions.viewOnlyPermissions.satisfied and not channelPermissions.viewAndPostPermissions.satisfied:
+      response = status_communities.checkCommunityChannelPermissions(arg.communityId, arg.chatId).result
+
     arg.finish(%* {
       "response": response,
       "communityId": arg.communityId,
@@ -46,13 +50,19 @@ type
   AsyncCheckAllChannelsPermissionsTaskArg = ref object of QObjectTaskArg
     communityId: string
     addresses: seq[string]
+    fullCheck: bool
 
 const asyncCheckAllChannelsPermissionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCheckAllChannelsPermissionsTaskArg](argEncoded)
   try:
-    let response = status_communities.checkAllCommunityChannelsPermissions(arg.communityId, arg.addresses)
+    var result = JsonNode()
+    if arg.fullCheck:
+      result = status_communities.checkAllCommunityChannelsPermissions(arg.communityId, arg.addresses).result
+    else:
+      result = status_communities.checkAllCommunityChannelsPermissionsLight(arg.communityId).result
+    let allChannelsPermissions = result.toCheckAllChannelsPermissionsResponseDto()
     arg.finish(%* {
-      "response": response,
+      "response": allChannelsPermissions,
       "communityId": arg.communityId,
       "error": "",
     })
