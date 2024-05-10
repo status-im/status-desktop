@@ -64,6 +64,9 @@ add_executable(
   ${CORE_JS_FILES}
   ${STORYBOOK_QML_FILES}
   README.md
+   # Require for loading WalletConnect SDK;
+   # TODO #14696: remove this dependency
+   storybook-resources.qrc
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
