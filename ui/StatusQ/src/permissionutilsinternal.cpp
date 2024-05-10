@@ -143,7 +143,8 @@ QJsonArray PermissionUtilsInternal::getUniquePermissionChannels(QAbstractItemMod
     return result;
 }
 
-int /*PermissionTypes::Type*/ PermissionUtilsInternal::isEligibleToJoinAs(QAbstractItemModel *permissionsModel) const
+std::optional<PermissionTypes::Type> PermissionUtilsInternal::isEligibleToJoinAsInternal(
+    QAbstractItemModel *permissionsModel) const
 {
     if (!permissionsModel)
         return PermissionTypes::Type::NoPermissions;
@@ -160,8 +161,6 @@ int /*PermissionTypes::Type*/ PermissionUtilsInternal::isEligibleToJoinAs(QAbstr
         return PermissionTypes::Type::NoPermissions;
     }
 
-    QSet<PermissionTypes::Type> tmpRes;
-    bool hasMemberPermission{false};
     constexpr auto isJoinTypePermission = [](PermissionTypes::Type type) {
         return type == PermissionTypes::Type::TokenMaster ||
                type == PermissionTypes::Type::Admin ||
@@ -173,6 +172,8 @@ int /*PermissionTypes::Type*/ PermissionUtilsInternal::isEligibleToJoinAs(QAbstr
     };
 
     const auto permissionsCount = permissionsModel->rowCount();
+    bool hasMemberPermission{false};
+    QSet<PermissionTypes::Type> tmpRes;
     for (int i = 0; i < permissionsCount; i++) {
         const auto permissionType = static_cast<PermissionTypes::Type>(permissionsModel->data(permissionsModel->index(i, 0), permissionTypeRole).toInt());
         if (isJoinTypePermission(permissionType)) {
@@ -191,10 +192,24 @@ int /*PermissionTypes::Type*/ PermissionUtilsInternal::isEligibleToJoinAs(QAbstr
     if (tmpRes.contains(PermissionTypes::Type::Admin))
         return PermissionTypes::Type::Admin;
 
-    if (tmpRes.contains(PermissionTypes::Type::Member) || !hasMemberPermission)
+    if (tmpRes.contains(PermissionTypes::Type::Member))
         return PermissionTypes::Type::Member;
 
-    return PermissionTypes::Type::None;
+    if (!hasMemberPermission)
+        return {}; // no join permissions -> free to join
+
+    return PermissionTypes::Type::None; // not allowed to join due to permissions not satisfied
+}
+
+int /*PermissionTypes::Type*/ PermissionUtilsInternal::isEligibleToJoinAs(QAbstractItemModel *permissionsModel) const
+{
+    return isEligibleToJoinAsInternal(permissionsModel).value_or(PermissionTypes::Type::Member);
+}
+
+bool PermissionUtilsInternal::isTokenGatedCommunity(QAbstractItemModel *permissionsModel) const
+{
+    const auto result = isEligibleToJoinAsInternal(permissionsModel);
+    return result && *result > PermissionTypes::Type::NoPermissions;
 }
 
 QVariantMap PermissionUtilsInternal::getTokenByKey(QAbstractItemModel *model,

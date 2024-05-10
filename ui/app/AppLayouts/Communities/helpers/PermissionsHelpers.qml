@@ -63,6 +63,10 @@ QtObject {
         return Internal.PermissionUtils.isEligibleToJoinAs(model)
     }
 
+    function isTokenGatedCommunity(model) {
+        return Internal.PermissionUtils.isTokenGatedCommunity(model)
+    }
+
     function setHoldingsTextFormat(type, name, amount, decimals) {
         if (typeof amount === "string") {
             amount = AmountsArithmetic.toNumber(AmountsArithmetic.fromString(amount), decimals)

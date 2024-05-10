@@ -11,6 +11,7 @@ import utils 1.0
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.helpers 1.0
 
 StatusScrollView {
     id: root
@@ -65,7 +66,7 @@ StatusScrollView {
 
             readonly property string tags: model.tags
             readonly property var permissionsList: model.permissionsModel
-            readonly property bool requirementsMet: !!model.allTokenRequirementsMet ? model.allTokenRequirementsMet : false
+            readonly property bool isTokenGatedCommunity: PermissionsHelpers.isTokenGatedCommunity(permissionsList)
 
             JSONListModel {
                 id: tagsJson
@@ -85,15 +86,24 @@ StatusScrollView {
             categories: tagsJson.model
             memberCountVisible: model.joined || !model.encrypted
 
-
             // Community restrictions
-            rigthHeaderComponent: PermissionsRow {
-                visible: !!card.permissionsList && card.permissionsList.count > 0
-                assetsModel: root.assetsModel
-                collectiblesModel: root.collectiblesModel
-                model: card.permissionsList
-                requirementsMet: card.requirementsMet
-                overlappingBorder: 0
+            Binding {
+                target: card
+                property: "rigthHeaderComponent"
+                when: card.isTokenGatedCommunity
+                value: Component {
+                    PermissionsRow {
+                        readonly property int eligibleToJoinAs: PermissionsHelpers.isEligibleToJoinAs(card.permissionsList)
+
+                        assetsModel: root.assetsModel
+                        collectiblesModel: root.collectiblesModel
+                        model: card.permissionsList
+                        requirementsMet: eligibleToJoinAs === PermissionTypes.Type.Member
+                                         || eligibleToJoinAs === PermissionTypes.Type.Admin
+                                         || eligibleToJoinAs === PermissionTypes.Type.Owner
+                        overlappingBorder: 0
+                    }
+                }
             }
 
             onClicked: root.cardClicked(communityId)
