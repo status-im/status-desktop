@@ -242,10 +242,6 @@ const SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING* = "acceptRequestToJoinLoading"
 const SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED* = "acceptRequestToJoinFailed"
 const SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION* = "acceptRequestToJoinFailedNoPermission"
 
-const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
-const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
-const TOKEN_PERMISSIONS_REMOVED = "tokenPermissionsRemoved"
-
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE* = "checkPermissionsToJoinResponse"
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED* = "checkPermissionsToJoinFailed"
 
@@ -1617,13 +1613,14 @@ QtObject:
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
     self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
-  proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string]) =
+  proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string], fullCheck: bool) =
     let arg = AsyncCheckPermissionsToJoinTaskArg(
       tptr: cast[ByteAddress](asyncCheckPermissionsToJoinTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckPermissionsToJoinDone",
       communityId: communityId,
-      addresses: addresses
+      addresses: addresses,
+      fullCheck: fullCheck
     )
     self.threadpool.start(arg)
 
@@ -1634,11 +1631,7 @@ QtObject:
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj["error"].getStr)
 
-      if rpcResponseObj["response"]{"error"}.kind != JNull:
-        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
-        raise newException(RpcException, error.message)
-
-      let checkPermissionsToJoinResponse = rpcResponseObj["response"]["result"].toCheckPermissionsToJoinResponseDto
+      let checkPermissionsToJoinResponse = rpcResponseObj["response"].toCheckPermissionsToJoinResponseDto
       self.events.emit(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE, CheckPermissionsToJoinResponseArgs(
         communityId: communityId,
         checkPermissionsToJoinResponse: checkPermissionsToJoinResponse

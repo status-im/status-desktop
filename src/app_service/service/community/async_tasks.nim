@@ -209,11 +209,22 @@ type
   AsyncCheckPermissionsToJoinTaskArg = ref object of QObjectTaskArg
     communityId: string
     addresses: seq[string]
+    fullCheck: bool
 
 const asyncCheckPermissionsToJoinTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCheckPermissionsToJoinTaskArg](argEncoded)
   try:
-    let response = status_go.checkPermissionsToJoinCommunity(arg.communityId, arg.addresses)
+    var response = JsonNode()
+    if not arg.fullCheck:
+      let hasPermissionToJoin = status_go.checkPermissionsToJoinCommunityLight(arg.communityId, arg.addresses).result.getBool
+      if hasPermissionToJoin:
+        let permissionToJoin = CheckPermissionsToJoinResponseDto(satisfied: true)
+        response = %permissionToJoin
+      else:
+        response = status_go.checkPermissionsToJoinCommunity(arg.communityId, arg.addresses).result
+    else:
+      response = status_go.checkPermissionsToJoinCommunity(arg.communityId, arg.addresses).result
+
     arg.finish(%* {
       "response": response,
       "communityId": arg.communityId,

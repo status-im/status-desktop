@@ -858,11 +858,11 @@ method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: s
 method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq[string]) =
   self.joiningCommunityDetails.communityIdForPermissions = communityId
 
-  self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
+  self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses, fullCheck = true)
   self.view.setJoinPermissionsCheckSuccessful(false)
   self.setCheckingPermissionToJoinInProgress(true)
 
-  self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
+  self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses, fullCheck = true)
   self.view.setChannelsPermissionsCheckSuccessful(false)
   self.checkingAllChannelPermissionsInProgress = true
 

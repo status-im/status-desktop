@@ -404,11 +404,11 @@ proc authenticate*(self: Controller) =
 proc getCommunityPublicKeyFromPrivateKey*(self: Controller, communityPrivateKey: string): string =
   result = self.communityService.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
 
-proc asyncCheckPermissionsToJoin*(self: Controller, communityId: string, addressesToShare: seq[string]) =
-  self.communityService.asyncCheckPermissionsToJoin(communityId, addressesToShare)
+proc asyncCheckPermissionsToJoin*(self: Controller, communityId: string, addressesToShare: seq[string], fullCheck: bool) =
+  self.communityService.asyncCheckPermissionsToJoin(communityId, addressesToShare, fullCheck)
 
-proc asyncCheckAllChannelsPermissions*(self: Controller, communityId: string, sharedAddresses: seq[string]) =
-  self.chatService.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
+proc asyncCheckAllChannelsPermissions*(self: Controller, communityId: string, sharedAddresses: seq[string], fullCheck: bool) =
+  self.chatService.asyncCheckAllChannelsPermissions(communityId, sharedAddresses, fullCheck)
 
 proc asyncGetRevealedAccountsForMember*(self: Controller, communityId, memberPubkey: string) =
   self.communityService.asyncGetRevealedAccountsForMember(communityId, memberPubkey)
