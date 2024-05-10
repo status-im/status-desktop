@@ -568,7 +568,7 @@ Item {
 
         anchors.fill: parent
 
-        url: "qrc:/app/AppLayouts/Wallet/services/dapps/sdk/src/index.html"
+        url: "sdk/src/index.html"
         webChannelObjects: [ statusObject ]
 
         onPageLoaded: function() {
