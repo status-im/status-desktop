@@ -113,6 +113,8 @@ method onLoggedInUserAuthenticated*(self: Module, pin: string, password: string,
       if chatKey.startsWith("0x"):
         chatKey = chatKey[2..^1]
   let connectionString = self.controller.getConnectionStringForBootstrappingAnotherDevice(password, chatKey)
+  if password.len == 0 and pin.len == 0:
+    return
   self.view.openPopupWithConnectionString(connectionString)
 
 proc validateConnectionString*(self: Module, connectionString: string): string =
