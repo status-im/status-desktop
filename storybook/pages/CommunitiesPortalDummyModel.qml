@@ -3,6 +3,9 @@ import QtQuick 2.14
 import Models 1.0
 
 ListModel {
+
+    readonly property var emptyModel: ListModel {}
+
     Component.onCompleted: append([
         {
             featured: true,
@@ -97,8 +100,6 @@ ListModel {
             ]),
             permissionsModel: PermissionsModel.moreThanTwoInitialShortPermissionsModel,
             allTokenRequirementsMet: false
-
-
         },
         {
             featured: false,
@@ -136,7 +137,7 @@ ListModel {
             popularity: 4,
             available: true,
             tags: JSON.stringify([]),
-            permissionsModel: PermissionsModel.threeShortPermissionsModelData,
+            permissionsModel: PermissionsModel.channelsOnlyPermissionsModelNotMet,
             allTokenRequirementsMet: false
         },
         {
@@ -183,7 +184,7 @@ ListModel {
             popularity: 4,
             available: true,
             tags: JSON.stringify([]),
-            permissionsModel: PermissionsModel.threeShortPermissionsModel,
+            permissionsModel: PermissionsModel.channelsOnlyPermissionsModel,
             allTokenRequirementsMet: false
         },
         {
@@ -233,7 +234,8 @@ ListModel {
             activeMembers: 0,
             popularity: 4,
             available: true,
-            tags: JSON.stringify([])
+            tags: JSON.stringify([]),
+            permissionsModel: emptyModel
         }
         ])
 }

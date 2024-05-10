@@ -194,7 +194,6 @@ StatusSectionLayout {
                     visible: (d.searchMode && filteredCommunitiesModel.count === 0) || communitiesGrid.isEmpty
                     text: qsTr("No communities found")
                     color: Theme.palette.baseColor1
-                    font.pixelSize: 15
                 }
             }
         }

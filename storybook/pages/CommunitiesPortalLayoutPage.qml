@@ -32,9 +32,10 @@ SplitView {
             SplitView.fillHeight: true
 
             assetsModel: AssetsModel {}
-            collectiblesModel:  CollectiblesModel {}
+            collectiblesModel: CollectiblesModel {}
             communitiesStore: CommunitiesStore {
                 readonly property int unreadNotificationsCount: 42
+                readonly property bool createCommunityEnabled: true
                 readonly property string communityTags: ModelsData.communityTags
                 readonly property var curatedCommunitiesModel: SortFilterProxyModel {
 
