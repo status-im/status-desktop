@@ -58,6 +58,8 @@ StackLayout {
     property string pubsubTopic
     property string pubsubTopicKey
 
+    property bool isTokenDeployed: !!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -198,9 +200,10 @@ StackLayout {
             communityColor: root.color
             isControlNode: root.isControlNode
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
+            isPromoteSelfToControlNodeEnabled: root.isControlNode || root.isTokenDeployed
 
             onExportControlNodeClicked:{
-                if(!!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed) {
+                if(root.isTokenDeployed) {
                     root.exportControlNodeClicked()
                 } else {
                     Global.openPopup(transferOwnershipAlertPopup, { mode: TransferOwnershipAlertPopup.Mode.MoveControlNode })
@@ -208,8 +211,7 @@ StackLayout {
             }
             onImportControlNodeClicked: root.importControlNodeClicked()
             onFinaliseOwnershipTransferClicked: root.finaliseOwnershipClicked()
-            //TODO update once the domain changes
-            onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "status-communities/about-the-control-node-in-status-communities")
+            onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "communities/about-the-control-node-in-status-communities")
         }
     }
 
