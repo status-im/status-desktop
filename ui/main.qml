@@ -122,28 +122,16 @@ StatusWindow {
 
     Action {
         shortcut: StandardKey.FullScreen
-        onTriggered: {
-            if (applicationWindow.visibility === Window.FullScreen) {
-                showNormal()
-            } else {
-                showFullScreen()
-            }
-        }
+        onTriggered: applicationWindow.toggleFullScreen()
     }
 
     Action {
         shortcut: "Ctrl+M"
-        onTriggered: {
-            if (applicationWindow.visibility === Window.Minimized) {
-                showNormal()
-            } else {
-                showMinimized()
-            }
-        }
+        onTriggered: applicationWindow.toggleMinimize()
     }
 
     Action {
-        shortcut: "Ctrl+W"
+        shortcut: StandardKey.Close
         enabled: loader.item && !!loader.item.appLayout && loader.item.appLayout.appView ? loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.browser
                              : true
         onTriggered: {
@@ -152,7 +140,7 @@ StatusWindow {
     }
 
     Action {
-        shortcut: "Ctrl+Q"
+        shortcut: StandardKey.Quit
         onTriggered: {
             Qt.quit()
         }
@@ -259,23 +247,20 @@ StatusWindow {
         function onStateChanged() {
             if (Qt.application.state == d.previousApplicationState
                 && Qt.application.state == Qt.ApplicationActive) {
-                applicationWindow.visible = true
-                applicationWindow.showNormal()
+                makeStatusAppActive()
             }
             d.previousApplicationState = Qt.application.state
         }
     }
 
     //TODO remove direct backend access
-	Connections {
+    Connections {
         target: singleInstance
 
         function onSecondInstanceDetected() {
             console.log("User attempted to run the second instance of the application")
             // activating this instance to give user visual feedback
-            applicationWindow.show()
-            applicationWindow.raise()
-            applicationWindow.requestActivate()
+            makeStatusAppActive()
         }
     }
 
@@ -304,7 +289,8 @@ StatusWindow {
     signal navigateTo(string path)
 
     function makeStatusAppActive() {
-        applicationWindow.show()
+        applicationWindow.restoreWindowState()
+        applicationWindow.visible = true
         applicationWindow.raise()
         applicationWindow.requestActivate()
     }
@@ -402,7 +388,7 @@ StatusWindow {
         anchors.top: parent.top
         anchors.margins: 13
 
-        visible: Qt.platform.os === Constants.mac && !applicationWindow.isFullScreen
+        visible: Qt.platform.os === Constants.mac && applicationWindow.visibility !== Window.FullScreen
 
         onClose: {
             if (loader.sourceComponent != app) {
@@ -419,7 +405,7 @@ StatusWindow {
         }
 
         onMinimised: {
-            applicationWindow.showMinimized()
+            applicationWindow.toggleMinimize()
         }
 
         onMaximized: {

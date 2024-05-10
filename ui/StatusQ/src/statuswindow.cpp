@@ -1,43 +1,31 @@
 #include "StatusQ/statuswindow.h"
 
 StatusWindow::StatusWindow(QWindow *parent)
-: QQuickWindow(parent),
-  m_isFullScreen(false)
+    : QQuickWindow(parent)
 {
-    removeTitleBar();
+    if (!windowStates().testFlag(Qt::WindowFullScreen))
+        removeTitleBar();
 
     connect(this, &QQuickWindow::windowStateChanged, [&](Qt::WindowState windowState) {
-        if (windowState == Qt::WindowNoState) {
-            removeTitleBar();
-            m_isFullScreen = false;
-            emit isFullScreenChanged();
-        } else if (windowState == Qt::WindowFullScreen) {
-            m_isFullScreen = true;
-            emit isFullScreenChanged();
+        if (windowState == Qt::WindowFullScreen) {
             showTitleBar();
+        } else {
+            removeTitleBar();
         }
     });
 }
 
-void StatusWindow::updatePosition()
+void StatusWindow::restoreWindowState()
 {
-    auto point = QPoint(screen()->geometry().center().x() - geometry().width() / 2,
-                        screen()->geometry().center().y() - geometry().height() / 2);
-    if (point != this->position()) {
-        this->setPosition(point);
-    }
+    setWindowStates(windowStates() & ~Qt::WindowMinimized);
 }
 
 void StatusWindow::toggleFullScreen()
 {
-    if (m_isFullScreen) {
-        showNormal();
-    } else {
-        showFullScreen();
-    }
+    setWindowStates(windowStates() ^ Qt::WindowFullScreen);
 }
 
-bool StatusWindow::isFullScreen() const
+void StatusWindow::toggleMinimize()
 {
-	return m_isFullScreen;
+    setWindowStates(windowStates() ^ Qt::WindowMinimized);
 }
