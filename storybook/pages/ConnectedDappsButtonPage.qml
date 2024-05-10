@@ -18,7 +18,10 @@ import AppLayouts.Wallet.controls 1.0
 
 import SortFilterProxyModel 0.2
 
+import shared.popups.walletconnect 1.0
+
 import utils 1.0
+import shared.stores 1.0
 
 Item {
     id: root
@@ -46,7 +49,7 @@ Item {
                     spacing: 8
 
                     onConnectDapp: {
-                        console.warn("TODO: run ConnectDappPopup...")
+                        console.warn("TODO: run ConnectDappModal...")
                     }
                 }
             }
@@ -56,8 +59,31 @@ Item {
         ColumnLayout {
             id: optionsSpace
 
+            RowLayout {
+                Text { text: "projectId" }
+                Text {
+                    id: projectIdText
+                    readonly property string projectId: SystemUtils.getEnvVar("WALLET_CONNECT_PROJECT_ID")
+                    text: projectId.substring(0, 3) + "..." + projectId.substring(projectId.length - 3)
+                    font.bold: true
+                }
+            }
+
             // spacer
             ColumnLayout {}
+        }
+    }
+
+    DAppsStore {
+        wCSDK: WalletConnectSDK {
+            active: true
+
+            projectId: projectIdText.projectId
+
+            onSessionRequestEvent: (details) => {
+                // TODO #14556
+                console.debug(`@dd onSessionRequestEvent: ${JSON.stringify(details)}`)
+            }
         }
     }
 }
