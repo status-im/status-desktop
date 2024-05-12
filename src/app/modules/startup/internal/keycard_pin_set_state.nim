@@ -20,7 +20,7 @@ method getNextPrimaryState*(self: KeycardPinSetState, controller: Controller): S
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
     if controller.getValidPuk():
       if not main_constants.IS_MACOS:
-        return nil
+        return createState(StateType.ProfileFetching, self.flowType, nil)
       return createState(StateType.Biometrics, self.flowType, self.getBackState)
     return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
   if self.flowType == FlowType.AppLogin:
@@ -38,7 +38,7 @@ method executePrimaryCommand*(self: KeycardPinSetState, controller: Controller) 
     if main_constants.IS_MACOS:
       return
     if controller.getValidPuk():
-      controller.setupKeycardAccount(storeToKeychain = false)
+      controller.setupKeycardAccount(storeToKeychain = false, recoverAccount = true)
   if self.flowType == FlowType.AppLogin:
     if controller.getRecoverKeycardUsingSeedPhraseWhileLoggingIn():
       controller.startLoginFlowAutomatically(controller.getPin())
@@ -47,20 +47,21 @@ method executePrimaryCommand*(self: KeycardPinSetState, controller: Controller) 
       let storeToKeychainValue = singletonInstance.localAccountSettings.getStoreToKeychainValue()
       controller.loginAccountKeycard(storeToKeychainValue)
   if self.flowType == FlowType.LostKeycardReplacement:
-    if main_constants.IS_MACOS:
-      return
     controller.startLoginFlowAutomatically(controller.getPin())
 
 method resolveKeycardNextState*(self: KeycardPinSetState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
+  var storeToKeychainValue = LS_VALUE_NEVER
   if self.flowType == FlowType.LostKeycardReplacement:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len == 0:
+        if main_constants.IS_MACOS:
+          storeToKeychainValue = LS_VALUE_NOT_NOW
         controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard(storeToKeychainValue = LS_VALUE_NOT_NOW, keycardReplacement = true)
+        controller.loginAccountKeycard(storeToKeychainValue, keycardReplacement = true)
   if self.flowType == FlowType.AppLogin:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len == 0:
         # we are here in case of recover account from the login flow using seed phrase
         controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard(storeToKeychainValue = LS_VALUE_NEVER, keycardReplacement = false)
+        controller.loginAccountKeycard(storeToKeychainValue, keycardReplacement = false)
