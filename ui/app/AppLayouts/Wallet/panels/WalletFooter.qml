@@ -25,13 +25,16 @@ Rectangle {
     signal launchShareAddressModal()
     signal launchSendModal()
     signal launchBridgeModal()
+    signal launchSwapModal()
 
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
     QtObject {
         id: d
-        readonly property bool isCollectibleViewed: !!walletStore.currentViewedCollectible
-        readonly property bool isCollectibleSoulbound: d.isCollectibleViewed && walletStore.currentViewedCollectible.soulbound
+        readonly property bool isCollectibleViewed: !!walletStore.currentViewedHoldingID &&
+                                                    (walletStore.currentViewedHoldingType === Constants.TokenType.ERC721 ||
+                                                    walletStore.currentViewedHoldingType === Constants.TokenType.ERC1155)
+        readonly property bool isCollectibleSoulbound: isCollectibleViewed && !!walletStore.currentViewedCollectible && walletStore.currentViewedCollectible.soulbound
     }
 
     StatusModalDivider {
@@ -51,12 +54,13 @@ Rectangle {
             interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchSendModal()
             tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be sent to another wallet") : networkConnectionStore.sendBuyBridgeToolTipText
-            visible: !walletStore.overview.isWatchOnlyAccount && walletStore.overview.canSend
+            visible: !walletStore.overview.isWatchOnlyAccount && walletStore.overview.canSend && !root.walletStore.showAllAccounts
         }
 
         StatusFlatButton {
             icon.name: "receive"
             text: qsTr("Receive")
+            visible: !root.walletStore.showAllAccounts
             onClicked: function () {
                 launchShareAddressModal()
             }
@@ -65,16 +69,16 @@ Rectangle {
         StatusFlatButton {
             icon.name: "bridge"
             text: qsTr("Bridge")
-            interactive: networkConnectionStore.sendBuyBridgeEnabled
+            interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchBridgeModal()
-            tooltip.text: networkConnectionStore.sendBuyBridgeToolTipText
-            visible: !walletStore.overview.isWatchOnlyAccount && !root.isCommunityOwnershipTransfer && walletStore.overview.canSend
+            tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be bridged to another wallet") :  networkConnectionStore.sendBuyBridgeToolTipText
+            visible: !walletStore.overview.isWatchOnlyAccount && !root.isCommunityOwnershipTransfer && walletStore.overview.canSend && !root.walletStore.showAllAccounts
         }
 
         StatusFlatButton {
             id: buySellBtn
 
-            visible: !root.isCommunityOwnershipTransfer
+            visible: !root.isCommunityOwnershipTransfer && !root.walletStore.showAllAccounts
             icon.name: "token"
             text: qsTr("Buy")
             onClicked: function () {
@@ -85,12 +89,12 @@ Rectangle {
         StatusFlatButton {
             id: swap
 
-            visible: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled && Global.featureFlags.swapEnabled
+            interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
+            visible: Global.featureFlags.swapEnabled && !walletStore.overview.isWatchOnlyAccount
+            tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be swapped") :  networkConnectionStore.sendBuyBridgeToolTipText
             icon.name: "swap"
             text: qsTr("Swap")
-            onClicked: function () {
-                console.warn("TODO: launch swap modal...")
-            }
+            onClicked: root.launchSwapModal()
         }
     }
 

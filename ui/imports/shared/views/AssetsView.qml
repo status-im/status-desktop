@@ -43,6 +43,7 @@ ColumnLayout {
     signal assetClicked(var token)
     signal sendRequested(string symbol)
     signal receiveRequested(string symbol)
+    signal launchSwapModal(string tokensKey)
     signal switchToCommunityRequested(string communityId)
     signal manageTokensRequested()
 
@@ -300,7 +301,8 @@ ColumnLayout {
                            } else if (mouse.button === Qt.RightButton) {
                                Global.openMenu(tokenContextMenu, this,
                                                {symbol: modelData.symbol, assetName: modelData.name, assetImage: symbolUrl,
-                                                   communityId: modelData.communityId, communityName: modelData.communityName, communityImage: modelData.communityImage})
+                                                   communityId: modelData.communityId, communityName: modelData.communityName,
+                                                   communityImage: modelData.communityImage, tokensKey: modelData.tokensKey})
                            }
                        }
             onSwitchToCommunityRequested: root.switchToCommunityRequested(communityId)
@@ -318,6 +320,7 @@ ColumnLayout {
         StatusMenu {
             onClosed: destroy()
 
+            property string tokensKey
             property string symbol
             property string assetName
             property string assetImage
@@ -336,6 +339,13 @@ ColumnLayout {
                 icon.name: "receive"
                 text: qsTr("Receive")
                 onTriggered: root.receiveRequested(symbol)
+            }
+            StatusAction {
+                icon.name: "swap"
+                text: qsTr("Swap")
+                enabled: Global.featureFlags.swapEnabled && !root.overview.isWatchOnlyAccount
+                visibleOnDisabled: Global.featureFlags.swapEnabled
+                onTriggered: root.launchSwapModal(tokensKey)
             }
             StatusMenuSeparator {}
             StatusAction {

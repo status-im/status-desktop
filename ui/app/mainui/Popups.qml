@@ -15,6 +15,7 @@ import AppLayouts.Chat.popups 1.0
 import AppLayouts.Profile.popups 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
+import AppLayouts.Wallet.popups.swap 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import AppLayouts.Chat.stores 1.0 as ChatStore
@@ -89,6 +90,7 @@ QtObject {
         Global.openConfirmHideAssetPopup.connect(openConfirmHideAssetPopup)
         Global.openConfirmHideCollectiblePopup.connect(openConfirmHideCollectiblePopup)
         Global.openCommunityMemberMessagesPopupRequested.connect(openCommunityMemberMessagesPopup)
+        Global.openSwapModalRequested.connect(openSwapModal)
     }
 
     property var currentPopup
@@ -382,6 +384,10 @@ QtObject {
             memberPubKey: memberPubKey,
             displayName: displayName
         })
+    }
+
+    function openSwapModal(parameters) {
+        openPopup(swapModal, {formData: parameters})
     }
 
     readonly property list<Component> _components: [
@@ -1228,6 +1234,12 @@ QtObject {
         Component {
             id: communityMemberMessagesPopup
             CommunityMemberMessagesPopup {
+                onClosed: destroy()
+            }
+        },
+        Component {
+            id: swapModal
+            SwapModal {
                 onClosed: destroy()
             }
         }
