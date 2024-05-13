@@ -6,6 +6,7 @@ import allure
 import configs
 import constants.user
 import driver
+from driver import objects_access
 from driver.objects_access import walk_children
 from gui.components.base_popup import BasePopup
 from gui.components.context_menu import ContextMenu
@@ -104,7 +105,6 @@ class LeftPanel(QObject):
         self._open_context_menu_for_account(account_name).select_edit_account_from_context_menu()
         return AccountPopup().verify_edit_account_popup_present()
 
-
     @allure.step('Open account popup')
     def open_add_account_popup(self, attempt: int = 2):
         self._add_account_button.click()
@@ -190,6 +190,33 @@ class SavedAddressesView(QObject):
         return ContextMenu().wait_until_appears()
 
 
+class ManageTokensView(QObject):
+
+    def __init__(self):
+        super(ManageTokensView, self).__init__(names.settingsContentBaseScrollView_manageTokensView_ManageTokensView)
+        self._window_item = QObject(names.statusDesktop_mainWindow)
+        self._token_item = QObject(names.settingsContentBaseScrollView_manageTokensDelegate_ManageTokensDelegate)
+
+    @property
+    @allure.step('Get tokens')
+    def tokens(self) -> typing.List[constants.token_list_item]:
+        _tokens = []
+        for token_item in driver.findAllObjects(self._token_item.real_name):
+            element = QObject(real_name=driver.objectMap.realName(token_item))
+            name = str(token_item.title)
+            _tokens.append(constants.token_list_item(name, element))
+
+        return sorted(_tokens, key=lambda token: token.object.y)
+
+    @allure.step('Drag token to change the order')
+    def drag_token(self, name: str, index: int):
+        assert driver.waitFor(lambda: len([token for token in self.tokens if token.title == name]) == 1), \
+            'Token not found or found more then one'
+        bounds = [token for token in self.tokens if token.title == name][0].object.bounds
+        d_bounds = self.tokens[index].object.bounds
+        driver.mouse.press_and_move(self._window_item.object, bounds.x, bounds.y, d_bounds.x, d_bounds.y + 1)
+
+
 class WalletAccountView(QObject):
 
     def __init__(self):
@@ -270,4 +297,13 @@ class WalletAccountView(QObject):
         for item in driver.findAllObjects(self._asset_item.real_name):
             token_list_items.append(item)
         sorted(token_list_items, key=lambda item: item.y)
+        return token_list_items
+
+    @allure.step('Get list of collectibles')
+    def get_list_of_collectibles(self) -> typing.List:
+        time.sleep(1)
+        token_list_items = []
+        for item in driver.findAllObjects(self._collectible_item.real_name):
+            token_list_items.append(item)
+        sorted(token_list_items, key=lambda item: item.x)
         return token_list_items

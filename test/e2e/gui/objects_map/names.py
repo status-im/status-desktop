@@ -792,6 +792,7 @@ mainWindow_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "
 mainWindow_RightTabView = {"container": mainWindow_StatusWindow, "type": "RightTabView", "unnamed": 1, "visible": True}
 filterButton_StatusFlatButton = {"checkable": True, "container": mainWindow_RightTabView, "objectName": "filterButton", "type": "StatusFlatButton", "visible": True}
 cmbTokenOrder_SortOrderComboBox = {"container": mainWindow_RightTabView, "objectName": "cmbTokenOrder", "type": "SortOrderComboBox", "visible": True}
+collectibles_cmbTokenOrder_SortOrderComboBox = {"container": mainWindow_RightTabView, "id": "cmbTokenOrder", "type": "SortOrderComboBox", "unnamed": 1, "visible": True}
 rightSideWalletTabBar_StatusTabBar = {"container": mainWindow_RightTabView, "objectName": "rightSideWalletTabBar", "type": "StatusTabBar", "visible": True}
 rightSideWalletTabBar_Assets_StatusTabButton = {"checkable": True, "container": rightSideWalletTabBar_StatusTabBar, "objectName": "assetsTabButton", "text": "Assets", "type": "StatusTabButton", "visible": True}
 rightSideWalletTabBar_Collectibles_StatusTabButton = {"checkable": True, "container": rightSideWalletTabBar_StatusTabBar, "objectName": "collectiblesTabButton", "text": "Collectibles", "type": "StatusTabButton", "visible": True}
@@ -800,6 +801,13 @@ o_AssetsView = {"container": mainWindow_RightTabView, "type": "AssetsView", "unn
 itemDelegate = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "menuDelegate", "type": "ItemDelegate", "unnamed": 1, "visible": True}
 assetView_TokenListItem_TokenDelegate = {"container": mainWindow_RightTabView, "objectName": RegularExpression("AssetView_TokenListItem_*"), "type": "TokenDelegate", "visible": True}
 arrow_icon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "objectName": "arrow-up-icon", "type": "StatusIcon", "visible": True}
+collectible_item = {"container": mainWindow_RightTabView, "type": "CollectibleView", "unnamed": 1, "visible": True}
+mainWindow_settingsContentBaseScrollView_StatusScrollView_general = {"container":  statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
+settingsContentBaseScrollView_manageTokensDelegate_ManageTokensDelegate = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView_general, "objectName": RegularExpression("manageTokensDelegate-*"), "type": "ManageTokensDelegate", "visible": True}
+settingsContentBaseScrollView_manageTokensView_ManageTokensView = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView_general, "id": "manageTokensView", "type": "ManageTokensView", "unnamed": 1, "visible": True}
+
+mainWindow_Save_and_apply_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "objectName": "settingsDirtyToastMessageSaveButton", "text": "Save and apply", "type": "StatusButton", "visible": True}
+mainWindow_Save_StatusFlatButton = {"checkable": False, "container": mainWindow_StatusWindow, "id": "saveForLaterButton", "text": "Save", "type": "StatusFlatButton", "unnamed": 1, "visible": True}
 
 # MOCKED KEYCARD CONTROLLER NAMES
 
