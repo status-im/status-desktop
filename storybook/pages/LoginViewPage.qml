@@ -44,13 +44,21 @@ SplitView {
                             thumbnailImage: ""
                             keyUid: "uid_2"
                         }
+                        ListElement {
+                            keycardCreatedAccount: true
+                            colorId: 3
+                            colorHash: "0xAB38"
+                            username: "8️⃣6️⃣.eth"
+                            thumbnailImage: ""
+                            keyUid: "uid_4"
+                        }
                     }
                 }
 
                 readonly property QtObject selectedLoginAccount: QtObject {
                     readonly property bool keycardCreatedAccount: false
                     readonly property int colorId: 0
-                    readonly property string username: "Alice"
+                    readonly property string username: "8️⃣6️⃣.eth"
                     readonly property string thumbnailImage: ""
                     readonly property string keyUid: "uid_3"
                 }

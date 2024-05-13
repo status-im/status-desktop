@@ -2,6 +2,7 @@ import QtQuick 2.15
 
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
 import shared 1.0
@@ -96,7 +97,7 @@ StatusMenu {
         displayNameVisible: false
         displayNamePlusIconsVisible: true
         editButtonVisible: false
-        displayName: root.selectedUserDisplayName
+        displayName: StatusQUtils.Emoji.parse(root.selectedUserDisplayName, StatusQUtils.Emoji.size.verySmall)
         pubkey: root.selectedUserPublicKey
         icon: root.selectedUserIcon
         trustStatus: contactDetails && contactDetails.trustStatus ? contactDetails.trustStatus

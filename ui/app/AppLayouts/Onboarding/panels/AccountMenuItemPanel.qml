@@ -6,6 +6,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import shared.controls.chat 1.0
 import utils 1.0
@@ -32,17 +33,6 @@ Item {
         anchors.fill: root
         color: sensor.containsMouse ? Theme.palette.statusSelect.menuItemHoverBackgroundColor
                                     : Theme.palette.statusSelect.menuItemBackgroundColor
-    }
-
-    MouseArea {
-        id: sensor
-        cursorShape: Qt.PointingHandCursor
-        anchors.fill: root
-        hoverEnabled: true
-
-        onClicked: {
-            root.clicked()
-        }
     }
 
     Loader {
@@ -73,8 +63,7 @@ Item {
     }
 
     StatusBaseText {
-        text: root.label
-        font.pixelSize: 15
+        text: StatusQUtils.Emoji.parse(root.label)
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: userImageOrIcon.right
         anchors.right: root.keycardCreatedAccount? keycardIcon.left : parent.right
@@ -98,6 +87,17 @@ Item {
             icon: "keycard"
             height: Style.current.padding
             color: Theme.palette.baseColor1
+        }
+    }
+
+    MouseArea {
+        id: sensor
+        cursorShape: Qt.PointingHandCursor
+        anchors.fill: root
+        hoverEnabled: true
+
+        onClicked: {
+            root.clicked()
         }
     }
 }

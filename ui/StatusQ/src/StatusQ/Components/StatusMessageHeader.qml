@@ -52,7 +52,7 @@ Item {
             font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.primaryColor1
-            text: root.amISender ? qsTr("You") : root.sender.displayName
+            text: root.amISender ? qsTr("You") : Emoji.parse(root.sender.displayName)
             MouseArea {
                 id: mouseArea
                 anchors.fill: parent

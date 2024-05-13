@@ -265,7 +265,7 @@ Pane {
         id: shareProfileCmp
         ShareProfileDialog {
             destroyOnClose: true
-            title: d.isCurrentUser ? qsTr("Share your profile") : qsTr("%1's profile").arg(d.mainDisplayName)
+            title: d.isCurrentUser ? qsTr("Share your profile") : qsTr("%1's profile").arg(StatusQUtils.Emoji.parse(d.mainDisplayName))
             publicKey: root.publicKey
             linkToProfile: d.linkToProfile
             qrCode: root.profileStore.getQrCodeSource(linkToProfile)
@@ -505,7 +505,7 @@ Pane {
                     font.pixelSize: 22
                     elide: Text.ElideRight
                     text: root.dirty ? root.dirtyValues.displayName
-                                     : d.mainDisplayName
+                                     : StatusQUtils.Emoji.parse(d.mainDisplayName, StatusQUtils.Emoji.size.middle)
                 }
                 StatusContactVerificationIcons {
                     id: verificationIcons
@@ -525,7 +525,7 @@ Pane {
                 StatusBaseText {
                     id: contactSecondaryName
                     color: Theme.palette.baseColor1
-                    text: d.optionalDisplayName
+                    text: StatusQUtils.Emoji.parse(d.optionalDisplayName)
                     visible: !!d.userNickName
                 }
                 Rectangle {
@@ -560,7 +560,8 @@ Pane {
             StatusScrollView {
                 id: bioScrollView
                 Layout.fillWidth: true
-                Layout.preferredHeight: 116
+                Layout.preferredHeight: implicitHeight
+                Layout.maximumHeight: 120
                 contentWidth: availableWidth
                 Layout.topMargin: Style.current.halfPadding
                 padding: 0

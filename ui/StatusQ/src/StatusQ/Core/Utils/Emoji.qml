@@ -26,7 +26,7 @@ QtObject {
             throw new Error("Invalid value for 'renderSize' parameter: ", renderSize);
         }
 
-        const path = renderFormat == format.svg ? "svg/" : "72x72/"
+        const path = renderFormat === format.svg ? "svg/" : "72x72/"
         Twemoji.twemoji.base = base + path
         Twemoji.twemoji.ext = `.${renderFormat}`
 
@@ -44,6 +44,7 @@ QtObject {
         })
     }
     function iconSource(text) {
+        if (!text) return
         const parsed = parse(text);
         const match = parsed.match('src="(.*\.svg).*"');
         return (match && match.length >= 2) ? match[1] : undefined;
@@ -52,12 +53,14 @@ QtObject {
         return `${base}/svg/${unicode}.svg`
     }
     function iconId(text) {
+        if (!text) return
         const parsed = parse(text);
         const match = parsed.match('src=".*\/(.+?).svg');
         return (match && match.length >= 2) ? match[1] : undefined;
     }
     // NOTE: doing the same thing as iconId but without checking Twemoji internal checks
     function iconHex(text) {
+        if (!text) return
         return text.codePointAt(0).toString(16);
     }
     function fromCodePoint(value) {
