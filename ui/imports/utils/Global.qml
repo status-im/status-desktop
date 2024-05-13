@@ -104,6 +104,9 @@ QtObject {
 
     signal openTestnetPopup()
 
+    // Swap
+    signal openSwapModalRequested(var formDataParams)
+
     /////////////////////////////////////////////////////
     // WalletConnect POC - to remove
     signal popupWalletConnect()

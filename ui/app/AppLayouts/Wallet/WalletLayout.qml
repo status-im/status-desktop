@@ -14,6 +14,7 @@ import "panels"
 import "views"
 import "stores"
 import "controls"
+import "popups/swap"
 
 Item {
     id: root
@@ -134,6 +135,15 @@ Item {
             RootStore.backButtonName = ""
         }
 
+        property SwapFormData swapFormData: SwapFormData {
+            selectedAccountIndex: RootStore.showAllAccounts ? 0 : leftTab.currentAccountIndex
+            selectedNetworkChainId: {
+                // Without this when we switch testnet mode, the correct network is not evaluated
+                RootStore.areTestNetworksEnabled
+                return StatusQUtils.ModelUtils.get(RootStore.filteredFlatModel, 0).chainId
+            }
+        }
+
         function displayAllAddresses() {
             RootStore.showSavedAddresses = false
             RootStore.selectedAddress = ""
@@ -203,6 +213,10 @@ Item {
                                                                   changingPreferredChainsEnabled: true,
                                                                   hasFloatingButtons: true
                                                               })
+            onLaunchSwapModal: {
+                d.swapFormData.fromTokensKey = tokensKey
+                Global.openSwapModalRequested(d.swapFormData)
+            }
         }
     }
 
@@ -261,9 +275,9 @@ Item {
             readonly property bool isCommunityCollectible: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityId !== "" : false
             readonly property bool isOwnerCommunityCollectible: isCommunityCollectible ? (walletStore.currentViewedCollectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
 
-            visible: !RootStore.showAllAccounts
+            visible: !RootStore.showAllAccounts || Global.featureFlags.swapEnabled
             width: parent.width
-            height: RootStore.showAllAccounts ? implicitHeight : 61
+            height: visible ? 61: implicitHeight
             walletStore: RootStore
             networkConnectionStore: root.networkConnectionStore
             isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible
@@ -313,6 +327,13 @@ Item {
                 root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
                 root.sendModalPopup.onlyAssets = true
                 root.sendModalPopup.open()
+            }
+            onLaunchSwapModal: {
+                d.swapFormData.fromTokensKey =  ""
+                if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
+                    d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
+                }
+                Global.openSwapModalRequested(d.swapFormData)
             }
         }
     }

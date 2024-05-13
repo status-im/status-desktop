@@ -22,6 +22,7 @@ RightTabBaseView {
     property alias currentTabIndex: walletTabBar.currentIndex
 
     signal launchShareAddressModal()
+    signal launchSwapModal(string tokensKey)
 
     function resetView() {
         resetStack()
@@ -152,7 +153,7 @@ RightTabBaseView {
                         filterVisible: filterButton.checked
                         onAssetClicked: {
                             assetDetailView.token = token
-                            RootStore.setCurrentViewedHolding(token.symbol, Constants.TokenType.ERC20)
+                            RootStore.setCurrentViewedHolding(token.symbol, token.tokensKey, Constants.TokenType.ERC20)
                             stack.currentIndex = 2
                         }
                         onSendRequested: (symbol) => {
@@ -166,6 +167,7 @@ RightTabBaseView {
                         onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
                         onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,
                                                                                       Constants.walletSettingsSubsection.manageAssets)
+                        onLaunchSwapModal: root.launchSwapModal(tokensKey)
                     }
                 }
                 Component {
@@ -178,7 +180,7 @@ RightTabBaseView {
                         filterVisible: filterButton.checked
                         onCollectibleClicked: {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
-                            RootStore.setCurrentViewedHolding(uid, tokenType)
+                            RootStore.setCurrentViewedHolding(uid, uid, tokenType)
                             d.detailedCollectibleActivityController.resetFilter()
                             d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")))
                             d.detailedCollectibleActivityController.setFilterChainsJson(JSON.stringify([chainId]), false)
