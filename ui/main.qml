@@ -25,8 +25,8 @@ StatusWindow {
 
     id: applicationWindow
     objectName: "mainWindow"
-    minimumWidth: 1200 / Screen.devicePixelRatio
-    minimumHeight: 680 / Screen.devicePixelRatio
+    minimumWidth: 1200
+    minimumHeight: 680
     color: Style.current.background
     title: {
         // Set application settings

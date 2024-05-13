@@ -161,24 +161,10 @@ char *dos_qguiapplication_application_dir_path()
 
 void dos_qguiapplication_enable_hdpi(const char *uiScaleFilePath)
 {
+    Q_UNUSED(uiScaleFilePath)
+
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
-
-    QFile scaleFile(QString::fromUtf8(uiScaleFilePath));
-    if (scaleFile.open(QIODevice::ReadOnly)) {
-        const auto scaleStr = scaleFile.readAll();
-        bool ok = false;
-        const auto scale = scaleStr.toDouble(&ok);
-        if (ok) {
-            // we want to scale the app on our own
-            qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "0");
-            // workaround for bug/feature when Qt would bail out if the scale is "1" and revert to DPI based scaling
-            constexpr auto unaryScale = 1.1;
-            qputenv("QT_SCREEN_SCALE_FACTORS", QByteArray::number(unaryScale));
-            // compensate for the workaround above so that we get the desired scale factor
-            qputenv("QT_SCALE_FACTOR", QByteArray::number(scale/unaryScale, 'f', 2));
-        }
-    }
 }
 
 void dos_qguiapplication_initialize_opengl()
@@ -193,12 +179,12 @@ void dos_qtwebview_initialize()
 
 void dos_qguiapplication_try_enable_threaded_renderer()
 {
-    if(QSysInfo::kernelType() == "darwin" && QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    if(QSysInfo::kernelType() == QLatin1String("darwin") && QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     {
         //Threaded renderer is crashing on M1 Macs
         return;
     }
-    qputenv("QSG_RENDER_LOOP", "threaded");
+    qputenv("QSG_RENDER_LOOP", QByteArrayLiteral("threaded"));
 }
 
 // This catches the QT and QML logs and outputs them.
