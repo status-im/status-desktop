@@ -8,6 +8,7 @@ import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/contacts/service as contact_service
+import ../../../../../app_service/service/community/service as community_service
 from ../../../../../app_service/service/community/dto/community import CommunityDto
 
 export io_interface
@@ -24,15 +25,18 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  chatService: chat_service.Service,
-  contactService: contact_service.Service): Module =
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    chatService: chat_service.Service,
+    contactService: contact_service.Service,
+    communityService: community_service.Service,
+  ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, chatService, contactService)
+  result.controller = controller.newController(result, events, settingsService, chatService, contactService,
+    communityService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -70,26 +74,34 @@ proc createChatItem(self: Module, chatDto: ChatDto): Item =
 
   return self.createItem(chatDto.id, chatName, chatImage, chatDto.color, chatDto.joined, itemType)
 
-proc initModel(self: Module) =
-  let channelGroups = self.controller.getChannelGroups()
+method initModel(self: Module) =
   var items: seq[Item]
-  for cg in channelGroups:
-    if cg.channelGroupType == ChannelGroupType.Community:
-      let item = self.createItem(cg.id, cg.name, cg.images.thumbnail, cg.color, joinedTimestamp = 0, item.Type.Community)
-      items.add(item)
-    elif cg.channelGroupType == ChannelGroupType.Personal:
-      for c in cg.chats:
-        if c.chatType != ChatType.OneToOne and c.chatType != ChatType.PrivateGroupChat:
-          continue
-        let item = self.createChatItem(c)
-        items.add(item)
+  # Add personal section
+  let personalChats = self.controller.getChatsForPersonalSection()
+  for c in personalChats:
+    if c.chatType != ChatType.OneToOne and c.chatType != ChatType.PrivateGroupChat:
+      continue
+    let item = self.createChatItem(c)
+    items.add(item)
+
+  # Add communities
+  let communities = self.controller.getJoinedAndSpectatedCommunities()
+  for community in communities:
+    let item = self.createItem(
+      community.id,
+      community.name,
+      community.images.thumbnail,
+      community.color,
+      joinedTimestamp = 0,
+      item.Type.Community
+    )
+    items.add(item)
 
   # Sort to get most recent first
   items.sort(comp, SortOrder.Descending)
   self.view.exemptionsModel().setItems(items)
 
 method viewDidLoad*(self: Module) =
-  self.initModel()
   self.moduleLoaded = true
   self.delegate.notificationsModuleDidLoad()
 

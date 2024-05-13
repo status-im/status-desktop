@@ -44,7 +44,7 @@ proc updateActivityGroupCounters*(self: Controller) =
   self.delegate.setActivityGroupCounters(counters)
 
 proc init*(self: Controller) =
-  self.events.once(chat_service.SIGNAL_CHANNEL_GROUPS_LOADED) do(e:Args):
+  self.events.once(chat_service.SIGNAL_ACTIVE_CHATS_LOADED) do(e:Args):
     # Only fectch activity center notification once channel groups are loaded,
     # since we need the chats to associate the notifications to
     self.activity_center_service.asyncActivityNotificationLoad()
@@ -135,9 +135,6 @@ proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
 
 proc getChatDetails*(self: Controller, chatId: string): ChatDto =
   return self.chatService.getChatById(chatId)
-
-proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
-  return self.chatService.getChannelGroups()
 
 proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
     tuple[name: string, image: string, largeImage: string] =

@@ -57,7 +57,8 @@ type
 # Forward declaration
 proc buildChatSectionUI(
   self: Module,
-  channelGroup: ChannelGroupDto,
+  community: CommunityDto,
+  chats: seq[ChatDto],
   events: UniqueUUIDEventEmitter,
   settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
@@ -75,7 +76,7 @@ proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewer
 
 proc addOrUpdateChat(self: Module,
     chat: ChatDto,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -255,7 +256,7 @@ proc removeSubmodule(self: Module, chatId: string) =
 
 
 proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, communityId: string, insertIntoModel: bool = true): chat_item.Item =
-  let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(communityId, category.id)
+  let hasUnreadMessages = self.controller.categoryHasUnreadMessages(communityId, category.id)
   result = chat_item.initItem(
         id = category.id,
         category.name,
@@ -284,7 +285,8 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
 
 proc buildChatSectionUI(
     self: Module,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
+    chats: seq[ChatDto],
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
@@ -299,11 +301,11 @@ proc buildChatSectionUI(
   let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
 
   var items: seq[chat_item.Item] = @[]
-  for categoryDto in channelGroup.categories:
+  for categoryDto in community.categories:
     # Add items for the categories. We use a special type to identify categories
-    items.add(self.addCategoryItem(categoryDto, channelGroup.memberRole, channelGroup.id))
+    items.add(self.addCategoryItem(categoryDto, community.memberRole, community.id))
 
-  for chatDto in channelGroup.chats:
+  for chatDto in chats:
     var categoryPosition = -1
 
     # Add an empty chat item that has the category info
@@ -315,14 +317,14 @@ proc buildChatSectionUI(
       isActive = true
 
     if chatDto.categoryId != "":
-      for category in channelGroup.categories:
+      for category in community.categories:
         if category.id == chatDto.categoryId:
           categoryPosition = category.position
           break
 
     items.add(self.addOrUpdateChat(
       chatDto,
-      channelGroup,
+      community,
       belongsToCommunity = chatDto.communityId.len > 0,
       events,
       settingsService,
@@ -392,7 +394,7 @@ proc reevaluateRequiresTokenPermissionToJoin(self: Module) =
       break
   self.view.setRequiresTokenPermissionToJoin(joinPermissionsChanged)
 
-proc initCommunityTokenPermissionsModel(self: Module, channelGroup: ChannelGroupDto) =
+proc initCommunityTokenPermissionsModel(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
 
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
@@ -419,7 +421,8 @@ method load*(self: Module) =
 
 method onChatsLoaded*(
     self: Module,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
+    chats: seq[ChatDto],
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
@@ -431,7 +434,7 @@ method onChatsLoaded*(
     sharedUrlsService: shared_urls_service.Service,
   ) =
   self.chatsLoaded = true
-  self.buildChatSectionUI(channelGroup, events, settingsService, nodeConfigurationService,
+  self.buildChatSectionUI(community, chats, events, settingsService, nodeConfigurationService,
     contactService, chatService, communityService, messageService, mailserversService, sharedUrlsService)
 
   if(not self.controller.isCommunity()):
@@ -446,8 +449,8 @@ method onChatsLoaded*(
       requestToJoinState = RequestToJoinState.Requested
 
     self.view.setRequestToJoinState(requestToJoinState)
-    self.initCommunityTokenPermissionsModel(channelGroup)
-    self.onCommunityCheckAllChannelsPermissionsResponse(channelGroup.channelPermissions)
+    self.initCommunityTokenPermissionsModel()
+    self.onCommunityCheckAllChannelsPermissionsResponse(community.channelPermissions)
     self.controller.asyncCheckPermissionsToJoin()
 
   let activeChatId = self.controller.getActiveChatId()
@@ -589,7 +592,7 @@ proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bo
       self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
 
     if chat.categoryId != "":
-      let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chat.communityId, chat.categoryId)
+      let hasUnreadMessages = self.controller.categoryHasUnreadMessages(chat.communityId, chat.categoryId)
       self.view.chatsModel().setCategoryHasUnreadMessages(chat.categoryId, hasUnreadMessages)
 
   self.updateParentBadgeNotifications()
@@ -629,7 +632,7 @@ method chatsModel*(self: Module): chats_model.Model =
 proc addNewChat(
     self: Module,
     chatDto: ChatDto,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
     belongsToCommunity: bool,
     events: EventEmitter,
     settingsService: settings_service.Service,
@@ -643,7 +646,7 @@ proc addNewChat(
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
   ): chat_item.Item =
-  let hasNotification =chatDto.unviewedMessagesCount > 0
+  let hasNotification = chatDto.unviewedMessagesCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
 
   var chatName = chatDto.name
@@ -672,12 +675,11 @@ proc addNewChat(
   var memberRole = self.getUserMemberRole(chatDto.members)
 
   if chatDto.chatType != ChatType.PrivateGroupChat:
-    memberRole = channelGroup.memberRole
+    memberRole = community.memberRole
 
   if memberRole == MemberRole.None and len(chatDto.communityId) != 0:
-    memberRole = channelGroup.memberRole
+    memberRole = community.memberRole
     if memberRole == MemberRole.None:
-      let community = communityService.getCommunityById(chatDto.communityId)
       memberRole = community.memberRole
 
   var categoryOpened = true
@@ -693,6 +695,16 @@ proc addNewChat(
       # TODO: This call will update the model for each category in channels which is not
       # preferable. Please fix-me in https://github.com/status-im/status-desktop/issues/14431
       self.view.chatsModel().changeCategoryOpened(category.id, category.categoryOpened)
+
+  var canPostReactions = true
+  var hideIfPermissionsNotMet = false
+  var viewersCanPostReactions = true
+  if self.controller.isCommunity:
+    let communityChat = community.getCommunityChat(chatDto.id)
+    # Some properties are only available on CommunityChat (they are useless for normal chats)
+    canPostReactions = communityChat.canPostReactions
+    hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
+    viewersCanPostReactions = communityChat.viewersCanPostReactions
 
   result = chat_item.initItem(
     chatDto.id,
@@ -726,9 +738,9 @@ proc addNewChat(
         self.controller.checkChatHasPermissions(self.controller.getMySectionId(), chatDto.id)
       else:
         false,
-    canPostReactions = chatDto.canPostReactions,
-    viewersCanPostReactions = chatDto.viewersCanPostReactions,
-    hideIfPermissionsNotMet = chatDto.hideIfPermissionsNotMet,
+    canPostReactions = canPostReactions,
+    viewersCanPostReactions = viewersCanPostReactions,
+    hideIfPermissionsNotMet = hideIfPermissionsNotMet,
     viewOnlyPermissionsSatisfied = true, # will be updated in async call
     viewAndPostPermissionsSatisfied = true # will be updated in async call
   )
@@ -1382,7 +1394,7 @@ method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
 
 proc addOrUpdateChat(self: Module,
     chat: ChatDto,
-    channelGroup: ChannelGroupDto,
+    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -1398,8 +1410,8 @@ proc addOrUpdateChat(self: Module,
   ): chat_item.Item =
 
   let sectionId = self.controller.getMySectionId()
-  if(belongsToCommunity and sectionId != chat.communityId or
-    not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey()):
+  if belongsToCommunity and sectionId != chat.communityId or
+    not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():
     return
 
   self.updateBadgeNotifications(chat, chat.unviewedMessagesCount > 0, chat.unviewedMentionsCount)
@@ -1424,7 +1436,7 @@ proc addOrUpdateChat(self: Module,
 
   result = self.addNewChat(
       chat,
-      channelGroup,
+      community,
       belongsToCommunity,
       events.eventsEmitter(),
       settingsService,
@@ -1456,7 +1468,7 @@ method addOrUpdateChat*(self: Module,
   ): chat_item.Item =
  result = self.addOrUpdateChat(
     chat,
-    ChannelGroupDto(),
+    CommunityDto(),
     belongsToCommunity,
     events,
     settingsService,

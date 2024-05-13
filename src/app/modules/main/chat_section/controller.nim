@@ -455,9 +455,30 @@ proc getAllChats*(self: Controller, communityId: string): seq[ChatDto] =
   return self.communityService.getAllChats(communityId)
 
 proc getChatsAndBuildUI*(self: Controller) =
-  let channelGroup = self.chatService.getChannelGroupById(self.sectionId)
+  var chats: seq[ChatDto]
+  var community: CommunityDto
+  if self.isCommunity():
+    community = self.getMyCommunity()
+    let normalChats = self.chatService.getChatsForCommunity(community.id)
+
+    # TODO remove this once we do this refactor https://github.com/status-im/status-desktop/issues/14219
+    var fullChats: seq[ChatDto] = @[]
+    for communityChat in community.chats:
+      for chat in normalChats:
+        if chat.id == communityChat.id:
+          var c = chat
+          c.updateMissingFields(communityChat)
+          fullChats.add(c)
+          break
+    chats = fullChats
+  else:
+    community = CommunityDto()
+    chats = self.chatService.getChatsForPersonalSection()
+
+  # Build chat section with the preloaded community (empty community for personal chat)
   self.delegate.onChatsLoaded(
-        channelGroup,
+        community,
+        chats,
         self.events,
         self.settingsService,
         self.nodeConfigurationService,
@@ -482,8 +503,8 @@ proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[Ch
 proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] =
   return self.chatService.getChatsByIds(chatIds)
 
-proc chatsWithCategoryHaveUnreadMessages*(self: Controller, communityId: string, categoryId: string): bool =
-  return self.chatService.chatsWithCategoryHaveUnreadMessages(communityId, categoryId)
+proc categoryHasUnreadMessages*(self: Controller, communityId: string, categoryId: string): bool =
+  return self.communityService.categoryHasUnreadMessages(communityId, categoryId)
 
 proc getCommunityCategoryDetails*(self: Controller, communityId: string, categoryId: string): Category =
   return self.communityService.getCategoryById(communityId, categoryId)

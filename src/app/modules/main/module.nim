@@ -91,7 +91,7 @@ type
     view: View
     viewVariant: QVariant
     controller: Controller
-    channelGroupModules: OrderedTable[string, chat_section_module.AccessInterface]
+    chatSectionModules: OrderedTable[string, chat_section_module.AccessInterface]
     events: EventEmitter
     urlsManager: UrlsManager
     keycardService: keycard_service.Service
@@ -207,7 +207,7 @@ proc newModule*[T](
   result.keychainService = keychainService
 
   # Submodules
-  result.channelGroupModules = initOrderedTable[string, chat_section_module.AccessInterface]()
+  result.chatSectionModules = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule(
     result, events, tokenService, collectibleService, currencyService,
     transactionService, walletAccountService,
@@ -246,9 +246,9 @@ method delete*[T](self: Module[T]) =
   self.gifsModule.delete
   self.activityCenterModule.delete
   self.communitiesModule.delete
-  for cModule in self.channelGroupModules.values:
+  for cModule in self.chatSectionModules.values:
     cModule.delete
-  self.channelGroupModules.clear
+  self.chatSectionModules.clear
   self.walletSectionModule.delete
   self.browserSectionModule.delete
   self.appSearchModule.delete
@@ -321,34 +321,30 @@ method onCommunityTokensDetailsLoaded[T](self: Module[T], communityId: string,
   )
   self.view.model().setTokenItems(communityId, communityTokensItems)
 
-proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
-  let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
-  var communityDetails: CommunityDto
+proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityDto): SectionItem =
   var communityTokensItems: seq[TokenItem]
-  if (isCommunity):
-    communityDetails = self.controller.getCommunityById(channelGroup.id)
-    if communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster:
-      self.controller.getCommunityTokensDetailsAsync(channelGroup.id)
 
-      # Get community members' revealed accounts
-      # We will update the model later when we finish loading the accounts
-      self.controller.asyncGetRevealedAccountsForAllMembers(channelGroup.id)
+  if communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster:
+    self.controller.getCommunityTokensDetailsAsync(communityDetails.id)
 
-  let unviewedCount = channelGroup.unviewedMessagesCount
-  let notificationsCount = channelGroup.unviewedMentionsCount
+    # Get community members' revealed accounts
+    # We will update the model later when we finish loading the accounts
+    self.controller.asyncGetRevealedAccountsForAllMembers(communityDetails.id)
+
+  let (unviewedCount, notificationsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(communityDetails.id)
+
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
-  let active = self.getActiveSectionId() == channelGroup.id # We must pass on if the current item section is currently active to keep that property as it is
+  let active = self.getActiveSectionId() == communityDetails.id # We must pass on if the current item section is currently active to keep that property as it is
 
 
   # Add members who were kicked from the community after the ownership change for auto-rejoin after they share addresses
-  var members = channelGroup.members
+  var members = communityDetails.members
   for requestForAutoRejoin in communityDetails.waitingForSharedAddressesRequestsToJoin:
     var chatMember = ChatMember()
     chatMember.id = requestForAutoRejoin.publicKey
     chatMember.joined = false
     chatMember.role = MemberRole.None
     members.add(chatMember)
-
 
   var bannedMembers = newSeq[MemberItem]()
   for memberId, memberState in communityDetails.pendingAndBannedMembers.pairs:
@@ -360,32 +356,32 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         discard
 
   result = initItem(
-    channelGroup.id,
-    if isCommunity: SectionType.Community else: SectionType.Chat,
-    if isCommunity: channelGroup.name else: conf.CHAT_SECTION_NAME,
-    channelGroup.memberRole,
-    if isCommunity: communityDetails.isControlNode else: false,
-    channelGroup.description,
-    channelGroup.introMessage,
-    channelGroup.outroMessage,
-    channelGroup.images.thumbnail,
-    channelGroup.images.banner,
-    icon = if (isCommunity): "" else: conf.CHAT_SECTION_ICON,
-    channelGroup.color,
-    if isCommunity: communityDetails.tags else: "",
+    communityDetails.id,
+    sectionType = SectionType.Community,
+    communityDetails.name,
+    communityDetails.memberRole,
+    communityDetails.isControlNode,
+    communityDetails.description,
+    communityDetails.introMessage,
+    communityDetails.outroMessage,
+    communityDetails.images.thumbnail,
+    communityDetails.images.banner,
+    icon = "",
+    communityDetails.color,
+    communityDetails.tags,
     hasNotification,
     notificationsCount,
     active,
     enabled = true,
-    if (isCommunity): communityDetails.joined else: true,
-    if (isCommunity): communityDetails.canJoin else: true,
-    if (isCommunity): communityDetails.spectated else: false,
-    channelGroup.canManageUsers,
-    if (isCommunity): communityDetails.canRequestAccess else: true,
-    if (isCommunity): communityDetails.isMember else: true,
-    channelGroup.permissions.access,
-    channelGroup.permissions.ensOnly,
-    channelGroup.muted,
+    communityDetails.joined,
+    communityDetails.canJoin,
+    communityDetails.spectated,
+    communityDetails.canManageUsers,
+    communityDetails.canRequestAccess,
+    communityDetails.isMember,
+    communityDetails.permissions.access,
+    communityDetails.permissions.ensOnly,
+    communityDetails.muted,
     # members
     members.map(proc(member: ChatMember): MemberItem =
       let contactDetails = self.controller.getContactDetails(member.id)
@@ -400,30 +396,30 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
       result = self.createMemberItem(member.id, "", state, member.role)
     ),
     # pendingRequestsToJoin
-    if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
+    communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,
       x.publicKey,
       x.chatId,
       x.communityId,
       x.state,
       x.our
-    )) else: @[],
+    )),
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
     bannedMembers,
     # pendingMemberRequests
-    if (isCommunity): communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+    communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
       result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    ) else: @[],
+    ),
     # declinedMemberRequests
-    if (isCommunity): communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+    communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
       result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    ) else: @[],
-    channelGroup.encrypted,
+    ),
+    communityDetails.encrypted,
     communityTokensItems,
-    channelGroup.pubsubTopic,
-    channelGroup.pubsubTopicKey,
-    channelGroup.shard.index,
+    communityDetails.pubsubTopic,
+    communityDetails.pubsubTopicKey,
+    communityDetails.shard.index,
   )
 
 proc connectForNotificationsOnly[T](self: Module[T]) =
@@ -623,9 +619,8 @@ method load*[T](
   else:
     self.setActiveSection(activeSection)
 
-method onChannelGroupsLoaded*[T](
+method onChatsLoaded*[T](
   self: Module[T],
-  channelGroups: seq[ChannelGroupDto],
   events: EventEmitter,
   settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
@@ -643,17 +638,63 @@ method onChannelGroupsLoaded*[T](
   self.chatsLoaded = true
   if not self.communityDataLoaded:
     return
+
+  let myPubKey = singletonInstance.userProfile.getPubKey()
+
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
   if activeSectionId == "" or activeSectionId == conf.SETTINGS_SECTION_ID:
-    activeSectionId = singletonInstance.userProfile.getPubKey()
+    activeSectionId = myPubKey
 
-  for channelGroup in channelGroups:
-    self.channelGroupModules[channelGroup.id] = chat_section_module.newModule(
+  # Create personal chat section
+  self.chatSectionModules[myPubKey] = chat_section_module.newModule(
+    self,
+    events,
+    sectionId = myPubKey,
+    isCommunity = false,
+    settingsService,
+    nodeConfigurationService,
+    contactsService,
+    chatService,
+    communityService,
+    messageService,
+    mailserversService,
+    walletAccountService,
+    tokenService,
+    communityTokensService,
+    sharedUrlsService,
+    networkService
+  )
+  let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(myPubKey)
+  let personalChatSectionItem = initItem(
+    myPubKey,
+    sectionType = SectionType.Chat,
+    name = conf.CHAT_SECTION_NAME,
+    icon = conf.CHAT_SECTION_ICON,
+    hasNotification = unviewedMessagesCount > 0 or unviewedMentionsCount > 0,
+    notificationsCount = unviewedMentionsCount,
+    active = self.getActiveSectionId() == myPubKey,
+    enabled = true,
+    joined = true,
+    canJoin = true,
+    canRequestAccess = true,
+    isMember = true,
+    muted = false,
+  )
+  self.view.model().addItem(personalChatSectionItem)
+  if activeSectionId == personalChatSectionItem.id:
+    activeSection = personalChatSectionItem
+
+  self.chatSectionModules[myPubKey].load()
+
+  let communities = self.controller.getJoinedAndSpectatedCommunities()
+  # Create Community sections
+  for community in communities:
+    self.chatSectionModules[community.id] = chat_section_module.newModule(
       self,
       events,
-      channelGroup.id,
-      isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community,
+      community.id,
+      isCommunity = true,
       settingsService,
       nodeConfigurationService,
       contactsService,
@@ -667,12 +708,12 @@ method onChannelGroupsLoaded*[T](
       sharedUrlsService,
       networkService
     )
-    let channelGroupItem = self.createChannelGroupItem(channelGroup)
-    self.view.model().addItem(channelGroupItem)
-    if activeSectionId == channelGroupItem.id:
-      activeSection = channelGroupItem
+    let communitySectionItem = self.createCommunitySectionItem(community)
+    self.view.model().addItem(communitySectionItem)
+    if activeSectionId == communitySectionItem.id:
+      activeSection = communitySectionItem
 
-    self.channelGroupModules[channelGroup.id].load()
+    self.chatSectionModules[community.id].load()
 
   # Set active section if it is one of the channel sections
   if not activeSection.isEmpty():
@@ -705,8 +746,7 @@ method onCommunityDataLoaded*[T](
   if not self.chatsLoaded:
     return
 
-  self.onChannelGroupsLoaded(
-    self.controller.getChannelGroups(),
+  self.onChatsLoaded(
     events,
     settingsService,
     nodeConfigurationService,
@@ -729,7 +769,7 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if self.moduleLoaded:
     return
 
-  for cModule in self.channelGroupModules.values:
+  for cModule in self.chatSectionModules.values:
     if(not cModule.isLoaded()):
       return
 
@@ -839,7 +879,7 @@ method setActiveSectionById*[T](self: Module[T], id: string) =
     self.setActiveSection(item)
 
 proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
-  for cModule in self.channelGroupModules.values:
+  for cModule in self.chatSectionModules.values:
     cModule.onActiveSectionChange(sectionId)
 
   # If there is a need other section may be notified the same way from here...
@@ -888,17 +928,17 @@ method setCurrentUserStatus*[T](self: Module[T], status: StatusType) =
   self.controller.setCurrentUserStatus(status)
 
 proc getChatSectionModule*[T](self: Module[T]): chat_section_module.AccessInterface =
-  return self.channelGroupModules[singletonInstance.userProfile.getPubKey()]
+  return self.chatSectionModules[singletonInstance.userProfile.getPubKey()]
 
 method getChatSectionModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.getChatSectionModule().getModuleAsVariant()
 
 method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVariant =
-  if(not self.channelGroupModules.contains(communityId)):
+  if(not self.chatSectionModules.contains(communityId)):
     echo "main-module, unexisting community key: ", communityId
     return
 
-  return self.channelGroupModules[communityId].getModuleAsVariant()
+  return self.chatSectionModules[communityId].getModuleAsVariant()
 
 method rebuildChatSearchModel*[T](self: Module[T]) =
   var items: seq[chat_search_item.Item] = @[]
@@ -985,13 +1025,13 @@ method communityJoined*[T](
   networkService: network_service.Service,
   setActive: bool = false,
 ) =
-  if self.channelGroupModules.contains(community.id):
+  if self.chatSectionModules.contains(community.id):
     # The community is already spectated
     return
   var firstCommunityJoined = false
-  if (self.channelGroupModules.len == 1): # First one is personal chat section
+  if (self.chatSectionModules.len == 1): # First one is personal chat section
     firstCommunityJoined = true
-  self.channelGroupModules[community.id] = chat_section_module.newModule(
+  self.chatSectionModules[community.id] = chat_section_module.newModule(
       self,
       events,
       community.id,
@@ -1009,10 +1049,9 @@ method communityJoined*[T](
       sharedUrlsService,
       networkService
     )
-  let channelGroup = community.toChannelGroupDto()
-  self.channelGroupModules[community.id].load()
+  self.chatSectionModules[community.id].load()
 
-  let communitySectionItem = self.createChannelGroupItem(channelGroup)
+  let communitySectionItem = self.createCommunitySectionItem(community)
   if (firstCommunityJoined):
     # If there are no other communities, add the first community after the Chat section in the model so that the order is respected
     self.view.model().addItem(communitySectionItem,
@@ -1022,11 +1061,12 @@ method communityJoined*[T](
 
   if setActive:
     self.setActiveSection(communitySectionItem)
-    if channelGroup.chats.len > 0:
-      self.channelGroupModules[community.id].setActiveItem(channelGroup.chats[0].id)
+    if(community.chats.len > 0):
+      let chatId = community.chats[0].id
+      self.chatSectionModules[community.id].setActiveItem(chatId)
 
 method communityLeft*[T](self: Module[T], communityId: string) =
-  if(not self.channelGroupModules.contains(communityId)):
+  if(not self.chatSectionModules.contains(communityId)):
     echo "main-module, unexisting community key to leave: ", communityId
     return
 
@@ -1039,24 +1079,23 @@ method communityLeft*[T](self: Module[T], communityId: string) =
     self.setActiveSection(item)
 
   var moduleToDelete: chat_section_module.AccessInterface
-  discard self.channelGroupModules.pop(communityId, moduleToDelete)
+  discard self.chatSectionModules.pop(communityId, moduleToDelete)
   moduleToDelete.delete
   moduleToDelete = nil
 
 method communityEdited*[T](
     self: Module[T],
     community: CommunityDto) =
-  if(not self.channelGroupModules.contains(community.id)):
+  if(not self.chatSectionModules.contains(community.id)):
     return
-  let channelGroup = community.toChannelGroupDto()
-  var channelGroupItem = self.createChannelGroupItem(channelGroup)
+  var communitySectionItem = self.createCommunitySectionItem(community)
   # We need to calculate the unread counts because the community update doesn't come with it
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
-    channelGroupItem.id
+    communitySectionItem.id
   )
-  channelGroupItem.setHasNotification(unviewedMessagesCount > 0)
-  channelGroupItem.setNotificationsCount(unviewedMentionsCount)
-  self.view.editItem(channelGroupItem)
+  communitySectionItem.setHasNotification(unviewedMessagesCount > 0)
+  communitySectionItem.setNotificationsCount(unviewedMentionsCount)
+  self.view.editItem(communitySectionItem)
 
 method onCommunityMuted*[T](
     self: Module[T],
@@ -1595,8 +1634,8 @@ method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
     return
 
 method onDeactivateChatLoader*[T](self: Module[T], sectionId: string, chatId: string) =
-  if (sectionId.len > 0 and self.channelGroupModules.contains(sectionId)):
-    self.channelGroupModules[sectionId].onDeactivateChatLoader(chatId)
+  if (sectionId.len > 0 and self.chatSectionModules.contains(sectionId)):
+    self.chatSectionModules[sectionId].onDeactivateChatLoader(chatId)
 
 method windowActivated*[T](self: Module[T]) =
   self.controller.slowdownArchivesImport()
@@ -1646,12 +1685,12 @@ method checkIfAddressWasCopied*[T](self: Module[T], value: string) =
   self.addressWasShown(value)
 
 method openSectionChatAndMessage*[T](self: Module[T], sectionId: string, chatId: string, messageId: string) =
-  if sectionId in self.channelGroupModules:
-    self.channelGroupModules[sectionId].openCommunityChatAndScrollToMessage(chatId, messageId)
+  if sectionId in self.chatSectionModules:
+    self.chatSectionModules[sectionId].openCommunityChatAndScrollToMessage(chatId, messageId)
 
 method updateRequestToJoinState*[T](self: Module[T], sectionId: string, requestToJoinState: RequestToJoinState) =
-  if sectionId in self.channelGroupModules:
-    self.channelGroupModules[sectionId].updateRequestToJoinState(requestToJoinState)
+  if sectionId in self.chatSectionModules:
+    self.chatSectionModules[sectionId].updateRequestToJoinState(requestToJoinState)
 
 proc createMemberItem*[T](self: Module[T], memberId: string, requestId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)

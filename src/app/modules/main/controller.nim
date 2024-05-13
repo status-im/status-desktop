@@ -109,10 +109,8 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_CHANNEL_GROUPS_LOADED) do(e:Args):
-    let args = ChannelGroupsArgs(e)
-    self.delegate.onChannelGroupsLoaded(
-      args.channelGroups,
+  self.events.on(SIGNAL_ACTIVE_CHATS_LOADED) do(e:Args):
+    self.delegate.onChatsLoaded(
       self.events,
       self.settingsService,
       self.nodeConfigurationService,
@@ -145,7 +143,7 @@ proc init*(self: Controller) =
       self.networksService,
     )
 
-  self.events.on(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED) do(e:Args):
+  self.events.on(SIGNAL_CHATS_LOADING_FAILED) do(e:Args):
     self.delegate.onChatsLoadingFailed()
 
   self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e:Args):
@@ -489,9 +487,6 @@ proc init*(self: Controller) =
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
 
-proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
-  return self.chatService.getChannelGroups()
-
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
 
@@ -534,6 +529,9 @@ proc isMnemonicBackedUp*(self: Controller): bool =
 proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
   let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
+
+proc getJoinedAndSpectatedCommunities*(self: Controller): seq[CommunityDto] =
+  return self.communityService.getJoinedAndSpectatedCommunities()
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)

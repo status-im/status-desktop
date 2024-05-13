@@ -306,10 +306,10 @@ QtObject:
     result.communityMetrics = initTable[string, CommunityMetricsDto]()
     result.communityInfoRequests = initTable[string, Time]()
 
-  proc getFilteredJoinedCommunities(self: Service): Table[string, CommunityDto] =
+  proc getFilteredJoinedAndSpectatedCommunities(self: Service): Table[string, CommunityDto] =
     result = initTable[string, CommunityDto]()
     for communityId, community in self.communities.pairs:
-      if community.joined:
+      if community.joined or community.spectated:
         result[communityId] = community
 
   proc getFilteredCuratedCommunities(self: Service): Table[string, CommunityDto] =
@@ -650,17 +650,6 @@ QtObject:
               chat.emoji != prevChat.emoji or chat.viewersCanPostReactions != prevChat.viewersCanPostReactions or
               chat.hideIfPermissionsNotMet != prevChat.hideIfPermissionsNotMet:
             var updatedChat = chat
-
-            # TODO improve this in https://github.com/status-im/status-desktop/issues/12595
-            # Currently, status-go only sends canPostReactions on app start (getChannelGroups)
-            # so here, we need to imply it. If viewersCanPostReactions is true, then everyone can post reactions
-            # admins can also always post reactions
-            if chat.viewersCanPostReactions or
-                (not chat.viewersCanPostReactions and community.memberRole != MemberRole.None):
-              updatedChat.canPostReactions = true
-            elif not chat.viewersCanPostReactions and community.memberRole == MemberRole.None:
-              updatedChat.canPostReactions = false
-
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
 
             let data = CommunityChatArgs(chat: updatedChat)
@@ -845,7 +834,7 @@ QtObject:
         if self.communities.hasKey(settings.id):
           self.communities[settings.id].settings = settings
 
-      # Non approver requests to join for all communities
+      # Non approved requests to join for all communities
       let nonAprrovedRequestsToJoinObj = responseObj["nonAprrovedRequestsToJoin"]
 
       if nonAprrovedRequestsToJoinObj{"result"}.kind != JNull:
@@ -874,8 +863,8 @@ QtObject:
   proc getCommunityTags*(self: Service): string =
     return self.communityTags
 
-  proc getJoinedCommunities*(self: Service): seq[CommunityDto] =
-    return toSeq(self.getFilteredJoinedCommunities().values)
+  proc getJoinedAndSpectatedCommunities*(self: Service): seq[CommunityDto] =
+    return toSeq(self.getFilteredJoinedAndSpectatedCommunities().values)
 
   proc getAllCommunities*(self: Service): seq[CommunityDto] =
     return toSeq(self.communities.values)
@@ -1056,12 +1045,8 @@ QtObject:
 
       updatedCommunity.settings = communitySettings
       self.communities[communityId] = updatedCommunity
-      self.chatService.loadChannelGroupById(communityId)
 
       let ownerTokenNotification = self.activityCenterService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, communityId)
-
-      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
-      self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true, isPendingOwnershipRequest: (ownerTokenNotification != nil)))
 
       for k, chat in updatedCommunity.chats:
         var fullChatId = chat.id
@@ -1077,6 +1062,9 @@ QtObject:
         # TODO find a way to populate missing infos like the color
         self.chatService.updateOrAddChat(chatDto)
         self.messageService.asyncLoadInitialMessagesForChat(fullChatId)
+
+      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
+      self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true, isPendingOwnershipRequest: (ownerTokenNotification != nil)))
     except Exception as e:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
@@ -1225,8 +1213,6 @@ QtObject:
         community.settings = communitySettings
         # add this to the communities list and communitiesSettings
         self.communities[community.id] = community
-        # add new community channel group and chats to chat service
-        self.chatService.updateOrAddChannelGroup(community.toChannelGroupDto())
         for chat in community.chats:
           self.chatService.updateOrAddChat(chat)
 
@@ -2495,3 +2481,18 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
     except Exception as e:
       error "error promoting self to control node", msg = e.msg
+
+  proc categoryHasUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
+    if communityId == "" or categoryId == "":
+      return false
+
+    if not self.communities.contains(communityId):
+      warn "unknown community", communityId
+      return false
+
+    for chat in self.communities[communityId].chats:
+      if chat.categoryId != categoryId:
+        continue
+      if (not chat.muted and chat.unviewedMessagesCount > 0) or chat.unviewedMentionsCount > 0:
+        return true
+    return false

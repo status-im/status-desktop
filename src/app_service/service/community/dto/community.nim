@@ -548,39 +548,6 @@ proc getBannedMembersIds*(self: CommunityDto): seq[string] =
       bannedIds.add(memberId)
   return bannedIds
 
-proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
-  ChannelGroupDto(
-    id: communityDto.id,
-    channelGroupType: ChannelGroupType.Community,
-    name: communityDto.name,
-    images: communityDto.images,
-    chats: communityDto.chats,
-    categories: communityDto.categories,
-    # Community doesn't have an ensName yet. Add this when it is added in status-go
-    # ensName: communityDto.ensName,
-    memberRole: communityDto.memberRole,
-    verified: communityDto.verified,
-    description: communityDto.description,
-    introMessage: communityDto.introMessage,
-    outroMessage: communityDto.outroMessage,
-    color: communityDto.color,
-    # tags: communityDto.tags, NOTE: do we need tags here?
-    permissions: communityDto.permissions,
-    members: communityDto.members.map(m => ChatMember(
-        id: m.id,
-        joined: true,
-        role: m.role
-      )),
-    canManageUsers: communityDto.canManageUsers,
-    muted: communityDto.muted,
-    historyArchiveSupportEnabled: communityDto.settings.historyArchiveSupportEnabled,
-    bannedMembersIds: communityDto.getBannedMembersIds(),
-    encrypted: communityDto.encrypted,
-    shard: communityDto.shard,
-    pubsubTopic: communityDto.pubsubTopic,
-    pubsubTopicKey: communityDto.pubsubTopicKey,
-  )
-
 proc parseCommunitiesSettings*(response: JsonNode): seq[CommunitySettingsDto] =
   result = map(response["result"].getElems(),
     proc(x: JsonNode): CommunitySettingsDto = x.toCommunitySettingsDto())
@@ -628,14 +595,19 @@ proc toMembersRevealedAccounts*(membersRevealedAccountsObj: JsonNode): MembersRe
   for (pubkey, revealedAccountsObj) in membersRevealedAccountsObj.pairs:
     result[pubkey] = revealedAccountsObj.toRevealedAccounts()
 
-proc getCommunityChats*(self: CommunityDto, chatsIds: seq[string]): seq[ChatDto] =
+proc getCommunityChats*(self: CommunityDto, chatIds: seq[string]): seq[ChatDto] =
   var chats: seq[ChatDto] = @[]
-  for chatId in chatsIds:
+  for chatId in chatIds:
     for communityChat in self.chats:
       if chatId == communityChat.id:
         chats.add(communityChat)
         break
   return chats
+
+proc getCommunityChat*(self: CommunityDto, chatId: string): ChatDto =
+  let chats = self.getCommunityChats(@[chatId])
+  if chats.len > 0:
+    return chats[0]
 
 proc isOwner*(self: CommunityDto): bool =
   return self.memberRole == MemberRole.Owner

@@ -84,9 +84,8 @@ method chatSectionDidLoad*(self: AccessInterface) {.base.} =
 method communitySectionDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChannelGroupsLoaded*(
+method onChatsLoaded*(
     self: AccessInterface,
-    channelGroups: seq[ChannelGroupDto],
     events: EventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
