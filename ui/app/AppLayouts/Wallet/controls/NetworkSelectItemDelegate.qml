@@ -15,6 +15,7 @@ StatusListItem {
     property var singleSelection
     property var radioButtonGroup
     property bool useEnabledRole: true
+    property bool showCheckboxes: true
 
     // Needed for preferred sharing networks
     property bool preferredNetworksMode: false
@@ -49,7 +50,7 @@ StatusListItem {
             id: checkBox
             objectName: "networkSelectionCheckbox_" + model.chainName
             tristate: true
-            visible: !root.singleSelection.enabled
+            visible: !root.singleSelection.enabled && root.showCheckboxes
 
             checkState: {
                 if(root.preferredNetworksMode) {

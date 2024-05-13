@@ -19,6 +19,7 @@ StatusListView {
     property SingleSelectionInfo singleSelection: SingleSelectionInfo {}
     property var preferredSharingNetworks: []
     property bool preferredNetworksMode: false
+    property bool showCheckboxes: true
 
     signal toggleNetwork(var network, int index)
 
@@ -35,6 +36,7 @@ StatusListView {
         preferredNetworksMode: root.preferredNetworksMode
         preferredSharingNetworks: root.preferredSharingNetworks
         allChecked: root.preferredSharingNetworks.length === root.count
+        showCheckboxes: root.showCheckboxes
     }
 
     section {
