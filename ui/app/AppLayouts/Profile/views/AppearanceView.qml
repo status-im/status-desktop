@@ -38,22 +38,6 @@ SettingsContentBase {
         appearanceView.updateFontSize(localAccountSensitiveSettings.fontSize)
     }
 
-    readonly property var priv: QtObject {
-        id: priv
-
-        readonly property real savedDpr: {
-            const scaleFactorStr = appearanceView.appearanceStore.readTextFile(uiScaleFilePath)
-            if (scaleFactorStr === "") {
-                return 1
-            }
-            const scaleFactor = parseFloat(scaleFactorStr)
-            if (isNaN(scaleFactor)) {
-                return 1
-            }
-            return scaleFactor
-        }
-    }
-
     Item {
         id: appearanceContainer
         anchors.left: !!parent ? parent.left : undefined
@@ -127,51 +111,9 @@ SettingsContentBase {
             }
         }
 
-        StatusSectionHeadline {
-            id: labelZoom
-            anchors.top: fontSizeSlider.bottom
-            anchors.topMargin: Style.current.bigPadding*2
-            anchors.left: parent.left
-            anchors.right: parent.right
-            text: qsTr("Zoom (requires restart)")
-        }
-
-        StatusQ.StatusLabeledSlider {
-            id: zoomSlider
-
-            readonly property int initialValue: priv.savedDpr * 100
-            readonly property bool dirty: value !== initialValue
-
-            anchors.top: labelZoom.bottom
-            anchors.topMargin: Style.current.padding
-            width: parent.width
-            from: 50
-            to: 300
-            stepSize: 25
-            model: [ qsTr("50%"), qsTr("75%"), qsTr("100%"), qsTr("125%"), qsTr("150%"), qsTr("175%"), qsTr("200%"),
-                qsTr("225%"), qsTr("250%"), qsTr("275%"), qsTr("300%")]
-            value: initialValue
-            onMoved: {
-                const uiScale = zoomSlider.value === 100 ? "" // reset to native highdpi
-                                                         : zoomSlider.value / 100.0
-                appearanceView.appearanceStore.writeTextFile(uiScaleFilePath, uiScale)
-            }
-            onPressedChanged: {
-                if (!pressed && dirty) {
-                    confirmAppRestartModal.open()
-                }
-            }
-
-            ConfirmAppRestartModal {
-                id: confirmAppRestartModal
-                onAccepted: Utils.restartApplication();
-                onClosed: zoomSlider.value = zoomSlider.initialValue
-            }
-        }
-
         Rectangle {
             id: modeSeparator
-            anchors.top: zoomSlider.bottom
+            anchors.top: fontSizeSlider.bottom
             anchors.topMargin: Style.current.padding*3
             anchors.left: parent.left
             anchors.right: parent.right
