@@ -93,17 +93,19 @@ proc upsertNetwork*(self: Service, network: NetworkItem): bool =
 proc deleteNetwork*(self: Service, network: NetworkItem) =
   discard backend.deleteEthereumChain(network.chainId)
 
-proc getNetworkByChainId*(self: Service, chainId: int): NetworkItem =
+proc getNetworkByChainId*(self: Service, chainId: int, testNetworksEnabled: bool): NetworkItem =
   var networks = self.combinedNetworks
   if self.combinedNetworks.len == 0:
     networks = self.fetchNetworks()
-  let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
   for network in networks:
     let net = if testNetworksEnabled: network.test
               else: network.prod
     if chainId == net.chainId:
         return net
   return nil
+
+proc getNetworkByChainId*(self: Service, chainId: int): NetworkItem =
+  return self.getNetworkByChainId(chainId, self.settingsService.areTestNetworksEnabled())
 
 proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
   for chainId in chainIds:
@@ -140,8 +142,8 @@ proc getAppNetwork*(self: Service): NetworkItem =
     quit() # quit the app
   return network
 
-proc updateNetworkEndPointValues*(self: Service, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
-  let network = self.getNetworkByChainId(chainId)
+proc updateNetworkEndPointValues*(self: Service, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
+  let network = self.getNetworkByChainId(chainId, testNetwork)
 
   if not network.isNil:
     if network.rpcURL != newMainRpcInput:
