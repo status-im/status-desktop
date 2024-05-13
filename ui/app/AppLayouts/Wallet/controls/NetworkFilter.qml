@@ -25,6 +25,8 @@ StatusComboBox {
     property bool multiSelection: true
     property bool preferredNetworksMode: false
     property var preferredSharingNetworks: []
+    property bool showAllSelectedText: true
+    property bool showCheckboxes: true
 
     /// \c network is a network.model.nim entry
     /// It is called for every toggled network if \c multiSelection is \c true
@@ -101,13 +103,13 @@ StatusComboBox {
             lineHeight: 24
             lineHeightMode: Text.FixedHeight
             verticalAlignment: Text.AlignVCenter
-            text: root.multiSelection ? (d.noneSelected ? qsTr("Select networks"): d.allSelected ? qsTr("All networks") : "") : d.selectedChainName
+            text: root.multiSelection ? (d.noneSelected ? qsTr("Select networks"): d.allSelected && root.showAllSelectedText ? qsTr("All networks") : "") : d.selectedChainName
             color: Theme.palette.baseColor1
             visible: !!text
         }
         Row {
             spacing: -4
-            visible: !d.allSelected && chainRepeater.count > 0
+            visible: (!d.allSelected || !root.showAllSelectedText) && chainRepeater.count > 0
             Repeater {
                 id: chainRepeater
                 model: root.preferredNetworksMode ? root.flatNetworks: root.multiSelection ? d.enabledFlatNetworks: []
@@ -126,6 +128,7 @@ StatusComboBox {
         flatNetworks: root.flatNetworks
         preferredSharingNetworks: root.preferredSharingNetworks
         preferredNetworksMode: root.preferredNetworksMode
+        showCheckboxes: root.showCheckboxes
 
         implicitWidth: contentWidth
         implicitHeight: contentHeight
