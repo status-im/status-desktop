@@ -38,6 +38,7 @@ QtObject:
 
       addresses: seq[string]
       chainIds: seq[int]
+      selectedAddress: string
       filter: backend_collectibles.CollectibleFilter
 
       ownershipStatus: Table[string, Table[int, OwnershipStatus]] # Table[address][chainID] -> OwnershipStatus
@@ -70,7 +71,7 @@ QtObject:
     # Otherwise, if any address+chainID is updating, then the whole model is updating
     # Otherwise, the model is idle
     for address, statusPerChainID in self.ownershipStatus.pairs:
-      if not self.addresses.contains(address):
+      if not self.addresses.contains(address) or (self.selectedAddress != "" and self.selectedAddress != address):
         continue
       for chainID, status in statusPerChainID:
         if not self.chainIds.contains(chainID):
@@ -283,6 +284,10 @@ QtObject:
     result.setupEventHandlers()
 
     signalConnect(result.model, "loadMoreItems()", result, "onModelLoadMoreItems()")
+
+  proc setSelectedAccount*(self: Controller, address: string) =
+    self.selectedAddress = address
+    self.checkModelState()
 
   proc setFilterAddressesAndChains*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
     if chainIds == self.chainIds and addresses == self.addresses:

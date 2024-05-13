@@ -78,6 +78,9 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.allCollectiblesModuleDidLoad()
 
+method setSelectedAccount*(self: Module, address: string) =
+  self.collectiblesController.setSelectedAccount(address)
+
 method getAllCollectiblesModel*(self: Module): collectibles_model.Model =
   return self.collectiblesController.getModel()
 
