@@ -3,6 +3,7 @@ import QtQuick 2.13
 import utils 1.0
 
 import StatusQ 0.1
+import StatusQ.Models 0.1
 import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
@@ -13,7 +14,7 @@ QtObject {
     property var walletModule
     property var accountsModule: root.walletModule.accountsModule
     property var networksModuleInst: networksModule
-    property var collectibles: root.walletModule.collectiblesModel
+    property var collectibles: _jointCollectiblesBySymbolModel
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
     property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
@@ -54,6 +55,42 @@ QtObject {
             value: Constants.watchWalletType
             inverted: true
         }
+    }
+
+    /* PRIVATE: This model renames the roles
+        1. "id" to "communityId"
+        2. "name" to "communityName"
+        3. "image" to "communityImage"
+        4. "description" to "communityDescription"
+        in communitiesModule.model so that it can be easily
+        joined with the Collectibles model */
+    readonly property var _renamedCommunitiesModel: RolesRenamingModel {
+        sourceModel: communitiesModule.model
+        mapping: [
+            RoleRename {
+                from: "id"
+                to: "communityId"
+            },
+            RoleRename {
+                from: "name"
+                to: "communityName"
+            },
+            RoleRename {
+                from: "image"
+                to: "communityImage"
+            },
+            RoleRename {
+                from: "description"
+                to: "communityDescription"
+            }
+        ]
+    }
+
+    /* PRIVATE: This model joins the "Tokens By Symbol Model" and "Communities Model" by communityId */
+    property LeftJoinModel _jointCollectiblesBySymbolModel: LeftJoinModel {
+        leftModel: root.walletModule.collectiblesModel
+        rightModel: _renamedCommunitiesModel
+        joinRole: "communityId"
     }
 
     property string userProfilePublicKey: userProfile.pubKey
