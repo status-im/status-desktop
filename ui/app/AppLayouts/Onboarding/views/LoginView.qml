@@ -10,6 +10,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import shared.popups.keycard.helpers 1.0
 
@@ -153,7 +154,7 @@ Item {
     ConfirmationDialog {
         id: obtainingPasswordErrorNotification
         height: 270
-        confirmButtonLabel: qsTr("Ok")
+        confirmButtonLabel: qsTr("OK")
 
         onConfirmButtonClicked: {
             close()
@@ -217,7 +218,7 @@ Item {
             StatusBaseText {
                 id: usernameText
                 objectName: "currentUserNameLabel"
-                text: root.startupStore.selectedLoginAccount.username
+                text: StatusQUtils.Emoji.parse(root.startupStore.selectedLoginAccount.username, "24x24")
                 font.pixelSize: 17
                 anchors.left: userImage.right
                 anchors.right: root.startupStore.selectedLoginAccount.keycardCreatedAccount?

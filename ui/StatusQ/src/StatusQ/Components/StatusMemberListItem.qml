@@ -98,7 +98,7 @@ StatusListItem {
         function composeSubtitle() {
             var compose = ""
             if(root.userName !== "" && root.nickName !== "")
-                compose = "(" + root.userName + ")"
+                compose = "(" + Emoji.parse(root.userName, "12x12") + ")"
 
             if(compose !== "" && root.pubKey !== "")
                 // Composition
@@ -119,7 +119,8 @@ StatusListItem {
     }
 
     // root object settings:
-    title: root.nickName || root.userName
+    title: root.nickName || Emoji.parse(root.userName)
+    statusListItemIcon.name: root.nickName || root.userName
     statusListItemTitleIcons.sourceComponent: root.isAwaitingAddress ?
                                                   awaitingAddressComponent : statusContactVerificationIcons
 

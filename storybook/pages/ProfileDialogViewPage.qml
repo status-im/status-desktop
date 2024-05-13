@@ -480,7 +480,7 @@ SplitView {
                     TextField {
                         id: name
                         enabled: ensVerified.checked
-                        text: ensVerified.checked ? "mock-ens-name.eth" : ""
+                        text: ensVerified.checked ? "8⃣6⃣.eth" : ""
                         placeholderText: "ENS name"
                     }
                 }

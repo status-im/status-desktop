@@ -18,6 +18,10 @@ ListModel {
               nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
         colorId: 7
         isEnsVerified: false
+        colorHash: [
+            ListElement {colorId: 0; segmentLength: 2},
+            ListElement {colorId: 17; segmentLength: 2}
+        ]
     }
     ListElement {
         pubKey: "0x04df12f12f12f12f1234"
@@ -33,6 +37,10 @@ ListModel {
         icon: ""
         colorId: 9
         isEnsVerified: false
+        colorHash: [
+            ListElement {colorId: 0; segmentLength: 1},
+            ListElement {colorId: 19; segmentLength: 2}
+        ]
     }
     ListElement {
         pubKey: "0x04d1b7cc0ef3f470f1238"
@@ -58,8 +66,8 @@ ListModel {
         isUntrustworthy: true
         displayName: "Maria"
         alias: "meth"
-        localNickname: ""
-        ensName: "maria.eth"
+        localNickname: "86.eth"
+        ensName: "8⃣6⃣.eth"
         icon: ""
         colorId: 5
         isEnsVerified: true
@@ -77,6 +85,21 @@ ListModel {
         ensName: "richard-the-lionheart.eth"
         icon: ""
         colorId: 3
+        isEnsVerified: true
+    }
+    ListElement {
+        pubKey: "0x04d1bed192343f470fabc"
+        onlineStatus: 0
+        isContact: true
+        isVerified: false
+        isAdmin: false
+        isUntrustworthy: false
+        displayName: ""
+        alias: ""
+        localNickname: ""
+        ensName: "8⃣6⃣.eth"
+        icon: ""
+        colorId: 7
         isEnsVerified: true
     }
 }

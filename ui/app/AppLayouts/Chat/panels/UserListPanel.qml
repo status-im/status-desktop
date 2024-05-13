@@ -130,7 +130,7 @@ Item {
                         Global.openMenu(profileContextMenuComponent, this, {
                                             myPublicKey: userProfile.pubKey,
                                             selectedUserPublicKey: model.pubKey,
-                                            selectedUserDisplayName: title,
+                                            selectedUserDisplayName: nickName || userName,
                                             selectedUserIcon: model.icon,
                                         })
                     } else if (mouse.button === Qt.LeftButton) {
