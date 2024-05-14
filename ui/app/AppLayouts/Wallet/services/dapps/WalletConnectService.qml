@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import StatusQ.Core.Theme 0.1
+
 import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Profile.stores 1.0
 import shared.stores 1.0
@@ -73,24 +75,27 @@ QtObject {
         }
 
         function onApproveSessionResult(session, err) {
+            // TODO #14754: implement custom dApp notification
+            let app_url = _d.currentSessionProposal ? _d.currentSessionProposal.params.proposer.metadata.url : "-"
+            Global.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_url), "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
             root.approveSessionResult(session, err)
         }
 
         function onRejectSessionResult(err) {
-            let app_url = _d.currentSessionProposal ? _d.currentSessionProposal.params.proposer.url : "-"
+            let app_url = _d.currentSessionProposal ? _d.currentSessionProposal.params.proposer.metadata.url : "-"
             if(err) {
-                console.debug(`TODO #14556: show a notification "Failed to reject connection request for ${app_url}"`)
+                Global.displayToastMessage(qsTr("Failed to reject connection request for %1").arg(app_url), "", "warning", false, Constants.ephemeralNotificationType.danger, "")
             } else {
-                console.debug(`TODO #14556: show a notification "Connection request for ${app_url} was rejected"`)
+                Global.displayToastMessage(qsTr("Connection request for %1 was rejected").arg(app_url), "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
             }
         }
 
-        function onSessionDelete(topic, error) {
-            let app_url = _d.currentSessionProposal ? _d.currentSessionProposal.params.proposer.url : "-"
-            if(error) {
-                console.debug(`TODO #14556: show a notification "Failed to disconnect from ${app_url}"`)
+        function onSessionDelete(topic, err) {
+            let app_url = _d.currentSessionProposal ? _d.currentSessionProposal.params.proposer.metadata.url : "-"
+            if(err) {
+                Global.displayToastMessage(qsTr("Failed to disconnect from %1").arg(app_url), "", "warning", false, Constants.ephemeralNotificationType.danger, "")
             } else {
-                console.debug(`TODO #14556: show a notification "Disconnected from ${app_url}"`)
+                Global.displayToastMessage(qsTr("Disconnected from %1").arg(app_url), "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
             }
         }
     }
