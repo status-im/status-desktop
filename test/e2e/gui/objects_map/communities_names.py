@@ -89,6 +89,46 @@ checkListText_2_Tokens = {"container": mainWindow_MintedTokensView, "objectName"
 mint_Owner_Tokens_InfoBoxPanel = {"container": mainWindow_MintedTokensView, "type": "StatusInfoBoxPanel", "unnamed": 1, "visible": True}
 mint_Owner_Tokens_StatusButton = {"checkable": False, "container": mainWindow_MintedTokensView, "id": "button", "type": "StatusButton", "unnamed": 1, "visible": True}
 
+# Owner Token settings view
+mainWindow_ownerTokenPage_SettingsPage = {"container": mainWindow_StatusWindow, "id": "ownerTokenPage", "type": "SettingsPage", "unnamed": 1, "visible": True}
+mainWindow_OwnerTokenWelcomeView = {"container": mainWindow_StatusWindow, "type": "OwnerTokenWelcomeView", "unnamed": 1, "visible": True}
+ownerToken_InfoPanel = {"container": mainWindow_OwnerTokenWelcomeView, "type": "InfoPanel", "unnamed": 1, "visible": True}
+tokenMasterToken_InfoPanel = {"container": mainWindow_OwnerTokenWelcomeView, "occurrence": 2, "type": "InfoPanel", "unnamed": 1, "visible": True}
+next_StatusButton = {"checkable": False, "container": mainWindow_OwnerTokenWelcomeView, "type": "StatusButton", "unnamed": 1, "visible": True}
+owner_token_StatusBaseText = {"container": ownerToken_InfoPanel, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+token_master_StatusBaseText = {"container": tokenMasterToken_InfoPanel, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+o_Flickable = {"container": mainWindow_OwnerTokenWelcomeView, "type": "Flickable", "unnamed": 1, "visible": True}
+
+# Edit owner token view
+mainWindow_editOwnerTokenView_EditOwnerTokenView = {"container": mainWindow_StatusWindow, "id": "editOwnerTokenView", "type": "EditOwnerTokenView", "unnamed": 1, "visible": True}
+editOwnerTokenView_Flickable = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "Flickable", "unnamed": 1, "visible": True}
+editOwnerTokenView_CustomComboItem = {"checkable": False, "container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "CustomComboItem", "unnamed": 1, "visible": True}
+editOwnerTokenView_comboBox_ComboBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "id": "comboBox", "occurrence": 2, "type": "ComboBox", "unnamed": 1, "visible": True}
+mainnet_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 0, "objectName": "Mainnet", "type": "NetworkSelectItemDelegate", "visible": True}
+optimism_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 1, "objectName": "Optimism", "type": "NetworkSelectItemDelegate", "visible": True}
+arbitrum_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 2, "objectName": "Arbitrum", "type": "NetworkSelectItemDelegate", "visible": True}
+editOwnerTokenView_Mint_StatusButton = {"checkable": False, "container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "StatusButton", "unnamed": 1, "visible": True}
+editOwnerTokenView_FeeRow = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "FeeRow", "unnamed": 1, "visible": True}
+editOwnerTokenView_fees_StatusBaseText = {"container": editOwnerTokenView_FeeRow, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+editOwnerTokenView_Owner_StatusBaseText = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+editOwnerTokenView_crown_icon_StatusIcon = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "crown-icon", "type": "StatusIcon", "visible": True}
+editOwnerTokenView_symbolBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "symbolBox", "type": "CustomPreviewBox", "visible": True}
+editOwnerTokenView_totalBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "totalBox", "type": "CustomPreviewBox", "visible": True}
+editOwnerTokenView_remainingBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "remainingBox", "type": "CustomPreviewBox", "visible": True}
+editOwnerTokenView_transferableBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "transferableBox", "type": "CustomPreviewBox", "visible": True}
+editOwnerTokenView_destructibleBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "destructibleBox", "type": "CustomPreviewBox", "visible": True}
+editOwnerTokenView_token_sale_icon_StatusIcon = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "token-sale-icon", "type": "StatusIcon", "visible": True}
+
+# Minted tokens view
+mainWindow_MintedTokensView = {"container": mainWindow_StatusWindow, "type": "MintedTokensView", "unnamed": 1, "visible": True}
+specialCollectible_PrivilegedTokenArtworkPanel = {"container": mainWindow_MintedTokensView, "id": "specialCollectible", "type": "PrivilegedTokenArtworkPanel", "unnamed": 1, "visible": True}
+specialCollectible_PrivilegedTokenArtworkPanel_2 = {"container": mainWindow_MintedTokensView, "id": "specialCollectible", "occurrence": 2, "type": "PrivilegedTokenArtworkPanel", "unnamed": 1, "visible": True}
+o_CollectibleView_2 = {"container": mainWindow_MintedTokensView, "index": 1, "type": "CollectibleView", "unnamed": 1, "visible": True}
+o_CollectibleView = {"container": mainWindow_MintedTokensView, "index": 0, "type": "CollectibleView", "unnamed": 1, "visible": True}
+token_sale_icon_StatusIcon = {"container": mainWindow_MintedTokensView, "objectName": "token-sale-icon", "type": "StatusIcon", "visible": True}
+crown_icon_StatusIcon = {"container": mainWindow_MintedTokensView, "objectName": "crown-icon", "type": "StatusIcon", "visible": True}
+
 # Airdrops View
 mainWindow_airdropPanel_AirdropsSettingsPanel = {"container": mainWindow_StatusWindow, "id": "airdropPanel", "type": "AirdropsSettingsPanel", "unnamed": 1, "visible": True}
 mainWindow_WelcomeSettingsView = {"container": mainWindow_StatusWindow, "type": "WelcomeSettingsView", "unnamed": 1, "visible": True}

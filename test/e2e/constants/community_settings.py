@@ -19,6 +19,26 @@ class TokensElements(Enum):
     INFOBOX_TEXT = 'In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.'
 
 
+class MintOwnerTokensElements(Enum):
+    OWNER_TOKEN_CHEKLIST_ELEMENT_1 = 'Only 1 will ever exist'
+    OWNER_TOKEN_CHEKLIST_ELEMENT_2 = 'Hodler is the owner of the Community'
+    OWNER_TOKEN_CHEKLIST_ELEMENT_3 = 'Ability to airdrop / destroy TokenMaster token'
+    OWNER_TOKEN_CHEKLIST_ELEMENT_4 = 'Ability to mint and airdrop Community tokens'
+    MASTER_TOKEN_CHEKLIST_ELEMENT_1 = 'Unlimited supply'
+    MASTER_TOKEN_CHEKLIST_ELEMENT_2 = 'Grants full Community admin rights'
+    MASTER_TOKEN_CHEKLIST_ELEMENT_3 = 'Ability to mint and airdrop Community tokens'
+    MASTER_TOKEN_CHEKLIST_ELEMENT_4 = 'Non-transferrable'
+    MASTER_TOKEN_CHEKLIST_ELEMENT_5 = 'Remotely destructible by the Owner token hodler'
+    SIGN_TRANSACTION_MINT_TITLE = ' Owner and TokenMaster tokens on Mainnet'
+    OWNER_TOKEN_NAME = 'Owner-'
+    MASTER_TOKEN_NAME = 'TMaster-'
+    OWNER_TOKEN_SYMBOL = 'OWN'
+    MASTER_TOKEN_SYMBOL = 'TM'
+    TOAST_AIRDROPPING_TOKEN_1 = 'Airdropping '
+    TOAST_AIRDROPPING_TOKEN_2 = ' Owner token to you...'
+    TOAST_TOKENS_BEING_MINTED = ' Owner and TokenMaster tokens are being minted...'
+
+
 class AirdropsElements(Enum):
     WELCOME_TITLE = "Airdrop community tokens"
     WELCOME_SUBTITLE = 'You can mint custom tokens and collectibles for your community'

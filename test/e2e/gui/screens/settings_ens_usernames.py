@@ -14,7 +14,7 @@ class ENSSettingsView(QObject):
 
     def __init__(self):
         super().__init__(names.mainWindow_EnsWelcomeView)
-        self._start_button = Scroll(names.mainWindow_Start_StatusButton)
+        self._start_button = Button(names.mainWindow_Start_StatusButton)
 
     @allure.step('Start purhasing ens username')
     def start(self):

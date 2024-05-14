@@ -192,6 +192,12 @@ selected_tags_text = {"container": statusDesktop_mainWindow_overlay, "type": "St
 # Signing phrase popup
 signPhrase_Ok_Button = {"container": statusDesktop_mainWindow, "type": "StatusFlatButton", "objectName": "signPhraseModalOkButton", "visible": True}
 
+# Sign transaction popup
+cancel_transaction_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "cancelButton", "text": "Cancel", "type": "StatusButton", "visible": True}
+sign_transaction_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "signTransactionButton", "text": "Sign transaction", "type": "StatusButton", "visible": True}
+o_FeeRow = {"container": statusDesktop_mainWindow_overlay, "type": "FeeRow", "unnamed": 1, "visible": True}
+feeTotalRow_FeeRow = {"container": statusDesktop_mainWindow_overlay, "id": "feeTotalRow", "type": "FeeRow", "unnamed": 1, "visible": True}
+
 # Remove account popup:
 mainWallet_Remove_Account_Popup_Account_Notification = {"container": statusDesktop_mainWindow, "objectName": "RemoveAccountPopup-Notification", "type": "StatusBaseText", "visible": True}
 mainWallet_Remove_Account_Popup_Account_Path_Component = {"container": statusDesktop_mainWindow, "objectName": "RemoveAccountPopup-DerivationPath", "type": "StatusInput", "visible": True}
@@ -631,6 +637,11 @@ sview_keyLbl_StatusDescriptionListItem = {"container": mainWindow_sview_StatusSc
 sview_ensAgreeTerms_StatusCheckBox = {"checkable": True, "container": mainWindow_sview_StatusScrollView, "objectName": "ensAgreeTerms", "type": "StatusCheckBox", "visible": True}
 mainWindow_Register_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "ensStartTransaction", "text": "Register", "type": "StatusButton", "visible": True}
 mainWindow_EnsRegisteredView = {"container": statusDesktop_mainWindow, "type": "EnsRegisteredView", "unnamed": 1, "visible": True}
+
+# Advanced view
+mainWindow_AdvancedView = {"container": mainWindow_StatusWindow, "type": "AdvancedView", "unnamed": 1, "visible": True}
+mainWindow_settingsContentBaseScrollView_StatusScrollView = {"container": mainWindow_StatusWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
+manageCommunitiesOnTestnetButton_StatusSettingsLineButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "manageCommunitiesOnTestnetButton", "type": "StatusSettingsLineButton", "visible": True}
 
 # ONBOARDING NAMES
 mainWindow_onboardingBackButton_StatusRoundButton = {"container": statusDesktop_mainWindow, "objectName": "onboardingBackButton", "type": "StatusRoundButton", "visible": True}

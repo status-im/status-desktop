@@ -18,6 +18,7 @@ from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
 from gui.objects_map import communities_names, names
+from gui.screens.community_settings_tokens import TokensView
 from scripts.tools.image import Image
 
 
@@ -297,63 +298,6 @@ class MembersView(QObject):
         kick_member_popup = KickMemberPopup()
         assert kick_member_popup.exists
         kick_member_popup.confirm_kicking()
-
-
-
-class TokensView(QObject):
-    def __init__(self):
-        super(TokensView, self).__init__(communities_names.mainWindow_mintPanel_MintTokensSettingsPanel)
-        self._mint_token_button = Button(communities_names.mainWindow_Mint_token_StatusButton)
-        self._welcome_image = QObject(communities_names.welcomeSettingsTokens_Image)
-        self._welcome_title = TextLabel(communities_names.welcomeSettingsTokens_Title)
-        self._welcome_subtitle = TextLabel(communities_names.welcomeSettingsTokensSubtitle)
-        self._welcome_checklist_1 = TextLabel(communities_names.checkListText_0_Tokens)
-        self._welcome_checklist_2 = TextLabel(communities_names.checkListText_1_Tokens)
-        self._welcome_checklist_3 = TextLabel(communities_names.checkListText_2_Tokens)
-        self._get_started_infobox = QObject(communities_names.mint_Owner_Tokens_InfoBoxPanel)
-        self._mint_owner_token_button = Button(communities_names.mint_Owner_Tokens_StatusButton)
-
-    @property
-    @allure.step('Get mint token button enable state')
-    def is_mint_token_button_present(self) -> bool:
-        return self._mint_token_button.exists
-
-    @property
-    @allure.step('Get tokens welcome image path')
-    def tokens_welcome_image_path(self) -> str:
-        return self._welcome_image.object.source.path
-
-    @property
-    @allure.step('Get tokens welcome title')
-    def tokens_welcome_title(self) -> str:
-        return self._welcome_title.text
-
-    @property
-    @allure.step('Get tokens welcome subtitle')
-    def tokens_welcome_subtitle(self) -> str:
-        return self._welcome_subtitle.text
-
-    @property
-    @allure.step('Get tokens checklist')
-    def tokens_checklist(self) -> typing.List[str]:
-        tokens_checklist = [str(self._welcome_checklist_1.object.text), str(self._welcome_checklist_2.object.text),
-                            str(self._welcome_checklist_3.object.text)]
-        return tokens_checklist
-
-    @property
-    @allure.step('Get tokens info box title')
-    def tokens_infobox_title(self) -> str:
-        return str(self._get_started_infobox.object.title)
-
-    @property
-    @allure.step('Get tokens info box text')
-    def tokens_infobox_text(self) -> str:
-        return str(self._get_started_infobox.object.text)
-
-    @property
-    @allure.step('Get tokens mint owner token button visibility state')
-    def is_tokens_owner_token_button_visible(self) -> bool:
-        return self._mint_owner_token_button.is_visible
 
 
 class AirdropsView(QObject):
