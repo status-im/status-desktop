@@ -90,8 +90,10 @@ proc getWakuVersion*(self: Service): int =
   return 0
 
 proc isShardFleet(config: NodeConfigDto): bool =
-  return case config.ClusterConfig.Fleet:
+  return
+    case config.ClusterConfig.Fleet
     of $Fleet.ShardsTest: true
+    of $Fleet.ShardsStaging: true
     else: false
 
 proc setWakuConfig(configuration: NodeConfigDto): NodeConfigDto =
@@ -148,28 +150,42 @@ proc saveNewWakuNode*(self: Service, nodeAddress: string) =
   discard self.saveConfiguration(newConfiguration)
 
 proc setFleet*(self: Service, fleet: string): bool =
-  if(not self.settingsService.saveFleet(fleet)):
-    error "error saving fleet ", procName="setFleet"
+  if (not self.settingsService.saveFleet(fleet)):
+    error "error saving fleet ", procName = "setFleet"
     return false
-  
+
   let fleetType = fleetFromString(fleet)
   var newConfiguration = self.configuration
   newConfiguration.ClusterConfig.Fleet = fleet
-  newConfiguration.ClusterConfig.BootNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.Bootnodes)
-  newConfiguration.ClusterConfig.TrustedMailServers = self.fleetConfiguration.getNodes(fleetType, FleetNodes.Mailservers)
-  newConfiguration.ClusterConfig.StaticNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.Whisper)
-  newConfiguration.ClusterConfig.RendezvousNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.Rendezvous)
+  newConfiguration.ClusterConfig.BootNodes =
+    self.fleetConfiguration.getNodes(fleetType, FleetNodes.Bootnodes)
+  newConfiguration.ClusterConfig.TrustedMailServers =
+    self.fleetConfiguration.getNodes(fleetType, FleetNodes.Mailservers)
+  newConfiguration.ClusterConfig.StaticNodes =
+    self.fleetConfiguration.getNodes(fleetType, FleetNodes.Whisper)
+  newConfiguration.ClusterConfig.RendezvousNodes =
+    self.fleetConfiguration.getNodes(fleetType, FleetNodes.Rendezvous)
 
   var dnsDiscoveryURL: seq[string] = @[]
-  case fleetType:
-    of Fleet.WakuV2Prod:
-      dnsDiscoveryURL.add("enrtree://ANEDLO25QVUGJOUTQFRYKWX6P4Z4GKVESBMHML7DZ6YK4LGS5FC5O@prod.wakuv2.nodes.status.im")
-    of Fleet.WakuV2Test:
-      dnsDiscoveryURL.add("enrtree://AO47IDOLBKH72HIZZOXQP6NMRESAN7CHYWIBNXDXWRJRZWLODKII6@test.wakuv2.nodes.status.im")
-    of Fleet.ShardsTest:
-      dnsDiscoveryURL.add("enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.test.shards.nodes.status.im")
-    else:
-      discard
+  case fleetType
+  of Fleet.WakuV2Prod:
+    dnsDiscoveryURL.add(
+      "enrtree://ANEDLO25QVUGJOUTQFRYKWX6P4Z4GKVESBMHML7DZ6YK4LGS5FC5O@prod.wakuv2.nodes.status.im"
+    )
+  of Fleet.WakuV2Test:
+    dnsDiscoveryURL.add(
+      "enrtree://AO47IDOLBKH72HIZZOXQP6NMRESAN7CHYWIBNXDXWRJRZWLODKII6@test.wakuv2.nodes.status.im"
+    )
+  of Fleet.ShardsTest:
+    dnsDiscoveryURL.add(
+      "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.test.shards.nodes.status.im"
+    )
+  of Fleet.ShardsStaging:
+    dnsDiscoveryURL.add(
+      "enrtree://AI4W5N5IFEUIHF5LESUAOSMV6TKWF2MB6GU2YK7PU4TYUGUNOCEPW@boot.staging.shards.nodes.status.im"
+    )
+  else:
+    discard
 
   newConfiguration.ClusterConfig.WakuNodes = dnsDiscoveryURL
 
