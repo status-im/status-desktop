@@ -1,7 +1,7 @@
 import Tables, json, options, tables, strutils
 import ../../stickers/dto/stickers
 
-include  ../../../common/json_utils
+include ../../../common/json_utils
 from ../../../common/types import StatusType
 from ../../../common/conversion import intToEnum
 
@@ -68,9 +68,9 @@ const PROFILE_PICTURES_SHOW_TO_EVERYONE* = 2
 const PROFILE_PICTURES_SHOW_TO_NO_ONE* = 3
 
 type UrlUnfurlingMode* {.pure.} = enum
-  AlwaysAsk = 1,
-  Enabled = 2,
-  Disabled = 3,
+  AlwaysAsk = 1
+  Enabled = 2
+  Disabled = 3
 
 proc toUrlUnfurlingMode*(value: int): UrlUnfurlingMode =
   try:
@@ -97,6 +97,7 @@ type PinnedMailserver* = object
   statusTest*: string
   statusProd*: string
   shardsTest*: string
+  shardsStaging*: string
 
 type CurrentUserStatus* = object
   statusType*: StatusType
@@ -166,7 +167,6 @@ type
     collectibleGroupByCollection*: bool
     urlUnfurlingMode*: UrlUnfurlingMode
 
-
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
   discard jsonObj.getProp("eth.prod", result.ethProd)
@@ -176,6 +176,7 @@ proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   discard jsonObj.getProp("status.test", result.statusTest)
   discard jsonObj.getProp("status.prod", result.statusProd)
   discard jsonObj.getProp("shards.test", result.shardsTest)
+  discard jsonObj.getProp("shards.staging", result.shardsStaging)
 
 proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
   var statusTypeInt: int
@@ -233,19 +234,19 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   result.urlUnfurlingMode = toUrlUnfurlingMode(urlUnfurlingMode)
 
   var pinnedMailserverObj: JsonNode
-  if(jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserverObj)):
+  if (jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserverObj)):
     result.pinnedMailserver = toPinnedMailserver(pinnedMailserverObj)
 
   var currentUserStatusObj: JsonNode
-  if(jsonObj.getProp(KEY_CURRENT_USER_STATUS, currentUserStatusObj)):
+  if (jsonObj.getProp(KEY_CURRENT_USER_STATUS, currentUserStatusObj)):
     result.currentUserStatus = toCurrentUserStatus(currentUserStatusObj)
 
   discard jsonObj.getProp(KEY_NODE_CONFIG, result.nodeConfig)
   discard jsonObj.getProp(KEY_WAKU_BLOOM_FILTER_MODE, result.wakuBloomFilterMode)
 
   var usernamesArr: JsonNode
-  if(jsonObj.getProp(KEY_ENS_USERNAMES, usernamesArr)):
-    if(usernamesArr.kind == JArray):
+  if (jsonObj.getProp(KEY_ENS_USERNAMES, usernamesArr)):
+    if (usernamesArr.kind == JArray):
       for username in usernamesArr:
         result.ensUsernames.add(username.getStr)
 
@@ -256,5 +257,7 @@ proc pinnedMailserverToJsonNode*(mailserver: PinnedMailserver): JsonNode =
     "wakuv2.prod": mailserver.wakuv2Prod,
     "wakuv2.test": mailserver.wakuv2Test,
     "status.test": mailserver.statusTest,
-    "status.prod": mailserver.statusProd
+    "status.prod": mailserver.statusProd,
+    "shard.test": mailserver.shardsTest,
+    "sharding.staging": mailserver.shardsStaging,
   }

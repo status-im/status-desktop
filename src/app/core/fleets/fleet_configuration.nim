@@ -2,16 +2,17 @@ import json, typetraits, tables, sequtils, strutils
 
 type
   Fleet* {.pure.} = enum
-    Undefined = "",
+    Undefined = ""
     WakuV2Prod = "wakuv2.prod"
     WakuV2Test = "wakuv2.test"
     ShardsTest = "shards.test"
+    ShardsStaging = "shards.staging"
 
   FleetNodes* {.pure.} = enum
-    Bootnodes = "boot",
-    Mailservers = "mail",
-    Rendezvous = "rendezvous",
-    Whisper = "whisper",
+    Bootnodes = "boot"
+    Mailservers = "mail"
+    Rendezvous = "rendezvous"
+    Whisper = "whisper"
     Waku = "tcp/p2p/waku"
     WakuENR = "enr/p2p/waku"
     WakuBoot = "tcp/p2p/waku/boot"
@@ -55,25 +56,25 @@ proc extractConfig(self: FleetConfiguration, jsonString: string) {.gcsafe.} =
 
 proc getNodes*(self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = FleetNodes.Bootnodes): seq[string] =
   var t = nodeType
-  if fleet == Fleet.ShardsTest:
-      case nodeType:
-       of Bootnodes: t = WakuBoot
-       of Mailservers: t = WakuStore
-       of WakuENR: t = WakuBootENR
-       else: discard
+  if fleet == Fleet.ShardsTest or fleet == Fleet.ShardsStaging:
+    case nodeType:
+      of Bootnodes: t = WakuBoot
+      of Mailservers: t = WakuStore
+      of WakuENR: t = WakuBootENR
+      else: discard
 
   if not self.fleet[$fleet].hasKey($t): return
   result = toSeq(self.fleet[$fleet][$t].values)
 
 proc getMailservers*(self: FleetConfiguration, fleet: Fleet): Table[string, string] =
   var fleetKey: string
-  if fleet == Fleet.ShardsTest:
-    fleetKey = $FleetNodes.WakuStore 
+  if fleet == Fleet.ShardsTest or fleet == Fleet.ShardsStaging:
+    fleetKey = $FleetNodes.WakuStore
   else:
-    fleetKey = $FleetNodes.Waku 
+    fleetKey = $FleetNodes.Waku
 
-  if not self.fleet[$fleet].hasKey(fleetKey) :
-    result = initTable[string,string]()
+  if not self.fleet[$fleet].hasKey(fleetKey):
+    result = initTable[string, string]()
     return
   result = self.fleet[$fleet][fleetKey]
 
