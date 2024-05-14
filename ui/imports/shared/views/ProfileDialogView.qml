@@ -129,6 +129,11 @@ Pane {
         d.reload()
     }
 
+    onDirtyChanged: {
+        if (!dirty)
+            d.reload()
+    }
+
     Component {
         id: btnEditProfileComponent
         StatusButton {
@@ -504,8 +509,7 @@ Pane {
                     font.bold: true
                     font.pixelSize: 22
                     elide: Text.ElideRight
-                    text: root.dirty ? root.dirtyValues.displayName
-                                     : StatusQUtils.Emoji.parse(d.mainDisplayName, StatusQUtils.Emoji.size.middle)
+                    text: StatusQUtils.Emoji.parse(root.dirty ? root.dirtyValues.displayName : d.mainDisplayName, StatusQUtils.Emoji.size.middle)
                 }
                 StatusContactVerificationIcons {
                     id: verificationIcons
@@ -633,7 +637,8 @@ Pane {
                     Layout.preferredHeight: 300
 
                     currentTabIndex: showcaseTabBar.currentIndex
-                    mainDisplayName: d.mainDisplayName
+                    mainDisplayName: root.dirty ? root.dirtyValues.displayName
+                                     : d.mainDisplayName
                     readOnly: root.readOnly
                     
                     communitiesModel: root.showcaseCommunitiesModel
