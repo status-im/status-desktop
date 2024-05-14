@@ -23,8 +23,8 @@ SplitView {
 
             function getAllNetworksSupportedString(hovered) {
                 return hovered ?  "<font color=\"" + "#627EEA" + "\">" + "eth:" + "</font>" +
-                                 "<font color=\"" + "#E90101" + "\">" + "opt:" + "</font>" +
-                                 "<font color=\"" + "#27A0EF" + "\">" + "arb:" + "</font>" : "eth:opt:arb:"
+                                 "<font color=\"" + "#E90101" + "\">" + "oeth:" + "</font>" +
+                                 "<font color=\"" + "#27A0EF" + "\">" + "arb1:" + "</font>" : "eth:oeth:arb1:"
             }
         }
     }

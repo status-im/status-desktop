@@ -134,12 +134,12 @@ SplitView {
                     contactsStore: contactsStoreMockup
                     addresses: [
                         "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86C",
-                        "eth:arb:opt:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
+                        "eth:arb1:oeth:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
                         "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
-                        "eth:opt:arb:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
-                        "eth:opt:arb:0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B",
+                        "eth:oeth:arb1:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
+                        "eth:oeth:arb1:0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B",
                         "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B",
-                        "eth:opt:arb:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc36"
+                        "eth:oeth:arb1:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc36"
                     ]
                 }
             }

@@ -138,7 +138,7 @@ SplitView {
         property int timestamp: Date.now() / 1000
         property int txStatus: 0
         property string type: "eth"
-        property string from: "eth:arb:opt:0xb38e8c17e38363af6ebdcb3dae12e0243582891d"
+        property string from: "eth:arb1:oeth:0xb38e8c17e38363af6ebdcb3dae12e0243582891d"
         property string to: "0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8"
         property bool isNFT: false
         property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"

@@ -79,7 +79,7 @@ SplitView {
 
         QtObject {
             id: d
-            property string addressPrefixString: "eth:opt:arb:"
+            property string addressPrefixString: "eth:oeth:arb1:"
             property string addressName: "Ariana Pearlona"
             property bool isContact: true
             property bool isWallet: false

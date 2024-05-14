@@ -59,7 +59,7 @@ SplitView {
                 return chainNameString
             }
 
-            property string networksNames: "opt:arb:eth:"
+            property string networksNames: "oeth:arb1:eth:"
 
             store: QtObject {
                 property var filteredFlatModel: SortFilterProxyModel {
@@ -118,14 +118,14 @@ SplitView {
                 RadioButton {
                     text: "Medium length address"
                     onCheckedChanged: {
-                        dialog.networksNames = "opt:arb:eth:arb:solana:status:other:"
+                        dialog.networksNames = "oeth:arb1:eth:arb1:solana:status:other:"
                     }
                 }
 
                 RadioButton {
                     text: "Super long address"
                     onCheckedChanged: {
-                        dialog.networksNames = "opt:arb:eth:arb:solana:status:other:something:hey:whatsapp:tele:viber:do:it:now:blackjack:some:black:number:check:it:out:heyeey:dosay:what:are:you:going:to:do:with:me:forever:young:michael:jackson:super:long:string:crasy:daisy:this:is:amazing:whatever:you:do:whenever:you:go:"
+                        dialog.networksNames = "oeth:arb1:eth:arb1:solana:status:other:something:hey:whatsapp:tele:viber:do:it:now:blackjack:some:black:number:check:it:out:heyeey:dosay:what:are:you:going:to:do:with:me:forever:young:michael:jackson:super:long:string:crasy:daisy:this:is:amazing:whatever:you:do:whenever:you:go:"
                     }
                 }
 
@@ -133,7 +133,7 @@ SplitView {
                     checked: true
                     text: "Short address"
                     onCheckedChanged: {
-                        dialog.networksNames = "opt:arb:eth:"
+                        dialog.networksNames = "oeth:arb1:eth:"
                     }
                 }
             }
