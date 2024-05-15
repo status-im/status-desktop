@@ -47,7 +47,6 @@ QtObject {
                 qsTr("Status was co-founded by Jarrad Hope and Carl Bennetts"),
                 qsTr("Status was created to ease the transition to a more open mobile internet"),
                 qsTr("Status aims to help anyone, anywhere, interact with Ethereum, requiring no more than a phone"),
-                qsTr("Status is one of the top funded projects in crypto, raising $100m in their ICO for SNT in 2017"),
             ],
             [
                 qsTr("Your mobile company, and government are able to see the contents of all your private SMS messages"),
