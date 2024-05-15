@@ -24,9 +24,7 @@ Item {
 
             Layout.fillWidth: true
 
-            color: Theme.palette.directColor1
             font {
-                family: Theme.palette.baseFont.name
                 pixelSize: 17
                 bold: true
             }
@@ -40,10 +38,6 @@ Item {
 
             visible: text !== ""
             color: Theme.palette.baseColor1
-            font {
-                family: Theme.palette.baseFont.name
-                pixelSize: 15
-            }
             elide: Text.ElideMiddle
         }
     }
