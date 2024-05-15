@@ -31,6 +31,7 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.parametrize('receiver_account_address, amount, asset, tab', [
     pytest.param(constants.user.user_account_one.status_address, 0, 'Ether', 'Assets')
 ])
+@pytest.mark.timeout(timeout=120)
 def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_account_address, amount, asset, tab):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
@@ -93,6 +94,7 @@ allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704602',
 @pytest.mark.parametrize('tab, receiver_account_address, amount, collectible', [
     pytest.param('Collectibles', constants.user.user_with_funds.status_address, 1, 'Panda')
 ])
+@pytest.mark.timeout(timeout=120)
 def test_wallet_send_nft(keys_screen, main_window, user_account, tab, receiver_account_address, amount, collectible):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
