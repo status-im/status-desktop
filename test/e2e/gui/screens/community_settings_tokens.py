@@ -253,12 +253,19 @@ class EditOwnerTokenView(QObject):
         return str(destructible_box.value)
 
     @allure.step('Select Mainnet network')
-    def select_mainnet_network(self):
+    def select_mainnet_network(self, attempts: int = 2):
         if not self._select_network_combobox.is_visible:
             self._scroll.vertical_down_to(self._select_network_combobox)
         self._select_network_combobox.click()
-        self._mainnet_network_item.click()
-        return self
+        try:
+            self._mainnet_network_item.wait_until_appears()
+            self._mainnet_network_item.click()
+            return self
+        except AssertionError as err:
+            if attempts:
+                self.select_mainnet_network(attempts - 1)
+            else:
+                raise err
 
     @allure.step('Click mint button')
     def click_mint(self):

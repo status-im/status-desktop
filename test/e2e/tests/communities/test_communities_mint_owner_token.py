@@ -79,7 +79,7 @@ def test_mint_owner_token(keys_screen, main_window, user_account):
     with step('Verify all elements of master token panel'):
         tokens_screen.verify_text_on_master_token_panel()
 
-    with step('Select Mainnet network in edit network view and click mint'):
+    with step('Click next'):
         edit_owner_token_view = tokens_screen.click_next()
 
     with (step('Verify all elements of owner token section')):
@@ -115,7 +115,7 @@ def test_mint_owner_token(keys_screen, main_window, user_account):
             assert edit_owner_token_view.get_transferable_box_content(1) == 'No'
             assert edit_owner_token_view.get_destructible_box_content(1) == 'Yes'
 
-    with step('Verify all elements of master token section'):
+    with step('Select Mainnet network'):
         select_network = edit_owner_token_view.select_mainnet_network()
 
     with step('Verify fees title and gas fees exist'):
