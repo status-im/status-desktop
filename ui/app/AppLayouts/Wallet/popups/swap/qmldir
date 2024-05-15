@@ -1,2 +1,3 @@
 SwapModal 1.0 SwapModal.qml
-SwapFormData 1.0 SwapFormData.qml
+SwapInputParamsForm 1.0 SwapInputParamsForm.qml
+SwapModalAdaptor 1.0 SwapModalAdaptor.qml

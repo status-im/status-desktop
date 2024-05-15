@@ -8,14 +8,18 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
 
-import "../controls"
+import shared.controls 1.0
 
 StatusComboBox {
     id: root
 
     property var selectedAccount
     property var getNetworkShortNames: function(chainIds){}
+    property var formatCurrencyAmount: function(balance, symbol){}
     property int selectedIndex: -1
+
+    objectName: "accountsModalHeader"
+    popupContentItemObjectName: "accountSelectorList"
 
     control.padding: 0
     control.spacing: 0
@@ -27,6 +31,8 @@ StatusComboBox {
     control.indicator: null
 
     control.background: Rectangle {
+        objectName: "headerBackground"
+
         width: contentItem.childrenRect.width + control.leftPadding + control.rightPadding
         height: 32
         radius: 8
@@ -43,21 +49,19 @@ StatusComboBox {
         anchors.verticalCenter: parent.verticalCenter
         width: childrenRect.width
         spacing: 8
-        component Padding: Item {
-            width: 12
-            height: 16
-        }
         Padding {}
         StatusEmoji {
+            objectName: "headerContentItemEmoji"
             anchors.verticalCenter: parent.verticalCenter
             width: 16
             height: 16
-            emojiId: StatusQUtils.Emoji.iconId(selectedAccount.emoji ?? "", StatusQUtils.Emoji.size.verySmall) || ""
+            emojiId: StatusQUtils.Emoji.iconId(!!selectedAccount && !!selectedAccount.emoji ? selectedAccount.emoji : "", StatusQUtils.Emoji.size.verySmall) || ""
             visible: !!emojiId
         }
         StatusBaseText {
+            objectName: "headerContentItemText"
             anchors.verticalCenter: parent.verticalCenter
-            text: selectedAccount.name ?? ""
+            text: !!selectedAccount && !!selectedAccount.name ? selectedAccount.name : ""
             font.pixelSize: 15
             color: Theme.palette.indirectColor1
         }
@@ -76,15 +80,16 @@ StatusComboBox {
         width: ListView.view.width
         modelData: model
         getNetworkShortNames: root.getNetworkShortNames
+        formatCurrencyAmount: root.formatCurrencyAmount
         color: sensor.containsMouse || highlighted ?
                    Theme.palette.baseColor2 :
-                   selectedAccount.name === model.name ? Theme.palette.statusListItem.highlightColor : "transparent"
+                   !!selectedAccount && selectedAccount.name === model.name ? Theme.palette.statusListItem.highlightColor : "transparent"
         onClicked: {
             selectedIndex = index
             control.popup.close()
         }
         Component.onCompleted:{
-            if(selectedAccount.address === model.address)
+            if(!!selectedAccount && selectedAccount.address === model.address)
                 selectedIndex = index
         }
     }

@@ -3,3 +3,4 @@ ActivityFiltersStore 1.0 ActivityFiltersStore.qml
 CollectiblesStore 1.0 CollectiblesStore.qml
 TokensStore 1.0 TokensStore.qml
 WalletAssetsStore 1.0 WalletAssetsStore.qml
+SwapStore 1.0 SwapStore.qml

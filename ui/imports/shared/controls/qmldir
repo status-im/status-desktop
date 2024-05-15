@@ -52,3 +52,4 @@ MockedKeycardReaderStateSelector 1.0 MockedKeycardReaderStateSelector.qml
 MockedKeycardStateSelector 1.0 MockedKeycardStateSelector.qml
 AssetsSectionDelegate 1.0 AssetsSectionDelegate.qml
 ExpandableTag 1.0 ExpandableTag.qml
+Padding 1.0 Padding.qml
