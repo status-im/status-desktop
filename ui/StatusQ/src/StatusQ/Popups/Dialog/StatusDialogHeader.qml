@@ -18,6 +18,14 @@ Rectangle {
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
 
+    // cover for the bottom rounded corners
+    Rectangle {
+        width: parent.width
+        height: parent.radius
+        anchors.bottom: parent.bottom
+        color: parent.color
+    }
+
     RowLayout {
         id: layout
 
