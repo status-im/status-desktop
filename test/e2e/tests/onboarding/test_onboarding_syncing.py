@@ -2,6 +2,8 @@ import allure
 import pyperclip
 import pytest
 from allure_commons._allure import step
+
+from gui.screens.settings_syncing import SyncingSettingsView
 from . import marks
 
 import configs.testpath
@@ -121,9 +123,7 @@ def test_cancel_setup_syncing(main_screen: MainWindow):
         if configs.DEV_BUILD:
             sync_settings_view.is_backup_button_present()
     with step('Click setup syncing and close authenticate popup'):
-        main_screen.left_panel.open_settings().left_panel.open_syncing_settings().click_setup_syncing().close_authenticate_popup()
-        sync_new_device_popup = SyncNewDevicePopup().wait_until_appears()
+        sync_settings_view.click_setup_syncing().close_authenticate_popup()
 
-    with step('Verify error messages appear'):
-        assert sync_new_device_popup.primary_error_message == SyncingSettings.SYNC_SETUP_ERROR_PRIMARY.value
-        assert sync_new_device_popup.secondary_error_message == SyncingSettings.SYNC_SETUP_ERROR_SECONDARY.value
+    with step('Verify that authenticate popup was closed and syncing settings view appears after closing'):
+        SyncingSettingsView().wait_until_appears()
