@@ -22,10 +22,7 @@ type
     Ownership
     # Community-related roles
     CommunityId
-    CommunityName
-    CommunityColor
     CommunityPrivilegesLevel
-    CommunityImage
     TokenType
     Soulbound
 
@@ -145,10 +142,7 @@ QtObject:
       CollectibleRole.IsLoading.int:"isLoading",
       CollectibleRole.Ownership.int:"ownership",
       CollectibleRole.CommunityId.int:"communityId",
-      CollectibleRole.CommunityName.int:"communityName",
-      CollectibleRole.CommunityColor.int:"communityColor",
       CollectibleRole.CommunityPrivilegesLevel.int:"communityPrivilegesLevel",
-      CollectibleRole.CommunityImage.int:"communityImage",
       CollectibleRole.TokenType.int:"tokenType",
       CollectibleRole.Soulbound.int:"soulbound"
     }.toTable
@@ -195,14 +189,8 @@ QtObject:
         result = item.getOwnershipModelAsVariant()
       of CollectibleRole.CommunityId:
         result = newQVariant(item.getCommunityId())
-      of CollectibleRole.CommunityName:
-        result = newQVariant(item.getCommunityName())
-      of CollectibleRole.CommunityColor:
-        result = newQVariant(item.getCommunityColor())
       of CollectibleRole.CommunityPrivilegesLevel:
         result = newQVariant(item.getCommunityPrivilegesLevel())
-      of CollectibleRole.CommunityImage:
-        result = newQVariant(item.getCommunityImage())
       of CollectibleRole.TokenType:
         result = newQVariant(item.getTokenType())
       of CollectibleRole.Soulbound:
@@ -227,10 +215,7 @@ QtObject:
       of "collectionSlug": result = item.getCollectionSlug()
       of "isLoading": result = $false
       of "communityId": result = item.getCommunityID()
-      of "communityName": result = item.getCommunityName()
-      of "communityColor": result = item.getCommunityColor()
       of "communityPrivilegesLevel": result = $item.getCommunityPrivilegesLevel()
-      of "communityImage": result = item.getCommunityImage()
 
   proc resetCollectibleItems(self: Model, newItems: seq[CollectiblesEntry] = @[]) =
     self.beginResetModel()

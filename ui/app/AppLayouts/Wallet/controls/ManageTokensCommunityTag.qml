@@ -19,7 +19,6 @@ Control {
     property string communityId
     property var communityImage
     property bool loading
-    property bool useLongTextDescription: true
 
     property Component customBackground: Component {
         Rectangle {
@@ -53,7 +52,7 @@ Control {
             Layout.preferredHeight: visible ? asset.width : 0
             asset.width: 16
             asset.height: 16
-            visible: root.useLongTextDescription && !!asset.source
+            visible: !d.unknownCommunityName && !!asset.source
 
             Component.onCompleted: {
                 updateCommunityImage()

@@ -5,6 +5,8 @@ import StatusQ.Models 0.1
 
 import utils 1.0
 
+import SortFilterProxyModel 0.2
+
 QtObject {
     id: root
 
@@ -27,7 +29,7 @@ QtObject {
     }
 
     readonly property var collectiblesController: ManageTokensController {
-        sourceModel: allCollectiblesModel
+        sourceModel: _jointCollectiblesBySymbolModel
         settingsKey: "WalletCollectibles"
         serializeAsCollectibles: true
 
@@ -51,6 +53,43 @@ QtObject {
                                         qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
                                         false, Constants.ephemeralNotificationType.success, "")
     }
+
+    /* PRIVATE: This model renames the roles
+        1. "id" to "communityId"
+        2. "name" to "communityName"
+        3. "image" to "communityImage"
+        4. "description" to "communityDescription"
+        in communitiesModule.model so that it can be easily
+        joined with the Collectibles model */
+    readonly property var _renamedCommunitiesModel: RolesRenamingModel {
+        sourceModel: communitiesModule.model
+        mapping: [
+            RoleRename {
+                from: "id"
+                to: "communityId"
+            },
+            RoleRename {
+                from: "name"
+                to: "communityName"
+            },
+            RoleRename {
+                from: "image"
+                to: "communityImage"
+            },
+            RoleRename {
+                from: "description"
+                to: "communityDescription"
+            }
+        ]
+    }
+
+    /* PRIVATE: This model joins the "Tokens By Symbol Model" and "Communities Model" by communityId */
+    property LeftJoinModel _jointCollectiblesBySymbolModel: LeftJoinModel {
+        leftModel: allCollectiblesModel
+        rightModel: _renamedCommunitiesModel
+        joinRole: "communityId"
+    }
+
     readonly property bool areCollectiblesFetching: !!root._allCollectiblesModel ? root._allCollectiblesModel.isFetching : true
     readonly property bool areCollectiblesUpdating: !!root._allCollectiblesModel ? root._allCollectiblesModel.isUpdating : false
     readonly property bool areCollectiblesError: !!root._allCollectiblesModel ? root._allCollectiblesModel.isError : false
