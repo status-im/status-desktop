@@ -295,50 +295,12 @@ StatusWindow {
         applicationWindow.requestActivate()
     }
 
-    SystemTrayIcon {
+    StatusTrayIcon {
         id: systemTray
-        visible: true
-        icon.source: {
-            if (production) {
-                if (Qt.platform.os == Constants.mac)
-                    return "imports/assets/png/status-logo-round-rect.png"
-                else
-                    return "imports/assets/png/status-logo-circle.png"
-            } else {
-                if (Qt.platform.os == Constants.mac)
-                    return "imports/assets/png/status-logo-dev-round-rect.png"
-                else
-                    return "imports/assets/png/status-logo-dev-circle.png"
-            }
-        }
-
-        onMessageClicked: {
-            if (Qt.platform.os === Constants.windows) {
-                applicationWindow.makeStatusAppActive()
-            }
-        }
-
-        menu: Menu {
-            MenuItem {
-                text: qsTr("Open Status")
-                onTriggered: {
-                    applicationWindow.makeStatusAppActive()
-                }
-            }
-
-            MenuSeparator {
-            }
-
-            MenuItem {
-                text: qsTr("Quit")
-                onTriggered: Qt.quit()
-            }
-        }
-
-        onActivated: {
-            if (reason !== SystemTrayIcon.Context) {
-                applicationWindow.makeStatusAppActive()
-            }
+        objectName: "systemTray"
+        isProduction: production
+        onActivateApp: {
+            applicationWindow.makeStatusAppActive()
         }
     }
 
