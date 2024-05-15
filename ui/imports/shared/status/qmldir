@@ -15,6 +15,7 @@ StatusEmojiSuggestionPopup 1.0 StatusEmojiSuggestionPopup.qml
 StatusExpandableAddress 1.0 StatusExpandableAddress.qml
 StatusGifPopup 1.0 StatusGifPopup.qml
 StatusImageModal 1.0 StatusImageModal.qml
+StatusVideoModal 1.0 StatusVideoModal.qml
 StatusImageRadioButton 1.0 StatusImageRadioButton.qml
 StatusInputListPopup 1.0 StatusInputListPopup.qml
 StatusNotification 1.0 StatusNotification.qml

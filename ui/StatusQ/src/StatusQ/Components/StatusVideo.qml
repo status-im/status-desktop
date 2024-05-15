@@ -31,6 +31,7 @@ Item {
     readonly property bool isLoading: player.playbackState !== MediaPlayer.PlayingState
     readonly property bool isError: player.status === MediaPlayer.InvalidMedia
 
+    property alias source: player.source
     property alias player: player
     property alias output: output
     property alias fillMode: output.fillMode

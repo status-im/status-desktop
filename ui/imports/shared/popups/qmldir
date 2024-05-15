@@ -32,3 +32,4 @@ SettingsDirtyToastMessage 1.0 SettingsDirtyToastMessage.qml
 UnblockContactConfirmationDialog 1.0 UnblockContactConfirmationDialog.qml
 UserAgreementPopup 1.0 UserAgreementPopup.qml
 UserStatusContextMenu 1.0 UserStatusContextMenu.qml
+ImageContextMenu 1.0 ImageContextMenu.qml

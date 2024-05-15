@@ -1195,7 +1195,7 @@ Rectangle {
                         }
                         control.fileUrlsAndSources = urls
                     }
-                    onImageClicked: (chatImage) => Global.openImagePopup(chatImage, "")
+                    onImageClicked: (chatImage) => Global.openImagePopup(chatImage, "", false)
                     onLinkReload: (link) => control.linkPreviewReloaded(link)
                     onLinkClicked: (link) => Global.openLink(link)
                     onEnableLinkPreview: () => control.enableLinkPreview()

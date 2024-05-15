@@ -9,7 +9,7 @@ import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared.controls 1.0
-import shared.views.chat 1.0
+import shared.popups 1.0
 import shared.controls.chat 1.0
 
 StatusDialog {

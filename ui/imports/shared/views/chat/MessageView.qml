@@ -340,7 +340,7 @@ Loader {
         function onImageClicked(image, mouse, imageSource, url = "") {
             switch (mouse.button) {
             case Qt.LeftButton:
-                Global.openImagePopup(image, url)
+                Global.openImagePopup(image, url, false)
                 break;
             case Qt.RightButton:
                 Global.openMenu(imageContextMenuComponent, image, { imageSource, url })
