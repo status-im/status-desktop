@@ -75,10 +75,10 @@ proc `$`*(self: LinkPreview): string =
 proc `%`*(self: LinkPreview): JsonNode =
   result = %* {
     "url": self.url,
-    "standardPreview": %self.standardPreview,
-    "contactPreview": %self.statusContactPreview,
-    "communityPreview": %self.statusCommunityPreview,
-    "channelPreview": %self.statusCommunityChannelPreview
+    "standardPreview": if self.standardPreview != nil: %self.standardPreview else: newJNull(),
+    "contactPreview": if self.statusContactPreview != nil: %self.statusContactPreview else: newJNull(),
+    "communityPreview": if self.statusCommunityPreview != nil: %self.statusCommunityPreview else: newJNull(),
+    "channelPreview": if self.statusCommunityChannelPreview != nil: %self.statusCommunityChannelPreview else: newJNull()
   }
 
 proc empty*(self: LinkPreview): bool =
