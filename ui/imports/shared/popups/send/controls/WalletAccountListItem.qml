@@ -1,5 +1,6 @@
 import QtQuick 2.15
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
@@ -16,6 +17,7 @@ StatusListItem {
     property var modelData
     property var getNetworkShortNames: function(chainIds){}
     property bool clearVisible: false
+    property var formatCurrencyAmount: function(balances, symbols){}
     signal cleared()
 
     objectName: !!modelData  ? modelData.name: ""
@@ -45,25 +47,19 @@ StatusListItem {
         Column {
             anchors.verticalCenter: parent.verticalCenter
             StatusTextWithLoadingState   {
+                objectName: "walletAccountCurrencyBalance"
                 anchors.right: parent.right
                 font.pixelSize: 15
                 text: LocaleUtils.currencyAmountToLocaleString(!!modelData ? modelData.currencyBalance: "")
             }
-            Row {
+            StatusIcon {
+                objectName: "walletAccountTypeIcon"
                 anchors.right: parent.right
-                spacing: 6
-                StatusIcon {
-                    width: !!icon ? 15: 0
-                    height: !!icon ? 15 : 0
-                    color: Theme.palette.directColor1
-                    icon: !!modelData && modelData.walletType === Constants.watchWalletType ? "show" : ""
-                }
-                StatusIcon {
-                    width: !!icon ? 15: 0
-                    height: !!icon ? 15 : 0
-                    color: Theme.palette.directColor1
-                    icon: !!modelData && modelData.migratedToKeycard ? "keycard" : ""
-                }
+                width: !!icon ? 15: 0
+                height: !!icon ? 15 : 0
+                color: Theme.palette.directColor1
+                icon: !!modelData ? modelData.walletType === Constants.watchWalletType ? "show" :
+                                    modelData.migratedToKeycard ? "keycard" : "" : ""
             }
         },
         ClearButton {
@@ -74,4 +70,21 @@ StatusListItem {
             onClicked: root.cleared()
         }
     ]
+
+    inlineTagModel: !!root.modelData.fromToken && !!root.modelData.accountBalance ? 1 : 0
+    inlineTagDelegate: StatusListItemTag {
+        objectName: "inlineTagDelegate_" +  index
+        readonly property double balance: StatusQUtils.AmountsArithmetic.toNumber(root.modelData.accountBalance.balance, root.modelData.fromToken.decimals)
+        background: null
+        height: 16
+        asset.height: 16
+        asset.width: 16
+        title: root.formatCurrencyAmount(balance, root.modelData.fromToken.symbol)
+        titleText.font.pixelSize: 12
+        titleText.color: balance === 0 ? Theme.palette.baseColor1 : Theme.palette.directColor1
+        asset.isImage: true
+        asset.name: Style.svg("tiny/%1".arg(root.modelData.accountBalance.iconUrl))
+        asset.color: root.modelData.accountBalance.chainColor
+        closeButtonVisible: false
+    }
 }

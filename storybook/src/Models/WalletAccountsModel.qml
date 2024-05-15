@@ -40,7 +40,13 @@ ListModel {
                         symbol: "ZRX"
                     }
                 }
-            ]
+            ],
+            preferredSharingChainIds: "5:420:421613",
+            currencyBalance: ({amount: 1.25,
+                                  symbol: "USD",
+                                  displayDecimals: 4,
+                                  stripTrailingZeroes: false}),
+            migratedToKeycard: true
         },
         {
             name: "Hot wallet (generated)",
@@ -60,7 +66,13 @@ ListModel {
                         symbol: "DBF"
                     }
                 }
-            ]
+            ],
+            preferredSharingChainIds: "5:420:421613",
+            currencyBalance: ({amount: 10,
+                                  symbol: "USD",
+                                  displayDecimals: 4,
+                                  stripTrailingZeroes: false}),
+            migratedToKeycard: false
         },
         {
             name: "Family (seed)",
@@ -89,7 +101,13 @@ ListModel {
                         symbol: "DAI"
                     }
                 }
-            ]
+            ],
+            preferredSharingChainIds: "5:420:421613",
+            currencyBalance: ({amount: 110.05,
+                                  symbol: "USD",
+                                  displayDecimals: 4,
+                                  stripTrailingZeroes: false}),
+            migratedToKeycard: false
         },
         {
             name: "Tag Heuer (watch)",
@@ -100,7 +118,13 @@ ListModel {
             walletType: Constants.watchWalletType,
             position: 2,
             assets: [
-            ]
+            ],
+            preferredSharingChainIds: "5:420:421613",
+            currencyBalance: ({amount: 3,
+                                  symbol: "USD",
+                                  displayDecimals: 4,
+                                  stripTrailingZeroes: false}),
+            migratedToKeycard: false
         },
         {
             name: "Fab (key)",
@@ -120,7 +144,13 @@ ListModel {
                         symbol: "SOX"
                     }
                 }
-            ]
+            ],
+            preferredSharingChainIds: "5:420:421613",
+            currencyBalance: ({amount: 999,
+                                  symbol: "USD",
+                                  displayDecimals: 4,
+                                  stripTrailingZeroes: false}),
+            migratedToKeycard: false
         }
     ]
 

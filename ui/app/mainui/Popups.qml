@@ -387,7 +387,7 @@ QtObject {
     }
 
     function openSwapModal(parameters) {
-        openPopup(swapModal, {formData: parameters})
+        openPopup(swapModal, {swapInputParamsForm: parameters})
     }
 
     readonly property list<Component> _components: [
@@ -1240,6 +1240,12 @@ QtObject {
         Component {
             id: swapModal
             SwapModal {
+                swapAdaptor: SwapModalAdaptor {
+                    swapStore: WalletStore.SwapStore {}
+                    walletAssetsStore: root.walletAssetsStore
+                    currencyStore: root.currencyStore
+                    swapFormData: swapInputParamsForm
+                }
                 onClosed: destroy()
             }
         }

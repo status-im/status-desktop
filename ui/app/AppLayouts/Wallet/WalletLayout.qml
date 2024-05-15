@@ -135,12 +135,12 @@ Item {
             RootStore.backButtonName = ""
         }
 
-        property SwapFormData swapFormData: SwapFormData {
-            selectedAccountIndex: RootStore.showAllAccounts ? 0 : leftTab.currentAccountIndex
+        property SwapInputParamsForm swapFormData: SwapInputParamsForm {
+            selectedAccountIndex: d.selectedAccountIndex
             selectedNetworkChainId: {
                 // Without this when we switch testnet mode, the correct network is not evaluated
                 RootStore.areTestNetworksEnabled
-                return StatusQUtils.ModelUtils.get(RootStore.filteredFlatModel, 0).chainId
+                return StatusQUtils.ModelUtils.get(RootStore.filteredFlatModel, 0, "chainId")
             }
         }
 
@@ -167,6 +167,8 @@ Item {
                 rightPanelStackView.currentItem.resetView()
             }
         }
+
+        readonly property int selectedAccountIndex: RootStore.showAllAccounts ? 0 : leftTab.currentAccountIndex
     }
 
     SignPhraseModal {
@@ -214,6 +216,7 @@ Item {
                                                                   hasFloatingButtons: true
                                                               })
             onLaunchSwapModal: {
+                d.swapFormData.selectedAccountIndex = d.selectedAccountIndex
                 d.swapFormData.fromTokensKey = tokensKey
                 Global.openSwapModalRequested(d.swapFormData)
             }
@@ -330,6 +333,7 @@ Item {
             }
             onLaunchSwapModal: {
                 d.swapFormData.fromTokensKey =  ""
+                d.swapFormData.selectedAccountIndex = d.selectedAccountIndex
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
                 }

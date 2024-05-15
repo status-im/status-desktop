@@ -15,6 +15,9 @@ QtObject {
 
     property TokensStore walletTokensStore
 
+    /* this property represents the grouped_account_assets_model from backend*/
+    readonly property var baseGroupedAccountAssetModel: walletSectionAssets.groupedAccountAssetsModel
+
     readonly property var assetsController: ManageTokensController {
         sourceModel: groupedAccountAssetsModel
         settingsKey: "WalletAssets"
@@ -92,7 +95,7 @@ QtObject {
     /* This model joins the "Tokens by symbol model combined with Community details"
     and "Grouped Account Assets Model" by tokenskey */
     property LeftJoinModel groupedAccountAssetsModel: LeftJoinModel {
-        leftModel: walletSectionAssets.groupedAccountAssetsModel
+        leftModel: root.baseGroupedAccountAssetModel
         rightModel: _jointTokensBySymbolModel
         joinRole: "tokensKey"
     }

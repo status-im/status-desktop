@@ -10,7 +10,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-import "../controls"
+import shared.popups.send.controls 1.0
 
 Item {
     id: root
