@@ -85,6 +85,20 @@ StatusRoundedComponent {
     */
     property int manualMaxDimension: 0
 
+    /*!
+        \qmlproperty bool StatusRoundedMedia::interactive
+
+        Enable mouse interaction with the media.
+    */
+    property bool interactive: false
+
+    /*!
+        \qmlproperty bool StatusRoundedMedia::isEmpty
+
+        Media source is empty.
+    */
+    property bool isEmpty: false
+
     readonly property int componentMediaType: {
         if (root.mediaType.startsWith("image")) {
             return StatusRoundedMedia.MediaType.Image
@@ -93,6 +107,11 @@ StatusRoundedComponent {
         }
         return StatusRoundedMedia.MediaType.Unknown
     }
+
+    signal imageClicked(var image, bool plain)
+    signal videoClicked(var mediaUrl)
+    signal openImageContextMenu(var url, bool isGif)
+    signal openVideoContextMenu(var url)
 
     isLoading: {
         if (mediaLoader.status === Loader.Ready) {
@@ -115,14 +134,23 @@ StatusRoundedComponent {
         }
     }
 
+    Binding on isEmpty {
+        when: mediaLoader.status === Loader.Ready
+        value: !!mediaLoader.item && mediaLoader.item.source.toString() === ""
+        delayed: true
+        restoreMode: Binding.RestoreBindingOrValue
+    }
+
     QtObject {
         id: d
         property bool isFallback: false
         property int errorCounter: 0
+        property bool plainImage: false
 
         function reset() {
             isFallback = false
             errorCounter = 0
+            plainImage = false
         }
     }
 
@@ -139,6 +167,33 @@ StatusRoundedComponent {
             return mediaLoader.item.paintedHeight
         }
         else return root.manualMaxDimension
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        enabled: root.enabled && root.interactive && mediaLoader.visible && mediaLoader.item
+        cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: {
+            if (root.isError || root.isEmpty) {
+                return
+            }
+            if (mouse.button == Qt.RightButton) {
+                if (d.isFallback || componentMediaType === StatusRoundedMedia.MediaType.Image) {
+                    root.openImageContextMenu(mediaLoader.item.source, !!mediaLoader.item.playing)
+                } else if (componentMediaType === StatusRoundedMedia.MediaType.Video) {
+                    root.openVideoContextMenu(mediaUrl)
+                }
+
+                return
+            }
+
+            if (!d.isFallback && componentMediaType === StatusRoundedMedia.MediaType.Video) {
+                root.videoClicked(root.mediaUrl)
+            } else {
+                root.imageClicked(mediaLoader.item, d.plainImage)
+            }
+        }
     }
 
     Component.onCompleted: updateMediaLoader()
@@ -182,6 +237,7 @@ StatusRoundedComponent {
         if (!d.isFallback) {
             // AnimatedImage sometimes cannot load stuff that plan Image can, try that first
             if (componentMediaType === StatusRoundedMedia.MediaType.Image && d.errorCounter <= 1) {
+                d.plainImage = true
                 mediaLoader.setSource("StatusImage.qml",
                                     {
                                         "source": root.mediaUrl,
@@ -197,6 +253,7 @@ StatusRoundedComponent {
     }
 
     function setFallbackImage() {
+        d.plainImage = true
         d.isFallback = true
         mediaLoader.setSource("StatusImage.qml",
                             {
@@ -206,6 +263,7 @@ StatusRoundedComponent {
     }
 
     function setEmptyComponent() {
+        d.plainImage = true
         mediaLoader.setSource("StatusImage.qml",
                             {
                                 "source": "",

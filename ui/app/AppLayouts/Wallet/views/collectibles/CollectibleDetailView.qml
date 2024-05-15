@@ -14,6 +14,7 @@ import AppLayouts.Communities.panels 1.0
 import utils 1.0
 import shared.controls 1.0
 import shared.views 1.0
+import shared.popups 1.0
 
 import "../../stores"
 import "../../controls"
@@ -149,11 +150,11 @@ Item {
                             property int modelIndex: index
                             anchors.top: parent.top
                             anchors.left: parent.left
-                            sourceComponent: isCollectibleLoading ?
-                                                 collectibleimage:
+                            sourceComponent: root.isCollectibleLoading ?
+                                                 collectibleimageComponent:
                                                  root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType) ?
-                                                     privilegedCollectibleImage:
-                                                     collectibleimage
+                                                     privilegedCollectibleImageComponent:
+                                                     collectibleimageComponent
                             active: root.visible
                         }
                         Loader {
@@ -345,7 +346,7 @@ Item {
         }
     }
     Component {
-        id: privilegedCollectibleImage
+        id: privilegedCollectibleImageComponent
         // Special artwork representation for community `Owner and Master Token` token types:
         PrivilegedTokenArtworkPanel {
             size: PrivilegedTokenArtworkPanel.Size.Large
@@ -356,43 +357,52 @@ Item {
     }
 
     Component {
-        id: collectibleimage
-         StatusRoundedMedia {
-                id: collectibleImage
-                readonly property bool isEmpty: !mediaUrl.toString() && !fallbackImageUrl.toString()
-                radius: Style.current.radius
-                color: isError || isEmpty ? Theme.palette.baseColor5 : collectible.backgroundColor
-                mediaUrl: collectible.mediaUrl ?? ""
-                mediaType: !!collectible ? (modelIndex > 0 && collectible.mediaType.startsWith("video")) ? "" : collectible.mediaType: ""
-                fallbackImageUrl: collectible.imageUrl
-                manualMaxDimension: 240
+        id: collectibleimageComponent
+        StatusRoundedMedia {
+            id: collectibleImage
+            readonly property bool isEmpty: !mediaUrl.toString() && !fallbackImageUrl.toString()
+            radius: Style.current.radius
+            color: isError || isEmpty ? Theme.palette.baseColor5 : collectible.backgroundColor
+            mediaUrl: collectible.mediaUrl ?? ""
+            mediaType: !!collectible ? (modelIndex > 0 && collectible.mediaType.startsWith("video")) ? "" : collectible.mediaType: ""
+            fallbackImageUrl: collectible.imageUrl
+            manualMaxDimension: 240
+            interactive: !isError && !isEmpty
+            enabled: interactive
+            onImageClicked: (image, plain) => Global.openImagePopup(image, "", plain)
+            onVideoClicked: (url) => Global.openVideoPopup(url)
+            onOpenImageContextMenu: (url, isGif) => Global.openMenu(imageContextMenu, collectibleImage, { imageSource: url, isGif: isGif, isVideo: false })
+            onOpenVideoContextMenu: (url) => Global.openMenu(imageContextMenu, collectibleImage, { imageSource: url, url: url, isVideo: true, isGif: false })
 
-                Column {
-                    anchors.centerIn: parent
-                    visible: collectibleImage.isError || collectibleImage.isEmpty
-                    spacing: 10
+            Loader {
+                anchors.fill: parent
+                active: collectibleImage.isLoading
+                sourceComponent: LoadingComponent {radius: collectibleImage.radius}
+            }
 
-                    StatusIcon {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        icon: "frowny"
-                        opacity: 0.1
-                        color: Theme.palette.directColor1
-                    }
-                    StatusBaseText {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        horizontalAlignment: Qt.AlignHCenter
-                        color: Theme.palette.directColor6
-                        text: {
-                            if (collectibleImage.isError && collectibleImage.componentMediaType === StatusRoundedMedia.MediaType.Unkown) {
-                                return qsTr("Unsupported\nfile format")
-                            }
-                            if (!collectible.description && !collectible.name) {
-                                return qsTr("Info can't\nbe fetched")
-                            }
-                            return qsTr("Failed\nto load")
+            Loader {
+                anchors.fill: parent
+                active: collectibleImage.isError || collectibleImage.isEmpty
+                sourceComponent: LoadingErrorComponent {
+                    radius: collectibleImage.radius
+                    text: {
+                        if (collectibleImage.isError && collectibleImage.componentMediaType === StatusRoundedMedia.MediaType.Unkown) {
+                            return qsTr("Unsupported\nfile format")
                         }
+                        if (!collectible.description && !collectible.name) {
+                            return qsTr("Info can't\nbe fetched")
+                        }
+                        return qsTr("Failed\nto load")
                     }
                 }
             }
+
+            Component {
+                id: imageContextMenu
+                ImageContextMenu {
+                    onClosed: destroy()
+                }
+            }
+        }
     }
 }

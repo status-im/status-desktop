@@ -1,6 +1,7 @@
 module StatusQ.Components
 
 LoadingComponent 0.1 LoadingComponent.qml
+LoadingErrorComponent 0.1 LoadingErrorComponent.qml
 StatusAddress 0.1 StatusAddress.qml
 StatusAddressPanel 0.1 StatusAddressPanel.qml
 StatusAnimatedImage 0.1 StatusAnimatedImage.qml

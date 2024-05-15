@@ -9,24 +9,25 @@ StatusMenu {
     property string imageSource
     property string domain
     property bool requireConfirmationOnOpen: false
+    property bool isGif: root.imageSource.toLowerCase().endsWith(".gif")
+    property bool isVideo: root.imageSource.toLowerCase().endsWith(".mp4")
 
     QtObject {
         id: d
         readonly property bool isUnfurled: (!!url&&url!=="")
-        readonly property bool isGif: root.imageSource.toLowerCase().endsWith(".gif")
     }
 
     StatusAction {
-        text: d.isGif ? qsTr("Copy GIF") : qsTr("Copy image")
+        text: root.isGif ? qsTr("Copy GIF") : qsTr("Copy image")
         icon.name: "copy"
-        enabled: !!root.imageSource
+        enabled: !!root.imageSource && !root.isVideo
         onTriggered: {
             Utils.copyImageToClipboardByUrl(root.imageSource)
         }
     }
 
     StatusAction {
-        text: d.isGif ? qsTr("Download GIF") : qsTr("Download image")
+        text: root.isGif ? qsTr("Download GIF") : root.isVideo ? qsTr("Download video") : qsTr("Download image")
         icon.name: "download"
         enabled: !!root.imageSource
         onTriggered: {
