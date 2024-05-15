@@ -152,7 +152,7 @@ class LeftPanel(QObject):
                 raise ex
 
     @allure.step('Open Wallet section')
-    def open_wallet(self, attempts: int = 2) -> WalletScreen:
+    def open_wallet(self, attempts: int = 3) -> WalletScreen:
         self._wallet_button.click()
         try:
             return WalletScreen()
