@@ -72,6 +72,8 @@ proc init*(self: Service) =
     return
 
 proc saveConfiguration(self: Service, configuration: NodeConfigDto): bool =
+  # FIXME: this method should be removed and the configuration should be updated in the status-go
+  #  (see SetLogLevel, #14643)
   if(not self.settingsService.saveNodeConfiguration(configuration.toJsonNode())):
     error "error saving node configuration "
     return false
@@ -205,13 +207,15 @@ proc isDebugEnabled*(self: Service): bool =
   return logLevel in DEBUG_LOG_LEVELS
 
 proc setLogLevel*(self: Service, logLevel: LogLevel): bool =
-  var newConfiguration = self.configuration
-  newConfiguration.LogLevel = $logLevel
-  if self.saveConfiguration(newConfiguration):
-    self.events.emit(SIGNAL_NODE_LOG_LEVEL_UPDATE, NodeLogLevelUpdatedArgs(logLevel: logLevel))
-    return true
-  else:
+  let response = status_node_config.setLogLevel(logLevel)
+
+  if not response.error.isNil:
+    error "failed to set log level: ", errDescription = response.error.message
     return false
+
+  self.configuration.LogLevel = $logLevel
+  self.events.emit(SIGNAL_NODE_LOG_LEVEL_UPDATE, NodeLogLevelUpdatedArgs(logLevel: logLevel))
+  return true
 
 proc getNimbusProxyConfig(self: Service): bool =
   return self.configuration.NimbusProxyConfig.Enabled

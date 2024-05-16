@@ -41,3 +41,13 @@ proc disableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] =
   except RpcException as e:
     error "error doing rpc request", methodName = "disableCommunityHistoryArchiveProtocol", exception=e.msg
     raise newException(RpcException, e.msg)
+
+proc  setLogLevel*(logLevel: LogLevel): RpcResponse[JsonNode] =
+  try:
+    let payload = %*[{
+      "logLevel": $logLevel
+    }]
+    result = core.callPrivateRPC("setLogLevel".prefix, payload)
+  except RpcException as e:
+    error "error doing rpc request", methodName = "setLogLevel", exception=e.msg
+    raise newException(RpcException, e.msg)
