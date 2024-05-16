@@ -8,15 +8,11 @@ import QtWebChannel 1.15
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components 0.1
 
-import utils 1.0
-
 Item {
     id: root
 
     required property string projectId
     readonly property alias sdkReady: d.sdkReady
-    readonly property alias pairingsModel: d.pairingsModel
-    readonly property alias sessionsModel: d.sessionsModel
     readonly property alias webEngineLoader: loader
 
     property alias active: loader.active
@@ -108,67 +104,7 @@ Item {
         id: d
 
         property bool sdkReady: false
-        property ListModel pairingsModel: pairings
-        property ListModel sessionsModel: sessions
-
         property WebEngineView engine: loader.instance
-
-        onSdkReadyChanged: {
-            if (sdkReady)
-            {
-                d.resetPairingsModel()
-                d.resetSessionsModel()
-            }
-        }
-
-        function resetPairingsModel(entryCallback)
-        {
-            pairings.clear();
-
-            // We have to postpone `getPairings` call, cause otherwise:
-            // - the last made pairing will always have `active` prop set to false
-            // - expiration date won't be the correct one, but one used in session proposal
-            // - the list of pairings will display succesfully made pairing as inactive
-            Backpressure.debounce(this, 250, () => {
-                                      wcCalls.getPairings((pairList) => {
-                                                              for (let i = 0; i < pairList.length; i++) {
-                                                                  pairings.append(pairList[i]);
-
-                                                                  if (entryCallback) {
-                                                                      entryCallback(pairList[i])
-                                                                  }
-                                                              }
-                                                          });
-                                  })();
-        }
-
-        function resetSessionsModel() {
-            sessions.clear();
-
-            Backpressure.debounce(this, 250, () => {
-                                      wcCalls.getActiveSessions((sessionList) => {
-                                                                    for (var topic of Object.keys(sessionList)) {
-                                                                        sessions.append(sessionList[topic]);
-                                                                    }
-                                                                });
-                                  })();
-        }
-
-        function getPairingTopicFromPairingUrl(url)
-        {
-            if (!url.startsWith("wc:"))
-            {
-                return null;
-            }
-
-            const atIndex = url.indexOf("@");
-            if (atIndex < 0)
-            {
-                return null;
-            }
-
-            return url.slice(3, atIndex);
-        }
     }
 
     QtObject {
@@ -445,13 +381,11 @@ Item {
 
         function onDisconnectSessionResponse(topic, error) {
             console.debug(`WC WalletConnectSDK.onDisconnectSessionResponse; topic: ${topic}, error: ${error}`)
-            d.resetSessionsModel()
             root.sessionDelete(topic, error)
         }
 
         function onDisconnectPairingResponse(topic, error) {
             console.debug(`WC WalletConnectSDK.onDisconnectPairingResponse; topic: ${topic}, error: ${error}`)
-            d.resetPairingsModel()
         }
 
         function onBuildApprovedNamespacesResponse(approvedNamespaces, error) {
@@ -461,30 +395,22 @@ Item {
 
         function onApproveSessionResponse(session, error) {
             console.debug(`WC WalletConnectSDK.onApproveSessionResponse; sessionTopic: ${JSON.stringify(session, null, 2)}, error: ${error}`)
-            d.resetPairingsModel()
-            d.resetSessionsModel()
             root.approveSessionResult(session, error)
         }
 
         function onRejectSessionResponse(error) {
             console.debug(`WC WalletConnectSDK.onRejectSessionResponse; error: ${error}`)
             root.rejectSessionResult(error)
-            d.resetPairingsModel()
-            d.resetSessionsModel()
         }
 
         function onRespondSessionRequestResponse(error) {
             console.debug(`WC WalletConnectSDK.onRespondSessionRequestResponse; error: ${error}`)
             root.sessionRequestUserAnswerResult(true, error)
-            d.resetPairingsModel()
-            d.resetSessionsModel()
         }
 
         function onRejectSessionRequestResponse(error) {
             console.debug(`WC WalletConnectSDK.onRejectSessionRequestResponse; error: ${error}`)
             root.sessionRequestUserAnswerResult(false, error)
-            d.resetPairingsModel()
-            d.resetSessionsModel()
         }
 
         function onSessionProposal(details) {
@@ -507,8 +433,6 @@ Item {
         function onSessionDelete(details) {
             console.debug(`WC WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details, null, 2)}`)
             root.sessionDelete(details.topic, "")
-            d.resetPairingsModel()
-            d.resetSessionsModel()
         }
 
         function onSessionExpire(details) {
@@ -551,14 +475,6 @@ Item {
             console.debug(`WC WalletConnectSDK.onRejectAuthResponse; error: ${error}`)
             root.authRequestUserAnswerResult(false, error)
         }
-    }
-
-    ListModel {
-        id: pairings
-    }
-
-    ListModel {
-        id: sessions
     }
 
     WebEngineLoader {
