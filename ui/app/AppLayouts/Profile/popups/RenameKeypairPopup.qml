@@ -140,6 +140,7 @@ StatusModal {
         },
         StatusButton {
             text: qsTr("Save changes")
+            objectName: "saveRenameKeypairChangesButton"
             enabled: d.entryValid
             focus: true
             Keys.onReturnPressed: function(event) {
