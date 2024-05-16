@@ -32,7 +32,8 @@ Rectangle {
     property var collectiblesModel
 
     property bool requirementsCheckPending
-    property bool joinPermissionsCheckSuccessful
+    property bool checkingPermissionToJoinInProgress
+    property bool joinPermissionsCheckCompletedWithoutErrors
 
     readonly property bool lostPermissionToJoin: d.lostPermissionToJoin
     readonly property bool lostChannelPermissions: d.lostChannelPermissions
@@ -257,7 +258,7 @@ Rectangle {
 
     CommunityEligibilityTag {
         id: eligibilityHintBubble
-        visible: !root.requirementsCheckPending && root.joinPermissionsCheckSuccessful
+        visible: !root.checkingPermissionToJoinInProgress && root.joinPermissionsCheckCompletedWithoutErrors
         eligibleToJoinAs: root.eligibleToJoinAs
         isEditMode: root.isEditMode
         isDirty: root.isDirty

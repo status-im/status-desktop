@@ -33,8 +33,9 @@ Control {
     required property bool allAddressesToRevealBelongToSingleNonProfileKeypair
     required property int /*PermissionTypes.Type*/ eligibleToJoinAs
 
-    property bool requirementsCheckPending: false
-    property bool joinPermissionsCheckSuccessful
+    property bool requirementsCheckPending
+    property bool checkingPermissionToJoinInProgress
+    property bool joinPermissionsCheckCompletedWithoutErrors
 
     required property string communityId
     required property string communityName
@@ -103,18 +104,18 @@ Control {
         }
 
         readonly property string tooltipText: {
-            if (root.requirementsCheckPending)
+            if (root.requirementsCheckPending || root.checkingPermissionToJoinInProgress)
                 return qsTr("Requirements check pending")
 
-            if (!root.joinPermissionsCheckSuccessful)
-                return qsTr("Checking permissions to join failed")
+            if (!root.joinPermissionsCheckCompletedWithoutErrors)
+                return qsTr("Checking permissions failed")
 
             return ""
         }
 
         readonly property var saveButton: StatusButton {
             visible: root.isEditMode
-            interactive: d.dirty && !root.requirementsCheckPending && root.joinPermissionsCheckSuccessful
+            interactive: d.dirty && !root.requirementsCheckPending && root.joinPermissionsCheckCompletedWithoutErrors
             loading: root.requirementsCheckPending
             type: d.lostCommunityPermission || d.lostChannelPermissions ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal
             tooltip.text: {
@@ -164,8 +165,8 @@ Control {
 
         readonly property var shareAddressesButton: StatusButton {
             visible: !root.isEditMode
-            interactive: root.eligibleToJoinAs !== PermissionTypes.Type.None && root.joinPermissionsCheckSuccessful
-            loading: root.requirementsCheckPending
+            interactive: !root.checkingPermissionToJoinInProgress && root.eligibleToJoinAs !== PermissionTypes.Type.None && root.joinPermissionsCheckCompletedWithoutErrors
+            loading: root.checkingPermissionToJoinInProgress
             tooltip.text: {
                 if (interactive)
                     return ""
@@ -331,7 +332,8 @@ Control {
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
             requirementsCheckPending: root.requirementsCheckPending
-            joinPermissionsCheckSuccessful: root.joinPermissionsCheckSuccessful
+            checkingPermissionToJoinInProgress: root.checkingPermissionToJoinInProgress
+            joinPermissionsCheckCompletedWithoutErrors: root.joinPermissionsCheckCompletedWithoutErrors
             communityName: root.communityName
             communityIcon: root.communityIcon
             eligibleToJoinAs: root.eligibleToJoinAs

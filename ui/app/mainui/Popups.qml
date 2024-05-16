@@ -718,7 +718,8 @@ QtObject {
                 id: dialogRoot
 
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
-                joinPermissionsCheckSuccessful: root.rootStore.joinPermissionsCheckSuccessful
+                checkingPermissionToJoinInProgress: root.rootStore.checkingPermissionToJoinInProgress
+                joinPermissionsCheckCompletedWithoutErrors: root.rootStore.joinPermissionsCheckCompletedWithoutErrors
 
                 walletAccountsModel: root.rootStore.walletAccountsModel
                 walletCollectiblesModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
@@ -968,7 +969,8 @@ QtObject {
                 communityIcon: chatStore.sectionDetails.image
 
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
-                joinPermissionsCheckSuccessful: root.rootStore.joinPermissionsCheckSuccessful
+                checkingPermissionToJoinInProgress: root.rootStore.checkingPermissionToJoinInProgress
+                joinPermissionsCheckCompletedWithoutErrors: root.rootStore.joinPermissionsCheckCompletedWithoutErrors
 
                 introMessage: chatStore.sectionDetails.introMessage
 
