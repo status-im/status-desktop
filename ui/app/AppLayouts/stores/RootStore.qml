@@ -18,7 +18,8 @@ QtObject {
     property var communitiesModuleInst: communitiesModule
     property bool newVersionAvailable: false
     readonly property bool requirementsCheckPending: communitiesModuleInst.requirementsCheckPending
-    readonly property bool joinPermissionsCheckSuccessful: communitiesModuleInst.joinPermissionsCheckSuccessful
+    readonly property bool checkingPermissionToJoinInProgress: communitiesModuleInst.checkingPermissionToJoinInProgress
+    readonly property bool joinPermissionsCheckCompletedWithoutErrors: communitiesModuleInst.joinPermissionsCheckCompletedWithoutErrors
     readonly property bool channelsPermissionsCheckSuccessful: communitiesModuleInst.channelsPermissionsCheckSuccessful
     property string latestVersion
     property string downloadURL

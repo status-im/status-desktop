@@ -97,6 +97,7 @@ method setAllCommunities*(self: Module, communities: seq[CommunityDto])
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
 proc buildTokensAndCollectiblesFromAllCommunities(self: Module)
 proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto])
+proc setCheckingPermissionToJoinInProgress(self: Module, inProgress: bool)
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -131,7 +132,7 @@ proc newModule*(
   result.moduleLoaded = false
   result.events = events
   result.curatedCommunitiesLoaded = false
-  result.checkingPermissionToJoinInProgress = false
+  result.setCheckingPermissionToJoinInProgress(false)
   result.checkingAllChannelPermissionsInProgress = false
 
 method delete*(self: Module) =
@@ -859,7 +860,7 @@ method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq
 
   self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
   self.view.setJoinPermissionsCheckSuccessful(false)
-  self.checkingPermissionToJoinInProgress = true
+  self.setCheckingPermissionToJoinInProgress(true)
 
   self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
   self.view.setChannelsPermissionsCheckSuccessful(false)
@@ -938,9 +939,18 @@ proc updateCheckingPermissionsInProgressIfNeeded(self: Module, inProgress = fals
     return
   self.view.setCheckingPermissionsInProgress(inProgress)
 
+method getCheckingPermissionToJoinInProgress*(self: Module): bool =
+  self.checkingPermissionToJoinInProgress
+
+proc setCheckingPermissionToJoinInProgress(self: Module, inProgress: bool) =
+  if self.checkingPermissionToJoinInProgress == inProgress:
+    return
+  self.checkingPermissionToJoinInProgress = inProgress
+  self.view.checkingPermissionToJoinInProgressChanged()
+
 method onCommunityCheckPermissionsToJoinFailed*(self: Module, communityId: string, error: string) =
   self.view.setJoinPermissionsCheckSuccessful(false)
-  self.checkingPermissionToJoinInProgress = false
+  self.setCheckingPermissionToJoinInProgress(false)
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
 method onCommunityCheckAllChannelPermissionsFailed*(self: Module, communityId: string, error: string) =
@@ -954,7 +964,7 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: str
       self.joiningCommunityDetails.communityIdForPermissions != communityId:
     return
   self.applyPermissionResponse(communityId, checkPermissionsToJoinResponse.permissions)
-  self.checkingPermissionToJoinInProgress = false
+  self.setCheckingPermissionToJoinInProgress(false)
   self.view.setJoinPermissionsCheckSuccessful(true)
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 

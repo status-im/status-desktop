@@ -267,3 +267,6 @@ method removeCommunityChat*(self: AccessInterface, communityId: string, channelI
 
 method promoteSelfToControlNode*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getCheckingPermissionToJoinInProgress*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

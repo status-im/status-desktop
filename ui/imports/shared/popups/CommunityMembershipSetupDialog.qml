@@ -29,7 +29,8 @@ StatusStackModal {
     required property string communityIcon
     required property bool requirementsCheckPending
 
-    property bool joinPermissionsCheckSuccessful
+    property bool checkingPermissionToJoinInProgress
+    property bool joinPermissionsCheckCompletedWithoutErrors
 
     property string introMessage
 
@@ -87,26 +88,23 @@ StatusStackModal {
 
     finishButton: StatusButton {
         interactive: {
-            if (root.isInvitationPending)
+            if (root.isInvitationPending || d.accessType !== Constants.communityChatOnRequestAccess)
                 return true
 
-            if (root.requirementsCheckPending || !root.joinPermissionsCheckSuccessful)
+            if (root.checkingPermissionToJoinInProgress || !root.joinPermissionsCheckCompletedWithoutErrors)
                 return false
-
-            if (d.accessType !== Constants.communityChatOnRequestAccess)
-                return true
 
             return d.eligibleToJoinAs !== PermissionTypes.Type.None
         }
-        loading: root.requirementsCheckPending && !root.isInvitationPending
+        loading: root.checkingPermissionToJoinInProgress && !root.isInvitationPending
         tooltip.text: {
             if (interactive)
                 return ""
 
-            if (root.requirementsCheckPending)
+            if (root.checkingPermissionToJoinInProgress)
                 return qsTr("Requirements check pending")
 
-            if (!root.joinPermissionsCheckSuccessful)
+            if (!root.joinPermissionsCheckCompletedWithoutErrors)
                 return qsTr("Checking permissions to join failed")
 
             return ""
@@ -199,6 +197,7 @@ StatusStackModal {
         property int eligibleToJoinAs: PermissionsHelpers.isEligibleToJoinAs(root.permissionsModel)
         readonly property var _con: Connections {
             target: root.permissionsModel
+            ignoreUnknownSignals: true
             function onTokenCriteriaUpdated() {
                 d.eligibleToJoinAs = PermissionsHelpers.isEligibleToJoinAs(root.permissionsModel)
             }
@@ -362,7 +361,8 @@ StatusStackModal {
             communityName: root.communityName
             communityIcon: root.communityIcon
             requirementsCheckPending: root.requirementsCheckPending
-            joinPermissionsCheckSuccessful: root.joinPermissionsCheckSuccessful
+            checkingPermissionToJoinInProgress: root.checkingPermissionToJoinInProgress
+            joinPermissionsCheckCompletedWithoutErrors: root.joinPermissionsCheckCompletedWithoutErrors
 
             walletAccountsModel: d.initialAddressesModel
 
@@ -454,7 +454,7 @@ StatusStackModal {
                     StatusRoundedImage {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: 64
-                        Layout.preferredHeight: Layout.preferredWidth
+                        Layout.preferredHeight: width
                         visible: ((image.status == Image.Loading) ||
                                   (image.status == Image.Ready)) &&
                                  !image.isError
@@ -477,7 +477,7 @@ StatusStackModal {
                 anchors.bottomMargin: Style.current.bigPadding
                 eligibleToJoinAs: d.eligibleToJoinAs
                 isEditMode: root.isEditMode
-                visible: !root.isInvitationPending && !root.requirementsCheckPending && root.joinPermissionsCheckSuccessful &&
+                visible: !root.isInvitationPending && !root.checkingPermissionToJoinInProgress && root.joinPermissionsCheckCompletedWithoutErrors &&
                          d.accessType === Constants.communityChatOnRequestAccess
             }
         }

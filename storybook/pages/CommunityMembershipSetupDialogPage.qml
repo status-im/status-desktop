@@ -1,6 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml 2.15
 
 import Storybook 1.0
 import Models 1.0
@@ -38,7 +39,7 @@ SplitView {
                 closePolicy: Popup.NoAutoClose
 
                 isEditMode: ctrlIsEditMode.checked
-                communityId: "community_id"
+                communityId: "ddls"
                 communityName: ctrlCommunityName.text
                 communityIcon: {
                     if (ctrlIconStatus.checked)
@@ -55,7 +56,8 @@ SplitView {
 
                 isInvitationPending: ctrlIsInvitationPending.checked
                 requirementsCheckPending: ctrlRequirementsCheckPending.checked
-                joinPermissionsCheckSuccessful: ctrlJoinPermissionsCheckSuccessful.checked
+                checkingPermissionToJoinInProgress: ctrlCheckingPermissionToJoinInProgress.checked
+                joinPermissionsCheckCompletedWithoutErrors: ctrlJoinPermissionsCheckCompletedWithoutErrors.checked
 
                 walletAccountsModel: WalletAccountsModel {}
                 walletAssetsModel: root.walletAssetStore.groupedAccountAssetsModel
@@ -220,10 +222,24 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
             }
 
             CheckBox {
-                Layout.leftMargin: 12
-                id: ctrlJoinPermissionsCheckSuccessful
+                Layout.leftMargin: 20
+                id: ctrlCheckingPermissionToJoinInProgress
+                enabled: !ctrlRequirementsCheckPending.checked
                 visible: !ctrlIsInvitationPending.checked
-                text: "Join permission successful"
+                text: "Checking perms to join"
+
+                Binding on checked {
+                    when: ctrlRequirementsCheckPending.checked
+                    value: true
+                    restoreMode: Binding.RestoreValue
+                }
+            }
+
+            CheckBox {
+                Layout.leftMargin: 12
+                id: ctrlJoinPermissionsCheckCompletedWithoutErrors
+                visible: !ctrlIsInvitationPending.checked
+                text: "Join perm. check completed w/o errors"
                 checked: true
             }
 

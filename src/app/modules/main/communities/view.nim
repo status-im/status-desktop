@@ -55,7 +55,7 @@ QtObject:
       discordImportHasCommunityImage: bool
       downloadingCommunityHistoryArchives: bool
       checkingPermissionsInProgress: bool
-      joinPermissionsCheckSuccessful: bool
+      joinPermissionsCheckCompletedWithoutErrors: bool
       channelsPermissionsCheckSuccessful: bool
       myRevealedAddressesStringForCurrentCommunity: string
       myRevealedAirdropAddressForCurrentCommunity: string
@@ -123,7 +123,7 @@ QtObject:
     result.collectiblesListModel = newTokenListModel()
     result.collectiblesListModelVariant = newQVariant(result.collectiblesListModel)
     result.checkingPermissionsInProgress = false
-    result.joinPermissionsCheckSuccessful = false
+    result.joinPermissionsCheckCompletedWithoutErrors = false
     result.channelsPermissionsCheckSuccessful = false
 
   proc load*(self: View) =
@@ -802,17 +802,26 @@ QtObject:
     read = getCheckingPermissionsInProgress
     notify = checkingPermissionsInProgressChanged
 
+  proc getCheckingPermissionToJoinInProgress*(self: View): bool {.slot.} =
+    self.delegate.getCheckingPermissionToJoinInProgress
+
+  proc checkingPermissionToJoinInProgressChanged*(self: View) {.signal.}
+
+  QtProperty[bool] checkingPermissionToJoinInProgress:
+    read = getCheckingPermissionToJoinInProgress
+    notify = checkingPermissionToJoinInProgressChanged
+
   proc joinPermissionsCheckSuccessfulChanged*(self: View) {.signal.}
 
   proc setJoinPermissionsCheckSuccessful*(self: View, successful: bool) =
-    if (self.joinPermissionsCheckSuccessful == successful): return
-    self.joinPermissionsCheckSuccessful = successful
+    if (self.joinPermissionsCheckCompletedWithoutErrors == successful): return
+    self.joinPermissionsCheckCompletedWithoutErrors = successful
     self.joinPermissionsCheckSuccessfulChanged()
 
   proc getJoinPermissionsCheckSuccessful*(self: View): bool {.slot.} =
-    return self.joinPermissionsCheckSuccessful
+    return self.joinPermissionsCheckCompletedWithoutErrors
 
-  QtProperty[bool] joinPermissionsCheckSuccessful:
+  QtProperty[bool] joinPermissionsCheckCompletedWithoutErrors:
     read = getJoinPermissionsCheckSuccessful
     notify = joinPermissionsCheckSuccessfulChanged
 
