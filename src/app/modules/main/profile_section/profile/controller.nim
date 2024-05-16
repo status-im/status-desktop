@@ -91,7 +91,7 @@ proc getBio*(self: Controller): string =
   self.settingsService.getBio()
 
 proc setBio*(self: Controller, bio: string): bool =
-  self.settingsService.saveBio(bio)
+  self.profileService.setBio(bio)
 
 proc saveProfileShowcasePreferences*(self: Controller, preferences: ProfileShowcasePreferencesDto, revealedAddresses: seq[string]) =
   self.profileService.saveProfileShowcasePreferences(preferences)

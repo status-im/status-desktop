@@ -88,15 +88,29 @@ QtObject:
   proc setDisplayName*(self: Service, displayName: string): bool =
     try:
       let response = status_accounts.setDisplayName(displayName)
-      if(not response.error.isNil):
+      if not response.error.isNil:
         error "could not set display name"
         return false
-      if(not self.settingsService.saveDisplayName(displayName)):
-        error "could save display name to the settings"
+      if not self.settingsService.saveDisplayName(displayName):
+        error "could not save display name to the settings"
         return false
       return true
     except Exception as e:
       error "error: ", procName="setDisplayName", errName = e.name, errDesription = e.msg
+      return false
+
+  proc setBio*(self: Service, bio: string): bool =
+    try:
+      let response = status_accounts.setBio(bio)
+      if not response.error.isNil:
+        error "could not set bio"
+        return false
+      if not self.settingsService.saveBio(bio):
+        error "could not set bio to the settings"
+        return false
+      return true
+    except Exception as e:
+      error "error: ", procName="setBio", errName = e.name, errDesription = e.msg
       return false
 
   proc requestProfileShowcasePreferences*(self: Service) =

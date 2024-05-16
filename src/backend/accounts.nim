@@ -421,6 +421,10 @@ proc setDisplayName*(displayName: string): RpcResponse[JsonNode] =
   let payload = %* [displayName]
   result = core.callPrivateRPC("setDisplayName".prefix, payload)
 
+proc setBio*(bio: string): RpcResponse[JsonNode] =
+  let payload = %* [bio]
+  result = core.callPrivateRPC("setBio".prefix, payload)
+
 proc getDerivedAddresses*(password: string, derivedFrom: string, paths: seq[string]): RpcResponse[JsonNode] =
   let payload = %* [password, derivedFrom, paths]
   result = core.callPrivateRPC("wallet_getDerivedAddresses", payload)
