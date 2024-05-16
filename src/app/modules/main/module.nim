@@ -331,7 +331,10 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     # We will update the model later when we finish loading the accounts
     self.controller.asyncGetRevealedAccountsForAllMembers(communityDetails.id)
 
-  let (unviewedCount, notificationsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(communityDetails.id)
+  let (unviewedCount, notificationsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
+    communityDetails.id,
+    communityDetails.muted,
+  )
 
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
   let active = self.getActiveSectionId() == communityDetails.id # We must pass on if the current item section is currently active to keep that property as it is
@@ -665,7 +668,10 @@ method onChatsLoaded*[T](
     sharedUrlsService,
     networkService
   )
-  let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(myPubKey)
+  let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
+    myPubKey,
+    sectionIsMuted = false
+  )
   let personalChatSectionItem = initItem(
     myPubKey,
     sectionType = SectionType.Chat,
@@ -1091,7 +1097,8 @@ method communityEdited*[T](
   var communitySectionItem = self.createCommunitySectionItem(community)
   # We need to calculate the unread counts because the community update doesn't come with it
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
-    communitySectionItem.id
+    communitySectionItem.id,
+    communitySectionItem.muted,
   )
   communitySectionItem.setHasNotification(unviewedMessagesCount > 0)
   communitySectionItem.setNotificationsCount(unviewedMentionsCount)

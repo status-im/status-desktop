@@ -97,6 +97,9 @@ method onMarkAllMessagesRead*(self: AccessInterface, chat: ChatDto) {.base.} =
 method onMarkMessageAsUnread*(self: AccessInterface, chat: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onSectionMutedChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onCommunityMuted*(self: AccessInterface, chatId: string, muted: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 

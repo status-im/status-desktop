@@ -2213,6 +2213,9 @@ QtObject:
         return
 
       let muted = if (MutedType(mutedType) == MutedType.Unmuted): false else: true
+
+      self.communities[communityId].muted = muted
+
       self.events.emit(SIGNAL_COMMUNITY_MUTED,
         CommunityMutedArgs(communityId: communityId, muted: muted))
     except Exception as e:

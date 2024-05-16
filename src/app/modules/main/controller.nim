@@ -496,9 +496,9 @@ proc setActiveSectionId*(self: Controller, sectionId: string) =
 proc getAllChats*(self: Controller): seq[ChatDto] =
   result = self.chatService.getAllChats()
 
-proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string):
+proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string, sectionIsMuted: bool):
     tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
-  return self.chatService.sectionUnreadMessagesAndMentionsCount(communityId)
+  return self.chatService.sectionUnreadMessagesAndMentionsCount(communityId, sectionIsMuted)
 
 proc setCurrentUserStatus*(self: Controller, status: StatusType) =
   if(self.settingsService.saveSendStatusUpdates(status)):
