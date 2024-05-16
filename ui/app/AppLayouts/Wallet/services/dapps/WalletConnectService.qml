@@ -103,5 +103,9 @@ QtObject {
     readonly property QtObject _d: QtObject {
         property var currentSessionProposal: null
         property var acceptedSessionProposal: null
+
+        readonly property DAppsListProvider dappsProvider: DAppsListProvider {
+            sdk: root.wcSDK
+        }
     }
 }

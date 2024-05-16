@@ -1,4 +1,5 @@
 WalletConnectSDK 1.0 WalletConnectSDK.qml
 WalletConnectService 1.0 WalletConnectService.qml
+DAppsListProvider 1.0 DAppsListProvider.qml
 
 Helpers 1.0 helpers.js
