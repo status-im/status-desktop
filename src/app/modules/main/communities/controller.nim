@@ -330,9 +330,6 @@ proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] 
 proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard, importing: bool) =
   self.communityService.requestCommunityInfo(communityId, shard, importing)
 
-proc importCommunity*(self: Controller, communityKey: string) =
-  self.communityService.asyncImportCommunity(communityKey)
-
 proc setCommunityMuted*(self: Controller, communityId: string, mutedType: int) =
   self.communityService.setCommunityMuted(communityId, mutedType)
 

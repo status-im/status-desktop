@@ -80,9 +80,6 @@ method requestCommunityInfo*(self: AccessInterface, communityId: string, shardCl
 method requestCommunityInfo*(self: AccessInterface, communityId: string, shard: Shard, importing: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method importCommunity*(self: AccessInterface, communityKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method myRequestAdded*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -420,10 +420,6 @@ method userCanJoin*(self: Module, communityId: string): bool =
 method isMyCommunityRequestPending*(self: Module, communityId: string): bool =
   self.controller.isMyCommunityRequestPending(communityId)
 
-method communityImported*(self: Module, community: CommunityDto) =
-  self.view.addOrUpdateItem(self.getCommunityItem(community))
-  self.view.emitImportingCommunityStateChangedSignal(community.id, ImportCommunityState.Imported.int, errorMsg = "")
-
 method communityDataImported*(self: Module, community: CommunityDto) =
   self.view.addItem(self.getCommunityItem(community))
   self.buildTokensAndCollectiblesFromCommunities(@[community])
@@ -432,15 +428,8 @@ method communityDataImported*(self: Module, community: CommunityDto) =
 method communityInfoRequestFailed*(self: Module, communityId: string, errorMsg: string) =
   self.view.emitCommunityInfoRequestCompleted(communityId, errorMsg)
 
-method importCommunity*(self: Module, communityId: string) =
-  self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingInProgress.int, errorMsg = "")
-  self.controller.importCommunity(communityId)
-
 method onImportCommunityErrorOccured*(self: Module, communityId: string, error: string) =
   self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingError.int, error)
-
-method onImportCommunityCancelled*(self: Module, communityId: string) =
-  self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingCanceled.int, errorMsg = "")
 
 method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: seq[string]) =
   self.view.setDiscordDataExtractionInProgress(true)
