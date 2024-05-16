@@ -22,7 +22,7 @@ import StatusQ.Core.Theme 0.1
             width: parent.width
             rootStore: WalletStores.RootStore
             addresses: [
-                "eth:arb:opt:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
+                "eth:arb1:oeth:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
                 "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
             ]
         }

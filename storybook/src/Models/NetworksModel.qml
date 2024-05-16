@@ -17,10 +17,10 @@ QtObject {
             return "eth"
 
         if(chainId === root.optimismNet)
-            return "opt"
+            return "oeth"
 
         if(chainId === root.arbitrumNet)
-            return "arb"
+            return "arb1"
 
         if(chainId === root.hermezNet)
             return "her"
@@ -95,7 +95,7 @@ QtObject {
                 blockExplorerUrl: "https://optimistic.etherscan.io",
                 iconUrl: "network/Network=Optimism",
                 chainColor: "#E90101",
-                shortName: "opt",
+                shortName: "oeth",
                 nativeCurrencyName: "Ether",
                 nativeCurrencySymbol: "ETH",
                 nativeCurrencyDecimals: 18,
@@ -123,7 +123,7 @@ QtObject {
                 blockExplorerUrl: "https://arbiscan.io/",
                 iconUrl: "network/Network=Arbitrum",
                 chainColor: "#51D0F0",
-                shortName: "arb",
+                shortName: "arb1",
                 nativeCurrencyName: "Ether",
                 nativeCurrencySymbol: "ETH",
                 nativeCurrencyDecimals: 18,

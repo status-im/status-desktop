@@ -59,7 +59,7 @@ SplitView {
             }
 
             function getNetworkShortNames() {
-                return "eth:opt:arb:"
+                return "eth:oeth:arb1:"
             }
 
             function getAllNetworksChainIds() {

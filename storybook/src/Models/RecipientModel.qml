@@ -9,7 +9,7 @@ QtObject {
             address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
             ens: ""
             favourite: true
-            chainShortNames: "eth:arb:opt"
+            chainShortNames: "eth:arb1:oeth"
             isTest: false
             checked: true
             allChecked: true
