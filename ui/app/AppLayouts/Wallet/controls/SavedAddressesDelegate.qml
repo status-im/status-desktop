@@ -63,7 +63,7 @@ StatusListItem {
         height: 40
         color: Utils.getColorForId(root.colorId)
         isLetterIdenticon: true
-        useLetterIdenticonStrictBgColor: false
+        letterIdenticonBgWithAlpha: true
     }
 
     statusListItemIcon.hoverEnabled: true
