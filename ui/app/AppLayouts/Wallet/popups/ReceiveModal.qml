@@ -233,7 +233,7 @@ StatusModal {
                         emoji: root.selectedAccount.emoji
                         charactersLen: 1
                         isLetterIdenticon: root.selectedAccount.name && !root.selectedAccount.emoji
-                        useLetterIdenticonStrictBgColor: !root.selectedAccount.name || root.selectedAccount.emoji
+                        letterIdenticonBgWithAlpha: root.selectedAccount.name && !root.selectedAccount.emoji
                     }
                 }
             }

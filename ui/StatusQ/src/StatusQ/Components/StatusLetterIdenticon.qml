@@ -21,10 +21,10 @@ Rectangle {
     //
     // characterLen is ignored
     property bool useAcronymForLetterIdenticon: false
-    property bool strictBackgroundColor: !useAcronymForLetterIdenticon
+    property bool backgroundWithAlpha: useAcronymForLetterIdenticon
 
     color: {
-        if (root.strictBackgroundColor)
+        if (!root.backgroundWithAlpha)
             return root.letterIdenticonColor
 
         return Qt.rgba(root.letterIdenticonColor.r,
@@ -57,7 +57,7 @@ Rectangle {
         font.weight: Font.Bold
         font.pixelSize: root.letterSize
         color: {
-            if (!root.strictBackgroundColor)
+            if (root.backgroundWithAlpha)
                 return root.letterIdenticonColor
 
             return d.luminance(root.letterIdenticonColor) > 0.5 ? Qt.rgba(0, 0, 0, 0.5) : Qt.rgba(1, 1, 1, 0.7)
