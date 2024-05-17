@@ -2,6 +2,7 @@ import allure
 
 import configs
 import driver
+from driver.objects_access import walk_children
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.text_edit import TextEdit
@@ -22,6 +23,9 @@ class RenameKeypairPopup(BasePopup):
 
     @allure.step('Rename keypair')
     def rename_keypair(self, name):
-        self._rename_text_edit.text = name
+        for child in walk_children(self.object):
+            if getattr(child, 'id', '') == 'edit':
+                text_edit = TextEdit(real_name=driver.objectMap.realName(child))
+                text_edit.text = name
         self._save_changes_button.click()
         self.wait_until_hidden()
