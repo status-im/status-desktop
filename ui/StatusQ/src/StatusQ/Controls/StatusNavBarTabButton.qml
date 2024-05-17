@@ -12,7 +12,6 @@ StatusIconTabButton {
     property Component popupMenu
     property alias stateIcon: stateIcon
 
-
     StatusToolTip {
         id: statusTooltip
         visible: statusNavBarTabButton.hovered && !!statusTooltip.text

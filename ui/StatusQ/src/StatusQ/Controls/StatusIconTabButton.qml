@@ -32,6 +32,8 @@ TabButton {
             asset.height: asset.isImage ? 28 : statusIconTabButton.icon.height
             asset.color: (statusIconTabButton.hovered || highlighted || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
             asset.isLetterIdenticon: statusIconTabButton.name !== "" && !asset.isImage
+            asset.charactersLen: 1
+            asset.useAcronymForLetterIdenticon: false
             name: statusIconTabButton.name
         }
     }

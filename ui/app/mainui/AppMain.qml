@@ -715,7 +715,7 @@ Item {
                 implicitHeight: 32
                 identicon.asset.width: width
                 identicon.asset.height: height
-                identicon.asset.charactersLen: 2
+                identicon.asset.useAcronymForLetterIdenticon: true
                 identicon.asset.color: Utils.colorForPubkey(appMain.rootStore.userProfileInst.pubKey)
                 identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey,
                                                                                appMain.rootStore.userProfileInst.preferredName)

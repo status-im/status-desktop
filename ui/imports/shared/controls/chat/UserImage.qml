@@ -36,7 +36,6 @@ Loader {
             height: root.imageHeight
             color: Utils.colorForColorId(root.colorId)
             name: root.image
-            charactersLen: 2
             isImage: true
         }
         ringSettings {

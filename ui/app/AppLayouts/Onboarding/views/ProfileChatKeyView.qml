@@ -84,7 +84,6 @@ Item {
                 asset.height: 86
                 asset.letterSize: 32
                 asset.color: Utils.colorForPubkey(d.publicKey)
-                asset.charactersLen: 2
                 asset.isImage: !!asset.name
                 asset.imgIsIdenticon: false
                 asset.name: d.image
