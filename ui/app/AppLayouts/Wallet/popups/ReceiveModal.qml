@@ -233,12 +233,11 @@ StatusModal {
                         emoji: root.selectedAccount.emoji
                         charactersLen: 1
                         isLetterIdenticon: root.selectedAccount.name && !root.selectedAccount.emoji
-                        useAcronymForLetterIdenticon: root.selectedAccount.name && !root.selectedAccount.emoji
+                        useLetterIdenticonStrictBgColor: !root.selectedAccount.name || root.selectedAccount.emoji
                     }
                 }
             }
         }
-
 
         Item {
             width: parent.width

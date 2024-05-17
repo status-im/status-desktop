@@ -55,7 +55,7 @@ StatusDialog {
             asset {
                 color: Utils.getColorForId(root.colorId)
                 isLetterIdenticon: true
-                useAcronymForLetterIdenticon: true
+                useLetterIdenticonStrictBgColor: false
             }
         }
     }

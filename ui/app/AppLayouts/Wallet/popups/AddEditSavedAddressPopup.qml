@@ -562,7 +562,7 @@ StatusModal {
                             emoji: model.emoji
                             color: model.color
                             isLetterIdenticon: !model.icon
-                            useAcronymForLetterIdenticon: model.type === AddEditSavedAddressPopup.CardType.SavedAddress
+                            useLetterIdenticonStrictBgColor: model.type !== AddEditSavedAddressPopup.CardType.SavedAddress
                             charactersLen: 2
                         }
                     }
