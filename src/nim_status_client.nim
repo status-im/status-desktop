@@ -12,6 +12,9 @@ import app/boot/app_controller
 when defined(macosx) and defined(arm64):
   import posix
 
+when defined(windows):
+    {.link: "../status.o".}
+
 logScope:
   topics = "status-app"
 
@@ -32,18 +35,14 @@ proc determineOpenUri(): string =
     result = OPENURI
 
 proc determineStatusAppIconPath(): string =
+  if main_constants.IS_MACOS or defined(windows):
+    return "" # not used in macOS and Windows
+
+  # update the linux icon
   if defined(production):
-    if main_constants.IS_MACOS:
-      return "" # not used in macOS
-    elif defined(windows):
-      return "/../resources/status.png"
-    else:
-      return "/../status.png"
-  else:
-    if main_constants.IS_MACOS:
-      return "" # not used in macOS
-    else:
-      return "/../status-dev.png"
+    return "/../status.png"
+
+  return "/../status-dev.png" 
 
 proc prepareLogging() =
   # Outputs logs in the node tab

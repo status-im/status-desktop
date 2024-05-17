@@ -531,6 +531,12 @@ endif
 
 NIM_SOURCES := .update.timestamp $(shell find src -type f)
 
+STATUS_RC_FILE := status.rc
+
+# Building the resource files for windows to set the icon
+compile_windows_resources:
+	windres $(STATUS_RC_FILE) -o status.o
+
 ifeq ($(detected_OS),Windows)
  NIM_STATUS_CLIENT := bin/nim_status_client.exe
 else
@@ -735,7 +741,7 @@ STATUS_CLIENT_7Z ?= pkg/Status.7z
 $(STATUS_CLIENT_EXE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_EXE): OUTPUT := tmp/windows/dist/Status
 $(STATUS_CLIENT_EXE): INSTALLER_OUTPUT := pkg
-$(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBUILT_DLLS)
+$(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBUILT_DLLS)
 	rm -rf pkg/*.exe tmp/windows/dist
 	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n $(OUTPUT)/bin/StatusQ
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
@@ -824,7 +830,8 @@ run-macos: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
 	./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
 
-run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
+run-windows: STATUS_RC_FILE = status-dev.rc
+run-windows: compile_windows_resources nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
 	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe $(ARGS)
