@@ -225,6 +225,7 @@ Popup {
             Row {
                 id: skinToneEmoji
                 property bool expandSkinColorOptions: false
+                clip: true
                 width: expandSkinColorOptions ? (22 * skinColorEmojiRepeater.count) : 22
                 height: 22
                 opacity: expandSkinColorOptions ? 1.0 : 0.0
