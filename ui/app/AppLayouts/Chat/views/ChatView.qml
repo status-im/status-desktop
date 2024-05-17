@@ -51,7 +51,10 @@ StatusSectionLayout {
     readonly property var chatContentModule: rootStore.currentChatContentModule() || null
     readonly property bool viewOnlyPermissionsSatisfied: chatContentModule.viewOnlyPermissionsSatisfied
     readonly property bool viewAndPostPermissionsSatisfied: chatContentModule.viewAndPostPermissionsSatisfied
+
     property bool hasViewOnlyPermissions: false
+    property bool hasUnrestrictedViewOnlyPermission: false
+
     property bool hasViewAndPostPermissions: false
     property bool amIMember: false
     property bool amISectionAdmin: false
@@ -92,6 +95,9 @@ StatusSectionLayout {
             return false
         }
         if (!amIMember) {
+            if (hasUnrestrictedViewOnlyPermission)
+                return false
+
             return hasViewAndPostPermissions || hasViewOnlyPermissions
         }
         if (amISectionAdmin) {

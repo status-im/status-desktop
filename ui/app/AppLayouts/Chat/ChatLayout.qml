@@ -155,6 +155,44 @@ StackLayout {
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
                              root.sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
+
+            hasUnrestrictedViewOnlyPermission: {
+                viewOnlyUnrestrictedPermissionHelper.revision
+
+                const model = root.permissionsStore.viewOnlyPermissionsModel
+                const count = model.rowCount()
+
+                for (let i = 0; i < count; i++) {
+                    const holdings = ModelUtils.get(model, i, "holdingsListModel")
+
+                    if (holdings.rowCount() === 0)
+                        return true
+                }
+
+                return false
+            }
+
+            Instantiator {
+                id: viewOnlyUnrestrictedPermissionHelper
+
+                model: root.permissionsStore.viewOnlyPermissionsModel
+
+                property int revision: 0
+
+                delegate: QObject {
+                    ModelChangeTracker {
+                        model: model.holdingsListModel
+
+                        onRevisionChanged: viewOnlyUnrestrictedPermissionHelper.revision++
+                    }
+                }
+            }
+
+            ModelChangeTracker {
+                model: root.permissionsStore.viewOnlyPermissionsModel
+                onRevisionChanged: viewOnlyUnrestrictedPermissionHelper.revision++
+            }
+
             hasViewAndPostPermissions: root.permissionsStore.viewAndPostPermissionsModel.count > 0
             viewOnlyPermissionsModel: root.permissionsStore.viewOnlyPermissionsModel
             viewAndPostPermissionsModel: root.permissionsStore.viewAndPostPermissionsModel
