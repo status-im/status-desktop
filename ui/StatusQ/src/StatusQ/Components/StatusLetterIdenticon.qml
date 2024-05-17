@@ -14,12 +14,15 @@ Rectangle {
     property int charactersLen: 1
     property color letterIdenticonColor: Theme.palette.miscColor5
     property bool useAcronymForLetterIdenticon: false
+    property bool strictBackgroundColor: !useAcronymForLetterIdenticon
 
     color: {
-        if (root.useAcronymForLetterIdenticon) {
-            return Qt.rgba(root.letterIdenticonColor.r, root.letterIdenticonColor.g, root.letterIdenticonColor.b, 0.2)
-        }
-        return root.letterIdenticonColor
+        if (root.strictBackgroundColor)
+            return root.letterIdenticonColor
+
+        return Qt.rgba(root.letterIdenticonColor.r,
+                       root.letterIdenticonColor.g,
+                       root.letterIdenticonColor.b, 0.2)
     }
 
     width: 40
@@ -33,7 +36,7 @@ Rectangle {
         height: Math.round(parent.height / 2)
         emojiId: Emoji.iconId(root.emoji, root.emojiSize) || Emoji.iconHex(root.emoji) || ""
     }
-    
+
     StatusBaseText {
         id: identiconText
 
@@ -47,9 +50,9 @@ Rectangle {
         font.weight: Font.Bold
         font.pixelSize: root.letterSize
         color: {
-            if (root.useAcronymForLetterIdenticon) {
+            if (!root.strictBackgroundColor)
                 return root.letterIdenticonColor
-            }
+
             return d.luminance(root.letterIdenticonColor) > 0.5 ? Qt.rgba(0, 0, 0, 0.5) : Qt.rgba(1, 1, 1, 0.7)
         }
 
