@@ -549,8 +549,14 @@ method getChatContentModule*(self: Module, chatId: string): QVariant =
   return self.chatContentModules[chatId].getModuleAsVariant()
 
 proc updateParentBadgeNotifications(self: Module) =
+  var sectionIsMuted = false
+  if self.controller.isCommunity:
+    let myCommunity = self.controller.getMyCommunity()
+    sectionIsMuted = myCommunity.muted
+
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
-    self.controller.getMySectionId()
+    self.controller.getMySectionId(),
+    sectionIsMuted,
   )
   self.delegate.onNotificationsUpdated(
     self.controller.getMySectionId(),
@@ -1098,6 +1104,9 @@ method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
 method onMarkMessageAsUnread*(self: Module, chat: ChatDto) =
   self.updateBadgeNotifications(chat, hasUnreadMessages=true, chat.unviewedMentionsCount)
 
+method onSectionMutedChanged*(self: Module) =
+  self.updateParentBadgeNotifications()
+
 method markAllMessagesRead*(self: Module, chatId: string) =
   self.controller.markAllMessagesRead(chatId)
 
@@ -1178,8 +1187,9 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     return
 
   let chatDetails = self.controller.getChatDetails(chatIdMsgBelongsTo)
+  let community = self.controller.getMyCommunity()
 
-  if (chatDetails.muted):
+  if (chatDetails.muted or community.muted):
     # No need to send a notification
     return
 
@@ -1194,7 +1204,7 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     notificationType = notification_details.NotificationType.NewMessageWithGlobalMention
 
   var senderDisplayName = self.controller.getContactDetails(message.`from`).defaultDisplayName
-  let communityChats = self.controller.getMyCommunity().chats
+  let communityChats = community.chats
   let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
   var plainText = singletonInstance.utils.plainText(renderedMessageText)
   if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(plainText) == 0):

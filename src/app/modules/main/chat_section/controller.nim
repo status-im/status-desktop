@@ -372,6 +372,11 @@ proc init*(self: Controller) =
       if args.communityId == self.sectionId:
         self.delegate.communityMemberReevaluationStatusUpdated(args.status)
 
+    self.events.on(SIGNAL_COMMUNITY_MUTED) do(e: Args):
+      let args = CommunityMutedArgs(e)
+      if args.communityId == self.sectionId:
+        self.delegate.onSectionMutedChanged()
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
@@ -490,9 +495,9 @@ proc getChatsAndBuildUI*(self: Controller) =
         self.sharedUrlsService,
       )
 
-proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string):
+proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string, sectionIsMuted: bool):
     tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
-  return self.chatService.sectionUnreadMessagesAndMentionsCount(communityId)
+  return self.chatService.sectionUnreadMessagesAndMentionsCount(communityId, sectionIsMuted)
 
 proc getChatDetails*(self: Controller, chatId: string): ChatDto =
   return self.chatService.getChatById(chatId)

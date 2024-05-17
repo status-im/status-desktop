@@ -219,24 +219,24 @@ QtObject:
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)
 
-  proc sectionUnreadMessagesAndMentionsCount*(self: Service, sectionId: string):
+  proc sectionUnreadMessagesAndMentionsCount*(self: Service, sectionId: string, sectionIsMuted: bool):
       tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
 
     result.unviewedMentionsCount = 0
     result.unviewedMessagesCount = 0
 
     let myPubKey = singletonInstance.userProfile.getPubKey()
-    var seactionIdToFind = sectionId
+    var sectionIdToFind = sectionId
     if sectionId == myPubKey:
-      # If the section is the personal one (ID == pubKey), then we set the seactionIdToFind to ""
+      # If the section is the personal one (ID == pubKey), then we set the sectionIdToFind to ""
       # because personal chats have communityId == ""
-      seactionIdToFind = ""
+      sectionIdToFind = ""
     for _, chat in self.chats:
-      if chat.communityId != seactionIdToFind:
+      if chat.communityId != sectionIdToFind:
         continue
       result.unviewedMentionsCount += chat.unviewedMentionsCount
       # We count the unread messages if we are unmuted and it's not a mention, we want to show a badge on mentions
-      if chat.unviewedMentionsCount == 0 and chat.muted:
+      if chat.unviewedMentionsCount == 0 and (chat.muted or sectionIsMuted):
         continue
       if chat.unviewedMessagesCount > 0:
         result.unviewedMessagesCount = result.unviewedMessagesCount + chat.unviewedMessagesCount
