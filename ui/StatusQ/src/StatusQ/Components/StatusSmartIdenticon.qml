@@ -120,6 +120,7 @@ Loader {
             letterSize: root.asset.letterSize
             charactersLen: root.asset.charactersLen
             useAcronymForLetterIdenticon: root.asset.useAcronymForLetterIdenticon
+            strictBackgroundColor: root.asset.useLetterIdenticonStrictBgColor
         }
     }
 
