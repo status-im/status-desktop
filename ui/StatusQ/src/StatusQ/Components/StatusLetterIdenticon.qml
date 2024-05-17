@@ -13,6 +13,13 @@ Rectangle {
     property int letterSize: 21
     property int charactersLen: 1
     property color letterIdenticonColor: Theme.palette.miscColor5
+
+    // In this mode, one or two letters are used depending on words used:
+    // John -> J
+    // John Smith -> JS
+    // John Smith Junior -> JS
+    //
+    // characterLen is ignored
     property bool useAcronymForLetterIdenticon: false
     property bool strictBackgroundColor: !useAcronymForLetterIdenticon
 
@@ -57,19 +64,18 @@ Rectangle {
         }
 
         text: {
-            let parts = root.name.split(" ")
-            if (root.useAcronymForLetterIdenticon && parts.length > 1) {
-                let word = ""
-                for (let i=0; i<root.charactersLen; i++) {
-                    if (i >= parts.length) {
-                        return word
-                    }
+            const parts = root.name.split(" ")
 
+            if (root.useAcronymForLetterIdenticon) {
+                let word = ""
+
+                for (let i = 0; i < Math.min(parts.length, 2); i++) {
                     let shift = (parts[i].charAt(0) === "#") ||
                                 (parts[i].charAt(0) === "@")
 
                     word += parts[i].substring(shift, shift + 1).toUpperCase()
                 }
+
                 return word
             }
 

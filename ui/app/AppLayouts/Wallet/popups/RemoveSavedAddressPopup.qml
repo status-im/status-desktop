@@ -54,13 +54,6 @@ StatusDialog {
             name: root.name
             asset {
                 color: Utils.getColorForId(root.colorId)
-                charactersLen: {
-                    let parts = root.name.split(" ")
-                    if (parts.length > 1) {
-                        return 2
-                    }
-                    return 1
-                }
                 isLetterIdenticon: true
                 useAcronymForLetterIdenticon: true
             }
