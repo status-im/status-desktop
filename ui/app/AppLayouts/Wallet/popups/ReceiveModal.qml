@@ -231,13 +231,7 @@ StatusModal {
                         name: !root.selectedAccount.name && !root.selectedAccount.emoji? "status-logo-icon" : ""
                         color: !root.selectedAccount.name && !root.selectedAccount.emoji? "transparent" : Utils.getColorForId(root.selectedAccount.colorId)
                         emoji: root.selectedAccount.emoji
-                        charactersLen: {
-                            let parts = root.selectedAccount.name.split(" ")
-                            if (parts.length > 1) {
-                                return 2
-                            }
-                            return 1
-                        }
+                        charactersLen: 1
                         isLetterIdenticon: root.selectedAccount.name && !root.selectedAccount.emoji
                         useAcronymForLetterIdenticon: root.selectedAccount.name && !root.selectedAccount.emoji
                     }

@@ -563,12 +563,7 @@ StatusModal {
                             color: model.color
                             isLetterIdenticon: !model.icon
                             useAcronymForLetterIdenticon: model.type === AddEditSavedAddressPopup.CardType.SavedAddress
-                            charactersLen: {
-                                if (model.type === AddEditSavedAddressPopup.CardType.SavedAddress && model.title.split(" ").length == 1) {
-                                    return 1
-                                }
-                                return 2
-                            }
+                            charactersLen: 2
                         }
                     }
                 }
