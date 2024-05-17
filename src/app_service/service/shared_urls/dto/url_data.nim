@@ -29,6 +29,7 @@ type UrlDataDto* = object
   community*: CommunityUrlDataDto
   channel*: CommunityChannelUrlDataDto
   contact*: ContactUrlDataDto
+  notASupportedStatusLink*: bool # If this is true, it was not a supported status link, so we should open it in a browser
 
 proc getShard*(jsonObj: JsonNode): Shard =
   var shardObj: JsonNode

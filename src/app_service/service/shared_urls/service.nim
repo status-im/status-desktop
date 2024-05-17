@@ -1,4 +1,4 @@
-import NimQml, json, chronicles
+import NimQml, json, chronicles, strutils
 
 import ../../../backend/general as status_general
 import ../../../app/core/eventemitter
@@ -24,9 +24,12 @@ QtObject:
   proc parseSharedUrl*(self: Service, url: string): UrlDataDto =
     try:
       let response = status_general.parseSharedUrl(url)
-      if not response.result.contains("error"):
-        return response.result.toUrlDataDto()
-      let errMsg = response.result["error"].getStr()
-      error "failed to parse shared url: ", url, errDesription = errMsg
+      if  response.result.contains("error"):
+        let errMsg = response.result["error"].getStr()
+        raise newException(Exception, errMsg)
+      # not a status shared url
+      return response.result.toUrlDataDto()
     except Exception as e:
-      error "failed to parse shared url: ", url, errDesription = e.msg
+      if not e.msg.contains("not a status shared url"):
+        error "failed to parse shared url: ", url, errDesription = e.msg
+      result.notASupportedStatusLink = true

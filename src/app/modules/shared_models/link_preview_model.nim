@@ -282,6 +282,13 @@ QtObject:
     defer: indexEnd.delete
     self.dataChanged(indexStart, indexEnd)
       
+  proc getLinkPreviewType*(self: Model, url: string): int {.slot.} =
+    let index = self.findUrlIndex(url)
+    if index == -1:
+      return PreviewType.NoPreview.int
+
+    return self.items[index].linkPreview.previewType.int
+
   proc getUnfuledLinkPreviews*(self: Model): seq[LinkPreview] =
     result = @[]
     for item in self.items:
