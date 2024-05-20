@@ -97,3 +97,7 @@ add_test(NAME WritableProxyModelTest COMMAND WritableProxyModelTest)
 add_executable(MovableModelTest tst_MovableModel.cpp)
 target_link_libraries(MovableModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME MovableModelTest COMMAND MovableModelTest)
+
+add_executable(ModelSyncedContainerTest tst_ModelSyncedContainer.cpp)
+target_link_libraries(ModelSyncedContainerTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME ModelSyncedContainerTest COMMAND ModelSyncedContainerTest)

@@ -101,6 +101,7 @@ add_library(StatusQ SHARED
         include/StatusQ/formatteddoubleproperty.h
         include/StatusQ/functionaggregator.h
         include/StatusQ/leftjoinmodel.h
+        include/StatusQ/modelsyncedcontainer.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/movablemodel.h
         include/StatusQ/permissionutilsinternal.h
