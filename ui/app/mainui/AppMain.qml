@@ -2043,7 +2043,8 @@ Item {
 
                 projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
             }
-            dappsStore: DAppsStore {
+            store: DAppsStore {
+                module: WalletStore.RootStore.walletConnectModule
             }
             walletStore: appMain.rootStore.profileSectionStore.walletStore
 

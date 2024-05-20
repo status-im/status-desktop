@@ -25,8 +25,9 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.walletAccountService = walletAccountService
   result.walletConnectService = walletConnectService
 
-proc delete*(self: Controller) =
-  self.disconnectAll()
-
 proc init*(self: Controller) =
   discard
+
+proc addWalletConnectSession*(self: Controller, session_json: string): bool =
+  echo "@ddd Controller.addWalletConnectSession", session_json.len
+  return self.walletConnectService.addSession(session_json)

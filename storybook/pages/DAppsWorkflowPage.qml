@@ -172,7 +172,10 @@ Item {
             projectId: projectIdText.projectId
         }
 
-        dappsStore: DAppsStore {
+        store: DAppsStore {
+            function addWalletConnectSession(sessionJson) {
+                console.info("Persist Session", sessionJson)
+            }
         }
 
         walletStore: WalletStore {

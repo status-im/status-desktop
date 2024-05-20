@@ -290,7 +290,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.generalService,
     result.keycardService,
     result.networkConnectionService,
-    result.sharedUrlsService
+    result.sharedUrlsService,
+    statusFoundation.threadpool
   )
 
   # Do connections
