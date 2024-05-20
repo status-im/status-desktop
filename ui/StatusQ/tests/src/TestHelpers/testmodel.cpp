@@ -85,7 +85,7 @@ void TestModel::remove(int index)
 
 void TestModel::invert()
 {
-    if (m_data.size() < 2)
+    if (rowCount() < 2)
         return;
 
     emit layoutAboutToBeChanged();
