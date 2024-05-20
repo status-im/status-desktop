@@ -61,7 +61,7 @@ Item {
     QtObject {
         id: d
         property bool loading: false
-
+        readonly property bool isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
         readonly property string stateLoginRegularUser: "regularUserLogin"
         readonly property string stateLoginKeycardUser: "keycardUserLogin"
         readonly property bool isRegularLogin: (image.source.toString() === Style.png("status-logo"))
@@ -93,7 +93,7 @@ Item {
         }
 
         function resetLogin() {
-            if(localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.store)
+            if(!d.isBiometricsLogin)
             {
                 if (!root.startupStore.selectedLoginAccount.keycardCreatedAccount){
                     txtPassword.visible = true
@@ -124,7 +124,7 @@ Item {
         }
 
         function onObtainingPasswordSuccess(password: string) {
-            if(localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.store)
+            if(!d.isBiometricsLogin)
                 return
 
             if (root.startupStore.selectedLoginAccount.keycardCreatedAccount) {
@@ -145,6 +145,11 @@ Item {
                         txtPassword.validationError = qsTr("Login failed: %1").arg(error.toUpperCase())
                     }
                     d.loading = false
+
+                    // Activate the link to switch to password login
+                    if (d.isBiometricsLogin)
+                        link.activate()
+
                     txtPassword.textField.forceActiveFocus()
                 }
             }
@@ -501,9 +506,15 @@ Item {
 
         StatusBaseText {
             id: link
+            
+            function activate() {
+                root.startupStore.doSecondaryAction()
+            }
+
             Layout.alignment: Qt.AlignHCenter
             color: Theme.palette.primaryColor1
             font.pixelSize: Constants.keycard.general.fontSize2
+
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
@@ -515,7 +526,7 @@ Item {
                     parent.font.underline = false
                 }
                 onClicked: {
-                    root.startupStore.doSecondaryAction()
+                    link.activate()
                 }
             }
         }
@@ -529,24 +540,24 @@ Item {
                   root.startupStore.currentStartupState.stateType === Constants.startupState.login
             PropertyChanges {
                 target: image
-                source: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store?
+                source: d.isBiometricsLogin ?
                             Style.png("keycard/biometrics-success") : Style.png("status-logo")
                 pattern: ""
-                Layout.preferredHeight: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store?
+                Layout.preferredHeight: d.isBiometricsLogin ?
                                             Constants.onboarding.biometricsImageWidth :
                                             Constants.onboarding.logoImageHeight
-                Layout.preferredWidth: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store?
+                Layout.preferredWidth: d.isBiometricsLogin ?
                                            Constants.onboarding.biometricsImageHeight :
                                            Constants.onboarding.logoImageWidth
             }
             PropertyChanges {
                 target: title
-                text: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store? "" : qsTr("Welcome back")
-                visible: localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.store
+                text: d.isBiometricsLogin ? "" : qsTr("Welcome back")
+                visible: !d.isBiometricsLogin
             }
             PropertyChanges {
                 target: passwordSection
-                visible: localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.store
+                visible: !d.isBiometricsLogin
             }
             PropertyChanges {
                 target: pinSection
