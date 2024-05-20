@@ -29,6 +29,7 @@ StatusStackModal {
     rightButtons: [finishButton]
     finishButton: StatusButton {
         text: qsTr("Add")
+        objectName: "addButton"
         enabled: linkTarget.valid && (!customTitle.visible || customTitle.valid)
         onClicked: {
             root.addLinkRequested(d.selectedLinkTypeText || customTitle.text, // text for custom link, otherwise the link typeId
