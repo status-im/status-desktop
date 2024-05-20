@@ -6,6 +6,8 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    QGuiApplication::setOrganizationName(QStringLiteral("Status"));
+    QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
 
     const QString pagesPath = QML_IMPORT_ROOT + QStringLiteral("/pages");
     QDir pagesDir(pagesPath);
@@ -20,7 +22,11 @@ int main(int argc, char *argv[])
                                             QML_IMPORT_ROOT + QStringLiteral("/stubs")};
 
     int errorCount = 0;
+    QStringList warnings;
+    QStringList failedPages;
+    
     for (const auto &fileInfo : files) {
+        warnings.clear();
         QQmlApplicationEngine engine;
         engine.setOutputWarningsToStandardError(false);
         engine.setBaseUrl(QUrl::fromLocalFile(pagesPath + QDir::separator()));
@@ -28,11 +34,19 @@ int main(int argc, char *argv[])
         for (const auto &path : additionalImportPaths)
             engine.addImportPath(path);
 
+        QObject::connect(&engine, &QQmlApplicationEngine::warnings, &app, [&warnings](const QList<QQmlError> &qmlWarnings) {
+            for (const auto &qmlWarning: qmlWarnings)
+                warnings.append(qmlWarning.toString());
+        });
+
         QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                         &app, [&errorCount](QObject *obj, const QUrl &objUrl) {
+                        &app, [&errorCount, &warnings, &failedPages](QObject *obj, const QUrl &objUrl) {
             if (!obj) {
                 errorCount++;
-                qWarning() << ">>> Error loading StoryBook page:" << objUrl;
+                failedPages << objUrl.toLocalFile();
+
+                for (const auto &warning: qAsConst(warnings))
+                    qWarning() << "    " << warning;
             }
         });
 
@@ -44,6 +58,8 @@ int main(int argc, char *argv[])
 
     if (errorCount) {
         qWarning() << ">>> StoryBook page verification failed with" << errorCount << "errors.";
+        qWarning() << ">>> StoryBook pages with errors:" << failedPages;
+
         return EXIT_FAILURE;
     }
 
