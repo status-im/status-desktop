@@ -69,7 +69,7 @@ Control {
         id: d
 
         // internal logic
-        readonly property bool hasPermissions: root.permissionsModel && root.permissionsModel.count
+        readonly property bool hasPermissions: permissionsView.hasAnyVisiblePermission
         readonly property int selectedSharedAddressesCount: root.selectedSharedAddressesMap.size
 
         readonly property bool dirty: {
