@@ -53,7 +53,12 @@ Item {
             minimumHeight: 108
             maximumHeight: 108
             input.verticalAlignment: TextEdit.AlignTop
-
+            validators: [
+                StatusRegularExpressionValidator {
+                    regularExpression: Constants.regularExpressions.asciiWithEmoji
+                    errorMessage: qsTr("Invalid characters. Standard keyboard characters and emojis only.")
+                }
+            ]
             input.tabNavItem: displayNameInput.input.edit
         }
     }
