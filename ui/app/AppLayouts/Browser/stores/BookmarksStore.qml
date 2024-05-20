@@ -1,6 +1,8 @@
 pragma Singleton
 
-import QtQuick 2.13
+import QtQuick 2.15
+
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 QtObject {
     id: root
@@ -36,10 +38,12 @@ QtObject {
             return null
         }
 
+        const item = SQUtils.ModelUtils.get(bookmarkModule.model, index)
+
         return {
             url: url,
-            name: bookmarkModule.model.rowData(index, 'name'),
-            image: bookmarkModule.model.rowData(index, 'imageUrl')
+            name: item.name,
+            image: item.imageUrl
         }
     }
 }

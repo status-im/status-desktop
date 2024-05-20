@@ -143,20 +143,3 @@ QtObject:
 
   proc getFoundStickers*(self: StickerPackList): QVariant {.slot.} =
     return self.foundStickers
-
-  proc rowData*(self: StickerPackList, row: int, data: string): string {.slot.} =
-    if row < 0 or (row > self.packs.len - 1):
-      return
-    self.packIdToRetrieve = row
-    let packInfo = self.packs[row]
-    let stickerPack = packInfo.pack
-    case data:
-      of "author": result = stickerPack.author
-      of "name": result = stickerPack.name
-      of "price": result = self.delegate.wei2Eth(stickerPack.price)
-      of "preview": result = stickerPack.preview
-      of "thumbnail": result = stickerPack.thumbnail
-      of "installed": result = $packInfo.installed
-      of "bought": result = $packInfo.bought
-      of "pending": result = $packInfo.pending
-      else: result = ""

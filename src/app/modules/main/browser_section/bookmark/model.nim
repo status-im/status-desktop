@@ -67,15 +67,6 @@ QtObject:
     of ModelRole.ImageUrl:
       result = newQVariant(item.getImageUrl())
 
-  proc rowData(self: Model, index: int, column: string): string {.slot.} =
-    if (index > self.items.len - 1):
-      return
-    let bookmark = self.items[index]
-    case column:
-      of "name": result = bookmark.getName()
-      of "url": result = bookmark.getUrl()
-      of "imageUrl": result = bookmark.getImageUrl()
-
   proc addItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete

@@ -206,11 +206,6 @@ SplitView {
     SortFilterProxyModel {
         id: availableNetworks
 
-        // Simulate Nim's way of providing access to data
-        function rowData(index, propName) {
-            return get(index)[propName]
-        }
-
         sourceModel: NetworksModel.flatNetworks
         filters: ValueFilter { roleName: "isTest"; value: testModeCheckbox.checked; }
     }

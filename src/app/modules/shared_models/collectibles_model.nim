@@ -196,27 +196,6 @@ QtObject:
       of CollectibleRole.Soulbound:
         result = newQVariant(item.getSoulbound())
 
-  proc rowData(self: Model, index: int, column: string): string {.slot.} =
-    if (index >= self.items.len):
-      return
-    let item = self.items[index]
-    case column:
-      of "uid": result = item.getIDAsString()
-      of "chainId": result = $item.getChainID()
-      of "contractAddress": result = item.getContractAddress()
-      of "tokenId": result = item.getTokenIDAsString()
-      of "name": result = item.getName()
-      of "mediaUrl": result = item.getMediaURL()
-      of "mediaType": result = item.getMediaType()
-      of "imageUrl": result = item.getImageURL()
-      of "backgroundColor": result = item.getBackgroundColor()
-      of "collectionUid": result = item.getCollectionIDAsString()
-      of "collectionName": result = item.getCollectionName()
-      of "collectionSlug": result = item.getCollectionSlug()
-      of "isLoading": result = $false
-      of "communityId": result = item.getCommunityID()
-      of "communityPrivilegesLevel": result = $item.getCommunityPrivilegesLevel()
-
   proc resetCollectibleItems(self: Model, newItems: seq[CollectiblesEntry] = @[]) =
     self.beginResetModel()
     self.items = newItems

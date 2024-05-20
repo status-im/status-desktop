@@ -63,13 +63,6 @@ QtObject:
     of ModelRole.Accounts:
       result = newQVariant(item.accounts)
 
-  proc rowData*(self: DappsModel, index: int, column: string): string {.slot.} =
-    if (index > self.items.len - 1):
-      return
-    let item = self.items[index]
-    case column:
-      of "name": result = item.name
-
   proc addItem*(self: DappsModel, item: Item) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete

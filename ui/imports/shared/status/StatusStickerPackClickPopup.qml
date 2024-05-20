@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 import shared 1.0
@@ -39,14 +40,15 @@ ModalPopup {
     Component.onCompleted: {
         const idx = stickersModule.stickerPacks.findIndexById(packId, false);
         if(idx === -1) close();
-        name = stickersModule.stickerPacks.rowData(idx, "name")
-        author = stickersModule.stickerPacks.rowData(idx, "author")
-        thumbnail = stickersModule.stickerPacks.rowData(idx, "thumbnail")
-        price = stickersModule.stickerPacks.rowData(idx, "price")
+        const item = SQUtils.ModelUtils.get(stickersModule.stickerPacks, idx)
+        name = item.name
+        author = item.author
+        thumbnail = item.thumbnail
+        price = item.price
         stickers = stickersModule.stickerPacks.getStickers()
-        installed = stickersModule.stickerPacks.rowData(idx, "installed") === "true"
-        bought = stickersModule.stickerPacks.rowData(idx, "bought") === "true"
-        pending = stickersModule.stickerPacks.rowData(idx, "pending") === "true"
+        installed = item.installed
+        bought = item.bought
+        pending = item.pending
     }
 
     height: 472
