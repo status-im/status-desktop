@@ -1,6 +1,6 @@
 import NimQml, chronicles
 
-# import backend/wallet_connect as status_go_wallet_connect
+import backend/wallet_connect as status_go
 
 import app/global/global_singleton
 
@@ -32,3 +32,6 @@ QtObject:
 
   proc init*(self: Service) =
     discard
+
+  proc addSession*(self: Service, session_json: string): bool =
+    return status_go.addSession(session_json)

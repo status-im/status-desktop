@@ -14,7 +14,7 @@ QtObject {
     id: root
 
     required property WalletConnectSDK wcSDK
-    required property DAppsStore dappsStore
+    required property DAppsStore store
     required property WalletStore walletStore
 
     readonly property var validAccounts: SortFilterProxyModel {
@@ -75,10 +75,19 @@ QtObject {
         }
 
         function onApproveSessionResult(session, err) {
+            // Notify client
+            root.approveSessionResult(session, err)
+
+            if (err) {
+                return
+            }
+
             // TODO #14754: implement custom dApp notification
             let app_url = _d.currentSessionProposal ? _d.currentSessionProposal.params.proposer.metadata.url : "-"
             Global.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_url), "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
-            root.approveSessionResult(session, err)
+
+            // Persist session
+            store.addWalletConnectSession(JSON.stringify(session))
         }
 
         function onRejectSessionResult(err) {

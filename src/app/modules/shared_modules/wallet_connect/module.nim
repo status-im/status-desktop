@@ -21,7 +21,6 @@ type
     controller: Controller
 
 proc newModule*[T](delegate: T,
-  uniqueIdentifier: string,
   events: EventEmitter,
   walletAccountService: wallet_account_service.Service,
   walletConnectService: wallet_connect_service.Service):
@@ -30,14 +29,17 @@ proc newModule*[T](delegate: T,
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, walletAccountService, walletConnectService)
+  result.controller = controller.newController(result, events, walletAccountService, walletConnectService)
+
+proc addWalletConnectSession*[T](self: Module[T], session_json: string): bool =
+  echo "@dd Module.addWalletConnectSession: ", session_json
+  return self.controller.addWalletConnectSession(session_json)
 
 {.push warning[Deprecated]: off.}
 
 method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
-  self.controller.delete
 
 proc init[T](self: Module[T], fullConnect = true) =
     self.controller.init()

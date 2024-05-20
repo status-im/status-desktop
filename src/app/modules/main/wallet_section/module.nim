@@ -16,7 +16,6 @@ import ./send/module as send_module
 
 import ./activity/controller as activityc
 import ./activity/details_controller as activity_detailsc
-import ./poc_wallet_connect/controller as wcc
 
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 
@@ -24,6 +23,7 @@ import app/global/global_singleton
 import app/core/eventemitter
 import app/modules/shared_modules/add_account/module as add_account_module
 import app/modules/shared_modules/keypair_import/module as keypair_import_module
+import app/modules/shared_modules/wallet_connect/module as wc_module
 import app_service/service/keycard/service as keycard_service
 import app_service/service/token/service as token_service
 import app_service/service/collectible/service as collectible_service
@@ -38,8 +38,11 @@ import app_service/service/node/service as node_service
 import app_service/service/network_connection/service as network_connection_service
 import app_service/service/devices/service as devices_service
 import app_service/service/community_tokens/service as community_tokens_service
+import app_service/service/wallet_connect/service as wc_service
 
 import backend/collectibles as backend_collectibles
+
+import app/core/tasks/threadpool
 
 logScope:
   topics = "wallet-section-module"
@@ -58,6 +61,7 @@ type
     # shared modules
     addAccountModule: add_account_module.AccessInterface
     keypairImportModule: keypair_import_module.AccessInterface
+    walletConnectModule: wc_module.AccessInterface
     # modules
     accountsModule: accounts_module.AccessInterface
     allTokensModule: all_tokens_module.AccessInterface
@@ -75,6 +79,7 @@ type
     walletAccountService: wallet_account_service.Service
     savedAddressService: saved_address_service.Service
     devicesService: devices_service.Service
+    walletConnectService: wc_service.Service
 
     activityController: activityc.Controller
     collectibleDetailsController: collectible_detailsc.Controller
@@ -85,7 +90,7 @@ type
     tmpActivityControllers: ActivityControllerArray
     activityDetailsController: activity_detailsc.Controller
 
-    wcController: wcc.Controller
+    threadpool: ThreadPool
 
 ## Forward declaration
 proc onUpdatedKeypairsOperability*(self: Module, updatedKeypairs: seq[KeypairDto])
@@ -107,7 +112,8 @@ proc newModule*(
   nodeService: node_service.Service,
   networkConnectionService: network_connection_service.Service,
   devicesService: devices_service.Service,
-  communityTokensService: community_tokens_service.Service
+  communityTokensService: community_tokens_service.Service,
+  threadpool: ThreadPool
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -119,6 +125,7 @@ proc newModule*(
   result.devicesService = devicesService
   result.moduleLoaded = false
   result.controller = newController(result, settingsService, walletAccountService, currencyService, networkService)
+  result.threadpool = threadpool
 
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService, settingsService, communityTokensService)
@@ -160,9 +167,10 @@ proc newModule*(
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 
-  result.wcController = wcc.newController(events, walletAccountService)
+  result.walletConnectService = wc_service.newService(result.events, result.threadpool)
+  result.walletConnectModule = wc_module.newModule(result, result.events, result.walletAccountService, result.walletConnectService)
 
-  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.wcController)
+  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.walletConnectModule)
 
 method delete*(self: Module) =
   self.accountsModule.delete
@@ -179,7 +187,6 @@ method delete*(self: Module) =
     self.tmpActivityControllers[i].delete
   self.activityDetailsController.delete
   self.collectibleDetailsController.delete
-  self.wcController.delete
 
   if not self.addAccountModule.isNil:
     self.addAccountModule.delete

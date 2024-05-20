@@ -4,8 +4,8 @@ import ./activity/controller as activityc
 import ./activity/details_controller as activity_detailsc
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import ./io_interface
-import ../../shared_models/currency_amount
-import ./poc_wallet_connect/controller as wcc
+import app/modules/shared_models/currency_amount
+import app/modules/shared_modules/wallet_connect/io_interface as wc_module
 
 type
   ActivityControllerArray* = array[2, activityc.Controller]
@@ -25,7 +25,7 @@ QtObject:
       collectibleDetailsController: collectible_detailsc.Controller
       isNonArchivalNode: bool
       keypairOperabilityForObservedAccount: string
-      wcController: wcc.Controller
+      wcModule: wc_module.AccessInterface
       walletReady: bool
       addressFilters: string
       currentCurrency: string
@@ -41,14 +41,14 @@ QtObject:
     tmpActivityControllers: ActivityControllerArray,
     activityDetailsController: activity_detailsc.Controller,
     collectibleDetailsController: collectible_detailsc.Controller,
-    wcController: wcc.Controller): View =
+    wcModule: wc_module.AccessInterface): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
     result.tmpActivityControllers = tmpActivityControllers
     result.activityDetailsController = activityDetailsController
     result.collectibleDetailsController = collectibleDetailsController
-    result.wcController = wcController
+    result.wcModule = wcModule
 
     result.setup()
 
@@ -236,10 +236,13 @@ QtObject:
   proc emitDestroyKeypairImportPopup*(self: View) =
     self.destroyKeypairImportPopup()
 
-  proc getWalletConnectController(self: View): QVariant {.slot.} =
-    return newQVariant(self.wcController)
-  QtProperty[QVariant] walletConnectController:
-    read = getWalletConnectController
+  proc getWalletConnectModule(self: View): QVariant {.slot.} =
+    if self.wcModule == nil:
+      return newQVariant()
+    return self.wcModule.getModuleAsVariant()
+
+  QtProperty[QVariant] walletConnectModule:
+    read = getWalletConnectModule
 
   proc walletReadyChanged*(self: View) {.signal.}
 

@@ -56,6 +56,7 @@ QtObject {
     property var activityDetailsController: walletSectionInst.activityDetailsController
     property string signingPhrase: walletSectionInst.signingPhrase
     property string mnemonicBackedUp: walletSectionInst.isMnemonicBackedUp
+    property var walletConnectModule: walletSectionInst.walletConnectModule
 
     property CollectiblesStore collectiblesStore: CollectiblesStore {}
 
