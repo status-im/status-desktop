@@ -18,6 +18,7 @@ QtObject {
         }
         return returnPos;
     }
+
     function isValidAddress(inputValue) {
         return inputValue !== "0x" && /^0x[a-fA-F0-9]{40}$/.test(inputValue)
     }
@@ -51,15 +52,16 @@ QtObject {
 
     function findAssetByChainAndSymbol(chainIdToFind, assets, symbolToFind) {
         for(var i=0; i<assets.rowCount(); i++) {
-            const symbol = assets.rowData(i, "symbol")
-            if (symbol.toLowerCase() === symbolToFind.toLowerCase() && assets.hasChain(i, parseInt(chainIdToFind))) {
+            const item = ModelUtils.get(assets, i)
+            if (item.symbol.toLowerCase() === symbolToFind.toLowerCase() &&
+                    !!ModelUtils.getByKey(item.balances, "chainId", chainIdToFind)) {
                 return {
-                    name: assets.rowData(i, "name"),
-                    symbol,
-                    totalBalance: assets.rowData(i, "totalBalance"),
-                    totalCurrencyBalance: assets.rowData(i, "totalCurrencyBalance"),
-                    fiatBalance: assets.rowData(i, "totalCurrencyBalance"),
-                    chainId: chainIdToFind,
+                    name: item.name,
+                    symbol: item.symbol,
+                    totalBalance: item.totalBalance,
+                    totalCurrencyBalance: item.totalCurrencyBalance,
+                    fiatBalance: item.totalCurrencyBalance,
+                    chainId: chainIdToFind
                 }
             }
         }
@@ -220,31 +222,8 @@ QtObject {
         return text.replace(/<[^>]*>?/gm, '')
     }
 
-    function delegateModelSort(srcGroup, dstGroup, lessThan) {
-        const insertPosition = (lessThan, item) => {
-            let lower = 0
-            let upper = dstGroup.count
-            while (lower < upper) {
-                const middle = Math.floor(lower + (upper - lower) / 2)
-                const result = lessThan(item.model, dstGroup.get(middle).model);
-                if (result)
-                    upper = middle
-                else
-                    lower = middle + 1
-            }
-            return lower
-        }
-
-        while (srcGroup.count > 0) {
-            const item = srcGroup.get(0)
-            const index = insertPosition(lessThan, item)
-            item.groups = dstGroup.name
-            dstGroup.move(item.itemsIndex, index)
-        }
-    }
-
     function elideText(text, leftCharsCount, rightCharsCount = leftCharsCount) {
-        return text.substr(0, leftCharsCount) + "..." + text.substr(text.length - rightCharsCount)
+        return text.substr(0, leftCharsCount) + "…" + text.substr(text.length - rightCharsCount)
     }
 
     function elideAndFormatWalletAddress(address) {
@@ -289,5 +268,3 @@ QtObject {
         return text.replace(/http(s)?(:)?(\/\/)?|(\/\/)?(www\.)?(\/)/gim, '')
     }
 }
-
-

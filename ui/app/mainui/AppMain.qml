@@ -1315,6 +1315,7 @@ Item {
                             transactionStore: appMain.transactionStore
                             assetsStore: appMain.walletAssetsStore
                             currencyStore: appMain.currencyStore
+                            tokensStore: appMain.tokensStore
                         }
                         // Loaders do not have access to the context, so props need to be set
                         // Adding a "_" to avoid a binding loop

@@ -85,18 +85,6 @@ QtObject:
     of ModelRole.IsTest:
       result = newQVariant(item.getIsTest())
 
-  proc rowData(self: Model, index: int, column: string): string {.slot.} =
-    if (index >= self.items.len):
-      return
-    let item = self.items[index]
-    case column:
-      of "name": result = $item.getName()
-      of "address": result = $item.getAddress()
-      of "ens": result = $item.getEns()
-      of "colorId": result = $item.getColorId()
-      of "chainShortNames": result = $item.getChainShortNames()
-      of "isTest": result = $item.getIsTest()
-
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.items = items

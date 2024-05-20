@@ -18,6 +18,7 @@ Dialog {
 
     required property var assetsStore
     required property var currencyStore
+    required property var tokensStore
 
     signal sendTriggered(var selectedAccount)
     signal disconnect()
@@ -209,6 +210,7 @@ Dialog {
                 id: assetsTab
                 controller: popup.assetsStore.assetsController
                 currencyStore: popup.currencyStore
+                tokensStore: popup.tokensStore
             }
             HistoryView {
                 id: historyTab

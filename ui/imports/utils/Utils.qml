@@ -169,7 +169,6 @@ QtObject {
         return isEmail || isDomain || (inputValue.startsWith("@") && inputValue.length > 1)
     }
 
-
     /**
      * Removes trailing zeros from a string-representation of a number. Throws
      * if parameter is not a string
@@ -203,23 +202,6 @@ QtObject {
 
     function setColorAlpha(color, alpha) {
         return Qt.hsla(color.hslHue, color.hslSaturation, color.hslLightness, alpha)
-    }
-
-    // To-do move to Wallet Store, this should not be under Utils.
-    function findAssetByChainAndSymbol(chainIdToFind, assets, symbolToFind) {
-        for(var i=0; i<assets.rowCount(); i++) {
-            const symbol = assets.rowData(i, "symbol")
-            if (symbol.toLowerCase() === symbolToFind.toLowerCase() && assets.hasChain(i, parseInt(chainIdToFind))) {
-                return {
-                    name: assets.rowData(i, "name"),
-                    symbol,
-                    totalBalance: assets.rowData(i, "totalBalance"),
-                    totalCurrencyBalance: assets.rowData(i, "totalCurrencyBalance"),
-                    fiatBalance: assets.rowData(i, "totalCurrencyBalance"),
-                    chainId: chainIdToFind,
-                }
-            }
-        }
     }
 
     function isValidChannelName(channelName) {
@@ -660,20 +642,6 @@ QtObject {
             return 28
         else
             return 34
-    }
-
-    function getTimerString(timeInSecs) {
-        let result = ""
-        const hour = Math.floor(timeInSecs/60/60)
-        const mins = Math.floor(timeInSecs/60%60)
-        const secs = Math.floor(timeInSecs%60)
-        if(hour > 0 )
-            result += qsTr(" %n hour(s) ", "", hour)
-        if(mins > 0)
-            result += qsTr(" %n min(s) ", "", mins)
-        if(secs > 0)
-            result += qsTr(" %n sec(s) ", "", secs)
-        return result
     }
 
     function appTranslation(key) {

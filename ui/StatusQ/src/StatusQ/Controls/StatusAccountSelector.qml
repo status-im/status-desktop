@@ -13,7 +13,7 @@ import SortFilterProxyModel 0.2
 Item {
     id: root
 
-    property string label: "Choose account"
+    property string label: qsTr("Choose account")
     property bool showAccountDetails: !!selectedAccount
     property var accounts
     property var selectedAccount
@@ -32,7 +32,8 @@ Item {
 
 
     property var assetBalanceTextFn: function (foundValue) {
-        return "Balance: " + (parseFloat(foundValue) === 0.0 ? "0" : Utils.stripTrailingZeros(foundValue))
+        return qsTr("Balance: %1").arg(parseFloat(foundValue) === 0.0 ? Qt.locale().zeroDigit
+                                                                      : LocaleUtils.numberToLocaleString(foundValue))
     }
 
     readonly property string watchWalletType: "watch"
@@ -284,4 +285,3 @@ Item {
         }
     }
 }
-

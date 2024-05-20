@@ -120,29 +120,6 @@ QtObject:
     of ModelRole.OriginalFallbackURL:
       result = newQVariant(item.originalFallbackURL)
 
-  proc rowData*(self: Model, index: int, column: string): string {.slot.} =
-    if (index >= self.rowCount()):
-      return
-    let item = self.delegate.getFlatNetworksList()[index]
-    case column:
-      of "chainId": result = $item.chainId
-      of "nativeCurrencyDecimals": result = $item.nativeCurrencyDecimals
-      of "layer": result = $item.layer
-      of "chainName": result = $item.chainName
-      of "rpcURL": result = $item.rpcURL
-      of "blockExplorerURL": result = $item.blockExplorerURL
-      of "nativeCurrencyName": result = $item.nativeCurrencyName
-      of "nativeCurrencySymbol": result = $item.nativeCurrencySymbol
-      of "isTest": result = $item.isTest
-      of "isEnabled": result = $item.isEnabled
-      of "iconUrl": result = $item.iconURL
-      of "chainColor": result = $item.chainColor
-      of "shortName": result = $item.shortName
-      of "enabledState": result = $item.enabledState.int
-      of "fallbackURL": result = $item.fallbackURL
-      of "originalRpcURL": result = $item.originalRpcURL
-      of "originalFallbackURL": result = $item.originalFallbackURL
-
   proc refreshModel*(self: Model) =
     self.beginResetModel()
     self.endResetModel()

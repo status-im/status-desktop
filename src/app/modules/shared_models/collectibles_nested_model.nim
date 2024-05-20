@@ -122,20 +122,6 @@ QtObject:
     of CollectiblesNestedRole.Count:
       result = newQVariant(item.getCountAsString())
 
-  proc rowData(self: Model, index: int, column: string): string {.slot.} =
-    if (index >= self.items.len):
-      return
-    let item = self.items[index]
-    case column:
-      of "uid": result = item.getId()
-      of "chainId": result = $item.getChainId()
-      of "name": result = item.getName()
-      of "iconUrl": result = item.getIconUrl()
-      of "groupId": result = item.getGroupId()
-      of "groupName": result = item.getGroupName()
-      of "itemType": result = $item.getItemType()
-      of "count": result = item.getCountAsString()
-
   # Groups collectibles by CommunityID if available, or CollectionID otherwise. 
   # Returns pair (collectiblesPerCommunity, collectiblesPerCollection)
   proc getCollectiblesPerGroupId(items: seq[flat_item.CollectiblesEntry]): (CollectiblesPerGroupId, CollectiblesPerGroupId) =

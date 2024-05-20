@@ -52,14 +52,7 @@ QtObject {
             return "Custom"
     }
 
-    component CustomNetworkModel: ListModel {
-        // Simulate Nim's way of providing access to data
-        function rowData(index, propName) {
-            return get(index)[propName]
-        }
-    }
-
-    readonly property var flatNetworks: CustomNetworkModel {
+    readonly property var flatNetworks: ListModel {
         Component.onCompleted: append([
             {
                 chainId: 1,
@@ -148,7 +141,7 @@ QtObject {
         )
     }
 
-    readonly property var sendFromNetworks: CustomNetworkModel {
+    readonly property var sendFromNetworks: ListModel {
         function updateFromNetworks(paths){
             reset()
             for(let i=0; i<paths.length; i++) {
@@ -248,7 +241,7 @@ QtObject {
                ])
     }
 
-    readonly property var sendToNetworks: CustomNetworkModel {
+    readonly property var sendToNetworks: ListModel {
         function updateRoutePreferredChains(chainIds) {
             for( let i=0; i<count; i++) {
                 get(i).isPreferred = false

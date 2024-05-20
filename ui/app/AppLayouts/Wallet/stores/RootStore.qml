@@ -116,7 +116,8 @@ QtObject {
 
         function initChainColors(model) {
             for (let i = 0; i < model.count; i++) {
-                chainColors[model.rowData(i, "shortName")] = model.rowData(i, "chainColor")
+                const item = SQUtils.ModelUtils.get(model, i)
+                chainColors[item.shortName] = item.chainColor
             }
         }
 

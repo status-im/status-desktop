@@ -34,6 +34,7 @@ StatusSectionLayout {
     required property TransactionStore transactionStore
     required property var assetsStore
     required property var currencyStore
+    required property var tokensStore
 
     function openUrlInNewTab(url) {
         var tab = _internal.addNewTab()
@@ -434,6 +435,7 @@ StatusSectionLayout {
             BrowserWalletMenu {
                 assetsStore: root.assetsStore
                 currencyStore: root.currencyStore
+                tokensStore: root.tokensStore
                 property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
                 x: (parent.width - width - Style.current.halfPadding)
                 y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +

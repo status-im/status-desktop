@@ -75,7 +75,7 @@ ColumnLayout {
             let nwFilters = root.networkFilters.split(":")
             let addrFilters = root.addressFilters.split(":")
             for(let i=0; i<balances.count; i++) {
-                let balancePerAddressPerChain = ModelUtils.get(balances, i)
+                let balancePerAddressPerChain = SQUtils.ModelUtils.get(balances, i)
                 if (nwFilters.includes(balancePerAddressPerChain.chainId+"") &&
                         addrFilters.includes(balancePerAddressPerChain.account)) {
                     totalBalance+=SQUtils.AmountsArithmetic.toNumber(balancePerAddressPerChain[key], decimals)

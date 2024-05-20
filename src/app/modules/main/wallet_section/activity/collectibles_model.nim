@@ -114,18 +114,6 @@ QtObject:
       error "Invalid role for loading item"
       result = newQVariant()
 
-  proc rowData(self: CollectiblesModel, index: int, column: string): string {.slot.} =
-    if (index >= self.items.len):
-      return
-    let item = self.items[index]
-    case column:
-      of "uid": result = item.getId()
-      of "chainId": result = $item.getChainId()
-      of "contractAddress": result = item.getContractAddress()
-      of "tokenId": result = item.getTokenId().toString()
-      of "name": result = item.getName()
-      of "imageUrl": result = item.getImageUrl()
-
   proc appendCollectibleItems(self: CollectiblesModel, newItems: seq[CollectibleItem]) =
     if len(newItems) == 0:
       return
