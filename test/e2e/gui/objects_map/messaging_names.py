@@ -80,3 +80,14 @@ edit_inputScrollView_messageInputField_TextArea = {"container": chatMessageViewD
 chatMessageViewDelegate_Save_StatusButton = {"checkable": False, "container": chatLogView_chatMessageViewDelegate_MessageView, "id": "saveBtn", "type": "StatusButton", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_reply_icon_StatusIcon = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "reply-icon", "type": "StatusIcon", "visible": True}
 mainWindow_replyArea_StatusChatInputReplyArea = {"container": statusDesktop_mainWindow, "id": "replyArea", "type": "StatusChatInputReplyArea", "unnamed": 1, "visible": True}
+
+# Message link preview
+mainWindow_optionsComboBox_ComboBox = {"container": statusDesktop_mainWindow, "id": "optionsComboBox", "type": "ComboBox", "unnamed": 1, "visible": True}
+mainWindow_settingsCard_LinkPreviewSettingsCard = {"container": statusDesktop_mainWindow, "id": "settingsCard", "type": "LinkPreviewSettingsCard", "unnamed": 1, "visible": True}
+mainWindow_closeLinkPreviewButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow, "objectName": "closeLinkPreviewButton", "type": "StatusFlatRoundButton", "visible": True}
+mainWindow_linkPreviewTitleText_StatusBaseText = {"container":  statusDesktop_mainWindow, "objectName": "linkPreviewTitleText", "type": "StatusBaseText", "visible": True}
+mainWindow_linkPreviewSubtitleText_StatusBaseText = {"container": statusDesktop_mainWindow, "objectName": "linkPreviewSubtitleText", "type": "StatusBaseText", "visible": True}
+mainWindow_titleText_StatusBaseText = {"container": statusDesktop_mainWindow, "objectName": "titleText", "type": "StatusBaseText", "visible": True}
+mainWindow_subtitleText_StatusBaseText = {"container": statusDesktop_mainWindow, "objectName": "subtitleText", "type": "StatusBaseText", "visible": True}
+linkPreviewTitle_StatusBaseText = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "linkPreviewTitle", "type": "StatusBaseText", "visible": True}
+linkPreviewEmojiHash_EmojiHash = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "linkPreviewEmojiHash", "type": "EmojiHash", "visible": True}

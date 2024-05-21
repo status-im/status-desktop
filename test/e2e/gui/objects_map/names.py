@@ -472,6 +472,11 @@ statusListView = {"container": statusDesktop_mainWindow_overlay, "type": "Status
 # Rename keypair popup
 save_changes_rename_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "saveRenameKeypairChangesButton", "type": "StatusButton", "visible": True}
 
+# Link preview options popup
+show_for_this_message_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "text": "Show for this message", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
+always_show_previews_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "text": "Always show previews", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
+never_show_previews_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "text": "Never show previews", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
+
 # OS NAMES
 # Open Files Dialog
 chooseAnImageALogo_QQuickWindow = {"title": RegularExpression("Choose.*"), "type": "QQuickWindow", "unnamed": 1, "visible": True}
@@ -511,6 +516,10 @@ settings_StatusFlatButton = {"type": "StatusFlatButton", "unnamed": 1, "visible"
 # Messaging View
 mainWindow_MessagingView = {"container": statusDesktop_mainWindow, "type": "MessagingView", "unnamed": 1, "visible": True}
 contactsListItem_btn_StatusContactRequestsIndicatorListItem = {"container": mainWindow_MessagingView, "objectName": "MessagingView_ContactsListItem_btn", "type": "StatusContactRequestsIndicatorListItem", "visible": True}
+settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
+always_ask_radioButton_StatusRadioButton = {"container": settingsContentBase_ScrollView, "objectName": "MessagingView_AlwaysAsk_RadioButton", "type": "SettingsRadioButton", "visible": True}
+always_show_radioButton_StatusRadioButton = {"container": settingsContentBase_ScrollView, "objectName": "MessagingView_AlwaysShow_RadioButton", "type": "SettingsRadioButton", "visible": True}
+never_show_radioButton_StatusRadioButton = {"container": settingsContentBase_ScrollView, "objectName": "MessagingView_NeverShow_RadioButton", "type": "SettingsRadioButton", "visible": True}
 
 # Contacts View
 mainWindow_ContactsView = {"container": statusDesktop_mainWindow, "type": "ContactsView", "unnamed": 1, "visible": True}

@@ -10,3 +10,5 @@ class Messaging(Enum):
     YOU_NEED_TO_BE_A_MEMBER = 'You need to be a member of this group to send messages'
     ID_VERIFICATION_REQUEST_SENT = 'ID verification request sent'
     ID_VERIFICATION_REPLY_SENT = 'ID verification reply sent'
+    SHOW_PREVIEWS_TITLE = 'Show link previews?'
+    SHOW_PREVIEWS_TEXT = 'A preview of your link will be shown here before you send it'

@@ -22,11 +22,18 @@ class MessagingSettingsView(QObject):
     def __init__(self):
         super().__init__(names.mainWindow_MessagingView)
         self._contacts_button = Button(names.contactsListItem_btn_StatusContactRequestsIndicatorListItem)
+        self._always_ask_button = Button(names.always_ask_radioButton_StatusRadioButton)
+        self._always_show_button = Button(names.always_show_radioButton_StatusRadioButton)
+        self._never_ask_button = Button(names.never_show_radioButton_StatusRadioButton)
 
     @allure.step('Open contacts settings')
     def open_contacts_settings(self) -> 'ContactsSettingsView':
         self._contacts_button.click()
         return ContactsSettingsView()
+
+    @allure.step('Choose always show previews from website links preview options')
+    def click_always_show(self):
+        self._always_show_button.click()
 
 
 class ContactItem:
@@ -101,7 +108,8 @@ class ContactsSettingsView(QObject):
         self._verify_identity_item = QObject(names.verify_Identity_StatusMenuItem)
         self._respond_to_id_request_item = QObject(names.respond_to_ID_Request_StatusMenuItem)
         self._view_profile_item = QObject(names.view_Profile_StatusMenuItem)
-        self._respond_to_id_request_button = Button(names.settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton)
+        self._respond_to_id_request_button = Button(
+            names.settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton)
 
     @property
     @allure.step('Get contact items')

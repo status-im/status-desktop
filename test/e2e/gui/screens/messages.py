@@ -7,6 +7,7 @@ import allure
 import configs
 import driver
 from driver.objects_access import walk_children
+from driver.toplevel_window import set_focus
 from gui.components.activity_center import ActivityCenter
 from gui.components.context_menu import ContextMenu
 from gui.components.delete_popup import DeleteMessagePopup
@@ -15,6 +16,7 @@ from gui.components.messaging.clear_chat_history_popup import ClearChatHistoryPo
 from gui.components.messaging.close_chat_popup import CloseChatPopup
 from gui.components.messaging.edit_group_name_and_image_popup import EditGroupNameAndImagePopup
 from gui.components.messaging.leave_group_popup import LeaveGroupPopup
+from gui.components.messaging.link_preview_options_popup import LinkPreviewOptionsPopup
 from gui.elements.button import Button
 from gui.elements.list import List
 from gui.elements.object import QObject
@@ -124,6 +126,10 @@ class Message:
         self.from_user: typing.Optional[str] = None
         self.text: typing.Optional[str] = None
         self.delegate_button: typing.Optional[Button] = None
+        self.reply_corner: typing.Optional[QObject] = None
+        self.link_preview: typing.Optional[QObject] = None
+        self.link_preview_title_object: typing.Optional[QObject] = None
+        self.link_preview_emoji_hash: typing.Optional[str] = None
         self.community_invitation: dict = {}
         self.init_ui()
 
@@ -135,6 +141,10 @@ class Message:
                 self.community_invitation['name'] = str(child.text)
             elif getattr(child, 'id', '') == 'description':
                 self.community_invitation['description'] = str(child.text)
+            elif getattr(child, 'id', '') == 'titleLayout':
+                self.link_preview_title_object = child
+            elif getattr(child, 'objectName', '') == 'linkPreviewEmojiHash':
+                self.link_preview_emoji_hash = str(child.publicKey)
             else:
                 match getattr(child, 'id', ''):
                     case 'profileImage':
@@ -149,6 +159,8 @@ class Message:
                         self.reply_corner = QObject(real_name=driver.objectMap.realName(child))
                     case 'delegate':
                         self.delegate_button = Button(real_name=driver.objectMap.realName(child))
+                    case 'linksMessageView':
+                        self.link_preview = QObject(real_name=driver.objectMap.realName(child))
 
     @allure.step('Open community invitation')
     def open_community_invitation(self):
@@ -179,6 +191,12 @@ class Message:
     @allure.step('Get message pinned state')
     def message_is_pinned(self) -> bool:
         return self.delegate_button.object.isPinned
+
+    @allure.step('Get title of link preview')
+    def get_link_preview_title(self) -> str:
+        for child in walk_children(self.link_preview_title_object):
+            if getattr(child, 'objectName', '') == 'linkPreviewTitle':
+                return str(child.text)
 
 
 class ChatView(QObject):
@@ -273,6 +291,13 @@ class ChatMessagesView(QObject):
         self._message_input_area = QObject(messaging_names.inputScrollView_messageInputField_TextArea)
         self._message_field = TextEdit(messaging_names.inputScrollView_Message_PlaceholderText)
         self._emoji_button = Button(messaging_names.mainWindow_statusChatInputEmojiButton_StatusFlatRoundButton)
+        self._link_preview_title = QObject(messaging_names.mainWindow_linkPreviewTitleText_StatusBaseText)
+        self._link_preview_preview_subtitle = QObject(messaging_names.mainWindow_linkPreviewSubtitleText_StatusBaseText)
+        self._link_preview_show_preview = QObject(messaging_names.mainWindow_titleText_StatusBaseText)
+        self._link_preview_show_description = QObject(messaging_names.mainWindow_subtitleText_StatusBaseText)
+        self._link_preview_card = QObject(messaging_names.mainWindow_settingsCard_LinkPreviewSettingsCard)
+        self._options_combobox = QObject(messaging_names.mainWindow_optionsComboBox_ComboBox)
+        self._close_preview_button = QObject(messaging_names.mainWindow_closeLinkPreviewButton_StatusFlatRoundButton)
 
     @property
     @allure.step('Get group name')
@@ -322,9 +347,49 @@ class ChatMessagesView(QObject):
 
     @allure.step('Send message to group chat')
     def send_message_to_group_chat(self, message: str):
+        self.type_message(message)
+        self.confirm_sending_message()
+
+    @allure.step('Type text to message field')
+    def type_message(self, message: str):
         self._message_field.type_text(message)
+
+    @allure.step('Confirm sending message')
+    def confirm_sending_message(self):
+        self._message_input_area.click()
         for i in range(2):
             driver.nativeType('<Return>')
+
+    @allure.step('Click options combobox')
+    def click_options(self):
+        self._options_combobox.click()
+        return LinkPreviewOptionsPopup().wait_until_appears()
+
+    @allure.step('Close link preview popup by clicking preview bubble area')
+    def close_link_preview_popup(self):
+        self._link_preview_card.click()
+        LinkPreviewOptionsPopup().wait_until_hidden()
+        return self
+
+    @allure.step('Get text of title of link preview bubble')
+    def get_link_preview_bubble_title(self) -> str:
+        return str(self._link_preview_title.object.text)
+
+    @allure.step('Get text of description of link preview bubble')
+    def get_link_preview_bubble_description(self) -> str:
+        return str(self._link_preview_preview_subtitle.object.text)
+
+    @allure.step('Get text of title of show link preview bubble')
+    def get_show_link_preview_bubble_title(self) -> str:
+        return str(self._link_preview_show_preview.object.text)
+
+    @allure.step('Get text of description of show link preview bubble')
+    def get_show_link_preview_bubble_description(self) -> str:
+        return str(self._link_preview_show_description.object.text)
+
+    @allure.step('Get close button visibility state')
+    def does_close_button_exist(self) -> bool:
+        return self._close_preview_button.is_visible
 
     @allure.step('Send emoji to chat')
     def send_emoji_to_chat(self, emoji: str):
