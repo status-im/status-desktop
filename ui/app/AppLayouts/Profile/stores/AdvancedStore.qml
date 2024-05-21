@@ -41,6 +41,8 @@ QtObject {
     readonly property real scrollVelocity: localAppSettings.scrollVelocity
     readonly property real scrollDeceleration: localAppSettings.scrollDeceleration
 
+    readonly property bool refreshTokenEnabled: localAppSettings.refreshTokenEnabled ?? false
+
     readonly property bool isGoerliEnabled: networksModuleInst.isGoerliEnabled
 
     function logDir() {
@@ -171,6 +173,12 @@ QtObject {
             return
 
         localAppSettings.wakuV2ShardedCommunitiesEnabled = !localAppSettings.wakuV2ShardedCommunitiesEnabled
+    }
+
+    function toggleRefreshTokenEnabled() {
+        if(!localAppSettings)
+            return
+        localAppSettings.refreshTokenEnabled = !localAppSettings.refreshTokenEnabled
     }
 
     function setCustomScrollingEnabled(value) {

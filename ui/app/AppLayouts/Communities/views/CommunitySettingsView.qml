@@ -397,6 +397,9 @@ StatusSectionLayout {
             onDeleteToken:
                 communityTokensStore.deleteToken(root.community.id, tokenKey)
 
+            onRefreshToken:
+                communityTokensStore.refreshToken(tokenKey)
+
             onAirdropToken: {
                 root.goTo(Constants.CommunitySettingsSections.Airdrops)
 

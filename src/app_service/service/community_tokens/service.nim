@@ -1383,3 +1383,9 @@ QtObject:
     except Exception:
       error "can't get owner token owner address", message = getCurrentExceptionMsg()
     self.events.emit(SIGNAL_OWNER_TOKEN_OWNER_ADDRESS, ownerTokenArgs)
+
+  proc refreshCommunityToken*(self: Service, chainId: int, contractAddress: string) =
+    try:
+      discard tokens_backend.reTrackOwnerTokenDeploymentTransaction(chainId, contractAddress)
+    except Exception:
+      error "can't retrack token transaction", message = getCurrentExceptionMsg()
