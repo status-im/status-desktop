@@ -192,7 +192,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.accountsService,
     result.tokenService, result.networkService, result.currencyService
   )
-  result.walletConnectService = wallet_connect_service.newService(statusFoundation.events, statusFoundation.threadpool)
+  result.walletConnectService = wallet_connect_service.newService(statusFoundation.events, statusFoundation.threadpool, result.settingsService)
   result.messageService = message_service.newService(
     statusFoundation.events,
     statusFoundation.threadpool,

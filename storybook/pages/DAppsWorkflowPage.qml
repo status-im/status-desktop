@@ -98,15 +98,18 @@ Item {
                 }
             }
 
-
-            CheckBox {
-
-                text: "Open Pair"
-                checked: settings.openPair
-                onCheckedChanged: {
-                    settings.openPair = checked
-                    if (checked) {
-                        d.startPairing()
+            ComboBox {
+                model: [{testCase: d.noTestCase, name: "No Test Case"},
+                        {testCase: d.openDappsTestCase, name: "Open dApps"},
+                        {testCase: d.openPairTestCase, name: "Open Pair"}
+                ]
+                textRole: "name"
+                valueRole: "testCase"
+                currentIndex: settings.testCase
+                onCurrentValueChanged: {
+                    settings.testCase = currentValue
+                    if (currentValue !== d.noTestCase) {
+                        d.startTestCase()
                     }
                 }
 
@@ -114,8 +117,8 @@ Item {
                     target: dappsWorkflow
 
                     // If Open Pair workflow if selected in the side bar
-                    function onDAppsListReady() {
-                        if (!d.startPairingWorkflowActive)
+                    function onDappsListReady() {
+                        if (d.activeTestCase < d.openPairTestCase)
                             return
 
                         let items = InspectionUtils.findVisualsByTypeName(dappsWorkflow, "DAppsListPopup")
@@ -128,7 +131,7 @@ Item {
                     }
 
                     function onPairWCReady() {
-                        if (!d.startPairingWorkflowActive)
+                        if (d.activeTestCase < d.openPairTestCase)
                             return
 
                         if (pairUriInput.text.length > 0) {
@@ -142,7 +145,7 @@ Item {
                     }
 
                     function clickDoneIfSDKReady() {
-                        if (!d.startPairingWorkflowActive) {
+                        if (d.activeTestCase < d.openPairTestCase) {
                             return
                         }
 
@@ -150,7 +153,7 @@ Item {
                         if (modals.length === 1) {
                             let buttons = InspectionUtils.findVisualsByTypeName(modals[0].footer, "StatusButton")
                             if (buttons.length === 1 && walletConnectService.wcSDK.sdkReady) {
-                                d.startPairingWorkflowActive = false
+                                d.activeTestCase = d.noTestCase
                                 buttons[0].clicked()
                                 return
                             }
@@ -173,8 +176,25 @@ Item {
         }
 
         store: DAppsStore {
+            signal dappsListReceived(string dappsJson)
+
             function addWalletConnectSession(sessionJson) {
                 console.info("Persist Session", sessionJson)
+
+                let session = JSON.parse(sessionJson)
+
+                let firstIconUrl = session.peer.metadata.icons.length > 0 ? session.peer.metadata.icons[0] : ""
+                let persistedDapp = {
+                    "name": session.peer.metadata.name,
+                    "url": session.peer.metadata.url,
+                    "iconUrl": firstIconUrl
+                }
+                d.persistedDapps.push(persistedDapp)
+            }
+
+            function getDapps() {
+                this.dappsListReceived(JSON.stringify(d.persistedDapps))
+                return true
             }
         }
 
@@ -191,26 +211,39 @@ Item {
     QtObject {
         id: d
 
-        property bool startPairingWorkflowActive: false
+        property int activeTestCase: noTestCase
 
-        function startPairing() {
-            d.startPairingWorkflowActive = true
+        function startTestCase() {
+            d.activeTestCase = settings.testCase
             if(root.visible) {
                 dappsWorkflow.clicked()
             }
         }
+
+        readonly property int noTestCase: 0
+        readonly property int openDappsTestCase: 1
+        readonly property int openPairTestCase: 2
+
+        property var persistedDapps: [
+            {"name":"Test dApp 1", "url":"https://dapp.test/1","iconUrl":"https://se-sdk-dapp.vercel.app/assets/eip155:1.png"},
+            {"name":"Test dApp 2", "url":"https://dapp.test/2","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"},
+            {"name":"Test dApp 3", "url":"https://dapp.test/3","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"},
+            {"name":"Test dApp 4 - very long name !!!!!!!!!!!!!!!!", "url":"https://dapp.test/4","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"},
+            {"name":"Test dApp 5 - very long url", "url":"https://dapp.test/very_long/url/unusual","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"},
+            {"name":"Test dApp 6", "url":"https://dapp.test/6","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"}
+        ]
     }
 
     onVisibleChanged: {
-        if (visible && d.startPairingWorkflowActive) {
-            d.startPairing()
+        if (visible && d.activeTestCase !== d.noTestCase) {
+            d.startTestCase()
         }
     }
 
     Settings {
         id: settings
 
-        property bool openPair: false
+        property int testCase: d.noTestCase
         property string pairUri: ""
         property bool testNetworks: false
     }

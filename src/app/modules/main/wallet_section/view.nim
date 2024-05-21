@@ -5,7 +5,7 @@ import ./activity/details_controller as activity_detailsc
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import ./io_interface
 import app/modules/shared_models/currency_amount
-import app/modules/shared_modules/wallet_connect/io_interface as wc_module
+import app/modules/shared_modules/wallet_connect/controller as wc_controller
 
 type
   ActivityControllerArray* = array[2, activityc.Controller]
@@ -25,7 +25,7 @@ QtObject:
       collectibleDetailsController: collectible_detailsc.Controller
       isNonArchivalNode: bool
       keypairOperabilityForObservedAccount: string
-      wcModule: wc_module.AccessInterface
+      wcController: QVariant
       walletReady: bool
       addressFilters: string
       currentCurrency: string
@@ -34,6 +34,8 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: View) =
+    self.wcController.delete
+
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface,
@@ -41,14 +43,14 @@ QtObject:
     tmpActivityControllers: ActivityControllerArray,
     activityDetailsController: activity_detailsc.Controller,
     collectibleDetailsController: collectible_detailsc.Controller,
-    wcModule: wc_module.AccessInterface): View =
+    wcController: wc_controller.Controller): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
     result.tmpActivityControllers = tmpActivityControllers
     result.activityDetailsController = activityDetailsController
     result.collectibleDetailsController = collectibleDetailsController
-    result.wcModule = wcModule
+    result.wcController = newQVariant(wcController)
 
     result.setup()
 
@@ -236,13 +238,13 @@ QtObject:
   proc emitDestroyKeypairImportPopup*(self: View) =
     self.destroyKeypairImportPopup()
 
-  proc getWalletConnectModule(self: View): QVariant {.slot.} =
-    if self.wcModule == nil:
+  proc getWalletConnectController(self: View): QVariant {.slot.} =
+    if self.wcController == nil:
       return newQVariant()
-    return self.wcModule.getModuleAsVariant()
+    return self.wcController
 
-  QtProperty[QVariant] walletConnectModule:
-    read = getWalletConnectModule
+  QtProperty[QVariant] walletConnectController:
+    read = getWalletConnectController
 
   proc walletReadyChanged*(self: View) {.signal.}
 
