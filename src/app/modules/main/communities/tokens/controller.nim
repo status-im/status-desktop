@@ -118,6 +118,9 @@ proc deployOwnerContracts*(self: Controller, communityId: string, addressFrom: s
 proc removeCommunityToken*(self: Controller, communityId: string, chainId: int, address: string) =
   self.communityTokensService.removeCommunityToken(communityId, chainId, address)
 
+proc refreshCommunityToken*(self: Controller, chainId: int, address: string) =
+  self.communityTokensService.refreshCommunityToken(chainId, address)
+
 proc airdropTokens*(self: Controller, communityId: string, password: string, tokensAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string) =
   self.communityTokensService.airdropTokens(communityId, password, tokensAndAmounts, walletAddresses, addressFrom)
 

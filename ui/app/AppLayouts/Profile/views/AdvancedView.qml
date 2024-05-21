@@ -488,6 +488,17 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
+                text: qsTr("Enable community tokens refreshing")
+                isSwitch: true
+                switchChecked: root.advancedStore.refreshTokenEnabled
+                onClicked: {
+                    root.advancedStore.toggleRefreshTokenEnabled()
+                }
+            }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("How many log files to keep archived")
                 currentValue: root.advancedStore.logMaxBackups
                 onClicked: {
