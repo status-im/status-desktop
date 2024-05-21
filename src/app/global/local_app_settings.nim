@@ -24,6 +24,7 @@ const DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED = false
 const LAS_KEY_TRANSLATIONS_ENABLED = "global/translations_enabled"
 const DEFAULT_LAS_KEY_TRANSLATIONS_ENABLED = false
 const DEFAULT_LAS_KEY_CREATE_COMMUNITIES_ENABLED = false
+const LAS_KEY_REFRESH_TOKEN_ENABLED = "global/refresh_token_enabled"
 
 QtObject:
   type LocalAppSettings* = ref object of QObject
@@ -149,6 +150,18 @@ QtObject:
     read = getFakeLoadingScreenEnabled
     write = setFakeLoadingScreenEnabled
     notify = fakeLoadingScreenEnabledChanged
+
+  proc refreshTokenEnabledChanged*(self: LocalAppSettings) {.signal.}
+  proc getRefreshTokenEnabled*(self: LocalAppSettings): bool {.slot.} =
+    self.settings.value(LAS_KEY_REFRESH_TOKEN_ENABLED, newQVariant(false)).boolVal
+  proc setRefreshTokenEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
+    self.settings.setValue(LAS_KEY_REFRESH_TOKEN_ENABLED, newQVariant(enabled))
+    self.refreshTokenEnabledChanged()
+
+  QtProperty[bool] refreshTokenEnabled:
+    read = getRefreshTokenEnabled
+    write = setRefreshTokenEnabled
+    notify = refreshTokenEnabledChanged
 
   proc createCommunityEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getCreateCommunityEnabled*(self: LocalAppSettings): bool {.slot.} =

@@ -93,6 +93,9 @@ method onAirdropStateChanged*(self: AccessInterface, communityId: string, tokenN
 method removeCommunityToken*(self: AccessInterface, communityId: string, chainId: int, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method refreshCommunityToken*(self: AccessInterface, chainId: int, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onOwnerTokenReceived*(self: AccessInterface, communityId: string, communityName: string, chainId: int, contractAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -249,6 +249,9 @@ method deployAssets*(self: Module, communityId: string, fromAddress: string, nam
 method removeCommunityToken*(self: Module, communityId: string, chainId: int, address: string) =
   self.controller.removeCommunityToken(communityId, chainId, address)
 
+method refreshCommunityToken*(self: Module, chainId: int, address: string) =
+  self.controller.refreshCommunityToken(chainId, address)
+
 method onUserAuthenticated*(self: Module, password: string) =
   defer: self.resetTempValues()
   if password.len == 0:

@@ -74,6 +74,7 @@ StackView {
     signal burnToken(string tokenKey, string amount, string accountAddress)
     signal airdropToken(string tokenKey, string amount, int type, var addresses)
     signal deleteToken(string tokenKey)
+    signal refreshToken(string tokenKey)
     signal registerDeployFeesSubscriber(var feeSubscriber)
     signal registerSelfDestructFeesSubscriber(var feeSubscriber)
     signal registerBurnTokenFeesSubscriber(var feeSubscriber)
@@ -519,6 +520,12 @@ StackView {
                         retryAssetOrCollectible()
                     }
                 }
+            },
+            StatusButton {
+                text: qsTr("Refresh")
+                visible: localAppSettings.refreshTokenEnabled && (tokenViewPage.token.deployState === Constants.ContractTransactionStatus.InProgress)
+                onClicked: root.refreshToken(tokenViewPage.token.key)
+                tooltip.text: qsTr("Restart token's transaction listening if the token got stuck in minting state")
             }
         ]
 

@@ -144,6 +144,10 @@ proc getOwnerTokenOwnerAddress*(chainId: int, contractAddress: string): RpcRespo
   let payload = %*[chainId, contractAddress]
   return core.callPrivateRPC("communitytokens_ownerTokenOwnerAddress", payload)
 
+proc reTrackOwnerTokenDeploymentTransaction*(chainId: int, contractAddress: string): RpcResponse[JsonNode] =
+  let payload = %*[chainId, contractAddress]
+  return core.callPrivateRPC("communitytokens_reTrackOwnerTokenDeploymentTransaction", payload)
+
 rpc(registerReceivedCommunityTokenNotification, "wakuext"):
   communityId: string
   isFirst: bool
