@@ -1,15 +1,15 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core.Theme 0.1
-import QtGraphicalEffects 1.12
 
 /*!
    \qmltype LoadingComponent
    \inherits Control
    \inqmlmodule StatusQ.Components
    \since StatusQ.Components 0.1
-   \brief A componet that can be used to adding a loading state to a widget
+   \brief A component that can be used to adding a loading state to a widget
    Example:
 
    \qml
@@ -48,6 +48,7 @@ Control {
             color: Theme.palette.statusLoadingHighlight
             radius: root.radius
             visible: false
+
             LinearGradient {
                 id: gradient
                 width: 100
@@ -62,7 +63,7 @@ Control {
                     GradientStop { position: 0.8; color: "transparent"}
                 }
                 rotation: 20
-                NumberAnimation on x {
+                XAnimator on x {
                     id: animation
                     easing.type: Easing.Linear
                     loops: Animation.Infinite

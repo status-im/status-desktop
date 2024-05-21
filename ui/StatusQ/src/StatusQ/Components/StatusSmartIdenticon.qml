@@ -38,6 +38,7 @@ Loader {
     property bool hoverEnabled: false
     readonly property bool hovered: (sourceComponent === roundedIcon && item) ?
                      item.hovered : false
+
     signal clicked(var mouse)
 
     Component {
@@ -91,18 +92,15 @@ Loader {
             asset.bgBorderWidth: root.asset.bgBorderWidth
             asset.bgBorderColor: root.asset.bgBorderColor
 
-            signal clicked(var mouse)
-
-            property alias hovered: mouseArea.containsMouse
+            readonly property alias hovered: mouseArea.containsMouse
 
             MouseArea {
                 id: mouseArea
 
                 anchors.fill: parent
                 hoverEnabled: root.hoverEnabled
-                cursorShape: loading ? Qt.ArrowCursor
-                                     : Qt.PointingHandCursor
-                onClicked: parent.clicked(mouse)
+                cursorShape: !loading && root.hoverEnabled ? Qt.PointingHandCursor : undefined
+                onClicked: root.clicked(mouse)
             }
         }
     }
@@ -166,16 +164,6 @@ Loader {
             radius: width/2
             height: root.asset.isImage ? root.asset.height : root.asset.bgHeight
             width: root.asset.isImage ? root.asset.width : root.asset.bgWidth
-        }
-    }
-
-    Connections {
-        target: item
-        enabled: status === Loader.Ready
-        ignoreUnknownSignals: true
-
-        function onClicked(mouse) {
-            root.clicked(mouse)
         }
     }
 }
