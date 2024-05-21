@@ -682,15 +682,20 @@ Loader {
                         const pubkey = link.replace("//", "");
                         Global.openProfilePopup(pubkey)
                         return
-                    } else if (link.startsWith('#')) {
+                    }
+                    if (link.startsWith('#')) {
                         rootStore.chatCommunitySectionModule.switchToChannel(link.replace("#", ""))
-                        return
-                    } else if (Utils.isStatusDeepLink(link)) {
-                        Global.activateDeepLink(link)
                         return
                     }
 
-                    Global.openLink(link)
+                    const linkPreviewType = root.linkPreviewModel.getLinkPreviewType(link)
+
+                    if (linkPreviewType === Constants.LinkPreviewType.Standard || !Utils.isStatusDeepLink(link)) {
+                        Global.openLink(link)
+                        return
+                    }
+
+                    Global.activateDeepLink(link)
                 }
 
                 onProfilePictureClicked: {
