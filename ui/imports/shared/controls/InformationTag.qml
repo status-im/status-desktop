@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -18,20 +18,23 @@ Control {
     property alias rightComponent: rightComponent.sourceComponent
     property bool loading: false
     property int secondarylabelMaxWidth: 100
+
     property color backgroundColor: "transparent"
+    property color bgBorderColor: Theme.palette.baseColor2
+    property real bgRadius: 36
 
     property Component customBackground: Component {
         Rectangle {
             color: root.backgroundColor
             border.width: 1
-            border.color: Theme.palette.baseColor2
-            radius: 36
+            border.color: root.bgBorderColor
+            radius: root.bgRadius
         }
     }
 
     QtObject {
         id: d
-        property var loadingComponent: Component { LoadingComponent {} }
+        property var loadingComponent: Component { LoadingComponent { radius: root.bgRadius } }
     }
 
     horizontalPadding: 12

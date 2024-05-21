@@ -12,6 +12,7 @@ CurrencyAmountInput 1.0 CurrencyAmountInput.qml
 EmojiHash 1.0 EmojiHash.qml
 EmptyShapeRectangleFooterListView 1.0 EmptyShapeRectangleFooterListView.qml
 ErrorDetails 1.0 ErrorDetails.qml
+ErrorTag 1.0 ErrorTag.qml
 FoldableHeader 1.0 FoldableHeader.qml
 FormGroup 1.0 FormGroup.qml
 GetSyncCodeDesktopInstructions 1.0 GetSyncCodeDesktopInstructions.qml
