@@ -18,12 +18,12 @@ import ./activity/controller as activityc
 import ./activity/details_controller as activity_detailsc
 
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
+import app/modules/shared_modules/wallet_connect/controller as wc_controller
 
 import app/global/global_singleton
 import app/core/eventemitter
 import app/modules/shared_modules/add_account/module as add_account_module
 import app/modules/shared_modules/keypair_import/module as keypair_import_module
-import app/modules/shared_modules/wallet_connect/module as wc_module
 import app_service/service/keycard/service as keycard_service
 import app_service/service/token/service as token_service
 import app_service/service/collectible/service as collectible_service
@@ -61,7 +61,6 @@ type
     # shared modules
     addAccountModule: add_account_module.AccessInterface
     keypairImportModule: keypair_import_module.AccessInterface
-    walletConnectModule: wc_module.AccessInterface
     # modules
     accountsModule: accounts_module.AccessInterface
     allTokensModule: all_tokens_module.AccessInterface
@@ -80,6 +79,7 @@ type
     savedAddressService: saved_address_service.Service
     devicesService: devices_service.Service
     walletConnectService: wc_service.Service
+    walletConnectController: wc_controller.Controller
 
     activityController: activityc.Controller
     collectibleDetailsController: collectible_detailsc.Controller
@@ -167,10 +167,10 @@ proc newModule*(
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 
-  result.walletConnectService = wc_service.newService(result.events, result.threadpool)
-  result.walletConnectModule = wc_module.newModule(result, result.events, result.walletAccountService, result.walletConnectService)
+  result.walletConnectService = wc_service.newService(result.events, result.threadpool, settingsService)
+  result.walletConnectController = wc_controller.newController(result.walletConnectService)
 
-  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.walletConnectModule)
+  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.walletConnectController)
 
 method delete*(self: Module) =
   self.accountsModule.delete

@@ -2044,7 +2044,7 @@ Item {
                 projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
             }
             store: DAppsStore {
-                module: WalletStore.RootStore.walletConnectModule
+                controller: WalletStore.RootStore.walletConnectController
             }
             walletStore: appMain.rootStore.profileSectionStore.walletStore
 

@@ -32,7 +32,7 @@ Item {
             "metadata": {
                 "description": "React App for WalletConnect",
                 "icons": [
-                "https://avatars.githubusercontent.com/u/37784886"
+                    "https://avatars.githubusercontent.com/u/37784886"
                 ],
                 "name": "React App",
                 "url": "https://react-app.walletconnect.com",

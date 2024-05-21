@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.15
 import QtQml.Models 2.14
 import SortFilterProxyModel 0.2
 
+import QtGraphicalEffects 1.15
+
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -41,7 +43,9 @@ StatusDialog {
         dappCard.name = m.name
         dappCard.url = m.url
         if(m.icons.length > 0) {
-            dappCard.icon = m.icons[0]
+            dappCard.iconUrl = m.icons[0]
+        } else {
+            dappCard.iconUrl = ""
         }
 
         d.dappChains.clear()
@@ -230,23 +234,39 @@ StatusDialog {
     component DAppCard: ColumnLayout {
         property alias name: appNameText.text
         property alias url: appUrlText.text
-        property alias icon: iconDisplay.asset.source
+        property string iconUrl: ""
 
-        // TODO: this doesn't work as expected, the icon is not displayed properly
-        // TODO: set a fallback icon for when the provided icon is not available
-        StatusRoundIcon {
-            id: iconDisplay
-
+        Rectangle {
             Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 16
+            Layout.preferredWidth: 72
+            Layout.preferredHeight: Layout.preferredWidth
 
-            width: 72
-            height: 72
+            radius: width / 2
+            color: Theme.palette.primaryColor3
 
-            asset.width: width
-            asset.height: height
-            asset.color: "transparent"
-            asset.bgColor: "transparent"
+            StatusRoundedImage {
+                id: iconDisplay
+
+                anchors.fill: parent
+
+                visible: !fallbackImage.visible
+
+                image.source: iconUrl
+            }
+
+            StatusIcon {
+                id: fallbackImage
+
+                anchors.centerIn: parent
+
+                width: 40
+                height: 40
+
+                icon: "dapp"
+                color: Theme.palette.primaryColor1
+
+                visible: iconDisplay.image.isLoading || iconDisplay.image.isError || !iconUrl
+            }
         }
 
         StatusBaseText {
