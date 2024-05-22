@@ -185,6 +185,7 @@ CalloutCard {
                     spacing: 0
                     StatusBaseText {
                         id: titleText
+                        objectName: "linkPreviewTitleText"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         font.pixelSize: Style.current.additionalTextSize
@@ -217,6 +218,7 @@ CalloutCard {
                 }
                 StatusBaseText {
                     id: subtitleText
+                    objectName: "linkPreviewSubtitleText"
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     font.pixelSize: Style.current.tertiaryTextFontSize

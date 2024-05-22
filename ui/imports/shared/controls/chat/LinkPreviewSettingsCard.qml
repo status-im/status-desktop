@@ -39,6 +39,7 @@ CalloutCard {
                 elide: Text.ElideRight
                 maximumLineCount: 1
                 text: qsTr("Show link previews?")
+                objectName: "titleText"
             }
             StatusBaseText {
                 Layout.fillWidth: true
@@ -49,6 +50,7 @@ CalloutCard {
                 elide: Text.ElideRight
                 maximumLineCount: 1
                 text: qsTr("A preview of your link will be shown here before you send it")
+                objectName: "subtitleText"
             }
         }
         ComboBox {
@@ -98,6 +100,7 @@ CalloutCard {
 
         StatusFlatRoundButton {
             id: closeButton
+            objectName: "closeLinkPreviewButton"
             Layout.preferredHeight: 38
             Layout.preferredWidth: 38
             type: StatusFlatRoundButton.Type.Secondary

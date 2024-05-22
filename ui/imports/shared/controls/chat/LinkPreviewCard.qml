@@ -94,6 +94,7 @@ CalloutCard {
                 }
                 StatusBaseText {
                     id: title
+                    objectName: "linkPreviewTitle"
                     // One line centered next to the logo
                     // Two or more lines, or no logo, top aligned
                     readonly property bool centerText: lineCount == 1 && height === logo.height && logo.visible 
@@ -115,6 +116,7 @@ CalloutCard {
                 visible: root.type === Constants.LinkPreviewType.StatusContact
                 publicKey: root.userData.publicKey
                 oneRow: true
+                objectName: "linkPreviewEmojiHash"
             }
             StatusBaseText {
                 id: description
