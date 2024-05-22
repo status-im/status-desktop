@@ -124,8 +124,12 @@ proc getChat*(self: Controller): ChatDto =
 proc getChatMembers*(self: Controller): seq[ChatMember] =
   if self.belongsToCommunity:
     let myCommunity = self.getMyCommunity()
-    return myCommunity.getCommunityChat(self.chatId).members
-  else:
+    # TODO: when a new channel is added, chat may arrive earlier and we have no up to date community yet
+    # see log here: https://github.com/status-im/status-desktop/issues/14442#issuecomment-2120756598
+    # should be resolved in https://github.com/status-im/status-desktop/issues/14219
+    let members = myCommunity.getCommunityChat(self.chatId).members
+    if members.len > 0:
+      return members
     return self.chatService.getChatById(self.chatId).members
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
