@@ -9,6 +9,7 @@ import StatusQ.Core.Utils 0.1
 import Storybook 1.0
 import Models 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 SplitView {
     orientation: Qt.Horizontal
@@ -59,7 +60,7 @@ SplitView {
 
             property string networksNames: "oeth:arb1:eth:"
 
-            store: QtObject {
+            store: WalletStores.RootStore {
                 property var filteredFlatModel: SortFilterProxyModel {
                     sourceModel: NetworksModel.flatNetworks
                     filters: ValueFilter { roleName: "isTest"; value: false }

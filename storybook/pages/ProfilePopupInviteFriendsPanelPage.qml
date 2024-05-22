@@ -1,7 +1,10 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.stores 1.0 as AppLayoutStores
+
 import utils 1.0
 
 Item {
@@ -56,13 +59,13 @@ Item {
 
                 community: ({ id: "communityId" })
 
-                rootStore: QtObject {
+                rootStore: AppLayoutStores.RootStore {
                     function communityHasMember(communityId, pubKey) {
                         return false
                     }
                 }
 
-                contactsStore: QtObject {
+                contactsStore: ProfileStores.ContactsStore {
                     readonly property ListModel myContactsModel: ListModel {
                         Component.onCompleted: {
                             const keys = []

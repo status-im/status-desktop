@@ -15,6 +15,8 @@ import SortFilterProxyModel 0.2
 
 import utils 1.0
 
+import AppLayouts.Wallet.stores 1.0 as WalletStores
+
 Control {
     id: root
 
@@ -31,7 +33,7 @@ Control {
     property var globalAssetsModel
     property var globalCollectiblesModel
 
-    property var walletStore
+    property WalletStores.RootStore walletStore
 
     required property string mainDisplayName
     required property bool readOnly

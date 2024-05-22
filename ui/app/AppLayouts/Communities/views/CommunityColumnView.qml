@@ -19,9 +19,11 @@ import shared.panels 1.0
 import shared.stores 1.0
 import shared.views.chat 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.panels 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 // FIXME: Rework me to use ColumnLayout instead of anchors!!
 Item {
@@ -36,9 +38,9 @@ Item {
     property var communitySectionModule
     property var emojiPopup
 
-    property var store
-    property var communitiesStore
-    required property WalletStore.WalletAssetsStore walletAssetsStore
+    property ChatStores.RootStore store
+    property CommunitiesStores.CommunitiesStore communitiesStore
+    required property WalletStores.WalletAssetsStore walletAssetsStore
     required property CurrenciesStore currencyStore
     property bool hasAddedContacts: false
     property var communityData

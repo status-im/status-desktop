@@ -11,13 +11,16 @@ import shared.controls.chat 1.0
 import shared.controls 1.0
 import shared.stores 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 Item {
     id: root
     width: rectangleBubble.width
     height: rectangleBubble.height
 
-    property var store              // expected ui/app/AppLayouts/Chat/stores/RootStore.qml
-    property var contactsStore
+    property ChatStores.RootStore store
+    property ProfileStores.ContactsStore contactsStore
 
     property var transactionParams
 

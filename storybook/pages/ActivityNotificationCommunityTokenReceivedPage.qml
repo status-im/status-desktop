@@ -8,6 +8,9 @@ import mainui 1.0
 import Storybook 1.0
 import Models 1.0
 
+import AppLayouts.stores 1.0 as AppLayoutStores
+import shared.stores 1.0
+
 SplitView {
     id: root
 
@@ -20,8 +23,8 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: QtObject {}
-        communityTokensStore: QtObject {}
+        rootStore: AppLayoutStores.RootStore {}
+        communityTokensStore: CommunityTokensStore {}
     }
 
     QtObject {

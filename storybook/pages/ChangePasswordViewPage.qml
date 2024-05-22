@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Extras 1.4
 
 import shared.views 1.0
+import AppLayouts.Profile.stores 1.0
 import AppLayouts.Profile.views 1.0
 
 import utils 1.0
@@ -31,7 +32,7 @@ SplitView {
 
             passwordStrengthScoreFunction: (newPass) => Math.min(newPass.length, 4)
 
-            privacyStore: QtObject{
+            privacyStore: PrivacyStore {
                  property QtObject privacyModule: QtObject {
                     signal passwordChanged(success: bool, errorMsg: string)
                     signal storeToKeychainError(errorDescription: string)

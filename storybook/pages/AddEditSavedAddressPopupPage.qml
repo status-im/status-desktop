@@ -7,6 +7,7 @@ import SortFilterProxyModel 0.2
 
 import Storybook 1.0
 import Models 1.0
+import AppLayouts.stores 1.0
 import AppLayouts.Wallet.popups 1.0
 
 import utils 1.0

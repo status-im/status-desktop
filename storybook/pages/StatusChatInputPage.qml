@@ -11,6 +11,8 @@ import shared.stores 1.0
 
 import StatusQ.Core.Utils 0.1
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 SplitView {
     id: root
 
@@ -129,7 +131,7 @@ SplitView {
                         d.loadLinkPreviews(unformattedText)
                     }
                 }
-                usersStore: QtObject {
+                usersStore: ChatStores.UsersStore {
                     readonly property var usersModel: fakeUsersModel
                 }
                 onSendMessage: {

@@ -6,10 +6,12 @@ import utils 1.0
 import shared.popups 1.0
 import shared.controls 1.0
 
+import AppLayouts.Profile.stores 1.0
+
 RadioButtonSelector {
     id: root
 
-    property var advancedStore
+    property AdvancedStore advancedStore
 
     property string fleetName: ""
     property string newFleet: ""

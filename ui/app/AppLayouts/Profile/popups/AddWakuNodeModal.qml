@@ -8,14 +8,15 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
-
 import utils 1.0
+
+import AppLayouts.Profile.stores 1.0
 
 StatusModal {
     id: root
 
-    property var messagingStore
-    property var advancedStore
+    property MessagingStore messagingStore
+    property AdvancedStore advancedStore
 
     height: 560
     padding: 8

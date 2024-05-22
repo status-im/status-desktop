@@ -12,6 +12,7 @@ import shared.controls 1.0 as SharedControls
 import shared.stores.send 1.0
 
 import utils 1.0
+import shared.stores.send 1.0
 
 import "../controls"
 

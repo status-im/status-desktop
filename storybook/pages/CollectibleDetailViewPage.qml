@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import Storybook 1.0
 
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
 import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.views.collectibles 1.0
@@ -11,7 +12,7 @@ import AppLayouts.Wallet.views.collectibles 1.0
 import StatusQ.Core.Utils 0.1
 
 import shared.controls 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 import Models 1.0
 import utils 1.0
@@ -85,8 +86,8 @@ SplitView {
                     isCollectibleLoading: isLoadingCheckbox.checked
                     activityModel: d.transactionsModel
                     addressFilters: d.addressesSelected
-                    rootStore: QtObject {
-                        readonly property string currentCurrency: "EUR"
+                    rootStore: SharedStores.RootStore {
+                        currentCurrency: "EUR"
 
                         function getFiatValue(cryptoValue, symbol) {
                             return cryptoValue * 0.1;
@@ -96,7 +97,7 @@ SplitView {
                             return "%L1 %2".arg(cryptoValue).arg(symbol)
                         }
                     }
-                    walletRootStore: QtObject {
+                    walletRootStore: WalletStores.RootStore {
                         function getNameForAddress(address) {
                             return "NAMEFOR: %1".arg(address)
                         }
@@ -127,7 +128,7 @@ SplitView {
                             return "%1/assets/%2/%3/%4".arg(baseLink).arg(networkShortName).arg(contractAddress).arg(tokenId)
                         }
                     }
-                    communitiesStore: QtObject {
+                    communitiesStore: CommunitiesStores.CommunitiesStore {
                         function getCommunityDetailsAsJson(communityId) {
                             if (communityId.indexOf("unknown") >= 0) {
                                 return { name : "", image : "", color : "" }

@@ -3,13 +3,15 @@ import QtQuick.Layouts 1.15
 
 import AppLayouts.Wallet.views 1.0
 
+import shared.stores 1.0 as SharedStores
+
 import "../../stores"
 
 ColumnLayout {
     id: root
 
     property ContactsStore contactsStore
-    property var networkConnectionStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     property var sendModal
 
     SavedAddresses {

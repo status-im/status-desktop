@@ -21,9 +21,13 @@ import QtQuick.Layouts 1.15
 
 import "."
 import "../panels"
-import AppLayouts.Communities.panels 1.0
-import AppLayouts.Communities.views 1.0
+
 import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
+import AppLayouts.Communities.views 1.0
+
+import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import "../popups"
 import "../helpers"
@@ -33,13 +37,13 @@ import "../stores"
 StatusSectionLayout {
     id: root
 
-    property var contactsStore
+    property ContactsStore contactsStore
     property bool hasAddedContacts: contactsStore.myContactsModel.count > 0
 
     property RootStore rootStore
     required property TransactionStore transactionStore
-    property var createChatPropertiesStore
-    property var communitiesStore
+    property CreateChatPropertiesStore createChatPropertiesStore
+    property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property CurrenciesStore currencyStore
     property var sectionItemModel

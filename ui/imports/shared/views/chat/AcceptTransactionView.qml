@@ -7,14 +7,17 @@ import shared.controls 1.0
 
 import utils 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 //TODO remove dynamic scoping
 Item {
     id: root
     width: parent.width
     height: childrenRect.height
 
-    property var store              // Expected ui/app/AppLayouts/Chat/stores/RootStore.qml
-    property var contactsStore
+    property ChatStores.RootStore store
+    property ProfileStores.ContactsStore contactsStore
 
     property var token
     property string tokenAmount

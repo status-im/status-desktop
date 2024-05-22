@@ -17,6 +17,9 @@ import shared.stores 1.0
 import utils 1.0
 import shared.popups.send 1.0
 
+import AppLayouts.Communities.stores 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 import "../controls"
 import "../popups"
 import "../stores" as WalletStores
@@ -27,9 +30,9 @@ Item {
     id: root
 
     property var overview: WalletStores.RootStore.overview
-    property var contactsStore
-    property var communitiesStore
-    property var networkConnectionStore
+    property ProfileStores.ContactsStore contactsStore
+    property CommunitiesStore communitiesStore
+    property NetworkConnectionStore networkConnectionStore
     property var controller
     property var sendModal
     property bool showAllAccounts: false

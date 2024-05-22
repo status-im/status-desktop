@@ -1,2 +1,3 @@
 RootStore 1.0 RootStore.qml
 CloneModel 1.0 CloneModel.qml
+AppSearchStore 1.0 AppSearchStore.qml

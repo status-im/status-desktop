@@ -8,6 +8,8 @@ import mainui 1.0
 import shared.views 1.0
 import shared.stores 1.0
 
+import AppLayouts.stores 1.0 as AppLayoutStores
+
 SplitView {
     id: root
     orientation: Qt.Vertical
@@ -16,7 +18,7 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: QtObject {}
+        rootStore: AppLayoutStores.RootStore {}
         communityTokensStore: CommunityTokensStore {}
     }
 

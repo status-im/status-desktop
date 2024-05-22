@@ -15,7 +15,7 @@ import shared.popups.send 1.0
 import shared.stores.send 1.0
 
 //TODO remove this dependency!
-import "../../../app/AppLayouts/Chat/stores"
+import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Wallet.stores 1.0
 
 // TODO: replace with StatusModal
@@ -24,7 +24,7 @@ ModalPopup {
 
     property string packId
 
-    property var store
+    property ChatStores.RootStore store
     required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
     property string thumbnail: ""

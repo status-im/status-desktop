@@ -8,10 +8,12 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
 import AppLayouts.stores 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import utils 1.0
 import shared.views 1.0
+import shared.stores 1.0 as SharedStores
 
 import "../controls"
 import ".."
@@ -19,8 +21,8 @@ import ".."
 StatusModal {
     id: root
 
-    property var networkConnectionStore
-    property var contactsStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
+    property ProfileStores.ContactsStore contactsStore
     property var sendModalPopup
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -145,8 +147,6 @@ StatusModal {
                     asset.letterSize: 32
                     bgColor: Theme.palette.statusListItem.backgroundColor
 
-                    store: WalletStore.RootStore
-                    contactsStore: root.contactsStore
                     networkConnectionStore: root.networkConnectionStore
 
                     name: d.name

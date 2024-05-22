@@ -12,14 +12,15 @@ import shared.panels 1.0
 import shared.views 1.0
 import shared.status 1.0
 
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 ColumnLayout {
     id: root
     objectName: "CommunityProfilePopupInviteMessagePanel_ColumnLayout"
 
     property var pubKeys: ([])
 
-    property var rootStore
-    property var contactsStore
+    property ProfileStores.ContactsStore contactsStore
 
     property alias inviteMessage: messageInput.text
 

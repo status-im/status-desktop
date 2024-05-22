@@ -14,10 +14,12 @@ import shared.status 1.0
 import shared.controls.chat 1.0
 import shared.controls.chat.menuItems 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 StatusMenu {
     id: root
 
-    property var store
+    property ChatStores.RootStore store
     property var reactionModel: []
 
     property string myPublicKey: ""

@@ -13,8 +13,8 @@ import AppLayouts.Wallet 1.0
 ActivityNotificationBase {
     id: root
 
+    store: null
     property var community: null
-    property var store: null
 
     property var tokenData: root.notification.tokenData
 

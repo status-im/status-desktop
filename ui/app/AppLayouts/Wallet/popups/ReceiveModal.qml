@@ -23,7 +23,7 @@ import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.controls 1.0
 
 import ".."
-import "../stores"
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 StatusModal {
     id: root
@@ -34,12 +34,12 @@ StatusModal {
     property bool switchingAccounsEnabled: true
     property bool changingPreferredChainsEnabled: true
 
-    property string qrImageSource: store.getQrCode(d.visibleAddress)
+    property string qrImageSource: root.store.getQrCode(d.visibleAddress)
     property var getNetworkShortNames: function(chainIDsString) {
-        return store.getNetworkShortNames(chainIDsString)
+        return root.store.getNetworkShortNames(chainIDsString)
     }
 
-    property var store: RootStore
+    property WalletStores.RootStore store: WalletStores.RootStore
 
     signal updateSelectedAddress(string address)
     signal updatePreferredChains(string address, string preferredChains)
@@ -149,7 +149,7 @@ StatusModal {
     }
 
     onOpened: {
-        store.addressWasShown(root.selectedAccount.address)
+        root.store.addressWasShown(root.selectedAccount.address)
     }
 
     QtObject {

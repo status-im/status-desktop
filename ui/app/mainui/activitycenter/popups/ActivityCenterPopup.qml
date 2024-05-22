@@ -12,6 +12,8 @@ import shared.views.chat 1.0
 
 import utils 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 import "../views"
 import "../panels"
 import "../stores"
@@ -20,7 +22,7 @@ Popup {
     id: root
 
     property ActivityCenterStore activityCenterStore
-    property var store
+    property ChatStores.RootStore store
 
     onOpened: {
         Global.activityPopupOpened = true

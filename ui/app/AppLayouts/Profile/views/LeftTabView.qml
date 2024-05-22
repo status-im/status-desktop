@@ -9,11 +9,12 @@ import shared 1.0
 import shared.popups 1.0
 
 import "../panels"
+import AppLayouts.Profile.stores 1.0
 
 Item {
     id: root
 
-    property var store
+    property ProfileSectionStore store
 
     signal menuItemClicked(var event)
 

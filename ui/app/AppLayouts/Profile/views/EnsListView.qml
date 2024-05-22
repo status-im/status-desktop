@@ -13,12 +13,14 @@ import shared.views.chat 1.0
 import shared.controls.chat 1.0
 import utils 1.0
 
+import AppLayouts.Profile.stores 1.0
+
 import "../popups"
 
 Item {
     id: root
 
-    property var ensUsernamesStore
+    property EnsUsernamesStore ensUsernamesStore
 
     property int profileContentWidth
 

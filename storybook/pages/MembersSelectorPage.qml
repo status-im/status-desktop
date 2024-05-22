@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import AppLayouts.Chat.views 1.0
+import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import Storybook 1.0
 import utils 1.0
@@ -63,7 +64,7 @@ SplitView {
         }
     }
 
-    QtObject {
+    ChatStores.RootStore {
         id: rootStoreMock
 
         readonly property var contactsModel: ListModel {

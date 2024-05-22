@@ -10,12 +10,14 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import shared.stores.send 1.0 as SharedSendStores
+
 import "../controls"
 
 ColumnLayout {
     id: root
 
-    property var store
+    property SharedSendStores.TransactionStore store
     property var selectedRecipient
     property string ensAddressOrEmpty: ""
     property double amountToSend

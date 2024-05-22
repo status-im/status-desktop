@@ -6,14 +6,17 @@ import SortFilterProxyModel 0.2
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import shared.stores 1.0
 
+import AppLayouts.Profile.stores 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
+
 QtObject {
     id: root
 
-    property var contactsStore
-    property var communityTokensStore
-    property var walletStore
+    property ContactsStore contactsStore
+    property CommunityTokensStore communityTokensStore
+    property WalletStore.RootStore walletStore
 
-    property var networkConnectionStore
+    property NetworkConnectionStore networkConnectionStore
 
     readonly property PermissionsStore permissionsStore: PermissionsStore {
         activeSectionId: mainModuleInst.activeSection.id
@@ -202,7 +205,7 @@ QtObject {
         }
     }
 
-    property var messageStore: MessageStore { }
+    property MessageStore messageStore: MessageStore { }
 
     property var emojiReactionsModel
 
@@ -231,7 +234,7 @@ QtObject {
 
     readonly property int loginType: getLoginType()
 
-    property var stickersStore: StickersStore {
+    property StickersStore stickersStore: StickersStore {
         stickersModule: stickersModuleInst
     }
 

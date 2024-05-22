@@ -11,13 +11,14 @@ import shared.status 1.0
 import shared.stores 1.0
 // TODO move Contact into shared to get rid of that import
 import AppLayouts.Chat.controls 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import SortFilterProxyModel 0.2
 
 Item {
     id: root
 
-    property var contactsStore
+    property ProfileStores.ContactsStore contactsStore
 
     property var pubKeys: ([])
 

@@ -8,6 +8,9 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.controls 1.0
+import shared.stores 1.0 as SharedStores
+
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import "../controls"
 import "../popups"
@@ -15,8 +18,8 @@ import "../popups"
 Rectangle {
     id: root
 
-    property var walletStore
-    property var networkConnectionStore
+    property WalletStores.RootStore walletStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
 
     // Community-token related properties:
     required property bool isCommunityOwnershipTransfer

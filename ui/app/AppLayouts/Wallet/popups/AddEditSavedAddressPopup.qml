@@ -22,7 +22,7 @@ import SortFilterProxyModel 0.2
 
 import AppLayouts.stores 1.0
 
-import "../stores"
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import "../controls"
 import ".."
 
@@ -35,7 +35,7 @@ StatusModal {
 
     width: 477
 
-    headerSettings.title: d.editMode? qsTr("Edit saved address") : qsTr("Add new saved address")
+    headerSettings.title: d.editMode? qsTr("Edit saved addres") : qsTr("Add new saved address")
     headerSettings.subTitle: d.editMode? d.name : ""
 
     property var store: RootStore
@@ -139,7 +139,7 @@ StatusModal {
         property int contactsWithSameAddress: 0
 
         function checkIfAddressIsAlreadyAddedToWallet(address) {
-            let account = root.store.getWalletAccount(address)
+            let account = WalletStores.RootStore.getWalletAccount(address)
             d.cardsModel.clear()
             d.addressAlreadyAddedToWalletError = !!account.name
             if (!d.addressAlreadyAddedToWalletError) {
@@ -156,7 +156,7 @@ StatusModal {
         }
 
         function checkIfAddressIsAlreadyAddedToSavedAddresses(address) {
-            let savedAddress = root.store.getSavedAddress(address)
+            let savedAddress = WalletStores.RootStore.getSavedAddress(address)
             d.cardsModel.clear()
             d.addressAlreadyAddedToSavedAddressesError = !!savedAddress.address
             if (!d.addressAlreadyAddedToSavedAddressesError) {
@@ -272,7 +272,7 @@ StatusModal {
                     || event !== undefined && event.key !== Qt.Key_Return && event.key !== Qt.Key_Enter)
                 return
 
-            root.store.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.chainShortNames)
+            WalletStores.RootStore.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.chainShortNames)
             root.close()
         }
     }
@@ -390,7 +390,7 @@ StatusModal {
                     StatusValidator {
                         name: "check-saved-address-existence"
                         validate: (value) => {
-                                      return !root.store.savedAddressNameExists(value)
+                                      return !WalletStores.RootStore.savedAddressNameExists(value)
                                       || d.editMode && d.storedName == value
                                   }
                         errorMessage: qsTr("Name already in use")

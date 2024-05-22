@@ -7,18 +7,20 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 
 import shared.controls 1.0
+import shared.stores 1.0
 import shared.views 1.0
 import utils 1.0
 
 import "../stores"
+import "../../Wallet/stores"
 
 // TODO: replace with StatusMenu
 Dialog {
     id: popup
 
-    required property var assetsStore
-    required property var currencyStore
-    required property var tokensStore
+    required property WalletAssetsStore walletAssetsStore
+    required property CurrenciesStore currencyStore
+    required property TokensStore tokensStore
 
     signal sendTriggered(var selectedAccount)
     signal disconnect()
@@ -210,7 +212,7 @@ Dialog {
             // integration but the old version was not working properly neither.
             //AssetsView {
             //    id: assetsTab
-            //    controller: popup.assetsStore.assetsController
+            //    controller: popup.walletAssetsStore.assetsController
             //    currencyStore: popup.currencyStore
             //    tokensStore: popup.tokensStore
             //}

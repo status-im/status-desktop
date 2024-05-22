@@ -5,6 +5,7 @@ import QtQml.StateMachine 1.14 as DSM
 
 import utils 1.0
 import shared 1.0
+import shared.stores 1.0 as SharedStores
 import shared.stores.send 1.0
 
 import AppLayouts.Wallet.stores 1.0
@@ -17,8 +18,8 @@ Item {
     property EnsUsernamesStore ensUsernamesStore
     property WalletAssetsStore walletAssetsStore
 
-    property var contactsStore
-    property var networkConnectionStore
+    property ContactsStore contactsStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     required property TransactionStore transactionStore
 
     property int profileContentWidth

@@ -41,7 +41,7 @@ import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
 
 import mainui.activitycenter.stores 1.0
@@ -58,21 +58,21 @@ Item {
     property RootStore rootStore: RootStore {
         profileSectionStore.sendModalPopup: sendModal
     }
-    property var rootChatStore: ChatStores.RootStore {
+    property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
         contactsStore: appMain.rootStore.contactStore
         communityTokensStore: appMain.communityTokensStore
         emojiReactionsModel: appMain.rootStore.emojiReactionsModel
         openCreateChat: createChatView.opened
         networkConnectionStore: appMain.networkConnectionStore
     }
-    property var createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
+    property ChatStores.CreateChatPropertiesStore createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
     property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
     property CommunitiesStore communitiesStore: CommunitiesStore {}
-    readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
-    readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
-    readonly property WalletStore.CollectiblesStore walletCollectiblesStore: WalletStore.RootStore.collectiblesStore
+    readonly property WalletStores.TokensStore tokensStore: WalletStores.RootStore.tokensStore
+    readonly property WalletStores.WalletAssetsStore walletAssetsStore: WalletStores.RootStore.walletAssetsStore
+    readonly property WalletStores.CollectiblesStore walletCollectiblesStore: WalletStores.RootStore.collectiblesStore
     readonly property CurrenciesStore currencyStore: CurrenciesStore {}
     readonly property TransactionStore transactionStore: TransactionStore {
         walletAssetStore: appMain.walletAssetsStore
@@ -1299,10 +1299,9 @@ Item {
                         active: appView.currentIndex === Constants.appViewStackIndex.browser
                         asynchronous: true
                         sourceComponent: BrowserLayout {
-                            globalStore: appMain.rootStore
                             sendTransactionModal: sendModal
                             transactionStore: appMain.transactionStore
-                            assetsStore: appMain.walletAssetsStore
+                            walletAssetsStore: appMain.walletAssetsStore
                             currencyStore: appMain.currencyStore
                             tokensStore: appMain.tokensStore
                         }
@@ -1482,7 +1481,7 @@ Item {
                     communityTokensStore: appMain.communityTokensStore
                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                     openCreateChat: createChatView.opened
-                    walletStore: WalletStore.RootStore
+                    walletStore: WalletStores.RootStore
                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                 }
                 activityCenterStore: appMain.activityCenterStore
@@ -1788,7 +1787,7 @@ Item {
         }
 
         sourceComponent: WalletPopups.AddEditSavedAddressPopup {
-            flatNetworks: WalletStore.RootStore.filteredFlatModel
+            flatNetworks: WalletStores.RootStore.filteredFlatModel
 
             onClosed: {
                 addEditSavedAddress.close()
@@ -1799,8 +1798,8 @@ Item {
             target: WalletStore.RootStore
 
             function onSavedAddressAddedOrUpdated(added: bool, name: string, address: string, errorMsg: string) {
-                WalletStore.RootStore.addingSavedAddress = false
-                WalletStore.RootStore.lastCreatedSavedAddress = { address: address, error: errorMsg }
+                WalletStores.RootStore.addingSavedAddress = false
+                WalletStores.RootStore.lastCreatedSavedAddress = { address: address, error: errorMsg }
 
                 if (!!errorMsg) {
                     let mode = qsTr("adding")
@@ -1866,7 +1865,7 @@ Item {
             }
 
             onRemoveSavedAddress: {
-                WalletStore.RootStore.deleteSavedAddress(address)
+                WalletStores.RootStore.deleteSavedAddress(address)
                 close()
             }
         }
@@ -1875,7 +1874,7 @@ Item {
             target: WalletStore.RootStore
 
             function onSavedAddressDeleted(name: string, address: string, errorMsg: string) {
-                WalletStore.RootStore.deletingSavedAddress = false
+                WalletStores.RootStore.deletingSavedAddress = false
 
                 if (!!errorMsg) {
 
@@ -1950,30 +1949,30 @@ Item {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return null
                 }
-                return WalletStore.RootStore.receiveAccounts
+                return WalletStores.RootStore.receiveAccounts
             }
 
             selectedAccount: {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return showQR.selectedAccount
                 }
-                return WalletStore.RootStore.selectedReceiveAccount
+                return WalletStores.RootStore.selectedReceiveAccount
             }
 
             onUpdateSelectedAddress: (address) => {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return
                 }
-                WalletStore.RootStore.switchReceiveAccountByAddress(address)
+                WalletStores.RootStore.switchReceiveAccountByAddress(address)
             }
 
             onUpdatePreferredChains: {
                 if (showQR.showForSavedAddress) {
-                    let shortNames = WalletStore.RootStore.getNetworkShortNames(preferredChains)
-                    WalletStore.RootStore.updatePreferredChains(address, shortNames)
+                    let shortNames = WalletStores.RootStore.getNetworkShortNames(preferredChains)
+                    WalletStores.RootStore.updatePreferredChains(address, shortNames)
                     return
                 }
-                WalletStore.RootStore.updateWalletAccountPreferredChains(address, preferredChains)
+                WalletStores.RootStore.updateWalletAccountPreferredChains(address, preferredChains)
             }
 
             onClosed: {
@@ -2040,12 +2039,12 @@ Item {
             id: walletConnectService
 
             wcSDK: WalletConnectSDK {
-                active: WalletStore.RootStore.walletSectionInst.walletReady
+                active: WalletStores.RootStore.walletSectionInst.walletReady
 
-                projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
+                projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
             }
             store: DAppsStore {
-                controller: WalletStore.RootStore.walletConnectController
+                controller: WalletStores.RootStore.walletConnectController
             }
             walletStore: appMain.rootStore.profileSectionStore.walletStore
 

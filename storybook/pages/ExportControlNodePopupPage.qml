@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import AppLayouts.Communities.popups 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import utils 1.0
 
@@ -91,7 +92,7 @@ SplitView {
                 property string image: Style.png("tokens/UNI")
                 property string color: "orchid"
             }
-            devicesStore: QtObject {
+            devicesStore: ProfileStores.DevicesStore {
                 function loadDevices() {}
 
                 property bool isDeviceSetup: true

@@ -3,3 +3,4 @@ WalletAssetsStore 1.0 WalletAssetsStore.qml
 TokensStore 1.0 TokensStore.qml
 ActivityFiltersStore 1.0 ActivityFiltersStore.qml
 SwapStore 1.0 SwapStore.qml
+RootStore 1.0 RootStore.qml

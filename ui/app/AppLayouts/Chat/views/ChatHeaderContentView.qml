@@ -21,7 +21,7 @@ Item {
     property alias membersButton: membersButton
     property alias searchButton: searchButton
 
-    property var rootStore
+    property RootStore rootStore
     property var chatContentModule: root.rootStore.currentChatContentModule() || null
     property var emojiPopup
     property int padding: Style.current.halfPadding
