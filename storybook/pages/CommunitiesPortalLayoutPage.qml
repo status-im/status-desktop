@@ -1,9 +1,11 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
+import AppLayouts.stores 1.0 as AppLayoutStores
 import AppLayouts.Communities 1.0
 import AppLayouts.Communities.stores 1.0
 
+import StatusQ 0.1
 import SortFilterProxyModel 0.2
 
 import Storybook 1.0
@@ -19,7 +21,7 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: QtObject {}
+        rootStore: AppLayoutStores.RootStore
         communityTokensStore: CommunityTokensStore {}
     }
 

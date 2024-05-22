@@ -13,9 +13,7 @@ import AppLayouts.Communities.panels 1.0
 StatusModal {
     id: root
 
-    property var store
     property var community
-    property var contactsStore
     property bool hasAddedContacts
     property var communitySectionModule
 

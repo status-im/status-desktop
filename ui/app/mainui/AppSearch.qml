@@ -8,10 +8,12 @@ import StatusQ.Popups 0.1
 import shared.stores 1.0
 import utils 1.0
 
+import AppLayouts.stores 1.0
+
 Item {
     id: appSearch
 
-    property var store
+    property AppSearchStore store
     readonly property var searchMessages: Backpressure.debounce(searchPopup, 400, function (value) {
         appSearch.store.searchMessages(value)
     })

@@ -7,7 +7,6 @@ import QtQuick.Layouts 1.15
 import utils 1.0
 import shared.controls 1.0
 import shared.panels 1.0
-import shared.stores 1.0 as SharedStores
 
 import StatusQ 0.1
 import StatusQ.Components 0.1
@@ -22,9 +21,7 @@ import StatusQ.Popups.Dialog 0.1
 
 import SortFilterProxyModel 0.2
 
-import AppLayouts.stores 1.0
-
-import "../stores"
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import "../controls"
 import ".."
 
@@ -37,10 +34,10 @@ StatusModal {
 
     width: 477
 
-    headerSettings.title: d.editMode? qsTr("Edit saved address") : qsTr("Add new saved address")
+    headerSettings.title: d.editMode? qsTr("Edit saved addres") : qsTr("Add new saved address")
     headerSettings.subTitle: d.editMode? d.name : ""
 
-    property var store: RootStore
+    property WalletStores.RootStore store
 
     function initWithParams(params = {}) {
         d.storedName = params.name?? ""
@@ -183,7 +180,7 @@ StatusModal {
             mainModule.resolveENS(name, d.uuid)
         });
 
-        property var contactsModuleInst: SharedStores.RootStore.profileSectionModuleInst.contactsModule
+        property var contactsModuleInst: root.store.profileSectionModuleInst.contactsModule
 
         /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
         property bool initialized: false

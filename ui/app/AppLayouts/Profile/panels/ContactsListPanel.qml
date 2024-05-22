@@ -13,13 +13,15 @@ import shared.panels 1.0
 import "../../Chat/popups"
 import "."
 
+import AppLayouts.Profile.stores 1.0
+
 import SortFilterProxyModel 0.2
 
 Item {
     id: root
     implicitHeight: (title.height + contactsList.height)
 
-    property var contactsStore
+    property ContactsStore contactsStore
     property var contactsModel
 
     property int panelUsage: Constants.contactsPanelUsage.unknownPosition

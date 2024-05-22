@@ -11,13 +11,15 @@ import StatusQ.Popups 0.1
 import shared.controls.delegates 1.0
 import utils 1.0
 
+import AppLayouts.Wallet.stores 1.0 as WalletStores
+
 Item {
     id: root
 
     required property string mainDisplayName
     required property bool sendToAccountEnabled
     required property var accountsModel
-    required property var walletStore
+    required property WalletStores.RootStore walletStore
 
     property alias cellWidth: accountsView.cellWidth
     property alias cellHeight: accountsView.cellHeight

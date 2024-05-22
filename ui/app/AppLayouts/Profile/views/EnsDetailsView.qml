@@ -13,10 +13,12 @@ import shared.popups 1.0
 import shared.popups.send 1.0
 import shared.stores.send 1.0
 
+import AppLayouts.Profile.stores 1.0
+
 Item {
     id: root
-    property var ensUsernamesStore
-    property var contactsStore
+    property EnsUsernamesStore ensUsernamesStore
+    property ContactsStore contactsStore
     required property TransactionStore transactionStore
     property string username: ""
     property string chainId: ""

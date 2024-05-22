@@ -4,6 +4,8 @@ import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
@@ -12,10 +14,11 @@ import shared.status 1.0
 import shared.controls.chat 1.0
 import shared.controls.chat.menuItems 1.0
 
+
 StatusMenu {
     id: root
 
-    property var store
+    property ChatStores.RootStore store
 
     property string myPublicKey: ""
 

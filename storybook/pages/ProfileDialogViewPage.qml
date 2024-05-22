@@ -10,6 +10,8 @@ import mainui 1.0
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import AppLayouts.stores 1.0 as AppLayoutStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0
 
 import Storybook 1.0
@@ -174,7 +176,7 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: QtObject {
+        rootStore: AppLayoutStores.RootStore {
             property var contactStore: QtObject {
                 property var contactsModule: null
 
@@ -352,7 +354,7 @@ SplitView {
                         assetsModel: AssetsModel {}
                         collectiblesModel: CollectiblesModel {}
 
-                        profileStore: QtObject {
+                        profileStore: ProfileStores.ProfileStore {
                             readonly property string pubkey: "0xdeadbeef"
                             readonly property string ensName: name.text
 
@@ -364,7 +366,7 @@ SplitView {
                             }
                         }
 
-                        contactsStore: QtObject {
+                        contactsStore: ProfileStores.ContactsStore {
                             readonly property string myPublicKey: "0xdeadbeef"
 
                             function joinPrivateChat(publicKey) {

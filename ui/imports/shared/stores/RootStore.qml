@@ -29,7 +29,7 @@ QtObject {
     readonly property bool newDataAvailable: Global.appIsReady && walletSectionInst.activityController.status.newDataAvailable
     property bool isNonArchivalNode: Global.appIsReady && walletSectionInst.isNonArchivalNode
 
-    property var marketValueStore: TokenMarketValuesStore{}
+    property TokenMarketValuesStore marketValueStore: TokenMarketValuesStore{}
 
     function resetActivityData() {
         walletSectionInst.activityController.resetActivityData()

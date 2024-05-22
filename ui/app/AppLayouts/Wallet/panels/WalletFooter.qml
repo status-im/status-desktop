@@ -11,7 +11,11 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 import shared.controls 1.0
+
+import shared.stores 1.0 as SharedStores
 import shared.stores.send 1.0
+
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import "../controls"
 import "../popups"
@@ -21,8 +25,8 @@ Rectangle {
 
     readonly property alias anyActionAvailable: d.anyActionAvailable
 
-    property var walletStore
-    property var networkConnectionStore
+    property WalletStores.RootStore walletStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     required property TransactionStore transactionStore
 
     property bool swapEnabled

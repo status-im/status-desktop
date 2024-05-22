@@ -12,13 +12,15 @@ import StatusQ.Components 0.1
 import shared.panels 1.0
 import shared.popups 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 Control {
     id: root
 
     implicitWidth: d.invitedCommunity || d.loading ? 270 /*by design*/ : 0
     padding: 1
 
-    property var store
+    property ChatStores.RootStore store
     property string communityId
 
     QtObject {

@@ -15,10 +15,12 @@ import shared.popups 1.0
 
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Chat.stores 1.0
+
 StatusModal {
     id: root
 
-    property var store
+    property RootStore store
     property string communityId
     property string categoryId
     property string categoryName: ""

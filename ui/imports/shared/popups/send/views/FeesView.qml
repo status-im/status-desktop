@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 import utils 1.0
 
 import shared.stores 1.0
+import shared.stores.send 1.0 as SharedSendStores
 
 import "../controls"
 
@@ -17,8 +18,8 @@ Rectangle {
     property double gasFiatAmount
     property bool isLoading: false
     property var bestRoutes
-    property var store
-    property var currencyStore: store.currencyStore
+    property SharedSendStores.TransactionStore store
+    property CurrenciesStore currencyStore: store.currencyStore
     property var selectedAsset
     property int errorType: Constants.NoError
 

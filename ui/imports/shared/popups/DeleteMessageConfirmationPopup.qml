@@ -1,9 +1,11 @@
 import QtQuick 2.15
 
+import AppLayouts.Chat.stores 1.0
+
 ConfirmationDialog {
     id: root
 
-    property var messageStore
+    property MessageStore messageStore
     property string messageId
 
     headerSettings.title: qsTr("Confirm deleting this message")

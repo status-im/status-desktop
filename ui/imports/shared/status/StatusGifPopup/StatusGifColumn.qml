@@ -15,7 +15,7 @@ Column {
     spacing: 8
     property alias gifList: repeater
     property int gifWidth: 0
-    property var store
+    property RootStore store
     property var gifSelected: function () {}
     property var toggleFavorite: function () {}
     property string lastHoveredId

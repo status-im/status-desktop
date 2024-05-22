@@ -10,8 +10,10 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import shared.controls 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 import utils 1.0
 
 import SortFilterProxyModel 0.2

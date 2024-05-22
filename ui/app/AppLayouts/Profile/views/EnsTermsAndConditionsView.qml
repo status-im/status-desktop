@@ -17,18 +17,19 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import AppLayouts.Wallet.stores 1.0
+import AppLayouts.Profile.stores 1.0
 
 Item {
     id: root
 
-    property var ensUsernamesStore
-    property var contactsStore
+    property EnsUsernamesStore ensUsernamesStore
+    property ContactsStore contactsStore
     required property TransactionStore transactionStore
     property WalletAssetsStore walletAssetsStore
     property string username: ""
 
-    signal backBtnClicked();
-    signal usernameRegistered(userName: string);
+    signal backBtnClicked()
+    signal usernameRegistered(userName: string)
 
     QtObject {
         id: d

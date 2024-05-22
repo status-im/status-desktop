@@ -10,6 +10,8 @@ import StatusQ.Components 0.1
 
 import "../../panels"
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 import utils 1.0
 import shared.controls.delegates 1.0
 
@@ -18,7 +20,7 @@ import SortFilterProxyModel 0.2
 InlineSelectorPanel {
     id: root
 
-    property var rootStore
+    property ChatStores.RootStore rootStore
 
     readonly property int membersLimit: 20 // see: https://github.com/status-im/status-mobile/issues/13066
     property bool limitReached: model.count >= membersLimit

@@ -10,6 +10,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Profile.popups 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import shared.controls 1.0
 import shared.popups 1.0
@@ -33,7 +34,7 @@ ColumnLayout {
 
     property var account
     property var keyPair
-    property var walletStore
+    property ProfileStores.WalletStore walletStore
     property var emojiPopup
     property string userProfilePublicKey
 

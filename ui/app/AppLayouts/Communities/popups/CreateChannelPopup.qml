@@ -22,11 +22,12 @@ import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.models 1.0
 import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
 
 StatusStackModal {
     id: root
 
-    property var communitiesStore
+    property CommunitiesStores.CommunitiesStore communitiesStore
 
     property bool isDiscordImport // creating new or importing from discord?
     property bool isEdit: false

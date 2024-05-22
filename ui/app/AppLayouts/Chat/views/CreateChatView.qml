@@ -13,11 +13,13 @@ import utils 1.0
 import shared.status 1.0
 import shared.controls.delegates 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 Page {
     id: root
 
-    property var rootStore
-    property var createChatPropertiesStore
+    property ChatStores.RootStore rootStore
+    property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property var emojiPopup: null
     property var stickersPopup: null
 

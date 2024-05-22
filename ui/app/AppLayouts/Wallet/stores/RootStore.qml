@@ -3,7 +3,7 @@ pragma Singleton
 import QtQuick 2.13
 
 // Aliasing not to conflict with the shared.stores.RootStore
-import shared.stores 1.0 as Stores
+import shared.stores 1.0 as SharedStores
 
 import utils 1.0
 
@@ -433,7 +433,7 @@ QtObject {
         walletSectionAccounts.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
     }
 
-    property Stores.CurrenciesStore currencyStore: Stores.CurrenciesStore {}
+    property SharedStores.CurrenciesStore currencyStore: SharedStores.CurrenciesStore {}
 
     function addressWasShown(address) {
         return d.mainModuleInst.addressWasShown(address)

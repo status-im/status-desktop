@@ -13,6 +13,7 @@ import shared.stores 1.0
 
 //TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
+import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -35,8 +36,8 @@ Rectangle {
     signal dismissLinkPreviewSettings()
     signal dismissLinkPreview(int index)
     
-    property var usersStore
-    property var store
+    property ChatStores.UsersStore usersStore
+    property ChatStores.RootStore store
 
     property var emojiPopup: null
     property var stickersPopup: null

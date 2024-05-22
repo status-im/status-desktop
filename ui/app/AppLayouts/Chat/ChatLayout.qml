@@ -8,13 +8,14 @@ import shared.stores 1.0
 import shared.stores.send 1.0
 
 import "views"
-import "stores"
 
 import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
 
 import AppLayouts.Chat.stores 1.0
+import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import StatusQ.Core.Utils 0.1
@@ -23,10 +24,10 @@ StackLayout {
     id: root
 
     property RootStore rootStore
-    property var createChatPropertiesStore
-    readonly property var contactsStore: rootStore.contactsStore
-    readonly property var permissionsStore: rootStore.permissionsStore
-    property var communitiesStore
+    property CreateChatPropertiesStore createChatPropertiesStore
+    readonly property ContactsStore contactsStore: rootStore.contactsStore
+    readonly property PermissionsStore permissionsStore: rootStore.permissionsStore
+    property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStore.TokensStore tokensStore
     required property TransactionStore transactionStore
     required property WalletStore.WalletAssetsStore walletAssetsStore

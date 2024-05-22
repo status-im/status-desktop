@@ -5,11 +5,13 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 
+import shared.stores 1.0
+
 Loader {
     id: root
     active: false
 
-    property var networkConnectionStore
+    property NetworkConnectionStore networkConnectionStore
     readonly property string jointChainIdString: networkConnectionStore.getChainIdsJointString(chainIdsDown)
     property string websiteDown
     property int connectionState: -1

@@ -8,13 +8,17 @@ import StatusQ.Controls 0.1
 import shared 1.0
 import utils 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
+import mainui.activitycenter.stores 1.0
+
 Item {
     id: root
 
     /* required */ property int filteredIndex
     /* required */ property var notification
-    /* required */ property var store
-    /* required */ property var activityCenterStore
+    /* required */ property ChatStores.RootStore store
+    /* required */ property ActivityCenterStore activityCenterStore
 
     property alias bodyComponent: bodyLoader.sourceComponent
     property alias badgeComponent: badgeLoader.sourceComponent

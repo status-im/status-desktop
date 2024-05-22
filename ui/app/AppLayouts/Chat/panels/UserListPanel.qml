@@ -15,10 +15,12 @@ import utils 1.0
 
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 Item {
     id: root
 
-    property var store
+    property ChatStores.RootStore store
     property var usersModel
     property string label
     property int communityMemberReevaluationStatus: Constants.CommunityMemberReevaluationStatus.None

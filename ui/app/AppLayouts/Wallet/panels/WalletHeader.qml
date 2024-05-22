@@ -13,6 +13,10 @@ import StatusQ.Popups 0.1
 
 import SortFilterProxyModel 0.2
 
+import shared.stores 1.0
+
+import AppLayouts.Wallet.stores 1.0 as WalletStores
+
 import utils 1.0
 
 import "../controls"
@@ -21,10 +25,9 @@ import "../stores"
 Item {
     id: root
 
-    property var networkConnectionStore
+    property NetworkConnectionStore networkConnectionStore
     property var overview
-    property var store
-    property var walletStore
+    property WalletStores.RootStore walletStore
 
     property bool dappsEnabled
 
@@ -174,8 +177,8 @@ Item {
 
                 Layout.alignment: Qt.AlignTop
 
-                flatNetworks: walletStore.filteredFlatModel
-                onToggleNetwork: walletStore.toggleNetwork(chainId)
+                flatNetworks: root.walletStore.filteredFlatModel
+                onToggleNetwork: root.walletStore.toggleNetwork(chainId)
 
                 Binding on selection {
                     value: chainIdsAggregator.value

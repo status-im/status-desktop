@@ -12,9 +12,12 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import mainui 1.0
 import utils 1.0
 
+import AppLayouts.stores 1.0 as AppLayoutStores
+import AppLayouts.Communities.stores 1.0 as CommunitiesStore
 import AppLayouts.Wallet.views 1.0
 import AppLayouts.Wallet.stores 1.0
 
+import shared.stores 1.0
 import shared.views 1.0
 
 import Storybook 1.0
@@ -47,8 +50,8 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: QtObject {}
-        communityTokensStore: QtObject {}
+        rootStore: AppLayoutStores.RootStore
+        communityTokensStore: CommunityTokensStore {}
         walletCollectiblesStore: CollectiblesStore {
             collectiblesController: collectiblesView.controller
         }

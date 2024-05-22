@@ -13,10 +13,12 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
+
 StatusDialog {
     id: root
 
-    property var store
+    property CommunitiesStores.CommunitiesStore store
     property alias text: keyInput.text
 
     signal joinCommunityRequested(string communityId, var communityDetails)

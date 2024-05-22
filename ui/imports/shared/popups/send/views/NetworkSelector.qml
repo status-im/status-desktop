@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 import shared.stores 1.0
+import shared.stores.send 1.0 as SharedSendStores
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -16,8 +17,8 @@ import shared.controls 1.0
 Item {
     id: root
 
-    property var store
-    property var currencyStore : store.currencyStore
+    property SharedSendStores.TransactionStore store
+    property CurrenciesStore currencyStore : store.currencyStore
     property var selectedRecipient
     property string ensAddressOrEmpty: ""
     property var selectedAsset

@@ -9,12 +9,14 @@ import utils 1.0
 import shared.panels 1.0
 
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.stores 1.0 as AppLayoutStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 StatusStackModal {
     id: root
 
-    property var rootStore
-    property var contactsStore
+    property AppLayoutStores.RootStore rootStore
+    property ProfileStores.ContactsStore contactsStore
     property var community
     property var communitySectionModule
 

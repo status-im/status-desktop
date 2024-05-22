@@ -13,12 +13,14 @@ import StatusQ.Popups.Dialog 0.1
 
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Communities.stores 1.0
+
 import "../controls"
 
 StatusScrollView {
     id: root
 
-    property var store
+    property CommunitiesStore store
 
     property bool importingSingleChannel
 

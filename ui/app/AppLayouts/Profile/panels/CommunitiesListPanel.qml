@@ -9,11 +9,12 @@ import StatusQ.Popups 0.1
 
 import utils 1.0
 import shared.controls.chat.menuItems 1.0
+import AppLayouts.stores 1.0 as AppLayoutsStores
 
 StatusListView {
     id: root
 
-    property var rootStore
+    property AppLayoutsStores.RootStore rootStore
 
     signal inviteFriends(var communityData)
 

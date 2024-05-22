@@ -9,6 +9,8 @@ import utils 1.0
 import shared.status 1.0
 import shared.stores 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 import TextUtils 1.0
 
 Item {
@@ -24,7 +26,7 @@ Item {
             width: parent.width
             height: implicitHeight
             anchors.bottom: parent.bottom
-            usersStore: QtObject {
+            usersStore: ChatStores.UsersStore {
                 property var usersModel: ListModel {}
             }
         }

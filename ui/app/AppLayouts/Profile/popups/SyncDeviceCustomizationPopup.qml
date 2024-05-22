@@ -19,8 +19,8 @@ import "../stores"
 StatusDialog {
     id: root
 
-    property var devicesStore
-    property var advancedStore
+    property DevicesStore devicesStore
+    property AdvancedStore advancedStore
     property var deviceModel
 
     readonly property string deviceName: d.deviceName

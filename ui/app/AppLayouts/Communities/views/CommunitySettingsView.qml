@@ -14,8 +14,8 @@ import StatusQ.Layout 0.1
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0
-import shared.views.chat 1.0
 import shared.stores.send 1.0
+import shared.views.chat 1.0
 import utils 1.0
 
 import AppLayouts.Communities.controls 1.0
@@ -23,6 +23,7 @@ import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Wallet.stores 1.0
 
 StatusSectionLayout {
@@ -32,11 +33,11 @@ StatusSectionLayout {
     hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
     onNotificationButtonClicked: Global.openActivityCenterPopup()
 
-    property var rootStore
+    property ChatStores.RootStore rootStore
     property var chatCommunitySectionModule
     required property TokensStore tokensStore
     property var community
-    required property var transactionStore
+    required property TransactionStore transactionStore
     property bool communitySettingsDisabled
     property var sendModalPopup
 

@@ -7,6 +7,9 @@ import Storybook 1.0
 import utils 1.0
 
 import shared.controls 1.0
+import shared.stores 1.0 as SharedStores
+
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import Models 1.0
 
@@ -73,7 +76,7 @@ SplitView {
                     id: delegate
                     Layout.fillWidth: true
                     modelData: root.mockupModelData
-                    rootStore: QtObject {
+                    rootStore: SharedStores.RootStore {
                         readonly property string currentCurrency: "EUR"
 
                         function getFiatValue(cryptoValue, symbol) {
@@ -86,11 +89,7 @@ SplitView {
 
                         property var flatNetworks: NetworksModel.flatNetworks
                     }
-                    walletRootStore: QtObject {
-                        function getNameForAddress(address) {
-                            return "NAMEFOR: %1".arg(address)
-                        }
-                    }
+                    walletRootStore: WalletStores.RootStore
                 }
             }
         }

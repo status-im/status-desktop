@@ -10,13 +10,16 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import shared.stores 1.0 as SharedStores
+import shared.stores.send 1.0 as SharedSendStores
+
 import "../controls"
 
 Item {
     id: root
 
-    property var store
-    readonly property var currencyStore: store.currencyStore
+    property SharedSendStores.TransactionStore store
+    readonly property SharedStores.CurrenciesStore currencyStore: store.currencyStore
     property string receiverIdentityText
     property var selectedAsset
     property bool customMode: false

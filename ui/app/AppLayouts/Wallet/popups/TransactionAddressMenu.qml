@@ -15,6 +15,8 @@ import shared.stores 1.0
 
 import "../stores" as WalletStores
 
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 ////////////////////////////////////////////////////////////////////////////////
 // NOTE:
 //
@@ -30,8 +32,8 @@ import "../stores" as WalletStores
 StatusMenu {
     id: root
 
-    property var contactsStore
-    property var networkConnectionStore
+    property ProfileStores.ContactsStore contactsStore
+    property NetworkConnectionStore networkConnectionStore
     property bool areTestNetworksEnabled: false
     property bool isGoerliEnabled: false
 

@@ -21,8 +21,9 @@ import shared.views.profile 1.0
 
 import SortFilterProxyModel 0.2
 
-import AppLayouts.Wallet.stores 1.0 as WalletNS
 import AppLayouts.Profile.helpers 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 Pane {
     id: root
@@ -33,8 +34,8 @@ Pane {
     property string publicKey: contactsStore.myPublicKey
     readonly property alias isCurrentUser: d.isCurrentUser
 
-    property var profileStore
-    property var contactsStore
+    property ProfileStores.ProfileStore profileStore
+    property ProfileStores.ContactsStore contactsStore
     
     property alias sendToAccountEnabled: showcaseView.sendToAccountEnabled
 
@@ -616,7 +617,7 @@ Pane {
                     socialLinksModel: root.showcaseSocialLinksModel
                     // assetsModel: root.showcaseAssetsModel
 
-                    walletStore: WalletNS.RootStore
+                    walletStore: WalletStores.RootStore
 
                     onCloseRequested: root.closeRequested()
                     onCopyToClipboard: root.profileStore.copyToClipboard(text)

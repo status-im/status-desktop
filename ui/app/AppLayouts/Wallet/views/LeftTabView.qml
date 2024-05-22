@@ -27,7 +27,7 @@ Rectangle {
     id: root
     objectName: "walletLeftTab"
 
-    property var networkConnectionStore
+    property NetworkConnectionStore networkConnectionStore
     property var selectAllAccounts: function(){}
     property var changeSelectedAccount: function(){}
     property var selectSavedAddresses: function(){}

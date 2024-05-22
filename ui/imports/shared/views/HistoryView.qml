@@ -20,6 +20,7 @@ import "../popups/send"
 import "../stores"
 import "../controls"
 
+import AppLayouts.Communities.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Wallet.controls 1.0
@@ -29,7 +30,7 @@ ColumnLayout {
     id: root
 
     property var overview
-    property var communitiesStore
+    property CommunitiesStore communitiesStore
     property bool showAllAccounts: false
     property bool displayValues: true
     property var sendModal

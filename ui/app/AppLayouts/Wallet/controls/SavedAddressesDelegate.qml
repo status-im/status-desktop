@@ -8,7 +8,9 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
+
 import shared.controls 1.0
+import shared.stores 1.0 as SharedStores
 
 import "../popups"
 import "../controls"
@@ -18,9 +20,7 @@ import ".."
 StatusListItem {
     id: root
 
-    property var store
-    property var contactsStore
-    property var networkConnectionStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     property string name
     property string address
     property string ens
@@ -178,7 +178,7 @@ StatusListItem {
             timeout: 1500
             autoDismissMenu: true
             onTriggered: {
-                store.copyToClipboard(d.visibleAddress)
+                RootStore.copyToClipboard(d.visibleAddress)
             }
         }
 

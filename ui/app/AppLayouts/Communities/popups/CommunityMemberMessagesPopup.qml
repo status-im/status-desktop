@@ -13,10 +13,12 @@ import StatusQ.Popups.Dialog 0.1
 import utils 1.0
 import shared.views.chat 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 StatusDialog {
     id: root
 
-    property var store
+    property ChatStores.RootStore rootStore
     property var chatCommunitySectionModule
     property var memberMessagesModel: chatCommunitySectionModule.memberMessagesModel
     property string memberPubKey: ""

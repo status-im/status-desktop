@@ -20,7 +20,7 @@ import shared.controls.chat 1.0
 
 import SortFilterProxyModel 0.2
 
-import "../stores"
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 import "../popups"
 import "../controls"
 import "../../stores"
@@ -28,10 +28,10 @@ import "../../stores"
 SettingsContentBase {
     id: root
 
-    property var devicesStore
-    property ProfileStore profileStore
-    property PrivacyStore privacyStore
-    property var advancedStore
+    property ProfileStores.DevicesStore devicesStore
+    property ProfileStores.ProfileStore profileStore
+    property ProfileStores.PrivacyStore privacyStore
+    property ProfileStores.AdvancedStore advancedStore
 
     required property bool isProduction
 

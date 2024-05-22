@@ -10,6 +10,7 @@ import Storybook 1.0
 import Models 1.0
 
 import AppLayouts.Communities.popups 1.0
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
 
 SplitView {
     id: root
@@ -77,7 +78,7 @@ SplitView {
                     }
                 }
 
-                communitiesStore: QtObject {
+                communitiesStore: CommunitiesStores.CommunitiesStore {
                     property string discordImportChannelName
                     readonly property bool discordImportInProgress: false
                     readonly property bool discordDataExtractionInProgress: false

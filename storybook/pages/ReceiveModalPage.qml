@@ -9,6 +9,7 @@ import StatusQ.Core.Utils 0.1
 import Storybook 1.0
 import Models 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 SplitView {
     orientation: Qt.Horizontal
@@ -59,37 +60,7 @@ SplitView {
 
             property string networksNames: "oeth:arb1:eth:"
 
-            store: QtObject {
-                property var filteredFlatModel: SortFilterProxyModel {
-                    sourceModel: NetworksModel.flatNetworks
-                    filters: ValueFilter { roleName: "isTest"; value: false }
-                }
-
-                function getAllNetworksChainIds() {
-                    let result = []
-                    let chainIdsArray = ModelUtils.modelToFlatArray(filteredFlatModel, "chainId")
-                    for(let i = 0; i< chainIdsArray.length; i++) {
-                        result.push(chainIdsArray[i].toString())
-                    }
-                    return result
-                }
-
-                function getNetworkIds(chainShortNames) {
-                    let result = ""
-                    if (!chainShortNames) return result
-
-                    let shortNames = chainShortNames.split(":").filter((shortName) => shortName.length > 0)
-                    for(let i = 0; i< shortNames.length; i++) {
-                        let chainId = ModelUtils.getByKey(NetworksModel.flatNetworks, "shortName", shortNames[i]).chainId
-                        result += ":" + chainId.toString()
-                    }
-                    return result
-                }
-
-                function addressWasShown(account) {
-                    return true
-                }
-            }
+            store: WalletStores.RootStore
         }
     }
 

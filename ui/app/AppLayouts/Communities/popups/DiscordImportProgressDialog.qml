@@ -5,10 +5,12 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
 
+import AppLayouts.Communities.stores 1.0
+
 StatusDialog {
     id: root
 
-    property var store
+    property CommunitiesStore store
 
     property bool importingSingleChannel
 

@@ -15,6 +15,7 @@ import shared.popups.send.panels 1.0
 import shared.popups.send 1.0
 
 import utils 1.0
+import shared.stores.send 1.0
 
 import "../controls"
 

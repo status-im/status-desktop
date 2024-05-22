@@ -1,8 +1,10 @@
 CommunityTokensStore 1.0 CommunityTokensStore.qml
 CurrenciesStore 1.0 CurrenciesStore.qml
 NetworkConnectionStore 1.0 NetworkConnectionStore.qml
-singleton RootStore 1.0 RootStore.qml
+RootStore 1.0 RootStore.qml
 TokenBalanceHistoryStore 1.0 TokenBalanceHistoryStore.qml
 BIP39_en 1.0 BIP39_en.qml
 DAppsStore 1.0 DAppsStore.qml
 ProfileStore 1.0 ProfileStore.qml
+PermissionsStore 1.0 PermissionsStore.qml
+TokenMarketValuesStore 1.0 TokenMarketValuesStore.qml
