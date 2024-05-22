@@ -1,9 +1,11 @@
 import allure
 import pyperclip
 
+import configs
 import constants
 import driver
 from gui.components.base_popup import BasePopup
+from gui.components.settings.send_contact_request_popup import SendContactRequestFromProfile
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
@@ -74,3 +76,25 @@ class ProfilePopup(BasePopup):
     def edit_profile(self):
         self._edit_profile_button.click()
         return ProfileSettingsView()
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._emoji_hash.wait_until_appears(timeout_msec)
+        return self
+
+
+class ProfilePopupFromMembers(ProfilePopup):
+
+    def __init__(self):
+        super(ProfilePopupFromMembers, self).__init__()
+        self._send_request_button = Button(names.send_contact_request_StatusButton)
+        self._request_id_request_button = Button(names.request_ID_verification_StatusFlatButton)
+
+    @allure.step('Click send request button')
+    def send_request(self):
+        self._send_request_button.click()
+        return SendContactRequestFromProfile().wait_until_appears()
+
+    @allure.step('Get request id button visibility state')
+    def is_request_id_button_visible(self):
+        return self._request_id_request_button.is_visible

@@ -13,6 +13,7 @@ from gui.components.community.community_channel_popups import EditChannelPopup, 
 from gui.components.community.welcome_community import WelcomeCommunityPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.delete_popup import DeletePopup, DeleteCategoryPopup
+from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.elements.button import Button
 from gui.elements.list import List
 from gui.elements.object import QObject
@@ -423,6 +424,14 @@ class Members(QObject):
     @allure.step('Get all members')
     def members(self) -> typing.List[str]:
         return [str(member.statusListItemTitle.text) for member in driver.findAllObjects(self._member_item.real_name)]
+
+    @allure.step('Click member by name')
+    def click_member(self, member_name: str):
+        for member in driver.findAllObjects(self._member_item.real_name):
+            if getattr(member, 'title', '') == member_name:
+                driver.mouseClick(member)
+                break
+        return ProfilePopupFromMembers().wait_until_appears()
 
     @allure.step('Verify member is offline by index')
     def member_is_offline(self, index: int) -> bool:
