@@ -21,6 +21,7 @@ import SortFilterProxyModel 0.2
 
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Profile.stores 1.0
 
 import "../helpers"
 import "../controls"
@@ -36,9 +37,9 @@ Item {
     // don't follow struct we have on the backend.
     property var parentModule
 
-    property var rootStore
-    property var createChatPropertiesStore
-    property var contactsStore
+    property RootStore rootStore
+    property CreateChatPropertiesStore createChatPropertiesStore
+    property ContactsStore contactsStore
     property var emojiPopup
     property var stickersPopup
 

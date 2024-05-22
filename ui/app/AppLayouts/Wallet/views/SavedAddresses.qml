@@ -11,6 +11,8 @@ import SortFilterProxyModel 0.2
 
 import utils 1.0
 import shared.controls 1.0
+import shared.stores 1.0 as SharedStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import "../stores"
 import "../controls"
@@ -19,8 +21,8 @@ ColumnLayout {
     id: root
 
     property var sendModal
-    property var contactsStore
-    property var networkConnectionStore
+    property ProfileStores.ContactsStore contactsStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
 
     QtObject {
         id: d
@@ -147,8 +149,6 @@ ColumnLayout {
             chainShortNames: model.chainShortNames
             ens: model.ens
             colorId: model.colorId
-            store: RootStore
-            contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
             areTestNetworksEnabled: RootStore.areTestNetworksEnabled
             isGoerliEnabled: RootStore.isGoerliEnabled

@@ -19,7 +19,7 @@ import SortFilterProxyModel 0.2
 MembersSelectorBase {
     id: root
 
-    property var usersStore
+    property UsersStore usersStore
 
     onConfirmed: {
         usersStore.updateGroupMembers()

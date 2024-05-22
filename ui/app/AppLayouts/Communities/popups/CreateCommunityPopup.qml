@@ -17,11 +17,12 @@ import StatusQ.Popups 0.1
 
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.stores 1.0
 
 StatusStackModal {
     id: root
 
-    property var store
+    property CommunitiesStore store
     property bool isDiscordImport // creating new or importing from discord?
     property bool isDevBuild
 

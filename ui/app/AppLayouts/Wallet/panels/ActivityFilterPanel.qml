@@ -11,12 +11,13 @@ import shared.panels 1.0
 
 import "../controls"
 import "../popups"
+import "../stores" as WalletStores
 
 Column {
     id: root
 
     property var activityFilterStore
-    property var store
+    property WalletStores.RootStore store
     property bool isLoading: false
     property bool hideNoResults: false
 

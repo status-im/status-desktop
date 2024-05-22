@@ -12,13 +12,13 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 //TODO improve this!
-import AppLayouts.Chat.stores 1.0
+import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Wallet.stores 1.0
 
 Popup {
     id: root
 
-    property var store
+    property ChatStores.RootStore store
     required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
 

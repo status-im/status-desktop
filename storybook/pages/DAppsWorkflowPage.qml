@@ -27,6 +27,7 @@ import SortFilterProxyModel 0.2
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 import mainui 1.0
 import shared.stores 1.0
@@ -38,8 +39,8 @@ Item {
     // Needed for DAppsWorkflow->PairWCModal to open its instructions popup
     Popups {
         popupParent: root
-        rootStore: QtObject {}
-        communityTokensStore: QtObject {}
+        rootStore: AppLayoutStores.RootStore {}
+        communityTokensStore: CommunityTokensStore {}
     }
 
     SplitView {

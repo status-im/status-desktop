@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+import shared.stores.send 1.0 as SharedSendStores
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -16,7 +17,7 @@ import "../controls"
 RowLayout {
     id: root
 
-    property var store
+    property SharedSendStores.TransactionStore store
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false

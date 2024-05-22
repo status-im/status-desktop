@@ -2,6 +2,8 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 import utils 1.0
 
 Item {
@@ -63,7 +65,7 @@ Item {
             sourceComponent: ProfilePopupInviteMessagePanel {
                 id: panel
 
-                contactsStore: QtObject {
+                contactsStore: ProfileStores.ContactsStore {
                     readonly property ListModel myContactsModel: ListModel {
                         Component.onCompleted: {
                             const keys = []

@@ -22,11 +22,12 @@ import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.stores 1.0
 
 StatusSectionLayout {
     id: root
 
-    property var communitiesStore
+    property CommunitiesStore communitiesStore
 
     property var assetsModel
     property var collectiblesModel

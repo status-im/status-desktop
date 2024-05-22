@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import AppLayouts.stores 1.0 as AppLayoutStores
 import AppLayouts.Profile.views 1.0
 import AppLayouts.Profile.stores 1.0
 
@@ -10,6 +11,8 @@ import Storybook 1.0
 import utils 1.0
 import mainui 1.0
 
+import shared.stores 1.0
+
 SplitView {
     id: root
 
@@ -17,8 +20,8 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: QtObject {}
-        communityTokensStore: QtObject {}
+        rootStore: AppLayoutStores.RootStore {}
+        communityTokensStore: CommunityTokensStore {}
     }
 
     SplitView {
@@ -67,7 +70,7 @@ SplitView {
                 }
             }
 
-            currencyStore: QtObject {
+            currencyStore: CurrenciesStore {
                 property string currentCurrency: "USD"
                 property string currentCurrencySymbol: "$"
 

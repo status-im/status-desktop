@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 
+import AppLayouts.stores 1.0 as AppLayoutsStores
 import AppLayouts.Profile.views 1.0
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.Profile.stores 1.0
@@ -28,7 +29,7 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: QtObject {}
+        rootStore: AppLayoutsStores.RootStore
         communityTokensStore: CommunityTokensStore {}
     }
 
@@ -56,7 +57,7 @@ SplitView {
             }
             property var communitiesList: ctrlEmptyView.checked ? emptyModel : communitiesModel
         }
-        rootStore: QtObject {
+        rootStore: AppLayoutsStores.RootStore {
             function isMyCommunityRequestPending(communityId) {
                 return communityId === "0x0006"
             }

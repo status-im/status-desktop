@@ -15,12 +15,13 @@ import SortFilterProxyModel 0.2
 import utils 1.0
 
 import "../../../Wallet"
+import "../../../Wallet/stores" as WalletStores
 import "../../controls"
 
 StatusMenu {
     id: root
 
-    property var store
+    property WalletStores.RootStore store
 
     property var recentsList
     property bool loadingRecipients: false
@@ -143,14 +144,14 @@ StatusMenu {
                                     if (!searchValue)
                                         return true
                                     const address = model.address.toLowerCase()
-                                    return address.startsWith(searchValue) || store.getNameForAddress(address).toLowerCase().indexOf(searchValue) !== -1
+                                    return address.startsWith(searchValue) || root.store.getNameForAddress(address).toLowerCase().indexOf(searchValue) !== -1
                                 }
                             }
                         }
 
                         reuseItems: true
                         delegate: ActivityTypeCheckBox {
-                            readonly property string name: store.getNameForAddress(model.address)
+                            readonly property string name: root.store.getNameForAddress(model.address)
                             width: ListView.view.width
                             height: 44
                             title: name || StatusQUtils.Utils.elideText(model.address,6,4)

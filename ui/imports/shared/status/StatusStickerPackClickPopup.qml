@@ -15,7 +15,7 @@ import shared.popups.send 1.0
 import shared.stores.send 1.0
 
 //TODO remove this dependency!
-import AppLayouts.Chat.stores 1.0
+import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Wallet.stores 1.0
 
 // TODO: replace with StatusModal
@@ -24,24 +24,24 @@ ModalPopup {
 
     property string packId
 
-    property var store
+    property ChatStores.RootStore store
     required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
     property string thumbnail: ""
     property string name: ""
     property string author: ""
     property string price
-    property bool installed: false;
-    property bool bought: false;
-    property bool pending: false;
-    property var stickers;
+    property bool installed: false
+    property bool bought: false
+    property bool pending: false
+    property var stickers
     signal buyClicked(string packId)
 
     onAboutToShow: {
         stickersModule.getInstalledStickerPacks()
 
-        const idx = stickersModule.stickerPacks.findIndexById(packId, false);
-        if(idx === -1) close();
+        const idx = stickersModule.stickerPacks.findIndexById(packId, false)
+        if(idx === -1) close()
         const item = SQUtils.ModelUtils.get(stickersModule.stickerPacks, idx)
         name = item.name
         author = item.author
@@ -134,8 +134,8 @@ ModalPopup {
         greyedOut: !store.networkConnectionStore.stickersNetworkAvailable
         tooltip.text: store.networkConnectionStore.stickersNetworkUnavailableText
         onInstallClicked: {
-            stickersModule.install(packId);
-            stickerPackDetailsPopup.close();
+            stickersModule.install(packId)
+            stickerPackDetailsPopup.close()
         }
         onUninstallClicked: {
             stickersModule.uninstall(packId);
@@ -144,8 +144,8 @@ ModalPopup {
         onCancelClicked: function(){}
         onUpdateClicked: function(){}
         onBuyClicked: {
-            Global.openPopup(stickerPackPurchaseModal);
-            stickerPackDetailsPopup.buyClicked(packId);
+            Global.openPopup(stickerPackPurchaseModal)
+            stickerPackDetailsPopup.buyClicked(packId)
         }
     }
 }

@@ -1,2 +1,4 @@
-RootStore 1.0 RootStore.qml
+AppSearchStore 1.0 AppSearchStore.qml
+CloneModel 1.0 CloneModel.qml
 FeatureFlagsStore 1.0 FeatureFlagsStore.qml
+RootStore 1.0 RootStore.qml

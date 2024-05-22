@@ -12,13 +12,15 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 import SortFilterProxyModel 0.2
 
 StatusDialog {
     id: root
 
     required property var community
-    property var devicesStore
+    property ProfileStores.DevicesStore devicesStore
 
     width: 640
 

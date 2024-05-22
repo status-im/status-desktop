@@ -4,6 +4,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Chat.stores 1.0
+
 import shared.panels 1.0
 import shared.status 1.0
 
@@ -13,7 +15,7 @@ Rectangle {
     id: root
 
     property var activeCommunity
-    property var store
+    property RootStore store
     property var communitySectionModule
     property bool hasAddedContacts
 

@@ -15,7 +15,7 @@ import shared.status 1.0
 SettingsContentBase {
     id: root
 
-    property var store
+    property QtObject store
 
     // TODO when we re-implement check for updates, put isProduction back
     titleRowComponentLoader.active: false //root.store.isProduction

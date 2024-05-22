@@ -7,6 +7,7 @@ import Models 1.0
 
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
 
 import utils 1.0
 
@@ -43,7 +44,7 @@ SplitView {
                 communityId: "123"
                 communityName: communityNameText.text
                 communityLogo: ModelsData.collectibles.doodles
-                communitiesStore: QtObject {
+                communitiesStore: CommunitiesStores.CommunitiesStore {
                     function navigateToCommunity(id) {
                         logs.logEvent("FirstTokenReceivedPopup::onNavigateToCommunity: " + id)
                     }

@@ -5,6 +5,7 @@ import utils 1.0
 import StatusQ 0.1
 
 import SortFilterProxyModel 0.2
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import "../Profile/stores"
@@ -157,9 +158,9 @@ QtObject {
     // Not Refactored Yet
 //    property var profileModelInst: profileModel
 
-    property var contactStore: profileSectionStore.contactsStore
-    property var privacyStore: profileSectionStore.privacyStore
-    property var messagingStore: profileSectionStore.messagingStore
+    property ProfileStores.ContactsStore contactStore: profileSectionStore.contactsStore
+    property ProfileStores.PrivacyStore privacyStore: profileSectionStore.privacyStore
+    property ProfileStores.MessagingStore messagingStore: profileSectionStore.messagingStore
     property bool hasAddedContacts: contactStore.myContactsModel.count > 0
 
 //    property MessageStore messageStore: MessageStore { }

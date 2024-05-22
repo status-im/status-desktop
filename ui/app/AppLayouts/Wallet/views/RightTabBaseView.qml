@@ -3,16 +3,21 @@ import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 
-import "../stores"
+import shared.stores 1.0
+
+import AppLayouts.stores 1.0 as AppLayoutsStores
+import AppLayouts.Communities.stores 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import "../panels"
 
 FocusScope {
     id: root
 
-    property var store
-    property var contactsStore
-    property var communitiesStore
-    property var networkConnectionStore
+    property AppLayoutsStores.RootStore store
+    property ProfileStores.ContactsStore contactsStore
+    property CommunitiesStore communitiesStore
+    property NetworkConnectionStore networkConnectionStore
 
     property bool dappsEnabled
     property bool swapEnabled
@@ -32,9 +37,8 @@ FocusScope {
         WalletHeader {
             id: header
             Layout.fillWidth: true
-            overview: RootStore.overview
-            store: root.store
-            walletStore: RootStore
+            overview: WalletStores.RootStore.overview
+            walletStore: WalletStores.RootStore
             networkConnectionStore: root.networkConnectionStore
             dappsEnabled: root.dappsEnabled
         }

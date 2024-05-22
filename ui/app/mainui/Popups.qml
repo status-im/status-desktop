@@ -12,16 +12,19 @@ import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
+import AppLayouts.stores 1.0 as AppLayoutStores
 import AppLayouts.Chat.popups 1.0
 import AppLayouts.Profile.popups 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Wallet.popups.swap 1.0
 import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Communities.stores 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStore
-import AppLayouts.Chat.stores 1.0 as ChatStore
+import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import shared.popups 1.0
 import shared.status 1.0
@@ -34,14 +37,14 @@ QtObject {
     id: root
 
     required property var popupParent
-    required property var rootStore
-    required property var communityTokensStore
-    property var communitiesStore
-    property var devicesStore
+    required property AppLayoutStores.RootStore rootStore
+    required property CommunityTokensStore communityTokensStore
+    property CommunitiesStore communitiesStore
+    property ProfileStores.DevicesStore devicesStore
     property CurrenciesStore currencyStore
     property WalletStore.WalletAssetsStore walletAssetsStore
     property WalletStore.CollectiblesStore walletCollectiblesStore
-    property var networkConnectionStore
+    property NetworkConnectionStore networkConnectionStore
     property bool isDevBuild
 
     signal openExternalLink(string link)
@@ -628,7 +631,6 @@ QtObject {
             id: communityProfilePopup
 
             CommunityProfilePopup {
-                contactsStore: rootStore.contactStore
                 hasAddedContacts: rootStore.hasAddedContacts
 
                 onClosed: destroy()
@@ -962,7 +964,7 @@ QtObject {
             CommunityMembershipSetupDialog {
                 id: editSharedAddressesPopup
 
-                readonly property var chatStore: ChatStore.RootStore {
+                readonly property ChatStores.RootStore chatStore: ChatStores.RootStore {
                     contactsStore: root.rootStore.contactStore
                     chatCommunitySectionModule: {
                         root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(editSharedAddressesPopup.communityId)

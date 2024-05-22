@@ -11,6 +11,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.stores 1.0
 
 import utils 1.0
 
@@ -18,7 +19,7 @@ StatusDialog {
     id: root
 
     // Community related props:
-    required property var communitiesStore
+    required property CommunitiesStore communitiesStore
     required property string communityId
     required property string communityName
     required property string communityLogo

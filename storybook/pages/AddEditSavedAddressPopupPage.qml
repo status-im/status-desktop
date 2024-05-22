@@ -7,7 +7,9 @@ import SortFilterProxyModel 0.2
 
 import Storybook 1.0
 import Models 1.0
+import AppLayouts.stores 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import utils 1.0
 
@@ -49,19 +51,7 @@ SplitView {
                     filters: ValueFilter { roleName: "isTest"; value: false }
                 }
 
-                store: QtObject {
-                    function savedAddressNameExists(name) {
-                        return false
-                    }
-                    function createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames) {
-                        logs.logEvent("createOrUpdateSavedAddress", ["name", "address", "ens", "colorId", "chainShortNames"], arguments)
-                    }
-                    function getNetworkIds(chainSortNames) {
-                        let shortNames = chainSortNames.split(":").filter((shortName) => shortName.length > 0)
-                        const chainIds = shortNames.map((shortName) => ModelUtils.getByKey(NetworksModel.flatNetworks, "shortName", shortName).chainId)
-                        return chainIds.join(":")
-                    }
-                }
+                store: WalletStores.RootStore
 
                 // Emulate resolving ENS by simple validation
                 QtObject {

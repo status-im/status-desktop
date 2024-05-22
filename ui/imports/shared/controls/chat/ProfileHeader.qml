@@ -10,6 +10,8 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 Item {
     id: root
 
@@ -19,7 +21,7 @@ Item {
         Big
     }
 
-    property var store
+    property ProfileStores.ProfileStore store
     property string displayName
     property string pubkey
     property string icon

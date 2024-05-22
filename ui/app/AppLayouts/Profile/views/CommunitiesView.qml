@@ -22,12 +22,13 @@ import AppLayouts.Communities.panels 1.0
 import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import AppLayouts.Chat.stores 1.0 as ChatStore
+import AppLayouts.stores 1.0 as AppLayoutsStores
 
 SettingsContentBase {
     id: root
 
     property ProfileSectionStore profileSectionStore
-    property var rootStore
+    property AppLayoutsStores.RootStore rootStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property CurrenciesStore currencyStore
 

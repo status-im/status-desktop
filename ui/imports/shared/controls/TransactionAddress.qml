@@ -7,6 +7,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Wallet 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import utils 1.0
 
@@ -36,10 +38,10 @@ Item {
     property string address
 
     /* /internal Property hold reference to contacts store to refresh contact data on any change. */
-    property var contactsStore
+    property ProfileStores.ContactsStore contactsStore
 
     /* /internal Property hold reference to root store to refresh wallet data on any change. */
-    property var rootStore
+    property WalletStores.RootStore rootStore
 
     /*!
        \qmlproperty \l{StatusAssetSettings} TransactionAddress::asset

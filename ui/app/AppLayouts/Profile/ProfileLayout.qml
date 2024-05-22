@@ -28,6 +28,7 @@ import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import SortFilterProxyModel 0.2
+import AppLayouts.stores 1.0 as AppLayoutsStores
 
 StatusSectionLayout {
     id: root
@@ -35,10 +36,10 @@ StatusSectionLayout {
     objectName: "profileStatusSectionLayout"
 
     property ProfileSectionStore store
-    property var globalStore
+    property AppLayoutsStores.RootStore globalStore
     property var systemPalette
     property var emojiPopup
-    property var networkConnectionStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     required property TokensStore tokensStore
     required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore

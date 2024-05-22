@@ -18,14 +18,14 @@ import shared.popups.send 1.0
 import shared.stores.send 1.0
 
 //TODO remove this dependency!
-import AppLayouts.Chat.stores 1.0
+import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Wallet.stores 1.0
 
 Item {
     id: root
 
-    property var store
-    property var stickerPacks: StickerPackData {}
+    property ChatStores.RootStore store
+    property var stickerPacks: ChatStores.StickerPackData {}
     required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
     property string packId

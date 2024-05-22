@@ -17,6 +17,8 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
 
+import AppLayouts.Profile.stores 1.0
+
 StatusModal {
     id: root
 
@@ -25,8 +27,8 @@ StatusModal {
     padding: 8
     headerSettings.title: qsTr("History Nodes")
 
-    property var messagingStore
-    property var advancedStore
+    property MessagingStore messagingStore
+    property AdvancedStore advancedStore
     property string nameValidationError: ""
     property string enodeValidationError: ""
 

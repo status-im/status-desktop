@@ -12,11 +12,12 @@ import utils 1.0
 import shared.panels 1.0
 
 import "../controls"
+import "../stores"
 
 StatusModal {
     id: root
 
-    property var notificationsStore
+    property NotificationsStore notificationsStore
     property var item: ({
         name: "",
         image: "",

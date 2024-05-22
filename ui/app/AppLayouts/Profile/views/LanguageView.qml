@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 import utils 1.0
 import shared.panels 1.0
 import shared.popups 1.0
+import shared.stores 1.0 as SharedStores
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -23,7 +24,7 @@ SettingsContentBase {
     id: root
 
     property LanguageStore languageStore
-    property var currencyStore
+    property SharedStores.CurrenciesStore currencyStore
     property bool languageSelectionEnabled
 
     objectName: "languageView"

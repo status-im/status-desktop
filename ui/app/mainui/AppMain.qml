@@ -41,7 +41,7 @@ import StatusQ.Popups.Dialog 0.1
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
 
 import mainui.activitycenter.stores 1.0
@@ -58,21 +58,21 @@ Item {
     property RootStore rootStore: RootStore {
         profileSectionStore.sendModalPopup: sendModal
     }
-    property var rootChatStore: ChatStores.RootStore {
+    property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
         contactsStore: appMain.rootStore.contactStore
         communityTokensStore: appMain.communityTokensStore
         emojiReactionsModel: appMain.rootStore.emojiReactionsModel
         openCreateChat: createChatView.opened
         networkConnectionStore: appMain.networkConnectionStore
     }
-    property var createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
+    property ChatStores.CreateChatPropertiesStore createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
     property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
     property CommunitiesStore communitiesStore: CommunitiesStore {}
-    readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
-    readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
-    readonly property WalletStore.CollectiblesStore walletCollectiblesStore: WalletStore.RootStore.collectiblesStore
+    readonly property WalletStores.TokensStore tokensStore: WalletStores.RootStore.tokensStore
+    readonly property WalletStores.WalletAssetsStore walletAssetsStore: WalletStores.RootStore.walletAssetsStore
+    readonly property WalletStores.CollectiblesStore walletCollectiblesStore: WalletStores.RootStore.collectiblesStore
     readonly property CurrenciesStore currencyStore: CurrenciesStore {}
     readonly property TransactionStore transactionStore: TransactionStore {
         walletAssetStore: appMain.walletAssetsStore
@@ -232,7 +232,7 @@ Item {
             case Constants.SendType.Approve: {
                 const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromTokenKey)
                 const fromAccountName = SQUtils.ModelUtils.getByKey(appMain.transactionStore.accounts, "address", fromAddr, "name")
-                const networkName = SQUtils.ModelUtils.getByKey(WalletStore.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
+                const networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
                 if(!!fromToken && !!fromAccountName && !!networkName) {
                     const approvalAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
                     let toastTitle = qsTr("Setting spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
@@ -255,7 +255,7 @@ Item {
                 const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromTokenKey)
                 const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", toTokenKey)
                 const fromAccountName = SQUtils.ModelUtils.getByKey(appMain.transactionStore.accounts, "address", fromAddr, "name")
-                const networkName = SQUtils.ModelUtils.getByKey(WalletStore.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
+                const networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
                 if(!!fromToken && !!toToken && !!fromAccountName && !!networkName) {
                     const fromSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
                     const toSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
@@ -277,7 +277,7 @@ Item {
             }
             default: {
                 if (!error) {
-                    let networkName = SQUtils.ModelUtils.getByKey(WalletStore.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
+                    let networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
                     if(!!networkName) {
                         Global.displayToastMessage(qsTr("Transaction pending..."),
                                                    qsTr("View on %1").arg(networkName),
@@ -299,7 +299,7 @@ Item {
             case Constants.SendType.Approve: {
                 const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromTokenKey)
                 const fromAccountName = SQUtils.ModelUtils.getByKey(appMain.transactionStore.accounts, "address", fromAddr, "name")
-                const networkName = SQUtils.ModelUtils.getByKey(WalletStore.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
+                const networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
                 if(!!fromToken && !!fromAccountName && !!networkName) {
                     const approvalAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
                     let toastTitle = qsTr("Spending cap set: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
@@ -320,7 +320,7 @@ Item {
                 const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromTokenKey)
                 const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", toTokenKey)
                 const fromAccountName = SQUtils.ModelUtils.getByKey(appMain.transactionStore.accounts, "address", fromAddr, "name")
-                const networkName = SQUtils.ModelUtils.getByKey(WalletStore.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
+                const networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
                 if(!!fromToken && !!toToken && !!fromAccountName && !!networkName) {
                     const fromSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
                     const toSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
@@ -1561,7 +1561,7 @@ Item {
                     communityTokensStore: appMain.communityTokensStore
                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                     openCreateChat: createChatView.opened
-                    walletStore: WalletStore.RootStore
+                    walletStore: WalletStores.RootStore
                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                 }
                 activityCenterStore: appMain.activityCenterStore
@@ -1880,7 +1880,9 @@ Item {
         }
 
         sourceComponent: WalletPopups.AddEditSavedAddressPopup {
-            flatNetworks: WalletStore.RootStore.filteredFlatModel
+            store: WalletStores.RootStore
+
+            flatNetworks: WalletStores.RootStore.filteredFlatModel
 
             onClosed: {
                 addEditSavedAddress.close()
@@ -1888,11 +1890,11 @@ Item {
         }
 
         Connections {
-            target: WalletStore.RootStore
+            target: WalletStores.RootStore
 
             function onSavedAddressAddedOrUpdated(added: bool, name: string, address: string, errorMsg: string) {
-                WalletStore.RootStore.addingSavedAddress = false
-                WalletStore.RootStore.lastCreatedSavedAddress = { address: address, error: errorMsg }
+                WalletStores.RootStore.addingSavedAddress = false
+                WalletStores.RootStore.lastCreatedSavedAddress = { address: address, error: errorMsg }
 
                 if (!!errorMsg) {
                     let mode = qsTr("adding")
@@ -1958,16 +1960,16 @@ Item {
             }
 
             onRemoveSavedAddress: {
-                WalletStore.RootStore.deleteSavedAddress(address)
+                WalletStores.RootStore.deleteSavedAddress(address)
                 close()
             }
         }
 
         Connections {
-            target: WalletStore.RootStore
+            target: WalletStores.RootStore
 
             function onSavedAddressDeleted(name: string, address: string, errorMsg: string) {
-                WalletStore.RootStore.deletingSavedAddress = false
+                WalletStores.RootStore.deletingSavedAddress = false
 
                 if (!!errorMsg) {
 
@@ -2049,7 +2051,7 @@ Item {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return null
                 }
-                return WalletStore.RootStore.accounts
+                return WalletStores.RootStore.accounts
             }
 
             selectedAccount: {
@@ -2068,11 +2070,11 @@ Item {
 
             onUpdatePreferredChains: {
                 if (showQR.showForSavedAddress) {
-                    let shortNames = WalletStore.RootStore.getNetworkShortNames(preferredChains)
-                    WalletStore.RootStore.updatePreferredChains(address, shortNames)
+                    let shortNames = WalletStores.RootStore.getNetworkShortNames(preferredChains)
+                    WalletStores.RootStore.updatePreferredChains(address, shortNames)
                     return
                 }
-                WalletStore.RootStore.updateWalletAccountPreferredChains(address, preferredChains)
+                WalletStores.RootStore.updateWalletAccountPreferredChains(address, preferredChains)
             }
 
             onClosed: {
@@ -2134,12 +2136,12 @@ Item {
         id: dappsConnectorSDK
 
         DappsConnectorSDK {
-            active: WalletStore.RootStore.walletSectionInst.walletReady
-            controller: WalletStore.RootStore.dappsConnectorController
+            active: WalletStores.RootStore.walletSectionInst.walletReady
+            controller: WalletStores.RootStore.dappsConnectorController
             wcService: Global.walletConnectService
-            walletStore: WalletStore.RootStore
+            walletStore: WalletStores.RootStore
             store: DAppsStore {
-                controller: WalletStore.RootStore.walletConnectController
+                controller: WalletStores.RootStore.walletConnectController
             }
             loginType: appMain.rootStore.loginType
         }
@@ -2161,14 +2163,14 @@ Item {
             id: walletConnectService
 
             wcSDK: WalletConnectSDK {
-                enableSdk: WalletStore.RootStore.walletSectionInst.walletReady
+                enableSdk: WalletStores.RootStore.walletSectionInst.walletReady
                 userUID: appMain.rootStore.profileSectionStore.profileStore.pubkey
-                projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
+                projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
             }
             store: DAppsStore {
-                controller: WalletStore.RootStore.walletConnectController
+                controller: WalletStores.RootStore.walletConnectController
             }
-            walletRootStore: WalletStore.RootStore
+            walletRootStore: WalletStores.RootStore
 
             Component.onCompleted: {
                 Global.walletConnectService = walletConnectService

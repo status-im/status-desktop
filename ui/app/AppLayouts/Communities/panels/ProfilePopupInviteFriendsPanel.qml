@@ -12,14 +12,17 @@ import shared.panels 1.0
 import shared.views 1.0
 import shared.status 1.0
 
+import AppLayouts.stores 1.0 as AppLayoutStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 ColumnLayout {
     id: root
     objectName: "CommunityProfilePopupInviteFrindsPanel_ColumnLayout"
 
     property string headerTitle: ""
 
-    property var rootStore
-    property var contactsStore
+    property AppLayoutStores.RootStore rootStore
+    property ProfileStores.ContactsStore contactsStore
     property var community
 
     property var pubKeys: ([])

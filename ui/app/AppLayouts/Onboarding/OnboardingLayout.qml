@@ -18,7 +18,7 @@ import "../Profile/stores"
 OnboardingBasePage {
     id: root
 
-    property var startupStore: StartupStore {}
+    property StartupStore startupStore: StartupStore {}
 
     backButtonVisible: root.startupStore.currentStartupState ? root.startupStore.currentStartupState.displayBackButton
                                                              : false

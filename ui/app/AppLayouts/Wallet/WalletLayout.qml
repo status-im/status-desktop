@@ -9,7 +9,13 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import utils 1.0
 import shared.controls 1.0
 import shared.popups.keypairimport 1.0
+
+import shared.stores 1.0
 import shared.stores.send 1.0
+
+import AppLayouts.stores 1.0 as AppLayoutsStores
+import AppLayouts.Communities.stores 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import "popups"
 import "panels"
@@ -23,13 +29,15 @@ Item {
     id: root
 
     property bool hideSignPhraseModal: false
-    property var store
-    property var contactsStore
-    property var communitiesStore
+
+    property AppLayoutsStores.RootStore store
+    property ProfileStores.ContactsStore contactsStore
+    property CommunitiesStore communitiesStore
     required property TransactionStore transactionStore
+
     property var emojiPopup: null
     property var sendModalPopup
-    property var networkConnectionStore
+    property NetworkConnectionStore networkConnectionStore
     property bool appMainVisible
 
     property bool dappsEnabled
