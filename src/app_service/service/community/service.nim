@@ -2424,6 +2424,7 @@ QtObject:
     for chat in self.communities[communityId].chats:
       if chat.categoryId != categoryId:
         continue
-      if (not chat.muted and chat.unviewedMessagesCount > 0) or chat.unviewedMentionsCount > 0:
+      let chatDto = self.chatService.getChatById(chat.id)
+      if (not chatDto.muted and chatDto.unviewedMessagesCount > 0) or chatDto.unviewedMentionsCount > 0:
         return true
     return false

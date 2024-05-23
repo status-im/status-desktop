@@ -597,9 +597,13 @@ proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bo
     if (self.chatContentModules.contains(chatId)):
       self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
 
-    if chat.categoryId != "":
-      let hasUnreadMessages = self.controller.categoryHasUnreadMessages(chat.communityId, chat.categoryId)
-      self.view.chatsModel().setCategoryHasUnreadMessages(chat.categoryId, hasUnreadMessages)
+    if self.isCommunity:
+      let myCommunity = self.controller.getMyCommunity()
+      let communityChat = myCommunity.getCommunityChat(chatId)
+
+      if communityChat.categoryId != "":
+        let hasUnreadMessages = self.controller.categoryHasUnreadMessages(communityChat.communityId, communityChat.categoryId)
+        self.view.chatsModel().setCategoryHasUnreadMessages(communityChat.categoryId, hasUnreadMessages)
 
   self.updateParentBadgeNotifications()
 
