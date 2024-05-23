@@ -26,8 +26,6 @@ SubmodelProxyModel::SubmodelProxyModel(QObject* parent)
 
 QVariant SubmodelProxyModel::data(const QModelIndex& index, int role) const
 {
-    static constexpr auto attachementPropertyName = "_attachement";
-
     if (!checkIndex(index, CheckIndexOption::IndexIsValid))
         return {};
 
@@ -41,31 +39,34 @@ QVariant SubmodelProxyModel::data(const QModelIndex& index, int role) const
             return submodel;
         }
 
-        QVariant attachement = submodelObj->property(attachementPropertyName);
+        QVariant proxyVariant;
 
-        if (attachement.isValid())
-            return attachement;
+        auto& entry = m_container[index.row()];
 
-        // Make sure that wrapper is destroyed before it receives signal related
-        // to submodel's destruction. Otherwise injected context property may
-        // be cleared causing warnings related to accessing null from qml.
-        connect(submodelObj, &QObject::destroyed, this, [](auto obj) {
-            QVariant attachement = obj->property(attachementPropertyName);
+        if (entry) {
+            proxyVariant = QVariant::fromValue(entry.get());
+        }
 
-            if (attachement.isValid())
-                delete attachement.value<QObject*>();
-        });
+        if (proxyVariant.isValid())
+            return proxyVariant;
 
         auto creationContext = m_delegateModel->creationContext();
         auto parentContext = creationContext
                 ? creationContext : m_delegateModel->engine()->rootContext();
 
         auto context = new QQmlContext(parentContext, submodelObj);
+
+        // Make sure that wrapper is destroyed before it receives signal related
+        // to submodel's destruction. Otherwise injected context property may
+        // be cleared causing warnings related to accessing null from qml.
+        connect(submodelObj, &QObject::destroyed, this,
+                [context = QPointer(context)](auto obj) {
+            delete context.data();
+        });
+
         context->setContextProperty(QStringLiteral("submodel"), submodel);
 
         QObject* instance = m_delegateModel->create(context);
-        instance->setParent(submodelObj);
-
         QVariant wrappedInstance = QVariant::fromValue(instance);
 
         if (m_additionalRolesMap.size()) {
@@ -77,8 +78,7 @@ QVariant SubmodelProxyModel::data(const QModelIndex& index, int role) const
                     this, SLOT(onCustomRoleChanged(QObject*,int)));
         }
 
-        submodelObj->setProperty(attachementPropertyName, wrappedInstance);
-
+        m_container[index.row()].reset(instance);
         return wrappedInstance;
     }
 
@@ -109,6 +109,8 @@ void SubmodelProxyModel::setSourceModel(QAbstractItemModel* model)
 
     if (sourceModel() == model)
         return;
+
+    m_container.setModel(model);
 
     // Workaround for QTBUG-57971
     if (model->roleNames().isEmpty())

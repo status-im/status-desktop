@@ -663,9 +663,6 @@ private slots:
     }
 
     void multipleProxiesTest() {
-        QSKIP("Not implemented yet. The goal is to make the proxy fully "
-              "non-intrusive what will fix the isse pointed in this test.");
-
         QQmlEngine engine;
         auto delegate1 = std::make_unique<QQmlComponent>(&engine);
 

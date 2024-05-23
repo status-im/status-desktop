@@ -6,6 +6,8 @@
 #include <limits>
 #include <optional>
 
+#include "modelsyncedcontainer.h"
+
 class QQmlComponent;
 class QQmlEngine;
 
@@ -69,4 +71,6 @@ private:
     QHash<int, QByteArray> m_roleNames;
     QHash<QString, int> m_additionalRolesMap;
     int m_additionalRolesOffset = std::numeric_limits<int>::max();
+
+    mutable ModelSyncedContainer<std::unique_ptr<QObject>> m_container;
 };
