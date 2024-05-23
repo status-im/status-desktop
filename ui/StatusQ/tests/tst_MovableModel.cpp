@@ -7,12 +7,12 @@
 #include <QSortFilterProxyModel>
 
 #include <StatusQ/movablemodel.h>
+#include <StatusQ/snapshotmodel.h>
 
 #include <TestHelpers/listmodelwrapper.h>
 #include <TestHelpers/modelsignalsspy.h>
 #include <TestHelpers/modeltestutils.h>
 #include <TestHelpers/persistentindexestester.h>
-#include <TestHelpers/snapshotmodel.h>
 
 class TestMovableModel : public QObject
 {

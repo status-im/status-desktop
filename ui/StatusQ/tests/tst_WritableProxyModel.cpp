@@ -1,17 +1,19 @@
 #include <QAbstractItemModelTester>
 #include <QAbstractListModel>
-#include <QTest>
 #include <QSignalSpy>
+#include <QTest>
 
+#include "StatusQ/snapshotmodel.h"
 #include "StatusQ/writableproxymodel.h"
 
-#include <TestHelpers/persistentindexestester.h>
-#include <TestHelpers/snapshotmodel.h>
 #include <TestHelpers/modeltestutils.h>
+#include <TestHelpers/persistentindexestester.h>
 
-namespace {
+namespace
+{
 
-class TestSourceModel : public QAbstractListModel {
+class TestSourceModel : public QAbstractListModel
+{
 
 public:
     explicit TestSourceModel(QList<QPair<QString, QVariantList>> data)
