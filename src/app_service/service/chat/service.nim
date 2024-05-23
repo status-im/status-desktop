@@ -181,7 +181,7 @@ QtObject:
       var args = RpcResponseArgs(e)
       discard self.processMessengerResponse(args.response)
 
-  proc asyncGetActiveChat*(self: Service) =
+  proc asyncGetActiveChats*(self: Service) =
     let arg = AsyncGetActiveChatsTaskArg(
       tptr: cast[ByteAddress](asyncGetActiveChatsTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -213,7 +213,7 @@ QtObject:
   proc init*(self: Service) =
     self.doConnect()
 
-    self.asyncGetActiveChat()
+    self.asyncGetActiveChats()
 
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)
