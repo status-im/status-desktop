@@ -7,27 +7,38 @@ type
     packId*: string
     fromAddress*: string
     uuid*: string
-  
+
   ObtainMarketStickerPacksTaskArg = ref object of QObjectTaskArg
     chainId*: int
   InstallStickerPackTaskArg = ref object of QObjectTaskArg
     packId*: string
     chainId*: int
-  
+
   AsyncGetRecentStickersTaskArg* = ref object of QObjectTaskArg
   AsyncGetInstalledStickerPacksTaskArg* = ref object of QObjectTaskArg
 
 const asyncGetRecentStickersTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetRecentStickersTaskArg](argEncoded)
-  let response = status_stickers.recent()
-  arg.finish(response)
+  try:
+    let response = status_stickers.recent()
+    arg.finish(response)
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })
+
 
 const asyncGetInstalledStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetInstalledStickerPacksTaskArg](argEncoded)
-  let response = status_stickers.installed()
-  arg.finish(response)
+  try:
+    let response = status_stickers.installed()
+    arg.finish(response)
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })
 
-proc getMarketStickerPacks*(chainId: int): 
+proc getMarketStickerPacks*(chainId: int):
     tuple[stickers: Table[string, StickerPackDto], error: string] =
   result = (initTable[string, StickerPackDto](), "")
   try:

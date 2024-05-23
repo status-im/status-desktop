@@ -120,11 +120,14 @@ QtObject:
 
   proc asyncDevicesLoaded*(self: Service, response: string) {.slot.} =
     try:
-      let rpcResponse = Json.decode(response, RpcResponse[JsonNode])
-      let installations = map(rpcResponse.result.getElems(), proc(x: JsonNode): InstallationDto = x.toInstallationDto())
+      let responseObj = response.parseJson
+      if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
+        raise newException(CatchableError, responseObj{"error"}.getStr)
+
+      let installations = map(responseObj.getElems(), proc(x: JsonNode): InstallationDto = x.toInstallationDto())
       self.events.emit(SIGNAL_DEVICES_LOADED, DevicesArg(devices: installations))
     except Exception as e:
-      error "error loading devices: ", desription = e.msg
+      error "Erorr load devices async", msg = e.msg
       self.events.emit(SIGNAL_ERROR_LOADING_DEVICES, Args())
 
   proc getAllDevices*(self: Service): seq[InstallationDto] =

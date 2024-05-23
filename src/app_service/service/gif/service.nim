@@ -79,16 +79,13 @@ QtObject:
   proc onAsyncGetRecentGifsDone*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
-      if (rpcResponseObj{"error"}.kind != JNull):
-        let error = Json.decode($rpcResponseObj["error"], RpcError)
-        error "error loading recent gifs", msg = error.message
-        return
+      if rpcResponseObj{"error"}.kind != JNull:
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
       self.recents = map(rpcResponseObj{"result"}.getElems(), settingToGifDto)
       self.events.emit(SIGNAL_LOAD_RECENT_GIFS_DONE, GifsArgs(gifs: self.recents))
     except Exception as e:
-      let errMsg = e.msg
-      error "error: ", errMsg
+      error "error loading recent gifs: ", errMsg=e.msg
 
   proc asyncLoadFavoriteGifs*(self: Service) =
     self.events.emit(SIGNAL_LOAD_FAVORITE_GIFS_STARTED, Args())
@@ -105,16 +102,13 @@ QtObject:
   proc onAsyncGetFavoriteGifsDone*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
-      if (rpcResponseObj{"error"}.kind != JNull):
-        let error = Json.decode($rpcResponseObj["error"], RpcError)
-        error "error loading favorite gifs", msg = error.message
-        return
+      if rpcResponseObj{"error"}.kind != JNull:
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
       self.favorites = map(rpcResponseObj{"result"}.getElems(), settingToGifDto)
       self.events.emit(SIGNAL_LOAD_FAVORITE_GIFS_DONE, GifsArgs(gifs: self.favorites))
     except Exception as e:
-      let errMsg = e.msg
-      error "error: ", errMsg
+      error "error loading favorite gifs", errMsg = e.msg
 
   proc init*(self: Service) =
     discard
@@ -173,7 +167,7 @@ QtObject:
       if rpcResponseObj["event"].getStr == SIGNAL_LOAD_TRENDING_GIFS_DONE:
         # Save trending gifs in a local cache to not have to fetch them multiple times
         self.trending = items
-     
+
       self.events.emit(rpcResponseObj["event"].getStr, GifsArgs(gifs: items))
     except Exception as e:
       let errMsg = e.msg

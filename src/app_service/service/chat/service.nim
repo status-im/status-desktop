@@ -207,8 +207,7 @@ QtObject:
 
       self.events.emit(SIGNAL_ACTIVE_CHATS_LOADED, Args())
     except Exception as e:
-      let errDesription = e.msg
-      error "error get active chats: ", errDesription
+      error "error get active chats: ", msg = e.msg
       self.events.emit(SIGNAL_CHATS_LOADING_FAILED, Args())
 
   proc init*(self: Service) =
