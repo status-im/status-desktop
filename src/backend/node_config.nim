@@ -29,25 +29,31 @@ proc switchFleet*(fleet: string, nodeConfig: JsonNode): RpcResponse[JsonNode] =
     raise newException(RpcException, e.msg)
 
 proc enableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] =
-  try:
-    result = core.callPrivateRPC("enableCommunityHistoryArchiveProtocol".prefix)
-  except RpcException as e:
-    error "error doing rpc request", methodName = "enableCommunityHistoryArchiveProtocol", exception=e.msg
-    raise newException(RpcException, e.msg)
+  return core.callPrivateRPC("enableCommunityHistoryArchiveProtocol".prefix, %* [])
 
 proc disableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] =
-  try:
-    result = core.callPrivateRPC("disableCommunityHistoryArchiveProtocol".prefix)
-  except RpcException as e:
-    error "error doing rpc request", methodName = "disableCommunityHistoryArchiveProtocol", exception=e.msg
-    raise newException(RpcException, e.msg)
+  return core.callPrivateRPC("disableCommunityHistoryArchiveProtocol".prefix, %* [])
 
-proc  setLogLevel*(logLevel: LogLevel): RpcResponse[JsonNode] =
-  try:
-    let payload = %*[{
-      "logLevel": $logLevel
-    }]
-    result = core.callPrivateRPC("setLogLevel".prefix, payload)
-  except RpcException as e:
-    error "error doing rpc request", methodName = "setLogLevel", exception=e.msg
-    raise newException(RpcException, e.msg)
+proc setLogLevel*(logLevel: LogLevel): RpcResponse[JsonNode] =
+  let payload = %*[{
+    "logLevel": $logLevel
+  }]
+  result = core.callPrivateRPC("setLogLevel".prefix, payload)
+
+proc setMaxLogBackups*(maxLogBackups: int): RpcResponse[JsonNode] =
+  let payload = %*[{
+    "maxLogBackups": maxLogBackups
+  }]
+  return core.callPrivateRPC("setMaxLogBackups".prefix, payload)
+
+proc setLightClient*(enabled: bool): RpcResponse[JsonNode] =
+  let payload = %*[{
+    "enabled": enabled
+  }]
+  return core.callPrivateRPC("setLightClient".prefix, payload)
+
+proc saveNewWakuNode*(nodeAddress: string): RpcResponse[JsonNode] =
+  let payload = %*[{
+    "nodeAddress": nodeAddress
+  }]
+  return core.callPrivateRPC("saveNewWakuNode".prefix, payload)

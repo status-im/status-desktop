@@ -61,6 +61,6 @@ method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
 method saveNewWakuNode*(self: Module, nodeAddress: string) =
-  self.controller.saveNewWakuNode(nodeAddress)
-  let item = initItem(nodeAddress)
-  self.view.model().addItem(item)
+  if self.controller.saveNewWakuNode(nodeAddress):
+    let item = initItem(nodeAddress)
+    self.view.model().addItem(item)
