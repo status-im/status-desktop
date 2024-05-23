@@ -32,6 +32,7 @@ SendToContractWarning 1.0 SendToContractWarning.qml
 SettingsRadioButton 1.0 SettingsRadioButton.qml
 ShapeRectangle 1.0 ShapeRectangle.qml
 SocialLinkPreview 1.0 SocialLinkPreview.qml
+StatusButtonRow 1.0 StatusButtonRow.qml
 StatusSyncCodeInput 1.0 StatusSyncCodeInput.qml
 StatusSyncCodeScan 1.0 StatusSyncCodeScan.qml
 StatusSyncingInstructions 1.0 StatusSyncingInstructions.qml

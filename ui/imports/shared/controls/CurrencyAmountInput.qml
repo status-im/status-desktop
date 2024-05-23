@@ -12,7 +12,7 @@ import utils 1.0
 /*!
    \qmltype CurrencyAmountInput
    \inherits TextField
-   \brief Provides a text input field that accepts a numeric value, with optional currency symbol ("USD").
+   \brief Provides a text input field that accepts a numeric value, with optional (currency) symbol (defaults to "USD").
           Utilizes a builtin DoubleValidator to validate the user's input.
           It accepts both the native decimal separator and optionally a period (`.`) for locales that don't use this.
    \inqmlmodule shared.controls 1.0
@@ -91,11 +91,11 @@ TextField {
     background: Rectangle {
         radius: Style.current.radius
         color: Theme.palette.statusAppNavBar.backgroundColor
-        border.width: root.cursorVisible || root.hovered || !root.valid ? 1 : 0
+        border.width: 1
         border.color: {
-            if (!root.valid)
+            if (!root.valid && (root.focus || root.cursorVisible))
                 return Theme.palette.dangerColor1
-            if (root.cursorVisible)
+            if (root.cursorVisible || root.focus)
                 return Theme.palette.primaryColor1
             if (root.hovered)
                 return Theme.palette.primaryColor2
