@@ -147,11 +147,13 @@ Item {
                                 highlighted = true;
                                 categoryPopupMenuSlot.item.popup()
                             } else if (mouse.button === Qt.LeftButton) {
-                                root.toggleCollapsedCommunityCategory(model.categoryId, !statusChatListCategoryItem.opened)
+                                // We pass the value for collapsed that we want
+                                // So if opened == true, we want opened == false -> we pass collapsed = true
+                                root.toggleCollapsedCommunityCategory(model.categoryId, statusChatListCategoryItem.opened)
                             }
                         }
                         onToggleButtonClicked: {
-                            root.toggleCollapsedCommunityCategory(model.categoryId, !statusChatListCategoryItem.opened)
+                            root.toggleCollapsedCommunityCategory(model.categoryId, statusChatListCategoryItem.opened)
                         }
                         onMenuButtonClicked: {
                             statusChatListCategoryItem.setupPopup()
