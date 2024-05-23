@@ -817,7 +817,7 @@ QtObject:
       let collapsedCommunityCategories = responseObj["collapsedCommunityCategories"]
       if collapsedCommunityCategories{"result"}.kind != JNull:
         for jsonCategory in collapsedCommunityCategories["result"]:
-          categories.add(jsonCategory.toCategoryDto())
+          categories.add(jsonCategory.toCollapsedCategoryDto())
 
       # All communities
       let communities = parseCommunities(responseObj["communities"], categories)
