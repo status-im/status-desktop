@@ -1,6 +1,5 @@
 import NimQml
 
-import app_service/common/social_links
 import app_service/service/profile/dto/profile_showcase_preferences
 
 import models/profile_save_data
@@ -31,12 +30,6 @@ method onBioChanged*(self: AccessInterface, bio: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setDisplayName*(self: AccessInterface, displayName: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method saveSocialLinks*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onSocialLinksUpdated*(self: AccessInterface, socialLinks: SocialLinks, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onProfileShowcasePreferencesSaveSucceeded*(self: AccessInterface) {.base.} =

@@ -7,7 +7,6 @@ import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/service as token_service
-import app_service/common/social_links
 import app_service/common/types
 
 import app_service/service/profile/dto/profile_showcase_preferences
@@ -43,15 +42,9 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.settingsService.fetchAndStoreSocialLinks()
-
   self.events.on(SIGNAL_BIO_UPDATED) do(e: Args):
     let args = SettingsTextValueArgs(e)
     self.delegate.onBioChanged(args.value)
-
-  self.events.on(SIGNAL_SOCIAL_LINKS_UPDATED) do(e: Args):
-    let args = SocialLinksArgs(e)
-    self.delegate.onSocialLinksUpdated(args.socialLinks, args.error)
 
   self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_SUCCEEDED) do(e: Args):
     self.delegate.onProfileShowcasePreferencesSaveSucceeded()
@@ -72,9 +65,6 @@ proc deleteIdentityImage*(self: Controller, address: string): bool =
 proc setDisplayName*(self: Controller, displayName: string): bool =
   self.profileService.setDisplayName(displayName)
 
-proc getSocialLinks*(self: Controller): SocialLinks =
-  self.settingsService.getSocialLinks()
-
 proc getCommunityById*(self: Controller, id: string): CommunityDto =
   self.communityService.getCommunityById(id)
 
@@ -83,9 +73,6 @@ proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   self.walletAccountService.getWalletAccounts(true)
-
-proc setSocialLinks*(self: Controller, links: SocialLinks) =
-  self.settingsService.setSocialLinks(links)
 
 proc getBio*(self: Controller): string =
   self.settingsService.getBio()

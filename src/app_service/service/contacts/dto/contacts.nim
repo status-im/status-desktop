@@ -1,7 +1,6 @@
 {.used.}
 
 import json, stew/shims/strformat, strutils
-import ../../../common/social_links
 
 include ../../../common/json_utils
 include ../../../common/utils
@@ -52,7 +51,6 @@ type ContactsDto* = object
   lastUpdatedLocally*: int64
   localNickname*: string
   bio*: string
-  socialLinks*: SocialLinks
   image*: Images
   added*: bool
   blocked*: bool
@@ -162,10 +160,6 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   var imageObj: JsonNode
   if(jsonObj.getProp("images", imageObj)):
     result.image = toImages(imageObj)
-
-  var socialLinksObj: JsonNode
-  if(jsonObj.getProp("socialLinks", socialLinksObj)):
-    result.socialLinks = toSocialLinks(socialLinksObj)
 
   discard jsonObj.getProp("added", result.added)
   discard jsonObj.getProp("blocked", result.blocked)

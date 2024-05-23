@@ -1,8 +1,6 @@
 import NimQml, json, sequtils
 
 import io_interface
-import app/modules/shared_models/social_links_model
-import app/modules/shared_models/social_link_item
 
 import models/profile_save_data
 import models/showcase_preferences_generic_model
@@ -12,12 +10,6 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      # TODO: remove old models
-      socialLinksModel: SocialLinksModel
-      socialLinksModelVariant: QVariant
-      temporarySocialLinksModel: SocialLinksModel # used for editing purposes
-      temporarySocialLinksModelVariant: QVariant
-
       showcasePreferencesCommunitiesModel: ShowcasePreferencesGenericModel
       showcasePreferencesCommunitiesModelVariant: QVariant
       showcasePreferencesAccountsModel: ShowcasePreferencesGenericModel
@@ -30,12 +22,6 @@ QtObject:
       showcasePreferencesSocialLinksModelVariant: QVariant
 
   proc delete*(self: View) =
-    # TODO: remove old models
-    self.socialLinksModel.delete
-    self.socialLinksModelVariant.delete
-    self.temporarySocialLinksModel.delete
-    self.temporarySocialLinksModelVariant.delete
-
     self.showcasePreferencesCommunitiesModel.delete
     self.showcasePreferencesCommunitiesModelVariant.delete
     self.showcasePreferencesAccountsModel.delete
@@ -52,12 +38,6 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    # TODO: remove old models
-    result.socialLinksModel = newSocialLinksModel()
-    result.socialLinksModelVariant = newQVariant(result.socialLinksModel)
-    result.temporarySocialLinksModel = newSocialLinksModel()
-    result.temporarySocialLinksModelVariant = newQVariant(result.temporarySocialLinksModel)
-
     result.showcasePreferencesCommunitiesModel = newShowcasePreferencesGenericModel()
     result.showcasePreferencesCommunitiesModelVariant = newQVariant(result.showcasePreferencesCommunitiesModel)
     result.showcasePreferencesAccountsModel = newShowcasePreferencesGenericModel()
@@ -71,87 +51,6 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
-
-  proc socialLinksModel*(self: View): SocialLinksModel =
-    return self.socialLinksModel
-
-  proc getSocialLinksModel(self: View): QVariant {.slot.} =
-    return self.socialLinksModelVariant
-
-  QtProperty[QVariant] socialLinksModel:
-    read = getSocialLinksModel
-
-  proc temporarySocialLinksModel*(self: View): SocialLinksModel =
-    return self.temporarySocialLinksModel
-
-  proc getTemporarySocialLinksModel(self: View): QVariant {.slot.} =
-    return self.temporarySocialLinksModelVariant
-
-  QtProperty[QVariant] temporarySocialLinksModel:
-    read = getTemporarySocialLinksModel
-
-  proc socialLinksDirtyChanged*(self: View) {.signal.}
-  proc areSocialLinksDirty(self: View): bool {.slot.} =
-    self.socialLinksModel.items != self.temporarySocialLinksModel.items
-
-  proc socialLinksJsonChanged*(self: View) {.signal.}
-  proc getSocialLinksJson(self: View): string {.slot.} =
-    $(%*self.socialLinksModel.items)
-
-  proc temporarySocialLinksJsonChanged*(self: View) {.signal.}
-  proc getTemporarySocialLinksJson(self: View): string {.slot.} =
-    $(%*self.temporarySocialLinksModel.items)
-
-
-  QtProperty[string] socialLinksJson:
-    read = getSocialLinksJson
-    notify = socialLinksJsonChanged
-
-  QtProperty[string] temporarySocialLinksJson:
-    read = getTemporarySocialLinksJson
-    notify = temporarySocialLinksJsonChanged
-
-  QtProperty[bool] socialLinksDirty:
-    read = areSocialLinksDirty
-    notify = socialLinksDirtyChanged
-
-  proc containsSocialLink*(self: View, text: string, url: string): bool {.slot.} =
-    return self.temporarySocialLinksModel.containsSocialLink(text, url)
-
-  proc createLink(self: View, text: string, url: string, linkType: int, icon: string) {.slot.} =
-    self.temporarySocialLinksModel.appendItem(initSocialLinkItem(text, url, (LinkType)linkType, icon))
-    self.temporarySocialLinksJsonChanged()
-    self.socialLinksDirtyChanged()
-
-  proc removeLink(self: View, uuid: string) {.slot.} =
-    if (self.temporarySocialLinksModel.removeItem(uuid)):
-      self.temporarySocialLinksJsonChanged()
-      self.socialLinksDirtyChanged()
-
-  proc updateLink(self: View, uuid: string, text: string, url: string) {.slot.} =
-    if (self.temporarySocialLinksModel.updateItem(uuid, text, url)):
-      self.temporarySocialLinksJsonChanged()
-      self.socialLinksDirtyChanged()
-
-  proc moveLink(self: View, fromRow: int, toRow: int) {.slot.} =
-    discard self.temporarySocialLinksModel.moveItem(fromRow, toRow)
-
-  proc resetSocialLinks(self: View) {.slot.} =
-    if (self.areSocialLinksDirty()):
-      self.temporarySocialLinksModel.setItems(self.socialLinksModel.items)
-      self.socialLinksDirtyChanged()
-      self.temporarySocialLinksJsonChanged()
-
-  proc socialLinksSaved*(self: View, items: seq[SocialLinkItem]) =
-    self.socialLinksModel.setItems(items)
-    self.temporarySocialLinksModel.setItems(items)
-    self.socialLinksJsonChanged()
-    self.temporarySocialLinksJsonChanged()
-
-  proc saveSocialLinks(self: View, silent: bool = false) {.slot.} =
-    self.delegate.saveSocialLinks()
-    if not silent:
-      self.socialLinksDirtyChanged()
 
   proc bioChanged*(self: View) {.signal.}
   proc getBio(self: View): string {.slot.} =

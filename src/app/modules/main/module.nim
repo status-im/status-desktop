@@ -68,7 +68,6 @@ import ../../../app_service/service/shared_urls/service as urls_service
 import ../../../app_service/service/network_connection/service as network_connection_service
 import ../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 import ../../../app_service/common/types
-import ../../../app_service/common/social_links
 import ../../../app_service/common/utils as common_utils
 import app_service/service/network/network_item
 
@@ -1160,7 +1159,6 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "contactRequestState": contactDetails.dto.contactRequestState.int,
     "verificationStatus": contactDetails.dto.verificationStatus.int,
     "incomingVerificationStatus": requestStatus,
-    "socialLinks": $contactDetails.dto.socialLinks.toJsonNode(),
     "bio": contactDetails.dto.bio,
     "onlineStatus": onlineStatus.int
   }

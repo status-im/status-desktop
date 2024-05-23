@@ -2,7 +2,6 @@ import json, chronicles, tables
 
 import base
 
-import ../../../../app_service/common/social_links
 import ../../../../app_service/service/message/dto/[message, pinned_message_update, reaction, removed_message]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/bookmarks/dto/[bookmark]
@@ -32,7 +31,6 @@ type MessageSignal* = ref object of Signal
   removedChats*: seq[string]
   currentStatus*: seq[StatusUpdateDto]
   settings*: seq[SettingsFieldDto]
-  socialLinksInfo*: SocialLinksInfo
   clearedHistories*: seq[ClearedHistoryDto]
   verificationRequests*: seq[VerificationRequest]
   savedAddresses*: seq[SavedAddressDto]
@@ -142,9 +140,6 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if e.contains("settings"):
     for jsonSettingsField in e["settings"]:
       signal.settings.add(jsonSettingsField.toSettingsFieldDto())
-
-  if e.contains("socialLinksInfo"):
-    signal.socialLinksInfo = toSocialLinksInfo(e["socialLinksInfo"])
 
   if e.contains("verificationRequests"):
     for jsonVerificationRequest in e["verificationRequests"]:

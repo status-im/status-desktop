@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, sugar, strutils
+import NimQml, chronicles, strutils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -11,10 +11,6 @@ import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/profile/dto/profile_showcase_preferences
 import app_service/service/token/service as token_service
-import app_service/common/social_links
-
-import app/modules/shared_models/social_links_model
-import app/modules/shared_models/social_link_item
 
 import models/showcase_preferences_generic_model
 import models/showcase_preferences_social_links_model
@@ -63,12 +59,7 @@ method isLoaded*(self: Module): bool =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-proc updateSocialLinks(self: Module, socialLinks: SocialLinks) =
-  var socialLinkItems = toSocialLinkItems(socialLinks)
-  self.view.socialLinksSaved(socialLinkItems)
-
 method viewDidLoad*(self: Module) =
-  self.updateSocialLinks(self.controller.getSocialLinks())
   self.moduleLoaded = true
   self.delegate.profileModuleDidLoad()
 
@@ -77,16 +68,6 @@ method getBio(self: Module): string =
 
 method onBioChanged*(self: Module, bio: string) =
   self.view.emitBioChangedSignal()
-
-method saveSocialLinks*(self: Module) =
-  let socialLinks = map(self.view.temporarySocialLinksModel.items(), x => SocialLink(text: x.text, url: x.url, icon: x.icon))
-  self.controller.setSocialLinks(socialLinks)
-
-method onSocialLinksUpdated*(self: Module, socialLinks: SocialLinks, error: string) =
-  if error.len > 0:
-    # maybe we want in future popup or somehow display an error to a user
-    return
-  self.updateSocialLinks(socialLinks)
 
 method onProfileShowcasePreferencesSaveSucceeded*(self: Module) =
   self.view.emitProfileShowcasePreferencesSaveSucceededSignal()

@@ -397,7 +397,6 @@ QtObject:
           ),
           trustStatus: TrustStatus.Trusted,
           bio: self.settingsService.getBio(),
-          socialLinks: self.settingsService.getSocialLinks()
         )
       )
 
