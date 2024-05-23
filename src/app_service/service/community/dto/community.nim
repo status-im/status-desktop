@@ -391,10 +391,13 @@ proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipReq
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("our", result.our)
 
-proc toCategoryDto*(jsonObj: JsonNode): Category =
+proc toCollapsedCategoryDto*(jsonObj: JsonNode, isCollapsed: bool = false): Category =
   result = Category()
   discard jsonObj.getProp("categoryId", result.id)
-  discard jsonObj.getProp("collapsed", result.categoryOpened)
+  # The CollapsedCommunityCategories API only returns **collapsed** categories.
+  # So if a category is **not** collapsed, it's not in the list
+  # The collapsed property on the json is always false
+  result.collapsed = true
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
@@ -499,16 +502,16 @@ proc toCommunitySettingsDto*(jsonObj: JsonNode): CommunitySettingsDto =
   discard jsonObj.getProp("historyArchiveSupportEnabled", result.historyArchiveSupportEnabled)
 
 proc parseCommunities*(response: JsonNode, categories: seq[Category]): seq[CommunityDto] =
-  var categoryMap = initTable[string, bool]()
+  var categoryCollapsedMap = initTable[string, bool]()
   for category in categories:
-    categoryMap[category.id] = true
+    categoryCollapsedMap[category.id] = true
 
   for communityNode in response["result"].getElems():
     var community = communityNode.toCommunityDto()
 
     for category in community.categories.mitems:
-      if categoryMap.hasKey(category.id):
-        category.categoryOpened = true
+      if categoryCollapsedMap.hasKey(category.id):
+        category.collapsed = true
     result.add(community)
 
 proc parseKnownCuratedCommunities(jsonCommunities: JsonNode): seq[CommunityDto] =

@@ -695,12 +695,12 @@ proc addNewChat(
     if category.id == "":
       error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
     else:
-      categoryOpened = category.categoryOpened
+      categoryOpened = not category.collapsed
       categoryPosition = category.position
 
       # TODO: This call will update the model for each category in channels which is not
       # preferable. Please fix-me in https://github.com/status-im/status-desktop/issues/14431
-      self.view.chatsModel().changeCategoryOpened(category.id, category.categoryOpened)
+      self.view.chatsModel().changeCategoryOpened(category.id, categoryOpened)
 
   var canPostReactions = true
   var hideIfPermissionsNotMet = false
@@ -1394,7 +1394,7 @@ method toggleCollapsedCommunityCategory*(self: Module, categoryId: string, colla
   self.controller.toggleCollapsedCommunityCategory(categoryId, collapsed)
 
 method onToggleCollapsedCommunityCategory*(self: Module, categoryId: string, collapsed: bool) =
-  self.view.chatsModel().changeCategoryOpened(categoryId, collapsed)
+  self.view.chatsModel().changeCategoryOpened(categoryId, not collapsed)
 
 method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, toPosition: int) =
   self.controller.reorderCommunityChat(categoryId, chatId, toPosition + 1)
