@@ -40,6 +40,7 @@ type
     hideIfPermissionsNotMet: bool
     viewOnlyPermissionsSatisfied: bool
     viewAndPostPermissionsSatisfied: bool
+    channelRole: int
 
 proc initItem*(
     id,
@@ -72,7 +73,8 @@ proc initItem*(
     viewersCanPostReactions = true,
     hideIfPermissionsNotMet: bool,
     viewOnlyPermissionsSatisfied: bool,
-    viewAndPostPermissionsSatisfied: bool
+    viewAndPostPermissionsSatisfied: bool,
+    channelRole: int,
     ): Item =
   result = Item()
   result.id = id
@@ -107,12 +109,14 @@ proc initItem*(
   result.hideIfPermissionsNotMet = hideIfPermissionsNotMet
   result.viewOnlyPermissionsSatisfied = viewOnlyPermissionsSatisfied
   result.viewAndPostPermissionsSatisfied = viewAndPostPermissionsSatisfied
+  result.channelRole = channelRole
 
 proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
     id: {self.id},
     name: {$self.name},
     memberRole: {$self.memberRole},
+    channelRole: {$self.channelRole},
     icon: {$self.icon},
     color: {$self.color},
     colorId: {$self.colorId},
@@ -139,7 +143,7 @@ proc `$`*(self: Item): string =
     viewersCanPostReactions: {$self.viewersCanPostReactions},
     hideIfPermissionsNotMet: {$self.hideIfPermissionsNotMet},
     viewOnlyPermissionsSatisfied: {$self.viewOnlyPermissionsSatisfied},
-    viewAndPostPermissionsSatisfied: {$self.viewAndPostPermissionsSatisfied}
+    viewAndPostPermissionsSatisfied: {$self.viewAndPostPermissionsSatisfied},
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
@@ -147,6 +151,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "itemId": self.id,
     "name": self.name,
     "memberRole": self.memberRole,
+    "channelRole": self.channelRole,
     "icon": self.icon,
     "color": self.color,
     "colorId": self.colorId,
@@ -190,6 +195,9 @@ proc `name=`*(self: var Item, value: string) =
 
 proc memberRole*(self: Item): MemberRole =
   self.memberRole
+
+proc channelRole*(self: Item): int =
+  self.channelRole
 
 proc icon*(self: Item): string =
   self.icon

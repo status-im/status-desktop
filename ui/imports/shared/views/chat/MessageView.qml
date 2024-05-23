@@ -271,6 +271,9 @@ Loader {
                                                    root.chatContentModule.chatDetails.canPostReactions &&
                                                    !root.isViewMemberMessagesePopup
 
+        readonly property bool canPost: root.chatContentModule.chatDetails.channelRole === Constants.CommunityChannelRole.Poster
+        readonly property bool canView: canPost || root.chatContentModule.chatDetails.channelRole === Constants.CommunityChannelRole.Viewer
+
         function nextMessageHasHeader() {
             if(!root.nextMessageAsJsonObj) {
                 return false
@@ -939,7 +942,7 @@ Loader {
                     },
                     Loader {
                         active: !root.isInPinnedPopup && delegate.hovered && !delegate.hideQuickActions
-                                && !root.isViewMemberMessagesePopup && root.rootStore.permissionsStore.viewAndPostCriteriaMet
+                                && !root.isViewMemberMessagesePopup && d.canPost
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "replyToMessageButton"
@@ -955,7 +958,7 @@ Loader {
                     },
                     Loader {
                         active: !root.isInPinnedPopup && !root.editRestricted && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
-                                && !root.isViewMemberMessagesePopup && root.rootStore.permissionsStore.viewAndPostCriteriaMet
+                                && !root.isViewMemberMessagesePopup && d.canPost
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "editMessageButton"
@@ -980,7 +983,7 @@ Loader {
                             if(delegate.hideQuickActions)
                                 return false;
 
-                            if (!root.rootStore.permissionsStore.viewAndPostCriteriaMet)
+                            if (!d.canPost)
                                 return false;
 
                             if (root.isViewMemberMessagesePopup) {
@@ -1049,7 +1052,7 @@ Loader {
                                 return false;
                             if (delegate.hideQuickActions)
                                 return false;
-                            if (!root.rootStore.permissionsStore.viewAndPostCriteriaMet)
+                            if (!d.canPost)
                                 return false;
                             return (root.amISender || root.amIChatAdmin) &&
                                     (messageContentType === Constants.messageContentType.messageType ||

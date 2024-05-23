@@ -277,7 +277,8 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
         category.position,
         hideIfPermissionsNotMet = false,
         viewOnlyPermissionsSatisfied = true,
-        viewAndPostPermissionsSatisfied = true
+        viewAndPostPermissionsSatisfied = true,
+        channelRole = CommunityChannelRole.Unknown.int,
       )
 
   if insertIntoModel:
@@ -709,12 +710,15 @@ proc addNewChat(
   var canPostReactions = true
   var hideIfPermissionsNotMet = false
   var viewersCanPostReactions = true
+  var channelRole = CommunityChannelRole.Poster
   if self.controller.isCommunity:
+    let myPubKey = singletonInstance.userProfile.getPubKey()
     let communityChat = community.getCommunityChat(chatDto.id)
     # Some properties are only available on CommunityChat (they are useless for normal chats)
     canPostReactions = communityChat.canPostReactions
     hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
     viewersCanPostReactions = communityChat.viewersCanPostReactions
+    channelRole = communityChat.getChannelRole(myPubKey)
 
   result = chat_item.initItem(
     chatDto.id,
@@ -752,7 +756,8 @@ proc addNewChat(
     viewersCanPostReactions = viewersCanPostReactions,
     hideIfPermissionsNotMet = hideIfPermissionsNotMet,
     viewOnlyPermissionsSatisfied = true, # will be updated in async call
-    viewAndPostPermissionsSatisfied = true # will be updated in async call
+    viewAndPostPermissionsSatisfied = true, # will be updated in async call
+    channelRole = channelRole.int,
   )
 
   self.addSubmodule(
@@ -1358,7 +1363,8 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       categoryId="",
       hideIfPermissionsNotMet=false,
       viewOnlyPermissionsSatisfied = true,
-      viewAndPostPermissionsSatisfied = true
+      viewAndPostPermissionsSatisfied = true,
+      channelRole = CommunityChannelRole.Unknown.int,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem)
   let catChats = self.controller.getChats(communityId, categoryId)
@@ -1383,7 +1389,8 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       categoryId,
       hideIfPermissionsNotMet=false,
       viewOnlyPermissionsSatisfied = true,
-      viewAndPostPermissionsSatisfied = true
+      viewAndPostPermissionsSatisfied = true,
+      channelRole = CommunityChannelRole.Unknown.int,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem, ignoreCategory = true)
 

@@ -56,6 +56,11 @@ type MemberRole* {.pure} = enum
   Admin
   TokenMaster
 
+type CommunityChannelRole* {.pure}= enum
+  Unknown = -1,
+  Poster = 0,
+  Viewer = 1,
+
 # TODO: consider refactor MembershipRequestState to MembershipState and use both for request to join and kick/ban actions
 # Issue: https://github.com/status-im/status-desktop/issues/11842
 type MembershipRequestState* {.pure} = enum

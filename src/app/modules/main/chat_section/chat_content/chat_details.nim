@@ -25,6 +25,7 @@ QtObject:
     blocked: bool
     canPostReactions: bool
     hideIfPermissionsNotMet: bool
+    channelRole: int
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -51,7 +52,8 @@ QtObject:
       isContact: bool = false,
       blocked: bool = false,
       canPostReactions: bool = true,
-      hideIfPermissionsNotMet: bool
+      hideIfPermissionsNotMet: bool,
+      channelRole: int,
     ) =
     self.id = id
     self.`type` = `type`
@@ -73,6 +75,7 @@ QtObject:
     self.blocked = blocked
     self.canPostReactions = canPostReactions
     self.hideIfPermissionsNotMet = hideIfPermissionsNotMet
+    self.channelRole = channelRole
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
@@ -269,3 +272,14 @@ QtObject:
   proc setHideIfPermissionsNotMet*(self: ChatDetails, value: bool) =
     self.hideIfPermissionsNotMet = value
     self.hideIfPermissionsNotMetChanged()
+  
+  proc channelRoleChanged(self: ChatDetails) {.signal.}
+  proc getChannelRole(self: ChatDetails): int {.slot.} =
+    return self.channelRole
+  QtProperty[int] channelRole:
+    read = getChannelRole
+    notify = channelRoleChanged
+
+  proc setChannelRole*(self: ChatDetails, value: int) =
+    self.channelRole = value
+    self.channelRoleChanged()

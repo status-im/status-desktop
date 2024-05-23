@@ -42,6 +42,7 @@ type ChatMember* = object
   id*: string
   joined*: bool
   role*: MemberRole
+  channelRole*: CommunityChannelRole
 
 type CheckPermissionsResultDto* = object
   criteria*: seq[bool]
@@ -209,7 +210,7 @@ proc toGroupChatMember*(jsonObj: JsonNode): ChatMember =
 
 proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMember =
   # Parse status-go "CommunityMember" type
-  # Mapping this DTO is not strightforward since only keys are used for id. We
+  # Mapping this DTO is not straightforward since only keys are used for id. We
   # handle it a bit different.
   result = ChatMember()
   result.id = memberId
@@ -231,7 +232,11 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   elif roles.contains(MemberRole.TokenMaster.int):
     result.role = MemberRole.TokenMaster
 
-  result.joined = joined
+  result.channelRole = CommunityChannelRole.Unknown
+  var channelRoleInt: int
+  if (jsonObj.getProp("channelRole", channelRoleInt) and
+    (channelRoleInt >= ord(low(CommunityChannelRole)) or channelRoleInt <= ord(high(CommunityChannelRole)))):
+      result.channelRole = CommunityChannelRole(channelRoleInt)
 
 proc toChatDto*(jsonObj: JsonNode): ChatDto =
   result = ChatDto()
@@ -345,3 +350,10 @@ proc isPrivateGroupChat*(c: ChatDto): bool =
 
 proc isActivePersonalChat*(c: ChatDto): bool =
   return c.active and (c.isOneToOne() or c.isPrivateGroupChat()) and c.communityId == ""
+
+proc getChannelRole*(chat: ChatDto, pubkey: string): CommunityChannelRole =
+  for member in chat.members:
+    if member.id == pubkey:
+      return member.channelRole
+  return CommunityChannelRole.Unknown
+
