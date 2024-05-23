@@ -34,5 +34,5 @@ proc init*(self: Controller) =
 proc getAllWakuNodes*(self: Controller): seq[string] =
   return self.nodeConfigurationService.getAllWakuNodes()
 
-proc saveNewWakuNode*(self: Controller, nodeAddress: string) =
-  self.nodeConfigurationService.saveNewWakuNode(nodeAddress)
+proc saveNewWakuNode*(self: Controller, nodeAddress: string): bool =
+  return self.nodeConfigurationService.saveNewWakuNode(nodeAddress)

@@ -61,14 +61,14 @@ proc init*(self: Controller) =
 proc sendRPCMessageRaw*(self: Controller, inputJSON: string): string =
    return self.nodeService.sendRPCMessageRaw(inputJSON);
 
-proc isV2LightMode*(self: Controller): bool =
-   return self.nodeConfigurationService.isV2LightMode()
+proc isLightClient*(self: Controller): bool =
+   return self.nodeConfigurationService.isLightClient()
 
 proc isFullNode*(self: Controller): bool =
    return self.nodeConfigurationService.isFullNode()
 
-proc setV2LightMode*(self: Controller, enabled: bool): bool =
-   return self.nodeConfigurationService.setV2LightMode(enabled)
+proc setLightClient*(self: Controller, enabled: bool): bool =
+   return self.nodeConfigurationService.setLightClient(enabled)
 
 proc getWakuVersion*(self: Controller): int =
     return 2

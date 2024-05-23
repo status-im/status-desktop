@@ -57,10 +57,10 @@ proc setMaxLogBackups*(self: Controller, value: int) =
   self.delegate.onLogMaxBackupsChanged()
 
 proc getWakuV2LightClientEnabled*(self: Controller): bool =
-  return self.nodeConfigurationService.getV2LightMode()
+  return self.nodeConfigurationService.isLightClient()
 
 proc setWakuV2LightClientEnabled*(self: Controller, enabled: bool) =
-  if (not self.nodeConfigurationService.setV2LightMode(enabled)):
+  if (not self.nodeConfigurationService.setLightClient(enabled)):
     # in the future we may do a call from here to show a popup about this error
     error "an error occurred, we couldn't set WakuV2 light client"
     return
@@ -122,7 +122,7 @@ proc isNimbusProxyEnabled*(self: Controller): bool =
 proc toggleNimbusProxy*(self: Controller) =
   let enabled = self.nodeConfigurationService.isNimbusProxyEnabled()
 
-  if(not self.nodeConfigurationService.setNimbusProxyConfig(not enabled)):
+  if not self.nodeConfigurationService.setNimbusProxyConfigEnabled(not enabled):
     error "an error occurred, we couldn't toggle nimbus proxy"
     return
 

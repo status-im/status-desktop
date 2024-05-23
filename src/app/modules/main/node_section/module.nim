@@ -54,12 +54,12 @@ method viewDidLoad*(self: Module) =
 method sendRPCMessageRaw*(self: Module, inputJSON: string): string =
   return self.controller.sendRPCMessageRaw(inputJSON)
 
-method setV2LightMode*(self: Module, enabled: bool) =
-  if(self.controller.setV2LightMode(enabled)):
+method setLightClient*(self: Module, enabled: bool) =
+  if(self.controller.setLightClient(enabled)):
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
-method isV2LightMode*(self: Module): bool =
-  return self.controller.isV2LightMode()
+method isLightClient*(self: Module): bool =
+  return self.controller.isLightClient()
 
 method isFullNode*(self: Module): bool =
    return self.controller.isFullNode()

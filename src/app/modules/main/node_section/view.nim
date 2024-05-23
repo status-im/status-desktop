@@ -97,11 +97,11 @@ QtObject:
 
   proc log*(self: View, logContent: string) {.signal.}
 
-  proc getWakuV2LightClient(self: View): bool {.slot.} = self.delegate.isV2LightMode()
+  proc getWakuV2LightClient(self: View): bool {.slot.} = self.delegate.isLightClient()
 
   QtProperty[bool] WakuV2LightClient:
     read = getWakuV2LightClient
     notify = initialized
 
   proc setWakuV2LightClient*(self: View, enabled: bool) {.slot.} =
-    self.delegate.setV2LightMode(enabled)
+    self.delegate.setLightClient(enabled)

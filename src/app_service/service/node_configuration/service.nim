@@ -71,15 +71,6 @@ proc init*(self: Service) =
     error "error: ", errDesription
     return
 
-proc saveConfiguration(self: Service, configuration: NodeConfigDto): bool =
-  # FIXME: this method should be removed and the configuration should be updated in the status-go
-  #  (see SetLogLevel, #14643)
-  if(not self.settingsService.saveNodeConfiguration(configuration.toJsonNode())):
-    error "error saving node configuration "
-    return false
-  self.configuration = configuration
-  return true
-
 proc getWakuVersion*(self: Service): int =
   if self.configuration.WakuConfig.Enabled:
     return WAKU_VERSION_1
@@ -143,11 +134,19 @@ proc getFleetAsString*(self: Service): string =
 proc getAllWakuNodes*(self: Service): seq[string] =
   return self.wakuNodes
 
-proc saveNewWakuNode*(self: Service, nodeAddress: string) =
-  var newConfiguration = self.configuration
-  newConfiguration.ClusterConfig.WakuNodes.add(nodeAddress)
-  self.configuration = newConfiguration
-  discard self.saveConfiguration(newConfiguration)
+proc saveNewWakuNode*(self: Service, nodeAddress: string): bool =
+  try:
+    let response = status_node_config.saveNewWakuNode(nodeAddress)
+
+    if not response.error.isNil:
+      error "failed to add new waku node: ", errDescription = response.error.message
+      return false
+
+    self.configuration.ClusterConfig.WakuNodes.add(nodeAddress)
+  except Exception as e:
+    error "error saving new waku node: ", errDescription = e.msg
+    return false
+  return true
 
 proc setFleet*(self: Service, fleet: string): bool =
   if (not self.settingsService.saveFleet(fleet)):
@@ -197,13 +196,15 @@ proc setFleet*(self: Service, fleet: string): bool =
     error "Could not switch fleet"
     return false
 
-proc getV2LightMode*(self: Service): bool =
-  return self.configuration.WakuV2Config.LightClient
+proc setLightClient*(self: Service, enabled: bool): bool =
+  let response = status_node_config.setLightClient(enabled)
 
-proc setV2LightMode*(self: Service, enabled: bool): bool =
-  var newConfiguration = self.configuration
-  newConfiguration.WakuV2Config.LightClient = enabled
-  return self.saveConfiguration(newConfiguration)
+  if not response.error.isNil:
+    error "failed to set light client: ", errDescription = response.error.message
+    return false
+
+  self.configuration.WakuV2Config.LightClient = enabled
+  return true
 
 proc getLogLevel(self: Service): string =
   return self.configuration.LogLevel
@@ -231,12 +232,13 @@ proc getNimbusProxyConfig(self: Service): bool =
 proc isNimbusProxyEnabled*(self: Service): bool =
   return self.getNimbusProxyConfig()
 
-proc setNimbusProxyConfig*(self: Service, value: bool): bool =
-  var newConfiguration = self.configuration
-  newConfiguration.NimbusProxyConfig.Enabled = value
-  return self.saveConfiguration(newConfiguration)
+proc setNimbusProxyConfigEnabled*(self: Service, enabled: bool): bool =
+  # FIXME: call status-go API to update NodeConfig
+  # when this is merged https://github.com/status-im/status-go/pull/4254
+  self.configuration.NimbusProxyConfig.Enabled = enabled
+  return true
 
-proc isV2LightMode*(self: Service): bool =
+proc isLightClient*(self: Service): bool =
    return self.configuration.WakuV2Config.LightClient
 
 proc isFullNode*(self: Service): bool =
@@ -246,6 +248,12 @@ proc getLogMaxBackups*(self: Service): int =
   return self.configuration.LogMaxBackups
 
 proc setMaxLogBackups*(self: Service, value: int): bool =
-  var newConfiguration = self.configuration
-  newConfiguration.LogMaxBackups = value
-  return self.saveConfiguration(newConfiguration)
+  let response = status_node_config.setMaxLogBackups(value)
+
+  if not response.error.isNil:
+    error "failed to set max log backups: ", errDescription = response.error.message
+    return false
+
+  self.configuration.LogMaxBackups = value
+  return true
+

@@ -30,10 +30,10 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method sendRPCMessageRaw*(self: AccessInterface, inputJSON: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setV2LightMode*(self: AccessInterface, enabled: bool) {.base.} =
+method setLightClient*(self: AccessInterface, enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isV2LightMode*(self: AccessInterface): bool {.base.} =
+method isLightClient*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isFullNode*(self: AccessInterface): bool {.base.} =

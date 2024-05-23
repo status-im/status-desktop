@@ -446,12 +446,6 @@ QtObject:
   proc unpinMailserver*(self: Service, fleet: Fleet): bool =
     return self.setPinnedMailserverId("", fleet)
 
-  proc saveNodeConfiguration*(self: Service, value: JsonNode): bool =
-    if(self.saveSetting(KEY_NODE_CONFIG, value)):
-      self.settings.nodeConfig = value
-      return true
-    return false
-
   proc saveAutoMessageEnabled*(self: Service, value: bool): bool =
     if(self.saveSetting(KEY_AUTO_MESSAGE_ENABLED, value)):
       self.settings.autoMessageEnabled = value
