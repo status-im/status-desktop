@@ -32,8 +32,8 @@ elif defined(windows):
 else:
   --dynlibOverrideAll # don't use dlopen()
   # dynamically link these libs, since we're opting out of dlopen()
-  switch("passL", "-lcrypto")
-  switch("passL", "-lssl")
+  switch("passL", "-l:libcrypto.so.1.1")
+  switch("passL", "-l:libssl.so.1.1")
   # don't link libraries we're not actually using
   switch("passL", "-Wl,-as-needed")
 
