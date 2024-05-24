@@ -6,16 +6,26 @@ type
 
 const asyncGetRecentGifsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetRecentGifsTaskArg](argEncoded)
-  let response = status_go.getRecentGifs()
-  arg.finish(response)
+  try:
+    let response = status_go.getRecentGifs()
+    arg.finish(response)
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })
 
 type
   AsyncGetFavoriteGifsTaskArg = ref object of QObjectTaskArg
 
 const asyncGetFavoriteGifsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetFavoriteGifsTaskArg](argEncoded)
-  let response = status_go.getFavoriteGifs()
-  arg.finish(response)
+  try:
+    let response = status_go.getFavoriteGifs()
+    arg.finish(response)
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })
 
 type
   AsyncTenorQueryArg = ref object of QObjectTaskArg
@@ -50,7 +60,7 @@ const asyncTenorQuery: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 
   except Exception as e:
     error "error: ", procName="asyncTenorQuery", query = arg.query, errDesription = e.msg
-    
+
     arg.finish(%* {
       "error": e.msg,
       "event": arg.event,

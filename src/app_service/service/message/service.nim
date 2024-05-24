@@ -488,76 +488,87 @@ QtObject:
     return (tokenStr, weiStr)
 
   proc onAsyncLoadPinnedMessagesForChat*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "load pinned messages response is not a json object"
+    try:
+      let responseObj = response.parseJson
+      if responseObj.kind != JObject:
+        raise newException(CatchableError, "load pinned messages response is not a json object")
+
+      if responseObj.contains("error"):
+        raise newException(CatchableError, responseObj{"error"}.getStr)
+
+      var chatId: string
+      discard responseObj.getProp("chatId", chatId)
+
+      let pinnedMsgCursor = self.initOrGetPinnedMessageCursor(chatId)
+      # handling pinned messages
+      var pinnedMsgCursorValue: string
+      if(responseObj.getProp("pinnedMessagesCursor", pinnedMsgCursorValue)):
+        pinnedMsgCursor.setValue(pinnedMsgCursorValue)
+
+      var pinnedMsgArr: JsonNode
+      var pinnedMessages: seq[PinnedMessageDto]
+      if(responseObj.getProp("pinnedMessages", pinnedMsgArr)):
+        pinnedMessages = map(pinnedMsgArr.getElems(), proc(x: JsonNode): PinnedMessageDto = x.toPinnedMessageDto())
+
+      # set initial number of pinned messages
+      self.numOfPinnedMessagesPerChat[chatId] = pinnedMessages.len
+
+      let data = PinnedMessagesLoadedArgs(chatId: chatId,
+        pinnedMessages: pinnedMessages)
+
+      self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
+    except Exception as e:
+      error "Erorr load pinned messages for chat async", msg = e.msg
+      # notify view, this is important
       self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, PinnedMessagesLoadedArgs())
-      return
-
-    var chatId: string
-    discard responseObj.getProp("chatId", chatId)
-
-    let pinnedMsgCursor = self.initOrGetPinnedMessageCursor(chatId)
-    # handling pinned messages
-    var pinnedMsgCursorValue: string
-    if(responseObj.getProp("pinnedMessagesCursor", pinnedMsgCursorValue)):
-      pinnedMsgCursor.setValue(pinnedMsgCursorValue)
-
-    var pinnedMsgArr: JsonNode
-    var pinnedMessages: seq[PinnedMessageDto]
-    if(responseObj.getProp("pinnedMessages", pinnedMsgArr)):
-      pinnedMessages = map(pinnedMsgArr.getElems(), proc(x: JsonNode): PinnedMessageDto = x.toPinnedMessageDto())
-
-    # set initial number of pinned messages
-    self.numOfPinnedMessagesPerChat[chatId] = pinnedMessages.len
-
-    let data = PinnedMessagesLoadedArgs(chatId: chatId,
-      pinnedMessages: pinnedMessages)
-
-    self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
 
   proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "load more messages response is not a json object"
+    try:
+      let responseObj = response.parseJson
+      if (responseObj.kind != JObject):
+        raise newException(CatchableError, "load more messages response is not a json object")
+
+      if responseObj.contains("error"):
+        raise newException(CatchableError, responseObj{"error"}.getStr)
+
+      var chatId: string
+      discard responseObj.getProp("chatId", chatId)
+
+      let msgCursor = self.initOrGetMessageCursor(chatId)
+      if(msgCursor.getValue() == ""):
+        # this is the first time we load messages for this chat
+        # we need to load pinned messages as well
+        self.asyncLoadPinnedMessagesForChat(chatId)
+
+      # handling messages
+      var msgCursorValue: string
+      if(responseObj.getProp("messagesCursor", msgCursorValue)):
+        msgCursor.setValue(msgCursorValue)
+
+      var messagesArr: JsonNode
+      var messages: seq[MessageDto]
+      if(responseObj.getProp("messages", messagesArr)):
+        messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
+
+      self.bulkReplacePubKeysWithDisplayNames(messages)
+
+      # handling reactions
+      var reactionsArr: JsonNode
+      var reactions: seq[ReactionDto]
+      if(responseObj.getProp("reactions", reactionsArr)):
+        reactions = map(reactionsArr.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
+
+      let data = MessagesLoadedArgs(
+        chatId: chatId,
+        messages: messages,
+        reactions: reactions,
+      )
+
+      self.events.emit(SIGNAL_MESSAGES_LOADED, data)
+    except Exception as e:
+      error "Erorr load more messages for chat async", msg = e.msg
       # notify view, this is important
       self.events.emit(SIGNAL_MESSAGES_LOADED, MessagesLoadedArgs())
-      return
-
-    var chatId: string
-    discard responseObj.getProp("chatId", chatId)
-
-    let msgCursor = self.initOrGetMessageCursor(chatId)
-    if(msgCursor.getValue() == ""):
-      # this is the first time we load messages for this chat
-      # we need to load pinned messages as well
-      self.asyncLoadPinnedMessagesForChat(chatId)
-
-    # handling messages
-    var msgCursorValue: string
-    if(responseObj.getProp("messagesCursor", msgCursorValue)):
-      msgCursor.setValue(msgCursorValue)
-
-    var messagesArr: JsonNode
-    var messages: seq[MessageDto]
-    if(responseObj.getProp("messages", messagesArr)):
-      messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
-
-    self.bulkReplacePubKeysWithDisplayNames(messages)
-
-    # handling reactions
-    var reactionsArr: JsonNode
-    var reactions: seq[ReactionDto]
-    if(responseObj.getProp("reactions", reactionsArr)):
-      reactions = map(reactionsArr.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
-
-    let data = MessagesLoadedArgs(
-      chatId: chatId,
-      messages: messages,
-      reactions: reactions,
-    )
-
-    self.events.emit(SIGNAL_MESSAGES_LOADED, data)
 
   proc onAsyncLoadCommunityMemberAllMessages*(self: Service, response: string) {.slot.} =
     try:
@@ -715,37 +726,36 @@ QtObject:
     self.threadpool.start(arg)
     return requestId
 
-  proc finishAsyncSearchMessagesWithError*(self: Service, chatId, errorMessage: string) =
-    error "error: ", procName="onAsyncSearchMessages", errDescription = errorMessage
-    self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, MessagesArgs(chatId: chatId))
-
   proc onAsyncSearchMessages*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      self.finishAsyncSearchMessagesWithError("", "search messages response is not an json object")
-      return
+    var chatId = ""
+    try:
+      let responseObj = response.parseJson
+      if (responseObj.kind != JObject):
+        raise newException(CatchableError, "search messages response is not an json object")
 
-    var chatId: string
-    discard responseObj.getProp("chatId", chatId)
+      if responseObj.contains("error"):
+        raise newException(CatchableError, responseObj{"error"}.getStr)
 
-    var messagesObj: JsonNode
-    if (not responseObj.getProp("messages", messagesObj)):
-      self.finishAsyncSearchMessagesWithError(chatId, "search messages response doesn't contain messages property")
-      return
+      discard responseObj.getProp("chatId", chatId)
 
-    var messagesArray: JsonNode
-    if (not messagesObj.getProp("messages", messagesArray)):
-      self.finishAsyncSearchMessagesWithError(chatId, "search messages response doesn't contain messages array")
-      return
+      var messagesObj: JsonNode
+      if (not responseObj.getProp("messages", messagesObj)):
+        raise newException(CatchableError, "search messages response doesn't contain messages property")
 
-    if (messagesArray.kind notin {JArray, JNull}):
-      self.finishAsyncSearchMessagesWithError(chatId, "expected messages json array is neither of JArray nor JNull type")
-      return
+      var messagesArray: JsonNode
+      if (not messagesObj.getProp("messages", messagesArray)):
+        raise newException(CatchableError, "search messages response doesn't contain messages array")
 
-    var messages = map(messagesArray.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
+      if (messagesArray.kind notin {JArray, JNull}):
+        raise newException(CatchableError, "expected messages json array is neither of JArray nor JNull type")
 
-    let data = MessagesArgs(chatId: chatId, messages: messages)
-    self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, data)
+      var messages = map(messagesArray.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
+
+      let data = MessagesArgs(chatId: chatId, messages: messages)
+      self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, data)
+    except Exception as e:
+      error "error: ", procName="onAsyncSearchMessages", errDescription = e.msg
+      self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, MessagesArgs(chatId: chatId))
 
   proc asyncSearchMessages*(self: Service, chatId: string, searchTerm: string, caseSensitive: bool) =
     ## Asynchronous search for messages which contain the searchTerm and belong to the chat with chatId.
@@ -792,23 +802,23 @@ QtObject:
     self.threadpool.start(arg)
 
   proc onMarkAllMessagesRead*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      self.finishAsyncSearchMessagesWithError("", "mark all messages read response is not an json object")
-      return
+    try:
+      let responseObj = response.parseJson
+      if (responseObj.kind != JObject):
+        raise newException(CatchableError, "mark all messages read response is not an json object")
 
-    var error: string
-    discard responseObj.getProp("error", error)
-    if(error.len > 0):
-      error "error: ", procName="onMarkAllMessagesRead", errDescription=error
-      return
+      if responseObj.contains("error"):
+        raise newException(CatchableError, responseObj{"error"}.getStr)
 
-    var chatId: string
-    discard responseObj.getProp("chatId", chatId)
+      var chatId: string
+      discard responseObj.getProp("chatId", chatId)
 
-    let data = MessagesMarkedAsReadArgs(chatId: chatId, allMessagesMarked: true)
-    self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
-    checkAndEmitACNotificationsFromResponse(self.events, responseObj{"activityCenterNotifications"})
+      let data = MessagesMarkedAsReadArgs(chatId: chatId, allMessagesMarked: true)
+      self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
+      checkAndEmitACNotificationsFromResponse(self.events, responseObj{"activityCenterNotifications"})
+    except Exception as e:
+      error "error: ", procName="onMarkAllMessagesRead", errDesription = e.msg
+      self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, MessagesArgs(chatId: ""))
 
   proc markAllMessagesRead*(self: Service, chatId: string) =
     if (chatId.len == 0):
@@ -862,40 +872,40 @@ QtObject:
       error "error: ", procName="markMessageAsUnread", errName = e.name, errDesription = e.msg
 
   proc onMarkCertainMessagesRead*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
+    try:
+      let responseObj = response.parseJson
 
-    var error: string
-    discard responseObj.getProp("error", error)
-    if(error.len > 0):
-      error "error: ", procName="onMarkCertainMessagesRead", errDescription=error
-      return
+      if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
+        raise newException(CatchableError, responseObj{"error"}.getStr)
 
-    var chatId: string
-    discard responseObj.getProp("chatId", chatId)
+      var chatId: string
+      discard responseObj.getProp("chatId", chatId)
 
-    var messagesIdsArr: JsonNode
-    var messagesIds: seq[string]
-    if(responseObj.getProp("messagesIds", messagesIdsArr)):
-      for id in messagesIdsArr:
-        messagesIds.add(id.getStr)
+      var messagesIdsArr: JsonNode
+      var messagesIds: seq[string]
+      if(responseObj.getProp("messagesIds", messagesIdsArr)):
+        for id in messagesIdsArr:
+          messagesIds.add(id.getStr)
 
-    var count: int
-    discard responseObj.getProp("count", count)
+      var count: int
+      discard responseObj.getProp("count", count)
 
-    if count < len(messagesIds):
-      warn "warning: ", procName="onMarkCertainMessagesRead", errDescription="not all messages has been marked as read"
+      if count < len(messagesIds):
+        warn "warning: ", procName="onMarkCertainMessagesRead", errDescription="not all messages has been marked as read"
 
-    var countWithMentions: int
-    discard responseObj.getProp("countWithMentions", countWithMentions)
+      var countWithMentions: int
+      discard responseObj.getProp("countWithMentions", countWithMentions)
 
-    let data = MessagesMarkedAsReadArgs(
-      chatId: chatId,
-      allMessagesMarked: false,
-      messagesIds: messagesIds,
-      messagesCount: count,
-      messagesWithMentionsCount: countWithMentions)
-    self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
-    checkAndEmitACNotificationsFromResponse(self.events, responseObj{"activityCenterNotifications"})
+      let data = MessagesMarkedAsReadArgs(
+        chatId: chatId,
+        allMessagesMarked: false,
+        messagesIds: messagesIds,
+        messagesCount: count,
+        messagesWithMentionsCount: countWithMentions)
+      self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
+      checkAndEmitACNotificationsFromResponse(self.events, responseObj{"activityCenterNotifications"})
+    except Exception as e:
+      error "error: ", procName="onMarkCertainMessagesRead", errDesription = e.msg
 
   proc markCertainMessagesRead*(self: Service, chatId: string, messagesIds: seq[string]) =
     if (chatId.len == 0):

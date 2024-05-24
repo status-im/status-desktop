@@ -273,16 +273,22 @@ QtObject:
     except Exception as e:
       error "Error marking as seen", msg = e.msg
 
-  proc asyncActivityNotificationLoaded*(self: Service, rpcResponse: string) {.slot.} =
-    let rpcResponseObj = rpcResponse.parseJson
+  proc asyncActivityNotificationLoaded*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
+        raise newException(CatchableError, responseObj{"error"}.getStr)
 
-    if(rpcResponseObj["activityNotifications"].kind != JNull):
-      let activityCenterNotificationsTuple = parseActivityCenterNotifications(rpcResponseObj["activityNotifications"])
+      if responseObj["activityNotifications"].kind != JNull:
+        let activityCenterNotificationsTuple = parseActivityCenterNotifications(responseObj["activityNotifications"])
 
-      self.cursor = activityCenterNotificationsTuple[0]
+        self.cursor = activityCenterNotificationsTuple[0]
 
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
-        ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
+        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+          ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
+    except Exception as e:
+      error "Error loading activity notification async", msg = e.msg
+
 
   proc deleteActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
     try:

@@ -27,27 +27,41 @@ type
 
 const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncFetchChatMessagesTaskArg](argEncoded)
+  try:
+    var responseJson = %*{
+      "chatId": arg.chatId
+    }
 
-  var responseJson = %*{
-    "chatId": arg.chatId
-  }
+    # handle messages
+    var messagesArr: JsonNode
+    var messagesCursor: JsonNode
+    let msgsResponse = status_go.fetchMessages(arg.chatId, arg.msgCursor, arg.limit)
 
-  # handle messages
-  var messagesArr: JsonNode
-  var messagesCursor: JsonNode
-  let msgsResponse = status_go.fetchMessages(arg.chatId, arg.msgCursor, arg.limit)
-  discard msgsResponse.result.getProp("cursor", messagesCursor)
-  discard msgsResponse.result.getProp("messages", messagesArr)
-  responseJson["messages"] = messagesArr
-  responseJson["messagesCursor"] = messagesCursor
+    if not msgsResponse.error.isNil:
+      raise newException(CatchableError, msgsResponse.error.message)
 
-  # handle reactions
-  var reactionsArr: JsonNode
-  let rResponse = status_go.fetchReactions(arg.chatId, arg.msgCursor, arg.limit)
-  reactionsArr = rResponse.result
-  responseJson["reactions"] = reactionsArr
+    discard msgsResponse.result.getProp("cursor", messagesCursor)
+    discard msgsResponse.result.getProp("messages", messagesArr)
+    responseJson["messages"] = messagesArr
+    responseJson["messagesCursor"] = messagesCursor
 
-  arg.finish(responseJson)
+    # handle reactions
+    var reactionsArr: JsonNode
+    let rResponse = status_go.fetchReactions(arg.chatId, arg.msgCursor, arg.limit)
+    if not rResponse.error.isNil:
+      raise newException(CatchableError, rResponse.error.message)
+
+    reactionsArr = rResponse.result
+    responseJson["reactions"] = reactionsArr
+
+    arg.finish(responseJson)
+
+  except Exception as e:
+    arg.finish(%* {
+      "chatId": arg.chatId,
+      "error": e.msg,
+    })
+
 
 #################################################
 # Async load pinned messages
@@ -55,19 +69,30 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
 const asyncFetchPinnedChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncFetchChatMessagesTaskArg](argEncoded)
 
-  var responseJson = %*{
-    "chatId": arg.chatId
-  }
-  # handle pinned messages
-  var pinnedMsgArr: JsonNode
-  var msgCursor: JsonNode
-  let pinnedMsgsResponse = status_go.fetchPinnedMessages(arg.chatId, arg.msgCursor, arg.limit)
-  discard pinnedMsgsResponse.result.getProp("cursor", msgCursor)
-  discard pinnedMsgsResponse.result.getProp("pinnedMessages", pinnedMsgArr)
-  responseJson["pinnedMessages"] = pinnedMsgArr
-  responseJson["pinnedMessagesCursor"] = msgCursor
+  try:
+    var responseJson = %*{
+      "chatId": arg.chatId
+    }
+    # handle pinned messages
+    var pinnedMsgArr: JsonNode
+    var msgCursor: JsonNode
+    let pinnedMsgsResponse = status_go.fetchPinnedMessages(arg.chatId, arg.msgCursor, arg.limit)
 
-  arg.finish(responseJson)
+    if not pinnedMsgsResponse.error.isNil:
+      raise newException(CatchableError, pinnedMsgsResponse.error.message)
+
+    discard pinnedMsgsResponse.result.getProp("cursor", msgCursor)
+    discard pinnedMsgsResponse.result.getProp("pinnedMessages", pinnedMsgArr)
+    responseJson["pinnedMessages"] = pinnedMsgArr
+    responseJson["pinnedMessagesCursor"] = msgCursor
+
+    arg.finish(responseJson)
+
+  except Exception as e:
+    arg.finish(%* {
+      "chatId": arg.chatId,
+      "error": e.msg,
+    })
 
 
 #################################################
@@ -88,14 +113,20 @@ type
 
 const asyncSearchMessagesInChatTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSearchMessagesInChatTaskArg](argEncoded)
+  try:
+    let response = status_go.fetchAllMessagesFromChatWhichMatchTerm(arg.chatId, arg.searchTerm, arg.caseSensitive)
 
-  let response = status_go.fetchAllMessagesFromChatWhichMatchTerm(arg.chatId, arg.searchTerm, arg.caseSensitive)
-
-  let responseJson = %*{
-    "chatId": arg.chatId,
-    "messages": response.result
-  }
-  arg.finish(responseJson)
+    let responseJson = %*{
+      "chatId": arg.chatId,
+      "messages": response.result,
+      "error": response.error,
+    }
+    arg.finish(responseJson)
+  except Exception as e:
+    arg.finish(%* {
+      "chatId": arg.chatId,
+      "error": e.msg,
+    })
 
 #################################################
 # Async search messages in chats/channels and communities by term
@@ -108,15 +139,21 @@ type
 const asyncSearchMessagesInChatsAndCommunitiesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSearchMessagesInChatsAndCommunitiesTaskArg](argEncoded)
 
-  let response = status_go.fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm(arg.communityIds, arg.chatIds,
-  arg.searchTerm, arg.caseSensitive)
-
-  let responseJson = %*{
-    "communityIds": arg.communityIds,
-    "chatIds": arg.chatIds,
-    "messages": response.result
-  }
-  arg.finish(responseJson)
+  try:
+    let rpcResponse = status_go.fetchAllMessagesFromChatsAndCommunitiesWhichMatchTerm(arg.communityIds, arg.chatIds,
+    arg.searchTerm, arg.caseSensitive)
+    arg.finish(%*{
+      "communityIds": arg.communityIds,
+      "chatIds": arg.chatIds,
+      "messages": rpcResponse.result,
+      "error": rpcResponse.error,
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "communityIds": arg.communityIds,
+      "chatIds": arg.chatIds,
+      "error": e.msg,
+    })
 
 #################################################
 # Async mark all messages read
@@ -128,18 +165,23 @@ type
 const asyncMarkAllMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncMarkAllMessagesReadTaskArg](argEncoded)
 
-  let response =  status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
+  try:
+    let rpcResponse =  status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
 
-  var activityCenterNotifications: JsonNode = newJObject()
-  discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
+    var activityCenterNotifications: JsonNode = newJObject()
+    discard rpcResponse.result.getProp("activityCenterNotifications", activityCenterNotifications)
 
-  let responseJson = %*{
-    "chatId": arg.chatId,
-    "activityCenterNotifications": activityCenterNotifications,
-    "error": response.error
-  }
+    arg.finish(%*{
+      "chatId": arg.chatId,
+      "activityCenterNotifications": activityCenterNotifications,
+      "error": rpcResponse.error,
+    })
 
-  arg.finish(responseJson)
+  except Exception as e:
+    arg.finish(%* {
+      "chatId": arg.chatId,
+      "error": e.msg,
+    })
 
 #################################################
 # Async mark certain messages read
@@ -152,29 +194,39 @@ type
 const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncMarkCertainMessagesReadTaskArg](argEncoded)
 
-  let response = status_go.markCertainMessagesFromChatWithIdAsRead(arg.chatId, arg.messagesIds)
+  try:
+    let rpcResponse = status_go.markCertainMessagesFromChatWithIdAsRead(arg.chatId, arg.messagesIds)
 
-  var seenAndUnseenMessagesBatch: JsonNode = newJObject()
-  discard response.result.getProp("seenAndUnseenMessages", seenAndUnseenMessagesBatch)
-  let (count, countWithMentions) = getCountAndCountWithMentionsFromResponse(arg.chatId, seenAndUnseenMessagesBatch)
+    if not rpcResponse.error.isNil:
+      raise newException(CatchableError, rpcResponse.error.message)
 
-  var activityCenterNotifications: JsonNode = newJObject()
-  discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
+    var seenAndUnseenMessagesBatch: JsonNode = newJObject()
+    discard rpcResponse.result.getProp("seenAndUnseenMessages", seenAndUnseenMessagesBatch)
+    let (count, countWithMentions) = getCountAndCountWithMentionsFromResponse(arg.chatId, seenAndUnseenMessagesBatch)
 
-  var error = ""
-  if(count == 0):
-    error = "no message has updated"
+    var activityCenterNotifications: JsonNode = newJObject()
+    discard rpcResponse.result.getProp("activityCenterNotifications", activityCenterNotifications)
 
-  let responseJson = %*{
-    "chatId": arg.chatId,
-    "messagesIds": arg.messagesIds,
-    "count": count,
-    "countWithMentions": countWithMentions,
-    "activityCenterNotifications": activityCenterNotifications,
-    "error": error
-  }
+    var error = ""
+    if(count == 0):
+      error = "no message has updated"
 
-  arg.finish(responseJson)
+    let responseJson = %*{
+      "chatId": arg.chatId,
+      "messagesIds": arg.messagesIds,
+      "count": count,
+      "countWithMentions": countWithMentions,
+      "activityCenterNotifications": activityCenterNotifications,
+      "error": error
+    }
+    arg.finish(responseJson)
+
+  except Exception as e:
+    arg.finish(%* {
+      "chatId": arg.chatId,
+      "messagesIds": arg.messagesIds,
+      "error": e.msg,
+    })
 
 
 #################################################

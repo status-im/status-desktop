@@ -50,14 +50,20 @@ QtObject:
     return (url, host, scheme, path, true)
 
   proc postMessageResolved*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
+    try:
+      let responseObj = response.parseJson
 
-    var data = OnPostMessageArgs()
-    discard responseObj.getProp("payloadMethod", data.payloadMethod)
-    discard responseObj.getProp("result", data.result)
-    discard responseObj.getProp("chainId", data.chainId)
-    
-    self.events.emit(PROVIDER_SIGNAL_ON_POST_MESSAGE, data)
+      if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
+        raise newException(CatchableError, responseObj{"error"}.getStr)
+
+      var data = OnPostMessageArgs()
+      discard responseObj.getProp("payloadMethod", data.payloadMethod)
+      discard responseObj.getProp("result", data.result)
+      discard responseObj.getProp("chainId", data.chainId)
+
+      self.events.emit(PROVIDER_SIGNAL_ON_POST_MESSAGE, data)
+    except Exception as e:
+      error "error: ", procName="postMessageResolved", errMsg=e.msg
 
   proc postMessage*(self: Service, payloadMethod: string, requestType: string, message: string) =
     let arg = PostMessageTaskArg(

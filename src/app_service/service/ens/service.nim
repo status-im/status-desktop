@@ -195,17 +195,22 @@ QtObject:
     return true
 
   proc onEnsUsernameAvailabilityChecked*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "expected response is not a json object", procName="onEnsUsernameAvailabilityChecked"
+    try:
+      let responseObj = response.parseJson
+      if responseObj.kind != JObject:
+        raise newException(CatchableError, "expected response is not a json object")
+
+      if responseObj.contains("error"):
+        raise newException(CatchableError, responseObj{"error"}.getStr)
+
+      var availablilityStatus: string
+      discard responseObj.getProp("availability", availablilityStatus)
+      let data = EnsUsernameAvailabilityArgs(availabilityStatus: availablilityStatus)
+      self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, data)
+    except Exception as e:
+      error "error: ", procName="onEnsUsernameAvailabilityChecked", msg = e.msg
       # notify view, this is important
       self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, EnsUsernameAvailabilityArgs())
-      return
-
-    var availablilityStatus: string
-    discard responseObj.getProp("availability", availablilityStatus)
-    let data = EnsUsernameAvailabilityArgs(availabilityStatus: availablilityStatus)
-    self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, data)
 
   proc formatUsername(self: Service, username: string, isStatus: bool): string =
     result = username
@@ -234,21 +239,26 @@ QtObject:
       self.threadpool.start(arg)
 
   proc onEnsUsernameDetailsFetched*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "expected response is not a json object", procName="onEnsUsernameDetailsFetched"
+    try:
+      let responseObj = response.parseJson
+      if (responseObj.kind != JObject):
+        raise newException(CatchableError, "expected response is not a json object")
+
+      if responseObj.contains("error"):
+        raise newException(CatchableError, responseObj{"error"}.getStr)
+
+      var data = EnsUsernameDetailsArgs()
+      discard responseObj.getProp("chainId", data.chainId)
+      discard responseObj.getProp("ensUsername", data.ensUsername)
+      discard responseObj.getProp("address", data.address)
+      discard responseObj.getProp("pubkey", data.pubkey)
+      discard responseObj.getProp("isStatus", data.isStatus)
+      discard responseObj.getProp("expirationTime", data.expirationTime)
+      self.events.emit(SIGNAL_ENS_USERNAME_DETAILS_FETCHED, data)
+    except Exception as e:
+      error "error: ", procName="onEnsUsernameDetailsFetched", msg = e.msg
       # notify view, this is important
       self.events.emit(SIGNAL_ENS_USERNAME_DETAILS_FETCHED, EnsUsernameDetailsArgs())
-      return
-
-    var data = EnsUsernameDetailsArgs()
-    discard responseObj.getProp("chainId", data.chainId)
-    discard responseObj.getProp("ensUsername", data.ensUsername)
-    discard responseObj.getProp("address", data.address)
-    discard responseObj.getProp("pubkey", data.pubkey)
-    discard responseObj.getProp("isStatus", data.isStatus)
-    discard responseObj.getProp("expirationTime", data.expirationTime)
-    self.events.emit(SIGNAL_ENS_USERNAME_DETAILS_FETCHED, data)
 
   proc fetchDetailsForEnsUsername*(self: Service, chainId: int, ensUsername: string) =
     var isStatus = false

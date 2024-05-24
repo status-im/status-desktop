@@ -10,11 +10,10 @@ const asyncGetActiveChatsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall
   try:
     let response = status_chat.getActiveChats()
 
-    let responseJson = %*{
+    arg.finish(%*{
       "chats": response.result,
-      "error": "",
-    }
-    arg.finish(responseJson)
+      "error": response.error,
+    })
   except Exception as e:
     arg.finish(%* {
       "error": e.msg,

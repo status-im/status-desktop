@@ -277,15 +277,12 @@ QtObject:
     try:
       let rpcResponseObj = response.parseJson
       if (rpcResponseObj{"error"}.kind != JNull):
-        let error = Json.decode($rpcResponseObj["error"], RpcError)
-        error "error loading recent stickers", msg = error.message
-        return
+         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
       let recentStickers = map(rpcResponseObj{"result"}.getElems(), toStickerDto)
       self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_DONE, StickersArgs(stickers: recentStickers))
     except Exception as e:
-      let errMsg = e.msg
-      error "error: ", errMsg
+      error "error loading recent stickers: ", procName = "onAsyncGetRecentStickersDone", errMsg = e.msg
       self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_FAILED, Args())
 
   proc asyncLoadInstalledStickerPacks*(self: Service) =
@@ -304,16 +301,13 @@ QtObject:
     try:
       let rpcResponseObj = response.parseJson
       if (rpcResponseObj{"error"}.kind != JNull):
-        let error = Json.decode($rpcResponseObj["error"], RpcError)
-        error "error loading installed sticker packs", msg = error.message
-        return
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
       for (packID, stickerPackJson) in rpcResponseObj{"result"}.pairs():
         self.installedStickerPacks[packID] = stickerPackJson.toStickerPackDto()
       self.events.emit(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_DONE, StickerPacksArgs(packs: self.installedStickerPacks))
     except Exception as e:
-      let errMsg = e.msg
-      error "error: ", errMsg
+      error "error loading installed sticker packs: ", procName="onAsyncGetInstalledStickerPacksDone", errMsg = e.msg
       self.events.emit(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_FAILED, Args())
 
   proc getNumInstalledStickerPacks*(self: Service): int =
