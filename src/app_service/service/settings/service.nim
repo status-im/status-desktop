@@ -1,8 +1,6 @@
 import NimQml, chronicles, json, strutils, sequtils, tables
 
 import app_service/common/types as common_types
-import app_service/common/social_links
-import app_service/common/utils as common_utils
 import app/core/eventemitter
 import app/core/fleets/fleet_configuration
 import app/core/signals/types
@@ -25,7 +23,6 @@ const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
 const SIGNAL_DISPLAY_NAME_UPDATED* = "displayNameUpdated"
 const SIGNAL_BIO_UPDATED* = "bioUpdated"
 const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
-const SIGNAL_SOCIAL_LINKS_UPDATED* = "socialLinksUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 const SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED* = "profileMigrationNeededUpdated"
 const SIGNAL_URL_UNFURLING_MODE_UPDATED* = "urlUnfurlingModeUpdated"
@@ -41,10 +38,6 @@ type
     statusType*: StatusType
     text*: string
 
-  SocialLinksArgs* = ref object of Args
-    socialLinks*: SocialLinks
-    error*: string
-
   SettingsBoolValueArgs* = ref object of Args
     value*: bool
 
@@ -55,12 +48,10 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     settings: SettingsDto
-    socialLinks: SocialLinks
     initialized: bool
     notifExemptionsCache: Table[string, NotificationsExemptions]
 
   # Forward declaration
-  proc storeSocialLinksAndNotify(self: Service, data: SocialLinksArgs)
   proc initNotificationSettings*(self: Service)
   proc getNotifSettingAllowNotifications*(self: Service): bool
   proc getNotifSettingOneToOneChats*(self: Service): string
@@ -120,10 +111,6 @@ QtObject:
           if settingsField.name == KEY_URL_UNFURLING_MODE:
             self.settings.urlUnfurlingMode = toUrlUnfurlingMode(settingsField.value.getInt)
             self.events.emit(SIGNAL_URL_UNFURLING_MODE_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
-
-      if receivedData.socialLinksInfo.links.len > 0 or
-        receivedData.socialLinksInfo.removed:
-          self.storeSocialLinksAndNotify(SocialLinksArgs(socialLinks: receivedData.socialLinksInfo.links))
 
     self.initialized = true
 
@@ -995,45 +982,6 @@ QtObject:
       self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: self.settings.bio))
       return true
     return false
-
-  proc getSocialLinks*(self: Service): SocialLinks =
-    return self.socialLinks
-
-  proc storeSocialLinksAndNotify(self: Service, data: SocialLinksArgs) =
-    self.socialLinks = data.socialLinks
-    self.events.emit(SIGNAL_SOCIAL_LINKS_UPDATED, data)
-
-  proc fetchAndStoreSocialLinks*(self: Service) =
-    var data = SocialLinksArgs()
-    try:
-      let response = status_settings.getSocialLinks()
-      if(not response.error.isNil):
-        data.error = response.error.message
-        error "error getting social links", errDescription = response.error.message
-      data.socialLinks = toSocialLinks(response.result)
-    except Exception as e:
-      data.error = e.msg
-      error "error getting social links", errDesription = e.msg
-    self.storeSocialLinksAndNotify(data)
-
-  proc setSocialLinks*(self: Service, links: SocialLinks) =
-    var data = SocialLinksArgs()
-    let isValid = all(links, proc (link: SocialLink): bool = common_utils.validateLink(link.url))
-    if not isValid:
-      data.error = "invalid link provided"
-      error "validation error", errDescription=data.error
-      return
-    try:
-      let response = status_settings.addOrReplaceSocialLinks(%*links)
-      if not response.error.isNil:
-        data.error = response.error.message
-        error "error saving social links", errDescription=data.error
-        return
-      data.socialLinks = links
-    except Exception as e:
-      data.error = e.msg
-      error "error saving social links", errDescription=data.error
-    self.storeSocialLinksAndNotify(data)
 
   proc getProfileMigrationNeeded*(self: Service): bool =
     self.settings.profileMigrationNeeded
