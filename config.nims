@@ -7,6 +7,7 @@ else:
 --opt:speed # -O3
 --debugger:native # passes "-g" to the C compiler
 --define:ssl # needed by the stdlib to enable SSL procedures
+--define:useOpenssl3
 
 if defined(macosx):
   --dynlibOverrideAll # don't use dlopen()
@@ -18,8 +19,8 @@ if defined(macosx):
   switch("passL", "-rpath" & " " & getEnv("STATUSGO_LIBDIR"))
   switch("passL", "-rpath" & " " & getEnv("STATUSKEYCARDGO_LIBDIR"))
   # statically link these libs
-  switch("passL", "bottles/openssl@1.1/lib/libcrypto.a")
-  switch("passL", "bottles/openssl@1.1/lib/libssl.a")
+  switch("passL", "bottles/openssl@3.0/lib/libcrypto.a")
+  switch("passL", "bottles/openssl@3.0/lib/libssl.a")
   switch("passL", "bottles/pcre/lib/libpcre.a")
   # https://code.videolan.org/videolan/VLCKit/-/issues/232
   switch("passL", "-Wl,-no_compact_unwind")

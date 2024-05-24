@@ -122,7 +122,7 @@ endif
 
 ifeq ($(detected_OS),Darwin)
 BOTTLES_DIR := $(shell pwd)/bottles
-BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@1.1 pcre)
+BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@3.0 pcre)
 ifeq ($(QT_ARCH),arm64)
 # keep in sync with MACOSX_DEPLOYMENT_TARGET
 	BOTTLE_MACOS_VERSION := 'arm64_big_sur'
