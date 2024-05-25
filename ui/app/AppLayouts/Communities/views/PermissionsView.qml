@@ -31,7 +31,7 @@ ColumnLayout {
     required property var channelsModel
 
     // id, name, image, color, owner, admin properties expected
-    required property var communityDetails
+    required property QtObject communityDetails
 
     property int viewWidth: 560 // by design
     property bool viewOnlyCanAddReaction
@@ -44,16 +44,32 @@ ColumnLayout {
     signal userRestrictionsToggled(bool checked)
 
     readonly property alias count: repeater.count
+
+    Connections {
+        target: root.communityDetails
+        function onNameChanged(){
+            resetCommunityItemModel()
+        }
+        function onImageChanged(){
+            resetCommunityItemModel()
+        }
+        function onColorChanged(){
+            resetCommunityItemModel()
+        }
+    }
+
+    function resetCommunityItemModel(){
+        communityItemModel.clear()
+        communityItemModel.append({
+                   text: root.communityDetails.name,
+                   imageSource: root.communityDetails.image,
+                   color: root.communityDetails.color
+               })
+    }
+
     ListModel {
         id: communityItemModel
-
-        Component.onCompleted: {
-            append({
-                       text: root.communityDetails.name,
-                       imageSource: root.communityDetails.image,
-                       color: root.communityDetails.color
-                   })
-        }
+        Component.onCompleted: resetCommunityItemModel()
     }
 
     IntroPanel {
