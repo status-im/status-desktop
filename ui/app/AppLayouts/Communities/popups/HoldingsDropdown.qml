@@ -313,7 +313,10 @@ StatusDropdown {
                 d.collectibleAmountText = ""
 
                 if (checkedKeys.includes(key)) {
-                    const amount = root.usedTokens.find(entry => entry.key === key).amount
+
+                    const amountBasicUnit = root.usedTokens.find(entry => entry.key === key).amount
+                    const decimals = PermissionsHelpers.getTokenByKey(root.assetsModel, key).decimals
+                    const amount = AmountsArithmetic.toNumber(amountBasicUnit, decimals)
 
                     if(d.extendedDropdownType === ExtendedDropdownContent.Type.Assets)
                         root.assetAmount = amount
