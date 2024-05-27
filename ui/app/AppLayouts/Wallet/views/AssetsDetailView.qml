@@ -345,18 +345,21 @@ Item {
                 visible: !d.isCommunityAsset
                 InformationTile {
                     maxWidth: parent.width
+                    objectName: "marketCapInformationTile"
                     primaryText: qsTr("Market Cap")
                     secondaryText: token && token.marketDetails && token.marketDetails.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.marketCap) : Constants.dummyText
                     isLoading: d.marketDetailsLoading
                 }
                 InformationTile {
                     maxWidth: parent.width
+                    objectName: "dayLowInformationTile"
                     primaryText: qsTr("Day Low")
                     secondaryText: token && token.marketDetails && token.marketDetails.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.lowDay) : Constants.dummyText
                     isLoading: d.marketDetailsLoading
                 }
                 InformationTile {
                     maxWidth: parent.width
+                    objectName: "dayHighInformationTile"
                     primaryText: qsTr("Day High")
                     secondaryText: token && token.marketDetails && token.marketDetails.highDay ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.highDay) : Constants.dummyText
                     isLoading: d.marketDetailsLoading
@@ -367,6 +370,7 @@ Item {
                 InformationTile {
                     readonly property double changePctHour: token && token.marketDetails ? token.marketDetails.changePctHour : 0
                     maxWidth: parent.width
+                    objectName: "hourInformationTile"
                     primaryText: qsTr("Hour")
                     secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2))
                     secondaryLabel.customColor: changePctHour === 0 ? Theme.palette.directColor1 :
@@ -378,6 +382,7 @@ Item {
                     readonly property double changePctDay: token && token.marketDetails ? token.marketDetails.changePctDay : 0
                     maxWidth: parent.width
                     primaryText: qsTr("Day")
+                    objectName: "dayInformationTile"
                     secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2))
                     secondaryLabel.customColor: changePctDay === 0 ? Theme.palette.directColor1 :
                                                                      changePctDay < 0 ? Theme.palette.dangerColor1 :
@@ -388,6 +393,7 @@ Item {
                     readonly property double changePct24hour: token && token.marketDetails ? token.marketDetails.changePct24hour : 0
                     maxWidth: parent.width
                     primaryText: qsTr("24 Hours")
+                    objectName: "24HoursInformationTile"
                     secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2))
                     secondaryLabel.customColor: changePct24hour === 0 ? Theme.palette.directColor1 :
                                                                         changePct24hour < 0 ? Theme.palette.dangerColor1 :
