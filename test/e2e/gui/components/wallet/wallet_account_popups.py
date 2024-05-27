@@ -30,6 +30,7 @@ class AccountPopup(BasePopup):
         self._emoji_button = Button(names.mainWallet_AddEditAccountPopup_AccountEmojiPopupButton)
         self._color_radiobutton = QObject(names.color_StatusColorRadioButton)
         self._popup_header_title = TextLabel(names.mainWallet_AddEditAccountPopup_HeaderTitle)
+        self._emoji_id_in_title = QObject(names.mainWallet_AddEditAccountPopup_HeaderEmoji)
         # origin
         self._origin_combobox = QObject(names.mainWallet_AddEditAccountPopup_SelectedOrigin)
         self._watched_address_origin_item = QObject(names.mainWallet_AddEditAccountPopup_OriginOptionWatchOnlyAcc)
@@ -81,8 +82,12 @@ class AccountPopup(BasePopup):
     @allure.step('Set emoji for account')
     def set_emoji(self, value: str):
         self._emoji_button.click()
-        EmojiPopup().wait_until_appears(timeout_msec=10000).select(value)
+        EmojiPopup().select(value)
         return self
+
+    @allure.step('Get emoji id from account header')
+    def get_emoji_from_account_title(self):
+        return str(getattr(self._emoji_id_in_title.object, 'emojiId'))
 
     @allure.step('Set eth address for account added from context menu')
     def set_eth_address(self, value: str):

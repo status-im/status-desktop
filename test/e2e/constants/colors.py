@@ -54,3 +54,8 @@ class ColorCodes(Enum):
     BLUE = '#2a4af5'
     ORANGE = '#ff9f0f'
     GRAY = '#939ba1'
+
+
+class EmojiCodes(Enum):
+    SMILING_FACE_WITH_SUNGLASSES = '1f60e'
+    THUMBSUP_SIGN = '1f44d'
