@@ -93,6 +93,7 @@
         <file>StatusQ/Controls/StatusBaseInput.qml</file>
         <file>StatusQ/Controls/StatusBlockProgressBar.qml</file>
         <file>StatusQ/Controls/StatusButton.qml</file>
+        <file>StatusQ/Controls/StatusButtonRow.qml</file>
         <file>StatusQ/Controls/StatusChatCommandButton.qml</file>
         <file>StatusQ/Controls/StatusChatInfoButton.qml</file>
         <file>StatusQ/Controls/StatusChatListCategoryItemButton.qml</file>

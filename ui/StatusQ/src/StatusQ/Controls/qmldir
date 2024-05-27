@@ -15,6 +15,7 @@ StatusTabBarIconButton 0.1 StatusTabBarIconButton.qml
 StatusToolTip 0.1 StatusToolTip.qml
 StatusBaseButton 0.1 StatusBaseButton.qml
 StatusButton 0.1 StatusButton.qml
+StatusButtonRow 0.1 StatusButtonRow.qml
 StatusFlatButton 0.1 StatusFlatButton.qml
 StatusRoundButton 0.1 StatusRoundButton.qml
 StatusFlatRoundButton 0.1 StatusFlatRoundButton.qml
