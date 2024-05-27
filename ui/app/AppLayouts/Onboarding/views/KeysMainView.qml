@@ -231,6 +231,7 @@ Item {
 
         StatusBaseText {
             id: button2
+            objectName: "iDontHaveOtherDeviceButton"
             Layout.alignment: Qt.AlignHCenter
             visible: text !== ""
             color: Theme.palette.primaryColor1
