@@ -26,13 +26,14 @@ Control {
     }
 
     Component.onCompleted: {
-        buttons.model.append(d.values.map(i => ({ text: "%L1 %".arg(i), value: i })))
+        buttons.model.append(d.values.map(i => ({ text: "%L1 %2".arg(i).arg(d.customSymbol), value: i })))
         valueChanged()
     }
 
     QtObject {
         id: d
 
+        readonly property string customSymbol: "%"
         readonly property var values: [0.1, 0.5, 1]
         property bool internalUpdate: false
 
@@ -60,7 +61,6 @@ Control {
                     return
 
                 d.update(value)
-                customButton.visible = true
             }
         }
 
@@ -87,8 +87,9 @@ Control {
             visible: !customButton.visible
             minValue: 0.01
             maxValue: 100.0
-            currencySymbol: "%"
+            currencySymbol: d.customSymbol
             onValueChanged: d.update(value)
+            onFocusChanged: if (focus) d.update(value)
         }
     }
 }
