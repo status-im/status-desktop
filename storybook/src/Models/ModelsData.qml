@@ -82,4 +82,10 @@ QtObject {
         readonly property string ownerTokenInfo: "In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community."
         readonly property string airdropInfo: "You can Airdrop tokens to deserving Community members or to give individuals token-based permissions."
     }
+
+    readonly property QtObject onRampProviderImages: QtObject {
+        readonly property string latamex: Style.png("onRampProviders/latamex")
+        readonly property string moonPay: Style.png("onRampProviders/moonPay")
+        readonly property string ramp: Style.png("onRampProviders/ramp")
+    }
 }

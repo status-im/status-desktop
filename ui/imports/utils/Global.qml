@@ -107,6 +107,9 @@ QtObject {
     // Swap
     signal openSwapModalRequested(var formDataParams)
 
+    // BuyCrypto
+    signal openBuyCryptoModalRequested()
+
     /////////////////////////////////////////////////////
     // WalletConnect POC - to remove
     signal popupWalletConnect()

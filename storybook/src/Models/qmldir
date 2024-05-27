@@ -22,6 +22,7 @@ WalletTransactionsModel 1.0 WalletTransactionsModel.qml
 GroupedAccountsAssetsModel 1.0 GroupedAccountsAssetsModel.qml
 TokensBySymbolModel 1.0 TokensBySymbolModel.qml
 CommunitiesModel 1.0 CommunitiesModel.qml
+OnRampProvidersModel 1.0 OnRampProvidersModel.qml
 
 singleton ModelsData 1.0 ModelsData.qml
 singleton NetworksModel 1.0 NetworksModel.qml
