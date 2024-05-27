@@ -41,7 +41,8 @@ class AccountPopup(BasePopup):
         self._address_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountWatchOnlyAddress)
         self._add_account_button = Button(names.mainWallet_AddEditAccountPopup_PrimaryButton)
         self._edit_derivation_path_button = Button(names.mainWallet_AddEditAccountPopup_EditDerivationPathButton)
-        self._derivation_path_combobox_button = Button(names.mainWallet_AddEditAccountPopup_PreDefinedDerivationPathsButton)
+        self._derivation_path_combobox_button = Button(
+            names.mainWallet_AddEditAccountPopup_PreDefinedDerivationPathsButton)
         self._derivation_path_list_item = QObject(names.mainWallet_AddEditAccountPopup_derivationPath)
         self._reset_derivation_path_button = Button(names.mainWallet_AddEditAccountPopup_ResetDerivationPathButton)
         self._derivation_path_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_DerivationPathInput)
@@ -105,9 +106,19 @@ class AccountPopup(BasePopup):
     @allure.step('Set private key for account')
     def set_origin_private_key(self, value: str):
         self._origin_combobox.click()
-        self._new_master_key_origin_item.click()
-        AddNewAccountPopup().wait_until_appears().import_private_key(value)
+        self.click_new_master_key(value).import_private_key(value)
         return self
+
+    @allure.step('Click new master key item')
+    def click_new_master_key(self, value: str, attempts: int = 2):
+        self._new_master_key_origin_item.click()
+        try:
+            return AddNewAccountPopup().wait_until_appears()
+        except AssertionError as err:
+            if attempts:
+                return self.click_new_master_key(value, attempts - 1)
+            else:
+                raise err
 
     @allure.step('Set new seed phrase for account')
     def set_origin_new_seed_phrase(self, value: str):
@@ -201,13 +212,19 @@ class AddNewAccountPopup(BasePopup):
         self._private_key_name_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_PrivateKeyName)
         self._continue_button = Button(names.mainWallet_AddEditAccountPopup_PrimaryButton)
         self._import_seed_phrase_button = Button(names.mainWallet_AddEditAccountPopup_MasterKey_ImportSeedPhraseOption)
-        self._generate_master_key_button = Button(names.mainWallet_AddEditAccountPopup_MasterKey_GenerateSeedPhraseOption)
+        self._generate_master_key_button = Button(
+            names.mainWallet_AddEditAccountPopup_MasterKey_GenerateSeedPhraseOption)
         self._seed_phrase_12_words_button = Button(names.mainWallet_AddEditAccountPopup_12WordsButton)
         self._seed_phrase_18_words_button = Button(names.mainWallet_AddEditAccountPopup_18WordsButton)
         self._seed_phrase_24_words_button = Button(names.mainWallet_AddEditAccountPopup_24WordsButton)
         self._seed_phrase_word_text_edit = TextEdit(names.mainWindow_statusSeedPhraseInputField_TextEdit)
         self._seed_phrase_phrase_key_name_text_edit = TextEdit(
             names.mainWallet_AddEditAccountPopup_ImportedSeedPhraseKeyName)
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._generate_master_key_button.wait_until_appears(timeout_msec)
+        return self
 
     @allure.step('Import private key')
     def import_private_key(self, private_key: str) -> str:
