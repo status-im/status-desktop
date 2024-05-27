@@ -38,10 +38,6 @@ StatusModal {
 
     property var store: RootStore
 
-    onClosed: {
-        root.close()
-    }
-
     function initWithParams(params = {}) {
         d.storedName = params.name?? ""
         d.storedColorId = params.colorId?? ""
@@ -73,7 +69,7 @@ StatusModal {
                                       .arg(d.chainShortNames)
                                       .arg(d.address == Constants.zeroAddress? "" : d.address))
 
-        nameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
+        nameInput.input.edit.forceActiveFocus()
     }
 
     enum CardType {
@@ -132,7 +128,7 @@ StatusModal {
         property bool checkingContactsAddressInProgress: false
         property int contactsWithSameAddress: 0
 
-        function checkIfAddressIsAlreadyAdddedToWallet(address) {
+        function checkIfAddressIsAlreadyAddedToWallet(address) {
             let account = root.store.getWalletAccount(address)
             d.cardsModel.clear()
             d.addressAlreadyAddedToWalletError = !!account.name
@@ -149,7 +145,7 @@ StatusModal {
                                 })
         }
 
-        function checkIfAddressIsAlreadyAdddedToSavedAddresses(address) {
+        function checkIfAddressIsAlreadyAddedToSavedAddresses(address) {
             let savedAddress = root.store.getSavedAddress(address)
             d.cardsModel.clear()
             d.addressAlreadyAddedToSavedAddressesError = !!savedAddress.address
@@ -200,13 +196,13 @@ StatusModal {
             d.addressAlreadyAddedToSavedAddressesError = false
 
             if (d.addressInputIsAddress) {
-                d.checkIfAddressIsAlreadyAdddedToWallet(d.address)
+                d.checkIfAddressIsAlreadyAddedToWallet(d.address)
                 if (d.addressAlreadyAddedToWalletError) {
                     addressInput.errorMessageCmp.text = qsTr("You cannot add your own account as a saved address")
                     addressInput.errorMessageCmp.visible = true
                     return
                 }
-                d.checkIfAddressIsAlreadyAdddedToSavedAddresses(d.address)
+                d.checkIfAddressIsAlreadyAddedToSavedAddresses(d.address)
                 if (d.addressAlreadyAddedToSavedAddressesError) {
                     addressInput.errorMessageCmp.text = qsTr("This address is already saved")
                     addressInput.errorMessageCmp.visible = true
@@ -589,12 +585,13 @@ StatusModal {
                 id: networkSelector
 
                 objectName: "addSavedAddressNetworkSelector"
-                title: "Network preference"
+                title: qsTr("Network preference")
                 implicitWidth: d.componentWidth
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 enabled: d.addressInputValid && !d.addressInputIsENS
-                defaultItemText: "Add networks"
+                visible: !(d.editMode && d.addressInputIsENS)
+                defaultItemText: qsTr("Add networks")
                 defaultItemImageSource: "add"
                 rightButtonVisible: true
 
