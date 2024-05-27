@@ -4,8 +4,8 @@ import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
 
+import shared.controls 1.0
 import utils 1.0
 
 import Storybook 1.0
@@ -15,27 +15,14 @@ SplitView {
 
     Logs { id: logs }
 
-    QtObject {
-        id: d
-        readonly property var values: [0.1, 0.5, 0.7, 1] // predefined values
-    }
-
-    ListModel {
-        id: valuesModel
-    }
-
-    Component.onCompleted: {
-        valuesModel.append(d.values.map(i => ({ text: "%L1".arg(i), value: i })))
-    }
-
     Pane {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        StatusButtonRow {
+        SlippageSelector {
             id: buttonRow
+
             anchors.centerIn: parent
-            model: valuesModel
         }
     }
 
@@ -51,13 +38,23 @@ SplitView {
             Label {
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                text: "Raw model: %1".arg(d.values)
+                text: "Value: %1".arg(buttonRow.value)
             }
-
             Label {
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                text: "Value: %1".arg(buttonRow.value)
+                text: "Valid: " + buttonRow.valid//"%1".arg(buttonRow.valid ? "true" : "false")
+            }
+
+            ColumnLayout {
+                Repeater {
+                    model: [0.1, 0.5, 0.24, 0.8, 120.84]
+
+                    Button {
+                        text: "set " + modelData
+                        onClicked: buttonRow.value = modelData
+                    }
+                }
             }
 
             Item { Layout.fillHeight: true }

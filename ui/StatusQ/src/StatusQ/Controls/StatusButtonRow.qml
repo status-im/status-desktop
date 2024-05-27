@@ -5,8 +5,6 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
-import utils 1.0
-
 RowLayout {
     id: root
 
@@ -16,7 +14,7 @@ RowLayout {
     property alias model: repeater.model
     property var value: null
 
-    spacing: Style.current.halfPadding
+    spacing: 8
 
     Repeater {
         id: repeater
