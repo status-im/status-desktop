@@ -31,6 +31,7 @@ SeedPhraseTextArea 1.0 SeedPhraseTextArea.qml
 SendToContractWarning 1.0 SendToContractWarning.qml
 SettingsRadioButton 1.0 SettingsRadioButton.qml
 ShapeRectangle 1.0 ShapeRectangle.qml
+SlippageSelector 1.0 SlippageSelector.qml
 SocialLinkPreview 1.0 SocialLinkPreview.qml
 StatusButtonRow 1.0 StatusButtonRow.qml
 StatusSyncCodeInput 1.0 StatusSyncCodeInput.qml
