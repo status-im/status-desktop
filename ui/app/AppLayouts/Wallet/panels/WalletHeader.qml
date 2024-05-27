@@ -56,7 +56,7 @@ Item {
                     if (root.walletStore.showSavedAddresses)
                         return qsTr("Saved addresses")
 
-                    return overview.isAllAccounts ? qsTr("All Accounts") : overview.name
+                    return overview.isAllAccounts ? qsTr("All accounts") : overview.name
                 }
             }
             StatusEmoji {
