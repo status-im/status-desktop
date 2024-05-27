@@ -12,6 +12,7 @@ import driver
 from constants import ColorCodes
 from driver.objects_access import walk_children
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
+from gui.components.onboarding.keys_already_exist_popup import KeysAlreadyExistPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.components.splash_screen import SplashScreen
@@ -92,6 +93,11 @@ class KeysView(OnboardingView):
         self._import_seed_phrase_button.click()
         return ImportSeedPhraseView().wait_until_appears()
 
+    @allure.step('Open Enter Seed Phrase view')
+    def open_enter_seed_phrase_view(self) -> 'ImportSeedPhraseView':
+        self._import_seed_phrase_button.click()
+        return SeedPhraseInputView().wait_until_appears()
+
     @allure.step('Go back')
     def back(self) -> WelcomeToStatusView:
         self._back_button.click()
@@ -120,11 +126,17 @@ class SignBySyncingView(OnboardingView):
     def __init__(self):
         super(SignBySyncingView, self).__init__(names.mainWindow_KeysMainView)
         self._scan_or_enter_sync_code_button = Button(names.keysMainView_PrimaryAction_Button)
+        self._i_dont_have_other_device_button = Button(names.mainWindow_iDontHaveOtherDeviceButton_StatusBaseText)
 
     @allure.step('Open sync code view')
     def open_sync_code_view(self):
         self._scan_or_enter_sync_code_button.click()
         return SyncCodeView().wait_until_appears()
+
+    @allure.step('Open keys view')
+    def open_keys_view(self):
+        self._i_dont_have_other_device_button.click()
+        return KeysView().wait_until_appears()
 
 
 class SyncCodeView(OnboardingView):
@@ -235,10 +247,15 @@ class SeedPhraseInputView(OnboardingView):
             else:
                 self._seed_phrase_input_text_edit.text = word
 
-    @allure.step('Click import button')
+    @allure.step('Import seed phrase')
     def import_seed_phrase(self):
         self._import_button.click()
         return YourProfileView().wait_until_appears()
+
+    @allure.step('Click import button')
+    def click_import_seed_phrase_button(self):
+        self._import_button.click()
+        return KeysAlreadyExistPopup().wait_until_appears()
 
 
 class KeycardInitView(OnboardingView):
@@ -590,6 +607,8 @@ class LoginView(QObject):
         self._change_account_button = Button(names.loginView_changeAccountBtn)
         self._accounts_combobox = QObject(names.accountsView_accountListPanel)
         self._password_object = QObject(names.mainWindow_txtPassword_Input)
+        self._add_new_user_item = QObject(names.loginView_addNewUserItem_AccountMenuItemPanel)
+        self._add_existing_user_item = QObject(names.o_AccountMenuItemPanel)
 
     @property
     @allure.step('Get login error message')
@@ -605,6 +624,12 @@ class LoginView(QObject):
 
         self._password_text_edit.text = account.password
         self._arrow_right_button.click()
+
+    @allure.step('Add existing user')
+    def add_existing_status_user(self):
+        self._current_user_name_label.click()
+        self._add_existing_user_item.click()
+        return SignBySyncingView().wait_until_appears()
 
     @allure.step('Select user')
     def select_user_name(self, user_name, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):

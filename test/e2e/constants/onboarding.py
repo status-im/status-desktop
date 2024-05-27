@@ -15,6 +15,12 @@ class OnboardingScreensHeaders(Enum):
     YOUR_PROFILE_SCREEN_TITLE = 'Your profile'
 
 
+class KeysExistText(Enum):
+    KEYS_EXIST_TITLE = 'Keys for this account already exist'
+    KEYS_EXIST_TEXT = (
+        "Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase. In case of Keycard try recovering using PUK or reinstall the app and try login with the Keycard option.")
+
+
 password_strength_elements = namedtuple('Password_Strength_Elements',
                                         ['strength_indicator', 'strength_color', 'strength_messages'])
 very_weak_lower_elements = password_strength_elements('Very weak', '#ff2d55', ['• Lower case'])

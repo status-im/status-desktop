@@ -100,6 +100,10 @@ agreeToUse_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainW
 readyToUse_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "desktopBetaReadyCheckBox", "type": "StatusCheckBox", "visible": True}
 i_m_ready_to_use_Status_Desktop_Beta_StatusButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "objectName": "desktopBetaStatusButton", "visible": True}
 
+# Keys Exist Popup
+headline_StatusTitleSubtitle = {"container": statusDesktop_mainWindow_overlay, "id": "headline", "type": "StatusTitleSubtitle", "unnamed": 1, "visible": True}
+keys_exist_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
 """ Communities """
 
 # Create Community Banner
@@ -686,6 +690,7 @@ mainWindow_Import_seed_phrase = {"container": mainWindow_KeysMainView, "id": "bu
 # Import Seed Phrase View
 keysMainView_PrimaryAction_Button = {"container": statusDesktop_mainWindow,
                                      "objectName": "keysMainViewPrimaryActionButton", "type": "StatusButton"}
+mainWindow_iDontHaveOtherDeviceButton_StatusBaseText = {"container": statusDesktop_mainWindow, "objectName": "iDontHaveOtherDeviceButton", "type": "StatusBaseText", "visible": True}
 
 # Seed Phrase Input View
 mainWindow_SeedPhraseInputView = {"container": statusDesktop_mainWindow, "type": "SeedPhraseInputView", "unnamed": 1,
@@ -699,7 +704,7 @@ switchTabBar_24_words_Button = {"container": mainWindow_SeedPhraseInputView, "ob
 mainWindow_statusSeedPhraseInputField_TextEdit = {"container": mainWindow_StatusWindow, "objectName": "enterSeedPhraseInputField", "type": "TextEdit", "visible": True}
 
 mainWindow_Import_StatusButton = {"checkable": False, "container": mainWindow_SeedPhraseInputView,
-                                  "objectName": "seedPhraseViewSubmitButton", "text": "Import", "type": "StatusButton",
+                                  "objectName": "seedPhraseViewSubmitButton", "type": "StatusButton",
                                   "visible": True}
 
 # SyncCode View
@@ -769,6 +774,8 @@ loginView_currentUserNameLabel = {"container": mainWindow_LoginView, "objectName
 loginView_changeAccountBtn = {"container": mainWindow_LoginView, "objectName": "loginChangeAccountButton", "type": "StatusFlatRoundButton"}
 accountsView_accountListPanel = {"container": statusDesktop_mainWindow, "objectName": "LoginView_AccountsRepeater", "type": "Repeater", "visible": True}
 mainWindow_txtPassword_Input = {"container": statusDesktop_mainWindow, "id": "txtPassword", "type": "Input", "unnamed": 1, "visible": True}
+loginView_addNewUserItem_AccountMenuItemPanel = {"container": statusDesktop_mainWindow_overlay, "index": 0, "objectName": "LoginView_addNewUserItem", "type": "AccountMenuItemPanel", "visible": True}
+o_AccountMenuItemPanel = {"container": statusDesktop_mainWindow_overlay, "index": 1, "type": "AccountMenuItemPanel", "unnamed": 1, "visible": True}
 
 # Touch ID Auth View
 mainWindow_TouchIDAuthView = {"container": statusDesktop_mainWindow, "type": "TouchIDAuthView", "unnamed": 1, "visible": True}
