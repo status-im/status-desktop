@@ -183,6 +183,8 @@ QtObject {
 
     property color messageHighlightColor
 
+    property color desktopBlue10
+
     property var userCustomizationColors: []
 
     property var identiconRingColors: []
