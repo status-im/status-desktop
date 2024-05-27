@@ -20,8 +20,7 @@ SplitView {
         SplitView.fillHeight: true
 
         SlippageSelector {
-            id: buttonRow
-
+            id: slippageSelector
             anchors.centerIn: parent
         }
     }
@@ -38,12 +37,12 @@ SplitView {
             Label {
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                text: "Value: %1".arg(buttonRow.value)
+                text: "Value: %1".arg(slippageSelector.value)
             }
             Label {
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                text: "Valid: " + buttonRow.valid//"%1".arg(buttonRow.valid ? "true" : "false")
+                text: "Valid: %1".arg(slippageSelector.valid ? "true" : "false")
             }
 
             ColumnLayout {
@@ -52,9 +51,14 @@ SplitView {
 
                     Button {
                         text: "set " + modelData
-                        onClicked: buttonRow.value = modelData
+                        onClicked: slippageSelector.value = modelData
                     }
                 }
+            }
+
+            Button {
+                text: "Reset defaults"
+                onClicked: slippageSelector.reset()
             }
 
             Item { Layout.fillHeight: true }

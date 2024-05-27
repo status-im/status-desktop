@@ -7,9 +7,13 @@ import StatusQ.Controls 0.1
 Control {
     id: root
 
-    property double value: 0.5
-    readonly property bool valid: customInput.visible && customInput.valid
+    property double value: d.defaultValue
+    readonly property bool valid: customInput.activeFocus && customInput.valid
                                   || buttons.value !== null
+
+    function reset() {
+        value = d.defaultValue
+    }
 
     onValueChanged: {
         if (d.internalUpdate)
@@ -20,13 +24,14 @@ Control {
         if (custom) {
             customButton.visible = false
             customInput.value = value
+            customInput.forceActiveFocus()
         } else {
             customButton.visible = true
         }
     }
 
     Component.onCompleted: {
-        buttons.model.append(d.values.map(i => ({ text: "%L1 %2".arg(i).arg(d.customSymbol), value: i })))
+        buttons.model.append(d.values.map((i) => ({ text: "%L1 %2".arg(i).arg(d.customSymbol), value: i })))
         valueChanged()
     }
 
@@ -35,6 +40,7 @@ Control {
 
         readonly property string customSymbol: "%"
         readonly property var values: [0.1, 0.5, 1]
+        readonly property double defaultValue: 0.5
         property bool internalUpdate: false
 
         function update(value) {
@@ -44,16 +50,16 @@ Control {
         }
     }
 
+    background: null
     contentItem: RowLayout {
         spacing: buttons.spacing
 
         StatusButtonRow {
             id: buttons
-
             model: ListModel {}
 
             Binding on value {
-                value: customInput.visible ? null : root.value
+                value: customInput.activeFocus ? null : root.value
             }
 
             onValueChanged: {
@@ -89,7 +95,12 @@ Control {
             maxValue: 100.0
             currencySymbol: d.customSymbol
             onValueChanged: d.update(value)
-            onFocusChanged: if (focus) d.update(value)
+            onFocusChanged: {
+                if (focus && valid)
+                    d.update(value)
+                else if (!valid)
+                    clear()
+            }
         }
     }
 }
