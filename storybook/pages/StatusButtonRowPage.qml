@@ -19,15 +19,10 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        background: Rectangle {
-            color: Theme.palette.baseColor4
-        }
-
-        StatusButtonRow {
+        SlippageSelector {
             id: buttonRow
-            symbolValue: ctrlCustomSymbol.text
+
             anchors.centerIn: parent
-            //currentValue: 1.42
         }
     }
 
@@ -40,36 +35,26 @@ SplitView {
         ColumnLayout {
             anchors.fill: parent
 
-            RowLayout {
+            Label {
                 Layout.fillWidth: true
-                Label { text: "Custom symbol:" }
-                TextField {
-                    Layout.fillWidth: true
-                    id: ctrlCustomSymbol
-                    text: " %"
+                font.weight: Font.Medium
+                text: "Value: %1".arg(buttonRow.value)
+            }
+            Label {
+                Layout.fillWidth: true
+                font.weight: Font.Medium
+                text: "Valid: " + buttonRow.valid//"%1".arg(buttonRow.valid ? "true" : "false")
+            }
+
+            ColumnLayout {
+                Repeater {
+                    model: [0.1, 0.5, 0.24, 0.8, 120.84]
+
+                    Button {
+                        text: "set " + modelData
+                        onClicked: buttonRow.value = modelData
+                    }
                 }
-            }
-            Button {
-                text: "Reset to default"
-                onClicked: buttonRow.reset()
-            }
-            Label {
-                Layout.fillWidth: true
-                text: "Model: [%1]".arg(buttonRow.model)
-            }
-            Label {
-                Layout.fillWidth: true
-                text: "Default value: %1".arg(buttonRow.defaultValue)
-            }
-            Label {
-                Layout.fillWidth: true
-                font.weight: Font.Medium
-                text: "Current value: %1".arg(buttonRow.currentValue)
-            }
-            Label {
-                Layout.fillWidth: true
-                font.weight: Font.Medium
-                text: "Valid: %1".arg(buttonRow.valid ? "true" : "false")
             }
 
             Item { Layout.fillHeight: true }
