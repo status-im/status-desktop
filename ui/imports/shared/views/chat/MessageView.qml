@@ -271,8 +271,8 @@ Loader {
                                                    root.chatContentModule.chatDetails.canPostReactions &&
                                                    !root.isViewMemberMessagesePopup
 
-        readonly property bool canPost: root.chatContentModule.chatDetails.channelRole === Constants.CommunityChannelRole.Poster
-        readonly property bool canView: canPost || root.chatContentModule.chatDetails.channelRole === Constants.CommunityChannelRole.Viewer
+        readonly property bool canPost: root.chatContentModule.chatDetails.canPost
+        readonly property bool canView: canPost || root.chatContentModule.chatDetails.canView
 
         function nextMessageHasHeader() {
             if(!root.nextMessageAsJsonObj) {

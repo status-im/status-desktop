@@ -1,6 +1,6 @@
 import NimQml
 import ../../../shared_models/message_model as pinned_msg_model
-import ../../../../../app_service/service/chat/dto/chat as chat_dto
+import ../item as chat_item
 
 import io_interface
 import chat_details
@@ -37,15 +37,8 @@ QtObject:
     result.viewOnlyPermissionsSatisfied = false
     result.viewAndPostPermissionsSatisfied = false
 
-  proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
-      name, icon: string, color, description, emoji: string, hasUnreadMessages: bool,
-      notificationsCount: int, highlight, muted: bool, position: int, isUntrustworthy: bool,
-      isContact: bool, blocked: bool, canPostReactions: bool, hideIfPermissionsNotMet: bool, channelRole: int) =
-    self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name,
-      icon, color, description, emoji, hasUnreadMessages, notificationsCount, highlight, muted, position,
-      isUntrustworthy, isContact, blocked, canPostReactions, hideIfPermissionsNotMet, channelRole)
+  proc load*(self: View) =
     self.delegate.viewDidLoad()
-    self.chatDetailsChanged()
 
   proc pinnedModel*(self: View): pinned_msg_model.Model =
     return self.pinnedMessagesModel
@@ -103,6 +96,9 @@ QtObject:
   proc leaveChat*(self: View) {.slot.} =
     self.delegate.leaveChat()
 
+  proc chatDetails*(self: View): ChatDetails =
+    return self.chatDetails
+
   proc setMuted*(self: View, muted: bool) =
     self.chatDetails.setMuted(muted)
 
@@ -140,16 +136,6 @@ QtObject:
 
   proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
-
-  proc updateChatDetails*(self: View, chatDto: ChatDto) =
-    if chatDto.chatType != ChatType.OneToOne:
-      self.chatDetails.setName(chatDto.name)
-      self.chatDetails.setIcon(chatDto.icon)
-    self.chatDetails.setDescription(chatDto.description)
-    self.chatDetails.setEmoji(chatDto.emoji)
-    self.chatDetails.setColor(chatDto.color)
-    self.chatDetails.setMuted(chatDto.muted)
-    self.chatDetails.setCanPostReactions(chatDto.canPostReactions)
 
   proc updateChatDetailsName*(self: View, name: string) =
     self.chatDetails.setName(name)

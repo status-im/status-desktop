@@ -170,7 +170,7 @@ proc init*(self: Controller) =
     let args = CommunityChatArgs(e)
     if(args.chat.communityId != self.sectionId or args.chat.id != self.chatId):
       return
-    self.delegate.onChatEdited(args.chat)
+    self.delegate.onCommunityChannelEdited(args.chat)
 
   self.events.on(SIGNAL_CHAT_RENAMED) do(e: Args):
     var args = ChatRenameArgs(e)
@@ -183,12 +183,6 @@ proc init*(self: Controller) =
     if(self.chatId != args.id):
       return
     self.delegate.onGroupChatDetailsUpdated(args.newName, args.newColor, args.newImage)
-
-  self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
-    var args = ChatUpdateArgs(e)
-    for chat in args.chats:
-      if self.chatId == chat.id:
-        self.delegate.onChatEdited(chat)
 
 proc getMyChatId*(self: Controller): string =
   return self.chatId

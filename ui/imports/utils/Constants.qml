@@ -1315,9 +1315,4 @@ QtObject {
         InProgress = 1,
         Done = 2
     }
-
-    enum CommunityChannelRole {
-        Poster = 0,
-        Viewer = 1
-    }
 }

@@ -36,11 +36,12 @@ type
     locked: bool
     requiresPermissions: bool
     canPostReactions: bool
+    canPost: bool
+    canView: bool
     viewersCanPostReactions: bool
     hideIfPermissionsNotMet: bool
     viewOnlyPermissionsSatisfied: bool
     viewAndPostPermissionsSatisfied: bool
-    channelRole: int
 
 proc initItem*(
     id,
@@ -69,12 +70,13 @@ proc initItem*(
     loaderActive = false,
     locked = false,
     requiresPermissions = false,
+    canPost = true,
+    canView = true,
     canPostReactions = true,
     viewersCanPostReactions = true,
     hideIfPermissionsNotMet: bool,
     viewOnlyPermissionsSatisfied: bool,
     viewAndPostPermissionsSatisfied: bool,
-    channelRole: int,
     ): Item =
   result = Item()
   result.id = id
@@ -104,19 +106,19 @@ proc initItem*(
   result.loaderActive = loaderActive
   result.locked = locked
   result.requiresPermissions = requiresPermissions
+  result.canPost = canPost
+  result.canView = canView
   result.canPostReactions = canPostReactions
   result.viewersCanPostReactions = viewersCanPostReactions
   result.hideIfPermissionsNotMet = hideIfPermissionsNotMet
   result.viewOnlyPermissionsSatisfied = viewOnlyPermissionsSatisfied
   result.viewAndPostPermissionsSatisfied = viewAndPostPermissionsSatisfied
-  result.channelRole = channelRole
 
 proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
     id: {self.id},
     name: {$self.name},
     memberRole: {$self.memberRole},
-    channelRole: {$self.channelRole},
     icon: {$self.icon},
     color: {$self.color},
     colorId: {$self.colorId},
@@ -139,6 +141,8 @@ proc `$`*(self: Item): string =
     loaderActive: {$self.loaderActive},
     locked: {$self.locked},
     requiresPermissions: {$self.requiresPermissions},
+    canPost: {$self.canPost},
+    canView: {$self.canView},
     canPostReactions: {$self.canPostReactions},
     viewersCanPostReactions: {$self.viewersCanPostReactions},
     hideIfPermissionsNotMet: {$self.hideIfPermissionsNotMet},
@@ -151,7 +155,6 @@ proc toJsonNode*(self: Item): JsonNode =
     "itemId": self.id,
     "name": self.name,
     "memberRole": self.memberRole,
-    "channelRole": self.channelRole,
     "icon": self.icon,
     "color": self.color,
     "colorId": self.colorId,
@@ -174,6 +177,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "loaderActive": self.loaderActive,
     "locked": self.locked,
     "requiresPermissions": self.requiresPermissions,
+    "canPost": self.canPost,
+    "canView": self.canView,
     "canPostReactions": self.canPostReactions,
     "viewersCanPostReactions": self.viewersCanPostReactions,
     "hideIfPermissionsNotMet": self.hideIfPermissionsNotMet,
@@ -195,9 +200,6 @@ proc `name=`*(self: var Item, value: string) =
 
 proc memberRole*(self: Item): MemberRole =
   self.memberRole
-
-proc channelRole*(self: Item): int =
-  self.channelRole
 
 proc icon*(self: Item): string =
   self.icon
@@ -351,6 +353,18 @@ proc requiresPermissions*(self: Item): bool =
 
 proc `requiresPermissions=`*(self: Item, value: bool) =
   self.requiresPermissions = value
+
+proc canPost*(self: Item): bool =
+  self.canPost
+
+proc `canPost=`*(self: Item, value: bool) =
+  self.canPost = value
+
+proc canView*(self: Item): bool =
+  self.canView
+
+proc `canView=`*(self: Item, value: bool) =
+  self.canView = value
 
 proc canPostReactions*(self: Item): bool =
   self.canPostReactions

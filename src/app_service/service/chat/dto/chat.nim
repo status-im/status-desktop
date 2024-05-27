@@ -42,7 +42,6 @@ type ChatMember* = object
   id*: string
   joined*: bool
   role*: MemberRole
-  channelRole*: CommunityChannelRole
 
 type CheckPermissionsResultDto* = object
   criteria*: seq[bool]
@@ -86,6 +85,8 @@ type ChatDto* = object
   syncedTo*: int64
   syncedFrom*: int64
   firstMessageTimestamp: int64 # valid only for community chats, 0 - undefined, 1 - no messages, >1 valid timestamps
+  canPost*: bool
+  canView*: bool
   canPostReactions*: bool
   viewersCanPostReactions*: bool
   position*: int
@@ -232,12 +233,6 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   elif roles.contains(MemberRole.TokenMaster.int):
     result.role = MemberRole.TokenMaster
 
-  result.channelRole = CommunityChannelRole.Unknown
-  var channelRoleInt: int
-  if (jsonObj.getProp("channelRole", channelRoleInt) and
-    (channelRoleInt >= ord(low(CommunityChannelRole)) or channelRoleInt <= ord(high(CommunityChannelRole)))):
-      result.channelRole = CommunityChannelRole(channelRoleInt)
-
 proc toChatDto*(jsonObj: JsonNode): ChatDto =
   result = ChatDto()
   discard jsonObj.getProp("id", result.id)
@@ -253,6 +248,8 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
   discard jsonObj.getProp("canPostReactions", result.canPostReactions)
+  discard jsonObj.getProp("canPost", result.canPost)
+  discard jsonObj.getProp("canView", result.canView)
   discard jsonObj.getProp("viewersCanPostReactions", result.viewersCanPostReactions)
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("muted", result.muted)
@@ -350,10 +347,3 @@ proc isPrivateGroupChat*(c: ChatDto): bool =
 
 proc isActivePersonalChat*(c: ChatDto): bool =
   return c.active and (c.isOneToOne() or c.isPrivateGroupChat()) and c.communityId == ""
-
-proc getChannelRole*(chat: ChatDto, pubkey: string): CommunityChannelRole =
-  for member in chat.members:
-    if member.id == pubkey:
-      return member.channelRole
-  return CommunityChannelRole.Unknown
-
