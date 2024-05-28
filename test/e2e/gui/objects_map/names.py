@@ -337,6 +337,7 @@ mainWallet_AddEditAccountPopup_EnterSeedPhraseWord = {"container": mainWallet_Ad
 mainWallet_AddEditAccountPopup_12WordsButton = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "12SeedButton", "type": "StatusSwitchTabButton"}
 mainWallet_AddEditAccountPopup_18WordsButton = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "18SeedButton", "type": "StatusSwitchTabButton"}
 mainWallet_AddEditAccountPopup_24WordsButton = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "24SeedButton", "type": "StatusSwitchTabButton"}
+enterSeedPhraseInvalidSeedText_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "enterSeedPhraseInvalidSeedText", "type": "StatusBaseText", "visible": True}
 
 # Edit Account from settings popup
 editWalletSettings_renameButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "renameAccountModalSaveBtn", "type": "StatusButton"}

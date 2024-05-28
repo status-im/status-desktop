@@ -123,17 +123,19 @@ class AccountPopup(BasePopup):
 
     @allure.step('Set new seed phrase for account')
     def set_origin_new_seed_phrase(self, value: str):
-        self._origin_combobox.click()
-        self._new_master_key_origin_item.click()
-        AddNewAccountPopup().wait_until_appears().generate_new_master_key(value)
+        self.open_add_new_account_popup().generate_new_master_key(value)
         return self
 
     @allure.step('Set seed phrase')
     def set_origin_seed_phrase(self, value: typing.List[str]):
+        self.open_add_new_account_popup().import_new_seed_phrase(value)
+        return self
+
+    @allure.step('Open add new account popup')
+    def open_add_new_account_popup(self):
         self._origin_combobox.click()
         self._new_master_key_origin_item.click()
-        AddNewAccountPopup().wait_until_appears().import_new_seed_phrase(value)
-        return self
+        return AddNewAccountPopup().wait_until_appears()
 
     @allure.step('Set derivation path for account')
     def set_derivation_path(self, value: str, index: int, password: str):
@@ -221,6 +223,7 @@ class AddNewAccountPopup(BasePopup):
         self._seed_phrase_word_text_edit = TextEdit(names.mainWindow_statusSeedPhraseInputField_TextEdit)
         self._seed_phrase_phrase_key_name_text_edit = TextEdit(
             names.mainWallet_AddEditAccountPopup_ImportedSeedPhraseKeyName)
+        self._already_added_error = QObject(names.enterSeedPhraseInvalidSeedText_StatusBaseText)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
@@ -235,8 +238,16 @@ class AddNewAccountPopup(BasePopup):
         self._continue_button.click()
         return private_key[:5]
 
-    @allure.step('Import new seed phrase')
-    def import_new_seed_phrase(self, seed_phrase_words: list) -> str:
+    @allure.step('Import new seed phrase and continue')
+    def import_new_seed_phrase(self, seed_phrase_words: list):
+        self.enter_new_seed_phrase(seed_phrase_words)
+        seed_phrase_name = ''.join([word[0] for word in seed_phrase_words[:10]])
+        self._seed_phrase_phrase_key_name_text_edit.text = seed_phrase_name
+        self._continue_button.click()
+        return seed_phrase_name
+
+    @allure.step('Enter new seed phrase')
+    def enter_new_seed_phrase(self, seed_phrase_words: list) -> str:
         self._import_seed_phrase_button.click()
         if len(seed_phrase_words) == 12:
             self._seed_phrase_12_words_button.click()
@@ -249,15 +260,16 @@ class AddNewAccountPopup(BasePopup):
         for count, word in enumerate(seed_phrase_words, start=1):
             self._seed_phrase_word_text_edit.real_name['objectName'] = f'enterSeedPhraseInputField{count}'
             self._seed_phrase_word_text_edit.text = word
-        seed_phrase_name = ''.join([word[0] for word in seed_phrase_words[:10]])
-        self._seed_phrase_phrase_key_name_text_edit.text = seed_phrase_name
-        self._continue_button.click()
-        return seed_phrase_name
 
     @allure.step('Generate new seed phrase')
     def generate_new_master_key(self, name: str):
         self._generate_master_key_button.click()
         BackUpYourSeedPhrasePopUp().wait_until_appears().generate_seed_phrase(name)
+
+    @allure.step('Get text of error')
+    def get_already_added_error(self):
+        assert self._already_added_error.is_visible
+        return self._already_added_error.object.text
 
 
 class GeneratedAddressesList(QObject):

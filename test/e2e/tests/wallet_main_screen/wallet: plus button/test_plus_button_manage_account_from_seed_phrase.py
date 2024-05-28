@@ -3,6 +3,8 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+
+from constants.wallet import WalletSeedPhrase
 from tests.wallet_main_screen import marks
 
 import constants
@@ -83,3 +85,35 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
             f'Account with {new_name} is still displayed even it should not be'
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736371',
+                 "Can't import the same seed phrase when adding account")
+@pytest.mark.case(736371)
+@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
+@pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
+                         'new_name, new_color, new_emoji, new_emoji_unicode, seed_phrase', [
+                             pytest.param('SPAcc24', '#2a4af5', 'sunglasses', '1f60e',
+                                          'SPAcc24edited', '#216266', 'thumbsup', '1f44d',
+                                          'elite dinosaur flavor canoe garbage palace antique dolphin virtual mixed sand '
+                                          'impact solution inmate hair pipe affair cage vote estate gloom lamp robust like'),
+                         ])
+def test_plus_button_re_importing_seed_phrase(main_screen: MainWindow, user_account,
+                                              name: str, color: str, emoji: str, emoji_unicode: str,
+                                              new_name: str, new_color: str, new_emoji: str,
+                                              new_emoji_unicode: str,
+                                              seed_phrase: str):
+    with step('Create imported seed phrase wallet account'):
+        wallet = main_screen.left_panel.open_wallet()
+        SigningPhrasePopup().wait_until_appears().confirm_phrase()
+        account_popup = wallet.left_panel.open_add_account_popup()
+        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_seed_phrase(
+            seed_phrase.split()).save()
+        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        account_popup.wait_until_hidden()
+
+    with step('Try to re-import seed phrase and verify that correct error appears'):
+        account_popup = wallet.left_panel.open_add_account_popup()
+        add_new_account = account_popup.set_name(name).set_emoji(emoji).set_color(color).open_add_new_account_popup()
+        add_new_account.enter_new_seed_phrase(seed_phrase.split())
+        assert add_new_account.get_already_added_error() == WalletSeedPhrase.WALLET_SEED_PHRASE_ALREADY_ADDED.value

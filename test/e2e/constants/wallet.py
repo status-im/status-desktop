@@ -72,3 +72,6 @@ class WalletScreensHeaders(Enum):
 class WalletRenameKeypair(Enum):
     WALLET_SUCCESSFUL_RENAMING = 'You successfully renamed your keypair\n'
 
+
+class WalletSeedPhrase(Enum):
+    WALLET_SEED_PHRASE_ALREADY_ADDED = 'The entered seed phrase is already added'
