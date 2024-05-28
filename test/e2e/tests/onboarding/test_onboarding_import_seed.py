@@ -27,7 +27,8 @@ def keys_screen(main_window) -> KeysView:
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
-@pytest.mark.case(703040)
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736372', 'Re-importing seed-phrase')
+@pytest.mark.case(703040, 736372)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
 @pytest.mark.parametrize('autocomplete, default_name', [
     pytest.param(False, 'Account 1'),
