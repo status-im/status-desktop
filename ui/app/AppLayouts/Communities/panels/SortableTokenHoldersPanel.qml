@@ -71,7 +71,7 @@ Control {
             font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.baseColor1
 
-            text: qsTr("%1 token holders").arg(root.tokenName)
+            text: qsTr("%1 token hodlers").arg(root.tokenName)
         }
 
         SearchBox {
