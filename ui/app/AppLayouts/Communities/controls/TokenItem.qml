@@ -13,6 +13,7 @@ Control {
     property string shortName
     property string amount
     property url iconSource
+    property string decimals
     property bool selected: false
     property bool showSubItemsIcon: false
 
