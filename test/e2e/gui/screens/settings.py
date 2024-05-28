@@ -30,7 +30,7 @@ class LeftPanel(QObject):
     def _open_settings(self, object_name: str):
         self._settings_section_template.real_name['objectName'] = object_name
         if not self._settings_section_template.is_visible:
-            self._scroll.vertical_scroll_to(self._settings_section_template)
+            self._scroll.vertical_down_to(self._settings_section_template)
         self._settings_section_template.click()
 
     @allure.step('Check back up seed option menu item presence')
