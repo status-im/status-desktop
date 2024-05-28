@@ -140,6 +140,8 @@ StackLayout {
             readonly property var sectionItem: root.rootStore.chatCommunitySectionModule
             readonly property string communityId: root.sectionItemModel.id
 
+            objectName: "chatViewComponent"
+
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
             contactsStore: root.contactsStore
