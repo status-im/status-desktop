@@ -16,9 +16,9 @@ from constants import UserAccount
 pytestmark = marks
 
 
-@allure.testcase('',
-                 '')
-@pytest.mark.case()
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736170',
+                 'Add contact from community channel')
+@pytest.mark.case(736170)
 def test_add_contact_from_community_channel_chat(multiple_instances):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
@@ -115,7 +115,7 @@ def test_add_contact_from_community_channel_chat(multiple_instances):
             assert community_params['intro'] == welcome_popup.intro
             welcome_popup.join().authenticate(user_three.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
+                                  10000), 'Join community button not hidden'
             main_screen.hide()
 
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
@@ -131,7 +131,7 @@ def test_add_contact_from_community_channel_chat(multiple_instances):
             assert community_params['intro'] == welcome_popup.intro
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
+                                  10000), 'Join community button not hidden'
 
         with step(f'User {user_one.name}, send contact request to {user_three.name} from channel'):
             profile_popup = community_screen.right_panel.click_member(user_three.name)
