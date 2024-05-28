@@ -2,9 +2,9 @@ import json, typetraits, tables, sequtils, strutils
 
 type
   Fleet* {.pure.} = enum
-    Undefined = ""
-    WakuV2Prod = "wakuv2.prod"
-    WakuV2Test = "wakuv2.test"
+    Undefined = "",
+    WakuSandbox = "waku.sandbox"
+    WakuTest = "waku.test"
     ShardsTest = "shards.test"
     ShardsStaging = "shards.staging"
 

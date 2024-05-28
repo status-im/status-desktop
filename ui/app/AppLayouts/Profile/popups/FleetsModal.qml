@@ -31,7 +31,7 @@ ModalPopup {
 
         FleetRadioSelector {
             advancedStore: popup.advancedStore
-            fleetName: Constants.waku_prod
+            fleetName: Constants.waku_sandbox
             buttonGroup: fleetSettings
         }
 
