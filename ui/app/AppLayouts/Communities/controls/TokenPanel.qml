@@ -19,6 +19,7 @@ ColumnLayout {
     property alias tokenShortName: item.shortName
     property alias tokenAmount: item.amount
     property alias tokenImage: item.iconSource
+    property alias tokenDecimals: item.decimals
     property alias amountText: amountInput.text
     property alias amount: amountInput.amount
     property alias decimals: amountInput.tokenDecimals
@@ -131,7 +132,7 @@ ColumnLayout {
         maximumAmount: !!networksComboBoxLoader.item
                        ? networksComboBoxLoader.item.currentAmount : "0"
         tokenDecimals: !!networksComboBoxLoader.item
-                       ? networksComboBoxLoader.item.decimals : 0
+                       ? networksComboBoxLoader.item.decimals : root.tokenDecimals
         multiplierIndex: !!networksComboBoxLoader.item
                          ? networksComboBoxLoader.item.currentMultiplierIndex : 0
 

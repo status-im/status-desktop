@@ -306,7 +306,7 @@ StatusDropdown {
                       && ModelUtils.get(root.collectiblesModel, 0, "category") === TokenCategories.Category.General
             }
 
-            onTypeChanged: forceActiveFocus()            
+            onTypeChanged: forceActiveFocus()
 
             onItemClicked: {
                 d.assetAmountText = ""
@@ -402,6 +402,7 @@ StatusDropdown {
             tokenName: PermissionsHelpers.getTokenNameByKey(root.assetsModel, root.assetKey)
             tokenShortName: PermissionsHelpers.getTokenShortNameByKey(root.assetsModel, root.assetKey)
             tokenImage: PermissionsHelpers.getTokenIconByKey(root.assetsModel, root.assetKey)
+            tokenDecimals: PermissionsHelpers.getTokenDecimalsByKey(root.assetsModel, root.assetKey)
             tokenAmount: PermissionsHelpers.getTokenRemainingSupplyByKey(root.assetsModel, root.assetKey)
             amountText: d.assetAmountText
             tokenCategoryText: qsTr("Asset")
@@ -477,6 +478,7 @@ StatusDropdown {
             tokenShortName: ""
             tokenImage: PermissionsHelpers.getTokenIconByKey(root.collectiblesModel, root.collectibleKey)
             tokenAmount: PermissionsHelpers.getTokenRemainingSupplyByKey(root.collectiblesModel, root.collectibleKey)
+            tokenDecimals: PermissionsHelpers.getTokenDecimalsByKey(root.collectiblesModel, root.assetKey)
             amountText: d.collectibleAmountText
             tokenCategoryText: qsTr("Collectible")
             addOrUpdateButtonEnabled: d.collectiblesReady
