@@ -451,7 +451,7 @@ StatusModal {
                             // Update root values
                             if (Utils.isLikelyEnsName(plainText)) {
                                 d.ens = plainText
-                                d.address = ""
+                                d.address = Constants.zeroAddress
                                 d.chainShortNames = ""
                             }
                             else {
