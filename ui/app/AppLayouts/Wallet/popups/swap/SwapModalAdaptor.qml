@@ -33,7 +33,7 @@ QObject {
             },
             FastExpressionRole {
                 name: "fromToken"
-                expression: root.__selectedFromToken
+                expression: root.__fromToken
             }
         ]
     }
@@ -63,35 +63,43 @@ QObject {
     }
 
     // Internal properties and functions -----------------------------------------------------------------------------------------------------------------------------
+    readonly property var __fromToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
     readonly property SortFilterProxyModel __filteredFlatNetworksModel: SortFilterProxyModel {
         sourceModel: root.swapStore.flatNetworks
         filters: ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled }
     }
 
-    /* TODO: the below logic is only needed until https://github.com/status-im/status-desktop/issues/14550
-       is implemented then we should use that helper to connect the balances model with a wallet account */
-    readonly property var __selectedFromToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
-    readonly property var __balancesModelForSelectedFromToken: ModelUtils.getByKey(root.walletAssetsStore.baseGroupedAccountAssetModel, "tokensKey", root.swapFormData.fromTokensKey, "balances")
-    readonly property LeftJoinModel __networkJointBalancesModelForSelectedFromToken: LeftJoinModel {
-        leftModel: root.__balancesModelForSelectedFromToken
-        rightModel: root.__filteredFlatNetworksModel
-        joinRole: "chainId"
+    SubmodelProxyModel {
+        id: filteredBalancesModel
+        sourceModel: root.walletAssetsStore.baseGroupedAccountAssetModel
+        submodelRoleName: "balances"
+        delegateModel: SortFilterProxyModel {
+            sourceModel: joinModel
+            filters: ValueFilter {
+                roleName: "chainId"
+                value: root.swapFormData.selectedNetworkChainId
+            }
+            readonly property LeftJoinModel joinModel: LeftJoinModel {
+                leftModel: submodel
+                rightModel: root.__filteredFlatNetworksModel
+
+                joinRole: "chainId"
+            }
+        }
     }
-    readonly property SortFilterProxyModel __filteredBalancesModelForSelectedFromToken: SortFilterProxyModel {
-        sourceModel: __networkJointBalancesModelForSelectedFromToken
-        filters: ValueFilter { roleName: "chainId"; value: root.swapFormData.selectedNetworkChainId}
-    }
+
     function __processAccountBalance(address) {
         let network = ModelUtils.getByKey(root.__filteredFlatNetworksModel, "chainId", root.swapFormData.selectedNetworkChainId)
         if(!!network) {
-            let accountBalances = ModelUtils.getByKey(root.__filteredBalancesModelForSelectedFromToken, "account", address)
-            if(accountBalances === null) {
+            let balancesModel = ModelUtils.getByKey(filteredBalancesModel, "tokensKey", root.swapFormData.fromTokensKey, "balances")
+            let accountBalance = ModelUtils.getByKey(balancesModel, "account", address)
+            if(!accountBalance) {
                 return {
                     balance: "0",
                     iconUrl: network.iconUrl,
                     chainColor: network.chainColor}
             }
-            return accountBalances
+            return accountBalance
         }
         return null
     }
