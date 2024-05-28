@@ -20,7 +20,7 @@ in pkgs.mkShell {
     qt5Full
     bash curl wget git file unzip jq lsb-release
     cmake gnumake pkg-config gnugrep qtCustom
-    go_1_19
+    go_1_21
     pcre nss pcsclite extra-cmake-modules
     xorg.libxcb xorg.libX11 libxkbcommon
   ] ++ (with gst_all_1; [
