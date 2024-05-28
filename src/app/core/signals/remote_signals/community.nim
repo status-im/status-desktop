@@ -1,9 +1,11 @@
-import json, tables
+import json, tables, chronicles
 import base
 
 import ../../../../app_service/service/community/dto/[community]
 import ../../../../app_service/service/community_tokens/dto/community_token
 import ../../../../app_service/service/chat/dto/[chat]
+from ../../../../app_service/common/conversion import intToEnum
+
 import signal_type
 
 include  app_service/common/json_utils
@@ -84,6 +86,17 @@ type CommunityTokenTransactionStatusChangedSignal* = ref object of Signal
   ownerToken*: CommunityTokenDto
   masterToken*: CommunityTokenDto
   errorString*: string
+
+type
+  CommunityTokenActionType* {.pure.} = enum
+    Unknown = 0,
+    Airdrop,
+    Burn,
+    RemoteDestruct,
+
+type CommunityTokenActionSignal* = ref object of Signal
+  communityToken*: CommunityTokenDto
+  actionType*: CommunityTokenActionType
 
 proc fromEvent*(T: type CommunitySignal, event: JsonNode): CommunitySignal =
   result = CommunitySignal()
@@ -273,3 +286,14 @@ proc fromEvent*(T: type CommunityTokenTransactionStatusChangedSignal, event: Jso
     result.masterToken = toCommunityTokenDto(event["event"]{"masterToken"})
   result.errorString = event["event"]{"errorString"}.getStr()
   result.signalType = SignalType.CommunityTokenTransactionStatusChanged
+
+proc fromEvent*(T: type CommunityTokenActionSignal, event: JsonNode): CommunityTokenActionSignal =
+  result = CommunityTokenActionSignal()
+  result.actionType = CommunityTokenActionType.Unknown
+  if event["event"].hasKey("communityToken"):
+    result.communityToken = toCommunityTokenDto(event["event"]{"communityToken"})
+  try:
+    result.actionType = intToEnum[CommunityTokenActionType](event["event"]{"actionType"}.getInt())
+  except Exception as e:
+    error "CommunityTokenActionSignal: can't read actionType:", error=e.msg
+  result.signalType = SignalType.CommunityTokenAction

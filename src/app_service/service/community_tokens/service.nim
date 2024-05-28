@@ -261,6 +261,7 @@ const SIGNAL_COMPUTE_AIRDROP_FEE* = "communityTokens-computeAirdropFee"
 const SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED* = "communityTokens-communityTokenOwnersFetched"
 const SIGNAL_REMOTE_DESTRUCT_STATUS* = "communityTokens-communityTokenRemoteDestructStatus"
 const SIGNAL_BURN_STATUS* = "communityTokens-communityTokenBurnStatus"
+const SIGNAL_BURN_ACTION_RECEIVED* = "communityTokens-communityTokenBurnActionReceived"
 const SIGNAL_AIRDROP_STATUS* = "communityTokens-airdropStatus"
 const SIGNAL_REMOVE_COMMUNITY_TOKEN_FAILED* = "communityTokens-removeCommunityTokenFailed"
 const SIGNAL_COMMUNITY_TOKEN_REMOVED* = "communityTokens-communityTokenRemoved"
@@ -570,6 +571,21 @@ QtObject:
     except Exception as e:
       error "Error processing owner token deployment pending transaction event", msg=e.msg
 
+  proc processCommunityTokenAction(self: Service, signalArgs: CommunityTokenActionSignal) =
+    case signalArgs.actionType
+      of CommunityTokenActionType.Airdrop:
+        self.tempTokenOwnersToFetch = signalArgs.communityToken
+        self.tokenOwners1SecTimer.start()
+      of CommunityTokenActionType.Burn:
+        self.updateCommunityTokenCache(signalArgs.communityToken.chainId, signalArgs.communityToken.address, signalArgs.communityToken)
+        let data = RemoteDestructArgs(communityToken: signalArgs.communityToken)
+        self.events.emit(SIGNAL_BURN_ACTION_RECEIVED, data)
+      of CommunityTokenActionType.RemoteDestruct:
+        self.tempTokenOwnersToFetch = signalArgs.communityToken
+        self.tokenOwners1SecTimer.start()
+      else:
+        warn "Unknown token action", actionType=signalArgs.actionType
+
   proc tryFetchOwners(self: Service) =
     # both communities and tokens should be loaded
     if self.allCommunityTokensLoaded and self.communityDataLoaded:
@@ -589,6 +605,10 @@ QtObject:
     self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
       self.communityDataLoaded = true
       self.tryFetchOwners()
+
+    self.events.on(SignalType.CommunityTokenAction.event) do(e:Args):
+      let receivedData = CommunityTokenActionSignal(e)
+      self.processCommunityTokenAction(receivedData)
 
     self.events.on(SignalType.CommunityTokenTransactionStatusChanged.event) do(e: Args):
       let receivedData = CommunityTokenTransactionStatusChangedSignal(e)
