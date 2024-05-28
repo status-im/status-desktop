@@ -29,6 +29,7 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')
 @pytest.mark.case(727245)
 @pytest.mark.parametrize('user_account', [constants.user.user_with_funds])
+@pytest.mark.transaction
 def test_mint_owner_token(keys_screen, main_window, user_account):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
