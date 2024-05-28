@@ -355,6 +355,14 @@ proc init*(self: Controller) =
       self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
     self.delegate.onBurnStateChanged(communityToken.communityId, communityToken.chainId, communityToken.address, args.status)
 
+  self.events.on(SIGNAL_BURN_ACTION_RECEIVED) do(e: Args):
+    let args = RemoteDestructArgs(e)
+    let communityToken = args.communityToken
+    self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
+      communityToken.address, communityToken.supply,
+      self.getRemainingSupply(communityToken.chainId, communityToken.address),
+      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
+
   self.events.on(SIGNAL_FINALISE_OWNERSHIP_STATUS) do(e: Args):
     let args = FinaliseOwnershipStatusArgs(e)
     self.delegate.onFinaliseOwnershipStatusChanged(args.isPending, args.communityId)
