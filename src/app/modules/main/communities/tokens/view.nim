@@ -34,6 +34,9 @@ QtObject:
   proc removeCommunityToken*(self: View, communityId: string, chainId: int, address: string) {.slot.} =
     self.communityTokensModule.removeCommunityToken(communityId, chainId, address)
 
+  proc refreshCommunityToken*(self: View, chainId: int, address: string) {.slot.} =
+    self.communityTokensModule.refreshCommunityToken(chainId, address)
+
   proc airdropTokens*(self: View, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) {.slot.} =
     self.communityTokensModule.airdropTokens(communityId, tokensJsonString, walletsJsonString, addressFrom)
 

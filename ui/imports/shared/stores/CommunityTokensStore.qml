@@ -80,6 +80,11 @@ QtObject {
         communityTokensModuleInst.removeCommunityToken(communityId, parts[0], parts[1])
     }
 
+    function refreshToken(contractUniqueKey) {
+        let parts = contractUniqueKey.split("_");
+        communityTokensModuleInst.refreshCommunityToken(parts[0], parts[1])
+    }
+
     function updateSmartContract(communityId, chainId, contractAddress, accountAddress) {
         communityTokensModuleInst.setSigner(communityId, chainId, contractAddress, accountAddress)
     }
