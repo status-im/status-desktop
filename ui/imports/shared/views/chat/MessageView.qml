@@ -590,11 +590,13 @@ Loader {
 
                 readonly property int contentType: d.convertContentType(root.messageContentType)
                 property string originalMessageText: ""
-                readonly property bool hideQuickActions: root.isChatBlocked ||
+                readonly property bool hideQuickActions: {
+                    return root.isChatBlocked ||
                                   root.placeholderMessage ||
                                   root.isInPinnedPopup ||
                                   root.editModeOn ||
                                   !root.rootStore.mainModuleInst.activeSection.joined
+                }
 
                 function editCancelledHandler() {
                     root.messageStore.setEditModeOff(root.messageId)
@@ -957,8 +959,11 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup && !root.editRestricted && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
+                        active: {
+                        
+                            return !root.isInPinnedPopup && !root.editRestricted && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
                                 && !root.isViewMemberMessagesePopup && d.canPost
+                        }
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "editMessageButton"

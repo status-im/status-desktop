@@ -74,9 +74,8 @@ proc reevaluateRequiresTokenPermissionToJoin(self: Module)
 
 proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewersCanPostReactions: bool)
 
-proc addOrUpdateChat(self: Module,
+method addOrUpdateChat(self: Module,
     chat: ChatDto,
-    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -324,7 +323,6 @@ proc buildChatSectionUI(
 
     items.add(self.addOrUpdateChat(
       chatDto,
-      community,
       belongsToCommunity = chatDto.communityId.len > 0,
       events,
       settingsService,
@@ -701,7 +699,6 @@ proc getChatItemFromChatDto(
   var hideIfPermissionsNotMet = false
   var viewersCanPostReactions = true
   if self.controller.isCommunity:
-    let myPubKey = singletonInstance.userProfile.getPubKey()
     let communityChat = community.getCommunityChat(chatDto.id)
     # Some properties are only available on CommunityChat (they are useless for normal chats)
     canPost = communityChat.canPost
@@ -1422,9 +1419,8 @@ method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, t
 method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)
 
-proc addOrUpdateChat(self: Module,
+method addOrUpdateChat(self: Module,
     chat: ChatDto,
-    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -1438,7 +1434,6 @@ proc addOrUpdateChat(self: Module,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
   ): chat_item.Item =
-
   let sectionId = self.controller.getMySectionId()
   if belongsToCommunity and sectionId != chat.communityId or
     not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():
@@ -1453,6 +1448,9 @@ proc addOrUpdateChat(self: Module,
   if chat.id == activeChatId:
     self.updateActiveChatMembership()
 
+  var community = CommunityDto()
+  if belongsToCommunity:
+    community = self.controller.getMyCommunity()
   result = self.getChatItemFromChatDto(chat, community, setChatAsActive)
 
   if self.doesCatOrChatExist(chat.id):
@@ -1485,38 +1483,6 @@ proc addOrUpdateChat(self: Module,
       setChatAsActive,
       insertIntoModel,
     )
-
-method addOrUpdateChat*(self: Module,
-    chat: ChatDto,
-    belongsToCommunity: bool,
-    events: UniqueUUIDEventEmitter,
-    settingsService: settings_service.Service,
-    nodeConfigurationService: node_configuration_service.Service,
-    contactService: contact_service.Service,
-    chatService: chat_service.Service,
-    communityService: community_service.Service,
-    messageService: message_service.Service,
-    mailserversService: mailservers_service.Service,
-    sharedUrlsService: shared_urls_service.Service,
-    setChatAsActive: bool = true,
-    insertIntoModel: bool = true,
-  ): chat_item.Item =
- result = self.addOrUpdateChat(
-    chat,
-    CommunityDto(),
-    belongsToCommunity,
-    events,
-    settingsService,
-    nodeConfigurationService,
-    contactService,
-    chatService,
-    communityService,
-    messageService,
-    mailserversService,
-    sharedUrlsService,
-    setChatAsActive,
-    insertIntoModel,
-  )
 
 method downloadMessages*(self: Module, chatId: string, filePath: string) =
   if(not self.chatContentModules.contains(chatId)):

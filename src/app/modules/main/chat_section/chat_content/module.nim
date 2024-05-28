@@ -387,14 +387,15 @@ method onChatUpdated*(self: Module, chatItem: chat_item.Item) =
   self.messagesModule.updateChatIdentifier()
 
 method onCommunityChannelEdited*(self: Module, chatDto: ChatDto) =
-  if chatDto.chatType != ChatType.OneToOne:
-     self.view.chatDetails.setName(chatDto.name)
-     self.view.chatDetails.setIcon(chatDto.icon)
+  # This is CommunityChat ChatDto
   self.view.chatDetails.setDescription(chatDto.description)
   self.view.chatDetails.setEmoji(chatDto.emoji)
   self.view.chatDetails.setColor(chatDto.color)
   self.view.chatDetails.setMuted(chatDto.muted)
+  self.view.chatDetails.setCanPost(chatDto.canPost)
+  self.view.chatDetails.setCanView(chatDto.canView)
   self.view.chatDetails.setCanPostReactions(chatDto.canPostReactions)
+  self.view.chatDetails.setHideIfPermissionsNotMet(chatDto.hideIfPermissionsNotMet)
 
   self.messagesModule.updateChatFetchMoreMessages()
   self.messagesModule.updateChatIdentifier()
