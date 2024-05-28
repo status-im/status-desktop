@@ -81,7 +81,6 @@ Control {
             icon: "close-circle"
             visible: closeButtonVisible
             MouseArea {
-                id: mouseArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor

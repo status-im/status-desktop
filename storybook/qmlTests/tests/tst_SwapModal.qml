@@ -33,7 +33,7 @@ Item {
         walletAssetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
             walletTokensStore: TokensStore {
-                readonly property var plainTokensBySymbolModel: TokensBySymbolModel {}
+                plainTokensBySymbolModel: TokensBySymbolModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
             assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel

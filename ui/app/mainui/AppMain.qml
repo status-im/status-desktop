@@ -77,6 +77,7 @@ Item {
     readonly property TransactionStore transactionStore: TransactionStore {
         walletAssetStore: appMain.walletAssetsStore
         tokensStore: appMain.tokensStore
+        currencyStore: appMain.currencyStore
     }
 
     // set from main.qml

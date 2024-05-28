@@ -16,7 +16,6 @@ StatusAmountInput {
     bottomPadding: 0
 
     placeholderText: ""
-    input.edit.cursorVisible: true
     input.edit.font.pixelSize: Utils.getFontSizeBasedOnLetterCount(text)
     input.placeholderFont.pixelSize: 34
     input.edit.padding: 0

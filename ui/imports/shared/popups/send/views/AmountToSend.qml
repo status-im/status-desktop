@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Controls.Validators 0.1
 
 import "../controls"
@@ -14,7 +16,7 @@ ColumnLayout {
     id: root
 
     readonly property alias input: topAmountToSendInput
-    readonly property bool inputNumberValid: !!input.text && !isNaN(d.parsedInput)
+    readonly property bool inputNumberValid: !!input.text && !isNaN(d.parsedInput) && input.valid
 
     readonly property int minSendCryptoDecimals:
         !inputIsFiat ? LocaleUtils.fractionalPartLength(d.inputNumber) : 0
@@ -36,6 +38,10 @@ ColumnLayout {
     property bool interactive: false
     property bool inputIsFiat: false
 
+    property string caption: isBridgeTx ? qsTr("Amount to bridge") : qsTr("Amount to send")
+
+    property bool fiatInputInteractive: true
+
     // Crypto value to send expressed in base units (like wei for ETH),
     // as a string representing integer decimal
     readonly property alias cryptoValueToSend: d.cryptoValueRawToSend
@@ -44,6 +50,8 @@ ColumnLayout {
 
     property var formatCurrencyAmount:
         (amount, symbol, options = null, locale = null) => {}
+
+    property bool loading
 
     signal reCalculateSuggestedRoute()
 
@@ -88,11 +96,11 @@ ColumnLayout {
         }
 
         readonly property string zeroString:
-            LocaleUtils.numberToLocaleString(0, 2, LocaleUtils.userInputLocale)
+            LocaleUtils.numberToLocaleString(0, 2, topAmountToSendInput.locale)
 
         readonly property double parsedInput:
             LocaleUtils.numberFromLocaleString(topAmountToSendInput.text,
-                                               LocaleUtils.userInputLocale)
+                                               topAmountToSendInput.locale)
 
         readonly property double inputNumber:
             root.inputNumberValid ? d.parsedInput : 0
@@ -108,10 +116,7 @@ ColumnLayout {
     }
 
     StatusBaseText {
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-        text: root.isBridgeTx ? qsTr("Amount to bridge")
-                              : qsTr("Amount to send")
+        text: root.caption
         font.pixelSize: 13
         lineHeight: 18
         lineHeightMode: Text.FixedHeight
@@ -119,17 +124,16 @@ ColumnLayout {
     }
 
     RowLayout {
+        Layout.fillWidth: true
         id: topItem
 
         property double topAmountToSend: !inputIsFiat ? d.cryptoValueToSend
                                                       : d.fiatValueToSend
         property string topAmountSymbol: !inputIsFiat ? d.selectedSymbol
                                                       : root.currentCurrency
-        Layout.alignment: Qt.AlignLeft
-
         AmountInputWithCursor {
             id: topAmountToSendInput
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+            Layout.fillWidth: true
             Layout.maximumWidth: 250
             Layout.preferredWidth: !!text ? input.edit.paintedWidth + 2
                                           : textMetrics.advanceWidth
@@ -138,31 +142,29 @@ ColumnLayout {
                                           : Theme.palette.dangerColor1
             input.edit.readOnly: !root.interactive
 
+            validationMode: StatusInput.ValidationMode.Always
             validators: [
-                StatusFloatValidator {
-                    id: floatValidator
-                    bottom: 0
-                    errorMessage: ""
-                    locale: topAmountToSendInput.locale
-                },
                 StatusValidator {
                     errorMessage: ""
 
                     validate: (text) => {
-                        const num = parseFloat(text)
+                                  var num = 0
+                                  try {
+                                      num = Number.fromLocaleString(topAmountToSendInput.locale, text)
+                                  } catch (e) {
+                                      console.warn(e, "(Error parsing number from text: %1)".arg(text))
+                                      return false
+                                  }
 
-                        if (isNaN(num))
-                            return true
-
-                        return num <= root.maxInputBalance
-                    }
+                                  return num > 0 && num <= root.maxInputBalance
+                              }
                 }
             ]
 
             TextMetrics {
                 id: textMetrics
                 text: topAmountToSendInput.placeholderText
-                font: topAmountToSendInput.input.placeholder.font
+                font: topAmountToSendInput.placeholderFont
             }
 
             Keys.onReleased: {
@@ -172,33 +174,35 @@ ColumnLayout {
                 if (!isNaN(amount))
                     d.waitTimer.restart()
             }
+
+            visible: !root.loading
+        }
+        LoadingComponent {
+            objectName: "topAmountToSendInputLoadingComponent"
+            Layout.preferredWidth: topAmountToSendInput.width
+            Layout.preferredHeight: topAmountToSendInput.height
+            visible: root.loading
         }
     }
-    Item {
+
+    StatusBaseText {
+        Layout.maximumWidth: parent.width
         id: bottomItem
+        objectName: "bottomItemText"
 
-        property double bottomAmountToSend: inputIsFiat ? d.cryptoValueToSend
-                                                        : d.fiatValueToSend
-        property string bottomAmountSymbol: inputIsFiat ? d.selectedSymbol
-                                                        : currentCurrency
-
-        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-        Layout.preferredWidth: txtBottom.width
-        Layout.preferredHeight: txtBottom.height
-
-        StatusBaseText {
-            id: txtBottom
-            anchors.top: parent.top
-            anchors.left: parent.left
-            text: root.formatCurrencyAmount(bottomItem.bottomAmountToSend,
-                                            bottomItem.bottomAmountSymbol)
-            font.pixelSize: 13
-            color: Theme.palette.directColor5
-        }
+        readonly property double bottomAmountToSend: inputIsFiat ? d.cryptoValueToSend
+                                                                 : d.fiatValueToSend
+        readonly property string bottomAmountSymbol: inputIsFiat ? d.selectedSymbol
+                                                                 : root.currentCurrency
+        elide: Text.ElideMiddle
+        text: root.formatCurrencyAmount(bottomAmountToSend, bottomAmountSymbol)
+        font.pixelSize: 13
+        color: Theme.palette.directColor5
 
         MouseArea {
             anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: enabled ? Qt.PointingHandCursor : undefined
+            enabled: root.fiatInputInteractive && !!root.selectedHolding
 
             onClicked: {
                 topAmountToSendInput.validate()
@@ -207,12 +211,19 @@ ColumnLayout {
                                 bottomItem.bottomAmountToSend,
                                 bottomItem.bottomAmountSymbol,
                                 { noSymbol: true, rawAmount: true },
-                                LocaleUtils.userInputLocale)
+                                topAmountToSendInput.locale)
                 }
-                inputIsFiat = !inputIsFiat
+                root.inputIsFiat = !root.inputIsFiat
                 d.waitTimer.restart()
             }
         }
+        visible: !root.loading
+    }
+
+    LoadingComponent {
+        objectName: "bottomItemTextLoadingComponent"
+        Layout.preferredWidth: bottomItem.width
+        Layout.preferredHeight: bottomItem.height
+        visible: root.loading
     }
 }
-

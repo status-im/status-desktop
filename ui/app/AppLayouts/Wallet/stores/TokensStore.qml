@@ -18,12 +18,13 @@ QtObject {
        ex. uniswap list, status tokens list */
     readonly property var sourcesOfTokensModel: SortFilterProxyModel {
         sourceModel: !!root._allTokensModule ? root._allTokensModule.sourcesOfTokensModel : null
-        proxyRoles: ExpressionRole {
+        proxyRoles: FastExpressionRole {
             function sourceImage(sourceKey) {
                 return Constants.getSupportedTokenSourceImage(sourceKey)
             }
             name: "image"
             expression: sourceImage(model.key)
+            expectedRoles: ["key"]
         }
         filters: AnyOf {
             ValueFilter {
@@ -56,16 +57,18 @@ QtObject {
         sourceModel: root._joinFlatTokensModel
 
         proxyRoles:  [
-            ExpressionRole {
+            FastExpressionRole {
                 name: "explorerUrl"
                 expression: model.blockExplorerURL + "/token/" + model.address
+                expectedRoles: ["blockExplorerURL", "address"]
             },
-            ExpressionRole {
+            FastExpressionRole {
                 function tokenIcon(symbol) {
                     return Constants.tokenIcon(symbol)
                 }
                 name: "image"
                 expression: tokenIcon(model.symbol)
+                expectedRoles: ["symbol"]
             }
         ]
     }
@@ -79,24 +82,27 @@ QtObject {
     readonly property var assetsBySymbolModel: SortFilterProxyModel {
         sourceModel: plainTokensBySymbolModel
         proxyRoles: [
-            ExpressionRole {
+            FastExpressionRole {
                 function tokenIcon(symbol) {
                     return Constants.tokenIcon(symbol)
                 }
                 name: "iconSource"
                 expression: tokenIcon(model.symbol)
+                expectedRoles: ["symbol"]
             },
             // TODO: Review if it can be removed
-            ExpressionRole {
+            FastExpressionRole {
                 name: "shortName"
                 expression: model.symbol
+                expectedRoles: ["symbol"]
             },
-            ExpressionRole {
+            FastExpressionRole {
                 function getCategory(index) {
                     return 0
                 }
                 name: "category"
                 expression: getCategory(model.communityId)
+                expectedRoles: ["communityId"]
             }
         ]
     }

@@ -94,7 +94,9 @@ Rectangle {
     property alias subTitleBadgeComponent: subTitleBadgeLoader.sourceComponent
     property alias errorIcon: errorIcon
     property alias statusListItemTagsRowLayout: statusListItemSubtitleTagsRow
+
     property bool showLoadingIndicator: false
+    property bool tagsScrollBarVisible: true
 
     property int subTitleBadgeLoaderAlignment: Qt.AlignVCenter
 
@@ -391,6 +393,7 @@ Rectangle {
                 width: Math.min(statusListItemTagsSlotInline.width, statusListItemTagsSlotInline.availableWidth, parent.width)
                 height: visible ? contentHeight : 0
                 padding: 0
+                ScrollBar.horizontal.policy: root.tagsScrollBarVisible ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
 
                 Row {
                     id: statusListItemTagsSlotInline
@@ -399,7 +402,7 @@ Rectangle {
 
                     Repeater {
                         id: tagsRepeater
-                        delegate: tagsDelegate
+                        delegate: root.tagsDelegate
                     }
                 }
             }

@@ -1,4 +1,3 @@
-
 import QtQml 2.15
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -22,10 +21,8 @@ Item {
     id: root
 
     property var assetsModel
-    property string selectedSenderAccount
     property var collectiblesModel
     property var networksModel
-    property string currentCurrencySymbol
     property bool onlyAssets: true
     property string searchText
 
@@ -40,6 +37,16 @@ Item {
 
     property alias selectedItem: holdingItemSelector.selectedItem
     property alias hoveredItem: holdingItemSelector.hoveredItem
+
+    property string searchPlaceholderText: {
+        if (d.isCurrentBrowsingTypeAsset) {
+            return qsTr("Search for token or enter token address")
+        } else if (d.isBrowsingGroup) {
+            return qsTr("Search %1").arg(d.currentBrowsingGroupName ?? qsTr("collectibles in collection"))
+        } else {
+            return qsTr("Search collectibles")
+        }
+    }
 
     function setSelectedItem(item, holdingType) {
         d.browsingHoldingType = holdingType
@@ -66,8 +73,8 @@ Item {
          [qsTr("Assets")] :
          [qsTr("Assets"), qsTr("Collectibles")]
 
-        readonly property var updateSearchText: Backpressure.debounce(root, 1000, function(inputText) {
-            searchText = inputText
+        readonly property var updateSearchText: Backpressure.debounce(root, 500, function(inputText) {
+            root.searchText = inputText
         })
 
         function isAsset(type) {
@@ -103,10 +110,8 @@ Item {
             } else if (asset.image) {
                 // Community assets have a dedicated image streamed from status-go
                 return asset.image
-            } else {
-                return Constants.tokenIcon(asset.symbol)
             }
-            return ""
+            return Constants.tokenIcon(asset.symbol)
         }
 
         property var collectibleTextFn: function (item) {
@@ -167,16 +172,6 @@ Item {
             ]
         }
 
-        readonly property string searchPlaceholderText: {
-            if (isCurrentBrowsingTypeAsset) {
-                return qsTr("Search for token or enter token address")
-            } else if (isBrowsingGroup) {
-                return qsTr("Search %1").arg(d.currentBrowsingGroupName ?? qsTr("collectibles in collection"))
-            } else {
-                return qsTr("Search collectibles")
-            }
-        }
-
         // By design values:
         readonly property int padding: 16
         readonly property int headerTopMargin: 5
@@ -187,7 +182,6 @@ Item {
         readonly property int collectibleContentIconSize: 28
         readonly property int assetContentTextSize: 28
         readonly property int collectibleContentTextSize: 15
-
     }
 
     HoldingItemSelector {
@@ -246,6 +240,7 @@ Item {
         contentIconSize: d.isAsset(d.currentHoldingType) ? d.assetContentIconSize : d.collectibleContentIconSize
         contentTextSize: d.isAsset(d.currentHoldingType) ? d.assetContentTextSize : d.collectibleContentTextSize
         comboBoxListViewSection.property: "isCommunityAsset"
+        // TODO allow for different header/sections for the Swap modal
         comboBoxListViewSection.delegate: AssetsSectionDelegate {
                             height: !!text ? 52 : 0 // if we bind to some property instead of hardcoded value it wont work nice when switching tabs or going inside collection and back
                             width: ListView.view.width
@@ -253,7 +248,10 @@ Item {
                             text: Helpers.assetsSectionTitle(section, holdingItemSelector.hasCommunityTokens, d.isBrowsingGroup, d.isCurrentBrowsingTypeAsset)
                             onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
                         }
+        comboBoxControl.popup.onOpened: comboBoxControl.popup.contentItem.headerItem.focusSearch()
         comboBoxControl.popup.onClosed: comboBoxControl.popup.contentItem.headerItem.clear()
+
+        comboBoxControl.popup.x: root.width - comboBoxControl.popup.width
     }
 
     Component {
@@ -264,6 +262,10 @@ Item {
     Component {
         id: headerComponent
         ColumnLayout {
+            function focusSearch() {
+                searchInput.input.forceActiveFocus()
+            }
+
             function clear() {
                 searchInput.input.edit.clear()
             }
@@ -303,7 +305,7 @@ Item {
             CollectibleBackButtonWithInfo {
                 Layout.fillWidth: true
                 visible: d.isBrowsingGroup
-                count: collectiblesModel.count
+                count: collectiblesModel ? collectiblesModel.count : 0
                 name: d.currentBrowsingGroupName
                 onBackClicked: {
                     if (!d.isCurrentBrowsingTypeAsset) {
@@ -325,7 +327,7 @@ Item {
                     anchors.fill: parent
 
                     input.showBackground: false
-                    placeholderText: d.searchPlaceholderText
+                    placeholderText: root.searchPlaceholderText
                     onTextChanged: Qt.callLater(d.updateSearchText, text)
                     input.clearable: true
                     input.implicitHeight: 56
@@ -344,7 +346,7 @@ Item {
         TokenBalancePerChainDelegate {
             objectName: "AssetSelector_ItemDelegate_" + symbol
             width: holdingItemSelector.comboBoxControl.popup.width
-            selectedSenderAccount: root.selectedSenderAccount
+            highlighted: !!holdingItemSelector.selectedItem && symbol === holdingItemSelector.selectedItem.symbol
             balancesModel: LeftJoinModel {
                 leftModel: balances
                 rightModel: root.networksModel
@@ -370,6 +372,7 @@ Item {
         CollectibleNestedDelegate {
             objectName: "CollectibleSelector_ItemDelegate_" + groupId
             width: holdingItemSelector.comboBoxControl.popup.width
+            highlighted: !!holdingItemSelector.selectedItem && uid === holdingItemSelector.selectedItem.uid
             onItemSelected: {
                 if (isGroup) {
                     d.currentBrowsingGroupName = groupName

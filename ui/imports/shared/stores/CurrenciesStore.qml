@@ -1,6 +1,7 @@
 import QtQuick 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 import AppLayouts.Profile.stores 1.0
@@ -982,10 +983,16 @@ QtObject {
 
     function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
         if (isNaN(amount)) {
-            return "N/A"
+            return qsTr("N/A")
         }
         var currencyAmount = getCurrencyAmount(amount, symbol)
         return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
+    }
+
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
+        let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balance)
+        let decimalBalance = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, decimals)
+        return formatCurrencyAmount(decimalBalance, symbol)
     }
 
     function getFiatValue(cryptoAmount, cryptoSymbol) {
