@@ -80,6 +80,7 @@ Item {
             keyClick(Qt.Key_3)
 
             compare(controlUnderTest.text, "13")
+            compare(controlUnderTest.valid, true)
         }
 
         function test_defaultValidation() {

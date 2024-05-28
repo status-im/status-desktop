@@ -55,8 +55,12 @@ QObject {
         return networkString
     }
 
-    function formatCurrencyAmount(balance, symbol) {
-        return root.currencyStore.formatCurrencyAmount(balance, symbol)
+    function formatCurrencyAmount(balance, symbol, options = null, locale = null) {
+        return root.currencyStore.formatCurrencyAmount(balance, symbol, options, locale)
+    }
+
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
+        return root.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
     }
 
     // TODO: remove once the AccountsModalHeader is reworked!!
@@ -67,8 +71,79 @@ QObject {
         return null
     }
 
+    // Model prepared to provide filtered and sorted assets as per the advanced Settings in token management
+    readonly property var processedAssetsModel: SortFilterProxyModel {
+        property real displayAssetsBelowBalanceThresholdAmount: root.walletAssetsStore.walletTokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
+        sourceModel: __assetsWithFilteredBalances
+        proxyRoles: [
+            FastExpressionRole {
+                name: "isCommunityAsset"
+                expression: !!model.communityId
+                expectedRoles: ["communityId"]
+            },
+            FastExpressionRole {
+                name: "currentBalance"
+                expression: __getTotalBalance(model.balances, model.decimals)
+                expectedRoles: ["balances", "decimals"]
+            },
+            FastExpressionRole {
+                name: "currentCurrencyBalance"
+                expression: {
+                    if (!!model.marketDetails) {
+                        return model.currentBalance * model.marketDetails.currencyPrice.amount
+                    }
+                    return 0
+                }
+                expectedRoles: ["marketDetails", "currentBalance"]
+            }
+        ]
+        filters: [
+            FastExpressionFilter {
+                expression: {
+                    root.walletAssetsStore.assetsController.revision
+
+                    if (!root.walletAssetsStore.assetsController.filterAcceptsSymbol(model.symbol)) // explicitely hidden
+                        return false
+                    if (model.isCommunityAsset) // do not show community assets
+                        return false
+                    if (root.walletAssetsStore.walletTokensStore.displayAssetsBelowBalance)
+                        return model.currentCurrencyBalance > processedAssetsModel.displayAssetsBelowBalanceThresholdAmount
+                    return true
+                }
+                expectedRoles: ["symbol", "isCommunityAsset", "currentCurrencyBalance"]
+            }
+        ]
+        // FIXME sort by assetsController instead, to have the sorting/order as in the main wallet view
+        // sorters: RoleSorter {
+        //     roleName: "isCommunityAsset"
+        // }
+    }
+
     // Internal properties and functions -----------------------------------------------------------------------------------------------------------------------------
     readonly property var __fromToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
+
+    // Internal model filtering balances by the account selected in the AccountsModalHeader
+    SubmodelProxyModel {
+        id: __assetsWithFilteredBalances
+        sourceModel: root.walletAssetsStore.groupedAccountAssetsModel
+        submodelRoleName: "balances"
+        delegateModel: SortFilterProxyModel {
+            sourceModel: submodel
+
+            filters: [
+                ValueFilter {
+                    roleName: "chainId"
+                    value: root.swapFormData.selectedNetworkChainId
+                    enabled: root.swapFormData.selectedNetworkChainId !== -1
+                }/*,
+                // TODO enable once AccountsModalHeader is reworked!!
+                ValueFilter {
+                    roleName: "account"
+                    value: root.selectedSenderAccount.address
+                }*/
+            ]
+        }
+    }
 
     SubmodelProxyModel {
         id: filteredBalancesModel
@@ -103,5 +178,15 @@ QObject {
             return accountBalance
         }
         return null
+    }
+
+    /* Internal function to calculate total balance */
+    function __getTotalBalance(balances, decimals) {
+        let totalBalance = 0
+        for(let i=0; i<balances.count; i++) {
+            let balancePerAddressPerChain = ModelUtils.get(balances, i)
+            totalBalance+=AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
+        }
+        return totalBalance
     }
 }

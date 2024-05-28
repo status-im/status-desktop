@@ -12,7 +12,7 @@ import AppLayouts.Wallet.stores 1.0
 QtObject {
     id: root
 
-    readonly property var currencyStore: CurrenciesStore{}
+    readonly property CurrenciesStore currencyStore: CurrenciesStore {}
     readonly property var senderAccounts: WalletSendAccountsModel {
         Component.onCompleted: selectedSenderAccount = senderAccounts.get(0)
     }
@@ -280,7 +280,7 @@ QtObject {
             },
             FastExpressionRole {
                 name: "currentBalance"
-                expression: __getTotalBalance(model.balances, model.decimals, model.symbol, root.selectedSenderAccount)
+                expression: __getTotalBalance(model.balances, model.decimals)
                 expectedRoles: ["balances", "decimals", "symbol"]
             },
             FastExpressionRole {
@@ -302,7 +302,7 @@ QtObject {
                                 name.toUpperCase().startsWith(searchString.toUpperCase()) || __searchAddressInList(addressPerChain, searchString)
                     )
                 }
-                expression: search(symbol, name, addressPerChain, root.assetSearchString)
+                expression: search(model.symbol, model.name, model.addressPerChain, root.assetSearchString)
                 expectedRoles: ["symbol", "name", "addressPerChain"]
             },
             ValueFilter {
@@ -339,7 +339,7 @@ QtObject {
     }
 
     /* Internal function to calculate total balance */
-    function __getTotalBalance(balances, decimals, symbol) {
+    function __getTotalBalance(balances, decimals) {
         let totalBalance = 0
         for(let i=0; i<balances.count; i++) {
             let balancePerAddressPerChain = SQUtils.ModelUtils.get(balances, i)

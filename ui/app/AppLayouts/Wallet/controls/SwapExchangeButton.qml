@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 StatusButton {
@@ -12,6 +11,7 @@ StatusButton {
     icon.name: hovered ? "arrow-up" : "arrow-down"
     icon.color: Theme.palette.baseColor1
 
+    focusPolicy: Qt.NoFocus
     isRoundIcon: true
     radius: height/2
     normalColor: Theme.palette.indirectColor3

@@ -20,7 +20,6 @@ import "../controls"
 Item {
     id: root
 
-    property string selectedSenderAccount
     property var assets: null
     property var collectibles: null
     property var networksModel
@@ -221,7 +220,6 @@ Item {
         TokenBalancePerChainDelegate {
             width: tokenList.width
 
-            selectedSenderAccount: root.selectedSenderAccount
             balancesModel: LeftJoinModel {
                 leftModel: !!model & !!model.balances ? model.balances : null
                 rightModel: root.networksModel
@@ -230,7 +228,7 @@ Item {
             onTokenSelected: function (selectedToken) {
                 root.tokenSelected(selectedToken.symbol, Constants.TokenType.ERC20)
             }
-            onTokenHovered: root.tokenHovered(symbol, Constants.TokenType.ERC20, hovered)
+            onTokenHovered: root.tokenHovered(selectedToken.symbol, Constants.TokenType.ERC20, hovered)
             formatCurrentCurrencyAmount: function(balance){
                 return root.formatCurrentCurrencyAmount(balance)
             }
@@ -253,13 +251,13 @@ Item {
         id: collectiblesDelegate
         CollectibleNestedDelegate {
             width: tokenList.width
-            onItemHovered: root.tokenHovered(selectedItem.uid, tokenType, hovered)
+            onItemHovered: root.tokenHovered(selectedItem.uid, Constants.TokenType.ERC721, hovered)
             onItemSelected: {
                 if (isGroup) {
                     d.currentBrowsingGroupName = groupName
                     root.collectibles.currentGroupId = groupId
                 } else {
-                    root.tokenSelected(selectedItem.uid, tokenType)
+                    root.tokenSelected(selectedItem.uid, Constants.TokenType.ERC721)
                 }
             }
         }

@@ -174,7 +174,7 @@ StatusDialog {
         }
 
         if(!!popup.preDefinedAmountToSend) {
-            amountToSendInput.input.text = popup.preDefinedAmountToSend
+            amountToSendInput.input.text = Number(popup.preDefinedAmountToSend).toLocaleString(Qt.locale(), 'f', -128)
         }
 
         if(!!popup.preSelectedRecipient) {
@@ -260,11 +260,9 @@ StatusDialog {
                         id: holdingSelector
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        selectedSenderAccount: store.selectedSenderAccount.address
                         assetsModel: popup.store.processedAssetsModel
                         collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                         networksModel: popup.store.flatNetworksModel
-                        currentCurrencySymbol: d.currencyStore.currentCurrencySymbol
                         visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.TokenType.Unknown) ||
                                  (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.TokenType.Unknown)
                         onItemSelected: {
@@ -290,7 +288,8 @@ StatusDialog {
                                 const max = d.prepareForMaxSend(input, d.hoveredHolding.symbol)
                                 if (max <= 0)
                                     return qsTr("No balances active")
-                                const balance = d.currencyStore.formatCurrencyAmount(max , d.hoveredHolding.symbol)
+                                const balance = d.currencyStore.formatCurrencyAmount(max, amountToSendInput.inputIsFiat ? amountToSendInput.currentCurrency
+                                                                                                                        : d.selectedHolding.symbol)
                                 return qsTr("Max: %1").arg(balance.toString())
                             }
                             const max = d.prepareForMaxSend(d.maxInputBalance, d.inputSymbol)
@@ -393,7 +392,6 @@ StatusDialog {
             Layout.bottomMargin: Style.current.xlPadding
             visible: !d.selectedHolding
 
-            selectedSenderAccount: store.selectedSenderAccount.address
             assets: popup.store.processedAssetsModel
             collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
             networksModel: popup.store.flatNetworksModel
@@ -527,4 +525,3 @@ StatusDialog {
         }
     }
 }
-

@@ -6,3 +6,4 @@ ManageAssetsPanel 1.0 ManageAssetsPanel.qml
 ManageCollectiblesPanel 1.0 ManageCollectiblesPanel.qml
 ManageHiddenPanel 1.0 ManageHiddenPanel.qml
 DAppsWorkflow 1.0 DAppsWorkflow.qml
+SwapInputPanel 1.0 SwapInputPanel.qml

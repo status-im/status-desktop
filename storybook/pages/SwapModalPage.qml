@@ -170,7 +170,7 @@ SplitView {
             StatusInput {
                 id: swapInput
                 Layout.preferredWidth: 100
-                label:  "Token mount to swap"
+                label: "Token amount to swap"
                 text: "100"
             }
 

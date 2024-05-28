@@ -38,7 +38,7 @@ SplitView {
 
                 maxInputBalance: inputIsFiat ? root.maxCryptoBalance*amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount
                                              : root.maxCryptoBalance
-                currentCurrency: "Fiat"
+                currentCurrency: "USD"
                 formatCurrencyAmount: function(amount, symbol, options, locale) {
                     const currencyAmount = {
                         amount: amount,
@@ -57,47 +57,42 @@ SplitView {
         LogsAndControlsPanel {
             id: logsAndControlsPanel
 
-            SplitView.minimumHeight: 100
+            SplitView.minimumHeight: 250
 
             logsView.logText: logs.logText
-        }
-    }
 
-    Pane {
-        SplitView.minimumWidth: 300
-        SplitView.preferredWidth: 300
+            ColumnLayout {
+                Label {
+                    Layout.topMargin: 10
+                    Layout.fillWidth: true
+                    text: "Max Crypto Balance"
+                }
 
-        ColumnLayout {
-            Label {
-                Layout.topMargin: 10
-                Layout.fillWidth: true
-                text: "Max Crypto Balance"
-            }
+                TextField {
+                    id: maxCryptoBalanceText
+                    background: Rectangle { border.color: 'lightgrey' }
+                    Layout.preferredWidth: 200
+                    text: "1000000"
+                }
 
-            TextField {
-                id: maxCryptoBalanceText
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
-                text: "1000000"
-            }
+                Label {
+                    Layout.topMargin: 10
+                    Layout.fillWidth: true
+                    text: "Decimals"
+                }
 
-            Label {
-                Layout.topMargin: 10
-                Layout.fillWidth: true
-                text: "Decimals"
-            }
+                TextField {
+                    id: decimalsText
+                    background: Rectangle { border.color: 'lightgrey' }
+                    Layout.preferredWidth: 200
+                    text: "6"
+                }
 
-            TextField {
-                id: decimalsText
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
-                text: "6"
-            }
+                CheckBox {
+                    id: fiatInput
 
-            CheckBox {
-                id: fiatInput
-
-                text: "Fiat input value"
+                    text: "Fiat input value"
+                }
             }
         }
     }

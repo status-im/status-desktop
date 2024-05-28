@@ -14,7 +14,7 @@ import AppLayouts.Wallet.stores 1.0
 QtObject {
     id: root
 
-    property CurrenciesStore currencyStore: CurrenciesStore {}
+    property CurrenciesStore currencyStore
     property WalletAssetsStore walletAssetStore
     property TokensStore tokensStore
 
@@ -276,10 +276,12 @@ QtObject {
         submodelRoleName: "balances"
         delegateModel: SortFilterProxyModel {
             sourceModel: submodel
-            filters: FastExpressionFilter {
-                expression: root.selectedSenderAccount.address === model.account
-                expectedRoles: ["account"]
-            }
+            filters: [
+                ValueFilter {
+                    roleName: "account"
+                    value: root.selectedSenderAccount.address
+                }
+            ]
         }
     }
 
@@ -302,7 +304,7 @@ QtObject {
             },
             FastExpressionRole {
                 name: "currentBalance"
-                expression: __getTotalBalance(model.balances, model.decimals, root.selectedSenderAccount)
+                expression: __getTotalBalance(model.balances, model.decimals)
                 expectedRoles: ["balances", "decimals"]
             },
             FastExpressionRole {
@@ -324,7 +326,7 @@ QtObject {
                                 name.toUpperCase().startsWith(searchString.toUpperCase()) || __searchAddressInList(addressPerChain, searchString)
                     )
                 }
-                expression: search(symbol, name, addressPerChain, assetSearchString)
+                expression: search(symbol, name, addressPerChain, root.assetSearchString)
                 expectedRoles: ["symbol", "name", "addressPerChain"]
             },
             ValueFilter {

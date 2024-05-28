@@ -10,6 +10,10 @@ class Setup : public QObject
 public slots:
     void qmlEngineAvailable(QQmlEngine *engine) {
         // custom code that needs QQmlEngine, register QML types, add import paths,...
+
+        QGuiApplication::setOrganizationName(QStringLiteral("Status"));
+        QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
+
         const QStringList additionalImportPaths {
             STATUSQ_MODULE_IMPORT_PATH,
             QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),

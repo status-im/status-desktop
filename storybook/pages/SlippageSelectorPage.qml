@@ -47,7 +47,7 @@ SplitView {
 
             ColumnLayout {
                 Repeater {
-                    model: [0.1, 0.5, 0.24, 0.8, 120.84]
+                    model: [0, 0.1, 0.5, 0.24, 0.8, 120.84]
 
                     Button {
                         text: "set " + modelData
