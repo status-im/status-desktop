@@ -87,11 +87,18 @@ StatusDialog {
         property string totalTimeEstimate
         property double totalFeesInFiat
         property double totalAmountToReceive
+
         readonly property bool isBridgeTx: store.sendType === Constants.SendType.Bridge
+        readonly property bool isSwapTx: store.sendType === Constants.SendType.Swap
+
         readonly property bool isCollectiblesTransfer: store.sendType === Constants.SendType.ERC721Transfer ||
                                                        store.sendType === Constants.SendType.ERC1155Transfer
         property var selectedHolding: null
         property var selectedHoldingType: Constants.TokenType.Unknown
+
+        property var selectedHolding2: null
+        property var selectedHolding2Type: Constants.TokenType.Unknown
+
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.TokenType.ERC20
         property var hoveredHolding: null
         property var hoveredHoldingType: Constants.TokenType.Unknown
@@ -109,6 +116,18 @@ StatusDialog {
             holdingSelector.setSelectedItem(selectorHolding, holdingType)
         }
 
+        function setSelectedHolding2Id(holdingId, holdingType) {
+            let holding = store.getHolding(holdingId, holdingType)
+            setSelectedHolding2(holding, holdingType)
+        }
+
+        function setSelectedHolding2(holding, holdingType) {
+            d.selectedHolding2Type = holdingType
+            d.selectedHolding2 = holding
+            let selectorHolding = store.holdingToSelectorHolding(holding, holdingType)
+            holdingSelector2.setSelectedItem(selectorHolding, holdingType)
+        }
+
         function setHoveredHoldingId(holdingId, holdingType) {
             let holding = store.getHolding(holdingId, holdingType)
             setHoveredHolding(holding, holdingType)
@@ -123,7 +142,7 @@ StatusDialog {
 
         onSelectedHoldingChanged: {
             if (d.selectedHoldingType === Constants.TokenType.ERC20) {
-                if(!d.ensOrStickersPurpose && store.sendType !== Constants.SendType.Bridge)
+                if(!d.ensOrStickersPurpose && !d.isBridgeTx && !d.isSwapTx)
                     store.setSendType(Constants.SendType.Transfer)
                 store.setSelectedAssetKey(selectedHolding.tokensKey)
                 store.setSelectedTokenIsOwnerToken(false)
@@ -139,6 +158,16 @@ StatusDialog {
             }
             store.setSelectedTokenName(selectedHolding.name)
 
+            recalculateRoutesAndFees()
+        }
+
+        onSelectedHolding2Changed: {
+            if (!d.isSwapTx) {
+                return
+            }
+            if (d.selectedHolding2Type === Constants.TokenType.ERC20) {
+                store.setSelectedToAssetKey(selectedHolding2.tokensKey)
+            }
             recalculateRoutesAndFees()
         }
 
@@ -189,6 +218,17 @@ StatusDialog {
         if(d.isBridgeTx) {
             recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
             recipientLoader.selectedRecipient = {address: popup.preSelectedAccount.address}
+        }
+
+        if (d.isSwapTx) {
+            recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
+            recipientLoader.selectedRecipient = {address: popup.preSelectedAccount.address}
+
+            if (popup.store.areTestNetworksEnabled) {
+                d.setSelectedHolding2Id("STT", Constants.TokenType.ERC20)
+                return
+            }
+            d.setSelectedHolding2Id("SNT", Constants.TokenType.ERC20)
         }
     }
 
@@ -248,22 +288,29 @@ StatusDialog {
                 RowLayout {
                     spacing: 8
                     Layout.preferredHeight: 44
+                    Layout.maximumWidth: parent.width - 2*Style.current.xlPadding
+
                     StatusBaseText {
                         id: modalHeader
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                         verticalAlignment: Text.AlignVCenter
-                        text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
+                        text: {
+                            if (d.isBridgeTx)
+                                return qsTr("Bridge")
+                            if (d.isSwapTx)
+                                return qsTr("Swap")
+                            return qsTr("Send")
+                        }
                         font.pixelSize: 28
                         lineHeight: 38
                         lineHeightMode: Text.FixedHeight
                         font.letterSpacing: -0.4
                         color: Theme.palette.directColor1
-                        Layout.maximumWidth: contentWidth
                     }
 
                     HoldingSelector {
                         id: holdingSelector
-                        Layout.fillWidth: true
+                        Layout.preferredWidth: holdingSelector2.visible? 130 : -1
                         Layout.fillHeight: true
                         selectedSenderAccount: store.selectedSenderAccount.address
                         assetsModel: popup.store.processedAssetsModel
@@ -282,6 +329,44 @@ StatusDialog {
                         formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){
                             return popup.store.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
                         }
+                    }
+
+                    StatusBaseText {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                        visible: holdingSelector2.visible
+                        text: qsTr("To")
+                        font.pixelSize: 28
+                        lineHeight: 38
+                        lineHeightMode: Text.FixedHeight
+                        font.letterSpacing: -0.4
+                        color: Theme.palette.directColor1
+                    }
+
+                    HoldingSelector {
+                        id: holdingSelector2
+                        Layout.preferredWidth: 130
+                        Layout.fillHeight: true
+                        selectedSenderAccount: store.selectedSenderAccount.address
+                        assetsModel: popup.store.processedAssetsModel
+                        collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
+                        networksModel: popup.store.flatNetworksModel
+                        currentCurrencySymbol: d.currencyStore.currentCurrencySymbol
+                        visible: d.isSwapTx && !!d.selectedHolding && d.selectedHoldingType !== Constants.TokenType.Unknown
+                        onItemSelected: {
+                            d.setSelectedHolding2Id(holdingId, holdingType)
+                        }
+                        onSearchTextChanged: popup.store.assetSearchString = searchText
+                        formatCurrentCurrencyAmount: function(balance){
+                            return popup.store.currencyStore.formatCurrencyAmount(balance, popup.store.currencyStore.currentCurrency)
+                        }
+                        formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){
+                            return popup.store.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
+                        }
+                    }
+
+                    Item {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
                     }
 
                     StatusListItemTag {
@@ -316,6 +401,7 @@ StatusDialog {
                         }
                     }
                 }
+
                 RowLayout {
                     visible: d.isSelectedHoldingValidAsset && !d.isCollectiblesTransfer
                     AmountToSend {
@@ -323,6 +409,7 @@ StatusDialog {
 
                         Layout.fillWidth: true
                         isBridgeTx: d.isBridgeTx
+                        isSwapTx: d.isSwapTx
                         interactive: popup.interactive
                         selectedHolding: d.selectedHolding
                         maxInputBalance: d.maxInputBalance
@@ -350,7 +437,9 @@ StatusDialog {
                                  popup.bestRoutes.count > 0 && amountToSendInput.inputNumberValid
                         isLoading: popup.isLoading
                         selectedHolding: d.selectedHolding
+                        selectedHolding2: d.selectedHolding2
                         isBridgeTx: d.isBridgeTx
+                        isSwapTx: d.isSwapTx
                         cryptoValueToReceive: d.totalAmountToReceive
                         inputIsFiat: amountToSendInput.inputIsFiat
                         minCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
@@ -364,7 +453,7 @@ StatusDialog {
                 ColumnLayout {
                     spacing: 8
                     Layout.fillWidth: true
-                    visible: !d.isBridgeTx && !!d.selectedHolding
+                    visible: !d.isBridgeTx && !d.isSwapTx && !!d.selectedHolding
                     StatusBaseText {
                         id: label
                         elide: Text.ElideRight
@@ -378,6 +467,7 @@ StatusDialog {
                         store: popup.store
                         isCollectiblesTransfer: d.isCollectiblesTransfer
                         isBridgeTx: d.isBridgeTx
+                        isSwapTx: d.isSwapTx
                         interactive: popup.interactive
                         selectedAsset: d.selectedHolding
                         onIsLoading: popup.isLoading = true
@@ -398,6 +488,7 @@ StatusDialog {
             Layout.bottomMargin: Style.current.xlPadding
             visible: !d.selectedHolding
 
+            isSwapTx: d.isSwapTx
             selectedSenderAccount: store.selectedSenderAccount.address
             assets: popup.store.processedAssetsModel
             collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
@@ -429,7 +520,7 @@ StatusDialog {
             Layout.topMargin: Style.current.padding
             Layout.leftMargin: Style.current.xlPadding
             Layout.rightMargin: Style.current.xlPadding
-            visible: !recipientLoader.ready && !d.isBridgeTx && !!d.selectedHolding
+            visible: !recipientLoader.ready && !d.isBridgeTx && !d.isSwapTx && !!d.selectedHolding
 
             store: popup.store
             selectedAccount: popup.preSelectedAccount
@@ -476,6 +567,7 @@ StatusDialog {
                 errorType: d.errorType
                 isLoading: popup.isLoading
                 isBridgeTx: d.isBridgeTx
+                isSwapTx: d.isSwapTx
                 isCollectiblesTransfer: d.isCollectiblesTransfer
                 bestRoutes: popup.bestRoutes
                 totalFeesInFiat: d.totalFeesInFiat
@@ -485,7 +577,13 @@ StatusDialog {
 
     footer: SendModalFooter {
         width: parent.width
-        nextButtonText: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
+        nextButtonText: {
+            if (d.isBridgeTx)
+                return qsTr("Bridge")
+            if (d.isSwapTx)
+                return qsTr("Swap")
+            return qsTr("Send")
+        }
         maxFiatFees: popup.isLoading ? "..." : d.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, d.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
