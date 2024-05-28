@@ -61,7 +61,7 @@ class LeftPanel(QObject):
     @allure.step('Open messages screen')
     def open_messages_screen(self) -> MessagesScreen:
         self._messages_button.click()
-        return MessagesScreen().wait_until_appears()
+        return MessagesScreen()
 
     @allure.step('Open online identifier')
     def open_online_identifier(self, attempts: int = 2) -> OnlineIdentifier:

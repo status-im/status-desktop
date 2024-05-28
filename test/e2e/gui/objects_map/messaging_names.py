@@ -2,7 +2,7 @@ from gui.objects_map.names import statusDesktop_mainWindow
 
 # Map for messaging screens, views locators
 
-mainWindow_chatView_ChatView = {"container": statusDesktop_mainWindow, "id": "chatView", "type": "ChatView", "unnamed": 1, "visible": True}
+mainWindow_chatView_ChatView = {"container": statusDesktop_mainWindow, "objectName": "chatViewComponent", "type": "ChatView", "visible": True}
 
 # Left Panel
 mainWindow_contactColumnLoader_Loader = {"container": mainWindow_chatView_ChatView, "id": "contactColumnLoader", "type": "Loader", "unnamed": 1, "visible": True}
