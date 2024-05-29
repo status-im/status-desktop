@@ -84,10 +84,8 @@ def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_acco
             main_window.wait_for_notification())
 
 
-allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704602',
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704602',
                 'Send: can send ERC 721 token (collectible) to address pasted into receiver field with Simple flow')
-
-
 @pytest.mark.case(704602)
 @pytest.mark.transaction
 @pytest.mark.parametrize('user_account', [constants.user.user_with_funds])
