@@ -16,6 +16,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704611', 'Reply to identity request')
 @pytest.mark.case(704611)
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14954")
 def test_messaging_settings_identity_verification(multiple_instances):
     user_one: UserAccount = constants.user_with_random_attributes_1
     user_two: UserAccount = constants.user_with_random_attributes_2
