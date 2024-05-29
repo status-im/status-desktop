@@ -807,7 +807,7 @@ QtObject:
       if (responseObj.kind != JObject):
         raise newException(CatchableError, "mark all messages read response is not an json object")
 
-      if responseObj.contains("error"):
+      if responseObj.contains("error") and responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
         raise newException(CatchableError, responseObj{"error"}.getStr)
 
       var chatId: string
