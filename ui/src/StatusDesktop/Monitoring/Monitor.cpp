@@ -6,7 +6,8 @@
 #include <QQmlComponent>
 #include <QQuickWindow>
 
-void Monitor::initialize(QQmlApplicationEngine* engine) {
+void Monitor::initialize(QQmlApplicationEngine* engine)
+{
     QObject::connect(engine, &QQmlApplicationEngine::objectCreated, this,
                      [engine](QObject *obj, const QUrl &objUrl) {
         if (!obj) {
@@ -44,6 +45,11 @@ bool Monitor::isModel(const QVariant &obj) const
         return false;
 
     return qobject_cast<QAbstractItemModel*>(obj.value<QObject*>()) != nullptr;
+}
+
+QObject* Monitor::findChild(QObject* obj, const QString& name) const
+{
+    return obj == nullptr ? nullptr : obj->findChild<QObject*>(name);
 }
 
 QString Monitor::typeName(const QVariant &obj) const
