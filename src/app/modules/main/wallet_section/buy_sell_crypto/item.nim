@@ -7,15 +7,17 @@ type Item* = object
   logoUrl: string
   siteUrl: string  
   hostname: string
+  recurrentSiteUrl: string
 
 proc initItem*(name, description, fees, logoUrl, siteUrl,
-  hostname: string): Item =
+  hostname, recurrentSiteUrl,: string): Item =
   result.name = name
   result.description = description
   result.fees = fees
   result.logoUrl = logoUrl
   result.siteUrl = siteUrl
   result.hostname = hostname
+  result.recurrentSiteUrl = recurrentSiteUrl
 
 proc `$`*(self: Item): string =
   result = "Item("
@@ -25,6 +27,7 @@ proc `$`*(self: Item): string =
   result &= fmt"logoUrl:{self.logoUrl}, "
   result &= fmt"siteUrl:{self.siteUrl}"
   result &= fmt"hostname:{self.hostname}"
+  result &= fmt"recurrentSiteUrl:{self.recurrentSiteUrl}"
   result &= ")"
 
 method getName*(self: Item): string {.base.} =
@@ -44,3 +47,6 @@ method getSiteUrl*(self: Item): string {.base.} =
 
 method getHostname*(self: Item): string {.base.} =
   return self.hostname
+
+method getRecurrentSiteUrl*(self: Item): string {.base.} =
+  return self.recurrentSiteUrl

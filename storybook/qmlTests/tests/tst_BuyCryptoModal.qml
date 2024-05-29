@@ -1,7 +1,10 @@
 import QtQuick 2.15
 import QtTest 1.15
 
+import SortFilterProxyModel 0.2
+
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import Models 1.0
 import utils 1.0
@@ -14,13 +17,23 @@ Item {
     height: 800
 
     OnRampProvidersModel{
-        id: onRampProvidersModal
+        id: _onRampProvidersModel
+    }
+
+    SortFilterProxyModel {
+        id: recurrentOnRampProvidersModel
+        sourceModel: _onRampProvidersModel
+        filters: ValueFilter {
+            roleName: "recurrentSiteUrl"
+            value: ""
+            inverted: true
+        }
     }
 
     Component {
         id: componentUnderTest
         BuyCryptoModal {
-            onRampProvidersModel: onRampProvidersModal
+            onRampProvidersModel: _onRampProvidersModel
             onClosed: destroy()
         }
     }
@@ -47,6 +60,32 @@ Item {
             verify(!!controlUnderTest.opened)
         }
 
+        function testDelegateItems(providersList, modelToCompareAgainst) {
+            for(let i =0; i< providersList.count; i++) {
+                let delegateUnderTest = providersList.itemAtIndex(i)
+                verify(!!delegateUnderTest)
+
+                compare(delegateUnderTest.title, modelToCompareAgainst.get(i).name)
+                compare(delegateUnderTest.subTitle, modelToCompareAgainst.get(i).description)
+                compare(delegateUnderTest.asset.name, modelToCompareAgainst.get(i).logoUrl)
+
+                const feesText = findChild(delegateUnderTest, "feesText")
+                verify(!!feesText)
+                compare(feesText.text,  modelToCompareAgainst.get(i).fees)
+
+                const externalLinkIcon = findChild(delegateUnderTest, "externalLinkIcon")
+                verify(!!externalLinkIcon)
+                compare(externalLinkIcon.icon, "tiny/external")
+                compare(externalLinkIcon.color, Theme.palette.baseColor1)
+
+                // Hover over the item and check hovered state
+                mouseMove(delegateUnderTest, delegateUnderTest.width/2, delegateUnderTest.height/2)
+                verify(delegateUnderTest.sensor.containsMouse)
+                compare(externalLinkIcon.color, Theme.palette.directColor1)
+                verify(delegateUnderTest.color, Theme.palette.baseColor2)
+            }
+        }
+
         function test_launchAndCloseModal() {
             launchPopup()
 
@@ -64,7 +103,7 @@ Item {
             verify(!!footer)
             compare(footer.rightButtons.count, 1)
             compare(footer.rightButtons.get(0).text, qsTr("Done"))
-            mouseClick(footer.rightButtons.get(0), Qt.LeftButton)
+            mouseClick(footer.rightButtons.get(0))
 
             // popup should be closed
             verify(!controlUnderTest.opened)
@@ -78,6 +117,11 @@ Item {
             const tabBar = findChild(controlUnderTest, "tabBar")
             verify(!!tabBar)
 
+            // find providers list
+            const providersList = findChild(controlUnderTest, "providersList")
+            waitForRendering(providersList)
+            verify(!!providersList)
+
             // should have 2 items
             compare(tabBar.count, 2)
 
@@ -90,57 +134,88 @@ Item {
             // item 1 should have text "Recurrent"
             compare(tabBar.itemAt(1).text, qsTr("Recurrent"))
 
-            // TODO: this will be implemnted under https://github.com/status-im/status-desktop/issues/14820
-            // until then this list will be empty
-            mouseClick(tabBar.itemAt(1), Qt.LeftButton)
-            compare(tabBar.currentIndex, 1)
+            // close popup
+            controlUnderTest.close()
+            verify(!controlUnderTest.opened)
+        }
 
+        function test_modalContent_OneTime_tab() {
+            // Launch modal
+            launchPopup()
+
+            // find tab bar
+            const tabBar = findChild(controlUnderTest, "tabBar")
+            verify(!!tabBar)
+
+            // find providers list
             const providersList = findChild(controlUnderTest, "providersList")
             waitForRendering(providersList)
             verify(!!providersList)
-            compare(providersList.count, 0)
 
-            // check data on 1st tab --------------------------------------------------------
-            mouseClick(tabBar.itemAt(0), Qt.LeftButton)
+            mouseClick(tabBar.itemAt(0))
             compare(tabBar.currentIndex, 0)
-
-            waitForRendering(providersList)
-            verify(!!providersList)
 
             // verify that 3 items are listed
             compare(providersList.count, 3)
 
             // check if delegate contents are as expected
-            for(let i =0; i< providersList.count; i++) {
-                let delegateUnderTest = providersList.itemAtIndex(i)
-                verify(!!delegateUnderTest)
+            testDelegateItems(providersList, _onRampProvidersModel)
 
-                compare(delegateUnderTest.title, onRampProvidersModal.get(i).name)
-                compare(delegateUnderTest.subTitle, onRampProvidersModal.get(i).description)
-                compare(delegateUnderTest.asset.name, onRampProvidersModal.get(i).logoUrl)
-
-                const feesText = findChild(delegateUnderTest, "feesText")
-                verify(!!feesText)
-                compare(feesText.text,  onRampProvidersModal.get(i).fees)
-
-                const externalLinkIcon = findChild(delegateUnderTest, "externalLinkIcon")
-                verify(!!externalLinkIcon)
-                compare(externalLinkIcon.icon, "tiny/external")
-                compare(externalLinkIcon.color, Theme.palette.baseColor1)
-
-                // Hover over the item and check hovered state
-                mouseMove(delegateUnderTest, delegateUnderTest.width/2, delegateUnderTest.height/2)
-                verify(delegateUnderTest.sensor.containsMouse)
-                compare(externalLinkIcon.color, Theme.palette.directColor1)
-                verify(delegateUnderTest.color, Theme.palette.baseColor2)
-            }
+            let delegateUnderTest = providersList.itemAtIndex(0)
+            verify(!!delegateUnderTest)
 
             // test mouse click
             tryCompare(notificationSpy, "count", 0)
-            mouseClick(providersList.itemAtIndex(0))
+            mouseClick(delegateUnderTest)
             tryCompare(notificationSpy, "count", 1)
-            compare(notificationSpy.signalArguments[0][0],onRampProvidersModal.get(0).siteUrl)
-            compare(notificationSpy.signalArguments[0][1],onRampProvidersModal.get(0).hostname)
+            compare(notificationSpy.signalArguments[0][0], _onRampProvidersModel.get(0).siteUrl)
+            compare(notificationSpy.signalArguments[0][1], _onRampProvidersModel.get(0).hostname)
+            notificationSpy.clear()
+
+            // popup should be closed
+            verify(!controlUnderTest.opened)
+        }
+
+        function test_modalContent_recurrent_tab() {
+            // Launch modal
+            launchPopup()
+
+            // find tab bar
+            const tabBar = findChild(controlUnderTest, "tabBar")
+            verify(!!tabBar)
+
+            // find providers list
+            const providersList = findChild(controlUnderTest, "providersList")
+            waitForRendering(providersList)
+            verify(!!providersList)
+
+
+            // check data in "Recurrent" tab --------------------------------------------------------
+            mouseClick(tabBar.itemAt(1))
+            compare(tabBar.currentIndex, 1)
+            waitForRendering(providersList)
+            verify(!!providersList)
+
+            // verify that 1 item is listed
+            compare(providersList.count, 1)
+
+            // check if delegate contents are as expected
+            testDelegateItems(providersList, recurrentOnRampProvidersModel)
+
+            let delegateUnderTest = providersList.itemAtIndex(0)
+            verify(!!delegateUnderTest)
+
+            // test mouse click
+            tryCompare(notificationSpy, "count", 0)
+            verify(controlUnderTest.opened)
+            mouseClick(delegateUnderTest)
+            tryCompare(notificationSpy, "count", 1)
+            compare(notificationSpy.signalArguments[0][0], recurrentOnRampProvidersModel.get(0).recurrentSiteUrl)
+            compare(notificationSpy.signalArguments[0][1], recurrentOnRampProvidersModel.get(0).hostname)
+            notificationSpy.clear()
+
+            // popup should be closed
+            verify(!controlUnderTest.opened)
         }
     }
 }
