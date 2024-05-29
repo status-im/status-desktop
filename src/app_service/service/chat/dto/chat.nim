@@ -85,6 +85,8 @@ type ChatDto* = object
   syncedTo*: int64
   syncedFrom*: int64
   firstMessageTimestamp: int64 # valid only for community chats, 0 - undefined, 1 - no messages, >1 valid timestamps
+  canPost*: bool
+  canView*: bool
   canPostReactions*: bool
   viewersCanPostReactions*: bool
   position*: int
@@ -209,7 +211,7 @@ proc toGroupChatMember*(jsonObj: JsonNode): ChatMember =
 
 proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMember =
   # Parse status-go "CommunityMember" type
-  # Mapping this DTO is not strightforward since only keys are used for id. We
+  # Mapping this DTO is not straightforward since only keys are used for id. We
   # handle it a bit different.
   result = ChatMember()
   result.id = memberId
@@ -231,8 +233,6 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   elif roles.contains(MemberRole.TokenMaster.int):
     result.role = MemberRole.TokenMaster
 
-  result.joined = joined
-
 proc toChatDto*(jsonObj: JsonNode): ChatDto =
   result = ChatDto()
   discard jsonObj.getProp("id", result.id)
@@ -248,6 +248,8 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
   discard jsonObj.getProp("canPostReactions", result.canPostReactions)
+  discard jsonObj.getProp("canPost", result.canPost)
+  discard jsonObj.getProp("canView", result.canView)
   discard jsonObj.getProp("viewersCanPostReactions", result.viewersCanPostReactions)
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("muted", result.muted)

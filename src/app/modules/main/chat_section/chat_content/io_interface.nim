@@ -16,6 +16,9 @@ method load*(self: AccessInterface, chatItem: chat_item.Item) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onChatUpdated*(self: AccessInterface, chatItem: chat_item.Item) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -50,7 +53,7 @@ method toggleReactionFromOthers*(self: AccessInterface, messageId: string, emoji
 method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatEdited*(self: AccessInterface, chatDto: ChatDto) {.base.} =
+method onCommunityChannelEdited*(self: AccessInterface, chatDto: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatRenamed*(self: AccessInterface, newName: string) {.base.} =

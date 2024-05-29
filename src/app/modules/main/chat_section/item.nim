@@ -36,6 +36,8 @@ type
     locked: bool
     requiresPermissions: bool
     canPostReactions: bool
+    canPost: bool
+    canView: bool
     viewersCanPostReactions: bool
     hideIfPermissionsNotMet: bool
     viewOnlyPermissionsSatisfied: bool
@@ -68,11 +70,13 @@ proc initItem*(
     loaderActive = false,
     locked = false,
     requiresPermissions = false,
+    canPost = true,
+    canView = true,
     canPostReactions = true,
     viewersCanPostReactions = true,
     hideIfPermissionsNotMet: bool,
     viewOnlyPermissionsSatisfied: bool,
-    viewAndPostPermissionsSatisfied: bool
+    viewAndPostPermissionsSatisfied: bool,
     ): Item =
   result = Item()
   result.id = id
@@ -102,6 +106,8 @@ proc initItem*(
   result.loaderActive = loaderActive
   result.locked = locked
   result.requiresPermissions = requiresPermissions
+  result.canPost = canPost
+  result.canView = canView
   result.canPostReactions = canPostReactions
   result.viewersCanPostReactions = viewersCanPostReactions
   result.hideIfPermissionsNotMet = hideIfPermissionsNotMet
@@ -135,11 +141,13 @@ proc `$`*(self: Item): string =
     loaderActive: {$self.loaderActive},
     locked: {$self.locked},
     requiresPermissions: {$self.requiresPermissions},
+    canPost: {$self.canPost},
+    canView: {$self.canView},
     canPostReactions: {$self.canPostReactions},
     viewersCanPostReactions: {$self.viewersCanPostReactions},
     hideIfPermissionsNotMet: {$self.hideIfPermissionsNotMet},
     viewOnlyPermissionsSatisfied: {$self.viewOnlyPermissionsSatisfied},
-    viewAndPostPermissionsSatisfied: {$self.viewAndPostPermissionsSatisfied}
+    viewAndPostPermissionsSatisfied: {$self.viewAndPostPermissionsSatisfied},
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
@@ -169,6 +177,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "loaderActive": self.loaderActive,
     "locked": self.locked,
     "requiresPermissions": self.requiresPermissions,
+    "canPost": self.canPost,
+    "canView": self.canView,
     "canPostReactions": self.canPostReactions,
     "viewersCanPostReactions": self.viewersCanPostReactions,
     "hideIfPermissionsNotMet": self.hideIfPermissionsNotMet,
@@ -343,6 +353,18 @@ proc requiresPermissions*(self: Item): bool =
 
 proc `requiresPermissions=`*(self: Item, value: bool) =
   self.requiresPermissions = value
+
+proc canPost*(self: Item): bool =
+  self.canPost
+
+proc `canPost=`*(self: Item, value: bool) =
+  self.canPost = value
+
+proc canView*(self: Item): bool =
+  self.canView
+
+proc `canView=`*(self: Item, value: bool) =
+  self.canView = value
 
 proc canPostReactions*(self: Item): bool =
   self.canPostReactions
