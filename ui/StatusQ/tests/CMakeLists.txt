@@ -68,6 +68,10 @@ add_executable(SubmodelProxyModelTest tst_SubmodelProxyModel.cpp)
 target_link_libraries(SubmodelProxyModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
 
+add_executable(ObjectProxyModelTest tst_ObjectProxyModel.cpp)
+target_link_libraries(ObjectProxyModelTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME ObjectProxyModelTest COMMAND ObjectProxyModelTest)
+
 add_executable(AggregatorTest tst_Aggregator.cpp)
 target_link_libraries(AggregatorTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME AggregatorTest COMMAND AggregatorTest)

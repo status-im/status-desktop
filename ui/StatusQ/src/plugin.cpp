@@ -13,6 +13,7 @@
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/movablemodel.h"
+#include "StatusQ/objectproxymodel.h"
 #include "StatusQ/permissionutilsinternal.h"
 #include "StatusQ/rolesrenamingmodel.h"
 #include "StatusQ/rxvalidator.h"
@@ -54,6 +55,7 @@ public:
         qmlRegisterType<FastExpressionSorter>("StatusQ", 0, 1, "FastExpressionSorter");
         qmlRegisterType<UndefinedFilter>("StatusQ", 0, 1, "UndefinedFilter");
 
+        qmlRegisterType<ObjectProxyModel>("StatusQ", 0, 1, "ObjectProxyModel");
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
         qmlRegisterType<SubmodelProxyModel>("StatusQ", 0, 1, "SubmodelProxyModel");
         qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
