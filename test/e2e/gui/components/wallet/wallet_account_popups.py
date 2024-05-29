@@ -113,7 +113,8 @@ class AccountPopup(BasePopup):
     def click_new_master_key(self, value: str, attempts: int = 2):
         self._new_master_key_origin_item.click()
         try:
-            return AddNewAccountPopup().wait_until_appears()
+            AccountPopup().verify_add_account_popup_present()
+            return AddNewAccountPopup()
         except AssertionError as err:
             if attempts:
                 return self.click_new_master_key(value, attempts - 1)
