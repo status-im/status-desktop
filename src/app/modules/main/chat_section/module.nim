@@ -74,9 +74,8 @@ proc reevaluateRequiresTokenPermissionToJoin(self: Module)
 
 proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewersCanPostReactions: bool)
 
-proc addOrUpdateChat(self: Module,
+method addOrUpdateChat(self: Module,
     chat: ChatDto,
-    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -277,7 +276,7 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
         category.position,
         hideIfPermissionsNotMet = false,
         viewOnlyPermissionsSatisfied = true,
-        viewAndPostPermissionsSatisfied = true
+        viewAndPostPermissionsSatisfied = true,
       )
 
   if insertIntoModel:
@@ -324,7 +323,6 @@ proc buildChatSectionUI(
 
     items.add(self.addOrUpdateChat(
       chatDto,
-      community,
       belongsToCommunity = chatDto.communityId.len > 0,
       events,
       settingsService,
@@ -639,23 +637,13 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
 method chatsModel*(self: Module): chats_model.Model =
   return self.view.chatsModel()
 
-proc addNewChat(
+proc getChatItemFromChatDto(
     self: Module,
     chatDto: ChatDto,
     community: CommunityDto,
-    belongsToCommunity: bool,
-    events: EventEmitter,
-    settingsService: settings_service.Service,
-    nodeConfigurationService: node_configuration_service.Service,
-    contactService: contact_service.Service,
-    chatService: chat_service.Service,
-    communityService: community_service.Service,
-    messageService: message_service.Service,
-    mailserversService: mailservers_service.Service,
-    sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
-    insertIntoModel: bool = true,
-  ): chat_item.Item =
+    ): chat_item.Item =
+
   let hasNotification = chatDto.unviewedMessagesCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
 
@@ -667,13 +655,11 @@ proc addNewChat(
   var onlineStatus = OnlineStatus.Inactive
   var categoryPosition = -1
 
-  var isUsersListAvailable = true
   if chatDto.chatType == ChatType.OneToOne:
     let contactDetails = self.controller.getContactDetails(chatDto.id)
     chatName = contactDetails.defaultDisplayName
     chatImage = contactDetails.icon
     blocked = contactDetails.dto.isBlocked()
-    isUsersListAvailable = false
     if not contactDetails.dto.ensVerified:
       colorHash = self.controller.getColorHash(chatDto.id)
     colorId = self.controller.getColorId(chatDto.id)
@@ -706,12 +692,17 @@ proc addNewChat(
       # preferable. Please fix-me in https://github.com/status-im/status-desktop/issues/14431
       self.view.chatsModel().changeCategoryOpened(category.id, categoryOpened)
 
+
+  var canPost = true
+  var canView = true
   var canPostReactions = true
   var hideIfPermissionsNotMet = false
   var viewersCanPostReactions = true
   if self.controller.isCommunity:
     let communityChat = community.getCommunityChat(chatDto.id)
     # Some properties are only available on CommunityChat (they are useless for normal chats)
+    canPost = communityChat.canPost
+    canView = communityChat.canView
     canPostReactions = communityChat.canPostReactions
     hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
     viewersCanPostReactions = communityChat.viewersCanPostReactions
@@ -748,12 +739,34 @@ proc addNewChat(
         self.controller.checkChatHasPermissions(self.controller.getMySectionId(), chatDto.id)
       else:
         false,
+    canPost = canPost,
+    canView = canView,
     canPostReactions = canPostReactions,
     viewersCanPostReactions = viewersCanPostReactions,
     hideIfPermissionsNotMet = hideIfPermissionsNotMet,
     viewOnlyPermissionsSatisfied = true, # will be updated in async call
-    viewAndPostPermissionsSatisfied = true # will be updated in async call
+    viewAndPostPermissionsSatisfied = true, # will be updated in async call
   )
+
+proc addNewChat(
+    self: Module,
+    chatItem: chat_item.Item,
+    chatDto: ChatDto,
+    belongsToCommunity: bool,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
+    setChatAsActive: bool = true,
+    insertIntoModel: bool = true,
+  ) =
+
+  let isUsersListAvailable = chatDto.chatType != ChatType.OneToOne
 
   self.addSubmodule(
     chatDto.id,
@@ -770,11 +783,11 @@ proc addNewChat(
     sharedUrlsService,
   )
 
-  self.chatContentModules[chatDto.id].load(result)
+  self.chatContentModules[chatDto.id].load(chatItem)
   if insertIntoModel:
-    self.view.chatsModel().appendItem(result)
+    self.view.chatsModel().appendItem(chatItem)
   if setChatAsActive:
-    self.setActiveItem(result.id)
+    self.setActiveItem(chatItem.id)
 
 method switchToChannel*(self: Module, channelName: string) =
   if(not self.controller.isCommunity()):
@@ -1358,7 +1371,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       categoryId="",
       hideIfPermissionsNotMet=false,
       viewOnlyPermissionsSatisfied = true,
-      viewAndPostPermissionsSatisfied = true
+      viewAndPostPermissionsSatisfied = true,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem)
   let catChats = self.controller.getChats(communityId, categoryId)
@@ -1383,7 +1396,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       categoryId,
       hideIfPermissionsNotMet=false,
       viewOnlyPermissionsSatisfied = true,
-      viewAndPostPermissionsSatisfied = true
+      viewAndPostPermissionsSatisfied = true,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem, ignoreCategory = true)
 
@@ -1406,9 +1419,8 @@ method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, t
 method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)
 
-proc addOrUpdateChat(self: Module,
+method addOrUpdateChat(self: Module,
     chat: ChatDto,
-    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -1422,7 +1434,6 @@ proc addOrUpdateChat(self: Module,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
   ): chat_item.Item =
-
   let sectionId = self.controller.getMySectionId()
   if belongsToCommunity and sectionId != chat.communityId or
     not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():
@@ -1437,7 +1448,15 @@ proc addOrUpdateChat(self: Module,
   if chat.id == activeChatId:
     self.updateActiveChatMembership()
 
+  var community = CommunityDto()
+  if belongsToCommunity:
+    community = self.controller.getMyCommunity()
+  result = self.getChatItemFromChatDto(chat, community, setChatAsActive)
+
   if self.doesCatOrChatExist(chat.id):
+    if (self.chatContentModules.contains(chat.id)):
+      self.chatContentModules[chat.id].onChatUpdated(result)
+
     self.changeMutedOnChat(chat.id, chat.muted)
     self.changeCanPostValues(chat.id, chat.canPostReactions, chat.viewersCanPostReactions)
     self.updateChatRequiresPermissions(chat.id)
@@ -1448,9 +1467,9 @@ proc addOrUpdateChat(self: Module,
       self.onChatRenamed(chat.id, chat.name)
     return
 
-  result = self.addNewChat(
+  self.addNewChat(
+      result,
       chat,
-      community,
       belongsToCommunity,
       events.eventsEmitter(),
       settingsService,
@@ -1464,38 +1483,6 @@ proc addOrUpdateChat(self: Module,
       setChatAsActive,
       insertIntoModel,
     )
-
-method addOrUpdateChat*(self: Module,
-    chat: ChatDto,
-    belongsToCommunity: bool,
-    events: UniqueUUIDEventEmitter,
-    settingsService: settings_service.Service,
-    nodeConfigurationService: node_configuration_service.Service,
-    contactService: contact_service.Service,
-    chatService: chat_service.Service,
-    communityService: community_service.Service,
-    messageService: message_service.Service,
-    mailserversService: mailservers_service.Service,
-    sharedUrlsService: shared_urls_service.Service,
-    setChatAsActive: bool = true,
-    insertIntoModel: bool = true,
-  ): chat_item.Item =
- result = self.addOrUpdateChat(
-    chat,
-    CommunityDto(),
-    belongsToCommunity,
-    events,
-    settingsService,
-    nodeConfigurationService,
-    contactService,
-    chatService,
-    communityService,
-    messageService,
-    mailserversService,
-    sharedUrlsService,
-    setChatAsActive,
-    insertIntoModel,
-  )
 
 method downloadMessages*(self: Module, chatId: string, filePath: string) =
   if(not self.chatContentModules.contains(chatId)):

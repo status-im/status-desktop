@@ -642,8 +642,13 @@ QtObject:
               )
             )
 
-          if chat.name != prevChat.name or chat.description != prevChat.description or chat.color != prevChat.color or
-              chat.emoji != prevChat.emoji or chat.viewersCanPostReactions != prevChat.viewersCanPostReactions or
+          if chat.name != prevChat.name or
+              chat.description != prevChat.description or
+              chat.color != prevChat.color or
+              chat.emoji != prevChat.emoji or
+              chat.viewersCanPostReactions != prevChat.viewersCanPostReactions or
+              chat.canPost != prevChat.canPost or
+              chat.canView != prevChat.canView or
               chat.hideIfPermissionsNotMet != prevChat.hideIfPermissionsNotMet:
             var updatedChat = chat
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.

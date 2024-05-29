@@ -145,6 +145,7 @@ QtObject:
   # Forward declarations
   proc updateOrAddChat*(self: Service, chat: ChatDto)
   proc processMessengerResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])
+  proc getChatById*(self: Service, chatId: string, showWarning: bool = true): ChatDto
 
   proc doConnect(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
@@ -286,8 +287,11 @@ QtObject:
       error "no chats or messages in the parsed response"
       return
     for chat in chats:
-      if (chat.active):
-        self.events.emit(SIGNAL_CHAT_CREATED, CreatedChatArgs(chat: chat))
+      if chat.active:
+        var existingChat = self.getChatById(chat.id)
+        if existingChat.id == "" or not existingChat.active:
+          # Chat is now created
+          self.events.emit(SIGNAL_CHAT_CREATED, CreatedChatArgs(chat: chat))
     var chatMap: Table[string, ChatDto] = initTable[string, ChatDto]()
     for chat in chats:
       chatMap[chat.id] = chat
