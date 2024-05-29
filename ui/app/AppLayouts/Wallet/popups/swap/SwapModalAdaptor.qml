@@ -38,11 +38,16 @@ QObject {
         ]
     }
 
+    readonly property SortFilterProxyModel filteredFlatNetworksModel: SortFilterProxyModel {
+        sourceModel: root.swapStore.flatNetworks
+        filters: ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled }
+    }
+
     function getNetworkShortNames(chainIds) {
         var networkString = ""
         let chainIdsArray = chainIds.split(":")
         for (let i = 0; i< chainIdsArray.length; i++) {
-            let nwShortName = ModelUtils.getByKey(root.__filteredFlatNetworksModel, "chainId", Number(chainIdsArray[i]), "shortName")
+            let nwShortName = ModelUtils.getByKey(root.filteredFlatNetworksModel, "chainId", Number(chainIdsArray[i]), "shortName")
             if(!!nwShortName) {
                 networkString = networkString + nwShortName + ':'
             }
@@ -64,10 +69,6 @@ QObject {
 
     // Internal properties and functions -----------------------------------------------------------------------------------------------------------------------------
     readonly property var __fromToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
-    readonly property SortFilterProxyModel __filteredFlatNetworksModel: SortFilterProxyModel {
-        sourceModel: root.swapStore.flatNetworks
-        filters: ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled }
-    }
 
     SubmodelProxyModel {
         id: filteredBalancesModel
@@ -81,7 +82,7 @@ QObject {
             }
             readonly property LeftJoinModel joinModel: LeftJoinModel {
                 leftModel: submodel
-                rightModel: root.__filteredFlatNetworksModel
+                rightModel: root.filteredFlatNetworksModel
 
                 joinRole: "chainId"
             }
@@ -89,7 +90,7 @@ QObject {
     }
 
     function __processAccountBalance(address) {
-        let network = ModelUtils.getByKey(root.__filteredFlatNetworksModel, "chainId", root.swapFormData.selectedNetworkChainId)
+        let network = ModelUtils.getByKey(root.filteredFlatNetworksModel, "chainId", root.swapFormData.selectedNetworkChainId)
         if(!!network) {
             let balancesModel = ModelUtils.getByKey(filteredBalancesModel, "tokensKey", root.swapFormData.fromTokensKey, "balances")
             let accountBalance = ModelUtils.getByKey(balancesModel, "account", address)

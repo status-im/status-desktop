@@ -95,6 +95,7 @@ StatusComboBox {
             visible: active
         }
         StatusBaseText {
+            objectName: "contentItemText"
             Layout.alignment: Qt.AlignVCenter
             Layout.fillWidth: true
             font.pixelSize: Style.current.additionalTextSize

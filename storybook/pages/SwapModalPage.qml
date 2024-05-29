@@ -32,6 +32,16 @@ SplitView {
             sourceModel: d.flatNetworksModel
             filters: ValueFilter { roleName: "isTest"; value: areTestNetworksEnabledCheckbox.checked }
         }
+        function launchPopup() {
+            swapModal.createObject(root)
+        }
+        function getNetwork() {
+            let selectedChain = -1
+            if (networksComboBox.model.count > 0 && networksComboBox.currentIndex >= 0) {
+                selectedChain = ModelUtils.get(networksComboBox.model, networksComboBox.currentIndex, "chainId")
+            }
+            return selectedChain
+        }
     }
 
     PopupBackground {
@@ -48,50 +58,52 @@ SplitView {
             text: "Reopen"
             enabled: !swapModal.visible
 
-            onClicked: swapModal.open()
+            onClicked: d.launchPopup()
         }
 
-        SwapModal {
-            id: swapModal
-            visible: true
-            swapInputParamsForm: SwapInputParamsForm {
-                selectedAccountIndex: accountComboBox.currentIndex
-                selectedNetworkChainId: {
-                    if (networksComboBox.model.count > 0 && networksComboBox.currentIndex >= 0) {
-                        return ModelUtils.get(networksComboBox.model, networksComboBox.currentIndex, "chainId")
-                    }
-                    return -1
+        Component.onCompleted: d.launchPopup()
+
+        SwapInputParamsForm {
+            id: swapInputForm
+            selectedAccountIndex: accountComboBox.currentIndex
+            selectedNetworkChainId: d.getNetwork()
+            fromTokensKey: {
+                if (d.tokenBySymbolModel.count > 0) {
+                    return ModelUtils.get(d.tokenBySymbolModel, fromTokenComboBox.currentIndex, "key")
                 }
-                fromTokensKey: {
-                    if (d.tokenBySymbolModel.count > 0) {
-                        return ModelUtils.get(d.tokenBySymbolModel, fromTokenComboBox.currentIndex, "key")
-                    }
-                    return ""
-                }
-                fromTokenAmount: swapInput.text
-                toTokenKey: {
-                    if (d.tokenBySymbolModel.count > 0) {
-                        return ModelUtils.get(d.tokenBySymbolModel, toTokenComboBox.currentIndex, "key")
-                    }
-                    return ""
-                }
+                return ""
             }
-            swapAdaptor: SwapModalAdaptor {
-                swapStore: SwapStore {
-                    readonly property var accounts: d.accountsModel
-                    readonly property var flatNetworks: d.flatNetworksModel
-                    readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
+            fromTokenAmount: swapInput.text
+            toTokenKey: {
+                if (d.tokenBySymbolModel.count > 0) {
+                    return ModelUtils.get(d.tokenBySymbolModel, toTokenComboBox.currentIndex, "key")
                 }
-                walletAssetsStore: WalletAssetsStore {
-                    id: thisWalletAssetStore
-                    walletTokensStore: TokensStore {
-                        readonly property var plainTokensBySymbolModel: TokensBySymbolModel {}
+                return ""
+            }
+        }
+
+        Component {
+            id: swapModal
+            SwapModal {
+                visible: true
+                swapInputParamsForm: swapInputForm
+                    swapAdaptor: SwapModalAdaptor {
+                        swapStore: SwapStore {
+                            readonly property var accounts: d.accountsModel
+                            readonly property var flatNetworks: d.flatNetworksModel
+                            readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
+                        }
+                        walletAssetsStore: WalletAssetsStore {
+                            id: thisWalletAssetStore
+                            walletTokensStore: TokensStore {
+                                readonly property var plainTokensBySymbolModel: TokensBySymbolModel {}
+                            }
+                            readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
+                            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+                        }
+                        currencyStore: CurrenciesStore {}
+                        swapFormData: swapInputForm
                     }
-                    readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                    assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
-                }
-                currencyStore: CurrenciesStore {}
-                swapFormData: swapModal.swapInputParamsForm
             }
         }
     }
@@ -129,7 +141,7 @@ SplitView {
                 }
                 currentIndex: 0
                 onCurrentIndexChanged: {
-                    swapModal.swapInputParamsForm.selectedAccountIndex = currentIndex
+                    swapInputForm.selectedAccountIndex = currentIndex
                 }
             }
 
@@ -142,6 +154,7 @@ SplitView {
                 model: d.filteredNetworksModel
                 currentIndex: 0
                 onCountChanged: currentIndex = 0
+                onCurrentIndexChanged: swapInputForm.selectedNetworkChainId = d.getNetwork()
             }
 
             StatusBaseText {

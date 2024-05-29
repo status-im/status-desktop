@@ -217,6 +217,7 @@ Item {
                                                               })
             onLaunchSwapModal: {
                 d.swapFormData.selectedAccountIndex = d.selectedAccountIndex
+                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 d.swapFormData.fromTokensKey = tokensKey
                 Global.openSwapModalRequested(d.swapFormData)
             }
@@ -334,6 +335,7 @@ Item {
             onLaunchSwapModal: {
                 d.swapFormData.fromTokensKey =  ""
                 d.swapFormData.selectedAccountIndex = d.selectedAccountIndex
+                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
                 }

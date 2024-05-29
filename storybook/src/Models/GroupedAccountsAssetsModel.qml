@@ -6,7 +6,9 @@ ListModel {
             tokensKey: "DAI",
             balances: [
                 { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 5, balance: "0" },
-                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 5, balance: "123456789123456789" }
+                { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 11155111, balance: "0" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 5, balance: "123456789123456789" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 11155111, balance: "123456789123456789" }
             ]
         },
         {
@@ -15,6 +17,7 @@ ListModel {
                 { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 420, balance: "1013151281976507736" },
                 { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 421613, balance: "473057568699284613" },
                 { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 5, balance: "307400931315122839" },
+                { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 11155111, balance: "307400931315122839" },
                 { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 420, balance: "122082928968121891" },
                 { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 421613, balance: "0" },
                 { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 5, balance: "559133758939097000" }
@@ -24,7 +27,10 @@ ListModel {
             tokensKey: "STT",
             balances: [
                 { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 5, balance: "999999999998998500000000000016777216" },
-                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 5, balance: "1077000000000000000000" }
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 5, balance: "1077000000000000000000" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 420, balance: "122082928968121891" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 421613, balance: "222000000000000000" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 11155111, balance: "559133758939097000" }
             ]
         },
         {
