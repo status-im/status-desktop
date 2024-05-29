@@ -10,6 +10,7 @@ type
     logoUrl*: string
     siteUrl*: string
     hostname*: string
+    recurrentSiteUrl*: string
 
 proc newDto*(
   name: string,
@@ -17,7 +18,8 @@ proc newDto*(
   fees: string,
   logoUrl: string,
   siteUrl: string,
-  hostname: string
+  hostname: string,
+  recurrentSiteUrl: string
 ): CryptoRampDto =
   return CryptoRampDto(
     name: name,
@@ -25,7 +27,8 @@ proc newDto*(
     fees: fees,
     logoUrl: logoUrl,
     siteUrl: siteUrl,
-    hostname: hostname
+    hostname: hostname,
+    recurrentSiteUrl: recurrentSiteUrl
   )
 
 proc `$`*(self: CryptoRampDto): string =
@@ -36,6 +39,7 @@ proc `$`*(self: CryptoRampDto): string =
   result &= fmt"logoUrl:{self.logoUrl}, "
   result &= fmt"siteUrl:{self.siteUrl}, "
   result &= fmt"hostname:{self.hostname}"
+  result &= fmt"recurrentSiteUrl:{self.recurrentSiteUrl}"
   result &= ")"
 
 proc toCryptoRampDto*(jsonObj: JsonNode): CryptoRampDto =
@@ -46,3 +50,4 @@ proc toCryptoRampDto*(jsonObj: JsonNode): CryptoRampDto =
   discard jsonObj.getProp("logoUrl", result.logoUrl)
   discard jsonObj.getProp("siteUrl", result.siteUrl)
   discard jsonObj.getProp("hostname", result.hostname)
+  discard jsonObj.getProp("recurrentSiteUrl", result.recurrentSiteUrl)

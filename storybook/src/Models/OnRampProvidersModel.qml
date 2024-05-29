@@ -9,7 +9,7 @@ ListModel {
             logoUrl:           ModelsData.onRampProviderImages.ramp,
             siteUrl:           "https://ramp.network/buy?hostApiKey=zrtf9u2uqebeyzcs37fu5857tktr3eg9w5tffove&swapAsset=DAI,ETH,USDC,USDT",
             hostname:          "ramp.network",
-            recurrentSiteURL:  ""
+            recurrentSiteUrl:  ""
         },
         {
             name:              "MoonPay",
@@ -18,7 +18,7 @@ ListModel {
             logoUrl:           ModelsData.onRampProviderImages.moonPay,
             siteUrl:           "https://buy.moonpay.com/?apiKey=pk_live_YQC6CQPA5qqDu0unEwHJyAYQyeIqFGR",
             hostname:          "moonpay.com",
-            recurrentSiteURL:  "https://buy.moonpay.com/?apiKey=pk_live_YQC6CQPA5qqDu0unEwHJyAYQyeIqFGR",
+            recurrentSiteUrl:  "https://buy.moonpay.com/?apiKey=pk_live_ABCCQPA5qqDu0unEwHJyAYQyeIqFGR",
         },
         {
             name:              "Latamex",
@@ -27,7 +27,7 @@ ListModel {
             logoUrl:           ModelsData.onRampProviderImages.latamex,
             siteUrl:           "https://latamex.com/",
             hostname:          "latamex.com",
-            recurrentSiteURL:  "",
+            recurrentSiteUrl:  "",
         }
     ]
 

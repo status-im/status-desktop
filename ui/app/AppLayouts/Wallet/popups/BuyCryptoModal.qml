@@ -46,12 +46,11 @@ StatusDialog {
             Layout.fillHeight: true
             model: SortFilterProxyModel {
                 sourceModel: !!root.onRampProvidersModel ? root.onRampProvidersModel : null
-                // TODO: this temporary and changed under https://github.com/status-im/status-desktop/issues/14820
-                // when recurrentSiteURL is available
                 filters: ValueFilter {
                     enabled: tabBar.currentIndex
-                    roleName: "name"
+                    roleName: "recurrentSiteUrl"
                     value: ""
+                    inverted: true
                 }
             }
             delegate: StatusListItem {
@@ -78,7 +77,7 @@ StatusDialog {
                     }
                 ]
                 onClicked: {
-                    let url = tabBar.currentIndex ? recurrentSiteURL : siteUrl
+                    let url = tabBar.currentIndex ? recurrentSiteUrl : siteUrl
                     Global.openLinkWithConfirmation(url, hostname)
                     root.close()
                 }
