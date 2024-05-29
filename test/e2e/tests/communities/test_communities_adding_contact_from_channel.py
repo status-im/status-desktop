@@ -17,7 +17,7 @@ pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736170',
-                 'Add contact from community channel')
+                 'Add a contact from community's member list')
 @pytest.mark.case(736170)
 def test_add_contact_from_community_channel_chat(multiple_instances):
     user_one: UserAccount = constants.user_account_one
