@@ -23,6 +23,8 @@ QtObject:
     isContact: bool
     active: bool
     blocked: bool
+    canPost: bool
+    canView: bool
     canPostReactions: bool
     hideIfPermissionsNotMet: bool
 
@@ -50,8 +52,10 @@ QtObject:
       isUntrustworthy: bool,
       isContact: bool = false,
       blocked: bool = false,
+      canPost: bool = true,
+      canView: bool = true,
       canPostReactions: bool = true,
-      hideIfPermissionsNotMet: bool
+      hideIfPermissionsNotMet: bool,
     ) =
     self.id = id
     self.`type` = `type`
@@ -71,6 +75,8 @@ QtObject:
     self.isContact = isContact
     self.active = false
     self.blocked = blocked
+    self.canPost = canPost
+    self.canView = canView
     self.canPostReactions = canPostReactions
     self.hideIfPermissionsNotMet = hideIfPermissionsNotMet
 
@@ -247,6 +253,28 @@ QtObject:
   proc setBlocked*(self: ChatDetails, value: bool) =
     self.blocked = value
     self.blockedChanged()
+
+  proc canPostChanged(self: ChatDetails) {.signal.}
+  proc getCanPost(self: ChatDetails): bool {.slot.} =
+    return self.canPost
+  QtProperty[bool] canPost:
+    read = getCanPost
+    notify = canPostChanged
+
+  proc setCanPost*(self: ChatDetails, value: bool) =
+    self.canPost = value
+    self.canPostChanged()
+
+  proc canViewChanged(self: ChatDetails) {.signal.}
+  proc getCanView(self: ChatDetails): bool {.slot.} =
+    return self.canView
+  QtProperty[bool] canView:
+    read = getCanView
+    notify = canViewChanged
+
+  proc setCanView*(self: ChatDetails, value: bool) =
+    self.canView = value
+    self.canViewChanged()
 
   proc canPostReactionsChanged(self: ChatDetails) {.signal.}
   proc getCanPostReactions(self: ChatDetails): bool {.slot.} =
