@@ -336,6 +336,7 @@ SplitView {
                         implicitWidth: 640
 
                         readOnly: ctrlReadOnly.checked
+                        idVerificationFlowsEnabled: true // enabled in SB
                         publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
 
                         onCloseRequested: logs.logEvent("closeRequested()")
