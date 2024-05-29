@@ -248,17 +248,12 @@ StatusDialog {
                 RowLayout {
                     spacing: 8
                     Layout.preferredHeight: 44
-                    StatusBaseText {
+
+                    HeaderTitleText {
                         id: modalHeader
-                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                        verticalAlignment: Text.AlignVCenter
-                        text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
-                        font.pixelSize: 28
-                        lineHeight: 38
-                        lineHeightMode: Text.FixedHeight
-                        font.letterSpacing: -0.4
-                        color: Theme.palette.directColor1
                         Layout.maximumWidth: contentWidth
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                        text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
                     }
 
                     HoldingSelector {

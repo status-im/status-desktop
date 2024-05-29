@@ -10,3 +10,4 @@ AmountInputWithCursor 1.0 AmountInputWithCursor.qml
 BalanceExceeded 1.0 BalanceExceeded.qml
 CollectibleBackButtonWithInfo 1.0 CollectibleBackButtonWithInfo.qml
 CollectibleNestedDelegate 1.0 CollectibleNestedDelegate.qml
+HeaderTitleText 1.0 HeaderTitleText.qml
