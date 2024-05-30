@@ -7,7 +7,8 @@ import pytest
 from allure_commons._allure import step
 
 import driver
-from constants.images_paths import HEART_EMOJI_PATH
+from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, \
+    LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
 from gui.screens.messages import MessagesScreen, ToolBar, ChatMessagesView
 from tests.settings.settings_messaging import marks
 
@@ -141,12 +142,26 @@ def test_1x1_chat(multiple_instances):
             assert message.reply_corner.exists
 
         with step(f'User {user_one.name}, add reaction to the last message and verify it was added'):
-            message.open_context_menu_for_message().add_reaction_to_message(1)
-            assert driver.waitFor(lambda: HEART_EMOJI_PATH == message.get_emoji_reactions_pathes()[0], timeout)
+            occurrence = random.randint(1, 5)
+            message.open_context_menu_for_message().add_reaction_to_message(occurrence)
+            EMOJI_PATHES = [HEART_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, LAUGHING_EMOJI_PATH,
+                            SAD_EMOJI_PATH, ANGRY_EMOJI_PATH]
+            assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] == message.get_emoji_reactions_pathes()[0],
+                                  timeout)
+            main_window.hide()
+
+        with step(f'User {user_two.name}, also see emoji reaction on the last message'):
+            aut_two.attach()
+            main_window.prepare()
+            message = chat.find_message_by_text(chat_message_reply, 0)
+            assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] == message.get_emoji_reactions_pathes()[0],
+                                  timeout)
+            main_window.hide()
 
         with step(f'User {user_one.name}, delete own message and verify it was deleted'):
-            message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(
-                chat_message_reply, 0)
+            aut_one.attach()
+            main_window.prepare()
+            message = chat.find_message_by_text(chat_message_reply, 0)
             message.hover_message().delete_message()
 
         with step(f'User {user_one.name}, cannot delete {user_two.name} message'):
