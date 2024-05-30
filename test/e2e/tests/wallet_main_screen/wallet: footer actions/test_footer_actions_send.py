@@ -31,6 +31,8 @@ def keys_screen(main_window) -> KeysView:
     pytest.param(constants.user.user_account_one.status_address, 0, 'Ether', 'Assets')
 ])
 @pytest.mark.timeout(timeout=120)
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14862")
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14509")
 def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_account_address, amount, asset, tab):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
