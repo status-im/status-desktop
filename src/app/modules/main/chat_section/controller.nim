@@ -16,7 +16,6 @@ import ../../../../app_service/service/community_tokens/service as community_tok
 import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 import ../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../app_service/common/types
-import backend/collectibles as backend_collectibles
 
 import ../../../core/signals/types
 import ../../../core/eventemitter
@@ -95,22 +94,8 @@ proc asyncCheckPermissionsToJoin*(self: Controller) =
   self.communityService.asyncCheckPermissionsToJoin(self.getMySectionId(), addresses = @[], fullCheck = false)
   self.delegate.setPermissionsToJoinCheckOngoing(true)
 
-proc asyncCheckAllChannelsPermissions*(self: Controller) =
-  if self.allChannelsPermissionCheckOngoing:
-    return
-  self.allChannelsPermissionCheckOngoing = true
-  self.chatService.asyncCheckAllChannelsPermissions(self.getMySectionId(), addresses = @[], fullCheck = false)
-  self.delegate.setChannelsPermissionsCheckOngoing(true)
-
 proc asyncCheckChannelPermissions*(self: Controller, communityId: string, chatId: string) =
   self.chatService.asyncCheckChannelPermissions(communityId, chatId)
-
-proc asyncCheckPermissions*(self: Controller) =
-  let community = self.getMyCommunity()
-  if community.isPrivilegedUser:
-    return
-  self.asyncCheckPermissionsToJoin()
-  self.asyncCheckAllChannelsPermissions()
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
@@ -268,33 +253,30 @@ proc init*(self: Controller) =
       if (args.communityId == self.sectionId):
         self.delegate.onCategoryUnmuted(args.categoryId)
 
-    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED) do(e: Args):
-      let args = CommunityTokenPermissionArgs(e)
-      if (args.communityId == self.sectionId):
-        self.delegate.onCommunityTokenPermissionCreated(args.communityId, args.tokenPermission)
-        self.asyncCheckPermissions()
-
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionCreationFailed(args.communityId)
-
-    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED) do(e: Args):
-      let args = CommunityTokenPermissionArgs(e)
-      if (args.communityId == self.sectionId):
-        self.delegate.onCommunityTokenPermissionUpdated(args.communityId, args.tokenPermission)
-        self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionUpdateFailed(args.communityId)
 
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED) do(e: Args):
+      let args = CommunityTokenPermissionArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenPermissionCreated(args.communityId, args.tokenPermission)
+
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED) do(e: Args):
+      let args = CommunityTokenPermissionArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenPermissionUpdated(args.communityId, args.tokenPermission)
+  
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionDeleted(args.communityId, args.tokenPermission)
-        self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
@@ -316,12 +298,6 @@ proc init*(self: Controller) =
       if args.communityId == self.sectionId:
         self.delegate.onCommunityCheckChannelPermissionsResponse(args.chatId, args.checkChannelPermissionsResponse)
 
-    self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE) do(e: Args):
-      let args = CheckAllChannelsPermissionsResponseArgs(e)
-      if args.communityId == self.sectionId:
-        self.allChannelsPermissionCheckOngoing = false
-        self.delegate.onCommunityCheckAllChannelsPermissionsResponse(args.checkAllChannelsPermissionsResponse)
-
     self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
       let args = CheckChannelsPermissionsErrorArgs(e)
       if args.communityId == self.sectionId:
@@ -332,15 +308,6 @@ proc init*(self: Controller) =
       let args = CommunityIdArgs(e)
       if args.communityId == self.sectionId:
         self.delegate.onWaitingOnNewCommunityOwnerToConfirmRequestToRejoin()
-
-    self.events.on(SignalType.Wallet.event, proc(e: Args) =
-      var data = WalletSignal(e)
-      if data.eventType == backend_collectibles.eventCollectiblesOwnershipUpdateFinished:
-        self.asyncCheckPermissions()
-    )
-
-    self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
-      self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_COMMUNITY_KICKED) do (e: Args):
       let args = CommunityArgs(e)
