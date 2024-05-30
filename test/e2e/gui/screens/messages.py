@@ -7,7 +7,6 @@ import allure
 import configs
 import driver
 from driver.objects_access import walk_children
-from driver.toplevel_window import set_focus
 from gui.components.activity_center import ActivityCenter
 from gui.components.context_menu import ContextMenu
 from gui.components.delete_popup import DeleteMessagePopup
@@ -17,6 +16,7 @@ from gui.components.messaging.close_chat_popup import CloseChatPopup
 from gui.components.messaging.edit_group_name_and_image_popup import EditGroupNameAndImagePopup
 from gui.components.messaging.leave_group_popup import LeaveGroupPopup
 from gui.components.messaging.link_preview_options_popup import LinkPreviewOptionsPopup
+from gui.components.messaging.message_context_menu_popup import MessageContextMenuPopup
 from gui.elements.button import Button
 from gui.elements.list import List
 from gui.elements.object import QObject
@@ -130,6 +130,7 @@ class Message:
         self.link_preview: typing.Optional[QObject] = None
         self.link_preview_title_object: typing.Optional[QObject] = None
         self.link_preview_emoji_hash: typing.Optional[str] = None
+        self.image_message: typing.Optional[QObject] = None
         self.community_invitation: dict = {}
         self.init_ui()
 
@@ -161,6 +162,8 @@ class Message:
                         self.delegate_button = Button(real_name=driver.objectMap.realName(child))
                     case 'linksMessageView':
                         self.link_preview = QObject(real_name=driver.objectMap.realName(child))
+                    case 'imageMessage':
+                        self.image_message = child
 
     @allure.step('Open community invitation')
     def open_community_invitation(self):
@@ -197,6 +200,21 @@ class Message:
         for child in walk_children(self.link_preview_title_object):
             if getattr(child, 'objectName', '') == 'linkPreviewTitle':
                 return str(child.text)
+
+    @allure.step('Open context menu for message')
+    def open_context_menu_for_message(self):
+        QObject(real_name=driver.objectMap.realName(self.object)).right_click()
+        return MessageContextMenuPopup().wait_until_appears()
+
+    @allure.step('Get emoji reactions pathes')
+    def get_emoji_reactions_pathes(self):
+        reactions_pathes = []
+        for child in walk_children(self.object):
+            if getattr(child, 'id', '') == 'reactionDelegate':
+                for item in walk_children(child):
+                    if getattr(item, 'objectName', '') == 'emojiReaction':
+                        reactions_pathes.append(item.source.path)
+        return reactions_pathes
 
 
 class ChatView(QObject):
@@ -288,9 +306,11 @@ class ChatMessagesView(QObject):
         self._add_remove_item = QObject(messaging_names.add_remove_from_group_StatusMenuItem)
         self._clear_history_item = QObject(messaging_names.clear_History_StatusMenuItem)
         self._close_chat_item = QObject(messaging_names.close_Chat_StatusMenuItem)
+        self._chat_input = QObject(messaging_names.mainWindow_statusChatInput_StatusChatInput)
         self._message_input_area = QObject(messaging_names.inputScrollView_messageInputField_TextArea)
         self._message_field = TextEdit(messaging_names.inputScrollView_Message_PlaceholderText)
         self._emoji_button = Button(messaging_names.mainWindow_statusChatInputEmojiButton_StatusFlatRoundButton)
+        self._image_button = Button(messaging_names.mainWindow_imageBtn_StatusFlatRoundButton)
         self._link_preview_title = QObject(messaging_names.mainWindow_linkPreviewTitleText_StatusBaseText)
         self._link_preview_preview_subtitle = QObject(messaging_names.mainWindow_linkPreviewSubtitleText_StatusBaseText)
         self._link_preview_show_preview = QObject(messaging_names.mainWindow_titleText_StatusBaseText)
@@ -395,6 +415,12 @@ class ChatMessagesView(QObject):
     def send_emoji_to_chat(self, emoji: str):
         self._emoji_button.click()
         EmojiPopup().wait_until_appears().select(emoji)
+        for i in range(2):
+            driver.nativeType('<Return>')
+
+    @allure.step('Send image to chat')
+    def send_image_to_chat(self, path):
+        self._chat_input.object.selectImageString('file://' + str(path))
         for i in range(2):
             driver.nativeType('<Return>')
 

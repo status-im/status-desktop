@@ -7,6 +7,7 @@ import pytest
 from allure_commons._allure import step
 
 import driver
+from constants.images_paths import HEART_EMOJI_PATH
 from gui.screens.messages import MessagesScreen, ToolBar, ChatMessagesView
 from tests.settings.settings_messaging import marks
 
@@ -26,6 +27,7 @@ def test_1x1_chat(multiple_instances):
     main_window = MainWindow()
     messages_screen = MessagesScreen()
     emoji = 'sunglasses'
+    timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
 
     with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
@@ -56,7 +58,7 @@ def test_1x1_chat(multiple_instances):
             aut_two.attach()
             main_window.prepare()
             activity_center = ToolBar().open_activity_center()
-            request = activity_center.find_contact_request_in_list(user_one.name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            request = activity_center.find_contact_request_in_list(user_one.name, timeout)
             activity_center.click_activity_center_button(
                 'Contact requests').accept_contact_request(request)
             main_window.hide()
@@ -103,22 +105,32 @@ def test_1x1_chat(multiple_instances):
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
                 assert '😎' in message_item
+
+        with step(f'User {user_two.name} send image to {user_one.name} and verify it was sent'):
+            path = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
+            messages_screen.group_chat.send_image_to_chat(str(path))
+            message_object = messages_screen.chat.messages(0)[0]
+            assert message_object.image_message.visible
             main_window.hide()
 
         with step(f'User {user_one.name}, received reply from {user_two.name}'):
             aut_one.attach()
             main_window.prepare()
+            time.sleep(4)
+            message_objects = messages_screen.chat.messages(2)
+            message_items = [message.text for message in message_objects]
+            for message_item in message_items:
+                assert driver.waitFor(lambda: chat_message2 in message_item, timeout)
+
+        with step(f'User {user_one.name}, received emoji from {user_two.name}'):
             message_objects = messages_screen.chat.messages(1)
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
-                assert driver.waitFor(lambda: chat_message2 in message_item, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                assert driver.waitFor(lambda: '😎' in message_item, timeout)
 
-        with step(f'User {user_one.name}, received emoji from {user_two.name}'):
-            time.sleep(2)
-            message_objects = messages_screen.chat.messages(0)
-            message_items = [message.text for message in message_objects]
-            for message_item in message_items:
-                assert driver.waitFor(lambda: '😎' in message_item, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        with step(f'User {user_one.name}, received image from {user_two.name}'):
+            message_object = messages_screen.chat.messages(0)[0]
+            assert message_object.image_message.visible
 
         with step(f'User {user_one.name}, reply to own message and verify that message displayed as a reply'):
             chat_message_reply = \
@@ -128,6 +140,10 @@ def test_1x1_chat(multiple_instances):
             message = chat.find_message_by_text(chat_message_reply, 0)
             assert message.reply_corner.exists
 
+        with step(f'User {user_one.name}, add reaction to the last message and verify it was added'):
+            message.open_context_menu_for_message().add_reaction_to_message(1)
+            assert driver.waitFor(lambda: HEART_EMOJI_PATH == message.get_emoji_reactions_pathes()[0], timeout)
+
         with step(f'User {user_one.name}, delete own message and verify it was deleted'):
             message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(
                 chat_message_reply, 0)
@@ -135,7 +151,7 @@ def test_1x1_chat(multiple_instances):
 
         with step(f'User {user_one.name}, cannot delete {user_two.name} message'):
             message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(chat_message2,
-                                                                                                        2)
+                                                                                                        3)
             assert not message.hover_message().is_delete_button_visible()
 
         with step(f'User {user_one.name}, clears chat history'):
@@ -163,5 +179,5 @@ def test_1x1_chat(multiple_instances):
             aut_one.attach()
             main_window.prepare()
             assert driver.waitFor(lambda: user_two.name in messages_screen.left_panel.get_chats_names,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'{chat} is present in chats list'
+                                  timeout), f'{chat} is present in chats list'
             main_window.hide()
