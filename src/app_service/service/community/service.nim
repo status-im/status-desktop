@@ -1619,14 +1619,13 @@ QtObject:
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
     self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
-  proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string], fullCheck: bool) =
+  proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string]) =
     let arg = AsyncCheckPermissionsToJoinTaskArg(
       tptr: cast[ByteAddress](asyncCheckPermissionsToJoinTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckPermissionsToJoinDone",
       communityId: communityId,
       addresses: addresses,
-      fullCheck: fullCheck
     )
     self.threadpool.start(arg)
 

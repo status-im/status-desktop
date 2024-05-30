@@ -91,7 +91,7 @@ proc getMySectionId*(self: Controller): string =
 proc asyncCheckPermissionsToJoin*(self: Controller) =
   if self.delegate.getPermissionsToJoinCheckOngoing():
     return
-  self.communityService.asyncCheckPermissionsToJoin(self.getMySectionId(), addresses = @[], fullCheck = false)
+  self.communityService.asyncCheckPermissionsToJoin(self.getMySectionId(), addresses = @[])
   self.delegate.setPermissionsToJoinCheckOngoing(true)
 
 proc asyncCheckChannelPermissions*(self: Controller, communityId: string, chatId: string) =
