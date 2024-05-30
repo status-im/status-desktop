@@ -142,7 +142,7 @@ def test_1x1_chat(multiple_instances):
             assert message.reply_corner.exists
 
         with step(f'User {user_one.name}, add reaction to the last message and verify it was added'):
-            occurrence = random.randint(1, 5)
+            occurrence = random.randint(1, 6)
             message.open_context_menu_for_message().add_reaction_to_message(occurrence)
             EMOJI_PATHES = [HEART_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, LAUGHING_EMOJI_PATH,
                             SAD_EMOJI_PATH, ANGRY_EMOJI_PATH]

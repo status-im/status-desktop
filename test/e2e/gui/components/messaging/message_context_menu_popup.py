@@ -19,6 +19,7 @@ class MessageContextMenuPopup(BasePopup):
 
     @allure.step('Add reaction to message')
     def add_reaction_to_message(self, occurrence: int):
+        # for 1st element occurrence is absent in real name, for other elements it starts from 2
         if occurrence > 1:
             self._emoji_reaction.real_name['occurrence'] = occurrence
         self._emoji_reaction.click()
