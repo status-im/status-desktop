@@ -32,7 +32,7 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
 
     with step('Create watched address from context menu'):
         account_popup = wallet.left_panel.select_add_watched_address_from_context_menu()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_eth_address(address).save()
+        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_eth_address(address).save_changes()
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
@@ -45,7 +45,7 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
 
     with step('Set new name, emoji and color for account and save'):
-        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
+        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(new_name, new_color.lower(), new_emoji_unicode)

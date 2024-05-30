@@ -1,7 +1,7 @@
 import allure
 
 from gui.components.base_popup import BasePopup
-from gui.components.community.authenticate_popup import AuthenticatePopup
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel

@@ -29,7 +29,7 @@ def test_context_menu_edit_default_account(main_screen: MainWindow, name: str, n
 
     with step('Edit wallet account'):
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
-        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
+        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(new_name, new_color.lower(), new_emoji_unicode)

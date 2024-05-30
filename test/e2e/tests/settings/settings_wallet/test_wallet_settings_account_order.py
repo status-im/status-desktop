@@ -2,14 +2,13 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-import constants
 from constants import EmojiCodes
 from . import marks
 
 import configs
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -34,7 +33,7 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_watched_address(address)
         assert account_popup.get_emoji_from_account_title() == EmojiCodes.SMILING_FACE_WITH_SUNGLASSES.value, \
             f'Emoji was not set or does not match'
-        account_popup.save()
+        account_popup.save_changes()
         account_popup.wait_until_hidden()
 
     with step('Create generated wallet account'):
@@ -42,7 +41,7 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
         account_popup.set_name(second_name).set_emoji(second_emoji).set_color(second_color)
         assert account_popup.get_emoji_from_account_title() == EmojiCodes.THUMBSUP_SIGN.value, \
             f'Emoji was not set or does not match'
-        account_popup.save()
+        account_popup.save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 

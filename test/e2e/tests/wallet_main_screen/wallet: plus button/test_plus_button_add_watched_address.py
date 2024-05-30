@@ -7,8 +7,7 @@ from tests.wallet_main_screen import marks
 
 import constants
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
-from gui.components.toast_message import ToastMessage
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -27,7 +26,7 @@ def test_plus_button_add_watched_address(
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_watched_address(address).save()
+        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_watched_address(address).save_changes()
         account_popup.wait_until_hidden()
 
     with step('Check authentication popup does not appear'):

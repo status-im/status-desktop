@@ -8,8 +8,7 @@ from tests.wallet_main_screen import marks
 import constants
 from driver.aut import AUT
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
-from gui.components.toast_message import ToastMessage
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -37,7 +36,7 @@ def test_add_generated_account_restart_add_again(
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).save()
+        account_popup.set_name(name).set_emoji(emoji).set_color(color).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
@@ -64,7 +63,7 @@ def test_add_generated_account_restart_add_again(
         assert not SigningPhrasePopup().is_ok_got_it_button_visible(), \
             f"Signing phrase should not be present because it has been hidden in the first step"
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name2).set_emoji(emoji2).set_color(color2).save()
+        account_popup.set_name(name2).set_emoji(emoji2).set_color(color2).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 

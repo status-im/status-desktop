@@ -11,12 +11,14 @@ from . import marks
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.components.wallet.send_popup import SendPopup
 from gui.screens.onboarding import KeysView, WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
 from gui.screens.settings_ens_usernames import ENSRegisteredView
 
 pytestmark = marks
+
+
 @pytest.fixture
 def keys_screen(main_window) -> KeysView:
     with step('Open Generate new keys view'):

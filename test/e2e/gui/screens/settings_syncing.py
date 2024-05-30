@@ -1,7 +1,7 @@
 import allure
 
 from constants.syncing import SyncingSettings
-from gui.components.community.authenticate_popup import AuthenticatePopup
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.components.settings.sync_new_device_popup import SyncNewDevicePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject

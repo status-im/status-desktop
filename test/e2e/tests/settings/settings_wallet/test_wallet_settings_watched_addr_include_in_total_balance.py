@@ -38,7 +38,7 @@ def test_settings_include_in_total_balance(main_screen: MainWindow, name, watche
     with step('Open wallet settings screen and add watched address using "+" button'):
         add_account_popup = \
             main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_add_account_pop_up()
-        add_account_popup.set_name(name).set_origin_watched_address(watched_address).save()
+        add_account_popup.set_name(name).set_origin_watched_address(watched_address).save_changes()
         add_account_popup.wait_until_hidden()
 
     with step('Open wallet settings and verify the keypair for the watched address is present with default title'):

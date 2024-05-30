@@ -1,16 +1,10 @@
 import random
-import typing
 
-import allure
-
-import configs
 from constants.wallet import *
-import driver
-from gui.objects_map import names
 from gui.screens.settings_wallet import *
 from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.components.wallet.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
@@ -18,6 +12,7 @@ from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 
 GENERATED_PAGES_LIMIT = 20
 
@@ -39,7 +34,7 @@ class AccountPopup(BasePopup):
         self._use_keycard_button = QObject(names.mainWallet_AddEditAccountPopup_MasterKey_GoToKeycardSettingsOption)
         # derivation
         self._address_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountWatchOnlyAddress)
-        self._add_account_button = Button(names.mainWallet_AddEditAccountPopup_PrimaryButton)
+        self._add_save_account_confirmation_button = Button(names.mainWallet_AddEditAccountPopup_PrimaryButton)
         self._edit_derivation_path_button = Button(names.mainWallet_AddEditAccountPopup_EditDerivationPathButton)
         self._derivation_path_combobox_button = Button(
             names.mainWallet_AddEditAccountPopup_PreDefinedDerivationPathsButton)
@@ -162,9 +157,9 @@ class AccountPopup(BasePopup):
         self._use_keycard_button.click()
         return self
 
-    @allure.step('Save added account')
-    def save(self):
-        self._add_account_button.wait_until_appears().click()
+    @allure.step('Click confirmation (add account / save changes) button')
+    def save_changes(self):
+        self._add_save_account_confirmation_button.click()
         return self
 
 

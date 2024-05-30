@@ -3,7 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants.wallet import WalletRenameKeypair
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
+from gui.components.authenticate_popup import AuthenticatePopup
 from tests.wallet_main_screen import marks
 
 import constants
@@ -33,21 +33,21 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, name: str, c
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).save()
+        account_popup.set_name(name).set_emoji(emoji).set_color(color).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
     with step('Create imported seed phrase wallet account'):
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(second_name).set_emoji(emoji).set_color(color).set_origin_seed_phrase(
-            seed_phrase.split()).save()
+            seed_phrase.split()).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
     with step('Import an account within private key'):
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(third_name).set_emoji(emoji).set_color(color).set_origin_private_key(
-            address_pair.private_key).save()
+            address_pair.private_key).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 

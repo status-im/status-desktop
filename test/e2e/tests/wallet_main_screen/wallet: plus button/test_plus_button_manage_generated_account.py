@@ -8,8 +8,7 @@ from tests.wallet_main_screen import marks
 import constants
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.toast_message import ToastMessage
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -31,7 +30,7 @@ def test_plus_button_manage_generated_account(main_screen: MainWindow, user_acco
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).save()
+        account_popup.set_name(name).set_emoji(emoji).set_color(color).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
@@ -51,7 +50,7 @@ def test_plus_button_manage_generated_account(main_screen: MainWindow, user_acco
 
     with step('Edit wallet account'):
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
-        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
+        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(new_name, new_color.lower(), new_emoji_unicode)

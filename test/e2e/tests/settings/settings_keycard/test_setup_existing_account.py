@@ -9,11 +9,11 @@ from . import marks
 import configs
 import constants
 import driver
-from constants import ColorCodes, aut_options
-from constants.images_paths import PLUG_IN_KEYCARD_IMAGE_PATH, INSERT_KEYCARD_IMAGE_PATH, CHOOSE_KEYCARD_PIN_IMAGE_PATH, \
+from constants import ColorCodes
+from constants.images_paths import PLUG_IN_KEYCARD_IMAGE_PATH, CHOOSE_KEYCARD_PIN_IMAGE_PATH, \
     KEYCARD_SUCCESS_IMAGE_PATH
 from constants.keycard import Keycard
-from gui.components.community.authenticate_popup import AuthenticatePopup
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
 

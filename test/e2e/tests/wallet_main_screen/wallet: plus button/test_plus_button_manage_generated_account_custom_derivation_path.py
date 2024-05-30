@@ -36,7 +36,7 @@ def test_plus_button_manage_generated_account_custom_derivation_path(main_screen
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_derivation_path(derivation_path,
                                                                                            generated_address_index,
-                                                                                           user_account.password).save()
+                                                                                           user_account.password).save_changes()
 
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -55,7 +55,7 @@ def test_plus_button_manage_generated_account_custom_derivation_path(main_screen
 
     with step('Edit wallet account'):
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
-        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
+        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(new_name, new_color.lower(), new_emoji_unicode)

@@ -9,7 +9,7 @@ from . import marks
 
 import constants
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -32,7 +32,7 @@ def test_add_new_account_from_wallet_settings(
             main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_add_account_pop_up()
 
     with step('Add a new generated account from wallet settings screen'):
-        add_account_popup.set_name(account_name).set_emoji(emoji).set_color(color).save()
+        add_account_popup.set_name(account_name).set_emoji(emoji).set_color(color).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         add_account_popup.wait_until_hidden()
 
