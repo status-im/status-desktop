@@ -319,10 +319,12 @@ Pane {
             Loader {
                 Layout.alignment: Qt.AlignTop
                 Layout.preferredHeight: menuButton.visible ? menuButton.height : -1
-                active: root.idVerificationFlowsEnabled
                 sourceComponent: {
                     if (d.isCurrentUser && !root.readOnly)
                         return btnShareProfile
+
+                    if (!root.idVerificationFlowsEnabled)
+                        return
 
                     if (d.isContact && !(d.isTrusted || d.isLocallyTrusted) && !d.isBlocked) {
                         if (d.isVerificationRequestSent)
