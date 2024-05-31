@@ -261,6 +261,7 @@ Pane {
     Component {
         id: btnShareProfile
         StatusFlatButton {
+            objectName: "shareProfileButton"
             size: StatusButton.Size.Small
             text: qsTr("Share Profile")
             onClicked: Global.openPopup(shareProfileCmp)
