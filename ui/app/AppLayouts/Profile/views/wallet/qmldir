@@ -8,3 +8,4 @@ ManageTokensView 1.0 ManageTokensView.qml
 NetworksView 1.0 NetworksView.qml
 PermissionsListView 1.0 PermissionsListView.qml
 SavedAddressesView 1.0 SavedAddressesView.qml
+RouterTestView 1.0 RouterTestView.qml

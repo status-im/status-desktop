@@ -32,5 +32,33 @@ proc suggestedRoutes*(accountFrom: string, accountTo: string, amount: string, to
     preferredChainIDs, 1, lockedInAmounts]
   return core.callPrivateRPC("wallet_getSuggestedRoutes", payload)
 
+proc suggestedRoutesV2*(accountFrom: string, accountTo: string, amount: string, token: string, toToken: string, disabledFromChainIDs,
+  disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: Table[string, string], extraParamsTable: Table[string, string]): RpcResponse[JsonNode] =
+  const
+    gasFeeLow = 0
+    gasFeeMedium = 1
+    gasFeeHigh = 2
+
+  let data = %* {
+      "sendType": sendType,
+      "addrFrom": accountFrom,
+      "addrTo": accountTo,
+      "amountIn": amount,
+      "tokenID": token,
+      "toTokenID": toToken,
+      "disabledFromChainIDs": disabledFromChainIDs,
+      "disabledToChaindIDs": disabledToChainIDs,
+      "preferedChainIDs": preferredChainIDs,
+      "gasFeeMode": gasFeeMedium,
+      "fromLockedAmount": lockedInAmounts,
+      # "testnetMode" optional parameter
+    }
+
+  for key, value in extraParamsTable:
+    data[key] = %* value
+
+  let payload = %* [data]
+  return core.callPrivateRPC("wallet_getSuggestedRoutesV2", payload)
+
 rpc(getEstimatedLatestBlockNumber, "wallet"):
   chainId: int

@@ -597,6 +597,29 @@ QtObject:
     )
     self.threadpool.start(arg)
 
+  proc suggestedRoutesV2*(self: Service, accountFrom: string, accountTo: string, amount: Uint256, token: string, toToken: string,
+    disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: Table[string, string],
+    extraParamsTable: Table[string, string]): string =
+    let amountAsHex = "0x" & eth_utils.stripLeadingZeros(amount.toHex)
+
+    try:
+      let response = eth.suggestedRoutesV2(
+        accountFrom,
+        accountTo,
+        amountAsHex,
+        token,
+        toToken,
+        disabledFromChainIDs,
+        disabledToChainIDs,
+        preferredChainIDs,
+        ord(sendType),
+        lockedInAmounts,
+        extraParamsTable,
+      )
+      return $response.result
+    except Exception as e:
+      error "Error getting suggested routes V2", message = e.msg
+
   proc onFetchCryptoServices*(self: Service, response: string) {.slot.} =
     let cryptoServices = parseJson(response){"result"}.getElems().map(x => x.toCryptoRampDto())
     self.events.emit(SIGNAL_CRYPTO_SERVICES_READY, CryptoServicesArgs(data: cryptoServices))

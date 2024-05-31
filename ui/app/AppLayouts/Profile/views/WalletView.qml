@@ -44,6 +44,7 @@ SettingsContentBase {
     readonly property int accountViewIndex: 4
     readonly property int manageTokensViewIndex: 5
     readonly property int savedAddressesViewIndex: 6
+    readonly property int routerTestViewIndex: 7
 
     readonly property string walletSectionTitle: qsTr("Wallet")
     readonly property string networksSectionTitle: qsTr("Networks")
@@ -133,6 +134,7 @@ SettingsContentBase {
                 stackContainer.currentIndex === root.accountOrderViewIndex ? accountOrderView.height:
                 stackContainer.currentIndex === root.manageTokensViewIndex ? manageTokensView.implicitHeight :
                 stackContainer.currentIndex === root.savedAddressesViewIndex ? savedAddressesView.height:
+                stackContainer.currentIndex === root.routerTestViewIndex ? routerTest.height:
                                                                              accountView.height
         currentIndex: mainViewIndex
 
@@ -185,6 +187,10 @@ SettingsContentBase {
                 root.sectionTitle = qsTr("Saved addresses")
 
                 root.titleRowComponentLoader.sourceComponent = addNewSavedAddressButtonComponent
+            } else if(currentIndex == root.routerTestViewIndex) {
+                root.rootStore.backButtonName = root.walletSectionTitle
+                root.sectionTitle = qsTr("Test the Router")
+
             }
         }
 
@@ -236,8 +242,8 @@ SettingsContentBase {
             onGoToManageTokensView: {
                 stackContainer.currentIndex = manageTokensViewIndex
             }
-            onGoToSavedAddressesView: {
-                stackContainer.currentIndex = root.savedAddressesViewIndex
+            onGoToRouterTestView: {
+                stackContainer.currentIndex = root.routerTestViewIndex
             }
         }
 
@@ -367,6 +373,13 @@ SettingsContentBase {
             contactsStore: root.rootStore.contactsStore
             networkConnectionStore: root.networkConnectionStore
             sendModal: root.rootStore.sendModalPopup
+        }
+
+        RouterTestView {
+            id: routerTest
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
         }
 
         DappPermissionsView {
