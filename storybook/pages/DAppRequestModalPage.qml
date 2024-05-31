@@ -28,7 +28,7 @@ Item {
     id: root
 
     function openModal() {
-        modal.openWith()
+        modal.open()
     }
 
     // qml Splitter

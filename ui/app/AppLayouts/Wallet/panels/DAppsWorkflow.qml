@@ -6,6 +6,7 @@ import AppLayouts.Wallet.controls 1.0
 
 import shared.popups.walletconnect 1.0
 import AppLayouts.Wallet.services.dapps 1.0
+import AppLayouts.Wallet.services.dapps.types 1.0
 
 import shared.stores 1.0
 import utils 1.0
@@ -109,6 +110,43 @@ ConnectedDappsButton {
         }
     }
 
+    Loader {
+        id: sessionRequestLoader
+
+        active: false
+
+        onLoaded: item.open()
+
+        property SessionRequestResolved request: null
+
+        sourceComponent: DAppRequestModal {
+            account: request.account
+            network: request.network
+
+            dappName: request.dappName
+            dappUrl: request.dappUrl
+            dappIcon: request.dappIcon
+
+            signContent: request.data.message
+            maxFeesText: request.maxFeesText
+            estimatedTimeText: request.estimatedTimeText
+
+            visible: true
+
+            onClosed: sessionRequestLoader.active = false
+
+            onSign: {
+                console.debug("@dd TODO sign session request")
+            }
+
+            onReject: {
+                let userRejected = true
+                wcService.requestHandler.rejectSessionRequest(request, userRejected)
+                close()
+            }
+        }
+    }
+
     Connections {
         target: root.wcService
 
@@ -139,6 +177,11 @@ ConnectedDappsButton {
                     modal.pairSuccessful(session)
                 }
             }
+        }
+
+        function onSessionRequest(request) {
+            sessionRequestLoader.request = request
+            sessionRequestLoader.active = true
         }
 
         function onDisplayToastMessage(message, err) {

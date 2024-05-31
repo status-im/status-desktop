@@ -70,8 +70,8 @@ Item {
             id: optionsSpace
 
             RowLayout {
-                Text { text: "projectId" }
-                Text {
+                StatusBaseText { text: "projectId" }
+                StatusBaseText {
                     id: projectIdText
                     readonly property string projectId: SystemUtils.getEnvVar("WALLET_CONNECT_PROJECT_ID")
                     text: SQUtils.Utils.elideText(projectId, 3)
@@ -80,11 +80,41 @@ Item {
             }
 
             CheckBox {
-
                 text: "Testnet Mode"
                 checked: settings.testNetworks
                 onCheckedChanged: {
                     settings.testNetworks = checked
+                }
+            }
+
+            StatusTextArea {
+                text: settings.customAccounts
+                onTextChanged: {
+                    settings.customAccounts = text
+                    customAccountsModel.clear()
+                    let customData = JSON.parse(text)
+                    customData.forEach(function(account) {
+                        customAccountsModel.append(account)
+                    })
+                }
+                Layout.fillWidth: true
+                Layout.preferredHeight: !!text ? 400 : undefined
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: "grey"
+            }
+
+            ListView {
+                Layout.fillWidth: true
+                model: walletConnectService.requestHandler.requestsModel
+                delegate: RowLayout {
+                    StatusBaseText {
+                        text: SQUtils.Utils.elideAndFormatWalletAddress(model.topic, 6, 4)
+                        Layout.fillWidth: true
+                    }
                 }
             }
 
@@ -101,11 +131,11 @@ Item {
             }
 
             RowLayout {
-                Text { text: "URI" }
-                TextField {
+                StatusBaseText { text: "URI" }
+                StatusInput {
                     id: pairUriInput
 
-                    placeholderText: "Enter WC Pair URI"
+                    //placeholderText: "Enter WC Pair URI"
                     text: settings.pairUri
                     onTextChanged: {
                         settings.pairUri = text
@@ -220,12 +250,13 @@ Item {
                 sourceModel: NetworksModel.flatNetworks
                 filters: ValueFilter { roleName: "isTest"; value: settings.testNetworks; }
             }
-            property var accounts:  WalletAccountsModel{}
+            property var accounts: customAccountsModel.count > 0 ? customAccountsModel : defaultAccountsModel
+            readonly property ListModel ownAccounts: accounts
         }
     }
 
 
-    QtObject {
+    QObject {
         id: d
 
         property int activeTestCase: noTestCase
@@ -249,6 +280,13 @@ Item {
             {"name":"Test dApp 5 - very long url", "url":"https://dapp.test/very_long/url/unusual","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"},
             {"name":"Test dApp 6", "url":"https://dapp.test/6","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"}
         ]
+
+        ListModel {
+            id: customAccountsModel
+        }
+        WalletAccountsModel{
+            id: defaultAccountsModel
+        }
     }
 
     onVisibleChanged: {
@@ -264,6 +302,7 @@ Item {
         property string pairUri: ""
         property bool testNetworks: false
         property bool enableSDK: true
+        property string customAccounts: ""
     }
 }
 

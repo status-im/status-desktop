@@ -42,17 +42,28 @@ const requiredNamespacesJsonString = `{
     }
 }`
 
+const dappName = 'Test dApp'
+const dappUrl = 'https://app.test.org'
+const dappFirstIcon = 'https://test.com/icon.png'
 const dappMetadataJsonString = `{
     "description": "Test dApp description",
     "icons": [
-        "https://test.com/icon.png"
+        "${dappFirstIcon}"
     ],
-    "name": "TestApp",
-    "url": "https://app.test.org"
+    "name": "${dappName}",
+    "url": "${dappUrl}"
+}`
+
+const verifiedContextJsonString = `{
+    "verified": {
+        "origin": "https://app.test.org",
+        "validation": "UNKNOWN",
+        "verifyUrl": "https://verify.walletconnect.com"
+    }
 }`
 
 function formatSessionProposal() {
-  return `{
+    return `{
     "id": 1715976881734096,
     "params": {
         "expiryTimestamp": 1715977219,
@@ -70,20 +81,14 @@ function formatSessionProposal() {
         ],
         "requiredNamespaces": ${requiredNamespacesJsonString}
     },
-    "verifyContext": {
-        "verified": {
-            "origin": "https://app.test.org",
-            "validation": "UNKNOWN",
-            "verifyUrl": "https://verify.walletconnect.com"
-        }
-    }
+    "verifyContext": ${verifiedContextJsonString}
   }`
 }
 
 function formatBuildApprovedNamespacesResult(networksArray, accountsArray) {
-  let requiredChainsStr = networksArray.map(chainId => `"eip155:${chainId}"`).join(',')
-  let requiredAccountsStr = accountsArray.map(address => networksArray.map(chainId => `"eip155:${chainId}:${address}"`).join(',')).join(',')
-  return `{
+    let requiredChainsStr = networksArray.map(chainId => `"eip155:${chainId}"`).join(',')
+    let requiredAccountsStr = accountsArray.map(address => networksArray.map(chainId => `"eip155:${chainId}:${address}"`).join(',')).join(',')
+    return `{
     "eip155": {
       "chains": [${requiredChainsStr}],
       "accounts": [${requiredAccountsStr}],
@@ -131,4 +136,21 @@ function formatApproveSessionResponse(networksArray, accountsArray) {
         },
         "topic": "e39e1f435a46b5ee6b31484d1751cfbc35be1275653af2ea340974a7592f1a19"
     }`
+}
+
+function formatSessionRequest(chainId, method, params, topic) {
+    let paramsStr = params.map(param => `"${param}"`).join(',')
+    return `{
+    "id": 1717149885151715,
+    "params": {
+        "chainId": "eip155:${chainId}",
+        "request": {
+            "expiryTimestamp": 1717150185,
+            "method": "${method}",
+            "params": [${paramsStr}]
+        }
+    },
+    "topic": "${topic}",
+    "verifyContext": ${verifiedContextJsonString}
+  }`
 }

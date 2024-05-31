@@ -11,6 +11,8 @@ import shared.popups.walletconnect 1.0
 import SortFilterProxyModel 0.2
 import utils 1.0
 
+import "types"
+
 QObject {
     id: root
 
@@ -19,16 +21,17 @@ QObject {
     required property WalletStore walletStore
 
     readonly property alias dappsModel: dappsProvider.dappsModel
+    readonly property alias requestHandler: requestHandler
 
     readonly property var validAccounts: SortFilterProxyModel {
-        sourceModel: walletStore.accounts
+        sourceModel: root.walletStore ? root.walletStore.accounts : null
         filters: ValueFilter {
             roleName: "walletType"
             value: Constants.watchWalletType
             inverted: true
         }
     }
-    readonly property var flatNetworks: walletStore.flatNetworks
+    readonly property var flatNetworks: root.walletStore ? root.walletStore.flatNetworks : null
 
     function pair(uri) {
         d.acceptedSessionProposal = null
@@ -37,7 +40,11 @@ QObject {
 
     function approvePairSession(sessionProposal, approvedChainIds, approvedAccount) {
         d.acceptedSessionProposal = sessionProposal
-        let approvedNamespaces = JSON.parse(Helpers.buildSupportedNamespaces(approvedChainIds, [approvedAccount.address]))
+        let approvedNamespaces = JSON.parse(
+            Helpers.buildSupportedNamespaces(approvedChainIds,
+                                             [approvedAccount.address],
+                                             requestHandler.getSupportedMethods())
+        )
         wcSDK.buildApprovedNamespaces(sessionProposal.params, approvedNamespaces)
     }
 
@@ -51,6 +58,7 @@ QObject {
 
     signal connectDApp(var dappChains, var sessionProposal, var approvedNamespaces)
     signal approveSessionResult(var session, var error)
+    signal sessionRequest(SessionRequestResolved request)
     signal displayToastMessage(string message, bool error)
 
     readonly property Connections sdkConnections: Connections {
@@ -59,7 +67,8 @@ QObject {
         function onSessionProposal(sessionProposal) {
             d.currentSessionProposal = sessionProposal
 
-            let supportedNamespacesStr = Helpers.buildSupportedNamespacesFromModels(root.flatNetworks, root.validAccounts)
+            let supportedNamespacesStr = Helpers.buildSupportedNamespacesFromModels(
+                root.flatNetworks, root.validAccounts, requestHandler.getSupportedMethods())
             wcSDK.buildApprovedNamespaces(sessionProposal.params, JSON.parse(supportedNamespacesStr))
         }
 
@@ -143,6 +152,18 @@ QObject {
 
     Component.onCompleted: {
         dappsProvider.updateDapps()
+    }
+
+    DAppsRequestHandler {
+        id: requestHandler
+
+        sdk: root.wcSDK
+        store: root.store
+        walletStore: root.walletStore
+
+        onSessionRequest: (request) => {
+            root.sessionRequest(request)
+        }
     }
 
     DAppsListProvider {

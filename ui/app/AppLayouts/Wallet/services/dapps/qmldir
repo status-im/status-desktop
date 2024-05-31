@@ -1,6 +1,8 @@
 WalletConnectSDKBase 1.0 WalletConnectSDKBase.qml
 WalletConnectSDK 1.0 WalletConnectSDK.qml
 WalletConnectService 1.0 WalletConnectService.qml
+
 DAppsListProvider 1.0 DAppsListProvider.qml
+DAppsRequestHandler 1.0 DAppsRequestHandler.qml
 
 Helpers 1.0 helpers.js
