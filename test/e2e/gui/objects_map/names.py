@@ -84,17 +84,18 @@ userContextMenu_ViewMyProfileAction = {"container": o_StatusListView, "objectNam
 userLabel_StyledText = {"container": o_StatusListView, "type": "StyledText", "unnamed": 1, "visible": True}
 o_StatusIdenticonRing = {"container": o_StatusListView, "type": "StatusIdenticonRing", "unnamed": 1, "visible": True}
 
-# My Profile Popup
-ProfileHeader_userImage = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialog_userImage", "type": "UserImage", "visible": True}
-ProfilePopup_displayName = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialog_displayName", "type": "StatusBaseText", "visible": True}
-ProfilePopup_editButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "editProfileButton", "type": "StatusButton", "visible": True}
-ProfilePopup_SendContactRequestButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
-profileDialog_userEmojiHash_EmojiHash = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialog_userEmojiHash", "type": "EmojiHash", "visible": True}
-edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
+# My Profile Popup (online identifier)
+ProfileContentItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialogView", "type": "ContentItem", "visible": True}
+ProfileHeader_userImage = {"container": ProfileContentItem, "objectName": "ProfileDialog_userImage", "type": "UserImage", "visible": True}
+ProfilePopup_displayName = {"container": ProfileContentItem, "objectName": "ProfileDialog_displayName", "type": "StatusBaseText", "visible": True}
+ProfilePopup_editButton = {"container": ProfileContentItem, "objectName": "editProfileButton", "type": "StatusButton", "visible": True}
+ProfilePopup_SendContactRequestButton = {"container": ProfileContentItem, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
+profileDialog_userEmojiHash_EmojiHash = {"container": ProfileContentItem, "objectName": "ProfileDialog_userEmojiHash", "type": "EmojiHash", "visible": True}
+edit_TextEdit = {"container": ProfileContentItem, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 https_status_app_StatusBaseText = {"container": edit_TextEdit, "type": "StatusBaseText", "unnamed": 1, "visible": True}
-copy_icon_CopyButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "copy-icon", "type": "CopyButton", "visible": True}
-request_ID_verification_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "requestIDVerification_StatusItem", "type": "StatusFlatButton", "visible": True}
-send_contact_request_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
+copy_icon_CopyButton = {"container": ProfileContentItem, "objectName": "copy-icon", "type": "CopyButton", "visible": True}
+request_ID_verification_StatusFlatButton = {"checkable": False, "container": ProfileContentItem, "objectName": "requestIDVerification_StatusItem", "type": "StatusFlatButton", "visible": True}
+send_contact_request_StatusButton = {"checkable": False, "container": ProfileContentItem, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
 
 # Welcome Status Popup
 betaConsent_StatusModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "desktopBetaStatusModal", "type": "StatusModal", "visible": True}

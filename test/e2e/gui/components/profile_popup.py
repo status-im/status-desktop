@@ -16,13 +16,19 @@ from gui.screens.settings_profile import ProfileSettingsView
 class ProfilePopup(BasePopup):
 
     def __init__(self):
-        super(ProfilePopup, self).__init__()
+        super().__init__()
+        self._profile_popup_content_item = QObject(names.ProfileContentItem)
         self._profile_image = QObject(names.ProfileHeader_userImage)
         self._user_name_label = TextLabel(names.ProfilePopup_displayName)
         self._edit_profile_button = Button(names.ProfilePopup_editButton)
         self._chat_key_text_label = TextLabel(names.https_status_app_StatusBaseText)
         self._emoji_hash = QObject(names.profileDialog_userEmojiHash_EmojiHash)
         self._chat_key_copy_button = Button(names.copy_icon_CopyButton)
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._profile_popup_content_item.wait_until_appears(timeout_msec)
+        return self
 
     @property
     @allure.step('Get profile image')
