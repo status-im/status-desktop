@@ -612,6 +612,12 @@ proc getCommunityChat*(self: CommunityDto, chatId: string): ChatDto =
   if chats.len > 0:
     return chats[0]
 
+proc hasCommunityChat*(self: CommunityDto, chatId: string): bool =
+  for communityChat in self.chats:
+    if chatId == communityChat.id:
+      return true
+  return false
+
 proc isOwner*(self: CommunityDto): bool =
   return self.memberRole == MemberRole.Owner
 

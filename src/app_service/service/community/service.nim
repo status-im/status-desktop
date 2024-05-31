@@ -1312,6 +1312,7 @@ QtObject:
         self.communities[communityId].chats.add(chatDto)
         let data = CommunityChatArgs(chat: chatDto)
         self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
+
     except Exception as e:
       error "Error creating community channel", msg = e.msg, communityId, name, description, procName="createCommunityChannel"
 
