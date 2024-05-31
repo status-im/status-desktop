@@ -553,7 +553,7 @@ Item {
             property var deleteChatConfirmationDialog
 
             onCreateCommunityChannel: function (chName, chDescription, chEmoji, chColor,
-                                                chCategoryId, hideIfPermissionsNotMet) {
+                                                chCategoryId, viewOnlyCanAddReaction, hideIfPermissionsNotMet) {
                 root.store.createCommunityChannel(chName, chDescription, chEmoji, chColor,
                                                   chCategoryId, viewOnlyCanAddReaction, hideIfPermissionsNotMet)
                 chatId = root.store.currentChatContentModule().chatDetails.id

@@ -700,12 +700,19 @@ proc getChatItemFromChatDto(
   var viewersCanPostReactions = true
   if self.controller.isCommunity:
     let communityChat = community.getCommunityChat(chatDto.id)
-    # Some properties are only available on CommunityChat (they are useless for normal chats)
-    canPost = communityChat.canPost
-    canView = communityChat.canView
-    canPostReactions = communityChat.canPostReactions
-    hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
-    viewersCanPostReactions = communityChat.viewersCanPostReactions
+    # NOTE: workaround for new community chat, which is delivered in chatDto before the community will know about that
+    if community.hasCommunityChat(chatDto.id):
+      let communityChat = community.getCommunityChat(chatDto.id)
+      # Some properties are only available on CommunityChat (they are useless for normal chats)
+      canPost = communityChat.canPost
+      canView = communityChat.canView
+      canPostReactions = communityChat.canPostReactions
+      hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
+      viewersCanPostReactions = communityChat.viewersCanPostReactions
+    else:
+      canPostReactions = chatDto.canPostReactions
+      hideIfPermissionsNotMet = chatDto.hideIfPermissionsNotMet
+      viewersCanPostReactions = chatDto.viewersCanPostReactions
 
   result = chat_item.initItem(
     chatDto.id,
