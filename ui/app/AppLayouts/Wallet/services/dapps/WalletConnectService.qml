@@ -14,11 +14,11 @@ import utils 1.0
 QObject {
     id: root
 
-    required property WalletConnectSDK wcSDK
+    required property WalletConnectSDKBase wcSDK
     required property DAppsStore store
     required property WalletStore walletStore
 
-    readonly property alias dappsModel: d.dappsProvider.dappsModel
+    readonly property alias dappsModel: dappsProvider.dappsModel
 
     readonly property var validAccounts: SortFilterProxyModel {
         sourceModel: walletStore.accounts
@@ -51,6 +51,7 @@ QObject {
 
     signal connectDApp(var dappChains, var sessionProposal, var approvedNamespaces)
     signal approveSessionResult(var session, var error)
+    signal displayToastMessage(string message, bool error)
 
     readonly property Connections sdkConnections: Connections {
         target: wcSDK
@@ -78,9 +79,6 @@ QObject {
         }
 
         function onApproveSessionResult(session, err) {
-            // Notify client
-            root.approveSessionResult(session, err)
-
             if (err) {
                 // TODO #14676: handle the error
                 console.error("Failed to approve session", err)
@@ -89,43 +87,41 @@ QObject {
 
             // TODO #14754: implement custom dApp notification
             let app_url = d.currentSessionProposal ? d.currentSessionProposal.params.proposer.metadata.url : "-"
-            Global.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_url), "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+            root.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_url), false)
 
             // Persist session
             store.addWalletConnectSession(JSON.stringify(session))
 
-            d.dappsProvider.updateDapps()
+            // Notify client
+            root.approveSessionResult(session, err)
+
+            dappsProvider.updateDapps()
         }
 
         function onRejectSessionResult(err) {
             let app_url = d.currentSessionProposal ? d.currentSessionProposal.params.proposer.metadata.url : "-"
             if(err) {
-                Global.displayToastMessage(qsTr("Failed to reject connection request for %1").arg(app_url), "", "warning", false, Constants.ephemeralNotificationType.danger, "")
+                root.displayToastMessage(qsTr("Failed to reject connection request for %1").arg(app_url), true)
             } else {
-                Global.displayToastMessage(qsTr("Connection request for %1 was rejected").arg(app_url), "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+                root.displayToastMessage(qsTr("Connection request for %1 was rejected").arg(app_url), false)
             }
         }
 
         function onSessionDelete(topic, err) {
             let app_url = d.currentSessionProposal ? d.currentSessionProposal.params.proposer.metadata.url : "-"
             if(err) {
-                Global.displayToastMessage(qsTr("Failed to disconnect from %1").arg(app_url), "", "warning", false, Constants.ephemeralNotificationType.danger, "")
+                root.displayToastMessage(qsTr("Failed to disconnect from %1").arg(app_url), true)
             } else {
-                Global.displayToastMessage(qsTr("Disconnected from %1").arg(app_url), "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+                root.displayToastMessage(qsTr("Disconnected from %1").arg(app_url), false)
             }
         }
     }
 
-    QtObject {
+    QObject {
         id: d
 
         property var currentSessionProposal: null
         property var acceptedSessionProposal: null
-
-        readonly property DAppsListProvider dappsProvider: DAppsListProvider {
-            sdk: root.wcSDK
-            store: root.store
-        }
 
         // TODO #14676: use it to check if already paired
         function getPairingTopicFromPairingUrl(url)
@@ -146,6 +142,13 @@ QObject {
     }
 
     Component.onCompleted: {
-        d.dappsProvider.updateDapps()
+        dappsProvider.updateDapps()
+    }
+
+    DAppsListProvider {
+        id: dappsProvider
+
+        sdk: root.wcSDK
+        store: root.store
     }
 }

@@ -95,6 +95,7 @@ Popup {
         }
 
         StatusButton {
+            objectName: "connectDappButton"
             Layout.fillWidth: true
             Layout.preferredHeight: implicitHeight
 

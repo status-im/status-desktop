@@ -14,6 +14,8 @@ import "PairWCModal"
 StatusDialog {
     id: root
 
+    objectName: "pairWCModal"
+
     width: 480
     implicitHeight: 633
 

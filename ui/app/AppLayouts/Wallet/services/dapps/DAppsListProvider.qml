@@ -9,7 +9,7 @@ import utils 1.0
 QObject {
     id: root
 
-    required property WalletConnectSDK sdk
+    required property WalletConnectSDKBase sdk
     required property DAppsStore store
 
     readonly property alias dappsModel: d.dappsModel
