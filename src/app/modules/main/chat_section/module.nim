@@ -710,6 +710,8 @@ proc getChatItemFromChatDto(
       hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
       viewersCanPostReactions = communityChat.viewersCanPostReactions
     else:
+      canPost = chatDto.canPost
+      canView = chatDto.canView
       canPostReactions = chatDto.canPostReactions
       hideIfPermissionsNotMet = chatDto.hideIfPermissionsNotMet
       viewersCanPostReactions = chatDto.viewersCanPostReactions
