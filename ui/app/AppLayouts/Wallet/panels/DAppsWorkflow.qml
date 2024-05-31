@@ -8,6 +8,7 @@ import shared.popups.walletconnect 1.0
 import AppLayouts.Wallet.services.dapps 1.0
 
 import shared.stores 1.0
+import utils 1.0
 
 ConnectedDappsButton {
     id: root
@@ -16,6 +17,7 @@ ConnectedDappsButton {
 
     signal dappsListReady()
     signal pairWCReady()
+    signal displayToastMessage(string message, bool error)
 
     onClicked: {
         dappsListLoader.active = true
@@ -137,6 +139,10 @@ ConnectedDappsButton {
                     modal.pairSuccessful(session)
                 }
             }
+        }
+
+        function onDisplayToastMessage(message, err) {
+            root.displayToastMessage(message, err)
         }
     }
 }

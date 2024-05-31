@@ -8,10 +8,9 @@ import QtWebChannel 1.15
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components 0.1
 
-Item {
+WalletConnectSDKBase {
     id: root
 
-    required property string projectId
     readonly property alias sdkReady: d.sdkReady
     readonly property alias webEngineLoader: loader
 
@@ -21,66 +20,49 @@ Item {
     implicitWidth: 1
     implicitHeight: 1
 
-    signal statusChanged(string message)
-    signal sdkInit(bool success, var result)
-    signal pairResponse(bool success)
-    signal sessionProposal(var sessionProposal)
-    signal sessionProposalExpired()
-    signal buildApprovedNamespacesResult(var session, string error)
-    signal approveSessionResult(var approvedNamespaces, string error)
-    signal rejectSessionResult(string error)
-    signal sessionRequestEvent(var sessionRequest)
-    signal sessionRequestUserAnswerResult(bool accept, string error)
-
-    signal authRequest(var request)
-    signal authMessageFormated(string formatedMessage, string address)
-    signal authRequestUserAnswerResult(bool accept, string error)
-
-    signal sessionDelete(var topic, string error)
-
     /// Generates \c pairResponse signal and expects to receive
     /// a \c sessionProposal signal with the sessionProposal object
-    function pair(pairLink) {
+    pair: function(pairLink) {
         wcCalls.pair(pairLink)
     }
 
-    function getPairings(callback) {
+    getPairings: function(callback) {
         wcCalls.getPairings(callback)
     }
 
-    function getActiveSessions(callback) {
+    getActiveSessions: function(callback) {
         wcCalls.getActiveSessions(callback)
     }
 
-    function disconnectSession(topic) {
+    disconnectSession: function(topic) {
         wcCalls.disconnectSession(topic)
     }
 
-    function disconnectPairing(topic) {
+    disconnectPairing: function(topic) {
         wcCalls.disconnectPairing(topic)
     }
 
-    function ping(topic) {
+    ping: function(topic) {
         wcCalls.ping(topic)
     }
 
-    function buildApprovedNamespaces(params, supportedNamespaces) {
+    buildApprovedNamespaces: function(params, supportedNamespaces) {
         wcCalls.buildApprovedNamespaces(params, supportedNamespaces)
     }
 
-    function approveSession(sessionProposal, supportedNamespaces) {
+    approveSession: function(sessionProposal, supportedNamespaces) {
         wcCalls.approveSession(sessionProposal, supportedNamespaces)
     }
 
-    function rejectSession(id) {
+    rejectSession: function(id) {
         wcCalls.rejectSession(id)
     }
 
-    function acceptSessionRequest(topic, id, signature) {
+    acceptSessionRequest: function(topic, id, signature) {
         wcCalls.acceptSessionRequest(topic, id, signature)
     }
 
-    function rejectSessionRequest(topic, id, error) {
+    rejectSessionRequest: function(topic, id, error) {
         wcCalls.rejectSessionRequest(topic, id, error)
     }
 

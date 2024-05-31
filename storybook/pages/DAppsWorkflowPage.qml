@@ -53,6 +53,14 @@ Item {
                     spacing: 8
 
                     wcService: walletConnectService
+
+                    onDisplayToastMessage: (message, isErr) => {
+                        if(isErr) {
+                            console.log(`Storybook.displayToastMessage(${message}, "", "warning", false, Constants.ephemeralNotificationType.danger, "")`)
+                            return
+                        }
+                        console.log(`Storybook.displayToastMessage(${message}, "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")`)
+                    }
                 }
             }
             ColumnLayout {}
@@ -82,6 +90,15 @@ Item {
 
             // spacer
             ColumnLayout {}
+
+            CheckBox {
+
+                text: "Enable SDK"
+                checked: settings.enableSDK
+                onCheckedChanged: {
+                    settings.enableSDK = checked
+                }
+            }
 
             RowLayout {
                 Text { text: "URI" }
@@ -170,7 +187,7 @@ Item {
         id: walletConnectService
 
         wcSDK: WalletConnectSDK {
-            active: true
+            active: settings.enableSDK
 
             projectId: projectIdText.projectId
         }
@@ -246,6 +263,7 @@ Item {
         property int testCase: d.noTestCase
         property string pairUri: ""
         property bool testNetworks: false
+        property bool enableSDK: true
     }
 }
 
