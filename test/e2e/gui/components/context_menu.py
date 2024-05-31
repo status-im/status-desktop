@@ -1,5 +1,6 @@
 import allure
 
+from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.elements.object import QObject
 from gui.objects_map import names, communities_names
 
@@ -17,6 +18,8 @@ class ContextMenu(QObject):
         self._context_delete_saved_address_option = QObject(names.contextSavedAddressDelete)
         self._edit_channel_context_item = QObject(communities_names.edit_Channel_StatusMenuItem)
         self._delete_channel_context_item = QObject(communities_names.delete_Channel_StatusMenuItem)
+        self._invite_people_item = QObject(communities_names.invite_People_StatusMenuItem)
+        self._mute_community_item = QObject(communities_names.mute_Community_StatusMenuItem)
 
     @allure.step('Is edit channel option present in context menu')
     def is_edit_channel_option_present(self):
@@ -58,3 +61,8 @@ class ContextMenu(QObject):
     @allure.step('Check delete option visibility in context menu')
     def is_delete_account_option_present(self):
         return self._context_delete_account_option.is_visible
+
+    @allure.step('Select invite people to community')
+    def select_invite_people(self):
+        self._invite_people_item.click()
+        return InviteContactsPopup()

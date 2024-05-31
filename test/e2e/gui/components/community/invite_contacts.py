@@ -1,6 +1,7 @@
 import typing
 
 import allure
+import pyperclip
 
 import configs.timeouts
 import driver
@@ -20,6 +21,7 @@ class InviteContactsPopup(BasePopup):
         self._message_text_edit = TextEdit(names.communityProfilePopupInviteMessagePanel_MessageInput_TextEdit)
         self._invited_member_item = QObject(names.o_StatusMemberListItem_2)
         self._send_button = Button(names.send_1_invite_StatusButton)
+        self._copy_button = Button(names.copy_icon_StatusIcon)
 
     @property
     @allure.step('Get contacts')
@@ -53,3 +55,8 @@ class InviteContactsPopup(BasePopup):
 
         self._send_button.click()
         self.wait_until_hidden()
+
+    @allure.step('Copy community link')
+    def copy_community_link(self):
+        self._copy_button.click()
+        return str(pyperclip.paste())
