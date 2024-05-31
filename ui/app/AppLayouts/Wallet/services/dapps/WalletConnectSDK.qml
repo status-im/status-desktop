@@ -8,6 +8,8 @@ import QtWebChannel 1.15
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components 0.1
 
+import "types"
+
 WalletConnectSDKBase {
     id: root
 

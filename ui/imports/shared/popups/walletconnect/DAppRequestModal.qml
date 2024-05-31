@@ -14,6 +14,8 @@ import utils 1.0
 StatusDialog {
     id: root
 
+    objectName: "dappsRequestModal"
+
     implicitWidth: 480
 
     required property string dappName
@@ -29,127 +31,131 @@ StatusDialog {
     signal sign()
     signal reject()
 
-    function openWith() {
-        root.open()
-    }
-
     title: qsTr("Sign request")
 
     padding: 20
 
-    contentItem: ColumnLayout {
-        spacing: 20
-        clip: true
-
-        IntentionPanel {
-            Layout.fillWidth: true
-
-            dappName: root.dappName
-            dappIcon: root.dappIcon
-            account: root.account
-            signContent: root.signContent
-        }
-
-        ContentPanel {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 340
-        }
-
-        // TODO: externalize as a TargetPanel
+    contentItem: StatusScrollView {
+        id: scrollView
+        padding: 0
         ColumnLayout {
-            spacing: 8
+            spacing: 20
+            clip: true
 
-            StatusBaseText {
-                text: qsTr("Sign with")
-                font.pixelSize: 13
-                color: Theme.palette.directColor1
+            width: scrollView.availableWidth
+
+            IntentionPanel {
+                Layout.fillWidth: true
+
+                dappName: root.dappName
+                dappIcon: root.dappIcon
+                account: root.account
+                signContent: root.signContent
             }
 
-            // TODO #14762: implement proper control to display the accounts details
-            Rectangle {
+            ContentPanel {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 76
+                Layout.preferredHeight: 340
+            }
 
-                radius: 8
-                border.width: 1
-                border.color: Theme.palette.baseColor2
+            // TODO: externalize as a TargetPanel
+            ColumnLayout {
+                spacing: 8
 
-                RowLayout {
-                    spacing: 12
-                    anchors.fill: parent
-                    anchors.margins: 16
-
-                    StatusSmartIdenticon {
-                        width: 40
-                        height: 40
-
-                        asset: StatusAssetSettings {
-                            color: Theme.palette.primaryColor1
-                            isImage: false
-                            isLetterIdenticon: true
-                            useAcronymForLetterIdenticon: false
-                            emoji: root.account.emoji
-                        }
-                    }
-
-                    ColumnLayout {
-                        Layout.alignment: Qt.AlignLeft
-
-                        StatusBaseText {
-                            text: root.account.name
-
-                            Layout.alignment: Qt.AlignLeft
-
-                            font.pixelSize: 13
-                        }
-                        StatusBaseText {
-                            text: StatusQ.Utils.elideAndFormatWalletAddress(root.account.address, 6, 4)
-
-                            Layout.alignment: Qt.AlignLeft
-
-                            font.pixelSize: 13
-
-                            color: Theme.palette.baseColor1
-                        }
-                    }
-
-                    Item {Layout.fillWidth: true }
+                StatusBaseText {
+                    text: qsTr("Sign with")
+                    font.pixelSize: 13
+                    color: Theme.palette.directColor1
                 }
-            }
-            // TODO #14762: implement proper control to display the chain
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 76
 
-                visible: root.network !== null
+                // TODO #14762: implement proper control to display the accounts details
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 76
 
-                radius: 8
-                border.width: 1
-                border.color: Theme.palette.baseColor2
+                    radius: 8
+                    border.width: 1
+                    border.color: Theme.palette.baseColor2
+                    color: "transparent"
 
-                RowLayout {
-                    spacing: 12
-                    anchors.fill: parent
-                    anchors.margins: 16
+                    RowLayout {
+                        spacing: 12
+                        anchors.fill: parent
+                        anchors.margins: 16
 
-                    StatusSmartIdenticon {
-                        width: 40
-                        height: 40
+                        StatusSmartIdenticon {
+                            width: 40
+                            height: 40
 
-                        asset: StatusAssetSettings {
-                            isImage: true
-                            name: !!root.network ? Style.svg("tiny/" + root.network.iconUrl) : ""
+                            asset: StatusAssetSettings {
+                                color: Theme.palette.primaryColor1
+                                isImage: false
+                                isLetterIdenticon: true
+                                useAcronymForLetterIdenticon: false
+                                emoji: root.account.emoji
+                            }
                         }
+
+                        ColumnLayout {
+                            Layout.alignment: Qt.AlignLeft
+
+                            StatusBaseText {
+                                text: root.account.name
+
+                                Layout.alignment: Qt.AlignLeft
+
+                                font.pixelSize: 13
+                            }
+                            StatusBaseText {
+                                text: StatusQ.Utils.elideAndFormatWalletAddress(root.account.address, 6, 4)
+
+                                Layout.alignment: Qt.AlignLeft
+
+                                font.pixelSize: 13
+
+                                color: Theme.palette.baseColor1
+                            }
+                        }
+
+                        Item {Layout.fillWidth: true }
                     }
+                }
+                // TODO #14762: implement proper control to display the chain
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 76
 
-                    StatusBaseText {
-                        text: !!root.network ? root.network.chainName : ""
+                    visible: root.network !== null
 
-                        Layout.alignment: Qt.AlignLeft
+                    radius: 8
+                    border.width: 1
+                    border.color: Theme.palette.baseColor2
+                    color: "transparent"
 
-                        font.pixelSize: 13
+                    RowLayout {
+                        spacing: 12
+                        anchors.fill: parent
+                        anchors.margins: 16
+
+                        StatusSmartIdenticon {
+                            width: 40
+                            height: 40
+
+                            asset: StatusAssetSettings {
+                                isImage: true
+                                name: !!root.network ? Style.svg("tiny/" + root.network.iconUrl) : ""
+                            }
+                        }
+
+                        StatusBaseText {
+                            text: !!root.network ? root.network.chainName : ""
+
+                            Layout.alignment: Qt.AlignLeft
+
+                            font.pixelSize: 13
+                        }
+                        Item {Layout.fillWidth: true }
                     }
-                    Item {Layout.fillWidth: true }
                 }
             }
         }
@@ -199,6 +205,8 @@ StatusDialog {
 
         rightButtons: ObjectModel {
             StatusButton {
+                objectName: "rejectButton"
+
                 height: 44
                 text: qsTr("Reject")
 
@@ -210,6 +218,8 @@ StatusDialog {
                 height: 44
                 text: qsTr("Sign")
 
+                enabled: false
+
                 onClicked: {
                     root.sign()
                 }
@@ -218,6 +228,7 @@ StatusDialog {
     }
 
     component MaxFeesDisplay: ColumnLayout {
+        visible: root.maxFeesText
         StatusBaseText {
             text: qsTr("Max fees:")
             font.pixelSize: 12
@@ -231,6 +242,7 @@ StatusDialog {
     }
 
     component EstimatedTimeDisplay: ColumnLayout {
+        visible: root.estimatedTimeText
         StatusBaseText {
             text: qsTr("Est. time:")
             font.pixelSize: 12
@@ -353,12 +365,26 @@ StatusDialog {
         color: "transparent"
         radius: 8
 
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: contentScrollView.enabled ? undefined : Qt.PointingHandCursor
+
+            onClicked: {
+                contentScrollView.enabled = !contentScrollView.enabled
+            }
+            z: contentScrollView.z + 1
+        }
+
         StatusScrollView {
             id: contentScrollView
             anchors.fill: parent
 
             contentWidth: availableWidth
             contentHeight: contentText.implicitHeight
+
+            padding: 0
+
+            enabled: false
 
             StatusBaseText {
                 id: contentText

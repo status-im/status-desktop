@@ -1,6 +1,8 @@
 import QtQuick 2.15
 
-QtObject {
+import StatusQ.Core.Utils 0.1
+
+QObject {
     id: root
 
     required property var controller
@@ -18,7 +20,7 @@ QtObject {
     }
 
     // Handle async response from controller
-    property Connections _connections: Connections {
+    Connections {
         target: controller
 
         function onDappsListReceived(dappsJson) {
