@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils, stew/shims/strformat
+import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils, stew/shims/strformat, times
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
@@ -287,9 +287,6 @@ QtObject:
       communityService: community_service.Service
       currencyService: currency_service.Service
 
-      tokenOwnersTimer: QTimer
-      tokenOwners1SecTimer: QTimer # used to update 1 sec after changes in owners
-      tempTokenOwnersToFetch: CommunityTokenDto # used by 1sec timer
       tokenOwnersCache: Table[ContractTuple, seq[CommunityCollectibleOwner]]
 
       tempFeeTable: Table[int, SuggestedFeesDto] # fees per chain, filled during gas computation, used during operation (deployment, mint, burn)
@@ -298,19 +295,26 @@ QtObject:
 
       communityTokensCache: seq[CommunityTokenDto]
 
-      communityDataLoaded: bool
-      allCommunityTokensLoaded: bool
+      # keep times when token holders list for contracts were updated
+      tokenHoldersLastUpdateMap: Table[ContractTuple, int64] 
+      # timer which fetches token holders
+      tokenHoldersTimer: QTimer
+      # token for which token holders are fetched
+      tokenHoldersToken: CommunityTokenDto
+      # flag to indicate that token holders management started
+      tokenHoldersManagementStarted: bool
 
   # Forward declaration
   proc getAllCommunityTokensAsync*(self: Service)
-  proc fetchAllTokenOwners(self: Service)
   proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner]
   proc getCommunityToken*(self: Service, chainId: int, address: string): CommunityTokenDto
   proc findContractByUniqueId*(self: Service, contractUniqueKey: string): CommunityTokenDto
+  proc restartTokenHoldersTimer(self: Service, chainId: int, contractAddress: string)
+  proc refreshTokenHolders(self: Service, token: CommunityTokenDto)
+
 
   proc delete*(self: Service) =
-      delete(self.tokenOwnersTimer)
-      delete(self.tokenOwners1SecTimer)
+      delete(self.tokenHoldersTimer)
       self.QObject.delete
 
   proc newService*(
@@ -335,13 +339,10 @@ QtObject:
     result.acService = acService
     result.communityService = communityService
     result.currencyService = currencyService
-    result.tokenOwnersTimer = newQTimer()
-    result.tokenOwnersTimer.setInterval(5*60*1000)
-    signalConnect(result.tokenOwnersTimer, "timeout()", result, "onRefreshTransferableTokenOwners()", 2)
-    result.tokenOwners1SecTimer = newQTimer()
-    result.tokenOwners1SecTimer.setInterval(1000)
-    result.tokenOwners1SecTimer.setSingleShot(true)
-    signalConnect(result.tokenOwners1SecTimer, "timeout()", result, "onFetchTempTokenOwners()", 2)
+
+    result.tokenHoldersTimer = newQTimer()
+    result.tokenHoldersTimer.setSingleShot(true)
+    signalConnect(result.tokenHoldersTimer, "timeout()", result, "onTokenHoldersTimeout()", 2)
 
   # cache functions
   proc updateCommunityTokenCache(self: Service, chainId: int, address: string, tokenToUpdate: CommunityTokenDto) =
@@ -507,8 +508,7 @@ QtObject:
 
       # update owners list if airdrop was successfull
       if signalArgs.success:
-        self.tempTokenOwnersToFetch = signalArgs.communityToken
-        self.tokenOwners1SecTimer.start()
+        self.refreshTokenHolders(signalArgs.communityToken)
     except Exception as e:
         error "Error processing airdrop pending transaction event", msg=e.msg
 
@@ -520,8 +520,7 @@ QtObject:
 
       # update owners list if remote destruct was successfull
       if signalArgs.success:
-        self.tempTokenOwnersToFetch = signalArgs.communityToken
-        self.tokenOwners1SecTimer.start()
+        self.refreshTokenHolders(signalArgs.communityToken)
     except Exception as e:
       error "Error processing collectible self destruct pending transaction event", msg=e.msg
 
@@ -574,23 +573,15 @@ QtObject:
   proc processCommunityTokenAction(self: Service, signalArgs: CommunityTokenActionSignal) =
     case signalArgs.actionType
       of CommunityTokenActionType.Airdrop:
-        self.tempTokenOwnersToFetch = signalArgs.communityToken
-        self.tokenOwners1SecTimer.start()
+        self.refreshTokenHolders(signalArgs.communityToken)
       of CommunityTokenActionType.Burn:
         self.updateCommunityTokenCache(signalArgs.communityToken.chainId, signalArgs.communityToken.address, signalArgs.communityToken)
         let data = RemoteDestructArgs(communityToken: signalArgs.communityToken)
         self.events.emit(SIGNAL_BURN_ACTION_RECEIVED, data)
       of CommunityTokenActionType.RemoteDestruct:
-        self.tempTokenOwnersToFetch = signalArgs.communityToken
-        self.tokenOwners1SecTimer.start()
+        self.refreshTokenHolders(signalArgs.communityToken)
       else:
         warn "Unknown token action", actionType=signalArgs.actionType
-
-  proc tryFetchOwners(self: Service) =
-    # both communities and tokens should be loaded
-    if self.allCommunityTokensLoaded and self.communityDataLoaded:
-      self.fetchAllTokenOwners()
-      self.tokenOwnersTimer.start()
 
   proc init*(self: Service) =
     self.getAllCommunityTokensAsync()
@@ -601,10 +592,6 @@ QtObject:
         self.processReceivedCollectiblesWalletEvent(data.message, data.accounts)
       elif data.eventType == tokens_backend.eventCommunityTokenReceived:
         self.processReceivedCommunityTokenWalletEvent(data.message, data.accounts)
-
-    self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
-      self.communityDataLoaded = true
-      self.tryFetchOwners()
 
     self.events.on(SignalType.CommunityTokenAction.event) do(e:Args):
       let receivedData = CommunityTokenActionSignal(e)
@@ -753,8 +740,6 @@ QtObject:
       self.communityTokensCache = map(responseJson["response"]["result"].getElems(),
         proc(x: JsonNode): CommunityTokenDto = x.toCommunityTokenDto())
 
-      self.allCommunityTokensLoaded = true
-      self.tryFetchOwners()
     except RpcException as e:
       error "Error getting all community tokens async", message = e.msg
 
@@ -1315,6 +1300,9 @@ QtObject:
     let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: communityTokenOwners)
     self.events.emit(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED, data)
 
+    # restart token holders timer
+    self.restartTokenHoldersTimer(chainId, contractAddress)
+
   # get owners from cache
   proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner] =
     return self.tokenOwnersCache.getOrDefault((chainId: chainId, address: contractAddress))
@@ -1322,25 +1310,6 @@ QtObject:
   proc iAmCommunityPrivilegedUser(self:Service, communityId: string): bool =
     let community = self.communityService.getCommunityById(communityId)
     return community.isPrivilegedUser()
-
-  # update in 5 minute intervals, only transferable tokens
-  proc onRefreshTransferableTokenOwners*(self:Service) {.slot.} =
-    let allTokens = self.getAllCommunityTokens()
-    for token in allTokens:
-      if token.transferable and self.iAmCommunityPrivilegedUser(token.communityId):
-        self.fetchCommunityOwners(token)
-
-  # used after airdrop or remote destruct
-  proc onFetchTempTokenOwners*(self: Service) {.slot.} =
-    self.fetchCommunityOwners(self.tempTokenOwnersToFetch)
-
-  # used in init
-  proc fetchAllTokenOwners(self: Service) =
-    let allTokens = self.getAllCommunityTokens()
-    for token in allTokens:
-      if not self.iAmCommunityPrivilegedUser(token.communityId):
-        continue
-      self.fetchCommunityOwners(token)
 
   # used when community members changed
   proc fetchCommunityTokenOwners*(self: Service, communityId: string) =
@@ -1409,3 +1378,59 @@ QtObject:
       discard tokens_backend.reTrackOwnerTokenDeploymentTransaction(chainId, contractAddress)
     except Exception:
       error "can't retrack token transaction", message = getCurrentExceptionMsg()
+
+  # ran also when holders are fetched
+  proc restartTokenHoldersTimer(self: Service, chainId: int, contractAddress: string) =
+    if not self.tokenHoldersManagementStarted:
+      return
+    self.tokenHoldersTimer.stop()
+
+    let tokenTupleKey = (chainId: chainId, address: contractAddress)
+    var nextTimerShotInSeconds = int64(0)
+    if self.tokenHoldersLastUpdateMap.hasKey(tokenTupleKey):
+      let lastUpdateTime = self.tokenHoldersLastUpdateMap[tokenTupleKey]
+      const intervalInSecs = int64(5*60)
+      let nowInSeconds = now().toTime().toUnix()
+      nextTimerShotInSeconds = intervalInSecs - (nowInSeconds - lastUpdateTime)
+      if nextTimerShotInSeconds < 0:
+        nextTimerShotInSeconds = 0
+
+    self.tokenHoldersTimer.setInterval(int(nextTimerShotInSeconds * 1000))
+    self.tokenHoldersTimer.start()
+
+  # executed when Token page with holders is opened
+  proc startTokenHoldersManagement*(self: Service, chainId: int, contractAddress: string) =
+    let communityToken = self.getCommunityToken(chainId, contractAddress)
+    if not self.iAmCommunityPrivilegedUser(communityToken.communityId):
+      warn "can't get token holders - not privileged user"
+      return
+
+    self.tokenHoldersToken = communityToken
+    self.tokenHoldersManagementStarted = true
+    self.restartTokenHoldersTimer(chainId, contractAddress)
+
+  # executed when Token page with holders is closed
+  proc stopTokenHoldersManagement*(self: Service) =
+    self.tokenHoldersManagementStarted = false
+    self.tokenHoldersTimer.stop()
+
+  proc onTokenHoldersTimeout(self: Service) {.slot.} =
+    # update last fetch time
+    let tokenTupleKey = (chainId: self.tokenHoldersToken.chainId, address: self.tokenHoldersToken.address)
+    let nowInSeconds = now().toTime().toUnix()
+    self.tokenHoldersLastUpdateMap[tokenTupleKey] = nowInSeconds
+    # run async calls to fetch holders
+    self.fetchCommunityOwners(self.tokenHoldersToken)
+
+  # executed when there was some change and holders needs to be fetched again
+  proc refreshTokenHolders(self: Service, token: CommunityTokenDto) =
+    let tokenTupleKey = (chainId: token.chainId, address: token.address)
+    self.tokenHoldersLastUpdateMap.del(tokenTupleKey)
+    if not self.tokenHoldersManagementStarted:
+      # not need to get holders now
+      return
+    let holdersTokenTuple = (chainId: self.tokenHoldersToken.chainId, address: self.tokenHoldersToken.address)
+    if (tokenTupleKey != holdersTokenTuple):
+      # different token is opened now
+      return
+    self.restartTokenHoldersTimer(token.chainId, token.address)

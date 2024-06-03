@@ -220,4 +220,12 @@ QtObject {
     function asyncGetOwnerTokenDetails(communityId) {
         communityTokensModuleInst.asyncGetOwnerTokenDetails(communityId)
     }
+
+    function startTokenHoldersManagement(chainId, contractAddress) {
+        communityTokensModuleInst.startTokenHoldersManagement(chainId, contractAddress)
+    }
+
+    function stopTokenHoldersManagement() {
+        communityTokensModuleInst.stopTokenHoldersManagement()
+    }
 }

@@ -385,3 +385,9 @@ method onOwnerTokenOwnerAddress*(self: Module, chainId: int, contractAddress: st
     "contractAddress": contractAddress
   }
   self.view.setOwnerTokenDetails($jsonObj)
+
+method startTokenHoldersManagement*(self: Module, chainId: int, contractAddress: string) =
+  self.controller.startTokenHoldersManagement(chainId, contractAddress)
+
+method stopTokenHoldersManagement*(self: Module) =
+  self.controller.stopTokenHoldersManagement()

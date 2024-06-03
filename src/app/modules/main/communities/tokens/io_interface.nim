@@ -119,3 +119,9 @@ method onOwnerTokenOwnerAddress*(self: AccessInterface, chainId: int, contractAd
 
 method asyncGetOwnerTokenDetails*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method startTokenHoldersManagement*(self: AccessInterface, chainId: int, contractAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method stopTokenHoldersManagement*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

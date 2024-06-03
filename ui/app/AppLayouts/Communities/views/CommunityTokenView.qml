@@ -78,6 +78,20 @@ StatusScrollView {
     signal kickRequested(string name, string contactId, string address)
     signal banRequested(string name, string contactId, string address)
 
+    signal startTokenHoldersManagement(int chainId, string address)
+    signal stopTokenHoldersManagement()
+
+    onVisibleChanged: {
+        if (visible) {
+            root.startTokenHoldersManagement(root.chainId, root.token.tokenAddress)
+        } else {
+            root.stopTokenHoldersManagement()
+        }
+    }
+
+    Component.onCompleted: root.startTokenHoldersManagement(root.chainId, root.token.tokenAddress)
+    Component.onDestruction: root.stopTokenHoldersManagement()
+
     QtObject {
         id: d
 

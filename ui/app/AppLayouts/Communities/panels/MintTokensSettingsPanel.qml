@@ -79,6 +79,9 @@ StackView {
     signal registerSelfDestructFeesSubscriber(var feeSubscriber)
     signal registerBurnTokenFeesSubscriber(var feeSubscriber)
 
+    signal startTokenHoldersManagement(int chainId, string address)
+    signal stopTokenHoldersManagement()
+
     function navigateBack() {
         pop(StackView.Immediate)
     }
@@ -540,6 +543,9 @@ StackView {
             membersModel: tokenViewPage.membersModel
             tokenOwnersModel: tokenViewPage.tokenOwnersModel
             isOwnerTokenItem: tokenViewPage.isOwnerTokenItem
+
+            onStartTokenHoldersManagement: root.startTokenHoldersManagement(chainId, address)
+            onStopTokenHoldersManagement: root.stopTokenHoldersManagement()
 
             onGeneralAirdropRequested: {
                 root.airdropToken(view.airdropKey,
