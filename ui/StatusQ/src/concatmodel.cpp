@@ -305,6 +305,38 @@ QVariant ConcatModel::data(const QModelIndex &index, int role) const
     return {};
 }
 
+bool ConcatModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (!checkIndex(index, CheckIndexOption::IndexIsValid))
+        return false;
+
+    auto row = index.row();
+    
+    auto source = sourceForIndex(row);
+    if (source.first == nullptr)
+        return false;
+    
+    auto model = source.first->model();
+    if (model == nullptr)
+        return false;
+
+    auto sourcePosition = m_sources.indexOf(source.first);
+    if (sourcePosition == -1)
+        return false;
+        
+    auto& mapping = m_rolesMappingToSource[sourcePosition];
+    auto it = mapping.find(role);
+
+    if (it == mapping.end())
+        return false;
+
+    auto sourceIndex = model->index(source.second, 0);
+    if(!sourceIndex.isValid())
+        return false;
+
+    return model->setData(sourceIndex, value, it->second);
+}
+
 QHash<int, QByteArray> ConcatModel::roleNames() const
 {
     return m_roleNames;
