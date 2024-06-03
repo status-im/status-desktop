@@ -702,14 +702,13 @@ QtObject:
       let errMsg = e.msg
       error "error checking all channel permissions: ", errMsg
 
-  proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string, addresses: seq[string], fullCheck: bool) =
+  proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string, addresses: seq[string]) =
     let arg = AsyncCheckAllChannelsPermissionsTaskArg(
       tptr: cast[ByteAddress](asyncCheckAllChannelsPermissionsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckAllChannelsPermissionsDone",
       communityId: communityId,
       addresses: addresses,
-      fullCheck: fullCheck
     )
 
     self.threadpool.start(arg)

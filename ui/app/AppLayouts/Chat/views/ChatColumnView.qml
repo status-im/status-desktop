@@ -46,7 +46,7 @@ Item {
     property int activeChatType: parentModule && parentModule.activeItem.type
     property bool stickersLoaded: false
     property bool permissionUpdatePending: false
-    property bool viewAndPostPermissionsSatisfied: true
+    property bool canPost: true
     property var viewAndPostHoldingsModel
 
     readonly property var contactDetails: rootStore ? rootStore.oneToOneChatContact : null
@@ -300,7 +300,7 @@ Item {
                             if (root.permissionUpdatePending) {
                                 return qsTr("Some permissions are being updated. You will be able to send messages once the control node is back online.")
                             }
-                            if (!root.viewAndPostPermissionsSatisfied) {
+                            if (!root.canPost) {
                                 return qsTr("Sorry, you don't have permissions to post in this channel.")
                             }
                             return root.rootStore.chatInputPlaceHolderText
@@ -389,7 +389,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: (2*Style.current.bigPadding)
                     visible: (!!root.viewAndPostHoldingsModel && (root.viewAndPostHoldingsModel.count > 0)
-                              && !root.amISectionAdmin && !root.viewAndPostPermissionsSatisfied)
+                              && !root.amISectionAdmin && !root.canPost)
                     assetsModel: root.rootStore.assetsModel
                     collectiblesModel: root.rootStore.collectiblesModel
                     holdingsModel: root.viewAndPostHoldingsModel

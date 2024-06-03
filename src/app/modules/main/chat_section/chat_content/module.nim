@@ -444,12 +444,6 @@ method amIChatAdmin*(self: Module): bool =
     return communityDto.memberRole == MemberRole.Owner or
       communityDto.memberRole == MemberRole.Admin or communityDto.memberRole == MemberRole.TokenMaster
 
-method onUpdateViewOnlyPermissionsSatisfied*(self: Module, value: bool) =
-  self.view.setViewOnlyPermissionsSatisfied(value)
-
-method onUpdateViewAndPostPermissionsSatisfied*(self: Module, value: bool) =
-  self.view.setViewAndPostPermissionsSatisfied(value)
-
 method setPermissionsCheckOngoing*(self: Module, value: bool) =
   self.view.setPermissionsCheckOngoing(value)
 

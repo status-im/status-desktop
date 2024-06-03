@@ -69,11 +69,11 @@ proc buildChatSectionUI(
   mailserversService: mailservers_service.Service,
   sharedUrlsService: shared_urls_service.Service,
 )
-
 proc reevaluateRequiresTokenPermissionToJoin(self: Module)
-
-proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewersCanPostReactions: bool)
-
+proc changeCanPostValues*(self: Module, chatId: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool)
+method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto)
+method onCommunityCheckChannelPermissionsResponse*(self: Module, chatId: string, checkChannelPermissionsResponse: CheckChannelPermissionsResponseDto)
+method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto)
 method addOrUpdateChat(self: Module,
     chat: ChatDto,
     belongsToCommunity: bool,
@@ -275,8 +275,6 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
         category.id,
         category.position,
         hideIfPermissionsNotMet = false,
-        viewOnlyPermissionsSatisfied = true,
-        viewAndPostPermissionsSatisfied = true,
       )
 
   if insertIntoModel:
@@ -448,8 +446,6 @@ method onChatsLoaded*(
 
     self.view.setRequestToJoinState(requestToJoinState)
     self.initCommunityTokenPermissionsModel()
-    self.onCommunityCheckAllChannelsPermissionsResponse(community.channelPermissions)
-    self.controller.asyncCheckPermissionsToJoin()
 
   let activeChatId = self.controller.getActiveChatId()
   let isCurrentSectionActive = self.controller.getIsCurrentSectionActive()
@@ -534,7 +530,18 @@ method activeItemSet*(self: Module, itemId: string) =
   if self.controller.isCommunity():
     let community = self.controller.getMyCommunity()
     if not community.isPrivilegedUser:
-      self.controller.asyncCheckChannelPermissions(mySectionId, activeChatId)
+      if not chat_item.canView or not chat_item.canPost:
+        # User doesn't have full access to this channel. Check permissions to know what is missing
+        self.controller.asyncCheckChannelPermissions(mySectionId, activeChatId)
+
+      self.onCommunityCheckChannelPermissionsResponse(activeChatId, CheckChannelPermissionsResponseDto(
+        viewOnlyPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto(
+          satisfied: chat_item.canView
+        ),
+        viewAndPostPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto(
+          satisfied: chat_item.canPost
+        ),
+      ))
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
@@ -568,16 +575,6 @@ proc updateChatLocked(self: Module, chatId: string) =
   let communityId = self.controller.getMySectionId()
   let locked = self.controller.checkChatIsLocked(communityId, chatId)
   self.view.chatsModel().setItemLocked(chatId, locked)
-
-proc updateViewOnlyPermissionsSatisfied(self: Module, chatId: string, satisifed: bool) =
-  if not self.controller.isCommunity():
-    return
-  self.view.chatsModel().setViewOnlyPermissionsSatisfied(chatId, satisifed)
-
-proc updateViewAndPostPermissionsSatisfied(self: Module, chatId: string, satisifed: bool) =
-  if not self.controller.isCommunity():
-    return
-  self.view.chatsModel().setViewAndPostPermissionsSatisfied(chatId, satisifed)
 
 proc updateChatRequiresPermissions(self: Module, chatId: string) =
   if not self.controller.isCommunity():
@@ -628,9 +625,13 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
   if self.isCommunity():
     let community = self.controller.getMyCommunity()
     if not community.isPrivilegedUser:
-      self.controller.asyncCheckPermissionsToJoin()
-      if firstLoad:
-        self.controller.asyncCheckAllChannelsPermissions()
+      if not community.joined:
+        self.controller.asyncCheckPermissionsToJoin()
+      else:
+        # We do not care about the combinations when we do satisfy
+        self.onCommunityCheckPermissionsToJoinResponse(CheckPermissionsToJoinResponseDto(
+          satisfied: true
+        ))
 
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
 
@@ -753,8 +754,6 @@ proc getChatItemFromChatDto(
     canPostReactions = canPostReactions,
     viewersCanPostReactions = viewersCanPostReactions,
     hideIfPermissionsNotMet = hideIfPermissionsNotMet,
-    viewOnlyPermissionsSatisfied = true, # will be updated in async call
-    viewAndPostPermissionsSatisfied = true, # will be updated in async call
   )
 
 proc addNewChat(
@@ -898,7 +897,7 @@ proc refreshHiddenBecauseNotPermittedState(self: Module) =
 method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   if(not self.chatContentModules.contains(chat.id)):
     return
-  self.changeCanPostValues(chat.id, chat.canPostReactions, chat.viewersCanPostReactions)
+  self.changeCanPostValues(chat.id, chat.canPost, chat.canView, chat.canPostReactions, chat.viewersCanPostReactions)
   self.view.chatsModel().updateItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color, chat.hideIfPermissionsNotMet)
   self.refreshHiddenBecauseNotPermittedState()
 
@@ -950,8 +949,8 @@ method onCategoryUnmuted*(self: Module, categoryId: string) =
 method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
   self.view.chatsModel().changeMutedOnItemById(chatId, muted)
 
-proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewersCanPostReactions: bool) =
-  self.view.chatsModel().changeCanPostValues(chatId, canPostReactions, viewersCanPostReactions)
+proc changeCanPostValues*(self: Module, chatId: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool) =
+  self.view.chatsModel().changeCanPostValues(chatId, canPost, canView, canPostReactions, viewersCanPostReactions)
 
 method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   self.rebuildCommunityTokenPermissionsModel()
@@ -1067,11 +1066,7 @@ proc updateChannelPermissionViewData*(
     self.updateChatLocked(chatId)
 
   if self.chatContentModules.hasKey(chatId):
-    self.chatContentModules[chatId].onUpdateViewOnlyPermissionsSatisfied(viewOnlyPermissions.satisfied)
-    self.chatContentModules[chatId].onUpdateViewAndPostPermissionsSatisfied(viewAndPostPermissions.satisfied)
     self.chatContentModules[chatId].setPermissionsCheckOngoing(false)
-  self.updateViewOnlyPermissionsSatisfied(chatId, viewOnlyPermissions.satisfied)
-  self.updateViewAndPostPermissionsSatisfied(chatId, viewAndPostPermissions.satisfied)
   self.refreshHiddenBecauseNotPermittedState()
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
@@ -1379,8 +1374,6 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       c.position,
       categoryId="",
       hideIfPermissionsNotMet=false,
-      viewOnlyPermissionsSatisfied = true,
-      viewAndPostPermissionsSatisfied = true,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem)
   let catChats = self.controller.getChats(communityId, categoryId)
@@ -1404,8 +1397,6 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       c.position,
       categoryId,
       hideIfPermissionsNotMet=false,
-      viewOnlyPermissionsSatisfied = true,
-      viewAndPostPermissionsSatisfied = true,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem, ignoreCategory = true)
 
@@ -1467,7 +1458,7 @@ method addOrUpdateChat(self: Module,
       self.chatContentModules[chat.id].onChatUpdated(result)
 
     self.changeMutedOnChat(chat.id, chat.muted)
-    self.changeCanPostValues(chat.id, chat.canPostReactions, chat.viewersCanPostReactions)
+    self.changeCanPostValues(chat.id, result.canPost, result.canView, result.canPostReactions, result.viewersCanPostReactions)
     self.updateChatRequiresPermissions(chat.id)
     self.updateChatLocked(chat.id)
     if (chat.chatType == ChatType.PrivateGroupChat):
