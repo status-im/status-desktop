@@ -67,7 +67,7 @@ QObject {
 
     QObject {
         id: d
-        property bool loading: !itemData.available && !isMe
+        readonly property bool loading: !itemData.available && !isMe
         onLoadingChanged: {
             if (loading) {
                 contactsStore.requestContactInfo(root.publicKey)

@@ -22,6 +22,7 @@ import shared.views.profile 1.0
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet.stores 1.0 as WalletNS
+import AppLayouts.Profile.helpers 1.0
 
 Pane {
     id: root
@@ -60,13 +61,15 @@ Pane {
         id: background
     }
 
+    ContactDetails {
+        id: contactDetails
+        publicKey: root.publicKey
+        contactsStore: root.contactsStore
+        profileStore: root.profileStore
+    }
+
     QtObject {
         id: d
-        property var contactDetails: Utils.getContactDetailsAsJson(root.publicKey, !isCurrentUser, !isCurrentUser, true)
-
-        function reload() {
-            contactDetails = Utils.getContactDetailsAsJson(root.publicKey, !isCurrentUser, !isCurrentUser, true)
-        }
 
         readonly property bool isCurrentUser: root.profileStore.pubkey === root.publicKey
         readonly property string userDisplayName: contactDetails.displayName
@@ -81,7 +84,7 @@ Pane {
 
         readonly property int contactRequestState: contactDetails.contactRequestState
 
-        readonly property int outgoingVerificationStatus: contactDetails.verificationStatus
+        readonly property int outgoingVerificationStatus: contactDetails.outgoingVerificationStatus
         readonly property int incomingVerificationStatus: contactDetails.incomingVerificationStatus
 
         readonly property bool isVerificationRequestSent:
@@ -93,46 +96,10 @@ Pane {
 
         readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
                                           incomingVerificationStatus === Constants.verificationStatus.trusted
+
         readonly property bool isLocallyTrusted: contactDetails.trustStatus === Constants.trustStatus.trusted
 
         readonly property string linkToProfile: root.contactsStore.getLinkToProfile(root.publicKey)
-
-        readonly property var conns: Connections {
-            target: root.contactsStore.myContactsModel ?? null
-
-            function onItemChanged(pubKey) {
-                if (pubKey === root.publicKey)
-                    d.reload()
-            }
-        }
-
-        // FIXME: use myContactsModel for identity verification
-        readonly property var conns2: Connections {
-            target: root.contactsStore.receivedContactRequestsModel ?? null
-
-            function onItemChanged(pubKey) {
-                if (pubKey === root.publicKey)
-                    d.reload()
-            }
-        }
-
-        readonly property var conns3: Connections {
-            target: root.contactsStore.sentContactRequestsModel ?? null
-
-            function onItemChanged(pubKey) {
-                if (pubKey === root.publicKey)
-                    d.reload()
-            }
-        }
-    }
-
-    function reload() {
-        d.reload()
-    }
-
-    onDirtyChanged: {
-        if (!dirty)
-            d.reload()
     }
 
     Component {
@@ -168,8 +135,7 @@ Pane {
             objectName: "profileDialog_reviewContactRequestButton"
             size: StatusButton.Size.Small
             text: qsTr("Review contact request")
-            onClicked: Global.openReviewContactRequestPopup(root.publicKey, d.contactDetails,
-                                                            popup => popup.closed.connect(d.reload))
+            onClicked: Global.openReviewContactRequestPopup(root.publicKey, contactDetails, null)
         }
     }
 
@@ -179,8 +145,7 @@ Pane {
             objectName: "profileDialog_sendContactRequestButton"
             size: StatusButton.Size.Small
             text: qsTr("Send contact request")
-            onClicked: Global.openContactRequestPopup(root.publicKey, d.contactDetails,
-                                                      popup => popup.accepted.connect(d.reload))
+            onClicked: Global.openContactRequestPopup(root.publicKey, contactDetails, null)
         }
     }
 
@@ -190,7 +155,7 @@ Pane {
             size: StatusButton.Size.Small
             type: StatusBaseButton.Type.Danger
             text: qsTr("Block user")
-            onClicked: Global.blockContactRequested(root.publicKey, d.contactDetails)
+            onClicked: Global.blockContactRequested(root.publicKey, contactDetails)
         }
     }
 
@@ -199,7 +164,7 @@ Pane {
         StatusButton {
             size: StatusButton.Size.Small
             text: qsTr("Unblock user")
-            onClicked: Global.unblockContactRequested(root.publicKey, d.contactDetails)
+            onClicked: Global.unblockContactRequested(root.publicKey, contactDetails)
         }
     }
 
@@ -229,8 +194,7 @@ Pane {
             text: qsTr("Reply to ID verification request")
             objectName: "respondToIDRequest_StatusItem"
             icon.name: "checkmark-circle"
-            onClicked: Global.openIncomingIDRequestPopup(root.publicKey, d.contactDetails,
-                                                         popup => popup.closed.connect(d.reload))
+            onClicked: Global.openIncomingIDRequestPopup(root.publicKey, contactDetails, null)
         }
     }
 
@@ -241,8 +205,7 @@ Pane {
             text: qsTr("Request ID verification")
             objectName: "requestIDVerification_StatusItem"
             icon.name: "checkmark-circle"
-            onClicked: Global.openSendIDRequestPopup(root.publicKey, d.contactDetails,
-                                                     popup => popup.accepted.connect(d.reload))
+            onClicked: Global.openSendIDRequestPopup(root.publicKey, contactDetails, null)
         }
     }
 
@@ -253,8 +216,7 @@ Pane {
             text: d.incomingVerificationStatus !== Constants.verificationStatus.verified ? qsTr("ID verification pending")
                                                                                          : qsTr("Review ID verification reply")
             icon.name: d.incomingVerificationStatus !== Constants.verificationStatus.verified ? "history" : "checkmark-circle"
-            onClicked: Global.openOutgoingIDRequestPopup(root.publicKey, d.contactDetails,
-                                                         popup => popup.closed.connect(d.reload))
+            onClicked: Global.openOutgoingIDRequestPopup(root.publicKey, contactDetails, null)
         }
     }
 
@@ -302,14 +264,14 @@ Pane {
                                  : d.mainDisplayName
                 pubkey: root.publicKey
                 image: root.dirty ? root.dirtyValues.profileLargeImage
-                                  : Utils.addTimestampToURL(d.contactDetails.largeImage)
+                                  : Utils.addTimestampToURL(contactDetails.largeImage)
                 interactive: false
                 imageWidth: 90
                 imageHeight: imageWidth
-                ensVerified: d.contactDetails.ensVerified
+                ensVerified: contactDetails.ensVerified
 
                 Binding on onlineStatus {
-                    value: d.contactDetails.onlineStatus
+                    value: contactDetails.onlineStatus
                     when: !d.isCurrentUser
                 }
             }
@@ -400,24 +362,22 @@ Pane {
 
                     SendContactRequestMenuItem {
                         enabled: !d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent &&
-                                 d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy // we have an action button otherwise
+                                 contactDetails.trustStatus === Constants.trustStatus.untrustworthy // we have an action button otherwise
                         onTriggered: {
-                            Global.openContactRequestPopup(root.publicKey, d.contactDetails, null)
+                            Global.openContactRequestPopup(root.publicKey, contactDetails, null)
                         }
                     }
                     StatusAction {
                         text: qsTr("Mark as ID verified")
                         icon.name: "checkmark-circle"
                         enabled: root.idVerificationFlowsEnabled && d.isContact && !d.isBlocked && !(d.isTrusted || d.isLocallyTrusted)
-                        onTriggered: Global.openMarkAsIDVerifiedPopup(root.publicKey, d.contactDetails,
-                                                                      popup => popup.accepted.connect(d.reload))
+                        onTriggered: Global.openMarkAsIDVerifiedPopup(root.publicKey, contactDetails, null)
                     }
                     StatusAction {
                         text: d.userNickName ? qsTr("Edit nickname") : qsTr("Add nickname")
                         icon.name: "edit_pencil"
                         onTriggered: {
-                            Global.openNicknamePopupRequested(root.publicKey, d.contactDetails,
-                                                              popup => popup.closed.connect(d.reload))
+                            Global.openNicknamePopupRequested(root.publicKey, contactDetails, null)
                         }
                     }
                     StatusAction {
@@ -441,23 +401,22 @@ Pane {
                         icon.name: "delete"
                         type: StatusAction.Type.Danger
                         enabled: root.idVerificationFlowsEnabled && d.isContact && (d.isTrusted || d.isLocallyTrusted)
-                        onTriggered: Global.openRemoveIDVerificationDialog(root.publicKey, d.contactDetails,
-                                                                           popup => popup.accepted.connect(d.reload))
+                        onTriggered: Global.openRemoveIDVerificationDialog(root.publicKey, contactDetails, null)
                     }
                     StatusAction {
                         text: qsTr("Remove nickname")
                         icon.name: "delete"
                         type: StatusAction.Type.Danger
-                        enabled: !d.isCurrentUser && !!d.contactDetails.localNickname
+                        enabled: !d.isCurrentUser && !!contactDetails.localNickname
                         onTriggered: root.contactsStore.changeContactNickname(root.publicKey, "", d.optionalDisplayName, true)
                     }
                     StatusAction {
                         text: qsTr("Mark as untrusted")
                         icon.name: "warning"
                         type: StatusAction.Type.Danger
-                        enabled: d.contactDetails.trustStatus !== Constants.trustStatus.untrustworthy && !d.isBlocked
+                        enabled: contactDetails.trustStatus !== Constants.trustStatus.untrustworthy && !d.isBlocked
                         onTriggered: {
-                            Global.markAsUntrustedRequested(root.publicKey, d.contactDetails)
+                            Global.markAsUntrustedRequested(root.publicKey, contactDetails)
                         }
                     }
                     StatusAction {
@@ -471,10 +430,9 @@ Pane {
                         text: qsTr("Remove untrusted mark")
                         icon.name: "warning"
                         type: StatusAction.Type.Danger
-                        enabled: d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy && !d.isBlocked
+                        enabled: contactDetails.trustStatus === Constants.trustStatus.untrustworthy && !d.isBlocked
                         onTriggered: {
                             root.contactsStore.removeTrustStatus(root.publicKey)
-                            d.reload()
                         }
                     }
                     StatusAction {
@@ -483,7 +441,7 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent
                         onTriggered: {
-                            Global.removeContactRequested(root.publicKey, d.contactDetails)
+                            Global.removeContactRequested(root.publicKey, contactDetails)
                         }
                     }
                     StatusAction {
@@ -492,7 +450,7 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: !d.isBlocked
                         onTriggered: {
-                            Global.blockContactRequested(root.publicKey, d.contactDetails)
+                            Global.blockContactRequested(root.publicKey, contactDetails)
                         }
                     }
                 }
@@ -524,7 +482,7 @@ Pane {
                     objectName: "ProfileDialog_userVerificationIcons"
                     visible: !d.isCurrentUser
                     isContact: d.isContact
-                    trustIndicator: d.contactDetails.trustStatus
+                    trustIndicator: contactDetails.trustStatus
                     isBlocked: d.isBlocked
                     tiny: false
                 }
@@ -580,7 +538,7 @@ Pane {
                     id: bioText
                     width: bioScrollView.availableWidth
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    text: root.dirty ? root.dirtyValues.bio.trim() : d.contactDetails.bio.trim()
+                    text: root.dirty ? root.dirtyValues.bio.trim() : contactDetails.bio.trim()
                 }
             }
             EmojiHash {

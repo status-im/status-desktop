@@ -310,27 +310,27 @@ bool ConcatModel::setData(const QModelIndex &index, const QVariant &value, int r
     if (!checkIndex(index, CheckIndexOption::IndexIsValid))
         return false;
 
-    auto row = index.row();
+    const auto row = index.row();
     
-    auto source = sourceForIndex(row);
+    const auto source = sourceForIndex(row);
     if (source.first == nullptr)
         return false;
     
-    auto model = source.first->model();
+    const auto model = source.first->model();
     if (model == nullptr)
         return false;
 
-    auto sourcePosition = m_sources.indexOf(source.first);
+    const auto sourcePosition = m_sources.indexOf(source.first);
     if (sourcePosition == -1)
         return false;
         
-    auto& mapping = m_rolesMappingToSource[sourcePosition];
-    auto it = mapping.find(role);
+    const auto& mapping = m_rolesMappingToSource[sourcePosition];
+    const auto it = mapping.find(role);
 
     if (it == mapping.end())
         return false;
 
-    auto sourceIndex = model->index(source.second, 0);
+    const auto sourceIndex = model->index(source.second, 0);
     if(!sourceIndex.isValid())
         return false;
 

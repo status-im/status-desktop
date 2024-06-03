@@ -20,100 +20,102 @@ import QtTest 1.15
 SplitView {
     id: root
 
-    ColumnLayout {
+    Pane {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        clip: true
-        spacing: 5
-        Label {
-            Layout.fillWidth: true
-            text: "publicKey: " + contactDetails.publicKey
-            font.bold: true
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "loading: " + contactDetails.loading
-            font.bold: true
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "displayName: " + contactDetails.displayName
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "ensName: " + contactDetails.ensName
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "ensVerified: " + contactDetails.ensVerified
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "localNickname: " + contactDetails.localNickname
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "alias: " + contactDetails.alias
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "icon: " + contactDetails.icon
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "colorId: " + contactDetails.colorId
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "colorHash: " + contactDetails.colorHash
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "onlineStatus: " + contactDetails.onlineStatus
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "isContact: " + contactDetails.isContact
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "isCurrentUser: " + contactDetails.isCurrentUser
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "isVerified: " + contactDetails.isVerified
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "isUntrustworthy: " + contactDetails.isUntrustworthy
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "isBlocked: " + contactDetails.isBlocked
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "contactRequestState: " + contactDetails.contactRequestState
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "incomingVerificationStatus: " + contactDetails.incomingVerificationStatus
-        }
-        Label {
-            Layout.fillWidth: true
-            text: "outgoingVerificationStatus: " + contactDetails.outgoingVerificationStatus
-        }
+        contentItem: ColumnLayout {
+            clip: true
+            spacing: 5
+            Label {
+                Layout.fillWidth: true
+                text: "publicKey: " + contactDetails.publicKey
+                font.bold: true
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "loading: " + contactDetails.loading
+                font.bold: true
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "displayName: " + contactDetails.displayName
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "ensName: " + contactDetails.ensName
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "ensVerified: " + contactDetails.ensVerified
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "localNickname: " + contactDetails.localNickname
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "alias: " + contactDetails.alias
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "icon: " + contactDetails.icon
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "colorId: " + contactDetails.colorId
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "colorHash: " + contactDetails.colorHash
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "onlineStatus: " + contactDetails.onlineStatus
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "isContact: " + contactDetails.isContact
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "isCurrentUser: " + contactDetails.isCurrentUser
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "isVerified: " + contactDetails.isVerified
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "isUntrustworthy: " + contactDetails.isUntrustworthy
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "isBlocked: " + contactDetails.isBlocked
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "contactRequestState: " + contactDetails.contactRequestState
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "incomingVerificationStatus: " + contactDetails.incomingVerificationStatus
+            }
+            Label {
+                Layout.fillWidth: true
+                text: "outgoingVerificationStatus: " + contactDetails.outgoingVerificationStatus
+            }
 
-        Pane {
-            contentItem: RowLayout {
-                ComboBox {
-                    id: pubKeySelector
-                    model: [...ModelUtils.modelToFlatArray(myContactsModel, "pubKey"), "myPubKey", "none"]
-                    ModelChangeTracker {
-                        id: modelChangeTracker
-                        model: myContactsModel
-                        onRevisionChanged: {
-                            pubKeySelector.model = [...ModelUtils.modelToFlatArray(myContactsModel, "pubKey"), "myPubKey", "none"]
+            Pane {
+                contentItem: RowLayout {
+                    ComboBox {
+                        id: pubKeySelector
+                        model: [...ModelUtils.modelToFlatArray(myContactsModel, "pubKey"), "myPubKey", "none"]
+                        ModelChangeTracker {
+                            id: modelChangeTracker
+                            model: myContactsModel
+                            onRevisionChanged: {
+                                pubKeySelector.model = [...ModelUtils.modelToFlatArray(myContactsModel, "pubKey"), "myPubKey", "none"]
+                            }
                         }
                     }
                 }
@@ -121,20 +123,22 @@ SplitView {
         }
     }
 
-    UsersModelEditor {
-        id: myContactsModelEditor
+    Pane {
         SplitView.fillHeight: true
         SplitView.preferredWidth: 500
-        model: myContactsModel
+        contentItem: UsersModelEditor {
+            id: myContactsModelEditor
+            model: myContactsModel
 
-        onRemoveClicked: (index) => {
-            myContactsModel.remove(index, 1)
-        }
-        onRemoveAllClicked: () => {
-            myContactsModel.clear()
-        }
-        onAddClicked: () => {
-            myContactsModel.append(getNewUser(myContactsModel.count))
+            onRemoveClicked: (index) => {
+                myContactsModel.remove(index, 1)
+            }
+            onRemoveAllClicked: () => {
+                myContactsModel.clear()
+            }
+            onAddClicked: () => {
+                myContactsModel.append(getNewUser(myContactsModel.count))
+            }
         }
     }
 

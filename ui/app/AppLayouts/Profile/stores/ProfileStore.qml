@@ -8,23 +8,23 @@ QtObject {
 
     property var profileModule
 
-    property string pubkey: !!Global.userProfile? Global.userProfile.pubKey : ""
-    property string name: !!Global.userProfile? Global.userProfile.name : ""
-    property string username: !!Global.userProfile? Global.userProfile.username : ""
-    property string displayName: !!Global.userProfile? Global.userProfile.displayName : ""
-    property string preferredName: !!Global.userProfile? Global.userProfile.preferredName : ""
-    property string profileLargeImage: !!Global.userProfile? Global.userProfile.largeImage : ""
-    property string icon: !!Global.userProfile? Global.userProfile.icon : ""
+    property string pubkey: userProfile.pubKey
+    property string name: userProfile.name
+    property string username: userProfile.username
+    property string displayName: userProfile.displayName
+    property string preferredName: userProfile.preferredName
+    property string profileLargeImage: userProfile.largeImage
+    property string icon: userProfile.icon
     property bool userDeclinedBackupBanner: Global.appIsReady? localAccountSensitiveSettings.userDeclinedBackupBanner : false
     property var privacyStore: profileSectionModule.privacyModule
-    readonly property string keyUid: !!Global.userProfile ? Global.userProfile.keyUid : ""
-    readonly property bool isKeycardUser: !!Global.userProfile ? Global.userProfile.isKeycardUser : false
-    readonly property int currentUserStatus: !!Global.userProfile ? Global.userProfile.currentUserStatus : 0
-    readonly property var thumbnailImage: !!Global.userProfile ? Global.userProfile.thumbnailImage : ""
-    readonly property var largeImage: !!Global.userProfile ? Global.userProfile.largeImage : ""
+    readonly property string keyUid: userProfile.keyUid
+    readonly property bool isKeycardUser: userProfile.isKeycardUser
+    readonly property int currentUserStatus: userProfile.currentUserStatus
+    readonly property var thumbnailImage: userProfile.thumbnailImage
+    readonly property var largeImage: userProfile.largeImage
     readonly property int colorId: Utils.colorIdForPubkey(root.pubkey)
     readonly property var colorHash: Utils.getColorHashAsJson(root.pubkey, name != "")
-    readonly property string defaultDisplayName: Utils.getDefaultDisplayName("", name, displayName, username)
+    readonly property string defaultDisplayName: ProfileUtils.displayName("", name, displayName, username)
 
     readonly property string bio: profileModule.bio
     readonly property string socialLinksJson: profileModule.socialLinksJson
