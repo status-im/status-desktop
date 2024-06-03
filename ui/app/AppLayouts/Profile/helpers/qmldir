@@ -3,3 +3,4 @@ ProfileShowcaseModelAdapter 1.0 ProfileShowcaseModelAdapter.qml
 ProfileShowcaseSettingsModelAdapter 1.0 ProfileShowcaseSettingsModelAdapter.qml
 ProfileShowcaseModels 1.0 ProfileShowcaseModels.qml
 VisibilityAndPositionDirtyStateModel 1.0 VisibilityAndPositionDirtyStateModel.qml
+ContactDetails 1.0 ContactDetails.qml

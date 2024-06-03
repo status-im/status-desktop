@@ -20,4 +20,15 @@ QtObject {
         const regex = new RegExp(`^[ \\t]{${minIndent}}`, "gm")
         return code.replace(regex, "")
     }
+
+    function findChild(parent, name) {
+        if (!parent || !parent.children)
+            return null
+            
+        for (let i = 0; i < parent.children.length; i++) {
+            if (parent.children[i].objectName === name)
+                return parent.children[i]
+        }
+        return null
+    }
 }

@@ -19,6 +19,12 @@ QtObject {
     property var privacyStore: profileSectionModule.privacyModule
     readonly property string keyUid: !!Global.userProfile ? Global.userProfile.keyUid : ""
     readonly property bool isKeycardUser: !!Global.userProfile ? Global.userProfile.isKeycardUser : false
+    readonly property int currentUserStatus: !!Global.userProfile ? Global.userProfile.currentUserStatus : 0
+    readonly property var thumbnailImage: !!Global.userProfile ? Global.userProfile.thumbnailImage : ""
+    readonly property var largeImage: !!Global.userProfile ? Global.userProfile.largeImage : ""
+    readonly property int colorId: Utils.colorIdForPubkey(root.pubkey)
+    readonly property var colorHash: Utils.getColorHashAsJson(root.pubkey, name != "")
+    readonly property string defaultDisplayName: Utils.getDefaultDisplayName("", name, displayName, username)
 
     readonly property string bio: profileModule.bio
     readonly property string socialLinksJson: profileModule.socialLinksJson

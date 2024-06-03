@@ -1,6 +1,8 @@
 import QtQuick 2.13
 import utils 1.0
 
+import StatusQ 0.1
+
 QtObject {
     id: root
 
@@ -11,6 +13,8 @@ QtObject {
 
     property string myPublicKey: !!Global.userProfile? Global.userProfile.pubKey : ""
 
+    // contactsModel holds all available contacts
+    property var contactsModel: contactsModule.contactsModel
     property var myContactsModel: contactsModule.myMutualContactsModel
     property var blockedContactsModel: contactsModule.blockedContactsModel
     property var receivedContactRequestsModel: contactsModule.receivedContactRequestsModel

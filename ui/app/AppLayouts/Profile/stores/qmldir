@@ -5,3 +5,4 @@ NotificationsStore 1.0 NotificationsStore.qml
 DevicesStore 1.0 DevicesStore.qml
 ProfileSectionStore 1.0 ProfileSectionStore.qml
 WalletStore 1.0 WalletStore.qml
+ContactsStore 1.0 ContactsStore.qml
