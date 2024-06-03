@@ -405,24 +405,30 @@ QtObject:
     let index = self.getItemIdxById(id)
     if index == -1:
       return
-    if(self.items[index].canView == canView and
-        self.items[index].canPost == canPost and
-        self.items[index].canPostReactions == canPostReactions and
-        self.items[index].viewersCanPostReactions == viewersCanPostReactions
-      ):
+    var changedRoles: seq[int] = @[]
+
+    if self.items[index].canView != canView:
+      self.items[index].canView = canView
+      changedRoles.add(ModelRole.CanView.int)
+
+    if self.items[index].canPost != canPost:
+      self.items[index].canPost = canPost
+      changedRoles.add(ModelRole.CanPost.int)
+
+    if self.items[index].canPostReactions != canPostReactions:
+      self.items[index].canPostReactions = canPostReactions
+      changedRoles.add(ModelRole.CanPostReactions.int)
+
+    if self.items[index].viewersCanPostReactions != viewersCanPostReactions:
+      self.items[index].viewersCanPostReactions = viewersCanPostReactions
+      changedRoles.add(ModelRole.ViewersCanPostReactions.int)
+
+    if changedRoles.len == 0:
       return
-    self.items[index].canPost = canPost
-    self.items[index].canView = canView
-    self.items[index].canPostReactions = canPostReactions
-    self.items[index].viewersCanPostReactions = viewersCanPostReactions
+    
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[
-      ModelRole.CanPost.int,
-      ModelRole.CanView.int,
-      ModelRole.CanPostReactions.int,
-      ModelRole.ViewersCanPostReactions.int
-    ])
+    self.dataChanged(modelIndex, modelIndex, changedRoles)
 
   proc changeMutedOnItemByCategoryId*(self: Model, categoryId: string, muted: bool) =
     for i in 0 ..< self.items.len:
