@@ -1,3 +1,5 @@
 LanguageStore 1.0 LanguageStore.qml
 ProfileSectionStore 1.0 ProfileSectionStore.qml
 WalletStore 1.0 WalletStore.qml
+ContactsStore 1.0 ContactsStore.qml
+ProfileStore 1.0 ProfileStore.qml
