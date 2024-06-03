@@ -368,6 +368,10 @@ StatusSectionLayout {
 
             onRegisterBurnTokenFeesSubscriber: d.feesBroker.registerBurnFeesSubscriber(feeSubscriber)
 
+            onStartTokenHoldersManagement: communityTokensStore.startTokenHoldersManagement(chainId, address)
+
+            onStopTokenHoldersManagement: communityTokensStore.stopTokenHoldersManagement()
+
             onMintCollectible:
                 communityTokensStore.deployCollectible(
                     root.community.id, collectibleItem)

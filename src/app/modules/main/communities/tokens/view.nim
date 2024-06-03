@@ -145,3 +145,9 @@ QtObject:
   QtProperty[string] ownerTokenDetails:
     read = getOwnerTokenDetails
     notify = ownerTokenDetailsChanged
+
+  proc startTokenHoldersManagement*(self: View, chainId: int, contractAddress: string) {.slot.} =
+    self.communityTokensModule.startTokenHoldersManagement(chainId, contractAddress)
+
+  proc stopTokenHoldersManagement*(self: View) {.slot.} =
+    self.communityTokensModule.stopTokenHoldersManagement()
