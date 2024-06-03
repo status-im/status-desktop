@@ -62,7 +62,19 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
     var args = TrustArgs(e)
     self.delegate.contactTrustStatusChanged(args.publicKey, args.isUntrustworthy)
+    
+  self.events.on(SIGNAL_CONTACT_VERIFIED) do (e: Args):
+    var args = ContactArgs(e)
+    self.delegate.updateContactVerificationStatus(args.contactId)
 
+  self.events.on(SIGNAL_CONTACT_VERIFICATION_SENT) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.updateContactVerificationStatus(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_VERIFICATION_ACCEPTED) do(e: Args):
+    var args = VerificationRequestArgs(e)
+    self.delegate.onVerificationRequestUpdatedOrAdded(args.verificationRequest)
+    
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
@@ -74,10 +86,12 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_CONTACT_VERIFICATION_DECLINED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onVerificationRequestDeclined(args.contactId)
+    self.delegate.updateContactVerificationStatus(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_VERIFICATION_CANCELLED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onVerificationRequestCanceled(args.contactId)
+    self.delegate.updateContactVerificationStatus(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_VERIFICATION_ADDED) do(e: Args):
     var args = VerificationRequestArgs(e)

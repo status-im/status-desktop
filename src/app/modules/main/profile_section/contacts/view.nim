@@ -11,6 +11,8 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      contactsModel: Model
+      contactsModelVariant: QVariant
       myMutualContactsModel: Model
       myMutualContactsModelVariant: QVariant
       blockedContactsModel: Model
@@ -37,6 +39,8 @@ QtObject:
 
 
   proc delete*(self: View) =
+    self.contactsModel.delete
+    self.contactsModelVariant.delete
     self.myMutualContactsModel.delete
     self.myMutualContactsModelVariant.delete
     self.blockedContactsModel.delete
@@ -66,6 +70,8 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
+    result.contactsModel = newModel()
+    result.contactsModelVariant = newQVariant(result.contactsModel)
     result.myMutualContactsModel = newModel()
     result.myMutualContactsModelVariant = newQVariant(result.myMutualContactsModel)
     result.blockedContactsModel = newModel()
@@ -92,6 +98,9 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
+    
+  proc contactsModel*(self: View): Model =
+    return self.contactsModel
 
   proc myMutualContactsModel*(self: View): Model =
     return self.myMutualContactsModel
@@ -111,6 +120,13 @@ QtObject:
 
   # proc sentButRejectedContactRequestsModel*(self: View): Model =
   #   return self.sentButRejectedContactRequestsModel
+
+  proc contactsModelChanged(self: View) {.signal.}
+  proc getContactsModel(self: View): QVariant {.slot.} =
+    return self.contactsModelVariant
+  QtProperty[QVariant] contactsModel:
+    read = getContactsModel
+    notify = contactsModelChanged
 
   proc myMutualContactsModelChanged(self: View) {.signal.}
   proc getMyMutualContactsModel(self: View): QVariant {.slot.} =
