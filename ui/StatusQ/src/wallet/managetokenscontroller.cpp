@@ -38,13 +38,9 @@ ManageTokensController::ManageTokensController(QObject* parent)
                     for (int i = first; i <= last; i++)
                         addItem(i);
 
-                    rebuildCommunityTokenGroupsModel();
-                    rebuildHiddenCommunityTokenGroupsModel();
-                    rebuildCollectionGroupsModel();
-                    rebuildHiddenCollectionGroupsModel();
+                    rebuildModels();
 
                     for (auto model : m_allModels) {
-                        model->applySort();
                         model->saveCustomSortOrder();
                     }
 #ifdef QT_DEBUG
@@ -52,12 +48,8 @@ ManageTokensController::ManageTokensController(QObject* parent)
                         << "!!! ADDING NEW SOURCE DATA TOOK" << t.nsecsElapsed() / 1'000'000.f << "ms";
 #endif
         });
-        connect(m_sourceModel, &QAbstractItemModel::rowsRemoved, this, &ManageTokensController::requestLoadSettings);
-        connect(m_sourceModel,
-                &QAbstractItemModel::dataChanged,
-                this,
-                &ManageTokensController::requestLoadSettings); // NB at this point we don't know in
-                                                               // which submodel the item is
+        connect(m_sourceModel, &QAbstractItemModel::rowsRemoved, this, &ManageTokensController::parseSourceModel);
+        connect(m_sourceModel, &QAbstractItemModel::dataChanged, this, &ManageTokensController::parseSourceModel);
         m_modelConnectionsInitialized = true;
     });
 }
@@ -335,12 +327,12 @@ void ManageTokensController::setSourceModel(QAbstractItemModel* newSourceModel)
 
     m_sourceModel = newSourceModel;
 
-    connect(m_sourceModel, &QAbstractItemModel::modelReset, this, &ManageTokensController::requestLoadSettings);
+    connect(m_sourceModel, &QAbstractItemModel::modelReset, this, &ManageTokensController::parseSourceModel);
 
     if (m_sourceModel && m_sourceModel->roleNames().isEmpty()) { // workaround for when a model has no roles and roles
                                                                  // are added when the model is populated (ListModel)
         // QTBUG-57971
-        connect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, &ManageTokensController::requestLoadSettings);
+        connect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, &ManageTokensController::parseSourceModel);
         return;
     } else {
         requestLoadSettings();
@@ -352,7 +344,7 @@ void ManageTokensController::parseSourceModel()
     if (!m_sourceModel)
         return;
 
-    disconnect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, &ManageTokensController::requestLoadSettings);
+    disconnect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, &ManageTokensController::parseSourceModel);
 
 #ifdef QT_DEBUG
     QElapsedTimer t;
@@ -370,6 +362,17 @@ void ManageTokensController::parseSourceModel()
         addItem(i);
     }
 
+    rebuildModels();
+
+#ifdef QT_DEBUG
+    qCDebug(manageTokens) << "!!! PARSING SOURCE DATA TOOK" << t.nsecsElapsed() / 1'000'000.f << "ms";
+#endif
+
+    emit sourceModelChanged();
+}
+
+void ManageTokensController::rebuildModels()
+{
     // build community groups model
     rebuildCommunityTokenGroupsModel();
     rebuildHiddenCommunityTokenGroupsModel();
@@ -383,12 +386,6 @@ void ManageTokensController::parseSourceModel()
         model->applySort();
         model->setDirty(false);
     }
-
-#ifdef QT_DEBUG
-    qCDebug(manageTokens) << "!!! PARSING SOURCE DATA TOOK" << t.nsecsElapsed() / 1'000'000.f << "ms";
-#endif
-
-    emit sourceModelChanged();
 }
 
 void ManageTokensController::addItem(int index)
