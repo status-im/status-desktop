@@ -90,15 +90,15 @@ pipeline {
     }
 
     stage('Deps') {
-      steps { script {
+      steps { script { dir('test/e2e') {
         sh "python3 -m venv ${VIRTUAL_ENV}"
         sh 'pip3 install -r requirements.txt'
-      } }
+      } } }
     }
 
     stage('Download') {
       when { expression { params.BUILD_SOURCE.startsWith('http') } }
-      steps { timeout(5) { script {
+      steps { timeout(5) { script { dir('test/e2e') {
         sh 'mkdir -p ./pkg/'
         setBuildDescFromFile(params.BUILD_SOURCE)
         fileOperations([
@@ -110,12 +110,12 @@ pipeline {
             password:       '',
           )
         ])
-      } } }
+      } } } }
     }
 
     stage('Copy') {
       when { expression { ! params.BUILD_SOURCE.startsWith('http') } }
-      steps { timeout(5) { script {
+      steps { timeout(5) { script { dir('test/e2e') {
         copyArtifacts(
           projectName: params.BUILD_SOURCE,
           filter:      'pkg/*-x86_64.tar.gz',
@@ -123,19 +123,19 @@ pipeline {
           target:      './'
         )
         setBuildDescFromFile(utils.findFile('pkg/*tar.gz'))
-      } } }
+      } } } }
     }
 
     stage('Unpack') {
-      steps { timeout(5) { script {
+      steps { timeout(5) { script { dir('test/e2e') {
         sh 'mkdir aut'
         sh "tar -zxvf '${utils.findFile('pkg/*tar.gz')}' -C './aut'"
         env.AUT_PATH = utils.findFile('aut/*.AppImage')
-      } } }
+      } } } }
     }
 
     stage('Test') {
-      steps { timeout(90) { script {
+      steps { timeout(90) { script { dir('test/e2e') {
         def flags = []
         if (params.TEST_NAME)  { flags.add("-k=${params.TEST_NAME}") }
         if (params.TEST_SCOPE_FLAG) { flags.add(params.TEST_SCOPE_FLAG) }
@@ -164,12 +164,12 @@ pipeline {
             """
           }
         }
-      } } }
+      } } } }
     }
   }
 
   post {
-    always { script {
+    always { script { dir('test/e2e') {
       archiveArtifacts('aut/*.log')
 
       /* Needed to categorize types of errors and add environment section in allure report. */
@@ -183,7 +183,7 @@ pipeline {
         jdk: '',
       ])
       updateGitHubStatus()
-    } }
+    } } }
     failure { script {
       discord.send(
         header: '**Desktop E2E test failure!**',
@@ -243,7 +243,7 @@ def getDefaultBuildSource() {
 }
 
 def getDefaultTestScopeFlag() {
-  if (JOB_NAME == "status-desktop/systems/linux/x86_64/tests-e2e-new") {
+  if (JOB_NAME == "status-desktop/systems/linux/x86_64/tests-e2e") {
     return ''
   } else {
     return '-m=critical'
