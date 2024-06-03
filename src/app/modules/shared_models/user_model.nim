@@ -22,6 +22,19 @@ type
     ContactRequest
     IncomingVerificationStatus
     OutgoingVerificationStatus
+    IsCurrentUser
+    DefaultDisplayName
+    OptionalName
+    LastUpdated
+    LastUpdatedLocally
+    Bio
+    ThumbnailImage
+    LargeImage
+    IsContactRequestReceived
+    IsContactRequestSent
+    IsSyncing
+    IsRemoved
+    TrustStatus
 
 QtObject:
   type
@@ -85,6 +98,19 @@ QtObject:
       ModelRole.ContactRequest.int: "contactRequest",
       ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
       ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
+      ModelRole.IsCurrentUser.int: "isCurrentUser",
+      ModelRole.DefaultDisplayName.int: "defaultDisplayName",
+      ModelRole.OptionalName.int: "optionalName",
+      ModelRole.LastUpdated.int: "lastUpdated",
+      ModelRole.LastUpdatedLocally.int: "lastUpdatedLocally",
+      ModelRole.Bio.int: "bio",
+      ModelRole.ThumbnailImage.int: "thumbnailImage",
+      ModelRole.LargeImage.int: "largeImage",
+      ModelRole.IsContactRequestReceived.int: "isContactRequestReceived",
+      ModelRole.IsContactRequestSent.int: "isContactRequestSent",
+      ModelRole.IsSyncing.int: "isSyncing",
+      ModelRole.IsRemoved.int: "isRemoved",
+      ModelRole.TrustStatus.int: "trustStatus",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -132,6 +158,34 @@ QtObject:
       result = newQVariant(item.incomingVerificationStatus.int)
     of ModelRole.OutgoingVerificationStatus:
       result = newQVariant(item.outgoingVerificationStatus.int)
+    of ModelRole.IsCurrentUser:
+      result = newQVariant(item.isCurrentUser)
+    of ModelRole.DefaultDisplayName:
+      result = newQVariant(item.defaultDisplayName)
+    of ModelRole.OptionalName:
+      result = newQVariant(item.optionalName)
+    of ModelRole.LastUpdated:
+      result = newQVariant(item.lastUpdated)
+    of ModelRole.LastUpdatedLocally:
+      result = newQVariant(item.lastUpdatedLocally)
+    of ModelRole.Bio:
+      result = newQVariant(item.bio)
+    of ModelRole.ThumbnailImage:
+      result = newQVariant(item.thumbnailImage)
+    of ModelRole.LargeImage:
+      result = newQVariant(item.largeImage)
+    of ModelRole.IsContactRequestReceived:
+      result = newQVariant(item.isContactRequestReceived)
+    of ModelRole.IsContactRequestSent:
+      result = newQVariant(item.isContactRequestSent)
+    of ModelRole.IsSyncing:
+      result = newQVariant(item.isSyncing)
+    of ModelRole.IsRemoved:
+      result = newQVariant(item.isRemoved)
+    of ModelRole.TrustStatus:
+      result = newQVariant(item.trustStatus.int)
+    else:
+      result = newQVariant()
 
   proc addItems*(self: Model, items: seq[UserItem]) =
     if(items.len == 0):

@@ -71,6 +71,7 @@ method delete*(self: Module) =
 
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contactDetails = self.controller.getContactDetails(publicKey)
+  let requestStatus = self.controller.getVerificationRequestFrom(publicKey).status
 
   return initUserItem(
     pubKey = contactDetails.dto.id,
@@ -87,6 +88,22 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     isVerified = contactDetails.dto.isContactVerified(),
     isUntrustworthy = contactDetails.dto.isContactUntrustworthy(),
     isBlocked = contactDetails.dto.isBlocked(),
+    isCurrentUser = contactDetails.isCurrentUser,
+    contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
+    incomingVerificationStatus = toVerificationRequestStatus(requestStatus),
+    outgoingVerificationStatus = toVerificationRequestStatus(contactDetails.dto.verificationStatus),
+    defaultDisplayName = contactDetails.defaultDisplayName,
+    optionalName = contactDetails.optionalName,
+    lastUpdated = contactDetails.dto.lastUpdated,
+    lastUpdatedLocally = contactDetails.dto.lastUpdatedLocally,
+    bio = contactDetails.dto.bio,
+    thumbnailImage = contactDetails.dto.image.thumbnail,
+    largeImage = contactDetails.dto.image.large,
+    isContactRequestReceived = contactDetails.dto.isContactRequestReceived,
+    isContactRequestSent = contactDetails.dto.isContactRequestSent,
+    isSyncing = contactDetails.dto.isSyncing,
+    isRemoved = contactDetails.dto.removed,
+    trustStatus = contactDetails.dto.trustStatus,
   )
 
 proc buildModel(self: Module, model: Model, group: ContactsGroup) =
@@ -106,6 +123,7 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
+  self.buildModel(self.view.contactsModel(), ContactsGroup.AllKnownContacts)
   self.buildModel(self.view.myMutualContactsModel(), ContactsGroup.MyMutualContacts)
   self.buildModel(self.view.blockedContactsModel(), ContactsGroup.BlockedContacts)
   self.buildModel(self.view.receivedContactRequestsModel(), ContactsGroup.IncomingPendingContactRequests)
@@ -122,6 +140,8 @@ method viewDidLoad*(self: Module) =
       let contactItem = self.createItemFromPublicKey(receivedVerificationRequest.fromID)
       contactItem.incomingVerificationStatus = toVerificationRequestStatus(receivedVerificationRequest.status)
       receivedVerificationRequestItems.add(contactItem)
+      self.view.contactsModel().updateIncomingRequestStatus(contactItem.pubKey, contactItem.incomingVerificationStatus)
+
   self.view.receivedContactRequestsModel().addItems(receivedVerificationRequestItems)
 
   self.moduleLoaded = true
@@ -170,6 +190,7 @@ proc addItemToAppropriateModel(self: Module, item: UserItem) =
     return
   let contact = self.controller.getContact(item.pubKey())
 
+  self.view.contactsModel().addItem(item)
   if contact.isBlocked():
     self.view.blockedContactsModel().addItem(item)
     return
@@ -185,6 +206,7 @@ proc addItemToAppropriateModel(self: Module, item: UserItem) =
       return
 
 proc removeItemWithPubKeyFromAllModels(self: Module, publicKey: string) =
+  self.view.contactsModel().removeItemById(publicKey)
   self.view.myMutualContactsModel().removeItemById(publicKey)
   self.view.receivedContactRequestsModel().removeItemById(publicKey)
   self.view.sentContactRequestsModel().removeItemById(publicKey)
@@ -217,6 +239,7 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
   for s in statusUpdates:
     let status = toOnlineStatus(s.statusType)
     self.view.myMutualContactsModel().setOnlineStatus(s.publicKey, status)
+    self.view.contactsModel().setOnlineStatus(s.publicKey, status)
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
@@ -224,6 +247,7 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
   let ensName = contactDetails.dto.name
   let localNickname = contactDetails.dto.localNickname
 
+  self.view.contactsModel().setName(publicKey, displayName, ensName, localNickname)
   self.view.myMutualContactsModel().setName(publicKey, displayName, ensName, localNickname)
   self.view.receivedContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
   self.view.sentContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
@@ -235,6 +259,7 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
 method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustworthy: bool) =
   self.view.myMutualContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
   self.view.blockedContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
+  self.updateContactVerificationStatus(publicKey)
 
 method markAsTrusted*(self: Module, publicKey: string): void =
   self.controller.markAsTrusted(publicKey)
@@ -247,6 +272,11 @@ method removeTrustStatus*(self: Module, publicKey: string): void =
 
 method removeTrustVerificationStatus*(self: Module, publicKey: string): void =
   self.controller.removeTrustVerificationStatus(publicKey)
+
+method updateContactVerificationStatus*(self: Module, publicKey: string) =
+  let item = self.createItemFromPublicKey(publicKey)
+  self.view.contactsModel().removeItemById(publicKey)
+  self.view.contactsModel().addItem(item)
 
 method getSentVerificationDetailsAsJson*(self: Module, publicKey: string): string =
   let verificationRequest = self.controller.getVerificationRequestSentTo(publicKey)
@@ -309,6 +339,8 @@ method onVerificationRequestCanceled*(self: Module, publicKey: string) =
 method onVerificationRequestUpdatedOrAdded*(self: Module, request: VerificationRequest) =
   let item =  self.createItemFromPublicKey(request.fromID)
   item.incomingVerificationStatus = toVerificationRequestStatus(request.status)
+  self.view.contactsModel().updateIncomingRequestStatus(item.pubKey, item.incomingVerificationStatus)
+
   if (self.view.receivedContactRequestsModel.containsItemWithPubKey(request.fromID)):
     if request.status != VerificationStatus.Verifying and
         request.status != VerificationStatus.Verified:
@@ -325,6 +357,8 @@ method requestContactInfo*(self: Module, publicKey: string) =
   self.controller.requestContactInfo(publicKey)
 
 method onContactInfoRequestFinished*(self: Module, publicKey: string, ok: bool) =
+  if ok:
+    self.removeIfExistsAndAddToAppropriateModel(publicKey)
   self.view.onContactInfoRequestFinished(publicKey, ok)
 
 method shareUserUrlWithData*(self: Module, pubkey: string): string =

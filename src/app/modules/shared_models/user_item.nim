@@ -5,10 +5,10 @@ import ../../../app_service/service/contacts/dto/contacts
 type
   ContactRequest* {.pure.} = enum
     None = 0
-    IncomingPending
-    IncomingRejected
-    OutgoingPending
-    OutgoingRejected
+    Mutual = 1
+    Sent = 2
+    Received = 3
+    Dismissed = 4
 
   VerificationRequestStatus* {.pure.} = enum
     None = 0
@@ -30,6 +30,16 @@ proc toVerificationRequestStatus*(value: VerificationStatus): VerificationReques
   of VerificationStatus.Untrustworthy: return VerificationRequestStatus.Untrustworthy
   else: return VerificationRequestStatus.None
 
+#TODO: #14964 - To check if this is needed
+proc toContactStatus*(value: ContactRequestState): ContactRequest =
+  case value:
+  of ContactRequestState.None: return ContactRequest.None
+  of ContactRequestState.Mutual: return ContactRequest.Mutual
+  of ContactRequestState.Sent: return ContactRequest.Sent
+  of ContactRequestState.Received: return ContactRequest.Received
+  of ContactRequestState.Dismissed: return ContactRequest.Dismissed
+  else: return ContactRequest.None
+
 type
   UserItem* = ref object of RootObj
     pubKey: string
@@ -49,6 +59,20 @@ type
     contactRequest: ContactRequest
     incomingVerificationStatus: VerificationRequestStatus
     outgoingVerificationStatus: VerificationRequestStatus
+    #Contact extra details
+    isCurrentUser: bool
+    defaultDisplayName: string
+    optionalName: string
+    lastUpdated: int64
+    lastUpdatedLocally: int64
+    bio: string
+    thumbnailImage: string
+    largeImage: string
+    isContactRequestReceived: bool
+    isContactRequestSent: bool
+    isSyncing: bool
+    isRemoved: bool
+    trustStatus: TrustStatus
 
 proc setup*(self: UserItem,
   pubKey: string,
@@ -68,6 +92,20 @@ proc setup*(self: UserItem,
   contactRequest: ContactRequest,
   incomingVerificationStatus: VerificationRequestStatus,
   outgoingVerificationStatus: VerificationRequestStatus,
+  #TODO: #14964 - remove defaults
+  isCurrentUser: bool = false,
+  defaultDisplayName: string = "",
+  optionalName: string = "",
+  lastUpdated: int64 = 0,
+  lastUpdatedLocally: int64 = 0,
+  bio: string = "",
+  thumbnailImage: string = "",
+  largeImage: string = "",
+  isContactRequestReceived: bool = false,
+  isContactRequestSent: bool = false,
+  isSyncing: bool = false,
+  isRemoved: bool = false,
+  trustStatus: TrustStatus = TrustStatus.Unknown,
   ) =
   self.pubKey = pubKey
   self.displayName = displayName
@@ -86,8 +124,22 @@ proc setup*(self: UserItem,
   self.contactRequest = contactRequest
   self.incomingVerificationStatus = incomingVerificationStatus
   self.outgoingVerificationStatus = outgoingVerificationStatus
+  self.isCurrentUser = isCurrentUser
+  self.defaultDisplayName = defaultDisplayName
+  self.optionalName = optionalName
+  self.lastUpdated = lastUpdated
+  self.lastUpdatedLocally = lastUpdatedLocally
+  self.bio = bio
+  self.thumbnailImage = thumbnailImage
+  self.largeImage = largeImage
+  self.isContactRequestReceived = isContactRequestReceived
+  self.isContactRequestSent = isContactRequestSent
+  self.isSyncing = isSyncing
+  self.isRemoved = isRemoved
+  self.trustStatus = trustStatus
 
 # FIXME: remove defaults
+# TODO: #14964
 proc initUserItem*(
     pubKey: string,
     displayName: string,
@@ -106,6 +158,19 @@ proc initUserItem*(
     contactRequest: ContactRequest = ContactRequest.None,
     incomingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
     outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
+    isCurrentUser: bool = false,
+    defaultDisplayName: string = "",
+    optionalName: string = "",
+    lastUpdated: int64 = 0,
+    lastUpdatedLocally: int64 = 0,
+    bio: string = "",
+    thumbnailImage: string = "",
+    largeImage: string = "",
+    isContactRequestReceived: bool = false,
+    isContactRequestSent: bool = false,
+    isSyncing: bool = false,
+    isRemoved: bool = false,
+    trustStatus: TrustStatus = TrustStatus.Unknown,
     ): UserItem =
   result = UserItem()
   result.setup(
@@ -125,7 +190,21 @@ proc initUserItem*(
     isBlocked = isBlocked,
     contactRequest = contactRequest,
     incomingVerificationStatus = incomingVerificationStatus,
-    outgoingVerificationStatus = outgoingVerificationStatus)
+    isCurrentUser = isCurrentUser,
+    outgoingVerificationStatus = outgoingVerificationStatus,
+    defaultDisplayName = defaultDisplayName,
+    optionalName = optionalName,
+    lastUpdated = lastUpdated,
+    lastUpdatedLocally = lastUpdatedLocally,
+    bio = bio,
+    thumbnailImage = thumbnailImage,
+    largeImage = largeImage,
+    isContactRequestReceived = isContactRequestReceived,
+    isContactRequestSent = isContactRequestSent,
+    isSyncing = isSyncing,
+    isRemoved = isRemoved,
+    trustStatus = trustStatus,
+    )
 
 proc `$`*(self: UserItem): string =
   result = fmt"""User Item(
@@ -146,6 +225,19 @@ proc `$`*(self: UserItem): string =
     contactRequest: {$self.contactRequest.int},
     incomingVerificationStatus: {$self.incomingVerificationStatus.int},
     outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
+    isCurrentUser: {self.isCurrentUser},
+    defaultDisplayName: {self.defaultDisplayName},
+    optionalName: {self.optionalName},
+    lastUpdated: {self.lastUpdated},
+    lastUpdatedLocally: {self.lastUpdatedLocally},
+    bio: {self.bio},
+    thumbnailImage: {self.thumbnailImage},
+    largeImage: {self.largeImage},
+    isContactRequestReceived: {self.isContactRequestReceived},
+    isContactRequestSent: {self.isContactRequestSent},
+    isSyncing: {self.isSyncing},
+    isRemoved: {self.isRemoved},
+    trustStatus: {$self.trustStatus.int},
     ]"""
 
 proc pubKey*(self: UserItem): string {.inline.} =
@@ -246,3 +338,81 @@ proc outgoingVerificationStatus*(self: UserItem): VerificationRequestStatus {.in
 
 proc `outgoingVerificationStatus=`*(self: UserItem, value: VerificationRequestStatus) {.inline.} =
   self.outgoingVerificationStatus = value
+
+proc isCurrentUser*(self: UserItem): bool {.inline.} =
+  self.isCurrentUser
+
+proc `isCurrentUser=`*(self: UserItem, value: bool) {.inline.} =
+  self.isCurrentUser = value
+
+proc defaultDisplayName*(self: UserItem): string {.inline.} =
+  self.defaultDisplayName
+
+proc `defaultDisplayName=`*(self: UserItem, value: string) {.inline.} =
+  self.defaultDisplayName = value
+
+proc optionalName*(self: UserItem): string {.inline.} =
+  self.optionalName
+
+proc `optionalName=`*(self: UserItem, value: string) {.inline.} =
+  self.optionalName = value
+
+proc lastUpdated*(self: UserItem): int64 {.inline.} =
+  self.lastUpdated
+
+proc `lastUpdated=`*(self: UserItem, value: int64) {.inline.} =
+  self.lastUpdated = value
+
+proc lastUpdatedLocally*(self: UserItem): int64 {.inline.} =
+  self.lastUpdatedLocally
+
+proc `lastUpdatedLocally=`*(self: UserItem, value: int64) {.inline.} =
+  self.lastUpdatedLocally = value
+
+proc bio*(self: UserItem): string {.inline.} =
+  self.bio
+
+proc `bio=`*(self: UserItem, value: string) {.inline.} =
+  self.bio = value
+
+proc thumbnailImage*(self: UserItem): string {.inline.} =
+  self.thumbnailImage
+
+proc `thumbnailImage=`*(self: UserItem, value: string) {.inline.} =
+  self.thumbnailImage = value
+
+proc largeImage*(self: UserItem): string {.inline.} =
+  self.largeImage
+
+proc `largeImage=`*(self: UserItem, value: string) {.inline.} =
+  self.largeImage = value
+
+proc isContactRequestReceived*(self: UserItem): bool {.inline.} =
+  self.isContactRequestReceived
+
+proc `isContactRequestReceived=`*(self: UserItem, value: bool) {.inline.} =
+  self.isContactRequestReceived = value
+
+proc isContactRequestSent*(self: UserItem): bool {.inline.} =
+  self.isContactRequestSent
+
+proc `isContactRequestSent=`*(self: UserItem, value: bool) {.inline.} =
+  self.isContactRequestSent = value
+
+proc isSyncing*(self: UserItem): bool {.inline.} =
+  self.isSyncing
+
+proc `isSyncing=`*(self: UserItem, value: bool) {.inline.} =
+  self.isSyncing = value
+
+proc isRemoved*(self: UserItem): bool {.inline.} =
+  self.isRemoved
+
+proc `isRemoved=`*(self: UserItem, value: bool) {.inline.} =
+  self.isRemoved = value
+
+proc trustStatus*(self: UserItem): TrustStatus {.inline.} =
+  self.trustStatus
+
+proc `trustStatus=`*(self: UserItem, value: TrustStatus) {.inline.} =
+  self.trustStatus = value
