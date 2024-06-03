@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Skipped tests",
+    "matchedStatuses": ["skipped"] 
+  },
+  {
+    "name": "Lookup errors",
+    "messageRegex": ".*LookupError.*" 
+  },
+  {
+    "name": "Lost connection",
+    "messageRegex": ".*Lost connection to AUT.*" 
+  },
+    {
+    "name": "Connection refused",
+    "messageRegex": ".*connection to AUT refused.*"
+  },
+  {
+    "name": "Assertion errors",
+    "messageRegex": ".*AssertionError.*" 
+  }
+]

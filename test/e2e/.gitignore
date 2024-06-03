@@ -1,0 +1,16 @@
+
+configs/_local.py
+
+.idea/
+.venv/
+
+*.pyc
+
+tmp/
+
+*.DS_Store
+
+/local_run_results/
+squish.ini
+.envrc
+
