@@ -319,7 +319,10 @@ void ModelEntry::cacheItem()
 
     for(const auto& role : qAsConst(m_roles))
     {
-        auto roleName = m_sourceModel->roleNames().key(role.toUtf8());
+        auto roleNames = m_sourceModel->roleNames().keys(role.toUtf8());
+        if (roleNames.isEmpty()) continue;
+
+        auto roleName = roleNames.first();
         auto roleValue = m_index.data(roleName);
 
         if(roleValue.canConvert<QAbstractItemModel*>())
