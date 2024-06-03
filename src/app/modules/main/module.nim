@@ -387,7 +387,6 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     communityDetails.muted,
     # members
     members.map(proc(member: ChatMember): MemberItem =
-      let contactDetails = self.controller.getContactDetails(member.id)
       var state = MembershipRequestState.Accepted
       if member.id in communityDetails.pendingAndBannedMembers:
         let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
