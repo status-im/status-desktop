@@ -35,7 +35,7 @@ StatusMenu {
     }
 
     StatusAction {
-        text: enabled? root.keyPair.migratedToKeycard? qsTr("Stop using Keycard") : qsTr("Move keypair to a Keycard") : ""
+        text: enabled? root.keyPair.migratedToKeycard? qsTr("Stop using Keycard") : qsTr("Move key pair to a Keycard") : ""
         enabled: !!root.keyPair && root.keyPair.pairType !== Constants.keypair.type.privateKeyImport
         icon.name: !!root.keyPair && root.keyPair.migratedToKeycard? "keycard-crossed" : "keycard"
         icon.color: Theme.palette.primaryColor1
@@ -48,7 +48,7 @@ StatusMenu {
     }
 
     StatusAction {
-        text: enabled? qsTr("Import keypair from device via encrypted QR") : ""
+        text: enabled? qsTr("Import key pair from device via encrypted QR") : ""
         enabled: root.hasPairedDevices &&
                  !!root.keyPair &&
                  root.keyPair.pairType !== Constants.keypair.type.profile &&
@@ -79,7 +79,7 @@ StatusMenu {
     }
 
     StatusAction {
-        text: enabled? qsTr("Rename keypair") : ""
+        text: enabled? qsTr("Rename key pair") : ""
         objectName: "renameKeypairMenuItem"
         enabled: !!root.keyPair &&
                  root.keyPair.pairType !== Constants.keypair.type.profile
@@ -96,7 +96,7 @@ StatusMenu {
     }
 
     StatusAction {
-        text: enabled? qsTr("Remove keypair and derived accounts") : ""
+        text: enabled? qsTr("Remove key pair and derived accounts") : ""
         enabled: !!root.keyPair &&
                  root.keyPair.pairType !== Constants.keypair.type.profile
         type: StatusAction.Type.Danger

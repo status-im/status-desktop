@@ -61,7 +61,7 @@ Column {
         }
         text2: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
-                return qsTr("Show encrypted keypairs code")
+                return qsTr("Show encrypted key pairs code")
             }
             return qsTr("Syncing")
         }
@@ -91,7 +91,7 @@ Column {
         text2: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
-                    return qsTr("encrypted keypairs code")
+                    return qsTr("encrypted key pairs code")
                 }
                 return qsTr("on this device")
             }
@@ -122,7 +122,7 @@ Column {
         text2: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
-                    return qsTr("encrypted keypairs code")
+                    return qsTr("encrypted key pairs code")
                 }
                 return ""
             }

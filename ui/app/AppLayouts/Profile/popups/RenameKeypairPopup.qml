@@ -22,7 +22,7 @@ StatusModal {
     required property string name
     required property var accounts
 
-    headerSettings.title: qsTr("Rename keypair")
+    headerSettings.title: qsTr("Rename key pair")
     focus: visible
     padding: Style.current.padding
 
@@ -44,7 +44,7 @@ StatusModal {
             }
             d.entryValid = d.entryValid && !root.accountsModule.keypairNameExists(nameInput.text)
             if (!d.entryValid) {
-                nameInput.errorMessageCmp.text = qsTr("Keypair name already in use")
+                nameInput.errorMessageCmp.text = qsTr("Key pair name already in use")
                 nameInput.valid = false
             }
         }
@@ -66,7 +66,7 @@ StatusModal {
             Layout.preferredHeight: 120
             topPadding: 8
             bottomPadding: 8
-            label: qsTr("Keypair name")
+            label: qsTr("Key pair name")
             charLimit: Constants.keypair.nameLengthMax
             validators: Constants.validators.keypairName
             input.clearable: true
@@ -81,7 +81,7 @@ StatusModal {
         StatusBaseText {
             Layout.preferredWidth: parent.width
             Layout.topMargin: Style.current.padding
-            text: qsTr("Accounts derived from this keypair")
+            text: qsTr("Accounts derived from this key pair")
             font.pixelSize: Style.current.primaryTextFontSize
         }
 

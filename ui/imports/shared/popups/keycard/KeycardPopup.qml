@@ -53,7 +53,7 @@ StatusModal {
             if (root.sharedKeycardModule.forceFlow) {
                 return qsTr("Enable password login on this device")
             }
-            return qsTr("Migrate a keypair from Keycard to Status")
+            return qsTr("Migrate a key pair from Keycard to Status")
         case Constants.keycardSharedFlow.migrateFromAppToKeycard:
             if (root.sharedKeycardModule.forceFlow) {
                 return qsTr("Enable Keycard login on this device")
