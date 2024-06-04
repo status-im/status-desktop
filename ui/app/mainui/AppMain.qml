@@ -2052,6 +2052,11 @@ Item {
             Component.onCompleted: {
                 Global.walletConnectService = walletConnectService
             }
+
+            onDisplayToastMessage: (message, isErr) => {
+                Global.displayToastMessage(message, "", isErr ? "warning" : "checkmark-circle", false,
+                    isErr ? Constants.ephemeralNotificationType.danger : Constants.ephemeralNotificationType.success, "")
+            }
         }
     }
 }

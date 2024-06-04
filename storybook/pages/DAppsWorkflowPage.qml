@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import QtQml 2.15
 import Qt.labs.settings 1.0
 import QtTest 1.15
+import QtQml.Models 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
@@ -30,7 +31,6 @@ import shared.stores 1.0
 Item {
     id: root
 
-    // qml Splitter
     SplitView {
         anchors.fill: parent
 
@@ -213,6 +213,42 @@ Item {
         }
     }
 
+    StatusDialog {
+        id: authMockDialog
+        title: "Authenticate user"
+        visible: false
+
+        property string topic: ""
+        property string id: ""
+
+        ColumnLayout {
+            RowLayout {
+                StatusBaseText { text: "Topic" }
+                StatusBaseText { text: authMockDialog.topic }
+                StatusBaseText { text: "ID" }
+                StatusBaseText { text: authMockDialog.id }
+            }
+        }
+        footer: StatusDialogFooter {
+            rightButtons: ObjectModel {
+                StatusButton {
+                    text: qsTr("Reject")
+                    onClicked: {
+                        walletConnectService.store.userAuthenticationFailed(authMockDialog.topic, authMockDialog.id)
+                        authMockDialog.close()
+                    }
+                }
+                StatusButton {
+                    text: qsTr("Authenticate")
+                    onClicked: {
+                        walletConnectService.store.userAuthenticated(authMockDialog.topic, authMockDialog.id)
+                        authMockDialog.close()
+                    }
+                }
+            }
+        }
+    }
+
     WalletConnectService {
         id: walletConnectService
 
@@ -224,6 +260,9 @@ Item {
 
         store: DAppsStore {
             signal dappsListReceived(string dappsJson)
+            signal userAuthenticated(string topic, string id)
+            signal userAuthenticationFailed(string topic, string id)
+            signal sessionRequestExecuted(var payload, bool success)
 
             function addWalletConnectSession(sessionJson) {
                 console.info("Persist Session", sessionJson)
@@ -243,6 +282,13 @@ Item {
                 this.dappsListReceived(JSON.stringify(d.persistedDapps))
                 return true
             }
+
+            function authenticateUser(topic, id, address) {
+                authMockDialog.topic = topic
+                authMockDialog.id = id
+                authMockDialog.open()
+                return true
+            }
         }
 
         walletStore: WalletStore {
@@ -253,6 +299,8 @@ Item {
             property var accounts: customAccountsModel.count > 0 ? customAccountsModel : defaultAccountsModel
             readonly property ListModel ownAccounts: accounts
         }
+
+        onDisplayToastMessage: (message, error) => console.info("Storybook - toast message: ", message, !!error ? "; error: " + error: "")
     }
 
 

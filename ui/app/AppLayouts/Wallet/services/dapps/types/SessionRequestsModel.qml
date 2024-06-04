@@ -4,8 +4,8 @@ import QtQuick 2.15
 ListModel {
     id: root
 
-    function enqueue(event) {
-        root.append(event);
+    function enqueue(request) {
+        root.append(request);
     }
 
     function dequeue() {
@@ -13,6 +13,17 @@ ListModel {
             var item = root.get(0);
             root.remove(0);
             return item;
+        }
+        return null;
+    }
+
+    /// returns null if not found
+    function findRequest(topic, id) {
+        for (var i = 0; i < root.count; i++) {
+            let entry = root.get(i)
+            if (entry.topic === topic && entry.id === id) {
+                return entry;
+            }
         }
         return null;
     }

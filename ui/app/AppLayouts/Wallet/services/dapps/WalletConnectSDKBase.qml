@@ -13,7 +13,7 @@ Item {
     signal approveSessionResult(var approvedNamespaces, string error)
     signal rejectSessionResult(string error)
     signal sessionRequestEvent(var sessionRequest)
-    signal sessionRequestUserAnswerResult(bool accept, string error)
+    signal sessionRequestUserAnswerResult(string topic, string id, bool accept /* not reject */, string error)
 
     signal authRequest(var request)
     signal authMessageFormated(string formatedMessage, string address)

@@ -14,7 +14,6 @@ import app_service/service/collectible/service as collectible_service
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/wallet_connect/service as wallet_connect_service
 import app_service/service/bookmarks/service as bookmark_service
 import app_service/service/dapp_permissions/service as dapp_permissions_service
 import app_service/service/privacy/service as privacy_service
@@ -81,7 +80,6 @@ type
     currencyService: currency_service.Service
     transactionService: transaction_service.Service
     walletAccountService: wallet_account_service.Service
-    walletConnectService: wallet_connect_service.Service
     bookmarkService: bookmark_service.Service
     dappPermissionsService: dapp_permissions_service.Service
     providerService: provider_service.Service
@@ -192,7 +190,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.accountsService,
     result.tokenService, result.networkService, result.currencyService
   )
-  result.walletConnectService = wallet_connect_service.newService(statusFoundation.events, statusFoundation.threadpool, result.settingsService)
   result.messageService = message_service.newService(
     statusFoundation.events,
     statusFoundation.threadpool,
@@ -328,7 +325,6 @@ proc delete*(self: AppController) =
   self.tokenService.delete
   self.transactionService.delete
   self.walletAccountService.delete
-  self.walletConnectService.delete
   self.aboutService.delete
   self.networkService.delete
   self.activityCenterService.delete
@@ -456,7 +452,6 @@ proc load(self: AppController) =
   self.collectibleService.init()
   self.currencyService.init()
   self.walletAccountService.init()
-  self.walletConnectService.init()
 
   # Apply runtime log level settings
   if not main_constants.runtimeLogLevelSet():

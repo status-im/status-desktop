@@ -196,11 +196,14 @@ StatusDialog {
         id: footer
 
         leftButtons: ObjectModel {
-            MaxFeesDisplay {}
+            MaxFeesDisplay {
+            }
             Item {
                 width: 20
             }
-            EstimatedTimeDisplay {}
+            EstimatedTimeDisplay {
+                visible: !!root.estimatedTimeText
+            }
         }
 
         rightButtons: ObjectModel {
@@ -218,8 +221,6 @@ StatusDialog {
                 height: 44
                 text: qsTr("Sign")
 
-                enabled: false
-
                 onClicked: {
                     root.sign()
                 }
@@ -228,21 +229,32 @@ StatusDialog {
     }
 
     component MaxFeesDisplay: ColumnLayout {
-        visible: root.maxFeesText
         StatusBaseText {
             text: qsTr("Max fees:")
+
             font.pixelSize: 12
             color: Theme.palette.directColor1
         }
         StatusBaseText {
+            id: maxFeesDisplay
             text: root.maxFeesText
+
+            visible: !!root.maxFeesText
+
             font.pixelSize: 16
             font.weight: Font.DemiBold
+        }
+        StatusBaseText {
+            text: qsTr("No fees")
+
+            visible: !maxFeesDisplay.visible
+
+            font.pixelSize: maxFeesDisplay.font.pixelSize
+            font.weight: maxFeesDisplay.font.weight
         }
     }
 
     component EstimatedTimeDisplay: ColumnLayout {
-        visible: root.estimatedTimeText
         StatusBaseText {
             text: qsTr("Est. time:")
             font.pixelSize: 12
