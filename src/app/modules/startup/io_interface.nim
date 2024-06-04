@@ -152,9 +152,6 @@ method setRemainingAttempts*(self: AccessInterface, value: int) {.base.} =
 method runFactoryResetPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method storeDefaultKeyPairForNewKeycardUser*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method syncKeycardBasedOnAppWalletStateAfterLogin*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -238,7 +235,6 @@ type
     c.userLoggedIn()
     c.finishAppLoading()
     c.appReady()
-    c.storeDefaultKeyPairForNewKeycardUser()
     c.syncKeycardBasedOnAppWalletStateAfterLogin()
     c.applyKeycardReplacementAfterLogin()
     c.addToKeycardUidPairsToCheckForAChangeAfterLogin(string, string)

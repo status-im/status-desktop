@@ -535,9 +535,6 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
           self.view.setCurrentStartupState(newState)
           debug "new state for onboarding/login flow continuation after shared flow is terminated", setCurrFlow=newState.flowType(), newCurrState=newState.stateType()
 
-method storeDefaultKeyPairForNewKeycardUser*[T](self: Module[T]) =
-  self.delegate.storeDefaultKeyPairForNewKeycardUser()
-
 method syncKeycardBasedOnAppWalletStateAfterLogin*[T](self: Module[T]) =
   self.delegate.syncKeycardBasedOnAppWalletStateAfterLogin()
 
