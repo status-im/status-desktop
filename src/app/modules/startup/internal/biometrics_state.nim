@@ -29,9 +29,9 @@ proc command(self: BiometricsState, controller: Controller, storeToKeychain: boo
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
     controller.importAccountAndLogin(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
+    controller.storeKeycardAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
+    controller.storeKeycardAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
     controller.setupKeycardAccount(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.LostKeycardReplacement:
@@ -49,8 +49,7 @@ method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
 method resolveKeycardNextState*(self: BiometricsState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   if self.flowType == FlowType.LostKeycardReplacement:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
-      keycardEvent.error.len == 0:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
         var storeToKeychainValue = LS_VALUE_NEVER
         if self.storeToKeychain:

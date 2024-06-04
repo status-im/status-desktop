@@ -435,8 +435,8 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
   )
   self.processCreateAccountResult(error, storeToKeychain)
 
-proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
-  if self.importMnemonic():
+# NOTE: Called during FirstRunNewUserNewKeycardKeys and FirstRunNewUserImportSeedPhraseIntoKeycard
+proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool = true) =
     self.delegate.moveToLoadingAppState()
     if newKeycard:
       self.delegate.storeDefaultKeyPairForNewKeycardUser()
@@ -633,8 +633,8 @@ proc buildSeedPhrasesFromIndexes*(self: Controller, seedPhraseIndexes: seq[int])
 proc generateRandomPUK*(self: Controller): string =
   return self.keycardService.generateRandomPUK()
 
+# Stores metadata, default Status account only, to the keycard for a newly created keycard user.
 proc storeMetadataForNewKeycardUser(self: Controller) =
-  ## Stores metadata, default Status account only, to the keycard for a newly created keycard user.
   let paths = @[account_constants.PATH_DEFAULT_WALLET]
   self.runStoreMetadataFlow(self.getDisplayName(), self.getPin(), paths)
 
