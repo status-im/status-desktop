@@ -209,7 +209,7 @@ proc toGroupChatMember*(jsonObj: JsonNode): ChatMember =
   result.role = if admin: MemberRole.Owner else: MemberRole.None
   result.joined = true
 
-proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMember =
+proc toChannelMember*(jsonObj: JsonNode, memberId: string): ChatMember =
   # Parse status-go "CommunityMember" type
   # Mapping this DTO is not straightforward since only keys are used for id. We
   # handle it a bit different.
@@ -220,6 +220,9 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   if(jsonObj.getProp("roles", rolesObj)):
     for roleObj in rolesObj:
       roles.add(roleObj.getInt)
+
+  # People in the community members' list are joined by default
+  result.joined = true
 
   result.role = MemberRole.None
   if roles.contains(MemberRole.Owner.int):
