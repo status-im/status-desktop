@@ -47,8 +47,6 @@ SplitView {
     PopupBackground {
         id: popupBg
 
-        property var popupIntance: null
-
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
@@ -80,14 +78,19 @@ SplitView {
                 }
                 return ""
             }
+            toTokenAmount: swapOutputAmount.text
         }
 
         Component {
             id: swapModal
             SwapModal {
                 visible: true
+                modal: false
+                closePolicy: Popup.CloseOnEscape
                 swapInputParamsForm: swapInputForm
                     swapAdaptor: SwapModalAdaptor {
+                        swapProposalLoading: loadingCheckBox.checked
+                        swapProposalReady: swapProposalReadyCheckBox.checked
                         swapStore: SwapStore {
                             readonly property var accounts: d.accountsModel
                             readonly property var flatNetworks: d.flatNetworksModel
@@ -182,6 +185,25 @@ SplitView {
                 textRole: "name"
                 model: d.tokenBySymbolModel
                 currentIndex: 1
+            }
+
+            StatusInput {
+                id: swapOutputAmount
+                Layout.preferredWidth: 100
+                label:  "Token amount to receive"
+                text: "100"
+            }
+
+            CheckBox {
+                id: loadingCheckBox
+                text: "swap proposal loading"
+                checked: false
+            }
+
+            CheckBox {
+                id: swapProposalReadyCheckBox
+                text: "swap proposal ready"
+                checked: false
             }
         }
     }

@@ -7,7 +7,8 @@ QtObject {
     property int selectedAccountIndex: 0
     property int selectedNetworkChainId: -1
     property string fromTokensKey: ""
-    property string fromTokenAmount: ""
+    property string fromTokenAmount: "0"
     property string toTokenKey: ""
-    property string toTokenAmount
+    property string toTokenAmount: "0"
+    property double selectedSlippage: 0.5
 }

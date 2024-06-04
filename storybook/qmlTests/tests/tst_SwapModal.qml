@@ -385,5 +385,64 @@ Item {
             networkComboBox.control.popup.close()
             closeAndVerfyModal()
         }
+
+        function test_edit_slippage() {
+            // by default the max slippage button should show no values and the edit button shouldnt be visible
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            // test default values for the various footer items for slippage
+            const maxSlippageText = findChild(controlUnderTest, "maxSlippageText")
+            verify(!!maxSlippageText)
+            compare(maxSlippageText.text, qsTr("Max slippage:"))
+
+            const maxSlippageValue = findChild(controlUnderTest, "maxSlippageValue")
+            verify(!!maxSlippageValue)
+
+            const editSlippageButton = findChild(controlUnderTest, "editSlippageButton")
+            verify(!!editSlippageButton)
+
+            const editSlippagePanel = findChild(controlUnderTest, "editSlippagePanel")
+            verify(!!editSlippagePanel)
+            verify(!editSlippagePanel.visible)
+
+            // set swap proposal to ready and check state of the edit slippage buttons and max slippage values
+            root.swapAdaptor.swapProposalReady = true
+            compare(maxSlippageValue.text, "%1%".arg(0.5))
+            verify(editSlippageButton.visible)
+
+            // clicking on editSlippageButton should show the edit slippage panel
+            mouseClick(editSlippageButton)
+            verify(!editSlippageButton.visible)
+            verify(editSlippagePanel.visible)
+
+            const slippageSelector = findChild(editSlippagePanel, "slippageSelector")
+            verify(!!slippageSelector)
+
+            verify(slippageSelector.valid)
+            compare(slippageSelector.value, 0.5)
+
+            const buttonsRepeater = findChild(slippageSelector, "buttonsRepeater")
+            verify(!!buttonsRepeater)
+            waitForRendering(buttonsRepeater)
+
+            for(let i =0; i< buttonsRepeater.count; i++) {
+                let buttonUnderTest = buttonsRepeater.itemAt(i)
+                verify(!!buttonUnderTest)
+
+                // the mouseClick(buttonUnderTest) doesnt seem to work
+                buttonUnderTest.clicked()
+
+                verify(slippageSelector.valid)
+                compare(slippageSelector.value, buttonUnderTest.value)
+
+                compare(maxSlippageValue.text, "%1%".arg(buttonUnderTest.value))
+            }
+
+            const signButton = findChild(controlUnderTest, "signButton")
+            verify(!!signButton)
+            verify(signButton.enabled)
+        }
     }
 }
