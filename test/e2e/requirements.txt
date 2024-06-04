@@ -13,3 +13,4 @@ pytest-ignore-flaky==2.1.0
 pytest-timeout==2.2.0
 shortuuid==1.0.12
 pluggy==1.2.0
+beautifulsoup4==4.12.3

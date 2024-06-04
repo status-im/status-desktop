@@ -4,7 +4,7 @@ from allure_commons._allure import step
 
 import constants
 from gui.main_window import MainWindow
-from scripts.utils.browser import open_link, get_response
+from scripts.utils.browser import get_response, get_page_content
 from . import marks
 
 pytestmark = marks
@@ -25,3 +25,10 @@ def test_share_community_link(main_screen: MainWindow):
         community_link = main_screen.left_panel.open_community_context_menu(
             community_params['name']).select_invite_people().copy_community_link()
         assert get_response(community_link).status_code != 404
+
+    with step('Verify that community title and description are displayed on webpage and correct'):
+        web_content = get_page_content(community_link)
+        community_title = web_content.findAll(attrs={"name": "title"})[0].attrs['content']
+        community_description = web_content.findAll(attrs={"name": "description"})[0].attrs['content']
+        assert community_params['name'] in community_title
+        assert community_params['description'] == community_description
