@@ -396,6 +396,7 @@ QtObject:
         previewPrivacy: true,
         torrentConfigEnabled: some(false),
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
+        keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
         walletSecretsConfig: self.buildWalletSecrets(),
       )
 
@@ -420,13 +421,24 @@ QtObject:
       error "failed to create account or login", procName="createAccountAndLogin", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc importAccountAndLogin*(self: Service, mnemonic: string, password: string, recoverAccount: bool, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
+  proc importAccountAndLogin*(self: Service, 
+    mnemonic: string, 
+    password: string, 
+    recoverAccount: bool, 
+    displayName: string, 
+    imagePath: string, 
+    imageCropRectangle: ImageCropRectangle,
+    keycardInstanceUID: string = "",
+    keycardWhisperPrivateKey: string = "",
+  ): string =
     try:
-      let request = RestoreAccountRequest(
+      var request = RestoreAccountRequest(
         mnemonic: mnemonic,
         fetchBackup: recoverAccount,
         createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
       )
+      request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
+      request.createAccountRequest.keycardWhisperPrivateKey = keycardWhisperPrivateKey
       let response = status_account.restoreAccountAndLogin(request)
 
       if not response.result.contains("error"):

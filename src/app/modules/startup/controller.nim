@@ -189,8 +189,10 @@ proc init*(self: Controller) =
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
-# This is used when fetching backup failed and we create a new displayName and profileImage.
-# At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
+# This is used in 2 cases.
+#   1. FirstRunOldUserImportSeedPhrase: when fetching backup failed and we create a new displayName and profileImage.
+#      At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
+#   2. FirstRunOldUserKeycardImport: WARNING: remove this usage
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
   debug "<<< storeProfileDataAndProceedWithAppLoading"
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
@@ -439,18 +441,22 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
 
 # NOTE: Called during FirstRunNewUserNewKeycardKeys and FirstRunNewUserImportSeedPhraseIntoKeycard
 proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool = true) =
-    self.delegate.moveToLoadingAppState()
-    if newKeycard:
-      self.delegate.storeDefaultKeyPairForNewKeycardUser()
-      self.storeMetadataForNewKeycardUser()
-    else:
-      self.syncKeycardBasedOnAppWalletStateAfterLogin()
-    let (_, flowEvent) = self.keycardService.getLastReceivedKeycardData() # we need this to get the correct instanceUID
-    self.accountsService.setupAccountKeycard(flowEvent, self.tmpDisplayName, useImportedAcc = true)
-    self.setupKeychain(storeToKeychain)
-  else:
-    error "an error ocurred while importing mnemonic"
+  self.delegate.moveToLoadingAppState()
+  self.storeMetadataForNewKeycardUser()
+  let (_, flowEvent) = self.keycardService.getLastReceivedKeycardData()
+  let error = self.accountsService.importAccountAndLogin(
+    self.tmpSeedPhrase, 
+    "", # NOTE: Keep an empty password. For keycard it will be substituted with`encryption.publicKey` in status-go
+    false, 
+    self.tmpDisplayName, 
+    self.tmpProfileImageDetails.url,
+    self.tmpProfileImageDetails.cropRectangle,
+    keycardInstanceUID = flowEvent.instanceUID,
+    keycardWhisperPrivateKey = flowEvent.whisperKey.privateKey,
+  )
+  self.processCreateAccountResult(error, storeToKeychain)
 
+# NOTE: Called during FirstRunOldUserKeycardImport
 proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
   if self.tmpKeycardEvent.keyUid.len == 0 or
     self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
