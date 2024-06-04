@@ -54,6 +54,7 @@ Item {
             minimumHeight: 108
             maximumHeight: 108
             input.verticalAlignment: TextEdit.AlignTop
+            validationMode: StatusInput.ValidationMode.Always
             validators: [
                 StatusValidator {
                     name: "maxLengthValidator"
