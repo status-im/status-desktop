@@ -445,10 +445,8 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
 
   var membersObj: JsonNode
   if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
-    # Do not show members list in closed communities
-    let joined = result.isMember or result.tokenPermissions.len == 0
     for memberId, memberObj in membersObj:
-      result.members.add(toChannelMember(memberObj, memberId, joined))
+      result.members.add(toChannelMember(memberObj, memberId))
 
   var tagsObj: JsonNode
   if(jsonObj.getProp("tags", tagsObj)):
