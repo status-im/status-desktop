@@ -63,19 +63,23 @@ method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
 method isAutomaticSelection*(self: Module): bool =
-  return self.controller.getPinnedMailserver().len == 0
+  return self.controller.getPinnedMailserverId().len == 0
 
-method onActiveMailserverChanged*(self: Module, nodeAddress: string) =
-  self.view.onActiveMailserverSet(nodeAddress)
+method onActiveMailserverChanged*(self: Module) =
+  self.view.onActiveMailserverSet()
 
-method getMailserverNameForNodeAddress*(self: Module, nodeAddress: string): string =
-  let name = self.view.model().getNameForNodeAddress(nodeAddress)
-  if(name.len > 0):
-    return name
-  return "---"
+method onPinnedMailserverChanged*(self: Module) =
+  self.view.onPinnedMailserverSet()
 
-method setActiveMailserver*(self: Module, mailserverID: string) =
-  self.controller.pinMailserver(mailserverID)
+method setPinnedMailserverId*(self: Module, mailserverID: string) =
+  self.controller.setPinnedMailserverId(mailserverID)
+
+method getPinnedMailserverId*(self: Module): string =
+  return self.controller.getPinnedMailserverId()
+
+method getActiveMailserverId*(self: Module): string =
+  let res = self.controller.getActiveMailserverId()
+  return res
 
 method saveNewMailserver*(self: Module, name: string, nodeAddress: string) =
   self.controller.saveNewMailserver(name, nodeAddress)
@@ -90,5 +94,5 @@ method getUseMailservers*(self: Module): bool =
   return self.controller.getUseMailservers()
 
 method setUseMailservers*(self: Module, value: bool) =
-  if (self.controller.setUseMailservers(value)):
+  if self.controller.setUseMailservers(value):
     self.view.useMailserversChanged()

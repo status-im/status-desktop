@@ -19,14 +19,12 @@ QtObject {
 
     // Module Properties
     property bool automaticMailserverSelection: syncModule.automaticSelection
-    property string activeMailserver: syncModule.activeMailserver
+    property string activeMailserverId: syncModule.activeMailserverId
+    property string pinnedMailserverId: syncModule.pinnedMailserverId
 
-    function getMailserverNameForNodeAddress(nodeAddress) {
-        return root.syncModule.getMailserverNameForNodeAddress(nodeAddress)
-    }
 
-    function setActiveMailserver(mailserverID) {
-        root.syncModule.setActiveMailserver(mailserverID)
+    function setPinnedMailserverId(mailserverID) {
+        root.syncModule.setPinnedMailserverId(mailserverID)
     }
 
     function saveNewMailserver(name, nodeAddress) {

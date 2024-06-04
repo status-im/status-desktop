@@ -1,9 +1,10 @@
 import NimQml, chronicles, json, strutils, sequtils, tables
 
-import app_service/common/types as common_types
 import app/core/eventemitter
 import app/core/fleets/fleet_configuration
 import app/core/signals/types
+import app_service/common/types as common_types
+import backend/mailservers as status_mailservers
 import backend/settings as status_settings
 import backend/status_update as status_update
 
@@ -26,6 +27,7 @@ const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 const SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED* = "profileMigrationNeededUpdated"
 const SIGNAL_URL_UNFURLING_MODE_UPDATED* = "urlUnfurlingModeUpdated"
+const SIGNAL_PINNED_MAILSERVER_CHANGED* = "pinnedMailserverChanged"
 
 logScope:
   topics = "settings-service"
@@ -328,11 +330,18 @@ QtObject:
   proc getAppearance*(self: Service): int =
     self.settings.appearance
 
-  proc saveUseMailservers*(self: Service, value: bool): bool =
-    if(self.saveSetting(KEY_USE_MAILSERVERS, value)):
+  proc toggleUseMailservers*(self: Service, value: bool): bool =
+    try:
+      let response = status_mailservers.toggleUseMailservers(value)
+      if not response.error.isNil:
+        error "error saving use mailservers: ", errDescription = response.error.message
+        return false
       self.settings.useMailservers = value
-      return true
-    return false
+    except Exception as e:
+      let errDesription = e.msg
+      error "saving use mailservers error: ", errDesription
+      return false
+    return true
 
   proc getUseMailservers*(self: Service): bool =
     self.settings.useMailservers
@@ -390,36 +399,52 @@ QtObject:
   proc getCurrentUserStatus*(self: Service): CurrentUserStatus =
     self.settings.currentUserStatus
 
-  proc getPinnedMailserver*(self: Service, fleet: Fleet): string =
-    if (fleet == Fleet.WakuSandbox):
-      return self.settings.pinnedMailserver.wakuSandbox
-    elif (fleet == Fleet.WakuTest):
-      return self.settings.pinnedMailserver.wakuTest
-    elif (fleet == Fleet.ShardsTest):
-      return self.settings.pinnedMailserver.shardsTest
-    elif (fleet == Fleet.ShardsStaging):
-      return self.settings.pinnedMailserver.shardsStaging
-    return ""
+  proc getPinnedMailserverId*(self: Service, fleet: Fleet): string =
+    case fleet:
+      of Fleet.WakuSandbox:
+        return self.settings.pinnedMailserver.wakuSandbox
+      of Fleet.WakuTest:
+        return self.settings.pinnedMailserver.wakuTest
+      of Fleet.ShardsTest:
+        return self.settings.pinnedMailserver.shardsTest
+      of Fleet.ShardsStaging:
+        return self.settings.pinnedMailserver.shardsStaging
+      else:
+        return ""
 
-  proc pinMailserver*(self: Service, mailserverID: string, fleet: Fleet): bool =
+  proc setPinnedMailserverId*(self: Service, mailserverID: string, fleet: Fleet): bool =
     if fleet == Fleet.Undefined:
       return false
     var newMailserverJsonObj = self.settings.pinnedMailserver.pinnedMailserverToJsonNode()
     newMailserverJsonObj[$fleet] = %* mailserverID
-    if(self.saveSetting(KEY_PINNED_MAILSERVERS, newMailserverJsonObj)):
-      if (fleet == Fleet.WakuSandbox):
-        self.settings.pinnedMailserver.wakuSandbox = mailserverID
-      elif (fleet == Fleet.WakuTest):
-        self.settings.pinnedMailserver.wakuTest = mailserverID
-      elif (fleet == Fleet.ShardsTest):
-        self.settings.pinnedMailserver.shardsTest = mailserverID
-      elif (fleet == Fleet.ShardsStaging):
-        self.settings.pinnedMailserver.shardsStaging = mailserverID
-      return true
-    return false
+
+    try:
+      let response = status_mailservers.setPinnedMailservers(newMailserverJsonObj)
+      if not response.error.isNil:
+        error "error saving pinned mailserver: ", errDescription = response.error.message
+        return false
+
+      case fleet:
+        of Fleet.WakuSandbox:
+          self.settings.pinnedMailserver.wakuSandbox = mailserverID
+        of Fleet.WakuTest:
+          self.settings.pinnedMailserver.wakuTest = mailserverID
+        of Fleet.ShardsTest:
+          self.settings.pinnedMailserver.shardsTest = mailserverID
+        of Fleet.ShardsStaging:
+          self.settings.pinnedMailserver.shardsStaging = mailserverID
+        else:
+          return false
+    except Exception as e:
+      let errDesription = e.msg
+      error "saving pinned mailserver error: ", errDesription
+      return false
+
+    self.events.emit(SIGNAL_PINNED_MAILSERVER_CHANGED, Args())
+    return true
 
   proc unpinMailserver*(self: Service, fleet: Fleet): bool =
-    return self.pinMailserver("", fleet)
+    return self.setPinnedMailserverId("", fleet)
 
   proc saveNodeConfiguration*(self: Service, value: JsonNode): bool =
     if(self.saveSetting(KEY_NODE_CONFIG, value)):

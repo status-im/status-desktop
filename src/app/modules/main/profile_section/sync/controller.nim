@@ -34,19 +34,24 @@ proc delete*(self: Controller) =
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e: Args):
-    var args = ActiveMailserverChangedArgs(e)
-    self.delegate.onActiveMailserverChanged(args.nodeAddress)
+    self.delegate.onActiveMailserverChanged()
+
+  self.events.on(SIGNAL_PINNED_MAILSERVER_CHANGED) do(e: Args):
+    self.delegate.onPinnedMailserverChanged()
 
 proc getAllMailservers*(self: Controller): seq[tuple[name: string, nodeAddress: string]] =
   return self.mailserversService.getAllMailservers()
 
-proc getPinnedMailserver*(self: Controller): string =
+proc getPinnedMailserverId*(self: Controller): string =
   let fleet = self.nodeConfigurationService.getFleet()
-  self.settingsService.getPinnedMailserver(fleet)
+  self.settingsService.getPinnedMailserverId(fleet)
 
-proc pinMailserver*(self: Controller, mailserverID: string) =
+proc setPinnedMailserverId*(self: Controller, mailserverID: string) =
   let fleet = self.nodeConfigurationService.getFleet()
-  discard self.settingsService.pinMailserver(mailserverID, fleet)
+  discard self.settingsService.setPinnedMailserverId(mailserverID, fleet)
+
+proc getActiveMailserverId*(self: Controller): string =
+  return self.mailserversService.getActiveMailserverId()
 
 proc saveNewMailserver*(self: Controller, name: string, nodeAddress: string) =
   discard self.mailserversService.saveMailserver(name, nodeAddress)
@@ -58,4 +63,4 @@ proc getUseMailservers*(self: Controller): bool =
   return self.settingsService.getUseMailservers()
 
 proc setUseMailservers*(self: Controller, value: bool): bool =
-  return self.settingsService.saveUseMailservers(value)
+  return self.settingsService.toggleUseMailservers(value)
