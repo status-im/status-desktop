@@ -168,7 +168,7 @@ proc newModule*(
   result.filter = initFilter(result.controller)
 
   result.walletConnectService = wc_service.newService(result.events, result.threadpool, settingsService)
-  result.walletConnectController = wc_controller.newController(result.walletConnectService)
+  result.walletConnectController = wc_controller.newController(result.walletConnectService, walletAccountService)
 
   result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.walletConnectController)
 
@@ -341,6 +341,7 @@ method load*(self: Module) =
   self.overviewModule.load()
   self.sendModule.load()
   self.networksModule.load()
+  self.walletConnectService.init()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded

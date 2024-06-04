@@ -206,10 +206,10 @@ WalletConnectSDKBase {
             d.engine.runJavaScript(`
                                     wc.respondSessionRequest("${topic}", ${id}, "${signature}")
                                     .then((value) => {
-                                        wc.statusObject.onRespondSessionRequestResponse("")
+                                        wc.statusObject.onAcceptSessionRequestResponse("${topic}", ${id}, "")
                                     })
                                     .catch((e) => {
-                                        wc.statusObject.onRespondSessionRequestResponse(e.message)
+                                        wc.statusObject.onAcceptSessionRequestResponse("${topic}", ${id}, e.message)
                                     })
                                    `
             )
@@ -221,10 +221,10 @@ WalletConnectSDKBase {
             d.engine.runJavaScript(`
                                     wc.rejectSessionRequest("${topic}", ${id}, "${error}")
                                     .then((value) => {
-                                        wc.statusObject.onRejectSessionRequestResponse("")
+                                        wc.statusObject.onRejectSessionRequestResponse("${topic}", ${id}, "")
                                     })
                                     .catch((e) => {
-                                        wc.statusObject.onRejectSessionRequestResponse(e.message)
+                                        wc.statusObject.onRejectSessionRequestResponse("${topic}", ${id}, e.message)
                                     })
                                    `
             )
@@ -387,14 +387,16 @@ WalletConnectSDKBase {
             root.rejectSessionResult(error)
         }
 
-        function onRespondSessionRequestResponse(error) {
-            console.debug(`WC WalletConnectSDK.onRespondSessionRequestResponse; error: ${error}`)
-            root.sessionRequestUserAnswerResult(true, error)
+        function onAcceptSessionRequestResponse(topic, id, error) {
+            console.debug(`WC WalletConnectSDK.onAcceptSessionRequestResponse; topic: ${topic}, id: ${id} error: ${error}`)
+            let responseToAccept = true
+            root.sessionRequestUserAnswerResult(topic, id, responseToAccept, error)
         }
 
-        function onRejectSessionRequestResponse(error) {
-            console.debug(`WC WalletConnectSDK.onRejectSessionRequestResponse; error: ${error}`)
-            root.sessionRequestUserAnswerResult(false, error)
+        function onRejectSessionRequestResponse(topic, id, error) {
+            console.debug(`WC WalletConnectSDK.onRejectSessionRequestResponse; topic: ${topic}, id: ${id}, error: ${error}`)
+            let responseToAccept = false
+            root.sessionRequestUserAnswerResult(topic, id, responseToAccept, error)
         }
 
         function onSessionProposal(details) {

@@ -164,6 +164,9 @@ QObject {
         onSessionRequest: (request) => {
             root.sessionRequest(request)
         }
+        onDisplayToastMessage: (message, error) => {
+            root.displayToastMessage(message, error)
+        }
     }
 
     DAppsListProvider {

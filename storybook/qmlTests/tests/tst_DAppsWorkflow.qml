@@ -22,8 +22,8 @@ import utils 1.0
 Item {
     id: root
 
-    // width: 600
-    // height: 400
+    width: 600
+    height: 400
 
     // Component {
     //     id: sdkComponent
@@ -79,6 +79,9 @@ Item {
 
     //     DAppsStore {
     //         signal dappsListReceived(string dappsJson)
+    //         signal userAuthenticated(string topic, string id)
+    //         signal userAuthenticationFailed(string topic, string id)
+    //         signal sessionRequestExecuted(var payload, bool success)
 
     //         // By default, return no dapps in store
     //         function getDapps() {
@@ -89,6 +92,16 @@ Item {
     //         property var addWalletConnectSessionCalls: []
     //         function addWalletConnectSession(sessionJson) {
     //             addWalletConnectSessionCalls.push({sessionJson})
+    //         }
+
+    //         property var authenticateUserCalls: []
+    //         function authenticateUser(topic, id, address) {
+    //             authenticateUserCalls.push({topic, id, address})
+    //         }
+
+    //         property var signMessageCalls: []
+    //         function signMessage(message) {
+    //             signMessageCalls.push({message})
     //         }
     //     }
     // }
@@ -117,6 +130,52 @@ Item {
     //             ListElement { address: "0x3" }
     //         }
     //         readonly property ListModel ownAccounts: accounts
+    //     }
+    // }
+
+    // Component {
+    //     id: dappsRequestHandlerComponent
+
+    //     DAppsRequestHandler {
+    //     }
+    // }
+
+    // TestCase {
+    //     id: requestHandlerTest
+    //     name: "DAppsRequestHandler"
+
+    //     property DAppsRequestHandler handler: null
+
+    //     SignalSpy {
+    //         id: displayToastMessageSpy
+    //         target: requestHandlerTest.handler
+    //         signalName: "onDisplayToastMessage"
+    //     }
+
+    //     function init() {
+    //         let walletStore = createTemporaryObject(walletStoreComponent, root)
+    //         verify(!!walletStore)
+    //         let sdk = createTemporaryObject(sdkComponent, root, { projectId: "12ab" })
+    //         verify(!!sdk)
+    //         let store = createTemporaryObject(dappsStoreComponent, root)
+    //         verify(!!store)
+    //         handler = createTemporaryObject(dappsRequestHandlerComponent, root, {sdk: sdk, store: store, walletStore: walletStore})
+    //         verify(!!handler)
+    //     }
+
+    //     function cleanup() {
+    //         displayToastMessageSpy.clear()
+    //     }
+
+    //     function test_TestAuthentication() {
+    //         let td = mockSessionRequestEvent(this, handler.sdk, handler.walletStore)
+    //         handler.authenticate(td.request)
+    //         compare(handler.store.authenticateUserCalls.length, 1, "expected a call to store.authenticateUser")
+
+    //         let store = handler.store
+    //         store.userAuthenticated(td.topic, td.request.id)
+    //         compare(store.signMessageCalls.length, 1, "expected a call to store.signMessage")
+    //         compare(store.signMessageCalls[0].message, td.request.data)
     //     }
     // }
 
@@ -263,6 +322,10 @@ Item {
     //         verify(!!request.data, "expected data to be set")
     //         compare(request.data.message, message, "expected message to be set")
     //     }
+
+    //     // TODO #14757: add tests with multiple session requests coming in; validate that authentication is serialized and in order
+    //     // function tst_SessionRequestQueueMultiple() {
+    //     // }
     // }
 
     // Component {
@@ -394,7 +457,7 @@ Item {
     //         waitForRendering(controlUnderTest)
 
     //         compare(dappsListReadySpy.count, 0, "expected NO dappsListReady signal to be emitted")
-    //         mouseClick(controlUnderTest, Qt.LeftButton)
+    //         mouseClick(controlUnderTest)
     //         waitForRendering(controlUnderTest)
     //         compare(dappsListReadySpy.count, 1, "expected dappsListReady signal to be emitted")
 
@@ -402,7 +465,7 @@ Item {
     //         verify(!!popup)
     //         verify(popup.opened)
 
-    //         mouseClick(Overlay.overlay, Qt.LeftButton)
+    //         popup.close()
     //         waitForRendering(controlUnderTest)
 
     //         verify(!popup.opened)
@@ -411,7 +474,7 @@ Item {
     //     function test_OpenPairModal() {
     //         waitForRendering(controlUnderTest)
 
-    //         mouseClick(controlUnderTest, Qt.LeftButton)
+    //         mouseClick(controlUnderTest)
     //         waitForRendering(controlUnderTest)
 
     //         let popup = findChild(controlUnderTest, "dappsPopup")
@@ -422,7 +485,7 @@ Item {
     //         verify(!!connectButton)
 
     //         verify(pairWCReadySpy.count === 0, "expected NO pairWCReady signal to be emitted")
-    //         mouseClick(connectButton, Qt.LeftButton)
+    //         mouseClick(connectButton)
     //         waitForRendering(controlUnderTest)
     //         verify(pairWCReadySpy.count === 1, "expected pairWCReady signal to be emitted")
 
@@ -437,42 +500,11 @@ Item {
     //         }
     //     }
 
-    //     function mockSessionRequestEvent() {
-    //         let service = controlUnderTest.wcService
-    //         let account = service.walletStore.accounts.get(1)
-    //         let network = service.walletStore.flatNetworks.get(1)
-    //         let method = "personal_sign"
-    //         let message = "hello world"
-    //         let params = [Helpers.strToHex(message), account.address]
-    //         let topic = "b536a"
-    //         let requestEvent = JSON.parse(Testing.formatSessionRequest(network.chainId, method, params, topic))
-    //         let request = createTemporaryObject(sessionRequestComponent, root, {
-    //             event: requestEvent,
-    //             topic,
-    //             id: requestEvent.id,
-    //             method: Constants.personal_sign,
-    //             account,
-    //             network,
-    //             data: message
-    //         })
-    //         // All calls to SDK are expected as events to be made by the wallet connect SDK
-    //         let sdk = service.wcSDK
-
-    //         // Expect to have calls to getActiveSessions from service initialization
-    //         let prevRequests = sdk.getActiveSessionsCallbacks.length
-    //         sdk.sessionRequestEvent(requestEvent)
-    //         // Service will trigger a sessionRequest event following the getActiveSessions call
-    //         let callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
-    //         let session = JSON.parse(Testing.formatApproveSessionResponse([network.chainId, 7], [account.address]))
-    //         callback({"b536a": session})
-
-    //         return {sdk, session, account, network, topic, id: request.id}
-    //     }
-
     //     function test_OpenDappRequestModal() {
     //         waitForRendering(controlUnderTest)
 
-    //         let td = mockSessionRequestEvent()
+    //         let service = controlUnderTest.wcService
+    //         let td = mockSessionRequestEvent(this, service.wcSDK, service.walletStore)
 
     //         waitForRendering(controlUnderTest)
     //         let popup = findChild(controlUnderTest, "dappsRequestModal")
@@ -494,7 +526,8 @@ Item {
     //     function test_RejectDappRequestModal() {
     //         waitForRendering(controlUnderTest)
 
-    //         let td = mockSessionRequestEvent()
+    //         let service = controlUnderTest.wcService
+    //         let td = mockSessionRequestEvent(this, service.wcSDK, service.walletStore)
 
     //         waitForRendering(controlUnderTest)
     //         let popup = findChild(controlUnderTest, "dappsRequestModal")
@@ -502,16 +535,44 @@ Item {
 
     //         let rejectButton = findChild(popup, "rejectButton")
 
-    //         mouseClick(rejectButton, Qt.LeftButton)
+    //         mouseClick(rejectButton)
     //         compare(td.sdk.rejectSessionRequestCalls.length, 1, "expected a call to service.rejectSessionRequest")
     //         let args = td.sdk.rejectSessionRequestCalls[0]
     //         compare(args.topic, td.topic, "expected topic to be set")
-    //         compare(args.id, td.id, "expected id to be set")
+    //         compare(args.id, td.request.id, "expected id to be set")
     //         compare(args.error, false, "expected no error; it was user rejected")
 
     //         waitForRendering(controlUnderTest)
     //         verify(!popup.opened)
     //         verify(!popup.visible)
     //     }
+    // }
+
+    // function mockSessionRequestEvent(tc, sdk, walletStore) {
+    //     let account = walletStore.accounts.get(1)
+    //     let network = walletStore.flatNetworks.get(1)
+    //     let method = "personal_sign"
+    //     let message = "hello world"
+    //     let params = [Helpers.strToHex(message), account.address]
+    //     let topic = "b536a"
+    //     let requestEvent = JSON.parse(Testing.formatSessionRequest(network.chainId, method, params, topic))
+    //     let request = tc.createTemporaryObject(sessionRequestComponent, root, {
+    //         event: requestEvent,
+    //         topic,
+    //         id: requestEvent.id,
+    //         method: Constants.personal_sign,
+    //         account,
+    //         network,
+    //         data: message
+    //     })
+    //     // Expect to have calls to getActiveSessions from service initialization
+    //     let prevRequests = sdk.getActiveSessionsCallbacks.length
+    //     sdk.sessionRequestEvent(requestEvent)
+    //     // Service might trigger a sessionRequest event following the getActiveSessions call
+    //     let callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
+    //     let session = JSON.parse(Testing.formatApproveSessionResponse([network.chainId, 7], [account.address]))
+    //     callback({"b536a": session})
+
+    //     return {sdk, session, account, network, topic, request}
     // }
 }

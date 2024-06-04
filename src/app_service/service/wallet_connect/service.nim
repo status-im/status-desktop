@@ -10,16 +10,25 @@ import app/core/eventemitter
 import app/core/signals/types
 import app/core/tasks/[threadpool]
 
+import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
+
 logScope:
   topics = "wallet-connect-service"
 
 # include async_tasks
+
+const UNIQUE_WALLET_CONNECT_MODULE_IDENTIFIER* = "WalletSection-WCModule"
+
+type
+  AuthenticationResponseFn* = proc(success: bool)
 
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
     settingsService: settings_service.Service
+
+    authenticationCallback: AuthenticationResponseFn
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -31,12 +40,29 @@ QtObject:
   ): Service =
     new(result, delete)
     result.QObject.setup
+
     result.events = events
     result.threadpool = threadpool
     result.settingsService = settings_service
 
   proc init*(self: Service) =
-    discard
+    self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
+      let args = SharedKeycarModuleArgs(e)
+      if args.uniqueIdentifier != UNIQUE_WALLET_CONNECT_MODULE_IDENTIFIER:
+        return
+
+      if self.authenticationCallback == nil:
+        error "unexpected user authenticated event; no callback set"
+        return
+      defer:
+        self.authenticationCallback = nil
+
+      if args.password == "" and args.pin == "":
+        info "fail to authenticate user"
+        self.authenticationCallback(false)
+        return
+
+      self.authenticationCallback(true)
 
   proc addSession*(self: Service, session_json: string): bool =
     # TODO #14588: call it async
@@ -47,3 +73,16 @@ QtObject:
     let testChains = self.settingsService.areTestNetworksEnabled()
     # TODO #14588: call it async
     return status_go.getDapps(validAtEpoch, testChains)
+
+  # Will fail if another authentication is in progress
+  proc authenticateUser*(self: Service, keyUid: string, callback: AuthenticationResponseFn): bool =
+    if self.authenticationCallback != nil:
+      return false
+    self.authenticationCallback = callback
+
+    let data = SharedKeycarModuleAuthenticationArgs(
+      uniqueIdentifier: UNIQUE_WALLET_CONNECT_MODULE_IDENTIFIER,
+      keyUid: keyUid)
+
+    self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
+    return true

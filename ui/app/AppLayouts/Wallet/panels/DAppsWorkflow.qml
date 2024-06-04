@@ -61,12 +61,13 @@ ConnectedDappsButton {
         sourceComponent: DAppsListPopup {
             visible: true
 
-            model: wcService.dappsModel
+            model: root.wcService.dappsModel
 
             onPairWCDapp: {
                 pairWCLoader.active = true
                 this.close()
             }
+
             onOpened: {
                 this.x = root.width - this.contentWidth - 2 * this.padding
                 this.y = root.height + 4
@@ -91,8 +92,8 @@ ConnectedDappsButton {
             visible: true
 
             onClosed: connectDappLoader.active = false
-            accounts: wcService.validAccounts
-            flatNetworks: wcService.flatNetworks
+            accounts: root.wcService.validAccounts
+            flatNetworks: root.wcService.flatNetworks
 
             onConnect: {
                 root.wcService.approvePairSession(sessionProposal, dappChains, selectedAccount)
@@ -136,14 +137,27 @@ ConnectedDappsButton {
             onClosed: sessionRequestLoader.active = false
 
             onSign: {
-                console.debug("@dd TODO sign session request")
+                if (!request) {
+                    console.error("Error signing: request is null")
+                    return
+                }
+                root.wcService.requestHandler.authenticate(request)
             }
 
             onReject: {
                 let userRejected = true
-                wcService.requestHandler.rejectSessionRequest(request, userRejected)
+                root.wcService.requestHandler.rejectSessionRequest(request, userRejected)
                 close()
             }
+        }
+    }
+
+    Connections {
+        target: root.wcService ? root.wcService.requestHandler : null
+
+        function onSessionRequestResult(payload, isSuccess) {
+            // TODO #14927 handle this properly
+            sessionRequestLoader.active = false
         }
     }
 
