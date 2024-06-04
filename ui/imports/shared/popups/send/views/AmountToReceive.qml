@@ -11,9 +11,11 @@ ColumnLayout {
     id: root
 
     property var selectedHolding
+    property var selectedHolding2
     property bool isLoading: false
     property double cryptoValueToReceive
     property bool isBridgeTx: false
+    property bool isSwapTx: false
     property bool inputIsFiat: false
     property string currentCurrency
     property int minCryptoDecimals: 0
@@ -23,6 +25,13 @@ ColumnLayout {
     QtObject {
         id: d
         readonly property string fiatValue: {
+            if (root.isSwapTx) {
+                if(!root.selectedHolding2 || !root.selectedHolding2.symbol || !root.selectedHolding2.marketDetails ||
+                        !root.selectedHolding2.marketDetails.currencyPrice || !cryptoValueToReceive)
+                    return LocaleUtils.numberToLocaleString(0, 2)
+                let fiatValue = cryptoValueToReceive * root.selectedHolding2.marketDetails.currencyPrice.amount
+                return root.formatCurrencyAmount(fiatValue, root.currentCurrency, inputIsFiat ? {"minDecimals": root.minFiatDecimals, "stripTrailingZeroes": true} : {})
+            }
             if(!root.selectedHolding || !root.selectedHolding.symbol || !root.selectedHolding.marketDetails ||
                     !root.selectedHolding.marketDetails.currencyPrice || !cryptoValueToReceive)
                 return LocaleUtils.numberToLocaleString(0, 2)
@@ -30,6 +39,11 @@ ColumnLayout {
             return root.formatCurrencyAmount(fiatValue, root.currentCurrency, inputIsFiat ? {"minDecimals": root.minFiatDecimals, "stripTrailingZeroes": true} : {})
         }
         readonly property string cryptoValue: {
+            if (root.isSwapTx) {
+                if(!root.selectedHolding2 || !root.selectedHolding2.symbol || !cryptoValueToReceive)
+                    return LocaleUtils.numberToLocaleString(0, 2)
+                return root.formatCurrencyAmount(cryptoValueToReceive, root.selectedHolding2.symbol, !inputIsFiat ? {"minDecimals": root.minCryptoDecimals, "stripTrailingZeroes": true} : {})
+            }
             if(!root.selectedHolding || !root.selectedHolding.symbol || !cryptoValueToReceive)
                 return LocaleUtils.numberToLocaleString(0, 2)
             return root.formatCurrencyAmount(cryptoValueToReceive, root.selectedHolding.symbol, !inputIsFiat ? {"minDecimals": root.minCryptoDecimals, "stripTrailingZeroes": true} : {})
@@ -38,7 +52,13 @@ ColumnLayout {
 
     StatusBaseText {
         Layout.alignment: Qt.AlignRight | Qt.AlignTop
-        text: root.isBridgeTx ? qsTr("Amount Bridged") : qsTr("Recipient will get")
+        text: {
+            if (root.isBridgeTx)
+                return qsTr("Amount Bridged")
+            if (root.isSwapTx)
+                return qsTr("Amount Swapped")
+            return qsTr("Recipient will get")
+        }
         font.pixelSize: 13
         lineHeight: 18
         lineHeightMode: Text.FixedHeight

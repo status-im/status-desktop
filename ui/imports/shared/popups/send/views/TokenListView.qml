@@ -20,6 +20,7 @@ import "../controls"
 Item {
     id: root
 
+    property bool isSwapTx: false
     property string selectedSenderAccount
     property var assets: null
     property var collectibles: null
@@ -98,7 +99,7 @@ Item {
         id: label
         anchors.top: parent.top
         elide: Text.ElideRight
-        text: qsTr("Token to send")
+        text: root.isSwapTx? qsTr("Token to swap") : qsTr("Token to send")
         font.pixelSize: 13
         color: Theme.palette.directColor1
     }
