@@ -68,6 +68,9 @@ method getModuleAsVariant*(self: Module): QVariant =
 
 proc getChatSubItems(self: Module, chats: seq[ChatDto]): seq[location_menu_sub_item.SubItem] =
   for chatDto in chats:
+    if chatDto.isHiddenChat:
+      continue
+    
     var chatName = chatDto.name
     var chatImage = chatDto.icon
     var colorHash: ColorHashDto = @[]
@@ -168,6 +171,9 @@ proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto]
     
     let searchTerm = self.controller.searchTerm().toLower
     for chatDto in chats:
+      if chatDto.isHiddenChat:
+        continue
+
       var chatName = chatDto.name
       var chatImage = chatDto.icon
       var colorHash: ColorHashDto = @[]

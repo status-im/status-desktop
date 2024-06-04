@@ -350,3 +350,6 @@ proc isPrivateGroupChat*(c: ChatDto): bool =
 
 proc isActivePersonalChat*(c: ChatDto): bool =
   return c.active and (c.isOneToOne() or c.isPrivateGroupChat()) and c.communityId == ""
+
+proc isHiddenChat*(chatDto: ChatDto): bool =
+  return chatDto.hideIfPermissionsNotMet and not chatDto.canView
