@@ -17,6 +17,15 @@ QObject {
     required property WalletStore.SwapStore swapStore
     required property SwapInputParamsForm swapFormData
 
+    /* TODO: link to the actually api to get swap proposal from backend under
+    https://github.com/status-im/status-desktop/issues/14828 */
+    property bool swapProposalReady: false
+    property bool swapProposalLoading: false
+
+    // To expose the selected from and to Token from the SwapModal
+    readonly property var fromToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
+    readonly property var toToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.toTokenKey)
+
     readonly property var nonWatchAccounts: SortFilterProxyModel {
         sourceModel: root.swapStore.accounts
         filters: ValueFilter {
@@ -33,7 +42,7 @@ QObject {
             },
             FastExpressionRole {
                 name: "fromToken"
-                expression: root.__fromToken
+                expression: root.fromToken
             }
         ]
     }

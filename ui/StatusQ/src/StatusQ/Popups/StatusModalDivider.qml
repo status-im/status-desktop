@@ -7,6 +7,7 @@ Column {
 
     property real topPadding: 0
     property real bottomPadding: 0
+    property alias dividerColor: divider.color
 
     width: 480
 

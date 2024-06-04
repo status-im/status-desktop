@@ -16,3 +16,4 @@ CollectibleBalanceTag 1.0 CollectibleBalanceTag.qml
 ConnectedDappsButton 1.0 ConnectedDappsButton.qml
 CollectibleLinksTags 1.0 CollectibleLinksTags.qml
 SwapExchangeButton 1.0 SwapExchangeButton.qml
+EditSlippagePanel 1.0 EditSlippagePanel.qml

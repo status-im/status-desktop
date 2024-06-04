@@ -10,6 +10,7 @@ Control {
     property double value: d.defaultValue
     readonly property bool valid: customInput.activeFocus && customInput.valid
                                   || buttons.value !== null
+    readonly property bool isEdited: root.value !== d.defaultValue
 
     function reset() {
         value = d.defaultValue
