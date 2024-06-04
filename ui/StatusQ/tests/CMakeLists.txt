@@ -23,13 +23,11 @@ add_library(StatusQTestLib
     src/TestHelpers/modeltestutils.h
     src/TestHelpers/persistentindexestester.cpp
     src/TestHelpers/persistentindexestester.h
-    src/TestHelpers/snapshotmodel.cpp
-    src/TestHelpers/snapshotmodel.h
     src/TestHelpers/testmodel.cpp
     src/TestHelpers/testmodel.h
 )
 
-target_link_libraries(StatusQTestLib PUBLIC Qt5::Core Qt5::Quick Qt5::Test)
+target_link_libraries(StatusQTestLib PUBLIC Qt5::Core Qt5::Quick Qt5::Test StatusQ)
 target_include_directories(StatusQTestLib PUBLIC src)
 
 enable_testing()
@@ -101,3 +99,11 @@ add_test(NAME MovableModelTest COMMAND MovableModelTest)
 add_executable(ModelSyncedContainerTest tst_ModelSyncedContainer.cpp)
 target_link_libraries(ModelSyncedContainerTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME ModelSyncedContainerTest COMMAND ModelSyncedContainerTest)
+
+add_executable(ModelEntryTest tst_ModelEntry.cpp)
+target_link_libraries(ModelEntryTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME ModelEntryTest COMMAND ModelEntryTest)
+
+add_executable(SnapshotObjectTest tst_SnapshotObject.cpp)
+target_link_libraries(SnapshotObjectTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME SnapshotObjectTest COMMAND SnapshotObjectTest)

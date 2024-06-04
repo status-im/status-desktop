@@ -1,6 +1,5 @@
 #include "persistentindexestester.h"
-
-#include <TestHelpers/snapshotmodel.h>
+#include "StatusQ/snapshotmodel.h"
 
 #include <QDebug>
 
