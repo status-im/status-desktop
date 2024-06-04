@@ -75,8 +75,8 @@ Item {
             for (var i = 0; i < timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange].length; ++i) {
                 result[i] = Math.random() * (maxStep - minStep) + minStep;
             }
-            graphDetail.chart.chartData.datasets[0].data = result;
-            graphDetail.chart.animateToNewData();
+            graphDetail.chart.datasets[0].data = result;
+            graphDetail.chart.refresh();
         }
     }
 
@@ -97,24 +97,21 @@ Item {
             //if graph bar
             //switch graph
         }
-        chart.chartType: 'line'
-        chart.chartData: {
-            return {
-                labels: d.timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange],
-                datasets: [{
-                    label: 'Price',
-                    xAxisId: 'x-axis-1',
-                    yAxisId: 'y-axis-1',
-                    backgroundColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 0.2)' : 'rgba(67, 96, 223, 0.2)',
-                    borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
-                    borderWidth: 3,
-                    pointRadius: 0,
-                    //data: d.generateData()
-                }]
-            }
+        chart.type: 'line'
+        chart.labels: d.timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
+        chart.datasets: {
+            return [{
+                label: 'Price',
+                xAxisId: 'x-axis-1',
+                yAxisId: 'y-axis-1',
+                backgroundColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 0.2)' : 'rgba(67, 96, 223, 0.2)',
+                borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
+                borderWidth: 3,
+                pointRadius: 0
+            }]
         }
 
-        chart.chartOptions: {
+        chart.options: {
             return {
                 maintainAspectRatio: false,
                 responsive: true,

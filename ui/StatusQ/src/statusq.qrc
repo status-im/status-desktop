@@ -68,9 +68,13 @@
         <file>StatusQ/Components/WebEngineLoader.qml</file>
         <file>StatusQ/Components/private/StatusComboboxBackground.qml</file>
         <file>StatusQ/Components/private/StatusComboboxIndicator.qml</file>
-        <file>StatusQ/Components/private/chart/Chart.js</file>
-        <file>StatusQ/Components/private/chart/Chart.qml</file>
-        <file>StatusQ/Components/private/chart/LICENSE</file>
+        <file>StatusQ/Components/private/chart/ChartCanvas.qml</file>
+        <file>StatusQ/Components/private/chart/Library/Animator.qml</file>
+        <file>StatusQ/Components/private/chart/Library/Chart.bundle.js</file>
+        <file>StatusQ/Components/private/chart/Library/chartjs-plugin-crosshair.js</file>
+        <file>StatusQ/Components/private/chart/Library/chartjs-plugin-datalabels.js</file>
+        <file>StatusQ/Components/private/chart/Library/Library.js</file>
+        <file>StatusQ/Components/private/chart/Library/Polyfills.js</file>
         <file>StatusQ/Components/private/qmldir</file>
         <file>StatusQ/Components/private/qwebchannel/helpers.js</file>
         <file>StatusQ/Components/private/qwebchannel/qwebchannel.js</file>

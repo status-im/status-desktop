@@ -6,8 +6,11 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 
 import Storybook 1.0
+
+import utils 1.0
 
 SplitView {
     id: root
@@ -26,15 +29,6 @@ SplitView {
             {text: "1D", enabled: true},{text: "7D", enabled: true},
             {text: "1M", enabled: true}, {text: "6M", enabled: true},
             {text: "1Y", enabled: true}, {text: "ALL", enabled: true}]
-
-        property var simTimer: Timer {
-            running: true
-            interval: 3000
-            repeat: true
-            onTriggered: {
-                d.generateData();
-            }
-        }
 
         function minutes(minutes = 0) {
             var newMinute = new Date(new Date().getTime() - (minutes * 60 * 1000)).toString();
@@ -80,64 +74,29 @@ SplitView {
             for (var i = 0; i < timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange].length; ++i) {
                 result[i] = Math.random() * (maxStep - minStep) + minStep;
             }
-            graphDetail.chart.chartData.datasets[0].data = result;
-            graphDetail.chart.animateToNewData();
+            return result;
         }
-    }
 
-    Item {
-        SplitView.fillWidth: true
-        SplitView.fillHeight: true
-
-        StatusChartPanel {
-            id: graphDetail
-            height: 290
-            anchors.left: parent.left
-            anchors.leftMargin: 24
-            anchors.right: parent.right
-            anchors.rightMargin: 24
-            anchors.verticalCenter: parent.verticalCenter
-            graphsModel: d.graphTabsModel
-            timeRangeModel: d.timeRangeTabsModel
-            onHeaderTabClicked: {
-                //TODO
-                //if time range tab
-                d.generateData();
-                //if graph bar
-                //switch graph
-            }
-            chart.chartType: 'line'
-            chart.chartData: {
-                return {
-                    labels: d.timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange],
-                    datasets: [{
-                            label: 'Price',
-                            xAxisId: 'x-axis-1',
-                            yAxisId: 'y-axis-1',
-                            backgroundColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 0.2)' : 'rgba(67, 96, 223, 0.2)',
-                            borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
-                            borderWidth: 3,
-                            pointRadius: 0,
-                            //data: d.generateData()
-                        }]
-                }
-            }
-
-            chart.chartOptions: {
-                return {
+        readonly property var lineConfig: {
+            return {
+                type: 'line',
+                labels: d.timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange],
+                datasets: [{
+                    label: 'Price',
+                    xAxisId: 'x-axis-1',
+                    yAxisId: 'y-axis-1',
+                    backgroundColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 0.2)' : 'rgba(67, 96, 223, 0.2)',
+                    borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    data: d.generateData()
+                }],
+                options: {
                     maintainAspectRatio: false,
                     responsive: true,
                     legend: {
                         display: false
                     },
-                    //TODO enable zoom
-                    //                zoom: {
-                    //                    enabled: true,
-                    //                    drag: true,
-                    //                    speed: 0.1,
-                    //                    threshold: 2
-                    //                },
-                    //                pan:{enabled:true,mode:'x'},
                     tooltips: {
                         intersect: false,
                         displayColors: false,
@@ -157,6 +116,7 @@ SplitView {
                         xAxes: [{
                                 id: 'x-axis-1',
                                 position: 'bottom',
+                                //type: 'linear',
                                 gridLines: {
                                     drawOnChartArea: false,
                                     drawBorder: false,
@@ -169,33 +129,300 @@ SplitView {
                                 }
                             }],
                         yAxes: [{
-                                position: 'left',
-                                id: 'y-axis-1',
-                                gridLines: {
-                                    borderDash: [8, 4],
-                                    drawBorder: false,
-                                    drawTicks: false,
-                                    color: (Theme.palette.name === "dark") ? '#909090' : '#939BA1'
+                            position: 'left',
+                            id: 'y-axis-1',
+                            gridLines: {
+                                borderDash: [8, 4],
+                                drawBorder: false,
+                                drawTicks: false,
+                                color: (Theme.palette.name === "dark") ? '#909090' : '#939BA1'
+                            },
+                            beforeDataLimits: (axis) => {
+                                axis.paddingTop = 25;
+                                axis.paddingBottom = 0;
+                            },
+                            ticks: {
+                                fontSize: 10,
+                                fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
+                                padding: 8,
+                                min: d.minStep,
+                                max: d.maxStep,
+                                stepSize: d.stepSize,
+                                callback: function(value, index, ticks) {
+                                    return '$' + value;
                                 },
-                                beforeDataLimits: (axis) => {
-                                    axis.paddingTop = 25;
-                                    axis.paddingBottom = 0;
-                                },
-                                ticks: {
-                                    fontSize: 10,
-                                    fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
-                                    padding: 8,
-                                    min: d.minStep,
-                                    max: d.maxStep,
-                                    stepSize: d.stepSize,
-                                    callback: function(value, index, ticks) {
-                                        return '$' + value;
-                                    },
-                                }
-                            }]
+                            }
+                        }]
                     }
                 }
             }
+        }
+
+        readonly property var barConfig: {
+            return {
+                type:"bar",
+                options: {
+                    onHover: function(event, activeElements) {
+                        if (activeElements.length === 0) {
+                            toolTip.close()
+                            return
+                        }
+
+                        toolTip.text = "StatusMenu triggered by " + activeElements[0]._model.label
+                        toolTip.popup()
+                        toolTip.x += 10
+                        toolTip.y -= toolTip.height + 10
+                    },
+                    tooltips: {
+                        enabled:false
+                    },
+                    scales:{ 
+                        xAxes:[{
+                            id: "x-axis-1",
+                            position: "bottom",
+                            stacked: false,
+                            gridLines: {
+                                drawOnChartArea: false,
+                                drawBorder: false,
+                                drawTicks: false
+                                },
+                            ticks: {
+                                fontSize:10,
+                                fontColor: "#939ba1",
+                                padding:16
+                            }
+                        }],
+                        yAxes: [{
+                            position: "left",
+                            id: "y-axis-1",
+                            stacked: false,
+                            gridLines: {
+                                borderDash: [5,3],
+                                lineWidth: 1,
+                                drawBorder: false,
+                                drawTicks: false,
+                                color: "#33939ba1"
+                            },
+                            ticks: {
+                                fontSize: 10,
+                                fontColor: "#939ba1",
+                                padding: 8,
+                                maxTicksLimit: 10,
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }]
+                    }
+                },
+                labels:["16:40","16:50","17:00","17:10","17:20","17:30"],
+                datasets: [{
+                    xAxisId: "x-axis-1",
+                    yAxisId: "y-axis-1",
+                    backgroundColor: "#334360df",
+                    pointRadius: 0,
+                    hoverBackgroundColor: "#334360df",
+                    hoverBorderColor: "#4360df",
+                    hoverBorderWidth: 2,
+                    data: [8,3,5,4,3,10]
+                }]
+            }
+        }
+
+        readonly property var crosshairConfig: {
+            //binding to regenerate data and reset zoom
+            chartType.currentText
+            const generateDataset = (shift, label, color) => {
+                var data = [];
+                var x = 0;
+
+                while (x < 30) {
+                    data.push({ x: x, y: Math.sin(shift + x / 3) });
+                    x += Math.random();
+                }
+
+                var dataset = {
+                    backgroundColor: color,
+                    borderColor: color,
+                    showLine: true,
+                    fill: false,
+                    pointRadius: 2,
+                    label: label,
+                    data: data,
+                    lineTension: 0,
+                    interpolate: true
+                };
+                return dataset;
+            }
+
+            return {
+                type: "scatter",
+                options: {
+                    plugins: {
+                        crosshair: {
+                            enabled: true,
+                            sync: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    tooltips: {
+                        mode: "interpolate",
+                        intersect: true,
+                    },
+                    scales: {
+                        xAxes: [{
+                                id: 'x-axis-1',
+                            }],
+                        yAxes: [{
+                            position: 'left',
+                            id: 'y-axis-1',
+                        }]
+                    }
+                },
+                data: {
+                    datasets: [
+                    generateDataset(0, "A", "red"),
+                    generateDataset(1, "B", "green"),
+                    generateDataset(2, "C", "blue")
+                    ]
+                }
+            };  
+        }
+
+        readonly property var minimisedConfig: {
+            let config = Object.assign({}, d.lineConfig)
+            config.datasets = [{
+                    label: 'Price',
+                    xAxisId: 'x-axis-1',
+                    yAxisId: 'y-axis-1',
+                    backgroundColor: "transparent",
+                    borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    data: d.generateData()
+                }]
+            config.options = Object.assign({}, d.lineConfig.options)
+
+            config.options.scales = {
+                xAxes: [{
+                    id: 'x-axis-1',
+                    display: false
+                }],
+                yAxes: [{
+                    id: 'y-axis-1',
+                    display: false
+                }]
+            }
+            return config;
+        }
+
+        readonly property var dataLabelsConfig: {
+
+            var DATA_COUNT = 8;
+            var labels = [];
+
+            for (var i = 0; i < DATA_COUNT; ++i) {
+                labels.push('' + i);
+            }
+
+            return {
+                type: 'line',
+                labels: labels,
+                datasets: [{
+                    backgroundColor: "blue",
+                    borderColor: "green",
+                    data: [5, 10, 15, 10, 5, 0, 5, 10],
+                    datalabels: {
+                        align: 'start',
+                        anchor: 'start'
+                    }
+                    }, {
+                    backgroundColor:"red",
+                    borderColor:"orance",
+                    data: [58, 80, 60, 70, 50, 60, 70, 80],
+                    }, {
+                    backgroundColor: "yellow",
+                    borderColor: "green",
+                    data: [30, 40, 30, 40, 30, 40, 30, 40],
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'end'
+                    }
+                }],
+                options: {
+                    plugins: {
+                    datalabels: {
+                        backgroundColor: "red",
+                        borderRadius: 4,
+                        color: 'white',
+                        font: {
+                            weight: 'bold',
+                            size: 12
+                        },
+                        formatter: Math.round,
+                        padding: 6
+                    }
+                    },
+
+                    // Core options
+                    aspectRatio: 5 / 3,
+                    layout: {
+                    padding: {
+                        top: 32,
+                        right: 16,
+                        bottom: 16,
+                        left: 8
+                    }
+                    },
+                    elements: {
+                    line: {
+                        fill: false
+                    }
+                    },
+                    scales: {
+                    yAxes: [{
+                        stacked: true
+                    }]
+                    }
+                }
+            }
+        }
+    }
+
+    StatusMenu {
+        id: toolTip
+        width: 243 //By design
+        topPadding: Style.current.padding
+        bottomPadding: topPadding
+        leftPadding: topPadding
+        rightPadding: topPadding
+        parent: Overlay.overlay
+        property alias text: label.text
+        Label {
+            id: label
+            text: "Tooltip"
+            anchors.centerIn: parent
+        }
+    }
+
+    Item {
+        SplitView.fillWidth: true
+        SplitView.fillHeight: true
+
+        StatusChartPanel {
+            id: graphDetail
+            height: 290
+            anchors.left: parent.left
+            anchors.leftMargin: 24
+            anchors.right: parent.right
+            anchors.rightMargin: 24
+            anchors.verticalCenter: parent.verticalCenter
+            graphsModel: d.graphTabsModel
+            timeRangeModel: d.timeRangeTabsModel
+            chart.type: d.lineConfig.type
+            chart.labels: d.lineConfig.labels
+            chart.datasets: d.lineConfig.datasets
+            chart.options: d.lineConfig.options
         }
     }
 
@@ -204,6 +431,49 @@ SplitView {
 
         SplitView.minimumHeight: 100
         SplitView.preferredHeight: 150
+
+        ComboBox {
+            id: chartType
+            model: d.lineConfig ? ["line", "bar", "with crosshair", "line minimised", "data labels"] : []
+            currentIndex: 0
+            onCurrentTextChanged: {
+                if (chartType.currentText === "line") {
+                    graphDetail.chart.type = d.lineConfig.type;
+                    graphDetail.chart.labels = d.lineConfig.labels;
+                    graphDetail.chart.datasets = d.lineConfig.datasets;
+                    graphDetail.chart.options = d.lineConfig.options;
+                    graphDetail.chart.plugins = []
+                    graphDetail.chart.rebuild();
+                } else if (chartType.currentText === "bar") {
+                    graphDetail.chart.type = d.barConfig.type;
+                    graphDetail.chart.labels = d.barConfig.labels;
+                    graphDetail.chart.datasets = d.barConfig.datasets;
+                    graphDetail.chart.options = d.barConfig.options;
+                    graphDetail.chart.plugins = []
+                    graphDetail.chart.rebuild();
+                } else if (chartType.currentText === "with crosshair") {
+                    graphDetail.chart.type = d.crosshairConfig.type;
+                    graphDetail.chart.options = d.crosshairConfig.options;
+                    graphDetail.chart.datasets = d.crosshairConfig.data.datasets;
+                    graphDetail.chart.plugins = []
+                    graphDetail.chart.rebuild();
+                } else if (chartType.currentText === "line minimised") {
+                    graphDetail.chart.type = d.minimisedConfig.type;
+                    graphDetail.chart.labels = d.minimisedConfig.labels;
+                    graphDetail.chart.datasets = d.minimisedConfig.datasets;
+                    graphDetail.chart.options = d.minimisedConfig.options;
+                    graphDetail.chart.plugins = []
+                    graphDetail.chart.rebuild();
+                } else if (chartType.currentText === "data labels") {
+                    graphDetail.chart.type = d.dataLabelsConfig.type;
+                    graphDetail.chart.datasets = d.dataLabelsConfig.datasets;
+                    graphDetail.chart.labels = d.dataLabelsConfig.labels;
+                    graphDetail.chart.options = d.dataLabelsConfig.options;
+                    graphDetail.chart.plugins = [graphDetail.chart.availablePlugins.datalabels]
+                    graphDetail.chart.rebuild();
+                }
+            }
+        }
     }
 }
 
