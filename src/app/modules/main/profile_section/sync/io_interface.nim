@@ -15,7 +15,10 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onActiveMailserverChanged*(self: AccessInterface, nodeAddress: string) {.base.} =
+method onActiveMailserverChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onPinnedMailserverChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
@@ -24,10 +27,13 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method isAutomaticSelection*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getMailserverNameForNodeAddress*(self: AccessInterface, nodeAddress: string): string {.base.} =
+method getActiveMailserverId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setActiveMailserver*(self: AccessInterface, mailserverID: string) {.base.} =
+method getPinnedMailserverId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setPinnedMailserverId*(self: AccessInterface, mailserverID: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method saveNewMailserver*(self: AccessInterface, name: string, nodeAddress: string) {.base.} =

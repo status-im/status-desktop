@@ -314,7 +314,7 @@ SettingsContentBase {
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
                 title: qsTr("History nodes")
-                label: root.messagingStore.getMailserverNameForNodeAddress(root.messagingStore.activeMailserver)
+                label: root.messagingStore.activeMailserverId || "---"
                 components: [
                     StatusIcon {
                         icon: "next"
