@@ -537,6 +537,8 @@ QtObject:
 
       self.addKeycardDetails(keycardData.instanceUID, settingsJson, accountDataJson)
 
+      debug "<<< setupAccountKeycard", useImportedAcc, keycardData, importedAccount = $self.importedAccount, accountDataJson, nodeConfigJson, subaccountDataJson, settingsJson
+
       if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
         nodeConfigJson.isNil):
         let description = "at least one json object is not prepared well"
@@ -613,6 +615,7 @@ QtObject:
   proc importMnemonic*(self: Service, mnemonic: string): string =
     if mnemonic.len == 0:
       return "empty mnemonic"
+    debug "<<< service.importMnemonic", mnemonic
     try:
       let response = status_account.multiAccountImportMnemonic(mnemonic)
       self.importedAccount = toGeneratedAccountDto(response.result)

@@ -192,6 +192,7 @@ proc shouldStartWithOnboardingScreen*(self: Controller): bool =
 # This is used when fetching backup failed and we create a new displayName and profileImage.
 # At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
+  debug "<<< storeProfileDataAndProceedWithAppLoading"
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
   discard self.profileService.setDisplayName(self.tmpDisplayName)
   let images = self.storeIdentityImage()
@@ -276,6 +277,7 @@ proc setSeedPhrase*(self: Controller, value: string) =
   let words = value.split(" ")
   self.tmpSeedPhrase = value
   self.tmpSeedPhraseLength = words.len
+  debug "<<< setSeedPhrase", seedPhraseLength = $self.tmpSeedPhraseLength, seedPhrase = $self.tmpSeedPhrase
 
 proc getSeedPhrase*(self: Controller): string =
   return self.tmpSeedPhrase
@@ -622,6 +624,7 @@ proc storeSeedPhraseToKeycard*(self: Controller, seedPhraseLength: int, seedPhra
   self.keycardService.storeSeedPhrase(seedPhraseLength, seedPhrase)
 
 proc buildSeedPhrasesFromIndexes*(self: Controller, seedPhraseIndexes: seq[int]) =
+  debug "<<< buildSeedPhrasesFromIndexes", seedPhraseIndexes
   if seedPhraseIndexes.len == 0:
     let err = "cannot generate mnemonic"
     error "keycard error: ", err

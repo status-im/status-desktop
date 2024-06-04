@@ -42,6 +42,7 @@ method executeCancelCommand*(self: RepeatPinState, controller: Controller) =
      
 method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  debug "<<< resolveKeycardNextState", keycardFlowType, keycardEvent
   let state = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
