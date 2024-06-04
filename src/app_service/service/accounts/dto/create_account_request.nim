@@ -38,6 +38,10 @@ type
     torrentConfigEnabled*: Option[bool]
     torrentConfigPort*: Option[int]
 
+    keycardInstanceUID*: string
+    keycardPairingDataFile*: string
+    keycardWhisperPrivateKey*: string
+
 proc toJson*(self: CreateAccountRequest): JsonNode =
   result = %*{
     "backupDisabledDataDir": self.backupDisabledDataDir,
@@ -54,6 +58,9 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "logEnabled": self.logEnabled,
     "previewPrivacy": self.previewPrivacy,
     "upstreamConfig": self.upstreamConfig,
+    "keycardInstanceUID": self.keycardInstanceUID,
+    "keycardPairingDataFile": self.keycardPairingDataFile,
+    "keycardWhisperPrivateKey": self.keycardWhisperPrivateKey,
   }
 
   if self.logLevel.isSome():

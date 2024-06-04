@@ -10,7 +10,7 @@ type
 proc toJson*(self: RestoreAccountRequest): JsonNode =
   result = %*{
     "mnemonic": self.mnemonic,
-    "fetchBackup": self.fetchBackup
+    "fetchBackup": self.fetchBackup,
   }
 
   for key, value in self.createAccountRequest.toJson().pairs():
