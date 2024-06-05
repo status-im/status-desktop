@@ -1,5 +1,6 @@
 import random
 
+import configs.timeouts
 from constants.wallet import *
 from gui.screens.settings_wallet import *
 from gui.components.base_popup import BasePopup
@@ -78,7 +79,7 @@ class AccountPopup(BasePopup):
     @allure.step('Set emoji for account')
     def set_emoji(self, value: str):
         self._emoji_button.click()
-        EmojiPopup().select(value)
+        EmojiPopup().wait_until_appears(timeout_msec=10000).select(value)
         return self
 
     @allure.step('Get emoji id from account header')
@@ -159,8 +160,15 @@ class AccountPopup(BasePopup):
 
     @allure.step('Click confirmation (add account / save changes) button')
     def save_changes(self):
+        assert driver.waitFor(lambda: self.is_save_changes_button_enabled(),
+                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         self._add_save_account_confirmation_button.click()
         return self
+
+    @allure.step('Get enabled state of (add account / save changes) button')
+    def is_save_changes_button_enabled(self):
+        return driver.waitForObjectExists(self._add_save_account_confirmation_button.real_name,
+                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
 
 
 class EditAccountFromSettingsPopup(BasePopup):

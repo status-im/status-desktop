@@ -18,7 +18,14 @@ class EmojiPopup(QObject):
         return self
 
     @allure.step('Select emoji')
-    def select(self, name: str):
+    def select(self, name: str, attempts: int = 2):
         self._search_text_edit.text = name
         self._emoji_item.real_name['objectName'] = 'statusEmoji_' + name
-        self._emoji_item.click()
+        try:
+            self._emoji_item.click()
+        except LookupError as err:
+            if attempts:
+                return self.select(name, attempts - 1)
+            else:
+                raise err
+        EmojiPopup().wait_until_hidden()
