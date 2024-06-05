@@ -179,7 +179,7 @@ Item {
 
                 validators: [
                     StatusMinLengthValidator {
-                        errorMessage: qsTr("key pair name must be at least %n character(s)", "", Constants.addAccountPopup.keyPairAccountNameMinLength)
+                        errorMessage: qsTr("Key pair name must be at least %n character(s)", "", Constants.addAccountPopup.keyPairAccountNameMinLength)
                         minLength: Constants.addAccountPopup.keyPairAccountNameMinLength
                     }
                 ]
