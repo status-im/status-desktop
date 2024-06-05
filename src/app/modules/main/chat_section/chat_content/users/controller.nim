@@ -130,7 +130,7 @@ proc getChatMembers*(self: Controller): seq[ChatMember] =
     let members = myCommunity.getCommunityChat(self.chatId).members
     if members.len > 0:
       return members
-    return self.chatService.getChatById(self.chatId).members
+  return self.chatService.getChatById(self.chatId).members
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =
