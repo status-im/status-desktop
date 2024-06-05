@@ -31,6 +31,7 @@ RightTabBaseView {
 
     function resetStack() {
         stack.currentIndex = 0;
+        RootStore.backButtonName = d.getBackButtonText(stack.currentIndex);
     }
 
     headerButton.onClicked: {
