@@ -107,7 +107,7 @@ def test_plus_button_re_importing_seed_phrase(main_screen: MainWindow, user_acco
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_seed_phrase(
-            seed_phrase.split()).save()
+            seed_phrase.split()).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 

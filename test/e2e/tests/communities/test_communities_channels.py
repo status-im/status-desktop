@@ -4,6 +4,7 @@ from allure_commons._allure import step
 
 import configs
 import constants
+import driver
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
 from . import marks
@@ -20,8 +21,10 @@ pytestmark = marks
     'new_channel_description, new_channel_emoji',
     [('Channel', 'Description', 'sunglasses', None, '#4360df', 'New-channel', 'New channel description', 'thumbsup')])
 # @pytest.mark.critical TODO: https://github.com/status-im/desktop-qa-automation/issues/658
-def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description, channel_emoji, channel_emoji_image,
-                                channel_color, new_channel_name, new_channel_description, new_channel_emoji):
+def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description, channel_emoji,
+                                              channel_emoji_image,
+                                              channel_color, new_channel_name, new_channel_description,
+                                              new_channel_emoji):
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
@@ -58,7 +61,8 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
         assert channel.name == new_channel_name
 
     with step('Verify edited channel details are correct in community toolbar'):
-        assert community_screen.tool_bar.channel_name == new_channel_name
+        assert driver.waitFor(lambda: community_screen.tool_bar.channel_name == new_channel_name,
+                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         assert community_screen.tool_bar.channel_description == new_channel_description
         assert community_screen.tool_bar.channel_emoji == '👍 '
         assert community_screen.tool_bar.channel_color == channel_color

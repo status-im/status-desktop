@@ -7,7 +7,7 @@ mainWindow_communitiesPortalLayout_CommunitiesPortalLayout = {"container": statu
 mainWindow_Create_New_Community_StatusButton = {"checkable": False, "container": mainWindow_communitiesPortalLayout_CommunitiesPortalLayout, "objectName": "createCommunityButton", "type": "StatusButton", "visible": True}
 
 # Community View
-mainWindow_communityLoader_Loader = {"container": statusDesktop_mainWindow, "id": "communityLoader", "type": "Loader", "unnamed": 1, "visible": True}
+mainWindow_communityLoader_Loader = {"container": statusDesktop_mainWindow, "objectName": "StatusSectionLayout", "type": "ContentItem", "visible": True}
 # Left Panel
 mainWindow_communityColumnView_CommunityColumnView = {"container": mainWindow_communityLoader_Loader, "objectName": "communityColumnView", "type": "CommunityColumnView", "visible": True}
 mainWindow_communityHeaderButton_StatusChatInfoButton = {"checkable": False, "container": mainWindow_communityColumnView_CommunityColumnView, "objectName": "communityHeaderButton", "type": "StatusChatInfoButton", "visible": True}
