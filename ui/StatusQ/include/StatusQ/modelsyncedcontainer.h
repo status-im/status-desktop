@@ -4,21 +4,26 @@
 #include <QObject>
 #include <QVariant>
 
+#include <memory>
+
 template<typename T>
 class ModelSyncedContainer
 {
-
 public:
     void setModel(QAbstractItemModel* model)
     {
         m_container.clear();
+
+        // create context object for connections, disconnect from previous model
+        // by destroying previous context object if present
+        m_ctx = std::make_unique<QObject>();
 
         if (model == nullptr)
             return;
 
         m_container.resize(model->rowCount());
 
-        QObject::connect(model, &QAbstractItemModel::rowsRemoved, &m_ctx,
+        QObject::connect(model, &QAbstractItemModel::rowsRemoved, m_ctx.get(),
                          [this] (const QModelIndex& parent, int first, int last)
         {
             if (parent.isValid())
@@ -28,7 +33,7 @@ public:
                               m_container.cbegin() + last + 1);
         });
 
-        QObject::connect(model, &QAbstractItemModel::rowsInserted, &m_ctx,
+        QObject::connect(model, &QAbstractItemModel::rowsInserted, m_ctx.get(),
                          [this] (const QModelIndex& parent, int first, int last)
         {
             if (parent.isValid())
@@ -45,8 +50,8 @@ public:
                                std::make_move_iterator(toBeInserted.end()));
         });
 
-        QObject::connect(model, &QAbstractItemModel::rowsAboutToBeMoved, &m_ctx,
-                         [this, model] (const QModelIndex& parent)
+        QObject::connect(model, &QAbstractItemModel::rowsAboutToBeMoved,
+                         m_ctx.get(), [this, model] (const QModelIndex& parent)
         {
             if (parent.isValid())
                 return;
@@ -55,7 +60,7 @@ public:
         });
 
         QObject::connect(model, &QAbstractItemModel::rowsMoved,
-                         &m_ctx, [this] (const QModelIndex& parent)
+                         m_ctx.get(), [this] (const QModelIndex& parent)
         {
             if (parent.isValid())
                 return;
@@ -67,26 +72,26 @@ public:
         });
 
         QObject::connect(model, &QAbstractItemModel::layoutAboutToBeChanged,
-                         &m_ctx, [this, model]
+                         m_ctx.get(), [this, model]
         {
             storePersistentIndexes(model);
         });
 
         QObject::connect(model, &QAbstractItemModel::layoutChanged,
-                         &m_ctx, [this]
+                         m_ctx.get(), [this]
         {
             updateFromPersistentIndexes();
         });
 
         QObject::connect(model, &QAbstractItemModel::modelReset,
-                         &m_ctx, [this, model]
+                         m_ctx.get(), [this, model]
         {
             m_container.clear();
             m_container.resize(model->rowCount());
         });
 
         QObject::connect(model, &QAbstractItemModel::destroyed,
-                         &m_ctx, [this, model]
+                         m_ctx.get(), [this, model]
         {
             m_container.clear();
         });
@@ -144,5 +149,6 @@ private:
 
     QList<QPersistentModelIndex> m_persistentIndexes;
     std::vector<T> m_container;
-    QObject m_ctx;
+
+    std::unique_ptr<QObject> m_ctx;
 };

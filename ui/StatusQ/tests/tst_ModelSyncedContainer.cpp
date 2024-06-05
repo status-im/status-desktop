@@ -59,6 +59,42 @@ private slots:
         QCOMPARE(container.size(), 0);
     }
 
+    void modelChangeDisconnectionTest()
+    {
+        struct Model : public QIdentityProxyModel
+        {
+            void connectNotify(const QMetaMethod&) override
+            {
+                connectionsCount++;
+            }
+
+            void disconnectNotify(const QMetaMethod&) override
+            {
+                connectionsCount--;
+            }
+
+            int connectionsCount = 0;
+        };
+
+        Model model1, model2;
+        ModelSyncedContainer<int> container;
+
+        QCOMPARE(model1.connectionsCount, 0);
+
+        container.setModel(&model1);
+        QVERIFY(model1.connectionsCount > 0);
+
+        container.setModel(nullptr);
+        QCOMPARE(model1.connectionsCount, 0);
+
+        container.setModel(&model1);
+        QVERIFY(model1.connectionsCount > 0);
+
+        container.setModel(&model2);
+        QCOMPARE(model1.connectionsCount, 0);
+        QVERIFY(model2.connectionsCount > 0);
+    }
+
     void appendTest()
     {
         QQmlEngine engine;
