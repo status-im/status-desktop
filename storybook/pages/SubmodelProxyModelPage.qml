@@ -13,6 +13,7 @@ Item {
     id: root
 
     readonly property string intro:
+        "<b>THIS MODEL IS DEPRECTAED. Use ObjectProxyModel instead</b><br>" +
         "The example uses two source models. The first model contains networks"
         + " (id and metadata such as name and color), visible on the left. The"
         + " second model contains tokens metadata and their balances per"
