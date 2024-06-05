@@ -58,7 +58,7 @@ StatusDialog {
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         if(!!popup.preSelectedAccount && !!holdingSelector.selectedItem
-                && recipientLoader.ready && amountToSendInput.inputNumberValid) {
+                && recipientLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)) {
             popup.isLoading = true
             popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSendInput.cryptoValueToSend)
         }
@@ -81,7 +81,8 @@ StatusDialog {
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
-        readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
+        readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode
+                                                                                      || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
@@ -446,7 +447,7 @@ StatusDialog {
 
             contentWidth: availableWidth
 
-            visible: recipientLoader.ready && !!d.selectedHolding && amountToSendInput.inputNumberValid
+            visible: recipientLoader.ready && !!d.selectedHolding && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
 
             objectName: "sendModalScroll"
 
@@ -484,7 +485,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : d.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, d.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: recipientLoader.ready && amountToSendInput.inputNumberValid && !d.errorMode
+        visible: recipientLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer) && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }
 
