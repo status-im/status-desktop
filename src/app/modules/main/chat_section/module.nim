@@ -576,7 +576,7 @@ proc updateChatLocked(self: Module, chatId: string) =
   let locked = self.controller.checkChatIsLocked(communityId, chatId)
   self.view.chatsModel().setItemLocked(chatId, locked)
 
-proc updateChatRequiresPermissions(self: Module, chatId: string) =
+proc updatePermissionsRequiredOnChat(self: Module, chatId: string) =
   if not self.controller.isCommunity():
     return
   let communityId = self.controller.getMySectionId
@@ -952,21 +952,32 @@ method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
 proc changeCanPostValues*(self: Module, chatId: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool) =
   self.view.chatsModel().changeCanPostValues(chatId, canPost, canView, canPostReactions, viewersCanPostReactions)
 
-method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  self.rebuildCommunityTokenPermissionsModel()
-  let community = self.controller.getMyCommunity()
+proc updateChatsRequiredPermissions(self: Module, chats: seq[ChatDto]) =
+  for chat in chats:
+    self.updatePermissionsRequiredOnChat(chat.id)
+
+proc displayTokenPermissionChangeNotification(self: Module, title: string, message: string, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto) =
   if self.showPermissionUpdateNotification(community, tokenPermission):
-    singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
+    singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(community.id, title, message)
+
+method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+  self.view.tokenPermissionsModel.removeItemWithId(tokenPermission.id)
+  self.reevaluateRequiresTokenPermissionToJoin()
+  let community = self.controller.getMyCommunity()
+  let chats = community.getCommunityChats(tokenPermission.chatIds)
+
+  self.updateChatsRequiredPermissions(chats)
+  self.displayTokenPermissionChangeNotification("Community permission deleted", "A token permission has been removed", community, tokenPermission)
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   let community = self.controller.getMyCommunity()
   let chats = community.getCommunityChats(tokenPermission.chatIds)
   let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
 
+  self.updateChatsRequiredPermissions(chats)
   self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
-  if self.showPermissionUpdateNotification(community, tokenPermission):
-    singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
+  self.displayTokenPermissionChangeNotification("Community permission created", "A token permission has been added", community, tokenPermission)
 
 # Returns true if there was an update
 proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckPermissionsResultDto], community: CommunityDto): bool =
@@ -1062,7 +1073,7 @@ proc updateChannelPermissionViewData*(
   let viewOnlyUpdated = self.updateTokenPermissionModel(viewOnlyPermissions.permissions, community)
   let viewAndPostUpdated = self.updateTokenPermissionModel(viewAndPostPermissions.permissions, community)
   if viewOnlyUpdated or viewAndPostUpdated:
-    self.updateChatRequiresPermissions(chatId)
+    self.updatePermissionsRequiredOnChat(chatId)
     self.updateChatLocked(chatId)
 
   if self.chatContentModules.hasKey(chatId):
@@ -1459,7 +1470,7 @@ method addOrUpdateChat(self: Module,
 
     self.changeMutedOnChat(chat.id, chat.muted)
     self.changeCanPostValues(chat.id, result.canPost, result.canView, result.canPostReactions, result.viewersCanPostReactions)
-    self.updateChatRequiresPermissions(chat.id)
+    self.updatePermissionsRequiredOnChat(chat.id)
     self.updateChatLocked(chat.id)
     if (chat.chatType == ChatType.PrivateGroupChat):
       self.onGroupChatDetailsUpdated(chat.id, chat.name, chat.color, chat.icon)
