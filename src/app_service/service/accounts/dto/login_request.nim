@@ -9,6 +9,7 @@ type
     runtimeLogLevel*: string
     wakuV2Nameserver*: string
     bandwidthStatsEnabled*: bool
+    keycardWhisperPrivateKey*: string
     walletSecretsConfig*: WalletSecretsConfig
 
 proc toJson*(self: LoginAccountRequest): JsonNode =
@@ -19,6 +20,7 @@ proc toJson*(self: LoginAccountRequest): JsonNode =
     "runtimeLogLevel": self.runtimeLogLevel,
     "wakuV2Nameserver": self.wakuV2Nameserver,
     "bandwidthStatsEnabled": self.bandwidthStatsEnabled,
+    "keycardWhisperPrivateKey": self.keycardWhisperPrivateKey,
   }
   for key, value in self.walletSecretsConfig.toJson().pairs():
     result[key] = value

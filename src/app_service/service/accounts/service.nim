@@ -671,7 +671,7 @@ QtObject:
     except Exception as e:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
-  proc doLogin(self: Service, account: AccountDto, passwordHash: string) =
+  proc doLogin(self: Service, account: AccountDto, passwordHash: string, chatPrivateKey: string = "") =
     var request = LoginAccountRequest(
       keyUid: account.keyUid,
       kdfIterations: account.kdfIterations,
@@ -679,6 +679,8 @@ QtObject:
       walletSecretsConfig: self.buildWalletSecrets(),
       bandwidthStatsEnabled: true,
     )
+
+    request.keycardWhisperPrivateKey = chatPrivateKey
 
     if main_constants.runtimeLogLevelSet():
       request.runtimeLogLevel = toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)
@@ -692,7 +694,7 @@ QtObject:
     debug "account logged in"
     self.setLocalAccountSettingsFile()
 
-  proc login*(self: Service, account: AccountDto, hashedPassword: string) =
+  proc login*(self: Service, account: AccountDto, hashedPassword: string, chatPrivateKey: string = "") =
     try:
       let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
       if not dirExists(keyStoreDir):
@@ -721,7 +723,7 @@ QtObject:
         self.threadpool.start(arg)
         return
 
-      self.doLogin(account, hashedPassword)
+      self.doLogin(account, hashedPassword, chatPrivateKey)
 
     except Exception as e:
       error "login failed", errName = e.name, errDesription = e.msg

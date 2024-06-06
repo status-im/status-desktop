@@ -537,15 +537,18 @@ proc loginLocalPairingAccount*(self: Controller) =
     kcEvent.encryptionKey.publicKey = self.localPairingStatus.password
     discard self.accountsService.loginAccountKeycard(self.localPairingStatus.account, kcEvent)
 
+# WARNING: Reuse `login` with custom keycard parameters
 proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, keycardReplacement = false) =
   if keycardReplacement:
     self.delegate.applyKeycardReplacementAfterLogin()
-  singletonInstance.localAccountSettings.setStoreToKeychainValue(storeToKeychainValue)
+
   self.delegate.moveToLoadingAppState()
-  let selAcc = self.getSelectedLoginAccount()
-  let error = self.accountsService.loginAccountKeycard(selAcc, self.tmpKeycardEvent)
-  if(error.len > 0):
-    self.delegate.emitAccountLoginError(error)
+  let selectedAccount = self.getSelectedLoginAccount()
+  self.accountsService.login(
+    selectedAccount, 
+    self.tmpKeycardEvent.encryptionKey.publicKey, 
+    self.tmpKeycardEvent.whisperKey.privateKey,
+  )
 
 proc loginAccountKeycardUsingSeedPhrase*(self: Controller, storeToKeychain: bool) =
   debug "<<< loginAccountKeycardUsingSeedPhrase", storeToKeychain
