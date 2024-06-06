@@ -438,6 +438,8 @@ QtObject:
       )
       request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
 
+      debug "<<< importAccountAndLogin", request
+      
       let response = status_account.restoreAccountAndLogin(request)
 
       if not response.result.contains("error"):
@@ -577,6 +579,8 @@ QtObject:
       error "error: ", procName="createAccountFromPrivateKey", errName = e.name, errDesription = e.msg
 
   proc createAccountFromMnemonic*(self: Service, mnemonic: string, paths: seq[string]): GeneratedAccountDto =
+    debug "<<< service.createAccountFromMnemonic", mnemonic, paths
+
     if mnemonic.len == 0:
       error "empty mnemonic"
       return
@@ -744,6 +748,8 @@ QtObject:
     self.tmpHashedPassword = ""
 
   proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string =
+    debug "<<< service.loginAccountKeycard", accToBeLoggedIn, keycardData
+
     try:
       self.setKeyStoreDir(keycardData.keyUid)
 
@@ -810,6 +816,8 @@ QtObject:
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
   proc convertKeycardProfileKeypairToRegular*(self: Service, mnemonic: string, currentPassword: string, newPassword: string) =
+    debug "<<< service.convertKeycardProfileKeypairToRegular", mnemonic, currentPassword, newPassword
+
     let hashedNewPassword = hashPassword(newPassword)
     let arg = ConvertKeycardProfileKeypairToRegularTaskArg(
       tptr: convertKeycardProfileKeypairToRegularTask,
@@ -832,7 +840,7 @@ QtObject:
         if(errMsg.len == 0):
           result = true
         else:
-          error "error: ", procName="onConvertKeycardProfileKeypairToRegular", errDesription = errMsg
+          error "failed to convert keycard account", procName="onConvertKeycardProfileKeypairToRegular", errDesription = errMsg
     except Exception as e:
       error "error handilng migrated keypair response", procName="onConvertKeycardProfileKeypairToRegular", errDesription=e.msg
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
