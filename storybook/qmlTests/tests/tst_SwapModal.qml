@@ -289,9 +289,7 @@ Item {
 
             // check default value of network comboBox, should be mainnet
             compare(root.swapFormData.selectedNetworkChainId, -1)
-            const networkComboBoxText = findChild(networkComboBox.control.contentItem, "contentItemText")
-            verify(!!networkComboBoxText)
-            compare(networkComboBoxText.text, root.swapAdaptor.filteredFlatNetworksModel.get(0).chainName)
+            compare(root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId, 11155111 /*Sepolia Mainnet*/)
 
             // lets ensure that the selected one is correctly set
             for (let i=0; i<networkComboBox.control.popup.contentItem.count; i++) {
@@ -313,7 +311,10 @@ Item {
                     // verify values set
                     verify(!networkComboBox.control.popup.opened)
                     compare(root.swapFormData.selectedNetworkChainId, networkComboBox.control.popup.contentItem.model.get(i).chainId)
-                    compare(networkComboBoxText.text, root.swapAdaptor.filteredFlatNetworksModel.get(i).chainName)
+
+                    const networkComboIcon = findChild(networkComboBox.control.contentItem, "contentItemIcon")
+                    verify(!!networkComboIcon)
+                    verify(networkComboIcon.asset.name.includes(root.swapAdaptor.filteredFlatNetworksModel.get(i).iconUrl))
                 }
             }
             networkComboBox.control.popup.close()

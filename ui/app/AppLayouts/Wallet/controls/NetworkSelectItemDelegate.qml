@@ -16,6 +16,7 @@ StatusListItem {
     property var radioButtonGroup
     property bool useEnabledRole: true
     property bool showCheckboxes: true
+    property bool showRadioButtons: true
 
     // Needed for preferred sharing networks
     property bool preferredNetworksMode: false
@@ -45,6 +46,10 @@ StatusListItem {
         }
     }
 
+    leftPadding: 12
+    rightPadding: 0
+    statusListItemTitleArea.anchors.leftMargin: 12
+
     components: [
         StatusCheckBox {
             id: checkBox
@@ -58,10 +63,10 @@ StatusListItem {
                 }
                 else if(root.useEnabledRole) {
                     return model.isEnabled ? Qt.Checked : Qt.Unchecked
-                } else if(model.enabledState === NetworkSelectItemDelegate.Enabled) {
+                } else if (model.enabledState === NetworkSelectItemDelegate.UxEnabledState.Enabled) {
                     return Qt.Checked
                 } else {
-                    if( model.enabledState === NetworkSelectItemDelegate.AllEnabled) {
+                    if( model.enabledState === NetworkSelectItemDelegate.UxEnabledState.AllEnabled) {
                         return Qt.PartiallyChecked
                     } else {
                         return Qt.Unchecked
@@ -76,7 +81,7 @@ StatusListItem {
         },
         StatusRadioButton {
             id: radioButton
-            visible: root.singleSelection.enabled
+            visible: root.singleSelection.enabled && root.showRadioButtons
             size: StatusRadioButton.Size.Large
             ButtonGroup.group: root.radioButtonGroup
             checked: root.singleSelection.currentModel === root.networkModel && root.singleSelection.currentIndex === model.index
