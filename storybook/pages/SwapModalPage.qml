@@ -42,6 +42,8 @@ SplitView {
             }
             return selectedChain
         }
+
+        readonly property SwapTransactionRoutes dummySwapTransactionRoutes: SwapTransactionRoutes{}
     }
 
     PopupBackground {
@@ -71,6 +73,45 @@ SplitView {
             toTokenAmount: swapOutputAmount.text
         }
 
+        SwapModalAdaptor {
+            id: swapModalAdaptor
+            swapStore: SwapStore {
+                signal suggestedRoutesReady(var txRoutes)
+                readonly property var accounts: d.accountsModel
+                readonly property var flatNetworks: d.flatNetworksModel
+                readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
+
+                function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
+                                            disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {
+                    console.debug("fetchSuggestedRoutes called >> accountFrom = ",accountFrom, " accountTo =",
+                                  accountTo, "amount = ",amount, " tokenFrom = ",tokenFrom, " tokenTo = ", tokenTo,
+                                  " disabledFromChainIDs = ",disabledFromChainIDs, " disabledToChainIDs = ",disabledToChainIDs,
+                                  " preferredChainIDs = ",preferredChainIDs, " sendType =", sendType, " lockedInAmounts = ",lockedInAmounts)
+                }
+                function authenticateAndTransfer(uuid, accountFrom, accountTo, tokenFrom,
+                                                 tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {
+                    console.debug("authenticateAndTransfer called >> uuid ", uuid, " accountFrom = ",accountFrom, " accountTo =",
+                                  accountTo, "tokenFrom = ",tokenFrom, " tokenTo = ",tokenTo, " sendType = ", sendType,
+                                  " tokenName = ", tokenName, " tokenIsOwnerToken = ", tokenIsOwnerToken, " paths = ", paths)
+                }
+                function getWei2Eth(wei, decimals) {
+                    return wei/(10**decimals)
+                }
+            }
+            walletAssetsStore: WalletAssetsStore {
+                id: thisWalletAssetStore
+                walletTokensStore: TokensStore {
+                    readonly property var plainTokensBySymbolModel: TokensBySymbolModel {}
+                    getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
+                }
+                readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
+                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+            }
+            currencyStore: CurrenciesStore {}
+            swapFormData: swapInputForm
+            swapOutputData: SwapOutputData{}
+        }
+
         Component {
             id: swapModal
             SwapModal {
@@ -79,32 +120,7 @@ SplitView {
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
                 swapInputParamsForm: swapInputForm
-                swapAdaptor: SwapModalAdaptor {
-                    swapProposalLoading: loadingCheckBox.checked
-                    swapProposalReady: swapProposalReadyCheckBox.checked
-                    swapStore: SwapStore {
-                        readonly property var accounts: d.accountsModel
-                        readonly property var flatNetworks: d.flatNetworksModel
-                        readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
-
-                        signal suggestedRoutesReady(var txRoutes)
-
-                        function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
-                                                      disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {}
-                        function authenticateAndTransfer(uuid, accountFrom, accountTo,
-                                                         tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {}
-                    }
-                    walletAssetsStore: WalletAssetsStore {
-                        id: thisWalletAssetStore
-                        walletTokensStore: TokensStore {
-                            plainTokensBySymbolModel: TokensBySymbolModel {}
-                        }
-                        readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                        assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
-                    }
-                    currencyStore: CurrenciesStore {}
-                    swapFormData: swapInputForm
-                }
+                swapAdaptor: swapModalAdaptor
             }
         }
     }
@@ -187,23 +203,25 @@ SplitView {
                 currentIndex: 1
             }
 
-            StatusInput {
-                id: swapOutputAmount
-                Layout.preferredWidth: 100
-                label: "Token amount to receive"
-                text: "100"
+            Button {
+                text: "emit no routes found event"
+                onClicked: {
+                    swapModalAdaptor.swapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txNoRoutes)
+                }
             }
 
-            CheckBox {
-                id: loadingCheckBox
-                text: "swap proposal loading"
-                checked: false
+            Button {
+                text: "emit no approval needed route"
+                onClicked: {
+                    swapModalAdaptor.swapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRouteNoApproval)
+                }
             }
 
-            CheckBox {
-                id: swapProposalReadyCheckBox
-                text: "swap proposal ready"
-                checked: false
+            Button {
+                text: "emit approval needed route"
+                onClicked: {
+                    swapModalAdaptor.swapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded)
+                }
             }
         }
     }

@@ -1251,6 +1251,7 @@ QtObject {
                     walletAssetsStore: root.walletAssetsStore
                     currencyStore: root.currencyStore
                     swapFormData: swapInputParamsForm
+                    swapOutputData: SwapOutputData{}
                 }
                 onClosed: destroy()
             }

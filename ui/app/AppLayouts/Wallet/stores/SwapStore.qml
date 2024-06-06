@@ -37,4 +37,8 @@ QtObject {
         root.walletSectionSendInst.authenticateAndTransferWithParameters(uuid, accountFrom, accountTo,
             tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths)
     }
+
+    function getWei2Eth(wei, decimals) {
+        return globalUtils.wei2Eth(wei, decimals)
+    }
 }

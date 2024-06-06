@@ -38,6 +38,7 @@ Item {
             }
             currencyStore: CurrenciesStore {}
             swapFormData: SwapInputParamsForm {}
+            swapOutputData: SwapOutputData {}
         }
     }
 

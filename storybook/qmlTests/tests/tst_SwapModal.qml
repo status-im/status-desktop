@@ -1,4 +1,4 @@
-import QtQuick 2.15
+﻿import QtQuick 2.15
 import QtTest 1.15
 
 import StatusQ 0.1 // See #10218
@@ -22,10 +22,18 @@ Item {
     width: 600
     height: 400
 
+    readonly property var dummySwapTransactionRoutes: SwapTransactionRoutes {}
+
     readonly property var swapStore: SwapStore {
+        signal suggestedRoutesReady(var txRoutes)
         readonly property var accounts: WalletAccountsModel {}
         readonly property var flatNetworks: NetworksModel.flatNetworks
         readonly property bool areTestNetworksEnabled: true
+        function getWei2Eth(wei, decimals) {
+            return wei/(10**decimals)
+        }
+        function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
+                                    disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {}
     }
 
     readonly property var swapAdaptor: SwapModalAdaptor {
@@ -34,12 +42,14 @@ Item {
             id: thisWalletAssetStore
             walletTokensStore: TokensStore {
                 plainTokensBySymbolModel: TokensBySymbolModel {}
+                getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
             assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
         }
         swapStore: root.swapStore
         swapFormData: root.swapFormData
+        swapOutputData: SwapOutputData{}
     }
 
     readonly property var swapFormData: SwapInputParamsForm {}
@@ -58,8 +68,19 @@ Item {
 
         property SwapModal controlUnderTest: null
 
+        readonly property SignalSpy formValuesChanged: SignalSpy {
+            target: root.swapFormData
+            signalName: "formValuesChanged"
+        }
+
         // helper functions -------------------------------------------------------------
+
+        function init() {
+            controlUnderTest = createTemporaryObject(componentUnderTest, root)
+        }
+
         function launchAndVerfyModal() {
+            formValuesChanged.clear()
             verify(!!controlUnderTest)
             controlUnderTest.open()
             verify(!!controlUnderTest.opened)
@@ -69,6 +90,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.close()
             verify(!controlUnderTest.opened)
+            formValuesChanged.clear()
         }
 
         function getAndVerifyAccountsModalHeader() {
@@ -85,11 +107,19 @@ Item {
             verify(!!accountsModalHeader.control.popup.opened)
             return accountsModalHeader
         }
-        // end helper functions -------------------------------------------------------------
 
-        function init() {
-            controlUnderTest = createTemporaryObject(componentUnderTest, root)
+        function verifyLoadingAndNoErrorsState() {
+            // verify loading state was set and no errors currently
+            verify(!root.swapAdaptor.validSwapProposalReceived)
+            verify(root.swapAdaptor.swapProposalLoading)
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.totalFees, 0)
+            compare(root.swapAdaptor.swapOutputData.bestRoutes, [])
+            compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
+            compare(root.swapAdaptor.swapOutputData.hasError, false)
         }
+        // end helper functions -------------------------------------------------------------
 
         function test_floating_header_default_account() {
             verify(!!controlUnderTest)
@@ -408,7 +438,7 @@ Item {
             verify(!editSlippagePanel.visible)
 
             // set swap proposal to ready and check state of the edit slippage buttons and max slippage values
-            root.swapAdaptor.swapProposalReady = true
+            root.swapAdaptor.validSwapProposalReceived = true
             compare(maxSlippageValue.text, "%1%".arg(0.5))
             verify(editSlippageButton.visible)
 
@@ -443,6 +473,132 @@ Item {
             const signButton = findChild(controlUnderTest, "signButton")
             verify(!!signButton)
             verify(signButton.enabled)
+        }
+
+        function test_modal_swap_proposal_setup() {
+            // by default the max slippage button should show no values and the edit button shouldnt be visible
+
+            root.swapAdaptor.reset()
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const maxFeesText = findChild(controlUnderTest, "maxFeesText")
+            verify(!!maxFeesText)
+
+            const maxFeesValue = findChild(controlUnderTest, "maxFeesValue")
+            verify(!!maxFeesValue)
+
+            const signButton = findChild(controlUnderTest, "signButton")
+            verify(!!signButton)
+
+            const errorTag = findChild(controlUnderTest, "errorTag")
+            verify(!!errorTag)
+
+            // Check max fees values and sign button state when nothing is set
+            compare(maxFeesText.text, qsTr("Max fees:"))
+            compare(maxFeesValue.text, "--")
+            verify(!signButton.enabled)
+            verify(!errorTag.visible)
+
+            // set input values in the form correctly
+            root.swapFormData.fromTokensKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(0).key
+            compare(formValuesChanged.count, 1)
+            root.swapFormData.toTokenKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(1).key
+            compare(formValuesChanged.count, 2)
+            root.swapFormData.fromTokenAmount = 10
+            compare(formValuesChanged.count, 3)
+            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+            compare(formValuesChanged.count, 4)
+
+            // wait for fetchSuggestedRoutes function to be called
+            wait(1000)
+
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState()
+
+            // emit event that no routes were found
+            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes)
+
+            // verify loading state was removed and that error was displayed
+            verify(!root.swapAdaptor.validSwapProposalReceived)
+            verify(!root.swapAdaptor.swapProposalLoading)
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.totalFees, 0)
+            compare(root.swapAdaptor.swapOutputData.bestRoutes, [])
+            compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
+            compare(root.swapAdaptor.swapOutputData.hasError, true)
+            verify(errorTag.visible)
+            verify(errorTag.text, qsTr("An error has occured, please try again"))
+            verify(!signButton.enabled)
+            compare(signButton.text, qsTr("Swap"))
+
+            // edit some params to retry swap
+            root.swapFormData.fromTokenAmount = 11
+            compare(formValuesChanged.count, 5)
+
+            // wait for fetchSuggestedRoutes function to be called
+            wait(1000)
+
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState()
+
+            // emit event with route that needs no approval
+            let txRoutes = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            root.swapStore.suggestedRoutesReady(txRoutes)
+
+            // verify loading state removed and data ius displayed as expected on the Modal
+            verify(root.swapAdaptor.validSwapProposalReceived)
+            verify(!root.swapAdaptor.swapProposalLoading)
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals).toString())
+
+            // calculation needed for total fees
+            let gasTimeEstimate = txRoutes.gasTimeEstimate
+            let totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
+            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+
+            compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
+            compare(root.swapAdaptor.swapOutputData.bestRoutes, txRoutes.suggestedRoutes)
+            compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
+            compare(root.swapAdaptor.swapOutputData.hasError, false)
+            verify(!errorTag.visible)
+            verify(signButton.enabled)
+            compare(signButton.text, qsTr("Swap"))
+
+            // edit some params to retry swap
+            root.swapFormData.fromTokenAmount = 1
+            compare(formValuesChanged.count, 6)
+
+            // wait for fetchSuggestedRoutes function to be called
+            wait(1000)
+
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState()
+
+            // emit event with route that needs no approval
+            let txRoutes2 = root.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
+            root.swapStore.suggestedRoutesReady(txRoutes2)
+
+            // verify loading state removed and data ius displayed as expected on the Modal
+            verify(root.swapAdaptor.validSwapProposalReceived)
+            verify(!root.swapAdaptor.swapProposalLoading)
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapStore.getWei2Eth(txRoutes2.amountToReceive, root.swapAdaptor.toToken.decimals).toString())
+
+            // calculation needed for total fees
+            gasTimeEstimate = txRoutes2.gasTimeEstimate
+            totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
+            totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+
+            compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
+            compare(root.swapAdaptor.swapOutputData.bestRoutes, txRoutes2.suggestedRoutes)
+            compare(root.swapAdaptor.swapOutputData.approvalNeeded, true)
+            compare(root.swapAdaptor.swapOutputData.hasError, false)
+            verify(!errorTag.visible)
+            verify(signButton.enabled)
+            compare(signButton.text, qsTr("Approve %1").arg(root.swapAdaptor.fromToken.symbol))
         }
     }
 }
