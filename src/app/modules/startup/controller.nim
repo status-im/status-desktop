@@ -379,6 +379,8 @@ proc validMnemonic*(self: Controller, mnemonic: string): bool =
 
 # validateMnemonicForImport checks if mnemonic is valid and not yet saved in local database
 proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
+  debug "<<< validateMnemonicForImport", mnemonic
+
   let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
   if err.len != 0:
     self.delegate.emitStartupError(err, StartupErrorType.ImportAccError)
@@ -458,6 +460,8 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
 
 # NOTE: Called during FirstRunOldUserKeycardImport
 proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
+  debug "<<< setupKeycardAccount", storeToKeychain, recoverAccount
+
   if self.tmpKeycardEvent.keyUid.len == 0 or
     self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
       self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
@@ -544,6 +548,8 @@ proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, keycar
     self.delegate.emitAccountLoginError(error)
 
 proc loginAccountKeycardUsingSeedPhrase*(self: Controller, storeToKeychain: bool) =
+  debug "<<< loginAccountKeycardUsingSeedPhrase", storeToKeychain
+
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true, includeWhisper = true)
   let selAcc = self.getSelectedLoginAccount()
 
@@ -564,6 +570,8 @@ proc loginAccountKeycardUsingSeedPhrase*(self: Controller, storeToKeychain: bool
     self.delegate.emitAccountLoginError(error)
 
 proc convertKeycardProfileKeypairToRegular*(self: Controller) =
+  debug "<<< convertKeycardProfileKeypairToRegular"
+
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
   self.accountsService.convertKeycardProfileKeypairToRegular(self.getSeedPhrase(), acc.derivedAccounts.encryption.publicKey,
     self.getPassword())
