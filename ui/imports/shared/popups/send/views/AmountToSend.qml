@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Controls.Validators 0.1
 
@@ -137,6 +138,7 @@ ColumnLayout {
             input.edit.color: input.valid ? Theme.palette.directColor1
                                           : Theme.palette.dangerColor1
             input.edit.readOnly: !root.interactive
+            validationMode: StatusInput.ValidationMode.OnlyWhenDirty
 
             validators: [
                 StatusFloatValidator {
