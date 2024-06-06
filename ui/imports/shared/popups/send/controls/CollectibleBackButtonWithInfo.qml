@@ -45,6 +45,7 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignRight
+            elide: Text.ElideRight
             text: "%1 %2".arg(count).arg(name)
             font.pixelSize: 13
             lineHeight: 18

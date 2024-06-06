@@ -81,8 +81,7 @@ StatusDialog {
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
-        readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode
-                                                                                      || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
+        readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
