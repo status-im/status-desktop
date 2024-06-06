@@ -442,6 +442,7 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
   self.processCreateAccountResult(error, storeToKeychain)
 
 # NOTE: Called during FirstRunNewUserNewKeycardKeys and FirstRunNewUserImportSeedPhraseIntoKeycard
+# WARNING: Reuse `importAccountAndLogin` with custom parameters
 proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool = true) =
   self.delegate.moveToLoadingAppState()
   self.storeMetadataForNewKeycardUser()
@@ -454,7 +455,6 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
     self.tmpProfileImageDetails.url,
     self.tmpProfileImageDetails.cropRectangle,
     keycardInstanceUID = flowEvent.instanceUID,
-    keycardWhisperPrivateKey = flowEvent.whisperKey.privateKey,
   )
   self.processCreateAccountResult(error, storeToKeychain)
 

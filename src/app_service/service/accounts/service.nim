@@ -429,7 +429,6 @@ QtObject:
     imagePath: string, 
     imageCropRectangle: ImageCropRectangle,
     keycardInstanceUID: string = "",
-    keycardWhisperPrivateKey: string = "",
   ): string =
     try:
       var request = RestoreAccountRequest(
@@ -438,7 +437,7 @@ QtObject:
         createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
       )
       request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
-      request.createAccountRequest.keycardWhisperPrivateKey = keycardWhisperPrivateKey
+
       let response = status_account.restoreAccountAndLogin(request)
 
       if not response.result.contains("error"):

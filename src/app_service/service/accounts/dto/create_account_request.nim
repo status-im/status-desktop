@@ -40,7 +40,6 @@ type
 
     keycardInstanceUID*: string
     keycardPairingDataFile*: string
-    keycardWhisperPrivateKey*: string
 
 proc toJson*(self: CreateAccountRequest): JsonNode =
   result = %*{
@@ -60,7 +59,6 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "upstreamConfig": self.upstreamConfig,
     "keycardInstanceUID": self.keycardInstanceUID,
     "keycardPairingDataFile": self.keycardPairingDataFile,
-    "keycardWhisperPrivateKey": self.keycardWhisperPrivateKey,
   }
 
   if self.logLevel.isSome():
