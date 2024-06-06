@@ -7,6 +7,7 @@ import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import shared.controls 1.0
 
@@ -94,8 +95,11 @@ Control {
             }
             StatusTextWithLoadingState {
                 text: {
-                    let amount = parseFloat(root.toTokenAmount)
-                    let percentageAmount = (amount - ((amount/100) * slippageSelector.value))
+                    let amount = !!root.toTokenAmount ? SQUtils.AmountsArithmetic.fromString(root.toTokenAmount) : NaN
+                    let percentageAmount = 0
+                    if(!Number.isNaN(amount)) {
+                        percentageAmount = (amount - ((amount/100) * slippageSelector.value))
+                    }
                     return ("%1 %2").arg(LocaleUtils.numberToLocaleString(percentageAmount)).arg(d.selectedToTokenSymbol)
                 }
                 font.pixelSize: 13

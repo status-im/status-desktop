@@ -1317,4 +1317,11 @@ QtObject {
         InProgress = 1,
         Done = 2
     }
+
+    readonly property QtObject swap: QtObject {
+        /* We should be very careful here, this is the token key for Status network token currently,
+        but in case the logic for keys changes in the backend, it should be updated here as well */
+        readonly property string testStatusTokenKey: "STT"
+        readonly property string mainnetStatusTokenKey: "SNT"
+    }
 }

@@ -53,6 +53,7 @@ SplitView {
             }
             currencyStore: CurrenciesStore {}
             swapFormData: d.swapInputParamsForm
+            swapOutputData: SwapOutputData {}
         }
     }
 

@@ -12,6 +12,7 @@ import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
 
 import shared.popups.send.controls 1.0
+import shared.controls 1.0
 
 import AppLayouts.Wallet.controls 1.0
 
@@ -32,9 +33,26 @@ StatusDialog {
     rightPadding: Style.current.xlPadding
     backgroundColor: Theme.palette.baseColor3
 
+    QtObject {
+        id: d
+         property var fetchSuggestedRoutes: Backpressure.debounce(root, 1000, function() {
+                 root.swapAdaptor.fetchSuggestedRoutes()
+         })
+    }
+
+    Connections {
+        target: root.swapInputParamsForm
+        function onFormValuesChanged() {
+            root.swapAdaptor.swapProposalLoading = true
+            d.fetchSuggestedRoutes()
+        }
+    }
+
     Behavior on implicitHeight {
         NumberAnimation { duration: 1000; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
     }
+
+    onClosed: root.swapAdaptor.reset()
 
     header: AccountsModalHeader {
         anchors.top: parent.top
@@ -52,91 +70,101 @@ StatusDialog {
     }
 
     contentItem: ColumnLayout {
-        spacing: 5
+        spacing: Style.current.padding
         clip: true
 
-        RowLayout {
+        // without this Column, the whole popup resizing when the network selector popup is clicked
+        Column {
             Layout.fillWidth: true
-            spacing: 12
-            HeaderTitleText {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                id: modalHeader
-                text: qsTr("Swap")
-            }
-            StatusBaseText {
-                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                text: qsTr("On:")
-                color: Theme.palette.baseColor1
-                font.pixelSize: 13
-                lineHeight: 38
-                lineHeightMode: Text.FixedHeight
-                verticalAlignment: Text.AlignVCenter
-            }
-            // TODO: update this once https://github.com/status-im/status-desktop/issues/14780 is ready
-            NetworkFilter {
-                id: networkFilter
-                objectName: "networkFilter"
-                Layout.alignment: Qt.AlignVCenter
-                multiSelection: false
-                showRadioButtons: false
-                showTitle: false
-                flatNetworks: root.swapAdaptor.filteredFlatNetworksModel
-                onToggleNetwork: (network) => {
-                                     root.swapInputParamsForm.selectedNetworkChainId = network.chainId
-                                 }
-                Component.onCompleted: {
-                    if(root.swapInputParamsForm.selectedNetworkChainId !== -1)
-                        networkFilter.setChain(root.swapInputParamsForm.selectedNetworkChainId)
+            spacing: 0
+            RowLayout {
+                width: parent.width
+                spacing: 12
+                HeaderTitleText {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                    id: modalHeader
+                    text: qsTr("Swap")
+                }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                    text: qsTr("On:")
+                    color: Theme.palette.baseColor1
+                    font.pixelSize: 13
+                    lineHeight: 38
+                    lineHeightMode: Text.FixedHeight
+                    verticalAlignment: Text.AlignVCenter
+                }
+                // TODO: update this once https://github.com/status-im/status-desktop/issues/14780 is ready
+                NetworkFilter {
+                    id: networkFilter
+                    objectName: "networkFilter"
+                    Layout.alignment: Qt.AlignVCenter
+                    multiSelection: false
+                    showRadioButtons: false
+                    showTitle: false
+                    flatNetworks: root.swapAdaptor.filteredFlatNetworksModel
+                    onToggleNetwork: (network) => {
+                                         root.swapInputParamsForm.selectedNetworkChainId = network.chainId
+                                     }
+                    Component.onCompleted: {
+                        if(root.swapInputParamsForm.selectedNetworkChainId !== -1)
+                            networkFilter.setChain(root.swapInputParamsForm.selectedNetworkChainId)
+                    }
                 }
             }
         }
 
         // This is a temporary placeholder while each of the components are  being added.
-        StatusBaseText {
-            topPadding: Style.current.padding
-            text: qsTr("This area is a temporary placeholder")
-            font.bold: true
-        }
-        StatusBaseText {
-            text: qsTr("Selected from token: %1").arg(swapInputParamsForm.fromTokensKey)
-        }
-        StatusBaseText {
-            text: qsTr("from token amount: %1").arg(swapInputParamsForm.fromTokenAmount)
-        }
-        StatusBaseText {
-            text: qsTr("Selected to token: %1").arg(swapInputParamsForm.toTokenKey)
-        }
-        StatusBaseText {
-            text: qsTr("to token amount: %1").arg(swapInputParamsForm.toTokenAmount)
-        }
-        StatusButton {
-            text: "Fetch Suggested Routes"
-            onClicked: {
-                swapAdaptor.fetchSuggestedRoutes()
-            }
-        }
-        StatusButton {
-            text: "Send Approve Tx"
-            onClicked: {
-                swapAdaptor.sendApproveTx()
-            }
-        }
-        StatusButton {
-            text: "Send Swap Tx"
-            onClicked: {
-                swapAdaptor.sendSwapTx()
-            }
-        }
-        StatusScrollView {
+        ColumnLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 200
-
-            StatusTextArea {
-                text: {
-                    let routes = SQUtils.ModelUtils.modelToArray(swapAdaptor.suggestedRoutes)
-                    let routesString = JSON.stringify(routes, null, "  ")
-                    return qsTr("Suggested routes: \n%1").arg(routesString)
+            spacing: 0
+            StatusBaseText {
+                text: "This area is a temporary placeholder"
+                font.bold: true
+            }
+            /* TODO: Will be swapped out under https://github.com/status-im/status-desktop/issues/14825
+               Will also handle that if one input is being edited the other one should be in loading state in that task */
+            StatusBaseText {
+                text: qsTr("Selected from token: %1").arg(swapInputParamsForm.fromTokensKey)
+            }
+            StatusInput {
+                id: fromTokenAmountInput
+                Layout.fillWidth: true
+                text: swapInputParamsForm.fromTokenAmount
+                onTextChanged: {
+                    swapInputParamsForm.fromTokenAmount = text
+                }
+            }
+            /* TODO: Will be swapped out under https://github.com/status-im/status-desktop/issues/14826
+               Will also handle that if one input is being edited the other one should be in loading state in that task */
+            StatusBaseText {
+                text: qsTr("Selected to token: %1").arg(swapInputParamsForm.toTokenKey)
+            }
+            StatusInput {
+                id: toTokenAmountInput
+                Layout.fillWidth: true
+                text: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ?
+                          root.swapAdaptor.formatCurrencyAmount(root.swapAdaptor.swapOutputData.toTokenAmount,
+                                                                root.swapAdaptor.toToken.symbol,
+                                                                {"minDecimals": root.swapAdaptor.toToken.decimals,
+                                                                    "stripTrailingZeroes": true, "noSymbol": true}) :
+                          root.swapInputParamsForm.toTokenAmount
+                onTextChanged: {
+                    if (!root.swapAdaptor.validSwapProposalReceived) {
+                        swapInputParamsForm.toTokenAmount =  text
+                    }
+                }
+                /* TODO: keep this input as disabled until the work for adding a param to handle to
+                   and from tokens inputed is supported by backend */
+                input.edit.enabled: false
+            }
+            /* Needed only till sign after approval is implemented under
+               https://github.com/status-im/status-desktop/issues/14833 */
+            StatusButton {
+                text: "Final Swap after Approval"
+                onClicked: {
+                    swapAdaptor.sendSwapTx()
                 }
             }
         }
@@ -149,11 +177,19 @@ StatusDialog {
             Layout.topMargin: Style.current.padding
             visible: editSlippageButton.checked
             selectedToToken: root.swapAdaptor.toToken
-            toTokenAmount: root.swapInputParamsForm.toTokenAmount
+            toTokenAmount: root.swapAdaptor.swapOutputData.toTokenAmount
             loading: root.swapAdaptor.swapProposalLoading
             onSlippageValueChanged: {
                 root.swapInputParamsForm.selectedSlippage = slippageValue
             }
+        }
+
+        ErrorTag {
+            objectName: "errorTag"
+            visible: root.swapAdaptor.swapOutputData.hasError
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: Style.current.smallPadding
+            text: qsTr("An error has occured, please try again")
         }
     }
 
@@ -199,13 +235,20 @@ StatusDialog {
                 spacing: Style.current.bigPadding
                 ColumnLayout {
                     StatusBaseText {
-                        text:qsTr("Max fees:")
+                        objectName: "maxFeesText"
+                        text: qsTr("Max fees:")
                         color: Theme.palette.directColor5
                         font.pixelSize: 15
                         font.weight: Font.Medium
                     }
                     StatusTextWithLoadingState {
-                        text: loading ? Constants.dummyText : "--"
+                        objectName: "maxFeesValue"
+                        text: loading ? Constants.dummyText :
+                                        root.swapAdaptor.validSwapProposalReceived ?
+                                            root.swapAdaptor.currencyStore.formatCurrencyAmount(
+                                                root.swapAdaptor.swapOutputData.totalFees,
+                                                root.swapAdaptor.currencyStore.currentCurrency) :
+                                            "--"
                         customColor: Theme.palette.directColor4
                         font.pixelSize: 15
                         font.weight: Font.Medium
@@ -214,12 +257,26 @@ StatusDialog {
                 }
                 StatusButton {
                     objectName: "signButton"
-                    /* TODO: there maybe a different icon shown here in case of approval of spending cap
-                       needed TBD under https://github.com/status-im/status-desktop/issues/14833 */
                     icon.name: "password"
-                    text: qsTr("Swap")
+                    /* TODO: Handling the next step agter approval of spending cap TBD under
+                       https://github.com/status-im/status-desktop/issues/14833 */
+                    text: root.swapAdaptor.validSwapProposalReceived &&
+                          root.swapAdaptor.swapOutputData.approvalNeeded ?
+                              qsTr("Approve %1").arg(!!root.swapAdaptor.fromToken ? root.swapAdaptor.fromToken.symbol: "") :
+                              qsTr("Swap")
                     disabledColor: Theme.palette.directColor8
-                    enabled: root.swapAdaptor.swapProposalReady && editSlippagePanel.valid
+                    enabled: root.swapAdaptor.validSwapProposalReceived && editSlippagePanel.valid
+                    onClicked: {
+                        if (root.swapAdaptor.validSwapProposalReceived ){
+                            if(root.swapAdaptor.swapOutputData.approvalNeeded) {
+                                swapAdaptor.sendApproveTx()
+                            }
+                            else {
+                                swapAdaptor.sendSwapTx()
+                            }
+                            close()
+                        }
+                    }
                 }
             }
         }
