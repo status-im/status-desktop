@@ -32,7 +32,7 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_private_key(
-            address_pair.private_key).save_changes()
+            address_pair.private_key, address_pair.private_key[:5]).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 

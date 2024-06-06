@@ -5,6 +5,8 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+
+from constants.wallet import WalletAccountPopup
 from . import marks
 
 import constants
@@ -32,6 +34,12 @@ def test_add_new_account_from_wallet_settings(
             main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_add_account_pop_up()
 
     with step('Add a new generated account from wallet settings screen'):
+
+        with step('Verify that error appears when name consists of less then 5 characters'):
+            add_account_popup.set_name(''.join(random.choices(string.ascii_letters +
+                                                              string.digits, k=4)))
+            assert add_account_popup.get_error_message() == WalletAccountPopup.WALLET_ACCOUNT_NAME_MIN.value
+
         add_account_popup.set_name(account_name).set_emoji(emoji).set_color(color).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         add_account_popup.wait_until_hidden()

@@ -1,8 +1,12 @@
+import random
+import string
 import time
 
 import allure
 import pytest
 from allure import step
+
+from constants.wallet import WalletAccountPopup
 from tests.wallet_main_screen import marks
 
 import constants
@@ -32,7 +36,8 @@ def test_plus_button_manage_account_added_for_new_seed(main_screen: MainWindow, 
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_new_seed_phrase(keypair_name).save_changes()
+        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_new_seed_phrase(
+            keypair_name).save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
@@ -52,6 +57,12 @@ def test_plus_button_manage_account_added_for_new_seed(main_screen: MainWindow, 
 
     with step('Edit wallet account'):
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
+
+        with step('Verify that error appears when name consists of less then 5 characters'):
+            account_popup.set_name(''.join(random.choices(string.ascii_letters +
+                                                          string.digits, k=4)))
+            assert account_popup.get_error_message() == WalletAccountPopup.WALLET_ACCOUNT_NAME_MIN.value
+
         account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
