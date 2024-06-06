@@ -27,6 +27,8 @@ StatusComboBox {
     property var preferredSharingNetworks: []
     property bool showAllSelectedText: true
     property bool showCheckboxes: true
+    property bool showRadioButtons: true
+    property bool showTitle: true
 
     /// \c network is a network.model.nim entry
     /// It is called for every toggled network if \c multiSelection is \c true
@@ -47,8 +49,14 @@ StatusComboBox {
     QtObject {
         id: d
 
-        readonly property string selectedChainName: NetworkModelHelpers.getChainName(root.flatNetworks, d.currentIndex)
-        readonly property string selectedIconUrl: NetworkModelHelpers.getChainIconUrl(root.flatNetworks, d.currentIndex)
+        readonly property string selectedChainName: {
+            root.multiSelection
+            NetworkModelHelpers.getChainName(root.flatNetworks, d.currentIndex)
+        }
+        readonly property string selectedIconUrl: {
+            root.multiSelection
+            NetworkModelHelpers.getChainIconUrl(root.flatNetworks, d.currentIndex)
+        }
         readonly property bool allSelected: enabledFlatNetworks.count === root.flatNetworks.count
         readonly property bool noneSelected: enabledFlatNetworks.count === 0
 
@@ -69,7 +77,9 @@ StatusComboBox {
     control.topPadding: 7
 
     control.popup.x: root.width - control.popup.width
-    control.popup.width: 430
+    control.popup.width: 300
+    control.popup.horizontalPadding: 4
+    control.popup.verticalPadding: 4
 
     size: StatusComboBox.Size.Small
 
@@ -86,6 +96,7 @@ StatusComboBox {
     control.contentItem: RowLayout {
         spacing: Style.current.padding
         StatusSmartIdenticon {
+            objectName: "contentItemIcon"
             Layout.alignment: Qt.AlignVCenter
             asset.height: 24
             asset.width: 24
@@ -104,7 +115,8 @@ StatusComboBox {
             lineHeight: 24
             lineHeightMode: Text.FixedHeight
             verticalAlignment: Text.AlignVCenter
-            text: root.multiSelection ? (d.noneSelected ? qsTr("Select networks"): d.allSelected && root.showAllSelectedText ? qsTr("All networks") : "") : d.selectedChainName
+            text: root.multiSelection ? (d.noneSelected ? qsTr("Select networks"): d.allSelected && root.showAllSelectedText ? qsTr("All networks") : "")
+                                      : (root.showTitle ? d.selectedChainName : "")
             color: Theme.palette.baseColor1
             visible: !!text
         }
@@ -130,6 +142,7 @@ StatusComboBox {
         preferredSharingNetworks: root.preferredSharingNetworks
         preferredNetworksMode: root.preferredNetworksMode
         showCheckboxes: root.showCheckboxes
+        showRadioButtons: root.showRadioButtons
 
         implicitWidth: contentWidth
         implicitHeight: contentHeight

@@ -71,6 +71,8 @@ StatusDialog {
                 objectName: "networkFilter"
                 Layout.alignment: Qt.AlignVCenter
                 multiSelection: false
+                showRadioButtons: false
+                showTitle: false
                 flatNetworks: root.swapAdaptor.filteredFlatNetworksModel
                 onToggleNetwork: (network) => {
                                      root.swapInputParamsForm.selectedNetworkChainId = network.chainId
@@ -96,6 +98,9 @@ StatusDialog {
         }
         StatusBaseText {
             text: qsTr("Selected to token: %1").arg(swapInputParamsForm.toTokenKey)
+        }
+        StatusBaseText {
+            text: qsTr("Selected network chainId: %1").arg(swapInputParamsForm.selectedNetworkChainId)
         }
     }
 }

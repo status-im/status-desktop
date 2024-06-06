@@ -20,6 +20,7 @@ StatusListView {
     property var preferredSharingNetworks: []
     property bool preferredNetworksMode: false
     property bool showCheckboxes: true
+    property bool showRadioButtons: true
 
     signal toggleNetwork(var network, int index)
 
@@ -32,11 +33,12 @@ StatusListView {
         networkModel: root.model
         useEnabledRole: root.useEnabledRole
         singleSelection: root.singleSelection
-        onToggleNetwork: root.toggleNetwork(network, index)
+        onToggleNetwork: (network, model, index) => root.toggleNetwork(network, index)
         preferredNetworksMode: root.preferredNetworksMode
         preferredSharingNetworks: root.preferredSharingNetworks
         allChecked: root.preferredSharingNetworks.length === root.count
         showCheckboxes: root.showCheckboxes
+        showRadioButtons: root.showRadioButtons
     }
 
     section {
@@ -50,7 +52,6 @@ StatusListView {
                 id: layer2text
                 StatusBaseText {
                     width: parent.width
-                    font.pixelSize: Style.current.primaryTextFontSize
                     color: Theme.palette.baseColor1
                     text: qsTr("Layer 2")
                     height: 40
