@@ -1,3 +1,5 @@
+import time
+
 import allure
 
 import configs
@@ -8,7 +10,7 @@ from gui.objects_map import names
 
 class EmojiPopup(QObject):
     def __init__(self):
-        super(EmojiPopup, self).__init__(names.mainWallet_AddEditAccountPopup_AccountEmojiSearchBox)
+        super(EmojiPopup, self).__init__()
         self._search_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountEmojiSearchBox)
         self._emoji_item = QObject(names.mainWallet_AddEditAccountPopup_AccountEmoji)
 
@@ -17,11 +19,17 @@ class EmojiPopup(QObject):
         self._search_text_edit.wait_until_appears(timeout_msec)
         return self
 
+    @allure.step('Wait until hidden {0}')
+    def wait_until_hidden(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._search_text_edit.wait_until_hidden(timeout_msec)
+        return self
+
     @allure.step('Select emoji')
     def select(self, name: str, attempts: int = 2):
         self._search_text_edit.text = name
         self._emoji_item.real_name['objectName'] = 'statusEmoji_' + name
         try:
+            time.sleep(0.5)
             self._emoji_item.click()
         except LookupError as err:
             if attempts:
