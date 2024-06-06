@@ -127,14 +127,33 @@ Item {
                     AnyOf {
                         enabled: root.showAllTokensMode
 
+                        /*
+                        // this category is not used
                         ValueFilter {
                             roleName: "category"
                             value: TokenCategories.Category.Own
+                        }*/
+
+                        AllOf {
+                            ValueFilter {
+                                roleName: "category"
+                                value: TokenCategories.Category.General
+                            }
+                            ValueFilter {
+                                roleName: "communityId"
+                                value: ""
+                            }
                         }
 
-                        ValueFilter {
-                            roleName: "category"
-                            value: TokenCategories.Category.General
+                        AllOf {
+                            ValueFilter {
+                                roleName: "category"
+                                value: TokenCategories.Category.Community
+                            }
+                            ValueFilter {
+                                roleName: "communityId"
+                                value: root.communityId
+                            }
                         }
                     },
                     AnyOf {
