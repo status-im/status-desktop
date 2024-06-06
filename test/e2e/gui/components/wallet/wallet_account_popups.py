@@ -23,6 +23,7 @@ class AccountPopup(BasePopup):
         super(AccountPopup, self).__init__()
         self._scroll = Scroll(names.o_Flickable)
         self._name_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountName)
+        self._name_text_input = QObject(names.mainWallet_AddEditAccountPopup_AccountNameComponent)
         self._emoji_button = Button(names.mainWallet_AddEditAccountPopup_AccountEmojiPopupButton)
         self._color_radiobutton = QObject(names.color_StatusColorRadioButton)
         self._popup_header_title = TextLabel(names.mainWallet_AddEditAccountPopup_HeaderTitle)
@@ -66,6 +67,10 @@ class AccountPopup(BasePopup):
         self._name_text_edit.text = value
         return self
 
+    @allure.step('Get error message')
+    def get_error_message(self):
+        return self._name_text_input.object.errorMessageCmp.text
+
     @allure.step('Set color for account')
     def set_color(self, value: str):
         if 'radioButtonColor' in self._color_radiobutton.real_name.keys():
@@ -100,9 +105,8 @@ class AccountPopup(BasePopup):
         return self
 
     @allure.step('Set private key for account')
-    def set_origin_private_key(self, value: str):
-        self._origin_combobox.click()
-        self.click_new_master_key().import_private_key(value)
+    def set_origin_private_key(self, value: str, private_key_name: str):
+        self.open_add_new_account_popup().import_private_key(value, private_key_name)
         return self
 
     @allure.step('Click new master key item')
@@ -120,11 +124,6 @@ class AccountPopup(BasePopup):
     @allure.step('Set new seed phrase for account')
     def set_origin_new_seed_phrase(self, value: str):
         self.open_add_new_account_popup().generate_new_master_key(value)
-        return self
-
-    @allure.step('Set seed phrase')
-    def set_origin_seed_phrase(self, value: typing.List[str]):
-        self.open_add_new_account_popup().import_new_seed_phrase(value)
         return self
 
     @allure.step('Open add new account popup')
@@ -226,6 +225,8 @@ class AddNewAccountPopup(BasePopup):
         self._seed_phrase_word_text_edit = TextEdit(names.mainWindow_statusSeedPhraseInputField_TextEdit)
         self._seed_phrase_phrase_key_name_text_edit = TextEdit(
             names.mainWallet_AddEditAccountPopup_ImportedSeedPhraseKeyName)
+        self._seed_phrase_status_input = QObject(names.addAccountPopup_ImportedSeedPhraseKeyName_StatusInput)
+        self._private_key_status_input = QObject(names.addAccountPopup_PrivateKeyName_StatusInput)
         self._already_added_error = QObject(names.enterSeedPhraseInvalidSeedText_StatusBaseText)
 
     @allure.step('Wait until appears {0}')
@@ -233,24 +234,47 @@ class AddNewAccountPopup(BasePopup):
         self._generate_master_key_button.wait_until_appears(timeout_msec)
         return self
 
+    @allure.step('Get error message')
+    def get_error_message(self) -> str:
+        return str(self._seed_phrase_status_input.object.errorMessageCmp.text)
+
+    @allure.step('Get private key error message')
+    def get_private_key_error_message(self) -> str:
+        return str(self._private_key_status_input.object.errorMessageCmp.text)
+
     @allure.step('Import private key')
-    def import_private_key(self, private_key: str) -> str:
+    def import_private_key(self, private_key: str, private_key_name: str) -> str:
+        self.import_and_enter_private_key(private_key)
+        self.enter_private_key_name(private_key_name)
+        self.click_continue()
+        return private_key_name
+
+    @allure.step('Click import private key and enter private key')
+    def import_and_enter_private_key(self, private_key: str):
         self._import_private_key_button.click()
         self._private_key_text_edit.text = private_key
-        self._private_key_name_text_edit.text = private_key[:5]
+        return self
+
+    @allure.step('Enter private key name')
+    def enter_private_key_name(self, private_key_name: str):
+        self._private_key_name_text_edit.text = private_key_name
+        return self
+
+    @allure.step('Click continue')
+    def click_continue(self):
         self._continue_button.click()
-        return private_key[:5]
+        return self
 
     @allure.step('Import new seed phrase and continue')
     def import_new_seed_phrase(self, seed_phrase_words: list):
         self.enter_new_seed_phrase(seed_phrase_words)
         seed_phrase_name = ''.join([word[0] for word in seed_phrase_words[:10]])
-        self._seed_phrase_phrase_key_name_text_edit.text = seed_phrase_name
-        self._continue_button.click()
+        self.enter_seed_phrase_name(seed_phrase_name)
+        self.click_continue()
         return seed_phrase_name
 
     @allure.step('Enter new seed phrase')
-    def enter_new_seed_phrase(self, seed_phrase_words: list) -> str:
+    def enter_new_seed_phrase(self, seed_phrase_words: list):
         self._import_seed_phrase_button.click()
         if len(seed_phrase_words) == 12:
             self._seed_phrase_12_words_button.click()
@@ -263,6 +287,12 @@ class AddNewAccountPopup(BasePopup):
         for count, word in enumerate(seed_phrase_words, start=1):
             self._seed_phrase_word_text_edit.real_name['objectName'] = f'enterSeedPhraseInputField{count}'
             self._seed_phrase_word_text_edit.text = word
+        return self
+
+    @allure.step('Enter seed phrase name')
+    def enter_seed_phrase_name(self, seed_phrase_name: str):
+        self._seed_phrase_phrase_key_name_text_edit.text = seed_phrase_name
+        return self
 
     @allure.step('Generate new seed phrase')
     def generate_new_master_key(self, name: str):

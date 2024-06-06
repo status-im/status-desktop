@@ -340,6 +340,8 @@ mainWallet_AddEditAccountPopup_12WordsButton = {"container": mainWallet_AddEditA
 mainWallet_AddEditAccountPopup_18WordsButton = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "18SeedButton", "type": "StatusSwitchTabButton"}
 mainWallet_AddEditAccountPopup_24WordsButton = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "24SeedButton", "type": "StatusSwitchTabButton"}
 enterSeedPhraseInvalidSeedText_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "enterSeedPhraseInvalidSeedText", "type": "StatusBaseText", "visible": True}
+addAccountPopup_ImportedSeedPhraseKeyName_StatusInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "AddAccountPopup-ImportedSeedPhraseKeyName", "type": "StatusInput", "visible": True}
+addAccountPopup_PrivateKeyName_StatusInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "AddAccountPopup-PrivateKeyName", "type": "StatusInput", "visible": True}
 
 # Edit Account from settings popup
 editWalletSettings_renameButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "renameAccountModalSaveBtn", "type": "StatusButton"}
@@ -484,6 +486,7 @@ statusListView = {"container": statusDesktop_mainWindow_overlay, "type": "Status
 
 # Rename keypair popup
 save_changes_rename_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "saveRenameKeypairChangesButton", "type": "StatusButton", "visible": True}
+nameInput_StatusInput = {"container": statusDesktop_mainWindow_overlay, "id": "nameInput", "type": "StatusInput", "unnamed": 1, "visible": True}
 
 # Link preview options popup
 show_for_this_message_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "text": "Show for this message", "type": "StatusMenuItem", "unnamed": 1, "visible": True}

@@ -75,3 +75,9 @@ class WalletRenameKeypair(Enum):
 
 class WalletSeedPhrase(Enum):
     WALLET_SEED_PHRASE_ALREADY_ADDED = 'The entered seed phrase is already added'
+
+
+class WalletAccountPopup(Enum):
+    WALLET_ACCOUNT_NAME_MIN = 'Account name must be at least 5 characters'
+    WALLET_KEYPAIR_NAME_MIN = 'Key pair name must be at least 5 characters'
+    WALLET_KEYPAIR_MIN = 'Key pair must be at least 5 characters'

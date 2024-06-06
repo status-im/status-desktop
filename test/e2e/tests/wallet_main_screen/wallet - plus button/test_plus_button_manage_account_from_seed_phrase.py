@@ -42,8 +42,9 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_seed_phrase(
-            seed_phrase.split()).save_changes()
+        account_popup.set_name(name).set_emoji(emoji).set_color(
+            color).open_add_new_account_popup().import_new_seed_phrase(seed_phrase.split())
+        account_popup.save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
@@ -102,12 +103,13 @@ def test_plus_button_re_importing_seed_phrase(main_screen: MainWindow, user_acco
                                               new_name: str, new_color: str, new_emoji: str,
                                               new_emoji_unicode: str,
                                               seed_phrase: str):
-    with step('Create imported seed phrase wallet account'):
+    with (step('Create imported seed phrase wallet account')):
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_seed_phrase(
-            seed_phrase.split()).save_changes()
+        account_popup.set_name(name).set_emoji(emoji).set_color(
+            color).open_add_new_account_popup().import_new_seed_phrase(seed_phrase.split())
+        account_popup.save_changes()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
