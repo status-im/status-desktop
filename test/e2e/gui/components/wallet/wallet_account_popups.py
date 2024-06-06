@@ -102,18 +102,18 @@ class AccountPopup(BasePopup):
     @allure.step('Set private key for account')
     def set_origin_private_key(self, value: str):
         self._origin_combobox.click()
-        self.click_new_master_key(value).import_private_key(value)
+        self.click_new_master_key().import_private_key(value)
         return self
 
     @allure.step('Click new master key item')
-    def click_new_master_key(self, value: str, attempts: int = 2):
+    def click_new_master_key(self, attempts: int = 2):
         self._new_master_key_origin_item.click()
         try:
             AccountPopup().verify_add_account_popup_present()
             return AddNewAccountPopup()
         except AssertionError as err:
             if attempts:
-                return self.click_new_master_key(value, attempts - 1)
+                return self.click_new_master_key(attempts - 1)
             else:
                 raise err
 
@@ -130,7 +130,7 @@ class AccountPopup(BasePopup):
     @allure.step('Open add new account popup')
     def open_add_new_account_popup(self):
         self._origin_combobox.click()
-        self._new_master_key_origin_item.click()
+        self.click_new_master_key()
         return AddNewAccountPopup().wait_until_appears()
 
     @allure.step('Set derivation path for account')
@@ -154,7 +154,7 @@ class AccountPopup(BasePopup):
     @allure.step('Click continue in keycard settings')
     def continue_in_keycard_settings(self):
         self._origin_combobox.click()
-        self._new_master_key_origin_item.click()
+        self.click_new_master_key()
         self._use_keycard_button.click()
         return self
 
