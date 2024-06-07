@@ -39,7 +39,7 @@ Item {
             if (root.messageDetails.contentType === StatusMessage.ContentType.Sticker)
                 return "";
 
-            if (root.messageDetails.contentType === StatusMessage.ContentType.Emoji)
+            if (root.messageDetails.contentType === StatusMessage.ContentType.Emoji && !root.isEdited)
                 return Emoji.parse(root.messageDetails.messageText, Emoji.size.middle, Emoji.format.png);
 
             let formattedMessage = Utils.linkifyAndXSS(root.messageDetails.messageText);
