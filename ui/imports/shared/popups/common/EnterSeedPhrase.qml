@@ -27,7 +27,7 @@ Item {
 
         StatusBaseText {
             width: parent.width
-            text: root.store.isAddAccountPopup? qsTr("Enter seed phrase") : qsTr("Enter private key for %1 keypair").arg(root.store.selectedKeypair.name)
+            text: root.store.isAddAccountPopup? qsTr("Enter seed phrase") : qsTr("Enter private key for %1 key pair").arg(root.store.selectedKeypair.name)
             font.pixelSize: Constants.addAccountPopup.labelFontSize1
             elide: Text.ElideRight
         }
@@ -90,7 +90,7 @@ Item {
 
                 validators: [
                     StatusMinLengthValidator {
-                        errorMessage: qsTr("Keypair name must be at least %n character(s)", "", Constants.addAccountPopup.keyPairAccountNameMinLength)
+                        errorMessage: qsTr("Key pair name must be at least %n character(s)", "", Constants.addAccountPopup.keyPairAccountNameMinLength)
                         minLength: Constants.addAccountPopup.keyPairAccountNameMinLength
                     }
                 ]

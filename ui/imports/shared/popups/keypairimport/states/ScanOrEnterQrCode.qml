@@ -23,8 +23,8 @@ Item {
 
         firstTabName: qsTr("Scan encrypted QR code")
         secondTabName: qsTr("Enter encrypted key")
-        syncQrErrorMessage: qsTr("This does not look like the correct keypair QR code")
-        syncCodeErrorMessage: qsTr("This does not look like an encrypted keypair code")
+        syncQrErrorMessage: qsTr("This does not look like the correct key pair QR code")
+        syncCodeErrorMessage: qsTr("This does not look like an encrypted key pair code")
         firstInstructionButtonName: Constants.keypairImportPopup.instructionsLabelForQr
         secondInstructionButtonName: Constants.keypairImportPopup.instructionsLabelForEncryptedKey
         syncCodeLabel: qsTr("Paste encrypted key")

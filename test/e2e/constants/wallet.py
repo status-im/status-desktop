@@ -26,7 +26,7 @@ class WalletNetworkSettings(Enum):
 
 
 class WalletAccountSettings(Enum):
-    STATUS_ACCOUNT_ORIGIN = 'Derived from your default Status keypair'
+    STATUS_ACCOUNT_ORIGIN = 'Derived from your default Status key pair'
     WATCHED_ADDRESS_ORIGIN = 'Watched address'
     STORED_ON_DEVICE = 'On device'
     WATCHED_ADDRESSES_KEYPAIR_LABEL = 'Watched addresses'
@@ -70,7 +70,7 @@ class WalletScreensHeaders(Enum):
 
 
 class WalletRenameKeypair(Enum):
-    WALLET_SUCCESSFUL_RENAMING = 'You successfully renamed your keypair\n'
+    WALLET_SUCCESSFUL_RENAMING = 'You successfully renamed your key pair\n'
 
 
 class WalletSeedPhrase(Enum):

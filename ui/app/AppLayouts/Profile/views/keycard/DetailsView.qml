@@ -113,7 +113,7 @@ ColumnLayout {
 
     StatusListItem {
         Layout.fillWidth: true
-        title: qsTr("Stop using Keycard for this keypair")
+        title: qsTr("Stop using Keycard for this key pair")
         components: [
             StatusIcon {
                 icon: "tiny/chevron-right"

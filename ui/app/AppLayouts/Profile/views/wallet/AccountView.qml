@@ -145,7 +145,7 @@ ColumnLayout {
             }
             StatusBaseText {
                 objectName: "Keypair_TextLabel"
-                text: qsTr("Keypair")
+                text: qsTr("Key pair")
                 Layout.leftMargin: 16
                 Layout.topMargin: 12
                 font.pixelSize: 13
@@ -173,7 +173,7 @@ ColumnLayout {
                     if(!!root.keyPair) {
                         switch(root.keyPair.pairType) {
                         case Constants.keypair.type.profile:
-                            return qsTr("Derived from your default Status keypair")
+                            return qsTr("Derived from your default Status key pair")
                         case Constants.keypair.type.seedImport:
                             return qsTr("Imported from seed phrase")
                         case Constants.keypair.type.privateKeyImport:

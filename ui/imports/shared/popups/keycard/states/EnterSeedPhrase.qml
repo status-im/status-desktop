@@ -73,7 +73,7 @@ Item {
                 text: {
                     switch (root.sharedKeycardModule.currentState.flowType) {
                     case Constants.keycardSharedFlow.migrateFromKeycardToApp:
-                        return qsTr("Enter seed phrase for %1 keypair").arg(root.sharedKeycardModule.keyPairForProcessing.name)
+                        return qsTr("Enter seed phrase for %1 key pair").arg(root.sharedKeycardModule.keyPairForProcessing.name)
                     }
 
                     return ""
@@ -88,7 +88,7 @@ Item {
                 text: {
                     switch (root.sharedKeycardModule.currentState.flowType) {
                     case Constants.keycardSharedFlow.migrateFromKeycardToApp:
-                        return qsTr("Enter seed phrase for %1 keypair").arg(root.sharedKeycardModule.keyPairForProcessing.name)
+                        return qsTr("Enter seed phrase for %1 key pair").arg(root.sharedKeycardModule.keyPairForProcessing.name)
                     }
 
                     return ""

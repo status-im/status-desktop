@@ -664,7 +664,7 @@ Item {
                         return qsTr("Migrating key pair to Keycard")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp) {
-                        return qsTr("Migrating keypair to Status")
+                        return qsTr("Migrating key pair to Status")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase) {
                         return qsTr("Creating new account...")
@@ -1075,7 +1075,7 @@ Item {
                 target: title
                 text: {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess) {
-                        return qsTr("Keypair successfully migrated")
+                        return qsTr("Key pair successfully migrated")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess) {
                         return qsTr("New account successfully created")
@@ -1131,7 +1131,7 @@ Item {
                 text: {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess) {
                         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromKeycardToApp) {
-                            return qsTr("Keypair was removed from Keycard and is now stored on device.\nYou no longer need this Keycard to transact with the below accounts.")
+                            return qsTr("Key pair was removed from Keycard and is now stored on device.\nYou no longer need this Keycard to transact with the below accounts.")
                         }
                         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
                             return qsTr("To complete migration close Status and sign in with your Keycard")
@@ -1167,7 +1167,7 @@ Item {
                 target: title
                 text: {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
-                        return qsTr("Failed to migrate keypair")
+                        return qsTr("Failed to migrate key pair")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure) {
                         return qsTr("Creating new account failed")
@@ -1434,10 +1434,10 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp) {
                         if (root.sharedKeycardModule.keyPairForProcessing.pairType === Constants.keycard.keyPairType.profile) {
                             if (root.sharedKeycardModule.forceFlow) {
-                                return qsTr("Your profile keypair has been\nmigrated from Keycard to Status")
+                                return qsTr("Your profile key pair has been\nmigrated from Keycard to Status")
                             }
                         }
-                        return qsTr("Are you sure you want to migrate\nthis keypair to Status?")
+                        return qsTr("Are you sure you want to migrate\nthis key pair to Status?")
                     }
                     return ""
                 }
@@ -1457,17 +1457,17 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp) {
                         if (root.sharedKeycardModule.keyPairForProcessing.pairType === Constants.keycard.keyPairType.profile) {
                             if (root.sharedKeycardModule.forceFlow) {
-                                return qsTr("In order to continue using this profile on this device, you need to enter the keypairs seed phrase and create a new password to log in with on this device.")
+                                return qsTr("In order to continue using this profile on this device, you need to enter the key pairs seed phrase and create a new password to log in with on this device.")
                             }
 
-                            let t = qsTr("%1 is your default Status keypair.").arg(root.sharedKeycardModule.keyPairForProcessing.name)
-                            t += qsTr(" Migrating this keypair will mean you will no longer require this Keycard to login to Status or transact with the keypair’s derived accounts.")
-                            t += qsTr(" The keypair and accounts will be fully removed from Keycard and stored on device.")
+                            let t = qsTr("%1 is your default Status key pair.").arg(root.sharedKeycardModule.keyPairForProcessing.name)
+                            t += qsTr(" Migrating this key pair will mean you will no longer require this Keycard to login to Status or transact with the key pair’s derived accounts.")
+                            t += qsTr(" The key pair and accounts will be fully removed from Keycard and stored on device.")
                             return t
                         }
 
-                        let t = qsTr("%1 keypair and its derived accounts will be fully removed from Keycard and stored on device.").arg(root.sharedKeycardModule.keyPairForProcessing.name)
-                        t += qsTr(" This will make your keypair and derived accounts less secure as you will no longer require this Keycard to transact.")
+                        let t = qsTr("%1 key pair and its derived accounts will be fully removed from Keycard and stored on device.").arg(root.sharedKeycardModule.keyPairForProcessing.name)
+                        t += qsTr(" This will make your key pair and derived accounts less secure as you will no longer require this Keycard to transact.")
                         return t
                     }
                     return ""
@@ -1488,7 +1488,7 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard) {
                         if (root.sharedKeycardModule.keyPairForProcessing.pairType === Constants.keycard.keyPairType.profile) {
                             if (root.sharedKeycardModule.forceFlow) {
-                                return qsTr("Your profile keypair has been\nmigrated from Status to Keycard")
+                                return qsTr("Your profile key pair has been\nmigrated from Status to Keycard")
                             }
                         }
                     }
@@ -1510,7 +1510,7 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard) {
                         if (root.sharedKeycardModule.keyPairForProcessing.pairType === Constants.keycard.keyPairType.profile) {
                             if (root.sharedKeycardModule.forceFlow) {
-                                return qsTr("In order to continue using this profile on this device, you need to login using the Keycard that this profile keypair was migrated to.")
+                                return qsTr("In order to continue using this profile on this device, you need to login using the Keycard that this profile key pair was migrated to.")
                             }
                         }
                     }

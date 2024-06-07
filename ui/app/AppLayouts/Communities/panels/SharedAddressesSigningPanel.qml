@@ -86,7 +86,7 @@ ColumnLayout {
             Layout.preferredWidth: parent.width
             elide: Text.ElideRight
             font.pixelSize: Constants.keycard.general.fontSize2
-            text: qsTr("To share %n address(s) with <b>%1</b>, authenticate the associated keypairs...", "", d.selectedSharedAddressesCount).arg(root.communityName)
+            text: qsTr("To share %n address(s) with <b>%1</b>, authenticate the associated key pairs...", "", d.selectedSharedAddressesCount).arg(root.communityName)
         }
 
         RowLayout {
@@ -292,8 +292,8 @@ ColumnLayout {
                 Layout.fillWidth: true
                 text: !d.anyOfSelectedAddressesToRevealBelongToProfileKeypair &&
                       d.thereAreMoreThanOneNonProfileRegularKeypairs?
-                          qsTr("Authenticate via “%1” keypair").arg(userProfile.name)
-                        : qsTr("The following keypairs will be authenticated via “%1” keypair").arg(userProfile.name)
+                          qsTr("Authenticate via “%1” key pair").arg(userProfile.name)
+                        : qsTr("The following key pairs will be authenticated via “%1” key pair").arg(userProfile.name)
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WrapAnywhere
