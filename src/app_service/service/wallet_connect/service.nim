@@ -20,7 +20,7 @@ logScope:
 const UNIQUE_WALLET_CONNECT_MODULE_IDENTIFIER* = "WalletSection-WCModule"
 
 type
-  AuthenticationResponseFn* = proc(success: bool)
+  AuthenticationResponseFn* = proc(password: string, pin: string, success: bool)
 
 QtObject:
   type Service* = ref object of QObject
@@ -59,10 +59,10 @@ QtObject:
 
       if args.password == "" and args.pin == "":
         info "fail to authenticate user"
-        self.authenticationCallback(false)
+        self.authenticationCallback("", "", false)
         return
 
-      self.authenticationCallback(true)
+      self.authenticationCallback(args.password, args.pin, true)
 
   proc addSession*(self: Service, session_json: string): bool =
     # TODO #14588: call it async
@@ -86,3 +86,9 @@ QtObject:
 
     self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
     return true
+
+  proc signMessage*(self: Service, address: string, password: string, message: string): string =
+    return status_go.signMessage(address, password, message)
+
+  proc signTypedDataV4*(self: Service, address: string, password: string, typedDataJson: string): string =
+    return status_go.signTypedData(address, password, typedDataJson)

@@ -50,7 +50,8 @@ Item {
                 dappName: settings.dappName
                 dappUrl: settings.dappUrl
                 dappIcon: settings.dappIcon
-                signContent: JSON.stringify(d.signTestContent, null, 2)
+                signContent: d.signTestContent
+                method: "eth_signTypedData_v4"
                 maxFeesText: "1.82 EUR"
                 estimatedTimeText: "3-5 mins"
 
@@ -128,36 +129,7 @@ Item {
 
         readonly property var selectedNetwork: NetworksModel.flatNetworks.get(0)
 
-        readonly property var signTestContent: {
-            "id": 1714038548266495,
-            "params": {
-                "chainld": "eip155:11155111",
-                "request": {
-                    "expiryTimestamp": 1714038848,
-                    "method": "eth_signTransaction",
-                    "params": [
-                        {
-                        "data": "0x",
-                        "from": "0xE2d622C817878dA5143bBE06866ca8E35273Ba8",
-                        "gasLimit": "0x5208",
-                        "gasPrice": "0xa677ef31",
-                        "nonce": "0x27",
-                        "to": "0xE2d622C817878dA5143bBE06866ca8E35273Ba8a",
-                        "value": "0x00"
-                        }
-                    ]
-                }
-            },
-            "topic": "a0f85b23a1f3a540d85760a523963165fb92169d57320c",
-            "verifyContext": {
-                "verified": {
-                    "isScam": false,
-                    "origin": "https://react-app.walletconnect.com/",
-                    "validation": "VALID",
-                    "verifyUrl": "https://verify.walletconnect.com/"
-                }
-            }
-        }
+        readonly property var signTestContent: "{\"types\":{\"EIP712Domain\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"version\",\"type\":\"string\"},{\"name\":\"chainId\",\"type\":\"uint256\"},{\"name\":\"verifyingContract\",\"type\":\"address\"}],\"Person\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"wallet\",\"type\":\"address\"}],\"Mail\":[{\"name\":\"from\",\"type\":\"Person\"},{\"name\":\"to\",\"type\":\"Person\"},{\"name\":\"contents\",\"type\":\"string\"}]},\"primaryType\":\"Mail\",\"domain\":{\"name\":\"Ether Mail\",\"version\":\"1\",\"chainId\":1,\"verifyingContract\":\"0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC\"},\"message\":{\"from\":{\"name\":\"Cow\",\"wallet\":\"0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826\"},\"to\":{\"name\":\"Bob\",\"wallet\":\"0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB\"},\"contents\":\"Hello, Bob!\"}}"
     }
 }
 

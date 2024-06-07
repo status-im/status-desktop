@@ -38,7 +38,7 @@ QtObject:
       self.dappsListReceived(res)
       return true
 
-  proc userAuthenticationResult*(self: Controller, topic: string, id: string, error: bool) {.signal.}
+  proc userAuthenticationResult*(self: Controller, topic: string, id: string, error: bool, password: string, pin: string) {.signal.}
 
   # Beware, it will fail if an authentication is already in progress
   proc authenticateUser*(self: Controller, topic: string, id: string, address: string): bool {.slot.} =
@@ -46,6 +46,12 @@ QtObject:
     if acc.keyUid == "":
       return false
 
-    return self.service.authenticateUser(acc.keyUid, proc(success: bool) =
-      self.userAuthenticationResult(topic, id, success)
+    return self.service.authenticateUser(acc.keyUid, proc(password: string, pin: string, success: bool) =
+      self.userAuthenticationResult(topic, id, success, password, pin)
     )
+
+  proc signMessage*(self: Controller, address: string, password: string, message: string): string {.slot.} =
+    return self.service.signMessage(address, password, message)
+
+  proc signTypedDataV4*(self: Controller, address: string, password: string, typedDataJson: string): string {.slot.} =
+    return self.service.signTypedDataV4(address, password, typedDataJson)

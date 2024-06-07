@@ -30,7 +30,7 @@ QObject {
 
     signal sessionRequest(SessionRequestResolved request)
     signal displayToastMessage(string message, bool error)
-    signal sessionRequestResult(var payload, bool isSuccess)
+    signal sessionRequestResult(/*model entry of SessionRequestResolved*/ var request, var payload, bool isSuccess)
 
     /// Supported methods
     property QtObject methods: QtObject {
@@ -38,11 +38,16 @@ QObject {
             readonly property string name: Constants.personal_sign
             readonly property string userString: qsTr("sign")
         }
+        readonly property QtObject signTypedData_v4: QtObject {
+            readonly property string name: "eth_signTypedData_v4"
+            readonly property string userString: qsTr("sign typed data")
+        }
+
         readonly property QtObject sendTransaction: QtObject {
             readonly property string name: "eth_sendTransaction"
             readonly property string userString: qsTr("send transaction")
         }
-        readonly property var all: [personalSign, sendTransaction]
+        readonly property var all: [personalSign, signTypedData_v4, sendTransaction]
     }
 
     function getSupportedMethods() {
@@ -81,14 +86,17 @@ QObject {
                     return
                 if (error) {
                     root.displayToastMessage(qsTr("Fail to %1 from %2").arg(methodStr).arg(session.peer.metadata.url), true)
-                    // TODO #14757 handle SDK error on user accept/reject
+
+                    root.sessionRequestResult(request, "", false /*isSuccessful*/)
+
                     console.error(`Error accepting session request for topic: ${topic}, id: ${id}, accept: ${accept}, error: ${error}`)
                     return
                 }
 
                 let actionStr = accept ? qsTr("accepted") : qsTr("rejected")
                 root.displayToastMessage("%1 %2 %3".arg(session.peer.metadata.url).arg(methodStr).arg(actionStr), false)
-                root.sessionRequestApprovalResult()
+
+                root.sessionRequestResult(request, "", true /*isSuccessful*/)
             })
         }
     }
@@ -96,13 +104,13 @@ QObject {
     Connections {
         target: root.store
 
-        function onUserAuthenticated(topic, id) {
+        function onUserAuthenticated(topic, id, password, pin) {
             var request = requests.findRequest(topic, id)
             if (request === null) {
                 console.error("Error finding event for topic", topic, "id", id)
                 return
             }
-            d.executeSessionRequest(request)
+            d.executeSessionRequest(request, password, pin)
         }
 
         function onUserAuthenticationFailed(topic, id) {
@@ -116,11 +124,6 @@ QObject {
                     return
                 root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(session.peer.metadata.url), true)
             })
-        }
-
-        function onSessionRequestExecuted(payload, isSuccess) {
-            // TODO #14927 handle this properly
-            root.sessionRequestResult(payload, isSuccess)
         }
     }
 
@@ -168,24 +171,24 @@ QObject {
 
         /// Returns null if the account is not found
         function lookupAccountFromEvent(event, method) {
+            var address = ""
             if (method === root.methods.personalSign.name) {
                 if (event.params.request.params.length < 2) {
                     return null
                 }
-                var address = event.params.request.params[1]
-                for (let i = 0; i < walletStore.ownAccounts.count; i++) {
-                    let acc = ModelUtils.get(walletStore.ownAccounts, i)
-                    if (acc.address === address) {
-                        return acc
-                    }
+                address = event.params.request.params[1]
+            } else if(method === root.methods.signTypedData_v4.name) {
+                if (event.params.request.params.length < 2) {
+                    return null
                 }
+                address = event.params.request.params[0]
             }
-            return null
+            return ModelUtils.getByKey(walletStore.ownAccounts, "address", address)
         }
 
         /// Returns null if the network is not found
         function lookupNetworkFromEvent(event, method) {
-            if (method === root.methods.personalSign.name) {
+            if (method === root.methods.personalSign.name || method === root.methods.signTypedData_v4.name) {
                 let chainId = Helpers.chainIdFromEip155(event.params.chainId)
                 for (let i = 0; i < walletStore.flatNetworks.count; i++) {
                     let network = ModelUtils.get(walletStore.flatNetworks, i)
@@ -202,9 +205,22 @@ QObject {
                 if (event.params.request.params.length == 0) {
                     return null
                 }
-                let hexMessage = event.params.request.params[0]
+                var message = ""
+                let messageParam = event.params.request.params[0]
+                // There is no standard on how data is encoded. Therefore we support hex or utf8
+                if (Helpers.isHex(messageParam)) {
+                    message = Helpers.hexToString(messageParam)
+                } else {
+                    message = messageParam
+                }
+                return {message}
+            } else if (method === root.methods.signTypedData_v4.name) {
+                if (event.params.request.params.length < 2) {
+                    return null
+                }
+                let jsonMessage = event.params.request.params[1]
                 return {
-                    message: Helpers.hexToString(hexMessage)
+                    message: jsonMessage
                 }
             }
         }
@@ -229,10 +245,33 @@ QObject {
             })
         }
 
-        function executeSessionRequest(request) {
-            if (request.method === root.methods.personalSign.name) {
-                store.signMessage(request.data.message)
-                console.debug("TODO #14927 sign message: ", request.data.message)
+        function executeSessionRequest(request, password, pin) {
+            if (request.method === root.methods.personalSign.name || request.method === root.methods.signTypedData_v4.name) {
+                if (password !== "") {
+                    //let originalMessage = request.data.message
+                    // TODO #14756: clarify why prefixing the message fails the test app https://react-app.walletconnect.com/
+                    //let finalMessage = "\x19Ethereum Signed Message:\n" + originalMessage.length + originalMessage
+                    let finalMessage = request.data.message
+                    var signedMessage = ""
+                    if (request.method === root.methods.personalSign.name) {
+                        signedMessage = store.signMessage(request.topic, request.id,
+                                                              request.account.address, password, finalMessage)
+                    } else if (request.method === root.methods.signTypedData_v4.name) {
+                        signedMessage = store.signTypedDataV4(request.topic, request.id,
+                                                              request.account.address, password, finalMessage)
+                    }
+                    let isSuccessful = signedMessage != ""
+                    if (isSuccessful) {
+                        // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
+                        sdk.acceptSessionRequest(request.topic, request.id, signedMessage)
+                    } else {
+                        root.sessionRequestResult(request, request.data.message, isSuccessful)
+                    }
+                } else if (pin !== "") {
+                    console.debug("TODO #14927 sign message using keycard: ", request.data.message)
+                } else {
+                    console.error("No password or pin provided to sign message")
+                }
             } else {
                 console.error("Unsupported method to execute: ", request.method)
             }
