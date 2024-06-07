@@ -669,15 +669,10 @@ mainWindow_EnsRegisteredView = {"container": statusDesktop_mainWindow, "type": "
 mainWindow_AdvancedView = {"container": mainWindow_StatusWindow, "type": "AdvancedView", "unnamed": 1, "visible": True}
 mainWindow_settingsContentBaseScrollView_StatusScrollView = {"container": mainWindow_StatusWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 manageCommunitiesOnTestnetButton_StatusSettingsLineButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "manageCommunitiesOnTestnetButton", "type": "StatusSettingsLineButton", "visible": True}
+enableCreateCommunityButton_StatusSettingsLineButton = {"container": settingsContentBase_ScrollView, "objectName": "enableCreateCommunityButton", "type": "StatusSettingsLineButton", "visible": True}
 
 # ONBOARDING NAMES
 mainWindow_onboardingBackButton_StatusRoundButton = {"container": statusDesktop_mainWindow, "objectName": "onboardingBackButton", "type": "StatusRoundButton", "visible": True}
-
-# Advanced view
-mainWindow_AdvancedView = {"container": mainWindow_StatusWindow, "type": "AdvancedView", "unnamed": 1, "visible": True}
-mainWindow_settingsContentBaseScrollView_StatusScrollView = {"container": mainWindow_StatusWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
-manageCommunitiesOnTestnetButton_StatusSettingsLineButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "manageCommunitiesOnTestnetButton", "type": "StatusSettingsLineButton", "visible": True}
-enableCreateCommunityButton_StatusSettingsLineButton = {"container": settingsContentBase_ScrollView, "objectName": "enableCreateCommunityButton", "type": "StatusSettingsLineButton", "visible": True}
 
 # Allow Notification View
 mainWindow_AllowNotificationsView = {"container": statusDesktop_mainWindow, "type": "AllowNotificationsView", "unnamed": 1, "visible": True}
