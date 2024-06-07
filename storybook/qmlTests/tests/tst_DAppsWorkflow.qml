@@ -25,6 +25,7 @@ Item {
     width: 600
     height: 400
 
+    // TODO #15151 fix CI crash and re-enable tests
     // Component {
     //     id: sdkComponent
 
@@ -79,9 +80,8 @@ Item {
 
     //     DAppsStore {
     //         signal dappsListReceived(string dappsJson)
-    //         signal userAuthenticated(string topic, string id)
+    //         signal userAuthenticated(string topic, string id, string password, string pin)
     //         signal userAuthenticationFailed(string topic, string id)
-    //         signal sessionRequestExecuted(var payload, bool success)
 
     //         // By default, return no dapps in store
     //         function getDapps() {
@@ -100,8 +100,12 @@ Item {
     //         }
 
     //         property var signMessageCalls: []
-    //         function signMessage(message) {
-    //             signMessageCalls.push({message})
+    //         function signMessage(topic, id, address, password, message) {
+    //             signMessageCalls.push({topic, id, address, password, message})
+    //         }
+    //         property var signTypedDataV4Calls: []
+    //         function signTypedDataV4(topic, id, address, password, message) {
+    //             signTypedDataV4Calls.push({topic, id, address, password, message})
     //         }
     //     }
     // }
@@ -173,7 +177,7 @@ Item {
     //         compare(handler.store.authenticateUserCalls.length, 1, "expected a call to store.authenticateUser")
 
     //         let store = handler.store
-    //         store.userAuthenticated(td.topic, td.request.id)
+    //         store.userAuthenticated(td.topic, td.request.id, "password", "")
     //         compare(store.signMessageCalls.length, 1, "expected a call to store.signMessage")
     //         compare(store.signMessageCalls[0].message, td.request.data)
     //     }
@@ -414,7 +418,7 @@ Item {
     //     }
     // }
 
-    // // Beware this TestCase should be last; I had it before ServiceHelpers and it was not run with `when: windowShown`
+    // TODO #15151: this TestCase if placed before ServiceHelpers was not run with `when: windowShown`. Check if related to the CI crash
     // TestCase {
     //     id: dappsWorkflowTest
 

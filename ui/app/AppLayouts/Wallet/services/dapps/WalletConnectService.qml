@@ -99,7 +99,9 @@ QObject {
             root.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_url), false)
 
             // Persist session
-            store.addWalletConnectSession(JSON.stringify(session))
+            if(!store.addWalletConnectSession(JSON.stringify(session))) {
+                console.error("Failed to persist session")
+            }
 
             // Notify client
             root.approveSessionResult(session, err)

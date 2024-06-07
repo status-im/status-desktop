@@ -129,6 +129,7 @@ ConnectedDappsButton {
             dappIcon: request.dappIcon
 
             signContent: request.data.message
+            method: request.method
             maxFeesText: request.maxFeesText
             estimatedTimeText: request.estimatedTimeText
 
@@ -155,9 +156,12 @@ ConnectedDappsButton {
     Connections {
         target: root.wcService ? root.wcService.requestHandler : null
 
-        function onSessionRequestResult(payload, isSuccess) {
-            // TODO #14927 handle this properly
-            sessionRequestLoader.active = false
+        function onSessionRequestResult(request, payload, isSuccess) {
+            if (isSuccess) {
+                sessionRequestLoader.active = false
+            } else {
+                // TODO #14762 handle the error case
+            }
         }
     }
 

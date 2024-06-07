@@ -4,6 +4,10 @@ function chainIdFromEip155(chain) {
     return parseInt(chain.split(':').pop().trim(), 10)
 }
 
+function isHex(str) {
+    return str.startsWith('0x') && str.length % 2 === 0 && /^[0-9a-fA-F]*$/.test(str.slice(2))
+}
+
 function hexToString(hex) {
     if (hex.startsWith("0x")) {
         hex = hex.substring(2);

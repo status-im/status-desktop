@@ -21,6 +21,7 @@ StatusDialog {
     required property string dappName
     required property string dappUrl
     required property url dappIcon
+    required property string method
     required property string signContent
     required property string maxFeesText
     required property string estimatedTimeText
@@ -34,6 +35,10 @@ StatusDialog {
     title: qsTr("Sign request")
 
     padding: 20
+
+    onSignContentChanged: d.updatePayloadToDisplay()
+    onMethodChanged: d.updatePayloadToDisplay()
+    Component.onCompleted: d.updatePayloadToDisplay()
 
     contentItem: StatusScrollView {
         id: scrollView
@@ -50,7 +55,6 @@ StatusDialog {
                 dappName: root.dappName
                 dappIcon: root.dappIcon
                 account: root.account
-                signContent: root.signContent
             }
 
             ContentPanel {
@@ -273,7 +277,6 @@ StatusDialog {
         required property string dappName
         required property url dappIcon
         required property var account
-        required property string signContent
 
         // Icons
         Item {
@@ -405,10 +408,24 @@ StatusDialog {
 
                 width: contentScrollView.availableWidth
 
-                text: signContent
+                text: d.payloadToDisplay
 
                 wrapMode: Text.WrapAnywhere
             }
+        }
+    }
+
+    QtObject {
+        id: d
+
+        property string payloadToDisplay: ""
+
+        function updatePayloadToDisplay() {
+            if (root.method === "eth_signTypedData_v4" && root.signContent) {
+                payloadToDisplay = JSON.stringify(JSON.parse(root.signContent), null, 2)
+                return
+            }
+            payloadToDisplay = root.signContent
         }
     }
 }

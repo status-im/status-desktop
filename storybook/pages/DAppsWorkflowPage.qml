@@ -241,7 +241,7 @@ Item {
                 StatusButton {
                     text: qsTr("Authenticate")
                     onClicked: {
-                        walletConnectService.store.userAuthenticated(authMockDialog.topic, authMockDialog.id)
+                        walletConnectService.store.userAuthenticated(authMockDialog.topic, authMockDialog.id, "0x1234567890", "123")
                         authMockDialog.close()
                     }
                 }
@@ -260,9 +260,8 @@ Item {
 
         store: DAppsStore {
             signal dappsListReceived(string dappsJson)
-            signal userAuthenticated(string topic, string id)
+            signal userAuthenticated(string topic, string id, string password, string pin)
             signal userAuthenticationFailed(string topic, string id)
-            signal sessionRequestExecuted(var payload, bool success)
 
             function addWalletConnectSession(sessionJson) {
                 console.info("Persist Session", sessionJson)
@@ -276,6 +275,7 @@ Item {
                     "iconUrl": firstIconUrl
                 }
                 d.persistedDapps.push(persistedDapp)
+                return true
             }
 
             function getDapps() {
@@ -288,6 +288,16 @@ Item {
                 authMockDialog.id = id
                 authMockDialog.open()
                 return true
+            }
+
+            // hardcoded for https://react-app.walletconnect.com/
+            function signMessage(topic, id, address, password, message) {
+                return "0x0b083acc1b3b612dd38e8e725b28ce9b2dd4936b4cf7922da4e4a3c6f44f7f4f6d3050ccb41455a2b85093f1bfadb10fc6a75d83bb590b2eb70e3447653459701c"
+            }
+
+            // hardcoded for https://react-app.walletconnect.com/
+            function signTypedDataV4(topic, id, address, password, typedDataJson) {
+                return "0xf8ceb3468319cc215523b67c24c4504b3addd9bf8de31c278038d7478c9b6de554f7d8a516cd5d6a066b7d48b81f03d9d6bb7d5d754513c08325674ebcc7efbc1b"
             }
         }
 

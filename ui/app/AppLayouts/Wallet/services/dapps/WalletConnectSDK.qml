@@ -127,7 +127,7 @@ WalletConnectSDKBase {
 
             if (d.engine) {
                 d.engine.runJavaScript(`wc.getActiveSessions()`, function(result) {
-                    let allSessions = ""
+                    var allSessions = ""
                     for (var key of Object.keys(result)) {
                         allSessions += `\nsessionTopic: ${key}  relatedPairingTopic: ${result[key].pairingTopic}`;
                     }
