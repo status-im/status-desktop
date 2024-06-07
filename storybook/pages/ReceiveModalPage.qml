@@ -34,17 +34,15 @@ SplitView {
             id: dialog
 
             visible: true
-            accounts: ListModel {
-                ListElement {
-                    position: 0
-                    name: "My account"
-                }
+            accounts: WalletAccountsModel {
+                id: accountsModel
             }
             selectedAccount: {
-                "name": "My account",
-                "emoji": "",
-                "address": "0x1234567890123456789012345678901234567890",
-                "preferredSharingChainIds": "10:42161:1:"
+                "name": "Hot wallet (generated)",
+                "emoji": "🚗",
+                "color": "#216266",
+                "address": "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
+                "preferredSharingChainIds": "5:420:421613",
             }
             switchingAccounsEnabled: true
             changingPreferredChainsEnabled: true

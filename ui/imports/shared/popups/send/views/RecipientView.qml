@@ -8,6 +8,9 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import AppLayouts.Wallet 1.0
 
+import shared.controls 1.0 as SharedControls
+import shared.stores.send 1.0
+
 import utils 1.0
 
 import "../controls"
@@ -15,7 +18,7 @@ import "../controls"
 Loader {
     id: root
 
-    property var store
+    property TransactionStore store
     property bool isCollectiblesTransfer
     property bool isBridgeTx: false
     property bool interactive: true
@@ -138,19 +141,29 @@ Loader {
 
     Component {
         id: myAccountRecipient
-        WalletAccountListItem {
-            property string chainShortNames: !!modelData ? store.getNetworkShortNames(modelData.preferredSharingChainIds): ""
+        SharedControls.WalletAccountListItem {
+            id: accountItem
+            readonly property var modelData: root.selectedRecipient
+
+            name: !!modelData ? modelData.name : ""
+            address: !!modelData ? modelData.address : ""
+            chainShortNames: !!modelData ? store.getNetworkShortNames(modelData.preferredSharingChainIds) : ""
+            emoji: !!modelData ? modelData.emoji : ""
+            walletColor: !!modelData ? Utils.getColorForId(modelData.colorId): ""
+            currencyBalance: !!modelData ? modelData.currencyBalance : ""
+            walletType: !!modelData ? modelData.walletType : ""
+            migratedToKeycard: !!modelData ? modelData.migratedToKeycard ?? false : false
+            accountBalance: !!modelData ? modelData.accountBalance : null
+
             implicitWidth: parent.width
-            modelData: root.selectedRecipient
             radius: 8
             clearVisible: true
             color: Theme.palette.indirectColor1
             sensor.enabled: false
             subTitle: {
                 if(!!modelData) {
-                    let elidedAddress = StatusQUtils.Utils.elideText(modelData.address,6,4)
-                    let chainShortNames = store.getNetworkShortNames(modelData.preferredSharingChainIds)
-                    return WalletUtils.colorizedChainPrefix(chainShortNames) + StatusQUtils.Utils.elideText(elidedAddress,6,4)
+                    const elidedAddress = StatusQUtils.Utils.elideAndFormatWalletAddress(modelData.address)
+                    return WalletUtils.colorizedChainPrefix(accountItem.chainShortNames) + elidedAddress
                 }
                 return ""
             }
@@ -192,9 +205,7 @@ Loader {
                     color: Theme.palette.primaryColor1
                     visible: root.ready
                 }
-                ClearButton {
-                    Layout.preferredWidth: 24
-                    Layout.preferredHeight: 24
+                StatusClearButton {
                     visible: !!store.plainText(recipientInput.text)
                     onClicked: {
                         recipientInput.input.edit.clear()

@@ -103,16 +103,19 @@ SplitView {
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
                 swapInputParamsForm: SwapInputParamsForm {
-                    selectedAccountAddress: {
-                        if (accountComboBox.model.count > 0 && accountComboBox.currentIndex >= 0) {
-                            return ModelUtils.get(accountComboBox.model, accountComboBox.currentIndex, "address")
-                        }
-                        return ""
-                    }
+                    selectedAccountAddress: accountComboBox.currentValue ?? ""
+
                     selectedNetworkChainId: d.getNetwork()
                     fromTokensKey: fromTokenComboBox.currentValue
                     fromTokenAmount: swapInput.text
                     toTokenKey: toTokenComboBox.currentValue
+                    onSelectedAccountAddressChanged: {
+                        if (selectedAccountAddress !== accountComboBox.currentValue)
+                            accountComboBox.currentIndex = accountComboBox.indexOfValue(selectedAccountAddress)
+                    }
+                    Binding on selectedAccountAddress {
+                        value: accountComboBox.currentValue ?? ""
+                    }
                 }
                 swapAdaptor: SwapModalAdaptor {
                     swapStore: dSwapStore
@@ -162,6 +165,7 @@ SplitView {
             ComboBox {
                 id: accountComboBox
                 textRole: "name"
+                valueRole: "address"
                 model: SortFilterProxyModel {
                     sourceModel: d.accountsModel
                     filters: ValueFilter {

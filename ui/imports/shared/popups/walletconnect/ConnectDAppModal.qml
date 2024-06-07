@@ -13,6 +13,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
+import shared.controls 1.0
 // TODO extract the components to StatusQ
 import shared.popups.send.controls 1.0
 
@@ -179,27 +180,14 @@ StatusDialog {
                     Layout.fillWidth: true
                 }
 
-                // TODO: have a reusable component for this
-                AccountsModalHeader {
+                AccountSelector {
                     id: accountsDropdown
 
                     Layout.preferredWidth: 204
 
                     control.enabled: d.connectionStatus === root.notConnectedStatus && count > 1
                     model: d.accountsProxy
-
-                    onCountChanged: {
-                        if (count > 0) {
-                            selectedAccount = d.accountsProxy.get(0)
-                        }
-                    }
-
-                    selectedAccount: d.accountsProxy.get(0)
-                    onSelectedAccountChanged: d.selectedAccount = selectedAccount
-                    onSelectedIndexChanged: {
-                        d.selectedAccount = model.get(selectedIndex)
-                        selectedAccount = d.selectedAccount
-                    }
+                    onCurrentAccountChanged: d.selectedAccount = currentAccount
                 }
             }
 
@@ -383,7 +371,7 @@ StatusDialog {
             sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
         }
 
-        property var selectedAccount: accountsProxy.count > 0 ? accountsProxy.get(0) : null
+        property var selectedAccount: ({})
 
         readonly property var filteredChains: LeftJoinModel {
             leftModel: d.dappChains

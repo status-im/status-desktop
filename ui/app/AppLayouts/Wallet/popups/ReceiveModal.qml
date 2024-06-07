@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtQuick.Controls 2.14
 import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -18,6 +19,7 @@ import shared.popups 1.0
 import shared.popups.send.controls 1.0
 
 import AppLayouts.stores 1.0
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.controls 1.0
 
 import ".."
@@ -39,7 +41,7 @@ StatusModal {
 
     property var store: RootStore
 
-    signal selectedAccountIndexChanged(int selectedIndex)
+    signal updateSelectedAddress(string address)
     signal updatePreferredChains(string address, string preferredChains)
 
     onSelectedAccountChanged: {
@@ -53,18 +55,34 @@ StatusModal {
 
     showHeader: false
     showAdvancedHeader: hasFloatingButtons
-    advancedHeaderComponent: AccountsModalHeader {
-        control.enabled: root.switchingAccounsEnabled && model.count > 1
-        model: SortFilterProxyModel {
-            sourceModel: root.accounts
+    advancedHeaderComponent: Item {
+        implicitWidth: accountSelector.implicitWidth
+        implicitHeight: accountSelector.implicitHeight
+        AccountSelectorHeader {
+            id: accountSelector
+            control.enabled: root.switchingAccounsEnabled && model.count > 1
+            width: implicitWidth
+            model: SortFilterProxyModel {
+                sourceModel: root.accounts
 
-            sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
-        }
+                sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
+                proxyRoles: [
+                    FastExpressionRole {
+                        name: "colorizedChainPrefixes"
+                        function getChainShortNames(chainIds) {
+                            const chainShortNames = root.getNetworkShortNames(chainIds)
+                            return WalletUtils.colorizedChainPrefix(chainShortNames)
+                        }
+                        expression: getChainShortNames(model.preferredSharingChainIds)
+                        expectedRoles: ["preferredSharingChainIds"]
+                    }
+                ]
+            }
 
-        selectedAccount: root.selectedAccount
-        getNetworkShortNames: root.getNetworkShortNames
-        onSelectedIndexChanged: {
-            root.selectedAccountIndexChanged(selectedIndex)
+            selectedAddress: !!root.selectedAccount ? root.selectedAccount.address : ""
+            onCurrentAccountAddressChanged: {
+                root.updateSelectedAddress(currentAccountAddress)
+            }
         }
     }
 

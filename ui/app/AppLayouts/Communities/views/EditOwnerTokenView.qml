@@ -14,6 +14,8 @@ import AppLayouts.Communities.panels 1.0
 import AppLayouts.Wallet.controls 1.0
 import utils 1.0
 
+import shared.controls 1.0
+
 import SortFilterProxyModel 0.2
 
 StatusScrollView {
@@ -149,30 +151,32 @@ StatusScrollView {
             AccountSelector {
                 id: accountBox
 
-                readonly property string address: {
-                    root.accounts.count
-                    return SQUtils.ModelUtils.get(root.accounts, currentIndex, "address")
-                }
-
-                readonly property string initAccountName: ownerToken.accountName
-                readonly property int initIndex: {
-                    root.accounts.count
-                    return SQUtils.ModelUtils.indexOf(root.accounts, "name", initAccountName)
-                }
-
                 Layout.fillWidth: true
                 Layout.topMargin: -Style.current.halfPadding
-
-                currentIndex: (initIndex !== -1) ? initIndex : 0
                 model: root.accounts
-
-                onAddressChanged: {
-                    ownerToken.accountAddress = address
-                    tMasterToken.accountAddress = address
+                selectedAddress: ownerToken.accountAddress
+                Binding {
+                    target: root.ownerToken
+                    property: "accountAddress"
+                    value: accountBox.currentAccountAddress
                 }
-                control.onDisplayTextChanged: {
-                    ownerToken.accountName = control.displayText
-                    tMasterToken.accountName = control.displayText
+
+                Binding {
+                    target: root.ownerToken
+                    property: "accountName"
+                    value: accountBox.currentAccount.name
+                }
+
+                Binding {
+                    target: root.tMasterToken
+                    property: "accountAddress"
+                    value: accountBox.currentAccountAddress
+                }
+
+                Binding {
+                    target: root.tMasterToken
+                    property: "accountName"
+                    value: accountBox.currentAccount.name
                 }
             }
 

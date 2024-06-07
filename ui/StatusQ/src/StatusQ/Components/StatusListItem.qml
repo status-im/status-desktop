@@ -159,8 +159,6 @@ Rectangle {
         acceptedButtons: Qt.NoButton
         hoverEnabled: true
 
-
-
         StatusSmartIdenticon {
             id: iconOrImage
             anchors.left: parent.left

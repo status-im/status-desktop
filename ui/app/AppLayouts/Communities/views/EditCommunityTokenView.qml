@@ -354,29 +354,18 @@ StatusScrollView {
             }
 
             accountsSelector.model: root.accounts
+            accountsSelector.selectedAddress: root.token.accountAddress
 
-            // account can be changed also on preview page and it should be
-            // reflected in the form after navigating back
-            Connections {
+            Binding {
                 target: root.token
-
-                function onAccountAddressChanged() {
-                    const idx = SQUtils.ModelUtils.indexOf(
-                                  feesBox.accountsSelector.model, "address",
-                                  root.token.accountAddress)
-
-                    feesBox.accountsSelector.currentIndex = idx
-                }
+                property: "accountAddress"
+                value: feesBox.accountsSelector.currentAccountAddress
             }
 
-            accountsSelector.onCurrentIndexChanged: {
-                if (accountsSelector.currentIndex < 0)
-                    return
-
-                const item = SQUtils.ModelUtils.get(
-                               accountsSelector.model, accountsSelector.currentIndex)
-                root.token.accountAddress = item.address
-                root.token.accountName = item.name
+            Binding {
+                target: root.token
+                property: "accountName"
+                value: feesBox.accountsSelector.currentAccount.name
             }
         }
 

@@ -1,4 +1,3 @@
-AccountsModalHeader 1.0 AccountsModalHeader.qml
 WalletAccountListItem 1.0 WalletAccountListItem.qml
 GasSelector 1.0 GasSelector.qml
 GasValidator 1.0 GasValidator.qml

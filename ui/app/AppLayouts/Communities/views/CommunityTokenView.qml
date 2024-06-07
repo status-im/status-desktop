@@ -195,24 +195,18 @@ StatusScrollView {
             }
 
             accountsSelector.model: root.accounts || null
+            accountsSelector.selectedAddress: root.token.accountAddress
 
-            Component.onCompleted: {
-                const initIndex = StatusQUtils.ModelUtils.indexOf(
-                                    accountsSelector.model, "name",
-                                    token.accountName)
+            Binding {
+                target: root.token
+                property: "accountAddress"
+                value: feesBox.accountsSelector.currentAccountAddress
+            }
 
-                accountsSelector.currentIndex = (initIndex !== -1) ? initIndex : 0
-
-                accountsSelector.currentIndexChanged.connect(() => {
-                    if (accountsSelector.currentIndex < 0)
-                        return
-
-                    const item = StatusQUtils.ModelUtils.get(
-                                   accountsSelector.model,
-                                   accountsSelector.currentIndex)
-                    token.accountAddress = item.address
-                    token.accountName = item.name
-                })
+            Binding {
+                target: root.token
+                property: "accountName"
+                value: feesBox.accountsSelector.currentAccount.name
             }
         }
 

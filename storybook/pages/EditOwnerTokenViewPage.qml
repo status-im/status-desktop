@@ -52,6 +52,7 @@ SplitView {
                     filters: ValueFilter { roleName: "isTest"; value: false }
                 }
                 accounts: WalletAccountsModel {}
+                ownerToken.accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
 
                 onMintClicked: logs.logEvent("EditOwnerTokenView::onMintClicked")
 

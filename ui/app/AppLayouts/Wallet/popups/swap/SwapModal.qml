@@ -66,21 +66,23 @@ StatusDialog {
     Behavior on implicitHeight {
         NumberAnimation { duration: 1000; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
     }
-
+    
     onClosed: root.swapAdaptor.reset()
 
-    header: AccountsModalHeader {
+    header: Item {
+        height: selector.height
         anchors.top: parent.top
         anchors.topMargin: -height - 18
-        control.popup.width: 512
-        model: root.swapAdaptor.nonWatchAccounts
-        getNetworkShortNames: root.swapAdaptor.getNetworkShortNames
-        formatCurrencyAmount: root.swapAdaptor.formatCurrencyAmount
-        /* TODO: once the Account Header is reworked we simply should be
-        able to use an index and not this logic of selectedAccount being set */
-        selectedAccount: root.swapAdaptor.getSelectedAccountByAddress(root.swapInputParamsForm.selectedAccountAddress)
-        onSelectedIndexChanged: {
-            root.swapInputParamsForm.selectedAccountAddress = root.swapAdaptor.getSelectedAccountAddressByIndex(selectedIndex)
+        AccountSelectorHeader {
+            id: selector
+            control.popup.width: 512
+            model: root.swapAdaptor.nonWatchAccounts
+            selectedAddress: root.swapInputParamsForm.selectedAccountAddress
+            onCurrentAccountAddressChanged: {
+                if (currentAccountAddress !== "" && currentAccountAddress !== root.swapInputParamsForm.selectedAccountAddress) {
+                    root.swapInputParamsForm.selectedAccountAddress = currentAccountAddress
+                }
+            }
         }
     }
 
@@ -125,6 +127,13 @@ StatusDialog {
                     Component.onCompleted: {
                         if(root.swapInputParamsForm.selectedNetworkChainId !== -1)
                             networkFilter.setChain(root.swapInputParamsForm.selectedNetworkChainId)
+                    }
+                }
+
+                Connections {
+                    target: root.swapInputParamsForm
+                    function onSelectedNetworkChainIdChanged() {
+                        networkFilter.setChain(root.swapInputParamsForm.selectedNetworkChainId)
                     }
                 }
             }

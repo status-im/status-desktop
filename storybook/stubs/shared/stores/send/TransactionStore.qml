@@ -170,8 +170,13 @@ QtObject {
         }
     }
 
-    function switchSenderAccount(index) {
-        selectedSenderAccount = senderAccounts.get(index)
+    function switchSenderAccountByAddress(address) {
+        for (let i = 0; i < senderAccounts.count; i++) {
+            if (senderAccounts.get(i).address === address) {
+                selectedSenderAccount = senderAccounts.get(i)
+                break
+            }
+        }
     }
 
     function getNetworkShortNames(chainIds) {

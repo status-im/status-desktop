@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -46,15 +46,17 @@ Control {
         color: root.bgColor
         radius: root.bgRadius
         border.color: root.bgBorderColor
-
-        MouseArea {
-            anchors.fill: parent
-            enabled: root.tagClickable
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: root.tagClicked(mouse)
-        }
     }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: (mouse) => {
+            root.tagClicked(mouse)
+        }
+        z: -1
+    }
+
     contentItem: RowLayout {
         id: layout
         spacing: root.spacing
@@ -79,12 +81,13 @@ Control {
             id: closeIcon
             color: Theme.palette.primaryColor1
             icon: "close-circle"
-            visible: closeButtonVisible
+            visible: root.closeButtonVisible
             MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: root.clicked(mouse)
+                anchors.fill: parent
+                onClicked: (mouse) => {
+                    root.clicked(mouse)
+                }
             }
         }
     }

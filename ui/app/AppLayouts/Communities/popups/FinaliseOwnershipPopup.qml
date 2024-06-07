@@ -50,6 +50,8 @@ StatusDialog {
         property bool ackCheck: false
 
         // Fees related props:
+        // TODO: These properties are not used in the current implementation!
+        // Check if the current fees box in this popup is needed!!
         property string accountAddress: ""
         property string accountName: ""
     }
@@ -291,6 +293,7 @@ StatusDialog {
             }
 
             FeesBox {
+                id: feesBox
                 Layout.fillWidth: true
 
                 implicitWidth: 0
@@ -307,14 +310,16 @@ StatusDialog {
                     readonly property bool error: root.feeErrorText !== ""
                 }
 
-                accountsSelector.onCurrentIndexChanged: {
-                    if (accountsSelector.currentIndex < 0)
-                        return
+                Binding {
+                    target: d
+                    property: "accountAddress"
+                    value: feesBox.accountsSelector.currentAccountAddress
+                }
 
-                    const item = ModelUtils.get(accountsSelector.model,
-                                                accountsSelector.currentIndex)
-                    d.accountAddress = item.address
-                    d.accountName = item.name
+                Binding {
+                    target: d
+                    property: "accountName"
+                    value: feesBox.accountsSelector.currentAccount.name
                 }
             }
 

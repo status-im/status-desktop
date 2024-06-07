@@ -7,6 +7,7 @@ import StatusQ.Core.Utils 0.1
 import utils 1.0
 
 import shared.stores 1.0
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 QObject {
@@ -25,8 +26,8 @@ QObject {
     property bool showCommunityTokens
 
     // To expose the selected from and to Token from the SwapModal
-    readonly property var fromToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
-    readonly property var toToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.toTokenKey)
+    readonly property var fromToken: fromTokenEntry.item
+    readonly property var toToken: toTokenEntry.item
 
     readonly property var nonWatchAccounts: SortFilterProxyModel {
         sourceModel: root.swapStore.accounts
@@ -45,6 +46,15 @@ QObject {
             FastExpressionRole {
                 name: "fromToken"
                 expression: root.fromToken
+            },
+            FastExpressionRole {
+                name: "colorizedChainPrefixes"
+                function getChainShortNames(chainIds) {
+                    const chainShortNames = root.getNetworkShortNames(chainIds)
+                    return WalletUtils.colorizedChainPrefix(chainShortNames)
+                }
+                expression: getChainShortNames(model.preferredSharingChainIds)
+                expectedRoles: ["preferredSharingChainIds"]
             }
         ]
     }
@@ -98,6 +108,27 @@ QObject {
         // FIXME sort by assetsController instead, to have the sorting/order as in the main wallet view
     }
 
+    ModelEntry {
+        id: fromTokenEntry
+        sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+        key: "key"
+        value: root.swapFormData.fromTokensKey
+    }
+
+    ModelEntry {
+        id: toTokenEntry
+        sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+        key: "key"
+        value: root.swapFormData.toTokenKey
+    }
+
+    ModelEntry {
+        id: selectedAccountEntry
+        sourceModel: root.nonWatchAccounts
+        key: "address"
+        value: root.swapFormData.selectedAccountAddress
+    }
+
     QtObject {
         id: d
 
@@ -143,19 +174,31 @@ QObject {
         }
 
         function processAccountBalance(address) {
+            if (!root.swapFormData.fromTokensKey) {
+                return null
+            }
+
             let network = ModelUtils.getByKey(root.filteredFlatNetworksModel, "chainId", root.swapFormData.selectedNetworkChainId)
-            if(!!network) {
-                let balancesModel = ModelUtils.getByKey(filteredBalancesModel, "tokensKey", root.swapFormData.fromTokensKey, "balances")
-                let accountBalance = ModelUtils.getByKey(balancesModel, "account", address)
-                if(!accountBalance) {
-                    return {
-                        balance: "0",
-                        iconUrl: network.iconUrl,
-                        chainColor: network.chainColor}
-                }
+
+            if (!network) {
+                return null
+            }
+
+            let balancesModel = ModelUtils.getByKey(filteredBalancesModel, "tokensKey", root.swapFormData.fromTokensKey, "balances")
+            let accountBalance = ModelUtils.getByKey(balancesModel, "account", address)
+            if(accountBalance) {
+                let balance = AmountsArithmetic.toNumber(accountBalance.balance, root.fromToken.decimals)
+                let formattedBalance = root.formatCurrencyAmount(balance, root.fromToken.symbol)
+                accountBalance.formattedBalance = formattedBalance
                 return accountBalance
             }
-            return null
+
+            return {
+                balance: "0",
+                iconUrl: network.iconUrl,
+                chainColor: network.chainColor,
+                formattedBalance: root.formatCurrencyAmount(.0 , root.fromToken.symbol)
+            }
         }
 
         /* Internal function to calculate total balance */
@@ -244,21 +287,6 @@ QObject {
         return disabledChainIds.join(":")
     }
 
-    // TODO: remove once the AccountsModalHeader is reworked!!
-    function getSelectedAccountAddressByIndex(index) {
-        if (root.nonWatchAccounts.count > 0 && index >= 0) {
-            return ModelUtils.get(nonWatchAccounts, index, "address")
-        }
-        return ""
-    }
-
-    function getSelectedAccountByAddress(address) {
-        if (root.nonWatchAccounts.count > 0 && !!address) {
-            return ModelUtils.getByKey(root.nonWatchAccounts, "address", address)
-        }
-        return null
-    }
-
     function fetchSuggestedRoutes(cryptoValueRaw) {
         if (root.swapFormData.isFormFilledCorrectly() && !!cryptoValueRaw) {
             root.swapOutputData.reset()
@@ -267,7 +295,7 @@ QObject {
             // Identify new swap with a different uuid
             d.uuid = Utils.uuid()
 
-            let account = getSelectedAccountByAddress(root.swapFormData.selectedAccountAddress)
+            let account = selectedAccountEntry.item
             let accountAddress = account.address
             let disabledChainIds = getDisabledChainIds(root.swapFormData.selectedNetworkChainId)
             let preferedChainIds = getAllChainIds()
@@ -283,7 +311,7 @@ QObject {
     }
 
     function sendApproveTx() {
-        let account = getSelectedAccountByAddress(root.swapFormData.selectedAccountAddress)
+        let account = selectedAccountEntry.item
         let accountAddress = account.address
 
         root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
@@ -292,7 +320,7 @@ QObject {
     }
 
     function sendSwapTx() {
-        let account = getSelectedAccountByAddress(root.swapFormData.selectedAccountAddress)
+        let account = selectedAccountEntry.item
         let accountAddress = account.address
 
         root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,

@@ -188,8 +188,8 @@ QtObject {
         }
     }
 
-    function switchSenderAccount(index) {
-        walletSectionSendInst.switchSenderAccount(index)
+    function switchSenderAccountByAddress(address) {
+        walletSectionSendInst.switchSenderAccountByAddress(address)
     }
 
     function getNetworkShortNames(chainIds) {

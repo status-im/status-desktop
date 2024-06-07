@@ -59,8 +59,8 @@ StatusDialog {
     QtObject {
         id: d
 
-        property string accountAddress: ""
-        property string accountName: ""
+        readonly property string accountAddress: feesBox.accountsSelector.currentAccountAddress
+        readonly property string accountName: feesBox.accountsSelector.currentAccount.name ?? ""
     }
 
     ColumnLayout {
@@ -142,6 +142,7 @@ StatusDialog {
         }
 
         FeesBox {
+            id: feesBox
             Layout.fillWidth: true
 
             implicitWidth: 0
@@ -156,16 +157,6 @@ StatusDialog {
                 readonly property string feeText: root.isFeeLoading ?
                                                   "" : root.feeText
                 readonly property bool error: root.feeErrorText !== ""
-            }
-
-            accountsSelector.onCurrentIndexChanged: {
-                if (accountsSelector.currentIndex < 0)
-                    return
-
-                const item = ModelUtils.get(accountsSelector.model,
-                                            accountsSelector.currentIndex)
-                d.accountAddress = item.address
-                d.accountName = item.name
             }
         }
     }
