@@ -493,8 +493,9 @@ QtObject:
       if responseObj.kind != JObject:
         raise newException(CatchableError, "load pinned messages response is not a json object")
 
-      if responseObj.contains("error"):
-        raise newException(CatchableError, responseObj{"error"}.getStr)
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
       var chatId: string
       discard responseObj.getProp("chatId", chatId)
@@ -528,8 +529,9 @@ QtObject:
       if (responseObj.kind != JObject):
         raise newException(CatchableError, "load more messages response is not a json object")
 
-      if responseObj.contains("error"):
-        raise newException(CatchableError, responseObj{"error"}.getStr)
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
       var chatId: string
       discard responseObj.getProp("chatId", chatId)
@@ -573,8 +575,10 @@ QtObject:
   proc onAsyncLoadCommunityMemberAllMessages*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
-      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        raise newException(RpcException, rpcResponseObj{"error"}.getStr)
+      let errorString = rpcResponseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
+
       if rpcResponseObj{"messages"}.kind == JNull:
         return
       if rpcResponseObj{"messages"}.kind != JArray:
@@ -597,18 +601,17 @@ QtObject:
     try:
       let response = status_go.addReaction(chatId, messageId, emojiId)
 
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr
-        error "error: ", procName="addReaction", errDesription = errMsg
-        return
+      let errorString = response.result{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
       var reactionsArr: JsonNode
       var reactions: seq[ReactionDto]
-      if(response.result.getProp("emojiReactions", reactionsArr)):
+      if response.result.getProp("emojiReactions", reactionsArr):
         reactions = map(reactionsArr.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
 
       var reactionId: string
-      if(reactions.len > 0):
+      if reactions.len > 0:
         reactionId = reactions[0].id
 
       let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
@@ -622,10 +625,9 @@ QtObject:
     try:
       let response = status_go.removeReaction(reactionId)
 
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr
-        error "error: ", procName="removeReaction", errDesription = errMsg
-        return
+      let errorString = response.result{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
       let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
       reactionId: reactionId)
@@ -638,21 +640,25 @@ QtObject:
     try:
       let response = status_go.pinUnpinMessage(chatId, messageId, pin)
 
+      let errorString = response.result{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
+
       var pinMessagesObj: JsonNode
-      if(response.result.getProp("pinMessages", pinMessagesObj)):
+      if response.result.getProp("pinMessages", pinMessagesObj):
         let pinnedMessagesArr = pinMessagesObj.getElems()
-        if(pinnedMessagesArr.len > 0): # an array is returned
+        if pinnedMessagesArr.len > 0: # an array is returned
           let pinMessageObj = pinnedMessagesArr[0]
           var doneBy: string
           discard pinMessageObj.getProp("from", doneBy)
           let data = MessagePinUnpinArgs(chatId: chatId, messageId: messageId, actionInitiatedBy: doneBy)
           var pinned = false
-          if(pinMessageObj.getProp("pinned", pinned)):
-            if(pinned and pin):
+          if pinMessageObj.getProp("pinned", pinned):
+            if pinned and pin:
               self.numOfPinnedMessagesPerChat[chatId] = self.getNumOfPinnedMessages(chatId) + 1
               self.events.emit(SIGNAL_MESSAGE_PINNED, data)
           else:
-            if(not pinned and not pin):
+            if not pinned and not pin:
               self.numOfPinnedMessagesPerChat[chatId] = self.getNumOfPinnedMessages(chatId) - 1
               self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
           discard self.chatService.processMessengerResponse(response)
@@ -730,11 +736,12 @@ QtObject:
     var chatId = ""
     try:
       let responseObj = response.parseJson
-      if (responseObj.kind != JObject):
+      if responseObj.kind != JObject:
         raise newException(CatchableError, "search messages response is not an json object")
 
-      if responseObj.contains("error"):
-        raise newException(CatchableError, responseObj{"error"}.getStr)
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
       discard responseObj.getProp("chatId", chatId)
 
@@ -807,8 +814,9 @@ QtObject:
       if (responseObj.kind != JObject):
         raise newException(CatchableError, "mark all messages read response is not an json object")
 
-      if responseObj.contains("error") and responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
-        raise newException(CatchableError, responseObj{"error"}.getStr)
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
       var chatId: string
       discard responseObj.getProp("chatId", chatId)
@@ -841,12 +849,9 @@ QtObject:
       if responseObj.kind != JObject:
         raise newException(RpcException, "markMessageAsUnread response is not a json object")
 
-      var error: string
-      discard responseObj.getProp("error", error)
-
-      if error.len > 0:
-        error "error: ", procName="onAsyncMarkMessageAsUnread", errDescription=error
-        return
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
       var chatId, messageId: string
       var count, countWithMentions: int
@@ -875,8 +880,9 @@ QtObject:
     try:
       let responseObj = response.parseJson
 
-      if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
-        raise newException(CatchableError, responseObj{"error"}.getStr)
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
       var chatId: string
       discard responseObj.getProp("chatId", chatId)
@@ -936,21 +942,17 @@ QtObject:
     try:
       let responseObj = response.parseJson
 
-      var error: string
-      discard responseObj.getProp("error", error)
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
       var chatId: string
       discard responseObj.getProp("chatId", chatId)
 
       var messageId = ""
-
-      if(error.len > 0):
-        error "error: ", procName="onGetFirstUnseenMessageIdFor", errDescription=error
-      else:
-        discard responseObj.getProp("messageId", messageId)
+      discard responseObj.getProp("messageId", messageId)
 
       self.events.emit(SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED, FirstUnseenMessageLoadedArgs(chatId: chatId, messageId: messageId))
-
     except Exception as e:
       error "error: ", procName="onGetFirstUnseenMessageIdFor", errName = e.name, errDesription = e.msg
 
@@ -1006,7 +1008,7 @@ QtObject:
       warn "expected response is not a json object", methodName = "onAsyncUnfurlUrlsFinished"
       return
 
-    let errMessage = responseObj["error"].getStr
+    let errMessage = responseObj{"error"}.getStr
     if errMessage != "":
       error "asyncUnfurlUrls failed", errMessage
       return
@@ -1204,9 +1206,9 @@ proc deleteCommunityMemberMessages*(self: Service, communityId: string, memberPu
   try:
     let response = status_go.deleteCommunityMemberMessages(communityId, memberPubKey, messageId, chatId)
 
-    if response.result.contains("error"):
-        let errMsg = response.result["error"].getStr
-        raise newException(RpcException, "Error deleting community member messages: " & errMsg)
+    let errorString = response.result{"error"}.getStr()
+    if errorString != "":
+      raise newException(CatchableError, errorString)
 
     var deletedMessages = initTable[string, seq[string]]()
     if response.result.contains("deletedMessages"):
