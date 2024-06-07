@@ -135,7 +135,7 @@ pipeline {
     }
 
     stage('Test') {
-      steps { timeout(90) { script { dir('test/e2e') {
+      steps { timeout(getTestStageTimeout()) { script { dir('test/e2e') {
         def flags = []
         if (params.TEST_NAME)  { flags.add("-k=${params.TEST_NAME}") }
         if (params.TEST_SCOPE_FLAG) { flags.add(params.TEST_SCOPE_FLAG) }
@@ -249,3 +249,5 @@ def getDefaultTestScopeFlag() {
     return '-m=critical'
   }
 }
+
+def getTestStageTimeout() { TEST_SCOPE_FLAG == '-m=critical' ? 30 : 120 }
