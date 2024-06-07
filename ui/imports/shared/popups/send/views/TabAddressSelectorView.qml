@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
+import shared.controls 1.0 as SharedControls
 import shared.stores 1.0
 
 import AppLayouts.Wallet 1.0
@@ -117,17 +118,30 @@ Item {
                 id: myAccounts
                 objectName: "myAccountsList"
 
-                delegate: WalletAccountListItem {
+                delegate: SharedControls.WalletAccountListItem {
+                    required property var model
+
                     implicitWidth: ListView.view.width
-                    modelData: model
-                    getNetworkShortNames: root.store.getNetworkShortNames
-                    onClicked: recipientSelected({name: modelData.name,
-                                                     address: modelData.address,
-                                                     color: modelData.color,
-                                                     emoji: modelData.emoji,
-                                                     walletType: modelData.walletType,
-                                                     currencyBalance: modelData.currencyBalance,
-                                                     preferredSharingChainIds: modelData.preferredSharingChainIds},
+                    name: model.name
+                    address: model.address
+
+                    emoji: model.emoji
+                    walletColor: Utils.getColorForId(model.colorId)
+                    currencyBalance: model.currencyBalance
+                    walletType: model.walletType
+                    migratedToKeycard: model.migratedToKeycard ?? false
+                    accountBalance: model.accountBalance ?? null
+                    chainShortNames: {
+                        const chainShortNames = store.getNetworkShortNames(model.preferredSharingChainIds)
+                        return WalletUtils.colorizedChainPrefix(chainShortNames)
+                    }
+                    onClicked: recipientSelected({name: model.name,
+                                                     address: model.address,
+                                                     color: model.color,
+                                                     emoji: model.emoji,
+                                                     walletType: model.walletType,
+                                                     currencyBalance: model.currencyBalance,
+                                                     preferredSharingChainIds: model.preferredSharingChainIds},
                                                  TabAddressSelectorView.Type.Account)
                 }
 

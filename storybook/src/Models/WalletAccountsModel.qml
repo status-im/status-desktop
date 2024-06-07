@@ -42,6 +42,7 @@ ListModel {
                 }
             ],
             preferredSharingChainIds: "5:420:421613",
+            colorizedChainPrefixes: "eth:opt",
             currencyBalance: ({amount: 1.25,
                                   symbol: "USD",
                                   displayDecimals: 4,
@@ -68,6 +69,7 @@ ListModel {
                 }
             ],
             preferredSharingChainIds: "5:420:421613",
+            colorizedChainPrefixes: "eth:opt",
             currencyBalance: ({amount: 10,
                                   symbol: "USD",
                                   displayDecimals: 4,
@@ -103,6 +105,7 @@ ListModel {
                 }
             ],
             preferredSharingChainIds: "5:420:421613",
+            colorizedChainPrefixes: "eth:opt",
             currencyBalance: ({amount: 110.05,
                                   symbol: "USD",
                                   displayDecimals: 4,
@@ -146,6 +149,7 @@ ListModel {
                 }
             ],
             preferredSharingChainIds: "5:420:421613",
+            colorizedChainPrefixes: "eth:opt",
             currencyBalance: ({amount: 999,
                                   symbol: "USD",
                                   displayDecimals: 4,

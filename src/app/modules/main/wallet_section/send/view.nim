@@ -247,12 +247,12 @@ QtObject:
       self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(),
       self.sendType, self.fromNetworksModel.getRouteLockedChainIds())
 
-  proc switchSenderAccountByAddress*(self: View, address: string) =
+  proc switchSenderAccountByAddress*(self: View, address: string) {.slot.} =
     let (account, index) = self.senderAccounts.getItemByAddress(address)
     self.setSelectedSenderAccount(account)
     self.delegate.setSelectedSenderAccountIndex(index)
 
-  proc switchReceiveAccountByAddress*(self: View, address: string) =
+  proc switchReceiveAccountByAddress*(self: View, address: string) {.slot.} =
     let (account, index) = self.accounts.getItemByAddress(address)
     self.setSelectetReceiveAccount(account)
     self.delegate.setSelectedReceiveAccountIndex(index)

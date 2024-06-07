@@ -114,13 +114,10 @@ StatusDialog {
             model: d.tokenCount > 0 ? singleFeeModel : undefined
             accountsSelector.model: root.accounts
 
-            accountsSelector.onCurrentIndexChanged: {
-                if (accountsSelector.currentIndex < 0)
-                    return
-
-                const item = ModelUtils.get(accountsSelector.model,
-                                            accountsSelector.currentIndex)
-                d.accountAddress = item.address
+            Binding {
+                target: d
+                property: "accountAddress"
+                value: feesBox.accountsSelector.currentAccountAddress
             }
 
             QtObject {

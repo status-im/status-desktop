@@ -440,8 +440,8 @@ QtObject {
         walletSection.runEditAccountPopup(address)
     }
 
-    function switchReceiveAccount(index) {
-        walletSectionSend.switchReceiveAccount(index)
+    function switchReceiveAccountByAddress(address) {
+        walletSectionSend.switchReceiveAccountByAddress(address)
     }
 
     function toggleWatchOnlyAccounts() {

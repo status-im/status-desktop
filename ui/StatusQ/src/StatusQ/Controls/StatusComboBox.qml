@@ -16,6 +16,7 @@ Item {
     property alias delegate: comboBox.delegate
     property alias contentItem: comboBox.contentItem
     property alias comboBoxListViewSection: listView.section
+    readonly property alias indicator: statusIndicator
 
     property alias currentIndex: comboBox.currentIndex
     property alias currentValue: comboBox.currentValue
@@ -30,6 +31,36 @@ Item {
 
     property int size: StatusComboBox.Size.Large
     property int type: StatusComboBox.Type.Primary
+
+    readonly property Component defaultBackgroundComponent: Rectangle {
+        color: root.type === StatusComboBox.Type.Secondary ? "transparent" : Theme.palette.baseColor2
+        radius: 8
+        border.width: (!!root.validationError || root.forceError
+                        || comboBox.hovered || comboBox.down
+                        || comboBox.visualFocus
+                        || root.type === StatusComboBox.Type.Secondary)
+                        ? 1 : 0
+
+        border.color: {
+            if (!!root.validationError || root.forceError)
+                return Theme.palette.dangerColor1
+
+            if (comboBox.visualFocus || comboBox.popup.opened)
+                return Theme.palette.primaryColor1
+
+            if (comboBox.hovered)
+                return Theme.palette.primaryColor2
+
+            if (root.type === StatusComboBox.Type.Secondary)
+                return Theme.palette.directColor7
+
+            return "transparent"
+        }
+
+        HoverHandler {
+            cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
+        }
+    }
 
     enum Size {
         Small,
@@ -76,34 +107,8 @@ Item {
             padding: 16
             spacing: 16
 
-            background: Rectangle {
-                color: root.type === StatusComboBox.Type.Secondary ? "transparent" : Theme.palette.baseColor2
-                radius: 8
-                border.width: (!!root.validationError || root.forceError
-                               || comboBox.hovered || comboBox.down
-                               || comboBox.visualFocus
-                               || root.type === StatusComboBox.Type.Secondary)
-                              ? 1 : 0
-
-                border.color: {
-                    if (!!root.validationError || root.forceError)
-                        return Theme.palette.dangerColor1
-
-                    if (comboBox.visualFocus || comboBox.popup.opened)
-                        return Theme.palette.primaryColor1
-
-                    if (comboBox.hovered)
-                        return Theme.palette.primaryColor2
-
-                    if (root.type === StatusComboBox.Type.Secondary)
-                        return Theme.palette.directColor7
-
-                    return "transparent"
-                }
-
-                HoverHandler {
-                    cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
-                }
+            background: Loader {
+                sourceComponent: root.defaultBackgroundComponent
             }
 
             contentItem: StatusBaseText {
@@ -115,6 +120,7 @@ Item {
             }
 
             indicator: StatusIcon {
+                id: statusIndicator
                 x: comboBox.mirrored ? comboBox.padding : comboBox.width - width - comboBox.padding
                 y: comboBox.topPadding + (comboBox.availableHeight - height) / 2
                 width: root.size === StatusComboBox.Size.Large ? 24 : 16

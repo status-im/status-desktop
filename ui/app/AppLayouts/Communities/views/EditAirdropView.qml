@@ -145,8 +145,7 @@ StatusScrollView {
                                  .concat([...selectedKeysFilter.keys])
         }
 
-        readonly property string selectedFeeAccount: ModelUtils.get(root.accountsModel,
-                                                        feesBox.accountIndex).address
+        readonly property string selectedFeeAccount: feesBox.accountsSelector.currentAccountAddress
 
         function prepareEntry(key, amount, type) {
             const tokenModel = type === Constants.TokenType.ERC20
@@ -532,9 +531,6 @@ StatusScrollView {
 
         FeesBox {
             id: feesBox
-
-            readonly property int accountIndex: accountsSelector.currentIndex
-
             Layout.fillWidth: true
 
             model: feesModel
@@ -567,10 +563,8 @@ StatusScrollView {
             enabled: root.isFullyFilled && root.feesAvailable && root.feeErrorText === ""
 
             onClicked: {
-                const accountItem = ModelUtils.get(root.accountsModel,
-                                                   feesBox.accountIndex)
-                feesPopup.accountAddress = accountItem.address
-                feesPopup.accountName = accountItem.name
+                feesPopup.accountAddress = feesBox.accountsSelector.currentAccountAddress
+                feesPopup.accountName = feesBox.accountsSelector.currentAccount.name ?? ""
                 feesPopup.open()
             }
         }

@@ -469,16 +469,9 @@ Item {
     Component {
         id: clearButton
 
-        StatusFlatRoundButton {
+        StatusClearButton {
             visible: edit.length != 0 && root.clearable && !root.multiline
                      && edit.activeFocus
-            type: StatusFlatRoundButton.Type.Secondary
-            width: 24
-            height: 24
-            icon.name: "clear"
-            icon.width: 16
-            icon.height: 16
-            icon.color: Theme.palette.baseColor1
             onClicked: {
                 edit.clear()
             }

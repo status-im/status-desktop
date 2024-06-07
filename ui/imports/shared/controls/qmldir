@@ -1,3 +1,5 @@
+AccountSelector 1.0 AccountSelector.qml
+AccountSelectorHeader 1.0 AccountSelectorHeader.qml
 AddressInput 1.0 AddressInput.qml
 AmountInput 1.0 AmountInput.qml
 AssetAndAmountInput 1.0 AssetAndAmountInput.qml
@@ -48,6 +50,7 @@ TransactionAddressTile 1.0 TransactionAddressTile.qml
 TransactionDataTile 1.0 TransactionDataTile.qml
 TransactionDelegate 1.0 TransactionDelegate.qml
 TransactionDetailsHeader.qml 1.0 TransactionDetailsHeader.qml
+WalletAccountListItem 1.0 WalletAccountListItem.qml
 MockedKeycardReaderStateSelector 1.0 MockedKeycardReaderStateSelector.qml
 MockedKeycardStateSelector 1.0 MockedKeycardStateSelector.qml
 AssetsSectionDelegate 1.0 AssetsSectionDelegate.qml

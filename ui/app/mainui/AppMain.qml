@@ -1960,11 +1960,11 @@ Item {
                 return WalletStore.RootStore.selectedReceiveAccount
             }
 
-            onSelectedAccountIndexChanged: {
+            onUpdateSelectedAddress: (address) => {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return
                 }
-                WalletStore.RootStore.switchReceiveAccount(selectedIndex)
+                WalletStore.RootStore.switchReceiveAccountByAddress(address)
             }
 
             onUpdatePreferredChains: {

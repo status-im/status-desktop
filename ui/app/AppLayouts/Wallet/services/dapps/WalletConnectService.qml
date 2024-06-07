@@ -1,8 +1,10 @@
 import QtQuick 2.15
 
+import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Profile.stores 1.0
 import shared.stores 1.0
@@ -30,6 +32,17 @@ QObject {
             value: Constants.watchWalletType
             inverted: true
         }
+        proxyRoles: [
+            FastExpressionRole {
+                name: "colorizedChainPrefixes"
+                function getChainShortNames(chainIds) {
+                    const chainShortNames = root.walletStore.getNetworkShortNames(chainIds)
+                    return WalletUtils.colorizedChainPrefix(chainShortNames)
+                }
+                expression: getChainShortNames(model.preferredSharingChainIds)
+                expectedRoles: ["preferredSharingChainIds"]
+            }
+        ]
     }
     readonly property var flatNetworks: root.walletStore ? root.walletStore.flatNetworks : null
 

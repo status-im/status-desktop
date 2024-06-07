@@ -72,7 +72,7 @@ Item {
 
                 spacing: 8
 
-                accounts: d.selectedAccount
+                accounts: WalletAccountsModel {}
 
                 flatNetworks: SortFilterProxyModel {
                     sourceModel: NetworksModel.flatNetworks

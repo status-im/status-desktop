@@ -5,8 +5,11 @@ import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.0
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Wallet 1.0
+
 import utils 1.0
 import shared.stores.send 1.0
+import shared.controls 1.0
 
 import StatusQ 0.1
 import StatusQ.Components 0.1
@@ -188,22 +191,38 @@ StatusDialog {
 
     onClosed: popup.store.resetStoredProperties()
 
-    header: AccountsModalHeader {
+    header: Item {
+        implicitHeight: accountSelector.implicitHeight
+        implicitWidth: accountSelector.implicitWidth
         anchors.top: parent.top
         anchors.topMargin: -height - 18
-        model: SortFilterProxyModel {
-            sourceModel: popup.store.senderAccounts
 
-            sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
-        }
-        selectedAccount: !!popup.preSelectedAccount ? popup.preSelectedAccount: {}
-        getNetworkShortNames: function(chainIds) {return store.getNetworkShortNames(chainIds)}
-        onSelectedIndexChanged: {
-            store.switchSenderAccount(selectedIndex)
-            if (d.isSelectedHoldingValidAsset) {
-                d.setSelectedHoldingId(d.selectedHolding.symbol, d.selectedHoldingType)
+        AccountSelectorHeader {
+            id: accountSelector
+            model: SortFilterProxyModel {
+                sourceModel: popup.store.senderAccounts
+
+                sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
+                proxyRoles: [
+                    FastExpressionRole {
+                        name: "colorizedChainPrefixes"
+                        function getChainShortNames(chainIds) {
+                            const chainShortNames = popup.store.getNetworkShortNames(chainIds)
+                            return WalletUtils.colorizedChainPrefix(chainShortNames)
+                        }
+                        expression: getChainShortNames(model.preferredSharingChainIds)
+                        expectedRoles: ["preferredSharingChainIds"]
+                    }
+                ]
             }
-            popup.recalculateRoutesAndFees()
+            selectedAddress: !!popup.preSelectedAccount && !!popup.preSelectedAccount.address ? popup.preSelectedAccount.address : ""
+            onCurrentAccountAddressChanged: {
+                store.switchSenderAccountByAddress(currentAccountAddress)
+                if (d.isSelectedHoldingValidAsset) {
+                    d.setSelectedHoldingId(d.selectedHolding.symbol, d.selectedHoldingType)
+                }
+                popup.recalculateRoutesAndFees()
+            }
         }
     }
 

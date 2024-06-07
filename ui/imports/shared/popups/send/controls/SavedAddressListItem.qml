@@ -34,9 +34,7 @@ StatusListItem {
     radius: 0
     color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
     components: [
-        ClearButton {
-            width: 24
-            height: 24
+        StatusClearButton {
             visible: root.clearVisible
             onClicked: root.cleared()
         }

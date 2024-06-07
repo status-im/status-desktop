@@ -27,7 +27,6 @@ Rectangle {
     id: root
     objectName: "walletLeftTab"
 
-    property alias currentAccountIndex: walletAccountsListView.currentIndex
     property var networkConnectionStore
     property var selectAllAccounts: function(){}
     property var changeSelectedAccount: function(){}

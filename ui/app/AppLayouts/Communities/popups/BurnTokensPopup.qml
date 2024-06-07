@@ -52,7 +52,8 @@ StatusDialog {
         readonly property string remainingTokensDisplayText:
             LocaleUtils.numberToLocaleString(remainingTokensFloat)
 
-        property string accountAddress
+        readonly property string accountAddress: feesBox.accountsSelector.currentAccountAddress
+
         property string amountToBurn: !isFormValid ? "" :
                                         specificAmountButton.checked ? amountInput.amount : root.remainingTokens
 
@@ -175,17 +176,6 @@ StatusDialog {
             implicitWidth: 0
             model: d.isFormValid ? singleFeeModel : undefined
             accountsSelector.model: root.accounts
-
-            accountsSelector.onCurrentIndexChanged: {
-                if (accountsSelector.currentIndex < 0)
-                    return
-
-                const item = SQUtils.ModelUtils.get(
-                               accountsSelector.model,
-                               accountsSelector.currentIndex)
-
-                d.accountAddress = item.address
-            }
 
             QtObject {
                 id: singleFeeModel
