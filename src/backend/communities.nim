@@ -103,12 +103,6 @@ proc checkPermissionsToJoinCommunity*(communityId: string, addresses: seq[string
     "addresses": addresses
   }])
 
-proc checkPermissionsToJoinCommunityLight*(communityId: string, addresses: seq[string]): RpcResponse[JsonNode] =
-  result = callPrivateRPC("checkPermissionsToJoinCommunityLight".prefix, %*[{
-    "communityId": communityId,
-    "addresses": addresses
-  }])
-
 proc reevaluateCommunityMembersPermissions*(
     communityId: string,
   ): RpcResponse[JsonNode] =
@@ -126,17 +120,6 @@ proc checkAllCommunityChannelsPermissions*(communityId: string, addresses: seq[s
   result = callPrivateRPC("checkAllCommunityChannelsPermissions".prefix, %*[{
     "communityId": communityId,
     "addresses": addresses,
-  }])
-
-proc checkCommunityChannelPermissionsLight*(communityId: string, chatId: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("checkCommunityChannelPermissionsLight".prefix, %*[{
-    "communityId": communityId,
-    "chatId": chatId
-  }])
-
-proc checkAllCommunityChannelsPermissionsLight*(communityId: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("checkAllCommunityChannelsPermissionsLight".prefix, %*[{
-    "communityId": communityId
   }])
 
 proc allNonApprovedCommunitiesRequestsToJoin*(): RpcResponse[JsonNode] =

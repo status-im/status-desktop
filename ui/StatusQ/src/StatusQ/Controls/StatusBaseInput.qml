@@ -400,7 +400,7 @@ Item {
                         KeyNavigation.tab: root.tabNavItem
                         Keys.onPressed: {
                             edit.keyEvent = event.key
-                            root.keyPressed(event);
+                            root.keyPressed(event)
                         }
                         onCursorRectangleChanged: Utils.ensureVisible(flick, cursorRectangle)
                         onActiveFocusChanged: if (root.pristine) root.pristine = false

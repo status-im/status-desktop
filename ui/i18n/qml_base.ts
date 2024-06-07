@@ -21553,8 +21553,8 @@ your PIN or if the wrong PIN is entered five times in a row.</translation>
     <message>
         <location filename="../app/AppLayouts/Communities/panels/SortableTokenHoldersPanel.qml" line="74" />
         <location filename="../app/AppLayouts/Communities/panels/SortableTokenHoldersPanel.qml" line="74" />
-        <source>%1 token holders</source>
-        <translation>%1 token holders</translation>
+        <source>%1 token hodlers</source>
+        <translation>%1 token hodlers</translation>
     </message>
     <message>
         <location filename="../app/AppLayouts/Communities/panels/SortableTokenHoldersPanel.qml" line="90" />
@@ -23472,8 +23472,8 @@ access to your webcam</translation>
     <message>
         <location filename="../app/AppLayouts/Communities/panels/TokenHoldersPanel.qml" line="46" />
         <location filename="../app/AppLayouts/Communities/panels/TokenHoldersPanel.qml" line="46" />
-        <source>%1 token holders</source>
-        <translation type="unfinished">%1 token holders</translation>
+        <source>%1 token hodlers</source>
+        <translation type="unfinished">%1 token hodlers</translation>
     </message>
     <message>
         <location filename="../app/AppLayouts/Communities/panels/TokenHoldersPanel.qml" line="60" />

@@ -77,6 +77,7 @@ Item {
     readonly property TransactionStore transactionStore: TransactionStore {
         walletAssetStore: appMain.walletAssetsStore
         tokensStore: appMain.tokensStore
+        currencyStore: appMain.currencyStore
     }
 
     // set from main.qml
@@ -2043,7 +2044,8 @@ Item {
 
                 projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
             }
-            dappsStore: DAppsStore {
+            store: DAppsStore {
+                controller: WalletStore.RootStore.walletConnectController
             }
             walletStore: appMain.rootStore.profileSectionStore.walletStore
 

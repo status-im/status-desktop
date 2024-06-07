@@ -83,5 +83,8 @@ QtObject {
         'mossHovered': '#1E857B',
         'brownHovered': '#6F2727',
         'brown2Hovered': '#7C6926',
+
+        'lightDesktopBlue10': '#ECEFFB',
+        'darkDesktopBlue10': '#273251',
     }
 }

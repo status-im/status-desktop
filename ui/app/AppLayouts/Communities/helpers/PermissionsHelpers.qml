@@ -36,6 +36,13 @@ QtObject {
         return ""
     }
 
+    function getTokenDecimalsByKey(model, key) {
+        const item = getTokenByKey(model, key)
+        if (item)
+            return item.decimals ?? 0
+        return 0
+    }
+
     function getTokenRemainingSupplyByKey(model, key) {
         const item = getTokenByKey(model, key)
 

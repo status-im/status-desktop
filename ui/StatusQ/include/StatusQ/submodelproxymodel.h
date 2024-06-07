@@ -11,7 +11,12 @@
 class QQmlComponent;
 class QQmlEngine;
 
-class SubmodelProxyModel : public QIdentityProxyModel
+/**
+ * NOTE: This proxy model is deprecated and will be removed soon. Use
+ * ObjectProxyModel instead.
+ */
+class QT_DEPRECATED_X("Use ObjectProxyModel instead") SubmodelProxyModel
+    : public QIdentityProxyModel
 {
     Q_OBJECT
 

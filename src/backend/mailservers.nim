@@ -20,6 +20,12 @@ proc saveMailserver*(id: string, name: string, enode: string, fleet: string):
 proc getMailservers*(): RpcResponse[JsonNode] =
   result = core.callPrivateRPC("mailservers_getMailservers")
 
+proc setPinnedMailservers*(mailservers: JsonNode): RpcResponse[JsonNode] =
+  result = core.callPrivateRPC("setPinnedMailservers".prefix, %*[ mailservers ])
+
+proc toggleUseMailservers*(value: bool): RpcResponse[JsonNode] =
+  result = core.callPrivateRPC("toggleUseMailservers".prefix, %*[ value ])
+
 proc syncChatFromSyncedFrom*(chatId: string): RpcResponse[JsonNode] =
   let payload = %*[chatId]
   result = core.callPrivateRPC("syncChatFromSyncedFrom".prefix, payload)

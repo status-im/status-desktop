@@ -111,6 +111,8 @@ Item {
                 root.clicked(imageMessage, mouse)
             }
         }
+
+        Component.onDestruction: imageMessage.source = ""
     }
 
     Loader {

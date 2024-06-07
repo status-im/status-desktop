@@ -35,13 +35,13 @@ type
     LoaderActive
     Locked
     RequiresPermissions
+    CanPost
+    CanView
     CanPostReactions
     ViewersCanPostReactions
     HideIfPermissionsNotMet
-    ViewOnlyPermissionsSatisfied
-    ViewAndPostPermissionsSatisfied
     ShouldBeHiddenBecausePermissionsAreNotMet #this is a complex role which depends on other roles
-                                              #(MemberRole , HideIfPermissionsNotMet, ViewOnlyPermissionsSatisfied, ViewAndPostPermissionsSatisfied)
+                                              #(MemberRole , HideIfPermissionsNotMet, canPost and canView)
 
 QtObject:
   type
@@ -130,8 +130,6 @@ QtObject:
       ModelRole.Position.int:"position",
       ModelRole.CategoryId.int:"categoryId",
       ModelRole.HideIfPermissionsNotMet.int:"hideIfPermissionsNotMet",
-      ModelRole.ViewOnlyPermissionsSatisfied.int:"viewOnlyPermissionsSatisfied",
-      ModelRole.ViewAndPostPermissionsSatisfied.int:"viewAndPostPermissionsSatisfied",
       ModelRole.CategoryPosition.int:"categoryPosition",
       ModelRole.Highlight.int:"highlight",
       ModelRole.CategoryOpened.int:"categoryOpened",
@@ -141,6 +139,8 @@ QtObject:
       ModelRole.LoaderActive.int:"loaderActive",
       ModelRole.Locked.int:"locked",
       ModelRole.RequiresPermissions.int:"requiresPermissions",
+      ModelRole.CanPost.int:"canPost",
+      ModelRole.CanView.int:"canView",
       ModelRole.CanPostReactions.int:"canPostReactions",
       ModelRole.ViewersCanPostReactions.int:"viewersCanPostReactions",
       ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int:"shouldBeHiddenBecausePermissionsAreNotMet"
@@ -211,16 +211,16 @@ QtObject:
       result = newQVariant(item.isLocked)
     of ModelRole.RequiresPermissions:
       result = newQVariant(item.requiresPermissions)
+    of ModelRole.CanPost:
+      result = newQVariant(item.canPost)
+    of ModelRole.CanView:
+      result = newQVariant(item.canView)
     of ModelRole.CanPostReactions:
       result = newQVariant(item.canPostReactions)
     of ModelRole.ViewersCanPostReactions:
       result = newQVariant(item.viewersCanPostReactions)
     of ModelRole.HideIfPermissionsNotMet:
       result = newQVariant(item.hideIfPermissionsNotMet)
-    of ModelRole.ViewAndPostPermissionsSatisfied:
-      result = newQVariant(item.viewAndPostPermissionsSatisfied)
-    of ModelRole.ViewOnlyPermissionsSatisfied:
-      result = newQVariant(item.viewOnlyPermissionsSatisfied)
     of ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet:
       return newQVariant(self.itemShouldBeHiddenBecauseNotPermitted(item))
 
@@ -370,36 +370,6 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Locked.int])
 
-  proc setViewOnlyPermissionsSatisfied*(self: Model, id: string, satisfied: bool) =
-    let index = self.getItemIdxById(id)
-    if index == -1:
-      return
-
-    if (self.items[index].viewOnlyPermissionsSatisfied == satisfied):
-      return
-
-    self.items[index].viewOnlyPermissionsSatisfied = satisfied
-    let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
-    # refresh also ShouldBeHiddenBecausePermissionsAreNotMet because it depends on ViewOnlyPermissionsSatisfied
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.ViewOnlyPermissionsSatisfied.int, ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int])
-    self.updateHiddenFlagForCategory(self.items[index].categoryId)
-
-  proc setViewAndPostPermissionsSatisfied*(self: Model, id: string, satisfied: bool) =
-    let index = self.getItemIdxById(id)
-    if index == -1:
-      return
-
-    if (self.items[index].viewAndPostPermissionsSatisfied == satisfied):
-      return
-
-    self.items[index].viewAndPostPermissionsSatisfied = satisfied
-    let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
-    # refresh also ShouldBeHiddenBecausePermissionsAreNotMet because it depends on ViewAndPostPermissionsSatisfied
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.ViewAndPostPermissionsSatisfied.int, ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int])
-    self.updateHiddenFlagForCategory(self.items[index].categoryId)
-
   proc setItemPermissionsRequired*(self: Model, id: string, value: bool) =
     let index = self.getItemIdxById(id)
     if index == -1:
@@ -431,22 +401,34 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Muted.int])
 
-  proc changeCanPostValues*(self: Model, id: string, canPostReactions, viewersCanPostReactions: bool) =
+  proc changeCanPostValues*(self: Model, id: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool) =
     let index = self.getItemIdxById(id)
     if index == -1:
       return
-    if(self.items[index].canPostReactions == canPostReactions and
-        self.items[index].viewersCanPostReactions == viewersCanPostReactions
-      ):
+    var changedRoles: seq[int] = @[]
+
+    if self.items[index].canView != canView:
+      self.items[index].canView = canView
+      changedRoles.add(ModelRole.CanView.int)
+
+    if self.items[index].canPost != canPost:
+      self.items[index].canPost = canPost
+      changedRoles.add(ModelRole.CanPost.int)
+
+    if self.items[index].canPostReactions != canPostReactions:
+      self.items[index].canPostReactions = canPostReactions
+      changedRoles.add(ModelRole.CanPostReactions.int)
+
+    if self.items[index].viewersCanPostReactions != viewersCanPostReactions:
+      self.items[index].viewersCanPostReactions = viewersCanPostReactions
+      changedRoles.add(ModelRole.ViewersCanPostReactions.int)
+
+    if changedRoles.len == 0:
       return
-    self.items[index].canPostReactions = canPostReactions
-    self.items[index].viewersCanPostReactions = viewersCanPostReactions
+    
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[
-      ModelRole.CanPostReactions.int,
-      ModelRole.ViewersCanPostReactions.int
-    ])
+    self.dataChanged(modelIndex, modelIndex, changedRoles)
 
   proc changeMutedOnItemByCategoryId*(self: Model, categoryId: string, muted: bool) =
     for i in 0 ..< self.items.len:

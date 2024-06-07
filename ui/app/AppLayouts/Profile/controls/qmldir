@@ -4,3 +4,4 @@ ShowcaseDelegate 1.0 ShowcaseDelegate.qml
 StaticSocialLinkInput 1.0 StaticSocialLinkInput.qml
 WalletAccountDelegate 1.0 WalletAccountDelegate.qml
 WalletKeyPairDelegate 1.0 WalletKeyPairDelegate.qml
+WalletAccountDetailsKeypairItem 1.0 WalletAccountDetailsKeypairItem.qml

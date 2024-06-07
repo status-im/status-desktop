@@ -33,6 +33,7 @@ type MailserverAvailableSignal* = ref object of Signal
 
 type MailserverChangedSignal* = ref object of Signal
   address*: string
+  id*: string
 
 type MailserverNotWorkingSignal* = ref object of Signal
 
@@ -84,6 +85,7 @@ proc fromEvent*(T: type MailserverChangedSignal, jsonSignal: JsonNode): Mailserv
   result = MailserverChangedSignal()
   result.signalType = SignalType.MailserverChanged
   result.address = jsonSignal["event"]{"address"}.getStr()
+  result.id = jsonSignal["event"]{"id"}.getStr()
 
 proc fromEvent*(T: type MailserverNotWorkingSignal, jsonSignal: JsonNode): MailserverNotWorkingSignal =
   result = MailserverNotWorkingSignal()

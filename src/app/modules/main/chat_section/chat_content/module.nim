@@ -4,6 +4,7 @@ import ../io_interface as delegate_interface
 import view, controller
 
 import ../item as chat_item
+import ./chat_details
 import ../../../shared_models/message_model as pinned_msg_model
 import ../../../shared_models/message_item as pinned_msg_item
 import ../../../shared_models/message_transaction_parameters_item
@@ -90,11 +91,15 @@ method load*(self: Module, chatItem: chat_item.Item) =
 
   self.usersModule.load()
 
-  self.view.load(chatItem.id, chatItem.`type`, self.controller.belongsToCommunity(),
+  self.view.load()
+  self.view.chatDetails.setChatDetails(chatItem.id, chatItem.`type`, self.controller.belongsToCommunity(),
     self.controller.isUsersListAvailable(), chatName, chatImage,
     chatItem.color, chatItem.description, chatItem.emoji, chatItem.hasUnreadMessages, chatItem.notificationsCount,
     chatItem.highlight, chatItem.muted, chatItem.position, isUntrustworthy = trustStatus == TrustStatus.Untrustworthy,
-    isContact, chatItem.blocked, chatItem.canPostReactions, chatItem.hideIfPermissionsNotMet)
+    isContact, chatItem.blocked, chatItem.canPost, chatItem.canView, chatItem.canPostReactions,
+    chatItem.hideIfPermissionsNotMet)
+  
+  self.view.chatDetailsChanged()
 
   self.inputAreaModule.load()
   self.messagesModule.load()
@@ -365,8 +370,33 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
 
-method onChatEdited*(self: Module, chatDto: ChatDto) =
-  self.view.updateChatDetails(chatDto)
+method onChatUpdated*(self: Module, chatItem: chat_item.Item) =
+  if chatItem.`type` != ChatType.OneToOne.int:
+    self.view.chatDetails.setName(chatItem.name)
+    self.view.chatDetails.setIcon(chatItem.icon)
+  self.view.chatDetails.setDescription(chatItem.description)
+  self.view.chatDetails.setEmoji(chatItem.emoji)
+  self.view.chatDetails.setColor(chatItem.color)
+  self.view.chatDetails.setMuted(chatItem.muted)
+  self.view.chatDetails.setCanPost(chatItem.canPost)
+  self.view.chatDetails.setCanView(chatItem.canView)
+  self.view.chatDetails.setCanPostReactions(chatItem.canPostReactions)
+  self.view.chatDetails.setHideIfPermissionsNotMet(chat_item.hideIfPermissionsNotMet)
+
+  self.messagesModule.updateChatFetchMoreMessages()
+  self.messagesModule.updateChatIdentifier()
+
+method onCommunityChannelEdited*(self: Module, chatDto: ChatDto) =
+  # This is CommunityChat ChatDto
+  self.view.chatDetails.setDescription(chatDto.description)
+  self.view.chatDetails.setEmoji(chatDto.emoji)
+  self.view.chatDetails.setColor(chatDto.color)
+  self.view.chatDetails.setMuted(chatDto.muted)
+  self.view.chatDetails.setCanPost(chatDto.canPost)
+  self.view.chatDetails.setCanView(chatDto.canView)
+  self.view.chatDetails.setCanPostReactions(chatDto.canPostReactions)
+  self.view.chatDetails.setHideIfPermissionsNotMet(chatDto.hideIfPermissionsNotMet)
+
   self.messagesModule.updateChatFetchMoreMessages()
   self.messagesModule.updateChatIdentifier()
 
@@ -413,12 +443,6 @@ method amIChatAdmin*(self: Module): bool =
     let communityDto = self.controller.getCommunityDetails()
     return communityDto.memberRole == MemberRole.Owner or
       communityDto.memberRole == MemberRole.Admin or communityDto.memberRole == MemberRole.TokenMaster
-
-method onUpdateViewOnlyPermissionsSatisfied*(self: Module, value: bool) =
-  self.view.setViewOnlyPermissionsSatisfied(value)
-
-method onUpdateViewAndPostPermissionsSatisfied*(self: Module, value: bool) =
-  self.view.setViewAndPostPermissionsSatisfied(value)
 
 method setPermissionsCheckOngoing*(self: Module, value: bool) =
   self.view.setPermissionsCheckOngoing(value)

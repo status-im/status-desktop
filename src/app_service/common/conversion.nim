@@ -87,3 +87,5 @@ proc wei2Gwei*(input: string): string =
 proc intToEnum*[T](intVal: int, defaultVal: T): T =
   result = if (intVal >= ord(low(T)) and intVal <= ord(high(T))): T(intVal) else: defaultVal
 
+proc intToEnum*[T](intVal: int): T =
+  result = if (intVal >= ord(low(T)) and intVal <= ord(high(T))): T(intVal) else: raise newException(ValueError, "Can't convert int to enum")

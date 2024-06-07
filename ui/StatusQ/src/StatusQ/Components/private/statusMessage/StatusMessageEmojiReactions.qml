@@ -108,6 +108,7 @@ Item {
                     spacing: 4
 
                     StatusEmoji {
+                        objectName: "emojiReaction"
                         anchors.verticalCenter: parent.verticalCenter
                         width: 15
                         height: 15

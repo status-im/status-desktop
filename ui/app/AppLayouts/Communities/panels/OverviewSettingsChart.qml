@@ -30,7 +30,7 @@ StatusChartPanel {
 
     onVisibleChanged: if(visible) d.resetWithSpamProtection()
     onTimeRangeTabBarIndexChanged: reset()
-    onModelChanged: chart.updateToNewData()
+    onModelChanged: chart.refresh()
     onCollectCommunityMetricsMessagesCount: d.lastRequestModelMetadata = d.selectedTabInfo.modelItems
 
     QtObject {
@@ -41,6 +41,7 @@ StatusChartPanel {
         readonly property string twentyPercentBaseColor1: Theme.palette.alphaColor(baseColor1, 0.2)
         readonly property string barColor: Theme.palette.primaryColor2
         readonly property string barBorderColor: Theme.palette.primaryColor1
+    
         readonly property string messagesLabel: qsTr("Messages")
 
         property int hoveredBarIndex: 0
@@ -266,17 +267,15 @@ StatusChartPanel {
     graphsModel: d.graphTabsModel
     timeRangeModel: d.modelMetadata
     onHeaderTabClicked: {
-        root.chart.animateToNewData();
+        chart.refresh()
     }
 
     /////////////////////////////
     // Chartjs configuration   //
     /////////////////////////////
-    chart.chartType: 'bar'
-    chart.chartData: {
-        return {
-            labels: d.labels,
-            datasets: [{
+    chart.type: 'bar'
+    chart.labels: d.labels
+    chart.datasets: [{
                 xAxisId: 'x-axis-1',
                 yAxisId: 'y-axis-1',
                 backgroundColor: d.barColor,
@@ -286,30 +285,26 @@ StatusChartPanel {
                 hoverBorderWidth: 2,
                 data: d.chartData
             }]
-        }
-    }
 
-    chart.chartOptions: {
+    chart.options: {
         return {
-            maintainAspectRatio: false,
-            responsive: true,
-            legend: {
-                display: false
-            },
             // Popup follows the cursor
-            onHover: function(arg1, hoveredItems, event) {
-                if(!event || hoveredItems.length == 0) {
+            onHover: function(arg1, hoveredItems) {
+                if(!arg1 || hoveredItems.length == 0) {
                     toolTip.close()
                     return
                 }
-
+                arg1.target = chart
                 d.hoveredBarIndex = hoveredItems[0]._index
                 d.hoveredBarValue = hoveredItems[0]._chart.config.data.datasets[0].data[hoveredItems[0]._index]
-                const position = d.getAdjustedTooltipPosition(event)
+                const position = d.getAdjustedTooltipPosition(arg1)
                 toolTip.popup(position.x, position.y)
             },
             tooltips: {
                 enabled: false,
+            },
+            legend: {
+                display: false
             },
             scales: {
                 xAxes: [{

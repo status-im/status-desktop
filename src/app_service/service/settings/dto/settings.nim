@@ -255,6 +255,6 @@ proc pinnedMailserverToJsonNode*(mailserver: PinnedMailserver): JsonNode =
     "waku.test": mailserver.wakuTest,
     "status.test": mailserver.statusTest,
     "status.prod": mailserver.statusProd,
-    "shard.test": mailserver.shardsTest,
+    "shards.test": mailserver.shardsTest,
     "sharding.staging": mailserver.shardsStaging,
   }

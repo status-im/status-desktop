@@ -74,6 +74,8 @@ ThemePalette {
 
     messageHighlightColor: getColor('blue4', 0.2)
 
+    desktopBlue10: getColor('darkDesktopBlue10')
+
     userCustomizationColors: [
         "#AAC6FF",
         "#887AF9",

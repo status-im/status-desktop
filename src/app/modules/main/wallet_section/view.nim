@@ -4,8 +4,8 @@ import ./activity/controller as activityc
 import ./activity/details_controller as activity_detailsc
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import ./io_interface
-import ../../shared_models/currency_amount
-import ./poc_wallet_connect/controller as wcc
+import app/modules/shared_models/currency_amount
+import app/modules/shared_modules/wallet_connect/controller as wc_controller
 
 type
   ActivityControllerArray* = array[2, activityc.Controller]
@@ -25,7 +25,7 @@ QtObject:
       collectibleDetailsController: collectible_detailsc.Controller
       isNonArchivalNode: bool
       keypairOperabilityForObservedAccount: string
-      wcController: wcc.Controller
+      wcController: QVariant
       walletReady: bool
       addressFilters: string
       currentCurrency: string
@@ -34,6 +34,8 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: View) =
+    self.wcController.delete
+
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface,
@@ -41,14 +43,14 @@ QtObject:
     tmpActivityControllers: ActivityControllerArray,
     activityDetailsController: activity_detailsc.Controller,
     collectibleDetailsController: collectible_detailsc.Controller,
-    wcController: wcc.Controller): View =
+    wcController: wc_controller.Controller): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
     result.tmpActivityControllers = tmpActivityControllers
     result.activityDetailsController = activityDetailsController
     result.collectibleDetailsController = collectibleDetailsController
-    result.wcController = wcController
+    result.wcController = newQVariant(wcController)
 
     result.setup()
 
@@ -237,7 +239,10 @@ QtObject:
     self.destroyKeypairImportPopup()
 
   proc getWalletConnectController(self: View): QVariant {.slot.} =
-    return newQVariant(self.wcController)
+    if self.wcController == nil:
+      return newQVariant()
+    return self.wcController
+
   QtProperty[QVariant] walletConnectController:
     read = getWalletConnectController
 

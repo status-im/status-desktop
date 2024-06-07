@@ -1,6 +1,6 @@
 import NimQml
 import ../../../shared_models/message_model as pinned_msg_model
-import ../../../../../app_service/service/chat/dto/chat as chat_dto
+import ../item as chat_item
 
 import io_interface
 import chat_details
@@ -13,8 +13,6 @@ QtObject:
       pinnedMessagesModelVariant: QVariant
       chatDetails: ChatDetails
       chatDetailsVariant: QVariant
-      viewOnlyPermissionsSatisfied: bool
-      viewAndPostPermissionsSatisfied: bool
       permissionsCheckOngoing: bool
 
   proc chatDetailsChanged*(self:View) {.signal.}
@@ -34,18 +32,9 @@ QtObject:
     result.pinnedMessagesModelVariant = newQVariant(result.pinnedMessagesModel)
     result.chatDetails = newChatDetails()
     result.chatDetailsVariant = newQVariant(result.chatDetails)
-    result.viewOnlyPermissionsSatisfied = false
-    result.viewAndPostPermissionsSatisfied = false
 
-  proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
-      name, icon: string, color, description, emoji: string, hasUnreadMessages: bool,
-      notificationsCount: int, highlight, muted: bool, position: int, isUntrustworthy: bool,
-      isContact: bool, blocked: bool, canPostReactions: bool, hideIfPermissionsNotMet: bool) =
-    self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name,
-      icon, color, description, emoji, hasUnreadMessages, notificationsCount, highlight, muted, position,
-      isUntrustworthy, isContact, blocked, canPostReactions, hideIfPermissionsNotMet)
+  proc load*(self: View) =
     self.delegate.viewDidLoad()
-    self.chatDetailsChanged()
 
   proc pinnedModel*(self: View): pinned_msg_model.Model =
     return self.pinnedMessagesModel
@@ -103,6 +92,9 @@ QtObject:
   proc leaveChat*(self: View) {.slot.} =
     self.delegate.leaveChat()
 
+  proc chatDetails*(self: View): ChatDetails =
+    return self.chatDetails
+
   proc setMuted*(self: View, muted: bool) =
     self.chatDetails.setMuted(muted)
 
@@ -141,16 +133,6 @@ QtObject:
   proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
 
-  proc updateChatDetails*(self: View, chatDto: ChatDto) =
-    if chatDto.chatType != ChatType.OneToOne:
-      self.chatDetails.setName(chatDto.name)
-      self.chatDetails.setIcon(chatDto.icon)
-    self.chatDetails.setDescription(chatDto.description)
-    self.chatDetails.setEmoji(chatDto.emoji)
-    self.chatDetails.setColor(chatDto.color)
-    self.chatDetails.setMuted(chatDto.muted)
-    self.chatDetails.setCanPostReactions(chatDto.canPostReactions)
-
   proc updateChatDetailsName*(self: View, name: string) =
     self.chatDetails.setName(name)
 
@@ -162,30 +144,6 @@ QtObject:
 
   proc updateChatBlocked*(self: View, blocked: bool) =
     self.chatDetails.setBlocked(blocked)
-
-  proc viewOnlyPermissionsSatisfiedChanged(self: View) {.signal.}
-
-  proc setViewOnlyPermissionsSatisfied*(self: View, value: bool) =
-    self.viewOnlyPermissionsSatisfied = value
-    self.viewOnlyPermissionsSatisfiedChanged()
-
-  proc getViewOnlyPermissionsSatisfied*(self: View): bool {.slot.} =
-    return self.viewOnlyPermissionsSatisfied or self.amIChatAdmin()
-  QtProperty[bool] viewOnlyPermissionsSatisfied:
-    read = getViewOnlyPermissionsSatisfied
-    notify = viewOnlyPermissionsSatisfiedChanged
-
-  proc viewAndPostPermissionsSatisfiedChanged(self: View) {.signal.}
-
-  proc setViewAndPostPermissionsSatisfied*(self: View, value: bool) =
-    self.viewAndPostPermissionsSatisfied = value
-    self.viewAndPostPermissionsSatisfiedChanged()
-
-  proc getViewAndPostPermissionsSatisfied*(self: View): bool {.slot.} =
-    return self.viewAndPostPermissionsSatisfied or self.amIChatAdmin()
-  QtProperty[bool] viewAndPostPermissionsSatisfied:
-    read = getViewAndPostPermissionsSatisfied
-    notify = viewAndPostPermissionsSatisfiedChanged
 
   proc getPermissionsCheckOngoing*(self: View): bool {.slot.} =
     return self.permissionsCheckOngoing

@@ -93,6 +93,9 @@ method onAirdropStateChanged*(self: AccessInterface, communityId: string, tokenN
 method removeCommunityToken*(self: AccessInterface, communityId: string, chainId: int, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method refreshCommunityToken*(self: AccessInterface, chainId: int, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onOwnerTokenReceived*(self: AccessInterface, communityId: string, communityName: string, chainId: int, contractAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -115,4 +118,10 @@ method onOwnerTokenOwnerAddress*(self: AccessInterface, chainId: int, contractAd
   raise newException(ValueError, "No implementation available")
 
 method asyncGetOwnerTokenDetails*(self: AccessInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method startTokenHoldersManagement*(self: AccessInterface, chainId: int, contractAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method stopTokenHoldersManagement*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

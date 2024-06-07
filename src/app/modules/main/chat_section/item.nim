@@ -36,10 +36,10 @@ type
     locked: bool
     requiresPermissions: bool
     canPostReactions: bool
+    canPost: bool
+    canView: bool
     viewersCanPostReactions: bool
     hideIfPermissionsNotMet: bool
-    viewOnlyPermissionsSatisfied: bool
-    viewAndPostPermissionsSatisfied: bool
 
 proc initItem*(
     id,
@@ -68,11 +68,11 @@ proc initItem*(
     loaderActive = false,
     locked = false,
     requiresPermissions = false,
+    canPost = true,
+    canView = true,
     canPostReactions = true,
     viewersCanPostReactions = true,
     hideIfPermissionsNotMet: bool,
-    viewOnlyPermissionsSatisfied: bool,
-    viewAndPostPermissionsSatisfied: bool
     ): Item =
   result = Item()
   result.id = id
@@ -102,11 +102,11 @@ proc initItem*(
   result.loaderActive = loaderActive
   result.locked = locked
   result.requiresPermissions = requiresPermissions
+  result.canPost = canPost
+  result.canView = canView
   result.canPostReactions = canPostReactions
   result.viewersCanPostReactions = viewersCanPostReactions
   result.hideIfPermissionsNotMet = hideIfPermissionsNotMet
-  result.viewOnlyPermissionsSatisfied = viewOnlyPermissionsSatisfied
-  result.viewAndPostPermissionsSatisfied = viewAndPostPermissionsSatisfied
 
 proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
@@ -135,11 +135,11 @@ proc `$`*(self: Item): string =
     loaderActive: {$self.loaderActive},
     locked: {$self.locked},
     requiresPermissions: {$self.requiresPermissions},
+    canPost: {$self.canPost},
+    canView: {$self.canView},
     canPostReactions: {$self.canPostReactions},
     viewersCanPostReactions: {$self.viewersCanPostReactions},
     hideIfPermissionsNotMet: {$self.hideIfPermissionsNotMet},
-    viewOnlyPermissionsSatisfied: {$self.viewOnlyPermissionsSatisfied},
-    viewAndPostPermissionsSatisfied: {$self.viewAndPostPermissionsSatisfied}
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
@@ -169,11 +169,11 @@ proc toJsonNode*(self: Item): JsonNode =
     "loaderActive": self.loaderActive,
     "locked": self.locked,
     "requiresPermissions": self.requiresPermissions,
+    "canPost": self.canPost,
+    "canView": self.canView,
     "canPostReactions": self.canPostReactions,
     "viewersCanPostReactions": self.viewersCanPostReactions,
     "hideIfPermissionsNotMet": self.hideIfPermissionsNotMet,
-    "viewOnlyPermissionsSatisfied": self.viewOnlyPermissionsSatisfied,
-    "viewAndPostPermissionsSatisfied": self.viewAndPostPermissionsSatisfied
   }
 
 proc delete*(self: Item) =
@@ -278,18 +278,6 @@ proc hideIfPermissionsNotMet*(self: Item): bool =
 proc `hideIfPermissionsNotMet=`*(self: var Item, value: bool) =
   self.hideIfPermissionsNotMet = value
 
-proc viewAndPostPermissionsSatisfied*(self: Item): bool =
-  self.viewAndPostPermissionsSatisfied
-
-proc `viewAndPostPermissionsSatisfied=`*(self: var Item, value: bool) =
-  self.viewAndPostPermissionsSatisfied = value
-
-proc viewOnlyPermissionsSatisfied*(self: Item): bool =
-  self.viewOnlyPermissionsSatisfied
-
-proc `viewOnlyPermissionsSatisfied=`*(self: var Item, value: bool) =
-  self.viewOnlyPermissionsSatisfied = value
-
 proc categoryPosition*(self: Item): int =
   self.categoryPosition
 
@@ -344,6 +332,18 @@ proc requiresPermissions*(self: Item): bool =
 proc `requiresPermissions=`*(self: Item, value: bool) =
   self.requiresPermissions = value
 
+proc canPost*(self: Item): bool =
+  self.canPost
+
+proc `canPost=`*(self: Item, value: bool) =
+  self.canPost = value
+
+proc canView*(self: Item): bool =
+  self.canView
+
+proc `canView=`*(self: Item, value: bool) =
+  self.canView = value
+
 proc canPostReactions*(self: Item): bool =
   self.canPostReactions
 
@@ -357,4 +357,4 @@ proc `viewersCanPostReactions=`*(self: Item, value: bool) =
   self.viewersCanPostReactions = value
 
 proc hideBecausePermissionsAreNotMet*(self: Item): bool =
-  self.hideIfPermissionsNotMet and not self.viewOnlyPermissionsSatisfied and not self.viewAndPostPermissionsSatisfied
+  self.hideIfPermissionsNotMet and not self.canPost and not self.canView

@@ -81,9 +81,7 @@ Rectangle {
             visible: !root.isCommunityOwnershipTransfer && !root.walletStore.showAllAccounts
             icon.name: "token"
             text: qsTr("Buy")
-            onClicked: function () {
-                Global.openPopup(buySellModal);
-            }
+            onClicked: Global.openBuyCryptoModalRequested()
         }        
 
         StatusFlatButton {
@@ -96,11 +94,6 @@ Rectangle {
             text: qsTr("Swap")
             onClicked: root.launchSwapModal()
         }
-    }
-
-    Component {
-        id: buySellModal
-        CryptoServicesModal {}
     }
 }
 

@@ -32,7 +32,7 @@ Item {
             "metadata": {
                 "description": "React App for WalletConnect",
                 "icons": [
-                "https://avatars.githubusercontent.com/u/37784886"
+                    "https://avatars.githubusercontent.com/u/37784886"
                 ],
                 "name": "React App",
                 "url": "https://react-app.walletconnect.com",
@@ -72,8 +72,7 @@ Item {
 
                 spacing: 8
 
-                accounts: WalletAccountsModel{
-                }
+                accounts: d.selectedAccount
 
                 flatNetworks: SortFilterProxyModel {
                     sourceModel: NetworksModel.flatNetworks

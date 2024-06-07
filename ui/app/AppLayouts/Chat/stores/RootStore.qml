@@ -674,7 +674,7 @@ QtObject {
             } else if (_d.activeChatType === Constants.chatType.privateGroupChat) {
                 return _d.amIMember
             } else if (_d.activeChatType === Constants.chatType.communityChat) {
-                return currentChatContentModule().viewAndPostPermissionsSatisfied
+                return currentChatContentModule().chatDetails.canPost
             }
 
             return true

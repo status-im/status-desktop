@@ -1,6 +1,7 @@
 import QtQuick 2.15
 
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Profile.stores 1.0
@@ -10,12 +11,14 @@ import shared.popups.walletconnect 1.0
 import SortFilterProxyModel 0.2
 import utils 1.0
 
-QtObject {
+QObject {
     id: root
 
     required property WalletConnectSDK wcSDK
-    required property DAppsStore dappsStore
+    required property DAppsStore store
     required property WalletStore walletStore
+
+    readonly property alias dappsModel: d.dappsProvider.dappsModel
 
     readonly property var validAccounts: SortFilterProxyModel {
         sourceModel: walletStore.accounts
@@ -28,12 +31,12 @@ QtObject {
     readonly property var flatNetworks: walletStore.flatNetworks
 
     function pair(uri) {
-        _d.acceptedSessionProposal = null
+        d.acceptedSessionProposal = null
         wcSDK.pair(uri)
     }
 
     function approvePairSession(sessionProposal, approvedChainIds, approvedAccount) {
-        _d.acceptedSessionProposal = sessionProposal
+        d.acceptedSessionProposal = sessionProposal
         let approvedNamespaces = JSON.parse(Helpers.buildSupportedNamespaces(approvedChainIds, [approvedAccount.address]))
         wcSDK.buildApprovedNamespaces(sessionProposal.params, approvedNamespaces)
     }
@@ -53,7 +56,7 @@ QtObject {
         target: wcSDK
 
         function onSessionProposal(sessionProposal) {
-            _d.currentSessionProposal = sessionProposal
+            d.currentSessionProposal = sessionProposal
 
             let supportedNamespacesStr = Helpers.buildSupportedNamespacesFromModels(root.flatNetworks, root.validAccounts)
             wcSDK.buildApprovedNamespaces(sessionProposal.params, JSON.parse(supportedNamespacesStr))
@@ -65,24 +68,37 @@ QtObject {
                 return
             }
 
-            if (_d.acceptedSessionProposal) {
-                wcSDK.approveSession(_d.acceptedSessionProposal, approvedNamespaces)
+            if (d.acceptedSessionProposal) {
+                wcSDK.approveSession(d.acceptedSessionProposal, approvedNamespaces)
             } else {
                 let res = Helpers.extractChainsAndAccountsFromApprovedNamespaces(approvedNamespaces)
 
-                root.connectDApp(res.chains, _d.currentSessionProposal, approvedNamespaces)
+                root.connectDApp(res.chains, d.currentSessionProposal, approvedNamespaces)
             }
         }
 
         function onApproveSessionResult(session, err) {
-            // TODO #14754: implement custom dApp notification
-            let app_url = _d.currentSessionProposal ? _d.currentSessionProposal.params.proposer.metadata.url : "-"
-            Global.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_url), "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+            // Notify client
             root.approveSessionResult(session, err)
+
+            if (err) {
+                // TODO #14676: handle the error
+                console.error("Failed to approve session", err)
+                return
+            }
+
+            // TODO #14754: implement custom dApp notification
+            let app_url = d.currentSessionProposal ? d.currentSessionProposal.params.proposer.metadata.url : "-"
+            Global.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_url), "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+
+            // Persist session
+            store.addWalletConnectSession(JSON.stringify(session))
+
+            d.dappsProvider.updateDapps()
         }
 
         function onRejectSessionResult(err) {
-            let app_url = _d.currentSessionProposal ? _d.currentSessionProposal.params.proposer.metadata.url : "-"
+            let app_url = d.currentSessionProposal ? d.currentSessionProposal.params.proposer.metadata.url : "-"
             if(err) {
                 Global.displayToastMessage(qsTr("Failed to reject connection request for %1").arg(app_url), "", "warning", false, Constants.ephemeralNotificationType.danger, "")
             } else {
@@ -91,7 +107,7 @@ QtObject {
         }
 
         function onSessionDelete(topic, err) {
-            let app_url = _d.currentSessionProposal ? _d.currentSessionProposal.params.proposer.metadata.url : "-"
+            let app_url = d.currentSessionProposal ? d.currentSessionProposal.params.proposer.metadata.url : "-"
             if(err) {
                 Global.displayToastMessage(qsTr("Failed to disconnect from %1").arg(app_url), "", "warning", false, Constants.ephemeralNotificationType.danger, "")
             } else {
@@ -100,8 +116,36 @@ QtObject {
         }
     }
 
-    readonly property QtObject _d: QtObject {
+    QtObject {
+        id: d
+
         property var currentSessionProposal: null
         property var acceptedSessionProposal: null
+
+        readonly property DAppsListProvider dappsProvider: DAppsListProvider {
+            sdk: root.wcSDK
+            store: root.store
+        }
+
+        // TODO #14676: use it to check if already paired
+        function getPairingTopicFromPairingUrl(url)
+        {
+            if (!url.startsWith("wc:"))
+            {
+                return null;
+            }
+
+            const atIndex = url.indexOf("@");
+            if (atIndex < 0)
+            {
+                return null;
+            }
+
+            return url.slice(3, atIndex);
+        }
+    }
+
+    Component.onCompleted: {
+        d.dappsProvider.updateDapps()
     }
 }

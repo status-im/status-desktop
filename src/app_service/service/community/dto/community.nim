@@ -445,10 +445,8 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
 
   var membersObj: JsonNode
   if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
-    # Do not show members list in closed communities
-    let joined = result.isMember or result.tokenPermissions.len == 0
     for memberId, memberObj in membersObj:
-      result.members.add(toChannelMember(memberObj, memberId, joined))
+      result.members.add(toChannelMember(memberObj, memberId))
 
   var tagsObj: JsonNode
   if(jsonObj.getProp("tags", tagsObj)):
@@ -611,6 +609,12 @@ proc getCommunityChat*(self: CommunityDto, chatId: string): ChatDto =
   let chats = self.getCommunityChats(@[chatId])
   if chats.len > 0:
     return chats[0]
+
+proc hasCommunityChat*(self: CommunityDto, chatId: string): bool =
+  for communityChat in self.chats:
+    if chatId == communityChat.id:
+      return true
+  return false
 
 proc isOwner*(self: CommunityDto): bool =
   return self.memberRole == MemberRole.Owner

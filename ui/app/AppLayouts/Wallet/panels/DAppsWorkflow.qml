@@ -14,7 +14,7 @@ ConnectedDappsButton {
 
     required property WalletConnectService wcService
 
-    signal dAppsListReady()
+    signal dappsListReady()
     signal pairWCReady()
 
     onClicked: {
@@ -52,18 +52,20 @@ ConnectedDappsButton {
 
         onLoaded: {
             item.open()
-            root.dAppsListReady()
+            root.dappsListReady()
         }
 
         sourceComponent: DAppsListPopup {
             visible: true
+
+            model: wcService.dappsModel
 
             onPairWCDapp: {
                 pairWCLoader.active = true
                 this.close()
             }
             onOpened: {
-                this.x = root.width - this.menuWidth - 2 * this.padding
+                this.x = root.width - this.contentWidth - 2 * this.padding
                 this.y = root.height + 4
             }
             onClosed: dappsListLoader.active = false

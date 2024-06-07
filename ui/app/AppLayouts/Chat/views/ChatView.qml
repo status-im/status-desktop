@@ -49,8 +49,8 @@ StatusSectionLayout {
     property bool stickersLoaded: false
 
     readonly property var chatContentModule: rootStore.currentChatContentModule() || null
-    readonly property bool viewOnlyPermissionsSatisfied: chatContentModule.viewOnlyPermissionsSatisfied
-    readonly property bool viewAndPostPermissionsSatisfied: chatContentModule.viewAndPostPermissionsSatisfied
+    readonly property bool canView: chatContentModule.chatDetails.canView
+    readonly property bool canPost: chatContentModule.chatDetails.canPost
 
     property bool hasViewOnlyPermissions: false
     property bool hasUnrestrictedViewOnlyPermission: false
@@ -104,13 +104,13 @@ StatusSectionLayout {
             return false
         }
         if (!hasViewAndPostPermissions && hasViewOnlyPermissions) {
-            return !viewOnlyPermissionsSatisfied
+            return !canView
         }
         if (hasViewAndPostPermissions && !hasViewOnlyPermissions) {
-            return !viewAndPostPermissionsSatisfied
+            return !canPost
         }
         if (hasViewOnlyPermissions && hasViewAndPostPermissions) {
-            return !viewOnlyPermissionsSatisfied && !viewAndPostPermissionsSatisfied
+            return !canView && !canPost
         }
         return false
     }
@@ -245,7 +245,7 @@ StatusSectionLayout {
             stickersPopup: root.stickersPopup
             permissionUpdatePending: root.permissionUpdatePending
             viewAndPostHoldingsModel: root.viewAndPostPermissionsModel
-            viewAndPostPermissionsSatisfied: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.viewAndPostPermissionsSatisfied
+            canPost: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.canPost
             amISectionAdmin: root.amISectionAdmin
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
@@ -267,8 +267,8 @@ StatusSectionLayout {
             collectiblesModel: root.collectiblesModel
             requestToJoinState: root.requestToJoinState
             requiresRequest: !root.amIMember
-            requirementsMet: (viewOnlyPermissionsSatisfied && viewOnlyPermissionsModel.count > 0) ||
-                             (viewAndPostPermissionsSatisfied && viewAndPostPermissionsModel.count > 0)
+            requirementsMet: (canView && viewOnlyPermissionsModel.count > 0) ||
+                             (canPost && viewAndPostPermissionsModel.count > 0)
             requirementsCheckPending: root.chatContentModule.permissionsCheckOngoing
             onRequestToJoinClicked: root.requestToJoinClicked()
             onInvitationPendingClicked: root.invitationPendingClicked()

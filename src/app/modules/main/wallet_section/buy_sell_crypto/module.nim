@@ -40,7 +40,8 @@ method updateCryptoServices*(self: Module, cryptoServices: seq[CryptoRampDto]) =
     w.fees,
     w.logoUrl,
     w.siteUrl,
-    w.hostname
+    w.hostname,
+    w.recurrentSiteUrl,
   ))
   self.view.setItems(items)
 

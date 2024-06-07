@@ -5,7 +5,6 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      activeMailserver: string
       model: Model
       modelVariant: QVariant
 
@@ -18,7 +17,6 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.activeMailserver = ""
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
 
@@ -31,33 +29,49 @@ QtObject:
   proc modelChanged*(self: View) {.signal.}
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
+
   QtProperty[QVariant] model:
     read = getModel
     notify = modelChanged
 
   proc isAutomaticSelection(self: View): bool {.slot.} =
     return self.delegate.isAutomaticSelection()
+
   QtProperty[bool] automaticSelection:
     read = isAutomaticSelection
+    notify = pinnedMailserverIdChanged
 
-  proc activeMailserverChanged*(self: View) {.signal.}
-  proc getActiveMailserver(self: View): string {.slot.} =
-    return self.activeMailserver
-  QtProperty[string] activeMailserver:
-    read = getActiveMailserver
-    notify = activeMailserverChanged
+  proc activeMailserverIdChanged*(self: View) {.signal.}
 
-  proc setActiveMailserver(self: View, mailserverID: string) {.slot.} =
-    self.delegate.setActiveMailserver(mailserverID)
+  proc getActiveMailserverId(self: View): string {.slot.} =
+    let res =  self.delegate.getActiveMailserverId()
+    return res
 
-  proc onActiveMailserverSet*(self: View, nodeAddress: string) =
-    if(self.activeMailserver == nodeAddress):
+  QtProperty[string] activeMailserverId:
+    read = getActiveMailserverId
+    notify = activeMailserverIdChanged
+
+  proc onActiveMailserverSet*(self: View) =
+    self.activeMailserverIdChanged()
+
+  proc pinnedMailserverIdChanged*(self: View) {.signal.}
+
+  proc getPinnedMailserverId(self: View): string {.slot.} =
+    let res = self.delegate.getPinnedMailserverId()
+    return res
+
+  QtProperty[string] pinnedMailserverId:
+    read = getPinnedMailserverId
+    write = setPinnedMailserverId
+    notify = pinnedMailserverIdChanged
+
+  proc setPinnedMailserverId(self: View, mailserverID: string) {.slot.} =
+    if mailserverID == self.getPinnedMailserverId():
       return
-    self.activeMailserver = nodeAddress
-    self.activeMailserverChanged()
+    self.delegate.setPinnedMailserverId(mailserverID)
 
-  proc getMailserverNameForNodeAddress*(self: View, nodeAddress: string): string {.slot.} =
-    self.delegate.getMailserverNameForNodeAddress(nodeAddress)
+  proc onPinnedMailserverSet*(self: View) =
+    self.pinnedMailserverIdChanged()
 
   proc saveNewMailserver(self: View, name: string, address: string) {.slot.} =
     self.delegate.saveNewMailserver(name, address)
@@ -71,6 +85,8 @@ QtObject:
     return self.delegate.getUseMailservers()
 
   proc setUseMailservers*(self: View, value: bool) {.slot.} =
+    if value == self.delegate.getUseMailservers():
+      return
     self.delegate.setUseMailservers(value)
 
   QtProperty[bool] useMailservers:

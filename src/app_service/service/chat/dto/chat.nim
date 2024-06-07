@@ -85,6 +85,8 @@ type ChatDto* = object
   syncedTo*: int64
   syncedFrom*: int64
   firstMessageTimestamp: int64 # valid only for community chats, 0 - undefined, 1 - no messages, >1 valid timestamps
+  canPost*: bool
+  canView*: bool
   canPostReactions*: bool
   viewersCanPostReactions*: bool
   position*: int
@@ -207,9 +209,9 @@ proc toGroupChatMember*(jsonObj: JsonNode): ChatMember =
   result.role = if admin: MemberRole.Owner else: MemberRole.None
   result.joined = true
 
-proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMember =
+proc toChannelMember*(jsonObj: JsonNode, memberId: string): ChatMember =
   # Parse status-go "CommunityMember" type
-  # Mapping this DTO is not strightforward since only keys are used for id. We
+  # Mapping this DTO is not straightforward since only keys are used for id. We
   # handle it a bit different.
   result = ChatMember()
   result.id = memberId
@@ -218,6 +220,9 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   if(jsonObj.getProp("roles", rolesObj)):
     for roleObj in rolesObj:
       roles.add(roleObj.getInt)
+
+  # People in the community members' list are joined by default
+  result.joined = true
 
   result.role = MemberRole.None
   if roles.contains(MemberRole.Owner.int):
@@ -230,8 +235,6 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
     result.role = MemberRole.ModerateContent
   elif roles.contains(MemberRole.TokenMaster.int):
     result.role = MemberRole.TokenMaster
-
-  result.joined = joined
 
 proc toChatDto*(jsonObj: JsonNode): ChatDto =
   result = ChatDto()
@@ -248,6 +251,8 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
   discard jsonObj.getProp("canPostReactions", result.canPostReactions)
+  discard jsonObj.getProp("canPost", result.canPost)
+  discard jsonObj.getProp("canView", result.canView)
   discard jsonObj.getProp("viewersCanPostReactions", result.viewersCanPostReactions)
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("muted", result.muted)
@@ -345,3 +350,6 @@ proc isPrivateGroupChat*(c: ChatDto): bool =
 
 proc isActivePersonalChat*(c: ChatDto): bool =
   return c.active and (c.isOneToOne() or c.isPrivateGroupChat()) and c.communityId == ""
+
+proc isHiddenChat*(chatDto: ChatDto): bool =
+  return chatDto.hideIfPermissionsNotMet and not chatDto.canView

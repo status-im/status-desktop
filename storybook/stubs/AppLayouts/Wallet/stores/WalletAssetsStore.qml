@@ -8,7 +8,7 @@ import Models 1.0
 QtObject {
     id: root
 
-    property TokensStore walletTokensStore
+    property TokensStore walletTokensStore: TokensStore {}
 
     readonly property var groupedAccountsAssetsModel: GroupedAccountsAssetsModel {}
     property var assetsWithFilteredBalances
@@ -56,5 +56,11 @@ QtObject {
         joinRole: "communityId"
     }
 
-    property var assetsController
+    property var assetsController: QtObject {
+        property int revision
+
+        function filterAcceptsSymbol(symbol) {
+            return true
+        }
+    }
 }

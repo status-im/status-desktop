@@ -74,9 +74,13 @@ StackView {
     signal burnToken(string tokenKey, string amount, string accountAddress)
     signal airdropToken(string tokenKey, string amount, int type, var addresses)
     signal deleteToken(string tokenKey)
+    signal refreshToken(string tokenKey)
     signal registerDeployFeesSubscriber(var feeSubscriber)
     signal registerSelfDestructFeesSubscriber(var feeSubscriber)
     signal registerBurnTokenFeesSubscriber(var feeSubscriber)
+
+    signal startTokenHoldersManagement(int chainId, string address)
+    signal stopTokenHoldersManagement()
 
     function navigateBack() {
         pop(StackView.Immediate)
@@ -519,6 +523,12 @@ StackView {
                         retryAssetOrCollectible()
                     }
                 }
+            },
+            StatusButton {
+                text: qsTr("Refresh")
+                visible: localAppSettings.refreshTokenEnabled && (tokenViewPage.token.deployState === Constants.ContractTransactionStatus.InProgress)
+                onClicked: root.refreshToken(tokenViewPage.token.key)
+                tooltip.text: qsTr("Restart token's transaction listening if the token got stuck in minting state")
             }
         ]
 
@@ -533,6 +543,9 @@ StackView {
             membersModel: tokenViewPage.membersModel
             tokenOwnersModel: tokenViewPage.tokenOwnersModel
             isOwnerTokenItem: tokenViewPage.isOwnerTokenItem
+
+            onStartTokenHoldersManagement: root.startTokenHoldersManagement(chainId, address)
+            onStopTokenHoldersManagement: root.stopTokenHoldersManagement()
 
             onGeneralAirdropRequested: {
                 root.airdropToken(view.airdropKey,

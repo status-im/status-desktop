@@ -51,9 +51,7 @@ SplitView {
                 return currencyStore.formatCurrencyAmount(balance, "USD")
             }
             formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){
-                let bigIntBalance = AmountsArithmetic.fromString(balance)
-                let decimalBalance = AmountsArithmetic.toNumber(bigIntBalance, decimals)
-                return currencyStore.formatCurrencyAmount(decimalBalance, symbol)
+                return currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
             }
         }
     }

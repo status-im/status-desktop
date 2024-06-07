@@ -108,6 +108,7 @@ private:
     QAbstractItemModel* sourceModel() const { return m_sourceModel; }
     void setSourceModel(QAbstractItemModel* newSourceModel);
     void parseSourceModel();
+    void rebuildModels();
 
     void addItem(int index);
 

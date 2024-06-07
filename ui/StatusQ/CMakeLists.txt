@@ -101,12 +101,16 @@ add_library(StatusQ SHARED
         include/StatusQ/formatteddoubleproperty.h
         include/StatusQ/functionaggregator.h
         include/StatusQ/leftjoinmodel.h
+        include/StatusQ/modelentry.h
         include/StatusQ/modelsyncedcontainer.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/movablemodel.h
+        include/StatusQ/objectproxymodel.h
         include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rolesrenamingmodel.h
         include/StatusQ/rxvalidator.h
+        include/StatusQ/snapshotmodel.h
+        include/StatusQ/snapshotobject.h
         include/StatusQ/singleroleaggregator.h
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
@@ -124,13 +128,17 @@ add_library(StatusQ SHARED
         src/formatteddoubleproperty.cpp
         src/functionaggregator.cpp
         src/leftjoinmodel.cpp
+        src/modelentry.cpp
         src/modelutilsinternal.cpp
         src/movablemodel.cpp
+        src/objectproxymodel.cpp
         src/permissionutilsinternal.cpp
         src/plugin.cpp
         src/rolesrenamingmodel.cpp
         src/rxvalidator.cpp
         src/singleroleaggregator.cpp
+        src/snapshotmodel.cpp
+        src/snapshotobject.cpp
         src/statussyntaxhighlighter.cpp
         src/statuswindow.cpp
         src/stringutilsinternal.cpp

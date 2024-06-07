@@ -58,7 +58,7 @@ StatusDialog {
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         if(!!popup.preSelectedAccount && !!holdingSelector.selectedItem
-                && recipientLoader.ready && amountToSendInput.inputNumberValid) {
+                && recipientLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)) {
             popup.isLoading = true
             popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSendInput.cryptoValueToSend)
         }
@@ -81,7 +81,8 @@ StatusDialog {
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
-        readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
+        readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode
+                                                                                      || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
@@ -174,7 +175,7 @@ StatusDialog {
         }
 
         if(!!popup.preDefinedAmountToSend) {
-            amountToSendInput.input.text = popup.preDefinedAmountToSend
+            amountToSendInput.input.text = Number(popup.preDefinedAmountToSend).toLocaleString(Qt.locale(), 'f', -128)
         }
 
         if(!!popup.preSelectedRecipient) {
@@ -248,28 +249,21 @@ StatusDialog {
                 RowLayout {
                     spacing: 8
                     Layout.preferredHeight: 44
-                    StatusBaseText {
+
+                    HeaderTitleText {
                         id: modalHeader
-                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                        verticalAlignment: Text.AlignVCenter
-                        text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
-                        font.pixelSize: 28
-                        lineHeight: 38
-                        lineHeightMode: Text.FixedHeight
-                        font.letterSpacing: -0.4
-                        color: Theme.palette.directColor1
                         Layout.maximumWidth: contentWidth
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                        text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
                     }
 
                     HoldingSelector {
                         id: holdingSelector
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        selectedSenderAccount: store.selectedSenderAccount.address
                         assetsModel: popup.store.processedAssetsModel
                         collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                         networksModel: popup.store.flatNetworksModel
-                        currentCurrencySymbol: d.currencyStore.currentCurrencySymbol
                         visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.TokenType.Unknown) ||
                                  (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.TokenType.Unknown)
                         onItemSelected: {
@@ -295,7 +289,8 @@ StatusDialog {
                                 const max = d.prepareForMaxSend(input, d.hoveredHolding.symbol)
                                 if (max <= 0)
                                     return qsTr("No balances active")
-                                const balance = d.currencyStore.formatCurrencyAmount(max , d.hoveredHolding.symbol)
+                                const balance = d.currencyStore.formatCurrencyAmount(max, amountToSendInput.inputIsFiat ? amountToSendInput.currentCurrency
+                                                                                                                        : d.selectedHolding.symbol)
                                 return qsTr("Max: %1").arg(balance.toString())
                             }
                             const max = d.prepareForMaxSend(d.maxInputBalance, d.inputSymbol)
@@ -398,7 +393,6 @@ StatusDialog {
             Layout.bottomMargin: Style.current.xlPadding
             visible: !d.selectedHolding
 
-            selectedSenderAccount: store.selectedSenderAccount.address
             assets: popup.store.processedAssetsModel
             collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
             networksModel: popup.store.flatNetworksModel
@@ -451,7 +445,7 @@ StatusDialog {
 
             contentWidth: availableWidth
 
-            visible: recipientLoader.ready && !!d.selectedHolding && amountToSendInput.inputNumberValid
+            visible: recipientLoader.ready && !!d.selectedHolding && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
 
             objectName: "sendModalScroll"
 
@@ -489,7 +483,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : d.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, d.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: recipientLoader.ready && amountToSendInput.inputNumberValid && !d.errorMode
+        visible: recipientLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer) && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }
 
@@ -532,4 +526,3 @@ StatusDialog {
         }
     }
 }
-

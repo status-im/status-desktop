@@ -1,6 +1,7 @@
 import QtQuick 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 QtObject {
     id: root
@@ -14,6 +15,12 @@ QtObject {
         }
         var currencyAmount = getCurrencyAmount(amount, symbol)
         return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
+    }
+
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
+        let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balance)
+        let decimalBalance = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, decimals)
+        return formatCurrencyAmount(decimalBalance, symbol)
     }
 
     function getFiatValue(balance, cryptoSymbol) {

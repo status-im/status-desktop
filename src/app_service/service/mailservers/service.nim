@@ -23,6 +23,7 @@ logScope:
 type
   ActiveMailserverChangedArgs* = ref object of Args
     nodeAddress*: string
+    nodeId*: string
 
   MailserverAvailableArgs* = ref object of Args
 
@@ -80,6 +81,7 @@ QtObject:
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
     fleetConfiguration: FleetConfiguration
+    activeMailserverData: ActiveMailserverChangedArgs
 
   # Forward declaration:
   proc doConnect(self: Service)
@@ -101,6 +103,7 @@ QtObject:
     result.settingsService = settingsService
     result.nodeConfigurationService = nodeConfigurationService
     result.fleetConfiguration = fleetConfiguration
+    result.activeMailserverData = ActiveMailserverChangedArgs(nodeAddress: "", nodeId: "")
 
   proc init*(self: Service) =
     self.doConnect()
@@ -118,10 +121,10 @@ QtObject:
         let mailserverName = "Test Mailserver"
         self.mailservers.add((name: mailserverName, nodeAddress: TEST_PEER_ENR))
         let mailserverID = self.saveMailserver(mailserverName, TEST_PEER_ENR)
-        discard self.settingsService.pinMailserver(mailserverId, fleet)
+        discard self.settingsService.setPinnedMailserverId(mailserverId, fleet)
 
     if MAILSERVER_ID != "":
-      discard self.settingsService.pinMailserver(MAILSERVER_ID, fleet)
+      discard self.settingsService.setPinnedMailserverId(MAILSERVER_ID, fleet)
 
   proc requestMoreMessages*(self: Service, chatId: string) =
     let arg = RequestMoreMessagesTaskArg(
@@ -144,13 +147,14 @@ QtObject:
     self.events.on(SignalType.MailserverChanged.event) do(e: Args):
       let receivedData = MailserverChangedSignal(e)
       let address = receivedData.address
+      let id = receivedData.id
 
       if address == "":
         info "removing active mailserver"
       else:
-        info "active mailserver changed", node=address
-      let data = ActiveMailserverChangedArgs(nodeAddress: address)
-      self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, data)
+        info "active mailserver changed", node=address, id = id
+      self.activeMailserverData = ActiveMailserverChangedArgs(nodeAddress: address, nodeId: id)
+      self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, self.activeMailserverData)
 
     self.events.on(SignalType.MailserverAvailable.event) do(e: Args):
       info "mailserver available"
@@ -179,7 +183,6 @@ QtObject:
       let h = HistoryRequestSuccessSignal(e)
       info "history request success", requestId=h.requestId, peerId=h.peerId
 
-
   proc initMailservers(self: Service) =
     let fleet = self.nodeConfigurationService.getFleet()
     let mailservers = self.fleetConfiguration.getMailservers(fleet)
@@ -187,6 +190,9 @@ QtObject:
     for (name, nodeAddress) in mailservers.pairs():
       info "initMailservers", topics="mailserver-interaction", name, nodeAddress
       self.mailservers.add((name: name, nodeAddress: nodeAddress))
+
+  proc getActiveMailserverId*(self: Service): string =
+    return self.activeMailserverData.nodeId
 
   proc fetchMailservers(self: Service) =
     try:
@@ -235,7 +241,3 @@ QtObject:
       #    slot: "onActiveMailserverResult"
       #  )
       #mailserverWorker.start(task)
-
-  proc onActiveMailserverResult*(self: Service, response: string) {.slot.} =
-    let fleet = self.nodeConfigurationService.getFleet()
-    discard self.settingsService.pinMailserver(response, fleet)

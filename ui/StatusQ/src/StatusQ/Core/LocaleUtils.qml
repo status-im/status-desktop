@@ -72,6 +72,7 @@ QtObject {
 
 
     function stripTrailingZeroes(numStr, locale) {
+        locale = locale || Qt.locale()
         let regEx = locale.decimalPoint == "." ? /(\.[0-9]*[1-9])0+$|\.0*$/ : /(\,[0-9]*[1-9])0+$|\,0*$/
         return numStr.replace(regEx, '$1')
     }
@@ -157,10 +158,10 @@ QtObject {
         var optDisplayDecimals = currencyAmount.displayDecimals
         var optStripTrailingZeroes = currencyAmount.stripTrailingZeroes
         if (options) {
-            if (options.noSymbol !== undefined) {
+            if (options.noSymbol !== undefined && options.noSymbol === true) {
                 optNoSymbol = true
             }
-            if (options.rawAmount !== undefined) {
+            if (options.rawAmount !== undefined && options.rawAmount === true) {
                 optRawAmount = true
             }
             if (options.minDecimals !== undefined && options.minDecimals > optDisplayDecimals) {
@@ -175,8 +176,7 @@ QtObject {
         var amountSuffix = ""
 
         let minAmount = 10**-optDisplayDecimals
-        if (currencyValue > 0 && currencyValue < minAmount && !optRawAmount)
-        {
+        if (currencyValue > 0 && currencyValue < minAmount && !optRawAmount) {
             // Handle amounts smaller than resolution
             amountStr = "<%1".arg(numberToLocaleString(minAmount, optDisplayDecimals, locale))
         } else {

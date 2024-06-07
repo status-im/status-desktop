@@ -1,6 +1,4 @@
-import QtQuick 2.13
-
-import utils 1.0
+import QtQml 2.15
 
 /* This is used so that there is an easy way to fill in the data
 needed to launch the Swap Modal with pre-filled requisites. */
@@ -11,5 +9,5 @@ QtObject {
     property string fromTokensKey: ""
     property string fromTokenAmount: ""
     property string toTokenKey: ""
+    property string toTokenAmount
 }
-

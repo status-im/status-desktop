@@ -207,30 +207,11 @@ Popup {
                 ColumnLayout {
                     Layout.fillWidth: true
 
-                    POCSessions {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: contentHeight
-
-                        model: root.sdk.sessionsModel
-
-                        onDisconnect: function (topic) {
-                            root.sdk.disconnectSession(topic)
-                        }
-
-                        onPing: function (topic) {
-                            root.sdk.ping(topic)
-                        }
-                    }
-                }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-
                     POCPairings {
                         Layout.fillWidth: true
                         Layout.preferredHeight: contentHeight
 
-                        model: root.sdk.pairingsModel
+                        model: root.sdk.dappsModel
 
                         onDisconnect: function (topic) {
                             root.sdk.disconnectPairing(topic)

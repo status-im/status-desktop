@@ -13,9 +13,12 @@
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/movablemodel.h"
+#include "StatusQ/objectproxymodel.h"
 #include "StatusQ/permissionutilsinternal.h"
 #include "StatusQ/rolesrenamingmodel.h"
 #include "StatusQ/rxvalidator.h"
+#include "StatusQ/modelentry.h"
+#include "StatusQ/snapshotobject.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
 #include "StatusQ/stringutilsinternal.h"
@@ -52,6 +55,7 @@ public:
         qmlRegisterType<FastExpressionSorter>("StatusQ", 0, 1, "FastExpressionSorter");
         qmlRegisterType<UndefinedFilter>("StatusQ", 0, 1, "UndefinedFilter");
 
+        qmlRegisterType<ObjectProxyModel>("StatusQ", 0, 1, "ObjectProxyModel");
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
         qmlRegisterType<SubmodelProxyModel>("StatusQ", 0, 1, "SubmodelProxyModel");
         qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
@@ -62,6 +66,8 @@ public:
         qmlRegisterType<FormattedDoubleProperty>("StatusQ", 0, 1, "FormattedDoubleProperty");
 
         qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0, 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
+        qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");
+        qmlRegisterType<SnapshotObject>("StatusQ", 0, 1, "SnapshotObject");
 
         qmlRegisterSingletonType<ModelUtilsInternal>(
             "StatusQ.Internal", 0, 1, "ModelUtils", &ModelUtilsInternal::qmlInstance);

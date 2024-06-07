@@ -23,13 +23,11 @@ add_library(StatusQTestLib
     src/TestHelpers/modeltestutils.h
     src/TestHelpers/persistentindexestester.cpp
     src/TestHelpers/persistentindexestester.h
-    src/TestHelpers/snapshotmodel.cpp
-    src/TestHelpers/snapshotmodel.h
     src/TestHelpers/testmodel.cpp
     src/TestHelpers/testmodel.h
 )
 
-target_link_libraries(StatusQTestLib PUBLIC Qt5::Core Qt5::Quick Qt5::Test)
+target_link_libraries(StatusQTestLib PUBLIC Qt5::Core Qt5::Quick Qt5::Test StatusQ)
 target_include_directories(StatusQTestLib PUBLIC src)
 
 enable_testing()
@@ -70,6 +68,10 @@ add_executable(SubmodelProxyModelTest tst_SubmodelProxyModel.cpp)
 target_link_libraries(SubmodelProxyModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
 
+add_executable(ObjectProxyModelTest tst_ObjectProxyModel.cpp)
+target_link_libraries(ObjectProxyModelTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME ObjectProxyModelTest COMMAND ObjectProxyModelTest)
+
 add_executable(AggregatorTest tst_Aggregator.cpp)
 target_link_libraries(AggregatorTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME AggregatorTest COMMAND AggregatorTest)
@@ -101,3 +103,11 @@ add_test(NAME MovableModelTest COMMAND MovableModelTest)
 add_executable(ModelSyncedContainerTest tst_ModelSyncedContainer.cpp)
 target_link_libraries(ModelSyncedContainerTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME ModelSyncedContainerTest COMMAND ModelSyncedContainerTest)
+
+add_executable(ModelEntryTest tst_ModelEntry.cpp)
+target_link_libraries(ModelEntryTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME ModelEntryTest COMMAND ModelEntryTest)
+
+add_executable(SnapshotObjectTest tst_SnapshotObject.cpp)
+target_link_libraries(SnapshotObjectTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME SnapshotObjectTest COMMAND SnapshotObjectTest)

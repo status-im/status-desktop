@@ -34,6 +34,9 @@ QtObject:
   proc removeCommunityToken*(self: View, communityId: string, chainId: int, address: string) {.slot.} =
     self.communityTokensModule.removeCommunityToken(communityId, chainId, address)
 
+  proc refreshCommunityToken*(self: View, chainId: int, address: string) {.slot.} =
+    self.communityTokensModule.refreshCommunityToken(chainId, address)
+
   proc airdropTokens*(self: View, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) {.slot.} =
     self.communityTokensModule.airdropTokens(communityId, tokensJsonString, walletsJsonString, addressFrom)
 
@@ -142,3 +145,9 @@ QtObject:
   QtProperty[string] ownerTokenDetails:
     read = getOwnerTokenDetails
     notify = ownerTokenDetailsChanged
+
+  proc startTokenHoldersManagement*(self: View, chainId: int, contractAddress: string) {.slot.} =
+    self.communityTokensModule.startTokenHoldersManagement(chainId, contractAddress)
+
+  proc stopTokenHoldersManagement*(self: View) {.slot.} =
+    self.communityTokensModule.stopTokenHoldersManagement()

@@ -77,6 +77,8 @@ import ../../core/custom_urls/urls_manager
 
 export io_interface
 
+import app/core/tasks/threadpool
+
 const TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS = 5000 # 5 seconds
 const STATUS_URL_ENS_RESOLVE_REASON = "StatusUrl"
 
@@ -165,7 +167,8 @@ proc newModule*[T](
   generalService: general_service.Service,
   keycardService: keycard_service.Service,
   networkConnectionService: network_connection_service.Service,
-  sharedUrlsService: urls_service.Service
+  sharedUrlsService: urls_service.Service,
+  threadpool: ThreadPool
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -212,7 +215,7 @@ proc newModule*[T](
     transactionService, walletAccountService,
     settingsService, savedAddressService, networkService, accountsService,
     keycardService, nodeService, networkConnectionService, devicesService,
-    communityTokensService
+    communityTokensService, threadpool
   )
   result.browserSectionModule = browser_section_module.newModule(
     result, events, bookmarkService, settingsService, networkService,
@@ -386,7 +389,6 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     communityDetails.muted,
     # members
     members.map(proc(member: ChatMember): MemberItem =
-      let contactDetails = self.controller.getContactDetails(member.id)
       var state = MembershipRequestState.Accepted
       if member.id in communityDetails.pendingAndBannedMembers:
         let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()

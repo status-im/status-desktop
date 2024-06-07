@@ -100,10 +100,10 @@ StatusModal {
                             StatusRadioButton {
                                 id: nodeRadioBtn
                                 ButtonGroup.group: nodesButtonGroup
-                                checked: model.nodeAddress === root.messagingStore.activeMailserver
+                                checked: model.name === root.messagingStore.pinnedMailserverId
                                 onCheckedChanged: {
                                      if (checked) {
-                                        root.messagingStore.setActiveMailserver(model.name)
+                                         root.messagingStore.setPinnedMailserverId(model.name)
                                     }
                                 }
                             }

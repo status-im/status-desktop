@@ -314,7 +314,7 @@ SettingsContentBase {
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
                 title: qsTr("History nodes")
-                label: root.messagingStore.getMailserverNameForNodeAddress(root.messagingStore.activeMailserver)
+                label: root.messagingStore.activeMailserverId || "---"
                 components: [
                     StatusIcon {
                         icon: "next"
@@ -482,6 +482,17 @@ SettingsContentBase {
                 switchChecked: root.advancedStore.isManageCommunityOnTestModeEnabled
                 onClicked: {
                     root.advancedStore.toggleManageCommunityOnTestnet()
+                }
+            }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Enable community tokens refreshing")
+                isSwitch: true
+                switchChecked: root.advancedStore.refreshTokenEnabled
+                onClicked: {
+                    root.advancedStore.toggleRefreshTokenEnabled()
                 }
             }
 

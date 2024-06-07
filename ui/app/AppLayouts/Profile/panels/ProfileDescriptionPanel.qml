@@ -48,15 +48,24 @@ Item {
 
             label: qsTr("Bio")
             placeholderText: qsTr("Tell us about yourself")
+            input.maximumLength : 32767
             charLimit: 240
             multiline: true
             minimumHeight: 108
             maximumHeight: 108
             input.verticalAlignment: TextEdit.AlignTop
             validators: [
+                StatusValidator {
+                    name: "maxLengthValidator"
+                    validate: function (t) { return t.length <= bioInput.charLimit}
+                    errorMessage: qsTr("Bio can’t be longer than %n character(s)", "", bioInput.charLimit)
+                },
                 StatusRegularExpressionValidator {
                     regularExpression: Constants.regularExpressions.asciiWithEmoji
                     errorMessage: qsTr("Invalid characters. Standard keyboard characters and emojis only.")
+                    validate: function (value) {
+                        return (regularExpression.test(value) || (value.length === 0));
+                    }
                 }
             ]
             input.tabNavItem: displayNameInput.input.edit

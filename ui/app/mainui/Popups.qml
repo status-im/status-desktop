@@ -16,6 +16,7 @@ import AppLayouts.Profile.popups 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Wallet.popups.swap 1.0
+import AppLayouts.Wallet.popups 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import AppLayouts.Chat.stores 1.0 as ChatStore
@@ -91,6 +92,7 @@ QtObject {
         Global.openConfirmHideCollectiblePopup.connect(openConfirmHideCollectiblePopup)
         Global.openCommunityMemberMessagesPopupRequested.connect(openCommunityMemberMessagesPopup)
         Global.openSwapModalRequested.connect(openSwapModal)
+        Global.openBuyCryptoModalRequested.connect(openBuyCryptoModal)
     }
 
     property var currentPopup
@@ -388,6 +390,10 @@ QtObject {
 
     function openSwapModal(parameters) {
         openPopup(swapModal, {swapInputParamsForm: parameters})
+    }
+
+    function openBuyCryptoModal() {
+        openPopup(buyCryptoModal)
     }
 
     readonly property list<Component> _components: [
@@ -1246,6 +1252,13 @@ QtObject {
                     currencyStore: root.currencyStore
                     swapFormData: swapInputParamsForm
                 }
+                onClosed: destroy()
+            }
+        },
+        Component {
+            id: buyCryptoModal
+            BuyCryptoModal {
+                onRampProvidersModel: WalletStore.RootStore.cryptoRampServicesModel
                 onClosed: destroy()
             }
         }

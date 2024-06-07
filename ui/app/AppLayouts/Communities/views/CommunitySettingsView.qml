@@ -368,6 +368,10 @@ StatusSectionLayout {
 
             onRegisterBurnTokenFeesSubscriber: d.feesBroker.registerBurnFeesSubscriber(feeSubscriber)
 
+            onStartTokenHoldersManagement: communityTokensStore.startTokenHoldersManagement(chainId, address)
+
+            onStopTokenHoldersManagement: communityTokensStore.stopTokenHoldersManagement()
+
             onMintCollectible:
                 communityTokensStore.deployCollectible(
                     root.community.id, collectibleItem)
@@ -396,6 +400,9 @@ StatusSectionLayout {
 
             onDeleteToken:
                 communityTokensStore.deleteToken(root.community.id, tokenKey)
+
+            onRefreshToken:
+                communityTokensStore.refreshToken(tokenKey)
 
             onAirdropToken: {
                 root.goTo(Constants.CommunitySettingsSections.Airdrops)

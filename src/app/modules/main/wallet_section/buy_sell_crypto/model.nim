@@ -10,6 +10,7 @@ type
     LogoUrl
     SiteUrl
     Hostname
+    RecurrentSiteUrl
 
 QtObject:
   type
@@ -36,7 +37,8 @@ QtObject:
       ModelRole.Fees.int:"fees",
       ModelRole.LogoUrl.int:"logoUrl",
       ModelRole.SiteUrl.int:"siteUrl",
-      ModelRole.Hostname.int:"hostname"
+      ModelRole.Hostname.int:"hostname",
+      ModelRole.RecurrentSiteUrl.int:"recurrentSiteUrl"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -62,6 +64,8 @@ QtObject:
       result = newQVariant(item.getSiteUrl)
     of ModelRole.Hostname:
       result = newQVariant(item.getHostname)
+    of ModelRole.RecurrentSiteUrl:
+      result = newQVariant(item.getRecurrentSiteUrl)
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

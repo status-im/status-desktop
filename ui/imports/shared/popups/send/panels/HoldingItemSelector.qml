@@ -1,17 +1,12 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-
-import SortFilterProxyModel 0.2
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
-import StatusQ.Core.Backpressure 1.0
 
-import shared.controls 1.0
 import utils 1.0
 
 Item {
@@ -40,12 +35,6 @@ Item {
     property int contentIconSize: 21
     property int contentTextSize: 28
 
-    function resetInternal() {
-        items = null
-        selectedItem = null
-        hoveredItem = null
-    }
-
     function openPopup() {
         root.comboBoxControl.popup.open()
     }
@@ -68,9 +57,8 @@ Item {
 
         property string iconSource: ""
         onIconSourceChanged: tokenIcon.image.source = iconSource
-        property string text: ""
+        property string text: qsTr("Select asset")
         readonly property bool isItemSelected: !!root.selectedItem || !!root.hoveredItem
-
     }
 
     StatusComboBox {
@@ -80,9 +68,7 @@ Item {
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
 
-        width: Math.min(implicitWidth, parent.width)
-
-        control.padding: 4
+        control.padding: 12
         control.popup.width: 492
         control.popup.x: -root.x
         control.popup.verticalPadding: 0
@@ -92,20 +78,21 @@ Item {
         model: root.comboBoxModel
 
         control.background: Rectangle {
-            color: "transparent"
+            color: !d.isItemSelected ? Theme.palette.primaryColor3 : "transparent"
             border.width: d.isItemSelected ? 0 : 1
             border.color: Theme.palette.directColor7
-            radius: 12
+            radius: 8
+
+            HoverHandler {
+                cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
+            }
         }
 
         contentItem: RowLayout {
-            id: rowLayout
-            implicitHeight: 38
             StatusRoundedImage {
                 id: tokenIcon
                 Layout.preferredWidth: root.contentIconSize
                 Layout.preferredHeight: root.contentIconSize
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 visible: !!d.iconSource
                 image.source: d.iconSource
                 image.onStatusChanged: {
@@ -116,22 +103,17 @@ Item {
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.alignment: Qt.AlignVCenter
                 font.pixelSize: root.contentTextSize
                 elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter
-                color: Theme.palette.miscColor1
+                color: Theme.palette.primaryColor1
                 text: d.text
-                visible: d.isItemSelected
             }
             StatusIcon {
-                Layout.leftMargin: -3
-                Layout.alignment: Qt.AlignVCenter
                 Layout.preferredWidth: 16
                 Layout.preferredHeight: 16
                 icon: "chevron-down"
-                color: Theme.palette.miscColor1
-                visible: !!root.selectedItem
+                color: Theme.palette.primaryColor1
             }
         }
 

@@ -39,6 +39,8 @@ StatusMenu {
     }
     readonly property bool isBlockedContact: (!!contactDetails && contactDetails.isBlocked) || false
 
+    readonly property bool idVerificationFlowsEnabled: false // disabled temporarily as per https://github.com/status-im/status-desktop/issues/14954
+
     readonly property int outgoingVerificationStatus: {
         if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {
             return 0
@@ -160,7 +162,8 @@ StatusMenu {
         text: qsTr("Request ID verification")
         objectName: "verifyIdentity_StatusItem"
         icon.name: "checkmark-circle"
-        enabled: !root.isMe && root.isContact
+        enabled: idVerificationFlowsEnabled
+                 && !root.isMe && root.isContact
                  && !root.isBlockedContact
                  && !root.userIsLocallyTrusted
                  && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
@@ -172,7 +175,7 @@ StatusMenu {
         text: qsTr("Mark as ID verified")
         objectName: "markAsVerified_StatusItem"
         icon.name: "checkmark-circle"
-        enabled: !root.isMe && root.isContact && !root.isBridgedAccount && !root.isBlockedContact && !(root.isTrusted || root.userIsLocallyTrusted)
+        enabled: idVerificationFlowsEnabled && !root.isMe && root.isContact && !root.isBridgedAccount && !root.isBlockedContact && !(root.isTrusted || root.userIsLocallyTrusted)
         onTriggered: Global.openMarkAsIDVerifiedPopup(root.selectedUserPublicKey, root.contactDetails, null)
     }
     StatusAction {
@@ -188,7 +191,7 @@ StatusMenu {
         }
         icon.name: root.isVerificationRequestSent && root.incomingVerificationStatus !== Constants.verificationStatus.verified ? "history"
                                                                                                                                : "checkmark-circle"
-        enabled: !root.isMe && root.isContact && !root.isBridgedAccount && !root.isBlockedContact && !(root.isTrusted || root.userIsLocallyTrusted) &&
+        enabled: idVerificationFlowsEnabled && !root.isMe && root.isContact && !root.isBridgedAccount && !root.isBlockedContact && !(root.isTrusted || root.userIsLocallyTrusted) &&
                  (root.hasActiveReceivedVerificationRequestFrom || root.isVerificationRequestSent)
 
         onTriggered: {
@@ -238,7 +241,7 @@ StatusMenu {
         text: qsTr("Remove ID verification")
         icon.name: "delete"
         type: StatusAction.Type.Danger
-        enabled: !root.isMe && root.isContact && !root.isBridgedAccount && (root.isTrusted || root.userIsLocallyTrusted)
+        enabled: idVerificationFlowsEnabled && !root.isMe && root.isContact && !root.isBridgedAccount && (root.isTrusted || root.userIsLocallyTrusted)
         onTriggered: Global.openRemoveIDVerificationDialog(root.selectedUserPublicKey, root.contactDetails, null)
     }
 
@@ -256,7 +259,7 @@ StatusMenu {
         text: qsTr("Cancel ID verification request")
         icon.name: "delete"
         type: StatusAction.Type.Danger
-        enabled: !root.isMe && root.isContact && !root.isBlockedContact && !root.isBridgedAccount && root.isVerificationRequestSent
+        enabled: idVerificationFlowsEnabled && !root.isMe && root.isContact && !root.isBlockedContact && !root.isBridgedAccount && root.isVerificationRequestSent
         onTriggered: root.store.contactsStore.cancelVerificationRequest(root.selectedUserPublicKey)
     }
 

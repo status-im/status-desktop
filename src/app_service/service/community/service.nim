@@ -642,8 +642,13 @@ QtObject:
               )
             )
 
-          if chat.name != prevChat.name or chat.description != prevChat.description or chat.color != prevChat.color or
-              chat.emoji != prevChat.emoji or chat.viewersCanPostReactions != prevChat.viewersCanPostReactions or
+          if chat.name != prevChat.name or
+              chat.description != prevChat.description or
+              chat.color != prevChat.color or
+              chat.emoji != prevChat.emoji or
+              chat.viewersCanPostReactions != prevChat.viewersCanPostReactions or
+              chat.canPost != prevChat.canPost or
+              chat.canView != prevChat.canView or
               chat.hideIfPermissionsNotMet != prevChat.hideIfPermissionsNotMet:
             var updatedChat = chat
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
@@ -1307,6 +1312,7 @@ QtObject:
         self.communities[communityId].chats.add(chatDto)
         let data = CommunityChatArgs(chat: chatDto)
         self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
+
     except Exception as e:
       error "Error creating community channel", msg = e.msg, communityId, name, description, procName="createCommunityChannel"
 
@@ -1613,14 +1619,13 @@ QtObject:
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
     self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
-  proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string], fullCheck: bool) =
+  proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string]) =
     let arg = AsyncCheckPermissionsToJoinTaskArg(
       tptr: cast[ByteAddress](asyncCheckPermissionsToJoinTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckPermissionsToJoinDone",
       communityId: communityId,
       addresses: addresses,
-      fullCheck: fullCheck
     )
     self.threadpool.start(arg)
 

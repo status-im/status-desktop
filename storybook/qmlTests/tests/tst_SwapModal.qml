@@ -33,7 +33,7 @@ Item {
         walletAssetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
             walletTokensStore: TokensStore {
-                readonly property var plainTokensBySymbolModel: TokensBySymbolModel {}
+                plainTokensBySymbolModel: TokensBySymbolModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
             assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
@@ -80,7 +80,7 @@ Item {
         function launchAccountSelectionPopup(accountsModalHeader) {
             // Launch account selection popup
             verify(!accountsModalHeader.control.popup.opened)
-            mouseClick(accountsModalHeader, Qt.LeftButton)
+            mouseClick(accountsModalHeader)
             waitForRendering(accountsModalHeader)
             verify(!!accountsModalHeader.control.popup.opened)
             return accountsModalHeader
@@ -206,14 +206,13 @@ Item {
             for(let i =0; i< comboBoxList.model.count; i++) {
                 let delegateUnderTest = comboBoxList.itemAtIndex(i)
                 verify(!delegateUnderTest.modelData.fromToken)
-                verify(!delegateUnderTest.modelData.accountBalance)
             }
 
             // close account selection dropdown
             accountsModalHeader.control.popup.close()
 
             // set network chainId and fromTokensKey and verify balances in account selection dropdown
-            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.__filteredFlatNetworksModel.get(0).chainId
+            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             root.swapFormData.fromTokensKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(0).key
             compare(controlUnderTest.swapInputParamsForm.selectedNetworkChainId, root.swapFormData.selectedNetworkChainId)
             compare(controlUnderTest.swapInputParamsForm.fromTokensKey, root.swapFormData.fromTokensKey)
@@ -257,7 +256,7 @@ Item {
 
                 let delegateUnderTest = comboBoxList.itemAtIndex(i)
 
-                mouseClick(delegateUnderTest, Qt.LeftButton)
+                mouseClick(delegateUnderTest)
                 waitForRendering(delegateUnderTest)
                 verify(accountsModalHeader.control.popup.closed)
 
@@ -277,6 +276,112 @@ Item {
                 verify(!!headerContentItemEmoji)
                 compare(headerContentItemEmoji.emojiId, SQUtils.Emoji.iconId(swapAdaptor.nonWatchAccounts.get(i).emoji))
             }
+            closeAndVerfyModal()
+        }
+
+        function test_network_default_and_selection() {
+            // Launch popup
+            launchAndVerfyModal()
+
+            // get network comboBox
+            const networkComboBox = findChild(controlUnderTest, "networkFilter")
+            verify(!!networkComboBox)
+
+            // check default value of network comboBox, should be mainnet
+            compare(root.swapFormData.selectedNetworkChainId, -1)
+            const networkComboBoxText = findChild(networkComboBox.control.contentItem, "contentItemText")
+            verify(!!networkComboBoxText)
+            compare(networkComboBoxText.text, root.swapAdaptor.filteredFlatNetworksModel.get(0).chainName)
+
+            // lets ensure that the selected one is correctly set
+            for (let i=0; i<networkComboBox.control.popup.contentItem.count; i++) {
+                // launch network selection popup
+                verify(!networkComboBox.control.popup.opened)
+                mouseClick(networkComboBox)
+                verify(networkComboBox.control.popup.opened)
+
+                let delegateUnderTest = networkComboBox.control.popup.contentItem.itemAtIndex(i)
+                verify(!!delegateUnderTest)
+
+                // if you try selecting an item already selected it doesnt do anything
+                if(networkComboBox.control.popup.contentItem.currentIndex === i) {
+                    mouseClick(networkComboBox)
+                } else {
+                    // select item
+                    mouseClick(delegateUnderTest)
+
+                    // verify values set
+                    verify(!networkComboBox.control.popup.opened)
+                    compare(root.swapFormData.selectedNetworkChainId, networkComboBox.control.popup.contentItem.model.get(i).chainId)
+                    compare(networkComboBoxText.text, root.swapAdaptor.filteredFlatNetworksModel.get(i).chainName)
+                }
+            }
+            networkComboBox.control.popup.close()
+            closeAndVerfyModal()
+        }
+
+        function test_network_and_account_header_items() {
+            root.swapFormData.fromTokensKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(0).key
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            // get network comboBox
+            const networkComboBox = findChild(controlUnderTest, "networkFilter")
+            verify(!!networkComboBox)
+
+            for (let i=0; i<networkComboBox.control.popup.contentItem.count; i++) {
+                // launch network selection popup
+                verify(!networkComboBox.control.popup.opened)
+                mouseClick(networkComboBox)
+                verify(networkComboBox.control.popup.opened)
+
+                let delegateUnderTest = networkComboBox.control.popup.contentItem.itemAtIndex(i)
+                verify(!!delegateUnderTest)
+
+                let networkModelItem = networkComboBox.control.popup.contentItem.model.get(i)
+
+                // if you try selecting an item already selected it doesnt do anything
+                if(networkComboBox.control.popup.contentItem.currentIndex === i) {
+                    mouseClick(networkComboBox)
+                    root.swapFormData.selectedNetworkChainId = networkModelItem.chainId
+                } else {
+                    // select item
+                    mouseClick(delegateUnderTest)
+                }
+
+                // verify values in accouns modal header dropdown
+                const accountsModalHeader = getAndVerifyAccountsModalHeader()
+                launchAccountSelectionPopup(accountsModalHeader)
+
+                const comboBoxList = findChild(accountsModalHeader, "accountSelectorList")
+                verify(!!comboBoxList)
+
+                for(let j =0; j< comboBoxList.model.count; j++) {
+                    let accountDelegateUnderTest = comboBoxList.itemAtIndex(j)
+                    verify(!!accountDelegateUnderTest)
+                    const inlineTagDelegate_0 = findChild(accountDelegateUnderTest, "inlineTagDelegate_0")
+                    verify(!!inlineTagDelegate_0)
+
+                    compare(inlineTagDelegate_0.asset.name, Style.svg("tiny/%1".arg(networkModelItem.iconUrl)))
+                    compare(inlineTagDelegate_0.asset.color.toString().toUpperCase(), networkModelItem.chainColor.toString().toUpperCase())
+
+                    let balancesModel = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.baseGroupedAccountAssetModel, "tokensKey", root.swapFormData.fromTokensKey).balances
+                    verify(!!balancesModel)
+                    let filteredBalances = SQUtils.ModelUtils.modelToArray(balancesModel).filter(balances => balances.chainId === root.swapFormData.selectedNetworkChainId).filter(balances => balances.account === accountDelegateUnderTest.modelData.address)
+                    verify(!!filteredBalances)
+                    let accountBalance = filteredBalances.length > 0 ? filteredBalances[0]: { balance: "0", iconUrl: networkModelItem.iconUrl, chainColor: networkModelItem.chainColor}
+                    verify(!!accountBalance)
+                    let fromToken = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
+                    verify(!!fromToken)
+                    let bigIntBalance = SQUtils.AmountsArithmetic.toNumber(accountBalance.balance, fromToken.decimals)
+                    compare(inlineTagDelegate_0.title, root.swapAdaptor.formatCurrencyAmount(bigIntBalance, fromToken.symbol))
+                }
+                // close account selection dropdown
+                accountsModalHeader.control.popup.close()
+            }
+            root.swapFormData.selectedNetworkChainId = -1
+            networkComboBox.control.popup.close()
             closeAndVerfyModal()
         }
     }

@@ -27,6 +27,7 @@ Pane {
     id: root
 
     property bool readOnly // inside settings/profile/preview
+    property bool idVerificationFlowsEnabled: false // disabled temporarily as per https://github.com/status-im/status-desktop/issues/14954
 
     property string publicKey: contactsStore.myPublicKey
     readonly property alias isCurrentUser: d.isCurrentUser
@@ -260,6 +261,7 @@ Pane {
     Component {
         id: btnShareProfile
         StatusFlatButton {
+            objectName: "shareProfileButton"
             size: StatusButton.Size.Small
             text: qsTr("Share Profile")
             onClicked: Global.openPopup(shareProfileCmp)
@@ -321,6 +323,9 @@ Pane {
                 sourceComponent: {
                     if (d.isCurrentUser && !root.readOnly)
                         return btnShareProfile
+
+                    if (!root.idVerificationFlowsEnabled)
+                        return
 
                     if (d.isContact && !(d.isTrusted || d.isLocallyTrusted) && !d.isBlocked) {
                         if (d.isVerificationRequestSent)
@@ -403,7 +408,7 @@ Pane {
                     StatusAction {
                         text: qsTr("Mark as ID verified")
                         icon.name: "checkmark-circle"
-                        enabled: d.isContact && !d.isBlocked && !(d.isTrusted || d.isLocallyTrusted)
+                        enabled: root.idVerificationFlowsEnabled && d.isContact && !d.isBlocked && !(d.isTrusted || d.isLocallyTrusted)
                         onTriggered: Global.openMarkAsIDVerifiedPopup(root.publicKey, d.contactDetails,
                                                                       popup => popup.accepted.connect(d.reload))
                     }
@@ -435,7 +440,7 @@ Pane {
                         text: qsTr("Remove ID verification")
                         icon.name: "delete"
                         type: StatusAction.Type.Danger
-                        enabled: d.isContact && (d.isTrusted || d.isLocallyTrusted)
+                        enabled: root.idVerificationFlowsEnabled && d.isContact && (d.isTrusted || d.isLocallyTrusted)
                         onTriggered: Global.openRemoveIDVerificationDialog(root.publicKey, d.contactDetails,
                                                                            popup => popup.accepted.connect(d.reload))
                     }
@@ -459,7 +464,7 @@ Pane {
                         text: qsTr("Cancel ID verification request")
                         icon.name: "delete"
                         type: StatusAction.Type.Danger
-                        enabled: d.isContact && !d.isBlocked && d.isVerificationRequestSent
+                        enabled: root.idVerificationFlowsEnabled && d.isContact && !d.isBlocked && d.isVerificationRequestSent
                         onTriggered: root.contactsStore.cancelVerificationRequest(root.publicKey)
                     }
                     StatusAction {
