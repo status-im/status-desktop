@@ -13,6 +13,9 @@ method executePrimaryCommand*(self: UserProfileCreateState, controller: Controll
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
     self.flowType == FlowType.FirstRunOldUserKeycardImport:
       controller.storeProfileDataAndProceedWithAppLoading()
+  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+      controller.storeKeycardAccountAndLogin(storeToKeychain = false, newKeycard = true)
 
 method getNextPrimaryState*(self: UserProfileCreateState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
