@@ -538,39 +538,24 @@ proc loginLocalPairingAccount*(self: Controller) =
     discard self.accountsService.loginAccountKeycard(self.localPairingStatus.account, kcEvent)
 
 # WARNING: Reuse `login` with custom keycard parameters
-proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, keycardReplacement = false) =
+# FIXME: Why do we even have storeToKeychain during login? Makes no sense
+proc loginAccountKeycard*(self: Controller, storeToKeychain: bool, keycardReplacement = false) =
+  debug "<<< loginAccountKeycard", storeToKeychain, keycardReplacement
+
   if keycardReplacement:
     self.delegate.applyKeycardReplacementAfterLogin()
 
+  # singletonInstance.localAccountSettings.setStoreToKeychainValue(storeToKeychainValue)
+
   self.delegate.moveToLoadingAppState()
   let selectedAccount = self.getSelectedLoginAccount()
+
   self.accountsService.login(
     selectedAccount, 
-    self.tmpKeycardEvent.encryptionKey.publicKey, 
-    self.tmpKeycardEvent.whisperKey.privateKey,
+    hashedPassword = self.tmpKeycardEvent.encryptionKey.publicKey, 
+    chatPrivateKey = self.tmpKeycardEvent.whisperKey.privateKey,
+    mnemonic = self.tmpSeedPhrase,
   )
-
-proc loginAccountKeycardUsingSeedPhrase*(self: Controller, storeToKeychain: bool) =
-  debug "<<< loginAccountKeycardUsingSeedPhrase", storeToKeychain
-
-  let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true, includeWhisper = true)
-  let selAcc = self.getSelectedLoginAccount()
-
-  var kcData = KeycardEvent(
-    keyUid: acc.keyUid,
-    masterKey: KeyDetails(address: acc.address),
-    whisperKey: KeyDetails(privateKey: acc.derivedAccounts.whisper.privateKey),
-    encryptionKey: KeyDetails(publicKey: acc.derivedAccounts.encryption.publicKey)
-  )
-  if acc.derivedAccounts.whisper.privateKey.startsWith("0x"):
-    kcData.whisperKey.privateKey = acc.derivedAccounts.whisper.privateKey[2..^1]
-
-  self.setupKeychain(storeToKeychain)
-
-  self.delegate.moveToLoadingAppState()
-  let error = self.accountsService.loginAccountKeycard(selAcc, kcData)
-  if(error.len > 0):
-    self.delegate.emitAccountLoginError(error)
 
 proc convertKeycardProfileKeypairToRegular*(self: Controller) =
   debug "<<< convertKeycardProfileKeypairToRegular"

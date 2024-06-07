@@ -38,7 +38,7 @@ proc command(self: BiometricsState, controller: Controller, storeToKeychain: boo
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())
   elif self.flowType == FlowType.LostKeycardConvertToRegularAccount:
-    controller.loginAccountKeycardUsingSeedPhrase(storeToKeychain)
+    controller.loginAccountKeycard(storeToKeychain, keycardReplacement = false)
 
 method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   self.command(controller, true)
@@ -51,7 +51,4 @@ method resolveKeycardNextState*(self: BiometricsState, keycardFlowType: string, 
   if self.flowType == FlowType.LostKeycardReplacement:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
-        var storeToKeychainValue = LS_VALUE_NEVER
-        if self.storeToKeychain:
-          storeToKeychainValue = LS_VALUE_NOT_NOW
-        controller.loginAccountKeycard(storeToKeychainValue, keycardReplacement = true)
+        controller.loginAccountKeycard(self.storeToKeychain, keycardReplacement = true)

@@ -29,4 +29,4 @@ method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller:
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
     controller.importAccountAndLogin(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.LostKeycardConvertToRegularAccount:
-    controller.loginAccountKeycardUsingSeedPhrase(storeToKeychain)
+    controller.loginAccountKeycard(storeToKeychain, keycardReplacement = true)

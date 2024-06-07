@@ -675,16 +675,16 @@ QtObject:
     except Exception as e:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
-  proc doLogin(self: Service, account: AccountDto, passwordHash: string, chatPrivateKey: string = "") =
+  proc doLogin(self: Service, account: AccountDto, passwordHash: string, chatPrivateKey: string = "", mnemonic: string = "") =
     var request = LoginAccountRequest(
       keyUid: account.keyUid,
       kdfIterations: account.kdfIterations,
       passwordHash: passwordHash,
+      keycardWhisperPrivateKey: chatPrivateKey,
+      mnemonic: mnemonic,
       walletSecretsConfig: self.buildWalletSecrets(),
       bandwidthStatsEnabled: true,
     )
-
-    request.keycardWhisperPrivateKey = chatPrivateKey
 
     if main_constants.runtimeLogLevelSet():
       request.runtimeLogLevel = toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)
@@ -698,8 +698,11 @@ QtObject:
     debug "account logged in"
     self.setLocalAccountSettingsFile()
 
-  proc login*(self: Service, account: AccountDto, hashedPassword: string, chatPrivateKey: string = "") =
+  proc login*(self: Service, account: AccountDto, hashedPassword: string, chatPrivateKey: string = "", mnemonic: string = "") =
     try:
+      debug "<<< login", account, hashedPassword, chatPrivateKey, mnemonic
+
+      # WARNING: Is this keystor migration still needed?
       let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
       if not dirExists(keyStoreDir):
         os.createDir(keyStoreDir)
@@ -709,13 +712,14 @@ QtObject:
 
       self.setKeyStoreDir(account.keyUid)
 
-      let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPasswordToUpperCase(hashedPassword))
-      if isOldHashPassword:
-        debug "database reencryption scheduled"
+      if mnemonic == "":
+        let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPasswordToUpperCase(hashedPassword))
+        if isOldHashPassword:
+          debug "database reencryption scheduled"
 
-        # Save tmp properties so that we can login after the timer
-        self.tmpAccount = account
-        self.tmpHashedPassword = hashedPassword
+          # Save tmp properties so that we can login after the timer
+          self.tmpAccount = account
+          self.tmpHashedPassword = hashedPassword
 
         # Start a 1 second timer for the loading screen to appear
         let arg = TimerTaskArg(
@@ -727,7 +731,7 @@ QtObject:
         self.threadpool.start(arg)
         return
 
-      self.doLogin(account, hashedPassword, chatPrivateKey)
+      self.doLogin(account, hashedPassword, chatPrivateKey, mnemonic)
 
     except Exception as e:
       error "login failed", errName = e.name, errDesription = e.msg

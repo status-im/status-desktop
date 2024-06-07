@@ -44,24 +44,27 @@ method executePrimaryCommand*(self: KeycardPinSetState, controller: Controller) 
       controller.startLoginFlowAutomatically(controller.getPin())
       return
     if controller.getValidPuk():
-      let storeToKeychainValue = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-      controller.loginAccountKeycard(storeToKeychainValue)
+      # FIXME: Make sure storeToKeychain is correct here. The idea is not to pass it at all
+      # let storeToKeychainValue = singletonInstance.localAccountSettings.getStoreToKeychainValue()
+      controller.loginAccountKeycard(storeToKeychain = false)
   if self.flowType == FlowType.LostKeycardReplacement:
     controller.startLoginFlowAutomatically(controller.getPin())
 
 method resolveKeycardNextState*(self: KeycardPinSetState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
-  var storeToKeychainValue = LS_VALUE_NEVER
-  if self.flowType == FlowType.LostKeycardReplacement:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
-      keycardEvent.error.len == 0:
-        if main_constants.IS_MACOS:
-          storeToKeychainValue = LS_VALUE_NOT_NOW
-        controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard(storeToKeychainValue, keycardReplacement = true)
-  if self.flowType == FlowType.AppLogin:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
-      keycardEvent.error.len == 0:
-        # we are here in case of recover account from the login flow using seed phrase
-        controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard(storeToKeychainValue, keycardReplacement = false)
+
+  if keycardFlowType != ResponseTypeValueKeycardFlowResult:
+    return
+
+  if keycardEvent.error.len != 0:
+    return
+
+  let keycardReplacement = self.flowType == FlowType.LostKeycardReplacement
+  if not keycardReplacement and self.flowType != FlowType.AppLogin:
+    return
+
+  let storeToKeychain = keycardReplacement and main_constants.SUPPORTS_FINGERPRINT
+  
+  controller.setKeycardEvent(keycardEvent)
+  controller.loginAccountKeycard(storeToKeychain, keycardReplacement)
+
