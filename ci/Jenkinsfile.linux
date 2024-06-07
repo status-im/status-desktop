@@ -116,8 +116,11 @@ pipeline {
       steps { script {
         build(
           job: 'status-desktop/e2e/prs',
-          parameters: jenkins.mapToParams([BUILD_SOURCE: JOB_NAME]),
-          wait: false
+          wait: false,
+          parameters: jenkins.mapToParams([
+            GIT_REF: env.GIT_COMMIT,
+            BUILD_SOURCE: env.JOB_NAME,
+          ]),
         )
       } }
     }
