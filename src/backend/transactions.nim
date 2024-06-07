@@ -54,6 +54,15 @@ proc `$`*(self: MultiTransactionDto): string =
     multiTxType:{self.multiTxType}
   )"""
 
+proc `%`*(self: MultiTransactionCommandDto): JsonNode {.inline.} =
+  result = newJObject()
+  result["fromAddress"] = %(self.fromAddress)
+  result["toAddress"] = %(self.toAddress)
+  result["fromAsset"] = %(self.fromAsset)
+  result["toAsset"] = %(self.toAsset)
+  result["fromAmount"] = %(self.fromAmount)
+  result["type"] = %int(self.multiTxType)
+
 proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] =
   core.callPrivateRPCWithChainId("eth_getTransactionByHash", chainId, %* [hash])
 
