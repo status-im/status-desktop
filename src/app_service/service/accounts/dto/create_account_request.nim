@@ -7,7 +7,7 @@ export image_crop_rectangle
 
 type
   CreateAccountRequest* = object
-    backupDisabledDataDir*: string
+    rootDataDir*: string
     kdfIterations*: int
     deviceName*: string
     displayName*: string
@@ -43,7 +43,7 @@ type
 
 proc toJson*(self: CreateAccountRequest): JsonNode =
   result = %*{
-    "backupDisabledDataDir": self.backupDisabledDataDir,
+    "rootDataDir": self.rootDataDir,
     "kdfIterations": self.kdfIterations,
     "deviceName": self.deviceName,
     "displayName": self.displayName,

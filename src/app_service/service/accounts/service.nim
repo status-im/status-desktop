@@ -383,7 +383,7 @@ QtObject:
 
   proc buildCreateAccountRequest(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
     return CreateAccountRequest(
-        backupDisabledDataDir: main_constants.STATUSGODIR,
+        rootDataDir: main_constants.STATUSGODIR,
         kdfIterations: KDF_ITERATIONS,
         password: hashPassword(password),
         displayName: displayName,
