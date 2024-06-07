@@ -18,7 +18,7 @@ function Install-Dependencies {
     if (!(scoop bucket list | Where { $_.Name -eq "extras" })) {
         scoop bucket add extras
     }
-    scoop install --global go@1.20.4
+    scoop install --global go@1.21.8
     scoop install --global vcredist2022
     scoop install --global `
         7zip git dos2unix findutils `
