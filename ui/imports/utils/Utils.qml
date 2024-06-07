@@ -869,10 +869,10 @@ QtObject {
             } else if (keypair.syncedFrom === Constants.keypair.syncedFrom.backup) {
                 if (keypair.pairType === Constants.keypair.type.seedImport ||
                         keypair.pairType === Constants.keypair.type.privateKeyImport) {
-                    return qsTr("Restored from backup. Import keypair to use derived accounts.")
+                    return qsTr("Restored from backup. Import key pair to use derived accounts.")
                 }
             }
-            return qsTr("Import keypair to use derived accounts")
+            return qsTr("Import key pair to use derived accounts")
         }
 
         return ""

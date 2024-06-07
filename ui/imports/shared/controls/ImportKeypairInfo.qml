@@ -10,9 +10,9 @@ import utils 1.0
 Rectangle {
     id: root
 
-    property string title: qsTr("Import keypair to use this account")
-    property string info: qsTr("This account was added to one of your synced devices. To use this account you will first need import the associated keypair to this device.")
-    property string buttonName: qsTr("Import missing keypair")
+    property string title: qsTr("Import key pair to use this account")
+    property string info: qsTr("This account was added to one of your synced devices. To use this account you will first need import the associated key pair to this device.")
+    property string buttonName: qsTr("Import missing key pair")
 
     signal runImport()
 

@@ -158,7 +158,7 @@ Item {
 
         function onShowToastKeypairRenamed(oldName: string, newName: string) {
             Global.displayToastMessage(
-                qsTr("You successfully renamed your keypair\nfrom \"%1\" to \"%2\"").arg(oldName).arg(newName),
+                qsTr("You successfully renamed your key pair\nfrom \"%1\" to \"%2\"").arg(oldName).arg(newName),
                 "",
                 "checkmark-circle",
                 false,
@@ -183,7 +183,7 @@ Item {
 
         function onShowToastKeypairRemoved(keypairName: string) {
             Global.displayToastMessage(
-                qsTr("“%1” keypair and its derived accounts were successfully removed from all devices").arg(keypairName),
+                qsTr("“%1” key pair and its derived accounts were successfully removed from all devices").arg(keypairName),
                 "",
                 "checkmark-circle",
                 false,
@@ -196,13 +196,13 @@ Item {
             let notification = qsTr("Please re-generate QR code and try importing again")
             if (error !== "") {
                 if (error.startsWith("one or more expected keystore files are not found among the sent files")) {
-                    notification = qsTr("Make sure you're importing the exported keypair on paired device")
+                    notification = qsTr("Make sure you're importing the exported key pair on paired device")
                 }
             }
             else {
-                notification = qsTr("%1 keypair successfully imported").arg(keypairName)
+                notification = qsTr("%1 key pair successfully imported").arg(keypairName)
                 if (keypairsCount > 1) {
-                    notification = qsTr("%n keypair(s) successfully imported", "", keypairsCount)
+                    notification = qsTr("%n key pair(s) successfully imported", "", keypairsCount)
                 }
             }
             Global.displayToastMessage(

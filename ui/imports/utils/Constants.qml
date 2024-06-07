@@ -522,7 +522,7 @@ QtObject {
             StatusValidator {
                 name: "startsWithSpaceValidator"
                 validate: function (t) { return !t.startsWith(" ") }
-                errorMessage: qsTr("Keypair starting with whitespace are not allowed")
+                errorMessage: qsTr("Key pair starting with whitespace are not allowed")
             },
             StatusRegularExpressionValidator {
                 regularExpression: /^[a-zA-Z0-9\-_ ]+$/
@@ -530,7 +530,7 @@ QtObject {
             },
             StatusMinLengthValidator {
                 minLength: keypair.nameLengthMin
-                errorMessage: qsTr("Keypair must be at least %n character(s)", "", keypair.nameLengthMin)
+                errorMessage: qsTr("Key pair must be at least %n character(s)", "", keypair.nameLengthMin)
             }
         ]
 

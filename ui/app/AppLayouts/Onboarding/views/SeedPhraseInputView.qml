@@ -29,7 +29,7 @@ Item {
         onWrongSeedPhraseChanged: {
             if (wrongSeedPhrase) {
                 if (root.startupStore.startupModuleInst.flowType === Constants.startupFlow.firstRunOldUserImportSeedPhrase) {
-                    seedPhraseView.setWrongSeedPhraseMessage(qsTr("Profile keypair for the inserted seed phrase is already set up"))
+                    seedPhraseView.setWrongSeedPhraseMessage(qsTr("Profile key pair for the inserted seed phrase is already set up"))
                     return
                 }
                 seedPhraseView.setWrongSeedPhraseMessage(qsTr("Seed phrase doesn’t match the profile of an existing Keycard user on this device"))

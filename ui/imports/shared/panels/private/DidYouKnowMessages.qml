@@ -15,7 +15,7 @@ QtObject {
                 qsTr("Status uses the latest encryption and security tools to secure your messages and transactions"),
                 qsTr("Status enables pseudo-anonymous interaction with Web3, DeFi, and society in general"),
                 qsTr("The Status Network token (SNT) is a modular utility token that fuels the Status network"),
-                qsTr("Your cryptographic keypair encrypts all of your messages which can only be unlocked by the intended recipient"),
+                qsTr("Your cryptographic key pair encrypts all of your messages which can only be unlocked by the intended recipient"),
                 qsTr("Status’ Web3 browser requires all DApps to ask permission before connecting to your wallet"),
                 qsTr("Your non-custodial wallet gives you full control over your funds without the use of a server"),
                 qsTr("Status is decentralized and serverless - chat, transact, and browse without surveillance and censorship"),

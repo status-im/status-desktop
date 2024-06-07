@@ -198,12 +198,12 @@ Column {
             spacing: 8
 
             StatusBaseText {
-                text: qsTr("Import keypairs from this device to your other synced devices")
+                text: qsTr("Import key pairs from this device to your other synced devices")
                 font.pixelSize: 15
             }
 
             StatusButton {
-                text: qsTr("Show encrypted QR of keypairs on device")
+                text: qsTr("Show encrypted QR of key pairs on device")
                 icon.name: "qr"
                 onClicked: {
                     root.walletStore.runKeypairImportPopup("", Constants.keypairImportPopup.mode.exportKeypairQr)
@@ -228,12 +228,12 @@ Column {
             spacing: 8
 
             StatusBaseText {
-                text: qsTr("%n keypair(s) require import to use on this device", "", d.unimportedNonProfileKeypairs)
+                text: qsTr("%n key pair(s) require import to use on this device", "", d.unimportedNonProfileKeypairs)
                 font.pixelSize: 15
             }
 
             StatusButton {
-                text: qsTr("Import missing keypairs")
+                text: qsTr("Import missing key pairs")
                 type: StatusBaseButton.Type.Warning
                 icon.name: "download"
                 onClicked: {
