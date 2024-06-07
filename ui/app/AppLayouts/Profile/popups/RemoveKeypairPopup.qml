@@ -23,7 +23,7 @@ StatusDialog {
 
     signal confirmClicked()
 
-    title: qsTr("Remove %1 keypair").arg(name)
+    title: qsTr("Remove %1 key pair").arg(name)
     width: 521
 
     ColumnLayout {
@@ -32,7 +32,7 @@ StatusDialog {
 
         StatusBaseText {
             Layout.fillWidth: true
-            text: qsTr("Are you sure you want to remove %1 keypair? The keypair will be removed from all of your synced devices. Make sure you have a backup of your keys or seed phrase before proceeding.").arg(name)
+            text: qsTr("Are you sure you want to remove %1 key pair? The key pair will be removed from all of your synced devices. Make sure you have a backup of your keys or seed phrase before proceeding.").arg(name)
             wrapMode: Text.WordWrap
             font.pixelSize: 15
         }
@@ -41,7 +41,7 @@ StatusDialog {
             Layout.fillWidth: true
             spacing: 8
             StatusBaseText {
-                text: qsTr("Accounts related to this keypair will also be removed:")
+                text: qsTr("Accounts related to this key pair will also be removed:")
                 font.pixelSize: 15
             }
 
@@ -98,7 +98,7 @@ StatusDialog {
             }
             StatusButton {
                 type: StatusBaseButton.Type.Danger
-                text: qsTr("Remove keypair and derived accounts")
+                text: qsTr("Remove key pair and derived accounts")
                 onClicked: root.confirmClicked()
                 Keys.onReturnPressed: function(event) {
                     root.confirmClicked()

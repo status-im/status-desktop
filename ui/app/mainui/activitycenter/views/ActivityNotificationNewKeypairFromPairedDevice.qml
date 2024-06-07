@@ -12,7 +12,7 @@ ActivityNotificationBase {
     id: root
 
     ctaComponent: StatusLinkText {
-        text: qsTr("View keypair import options")
+        text: qsTr("View key pair import options")
         color: Theme.palette.primaryColor1
         font.pixelSize: Theme.primaryTextFontSize
         font.weight: Font.Normal
@@ -51,13 +51,13 @@ ActivityNotificationBase {
             Layout.fillWidth: true
 
             StatusMessageHeader {
-                displayNameLabel.text: qsTr("New keypair added")
+                displayNameLabel.text: qsTr("New key pair added")
                 timestamp: root.notification.timestamp
             }
 
             StatusBaseText {
                 Layout.fillWidth: true
-                text: qsTr("%1 keypair was added to one of your synced devices").arg(root.notification.message.unparsedText)
+                text: qsTr("%1 key pair was added to one of your synced devices").arg(root.notification.message.unparsedText)
                 font.italic: true
                 wrapMode: Text.WordWrap
                 color: Theme.palette.baseColor1

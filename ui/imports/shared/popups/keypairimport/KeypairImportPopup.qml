@@ -24,14 +24,14 @@ StatusModal {
     headerSettings.title: {
         switch (root.store.currentState.stateType) {
         case Constants.keypairImportPopup.state.selectKeypair:
-            return qsTr("Import missing keypairs")
+            return qsTr("Import missing key pairs")
         case Constants.keypairImportPopup.state.exportKeypair:
             if (!!root.store.selectedKeypair.name) {
-                return qsTr("Encrypted QR for %1 keypair").arg(root.store.selectedKeypair.name)
+                return qsTr("Encrypted QR for %1 key pair").arg(root.store.selectedKeypair.name)
             }
-            return qsTr("Encrypted QR for keypairs on this device")
+            return qsTr("Encrypted QR for key pairs on this device")
         case Constants.keypairImportPopup.state.importQr:
-            return qsTr("Scan encrypted keypair QR code")
+            return qsTr("Scan encrypted key pair QR code")
         case Constants.keypairImportPopup.state.displayInstructions:
             if (root.store.syncViaQr) {
                 return Constants.keypairImportPopup.instructionsLabelForQr
@@ -39,7 +39,7 @@ StatusModal {
             return Constants.keypairImportPopup.instructionsLabelForEncryptedKey
         }
 
-        return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)
+        return qsTr("Import %1 key pair").arg(root.store.selectedKeypair.name)
     }
 
     onClosed: {
@@ -173,10 +173,10 @@ StatusModal {
                     if (root.store.syncViaQr) {
                         return qsTr("Done")
                     }
-                    return qsTr("Import keypair")
+                    return qsTr("Import key pair")
                 case Constants.keypairImportPopup.state.importPrivateKey:
                 case Constants.keypairImportPopup.state.importSeedPhrase:
-                    return qsTr("Import keypair")
+                    return qsTr("Import key pair")
                 }
 
                 return ""

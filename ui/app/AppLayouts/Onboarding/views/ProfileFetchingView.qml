@@ -100,7 +100,7 @@ Item {
                         case Constants.onboarding.profileFetching.entity.settings:
                             return qsTr("Settings")
                         case Constants.onboarding.profileFetching.entity.keypairs:
-                            return qsTr("Keypairs")
+                            return qsTr("Key pairs")
                         case Constants.onboarding.profileFetching.entity.watchOnlyAccounts:
                             return qsTr("Watched addresses")
                         }

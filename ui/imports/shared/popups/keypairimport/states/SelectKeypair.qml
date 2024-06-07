@@ -45,7 +45,7 @@ Item {
             Layout.fillWidth: true
             Layout.leftMargin: d.margin
             Layout.rightMargin: d.margin
-            text: qsTr("To use the associated accounts on this device, you need to import their keypairs.")
+            text: qsTr("To use the associated accounts on this device, you need to import their key pairs.")
             wrapMode: Text.WordWrap
         }
 
@@ -53,7 +53,7 @@ Item {
             Layout.fillWidth: true
             Layout.leftMargin: d.margin
             Layout.rightMargin: d.margin
-            text: qsTr("Import keypairs from your other device")
+            text: qsTr("Import key pairs from your other device")
         }
 
         StatusListItem {
