@@ -57,4 +57,20 @@ QtObject {
         }
         return hovered? WalletUtils.colorizedChainPrefix(chainShortNames) + Utils.richColorText(finalAddress, Theme.palette.directColor1) : chainShortNames + finalAddress
     }
+
+    /**
+      Calculate max safe amount to be used when making a transaction
+
+      This logic is here to make sure there is enough eth to pay for the gas.
+      Context, when making a transaction, whatever the type: swap/bridge/send, you need eth to pay for the gas.
+
+      rationale: https://github.com/status-im/status-desktop/pull/14959#discussion_r1627110880
+      */
+    function calculateMaxSafeSendAmount(value, symbol) {
+        if (symbol !== Constants.ethToken) {
+            return value
+        }
+
+        return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
+    }
 }

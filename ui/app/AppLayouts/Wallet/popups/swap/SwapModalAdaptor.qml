@@ -144,6 +144,10 @@ QObject {
                     roleName: "chainId"
                     value: root.swapFormData.selectedNetworkChainId
                     enabled: root.swapFormData.selectedNetworkChainId !== -1
+                },
+                ValueFilter {
+                    roleName: "isTest"
+                    value: root.swapStore.areTestNetworksEnabled
                 }/*,
                 // TODO enable once AccountsModalHeader is reworked!!
                 ValueFilter {

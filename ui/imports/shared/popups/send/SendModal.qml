@@ -17,6 +17,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
 
+import AppLayouts.Wallet.controls 1.0
+
 import "./panels"
 import "./controls"
 import "./views"
@@ -140,14 +142,6 @@ StatusDialog {
             store.setSelectedTokenName(selectedHolding.name)
 
             recalculateRoutesAndFees()
-        }
-
-        function prepareForMaxSend(value, symbol) {
-            if(symbol !== "ETH") {
-                return value
-            }
-
-            return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
         }
     }
 
@@ -277,36 +271,22 @@ StatusDialog {
                         }
                     }
 
-                    StatusListItemTag {
+                    MaxSendButton {
                         Layout.maximumWidth: 300
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                        Layout.preferredHeight: 22
                         visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset && !d.isCollectiblesTransfer
-                        title: {
-                            if(d.isHoveredHoldingValidAsset && !!d.hoveredHolding.symbol) {
-                                const input = amountToSendInput.inputIsFiat ? d.hoveredHolding.currentCurrencyBalance : d.hoveredHolding.currentBalance
-                                const max = d.prepareForMaxSend(input, d.hoveredHolding.symbol)
-                                if (max <= 0)
-                                    return qsTr("No balances active")
-                                const balance = d.currencyStore.formatCurrencyAmount(max, amountToSendInput.inputIsFiat ? amountToSendInput.currentCurrency
-                                                                                                                        : d.selectedHolding.symbol)
-                                return qsTr("Max: %1").arg(balance.toString())
-                            }
-                            const max = d.prepareForMaxSend(d.maxInputBalance, d.inputSymbol)
-                            if (max <= 0)
-                                return qsTr("No balances active")
 
-                            const balance = d.currencyStore.formatCurrencyAmount(max, d.inputSymbol)
-                            return qsTr("Max: %1").arg(balance.toString())
-                        }
-                        tagClickable: true
-                        closeButtonVisible: false
-                        titleText.font.pixelSize: 12
-                        bgColor: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
-                        titleText.color: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
-                        onTagClicked: {
-                            const max = d.prepareForMaxSend(d.maxInputBalance, d.inputSymbol)
-                            amountToSendInput.input.text = d.currencyStore.formatCurrencyAmount(max, d.inputSymbol, {noSymbol: true, rawAmount: true}, LocaleUtils.userInputLocale)
+                        value: d.maxInputBalance
+                        symbol: d.inputSymbol
+                        valid: amountToSendInput.input.valid || !amountToSendInput.input.text
+                        formatCurrencyAmount: (amount, symbol) => d.currencyStore.formatCurrencyAmount(amount, symbol, {noSymbol: !amountToSendInput.inputIsFiat})
+
+                        onClicked: {
+                            if (maxSafeValue > 0)
+                                amountToSendInput.input.text = maxSafeValueAsString
+                            else
+                                amountToSendInput.input.input.edit.clear()
+                            amountToSendInput.input.forceActiveFocus()
                         }
                     }
                 }

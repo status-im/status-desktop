@@ -211,6 +211,12 @@ QtObject {
         root.showUnPreferredChains = !root.showUnPreferredChains
     }
 
+    function setSelectedTokenIsOwnerToken(isOwnerToken) {
+    }
+
+    function setSelectedTokenName(tokenName) {
+    }
+
     property string amountToSend
     property bool suggestedRoutesCalled: false
     function suggestedRoutes(amount) {

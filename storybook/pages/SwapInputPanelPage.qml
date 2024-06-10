@@ -40,7 +40,7 @@ SplitView {
             swapStore: SwapStore {
                 readonly property var accounts: WalletAccountsModel {}
                 readonly property var flatNetworks: NetworksModel.flatNetworks
-                readonly property bool areTestNetworksEnabled: false
+                readonly property bool areTestNetworksEnabled: true
             }
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
