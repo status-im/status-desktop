@@ -142,8 +142,6 @@ ColumnLayout {
             input.edit.color: input.valid ? Theme.palette.directColor1
                                           : Theme.palette.dangerColor1
             input.edit.readOnly: !root.interactive
-            validationMode: StatusInput.ValidationMode.OnlyWhenDirty
-
             validationMode: StatusInput.ValidationMode.Always
             validators: [
                 StatusValidator {
