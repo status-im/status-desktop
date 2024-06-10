@@ -10,7 +10,8 @@ proc delete*(self: UserProfileCreateState) =
 
 method executePrimaryCommand*(self: UserProfileCreateState, controller: Controller) =
   # We're here in case of a backup fetch failure
-  if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase: 
+  if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
+    self.flowType == FlowType.FirstRunOldUserKeycardImport:
       controller.storeProfileDataAndProceedWithAppLoading()
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
     self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
