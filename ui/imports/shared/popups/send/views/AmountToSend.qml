@@ -5,7 +5,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls.Validators 0.1
 
@@ -128,10 +127,6 @@ ColumnLayout {
         Layout.fillWidth: true
         id: topItem
 
-        property double topAmountToSend: !inputIsFiat ? d.cryptoValueToSend
-                                                      : d.fiatValueToSend
-        property string topAmountSymbol: !inputIsFiat ? d.selectedSymbol
-                                                      : root.currentCurrency
         AmountInputWithCursor {
             id: topAmountToSendInput
             Layout.fillWidth: true

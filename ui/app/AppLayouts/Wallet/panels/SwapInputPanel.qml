@@ -10,6 +10,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Wallet.controls 1.0
+
 import shared.popups.send.views 1.0
 import shared.popups.send.panels 1.0
 
@@ -92,17 +94,6 @@ Control {
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? root.currencyStore.currentCurrency :
                                                                               !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
-        readonly property string maxInputBalanceFormatted:
-            root.currencyStore.formatCurrencyAmount(Math.trunc(prepareForMaxSend(d.maxInputBalance, d.inputSymbol)*100)/100, d.inputSymbol, {noSymbol: !amountToSendInput.inputIsFiat})
-
-        function prepareForMaxSend(value, symbol) {
-            if (symbol !== Constants.ethToken) {
-                return value
-            }
-
-            return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
-        }
-
         property string searchText
     }
 
@@ -197,13 +188,15 @@ Control {
                 interactive: true
                 selectedHolding: d.selectedHolding
                 fiatInputInteractive: root.fiatInputInteractive
+                input.input.edit.color: !input.valid ? Theme.palette.dangerColor1 : maxSendButton.hovered ? Theme.palette.baseColor1
+                                                                                                          : Theme.palette.directColor1
 
                 multiplierIndex: d.isSelectedHoldingValidAsset && !!holdingSelector.selectedItem && !!holdingSelector.selectedItem.decimals
                                  ? holdingSelector.selectedItem.decimals
                                  : 0
 
                 maxInputBalance: (root.swapSide === SwapInputPanel.SwapSide.Receive || !d.isSelectedHoldingValidAsset) ? Number.POSITIVE_INFINITY
-                                                                                                                       : d.prepareForMaxSend(d.maxInputBalance, d.inputSymbol)
+                                                                                                                       : maxSendButton.maxSafeValue
                 currentCurrency: root.currencyStore.currentCurrency
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 loading: root.loading
@@ -247,26 +240,24 @@ Control {
                 onSearchTextChanged: d.searchText = searchText
             }
 
-            Item { Layout.fillHeight: !itemTag.visible }
+            Item { Layout.fillHeight: !maxSendButton.visible }
 
-            StatusListItemTag {
-                id: itemTag
-                objectName: "maxTagButton"
+            MaxSendButton {
+                id: maxSendButton
                 Layout.alignment: Qt.AlignRight
                 Layout.maximumWidth: parent.width
-                Layout.preferredHeight: 22
+                objectName: "maxTagButton"
+
+                value: d.maxInputBalance
+                symbol: d.inputSymbol
+                valid: amountToSendInput.input.valid || !amountToSendInput.input.text
+                formatCurrencyAmount: (amount, symbol) => root.currencyStore.formatCurrencyAmount(amount, symbol, {noSymbol: !amountToSendInput.inputIsFiat})
+
                 visible: d.isSelectedHoldingValidAsset && root.swapSide === SwapInputPanel.SwapSide.Pay
-                title: d.maxInputBalance > 0 ? qsTr("Max: %1").arg(d.maxInputBalanceFormatted)
-                                             : qsTr("No balances active")
-                tagClickable: true
-                closeButtonVisible: false
-                titleText.font.pixelSize: 12
-                bgColor: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
-                titleText.color: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
-                onTagClicked: {
-                    const max = d.prepareForMaxSend(d.maxInputBalance, d.inputSymbol)
-                    if (max > 0)
-                        amountToSendInput.input.text = max.toLocaleString(Qt.locale(), 'f', -128)
+
+                onClicked: {
+                    if (maxSafeValue)
+                        amountToSendInput.input.text = maxSafeValueAsString
                     else
                         amountToSendInput.input.input.edit.clear()
                     amountToSendInput.input.forceActiveFocus()

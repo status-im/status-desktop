@@ -26,7 +26,7 @@ Item {
             swapStore: SwapStore {
                 readonly property var accounts: WalletAccountsModel {}
                 readonly property var flatNetworks: NetworksModel.flatNetworks
-                readonly property bool areTestNetworksEnabled: false
+                readonly property bool areTestNetworksEnabled: true
             }
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
@@ -199,6 +199,46 @@ Item {
 
             tryCompare(controlUnderTest, "cryptoValue", 1.42)
             verify(controlUnderTest.cryptoValueValid)
+        }
+
+        // verify that when "fiatInputInteractive" mode is on, the Max send button text shows fiat currency symbol (e.g. "1.2 USD")
+        function test_maxButtonFiatCurrencySymbol() {
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "ETH"})
+            verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
+            controlUnderTest.fiatInputInteractive = true
+
+            const maxTagButton = findChild(controlUnderTest, "maxTagButton")
+            verify(!!maxTagButton)
+            waitForRendering(maxTagButton)
+            verify(maxTagButton.visible)
+            verify(!maxTagButton.text.endsWith("ETH"))
+            mouseClick(maxTagButton)
+
+            const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
+            verify(!!amountToSendInput)
+            waitForRendering(amountToSendInput)
+
+            const bottomItemText = findChild(amountToSendInput, "bottomItemText")
+            verify(!!bottomItemText)
+            verify(bottomItemText.visible)
+            mouseClick(bottomItemText)
+            waitForRendering(amountToSendInput)
+
+            verify(maxTagButton.text.endsWith("USD"))
+        }
+
+        // verify that in default mode, the Max send button text doesn't show the currency symbol for crypto (e.g. "1.2" for ETH)
+        function test_maxButtonNoCryptoCurrencySymbol() {
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "ETH"})
+            verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
+
+            const maxTagButton = findChild(controlUnderTest, "maxTagButton")
+            verify(!!maxTagButton)
+            waitForRendering(maxTagButton)
+            verify(maxTagButton.visible)
+            verify(!maxTagButton.text.endsWith("ETH"))
         }
 
         function test_clickingMaxButton() {
