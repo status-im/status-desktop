@@ -1,4 +1,4 @@
-import sugar, sequtils, stint, json, json_serialization
+import sugar, sequtils, stint
 import uuids, chronicles
 import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
@@ -110,10 +110,9 @@ proc authenticate*(self: Controller, keyUid = "") =
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
 proc suggestedRoutes*(self: Controller, accountFrom: string, accountTo: string, amount: Uint256, token: string, toToken: string,
-  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
-  let suggestedRoutes = self.transactionService.suggestedRoutes(accountFrom, accountTo, amount, token, toToken, disabledFromChainIDs,
+  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string) =
+  self.transactionService.suggestedRoutes(accountFrom, accountTo, amount, token, toToken, disabledFromChainIDs,
     disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
-  return suggestedRoutes.toJson()
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string, toAssetKey: string,
     uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,

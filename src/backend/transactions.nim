@@ -11,7 +11,8 @@ type
   MultiTransactionType* = enum
     MultiTransactionSend = 0,
     MultiTransactionSwap = 1,
-    MultiTransactionBridge = 2
+    MultiTransactionBridge = 2,
+    MultiTransactionApprove = 3
 
   MultiTransactionCommandDto* = ref object of RootObj
     fromAddress* {.serializedFieldName("fromAddress").}: string

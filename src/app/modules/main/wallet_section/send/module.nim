@@ -281,6 +281,11 @@ method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, 
   else:
     self.controller.authenticate()
 
+method authenticateAndTransferWithPaths*(self: Module, fromAddr: string, toAddr: string, assetKey: string, toAssetKey: string, uuid: string,
+  sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool, rawPaths: string) =
+  self.tmpSendTransactionDetails.paths = rawPaths.convertToTransactionPathsDto()
+  self.authenticateAndTransfer(fromAddr, toAddr, assetKey, toAssetKey, uuid, sendType, selectedTokenName, selectedTokenIsOwnerToken)
+
 method onUserAuthenticated*(self: Module, password: string, pin: string) =
   if password.len == 0:
     self.transactionWasSent(chainId = 0, txHash = "", uuid = self.tmpSendTransactionDetails.uuid, error = authenticationCanceled)
@@ -333,8 +338,8 @@ method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: stri
   self.view.sendTransactionSentSignal(chainId, txHash, uuid, error)
 
 method suggestedRoutes*(self: Module, accountFrom: string, accountTo: string, amount: UInt256, token: string, toToken: string,
-  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
-  return self.controller.suggestedRoutes(accountFrom, accountTo, amount, token, toToken, disabledFromChainIDs,
+  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string) =
+  self.controller.suggestedRoutes(accountFrom, accountTo, amount, token, toToken, disabledFromChainIDs,
     disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
 
 method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) =
@@ -351,7 +356,8 @@ method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) 
     suggestedRoutes = suggestedRouteModel,
     gasTimeEstimate = gasTimeEstimate,
     amountToReceive = suggestedRoutes.amountToReceive,
-    toNetworksModel = toNetworksModel)
+    toNetworksModel = toNetworksModel,
+    rawPaths = suggestedRoutes.rawBest)
   self.view.setTransactionRoute(transactionRoutes)
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =

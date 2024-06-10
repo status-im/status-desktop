@@ -1026,6 +1026,8 @@ QtObject {
         Bridge,
         ERC721Transfer,
         ERC1155Transfer,
+        Swap,
+        Approve,
         Unknown
     }
 

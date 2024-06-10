@@ -55,6 +55,10 @@ QtObject {
         return modelToArray(model, [role]).map(entry => entry[role])
     }
 
+    function joinModelEntries(model, role, separator) {
+        return modelToFlatArray(model, role).join(separator)
+    }
+
     function indexOf(model, role, key) {
         if (!model)
             return -1

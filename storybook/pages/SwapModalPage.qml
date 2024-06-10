@@ -95,6 +95,13 @@ SplitView {
                             readonly property var accounts: d.accountsModel
                             readonly property var flatNetworks: d.flatNetworksModel
                             readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
+
+                            signal suggestedRoutesReady(var txRoutes)
+
+                            function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
+                                disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {}
+                            function authenticateAndTransfer(uuid, accountFrom, accountTo,
+                                    tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {}
                         }
                         walletAssetsStore: WalletAssetsStore {
                             id: thisWalletAssetStore

@@ -325,6 +325,15 @@ QtObject:
   proc isCollectiblesTransfer(self: Service, sendType: SendType): bool =
     return sendType == ERC721Transfer or sendType == ERC1155Transfer
 
+  proc sendTypeToMultiTxType(sendType: SendType): transactions.MultiTransactionType =
+    case sendType
+    of SendType.Swap:
+      return transactions.MultiTransactionType.MultiTransactionSwap
+    of SendType.Approve:
+      return transactions.MultiTransactionType.MultiTransactionApprove
+    else:
+      return transactions.MultiTransactionType.MultiTransactionSend
+
   proc transferEth(
     self: Service,
     from_addr: string,
@@ -364,11 +373,8 @@ QtObject:
         fromAsset: tokenSymbol,
         toAsset: toTokenSymbol,
         fromAmount:  "0x" & totalAmountToSend.toHex,
-        multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
+        multiTxType: sendTypeToMultiTxType(sendType),
       )
-
-      if sendType == Swap:
-        mtCommand.multiTxType = transactions.MultiTransactionType.MultiTransactionSwap
 
       let response = transactions.createMultiTransaction(
         mtCommand,
@@ -407,7 +413,7 @@ QtObject:
         toAddress: to_addr,
         fromAsset: if not asset.isNil: asset.symbol else: assetKey,
         toAsset: if not toAsset.isNil: toAsset.symbol else: toAssetKey,
-        multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
+        multiTxType: sendTypeToMultiTxType(sendType),
       )
 
     # if collectibles transfer ...
@@ -420,9 +426,6 @@ QtObject:
       else:
         error "Invalid assetKey for collectibles transfer", assetKey=assetKey
         return
-
-    if sendType == Swap:
-      mtCommand.multiTxType = transactions.MultiTransactionType.MultiTransactionSwap
 
     try:
       for route in routes:
@@ -449,6 +452,11 @@ QtObject:
           paths.add(approvalPath)
 
         totalAmountToSend += route.amountIn
+
+        if sendType == SendType.Approve:
+          # We only do the approvals
+          continue
+
         let transfer = Transfer(
           to: parseAddress(mtCommand.toAddress),
           value: route.amountIn,
@@ -558,7 +566,7 @@ QtObject:
     self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutesDto))
 
   proc suggestedRoutes*(self: Service, accountFrom: string, accountTo: string, amount: Uint256, token: string, toToken: string,
-    disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): SuggestedRoutesDto =
+    disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string) =
     var
       tokenId: string
       toTokenId: string
