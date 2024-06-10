@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import QtGraphicalEffects 1.15
+
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -121,17 +123,39 @@ StatusComboBox {
             visible: !!text
         }
         Row {
+            id: row
             spacing: -4
             visible: (!d.allSelected || !root.showAllSelectedText) && chainRepeater.count > 0
             Repeater {
                 id: chainRepeater
                 model: root.preferredNetworksMode ? root.flatNetworks: root.multiSelection ? d.enabledFlatNetworks: []
                 delegate: StatusRoundedImage {
+                    id: delegateItem
                     width: 24
                     height: 24
                     image.source: Style.svg(model.iconUrl)
                     z: index + 1
                     visible: root.preferredNetworksMode ? root.preferredSharingNetworks.includes(model.chainId.toString()): image.source !== ""
+
+                    image.layer.enabled: index < chainRepeater.count - 1 && row.spacing < 0
+                    image.layer.effect: OpacityMask {
+                        id: mask
+                        invert: true
+
+                        maskSource: Item {
+                            width: mask.width + 2
+                            height: mask.height + 2
+
+                            Rectangle {
+                                anchors.centerIn: parent
+                                anchors.horizontalCenterOffset: delegateItem.width + row.spacing
+
+                                width: parent.width
+                                height: width
+                                radius: width / 2
+                            }
+                        }
+                    }
                 }
             }
         }
