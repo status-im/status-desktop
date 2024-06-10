@@ -35,7 +35,9 @@ ComboBox {
             currentIndex = d.currentIndex
             root.createOrEditRequested()
         } else {
-            if (d.currentIndex === index)  // just keep the same sort role and flip the up/down
+            if (index === indexOfValue(SortOrderComboBox.TokenOrderCustom))
+                currentSortOrder = Qt.AscendingOrder
+            else if (d.currentIndex === index)  // just keep the same sort role and flip the up/down
                 currentSortOrder = currentSortOrder === Qt.AscendingOrder ? Qt.DescendingOrder : Qt.AscendingOrder
 
             // update internal index
@@ -211,16 +213,22 @@ ComboBox {
     }
 
     delegate: ItemDelegate {
+        id: menuDelegate
+
         required property int index
         required property var modelData
+
         readonly property bool isSeparator: text === "---"
 
-        id: menuDelegate
         width: ListView.view.width
         highlighted: root.highlightedIndex === index
         enabled: !isSeparator
+
+        readonly property bool custom:
+            modelData["value"] === SortOrderComboBox.TokenOrderCustom
+
         visible: {
-            if (modelData["value"] === SortOrderComboBox.TokenOrderCustom) // hide "Custom order" menu entry if none defined
+            if (custom) // hide "Custom order" menu entry if none defined
                 return root.hasCustomOrderDefined
             return true
         }
@@ -252,7 +260,7 @@ ComboBox {
             readonly property int menuIndex: menuDelegate.index
             readonly property string menuText: menuDelegate.text
             readonly property string iconName: menuDelegate.icon.name
-            readonly property bool showUpDownArrows: menuDelegate.modelData["sortRoleName"] !== ""
+            readonly property bool showUpDownArrows: !menuDelegate.custom && menuDelegate.modelData["sortRoleName"] !== ""
             readonly property bool isEditAction: modelData["value"] === SortOrderComboBox.TokenOrderCreateCustom
             sourceComponent: menuDelegate.isSeparator ? separatorMenuComponent : regularMenuComponent
         }

@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -11,8 +11,9 @@ import utils 1.0
 ColumnLayout {
     id: root
 
-    signal openInfoPopup()
     property alias text: sectionTitle.text
+
+    signal infoButtonClicked
 
     spacing: 0
 
@@ -39,7 +40,7 @@ ColumnLayout {
             textColor: Theme.palette.baseColor1
             horizontalPadding: 0
             verticalPadding: 0
-            onClicked: openInfoPopup()
+            onClicked: root.infoButtonClicked()
         }
     }
 }

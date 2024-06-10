@@ -175,7 +175,7 @@ Item {
                         width: parent.width
                         height: !!text ? 52 : 0 // if we bind to some property instead of hardcoded value it wont work nice when switching tabs or going inside collection and back
                         text: Helpers.assetsSectionTitle(section, tokenList.hasCommunityTokens, d.isBrowsingGroup, d.isBrowsingTypeERC20)
-                        onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+                        onInfoButtonClicked: Global.openPopup(communityInfoPopupCmp)
                     }
                 }
             }
