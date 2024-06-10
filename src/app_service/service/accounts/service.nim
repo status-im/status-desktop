@@ -83,6 +83,8 @@ QtObject:
     result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
     result.defaultWalletEmoji = ""
 
+  proc scheduleReencrpytion(self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000)
+
   proc setLocalAccountSettingsFile(self: Service) =
     if self.loggedInAccount.isValid():
       singletonInstance.localAccountSettings.setFileName(self.loggedInAccount.name)
@@ -713,29 +715,31 @@ QtObject:
       self.setKeyStoreDir(account.keyUid)
 
       if mnemonic == "":
-        let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPasswordToUpperCase(hashedPassword))
-        if isOldHashPassword:
-          debug "database reencryption scheduled"
-
-          # Save tmp properties so that we can login after the timer
-          self.tmpAccount = account
-          self.tmpHashedPassword = hashedPassword
-
-        # Start a 1 second timer for the loading screen to appear
-        let arg = TimerTaskArg(
-          tptr: timerTask,
-          vptr: cast[ByteAddress](self.vptr),
-          slot: "onWaitForReencryptionTimeout",
-          timeoutInMilliseconds: 1000
-        )
-        self.threadpool.start(arg)
-        return
+        let oldHashedPassword = hashedPasswordToUpperCase(hashedPassword)
+        if self.verifyDatabasePassword(account.keyUid, oldHashedPassword):
+          self.scheduleReencrpytion(account, hashedPassword, timeout = 1000)
+          return
 
       self.doLogin(account, hashedPassword, chatPrivateKey, mnemonic)
 
     except Exception as e:
       error "login failed", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: e.msg))
+
+  proc scheduleReencrpytion(self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000) =
+    debug "database reencryption scheduled"
+
+    # Save tmp properties so that we can login after the timer
+    self.tmpAccount = account
+    self.tmpHashedPassword = hashedPassword
+
+    let arg = TimerTaskArg(
+      tptr: timerTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onWaitForReencryptionTimeout",
+      timeoutInMilliseconds: timeout
+    )
+    self.threadpool.start(arg)
 
   proc onWaitForReencryptionTimeout(self: Service, response: string) {.slot.} =
     debug "starting database reencryption"
