@@ -9,9 +9,12 @@ proc delete*(self: UserProfileConfirmPasswordState) =
   self.State.delete
 
 method getNextPrimaryState*(self: UserProfileConfirmPasswordState, controller: Controller): State =
-  if not main_constants.SUPPORTS_FINGERPRINT:
-    return nil
-  return createState(StateType.Biometrics, self.flowType, self)
+  if main_constants.SUPPORTS_FINGERPRINT:
+    return createState(StateType.Biometrics, self.flowType, self)
+  if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
+    self.flowType == FlowType.FirstRunOldUserKeycardImport:
+    return createState(StateType.ProfileFetching, self.flowType, nil)
+  return nil
 
 method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller: Controller) =
   if main_constants.SUPPORTS_FINGERPRINT:
