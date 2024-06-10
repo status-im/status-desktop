@@ -250,7 +250,7 @@ ColumnLayout {
         AssetsSectionDelegate {
             width: parent.width
             text: qsTr("Community minted")
-            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+            onInfoButtonClicked: Global.openPopup(communityInfoPopupCmp)
         }
     }
 

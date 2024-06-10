@@ -22,6 +22,7 @@ InformationTag 1.0 InformationTag.qml
 InformationTile 1.0 InformationTile.qml
 Input 1.0 Input.qml
 LoadingTokenDelegate 1.0 LoadingTokenDelegate.qml
+LoadingTokenDelegateNew 1.0 LoadingTokenDelegateNew.qml
 LinkPreviewDebugView 1.0 LinkPreviewDebugView.qml
 ProfilePerspectiveSelector 1.0 ProfilePerspectiveSelector.qml
 RadioButtonSelector 1.0 RadioButtonSelector.qml
@@ -43,6 +44,7 @@ StyledTextEditWithLoadingState 1.0 StyledTextEditWithLoadingState.qml
 StyledTextField 1.0 StyledTextField.qml
 Timer 1.0 Timer.qml
 TokenDelegate 1.0 TokenDelegate.qml
+TokenDelegateNew 1.0 TokenDelegateNew.qml
 TransactionAddress 1.0 TransactionAddress.qml
 TransactionAddressTile 1.0 TransactionAddressTile.qml
 TransactionDataTile 1.0 TransactionDataTile.qml

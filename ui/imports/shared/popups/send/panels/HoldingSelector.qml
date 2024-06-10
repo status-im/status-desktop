@@ -246,7 +246,7 @@ Item {
                             width: ListView.view.width
                             required property bool section
                             text: Helpers.assetsSectionTitle(section, holdingItemSelector.hasCommunityTokens, d.isBrowsingGroup, d.isCurrentBrowsingTypeAsset)
-                            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+                            onInfoButtonClicked: Global.openPopup(communityInfoPopupCmp)
                         }
         comboBoxControl.popup.onOpened: comboBoxControl.popup.contentItem.headerItem.focusSearch()
         comboBoxControl.popup.onClosed: comboBoxControl.popup.contentItem.headerItem.clear()
