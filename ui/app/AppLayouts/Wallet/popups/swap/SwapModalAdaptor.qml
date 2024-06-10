@@ -26,6 +26,28 @@ QObject {
     readonly property var fromToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
     readonly property var toToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.toTokenKey)
 
+    readonly property alias suggestedRoutes: d.suggestedRoutes
+
+    QtObject {
+        id: d
+
+        property string uuid
+        // TODO: Remove these properties swap proposal is properly handled
+        property var suggestedRoutes
+        property string rawPaths
+    }
+
+    Connections {
+        target: root.swapStore
+        function onSuggestedRoutesReady(txRoutes) {
+            root.swapProposalReady = txRoutes.suggestedRoutes.count > 0
+            root.swapProposalLoading = false
+
+            d.suggestedRoutes = txRoutes.suggestedRoutes
+            d.rawPaths = txRoutes.rawPaths
+        }
+    }
+
     readonly property var nonWatchAccounts: SortFilterProxyModel {
         sourceModel: root.swapStore.accounts
         filters: ValueFilter {
@@ -70,6 +92,21 @@ QObject {
 
     function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
         return root.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
+    }
+
+    function getAllChainIds() {
+        return ModelUtils.joinModelEntries(root.filteredFlatNetworksModel, "chainId", ":")
+    }
+
+    function getDisabledChainIds(enabledChainId) {
+        let disabledChainIds = []
+        let chainIds = ModelUtils.modelToFlatArray(root.filteredFlatNetworksModel, "chainId")
+        for (let i = 0; i < chainIds.length; i++) {
+            if (chainIds[i] !== enabledChainId) {
+                disabledChainIds.push(chainIds[i])
+            }
+        }
+        return disabledChainIds.join(":")
     }
 
     // TODO: remove once the AccountsModalHeader is reworked!!
@@ -197,5 +234,43 @@ QObject {
             totalBalance+=AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
         }
         return totalBalance
+    }
+
+    function fetchSuggestedRoutes() {
+        root.swapProposalReady = false
+        root.swapProposalLoading = true
+
+        // Identify new swap with a different uuid
+        d.uuid = Utils.uuid()
+
+        let account = getSelectedAccount(root.swapFormData.selectedAccountIndex)
+        let accountAddress = account.address
+        let disabledChainIds = getDisabledChainIds(root.swapFormData.selectedNetworkChainId)
+        let preferedChainIds = getAllChainIds()
+
+        // TODO #14825: amount should be in BigInt string representation (fromTokenAmount * 10^decimals)
+        // Make sure that's replaced when the input component is integrated
+        root.swapStore.fetchSuggestedRoutes(accountAddress, accountAddress, 
+            root.swapFormData.fromTokenAmount, root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
+            disabledChainIds, disabledChainIds, preferedChainIds, 
+            Constants.SendType.Swap, "")
+    }
+
+    function sendApproveTx() {
+        let account = getSelectedAccount(root.swapFormData.selectedAccountIndex)
+        let accountAddress = account.address
+
+        root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
+            root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey, 
+            Constants.SendType.Approve, "", false, d.rawPaths)
+    }
+
+    function sendSwapTx() {
+        let account = getSelectedAccount(root.swapFormData.selectedAccountIndex)
+        let accountAddress = account.address
+
+        root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
+            root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey, 
+            Constants.SendType.Swap, "", false, d.rawPaths)
     }
 }

@@ -8,18 +8,21 @@ QtObject:
     gasTimeEstimate: GasEstimateItem
     amountToReceive: UInt256
     toNetworksModel: NetworkModel
+    rawPaths: string
 
   proc setup*(self: TransactionRoutes,
     suggestedRoutes: SuggestedRouteModel,
     gasTimeEstimate: GasEstimateItem,
     amountToReceive: UInt256,
-    toNetworksModel: NetworkModel
+    toNetworksModel: NetworkModel,
+    rawPaths: string
     ) =
       self.QObject.setup
       self.suggestedRoutes = suggestedRoutes
       self.gasTimeEstimate = gasTimeEstimate
       self.amountToReceive = amountToReceive
       self.toNetworksModel = toNetworksModel
+      self.rawPaths = rawPaths
 
   proc delete*(self: TransactionRoutes) =
       self.QObject.delete
@@ -28,10 +31,11 @@ QtObject:
     suggestedRoutes: SuggestedRouteModel = newSuggestedRouteModel(),
     gasTimeEstimate: GasEstimateItem = newGasEstimateItem(),
     amountToReceive: UInt256 = stint.u256(0),
-    toNetworksModel: NetworkModel = newNetworkModel()
+    toNetworksModel: NetworkModel = newNetworkModel(),
+    rawPaths: string = ""
     ): TransactionRoutes =
     new(result, delete)
-    result.setup(suggestedRoutes, gasTimeEstimate, amountToReceive, toNetworksModel)
+    result.setup(suggestedRoutes, gasTimeEstimate, amountToReceive, toNetworksModel, rawPaths)
 
   proc `$`*(self: TransactionRoutes): string =
     result = fmt"""TransactionRoutes(
@@ -39,6 +43,7 @@ QtObject:
       gasTimeEstimate: {self.gasTimeEstimate},
       amountToReceive: {self.amountToReceive},
       toNetworksModel: {self.toNetworksModel},
+      rawPaths: {self.rawPaths},
       ]"""
 
   proc suggestedRoutesChanged*(self: TransactionRoutes) {.signal.}
@@ -68,3 +73,10 @@ QtObject:
   QtProperty[QVariant] toNetworksModel:
     read = getToNetworks
     notify = toNetworksChanged
+
+  proc rawPathsChanged*(self: TransactionRoutes) {.signal.}
+  proc getRawPaths*(self: TransactionRoutes): string {.slot.} =
+    return self.rawPaths
+  QtProperty[string] rawPaths:
+    read = getRawPaths
+    notify = rawPathsChanged

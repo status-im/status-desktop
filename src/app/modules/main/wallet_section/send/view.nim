@@ -218,6 +218,20 @@ QtObject:
   proc sendTransactionSentSignal*(self: View, chainId: int, txHash: string, uuid: string, error: string) =
     self.transactionSent(chainId, txHash, uuid, error)
 
+  proc parseAmount(amount: string): Uint256 =
+    var parsedAmount = stint.u256(0)
+    try:
+      parsedAmount = amount.parse(Uint256)
+    except Exception as e:
+      discard
+    return parsedAmount
+  
+  proc parseChainIds(chainIds: string): seq[int] =
+    var parsedChainIds: seq[int] = @[]
+    for chainId in chainIds.split(':'):
+      parsedChainIds.add(chainId.parseInt())
+    return parsedChainIds
+
   proc authenticateAndTransfer*(self: View, uuid: string) {.slot.} =
     self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetKey,
       self.selectedToAssetKey, uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
@@ -227,15 +241,9 @@ QtObject:
     self.transactionRoutes = routes
     self.suggestedRoutesReady(newQVariant(self.transactionRoutes))
 
-  proc suggestedRoutes*(self: View, amount: string): string {.slot.} =
-    var parsedAmount = stint.u256(0)
-    try:
-      parsedAmount = amount.parse(Uint256)
-    except Exception as e:
-      discard
-
-    return self.delegate.suggestedRoutes(self.selectedSenderAccount.address(), self.selectedRecipient,
-      parsedAmount, self.selectedAssetKey, self.selectedToAssetKey, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
+  proc suggestedRoutes*(self: View, amount: string) {.slot.} =
+    self.delegate.suggestedRoutes(self.selectedSenderAccount.address(), self.selectedRecipient,
+      parseAmount(amount), self.selectedAssetKey, self.selectedToAssetKey, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
       self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(),
       self.sendType, self.fromNetworksModel.getRouteLockedChainIds())
 
@@ -322,3 +330,16 @@ QtObject:
 
   proc getIconUrl*(self: View, chainId: int): string {.slot.} =
     return self.fromNetworksModel.getIconUrl(chainId)
+
+# "Stateless" methods
+  proc fetchSuggestedRoutesWithParameters*(self: View, accountFrom: string, accountTo: string, amount: string, token: string, toToken: string,
+    disabledFromChainIDs: string, disabledToChainIDs: string, preferredChainIDs: string, sendType: int, lockedInAmounts: string) {.slot.} =
+    self.delegate.suggestedRoutes(accountFrom, accountTo,
+      parseAmount(amount), token, toToken, 
+      parseChainIds(disabledFromChainIDs), parseChainIds(disabledToChainIDs), parseChainIds(preferredChainIDs),
+      SendType(sendType), lockedInAmounts)
+  
+  proc authenticateAndTransferWithParameters*(self: View, uuid: string, accountFrom: string, accountTo: string, token: string, toToken: string,
+    sendType: int, tokenName: string, tokenIsOwnerToken: bool, rawPaths: string) {.slot.} =
+    self.delegate.authenticateAndTransferWithPaths(accountFrom, accountTo, token,
+      toToken, uuid, SendType(sendType), tokenName, tokenIsOwnerToken, rawPaths)

@@ -4,8 +4,10 @@ import QtQml.Models 2.15
 
 import utils 1.0
 
+import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
 
@@ -107,6 +109,36 @@ StatusDialog {
         }
         StatusBaseText {
             text: qsTr("to token amount: %1").arg(swapInputParamsForm.toTokenAmount)
+        }
+        StatusButton {
+            text: "Fetch Suggested Routes"
+            onClicked: {
+                swapAdaptor.fetchSuggestedRoutes()
+            }
+        }
+        StatusButton {
+            text: "Send Approve Tx"
+            onClicked: {
+                swapAdaptor.sendApproveTx()
+            }
+        }
+        StatusButton {
+            text: "Send Swap Tx"
+            onClicked: {
+                swapAdaptor.sendSwapTx()
+            }
+        }
+        StatusScrollView {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 200
+
+            StatusTextArea {
+                text: {
+                    let routes = SQUtils.ModelUtils.modelToArray(swapAdaptor.suggestedRoutes)
+                    let routesString = JSON.stringify(routes, null, "  ")
+                    return qsTr("Suggested routes: \n%1").arg(routesString)
+                }
+            }
         }
         // End temporary placeholders
 

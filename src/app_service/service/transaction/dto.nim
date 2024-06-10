@@ -20,6 +20,7 @@ type
     ERC721Transfer
     ERC1155Transfer
     Swap
+    Approve
 
 type
   PendingTransactionTypeDto* {.pure.} = enum
@@ -325,6 +326,15 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   discard jsonObj.getProp("approvalGasFees", result.approvalGasFees)
   discard jsonObj.getProp("approvalContractAddress", result.approvalContractAddress)
 
+proc convertToTransactionPathsDto*(jsonObj: JsonNode): seq[TransactionPathDto] =
+  result = @[]
+  for path in jsonObj.getElems():
+    result.add(path.convertToTransactionPathDto())
+  return result
+
+proc convertToTransactionPathsDto*(paths: string): seq[TransactionPathDto] =
+  return paths.parseJson.convertToTransactionPathsDto()
+  
 type
   FeesDto* = ref object
     totalFeesInEth*: float
@@ -369,6 +379,7 @@ proc convertSendToNetwork*(jsonObj: JsonNode): SendToNetwork =
 type
   SuggestedRoutesDto* = ref object
     best*: seq[TransactionPathDto]
+    rawBest*: string
     gasTimeEstimate*: FeesDto
     amountToReceive*: UInt256
     toNetworks*: seq[SendToNetwork]
@@ -376,6 +387,7 @@ type
 proc `$`*(self: SuggestedRoutesDto): string =
   return fmt"""SuggestedRoutesDto(
     best:{self.best},
+    rawBest:{self.rawBest},
     gasTimeEstimate:{self.gasTimeEstimate},
     amountToReceive:{self.amountToReceive},
     toNetworks:{self.toNetworks},
@@ -383,7 +395,8 @@ proc `$`*(self: SuggestedRoutesDto): string =
 
 proc convertToSuggestedRoutesDto*(jsonObj: JsonNode): SuggestedRoutesDto =
   result = SuggestedRoutesDto()
-  result.best = jsonObj["suggestedRoutes"]["best"].getElems().map(x => x.convertToTransactionPathDto())
+  result.rawBest = $jsonObj["suggestedRoutes"]["best"]
+  result.best = result.rawBest.convertToTransactionPathsDto()
   result.gasTimeEstimate = jsonObj["suggestedRoutes"]["gasTimeEstimate"].convertToFeesDto()
   result.amountToReceive = stint.u256(jsonObj["suggestedRoutes"]["amountToReceive"].getStr)
   result.toNetworks = jsonObj["suggestedRoutes"]["toNetworks"].getElems().map(x => x.convertSendToNetwork())
