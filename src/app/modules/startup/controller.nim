@@ -191,8 +191,8 @@ proc shouldStartWithOnboardingScreen*(self: Controller): bool =
 
 # This is used in 2 cases.
 #   1. FirstRunOldUserImportSeedPhrase: when fetching backup failed and we create a new displayName and profileImage.
-#      At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
-#   2. FirstRunOldUserKeycardImport: WARNING: remove this usage
+#   2. FirstRunOldUserKeycardImport:
+# At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
   debug "<<< storeProfileDataAndProceedWithAppLoading"
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
@@ -521,41 +521,42 @@ proc isSelectedAccountAKeycardAccount*(self: Controller): bool =
   let selectedAccount = self.getSelectedLoginAccount()
   return selectedAccount.keycardPairing.len > 0
 
-proc login*(self: Controller) =
+proc login*(self: Controller, keycard: bool = false, keycardReplacement: bool = false) =
+  debug "<<< controller.login", keycard, keycardReplacement
+
   self.delegate.moveToLoadingAppState()
-  let selectedAccount = self.getSelectedLoginAccount()
-  self.accountsService.login(selectedAccount, hashPassword(self.tmpPassword))
+
+  var passwordHash, chatPrivateKey, mnemonic = ""
+
+  if not keycard:
+    passwordHash = hashPassword(self.tmpPassword) 
+  else:
+    passwordHash = self.tmpKeycardEvent.encryptionKey.publicKey
+    chatPrivateKey = self.tmpKeycardEvent.whisperKey.privateKey
+    mnemonic = self.tmpSeedPhrase
+
+  if keycard and keycardReplacement:
+    self.delegate.applyKeycardReplacementAfterLogin()
+      
+  self.accountsService.login(
+    self.getSelectedLoginAccount(),
+    passwordHash,
+    chatPrivateKey,
+    mnemonic,
+  )
 
 proc loginLocalPairingAccount*(self: Controller) =
   self.delegate.moveToLoadingAppState()
-  if self.localPairingStatus.chatKey.len == 0:
-    self.accountsService.login(self.localPairingStatus.account, self.localPairingStatus.password)
-  else:
-    var kcEvent = KeycardEvent()
-    kcEvent.keyUid = self.localPairingStatus.account.keyUid
-    kcEvent.whisperKey.privateKey = self.localPairingStatus.chatKey
-    kcEvent.encryptionKey.publicKey = self.localPairingStatus.password
-    discard self.accountsService.loginAccountKeycard(self.localPairingStatus.account, kcEvent)
+  self.accountsService.login(
+    self.localPairingStatus.account,
+    self.localPairingStatus.password,
+    chatPrivateKey = self.localPairingStatus.chatKey
+  )
 
-# WARNING: Reuse `login` with custom keycard parameters
 # FIXME: Why do we even have storeToKeychain during login? Makes no sense
 proc loginAccountKeycard*(self: Controller, storeToKeychain: bool, keycardReplacement = false) =
-  debug "<<< loginAccountKeycard", storeToKeychain, keycardReplacement
-
-  if keycardReplacement:
-    self.delegate.applyKeycardReplacementAfterLogin()
-
   # singletonInstance.localAccountSettings.setStoreToKeychainValue(storeToKeychainValue)
-
-  self.delegate.moveToLoadingAppState()
-  let selectedAccount = self.getSelectedLoginAccount()
-
-  self.accountsService.login(
-    selectedAccount, 
-    hashedPassword = self.tmpKeycardEvent.encryptionKey.publicKey, 
-    chatPrivateKey = self.tmpKeycardEvent.whisperKey.privateKey,
-    mnemonic = self.tmpSeedPhrase,
-  )
+  self.login(keycard = true, keycardReplacement = keycardReplacement)
 
 proc convertKeycardProfileKeypairToRegular*(self: Controller) =
   debug "<<< convertKeycardProfileKeypairToRegular"
