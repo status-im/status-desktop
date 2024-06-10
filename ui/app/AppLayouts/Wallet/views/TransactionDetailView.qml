@@ -177,6 +177,13 @@ Item {
                     community: isModelDataValid && communityId && communitiesStore ? communitiesStore.getCommunityDetailsAsJson(communityId) : null
 
                     onRetryClicked: d.retryTransaction()
+
+                    onClicked: {
+                        console.log("===========", transaction.id)
+                        console.log("====", JSON.stringify(d.details))
+                        console.log("====", JSON.stringify(transaction))
+                        transaction.debug()
+                    }
                 }
 
                 Separator { }

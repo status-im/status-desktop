@@ -128,6 +128,9 @@ QtObject:
       metadata:{$self.metadata},
     )"""
 
+  proc debug*(self: ActivityEntry) {.slot.} =
+    echo "==== --- ", self
+
   # TODO: is this the right way to pass transaction identity? Why not use the instance?
   proc getId*(self: ActivityEntry): string {.slot.} =
     if self.isMultiTransaction():
