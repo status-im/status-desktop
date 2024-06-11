@@ -43,7 +43,7 @@ def kill_process(pid, sig: signal.Signals = signal.SIGKILL):
 
 
 @allure.step('Kill process with retries')
-def kill_process_with_retries(pid, sig: signal.Signals = signal.SIGTERM, attempts: int = 3):
+def kill_process_with_retries(pid, sig: signal.Signals = signal.SIGKILL, attempts: int = 3):
     LOG.debug('Killing process: %d', pid)
     try:
         p = psutil.Process(pid)
@@ -51,7 +51,7 @@ def kill_process_with_retries(pid, sig: signal.Signals = signal.SIGTERM, attempt
         LOG.warning('Process %d already gone.', pid)
         return
 
-    p.terminate()
+    p.send_signal(sig)
 
     while attempts > 0:
         attempts -= 1
