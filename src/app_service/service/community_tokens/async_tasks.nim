@@ -282,9 +282,11 @@ const fetchAssetOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall
   let arg = decode[FetchAssetOwnersArg](argEncoded)
   try:
     let addressesResponse = communities_backend.getCommunityMembersForWalletAddresses(arg.communityId, arg.chainId)
+    var walletMemberTable: Table[string, ContactsDto]
     var allCommunityMembersAddresses: seq[string] = @[]
-    for address in addressesResponse.result.keys():
+    for address, member in addressesResponse.result.pairs():
       allCommunityMembersAddresses.add(address)
+      walletMemberTable[address.toUpper] = member.toContactsDto()
 
     let balancesResponse = backend.getBalancesByChain(@[arg.chainId], allCommunityMembersAddresses, @[arg.contractAddress])
 
@@ -292,7 +294,7 @@ const fetchAssetOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall
 
     var collectibleOwners: seq[CommunityCollectibleOwner] = @[]
     for wallet, balance in walletBalanceTable.pairs():
-      let member = addressesResponse.result[wallet].toContactsDto()
+      let member = walletMemberTable[wallet]
       let collectibleBalance = CollectibleBalance(tokenId: stint.u256(0), balance: balance)
       let collectibleOwner = CollectibleOwner(address: wallet, balances: @[collectibleBalance])
       collectibleOwners.add(CommunityCollectibleOwner(
