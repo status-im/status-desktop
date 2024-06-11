@@ -42,7 +42,7 @@ class SquishServer:
         if cls.pid is None:
             return
         LOG.info('Stopping Squish Server with PID: %d', cls.pid)
-        local_system.kill_process_with_retries(cls.pid)
+        local_system.kill_process(cls.pid)
         cls.pid = None
         cls.port = None
 

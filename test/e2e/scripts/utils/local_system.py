@@ -36,34 +36,19 @@ def find_free_port(start: int, step: int):
 def kill_process(pid, sig: signal.Signals = signal.SIGKILL):
     LOG.debug('Sending %s to %d process', sig.name, pid)
     try:
-        os.kill(pid, sig)
+        p = psutil.Process(pid)
+
     except ProcessLookupError as err:
         LOG.error('Failed to find process %d: %s', pid, err)
         raise err
-
-
-@allure.step('Kill process with retries')
-def kill_process_with_retries(pid, sig: signal.Signals = signal.SIGKILL, attempts: int = 3):
-    LOG.debug('Killing process: %d', pid)
-    try:
-        p = psutil.Process(pid)
-    except psutil.NoSuchProcess:
-        LOG.warning('Process %d already gone.', pid)
-        return
-
-    p.send_signal(sig)
-
-    while attempts > 0:
-        attempts -= 1
+    for i in range(2):
         try:
             LOG.warning('Waiting for process to exit: %d', pid)
-            p.wait()
-        except TimeoutError as err:
             p.kill()
-        else:
-            return
-
-    raise RuntimeError('Failed to kill process: %d' % pid)
+            if not p.is_running():
+                break
+        except RuntimeError:
+            raise ('Failed to kill process: %d' % pid)
 
 
 @allure.step('System execute command')
