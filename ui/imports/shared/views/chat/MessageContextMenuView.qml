@@ -180,6 +180,7 @@ StatusMenu {
         enabled: (root.isMyMessage || root.amIChatAdmin) &&
                  !root.disabledForChat &&
                  (root.messageContentType === Constants.messageContentType.messageType ||
+                  root.messageContentType === Constants.messageContentType.bridgeMessageType ||
                   root.messageContentType === Constants.messageContentType.stickerType ||
                   root.messageContentType === Constants.messageContentType.emojiType ||
                   root.messageContentType === Constants.messageContentType.imageType ||
