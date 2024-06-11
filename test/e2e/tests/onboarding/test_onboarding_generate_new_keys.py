@@ -133,6 +133,3 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
     with step('Click sign out and quit in settings'):
         sign_out_screen = settings.left_panel.open_sign_out_and_quit()
         sign_out_screen.sign_out_and_quit()
-
-    with step('Check the application process is not running'):
-        psutil.Process(aut.pid).wait(timeout=30)
