@@ -73,13 +73,6 @@ class AUT:
         squish.currentApplicationContext().detach()
         self.ctx = None
 
-    def kill_process(self):
-        if self.pid is None:
-            LOG.warning('No PID available for AUT.')
-            return
-        local_system.kill_process_with_retries(self.pid)
-        self.pid = None
-
     @allure.step('Attach Squish to Test Application')
     def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
         LOG.info('Attaching to AUT: localhost:%d', self.port)
@@ -123,7 +116,7 @@ class AUT:
     def stop(self):
         LOG.info('Stopping AUT: %s', self.path)
         self.detach_context()
-        self.kill_process()
+        local_system.kill_process(self.pid)
 
     @allure.step("Start and attach AUT")
     def launch(self) -> 'AUT':
