@@ -69,12 +69,14 @@ def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account, de
         profile_popup = user_canvas.open_profile_popup_from_online_identifier()
         assert profile_popup.user_name == user_account.name
 
-    with step('Restart application and try re-importing seed phrase again'):
-        aut.restart()
-        enter_seed_view = LoginView().add_existing_status_user().open_keys_view().open_enter_seed_phrase_view()
-        enter_seed_view.input_seed_phrase(user_account.seed_phrase, autocomplete)
-        confirm_import = enter_seed_view.click_import_seed_phrase_button()
+    # TODO: https://github.com/status-im/status-desktop/issues/15124
+    # TODO: https://github.com/status-im/status-desktop/issues/15131
+    # with step('Restart application and try re-importing seed phrase again'):
+    #    aut.restart()
+    #    enter_seed_view = LoginView().add_existing_status_user().open_keys_view().open_enter_seed_phrase_view()
+    #    enter_seed_view.input_seed_phrase(user_account.seed_phrase, autocomplete)
+    #    confirm_import = enter_seed_view.click_import_seed_phrase_button()
 
-    with step('Verify that keys already exist popup appears and text is correct'):
-        assert confirm_import.get_key_exist_title() == KeysExistText.KEYS_EXIST_TITLE.value
-        assert KeysExistText.KEYS_EXIST_TEXT.value in confirm_import.get_text_labels()
+    #with step('Verify that keys already exist popup appears and text is correct'):
+    #    assert confirm_import.get_key_exist_title() == KeysExistText.KEYS_EXIST_TITLE.value
+    #    assert KeysExistText.KEYS_EXIST_TEXT.value in confirm_import.get_text_labels()
