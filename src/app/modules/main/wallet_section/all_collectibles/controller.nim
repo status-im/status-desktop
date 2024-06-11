@@ -47,7 +47,7 @@ proc init*(self: Controller) =
     self.delegate.refreshNetworks()
 
 proc getWalletAddresses*(self: Controller): seq[string] =
-  return self.walletAccountService.getWalletAddresses()
+  return self.walletAccountService.getWalletAccounts().map(a => a.address)
 
 proc getChainIds*(self: Controller): seq[int] =
   return self.networkService.getCurrentNetworks().map(n => n.chainId)
