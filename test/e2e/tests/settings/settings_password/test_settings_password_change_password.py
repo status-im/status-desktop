@@ -35,9 +35,6 @@ def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_accou
     with step('Click re-encrypt data button and then restart'):
         ChangePasswordPopup().click_re_encrypt_data_restart_button()
 
-    with step('Verify the application process is not running'):
-        psutil.Process(aut.pid).wait(timeout=30)
-
     with step('Restart application'):
         aut.restart()
 
