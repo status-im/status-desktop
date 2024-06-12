@@ -182,7 +182,7 @@ QtObject {
         let listOfChains = chainIds.split(":")
         let listOfChainIds = []
         for (let k =0;k<listOfChains.length;k++) {
-            listOfChainIds.push(SQUtils.ModelUtils.getByKey(NetworksModel.flatNetworks, "shortName", listOfChains[k], "chainId"))
+            listOfChainIds.push(SQUtils.ModelUtils.getByKey(flatNetworksModel, "shortName", listOfChains[k], "chainId"))
         }
         return listOfChainIds
     }
@@ -209,6 +209,9 @@ QtObject {
 
     function toggleShowUnPreferredChains() {
         root.showUnPreferredChains = !root.showUnPreferredChains
+    }
+
+    function setRouteEnabledFromChains(chainId) {
     }
 
     function setSelectedTokenIsOwnerToken(isOwnerToken) {
@@ -258,13 +261,11 @@ QtObject {
     }
 
     function getNetworkName(chainId) {
-        return SQUtils.ModelUtils.getByKey(NetworksModel.flatNetworks, "chainId", chainId, "chainName")
+        return SQUtils.ModelUtils.getByKey(flatNetworksModel, "chainId", chainId, "chainName")
     }
 
-    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
-        let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balance)
-        let decimalBalance = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, decimals)
-        return currencyStore.formatCurrencyAmount(decimalBalance, symbol)
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
+        return currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
     }
 
     // Property and methods below are used to apply advanced token management settings to the SendModal
@@ -318,11 +319,9 @@ QtObject {
             },
             FastExpressionFilter {
                 expression: {
-                    if (model.isCommunityAsset)
-                        return true
                     return model.currentCurrencyBalance > balanceThresholdAmount
                 }
-                expectedRoles: ["isCommunityAsset", "currentCurrencyBalance"]
+                expectedRoles: ["currentCurrencyBalance"]
                 enabled: balanceThresholdEnabled
             }
         ]

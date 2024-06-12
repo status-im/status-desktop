@@ -17,10 +17,10 @@ QtObject {
         return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
     }
 
-    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
         let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balance)
         let decimalBalance = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, decimals)
-        return formatCurrencyAmount(decimalBalance, symbol)
+        return formatCurrencyAmount(decimalBalance, symbol, options)
     }
 
     function getFiatValue(balance, cryptoSymbol) {

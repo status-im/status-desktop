@@ -9,7 +9,6 @@ ListModel {
     readonly property string nativeSource: "native" //SourceOfTokensModel.custom
 
     readonly property var data: [
-
         {
             key: "ETH",
             name: "Ether",
@@ -117,7 +116,7 @@ ListModel {
                 changePctDay: 0,
                 changePct24hour: 0,
                 change24hour: 0,
-                currencyPrice: ({amount: 0, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
+                currencyPrice: ({amount: 0.07, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
             },
             detailsLoading: false,
             marketDetailsLoading: false

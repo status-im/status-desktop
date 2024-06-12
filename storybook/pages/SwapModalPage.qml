@@ -65,19 +65,9 @@ SplitView {
             id: swapInputForm
             selectedAccountIndex: accountComboBox.currentIndex
             selectedNetworkChainId: d.getNetwork()
-            fromTokensKey: {
-                if (d.tokenBySymbolModel.count > 0) {
-                    return ModelUtils.get(d.tokenBySymbolModel, fromTokenComboBox.currentIndex, "key")
-                }
-                return ""
-            }
+            fromTokensKey: fromTokenComboBox.currentValue
             fromTokenAmount: swapInput.text
-            toTokenKey: {
-                if (d.tokenBySymbolModel.count > 0) {
-                    return ModelUtils.get(d.tokenBySymbolModel, toTokenComboBox.currentIndex, "key")
-                }
-                return ""
-            }
+            toTokenKey: toTokenComboBox.currentValue
             toTokenAmount: swapOutputAmount.text
         }
 
@@ -87,33 +77,34 @@ SplitView {
                 visible: true
                 modal: false
                 closePolicy: Popup.CloseOnEscape
+                destroyOnClose: true
                 swapInputParamsForm: swapInputForm
-                    swapAdaptor: SwapModalAdaptor {
-                        swapProposalLoading: loadingCheckBox.checked
-                        swapProposalReady: swapProposalReadyCheckBox.checked
-                        swapStore: SwapStore {
-                            readonly property var accounts: d.accountsModel
-                            readonly property var flatNetworks: d.flatNetworksModel
-                            readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
+                swapAdaptor: SwapModalAdaptor {
+                    swapProposalLoading: loadingCheckBox.checked
+                    swapProposalReady: swapProposalReadyCheckBox.checked
+                    swapStore: SwapStore {
+                        readonly property var accounts: d.accountsModel
+                        readonly property var flatNetworks: d.flatNetworksModel
+                        readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
 
-                            signal suggestedRoutesReady(var txRoutes)
+                        signal suggestedRoutesReady(var txRoutes)
 
-                            function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
-                                disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {}
-                            function authenticateAndTransfer(uuid, accountFrom, accountTo,
-                                    tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {}
-                        }
-                        walletAssetsStore: WalletAssetsStore {
-                            id: thisWalletAssetStore
-                            walletTokensStore: TokensStore {
-                                readonly property var plainTokensBySymbolModel: TokensBySymbolModel {}
-                            }
-                            readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
-                        }
-                        currencyStore: CurrenciesStore {}
-                        swapFormData: swapInputForm
+                        function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
+                                                      disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {}
+                        function authenticateAndTransfer(uuid, accountFrom, accountTo,
+                                                         tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {}
                     }
+                    walletAssetsStore: WalletAssetsStore {
+                        id: thisWalletAssetStore
+                        walletTokensStore: TokensStore {
+                            plainTokensBySymbolModel: TokensBySymbolModel {}
+                        }
+                        readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
+                        assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+                    }
+                    currencyStore: CurrenciesStore {}
+                    swapFormData: swapInputForm
+                }
             }
         }
     }
@@ -131,7 +122,7 @@ SplitView {
                 id: areTestNetworksEnabledCheckbox
                 text: "areTestNetworksEnabled"
                 checked: true
-                onCheckedChanged: networksComboBox.currentIndex = 0
+                onToggled: networksComboBox.currentIndex = 0
             }
 
             StatusBaseText {
@@ -173,6 +164,7 @@ SplitView {
             ComboBox {
                 id: fromTokenComboBox
                 textRole: "name"
+                valueRole: "key"
                 model: d.tokenBySymbolModel
                 currentIndex: 0
             }
@@ -190,6 +182,7 @@ SplitView {
             ComboBox {
                 id: toTokenComboBox
                 textRole: "name"
+                valueRole: "key"
                 model: d.tokenBySymbolModel
                 currentIndex: 1
             }
@@ -197,7 +190,7 @@ SplitView {
             StatusInput {
                 id: swapOutputAmount
                 Layout.preferredWidth: 100
-                label:  "Token amount to receive"
+                label: "Token amount to receive"
                 text: "100"
             }
 

@@ -23,7 +23,7 @@ void LeftJoinModel::initialize(bool reset)
     auto rightRoleNames = m_rightModel->roleNames();
 
     auto leftNames = leftRoleNames.values();
-    QList<QByteArray> rightNames;
+    QByteArrayList rightNames;
 
     if (m_rolesToJoin.empty()) {
         rightNames = rightRoleNames.values();
@@ -41,7 +41,7 @@ void LeftJoinModel::initialize(bool reset)
 
             if (roles.empty()) {
                 qWarning().noquote()
-                        << QString("Role to join %1 not found in the right model!")
+                        << QStringLiteral("Role to join %1 not found in the right model!")
                            .arg(roleName);
                 return;
             }
@@ -264,11 +264,11 @@ QVariant LeftJoinModel::data(const QModelIndex& index, int role) const
                 m_rightModel->index(0, 0), m_rightModelJoinRole,
                 joinRoleLeftValue, 1, Qt::MatchExactly);
 
-    if (match.empty())
+    if (match.isEmpty())
         return {};
 
-    m_lastUsedRightModelIndex = match.first();
-    return match.first().data(role - m_rightModelRolesOffset);
+    m_lastUsedRightModelIndex = match.constFirst();
+    return m_lastUsedRightModelIndex.data(role - m_rightModelRolesOffset);
 }
 
 void LeftJoinModel::classBegin()

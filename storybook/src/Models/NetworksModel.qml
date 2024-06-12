@@ -56,7 +56,7 @@ QtObject {
         Component.onCompleted: append([
             {
                 chainId: 1,
-                chainName: "Ethereum Mainnet",
+                chainName: "Mainnet",
                 blockExplorerUrl: "https://etherscan.io/",
                 iconUrl: "network/Network=Ethereum",
                 chainColor: "#627EEA",
@@ -217,7 +217,6 @@ QtObject {
                         chainName: "Arbitrum",
                         iconUrl: ModelsData.networks.arbitrum,
                         isActive: false,
-                        isEnabled: true,
                         shortName: "ARB",
                         chainColor: "purple",
                         layer: 2,
@@ -337,7 +336,6 @@ QtObject {
                         chainName: "Arbitrum",
                         iconUrl: ModelsData.networks.arbitrum,
                         isActive: false,
-                        isEnabled: true,
                         shortName: "ARB",
                         chainColor: "purple",
                         layer: 2,

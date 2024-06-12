@@ -263,9 +263,12 @@ private slots:
         model.setSourceModel(sourceModel);
         model.setDelegate(delegate.get());
 
-        QTest::ignoreMessage(QtWarningMsg, "Expected role not found!");
+        const auto expRoleName = QStringLiteral("undefined");
+        QTest::ignoreMessage(QtWarningMsg,
+                             QRegularExpression(QStringLiteral(".*findExpectedRoles*.")));
+        QTest::ignoreMessage(QtWarningMsg, QStringLiteral("Expected role \"%1\" not found!").arg(expRoleName).toLatin1());
 
-        model.setExpectedRoles({ QStringLiteral("undefined") });
+        model.setExpectedRoles({ expRoleName });
 
         QCOMPARE(model.rowCount(), 3);
     }
