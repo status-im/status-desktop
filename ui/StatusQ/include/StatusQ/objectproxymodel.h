@@ -66,9 +66,8 @@ private:
     void updateRoleNames();
     void updateIndexes(int from, int to);
 
-    QHash<int, QByteArray> findExpectedRoles(
-            const QHash<int, QByteArray>& roleNames,
-            const QStringList& expectedRoles);
+    QHash<int, QByteArray> findExpectedRoles(const QHash<int, QByteArray> &roleNames,
+                                             const QStringList &expectedRoles);
 
     QPointer<QQmlComponent> m_delegate;
     QHash<int, QByteArray> m_expectedRoleNames;

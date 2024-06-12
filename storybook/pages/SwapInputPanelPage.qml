@@ -30,6 +30,7 @@ SplitView {
         id: d
 
         readonly property SwapInputParamsForm swapInputParamsForm: SwapInputParamsForm {
+            selectedNetworkChainId: ctrlSelectedNetworkChainId.currentValue
             fromTokensKey: ctrlFromTokensKey.text
             fromTokenAmount: ctrlFromTokenAmount.text
             toTokenKey: ctrlToTokenKey.text
@@ -74,7 +75,7 @@ SplitView {
                 }
 
                 currencyStore: d.adaptor.currencyStore
-                flatNetworksModel: d.adaptor.filteredFlatNetworksModel
+                flatNetworksModel: d.adaptor.swapStore.flatNetworks
                 processedAssetsModel: d.adaptor.processedAssetsModel
 
                 tokenKey: d.swapInputParamsForm.fromTokensKey
@@ -124,6 +125,22 @@ SplitView {
 
         ColumnLayout {
             anchors.fill: parent
+
+            RowLayout {
+                Layout.fillWidth: true
+                Label {
+                    text: "Chain:"
+                }
+                ComboBox {
+                    Layout.fillWidth: true
+                    id: ctrlSelectedNetworkChainId
+                    model: d.adaptor.swapStore.flatNetworks
+                    textRole: "chainName"
+                    valueRole: "chainId"
+                    displayText: currentIndex === -1 ? "All chains" : currentText
+                    currentIndex: -1 // all chains
+                }
+            }
 
             RowLayout {
                 Layout.fillWidth: true

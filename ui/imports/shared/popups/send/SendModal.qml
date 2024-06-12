@@ -267,7 +267,7 @@ StatusDialog {
                             return popup.store.currencyStore.formatCurrencyAmount(balance, popup.store.currencyStore.currentCurrency)
                         }
                         formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){
-                            return popup.store.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
+                            return popup.store.formatCurrencyAmountFromBigInt(balance, symbol, decimals, {noSymbol: true})
                         }
                     }
 
@@ -391,7 +391,7 @@ StatusDialog {
                 return popup.store.currencyStore.formatCurrencyAmount(balance, popup.store.currencyStore.currentCurrency)
             }
             formatCurrencyAmountFromBigInt: function(balance, symbol, decimals) {
-                return popup.store.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
+                return popup.store.formatCurrencyAmountFromBigInt(balance, symbol, decimals, {noSymbol: true})
             }
         }
 

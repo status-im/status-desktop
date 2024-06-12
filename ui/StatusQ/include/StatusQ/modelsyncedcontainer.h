@@ -122,7 +122,7 @@ private:
         m_persistentIndexes.clear();
         m_persistentIndexes.reserve(count);
 
-        for (decltype(count) i = 0; i < count; i++)
+        for (auto i = 0; i < count; i++)
             m_persistentIndexes.push_back(model->index(i, 0));
     }
 

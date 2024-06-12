@@ -73,17 +73,23 @@ QtObject {
 
     function stripTrailingZeroes(numStr, locale) {
         locale = locale || Qt.locale()
-        let regEx = locale.decimalPoint == "." ? /(\.[0-9]*[1-9])0+$|\.0*$/ : /(\,[0-9]*[1-9])0+$|\,0*$/
+        let regEx = locale.decimalPoint === "." ? /(\.[0-9]*[1-9])0+$|\.0*$/ : /(\,[0-9]*[1-9])0+$|\,0*$/
         return numStr.replace(regEx, '$1')
     }
 
-    function numberToLocaleString(num, precision = -1, locale = null) {
+    function numberToLocaleString(num, precision = -128 /* QLocale::FloatingPointShortest */, locale = null) {
         locale = locale || Qt.locale()
 
-        if (precision === -1)
-            precision = fractionalPartLength(num)
-
         return num.toLocaleString(locale, 'f', precision)
+    }
+
+    function currencyNumberToLocaleString(num, symbol = "", locale = null) {
+        locale = locale || Qt.locale()
+
+        if (typeof num === "string")
+            num = Number(num)
+
+        return num.toLocaleCurrencyString(locale, symbol)
     }
 
     function numberToLocaleStringInCompactForm(num, locale = null) {

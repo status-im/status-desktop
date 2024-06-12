@@ -57,10 +57,10 @@ QtObject {
         sourceModel: root._joinFlatTokensModel
 
         proxyRoles:  [
-            FastExpressionRole {
+            JoinRole {
                 name: "explorerUrl"
-                expression: model.blockExplorerURL + "/token/" + model.address
-                expectedRoles: ["blockExplorerURL", "address"]
+                roleNames: ["blockExplorerURL", "address"]
+                separator: "/token/"
             },
             FastExpressionRole {
                 function tokenIcon(symbol) {

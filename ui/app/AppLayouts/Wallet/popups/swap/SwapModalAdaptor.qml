@@ -22,6 +22,8 @@ QObject {
     property bool swapProposalReady: false
     property bool swapProposalLoading: false
 
+    property bool showCommunityTokens
+
     // To expose the selected from and to Token from the SwapModal
     readonly property var fromToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
     readonly property var toToken: ModelUtils.getByKey(root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.toTokenKey)
@@ -90,8 +92,8 @@ QObject {
         return root.currencyStore.formatCurrencyAmount(balance, symbol, options, locale)
     }
 
-    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
-        return root.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
+        return root.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
     }
 
     function getAllChainIds() {
@@ -123,13 +125,12 @@ QObject {
         sourceModel: __assetsWithFilteredBalances
         proxyRoles: [
             FastExpressionRole {
-                name: "isCommunityAsset"
-                expression: !!model.communityId
-                expectedRoles: ["communityId"]
-            },
-            FastExpressionRole {
                 name: "currentBalance"
-                expression: __getTotalBalance(model.balances, model.decimals)
+                expression: {
+                    // FIXME recalc when selectedNetworkChainId changes
+                    root.swapFormData.selectedNetworkChainId
+                    return __getTotalBalance(model.balances, model.decimals)
+                }
                 expectedRoles: ["balances", "decimals"]
             },
             FastExpressionRole {
@@ -150,19 +151,16 @@ QObject {
 
                     if (!root.walletAssetsStore.assetsController.filterAcceptsSymbol(model.symbol)) // explicitely hidden
                         return false
-                    if (model.isCommunityAsset) // do not show community assets
-                        return false
+                    if (!!model.communityId)
+                        return root.showCommunityTokens
                     if (root.walletAssetsStore.walletTokensStore.displayAssetsBelowBalance)
                         return model.currentCurrencyBalance > processedAssetsModel.displayAssetsBelowBalanceThresholdAmount
                     return true
                 }
-                expectedRoles: ["symbol", "isCommunityAsset", "currentCurrencyBalance"]
+                expectedRoles: ["symbol", "communityId", "currentCurrencyBalance"]
             }
         ]
         // FIXME sort by assetsController instead, to have the sorting/order as in the main wallet view
-        // sorters: RoleSorter {
-        //     roleName: "isCommunityAsset"
-        // }
     }
 
     // Internal properties and functions -----------------------------------------------------------------------------------------------------------------------------
@@ -203,7 +201,7 @@ QObject {
             }
             readonly property LeftJoinModel joinModel: LeftJoinModel {
                 leftModel: submodel
-                rightModel: root.filteredFlatNetworksModel
+                rightModel: root.swapStore.flatNetworks
 
                 joinRole: "chainId"
             }
@@ -227,11 +225,12 @@ QObject {
     }
 
     /* Internal function to calculate total balance */
-    function __getTotalBalance(balances, decimals) {
+    function __getTotalBalance(balances, decimals, chainIds = [root.swapFormData.selectedNetworkChainId]) {
         let totalBalance = 0
         for(let i=0; i<balances.count; i++) {
             let balancePerAddressPerChain = ModelUtils.get(balances, i)
-            totalBalance+=AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
+            if (chainIds.includes(-1) || chainIds.includes(balancePerAddressPerChain.chainId))
+                totalBalance += AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
         }
         return totalBalance
     }

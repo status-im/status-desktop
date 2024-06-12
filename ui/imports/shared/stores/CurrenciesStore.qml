@@ -14,21 +14,13 @@ QtObject {
     property var _profileSectionModuleInst: profileSectionModule
 
     function getModelIndexForKey(key) {
-        for (var i=0; i<currenciesModel.count; i++) {
-            if (currenciesModel.get(i).key === key) {
-                return i;
-            }
-        }
-        return 0;
+        const idx = SQUtils.ModelUtils.indexOf(currenciesModel, "key", key)
+        return idx === -1 ? 0 : idx
     }
 
     function getModelIndexForShortName(shortName) {
-        for (var i=0; i<currenciesModel.count; i++) {
-            if (currenciesModel.get(i).shortName === shortName) {
-                return i;
-            }
-        }
-        return 0;
+        const idx = SQUtils.ModelUtils.indexOf(currenciesModel, "shortName", shortName)
+        return idx === -1 ? 0 : idx
     }
 
     readonly property string currentCurrency: Global.appIsReady ? walletSection.currentCurrency : ""
@@ -989,10 +981,10 @@ QtObject {
         return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
     }
 
-    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
         let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balance)
         let decimalBalance = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, decimals)
-        return formatCurrencyAmount(decimalBalance, symbol)
+        return formatCurrencyAmount(decimalBalance, symbol, options)
     }
 
     function getFiatValue(cryptoAmount, cryptoSymbol) {

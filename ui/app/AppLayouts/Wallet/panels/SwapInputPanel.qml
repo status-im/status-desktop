@@ -231,7 +231,7 @@ Control {
                     return root.currencyStore.formatCurrencyAmount(balance, root.currencyStore.currentCurrency)
                 }
                 formatCurrencyAmountFromBigInt: function(balance, symbol, decimals) {
-                    return root.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
+                    return root.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, {noSymbol: true})
                 }
                 onItemSelected: {
                     d.setSelectedHoldingId(holdingId, holdingType)

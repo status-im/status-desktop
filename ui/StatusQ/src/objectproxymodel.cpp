@@ -6,8 +6,6 @@
 #include <QQmlEngine>
 #include <QQmlProperty>
 
-#include <memory>
-
 ObjectProxyModel::ObjectProxyModel(QObject* parent)
     : QIdentityProxyModel{parent}
 {
@@ -184,8 +182,8 @@ QObject* ObjectProxyModel::proxyObject(int index)
         rowData->insert(i.value(), model->data(model->index(index, 0), i.key()));
     }
 
-    rowData->insert("index", index);
-    context->setContextProperty("model", rowData);
+    rowData->insert(QStringLiteral("index"), index);
+    context->setContextProperty(QStringLiteral("model"), rowData);
 
     QObject* instance = m_delegate->create(context);
     context->setParent(instance);
@@ -300,7 +298,7 @@ void ObjectProxyModel::updateIndexes(int from, int to)
         auto& entry = m_container[i];
 
         if (entry.proxy)
-            entry.rowData->insert("index", i);
+            entry.rowData->insert(QStringLiteral("index"), i);
     }
 }
 
@@ -308,22 +306,24 @@ QHash<int, QByteArray> ObjectProxyModel::findExpectedRoles(
         const QHash<int, QByteArray> &roleNames,
         const QStringList &expectedRoles)
 {
-    if (roleNames.empty() || expectedRoles.isEmpty())
+    if (roleNames.isEmpty() || expectedRoles.isEmpty())
         return {};
 
     QHash<int, QByteArray> expected;
 
-    for (auto& role : expectedRoles) {
+    for (auto &role : expectedRoles) {
         auto expectedKeys = roleNames.keys(role.toUtf8());
         auto expectedKeysCount = expectedKeys.size();
 
         if (expectedKeysCount == 1)
             expected.insert(expectedKeys.first(), role.toUtf8());
         else if (expectedKeysCount == 0) {
-            qWarning() << "Expected role not found!";
+            qWarning() << Q_FUNC_INFO;
+            qWarning() << "Expected role" << role << "not found!";
         } else {
-            qWarning() << "Malformed source model - multiple roles found for given "
-                          "expected role name!";
+            qWarning() << Q_FUNC_INFO;
+            qWarning()
+                << "Malformed source model - multiple roles found for given expected role name!";
             return {};
         }
     }

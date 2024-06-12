@@ -225,11 +225,11 @@ QtObject {
     }
 
     function getNetworkName(chainId) {
-      return fromNetworksModel.getNetworkName(chainId)
+        return fromNetworksModel.getNetworkName(chainId)
     }
 
     function updateRoutePreferredChains(chainIds) {
-       walletSectionSendInst.updateRoutePreferredChains(chainIds)
+        walletSectionSendInst.updateRoutePreferredChains(chainIds)
     }
 
     function toggleShowUnPreferredChains() {
@@ -261,10 +261,8 @@ QtObject {
         return walletSectionSendInst.getShortChainIds(chainShortNames)
     }
 
-    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
-        let bigIntBalance = AmountsArithmetic.fromString(balance)
-        let decimalBalance = AmountsArithmetic.toNumber(bigIntBalance, decimals)
-        return currencyStore.formatCurrencyAmount(decimalBalance, symbol)
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
+        return currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
     }
 
     // Property set from TokenLIstView and HoldingSelector to search token by name, symbol or contract address
@@ -340,13 +338,11 @@ QtObject {
 
                     if (!root.walletAssetStore.assetsController.filterAcceptsSymbol(model.symbol)) // explicitely hidden
                         return false
-                    if (model.isCommunityAsset)
-                        return true
                     if (tokensStore.displayAssetsBelowBalance)
                         return model.currentCurrencyBalance > processedAssetsModel.displayAssetsBelowBalanceThresholdAmount
                     return true
                 }
-                expectedRoles: ["symbol", "isCommunityAsset", "currentCurrencyBalance"]
+                expectedRoles: ["symbol", "currentCurrencyBalance"]
             }
         ]
         sorters: RoleSorter {
