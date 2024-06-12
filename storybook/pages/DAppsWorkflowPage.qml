@@ -53,14 +53,6 @@ Item {
                     spacing: 8
 
                     wcService: walletConnectService
-
-                    onDisplayToastMessage: (message, isErr) => {
-                        if(isErr) {
-                            console.log(`Storybook.displayToastMessage(${message}, "", "warning", false, Constants.ephemeralNotificationType.danger, "")`)
-                            return
-                        }
-                        console.log(`Storybook.displayToastMessage(${message}, "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")`)
-                    }
                 }
             }
             ColumnLayout {}
@@ -299,6 +291,10 @@ Item {
             function signTypedDataV4(topic, id, address, password, typedDataJson) {
                 return "0xf8ceb3468319cc215523b67c24c4504b3addd9bf8de31c278038d7478c9b6de554f7d8a516cd5d6a066b7d48b81f03d9d6bb7d5d754513c08325674ebcc7efbc1b"
             }
+
+            function signTransaction(topic, id, address, password, tx) {
+                return "0xf8ceb3468319cc215523b67c24c4504b3addd9bf8de31c278038d7478c9b6de554f7d8a516cd5d6a066b7d48b81f03d9d6bb7d5d754513c08325674ebcc7efbc1b"
+            }
         }
 
         walletStore: WalletStore {
@@ -310,7 +306,13 @@ Item {
             readonly property ListModel ownAccounts: accounts
         }
 
-        onDisplayToastMessage: (message, error) => console.info("Storybook - toast message: ", message, !!error ? "; error: " + error: "")
+        onDisplayToastMessage: (message, isErr) => {
+            if(isErr) {
+                console.log(`Storybook.displayToastMessage(${message}, "", "warning", false, Constants.ephemeralNotificationType.danger, "")`)
+                return
+            }
+            console.log(`Storybook.displayToastMessage(${message}, "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")`)
+        }
     }
 
 

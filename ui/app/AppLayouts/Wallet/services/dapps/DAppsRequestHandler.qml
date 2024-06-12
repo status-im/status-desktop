@@ -1,6 +1,7 @@
 import QtQuick 2.15
 
 import AppLayouts.Wallet.services.dapps 1.0
+import AppLayouts.Wallet.services.dapps.types 1.0
 
 import StatusQ.Core.Utils 0.1
 
@@ -30,31 +31,7 @@ QObject {
 
     signal sessionRequest(SessionRequestResolved request)
     signal displayToastMessage(string message, bool error)
-    signal sessionRequestResult(/*model entry of SessionRequestResolved*/ var request, var payload, bool isSuccess)
-
-    /// Supported methods
-    property QtObject methods: QtObject {
-        readonly property QtObject personalSign: QtObject {
-            readonly property string name: Constants.personal_sign
-            readonly property string userString: qsTr("sign")
-        }
-        readonly property QtObject signTypedData_v4: QtObject {
-            readonly property string name: "eth_signTypedData_v4"
-            readonly property string userString: qsTr("sign typed data")
-        }
-
-        readonly property QtObject sendTransaction: QtObject {
-            readonly property string name: "eth_sendTransaction"
-            readonly property string userString: qsTr("send transaction")
-        }
-        readonly property var all: [personalSign, signTypedData_v4, sendTransaction]
-    }
-
-    function getSupportedMethods() {
-        return methods.all.map(function(method) {
-            return method.name
-        })
-    }
+    signal sessionRequestResult(/*model entry of SessionRequestResolved*/ var request, bool isSuccess)
 
     Connections {
         target: sdk
@@ -75,7 +52,7 @@ QObject {
                 console.error("Error finding event for topic", topic, "id", id)
                 return
             }
-            let methodStr = d.methodToUserString(request.method)
+            let methodStr = SessionRequest.methodToUserString(request.method)
             if (!methodStr) {
                 console.error("Error finding user string for method", request.method)
                 return
@@ -87,7 +64,7 @@ QObject {
                 if (error) {
                     root.displayToastMessage(qsTr("Fail to %1 from %2").arg(methodStr).arg(session.peer.metadata.url), true)
 
-                    root.sessionRequestResult(request, "", false /*isSuccessful*/)
+                    root.sessionRequestResult(request, false /*isSuccessful*/)
 
                     console.error(`Error accepting session request for topic: ${topic}, id: ${id}, accept: ${accept}, error: ${error}`)
                     return
@@ -96,7 +73,7 @@ QObject {
                 let actionStr = accept ? qsTr("accepted") : qsTr("rejected")
                 root.displayToastMessage("%1 %2 %3".arg(session.peer.metadata.url).arg(methodStr).arg(actionStr), false)
 
-                root.sessionRequestResult(request, "", true /*isSuccessful*/)
+                root.sessionRequestResult(request, true /*isSuccessful*/)
             })
         }
     }
@@ -115,7 +92,7 @@ QObject {
 
         function onUserAuthenticationFailed(topic, id) {
             var request = requests.findRequest(topic, id)
-            let methodStr = d.methodToUserString(request.method)
+            let methodStr = SessionRequest.methodToUserString(request.method)
             if (request === null || !methodStr) {
                 return
             }
@@ -150,9 +127,9 @@ QObject {
             }
 
             // Check later to have a valid request object
-            if (!getSupportedMethods().includes(method)
+            if (!SessionRequest.getSupportedMethods().includes(method)
                 // TODO  #14927: support method eth_sendTransaction
-                || method == root.methods.sendTransaction.name) {
+                || method == SessionRequest.methods.sendTransaction.name) {
                 console.error("Unsupported method", method)
                 return null
             }
@@ -172,36 +149,42 @@ QObject {
         /// Returns null if the account is not found
         function lookupAccountFromEvent(event, method) {
             var address = ""
-            if (method === root.methods.personalSign.name) {
+            if (method === SessionRequest.methods.personalSign.name) {
                 if (event.params.request.params.length < 2) {
                     return null
                 }
                 address = event.params.request.params[1]
-            } else if(method === root.methods.signTypedData_v4.name) {
+            } else if(method === SessionRequest.methods.signTypedData_v4.name) {
                 if (event.params.request.params.length < 2) {
                     return null
                 }
                 address = event.params.request.params[0]
+            } else if (method === SessionRequest.methods.signTransaction.name) {
+                if (event.params.request.params.length == 0) {
+                    return null
+                }
+                address = event.params.request.params[0].from
             }
             return ModelUtils.getByKey(walletStore.ownAccounts, "address", address)
         }
 
         /// Returns null if the network is not found
         function lookupNetworkFromEvent(event, method) {
-            if (method === root.methods.personalSign.name || method === root.methods.signTypedData_v4.name) {
-                let chainId = Helpers.chainIdFromEip155(event.params.chainId)
-                for (let i = 0; i < walletStore.flatNetworks.count; i++) {
-                    let network = ModelUtils.get(walletStore.flatNetworks, i)
-                    if (network.chainId === chainId) {
-                        return network
-                    }
+            if (SessionRequest.getSupportedMethods().includes(method) === false) {
+                return null
+            }
+            let chainId = Helpers.chainIdFromEip155(event.params.chainId)
+            for (let i = 0; i < walletStore.flatNetworks.count; i++) {
+                let network = ModelUtils.get(walletStore.flatNetworks, i)
+                if (network.chainId === chainId) {
+                    return network
                 }
             }
             return null
         }
 
         function extractMethodData(event, method) {
-            if (method === root.methods.personalSign.name) {
+            if (method === SessionRequest.methods.personalSign.name) {
                 if (event.params.request.params.length == 0) {
                     return null
                 }
@@ -213,25 +196,22 @@ QObject {
                 } else {
                     message = messageParam
                 }
-                return {message}
-            } else if (method === root.methods.signTypedData_v4.name) {
+                return SessionRequest.methods.personalSign.buildDataObject(message)
+            } else if (method === SessionRequest.methods.signTypedData_v4.name) {
                 if (event.params.request.params.length < 2) {
                     return null
                 }
                 let jsonMessage = event.params.request.params[1]
-                return {
-                    message: jsonMessage
+                return SessionRequest.methods.signTypedData_v4.buildDataObject(jsonMessage)
+            } else if (method === SessionRequest.methods.signTransaction.name) {
+                if (event.params.request.params.length == 0) {
+                    return null
                 }
+                let tx = event.params.request.params[0]
+                return SessionRequest.methods.signTransaction.buildDataObject(tx)
+            } else {
+                return null
             }
-        }
-
-        function methodToUserString(method) {
-            for (let i = 0; i < methods.all.length; i++) {
-                if (methods.all[i].name === method) {
-                    return methods.all[i].userString
-                }
-            }
-            return ""
         }
 
         function lookupSession(topicToLookup, callback) {
@@ -246,34 +226,39 @@ QObject {
         }
 
         function executeSessionRequest(request, password, pin) {
-            if (request.method === root.methods.personalSign.name || request.method === root.methods.signTypedData_v4.name) {
-                if (password !== "") {
-                    //let originalMessage = request.data.message
+            if (!SessionRequest.getSupportedMethods().includes(request.method)) {
+                console.error("Unsupported method to execute: ", request.method)
+                return
+            }
+
+            if (password !== "") {
+                var signedMessage = ""
+                if (request.method === SessionRequest.methods.personalSign.name) {
                     // TODO #14756: clarify why prefixing the message fails the test app https://react-app.walletconnect.com/
                     //let finalMessage = "\x19Ethereum Signed Message:\n" + originalMessage.length + originalMessage
-                    let finalMessage = request.data.message
-                    var signedMessage = ""
-                    if (request.method === root.methods.personalSign.name) {
-                        signedMessage = store.signMessage(request.topic, request.id,
-                                                              request.account.address, password, finalMessage)
-                    } else if (request.method === root.methods.signTypedData_v4.name) {
-                        signedMessage = store.signTypedDataV4(request.topic, request.id,
-                                                              request.account.address, password, finalMessage)
-                    }
-                    let isSuccessful = signedMessage != ""
-                    if (isSuccessful) {
-                        // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
-                        sdk.acceptSessionRequest(request.topic, request.id, signedMessage)
-                    } else {
-                        root.sessionRequestResult(request, request.data.message, isSuccessful)
-                    }
-                } else if (pin !== "") {
-                    console.debug("TODO #14927 sign message using keycard: ", request.data.message)
-                } else {
-                    console.error("No password or pin provided to sign message")
+                    signedMessage = store.signMessage(request.topic, request.id,
+                                        request.account.address, password,
+                                        SessionRequest.methods.personalSign.getMessageFromData(request.data))
+                } else if (request.method === SessionRequest.methods.signTypedData_v4.name) {
+                    signedMessage = store.signTypedDataV4(request.topic, request.id,
+                                        request.account.address, password,
+                                        SessionRequest.methods.signTypedData_v4.getMessageFromData(request.data))
+                } else if (request.method === SessionRequest.methods.signTransaction.name) {
+                    signedMessage = store.signTransaction(request.topic, request.id,
+                                        request.account.address, password,
+                                        SessionRequest.methods.signTransaction.getTxFromData(request.data))
                 }
+                let isSuccessful = (signedMessage != "")
+                if (isSuccessful) {
+                    // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
+                    sdk.acceptSessionRequest(request.topic, request.id, signedMessage)
+                } else {
+                    root.sessionRequestResult(request, isSuccessful)
+                }
+            } else if (pin !== "") {
+                console.debug("TODO #15097 sign message using keycard: ", request.data)
             } else {
-                console.error("Unsupported method to execute: ", request.method)
+                console.error("No password or pin provided to sign message")
             }
         }
     }

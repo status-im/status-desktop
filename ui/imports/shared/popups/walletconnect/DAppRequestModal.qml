@@ -11,6 +11,8 @@ import StatusQ.Core.Utils 0.1 as StatusQ
 
 import utils 1.0
 
+import AppLayouts.Wallet.services.dapps.types 1.0
+
 StatusDialog {
     id: root
 
@@ -22,7 +24,7 @@ StatusDialog {
     required property string dappUrl
     required property url dappIcon
     required property string method
-    required property string signContent
+    required property var payloadData
     required property string maxFeesText
     required property string estimatedTimeText
 
@@ -36,9 +38,9 @@ StatusDialog {
 
     padding: 20
 
-    onSignContentChanged: d.updatePayloadToDisplay()
-    onMethodChanged: d.updatePayloadToDisplay()
-    Component.onCompleted: d.updatePayloadToDisplay()
+    onPayloadDataChanged: d.updateDisplay()
+    onMethodChanged: d.updateDisplay()
+    Component.onCompleted: d.updateDisplay()
 
     contentItem: StatusScrollView {
         id: scrollView
@@ -59,7 +61,7 @@ StatusDialog {
 
             ContentPanel {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 340
+                Layout.maximumHeight: 340
             }
 
             // TODO: externalize as a TargetPanel
@@ -319,7 +321,7 @@ StatusDialog {
 
         // Names and intentions
         StatusBaseText {
-            text: qsTr("%1 wants you to sign this transaction with %2").arg(dappName).arg(account.name)
+            text: qsTr("%1 wants you to %2 with %3").arg(dappName).arg(d.userDisplayNaming).arg(account.name)
 
             Layout.preferredWidth: 400
             Layout.alignment: Qt.AlignHCenter
@@ -380,9 +382,12 @@ StatusDialog {
         color: "transparent"
         radius: 8
 
+        implicitHeight: contentScrollView.implicitHeight + (2 * contentText.anchors.margins)
+
         MouseArea {
             anchors.fill: parent
-            cursorShape: contentScrollView.enabled ? undefined : Qt.PointingHandCursor
+            cursorShape: contentScrollView.enabled || !enabled ? undefined : Qt.PointingHandCursor
+            enabled: contentScrollView.height < contentScrollView.contentHeight
 
             onClicked: {
                 contentScrollView.enabled = !contentScrollView.enabled
@@ -395,7 +400,7 @@ StatusDialog {
             anchors.fill: parent
 
             contentWidth: availableWidth
-            contentHeight: contentText.implicitHeight
+            contentHeight: contentText.contentHeight
 
             padding: 0
 
@@ -419,13 +424,31 @@ StatusDialog {
         id: d
 
         property string payloadToDisplay: ""
+        property string userDisplayNaming: ""
 
-        function updatePayloadToDisplay() {
-            if (root.method === "eth_signTypedData_v4" && root.signContent) {
-                payloadToDisplay = JSON.stringify(JSON.parse(root.signContent), null, 2)
+        function updateDisplay() {
+            if (!root.payloadData)
                 return
+
+            switch (root.method) {
+                case SessionRequest.methods.personalSign.name: {
+                    payloadToDisplay = SessionRequest.methods.personalSign.getMessageFromData(root.payloadData)
+                    userDisplayNaming = SessionRequest.methods.personalSign.requestDisplay
+                    break
+                }
+                case SessionRequest.methods.signTypedData_v4.name: {
+                    let messageObject = SessionRequest.methods.signTypedData_v4.getMessageFromData(root.payloadData)
+                    payloadToDisplay = JSON.stringify(JSON.parse(messageObject), null, 2)
+                    userDisplayNaming = SessionRequest.methods.signTypedData_v4.requestDisplay
+                    break
+                }
+                case SessionRequest.methods.signTransaction.name: {
+                    let tx = SessionRequest.methods.signTransaction.getTxFromData(root.payloadData)
+                    payloadToDisplay = JSON.stringify(tx, null, 2)
+                    userDisplayNaming = SessionRequest.methods.signTransaction.requestDisplay
+                    break
+                }
             }
-            payloadToDisplay = root.signContent
         }
     }
 }

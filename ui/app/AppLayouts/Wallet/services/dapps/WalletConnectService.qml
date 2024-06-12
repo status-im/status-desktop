@@ -6,6 +6,7 @@ import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.services.dapps 1.0
+import AppLayouts.Wallet.services.dapps.types 1.0
 import AppLayouts.Profile.stores 1.0
 import shared.stores 1.0
 import shared.popups.walletconnect 1.0
@@ -56,7 +57,7 @@ QObject {
         let approvedNamespaces = JSON.parse(
             Helpers.buildSupportedNamespaces(approvedChainIds,
                                              [approvedAccount.address],
-                                             requestHandler.getSupportedMethods())
+                                             SessionRequest.getSupportedMethods())
         )
         wcSDK.buildApprovedNamespaces(sessionProposal.params, approvedNamespaces)
     }
@@ -81,7 +82,7 @@ QObject {
             d.currentSessionProposal = sessionProposal
 
             let supportedNamespacesStr = Helpers.buildSupportedNamespacesFromModels(
-                root.flatNetworks, root.validAccounts, requestHandler.getSupportedMethods())
+                root.flatNetworks, root.validAccounts, SessionRequest.getSupportedMethods())
             wcSDK.buildApprovedNamespaces(sessionProposal.params, JSON.parse(supportedNamespacesStr))
         }
 

@@ -18,7 +18,6 @@ ConnectedDappsButton {
 
     signal dappsListReady()
     signal pairWCReady()
-    signal displayToastMessage(string message, bool error)
 
     onClicked: {
         dappsListLoader.active = true
@@ -128,7 +127,7 @@ ConnectedDappsButton {
             dappUrl: request.dappUrl
             dappIcon: request.dappIcon
 
-            signContent: request.data.message
+            payloadData: request.data
             method: request.method
             maxFeesText: request.maxFeesText
             estimatedTimeText: request.estimatedTimeText
@@ -156,7 +155,7 @@ ConnectedDappsButton {
     Connections {
         target: root.wcService ? root.wcService.requestHandler : null
 
-        function onSessionRequestResult(request, payload, isSuccess) {
+        function onSessionRequestResult(request, isSuccess) {
             if (isSuccess) {
                 sessionRequestLoader.active = false
             } else {
@@ -200,10 +199,6 @@ ConnectedDappsButton {
         function onSessionRequest(request) {
             sessionRequestLoader.request = request
             sessionRequestLoader.active = true
-        }
-
-        function onDisplayToastMessage(message, err) {
-            root.displayToastMessage(message, err)
         }
     }
 }
