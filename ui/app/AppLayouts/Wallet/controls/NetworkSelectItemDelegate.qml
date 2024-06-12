@@ -1,96 +1,119 @@
 import QtQuick 2.15
+import QtQml 2.15
 import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
-
-import "../stores/NetworkSelectPopup"
 
 StatusListItem {
     id: root
 
-    property var networkModel: null
-    property var singleSelection
-    property var radioButtonGroup
-    property bool useEnabledRole: true
-    property bool showCheckboxes: true
-    property bool showRadioButtons: true
+    // input/output property
+    property int checkState: Qt.Unchecked
 
-    // Needed for preferred sharing networks
-    property bool preferredNetworksMode: false
-    property var preferredSharingNetworks: []
-    property bool allChecked: true
+    //input property
+    // Defines the next state of the checkbox when clicked
+    // By default, it toggles between checked and unchecked
+    property int nextCheckState: checkState === Qt.Checked ? Qt.Unchecked : Qt.Checked
 
-    signal toggleNetwork(var network, var model, int index)
+    required property string iconUrl
+    property bool showIndicator: true
+    property bool multiSelection: false
+    property bool interactive: true
 
-    /// Mirrors Nim's UxEnabledState enum from networks/item.nim
-    enum UxEnabledState {
-        Enabled,
-        AllEnabled,
-        Disabled
-    }
+    // output signal
+    // Emitted when the checkbox is clicked
+    // This signal is useful when the check state needs to change
+    // only after processing the toggle event E.g backend call
+    signal toggled
 
-    objectName: model.chainName
-    title: model.chainName
+    objectName: root.title
     asset.height: 24
     asset.width: 24
     asset.isImage: true
-    asset.name: Style.svg(model.iconUrl)
+    asset.name: root.iconUrl
     onClicked: {
-        if(!root.singleSelection.enabled) {
-            checkBox.nextCheckState()
-        } else if(!radioButton.checked) {   // Don't allow uncheck
-            root.toggleNetwork(({chainId: model.chainId, chainName: model.chainName, iconUrl: model.iconUrl}), root.networkModel, model.index)
+        d.toggled()
+    }
+
+    leftPadding: 16
+    rightPadding: 16
+    statusListItemTitleArea.anchors.leftMargin: 12
+    highlighted: (d.checkState !== Qt.Unchecked && !showIndicator)
+
+    Binding on bgColor {
+        when: highlighted && !root.sensor.containsMouse
+        value: root.interactive ? Theme.palette.baseColor4 : Theme.palette.primaryColor3
+        restoreMode: Binding.RestoreBindingOrValue
+    }
+
+    onCheckStateChanged: {
+        if (checkState !== d.checkState) {
+            d.checkState = checkState
         }
     }
 
-    leftPadding: 12
-    rightPadding: 0
-    statusListItemTitleArea.anchors.leftMargin: 12
-
     components: [
-        StatusCheckBox {
-            id: checkBox
-            objectName: "networkSelectionCheckbox_" + model.chainName
-            tristate: true
-            visible: !root.singleSelection.enabled && root.showCheckboxes
-
-            checkState: {
-                if(root.preferredNetworksMode) {
-                    return root.allChecked ? Qt.PartiallyChecked : preferredSharingNetworks.includes(model.chainId.toString()) ? Qt.Checked : Qt.Unchecked
-                }
-                else if(root.useEnabledRole) {
-                    return model.isEnabled ? Qt.Checked : Qt.Unchecked
-                } else if (model.enabledState === NetworkSelectItemDelegate.UxEnabledState.Enabled) {
-                    return Qt.Checked
-                } else {
-                    if( model.enabledState === NetworkSelectItemDelegate.UxEnabledState.AllEnabled) {
-                        return Qt.PartiallyChecked
-                    } else {
-                        return Qt.Unchecked
-                    }
-                }
-            }
-
-            nextCheckState: () => {
-                                Qt.callLater(root.toggleNetwork, model, root.networkModel, model.index)
-                                return Qt.PartiallyChecked
-                            }
-        },
-        StatusRadioButton {
-            id: radioButton
-            visible: root.singleSelection.enabled && root.showRadioButtons
-            size: StatusRadioButton.Size.Large
-            ButtonGroup.group: root.radioButtonGroup
-            checked: root.singleSelection.currentModel === root.networkModel && root.singleSelection.currentIndex === model.index
-
-            onToggled: {
-                if(checked) {
-                    root.toggleNetwork(({chainId: model.chainId, chainName: model.chainName, iconUrl: model.iconUrl}), root.networkModel, model.index)
-                }
-            }
+        Loader {
+            id: indicatorLoader
+            sourceComponent: root.multiSelection ? checkBoxComponent : radioButtonComponent
+            active: root.showIndicator
         }
     ]
+
+
+    Component {
+        id: checkBoxComponent
+        StatusCheckBox {
+            id: checkBox
+
+            objectName: "networkSelectionCheckbox_" + root.title
+            checkState: d.checkState
+            tristate: true
+            nextCheckState: () => d.checkState
+            enabled: root.interactive
+
+            onClicked: {
+                d.toggled()
+            }
+        }
+    }
+
+    Component {
+        id: radioButtonComponent
+        StatusRadioButton {
+            id: radioButton
+            objectName: "networkSelectionRadioButton_" + root.title
+            size: StatusRadioButton.Size.Large
+            checked: d.checkState !== Qt.Unchecked
+            enabled: root.interactive
+
+            onClicked: {
+                d.toggled()
+            }
+        }
+    }
+
+    QtObject {
+        id: d
+        property int checkState: root.checkState
+
+        function toggled() {
+            if (!root.interactive) {
+                return
+            }
+            d.checkState = root.nextCheckState
+            root.toggled()
+        }
+
+        onCheckStateChanged: {
+            if (checkState !== root.checkState) {
+                root.checkState = checkState
+            }
+        }
+    }
 }

@@ -136,6 +136,13 @@ StatusDialog {
                         networkFilter.setChain(root.swapInputParamsForm.selectedNetworkChainId)
                     }
                 }
+
+                Connections {
+                    target: root.swapInputParamsForm
+                    function onSelectedNetworkChainIdChanged() {
+                        networkFilter.setChain(root.swapInputParamsForm.selectedNetworkChainId)
+                    }
+                }
             }
         }
 

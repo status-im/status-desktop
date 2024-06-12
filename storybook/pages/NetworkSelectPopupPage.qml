@@ -10,6 +10,7 @@ import utils 1.0
 
 import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.views 1.0
 import AppLayouts.stores 1.0
 
 import Models 1.0
@@ -219,10 +220,10 @@ SplitView {
         roles: ["chainId", "layer", "chainName", "isTest", "isEnabled", "iconUrl", "shortName", "chainColor"]
         rolesOverride: [{ role: "enabledState", transform: (mD) => {
                 return simulatedNimModel.areAllEnabled(sourceModel)
-                        ? NetworkSelectItemDelegate.UxEnabledState.AllEnabled
+                        ? NetworkSelectionView.UxEnabledState.AllEnabled
                         : mD.isEnabled
-                            ? NetworkSelectItemDelegate.UxEnabledState.Enabled
-                            : NetworkSelectItemDelegate.UxEnabledState.Disabled
+                            ? NetworkSelectionView.UxEnabledState.Enabled
+                            : NetworkSelectionView.UxEnabledState.Disabled
             }
         }]
 
@@ -234,11 +235,11 @@ SplitView {
             let allEnabled = true
             for (let i = 0; i < simulatedNimModel.count; i++) {
                 const item = simulatedNimModel.get(i)
-                if(item.enabledState === NetworkSelectItemDelegate.UxEnabledState.Enabled) {
+                if(item.enabledState === NetworkSelectionView.UxEnabledState.Enabled) {
                     if(item.chainId !== chainId) {
                         chainIdOnlyEnabled = false
                     }
-                } else if(item.enabledState === NetworkSelectItemDelegate.UxEnabledState.Disabled) {
+                } else if(item.enabledState === NetworkSelectionView.UxEnabledState.Disabled) {
                     if(item.chainId !== chainId) {
                         chainIdOnlyDisabled = false
                     }
@@ -253,15 +254,15 @@ SplitView {
             for (let i = 0; i < simulatedNimModel.count; i++) {
                 const item = simulatedNimModel.get(i)
                 if(allEnabled) {
-                    simulatedNimModel.setProperty(i, "enabledState", item.chainId === chainId ? NetworkSelectItemDelegate.UxEnabledState.Enabled : NetworkSelectItemDelegate.UxEnabledState.Disabled)
+                    simulatedNimModel.setProperty(i, "enabledState", item.chainId === chainId ? NetworkSelectionView.UxEnabledState.Enabled : NetworkSelectionView.UxEnabledState.Disabled)
                 } else if(chainIdOnlyEnabled || chainIdOnlyDisabled) {
-                    simulatedNimModel.setProperty(i, "enabledState", NetworkSelectItemDelegate.UxEnabledState.AllEnabled)
+                    simulatedNimModel.setProperty(i, "enabledState", NetworkSelectionView.UxEnabledState.AllEnabled)
                 } else if(item.chainId === chainId) {
-                    simulatedNimModel.setProperty(i, "enabledState", item.enabledState === NetworkSelectItemDelegate.UxEnabledState.Enabled
-                        ? NetworkSelectItemDelegate.UxEnabledState.Disabled
-                        :NetworkSelectItemDelegate.UxEnabledState.Enabled)
+                    simulatedNimModel.setProperty(i, "enabledState", item.enabledState === NetworkSelectionView.UxEnabledState.Enabled
+                        ? NetworkSelectionView.UxEnabledState.Disabled
+                        :NetworkSelectionView.UxEnabledState.Enabled)
                 }
-                const haveEnabled = item.enabledState !== NetworkSelectItemDelegate.UxEnabledState.Disabled
+                const haveEnabled = item.enabledState !== NetworkSelectionView.UxEnabledState.Disabled
                 if(item.isEnabled !== haveEnabled) {
                     simulatedNimModel.setProperty(i, "isEnabled", haveEnabled)
                 }

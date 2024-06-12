@@ -54,6 +54,8 @@ SplitView {
                 sourceModel: NetworksModel.flatNetworks
                 filters: ValueFilter { roleName: "isTest"; value: areTestNetworksEnabledCheckbox.checked }
             }
+
+            property var filteredFlatModel: networks
             property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
             function toggleNetwork(chainId) {
             }
@@ -72,6 +74,13 @@ SplitView {
 
             function processPreferredSharingNetworkToggle(preferredSharingNetworksArray, network) {
                 console.warn("processPreferredSharingNetworkToggle :: preferredSharingNetworksArray ::", preferredSharingNetworksArray, "network :: ", network)
+                const chainId = network.chainId.toString()
+                if (preferredSharingNetworksArray.includes(chainId)) {
+                    preferredSharingNetworksArray.splice(preferredSharingNetworksArray.indexOf(chainId), 1)
+                } else {
+                    preferredSharingNetworksArray.push(chainId)
+                }
+                return [...preferredSharingNetworksArray]
             }
         }
 
