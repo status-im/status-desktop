@@ -1,1 +1,2 @@
 SessionRequestResolved 1.0 SessionRequestResolved.qml
+singleton SessionRequest 1.0 SessionRequest.qml

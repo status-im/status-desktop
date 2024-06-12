@@ -83,16 +83,6 @@ Item {
                 enabled: !!Global.walletConnectService
 
                 wcService: Global.walletConnectService
-
-                onDisplayToastMessage: (message, isErr) => {
-                    if (isErr) {
-                        Global.displayToastMessage(message, "", "warning", false,
-                                                   Constants.ephemeralNotificationType.danger, "")
-                    } else {
-                        Global.displayToastMessage(message, "", "checkmark-circle", false,
-                                                   Constants.ephemeralNotificationType.success, "")
-                    }
-                }
             }
 
             StatusButton {

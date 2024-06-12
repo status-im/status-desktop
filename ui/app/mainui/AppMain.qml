@@ -2054,8 +2054,11 @@ Item {
             }
 
             onDisplayToastMessage: (message, isErr) => {
-                Global.displayToastMessage(message, "", isErr ? "warning" : "checkmark-circle", false,
-                    isErr ? Constants.ephemeralNotificationType.danger : Constants.ephemeralNotificationType.success, "")
+                Global.displayToastMessage(message, "",
+                    isErr ? "warning" : "checkmark-circle", false,
+                    isErr ? Constants.ephemeralNotificationType.danger
+                          : Constants.ephemeralNotificationType.success,
+                    "")
             }
         }
     }
