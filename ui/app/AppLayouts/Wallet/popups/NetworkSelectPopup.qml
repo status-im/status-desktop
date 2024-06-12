@@ -75,7 +75,7 @@ StatusDialog {
         preferredSharingNetworks: root.preferredSharingNetworks
         useEnabledRole: root.useEnabledRole
         singleSelection: d.singleSelection
-        onToggleNetwork: {
+        onToggleNetwork: (network, index) => {
             root.toggleNetwork(network, index)
             if(d.singleSelection.enabled)
                 close()

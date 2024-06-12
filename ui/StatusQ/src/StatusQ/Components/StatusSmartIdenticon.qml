@@ -50,6 +50,7 @@ Loader {
 
             StatusRoundedImage {
                 id: statusRoundImage
+                objectName: "statusRoundImage"
                 width: parent.width
                 height: parent.height
                 image.source: root.asset.isImage ? root.asset.name : ""
@@ -80,6 +81,7 @@ Loader {
         id: roundedIcon
 
         StatusRoundIcon {
+            objectName: "statusRoundIcon"
             asset.bgRadius: root.asset.bgRadius
             asset.bgWidth: root.asset.bgWidth
             asset.bgHeight: root.asset.bgHeight

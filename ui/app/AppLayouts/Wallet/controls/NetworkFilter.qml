@@ -59,7 +59,8 @@ StatusComboBox {
             root.multiSelection
             NetworkModelHelpers.getChainIconUrl(root.flatNetworks, d.currentIndex)
         }
-        readonly property bool allSelected: enabledFlatNetworks.count === root.flatNetworks.count
+        readonly property bool allSelected: root.preferredNetworksMode ? root.preferredSharingNetworks.length === root.flatNetworks.count :
+                                                                        enabledFlatNetworks.count === root.flatNetworks.count
         readonly property bool noneSelected: enabledFlatNetworks.count === 0
 
         // Persist selection between selectPopupLoader reloads
@@ -67,7 +68,14 @@ StatusComboBox {
 
         property SortFilterProxyModel enabledFlatNetworks: SortFilterProxyModel {
             sourceModel: root.flatNetworks
-            filters: ValueFilter { roleName: "isEnabled"; value: true; enabled: !root.preferredNetworksMode }
+            filters: [
+                ValueFilter { roleName: "isEnabled"; value: true; enabled: !root.preferredNetworksMode },
+                FastExpressionFilter {
+                    expression: root.preferredSharingNetworks.includes(chainId.toString())
+                    expectedRoles: ["chainId"]
+                    enabled: root.preferredNetworksMode
+                }
+            ]
         }
     }
 
@@ -128,7 +136,7 @@ StatusComboBox {
             visible: (!d.allSelected || !root.showAllSelectedText) && chainRepeater.count > 0
             Repeater {
                 id: chainRepeater
-                model: root.preferredNetworksMode ? root.flatNetworks: root.multiSelection ? d.enabledFlatNetworks: []
+                model: root.multiSelection ? d.enabledFlatNetworks: []
                 delegate: StatusRoundedImage {
                     id: delegateItem
                     width: 24
