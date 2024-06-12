@@ -1,5 +1,7 @@
 import json
-import ./wallet_secretes_config
+import wallet_secretes_config
+
+export wallet_secretes_config
 
 type
   LoginAccountRequest* = object

@@ -5,7 +5,6 @@ import ../../../app/global/global_singleton
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
 import ./dto/login_request
-import ./dto/create_account_request
 import ./dto/restore_account_request
 
 from ../keycard/service import KeycardEvent, KeyDetails
@@ -70,6 +69,8 @@ QtObject:
     defaultWalletEmoji: string
     tmpAccount: AccountDto
     tmpHashedPassword: string
+
+  proc restoreAccountAndLogin(self: Service, request: RestoreAccountRequest): string
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -432,16 +433,51 @@ QtObject:
     imageCropRectangle: ImageCropRectangle,
     keycardInstanceUID: string = "",
   ): string =
-    try:
-      var request = RestoreAccountRequest(
-        mnemonic: mnemonic,
-        fetchBackup: recoverAccount,
-        createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
-      )
-      request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
 
-      debug "<<< importAccountAndLogin", request
+    var request = RestoreAccountRequest(
+      mnemonic: mnemonic,
+      fetchBackup: recoverAccount,
+      createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
+    )
+    request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
       
+    self.restoreAccountAndLogin(request)
+
+  # TODO: refactor arguments list
+  proc restoreKeycardAccountAndLogin*(self: Service, 
+    keycardData: KeycardEvent, 
+    recoverAccount: bool,
+    displayName: string,
+    imagePath: string, 
+    imageCropRectangle: ImageCropRectangle,
+    ): string =
+
+    let keycard = KeycardData(
+      keyUid: keycardData.keyUid,
+      address: keycardData.masterKey.address,
+      whisperPrivateKey: keycardData.whisperKey.privateKey,
+      whisperPublicKey: keycardData.whisperKey.publicKey,
+      whisperAddress: keycardData.whisperKey.address,
+      walletPublicKey: keycardData.walletKey.publicKey,
+      walletAddress: keycardData.walletKey.address,
+      walletRootAddress: keycardData.walletRootKey.address,
+      eip1581Address: keycardData.eip1581Key.address,
+      encryptionPublicKey: keycardData.encryptionKey.publicKey,
+    )
+
+    var request = RestoreAccountRequest(
+      keycard: keycard,
+      fetchBackup: recoverAccount,
+      createAccountRequest: self.buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
+    )
+    request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
+
+    return self.restoreAccountAndLogin(request)
+    
+  proc restoreAccountAndLogin(self: Service, request: RestoreAccountRequest): string =
+    try:
+      debug "<<< restoreAccountAndLogin", request
+
       let response = status_account.restoreAccountAndLogin(request)
 
       if not response.result.contains("error"):
@@ -453,12 +489,11 @@ QtObject:
         debug "Account saved succesfully"
         return ""
 
-      error "importAccountAndLogin status-go error: ", error
-      return "importAccountAndLogin failed: " & error
+      error "restoreAccountAndLogin status-go error: ", error
+      return "restoreAccountAndLogin failed: " & error
 
     except Exception as e:
-      error "failed to import account or login", procName="importAccountAndLogin", errName = e.name, errDesription = e.msg
-      return e.msg
+      error "restore account failed", procName="restoreAccountAndLogin", errName = e.name, errDesription = e.msg
 
   proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool,
     recoverAccount: bool = false) =

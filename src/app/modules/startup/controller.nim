@@ -468,35 +468,22 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccoun
     self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
       self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
       return
+
   if recoverAccount:
     self.delegate.prepareAndInitFetchingData()
     self.connectToFetchingFromWakuEvents()
-  if self.tmpSeedPhrase.len > 0:
-    # if `tmpSeedPhrase` is not empty means user has recovered keycard via seed phrase
-    let accFromSeedPhrase = self.accountsService.createAccountFromMnemonic(self.tmpSeedPhrase, includeEncryption = true,
-      includeWhisper = true, includeRoot = true, includeDefaultWallet = true, includeEip1581 = true)
-    self.tmpKeycardEvent.masterKey.privateKey = accFromSeedPhrase.privateKey
-    self.tmpKeycardEvent.masterKey.publicKey = accFromSeedPhrase.publicKey
-    self.tmpKeycardEvent.masterKey.address = accFromSeedPhrase.address
-    self.tmpKeycardEvent.whisperKey.privateKey = accFromSeedPhrase.derivedAccounts.whisper.privateKey
-    self.tmpKeycardEvent.whisperKey.publicKey = accFromSeedPhrase.derivedAccounts.whisper.publicKey
-    self.tmpKeycardEvent.whisperKey.address = accFromSeedPhrase.derivedAccounts.whisper.address
-    self.tmpKeycardEvent.walletKey.privateKey = accFromSeedPhrase.derivedAccounts.defaultWallet.privateKey
-    self.tmpKeycardEvent.walletKey.publicKey = accFromSeedPhrase.derivedAccounts.defaultWallet.publicKey
-    self.tmpKeycardEvent.walletKey.address = accFromSeedPhrase.derivedAccounts.defaultWallet.address
-    self.tmpKeycardEvent.walletRootKey.privateKey = accFromSeedPhrase.derivedAccounts.walletRoot.privateKey
-    self.tmpKeycardEvent.walletRootKey.publicKey = accFromSeedPhrase.derivedAccounts.walletRoot.publicKey
-    self.tmpKeycardEvent.walletRootKey.address = accFromSeedPhrase.derivedAccounts.walletRoot.address
-    self.tmpKeycardEvent.eip1581Key.privateKey = accFromSeedPhrase.derivedAccounts.eip1581.privateKey
-    self.tmpKeycardEvent.eip1581Key.publicKey = accFromSeedPhrase.derivedAccounts.eip1581.publicKey
-    self.tmpKeycardEvent.eip1581Key.address = accFromSeedPhrase.derivedAccounts.eip1581.address
-    self.tmpKeycardEvent.encryptionKey.privateKey = accFromSeedPhrase.derivedAccounts.encryption.privateKey
-    self.tmpKeycardEvent.encryptionKey.publicKey = accFromSeedPhrase.derivedAccounts.encryption.publicKey
-    self.tmpKeycardEvent.encryptionKey.address = accFromSeedPhrase.derivedAccounts.encryption.address
 
   self.syncKeycardBasedOnAppWalletStateAfterLogin()
-  self.accountsService.setupAccountKeycard(self.tmpKeycardEvent, self.tmpDisplayName, useImportedAcc = false, recoverAccount)
-  self.setupKeychain(storeToKeychain)
+
+  let error = self.accountsService.restoreKeycardAccountAndLogin(
+    self.tmpKeycardEvent,
+    recoverAccount, 
+    self.tmpDisplayName, 
+    self.tmpProfileImageDetails.url,
+    self.tmpProfileImageDetails.cropRectangle,
+  )
+  
+  self.processCreateAccountResult(error, storeToKeychain)
 
 proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
   return self.accountsService.openedAccounts()
