@@ -94,6 +94,7 @@ type ChatDto* = object
   highlight*: bool
   permissions*: Permission
   hideIfPermissionsNotMet*: bool
+  tokenGated*: bool
 
 type ClearedHistoryDto* = object
   chatId*: string
@@ -262,6 +263,7 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
     # This should be fixed in status-go, but would be a breaking change
     discard jsonObj.getProp("categoryID", result.categoryId)
   discard jsonObj.getProp("hideIfPermissionsNotMet", result.hideIfPermissionsNotMet)
+  discard jsonObj.getProp("tokenGated", result.tokenGated)
   discard jsonObj.getProp("position", result.position)
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("profile", result.profile)
@@ -301,12 +303,15 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
     result.id = result.communityId & result.id
 
 # To parse Community chats to ChatDto, we need to add the commuity ID and type
-proc toChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =
+proc toChatDto*(jsonObj: JsonNode, communityId: string, communityMembers: seq[ChatMember]): ChatDto =
   result = jsonObj.toChatDto()
   result.chatType = ChatType.CommunityChat
   result.communityId = communityId
   if communityId != "":
     result.id = communityId & result.id.replace(communityId, "") # Adding communityID prefix in case it's not available
+
+  if not result.tokenGated:
+    result.members = communityMembers
 
 proc isOneToOneChat*(chatDto: ChatDto): bool =
   return chatDto.chatType == ChatType.OneToOne

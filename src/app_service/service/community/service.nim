@@ -1306,7 +1306,8 @@ QtObject:
       let maxPosition = if chatsForCategory.len > 0: chatsForCategory[^1].position else: -1
 
       for chatObj in chatsJArr:
-        var chatDto = chatObj.toChatDto(communityId)
+        let community = self.communities[communityId]
+        var chatDto = chatObj.toChatDto(communityId, community.members)
         chatDto.position = maxPosition + 1
         self.chatService.updateOrAddChat(chatDto)
         self.communities[communityId].chats.add(chatDto)
@@ -1355,8 +1356,11 @@ QtObject:
         raise newException(RpcException, fmt"editCommunityChannel; there is no `chats` key in the response for community id: {communityId}")
 
       for chatObj in chatsJArr:
-        var chatDto = chatObj.toChatDto(communityId)
-
+        let community = self.communities[communityId]
+        var chatDto = chatObj.toChatDto(communityId, community.members)
+        let chatIndex = community.getCommunityChatIndex(chatDto.id)
+        if chatIndex > -1:
+          self.communities[communityId].chats[chatIndex] = chatDto
         self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
 
         let data = CommunityChatArgs(chat: chatDto)
