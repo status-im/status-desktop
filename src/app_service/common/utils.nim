@@ -1,6 +1,6 @@
-import json, random, times, strutils, sugar, os, re, chronicles
+import json, times, strutils, sugar, os, re, chronicles
 import nimcrypto
-import signing_phrases, account_constants
+import account_constants
 
 import ../../constants as main_constants
 
@@ -25,16 +25,6 @@ proc prefix*(methodName: string, isExt:bool = true): string =
   result = "waku"
   result = result & (if isExt: "ext_" else: "_")
   result = result & methodName
-
-proc generateSigningPhrase*(count: int): string =
-  let now = getTime()
-  var rng = initRand(now.toUnix * 1000000000 + now.nanosecond)
-  var phrases: seq[string] = @[]
-
-  for i in 1..count:
-    phrases.add(rng.sample(signing_phrases.phrases))
-
-  result = phrases.join(" ")
 
 proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
   if jArray == nil:

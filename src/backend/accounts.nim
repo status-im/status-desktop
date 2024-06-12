@@ -13,8 +13,6 @@ export response_type
 logScope:
   topics = "rpc-accounts"
 
-const NUMBER_OF_ADDRESSES_TO_GENERATE = 1
-const MNEMONIC_PHRASE_LENGTH = 12
 const PK_LENGTH_0X_INCLUDED = 132
 
 const GENERATED* = "generated"
@@ -132,22 +130,6 @@ proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType,
   ]
   return core.callPrivateRPC("accounts_saveAccount", payload)
 
-proc generateAddresses*(paths: seq[string]): RpcResponse[JsonNode] =
-  let payload = %* {
-    "n": NUMBER_OF_ADDRESSES_TO_GENERATE,
-    "mnemonicPhraseLength": MNEMONIC_PHRASE_LENGTH,
-    "bip39Passphrase": "",
-    "paths": paths
-  }
-
-  try:
-    let response = status_go.multiAccountGenerateAndDeriveAddresses($payload)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "generateAddresses", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 proc decompressPk*(publicKey: string): RpcResponse[string] =
   discard
   if publicKey.startsWith("0x04") and publicKey.len == PK_LENGTH_0X_INCLUDED:
@@ -221,20 +203,6 @@ proc getRandomMnemonic*(): RpcResponse[JsonNode] =
   let payload = %* []
   return core.callPrivateRPC("accounts_getRandomMnemonic", payload)
 
-proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] =
-  let payload = %* {
-    "mnemonicPhrase": mnemonic,
-    "Bip39Passphrase": ""
-  }
-
-  try:
-    let response = status_go.multiAccountImportMnemonic($payload)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "multiAccountImportMnemonic", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 ## Imports a new mnemonic and creates local keystore file.
 proc importMnemonic*(mnemonic, password: string):
   RpcResponse[JsonNode] =
@@ -290,20 +258,6 @@ proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] =
     error "error doing rpc request", methodName = "createAccountFromPrivateKey", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc deriveAccounts*(accountId: string, paths: seq[string]): RpcResponse[JsonNode] =
-  let payload = %* {
-    "accountID": accountId,
-    "paths": paths
-  }
-
-  try:
-    let response = status_go.multiAccountDeriveAddresses($payload)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "deriveAccounts", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 proc openedAccounts*(path: string): RpcResponse[JsonNode] =
   try:
     let response = status_go.openAccounts(path)
@@ -342,16 +296,6 @@ proc restoreAccountAndLogin*(request: RestoreAccountRequest): RpcResponse[JsonNo
     error "error doing rpc request", methodName = "restoreAccountAndLogin", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc saveAccountAndLoginWithKeycard*(chatKey, password: string, account, subaccounts, settings, config: JsonNode):
-  RpcResponse[JsonNode] =
-  try:
-    let response = status_go.saveAccountAndLoginWithKeycard($account, password, $settings, $config, $subaccounts, chatKey)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 proc convertRegularProfileKeypairToKeycard*(account: JsonNode, settings: JsonNode, keycardUid: string, password: string, newPassword: string):
   RpcResponse[JsonNode] =
   try:
@@ -378,14 +322,6 @@ proc loginAccount*(request: LoginAccountRequest): RpcResponse[JsonNode] =
     
   except RpcException as e:
     error "loginAccount failed", exception=e.msg
-    raise newException(RpcException, e.msg)
-
-proc loginWithKeycard*(chatKey, password: string, account, confNode: JsonNode): RpcResponse[JsonNode] =
-  try:
-    let response = status_go.loginWithKeycard($account, password, chatKey, $confNode)
-    result.result = Json.decode(response, JsonNode)
-  except RpcException as e:
-    error "error doing rpc request", methodName = "loginWithKeycard", exception=e.msg
     raise newException(RpcException, e.msg)
 
 proc verifyAccountPassword*(address: string, hashedPassword: string, keystoreDir: string):

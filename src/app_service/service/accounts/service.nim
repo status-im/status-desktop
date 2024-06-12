@@ -1,4 +1,4 @@
-import NimQml, Tables, os, json, stew/shims/strformat, sequtils, strutils, uuids, times, std/options
+import NimQml, Tables, os, json, stew/shims/strformat, sequtils, strutils, times, std/options
 import json_serialization, chronicles
 
 import ../../../app/global/global_singleton
@@ -19,8 +19,6 @@ import ../../../app/core/fleets/fleet_configuration
 import ../../common/[account_constants, network_constants, utils]
 import ../../../constants as main_constants
 
-import ../settings/dto/settings as settings
-
 export dto_accounts
 export dto_generated_accounts
 
@@ -28,8 +26,6 @@ export dto_generated_accounts
 logScope:
   topics = "accounts-service"
 
-const DEFAULT_WALLET_ACCOUNT_NAME = "Account 1"
-const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET, PATH_ENCRYPTION]
 const ACCOUNT_ALREADY_EXISTS_ERROR* =  "account already exists"
 const KDF_ITERATIONS* {.intdefine.} = 256_000
 const DEFAULT_CUSTOMIZATION_COLOR = "primary"  # to match `CustomizationColor` on the go side
@@ -61,10 +57,8 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     fleetConfiguration: FleetConfiguration
-    generatedAccounts: seq[GeneratedAccountDto]
     accounts: seq[AccountDto]
     loggedInAccount: AccountDto
-    importedAccount: GeneratedAccountDto
     keyStoreDir: string
     defaultWalletEmoji: string
     tmpAccount: AccountDto
@@ -102,9 +96,6 @@ QtObject:
     self.loggedInAccount.images = images
     singletonInstance.localAccountSettings.setFileName(displayName)
 
-  proc getImportedAccount*(self: Service): GeneratedAccountDto =
-    return self.importedAccount
-
   proc setKeyStoreDir(self: Service, key: string) =
     self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
     discard status_general.initKeystore(self.keyStoreDir)
@@ -121,22 +112,10 @@ QtObject:
       self.updateLoggedInAccount(receivedData.backedUpProfile.displayName, receivedData.backedUpProfile.images)
 
   proc init*(self: Service) =
-    try:
-      let response = status_account.generateAddresses(PATHS)
-
-      self.generatedAccounts = map(response.result.getElems(),
-      proc(x: JsonNode): GeneratedAccountDto = toGeneratedAccountDto(x))
-
-      for account in self.generatedAccounts.mitems:
-        account.alias = generateAliasFromPk(account.derivedAccounts.whisper.publicKey)
-
-    except Exception as e:
-      error "error: ", procName="init", errName = e.name, errDesription = e.msg
+    discard
 
   proc clear*(self: Service) =
-    self.generatedAccounts = @[]
     self.loggedInAccount = AccountDto()
-    self.importedAccount = GeneratedAccountDto()
 
   proc validateMnemonic*(self: Service, mnemonic: string): (string, string) =
     try:
@@ -146,13 +125,6 @@ QtObject:
       return (response.result["keyUID"].getStr, "")
     except Exception as e:
       error "error: ", procName="validateMnemonic", errName = e.name, errDesription = e.msg
-
-  proc generatedAccounts*(self: Service): seq[GeneratedAccountDto] =
-    if(self.generatedAccounts.len == 0):
-      error "There was some issue initiating account service"
-      return
-
-    result = self.generatedAccounts
 
   proc openedAccounts*(self: Service): seq[AccountDto] =
     try:
@@ -168,106 +140,12 @@ QtObject:
   proc openedAccountsContainsKeyUid*(self: Service, keyUid: string): bool =
     return (keyUID in self.openedAccounts().mapIt(it.keyUid))
 
-  proc saveKeycardAccountAndLogin(self: Service, chatKey, password: string, account, subaccounts, settings,
-    config: JsonNode): AccountDto =
-    try:
-      let response = status_account.saveAccountAndLoginWithKeycard(chatKey, password, account, subaccounts, settings, config)
-
-      var error = "response doesn't contain \"error\""
-      if(response.result.contains("error")):
-        error = response.result["error"].getStr
-        if error == "":
-          debug "Account saved succesfully"
-          result = toAccountDto(account)
-          return
-
-      let err = "Error saving account and logging in via keycard : " & error
-      error "error: ", procName="saveKeycardAccountAndLogin", errDesription = err
-
-    except Exception as e:
-      error "error: ", procName="saveKeycardAccountAndLogin", errName = e.name, errDesription = e.msg
-
-  proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string):
-    JsonNode =
-    result = %* [
-      {
-        "public-key": account.derivedAccounts.defaultWallet.publicKey,
-        "address": account.derivedAccounts.defaultWallet.address,
-        "colorId": DEFAULT_CUSTOMIZATION_COLOR,
-        "wallet": true,
-        "path": PATH_DEFAULT_WALLET,
-        "name": DEFAULT_WALLET_ACCOUNT_NAME,
-        "derived-from": account.address,
-        "emoji": self.defaultWalletEmoji
-      },
-      {
-        "public-key": account.derivedAccounts.whisper.publicKey,
-        "address": account.derivedAccounts.whisper.address,
-        "name": if displayName == "": account.alias else: displayName,
-        "path": PATH_WHISPER,
-        "chat": true,
-        "derived-from": ""
-      }
-    ]
-
-  proc getSubaccountDataForAccountId(self: Service, accountId: string, displayName: string): JsonNode =
-    for acc in self.generatedAccounts:
-      if(acc.id == accountId):
-        return self.prepareSubaccountJsonObject(acc, displayName)
-
-    if(self.importedAccount.isValid()):
-      if(self.importedAccount.id == accountId):
-        return self.prepareSubaccountJsonObject(self.importedAccount, displayName)
-
   proc toStatusGoSupportedLogLevel*(logLevel: string): string =
     if logLevel == "TRACE":
       return "DEBUG"
     return logLevel
 
-  proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDto,
-    installationId: string, displayName: string, withoutMnemonic: bool): JsonNode =
-    result = %* {
-      "key-uid": account.keyUid,
-      "mnemonic": if withoutMnemonic: "" else: account.mnemonic,
-      "public-key": account.derivedAccounts.whisper.publicKey,
-      "name": account.alias,
-      "display-name": displayName,
-      "address": account.address,
-      "eip1581-address": account.derivedAccounts.eip1581.address,
-      "dapps-address": account.derivedAccounts.defaultWallet.address,
-      "wallet-root-address": account.derivedAccounts.walletRoot.address,
-      "preview-privacy?": true,
-      "signing-phrase": generateSigningPhrase(3),
-      "log-level": main_constants.LOG_LEVEL,
-      "latest-derived-path": 0,
-      "currency": "usd",
-      "networks/networks": @[],
-      "networks/current-network": "",
-      "wallet/visible-tokens": {},
-      "waku-enabled": true,
-      "appearance": 0,
-      "installation-id": installationId,
-      "current-user-status": %* {
-          "publicKey": account.derivedAccounts.whisper.publicKey,
-          "statusType": 1,
-          "clock": 0,
-          "text": ""
-        },
-      "profile-pictures-show-to": settings.PROFILE_PICTURES_SHOW_TO_EVERYONE,
-      "profile-pictures-visibility": settings.PROFILE_PICTURES_VISIBILITY_EVERYONE,
-      "url-unfurling-mode": int(settings.UrlUnfurlingMode.AlwaysAsk),
-    }
-
-  proc getAccountSettings(self: Service, accountId: string, installationId: string, displayName: string, withoutMnemonic: bool): JsonNode =
-    for acc in self.generatedAccounts:
-      if(acc.id == accountId):
-        return self.prepareAccountSettingsJsonObject(acc, installationId, displayName, withoutMnemonic)
-
-    if(self.importedAccount.isValid()):
-      if(self.importedAccount.id == accountId):
-        return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName, withoutMnemonic)
-
-  # TODO: Remove after https://github.com/status-im/status-go/issues/4977
+  # TODO: Remove after https://github.com/status-im/status-desktop/issues/11435
   proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
     let fleet = Fleet.ShardsTest
     let dnsDiscoveryURL = "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.test.shards.nodes.status.im"
@@ -308,49 +186,7 @@ QtObject:
     result["KeycardPairingDataFile"] = newJString(main_constants.KEYCARDPAIRINGDATAFILE)
     result["ProcessBackedupMessages"] = newJBool(recoverAccount)
 
-  # TODO: Remove after https://github.com/status-im/status-go/issues/4977
-  proc getLoginNodeConfig(self: Service): JsonNode =
-    # To create appropriate NodeConfig for Login we set only params that maybe be set via env variables or cli flags
-    result = %*{}
-
-    # mandatory params
-    result["NetworkId"] = NETWORKS[0]{"chainId"}
-    result["DataDir"] = %* "./ethereum/mainnet"
-    result["KeyStoreDir"] = %* self.keyStoreDir.replace(main_constants.STATUSGODIR, "")
-    result["KeycardPairingDataFile"] = %* main_constants.KEYCARDPAIRINGDATAFILE
-
-    # other params
-    result["Networks"] = NETWORKS
-
-    result["UpstreamConfig"] = %* {
-      "URL": NETWORKS[0]{"rpcUrl"},
-      "Enabled": true,
-    }
-
-    result["ShhextConfig"] = %* {
-      "VerifyENSURL": NETWORKS[0]{"fallbackUrl"},
-      "VerifyTransactionURL": NETWORKS[0]{"fallbackUrl"}
-    }
-
-    result["WakuV2Config"] = %* {
-      "Port": WAKU_V2_PORT,
-      "UDPPort": WAKU_V2_PORT
-    }
-
-    result["WalletConfig"] = NODE_CONFIG["WalletConfig"]
-
-    result["TorrentConfig"] = %* {
-      "Port": TORRENT_CONFIG_PORT,
-      "DataDir": DEFAULT_TORRENT_CONFIG_DATADIR,
-      "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR
-    }
-
-    if main_constants.runtimeLogLevelSet():
-      result["RuntimeLogLevel"] = newJString(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL))
-
-    if STATUS_PORT != 0:
-      result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
-
+  # FIXME: remove this method, settings should be processed in status-go
   proc addKeycardDetails(self: Service, kcInstance: string, settingsJson: var JsonNode, accountData: var JsonNode) =
     let keycardPairingJsonString = readFile(main_constants.KEYCARDPAIRINGDATAFILE)
     let keycardPairingJsonObj = keycardPairingJsonString.parseJSON
@@ -428,7 +264,7 @@ QtObject:
     mnemonic: string, 
     password: string, 
     recoverAccount: bool, 
-    displayName: string, 
+    displayName: string,
     imagePath: string, 
     imageCropRectangle: ImageCropRectangle,
     keycardInstanceUID: string = "",
@@ -495,116 +331,6 @@ QtObject:
     except Exception as e:
       error "restore account failed", procName="restoreAccountAndLogin", errName = e.name, errDesription = e.msg
 
-  proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool,
-    recoverAccount: bool = false) =
-    try:
-      var keyUid = keycardData.keyUid
-      var address = keycardData.masterKey.address
-      var whisperPrivateKey = keycardData.whisperKey.privateKey
-      var whisperPublicKey = keycardData.whisperKey.publicKey
-      var whisperAddress = keycardData.whisperKey.address
-      var walletPublicKey = keycardData.walletKey.publicKey
-      var walletAddress = keycardData.walletKey.address
-      var walletRootAddress = keycardData.walletRootKey.address
-      var eip1581Address = keycardData.eip1581Key.address
-      var encryptionPublicKey = keycardData.encryptionKey.publicKey
-      if useImportedAcc:
-        keyUid = self.importedAccount.keyUid
-        address = self.importedAccount.address
-        whisperPublicKey = self.importedAccount.derivedAccounts.whisper.publicKey
-        whisperAddress = self.importedAccount.derivedAccounts.whisper.address
-        walletPublicKey = self.importedAccount.derivedAccounts.defaultWallet.publicKey
-        walletAddress = self.importedAccount.derivedAccounts.defaultWallet.address
-        walletRootAddress = self.importedAccount.derivedAccounts.walletRoot.address
-        eip1581Address = self.importedAccount.derivedAccounts.eip1581.address
-        encryptionPublicKey = self.importedAccount.derivedAccounts.encryption.publicKey
-        whisperPrivateKey = self.importedAccount.derivedAccounts.whisper.privateKey
-
-      if whisperPrivateKey.startsWith("0x"):
-        whisperPrivateKey = whisperPrivateKey[2 .. ^1]
-
-      let installationId = $genUUID()
-      let alias = generateAliasFromPk(whisperPublicKey)
-
-      var accountDataJson = %* {
-        "name": if displayName == "": alias else: displayName,
-        "display-name": displayName,
-        "address": address,
-        "key-uid": keyUid,
-        "kdfIterations": KDF_ITERATIONS,
-      }
-
-      self.setKeyStoreDir(keyUid)
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId, recoverAccount)
-      let subaccountDataJson = %* [
-        {
-          "public-key": walletPublicKey,
-          "address": walletAddress,
-          "colorId": DEFAULT_CUSTOMIZATION_COLOR,
-          "wallet": true,
-          "path": PATH_DEFAULT_WALLET,
-          "name": DEFAULT_WALLET_ACCOUNT_NAME,
-          "derived-from": address,
-          "emoji": self.defaultWalletEmoji,
-        },
-        {
-          "public-key": whisperPublicKey,
-          "address": whisperAddress,
-          "name": if displayName == "": alias else: displayName,
-          "path": PATH_WHISPER,
-          "chat": true,
-          "derived-from": ""
-        }
-      ]
-
-      var settingsJson = %* {
-        "key-uid": keyUid,
-        "public-key": whisperPublicKey,
-        "name": alias,
-        "display-name": displayName,
-        "address": address,
-        "eip1581-address": eip1581Address,
-        "dapps-address":  walletAddress,
-        "wallet-root-address": walletRootAddress,
-        "preview-privacy?": true,
-        "signing-phrase": generateSigningPhrase(3),
-        "log-level": main_constants.LOG_LEVEL,
-        "latest-derived-path": 0,
-        "currency": "usd",
-        "networks/networks": @[],
-        "networks/current-network": "",
-        "wallet/visible-tokens": {},
-        "waku-enabled": true,
-        "appearance": 0,
-        "installation-id": installationId,
-        "current-user-status": {
-          "publicKey": whisperPublicKey,
-          "statusType": 1,
-          "clock": 0,
-          "text": ""
-        }
-      }
-
-      self.addKeycardDetails(keycardData.instanceUID, settingsJson, accountDataJson)
-
-      debug "<<< setupAccountKeycard", useImportedAcc, keycardData, importedAccount = $self.importedAccount, accountDataJson, nodeConfigJson, subaccountDataJson, settingsJson
-
-      if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
-        nodeConfigJson.isNil):
-        let description = "at least one json object is not prepared well"
-        error "error: ", procName="setupAccountKeycard", errDesription = description
-        return
-
-      self.loggedInAccount = self.saveKeycardAccountAndLogin(chatKey = whisperPrivateKey,
-        password = encryptionPublicKey,
-        accountDataJson,
-        subaccountDataJson,
-        settingsJson,
-        nodeConfigJson)
-      self.setLocalAccountSettingsFile()
-    except Exception as e:
-      error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
-
   proc createAccountFromPrivateKey*(self: Service, privateKey: string): GeneratedAccountDto =
     if privateKey.len == 0:
       error "empty private key"
@@ -663,28 +389,6 @@ QtObject:
       error "error: ", procName="fetchAddressesFromNotImportedMnemonic", errName = e.name, errDesription = e.msg
       data.error = e.msg
     self.events.emit(SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED, data)
-
-  proc importMnemonic*(self: Service, mnemonic: string): string =
-    if mnemonic.len == 0:
-      return "empty mnemonic"
-    debug "<<< service.importMnemonic", mnemonic
-    try:
-      let response = status_account.multiAccountImportMnemonic(mnemonic)
-      self.importedAccount = toGeneratedAccountDto(response.result)
-
-      if (self.accounts.contains(self.importedAccount.keyUid)):
-        return ACCOUNT_ALREADY_EXISTS_ERROR
-
-      let responseDerived = status_account.deriveAccounts(self.importedAccount.id, PATHS)
-      self.importedAccount.derivedAccounts = toDerivedAccounts(responseDerived.result)
-
-      self.importedAccount.alias= generateAliasFromPk(self.importedAccount.derivedAccounts.whisper.publicKey)
-
-      if (not self.importedAccount.isValid()):
-        return "imported account is not valid"
-    except Exception as e:
-      error "error: ", procName="importMnemonic", errName = e.name, errDesription = e.msg
-      return e.msg
 
   proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
     try:
@@ -789,36 +493,6 @@ QtObject:
     # Clear out the temp properties
     self.tmpAccount = AccountDto()
     self.tmpHashedPassword = ""
-
-  proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string =
-    debug "<<< service.loginAccountKeycard", accToBeLoggedIn, keycardData
-
-    try:
-      self.setKeyStoreDir(keycardData.keyUid)
-
-      var accountDataJson = %* {
-        "key-uid": accToBeLoggedIn.keyUid,
-      }
-
-      let nodeConfigJson = self.getLoginNodeConfig()
-
-      let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey,
-        keycardData.encryptionKey.publicKey,
-        accountDataJson,
-        nodeConfigJson)
-
-      var error = "response doesn't contain \"error\""
-      if(response.result.contains("error")):
-        error = response.result["error"].getStr
-        if error == "":
-          debug "Account logged in succesfully"
-          # this should be fetched later from waku
-          self.loggedInAccount = accToBeLoggedIn
-          self.setLocalAccountSettingsFile()
-          return
-    except Exception as e:
-      error "keycard login failed", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
-      return e.msg
 
   proc convertRegularProfileKeypairToKeycard*(self: Service, keycardUid, currentPassword: string, newPassword: string) =
     var accountDataJson = %* {

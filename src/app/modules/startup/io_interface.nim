@@ -68,9 +68,6 @@ method startUpUIRaised*(self: AccessInterface) {.base.} =
 method emitLogOut*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getImportedAccount*(self: AccessInterface): GeneratedAccountDto {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method generateImage*(self: AccessInterface, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -108,9 +105,6 @@ method emitStartupError*(self: AccessInterface, error: string, errType: StartupE
   raise newException(ValueError, "No implementation available")
 
 method validMnemonic*(self: AccessInterface, mnemonic: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method importAccountSuccess*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setSelectedLoginAccount*(self: AccessInterface, item: login_acc_item.Item) {.base.} =

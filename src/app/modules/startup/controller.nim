@@ -22,7 +22,7 @@ logScope:
 
 type ProfileImageDetails = object
   url*: string
-  croppedImage*: string # TODO: Remove after https://github.com/status-im/status-go/issues/4977
+  croppedImage*: string
   cropRectangle*: ImageCropRectangle
 
 type
@@ -189,9 +189,9 @@ proc init*(self: Controller) =
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
-# This is used in 2 cases.
-#   1. FirstRunOldUserImportSeedPhrase: when fetching backup failed and we create a new displayName and profileImage.
-#   2. FirstRunOldUserKeycardImport:
+# This is used in 2 flows, inca case fetching backup failed and we create a new displayName and profileImage:
+#   1. FirstRunOldUserImportSeedPhrase
+#   2. FirstRunOldUserKeycardImport
 # At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
   debug "<<< storeProfileDataAndProceedWithAppLoading"
@@ -203,12 +203,6 @@ proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
 
 proc checkFetchingStatusAndProceed*(self: Controller) =
   self.delegate.checkFetchingStatusAndProceed()
-
-proc getGeneratedAccounts*(self: Controller): seq[GeneratedAccountDto] =
-  return self.accountsService.generatedAccounts()
-
-proc getImportedAccount*(self: Controller): GeneratedAccountDto =
-  return self.accountsService.getImportedAccount()
 
 proc getPasswordStrengthScore*(self: Controller, password, userName: string): int =
   return self.generalService.getPasswordStrengthScore(password, userName)
@@ -352,7 +346,6 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   let selectedAccount = self.getSelectedLoginAccount()
   self.keychainService.tryToObtainData(selectedAccount.keyUid)
 
-# TODO: Remove when implemented https://github.com/status-im/status-go/issues/4977
 proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:
     return
@@ -392,16 +385,6 @@ proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
 
   self.setSeedPhrase(mnemonic)
   return true
-
-# TODO: Remove after https://github.com/status-im/status-go/issues/4977
-proc importMnemonic*(self: Controller): bool =
-  let error = self.accountsService.importMnemonic(self.tmpSeedPhrase)
-  if(error.len == 0):
-    self.delegate.importAccountSuccess()
-    return true
-  else:
-    self.delegate.emitStartupError(error, StartupErrorType.ImportAccError)
-    return false
 
 proc setupKeychain(self: Controller, store: bool) =
   if store:
