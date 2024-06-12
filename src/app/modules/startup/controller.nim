@@ -462,7 +462,8 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
 
 # NOTE: Called during FirstRunOldUserKeycardImport
 proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
-  debug "<<< setupKeycardAccount", storeToKeychain, recoverAccount
+
+  debug "<<< setupKeycardAccount", storeToKeychain, recoverAccount, tmpKeycardEvent = $self.tmpKeycardEvent
 
   if self.tmpKeycardEvent.keyUid.len == 0 or
     self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
