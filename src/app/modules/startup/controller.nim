@@ -431,6 +431,7 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
     self.connectToFetchingFromWakuEvents()
   else:
     self.delegate.moveToLoadingAppState()
+
   let error = self.accountsService.importAccountAndLogin(
     self.tmpSeedPhrase, 
     self.tmpPassword, 
@@ -439,6 +440,7 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
     self.tmpProfileImageDetails.url,
     self.tmpProfileImageDetails.cropRectangle,
   )
+
   self.processCreateAccountResult(error, storeToKeychain)
 
 # NOTE: Called during FirstRunNewUserNewKeycardKeys and FirstRunNewUserImportSeedPhraseIntoKeycard
@@ -449,7 +451,7 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
   let (_, flowEvent) = self.keycardService.getLastReceivedKeycardData()
   let error = self.accountsService.importAccountAndLogin(
     self.tmpSeedPhrase, 
-    "", # NOTE: Keep an empty password. For keycard it will be substituted with`encryption.publicKey` in status-go
+    "", # Keep an empty password. For keycard it will be substituted with`encryption.publicKey` in status-go
     false, 
     self.tmpDisplayName, 
     self.tmpProfileImageDetails.url,

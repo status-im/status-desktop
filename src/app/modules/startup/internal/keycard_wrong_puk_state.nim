@@ -38,11 +38,11 @@ method resolveKeycardNextState*(self: KeycardWrongPukState, keycardFlowType: str
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       controller.setKeycardEvent(keycardEvent)
       controller.setPukValid(true)
-      if not main_constants.IS_MACOS:
-        controller.setupKeycardAccount(storeToKeychain = false, recoverAccount = true)
-        return createState(StateType.ProfileFetching, self.flowType, nil)
-      let backState = findBackStateWithTargetedStateType(self, StateType.RecoverOldUser)
-      return createState(StateType.Biometrics, self.flowType, backState)
+      if main_constants.SUPPORTS_FINGERPRINT:
+        let backState = findBackStateWithTargetedStateType(self, StateType.RecoverOldUser)
+        return createState(StateType.Biometrics, self.flowType, backState)
+      controller.setupKeycardAccount(storeToKeychain = false, recoverAccount = true)
+      return createState(StateType.ProfileFetching, self.flowType, nil)
   if self.flowType == FlowType.AppLogin:
     if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len > 0 and
