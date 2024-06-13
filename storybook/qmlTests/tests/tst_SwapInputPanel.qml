@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtTest 1.15
 
 import StatusQ 0.1
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.Wallet.panels 1.0
@@ -37,7 +38,9 @@ Item {
                 assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
             currencyStore: CurrenciesStore {}
-            swapFormData: SwapInputParamsForm {}
+            swapFormData: SwapInputParamsForm {
+                selectedAccountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            }
             swapOutputData: SwapOutputData {}
         }
     }
@@ -135,7 +138,7 @@ Item {
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
-            tryCompare(amountToSendInput.input, "text", Number(tokenAmount).toLocaleString(Qt.locale(), 'f', -128))
+            tryCompare(amountToSendInput.input, "text", AmountsArithmetic.fromString(tokenAmount).toLocaleString(Qt.locale(), 'f', -128))
         }
 
         function test_enterTokenAmountLocalizedNumber() {

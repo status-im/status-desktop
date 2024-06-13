@@ -91,6 +91,7 @@ Item {
         contentItem: RowLayout {
             StatusRoundedImage {
                 id: tokenIcon
+                objectName: "holdingSelectorsTokenIcon"
                 Layout.preferredWidth: root.contentIconSize
                 Layout.preferredHeight: root.contentIconSize
                 visible: !!d.iconSource
@@ -102,6 +103,7 @@ Item {
                 }
             }
             StatusBaseText {
+                objectName: "holdingSelectorsContentItemText"
                 Layout.fillWidth: true
                 font.pixelSize: root.contentTextSize
                 elide: Text.ElideRight

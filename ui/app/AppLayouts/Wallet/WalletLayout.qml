@@ -136,7 +136,7 @@ Item {
         }
 
         property SwapInputParamsForm swapFormData: SwapInputParamsForm {
-            selectedAccountIndex: d.selectedAccountIndex
+            selectedAccountAddress: StatusQUtils.ModelUtils.get(RootStore.nonWatchAccounts, d.selectedAccountIndex, "address")
             selectedNetworkChainId: {
                 // Without this when we switch testnet mode, the correct network is not evaluated
                 RootStore.areTestNetworksEnabled
@@ -216,7 +216,7 @@ Item {
                                                                   hasFloatingButtons: true
                                                               })
             onLaunchSwapModal: {
-                d.swapFormData.selectedAccountIndex = d.selectedAccountIndex
+                d.swapFormData.selectedAccountAddress = StatusQUtils.ModelUtils.get(RootStore.nonWatchAccounts, d.selectedAccountIndex, "address")
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 d.swapFormData.fromTokensKey = tokensKey
                 d.swapFormData.toTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
@@ -335,7 +335,7 @@ Item {
             }
             onLaunchSwapModal: {
                 d.swapFormData.fromTokensKey =  ""
-                d.swapFormData.selectedAccountIndex = d.selectedAccountIndex
+                d.swapFormData.selectedAccountAddress = StatusQUtils.ModelUtils.get(RootStore.nonWatchAccounts, d.selectedAccountIndex, "address")
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey

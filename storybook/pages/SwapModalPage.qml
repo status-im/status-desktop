@@ -63,64 +63,79 @@ SplitView {
 
         Component.onCompleted: d.launchPopup()
 
-        SwapInputParamsForm {
-            id: swapInputForm
-            selectedAccountIndex: accountComboBox.currentIndex
-            selectedNetworkChainId: d.getNetwork()
-            fromTokensKey: fromTokenComboBox.currentValue
-            fromTokenAmount: swapInput.text
-            toTokenKey: toTokenComboBox.currentValue
-            toTokenAmount: swapOutputAmount.text
+        SwapStore {
+            id: dSwapStore
+            signal suggestedRoutesReady(var txRoutes)
+            readonly property var accounts: d.accountsModel
+            readonly property var flatNetworks: d.flatNetworksModel
+            readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
+
+            function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
+                                          disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {
+                console.debug("fetchSuggestedRoutes called >> accountFrom = ",accountFrom, " accountTo =",
+                              accountTo, "amount = ",amount, " tokenFrom = ",tokenFrom, " tokenTo = ", tokenTo,
+                              " disabledFromChainIDs = ",disabledFromChainIDs, " disabledToChainIDs = ",disabledToChainIDs,
+                              " preferredChainIDs = ",preferredChainIDs, " sendType =", sendType, " lockedInAmounts = ",lockedInAmounts)
+            }
+            function authenticateAndTransfer(uuid, accountFrom, accountTo, tokenFrom,
+                                             tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {
+                console.debug("authenticateAndTransfer called >> uuid ", uuid, " accountFrom = ",accountFrom, " accountTo =",
+                              accountTo, "tokenFrom = ",tokenFrom, " tokenTo = ",tokenTo, " sendType = ", sendType,
+                              " tokenName = ", tokenName, " tokenIsOwnerToken = ", tokenIsOwnerToken, " paths = ", paths)
+            }
+            function getWei2Eth(wei, decimals) {
+                return wei/(10**decimals)
+            }
         }
 
-        SwapModalAdaptor {
-            id: swapModalAdaptor
-            swapStore: SwapStore {
-                signal suggestedRoutesReady(var txRoutes)
-                readonly property var accounts: d.accountsModel
-                readonly property var flatNetworks: d.flatNetworksModel
-                readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
-
-                function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
-                                            disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {
-                    console.debug("fetchSuggestedRoutes called >> accountFrom = ",accountFrom, " accountTo =",
-                                  accountTo, "amount = ",amount, " tokenFrom = ",tokenFrom, " tokenTo = ", tokenTo,
-                                  " disabledFromChainIDs = ",disabledFromChainIDs, " disabledToChainIDs = ",disabledToChainIDs,
-                                  " preferredChainIDs = ",preferredChainIDs, " sendType =", sendType, " lockedInAmounts = ",lockedInAmounts)
-                }
-                function authenticateAndTransfer(uuid, accountFrom, accountTo, tokenFrom,
-                                                 tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {
-                    console.debug("authenticateAndTransfer called >> uuid ", uuid, " accountFrom = ",accountFrom, " accountTo =",
-                                  accountTo, "tokenFrom = ",tokenFrom, " tokenTo = ",tokenTo, " sendType = ", sendType,
-                                  " tokenName = ", tokenName, " tokenIsOwnerToken = ", tokenIsOwnerToken, " paths = ", paths)
-                }
-                function getWei2Eth(wei, decimals) {
-                    return wei/(10**decimals)
-                }
-            }
-            walletAssetsStore: WalletAssetsStore {
-                id: thisWalletAssetStore
-                walletTokensStore: TokensStore {
-                    readonly property var plainTokensBySymbolModel: TokensBySymbolModel {}
-                    getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
-                }
-                readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
-            }
-            currencyStore: CurrenciesStore {}
-            swapFormData: swapInputForm
-            swapOutputData: SwapOutputData{}
+        TokensStore {
+            id: tokensStore
+            readonly property var plainTokensBySymbolModel: TokensBySymbolModel {}
+            getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
         }
 
         Component {
             id: swapModal
             SwapModal {
+                id: modal
                 visible: true
                 modal: false
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
-                swapInputParamsForm: swapInputForm
-                swapAdaptor: swapModalAdaptor
+                swapInputParamsForm: SwapInputParamsForm {
+                    selectedAccountAddress: {
+                        if (accountComboBox.model.count > 0 && accountComboBox.currentIndex >= 0) {
+                            return ModelUtils.get(accountComboBox.model, accountComboBox.currentIndex, "address")
+                        }
+                        return ""
+                    }
+                    selectedNetworkChainId: d.getNetwork()
+                    fromTokensKey: fromTokenComboBox.currentValue
+                    fromTokenAmount: swapInput.text
+                    toTokenKey: toTokenComboBox.currentValue
+                }
+                swapAdaptor: SwapModalAdaptor {
+                    swapStore: dSwapStore
+                    walletAssetsStore: WalletAssetsStore {
+                        id: thisWalletAssetStore
+                        walletTokensStore: tokensStore
+                        readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
+                        assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+                    }
+                    currencyStore: CurrenciesStore {}
+                    swapFormData: modal.swapInputParamsForm
+                    swapOutputData: SwapOutputData{}
+                }
+                Binding {
+                    target: swapInputParamsForm
+                    property: "fromTokensKey"
+                    value: fromTokenComboBox.currentValue
+                }
+                Binding {
+                    target: swapInputParamsForm
+                    property: "toTokenKey"
+                    value: toTokenComboBox.currentValue
+                }
             }
         }
     }
@@ -157,9 +172,6 @@ SplitView {
                     sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
                 }
                 currentIndex: 0
-                onCurrentIndexChanged: {
-                    swapInputForm.selectedAccountIndex = currentIndex
-                }
             }
 
             StatusBaseText {
@@ -171,7 +183,6 @@ SplitView {
                 model: d.filteredNetworksModel
                 currentIndex: 0
                 onCountChanged: currentIndex = 0
-                onCurrentIndexChanged: swapInputForm.selectedNetworkChainId = d.getNetwork()
             }
 
             StatusBaseText {
@@ -182,14 +193,13 @@ SplitView {
                 textRole: "name"
                 valueRole: "key"
                 model: d.tokenBySymbolModel
-                currentIndex: 0
             }
 
             StatusInput {
                 id: swapInput
                 Layout.preferredWidth: 100
                 label: "Token amount to swap"
-                text: "100"
+                text: ""
             }
 
             StatusBaseText {
@@ -206,21 +216,21 @@ SplitView {
             Button {
                 text: "emit no routes found event"
                 onClicked: {
-                    swapModalAdaptor.swapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txNoRoutes)
+                    dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txNoRoutes)
                 }
             }
 
             Button {
                 text: "emit no approval needed route"
                 onClicked: {
-                    swapModalAdaptor.swapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRouteNoApproval)
+                    dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRouteNoApproval)
                 }
             }
 
             Button {
                 text: "emit approval needed route"
                 onClicked: {
-                    swapModalAdaptor.swapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded)
+                    dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded)
                 }
             }
         }

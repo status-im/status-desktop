@@ -108,16 +108,31 @@ Item {
             return accountsModalHeader
         }
 
-        function verifyLoadingAndNoErrorsState() {
+        function verifyLoadingAndNoErrorsState(payPanel, receivePanel) {
             // verify loading state was set and no errors currently
             verify(!root.swapAdaptor.validSwapProposalReceived)
             verify(root.swapAdaptor.swapProposalLoading)
-            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "0")
-            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "")
             compare(root.swapAdaptor.swapOutputData.totalFees, 0)
             compare(root.swapAdaptor.swapOutputData.bestRoutes, [])
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
             compare(root.swapAdaptor.swapOutputData.hasError, false)
+
+            // verfy input and output panels
+            verify(!payPanel.loading)
+            compare(payPanel.selectedHoldingId, root.swapFormData.fromTokensKey)
+            compare(payPanel.cryptoValue, Number(root.swapFormData.fromTokenAmount))
+            compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(root.swapFormData.fromTokenAmount, root.swapAdaptor.fromToken.decimals).toString())
+            verify(payPanel.cryptoValueValid)
+            verify(receivePanel.loading)
+            verify(!receivePanel.interactive)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            /* TODO: there is bug which prevents us from testing this right now
+            The value is not updated after  setting tokenAmount to empty string in the receive input panel
+            https://github.com/status-im/status-desktop/issues/15162
+            compare(receivePanel.cryptoValue, 0)
+            compare(receivePanel.cryptoValueRaw, "0") */
         }
         // end helper functions -------------------------------------------------------------
 
@@ -126,7 +141,7 @@ Item {
             /* using a for loop set different accounts as default index and
             check if the correct values are displayed in the floating header*/
             for (let i = 0; i< swapAdaptor.nonWatchAccounts.count; i++) {
-                root.swapFormData.selectedAccountIndex = i
+                root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(i).address
 
                 // Launch popup
                 launchAndVerfyModal()
@@ -291,7 +306,7 @@ Item {
                 verify(accountsModalHeader.control.popup.closed)
 
                 // The input params form's slected Index should be updated  as per this selection
-                compare(root.swapFormData.selectedAccountIndex, i)
+                compare(root.swapFormData.selectedAccountAddress, swapAdaptor.nonWatchAccounts.get(i).address)
 
                 // The comboBox item should  reflect chosen account
                 const floatingHeaderBackground = findChild(accountsModalHeader, "headerBackground")
@@ -417,8 +432,6 @@ Item {
         }
 
         function test_edit_slippage() {
-            // by default the max slippage button should show no values and the edit button shouldnt be visible
-
             // Launch popup
             launchAndVerfyModal()
 
@@ -476,8 +489,6 @@ Item {
         }
 
         function test_modal_swap_proposal_setup() {
-            // by default the max slippage button should show no values and the edit button shouldnt be visible
-
             root.swapAdaptor.reset()
 
             // Launch popup
@@ -495,6 +506,12 @@ Item {
             const errorTag = findChild(controlUnderTest, "errorTag")
             verify(!!errorTag)
 
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+
+            const receivePanel = findChild(controlUnderTest, "receivePanel")
+            verify(!!receivePanel)
+
             // Check max fees values and sign button state when nothing is set
             compare(maxFeesText.text, qsTr("Max fees:"))
             compare(maxFeesValue.text, "--")
@@ -506,16 +523,18 @@ Item {
             compare(formValuesChanged.count, 1)
             root.swapFormData.toTokenKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(1).key
             compare(formValuesChanged.count, 2)
-            root.swapFormData.fromTokenAmount = 10
+            root.swapFormData.fromTokenAmount = "0.001"
             compare(formValuesChanged.count, 3)
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             compare(formValuesChanged.count, 4)
+            root.swapFormData.selectedAccountAddress = root.swapAdaptor.nonWatchAccounts.get(0).address
+            compare(formValuesChanged.count, 5)
 
             // wait for fetchSuggestedRoutes function to be called
             wait(1000)
 
             // verify loading state was set and no errors currently
-            verifyLoadingAndNoErrorsState()
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
             // emit event that no routes were found
             root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes)
@@ -523,8 +542,8 @@ Item {
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
             verify(!root.swapAdaptor.swapProposalLoading)
-            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "0")
-            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "")
             compare(root.swapAdaptor.swapOutputData.totalFees, 0)
             compare(root.swapAdaptor.swapOutputData.bestRoutes, [])
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
@@ -534,24 +553,32 @@ Item {
             verify(!signButton.enabled)
             compare(signButton.text, qsTr("Swap"))
 
+            // verfy input and output panels
+            verify(!payPanel.loading)
+            verify(!receivePanel.loading)
+            verify(!receivePanel.interactive)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.cryptoValue, 0)
+            compare(receivePanel.cryptoValueRaw, "0")
+
             // edit some params to retry swap
-            root.swapFormData.fromTokenAmount = 11
-            compare(formValuesChanged.count, 5)
+            root.swapFormData.fromTokenAmount = "0.00011"
+            compare(formValuesChanged.count, 6)
 
             // wait for fetchSuggestedRoutes function to be called
             wait(1000)
 
             // verify loading state was set and no errors currently
-            verifyLoadingAndNoErrorsState()
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
             // emit event with route that needs no approval
             let txRoutes = root.dummySwapTransactionRoutes.txHasRouteNoApproval
             root.swapStore.suggestedRoutesReady(txRoutes)
 
-            // verify loading state removed and data ius displayed as expected on the Modal
+            // verify loading state removed and data is displayed as expected on the Modal
             verify(root.swapAdaptor.validSwapProposalReceived)
             verify(!root.swapAdaptor.swapProposalLoading)
-            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
             compare(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals).toString())
 
             // calculation needed for total fees
@@ -567,15 +594,24 @@ Item {
             verify(signButton.enabled)
             compare(signButton.text, qsTr("Swap"))
 
+            // verfy input and output panels
+            waitForRendering(receivePanel)
+            verify(payPanel.cryptoValueValid)
+            verify(!receivePanel.loading)
+            verify(!receivePanel.interactive)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.cryptoValue, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
+            compare(receivePanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapAdaptor.toToken.decimals).toString())
+
             // edit some params to retry swap
-            root.swapFormData.fromTokenAmount = 1
-            compare(formValuesChanged.count, 6)
+            root.swapFormData.fromTokenAmount = "0.012"
+            compare(formValuesChanged.count, 7)
 
             // wait for fetchSuggestedRoutes function to be called
             wait(1000)
 
             // verify loading state was set and no errors currently
-            verifyLoadingAndNoErrorsState()
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
             // emit event with route that needs no approval
             let txRoutes2 = root.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
@@ -584,7 +620,7 @@ Item {
             // verify loading state removed and data ius displayed as expected on the Modal
             verify(root.swapAdaptor.validSwapProposalReceived)
             verify(!root.swapAdaptor.swapProposalLoading)
-            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "0")
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
             compare(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapStore.getWei2Eth(txRoutes2.amountToReceive, root.swapAdaptor.toToken.decimals).toString())
 
             // calculation needed for total fees
@@ -599,6 +635,497 @@ Item {
             verify(!errorTag.visible)
             verify(signButton.enabled)
             compare(signButton.text, qsTr("Approve %1").arg(root.swapAdaptor.fromToken.symbol))
+
+            // verfy input and output panels
+            waitForRendering(receivePanel)
+            verify(payPanel.cryptoValueValid)
+            verify(!receivePanel.loading)
+            verify(!receivePanel.interactive)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.cryptoValue, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
+            compare(receivePanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapAdaptor.toToken.decimals).toString())
+        }
+
+        function test_modal_pay_input_default() {
+            // Launch popup
+            launchAndVerfyModal()
+
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const amountToSendInput = findChild(payPanel, "amountToSendInput")
+            verify(!!amountToSendInput)
+            const bottomItemText = findChild(payPanel, "bottomItemText")
+            verify(!!bottomItemText)
+            const holdingSelector = findChild(payPanel, "holdingSelector")
+            verify(!!holdingSelector)
+            const maxTagButton = findChild(payPanel, "maxTagButton")
+            verify(!!maxTagButton)
+            const holdingSelectorsContentItemText = findChild(payPanel, "holdingSelectorsContentItemText")
+            verify(!!holdingSelectorsContentItemText)
+            const holdingSelectorsTokenIcon = findChild(payPanel, "holdingSelectorsTokenIcon")
+            verify(!!holdingSelectorsTokenIcon)
+
+            waitForRendering(payPanel)
+
+            // check default states for the from input selector
+            compare(amountToSendInput.caption, qsTr("Pay"))
+            verify(amountToSendInput.interactive)
+            compare(amountToSendInput.input.text, "")
+            verify(amountToSendInput.input.input.edit.cursorVisible)
+            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
+            compare(holdingSelector.selectedItem, undefined)
+            compare(holdingSelectorsContentItemText.text, qsTr("Select asset"))
+            compare(holdingSelectorsTokenIcon.image.source, "")
+            verify(!holdingSelectorsTokenIcon.visible)
+            verify(!maxTagButton.visible)
+            compare(payPanel.selectedHoldingId, "")
+            compare(payPanel.cryptoValue, 0)
+            compare(payPanel.cryptoValueRaw, "0")
+            verify(!payPanel.cryptoValueValid)
+
+            closeAndVerfyModal()
+        }
+
+        function test_modal_pay_input_presetValues() {
+            // try setting value before popup is launched and check values
+            let valueToExchange = 0.001
+            let valueToExchangeString = valueToExchange.toString()
+            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromTokenAmount = valueToExchangeString
+
+            let expectedToken =  SQUtils.ModelUtils.getByKey(root.swapAdaptor.processedAssetsModel, "tokensKey", "ETH")
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const amountToSendInput = findChild(payPanel, "amountToSendInput")
+            verify(!!amountToSendInput)
+            const bottomItemText = findChild(payPanel, "bottomItemText")
+            verify(!!bottomItemText)
+            const holdingSelector = findChild(payPanel, "holdingSelector")
+            verify(!!holdingSelector)
+            const maxTagButton = findChild(payPanel, "maxTagButton")
+            verify(!!maxTagButton)
+            const holdingSelectorsContentItemText = findChild(payPanel, "holdingSelectorsContentItemText")
+            verify(!!holdingSelectorsContentItemText)
+            const holdingSelectorsTokenIcon = findChild(payPanel, "holdingSelectorsTokenIcon")
+            verify(!!holdingSelectorsTokenIcon)
+
+            waitForRendering(payPanel)
+
+            compare(amountToSendInput.caption, qsTr("Pay"))
+            verify(amountToSendInput.interactive)
+            compare(amountToSendInput.input.text, valueToExchangeString)
+            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            verify(amountToSendInput.input.input.edit.cursorVisible)
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToExchange * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
+            compare(holdingSelector.selectedItem, expectedToken)
+            compare(holdingSelectorsContentItemText.text, expectedToken.symbol)
+            compare(holdingSelectorsTokenIcon.image.source, Constants.tokenIcon(expectedToken.symbol))
+            verify(holdingSelectorsTokenIcon.visible)
+            verify(maxTagButton.visible)
+            compare(maxTagButton.text, qsTr("Max. %1").arg(root.swapAdaptor.currencyStore.formatCurrencyAmount(Math.trunc(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)*100)/100, expectedToken.symbol, {noSymbol: true})))
+            compare(payPanel.selectedHoldingId, expectedToken.symbol)
+            compare(payPanel.cryptoValue, valueToExchange)
+            compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
+            verify(payPanel.cryptoValueValid)
+
+            closeAndVerfyModal()
+        }
+
+        function test_modal_pay_input_wrong_value_1() {
+            let invalidValues = ["ABC", "0.0.010201", "12PASA", "100,9.01"]
+            for (let i =0; i<invalidValues.length; i++) {
+                let invalidValue = invalidValues[i]
+                // try setting value before popup is launched and check values
+                root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+                root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+                root.swapFormData.fromTokensKey =
+                        root.swapFormData.fromTokenAmount = invalidValue
+
+                // Launch popup
+                launchAndVerfyModal()
+
+                const payPanel = findChild(controlUnderTest, "payPanel")
+                verify(!!payPanel)
+                const amountToSendInput = findChild(payPanel, "amountToSendInput")
+                verify(!!amountToSendInput)
+                const bottomItemText = findChild(payPanel, "bottomItemText")
+                verify(!!bottomItemText)
+                const holdingSelector = findChild(payPanel, "holdingSelector")
+                verify(!!holdingSelector)
+                const maxTagButton = findChild(payPanel, "maxTagButton")
+                verify(!!maxTagButton)
+                const holdingSelectorsContentItemText = findChild(payPanel, "holdingSelectorsContentItemText")
+                verify(!!holdingSelectorsContentItemText)
+                const holdingSelectorsTokenIcon = findChild(payPanel, "holdingSelectorsTokenIcon")
+                verify(!!holdingSelectorsTokenIcon)
+
+                waitForRendering(payPanel)
+
+                compare(amountToSendInput.caption, qsTr("Pay"))
+                verify(amountToSendInput.interactive)
+                compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+                verify(amountToSendInput.input.input.edit.cursorVisible)
+                compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
+                compare(holdingSelector.selectedItem, null)
+                compare(holdingSelectorsContentItemText.text, "")
+                verify(!holdingSelectorsTokenIcon.visible)
+                verify(!maxTagButton.visible)
+                compare(payPanel.selectedHoldingId, invalidValue)
+                compare(payPanel.cryptoValue, 0)
+                compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber("0", 0).toString())
+                verify(!payPanel.cryptoValueValid)
+
+                closeAndVerfyModal()
+            }
+        }
+
+        function test_modal_pay_input_wrong_value_2() {
+            // try setting value before popup is launched and check values
+            let valueToExchange = 100
+            let valueToExchangeString = valueToExchange.toString()
+            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromTokenAmount = valueToExchangeString
+
+            let expectedToken =  SQUtils.ModelUtils.getByKey(root.swapAdaptor.processedAssetsModel, "tokensKey", "ETH")
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const amountToSendInput = findChild(payPanel, "amountToSendInput")
+            verify(!!amountToSendInput)
+            const bottomItemText = findChild(payPanel, "bottomItemText")
+            verify(!!bottomItemText)
+            const holdingSelector = findChild(payPanel, "holdingSelector")
+            verify(!!holdingSelector)
+            const maxTagButton = findChild(payPanel, "maxTagButton")
+            verify(!!maxTagButton)
+            const holdingSelectorsContentItemText = findChild(payPanel, "holdingSelectorsContentItemText")
+            verify(!!holdingSelectorsContentItemText)
+            const holdingSelectorsTokenIcon = findChild(payPanel, "holdingSelectorsTokenIcon")
+            verify(!!holdingSelectorsTokenIcon)
+
+            waitForRendering(payPanel)
+
+            compare(amountToSendInput.caption, qsTr("Pay"))
+            verify(amountToSendInput.interactive)
+            compare(amountToSendInput.input.text, valueToExchangeString)
+            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            verify(amountToSendInput.input.input.edit.cursorVisible)
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0 * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
+            compare(holdingSelector.selectedItem, expectedToken)
+            compare(holdingSelectorsContentItemText.text, expectedToken.symbol)
+            compare(holdingSelectorsTokenIcon.image.source, Constants.tokenIcon(expectedToken.symbol))
+            verify(holdingSelectorsTokenIcon.visible)
+            verify(maxTagButton.visible)
+            compare(maxTagButton.text, qsTr("Max. %1").arg(root.swapAdaptor.currencyStore.formatCurrencyAmount(Math.trunc(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)*100)/100, expectedToken.symbol, {noSymbol: true})))
+            compare(payPanel.selectedHoldingId, expectedToken.symbol)
+            compare(payPanel.cryptoValue, 0)
+            compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber("0", expectedToken.decimals).toString())
+            verify(!payPanel.cryptoValueValid)
+
+            closeAndVerfyModal()
+        }
+
+        function test_modal_pay_input_switching_networks() {
+            // try setting value before popup is launched and check values
+            root.swapFormData.resetFormData()
+            let valueToExchange = 0.3
+            let valueToExchangeString = valueToExchange.toString()
+            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromTokenAmount = valueToExchangeString
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const maxTagButton = findChild(payPanel, "maxTagButton")
+            verify(!!maxTagButton)
+
+            for (let i=0; i< root.swapAdaptor.filteredFlatNetworksModel.count; i++) {
+                root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(i).chainId
+                waitForRendering(payPanel)
+                let expectedToken =  SQUtils.ModelUtils.getByKey(root.swapAdaptor.processedAssetsModel, "tokensKey", "ETH")
+
+                // check states for the pay input selector
+                verify(maxTagButton.visible)
+                let maxPossibleValue = Math.trunc(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)*100)/100
+                compare(maxTagButton.text, qsTr("Max. %1").arg(root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true})))
+                compare(payPanel.selectedHoldingId, expectedToken.symbol)
+                compare(payPanel.cryptoValueValid, valueToExchange <= maxPossibleValue)
+                /* TODO: there is bug which prevents us from testing this right now
+                When value entered is greater than balance then fiat and crytpo values are not calculated
+                https://github.com/status-im/status-desktop/issues/15162
+                compare(payPanel.cryptoValue, valueToExchange)
+                compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString()) */
+            }
+
+            closeAndVerfyModal()
+        }
+
+        function test_modal_receive_input_default() {
+            // Launch popup
+            launchAndVerfyModal()
+
+            const receivePanel = findChild(controlUnderTest, "receivePanel")
+            verify(!!receivePanel)
+            const amountToSendInput = findChild(receivePanel, "amountToSendInput")
+            verify(!!amountToSendInput)
+            const bottomItemText = findChild(receivePanel, "bottomItemText")
+            verify(!!bottomItemText)
+            const holdingSelector = findChild(receivePanel, "holdingSelector")
+            verify(!!holdingSelector)
+            const maxTagButton = findChild(receivePanel, "maxTagButton")
+            verify(!!maxTagButton)
+            const holdingSelectorsContentItemText = findChild(receivePanel, "holdingSelectorsContentItemText")
+            verify(!!holdingSelectorsContentItemText)
+
+            // check default states for the from input selector
+            compare(amountToSendInput.caption, qsTr("Receive"))
+            compare(amountToSendInput.input.text, "")
+            // TODO: this should be come interactive under https://github.com/status-im/status-desktop/issues/15095
+            verify(!amountToSendInput.interactive)
+            verify(!amountToSendInput.input.input.edit.cursorVisible)
+            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
+            compare(holdingSelector.selectedItem, undefined)
+            compare(holdingSelectorsContentItemText.text, qsTr("Select asset"))
+            verify(!maxTagButton.visible)
+            compare(receivePanel.selectedHoldingId, "")
+            compare(receivePanel.cryptoValue, 0)
+            compare(receivePanel.cryptoValueRaw, "0")
+            verify(!receivePanel.cryptoValueValid)
+
+            closeAndVerfyModal()
+        }
+
+        function test_modal_receive_input_presetValues() {
+            let valueToReceive = 0.001
+            let valueToReceiveString = valueToReceive.toString()
+            // try setting value before popup is launched and check values
+            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+            root.swapFormData.toTokenKey = "STT"
+            root.swapFormData.toTokenAmount = valueToReceiveString
+
+            let expectedToken =  SQUtils.ModelUtils.getByKey(root.swapAdaptor.processedAssetsModel, "tokensKey", "STT")
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const receivePanel = findChild(controlUnderTest, "receivePanel")
+            verify(!!receivePanel)
+            const amountToSendInput = findChild(receivePanel, "amountToSendInput")
+            verify(!!amountToSendInput)
+            const bottomItemText = findChild(receivePanel, "bottomItemText")
+            verify(!!bottomItemText)
+            const holdingSelector = findChild(receivePanel, "holdingSelector")
+            verify(!!holdingSelector)
+            const maxTagButton = findChild(receivePanel, "maxTagButton")
+            verify(!!maxTagButton)
+            const holdingSelectorsContentItemText = findChild(receivePanel, "holdingSelectorsContentItemText")
+            verify(!!holdingSelectorsContentItemText)
+            const holdingSelectorsTokenIcon = findChild(receivePanel, "holdingSelectorsTokenIcon")
+            verify(!!holdingSelectorsTokenIcon)
+
+            waitForRendering(receivePanel)
+
+            compare(amountToSendInput.caption, qsTr("Receive"))
+            // TODO: this should be come interactive under https://github.com/status-im/status-desktop/issues/15095
+            verify(!amountToSendInput.interactive)
+            verify(!amountToSendInput.input.input.edit.cursorVisible)
+            compare(amountToSendInput.input.text, valueToReceive.toLocaleString(Qt.locale(), 'f', -128))
+            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToReceive * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
+            compare(holdingSelector.selectedItem, expectedToken)
+            compare(holdingSelectorsContentItemText.text, expectedToken.symbol)
+            compare(holdingSelectorsTokenIcon.image.source, Constants.tokenIcon(expectedToken.symbol))
+            verify(holdingSelectorsTokenIcon.visible)
+            verify(!maxTagButton.visible)
+            compare(receivePanel.selectedHoldingId, expectedToken.symbol)
+            compare(receivePanel.cryptoValue, valueToReceive)
+            compare(receivePanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(valueToReceiveString, expectedToken.decimals).toString())
+            verify(receivePanel.cryptoValueValid)
+
+            closeAndVerfyModal()
+        }
+
+        function test_modal_max_button_click_with_preset_pay_value() {
+            // Launch popup
+            launchAndVerfyModal()
+
+            // try setting value before popup is launched and check values
+            let valueToExchange = 0.2
+            let valueToExchangeString = valueToExchange.toString()
+            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromTokenAmount = valueToExchangeString
+            root.swapFormData.toTokenKey = "STT"
+
+            compare(formValuesChanged.count, 5)
+
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const maxTagButton = findChild(payPanel, "maxTagButton")
+            verify(!!maxTagButton)
+            const amountToSendInput = findChild(payPanel, "amountToSendInput")
+            verify(!!amountToSendInput)
+            const bottomItemText = findChild(payPanel, "bottomItemText")
+            verify(!!bottomItemText)
+
+            waitForRendering(payPanel)
+
+            let expectedToken =  SQUtils.ModelUtils.getByKey(root.swapAdaptor.processedAssetsModel, "tokensKey", "ETH")
+
+            // check states for the pay input selector
+            verify(maxTagButton.visible)
+            let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
+            let truncmaxPossibleValue = Math.trunc(maxPossibleValue*100)/100
+            compare(maxTagButton.text, qsTr("Max. %1").arg(root.swapAdaptor.currencyStore.formatCurrencyAmount(truncmaxPossibleValue, expectedToken.symbol, {noSymbol: true})))
+            verify(amountToSendInput.interactive)
+            verify(amountToSendInput.input.input.edit.cursorVisible)
+            compare(amountToSendInput.input.text, valueToExchange.toLocaleString(Qt.locale(), 'f', -128))
+            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToExchange * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
+
+            // click on max button
+            maxTagButton.clicked()
+            waitForRendering(payPanel)
+
+            compare(formValuesChanged.count, 6)
+
+            verify(amountToSendInput.interactive)
+            verify(amountToSendInput.input.input.edit.cursorVisible)
+            compare(amountToSendInput.input.text, maxPossibleValue.toLocaleString(Qt.locale(), 'f', -128))
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
+
+            closeAndVerfyModal()
+        }
+
+        function test_modal_max_button_click_with_no_preset_pay_value() {
+            // Launch popup
+            launchAndVerfyModal()
+
+            // try setting value before popup is launched and check values
+            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.toTokenKey = "STT"
+
+            compare(formValuesChanged.count, 4)
+
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const maxTagButton = findChild(payPanel, "maxTagButton")
+            verify(!!maxTagButton)
+            const amountToSendInput = findChild(payPanel, "amountToSendInput")
+            verify(!!amountToSendInput)
+            const bottomItemText = findChild(payPanel, "bottomItemText")
+            verify(!!bottomItemText)
+
+            waitForRendering(payPanel)
+
+            let expectedToken =  SQUtils.ModelUtils.getByKey(root.swapAdaptor.processedAssetsModel, "tokensKey", "ETH")
+
+            // check states for the pay input selector
+            verify(maxTagButton.visible)
+            let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
+            let truncmaxPossibleValue = Math.trunc(maxPossibleValue*100)/100
+            compare(maxTagButton.text, qsTr("Max. %1").arg(root.swapAdaptor.currencyStore.formatCurrencyAmount(truncmaxPossibleValue, expectedToken.symbol, {noSymbol: true})))
+            verify(amountToSendInput.interactive)
+            verify(amountToSendInput.input.input.edit.cursorVisible)
+            compare(amountToSendInput.input.text, "")
+            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
+
+            // click on max button
+            maxTagButton.clicked()
+            waitForRendering(payPanel)
+
+            compare(formValuesChanged.count, 5)
+
+            verify(amountToSendInput.interactive)
+            verify(amountToSendInput.input.input.edit.cursorVisible)
+            compare(amountToSendInput.input.text, maxPossibleValue.toLocaleString(Qt.locale(), 'f', -128))
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
+
+            closeAndVerfyModal()
+        }
+
+        function test_modal_pay_input_switching_accounts() {
+            // test with pay value being set and not set
+            let payValuesToTestWith = ["", "0.2"]
+
+            for (let index = 0; index < payValuesToTestWith.length; index ++) {
+                let valueToExchangeString = payValuesToTestWith[index]
+                let valueToExchange = Number(valueToExchangeString)
+
+                // Asset chosen but no pay value set state -------------------------------------------------------------------------------
+                root.swapFormData.fromTokenAmount = valueToExchangeString
+                root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+                root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+                root.swapFormData.fromTokensKey = "ETH"
+
+                // Launch popup
+                launchAndVerfyModal()
+
+                const payPanel = findChild(controlUnderTest, "payPanel")
+                verify(!!payPanel)
+                const maxTagButton = findChild(payPanel, "maxTagButton")
+                verify(!!maxTagButton)
+                const amountToSendInput = findChild(payPanel, "amountToSendInput")
+                verify(!!amountToSendInput)
+
+                const errorTag = findChild(controlUnderTest, "errorTag")
+                verify(!!errorTag)
+
+                for (let i=0; i< root.swapAdaptor.nonWatchAccounts.count; i++) {
+                    root.swapFormData.selectedAccountAddress = root.swapAdaptor.nonWatchAccounts.get(i).address
+
+                    let expectedToken =  SQUtils.ModelUtils.getByKey(root.swapAdaptor.processedAssetsModel, "tokensKey", "ETH")
+
+                    waitForRendering(payPanel)
+
+                    // check states for the pay input selector
+                    verify(maxTagButton.visible)
+                    let maxPossibleValue = Math.trunc(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)*100)/100
+                    compare(maxTagButton.text, qsTr("Max. %1").arg(maxPossibleValue === 0 ? Qt.locale().zeroDigit : root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true, minDecimals: 0})))
+                    compare(payPanel.selectedHoldingId, expectedToken.symbol)
+                    /* TODO bug in max button not shown in red when max is 0 value and
+                    bug in swapInputModal that in case value entered is greater than maxPossibleValue then value is reset to 0, making the cryptoValueValid to false
+                    https://github.com/status-im/status-desktop/issues/15162 */
+                    compare(payPanel.cryptoValueValid, (valueToExchangeString === amountToSendInput.input.text) && !!root.swapFormData.fromTokenAmount && valueToExchange <= maxPossibleValue)
+
+                    /* TODO: there is bug which prevents us from testing this right now
+                    The value is not updated after setting tokenAmount to empty string in the receive input panel
+                    https://github.com/status-im/status-desktop/issues/15162
+                    compare(payPanel.cryptoValue, valueToExchange)
+                    compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())*/
+
+                    /* TODO: check if tag is visible in case amount entered to exchange is greater than max balance to send
+                    https://github.com/status-im/status-desktop/issues/15162 */
+                    let errortext = /*valueToExchange > maxPossibleValue ? qsTr("Insufficient funds for swap"): */qsTr("An error has occured, please try again")
+                    let buttonText = /*valueToExchange > maxPossibleValue ? qsTr("Buy crypto"):*/ ""
+                    compare(errorTag.visible, false/*valueToExchange > maxPossibleValue*/)
+                    compare(errorTag.text, errortext)
+                    compare(errorTag.buttonText, buttonText)
+                }
+
+                closeAndVerfyModal()
+            }
         }
     }
 }
