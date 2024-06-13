@@ -14,7 +14,7 @@ import utils 1.0
 ComboBox {
     id: root
 
-    // expected model role names: text, value (enum TokenOrder), sortRoleName, icon (optional)
+    // expected model role names: text, value (enum TokenOrder), sortRoleName, icon (optional), isDisabled (optional) default is false
     // text === "---" denotes a separator
 
     property bool hasCustomOrderDefined
@@ -228,6 +228,9 @@ ComboBox {
             modelData["value"] === SortOrderComboBox.TokenOrderCustom
 
         visible: {
+            if (modelData["isDisabled"]) {
+                return false;
+            }
             if (custom) // hide "Custom order" menu entry if none defined
                 return root.hasCustomOrderDefined
             return true
