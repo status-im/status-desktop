@@ -15,6 +15,7 @@ import shared.popups.send.controls 1.0
 import shared.controls 1.0
 
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.panels 1.0
 
 StatusDialog {
     id: root
@@ -35,16 +36,28 @@ StatusDialog {
 
     QtObject {
         id: d
-         property var fetchSuggestedRoutes: Backpressure.debounce(root, 1000, function() {
-                 root.swapAdaptor.fetchSuggestedRoutes()
+         property var debounceFetchSuggestedRoutes: Backpressure.debounce(root, 1000, function() {
+                 root.swapAdaptor.fetchSuggestedRoutes(payPanel.cryptoValueRaw)
          })
+
+        function fetchSuggestedRoutes() {
+            root.swapAdaptor.newFetchReset()
+            root.swapAdaptor.swapProposalLoading = true
+            debounceFetchSuggestedRoutes()
+        }
     }
 
     Connections {
         target: root.swapInputParamsForm
         function onFormValuesChanged() {
-            root.swapAdaptor.swapProposalLoading = true
             d.fetchSuggestedRoutes()
+        }
+        // refresh the selected asset in payPanel when account/network changes
+        function onSelectedAccountAddressChanged() {
+            payPanel.reevaluateSelectedId()
+        }
+        function onSelectedNetworkChainIdChanged() {
+            payPanel.reevaluateSelectedId()
         }
     }
 
@@ -63,9 +76,9 @@ StatusDialog {
         formatCurrencyAmount: root.swapAdaptor.formatCurrencyAmount
         /* TODO: once the Account Header is reworked we simply should be
         able to use an index and not this logic of selectedAccount being set */
-        selectedAccount: root.swapAdaptor.getSelectedAccount(root.swapInputParamsForm.selectedAccountIndex)
+        selectedAccount: root.swapAdaptor.getSelectedAccountByAddress(root.swapInputParamsForm.selectedAccountAddress)
         onSelectedIndexChanged: {
-            root.swapInputParamsForm.selectedAccountIndex = selectedIndex
+            root.swapInputParamsForm.selectedAccountAddress = root.swapAdaptor.getSelectedAccountAddressByIndex(selectedIndex)
         }
     }
 
@@ -115,60 +128,88 @@ StatusDialog {
             }
         }
 
-        // This is a temporary placeholder while each of the components are  being added.
-        ColumnLayout {
+        Item {
             Layout.fillWidth: true
-            spacing: 0
-            StatusBaseText {
-                text: "This area is a temporary placeholder"
-                font.bold: true
-            }
-            /* TODO: Will be swapped out under https://github.com/status-im/status-desktop/issues/14825
-               Will also handle that if one input is being edited the other one should be in loading state in that task */
-            StatusBaseText {
-                text: qsTr("Selected from token: %1").arg(swapInputParamsForm.fromTokensKey)
-            }
-            StatusInput {
-                id: fromTokenAmountInput
-                Layout.fillWidth: true
-                text: swapInputParamsForm.fromTokenAmount
-                onTextChanged: {
-                    swapInputParamsForm.fromTokenAmount = text
+            Layout.topMargin: 2
+            Layout.preferredHeight: payPanel.height + receivePanel.height + 4
+
+            SwapInputPanel {
+                id: payPanel
+                objectName: "payPanel"
+
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    top: parent.top
                 }
-            }
-            /* TODO: Will be swapped out under https://github.com/status-im/status-desktop/issues/14826
-               Will also handle that if one input is being edited the other one should be in loading state in that task */
-            StatusBaseText {
-                text: qsTr("Selected to token: %1").arg(swapInputParamsForm.toTokenKey)
-            }
-            StatusInput {
-                id: toTokenAmountInput
-                Layout.fillWidth: true
-                text: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ?
-                          root.swapAdaptor.formatCurrencyAmount(root.swapAdaptor.swapOutputData.toTokenAmount,
-                                                                root.swapAdaptor.toToken.symbol,
-                                                                {"minDecimals": root.swapAdaptor.toToken.decimals,
-                                                                    "stripTrailingZeroes": true, "noSymbol": true}) :
-                          root.swapInputParamsForm.toTokenAmount
-                onTextChanged: {
-                    if (!root.swapAdaptor.validSwapProposalReceived) {
-                        swapInputParamsForm.toTokenAmount =  text
+
+                currencyStore: root.swapAdaptor.currencyStore
+                flatNetworksModel: root.swapAdaptor.filteredFlatNetworksModel
+                processedAssetsModel: root.swapAdaptor.processedAssetsModel
+
+                tokenKey: root.swapInputParamsForm.fromTokensKey
+                tokenAmount: {
+                    // Only update if there is different in amount displayed
+                    if (root.swapInputParamsForm.fromTokenAmount !==
+                            SQUtils.AmountsArithmetic.fromString(cryptoValue).toLocaleString(locale, 'f', -128)){
+                        return root.swapInputParamsForm.fromTokenAmount
                     }
+                    return payPanel.tokenAmount
                 }
-                /* TODO: keep this input as disabled until the work for adding a param to handle to
-                   and from tokens inputed is supported by backend */
-                input.edit.enabled: false
+
+                swapSide: SwapInputPanel.SwapSide.Pay
+                swapExchangeButtonWidth: swapButton.width
+
+                onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
+                onCryptoValueChanged: root.swapInputParamsForm.fromTokenAmount = cryptoValue.toLocaleString(locale, 'f', -128)
             }
-            /* Needed only till sign after approval is implemented under
-               https://github.com/status-im/status-desktop/issues/14833 */
-            StatusButton {
-                text: "Final Swap after Approval"
-                onClicked: {
-                    swapAdaptor.sendSwapTx()
+
+            SwapInputPanel {
+                id: receivePanel
+                objectName: "receivePanel"
+
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
                 }
+
+                currencyStore: root.swapAdaptor.currencyStore
+                flatNetworksModel: root.swapAdaptorfilteredFlatNetworksModel
+                processedAssetsModel: root.swapAdaptor.processedAssetsModel
+
+                tokenKey: root.swapInputParamsForm.toTokenKey
+                tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
+
+                swapSide: SwapInputPanel.SwapSide.Receive
+                swapExchangeButtonWidth: swapButton.width
+
+                loading: root.swapAdaptor.swapProposalLoading
+
+                onSelectedHoldingIdChanged: root.swapInputParamsForm.toTokenKey = selectedHoldingId
+
+                /* TODO: keep this input as disabled until the work for adding a param to handle to
+                   and from tokens inputed is supported by backend under
+                   https://github.com/status-im/status-desktop/issues/15095 */
+                interactive: false
+            }
+
+            SwapExchangeButton {
+                id: swapButton
+                anchors.centerIn: parent
             }
         }
-        // End temporary placeholders
+
+        /* TODO: remove! Needed only till sign after approval is implemented under
+           https://github.com/status-im/status-desktop/issues/14833 */
+        StatusButton {
+            text: "Final Swap after Approval"
+            visible: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.swapOutputData.approvalNeeded
+            onClicked: {
+                swapAdaptor.sendSwapTx()
+                close()
+            }
+        }
 
         EditSlippagePanel {
             id: editSlippagePanel
@@ -186,10 +227,17 @@ StatusDialog {
 
         ErrorTag {
             objectName: "errorTag"
-            visible: root.swapAdaptor.swapOutputData.hasError
+            visible: root.swapAdaptor.swapOutputData.hasError || payPanel.amountEnteredGreaterThanBalance
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.smallPadding
-            text: qsTr("An error has occured, please try again")
+            text: {
+                if (payPanel.amountEnteredGreaterThanBalance)   {
+                    return qsTr("Insufficient funds for swap")
+                }
+                return qsTr("An error has occured, please try again")
+            }
+            buttonText: payPanel.amountEnteredGreaterThanBalance ? qsTr("Buy crypto"): ""
+            onButtonClicked: Global.openBuyCryptoModalRequested()
         }
     }
 
@@ -265,7 +313,9 @@ StatusDialog {
                               qsTr("Approve %1").arg(!!root.swapAdaptor.fromToken ? root.swapAdaptor.fromToken.symbol: "") :
                               qsTr("Swap")
                     disabledColor: Theme.palette.directColor8
-                    enabled: root.swapAdaptor.validSwapProposalReceived && editSlippagePanel.valid
+                    enabled: root.swapAdaptor.validSwapProposalReceived &&
+                             editSlippagePanel.valid &&
+                             !payPanel.amountEnteredGreaterThanBalance
                     onClicked: {
                         if (root.swapAdaptor.validSwapProposalReceived ){
                             if(root.swapAdaptor.swapOutputData.approvalNeeded) {
@@ -273,8 +323,8 @@ StatusDialog {
                             }
                             else {
                                 swapAdaptor.sendSwapTx()
+                                close()
                             }
-                            close()
                         }
                     }
                 }

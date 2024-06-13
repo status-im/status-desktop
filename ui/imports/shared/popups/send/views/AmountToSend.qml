@@ -95,8 +95,11 @@ ColumnLayout {
                         d.cryptoValueToSend, root.multiplierIndex).toString()
         }
 
-        readonly property string zeroString:
-            LocaleUtils.numberToLocaleString(0, 2, topAmountToSendInput.locale)
+        // Crypto value should be represented by 0 and fiat with 0.00
+        readonly property string zeroString: {
+            let decimals = root.inputIsFiat ? 2 : 0
+            LocaleUtils.numberToLocaleString(0, decimals, topAmountToSendInput.locale)
+        }
 
         readonly property double parsedInput:
             LocaleUtils.numberFromLocaleString(topAmountToSendInput.text,

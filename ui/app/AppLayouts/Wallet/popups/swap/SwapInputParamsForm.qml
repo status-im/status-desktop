@@ -9,15 +9,15 @@ QtObject {
 
     signal formValuesChanged()
 
-    property int selectedAccountIndex: 0
+    property string selectedAccountAddress: ""
     property int selectedNetworkChainId: -1
     property string fromTokensKey: ""
-    property string fromTokenAmount: "0"
+    property string fromTokenAmount: ""
     property string toTokenKey: ""
-    property string toTokenAmount: "0"
+    property string toTokenAmount: ""
     property double selectedSlippage: 0.5
 
-    onSelectedAccountIndexChanged: root.formValuesChanged()
+    onSelectedAccountAddressChanged: root.formValuesChanged()
     onSelectedNetworkChainIdChanged: root.formValuesChanged()
     onFromTokensKeyChanged: root.formValuesChanged()
     onFromTokenAmountChanged: root.formValuesChanged()
@@ -25,17 +25,17 @@ QtObject {
     onToTokenAmountChanged: root.formValuesChanged()
 
     function resetFormData() {
-        selectedAccountIndex = 0
+        selectedAccountAddress = ""
         selectedNetworkChainId = -1
         fromTokensKey = ""
-        fromTokenAmount = "0"
+        fromTokenAmount = ""
         toTokenKey = ""
-        toTokenAmount = "0"
+        toTokenAmount = ""
         selectedSlippage = 0.5
     }
 
     function isFormFilledCorrectly() {
-        return root.selectedAccountIndex >= 0 &&
+        return !!root.selectedAccountAddress &&
                 root.selectedNetworkChainId !== -1 &&
                 !!root.fromTokensKey && !!root.toTokenKey &&
                 ((!!root.fromTokenAmount &&

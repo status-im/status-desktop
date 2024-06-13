@@ -29,25 +29,31 @@ Control {
     required property var processedAssetsModel
 
     property string tokenKey
-    onTokenKeyChanged: {
-        if (!!tokenKey)
-            Qt.callLater(d.setSelectedHoldingId, tokenKey, Constants.TokenType.ERC20)
-    }
+    onTokenKeyChanged: reevaluateSelectedId()
     property string tokenAmount
     onTokenAmountChanged: {
         if (!!tokenAmount)
-            Qt.callLater(() => amountToSendInput.input.text = Number(tokenAmount).toLocaleString(Qt.locale(), 'f', -128))
+            Qt.callLater(() => amountToSendInput.input.text = SQUtils.AmountsArithmetic.fromString(tokenAmount).toLocaleString(locale, 'f', -128))
     }
 
     property int swapSide: SwapInputPanel.SwapSide.Pay
     property bool fiatInputInteractive
     property bool loading
+    property bool interactive: true
 
     // output API
     readonly property string selectedHoldingId: d.selectedHoldingId
     readonly property double cryptoValue: amountToSendInput.cryptoValueToSendFloat
     readonly property string cryptoValueRaw: amountToSendInput.cryptoValueToSend
     readonly property bool cryptoValueValid: amountToSendInput.inputNumberValid
+    /* TODO: this does not work as expected because of bug -
+       https://github.com/status-im/status-desktop/issues/15162 */
+    readonly property bool amountEnteredGreaterThanBalance: cryptoValue > maxSendButton.maxSafeValue
+    function reevaluateSelectedId() {
+        if (!!tokenKey) {
+            Qt.callLater(d.setSelectedHoldingId, tokenKey, Constants.TokenType.ERC20)
+        }
+    }
 
     // visual properties
     property int swapExchangeButtonWidth: 44
@@ -185,7 +191,7 @@ Control {
                 id: amountToSendInput
                 objectName: "amountToSendInput"
                 caption: root.caption
-                interactive: true
+                interactive: root.interactive
                 selectedHolding: d.selectedHolding
                 fiatInputInteractive: root.fiatInputInteractive
                 input.input.edit.color: !input.valid ? Theme.palette.dangerColor1 : maxSendButton.hovered ? Theme.palette.baseColor1

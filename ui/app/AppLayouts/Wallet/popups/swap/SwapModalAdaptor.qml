@@ -115,12 +115,11 @@ QObject {
                         roleName: "chainId"
                         value: root.swapFormData.selectedNetworkChainId
                         enabled: root.swapFormData.selectedNetworkChainId !== -1
-                    }/*,
-                    // TODO enable once AccountsModalHeader is reworked!!
+                    },
                     ValueFilter {
                         roleName: "account"
-                        value: root.selectedSenderAccount.address
-                    }*/
+                        value: root.swapFormData.selectedAccountAddress
+                    }
                 ]
             }
         }
@@ -203,6 +202,13 @@ QObject {
         root.swapProposalLoading = false
     }
 
+    // this function will not reset input params but only the output ones and loading states
+    function newFetchReset() {
+        root.swapOutputData.reset()
+        root.validSwapProposalReceived = false
+        root.swapProposalLoading = false
+    }
+
     function getNetworkShortNames(chainIds) {
         var networkString = ""
         let chainIdsArray = chainIds.split(":")
@@ -239,34 +245,35 @@ QObject {
     }
 
     // TODO: remove once the AccountsModalHeader is reworked!!
-    function getSelectedAccount(index) {
+    function getSelectedAccountAddressByIndex(index) {
         if (root.nonWatchAccounts.count > 0 && index >= 0) {
-            return ModelUtils.get(nonWatchAccounts, index)
+            return ModelUtils.get(nonWatchAccounts, index, "address")
+        }
+        return ""
+    }
+
+    function getSelectedAccountByAddress(address) {
+        if (root.nonWatchAccounts.count > 0 && !!address) {
+            return ModelUtils.getByKey(root.nonWatchAccounts, "address", address)
         }
         return null
     }
 
-    function fetchSuggestedRoutes() {
-        let amount = !!root.swapFormData.fromTokenAmount ? AmountsArithmetic.fromString(root.swapFormData.fromTokenAmount): NaN
-        root.swapOutputData.reset()
-
-        if(!isNaN(amount) && !!root.fromToken && root.swapFormData.isFormFilledCorrectly()) {
-            let fromTokenAmountInWei = AmountsArithmetic.fromNumber(amount, !!root.fromToken ? root.fromToken.decimals: 18).toString()
-
+    function fetchSuggestedRoutes(cryptoValueRaw) {
+        if (root.swapFormData.isFormFilledCorrectly() && !!cryptoValueRaw) {
+            root.swapOutputData.reset()
             root.validSwapProposalReceived = false
 
             // Identify new swap with a different uuid
             d.uuid = Utils.uuid()
 
-            let account = getSelectedAccount(root.swapFormData.selectedAccountIndex)
+            let account = getSelectedAccountByAddress(root.swapFormData.selectedAccountAddress)
             let accountAddress = account.address
             let disabledChainIds = getDisabledChainIds(root.swapFormData.selectedNetworkChainId)
             let preferedChainIds = getAllChainIds()
 
-            // TODO #14825: amount should be in BigInt string representation (fromTokenAmount * 10^decimals)
-            // Make sure that's replaced when the input component is integrated
             root.swapStore.fetchSuggestedRoutes(accountAddress, accountAddress,
-                                                fromTokenAmountInWei, root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
+                                                cryptoValueRaw, root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
                                                 disabledChainIds, disabledChainIds, preferedChainIds,
                                                 Constants.SendType.Swap, "")
         } else {
@@ -276,7 +283,7 @@ QObject {
     }
 
     function sendApproveTx() {
-        let account = getSelectedAccount(root.swapFormData.selectedAccountIndex)
+        let account = getSelectedAccountByAddress(root.swapFormData.selectedAccountAddress)
         let accountAddress = account.address
 
         root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
@@ -285,7 +292,7 @@ QObject {
     }
 
     function sendSwapTx() {
-        let account = getSelectedAccount(root.swapFormData.selectedAccountIndex)
+        let account = getSelectedAccountByAddress(root.swapFormData.selectedAccountAddress)
         let accountAddress = account.address
 
         root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
