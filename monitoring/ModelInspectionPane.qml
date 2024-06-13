@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import Monitoring 1.0
-
+import StatusQ.Core.Utils 0.1
 
 Pane {
     property string name
@@ -83,19 +83,45 @@ Pane {
         }
 
         Label {
-            visible: showControls
-
             text: "Hint: use right/left button click on a column " +
                   "header to adjust width, press cell content to " +
                   "see full value"
         }
 
-        Label {
-            text: model ? `rows count: ${model.rowCount()}` : ""
-            font.bold: true
+        RowLayout {
+            Layout.fillHeight: false
+
+            visible: listView.count > 0
+
+            Label {
+                text: `rows count: ${listView.count}`
+                font.bold: true
+            }
+
+            Label {
+                textFormat: Text.RichText
+                text: `<a href="copy">copy json to clipboard</a>`
+                font.bold: true
+
+                TextInput {
+                    id: hiddenTextInput
+                    visible: false
+                }
+
+                onLinkActivated: {
+                    const json = JSON.stringify(
+                                   ModelUtils.modelToArray(model), null, 2)
+
+                    hiddenTextInput.text = json
+                    hiddenTextInput.selectAll()
+                    hiddenTextInput.copy()
+                }
+            }
         }
 
         ListView {
+            id: listView
+
             Layout.fillWidth: true
             Layout.fillHeight: true
 
