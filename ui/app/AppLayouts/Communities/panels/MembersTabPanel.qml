@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -14,6 +15,8 @@ import shared.controls.chat 1.0
 import shared.controls 1.0
 
 import AppLayouts.Communities.layouts 1.0
+
+import SortFilterProxyModel 0.2
 
 Item {
     id: root
@@ -62,7 +65,28 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            model: root.model
+            model: SortFilterProxyModel {
+
+                sourceModel: root.model
+
+                proxyRoles: FastExpressionRole {
+                    function displayNameProxy(localNickname, ensName, displayName, aliasName) {
+                        return ProfileUtils.displayName(localNickname, ensName, displayName, aliasName);
+                    }
+
+                    name: "preferredDisplayName"
+                    expectedRoles: ["localNickname", "displayName", "ensName", "alias"]
+                    expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias);
+                }
+
+
+                sorters : [
+                    StringSorter {
+                        roleName: "preferredDisplayName"
+                        caseSensitivity: Qt.CaseInsensitive
+                    }
+                ]
+            }
             spacing: 0
 
             delegate: StatusMemberListItem {
