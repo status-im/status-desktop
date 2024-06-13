@@ -58,6 +58,26 @@ ColumnLayout {
         readonly property var sourceModel: root.controller.sourceModel
         readonly property bool isLoading: root.isUpdating || root.isFetching
 
+        function setSortByDateIsDisabled(value) {
+            const orderByDateIndex =  cmbTokenOrder.indexOfValue(SortOrderComboBox.TokenOrderDateAdded)
+
+            cmbTokenOrder.model[orderByDateIndex].isDisabled = value
+            cmbTokenOrder.modelChanged()
+
+            if (!value && cmbTokenOrder.currentIndex === orderByDateIndex) {
+                cmbTokenOrder.indexOfValue(SortOrderComboBox.TokenOrderAlpha)
+            }
+        }
+
+        Component.onCompleted: {
+            settings.sync()
+            if (settings.currentSortValue === SortOrderComboBox.TokenOrderDateAdded && !d.hasAllTimestampsAggregator.value) {
+                cmbTokenOrder.currentIndex = cmbTokenOrder.indexOfValue(SortOrderComboBox.TokenOrderAlpha) // Change to a different default option
+            } else {
+                cmbTokenOrder.currentIndex = cmbTokenOrder.indexOfValue(settings.currentSortValue) // Change to a different default option
+            }
+        }
+
         onIsLoadingChanged: {
             d.loadingItemsModel.refresh()
         }
@@ -115,6 +135,21 @@ ColumnLayout {
             markerRoleName: "sourceGroup"
         }
 
+        readonly property var allCollectiblesModel: ConcatModel {
+            sources: [
+                SourceModel {
+                    model: d.communityModel
+                    markerRoleValue: "loadingItemsModel"
+                },
+                SourceModel {
+                    model: d.nonCommunityModel
+                    markerRoleValue: "nonCommunityModel"
+                }
+            ]
+            markerRoleName: "sourceGroup"
+        }
+
+
         readonly property bool hasRegularCollectibles: d.nonCommunityModel.count || d.loadingItemsModel.count
         readonly property bool hasCommunityCollectibles: d.communityModel.count || d.loadingItemsModel.count
         readonly property bool onlyRegularCollectiblesType: hasRegularCollectibles && !hasCommunityCollectibles
@@ -159,6 +194,18 @@ ColumnLayout {
                 }
             }
             return AmountsArithmetic.toNumber(balance)
+        }
+
+        property FunctionAggregator hasAllTimestampsAggregator: FunctionAggregator {
+            model: d.allCollectiblesModel
+            initialValue: true
+            roleName: "lastTxTimestamp"
+
+            aggregateFunction: (aggr, value) => aggr && !!value
+
+            onValueChanged: {
+                d.setSortByDateIsDisabled(value)
+            }
         }
     }
 
@@ -246,11 +293,6 @@ ColumnLayout {
         property alias selectedFilterGroupIds: cmbFilter.selectedFilterGroupIds
     }
 
-    Component.onCompleted: {
-        settings.sync()
-        cmbTokenOrder.currentIndex = cmbTokenOrder.indexOfValue(settings.currentSortValue)
-    }
-
     Component.onDestruction: {
         settings.currentSortValue = cmbTokenOrder.currentValue
     }
@@ -299,7 +341,7 @@ ColumnLayout {
                 id: cmbTokenOrder
                 hasCustomOrderDefined: root.controller.hasSettings
                 model: [
-                    { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "", sortRoleName: "lastTxTimestamp" }, // Custom SFPM role
+                    { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "", sortRoleName: "lastTxTimestamp", isDisabled: !d.hasAllTimestampsAggregator.value }, // Custom SFPM role
                     { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Collectible name"), icon: "", sortRoleName: "name" },
                     { value: SortOrderComboBox.TokenOrderGroupName, text: qsTr("Collection/community name"), icon: "", sortRoleName: "groupName" }, // Custom SFPM role communityName || collectionName
                     { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "", sortRoleName: "" },
