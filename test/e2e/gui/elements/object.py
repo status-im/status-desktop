@@ -96,8 +96,8 @@ class QObject:
     ):
         driver.mouseClick(
             self.object,
-            x or int(self.object.width * 0.1),
-            y or int(self.object.height * 0.1),
+            x or int(self.object.width * 0.5),
+            y or int(self.object.height * 0.5),
             button or driver.Qt.LeftButton
         )
         LOG.info('%s: is clicked with Qt.LeftButton', self)
