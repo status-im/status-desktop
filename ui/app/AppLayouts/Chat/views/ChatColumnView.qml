@@ -45,7 +45,6 @@ Item {
     property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
     property int activeChatType: parentModule && parentModule.activeItem.type
     property bool stickersLoaded: false
-    property bool permissionUpdatePending: false
     property bool canPost: true
     property var viewAndPostHoldingsModel
 
@@ -277,7 +276,6 @@ Item {
                                  && root.rootStore.sectionDetails.joined
                                  && !root.rootStore.sectionDetails.amIBanned
                                  && root.rootStore.isUserAllowedToSendMessage
-                                 && !root.permissionUpdatePending
                     }
 
                     store: root.rootStore
@@ -296,9 +294,6 @@ Item {
                                 return qsTr("This user has been blocked.")
                             if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned) {
                                 return qsTr("You need to join this community to send messages")
-                            }
-                            if (root.permissionUpdatePending) {
-                                return qsTr("Some permissions are being updated. You will be able to send messages once the control node is back online.")
                             }
                             if (!root.canPost) {
                                 return qsTr("Sorry, you don't have permissions to post in this channel.")

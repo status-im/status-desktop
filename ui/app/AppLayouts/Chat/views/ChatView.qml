@@ -67,29 +67,6 @@ StatusSectionLayout {
     property var assetsModel
     property var collectiblesModel
 
-    readonly property var pendingViewOnlyPermissionsModel: SortFilterProxyModel {
-        sourceModel: root.viewOnlyPermissionsModel
-        filters: [
-            ValueFilter {
-                roleName: "permissionState"
-                value: PermissionTypes.State.Approved
-                inverted: true
-            }
-        ]
-    }
-    readonly property var pendingViewAndPostPermissionsModel: SortFilterProxyModel {
-        sourceModel: root.viewAndPostPermissionsModel
-        filters: [
-            ValueFilter {
-                roleName: "permissionState"
-                value: PermissionTypes.State.Approved
-                inverted: true
-            }
-        ]
-    }
-
-    readonly property bool permissionUpdatePending: pendingViewOnlyPermissionsModel.count > 0 || pendingViewAndPostPermissionsModel.count > 0
-
     readonly property bool contentLocked: {
         if (!rootStore.chatCommunitySectionModule.isCommunity()) {
             return false
@@ -243,7 +220,6 @@ StatusSectionLayout {
             stickersLoaded: root.stickersLoaded
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
-            permissionUpdatePending: root.permissionUpdatePending
             viewAndPostHoldingsModel: root.viewAndPostPermissionsModel
             canPost: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.canPost
             amISectionAdmin: root.amISectionAdmin
