@@ -18,6 +18,9 @@ ListView {
     // custom delegate height, when set to 0, delegate's implicitHeight is used
     property int delegateHeight: 0
 
+    // skip role for given row if is empty or undefined
+    property bool skipEmptyRoles: false
+
     // text to be displayed in a list view's header
     property string label
 
@@ -29,7 +32,7 @@ ListView {
     ScrollBar.vertical: ScrollBar {}
 
     clip: true
-    spacing: 5
+    spacing: 10
 
     leftMargin: margin
     rightMargin: margin
@@ -141,21 +144,29 @@ ListView {
             Flow {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+
                 Repeater {
                     model: rowModel
 
-                    Label {
+                    delegate: Label {
                         readonly property var value:
                             delegateRoot.topModel[roleName]
+
+                        readonly property bool mayBeImage: !!value &&
+                            (value.toString().startsWith("file:")
+                             || value.toString().startsWith("data:image"))
 
                         readonly property var valueSanitized:
                             value === undefined ? "-" : value
 
                         readonly property bool last: index === rowModel.count - 1
-                        readonly property string separator: last ? "" : ","
+                        readonly property string separator: last ? "" : ",&nbsp;&nbsp;"
 
-                        text: `${roleName}: ${valueSanitized}${separator}`
+                        visible: (value !== undefined && value !== "")
+                                 || !root.skipEmptyRoles
 
+                        text: `<u>${roleName}</u>: ${mayBeImage ? `<img src="${value}" width="15" height="15">`
+                                                         : valueSanitized}${separator}`
                         MouseArea {
                             anchors.fill: parent
 
@@ -184,6 +195,24 @@ ListView {
 
                 root.moveRequested(from, to)
             }
+        }
+
+        Rectangle {
+            anchors.top: parent.top
+            anchors.topMargin: -2
+
+            width: parent.width
+            height: 1
+            color: "lightgray"
+        }
+
+        Rectangle {
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: -2
+
+            width: parent.width
+            height: 1
+            color: "lightgray"
         }
     }
 }
