@@ -95,6 +95,8 @@ QtObject {
     /* This model joins the "Tokens by symbol model combined with Community details"
     and "Grouped Account Assets Model" by tokenskey */
     property LeftJoinModel groupedAccountAssetsModel: LeftJoinModel {
+        objectName: "groupedAccountAssetsModel"
+
         leftModel: root.baseGroupedAccountAssetModel
         rightModel: _jointTokensBySymbolModel
         joinRole: "tokensKey"
