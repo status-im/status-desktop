@@ -194,7 +194,6 @@ proc shouldStartWithOnboardingScreen*(self: Controller): bool =
 #   2. FirstRunOldUserKeycardImport
 # At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
-  debug "<<< storeProfileDataAndProceedWithAppLoading"
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
   discard self.profileService.setDisplayName(self.tmpDisplayName)
   let images = self.storeIdentityImage()
@@ -273,7 +272,6 @@ proc setSeedPhrase*(self: Controller, value: string) =
   let words = value.split(" ")
   self.tmpSeedPhrase = value
   self.tmpSeedPhraseLength = words.len
-  debug "<<< setSeedPhrase", seedPhraseLength = $self.tmpSeedPhraseLength, seedPhrase = $self.tmpSeedPhrase
 
 proc getSeedPhrase*(self: Controller): string =
   return self.tmpSeedPhrase
@@ -372,7 +370,6 @@ proc validMnemonic*(self: Controller, mnemonic: string): bool =
 
 # validateMnemonicForImport checks if mnemonic is valid and not yet saved in local database
 proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
-  debug "<<< validateMnemonicForImport", mnemonic
 
   let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
   if err.len != 0:
@@ -445,9 +442,6 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
 
 # NOTE: Called during FirstRunOldUserKeycardImport
 proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
-
-  debug "<<< setupKeycardAccount", storeToKeychain, recoverAccount, tmpKeycardEvent = $self.tmpKeycardEvent
-
   if self.tmpKeycardEvent.keyUid.len == 0 or
     self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
       self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
@@ -495,8 +489,6 @@ proc isSelectedAccountAKeycardAccount*(self: Controller): bool =
   return selectedAccount.keycardPairing.len > 0
 
 proc login*(self: Controller, keycard: bool = false, keycardReplacement: bool = false) =
-  debug "<<< controller.login", keycard, keycardReplacement
-
   self.delegate.moveToLoadingAppState()
 
   var passwordHash, chatPrivateKey, mnemonic = ""
@@ -532,8 +524,6 @@ proc loginAccountKeycard*(self: Controller, storeToKeychain: bool, keycardReplac
   self.login(keycard = true, keycardReplacement = keycardReplacement)
 
 proc convertKeycardProfileKeypairToRegular*(self: Controller) =
-  debug "<<< convertKeycardProfileKeypairToRegular"
-
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
   self.accountsService.convertKeycardProfileKeypairToRegular(self.getSeedPhrase(), acc.derivedAccounts.encryption.publicKey,
     self.getPassword())
@@ -600,7 +590,6 @@ proc storeSeedPhraseToKeycard*(self: Controller, seedPhraseLength: int, seedPhra
   self.keycardService.storeSeedPhrase(seedPhraseLength, seedPhrase)
 
 proc buildSeedPhrasesFromIndexes*(self: Controller, seedPhraseIndexes: seq[int]) =
-  debug "<<< buildSeedPhrasesFromIndexes", seedPhraseIndexes
   if seedPhraseIndexes.len == 0:
     let err = "cannot generate mnemonic"
     error "keycard error: ", err

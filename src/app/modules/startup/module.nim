@@ -389,15 +389,10 @@ method onProfileConverted*[T](self: Module[T], success: bool) =
   self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
 
 method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, settings: SettingsDto) =
-
-  debug "<<< onNodeLogin", error, account, settings
-
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot determine current startup state", procName="onNodeLogin"
     quit() # quit the app
-
-  debug "<<< onNodeLogin", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
 
   if error.len != 0:
     self.moveToStartupState()

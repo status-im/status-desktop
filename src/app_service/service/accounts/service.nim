@@ -312,8 +312,6 @@ QtObject:
     
   proc restoreAccountAndLogin(self: Service, request: RestoreAccountRequest): string =
     try:
-      debug "<<< restoreAccountAndLogin", request
-
       let response = status_account.restoreAccountAndLogin(request)
 
       if not response.result.contains("error"):
@@ -342,8 +340,6 @@ QtObject:
       error "error: ", procName="createAccountFromPrivateKey", errName = e.name, errDesription = e.msg
 
   proc createAccountFromMnemonic*(self: Service, mnemonic: string, paths: seq[string]): GeneratedAccountDto =
-    debug "<<< service.createAccountFromMnemonic", mnemonic, paths
-
     if mnemonic.len == 0:
       error "empty mnemonic"
       return
@@ -441,8 +437,6 @@ QtObject:
 
   proc login*(self: Service, account: AccountDto, hashedPassword: string, chatPrivateKey: string = "", mnemonic: string = "") =
     try:
-      debug "<<< login", account, hashedPassword, chatPrivateKey, mnemonic
-
       # WARNING: Is this keystor migration still needed?
       let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
       if not dirExists(keyStoreDir):
@@ -533,8 +527,6 @@ QtObject:
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
   proc convertKeycardProfileKeypairToRegular*(self: Service, mnemonic: string, currentPassword: string, newPassword: string) =
-    debug "<<< service.convertKeycardProfileKeypairToRegular", mnemonic, currentPassword, newPassword
-
     let hashedNewPassword = hashPassword(newPassword)
     let arg = ConvertKeycardProfileKeypairToRegularTaskArg(
       tptr: convertKeycardProfileKeypairToRegularTask,
