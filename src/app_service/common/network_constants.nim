@@ -271,3 +271,14 @@ var NODE_CONFIG* = %* {
   },
   "OutputMessageCSVEnabled": false
 }
+
+var STATUS_NODE_API_CONFIG* = %* {
+  "APIModules": "connector",
+  "ConnectorEnabled": true,
+  "HTTPEnabled": true,
+  "HTTPHost": "0.0.0.0",
+  "HTTPPort": 8545,
+  "WSEnabled": true,
+  "WSHost": "0.0.0.0",
+  "WSPort": 8586,
+}

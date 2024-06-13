@@ -40,6 +40,7 @@ type
 
     keycardInstanceUID*: string
     keycardPairingDataFile*: string
+    apiConfig*: Option[JsonNode]
 
 proc toJson*(self: CreateAccountRequest): JsonNode =
   result = %*{
@@ -91,3 +92,5 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
   for key, value in self.walletSecretsConfig.toJson().pairs():
     result[key] = value
 
+  if self.apiConfig.isSome():
+    result["apiConfig"] = %self.apiConfig.get()
