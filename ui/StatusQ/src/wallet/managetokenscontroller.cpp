@@ -272,6 +272,12 @@ bool ManageTokensController::hasSettings() const
     return !m_settingsData.isEmpty();
 }
 
+int ManageTokensController::order(const QString& symbol) const
+{
+    const auto entry = m_settingsData.value(symbol, TokenOrder());
+    return entry.visible ? entry.sortOrder : undefinedTokenOrder;
+}
+
 int ManageTokensController::compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const
 {
     const auto left = m_settingsData.value(lhsSymbol, TokenOrder());
