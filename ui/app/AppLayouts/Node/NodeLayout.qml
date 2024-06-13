@@ -159,19 +159,6 @@ StatusSectionLayout {
         }
 
         RowLayout {
-            id: resultContainer
-            Layout.fillHeight: true
-            Layout.rightMargin: Style.current.padding
-            Layout.leftMargin: Style.current.padding
-            StatusTextArea { 
-                id: callResult
-                Layout.fillWidth: true
-                text: root.store.nodeModelInst.callResult
-                readOnly: true
-            }
-        }
-
-        RowLayout {
             id: rpcInputContainer
             height: 70
             Layout.fillWidth: true
@@ -241,6 +228,19 @@ StatusSectionLayout {
                         }
                     }
                 }
+            }
+        }
+
+        RowLayout {
+            id: resultContainer
+            Layout.fillHeight: true
+            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Style.current.padding
+            StatusTextArea { 
+                id: callResult
+                Layout.fillWidth: true
+                text: root.store.nodeModelInst.callResult
+                readOnly: true
             }
         }
     }
