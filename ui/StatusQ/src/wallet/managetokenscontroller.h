@@ -64,6 +64,7 @@ public:
 
     Q_INVOKABLE QString serializeSettingsAsJson();
 
+    Q_INVOKABLE int order(const QString& symbol) const;
     Q_INVOKABLE int compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const;
     Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
 
