@@ -61,7 +61,7 @@ def pytest_exception_interact(node):
     test_path, test_name, test_params = generate_test_info(node)
     node_dir: SystemPath = configs.testpath.RUN / test_path / test_name / test_params
     node_dir.mkdir(parents=True, exist_ok=True)
-    screenshot = node_dir / f'screenshot_{datetime.today().strftime("%Y-%m-%d %H:%M:%S")}.png'
+    screenshot = node_dir / f'screenshot_{datetime.today().strftime("%Y-%m-%d %H-%M-%S")}.png'
     ImageGrab.grab(xdisplay=configs.system.DISPLAY if IS_LIN else None).save(screenshot)
     allure.attach(
         name='Screenshot on fail',
