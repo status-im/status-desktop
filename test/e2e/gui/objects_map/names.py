@@ -43,7 +43,9 @@ o_StatusListView = {"container": statusDesktop_mainWindow_overlay, "type": "Stat
 """ Onboarding """
 # Before you get started Popup
 acknowledge_checkbox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "acknowledgeCheckBox", "type": "StatusCheckBox", "visible": True}
+acknowledgeIndicator = {"container": acknowledge_checkbox, "objectName": "indicator", "type": "Item", "visible": True}
 termsOfUseCheckBox_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName":"termsOfUseCheckBox", "type": "StatusCheckBox", "visible": True}
+termsOfUseIndicator = {"container": termsOfUseCheckBox_StatusCheckBox, "objectName": "indicator", "type": "Item", "visible": True}
 getStartedStatusButton_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "getStartedStatusButton", "type": "StatusButton", "visible": True}
 termsOfUseLink_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "termsOfUseLink", "type": "StatusBaseText", "visible": True}
 privacyPolicyLink_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "privacyPolicyLink", "type": "StatusBaseText", "visible": True}

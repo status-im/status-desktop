@@ -177,8 +177,8 @@ class MainWindow(Window):
     @allure.step('Sign Up user')
     def sign_up(self, user_account: UserAccount = constants.user.user_account_one):
         BeforeStartedPopUp().get_started()
-        wellcome_screen = WelcomeToStatusView().wait_until_appears()
-        profile_view = wellcome_screen.get_keys().generate_new_keys()
+        welcome_screen = WelcomeToStatusView().wait_until_appears()
+        profile_view = welcome_screen.get_keys().generate_new_keys()
         profile_view.set_display_name(user_account.name)
         create_password_view = profile_view.next()
         confirm_password_view = create_password_view.create_password(user_account.password)

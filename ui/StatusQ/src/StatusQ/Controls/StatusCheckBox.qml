@@ -43,6 +43,7 @@ CheckBox {
     font.pixelSize: size === StatusCheckBox.Size.Regular ? 15 : 13
 
     indicator: Rectangle {
+        objectName: "indicator"
         anchors.left: root.leftSide? parent.left : undefined
         anchors.right: !root.leftSide? parent.right : undefined
         implicitWidth: size === StatusCheckBox.Size.Regular
