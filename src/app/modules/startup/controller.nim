@@ -189,7 +189,7 @@ proc init*(self: Controller) =
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
-# This is used in 2 flows, inca case fetching backup failed and we create a new displayName and profileImage:
+# This is used in 2 flows, in case fetching backup failed and we create a new displayName and profileImage:
 #   1. FirstRunOldUserImportSeedPhrase
 #   2. FirstRunOldUserKeycardImport
 # At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
@@ -431,7 +431,7 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
   let (_, flowEvent) = self.keycardService.getLastReceivedKeycardData()
   let error = self.accountsService.importAccountAndLogin(
     self.tmpSeedPhrase, 
-    "", # Keep an empty password. For keycard it will be substituted with`encryption.publicKey` in status-go
+    password = "", # For keycard it will be substituted with`encryption.publicKey` in status-go
     false, 
     self.tmpDisplayName, 
     self.tmpProfileImageDetails.url,
