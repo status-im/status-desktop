@@ -1,248 +1,271 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
-import Qt.labs.settings 1.0
-
-import SortFilterProxyModel 0.2
-
-import StatusQ 0.1
-import StatusQ.Models 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-
-import mainui 1.0
+import shared.views 1.0
 import utils 1.0
 
-import shared.controls 1.0
-import shared.views 1.0
-import shared.stores 1.0
-
 import Storybook 1.0
-import Models 1.0
 
-import AppLayouts.Wallet.views 1.0
-import AppLayouts.Wallet.stores 1.0
-
+import Qt.labs.settings 1.1
 
 SplitView {
     id: root
 
-    Logs { id: logs }
+    ListModel {
+        id: assetsModel
 
-    orientation: Qt.Horizontal
-
-    QtObject {
-        id: d
-
-        readonly property string networksChainsCurrentlySelected: {
-            let supportedNwChains = []
-            for (let i = 0; i< networksRepeater.count; i++) {
-                if (networksRepeater.itemAt(i).checked && networksRepeater.itemAt(i).visible)
-                    supportedNwChains.push(networksRepeater.itemAt(i).chainID)
-            }
-            return supportedNwChains.join(":")
+        function format(amount, symbol) {
+            return `${amount.toLocaleString(Qt.locale())} ${symbol}`
         }
 
-        readonly property string addressesSelected: {
-            let supportedAddresses = []
-            for (let i = 0; i< accountsRepeater.count; i++) {
-                if (accountsRepeater.itemAt(i).checked && accountsRepeater.itemAt(i).visible)
-                    supportedAddresses.push(accountsRepeater.itemAt(i).address)
-            }
-            return supportedAddresses.join(":")
-        }
+        Component.onCompleted: {
+            const data = [
+                {
+                    key: "key_ETH",
+                    symbol: "ETH",
+                    name: "Ether",
+                    icon: Constants.tokenIcon("ETH", false),
+                    balance: 10.0,
+                    balanceText: format(10.0, "ETH"),
+                    error: "",
 
-        readonly property var currencyStore: CurrenciesStore {}
+                    marketDetailsAvailable: true,
+                    marketDetailsLoading: true,
+                    marketPrice: 0,
+                    marketChangePct24hour: 0,
 
-        property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-            assetsWithFilteredBalances: d.assetsWithFilteredBalances
-            assetsController: assetsView.controller
-        }
+                    communityId: "",
+                    communityName: "",
+                    communityIcon: Qt.resolvedUrl(""),
 
-        // Added this here simply because the network and address filtering wont work in Storybook applied in AssetsView
-        readonly property SubmodelProxyModel assetsWithFilteredBalances: SubmodelProxyModel {
-            sourceModel: d.walletAssetStore.groupedAccountsAssetsModel
-            submodelRoleName: "balances"
-            delegateModel: SortFilterProxyModel {
-                sourceModel: submodel
-                filters: FastExpressionFilter {
-                    expression: {
-                        d.networksChainsCurrentlySelected
-                        return d.networksChainsCurrentlySelected.split(":").includes(model.chainId+"")
-                    }
-                    expectedRoles: ["chainId"]
+                    position: 2,
+                    canBeHidden: false
+                },
+                {
+                    key: "key_SNT",
+                    symbol: "SNT",
+                    name: "Status",
+                    icon: Constants.tokenIcon("SNT", false),
+                    balance: 20023.0,
+                    balanceText: format(20023.0, "SNT"),
+                    error: "",
+
+                    marketDetailsAvailable: true,
+                    marketDetailsLoading: false,
+                    marketPrice: 50.23,
+                    marketChangePct24hour: 12,
+
+                    communityId: "",
+                    communityName: "",
+                    communityIcon: Qt.resolvedUrl(""),
+
+                    position: 1,
+                    canBeHidden: true
+                },
+                {
+                    key: "key_MCT",
+                    symbol: "MCT",
+                    name: "My custom token",
+                    icon: Constants.tokenIcon("ZRX", false),
+                    balance: 102.4,
+                    balanceText: format(102.4, "MCT"),
+                    error: "",
+
+                    marketDetailsAvailable: false,
+                    marketDetailsLoading: false,
+                    marketPrice: 0,
+                    marketChangePct24hour: 0,
+
+                    communityId: "34",
+                    communityName: "Crypto Kitties",
+                    communityIcon: Constants.tokenIcon("DAI", false),
+
+                    position: 4,
+                    canBeHidden: true
+                },
+                {
+                    key: "key_DAI",
+                    symbol: "DAI",
+                    name: "Dai",
+                    icon: Constants.tokenIcon("DAI", false),
+                    balance: 123.24,
+                    balanceText: format(123.24, "DAI"),
+                    error: "",
+
+                    marketDetailsAvailable: true,
+                    marketDetailsLoading: false,
+                    marketPrice: 23.23,
+                    marketChangePct24hour: 2.3,
+
+                    communityId: "",
+                    communityName: "",
+                    communityIcon: Qt.resolvedUrl(""),
+
+                    position: 3,
+                    canBeHidden: true
+                },
+                {
+                    key: "key_USDT",
+                    symbol: "USDT",
+                    name: "USDT",
+                    icon: Constants.tokenIcon("USDT", false),
+                    balance: 15.24,
+                    balanceText: format(15.24, "USDT"),
+                    error: "",
+
+                    marketDetailsAvailable: true,
+                    marketDetailsLoading: false,
+                    marketPrice: 0.99,
+                    marketChangePct24hour: 0,
+
+                    communityId: "",
+                    communityName: "",
+                    communityIcon: Qt.resolvedUrl(""),
+
+                    position: 5,
+                    canBeHidden: true
+                },
+                {
+                    key: "key_TBT",
+                    symbol: "TBT",
+                    name: "The best token",
+                    icon: Constants.tokenIcon("UNI", false),
+                    balance: 102,
+                    balanceText: format(102, "TBT"),
+                    error: "Pocket Network (POKT) & Infura are currently both "
+                               + "unavailable for %1. %1 balances are as of %2."
+                               .arg("TBT").arg("10/06/2024"),
+
+                    marketDetailsAvailable: false,
+                    marketDetailsLoading: false,
+                    marketPrice: 0,
+                    marketChangePct24hour: 0,
+
+                    communityId: "3423",
+                    communityName: "Best tokens",
+                    communityIcon: Constants.tokenIcon("UNI", false),
+
+                    position: 6,
+                    canBeHidden: true
                 }
-            }
+            ]
+
+            append(data)
         }
     }
 
-    Popups {
-        popupParent: root
-        rootStore: QtObject {}
-        communityTokensStore: QtObject {}
-        walletAssetsStore: d.walletAssetStore
-    }
-
-    StackLayout {
-        id: stack
+    SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        currentIndex: 0
+        orientation: Qt.Vertical
 
-        AssetsView {
-            id: assetsView
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            areAssetsLoading: loadingCheckbox.checked
-            controller: ManageTokensController {
-                sourceModel: d.walletAssetStore.groupedAccountAssetsModel
-                settingsKey: "WalletAssets"
-                serializeAsCollectibles: false
+        Pane {
+            SplitView.fillWidth: true
+            SplitView.fillHeight: true
 
-                onRequestSaveSettings: (jsonData) => {
-                    savingStarted()
-                    settingsStore.setValue(settingsKey, jsonData)
-                    savingFinished()
-                }
-                onRequestLoadSettings: {
-                    loadingStarted()
-                    const jsonData = settingsStore.value(settingsKey, null)
-                    loadingFinished(jsonData)
-                }
-                onRequestClearSettings: {
-                    settingsStore.setValue(settingsKey, null)
-                }
+            AssetsView {
+                anchors.fill: parent
 
-                onTokenHidden: (symbol, name) => Global.displayToastMessage(
-                                   qsTr("%1 (%2) was successfully hidden").arg(name).arg(symbol), "", "checkmark-circle",
-                                   false, Constants.ephemeralNotificationType.success, "")
-                onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
-                                                 qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
-                                                 false, Constants.ephemeralNotificationType.success, "")
-                onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
-                                                                           false, Constants.ephemeralNotificationType.success, "")
-                onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
-                                                qsTr("%1 community assets are now visible").arg(communityName), "", "checkmark-circle",
-                                                false, Constants.ephemeralNotificationType.success, "")
-            }
-            filterVisible: ctrlFilterVisible.checked
-            currencyStore: d.currencyStore
-            tokensStore: TokensStore {
-                displayAssetsBelowBalance: ctrlBalanceThresholdSwitch.checked
-                getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => ctrlBalanceThreshold.value
-            }
-            networkFilters: d.networksChainsCurrentlySelected
-            addressFilters: d.addressesSelected
-            onAssetClicked: {
-                stack.currentIndex = 1
-                detailsView.token = token
-                logs.logEvent("onAssetClicked", ["token"], [token.symbol, token.communityId])
-            }
-            onSendRequested: logs.logEvent("onSendRequested", ["symbol"], arguments)
-            onReceiveRequested: logs.logEvent("onReceiveRequested", ["symbol"], arguments)
-            onSwitchToCommunityRequested: logs.logEvent("onSwitchToCommunityRequested", ["communityId"], arguments)
-            onManageTokensRequested: logs.logEvent("onManageTokensRequested")
+                loading: loadingCheckBox.checked
+                sorterVisible: sorterVisibleCheckBox.checked
+                customOrderAvailable: customOrderAvailableCheckBox.checked
 
-            Settings {
-                id: settingsStore
-                category: "ManageTokens-" + assetsView.controller.settingsKey
+                sendEnabled: sendEnabledCheckBox.checked
+                swapEnabled: swapEnabledCheckBox.checked
+                swapVisible: swapVisibleCheckBox.checked
+
+                balanceError: balanceErrorCheckBox.checked
+                              ? "Balance error!" : ""
+
+                marketDataError: marketDataErrorCheckBox.checked
+                                 ? "Market data error!" : ""
+
+                model: assetsModel
+
+                onSendRequested: logs.logEvent(`send requested: ${key}`)
+                onReceiveRequested: logs.logEvent(`receive requested: ${key}`)
+                onSwapRequested: logs.logEvent(`swap requested: ${key}`)
+                onAssetClicked: logs.logEvent(`asset clicked: ${key}`)
+
+                onHideRequested: logs.logEvent(`hide requested: ${key}`)
+                onHideCommunityAssets: logs.logEvent(`hide community assets requested: ${communityKey}`)
+                onManageTokensRequested: logs.logEvent(`manage tokens requested`)
             }
         }
 
-        ColumnLayout {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Button {
-                text: "go back"
-                onClicked: stack.currentIndex = 0
-            }
-            AssetsDetailView {
-                id: detailsView
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                currencyStore: d.currencyStore
-                allNetworksModel: NetworksModel.flatNetworks
-                networkFilters: d.networksChainsCurrentlySelected
-            }
+        Logs {
+            id: logs
+        }
+
+        LogsView {
+            clip: true
+
+            SplitView.preferredHeight: 150
+            SplitView.fillWidth: true
+
+            logText: logs.logText
         }
     }
 
     Pane {
-        SplitView.preferredWidth: 250
+        SplitView.preferredWidth: 300
 
         ColumnLayout {
-            spacing: 12
-            anchors.fill: parent
-
-            Switch {
-                id: ctrlFilterVisible
-                text: "Filter visible"
-                checked: true
-            }
-
             CheckBox {
-                id: loadingCheckbox
-                checked: false
+                id: loadingCheckBox
+
                 text: "loading"
             }
+            CheckBox {
+                id: sorterVisibleCheckBox
 
-            ColumnLayout {
-                Layout.fillWidth: true
-                Text {
-                    text: "select supported network(s)"
-                }
-                Repeater {
-                    id: networksRepeater
-                    model: NetworksModel.flatNetworks
-                    delegate: CheckBox {
-                        readonly property int chainID: chainId
-                        width: parent.width
-                        text: chainName
-                        visible: isTest
-                        checked: true
-                        onToggled: {
-                            isEnabled = checked
-                        }
-                    }
-                }
+                text: "sorter visible"
             }
+            CheckBox {
+                id: customOrderAvailableCheckBox
 
-            ColumnLayout {
-                Layout.fillWidth: true
-                Text {
-                    text: "select account(s)"
-                }
-                Repeater {
-                    id: accountsRepeater
-                    model: WalletAccountsModel {}
-                    delegate: CheckBox {
-                        readonly property string address: model.address
-                        checked: true
-                        visible: index<2
-                        width: parent.width
-                        text: name
-                    }
-                }
+                text: "custom order available"
             }
+            CheckBox {
+                id: sendEnabledCheckBox
 
-            ColumnLayout {
-                Layout.fillWidth: true
-                Switch {
-                    id: ctrlBalanceThresholdSwitch
-                    text: qsTr("Currency balance threshold")
-                    checked: false
-                }
-                CurrencyAmountInput {
-                    id: ctrlBalanceThreshold
-                    value: 10.1
-                }
+                text: "send enabled"
+            }
+            CheckBox {
+                id: swapEnabledCheckBox
+
+                text: "swap enabled"
+            }
+            CheckBox {
+                id: swapVisibleCheckBox
+
+                text: "swap visible"
+            }
+            CheckBox {
+                id: balanceErrorCheckBox
+
+                text: "balance error"
+            }
+            CheckBox {
+                id: marketDataErrorCheckBox
+
+                text: "market data error"
             }
         }
+    }
+
+    Settings {
+        property alias loading: loadingCheckBox.checked
+        property alias filterVisible: sorterVisibleCheckBox.checked
+        property alias customOrderAvailable: customOrderAvailableCheckBox.checked
+        property alias sendEnabled: sendEnabledCheckBox.checked
+        property alias swapEnabled: swapEnabledCheckBox.checked
+        property alias swapVisible: swapVisibleCheckBox.checked
+        property alias balanceError: balanceErrorCheckBox.checked
+        property alias marketDataError: marketDataErrorCheckBox.checked
     }
 }
 
 // category: Views
-// https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?type=design&node-id=17159-67977&mode=design&t=s5EXsh6Vi4nTNYUh-0
-// https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?type=design&node-id=17171-285559&mode=design&t=s5EXsh6Vi4nTNYUh-0

@@ -143,8 +143,7 @@ RightTabBaseView {
                 Component {
                     id: assetsView
 
-                    AssetsViewNew {
-
+                    AssetsView {
                         AssetsViewAdaptor {
                             id: assetsViewAdaptor
 

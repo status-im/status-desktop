@@ -206,12 +206,14 @@ Dialog {
             anchors.bottom: parent.bottom
             currentIndex: walletTabBar.currentIndex
 
-            AssetsView {
-                id: assetsTab
-                controller: popup.assetsStore.assetsController
-                currencyStore: popup.currencyStore
-                tokensStore: popup.tokensStore
-            }
+            // Disable because the refactored version of AssetView requires specific
+            // integration but the old version was not working properly neither.
+            //AssetsView {
+            //    id: assetsTab
+            //    controller: popup.assetsStore.assetsController
+            //    currencyStore: popup.currencyStore
+            //    tokensStore: popup.tokensStore
+            //}
             HistoryView {
                 id: historyTab
                 overview: WalletStore.dappBrowserAccount

@@ -7,67 +7,63 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
 import AppLayouts.Wallet.controls 1.0
-
 import utils 1.0
 
 StatusListItem {
     id: root
 
-    // expected roles: name, symbol, currencyPrice, changePct24hour, communityId, communityName, communityImage
+    property string name
+    property url icon
+    property string balance
 
-    property alias currencyBalance: currencyBalance
-    property alias change24HourPercentage: change24HourPercentageText
-    property alias currencyPrice: currencyPrice
+    property bool marketDetailsAvailable: false
+    property string marketBalance
+    property bool marketDetailsLoading: false
+    property string marketCurrencyPrice
+    property real marketChangePct24hour
 
-    property string currentCurrencySymbol
-    property string textColor: {
-        if (!modelData || !modelData.marketDetails) {
-            return Theme.palette.successColor1
-        }
-        return modelData.marketDetails.changePct24hour === undefined  ?
-            Theme.palette.baseColor1 :
-            modelData.marketDetails.changePct24hour === 0 ?
-                Theme.palette.baseColor1 :
-                modelData.marketDetails.changePct24hour < 0 ?
-                    Theme.palette.dangerColor1 :
-                    Theme.palette.successColor1
-    }
-        
+    property string communityId
+    property string communityName
+    property url communityIcon
+
     property string errorTooltipText_1
     property string errorTooltipText_2
 
-    readonly property bool isCommunityToken: !!modelData && !!modelData.communityId
-    readonly property string symbolUrl: {
-        if (!modelData)
-            return ""
-        if (modelData.image)
-            return modelData.image
-        if (modelData.symbol)
-            return Constants.tokenIcon(modelData.symbol, false)
-        return ""
-    }
-    readonly property string upDownTriangle: {
-        if (!modelData || !modelData.marketDetails)
-            return ""
-        if (modelData.marketDetails.changePct24hour < 0)
-            return "▾"
-        if (modelData.marketDetails.changePct24hour > 0)
-            return "▴"
-        return ""
-    }
-    readonly property bool isUndefined: modelData && !modelData.marketDetailsLoading && title === ""
+    signal communityClicked(string communityId)
 
-    signal switchToCommunityRequested(string communityId)
+    QtObject {
+        id: d
 
-    title: modelData ? modelData.name : ""
-    subTitle: LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
-    asset.name: symbolUrl
+        readonly property bool isCommunityToken: !!root.communityId
+
+        readonly property string textColor: {
+            if (!root.marketDetailsAvailable)
+                return Theme.palette.successColor1
+
+            if (root.marketChangePct24hour === 0)
+                return Theme.palette.baseColor1
+
+            return root.marketChangePct24hour < 0
+                    ? Theme.palette.dangerColor1
+                    : Theme.palette.successColor1
+        }
+
+        readonly property string upDownTriangle: {
+            if (root.marketChangePct24hour === 0)
+                return ""
+
+            return root.marketChangePct24hour < 0 ? "▾" : "▴"
+        }
+    }
+
+    title: root.name
+    subTitle: root.balance
+    asset.name: root.icon
     asset.isImage: true
     asset.width: 32
     asset.height: 32
     errorIcon.tooltip.maxWidth: 300
-    height: isUndefined ? 0 : implicitHeight
-    visible: !isUndefined
+    height: implicitHeight
 
     statusListItemTitleIcons.sourceComponent: StatusFlatRoundButton {
         width: 14
@@ -94,26 +90,32 @@ StatusListItem {
                 icon.color: Theme.palette.dangerColor1
                 tooltip.text: root.errorTooltipText_2
                 tooltip.maxWidth: 200
-                visible: !!tooltip.text
+                visible: root.marketDetailsAvailable && !!tooltip.text
             }
             StatusTextWithLoadingState   {
                 id: currencyBalance
+
                 anchors.right: parent.right
-                loading: modelData && modelData.marketDetailsLoading
-                visible: !errorIcon.visible && !root.isCommunityToken
+                visible: !errorIcon.visible && root.marketDetailsAvailable
+
+                loading: root.marketDetailsLoading
+                text: loading ? Constants.dummyText : root.marketBalance
             }
             Row {
                 anchors.right: parent.right
                 spacing: 6
-                visible: !errorIcon.visible && !root.isCommunityToken
+                visible: !errorIcon.visible && root.marketDetailsAvailable
+
                 StatusTextWithLoadingState {
                     id: change24HourPercentageText
+
                     anchors.verticalCenter: parent.verticalCenter
-                    customColor: root.textColor
+                    customColor: d.textColor
                     font.pixelSize: 13
-                    loading: modelData && modelData.marketDetailsLoading
-                    text: modelData && modelData.marketDetails && modelData.marketDetails.changePct24hour !== undefined ? "%1 %2%".arg(root.upDownTriangle).arg(LocaleUtils.numberToLocaleString(modelData.marketDetails.changePct24hour, 2))
-                                                                                                                        : "---"
+                    loading: root.marketDetailsLoading
+
+                    text: qsTr("%1 %2%", "[up/down/none character depending on value sign] [localized percentage value]%")
+                        .arg(d.upDownTriangle).arg(LocaleUtils.numberToLocaleString(root.marketChangePct24hour, 2))
                 }
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
@@ -123,39 +125,45 @@ StatusListItem {
                 }
                 StatusTextWithLoadingState {
                     id: currencyPrice
+
                     anchors.verticalCenter: parent.verticalCenter
-                    customColor: root.textColor
+                    customColor: d.textColor
                     font.pixelSize: 13
-                    loading: modelData && modelData.marketDetailsLoading
-                    text: modelData && modelData.marketDetails ? LocaleUtils.currencyAmountToLocaleString(modelData.marketDetails.currencyPrice) : ""
+                    loading: root.marketDetailsLoading
+                    text: loading ? Constants.dummyText : root.marketCurrencyPrice
                 }
             }
-            ManageTokensCommunityTag {
-                anchors.right: parent.right
-                communityImage: !!modelData ? modelData.communityImage : ""
-                communityName: !!modelData && !!modelData.communityName ? modelData.communityName: ""
-                communityId: !!modelData && !!modelData.communityId ? modelData.communityId : ""
-                asset.letterSize: 12
-                visible: root.isCommunityToken
-                
-                TapHandler {
-                    acceptedButtons: Qt.LeftButton
-                    onSingleTapped: root.switchToCommunityRequested(modelData.communityId)
+
+            Loader {
+                active: d.isCommunityToken
+
+                sourceComponent: ManageTokensCommunityTag {
+                    anchors.right: parent.right
+
+                    communityImage: root.communityIcon
+                    communityName: root.communityName
+                    communityId: root.communityId
+
+                    asset.letterSize: 12
+
+                    TapHandler {
+                        acceptedButtons: Qt.LeftButton
+                        onSingleTapped: root.communityClicked(root.communityId)
+                    }
                 }
             }
         }
     ]
 
-    states: [
-        State {
-            name: "unknownToken"
-            when: !root.symbolUrl
-            PropertyChanges {
-                target: root.asset
-                isLetterIdenticon: true
-                color: Theme.palette.miscColor5
-                name: !!modelData && modelData.symbol ? modelData.symbol : ""
-            }
+    states: State {
+        name: "unknownToken"
+        when: !root.icon.toString()
+
+        PropertyChanges {
+            target: root.asset
+            isLetterIdenticon: true
+            color: Theme.palette.miscColor5
+            name: root.name
         }
-    ]
+    }
 }
