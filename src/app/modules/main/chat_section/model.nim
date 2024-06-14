@@ -428,6 +428,8 @@ QtObject:
     
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
+    changedRoles.add(ModelRole.HideIfPermissionsNotMet.int) # depends on canPost, canView
+    changedRoles.add(ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int) # depends on hideIfPermissionsNotMet
     self.dataChanged(modelIndex, modelIndex, changedRoles)
 
   proc changeMutedOnItemByCategoryId*(self: Model, categoryId: string, muted: bool) =

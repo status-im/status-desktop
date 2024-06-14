@@ -298,7 +298,15 @@ Component {
                         text: "Note: 'applicationWindow' is good root object in"
                               + " most cases. 'WalletStores.RootStore' and"
                               + " `SharedStores.RootStore` are also exposed for"
-                              + " convenience for models created within those singletons."
+                              + " convenience for models created within those singletons. \n\n"
+                              + " Hack (see #15181): If you want to inspect a model that is not"
+                              + " from the root object (under a repeater), add objectName to a dummy object in AppMain.qml: \n"
+                              + " property var modelIWantToInspect: SortFilterProxyModel { \n"
+                              + "   objectName: \"YYY\" \n"
+                              + " } \n"
+                              + " and inside your item add something like this: \n"
+                              + " Component.onCompleted: appMain.modelIWantToInspect.sourceModel = this.model \n"
+                              + " Then you can use 'YYY' as the object name in this search."
                     }
 
                     RowLayout {
