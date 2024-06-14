@@ -519,6 +519,7 @@ proc loginLocalPairingAccount*(self: Controller) =
   )
 
 # FIXME: Why do we even have storeToKeychain during login? Makes no sense
+# https://github.com/status-im/status-desktop/issues/15167
 proc loginAccountKeycard*(self: Controller, storeToKeychain: bool, keycardReplacement = false) =
   # singletonInstance.localAccountSettings.setStoreToKeychainValue(storeToKeychainValue)
   self.login(keycard = true, keycardReplacement = keycardReplacement)

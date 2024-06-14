@@ -45,6 +45,7 @@ method executePrimaryCommand*(self: KeycardPinSetState, controller: Controller) 
       return
     if controller.getValidPuk():
       # FIXME: Make sure storeToKeychain is correct here. The idea is not to pass it at all
+      # https://github.com/status-im/status-desktop/issues/15167
       # let storeToKeychainValue = singletonInstance.localAccountSettings.getStoreToKeychainValue()
       controller.loginAccountKeycard(storeToKeychain = false)
   if self.flowType == FlowType.LostKeycardReplacement:
