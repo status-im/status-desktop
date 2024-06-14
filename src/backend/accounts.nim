@@ -5,6 +5,7 @@ import ../app_service/service/accounts/dto/login_request
 import ../app_service/service/accounts/dto/create_account_request
 import ../app_service/service/accounts/dto/restore_account_request
 import ./response_type
+import ../constants as status_const
 
 import status_go
 
@@ -263,6 +264,11 @@ proc openedAccounts*(path: string): RpcResponse[JsonNode] =
     let mixPanelAppId = getEnv("MIXPANEL_APP_ID")
     let mixPanelToken = getEnv("MIXPANEL_TOKEN")
     let payload = %* {"dataDir": path, "mixpanelAppId": mixPanelAppId, "mixpanelToken": mixPanelToken}
+    # Do not remove the sleep 700
+    # This sleep prevents a crash on intel MacOS
+    # with errors like bad flushGen 12 in prepareForSweep; sweepgen 0
+    if status_const.IS_MACOS and status_const.IS_INTEL:
+      sleep 700
     let response = status_go.initializeApplication($payload)
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
@@ -321,7 +327,7 @@ proc loginAccount*(request: LoginAccountRequest): RpcResponse[JsonNode] =
     let payload = request.toJson()
     let response = status_go.loginAccount($payload)
     result.result = Json.decode(response, JsonNode)
-    
+
   except RpcException as e:
     error "loginAccount failed", exception=e.msg
     raise newException(RpcException, e.msg)

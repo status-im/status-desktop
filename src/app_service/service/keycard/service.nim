@@ -97,6 +97,11 @@ QtObject:
   proc init*(self: Service) =
     if self.doLogging:
       debug "init keycard using ", pairingsJson=status_const.KEYCARDPAIRINGDATAFILE
+    # Do not remove the sleep 700
+    # This sleep prevents a crash on intel MacOS
+    # with errors like bad flushGen 12 in prepareForSweep; sweepgen 0
+    if status_const.IS_MACOS and status_const.IS_INTEL:
+      sleep 700
     let initResp = keycard_go.keycardInitFlow(status_const.KEYCARDPAIRINGDATAFILE)
     if self.doLogging:
       debug "initialization response: ", initResp
@@ -170,8 +175,14 @@ QtObject:
       debug "keycardResumeFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
 
   proc cancelCurrentFlow*(self: Service) =
+    # Do not remove the sleep 700
+    # This sleep prevents a crash on intel MacOS
+    # with errors like bad flushGen 12 in prepareForSweep; sweepgen 0
+    if status_const.IS_MACOS and status_const.IS_INTEL:
+      sleep 700
     let response = keycard_go.keycardCancelFlow()
-    sleep(200)
+    # sleep 200 is needed for cancel flow
+    sleep 200
     self.currentFlow = KCSFlowType.NoFlow
     self.busy = false
     if self.doLogging:
