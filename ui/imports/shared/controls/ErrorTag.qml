@@ -13,6 +13,7 @@ InformationTag {
 
     property string text
     property string buttonText
+    property bool buttonVisible
 
     signal buttonClicked()
 
@@ -54,7 +55,7 @@ InformationTag {
         horizontalPadding: 8
 
         width: visible || root.loading ? implicitWidth : 0
-        visible: !!text
+        visible: root.buttonVisible
 
         size: StatusBaseButton.Size.Tiny
         font.pixelSize: priv.fontPixelSize

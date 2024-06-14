@@ -48,6 +48,7 @@ Item {
         function test_buttonClick() {
             verify(!!controlUnderTest)
             controlUnderTest.buttonText = "Buy crypto"
+            controlUnderTest.buttonVisible = true
             const button = findChild(controlUnderTest, "rightComponentButton")
             verify(!!button)
             tryCompare(button, "visible", true)

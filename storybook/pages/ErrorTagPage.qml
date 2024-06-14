@@ -27,6 +27,7 @@ SplitView {
             anchors.centerIn: parent
             text: ctrlText.text
             buttonText: ctrlButtonText.text
+            buttonVisible: buttonVisible.checked
             asset.name: ctrlAssetName.text
             loading: ctrlLoading.checked
             onButtonClicked: logs.logEvent("ErrorTag::onButtonClicked", [], arguments)
@@ -84,6 +85,10 @@ SplitView {
             Switch {
                 id: ctrlLoading
                 text: "Loading"
+            }
+            Switch {
+                id: buttonVisible
+                text: "Button Visible"
             }
             Item { Layout.fillHeight: true }
         }

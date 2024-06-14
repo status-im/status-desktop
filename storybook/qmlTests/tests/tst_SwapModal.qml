@@ -120,19 +120,18 @@ Item {
             compare(root.swapAdaptor.swapOutputData.hasError, false)
 
             // verfy input and output panels
-            verify(!payPanel.loading)
+            verify(!payPanel.mainInputLoading)
+            verify(!payPanel.bottomTextLoading)
             compare(payPanel.selectedHoldingId, root.swapFormData.fromTokensKey)
-            compare(payPanel.cryptoValue, Number(root.swapFormData.fromTokenAmount))
-            compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(root.swapFormData.fromTokenAmount, root.swapAdaptor.fromToken.decimals).toString())
-            verify(payPanel.cryptoValueValid)
-            verify(receivePanel.loading)
+            compare(payPanel.value, Number(root.swapFormData.fromTokenAmount))
+            compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(root.swapFormData.fromTokenAmount, root.swapAdaptor.fromToken.decimals).toString())
+            verify(payPanel.valueValid)
+            verify(receivePanel.mainInputLoading)
+            verify(receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
-            /* TODO: there is bug which prevents us from testing this right now
-            The value is not updated after  setting tokenAmount to empty string in the receive input panel
-            https://github.com/status-im/status-desktop/issues/15162
-            compare(receivePanel.cryptoValue, 0)
-            compare(receivePanel.cryptoValueRaw, "0") */
+            compare(receivePanel.value, 0)
+            compare(receivePanel.rawValue, "0")
         }
         // end helper functions -------------------------------------------------------------
 
@@ -554,12 +553,14 @@ Item {
             compare(signButton.text, qsTr("Swap"))
 
             // verfy input and output panels
-            verify(!payPanel.loading)
-            verify(!receivePanel.loading)
+            verify(!payPanel.mainInputLoading)
+            verify(!payPanel.bottomTextLoading)
+            verify(!receivePanel.mainInputLoading)
+            verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
-            compare(receivePanel.cryptoValue, 0)
-            compare(receivePanel.cryptoValueRaw, "0")
+            compare(receivePanel.value, 0)
+            compare(receivePanel.rawValue, "0")
 
             // edit some params to retry swap
             root.swapFormData.fromTokenAmount = "0.00011"
@@ -596,12 +597,13 @@ Item {
 
             // verfy input and output panels
             waitForRendering(receivePanel)
-            verify(payPanel.cryptoValueValid)
-            verify(!receivePanel.loading)
+            verify(payPanel.valueValid)
+            verify(!receivePanel.mainInputLoading)
+            verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
-            compare(receivePanel.cryptoValue, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
-            compare(receivePanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapAdaptor.toToken.decimals).toString())
+            compare(receivePanel.value, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
+            compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapAdaptor.toToken.decimals).toString())
 
             // edit some params to retry swap
             root.swapFormData.fromTokenAmount = "0.012"
@@ -638,12 +640,13 @@ Item {
 
             // verfy input and output panels
             waitForRendering(receivePanel)
-            verify(payPanel.cryptoValueValid)
-            verify(!receivePanel.loading)
+            verify(payPanel.valueValid)
+            verify(!receivePanel.mainInputLoading)
+            verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
-            compare(receivePanel.cryptoValue, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
-            compare(receivePanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapAdaptor.toToken.decimals).toString())
+            compare(receivePanel.value, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
+            compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapAdaptor.toToken.decimals).toString())
         }
 
         function test_modal_pay_input_default() {
@@ -680,9 +683,9 @@ Item {
             verify(!holdingSelectorsTokenIcon.visible)
             verify(!maxTagButton.visible)
             compare(payPanel.selectedHoldingId, "")
-            compare(payPanel.cryptoValue, 0)
-            compare(payPanel.cryptoValueRaw, "0")
-            verify(!payPanel.cryptoValueValid)
+            compare(payPanel.value, 0)
+            compare(payPanel.rawValue, "0")
+            verify(!payPanel.valueValid)
 
             closeAndVerfyModal()
         }
@@ -731,9 +734,9 @@ Item {
             verify(maxTagButton.visible)
             compare(maxTagButton.text, qsTr("Max. %1").arg(root.swapAdaptor.currencyStore.formatCurrencyAmount(Math.trunc(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)*100)/100, expectedToken.symbol, {noSymbol: true})))
             compare(payPanel.selectedHoldingId, expectedToken.symbol)
-            compare(payPanel.cryptoValue, valueToExchange)
-            compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
-            verify(payPanel.cryptoValueValid)
+            compare(payPanel.value, valueToExchange)
+            compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
+            verify(payPanel.valueValid)
 
             closeAndVerfyModal()
         }
@@ -778,9 +781,9 @@ Item {
                 verify(!holdingSelectorsTokenIcon.visible)
                 verify(!maxTagButton.visible)
                 compare(payPanel.selectedHoldingId, invalidValue)
-                compare(payPanel.cryptoValue, 0)
-                compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber("0", 0).toString())
-                verify(!payPanel.cryptoValueValid)
+                compare(payPanel.value, 0)
+                compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber("0", 0).toString())
+                verify(!payPanel.valueValid)
 
                 closeAndVerfyModal()
             }
@@ -822,7 +825,7 @@ Item {
             compare(amountToSendInput.input.text, valueToExchangeString)
             compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
             verify(amountToSendInput.input.input.edit.cursorVisible)
-            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0 * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
+            compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToExchange * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
             compare(holdingSelector.selectedItem, expectedToken)
             compare(holdingSelectorsContentItemText.text, expectedToken.symbol)
             compare(holdingSelectorsTokenIcon.image.source, Constants.tokenIcon(expectedToken.symbol))
@@ -830,9 +833,9 @@ Item {
             verify(maxTagButton.visible)
             compare(maxTagButton.text, qsTr("Max. %1").arg(root.swapAdaptor.currencyStore.formatCurrencyAmount(Math.trunc(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)*100)/100, expectedToken.symbol, {noSymbol: true})))
             compare(payPanel.selectedHoldingId, expectedToken.symbol)
-            compare(payPanel.cryptoValue, 0)
-            compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber("0", expectedToken.decimals).toString())
-            verify(!payPanel.cryptoValueValid)
+            compare(payPanel.value, valueToExchange)
+            compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
+            verify(!payPanel.valueValid)
 
             closeAndVerfyModal()
         }
@@ -864,12 +867,9 @@ Item {
                 let maxPossibleValue = Math.trunc(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)*100)/100
                 compare(maxTagButton.text, qsTr("Max. %1").arg(root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true})))
                 compare(payPanel.selectedHoldingId, expectedToken.symbol)
-                compare(payPanel.cryptoValueValid, valueToExchange <= maxPossibleValue)
-                /* TODO: there is bug which prevents us from testing this right now
-                When value entered is greater than balance then fiat and crytpo values are not calculated
-                https://github.com/status-im/status-desktop/issues/15162
-                compare(payPanel.cryptoValue, valueToExchange)
-                compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString()) */
+                compare(payPanel.valueValid, valueToExchange <= maxPossibleValue)
+                compare(payPanel.value, valueToExchange)
+                compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
             }
 
             closeAndVerfyModal()
@@ -904,9 +904,9 @@ Item {
             compare(holdingSelectorsContentItemText.text, qsTr("Select asset"))
             verify(!maxTagButton.visible)
             compare(receivePanel.selectedHoldingId, "")
-            compare(receivePanel.cryptoValue, 0)
-            compare(receivePanel.cryptoValueRaw, "0")
-            verify(!receivePanel.cryptoValueValid)
+            compare(receivePanel.value, 0)
+            compare(receivePanel.rawValue, "0")
+            verify(!receivePanel.valueValid)
 
             closeAndVerfyModal()
         }
@@ -955,9 +955,9 @@ Item {
             verify(holdingSelectorsTokenIcon.visible)
             verify(!maxTagButton.visible)
             compare(receivePanel.selectedHoldingId, expectedToken.symbol)
-            compare(receivePanel.cryptoValue, valueToReceive)
-            compare(receivePanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(valueToReceiveString, expectedToken.decimals).toString())
-            verify(receivePanel.cryptoValueValid)
+            compare(receivePanel.value, valueToReceive)
+            compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToReceiveString, expectedToken.decimals).toString())
+            verify(receivePanel.valueValid)
 
             closeAndVerfyModal()
         }
@@ -1104,24 +1104,18 @@ Item {
                     let maxPossibleValue = Math.trunc(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)*100)/100
                     compare(maxTagButton.text, qsTr("Max. %1").arg(maxPossibleValue === 0 ? Qt.locale().zeroDigit : root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true, minDecimals: 0})))
                     compare(payPanel.selectedHoldingId, expectedToken.symbol)
-                    /* TODO bug in max button not shown in red when max is 0 value and
-                    bug in swapInputModal that in case value entered is greater than maxPossibleValue then value is reset to 0, making the cryptoValueValid to false
-                    https://github.com/status-im/status-desktop/issues/15162 */
-                    compare(payPanel.cryptoValueValid, (valueToExchangeString === amountToSendInput.input.text) && !!root.swapFormData.fromTokenAmount && valueToExchange <= maxPossibleValue)
+                    compare(payPanel.valueValid, !!root.swapFormData.fromTokenAmount && valueToExchange <= maxPossibleValue)
 
-                    /* TODO: there is bug which prevents us from testing this right now
-                    The value is not updated after setting tokenAmount to empty string in the receive input panel
-                    https://github.com/status-im/status-desktop/issues/15162
-                    compare(payPanel.cryptoValue, valueToExchange)
-                    compare(payPanel.cryptoValueRaw, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())*/
+                    compare(payPanel.value, valueToExchange)
+                    compare(payPanel.rawValue, !!valueToExchangeString ? SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString(): "0")
 
-                    /* TODO: check if tag is visible in case amount entered to exchange is greater than max balance to send
-                    https://github.com/status-im/status-desktop/issues/15162 */
-                    let errortext = /*valueToExchange > maxPossibleValue ? qsTr("Insufficient funds for swap"): */qsTr("An error has occured, please try again")
-                    let buttonText = /*valueToExchange > maxPossibleValue ? qsTr("Buy crypto"):*/ ""
-                    compare(errorTag.visible, false/*valueToExchange > maxPossibleValue*/)
+                    // check if tag is visible in case amount entered to exchange is greater than max balance to send
+                    let amountEnteredGreaterThanMaxBalance = valueToExchange > maxPossibleValue
+                    let errortext = amountEnteredGreaterThanMaxBalance ? qsTr("Insufficient funds for swap"): qsTr("An error has occured, please try again")
+                    compare(errorTag.visible, amountEnteredGreaterThanMaxBalance)
                     compare(errorTag.text, errortext)
-                    compare(errorTag.buttonText, buttonText)
+                    compare(errorTag.buttonText, qsTr("Buy crypto"))
+                    compare(errorTag.buttonVisible, amountEnteredGreaterThanMaxBalance)
                 }
 
                 closeAndVerfyModal()
