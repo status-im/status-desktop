@@ -187,6 +187,7 @@ QtObject:
     result["ProcessBackedupMessages"] = newJBool(recoverAccount)
 
   # FIXME: remove this method, settings should be processed in status-go
+  # https://github.com/status-im/status-go/issues/5359
   proc addKeycardDetails(self: Service, kcInstance: string, settingsJson: var JsonNode, accountData: var JsonNode) =
     let keycardPairingJsonString = readFile(main_constants.KEYCARDPAIRINGDATAFILE)
     let keycardPairingJsonObj = keycardPairingJsonString.parseJSON
@@ -279,7 +280,6 @@ QtObject:
       
     self.restoreAccountAndLogin(request)
 
-  # TODO: refactor arguments list
   proc restoreKeycardAccountAndLogin*(self: Service, 
     keycardData: KeycardEvent, 
     recoverAccount: bool,
@@ -437,7 +437,7 @@ QtObject:
 
   proc login*(self: Service, account: AccountDto, hashedPassword: string, chatPrivateKey: string = "", mnemonic: string = "") =
     try:
-      # WARNING: Is this keystor migration still needed?
+      # WARNING: Is this keystore migration still needed?
       let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
       if not dirExists(keyStoreDir):
         os.createDir(keyStoreDir)
