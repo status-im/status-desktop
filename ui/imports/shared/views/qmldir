@@ -1,7 +1,6 @@
 AssetContextMenu 1.0 AssetContextMenu.qml
 AssetsView 1.0 AssetsView.qml
 AssetsViewAdaptor 1.0 AssetsViewAdaptor.qml
-AssetsViewNew 1.0 AssetsViewNew.qml
 ConfirmHideAssetPopup 1.0 ConfirmHideAssetPopup.qml
 ConfirmHideCommunityAssetsPopup 1.0 ConfirmHideCommunityAssetsPopup.qml
 EnsResolver 1.0 EnsResolver.qml

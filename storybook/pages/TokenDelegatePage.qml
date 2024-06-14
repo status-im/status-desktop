@@ -14,7 +14,7 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        TokenDelegateNew {
+        TokenDelegate {
             anchors.centerIn: parent
 
             name: nameTextFiled.text
