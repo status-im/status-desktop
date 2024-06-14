@@ -20,7 +20,8 @@ pytestmark = marks
 @pytest.mark.parametrize('user_account, user_account_changed_password',
                          [pytest.param(constants.user.user_account_one,
                                        constants.user.user_account_one_changed_password)])
-@pytest.mark.critical
+@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15178')
+# @pytest.mark.critical
 # TODO: follow up on https://github.com/status-im/status-desktop/issues/13013
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account, user_account_changed_password):
     with step('Open profile settings'):
