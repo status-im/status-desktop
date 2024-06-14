@@ -37,13 +37,15 @@ StatusDialog {
     QtObject {
         id: d
          property var debounceFetchSuggestedRoutes: Backpressure.debounce(root, 1000, function() {
-                 root.swapAdaptor.fetchSuggestedRoutes(payPanel.cryptoValueRaw)
+                 root.swapAdaptor.fetchSuggestedRoutes(payPanel.rawValue)
          })
 
         function fetchSuggestedRoutes() {
-            root.swapAdaptor.newFetchReset()
-            root.swapAdaptor.swapProposalLoading = true
-            debounceFetchSuggestedRoutes()
+            if (payPanel.valueValid) {
+                root.swapAdaptor.newFetchReset()
+                root.swapAdaptor.swapProposalLoading = true
+                debounceFetchSuggestedRoutes()
+            }
         }
     }
 
@@ -151,7 +153,7 @@ StatusDialog {
                 tokenAmount: {
                     // Only update if there is different in amount displayed
                     if (root.swapInputParamsForm.fromTokenAmount !==
-                            SQUtils.AmountsArithmetic.fromString(cryptoValue).toLocaleString(locale, 'f', -128)){
+                            SQUtils.AmountsArithmetic.fromString(value).toLocaleString(locale, 'f', -128)){
                         return root.swapInputParamsForm.fromTokenAmount
                     }
                     return payPanel.tokenAmount
@@ -161,7 +163,8 @@ StatusDialog {
                 swapExchangeButtonWidth: swapButton.width
 
                 onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
-                onCryptoValueChanged: root.swapInputParamsForm.fromTokenAmount = cryptoValue.toLocaleString(locale, 'f', -128)
+                onValueChanged: root.swapInputParamsForm.fromTokenAmount = value.toLocaleString(locale, 'f', -128)
+                onValueValidChanged: d.fetchSuggestedRoutes()
             }
 
             SwapInputPanel {
@@ -184,7 +187,8 @@ StatusDialog {
                 swapSide: SwapInputPanel.SwapSide.Receive
                 swapExchangeButtonWidth: swapButton.width
 
-                loading: root.swapAdaptor.swapProposalLoading
+                mainInputLoading: root.swapAdaptor.swapProposalLoading
+                bottomTextLoading: root.swapAdaptor.swapProposalLoading
 
                 onSelectedHoldingIdChanged: root.swapInputParamsForm.toTokenKey = selectedHoldingId
 
@@ -236,7 +240,8 @@ StatusDialog {
                 }
                 return qsTr("An error has occured, please try again")
             }
-            buttonText: payPanel.amountEnteredGreaterThanBalance ? qsTr("Buy crypto"): ""
+            buttonText: qsTr("Buy crypto")
+            buttonVisible: payPanel.amountEnteredGreaterThanBalance
             onButtonClicked: Global.openBuyCryptoModalRequested()
         }
     }

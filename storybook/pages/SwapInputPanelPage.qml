@@ -86,7 +86,8 @@ SplitView {
                 swapSide: SwapInputPanel.SwapSide.Pay
                 fiatInputInteractive: ctrlFiatInputInteractive.checked
                 swapExchangeButtonWidth: swapButton.width
-                loading: ctrlLoading.checked
+                mainInputLoading: ctrlMainInputLoading.checked
+                bottomTextLoading: ctrlBottomTextLoading.checked
             }
 
             SwapInputPanel {
@@ -107,7 +108,8 @@ SplitView {
                 swapSide: SwapInputPanel.SwapSide.Receive
                 fiatInputInteractive: ctrlFiatInputInteractive.checked
                 swapExchangeButtonWidth: swapButton.width
-                loading: ctrlLoading.checked
+                mainInputLoading: ctrlMainInputLoading.checked
+                bottomTextLoading: ctrlBottomTextLoading.checked
             }
 
             SwapExchangeButton {
@@ -191,8 +193,12 @@ SplitView {
                 checked: false
             }
             Switch {
-                id: ctrlLoading
-                text: "Loading"
+                id: ctrlMainInputLoading
+                text: "mainInputLoading"
+            }
+            Switch {
+                id: ctrlBottomTextLoading
+                text: "bottomTextLoading"
             }
 
             Label {
@@ -200,16 +206,16 @@ SplitView {
                 font.weight: Font.Medium
                 text: "<b>Pay:</b><ul><li>Symbol: %1<li>Amount: %2<li>Valid: %3"
                   .arg(payPanel.selectedHoldingId || "N/A")
-                  .arg(payPanel.cryptoValue.toString())
-                  .arg(payPanel.cryptoValueValid ? "true" : "false")
+                  .arg(payPanel.value.toString())
+                  .arg(payPanel.valueValid ? "true" : "false")
             }
             Label {
                 Layout.fillWidth: true
                 font.weight: Font.Medium
                 text: "<b>Receive:</b><ul><li>Symbol: %1<li>Amount: %2<li>Valid: %3"
                   .arg(receivePanel.selectedHoldingId || "N/A")
-                  .arg(receivePanel.cryptoValue.toString())
-                  .arg(receivePanel.cryptoValueValid ? "true" : "false")
+                  .arg(receivePanel.value.toString())
+                  .arg(receivePanel.valueValid ? "true" : "false")
             }
 
             Item { Layout.fillHeight: true }

@@ -32,23 +32,21 @@ Control {
     onTokenKeyChanged: reevaluateSelectedId()
     property string tokenAmount
     onTokenAmountChanged: {
-        if (!!tokenAmount)
-            Qt.callLater(() => amountToSendInput.input.text = SQUtils.AmountsArithmetic.fromString(tokenAmount).toLocaleString(locale, 'f', -128))
+        Qt.callLater(() => amountToSendInput.input.text = !!tokenAmount ? SQUtils.AmountsArithmetic.fromString(tokenAmount).toLocaleString(locale, 'f', -128): "")
     }
 
     property int swapSide: SwapInputPanel.SwapSide.Pay
     property bool fiatInputInteractive
-    property bool loading
+    property bool mainInputLoading
+    property bool bottomTextLoading
     property bool interactive: true
 
     // output API
     readonly property string selectedHoldingId: d.selectedHoldingId
-    readonly property double cryptoValue: amountToSendInput.cryptoValueToSendFloat
-    readonly property string cryptoValueRaw: amountToSendInput.cryptoValueToSend
-    readonly property bool cryptoValueValid: amountToSendInput.inputNumberValid
-    /* TODO: this does not work as expected because of bug -
-       https://github.com/status-im/status-desktop/issues/15162 */
-    readonly property bool amountEnteredGreaterThanBalance: cryptoValue > maxSendButton.maxSafeValue
+    readonly property double value: amountToSendInput.cryptoValueToSendFloat
+    readonly property string rawValue: amountToSendInput.cryptoValueToSend
+    readonly property bool valueValid: amountToSendInput.inputNumberValid
+    readonly property bool amountEnteredGreaterThanBalance: value > maxSendButton.maxSafeValue
     function reevaluateSelectedId() {
         if (!!tokenKey) {
             Qt.callLater(d.setSelectedHoldingId, tokenKey, Constants.TokenType.ERC20)
@@ -205,7 +203,8 @@ Control {
                                                                                                                        : maxSendButton.maxSafeValue
                 currentCurrency: root.currencyStore.currentCurrency
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
-                loading: root.loading
+                mainInputLoading: root.mainInputLoading
+                bottomTextLoading: root.bottomTextLoading
             }
         }
         ColumnLayout {
@@ -256,7 +255,7 @@ Control {
 
                 value: d.maxInputBalance
                 symbol: d.inputSymbol
-                valid: amountToSendInput.input.valid || !amountToSendInput.input.text
+                valid: (amountToSendInput.input.valid || !amountToSendInput.input.text) && value > 0
                 formatCurrencyAmount: (amount, symbol) => root.currencyStore.formatCurrencyAmount(amount, symbol, {noSymbol: !amountToSendInput.inputIsFiat})
 
                 visible: d.isSelectedHoldingValidAsset && root.swapSide === SwapInputPanel.SwapSide.Pay

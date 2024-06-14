@@ -51,7 +51,8 @@ ColumnLayout {
     property var formatCurrencyAmount:
         (amount, symbol, options = null, locale = null) => {}
 
-    property bool loading
+    property bool mainInputLoading
+    property bool bottomTextLoading
 
     signal reCalculateSuggestedRoute()
 
@@ -88,9 +89,6 @@ ColumnLayout {
         readonly property string selectedSymbol: !!root.selectedHolding && !!root.selectedHolding.symbol ? root.selectedHolding.symbol: ""
 
         readonly property string cryptoValueRawToSend: {
-            if (!root.inputNumberValid)
-                return "0"
-
             return SQUtils.AmountsArithmetic.fromNumber(
                         d.cryptoValueToSend, root.multiplierIndex).toString()
         }
@@ -106,7 +104,8 @@ ColumnLayout {
                                                topAmountToSendInput.locale)
 
         readonly property double inputNumber:
-            root.inputNumberValid ? d.parsedInput : 0
+            // we should still calculate if value entered is greater than max safe value
+            !!input.text && !isNaN(d.parsedInput) && d.parsedInput >= 0 ? d.parsedInput : 0
 
         readonly property Timer waitTimer: Timer {
             interval: 1000
@@ -146,15 +145,9 @@ ColumnLayout {
                     errorMessage: ""
 
                     validate: (text) => {
-                                  var num = 0
-                                  try {
-                                      num = Number.fromLocaleString(topAmountToSendInput.locale, text)
-                                  } catch (e) {
-                                      console.warn(e, "(Error parsing number from text: %1)".arg(text))
-                                      return false
-                                  }
-
-                                  return num > 0 && num <= root.maxInputBalance
+                                  var num = LocaleUtils.numberFromLocaleString(topAmountToSendInput.text,
+                                                                               topAmountToSendInput.locale)
+                                  return !isNaN(num) && num > 0 && num <= root.maxInputBalance
                               }
                 }
             ]
@@ -173,13 +166,13 @@ ColumnLayout {
                     d.waitTimer.restart()
             }
 
-            visible: !root.loading
+            visible: !root.mainInputLoading
         }
         LoadingComponent {
             objectName: "topAmountToSendInputLoadingComponent"
             Layout.preferredWidth: topAmountToSendInput.width
             Layout.preferredHeight: topAmountToSendInput.height
-            visible: root.loading
+            visible: root.mainInputLoading
         }
     }
 
@@ -215,13 +208,13 @@ ColumnLayout {
                 d.waitTimer.restart()
             }
         }
-        visible: !root.loading
+        visible: !root.bottomTextLoading
     }
 
     LoadingComponent {
         objectName: "bottomItemTextLoadingComponent"
         Layout.preferredWidth: bottomItem.width
         Layout.preferredHeight: bottomItem.height
-        visible: root.loading
+        visible: root.bottomTextLoading
     }
 }
