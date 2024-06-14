@@ -1,9 +1,10 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
-import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 import shared.controls 1.0
@@ -141,36 +142,100 @@ RightTabBaseView {
 
                 Component {
                     id: assetsView
-                    AssetsView {
-                        areAssetsLoading: RootStore.overview.balanceLoading
-                        controller: RootStore.walletAssetsStore.assetsController
-                        networkFilters: RootStore.networkFilters
-                        addressFilters: RootStore.addressFilters
-                        overview: RootStore.overview
-                        currencyStore: RootStore.currencyStore
-                        networkConnectionStore: root.networkConnectionStore
-                        tokensStore: RootStore.tokensStore
-                        assetDetailsLaunched: stack.currentIndex === 2
-                        filterVisible: filterButton.checked
+
+                    AssetsViewNew {
+
+                        AssetsViewAdaptor {
+                            id: assetsViewAdaptor
+
+                            accounts: RootStore.addressFilters
+                            chains: RootStore.networkFilters
+
+                            marketValueThreshold:
+                                RootStore.tokensStore.displayAssetsBelowBalance
+                                ? RootStore.tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
+                                : 0
+
+                            Connections {
+                                target: RootStore.tokensStore
+
+                                function displayAssetsBelowBalanceThresholdChanged() {
+                                    assetsViewAdaptor.marketValueThresholdChanged()
+                                }
+                            }
+
+                            tokensModel: RootStore.walletAssetsStore.groupedAccountAssetsModel
+                            controller: RootStore.walletAssetsStore.assetsController
+
+                            formatBalance: (balance, symbol) => {
+                                return LocaleUtils.currencyAmountToLocaleString(
+                                                   RootStore.currencyStore.getCurrencyAmount(balance, symbol))
+                            }
+
+                            chainsError: (chains) => {
+                                if (!root.networkConnectionStore)
+                                    return ""
+                                return root.networkConnectionStore.getBlockchainNetworkDownText(chains)
+                            }
+                        }
+
+                        loading: RootStore.overview.balanceLoading
+                        sorterVisible: filterButton.checked
+                        customOrderAvailable: RootStore.walletAssetsStore.assetsController.hasSettings
+                        model: assetsViewAdaptor.model
+
+                        marketDataError: !!root.networkConnectionStore
+                                         ? root.networkConnectionStore.getMarketNetworkDownText()
+                                         : ""
+                        balanceError: {
+                            if (!root.networkConnectionStore)
+                                return ""
+
+                            return (root.networkConnectionStore.noBlockchainConnectionAndNoCache
+                                    && !root.networkConnectionStore.noMarketConnectionAndNoCache)
+                                    ? root.networkConnectionStore.noBlockchainConnectionAndNoCacheText
+                                    : ""
+                        }
+
+                        formatFiat: balance => RootStore.currencyStore.formatCurrencyAmount(
+                                        balance, RootStore.currencyStore.currentCurrency)
+
+                        sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled &&
+                                     !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
+                        swapEnabled: !RootStore.overview.isWatchOnlyAccount
+                        swapVisible: Global.featureFlags.swapEnabled
+
+                        onSendRequested: {
+                            const symbol = ModelUtils.getByKey(model, "key", key, "symbol")
+                            const modal = root.sendModal
+
+                            modal.preSelectedSendType = Constants.SendType.Transfer
+                            modal.preSelectedHoldingID = symbol
+                            modal.preSelectedHoldingType = Constants.TokenType.ERC20
+                            modal.onlyAssets = true
+                            modal.open()
+                        }
+
+                        onSwapRequested: root.launchSwapModal(key)
+                        onReceiveRequested: root.launchShareAddressModal()
+                        onCommunityClicked: Global.switchToCommunity(communityKey)
+                        onManageTokensRequested: Global.changeAppSectionBySectionType(
+                                                     Constants.appSection.profile,
+                                                     Constants.settingsSubsection.wallet,
+                                                     Constants.walletSettingsSubsection.manageAssets)
                         onAssetClicked: {
+                            const token = ModelUtils.getByKey(model, "key", key)
+
+                            SharedStores.RootStore.getHistoricalDataForToken(
+                                        token.symbol, RootStore.currencyStore.currentCurrency)
+
                             assetDetailView.token = token
-                            RootStore.setCurrentViewedHolding(token.symbol, token.tokensKey, Constants.TokenType.ERC20)
+                            RootStore.setCurrentViewedHolding(token.symbol, token.key, Constants.TokenType.ERC20)
                             stack.currentIndex = 2
                         }
-                        onSendRequested: (symbol) => {
-                                            root.sendModal.preSelectedSendType = Constants.SendType.Transfer
-                                            root.sendModal.preSelectedHoldingID = symbol
-                                            root.sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
-                                            root.sendModal.onlyAssets = true
-                                            root.sendModal.open()
-                                        }
-                        onReceiveRequested: (symbol) => root.launchShareAddressModal()
-                        onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
-                        onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,
-                                                                                      Constants.walletSettingsSubsection.manageAssets)
-                        onLaunchSwapModal: root.launchSwapModal(tokensKey)
                     }
                 }
+
                 Component {
                     id: collectiblesView
                     CollectiblesView {
