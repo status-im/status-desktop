@@ -39,7 +39,7 @@ Item {
         readonly property string symbol: !!root.token? root.token.symbol?? "" : ""
         property bool marketDetailsLoading: !!root.token? root.token.marketDetailsLoading?? false : false
         property bool tokenDetailsLoading: !!root.token? root.token.detailsLoading?? false: false
-        property bool isCommunityAsset: !!root.token && token.isCommunityAsset !== undefined ? token.isCommunityAsset : false
+        property bool isCommunityAsset: !!root.token && !!token.communityId
 
         readonly property LeftJoinModel addressPerChainModel: LeftJoinModel {
             leftModel: token && token.addressPerChain ? token.addressPerChain: null
@@ -79,10 +79,10 @@ Item {
         }
         asset.isImage: true
         primaryText: token && token.name ? token.name : Constants.dummyText
-        secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrencyAmount(token.currentBalance, token.symbol)) : Constants.dummyText
+        secondaryText: token ? token.balanceText : Constants.dummyText
         tertiaryText: {
             if (!d.isCommunityAsset) {
-                let totalCurrencyBalance = token && token.currentCurrencyBalance && token.symbol ? token.currentCurrencyBalance : 0
+                let totalCurrencyBalance = token ? token.balance * token.marketPrice : 0
                 return currencyStore.formatCurrencyAmount(totalCurrencyBalance, currencyStore.currentCurrency)
             }
             return ""

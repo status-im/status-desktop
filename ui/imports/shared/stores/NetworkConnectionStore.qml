@@ -64,6 +64,7 @@ QtObject {
     readonly property string stickersNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg(appNetworkName)
     readonly property string appNetworkName: ModelUtils.getByKey(networksModule.flatNetworks, "chainId", mainModule.appNetworkId, "chainName")
 
+    // DEPRECATED, use getBlockchainNetworkDownText instead
     function getBlockchainNetworkDownTextForToken(balances) {
         if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown && !notOnlineWithNoCache) {
             let chainIdsDown = []
@@ -78,6 +79,28 @@ QtObject {
                 .arg(LocaleUtils.formatDateTime(new Date(networkConnectionModule.blockchainNetworkConnection.lastCheckedAt*1000)))
             }
         }
+        return ""
+    }
+
+    function getBlockchainNetworkDownText(chains) {
+        if (chains.length === 0
+                || networkConnectionModule.blockchainNetworkConnection.completelyDown
+                || notOnlineWithNoCache)
+            return ""
+
+        let chainIdsDown = []
+
+        for (let i = 0; i < chains.length; i++) {
+            const chainId = chains[i]
+            if(blockchainNetworksDown.includes(chainId))
+                chainIdsDown.push(chainId)
+        }
+        if(chainIdsDown.length > 0) {
+            return qsTr("Pocket Network (POKT) & Infura are currently both unavailable for %1. %1 balances are as of %2.")
+            .arg(getChainIdsJointString(chainIdsDown))
+            .arg(LocaleUtils.formatDateTime(new Date(networkConnectionModule.blockchainNetworkConnection.lastCheckedAt * 1000)))
+        }
+
         return ""
     }
 
