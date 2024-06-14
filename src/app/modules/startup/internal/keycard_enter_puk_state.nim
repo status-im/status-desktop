@@ -58,5 +58,6 @@ method resolveKeycardNextState*(self: KeycardEnterPukState, keycardFlowType: str
       controller.setPukValid(true)
       let storeToKeychainValue = singletonInstance.localAccountSettings.getStoreToKeychainValue()
       # FIXME: Make sure storeToKeychain is correct here. The idea is not to pass it at all
+      # https://github.com/status-im/status-desktop/issues/15167
       controller.loginAccountKeycard(storeToKeychain = false)
       return nil
