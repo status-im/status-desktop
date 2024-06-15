@@ -10,45 +10,31 @@ import SortFilterProxyModel 0.2
 
 import utils 1.0
 
-import "../stores/NetworkSelectPopup"
 import "../controls"
 import "../views"
 
-StatusDialog {
+Popup {
     id: root
 
-    property var flatNetworks
-    property var preferredSharingNetworks: []
-    property bool preferredNetworksMode: false
+    required property var flatNetworks
 
-    /// Grouped properties for single selection state. \c singleSelection.enabled is \c false by default
-    /// \see SingleSelectionInfo
-    property alias singleSelection: d.singleSelection
+    property bool showSelectionIndicator: true
+    property bool selectionAllowed: true
+    property bool multiSelection: false
+    property var selection: []
 
-    property bool useEnabledRole: true
+    signal toggleNetwork(int chainId, int index)
 
-    /// \c network is a network.model.nim entry. \c model and \c index for the current selection
-    /// It is called for every toggled network if \c singleSelection.enabled is \c false
-    /// If \c singleSelection.enabled is \c true, it is called only for the selected network when the selection changes
-    /// \see SingleSelectionInfo
-    signal toggleNetwork(var network, int index)
-
-    QtObject {
-        id: d
-
-        property SingleSelectionInfo singleSelection: SingleSelectionInfo {}
+    onSelectionChanged: {
+        if (root.selection !== scrollView.selection) {
+            scrollView.selection = root.selection
+        }
     }
 
     modal: false
-    standardButtons: Dialog.NoButton
-
-    anchors.centerIn: undefined
 
     padding: 4
-    width: 360
-    implicitHeight: Math.min(432, scrollView.contentHeight + root.padding * 2)
-
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    implicitWidth: 300
 
     background: Rectangle {
         radius: Style.current.radius
@@ -65,20 +51,25 @@ StatusDialog {
         }
     }
 
-    NetworkSelectionView {
+    contentItem: NetworkSelectorView {
         id: scrollView
-        width: parent.width
-        height: parent.height
-        anchors.fill: parent
-        flatNetworks: root.flatNetworks
-        preferredNetworksMode: root.preferredNetworksMode
-        preferredSharingNetworks: root.preferredSharingNetworks
-        useEnabledRole: root.useEnabledRole
-        singleSelection: d.singleSelection
-        onToggleNetwork: (network, index) => {
-            root.toggleNetwork(network, index)
-            if(d.singleSelection.enabled)
-                close()
+
+        model: root.flatNetworks
+        interactive: root.selectionAllowed
+        multiSelection: root.multiSelection
+        showIndicator: root.showSelectionIndicator
+        selection: root.selection
+
+        onSelectionChanged: {
+            if (root.selection !== scrollView.selection) {
+                root.selection = scrollView.selection
+            }
+        }
+
+        onToggleNetwork: {
+            if (!root.multiSelection && root.closePolicy !== Popup.NoAutoClose)
+                root.close()
+            root.toggleNetwork(chainId, index)
         }
     }
 }

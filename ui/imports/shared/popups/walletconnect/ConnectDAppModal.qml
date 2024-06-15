@@ -8,6 +8,7 @@ import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -31,6 +32,7 @@ StatusDialog {
     required property var flatNetworks
 
     readonly property alias selectedAccount: d.selectedAccount
+    readonly property alias selectedChains: d.selectedChains
 
     readonly property int notConnectedStatus: 0
     readonly property int connectionSuccessfulStatus: 1
@@ -206,14 +208,21 @@ StatusDialog {
                     Layout.fillWidth: true
                 }
 
-                // TODO: replace with a specialized network selection control
                 NetworkFilter {
+                    id: networkFilter
                     Layout.preferredWidth: accountsDropdown.Layout.preferredWidth
 
                     flatNetworks: d.filteredChains
-                    showAllSelectedText: false
-                    showCheckboxes: false
-                    enabled: d.connectionStatus === root.notConnectedStatus
+                    showTitle: true
+                    multiSelection: true
+                    selectionAllowed: d.connectionStatus === root.notConnectedStatus && d.allChainIdsAggregator.value.length > 1
+                    selection: d.selectedChains
+
+                    onSelectionChanged: {
+                        if (d.selectedChains !== networkFilter.selection) {
+                            d.selectedChains = networkFilter.selection
+                        }
+                    }
                 }
             }
         }
@@ -372,6 +381,7 @@ StatusDialog {
         }
 
         property var selectedAccount: ({})
+        property var selectedChains: allChainIdsAggregator.value
 
         readonly property var filteredChains: LeftJoinModel {
             leftModel: d.dappChains
@@ -379,6 +389,14 @@ StatusDialog {
 
             joinRole: "chainId"
         }
+
+        readonly property FunctionAggregator allChainIdsAggregator: FunctionAggregator {
+            model: d.filteredChains
+            initialValue: []
+            roleName: "chainId"
+
+            aggregateFunction: (aggr, value) => [...aggr, value]
+        } 
 
         readonly property var dappChains: ListModel {}
 

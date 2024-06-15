@@ -46,6 +46,7 @@ SplitView {
                 communityName: communityName.text
                 communityLogo: doodles.checked ? ModelsData.collectibles.doodles : ModelsData.collectibles.mana
                 communityColor: color1.checked ?  "#FFC4E9" : "#f44336"
+                ownerToken.chainId: 42161
 
                 flatNetworks: SortFilterProxyModel {
                     sourceModel: NetworksModel.flatNetworks

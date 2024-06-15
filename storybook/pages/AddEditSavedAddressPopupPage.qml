@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ.Core.Utils 0.1
 import SortFilterProxyModel 0.2
 
 import Storybook 1.0
@@ -42,7 +43,7 @@ SplitView {
                 destroyOnClose: true
                 modal: false
                 closePolicy: Popup.NoAutoClose
-
+                
                 flatNetworks: SortFilterProxyModel {
                     sourceModel: NetworksModel.flatNetworks
                     filters: ValueFilter { roleName: "isTest"; value: false }
@@ -54,6 +55,11 @@ SplitView {
                     }
                     function createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames) {
                         logs.logEvent("createOrUpdateSavedAddress", ["name", "address", "ens", "colorId", "chainShortNames"], arguments)
+                    }
+                    function getNetworkIds(chainSortNames) {
+                        let shortNames = chainSortNames.split(":").filter((shortName) => shortName.length > 0)
+                        const chainIds = shortNames.map((shortName) => ModelUtils.getByKey(NetworksModel.flatNetworks, "shortName", shortName).chainId)
+                        return chainIds.join(":")
                     }
                 }
 

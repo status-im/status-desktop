@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.14
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -79,8 +80,6 @@ StatusScrollView {
     padding: 0
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
-
-    Component.onCompleted: networkSelector.setChain(ownerToken.chainId)
 
     ColumnLayout {
         id: mainLayout
@@ -262,10 +261,6 @@ StatusScrollView {
         property string label
         property string description
 
-        function setChain(chainId) { netFilter.setChain(chainId) }
-
-        readonly property alias currentNetworkName: netFilter.currentValue
-
         Layout.fillWidth: true
         Layout.topMargin: Style.current.padding
         spacing: 8
@@ -282,6 +277,8 @@ StatusScrollView {
             Layout.fillWidth: true
 
             flatNetworks: root.flatNetworks
+            selection: !!ownerToken.chainId ? [ownerToken.chainId] : [SQUtils.ModelUtils.getByKey(flatNetworks, "layer", 2).chainId/*first layer 2 network*/]
+
             multiSelection: false
             control.topPadding: 10
             control.background: Rectangle {
@@ -290,17 +287,17 @@ StatusScrollView {
                 color: "transparent"
                 border.color: Theme.palette.directColor7
             }
-
-            onToggleNetwork: (network) => {
+            
+            onToggleNetwork: {
                 // Set Owner Token network properties:
-                ownerToken.chainId = network.chainId
-                ownerToken.chainName = network.chainName
-                ownerToken.chainIcon = network.iconUrl
+                ownerToken.chainId = singleSelectionItemData.chainId
+                ownerToken.chainName = singleSelectionItemData.chainName
+                ownerToken.chainIcon = singleSelectionItemData.iconUrl
 
                 // Set TMaster Token network properties:
-                tMasterToken.chainId = network.chainId
-                tMasterToken.chainName = network.chainName
-                tMasterToken.chainIcon = network.iconUrl
+                tMasterToken.chainId = singleSelectionItemData.chainId
+                tMasterToken.chainName = singleSelectionItemData.chainName
+                tMasterToken.chainIcon = singleSelectionItemData.iconUrl
             }
         }
     }

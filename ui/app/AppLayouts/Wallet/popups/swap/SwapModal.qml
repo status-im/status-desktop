@@ -119,15 +119,14 @@ StatusDialog {
                     objectName: "networkFilter"
                     Layout.alignment: Qt.AlignVCenter
                     multiSelection: false
-                    showRadioButtons: false
+                    showSelectionIndicator: false
                     showTitle: false
                     flatNetworks: root.swapAdaptor.filteredFlatNetworksModel
-                    onToggleNetwork: (network) => {
-                                         root.swapInputParamsForm.selectedNetworkChainId = network.chainId
-                                     }
-                    Component.onCompleted: {
-                        if(root.swapInputParamsForm.selectedNetworkChainId !== -1)
-                            networkFilter.setChain(root.swapInputParamsForm.selectedNetworkChainId)
+                    selection: [root.swapInputParamsForm.selectedNetworkChainId]
+                    onSelectionChanged: {
+                        if (root.swapInputParamsForm.selectedNetworkChainId !== selection[0]) {
+                            root.swapInputParamsForm.selectedNetworkChainId = selection[0]
+                        }
                     }
                 }
 
@@ -141,7 +140,7 @@ StatusDialog {
                 Connections {
                     target: root.swapInputParamsForm
                     function onSelectedNetworkChainIdChanged() {
-                        networkFilter.setChain(root.swapInputParamsForm.selectedNetworkChainId)
+                        networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
                     }
                 }
             }

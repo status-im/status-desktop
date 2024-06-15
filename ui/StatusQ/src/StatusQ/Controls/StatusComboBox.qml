@@ -17,6 +17,7 @@ Item {
     property alias contentItem: comboBox.contentItem
     property alias comboBoxListViewSection: listView.section
     readonly property alias indicator: statusIndicator
+    property alias popup: comboBox.popup
 
     property alias currentIndex: comboBox.currentIndex
     property alias currentValue: comboBox.currentValue

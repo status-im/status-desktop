@@ -180,12 +180,12 @@ QtObject:
           break
     return networkString
 
-  proc getNetworkIds*(self: Model, shortNames: string): string =
+  proc getNetworkIds*(self: Model, shortNames: string, areTestNetworksEnabled: bool): string =
     var networkIds = ""
     let networksNames = shortNames.split(":")
     for name in networksNames:
       for item in self.delegate.getFlatNetworksList():
-        if item.shortName == name:
+        if item.shortName == name and item.isTest == areTestNetworksEnabled:
           networkIds = networkIds & $item.chainId & ':'
           break
     return networkIds

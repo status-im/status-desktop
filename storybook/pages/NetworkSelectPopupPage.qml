@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
@@ -39,16 +40,7 @@ SplitView {
 
                 Layout.alignment: Qt.AlignHCenter
 
-                flatNetworks: simulatedNimModel
-
-                onToggleNetwork: (network) => {
-                    if(multiSelection) {
-                        simulatedNimModel.toggleNetwork(network)
-                    } else {
-                        lastSingleSelectionLabel.text = `[${network.chainName}] (NL) - ID: ${network.chainId}, Icon: ${network.iconUrl}`
-                    }
-                }
-
+                flatNetworks: availableNetworks
                 multiSelection: multiSelectionCheckbox.checked
             }
 
@@ -56,21 +48,15 @@ SplitView {
             Item {
                 id: popupPlaceholder
 
-                Layout.preferredWidth: networkSelectPopup.width
-                Layout.preferredHeight: networkSelectPopup.height
+                Layout.preferredWidth: networkSelectPopup.implicitWidth
+                Layout.preferredHeight: networkSelectPopup.implicitHeight
 
                 NetworkSelectPopup {
                     id: networkSelectPopup
-
-                    flatNetworks: simulatedNimModel
-
-                    useEnabledRole: false
-
-                    visible: true
+                    flatNetworks: availableNetworks
+                    multiSelection: multiSelectionCheckbox.checked
                     closePolicy: Popup.NoAutoClose
-
-                    // Simulates a network toggle
-                    onToggleNetwork: (network, index) => simulatedNimModel.toggleNetwork(network)
+                    visible: true
                 }
             }
 
@@ -86,15 +72,21 @@ SplitView {
                 }
                 Label {
                     id: lastSingleSelectionLabel
-                    text: "-"
+                    text: selectedEntry.available ? `[${selectedEntry.item.chainName}] - ID: ${selectedEntry.item.chainId}, Icon: ${selectedEntry.item.iconUrl}` : "-"
+                }
+
+                ModelEntry {
+                    id: selectedEntry
+                    sourceModel: availableNetworks
+                    key: "chainId"
                 }
             }
 
             Item {
                 id: singleSelectionPopupPlaceholder
 
-                Layout.preferredWidth: selectPopupLoader.item ? selectPopupLoader.item.width : 0
-                Layout.preferredHeight: selectPopupLoader.item ? selectPopupLoader.item.height : 0
+                Layout.preferredWidth: selectPopupLoader.item ? selectPopupLoader.item.implicitWidth : 0
+                Layout.preferredHeight: selectPopupLoader.item ? selectPopupLoader.item.implicitHeight : 0
 
                 property var currentModel: networkFilter.flatNetworks
                 property int currentIndex: 0
@@ -105,20 +97,15 @@ SplitView {
                     active: false
 
                     sourceComponent: NetworkSelectPopup {
-                        flatNetworks: simulatedNimModel
-
-                        singleSelection {
-                            enabled: true
-                            currentModel: singleSelectionPopupPlaceholder.currentModel
-                            currentIndex: singleSelectionPopupPlaceholder.currentIndex
-                        }
-
-                        onToggleNetwork: (network, index) => {
-                            lastSingleSelectionLabel.text = `[${network.chainName}] - ID: ${network.chainId}, Icon: ${network.iconUrl}`
-                            singleSelectionPopupPlaceholder.currentIndex = index
-                        }
-
+                        flatNetworks: availableNetworks
+                        selection: selectedEntry.available ? [selectedEntry.value] : []
                         onClosed: selectPopupLoader.active = false
+
+                        onSelectionChanged: {
+                            if (selectedEntry.value !== selection[0]) {
+                                selectedEntry.value = selection[0]
+                            }
+                        }
                     }
 
                     onLoaded: item.open()
@@ -143,9 +130,11 @@ SplitView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                model: simulatedNimModel
+                model: availableNetworks
 
                 delegate: ItemDelegate {
+                    required property var model
+
                     width: allNetworksListView.width
                     implicitHeight: delegateRowLayout.implicitHeight
 
@@ -167,20 +156,20 @@ SplitView {
                                 Label { text: `<b>${model.shortName}</b>` }
                                 Label { text: `ID <b>${model.chainId}</b>` }
                                 CheckBox {
-                                    checkState: model.isEnabled ? Qt.Checked : Qt.Unchecked
-                                    tristate: true
-                                    nextCheckState: () => {
-                                        const nextEnabled = (checkState !== Qt.Checked)
-                                        availableNetworks.sourceModel.setProperty(availableNetworks.mapToSource(index), "isEnabled", nextEnabled)
-                                        Qt.callLater(() => { simulatedNimModel.cloneModel(availableNetworks) })
-                                        return nextEnabled ? Qt.Checked : Qt.Unchecked
+                                    checkState: networkSelectPopup.selection.includes(model.chainId) ? Qt.Checked : Qt.Unchecked
+                                    onToggled: {
+                                        let currentSelection = networkSelectPopup.selection
+                                        if (checkState === Qt.Checked && !currentSelection.includes(model.chainId)) {
+                                            currentSelection.push(model.chainId)
+                                        } else {
+                                            currentSelection = currentSelection.filter(id => id !== model.chainId)
+                                        }
+                                        networkSelectPopup.selection = [...currentSelection]
                                     }
                                 }
                             }
                         }
                     }
-
-                    onClicked: allNetworksListView.currentIndex = index
                 }
             }
             CheckBox {
@@ -199,7 +188,15 @@ SplitView {
 
                 text: "Test Networks Mode"
                 checked: false
-                onCheckedChanged: Qt.callLater(simulatedNimModel.cloneModel, availableNetworks)
+            }
+
+            CheckBox {
+                id: allowSelection
+                Layout.margins: 5
+
+                text: "Allow Selection"
+                checked: networkSelectPopup.selectionAllowed
+                onToggled: networkSelectPopup.selectionAllowed = checked
             }
         }
     }
@@ -209,74 +206,6 @@ SplitView {
 
         sourceModel: NetworksModel.flatNetworks
         filters: ValueFilter { roleName: "isTest"; value: testModeCheckbox.checked; }
-    }
-
-    // Keep a clone so that the UX can be modified without affecting the original model
-    CloneModel {
-        id: simulatedNimModel
-
-        sourceModel: availableNetworks
-
-        roles: ["chainId", "layer", "chainName", "isTest", "isEnabled", "iconUrl", "shortName", "chainColor"]
-        rolesOverride: [{ role: "enabledState", transform: (mD) => {
-                return simulatedNimModel.areAllEnabled(sourceModel)
-                        ? NetworkSelectionView.UxEnabledState.AllEnabled
-                        : mD.isEnabled
-                            ? NetworkSelectionView.UxEnabledState.Enabled
-                            : NetworkSelectionView.UxEnabledState.Disabled
-            }
-        }]
-
-        /// Simulate the Nim model
-        function toggleNetwork(network) {
-            const chainId = network.chainId
-            let chainIdOnlyEnabled = true
-            let chainIdOnlyDisabled = true
-            let allEnabled = true
-            for (let i = 0; i < simulatedNimModel.count; i++) {
-                const item = simulatedNimModel.get(i)
-                if(item.enabledState === NetworkSelectionView.UxEnabledState.Enabled) {
-                    if(item.chainId !== chainId) {
-                        chainIdOnlyEnabled = false
-                    }
-                } else if(item.enabledState === NetworkSelectionView.UxEnabledState.Disabled) {
-                    if(item.chainId !== chainId) {
-                        chainIdOnlyDisabled = false
-                    }
-                    allEnabled = false
-                } else {
-                    if(item.chainId === chainId) {
-                        chainIdOnlyDisabled = false
-                        chainIdOnlyEnabled = false
-                    }
-                }
-            }
-            for (let i = 0; i < simulatedNimModel.count; i++) {
-                const item = simulatedNimModel.get(i)
-                if(allEnabled) {
-                    simulatedNimModel.setProperty(i, "enabledState", item.chainId === chainId ? NetworkSelectionView.UxEnabledState.Enabled : NetworkSelectionView.UxEnabledState.Disabled)
-                } else if(chainIdOnlyEnabled || chainIdOnlyDisabled) {
-                    simulatedNimModel.setProperty(i, "enabledState", NetworkSelectionView.UxEnabledState.AllEnabled)
-                } else if(item.chainId === chainId) {
-                    simulatedNimModel.setProperty(i, "enabledState", item.enabledState === NetworkSelectionView.UxEnabledState.Enabled
-                        ? NetworkSelectionView.UxEnabledState.Disabled
-                        :NetworkSelectionView.UxEnabledState.Enabled)
-                }
-                const haveEnabled = item.enabledState !== NetworkSelectionView.UxEnabledState.Disabled
-                if(item.isEnabled !== haveEnabled) {
-                    simulatedNimModel.setProperty(i, "isEnabled", haveEnabled)
-                }
-            }
-        }
-
-        function areAllEnabled(modelToCheck) {
-            for (let i = 0; i < modelToCheck.count; i++) {
-                if(!(modelToCheck.get(i).isEnabled)) {
-                    return false
-                }
-            }
-            return true
-        }
     }
 }
 

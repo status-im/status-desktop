@@ -85,6 +85,7 @@ SplitView {
                 filters: ValueFilter { roleName: "isTest"; value: false }
             }
             function toggleNetwork(chainId) {
+                print ("toggleNetwork called with chainId: " + chainId)
             }
 
             function getAllNetworksSupportedString(hovered) {

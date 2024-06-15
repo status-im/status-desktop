@@ -43,12 +43,8 @@ ColumnLayout {
         readonly property bool privateKeyAccount: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.privateKeyImport: false
         readonly property bool seedImport: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.seedImport: false
         readonly property string preferredSharingNetworks: !!root.account? root.account.preferredSharingChainIds: ""
-        property var preferredSharingNetworksArray: preferredSharingNetworks.split(":").filter(Boolean)
+        property var preferredSharingNetworksArray: preferredSharingNetworks.split(":").filter(Boolean).map(Number)
         property string preferredSharingNetworkShortNames: walletStore.getNetworkShortNames(preferredSharingNetworks)
-     	onPreferredSharingNetworksChanged: {
-            preferredSharingNetworksArray = preferredSharingNetworks.split(":").filter(Boolean)
-            preferredSharingNetworkShortNames = walletStore.getNetworkShortNames(preferredSharingNetworks)
-        }
     }
 
     spacing: 0
@@ -257,11 +253,15 @@ ColumnLayout {
         components: [
             NetworkFilter {
                 flatNetworks: root.walletStore.filteredFlatModel
-                preferredNetworksMode: true
-                preferredSharingNetworks: d.preferredSharingNetworksArray
-                onToggleNetwork: (network) => {
-                                     d.preferredSharingNetworksArray = root.walletStore.processPreferredSharingNetworkToggle(d.preferredSharingNetworksArray, network)
-                                 }
+                multiSelection: true
+                selection: d.preferredSharingNetworksArray
+                
+                onSelectionChanged: {
+                    if (selection !== d.preferredSharingNetworksArray) {
+                        d.preferredSharingNetworksArray = selection
+                    }
+                }
+
                 control.popup.onClosed: {
                     if (!!root.account) {
                         root.walletStore.updateWalletAccountPreferredChains(root.account.address, d.preferredSharingNetworksArray.join(":"))

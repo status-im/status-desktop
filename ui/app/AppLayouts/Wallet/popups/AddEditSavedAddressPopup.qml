@@ -9,8 +9,10 @@ import shared.controls 1.0
 import shared.panels 1.0
 import shared.stores 1.0 as SharedStores
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
@@ -96,6 +98,14 @@ StatusModal {
         property string storedChainShortNames: ""
 
         property bool chainShortNamesDirty: false
+        property var networkSelection: []
+
+        onNetworkSelectionChanged: { 
+            if (d.networkSelection !== networkSelectPopup.selection) {
+                networkSelectPopup.selection = d.networkSelection
+            }
+        }
+
         property bool addressInputValid: d.editMode ||
                                          addressInput.input.dirty &&
                                          d.addressInputIsAddress &&
@@ -183,7 +193,7 @@ StatusModal {
                 d.ens = ""
                 d.address = Constants.zeroAddress
                 d.chainShortNames = ""
-                flatNetworksModelCopy.setEnabledNetworks([])
+                d.networkSelection = []
             }
 
             d.cardsModel.clear()
@@ -458,12 +468,12 @@ StatusModal {
                                 d.ens = ""
                                 d.address = prefixAndAddress.address
                                 d.chainShortNames = prefixAndAddress.prefix
-
-                                let prefixArrWithColumn = d.getPrefixArrayWithColumns(prefixAndAddress.prefix)
-                                if (!prefixArrWithColumn)
-                                    prefixArrWithColumn = []
-
-                                flatNetworksModelCopy.setEnabledNetworks(prefixArrWithColumn)
+                                
+                                Qt.callLater(()=> {
+                                    // Sync chain short names with model. This could result in removing networks from this text
+                                    // Call it later to avoid binding loop warnings
+                                    d.networkSelection = store.getNetworkIds(d.chainShortNames).split(":").filter(Boolean).map(Number)
+                            })
                             }
                         }
 
@@ -491,9 +501,10 @@ StatusModal {
                 }
 
                 function getUnknownPrefixes(prefixes) {
+                    const networksCount = root.flatNetworks.rowCount()
                     let unknownPrefixes = prefixes.filter(e => {
-                                                              for (let i = 0; i < flatNetworksModelCopy.count; i++) {
-                                                                  if (e == flatNetworksModelCopy.get(i).shortName)
+                                                              for (let i = 0; i < networksCount; i++) {
+                                                                  if (e == StatusQUtils.ModelUtils.get(root.flatNetworks, i).shortName)
                                                                   return false
                                                               }
                                                               return true
@@ -595,28 +606,25 @@ StatusModal {
                 defaultItemImageSource: "add"
                 rightButtonVisible: true
 
-                property bool modelUpdateBlocked: false
-
-                function blockModelUpdate(value) {
-                    modelUpdateBlocked = value
-                }
-
                 itemsModel: SortFilterProxyModel {
-                    sourceModel: flatNetworksModelCopy
-                    filters: ValueFilter {
-                        roleName: "isEnabled"
-                        value: true
+                    sourceModel: root.flatNetworks
+                    filters: FastExpressionFilter {
+                        readonly property var filteredNetworks: d.networkSelection
+                        expression: {
+                            return filteredNetworks.length > 0 && filteredNetworks.includes(model.chainId)
+                        }
+                        expectedRoles: ["chainId"]
                     }
 
                     onCountChanged: {
-                        if (!networkSelector.modelUpdateBlocked && d.initialized) {
+                        if (d.initialized) {
                             // Initially source model is empty, filter proxy is also empty, but does
                             // extra work and mistakenly overwrites d.chainShortNames property
                             if (sourceModel.count != 0) {
                                 const prefixAndAddress = Utils.splitToChainPrefixAndAddress(addressInput.plainText)
                                 const syncedPrefix = addressInput.syncChainPrefixWithModel(prefixAndAddress.prefix, this)
-                                d.chainShortNames = syncedPrefix
-                                addressInput.setPlainText(syncedPrefix + prefixAndAddress.address)
+                                if (addressInput.text !== syncedPrefix + prefixAndAddress.address)
+                                    addressInput.setPlainText(syncedPrefix + prefixAndAddress.address)
                             }
                         }
                     }
@@ -624,17 +632,18 @@ StatusModal {
 
                 addButton.highlighted: networkSelectPopup.visible
                 addButton.onClicked: {
-                    networkSelectPopup.openAtPosition(addButton.x, networkSelector.y + addButton.height + Style.current.xlPadding)
+                    networkSelectPopup.openAtPosition(addButton.x, addButton.height + Style.current.xlPadding)
                 }
 
                 onItemClicked: function (item, index, mouse) {
                     // Append first item
                     if (index === 0 && defaultItem.visible)
-                        networkSelectPopup.openAtPosition(defaultItem.x, networkSelector.y + defaultItem.height + Style.current.xlPadding)
+                        networkSelectPopup.openAtPosition(defaultItem.x, defaultItem.height + Style.current.xlPadding)
                 }
 
                 onItemRightButtonClicked: function (item, index, mouse) {
-                    item.modelRef.isEnabled = !item.modelRef.isEnabled
+                    let networkSelection = [...d.networkSelection]
+                    d.networkSelection = networkSelection.filter(n => n !== item.modelRef.chainId)
                     d.chainShortNamesDirty = true
                 }
 
@@ -659,30 +668,34 @@ StatusModal {
                         }
                     }
                 ]
+
+                NetworkSelectPopup {
+                    id: networkSelectPopup
+
+                    function openAtPosition(x, y) {
+                        networkSelectPopup.x = x
+                        networkSelectPopup.y = y
+                        networkSelectPopup.open()
+                    }
+
+                    flatNetworks: root.flatNetworks
+                    selection: d.networkSelection
+                    multiSelection: true
+
+                    onSelectionChanged: {
+                        if (d.networkSelection !== networkSelectPopup.selection) {
+                            d.networkSelection = networkSelectPopup.selection
+                            d.chainShortNamesDirty = true
+                        }
+                    }
+
+                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+                    modal: true
+                    dim: false
+                }
             }
         }
-    }
-
-    NetworkSelectPopup {
-        id: networkSelectPopup
-
-        flatNetworks: flatNetworksModelCopy
-
-        onToggleNetwork: (network) => {
-                             network.isEnabled = !network.isEnabled
-                             d.chainShortNamesDirty = true
-                         }
-
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-        function openAtPosition(xPos, yPos) {
-            x = xPos
-            y = yPos
-            open()
-        }
-
-        modal: true
-        dim: false
     }
 
     rightButtons: [
@@ -695,21 +708,4 @@ StatusModal {
             objectName: "addSavedAddress"
         }
     ]
-
-    CloneModel {
-        id: flatNetworksModelCopy
-
-        sourceModel: root.flatNetworks
-        roles: ["layer", "chainId", "chainColor", "chainName","shortName", "iconUrl"]
-        rolesOverride: [{ role: "isEnabled", transform: (modelData) => Boolean(false) }]
-
-        function setEnabledNetworks(prefixArr) {
-            networkSelector.blockModelUpdate(true)
-            for (let i = 0; i < count; i++) {
-                // Add only those chainShortNames to the model, that have column ":" at the end, making it a valid chain prefix
-                setProperty(i, "isEnabled", prefixArr.includes(get(i).shortName + ":"))
-            }
-            networkSelector.blockModelUpdate(false)
-        }
-    }
 }

@@ -162,29 +162,6 @@ QtObject {
         return networksModuleInst.getNetworkShortNames(chainIds)
     }
 
-    function processPreferredSharingNetworkToggle(preferredSharingNetworks, toggledNetwork) {
-        let prefChains = preferredSharingNetworks
-        if(prefChains.length === root.flatNetworks.count) {
-            prefChains = [toggledNetwork.chainId.toString()]
-        }
-        else if(!prefChains.includes(toggledNetwork.chainId.toString())) {
-            prefChains.push(toggledNetwork.chainId.toString())
-        }
-        else {
-            if(prefChains.length === 1) {
-                prefChains = getAllNetworksChainIds()
-            }
-            else {
-                for(var i = 0; i < prefChains.length;i++) {
-                    if(prefChains[i] === toggledNetwork.chainId.toString()) {
-                        prefChains.splice(i, 1)
-                    }
-                }
-            }
-        }
-        return prefChains
-    }
-
     function copyToClipboard(textToCopy) {
         globalUtils.copyToClipboard(textToCopy)
     }
