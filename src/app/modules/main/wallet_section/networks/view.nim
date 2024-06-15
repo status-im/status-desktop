@@ -95,7 +95,7 @@ QtObject:
     return self.flatNetworks.getNetworkShortNames(preferredNetworks, self.areTestNetworksEnabled)
 
   proc getNetworkIds*(self: View, shortNames: string): string {.slot.} =
-    return self.flatNetworks.getNetworkIds(shortNames)
+    return self.flatNetworks.getNetworkIds(shortNames, self.areTestNetworksEnabled)
 
   proc getBlockExplorerURL*(self: View, chainId: int): string {.slot.} =
     return self.flatNetworks.getBlockExplorerURL(chainId)

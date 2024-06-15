@@ -81,7 +81,7 @@ Item {
 
                 verify(!!delegate)
                 compare(delegate.title, model.chainName)
-                compare(delegate.iconUrl, Style.svg(model.iconUrl))
+                compare(delegate.iconUrl, (model.isTest ? Style.svg(model.iconUrl + "-test") : Style.svg(model.iconUrl)))
                 compare(delegate.showIndicator, controlUnderTest.showIndicator)
                 compare(delegate.multiSelection, controlUnderTest.multiSelection)
                 compare(delegate.checkState, controlUnderTest.selection.includes(model.chainId) ? Qt.Checked : Qt.Unchecked)

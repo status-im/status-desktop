@@ -15,82 +15,9 @@ SplitView {
     id: root
     Logs { id: logs }
 
-    readonly property string ethereumName : "Ethereum Mainnet"
+    readonly property string ethereumName : "Mainnet"
     readonly property string optimismName : "Optimism"
     readonly property string arbitrumName : "Arbitrum"
-
-
-
-    // Keep a clone so that the UX can be modified without affecting the original model
-    CloneModel {
-        id: simulatedNimModel
-
-        sourceModel: SortFilterProxyModel {
-            sourceModel: NetworksModel.flatNetworks
-            filters: ValueFilter { roleName: "isTest"; value: false }
-        }
-
-        roles: ["chainId", "layer", "chainName", "isTest", "isEnabled", "iconUrl", "shortName", "chainColor"]
-        rolesOverride: [{ role: "enabledState", transform: (mD) => {
-                return simulatedNimModel.areAllEnabled(sourceModel)
-                        ? NetworkSelectionView.UxEnabledState.AllEnabled
-                        : mD.isEnabled
-                            ? NetworkSelectionView.UxEnabledState.Enabled
-                            : NetworkSelectionView.UxEnabledState.Disabled
-            }
-        }]
-
-        /// Simulate the Nim model
-        function toggleNetwork(network) {
-            const chainId = network.chainId
-            let chainIdOnlyEnabled = true
-            let chainIdOnlyDisabled = true
-            let allEnabled = true
-            for (let i = 0; i < simulatedNimModel.count; i++) {
-                const item = simulatedNimModel.get(i)
-                if(item.enabledState === NetworkSelectionView.UxEnabledState.Enabled) {
-                    if(item.chainId !== chainId) {
-                        chainIdOnlyEnabled = false
-                    }
-                } else if(item.enabledState === NetworkSelectionView.UxEnabledState.Disabled) {
-                    if(item.chainId !== chainId) {
-                        chainIdOnlyDisabled = false
-                    }
-                    allEnabled = false
-                } else {
-                    if(item.chainId === chainId) {
-                        chainIdOnlyDisabled = false
-                        chainIdOnlyEnabled = false
-                    }
-                }
-            }
-            for (let i = 0; i < simulatedNimModel.count; i++) {
-                const item = simulatedNimModel.get(i)
-                if(allEnabled) {
-                    simulatedNimModel.setProperty(i, "enabledState", item.chainId === chainId ? NetworkSelectionView.UxEnabledState.Enabled : NetworkSelectionView.UxEnabledState.Disabled)
-                } else if(chainIdOnlyEnabled || chainIdOnlyDisabled) {
-                    simulatedNimModel.setProperty(i, "enabledState", NetworkSelectionView.UxEnabledState.AllEnabled)
-                } else if(item.chainId === chainId) {
-                    simulatedNimModel.setProperty(i, "enabledState", item.enabledState === NetworkSelectionView.UxEnabledState.Enabled
-                                                  ? NetworkSelectionView.UxEnabledState.Disabled
-                                                  : NetworkSelectionView.UxEnabledState.Enabled)
-                }
-                const haveEnabled = item.enabledState !== NetworkSelectionView.UxEnabledState.Disabled
-                if(item.isEnabled !== haveEnabled) {
-                    simulatedNimModel.setProperty(i, "isEnabled", haveEnabled)
-                }
-            }
-        }
-
-        function areAllEnabled(modelToCheck) {
-            for (let i = 0; i < modelToCheck.count; i++) {
-                if(!(modelToCheck.get(i).isEnabled)) {
-                    return false
-                }
-            }
-            return true
-        }
-    }
 
     SplitView {
         orientation: Qt.Vertical
@@ -107,30 +34,13 @@ SplitView {
 
                 anchors.centerIn: parent
 
-                flatNetworks: simulatedNimModel
+                flatNetworks: NetworksModel.flatNetworks
 
                 multiSelection: multiSelectionCheckBox.checked
                 showAllSelectedText: ctrlShowAllSelectedText.checked
                 showTitle: ctrlShowTitle.checked
-                showCheckboxes: ctrlShowCheckBoxes.checked
-                showRadioButtons: ctrlShowRadioButtons.checked
-
-                onToggleNetwork: (network) => {
-                    logs.logEvent("onToggleNetwork: " + network.chainName)
-
-                    if(multiSelection) {
-                        simulatedNimModel.toggleNetwork(network)
-                    } else {
-                      if(network.chainName === root.ethereumName)
-                        ethRadioBtn.checked = true
-
-                      else if(network.chainName === root.optimismName)
-                        optRadioBtn.checked = true
-
-                      else if(network.chainName === root.arbitrumName)
-                        arbRadioBtn.checked = true
-                    }
-                }
+                selectionAllowed: selectionAllowedCheckBox.checked
+                showSelectionIndicator: (ctrlShowCheckBoxes.checked && multiSelection) || (ctrlShowRadioButtons.checked && !multiSelection)
             }
         }
 
@@ -154,13 +64,11 @@ SplitView {
             CheckBox {
                 id: multiSelectionCheckBox
                 text: "Multi selection"
-                checked: true
-                onCheckedChanged: if(!checked) ethRadioBtn.checked = true
+                checked: false
             }
 
             CheckBox {
                 id: ctrlShowTitle
-                visible: !multiSelectionCheckBox.checked
                 text: "Show title text"
                 checked: true
             }
@@ -186,6 +94,12 @@ SplitView {
                 checked: true
             }
 
+            CheckBox {
+                id: selectionAllowedCheckBox
+                text: "Selection allowed"
+                checked: true
+            }
+
             ColumnLayout {
                 visible: !multiSelectionCheckBox.checked
                 Label {
@@ -197,19 +111,22 @@ SplitView {
                     id: ethRadioBtn
 
                     text: root.ethereumName
-                    onCheckedChanged: if(checked) networkFilter.setChain(NetworksModel.ethNet)
+                    checked: networkFilter.selection.includes(NetworksModel.ethNet)
+                    onToggled: networkFilter.selection = [NetworksModel.ethNet]
                 }
                 RadioButton {
                     id: optRadioBtn
 
                     text: root.optimismName
-                    onCheckedChanged: if(checked) networkFilter.setChain(NetworksModel.optimismNet)
+                    checked: networkFilter.selection.includes(NetworksModel.optimismNet)
+                    onToggled: networkFilter.selection = [NetworksModel.optimismNet]
                 }
                 RadioButton {
                     id: arbRadioBtn
 
                     text: root.arbitrumName
-                    onCheckedChanged: if(checked) networkFilter.setChain(NetworksModel.arbitrumNet)
+                    checked: networkFilter.selection.includes(NetworksModel.arbitrumNet)
+                    onToggled: networkFilter.selection = [NetworksModel.arbitrumNet]
                 }
             }
         }

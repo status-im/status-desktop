@@ -43,7 +43,7 @@ StatusListItem {
     leftPadding: 16
     rightPadding: 16
     statusListItemTitleArea.anchors.leftMargin: 12
-    highlighted: (d.checkState !== Qt.Unchecked && !showIndicator)
+    highlighted: d.checkState !== Qt.Unchecked && !showIndicator
 
     Binding on bgColor {
         when: highlighted && !root.sensor.containsMouse

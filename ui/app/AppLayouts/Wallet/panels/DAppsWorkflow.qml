@@ -96,7 +96,7 @@ ConnectedDappsButton {
             flatNetworks: root.wcService.flatNetworks
 
             onConnect: {
-                root.wcService.approvePairSession(sessionProposal, dappChains, selectedAccount)
+                root.wcService.approvePairSession(sessionProposal, selectedChains, selectedAccount)
             }
 
             onDecline: {

@@ -124,10 +124,29 @@ Item {
                 Layout.alignment: Qt.AlignTop
 
                 flatNetworks: walletStore.filteredFlatModel
+                onToggleNetwork: walletStore.toggleNetwork(chainId)
 
-                onToggleNetwork: (network) => {
-                                     walletStore.toggleNetwork(network.chainId)
-                                 }
+                Binding on selection {
+                    value: chainIdsAggregator.value
+                }
+
+                FunctionAggregator {
+                    id: chainIdsAggregator
+
+                    readonly property SortFilterProxyModel enabledNetworksModel: SortFilterProxyModel{
+                        sourceModel: walletStore.filteredFlatModel
+                        filters: ValueFilter {
+                            roleName: "isEnabled"
+                            value: true
+                        }
+                    }
+
+                    model: enabledNetworksModel
+                    initialValue: []
+                    roleName: "chainId"
+
+                    aggregateFunction: (aggr, value) => [...aggr, value]
+                }
             }
         }
 

@@ -193,7 +193,7 @@ Rectangle {
 
                     asset.height: root.asset.height
                     asset.width: root.asset.width
-                    asset.name: root.useLetterIdenticons ? model.text : Style.svg(model.iconUrl)
+                    asset.name: root.useLetterIdenticons ? model.text : (model.isTest ? Style.svg(model.iconUrl + "-test") : Style.svg(model.iconUrl))
                     asset.isImage: root.asset.isImage
                     asset.bgColor: root.asset.bgColor
                     asset.isLetterIdenticon: root.useLetterIdenticons

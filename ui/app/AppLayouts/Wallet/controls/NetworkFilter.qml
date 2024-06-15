@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQml 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
@@ -15,6 +16,7 @@ import StatusQ.Controls 0.1
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet.helpers 1.0
+import AppLayouts.Wallet.popups 1.0
 
 import utils 1.0
 
@@ -24,70 +26,28 @@ StatusComboBox {
     id: root
 
     required property var flatNetworks
+    readonly property alias singleSelectionItemData: d.singleSelectionItem.item
+
     property bool multiSelection: true
-    property bool preferredNetworksMode: false
-    property var preferredSharingNetworks: []
+    property bool showSelectionIndicator: true
     property bool showAllSelectedText: true
-    property bool showCheckboxes: true
-    property bool showRadioButtons: true
     property bool showTitle: true
+    property bool selectionAllowed: true
+    property var selection: []
 
-    /// \c network is a network.model.nim entry
-    /// It is called for every toggled network if \c multiSelection is \c true
-    /// If \c multiSelection is \c false, it is called only for the selected network when the selection changes
-    signal toggleNetwork(var network)
+    signal toggleNetwork(int chainId, int index)
 
-    function setChain(chainId) {
-        if(!multiSelection && !!root.flatNetworks && root.flatNetworks.count > 0) {
-            d.currentIndex = NetworkModelHelpers.getChainIndexByChainId(root.flatNetworks, chainId)
-            if(d.currentIndex == -1)
-                d.currentIndex = NetworkModelHelpers.getChainIndexForFirstLayer2Network(root.flatNetworks)
-
-            // Notify change:
-            root.toggleNetwork(ModelUtils.get(root.flatNetworks, d.currentIndex))
+    onSelectionChanged: {
+        if (root.selection !== networkSelectorView.selection) {
+            networkSelectorView.selection = root.selection
         }
     }
-
-    QtObject {
-        id: d
-
-        readonly property string selectedChainName: {
-            root.multiSelection
-            NetworkModelHelpers.getChainName(root.flatNetworks, d.currentIndex)
-        }
-        readonly property string selectedIconUrl: {
-            root.multiSelection
-            NetworkModelHelpers.getChainIconUrl(root.flatNetworks, d.currentIndex)
-        }
-        readonly property bool allSelected: root.preferredNetworksMode ? root.preferredSharingNetworks.length === root.flatNetworks.count :
-                                                                        enabledFlatNetworks.count === root.flatNetworks.count
-        readonly property bool noneSelected: enabledFlatNetworks.count === 0
-
-        // Persist selection between selectPopupLoader reloads
-        property int currentIndex: 0
-
-        property SortFilterProxyModel enabledFlatNetworks: SortFilterProxyModel {
-            sourceModel: root.flatNetworks
-            filters: [
-                ValueFilter { roleName: "isEnabled"; value: true; enabled: !root.preferredNetworksMode },
-                FastExpressionFilter {
-                    expression: root.preferredSharingNetworks.includes(chainId.toString())
-                    expectedRoles: ["chainId"]
-                    enabled: root.preferredNetworksMode
-                }
-            ]
-        }
-    }
-
-    onMultiSelectionChanged: root.setChain()
 
     control.padding: 12
     control.spacing: 0
     control.rightPadding: 36
     control.topPadding: 7
 
-    control.popup.x: root.width - control.popup.width
-    control.popup.width: 300
     control.popup.horizontalPadding: 4
     control.popup.verticalPadding: 4
 
@@ -101,34 +61,20 @@ StatusComboBox {
     control.indicator: SQP.StatusComboboxIndicator {
         x: root.control.mirrored ? root.control.horizontalPadding : root.width - width - root.control.horizontalPadding
         y: root.control.topPadding + (root.control.availableHeight - height) / 2
+        visible: !d.selectionUnavailable
     }
 
     control.contentItem: RowLayout {
-        spacing: Style.current.padding
+        spacing: Style.current.halfPadding
         StatusSmartIdenticon {
             objectName: "contentItemIcon"
             Layout.alignment: Qt.AlignVCenter
             asset.height: 24
             asset.width: 24
             asset.isImage: !root.multiSelection
-            asset.name: !root.multiSelection ? Style.svg(d.selectedIconUrl) : ""
+            asset.name: !root.multiSelection ? Style.svg(d.singleSelectionIconUrl) : ""
             active: !root.multiSelection
             visible: active
-        }
-        StatusBaseText {
-            objectName: "contentItemText"
-            Layout.alignment: Qt.AlignVCenter
-            Layout.fillWidth: true
-            font.pixelSize: Style.current.additionalTextSize
-            font.weight: Font.Medium
-            elide: Text.ElideRight
-            lineHeight: 24
-            lineHeightMode: Text.FixedHeight
-            verticalAlignment: Text.AlignVCenter
-            text: root.multiSelection ? (d.noneSelected ? qsTr("Select networks"): d.allSelected && root.showAllSelectedText ? qsTr("All networks") : "")
-                                      : (root.showTitle ? d.selectedChainName : "")
-            color: Theme.palette.baseColor1
-            visible: !!text
         }
         Row {
             id: row
@@ -136,14 +82,25 @@ StatusComboBox {
             visible: (!d.allSelected || !root.showAllSelectedText) && chainRepeater.count > 0
             Repeater {
                 id: chainRepeater
-                model: root.multiSelection ? d.enabledFlatNetworks: []
+                model: SortFilterProxyModel {
+                    sourceModel: root.multiSelection ? root.flatNetworks : null
+                    filters: FastExpressionFilter {
+                        expression: {
+                            root.selection
+                            return root.selection.includes(model.chainId) 
+                        } 
+                        expectedRoles: ["chainId"] 
+                    }
+                }
                 delegate: StatusRoundedImage {
                     id: delegateItem
+                    required property var model
+                    required property int index
+
                     width: 24
                     height: 24
-                    image.source: Style.svg(model.iconUrl)
+                    image.source: model.isTest ? Style.svg(model.iconUrl + "-test") : Style.svg(model.iconUrl)
                     z: index + 1
-                    visible: root.preferredNetworksMode ? root.preferredSharingNetworks.includes(model.chainId.toString()): image.source !== ""
 
                     image.layer.enabled: index < chainRepeater.count - 1 && row.spacing < 0
                     image.layer.effect: OpacityMask {
@@ -167,31 +124,83 @@ StatusComboBox {
                 }
             }
         }
+
+        StatusBaseText {
+            objectName: "contentItemText"
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillWidth: true
+            font.pixelSize: Style.current.additionalTextSize
+            font.weight: Font.Medium
+            elide: Text.ElideRight
+            lineHeight: 24
+            lineHeightMode: Text.FixedHeight
+            verticalAlignment: Text.AlignVCenter
+            text: d.titleText
+            color: Theme.palette.baseColor1
+            visible: !!text
+        }
     }
 
-    control.popup.contentItem: NetworkSelectionView {
+    popup: NetworkSelectPopup {
+        id: networkSelectorView
+        y: control.height + 4
+        x: root.width - width
+
         flatNetworks: root.flatNetworks
-        preferredSharingNetworks: root.preferredSharingNetworks
-        preferredNetworksMode: root.preferredNetworksMode
-        showCheckboxes: root.showCheckboxes
-        showRadioButtons: root.showRadioButtons
+        selectionAllowed: root.selectionAllowed
+        multiSelection: root.multiSelection
+        showSelectionIndicator: root.showSelectionIndicator
+        selection: root.selection
 
-        implicitWidth: contentWidth
-        implicitHeight: contentHeight
-
-        singleSelection {
-            enabled: !root.multiSelection
-            currentModel: root.flatNetworks
-            currentIndex: d.currentIndex
+        onSelectionChanged: {
+            if (root.selection !== networkSelectorView.selection) {
+                root.selection = networkSelectorView.selection
+            }
         }
 
-        useEnabledRole: false
+        onToggleNetwork: root.toggleNetwork(chainId, index)
+    }
 
-        onToggleNetwork: (network, index) => {
-                             d.currentIndex = index
-                             root.toggleNetwork(network)
-                             if(singleSelection.enabled)
-                                control.popup.close()
-                         }
+    Connections {
+        target: control.popup
+        enabled: !root.multiSelection
+        function onOpened() {
+            if (d.selectionUnavailable)
+                control.popup.close()
+        }
+    }
+
+    QtObject {
+        id: d
+        readonly property bool allSelected: root.selection.length === root.flatNetworks.count
+        readonly property bool noneSelected: root.selection.length === 0
+        readonly property bool oneSelected: root.selection.length === 1
+        readonly property bool selectionUnavailable: root.flatNetworks.count <= 1 && d.oneSelected
+
+        readonly property ModelEntry singleSelectionItem: ModelEntry {
+            sourceModel: d.oneSelected ? root.flatNetworks : null
+            key: "chainId"
+            value: root.selection[0] ?? -1
+        }
+
+        readonly property string singleSelectionIconUrl: singleSelectionItem.item.iconUrl ?? ""
+        readonly property string singleCelectionChainName: singleSelectionItem.item.chainName ?? ""
+
+        readonly property string titleText: {
+            if (d.oneSelected && root.showTitle) {
+                return d.singleCelectionChainName
+            }
+
+            if (root.multiSelection) {
+                if (d.noneSelected) {
+                    return  qsTr("Select networks")
+                }
+                if (d.allSelected && root.showAllSelectedText) {
+                    return qsTr("All networks")
+                }
+            }
+
+            return ""
+        }
     }
 }

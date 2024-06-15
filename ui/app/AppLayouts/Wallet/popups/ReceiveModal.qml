@@ -45,7 +45,7 @@ StatusModal {
     signal updatePreferredChains(string address, string preferredChains)
 
     onSelectedAccountChanged: {
-        d.preferredChainIdsArray = root.selectedAccount.preferredSharingChainIds.split(":").filter(Boolean)
+        d.preferredChainIdsArray = root.selectedAccount.preferredSharingChainIds.split(":").filter(Boolean).map(Number)
     }
 
     width: 556
@@ -158,7 +158,15 @@ StatusModal {
         readonly property bool multiChainView: tabBar.currentIndex === 1
         readonly property int advanceFooterHeight: 88
 
-        property var preferredChainIdsArray: root.selectedAccount.preferredSharingChainIds.split(":").filter(Boolean)
+        property var preferredChainIdsArray: []
+        Binding on preferredChainIdsArray {
+            value: root.selectedAccount.preferredSharingChainIds.split(":").filter(Boolean).map(Number)
+        }
+        onPreferredChainIdsArrayChanged: {
+            if (preferredChainIdsArray !== selectPopup.selection) {
+                selectPopup.selection = preferredChainIdsArray
+            }
+        }
         property var preferredChainIds: d.preferredChainIdsArray.join(":")
 
         readonly property string preferredChainShortNames: d.multiChainView? root.getNetworkShortNames(d.preferredChainIds) : ""
@@ -274,8 +282,8 @@ StatusModal {
                         enabled: false
                         button.visible: false
                         title: model.shortName
-                        asset.name: Style.svg("tiny/" + model.iconUrl)
-                        visible: d.preferredChainIdsArray.includes(model.chainId.toString())
+                        asset.name: model.isTest ? Style.svg(model.iconUrl + "-test") : Style.svg(model.iconUrl)
+                        visible: d.preferredChainIdsArray.includes(model.chainId)
                     }
                 }
             }
@@ -302,16 +310,15 @@ StatusModal {
                     margins: -1 // to allow positioning outside the bounds of the dialog
 
                     flatNetworks: root.store.filteredFlatModel
-                    preferredNetworksMode: true
-                    preferredSharingNetworks: d.preferredChainIdsArray
-
-                    useEnabledRole: false
+                    selection: d.preferredChainIdsArray
+                    multiSelection: true
 
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-                    onToggleNetwork: (network, index) => {
-                                         d.preferredChainIdsArray = store.processPreferredSharingNetworkToggle(d.preferredChainIdsArray, network)
-                                     }
+                    onSelectionChanged: {
+                        if (selection !== d.preferredChainIdsArray)
+                            d.preferredChainIdsArray = selection
+                    }
 
                     onClosed: {
                         root.updatePreferredChains(root.selectedAccount.address, d.preferredChainIds)

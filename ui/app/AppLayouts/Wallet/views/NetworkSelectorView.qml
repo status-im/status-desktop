@@ -21,6 +21,7 @@ StatusListView {
         chainId        [int]             - chain unique identifier
         iconUrl        [string]          - SVG icon name. e.g. "network/Network=Ethereum"
         layer          [int]             - chain layer. e.g. 1 or 2
+        isTest         [bool]            - true if the chain is a testnet
     **/
     property bool showIndicator: true
     property bool multiSelection: false
@@ -71,7 +72,7 @@ StatusListView {
         height: 48
         width: ListView.view.width
         title: model.chainName
-        iconUrl: Style.svg(model.iconUrl)
+        iconUrl: model.isTest ? Style.svg(model.iconUrl + "-test") : Style.svg(model.iconUrl)
         showIndicator: root.showIndicator
         multiSelection: root.multiSelection
         interactive: root.interactive
@@ -100,7 +101,8 @@ StatusListView {
             required property int section
             width: parent.width
             height: active ? 44 : 0
-            sourceComponent: section === 2 ? layer2text: null
+            active: section === 2
+            sourceComponent: layer2text
 
             Component {
                 id: layer2text
