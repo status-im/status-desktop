@@ -288,7 +288,7 @@ QObject {
 
         root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
             root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey, 
-            Constants.SendType.Approve, "", false, root.swapOutputData.rawPaths)
+            Constants.SendType.Approve, "", false, root.swapOutputData.rawPaths, "")
     }
 
     function sendSwapTx() {
@@ -297,6 +297,6 @@ QObject {
 
         root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
             root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey, 
-            Constants.SendType.Swap, "", false, root.swapOutputData.rawPaths)
+            Constants.SendType.Swap, "", false, root.swapOutputData.rawPaths, root.swapFormData.selectedSlippage)
     }
 }

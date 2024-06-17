@@ -343,7 +343,8 @@ QtObject:
     uuid: string,
     routes: seq[TransactionPathDto],
     password: string,
-    sendType: SendType
+    sendType: SendType,
+    slippagePercentage: Option[float]
   ) =
     try:
       var paths: seq[TransactionBridgeDto] = @[]
@@ -364,6 +365,7 @@ QtObject:
         txData = ens_utils.buildTransaction(parseAddress(from_addr), route.amountIn,
           $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
         txData.to = parseAddress(to_addr).some
+        txData.slippagePercentage = slippagePercentage
 
         paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
 
@@ -402,7 +404,8 @@ QtObject:
     password: string,
     sendType: SendType,
     tokenName: string,
-    isOwnerToken: bool
+    isOwnerToken: bool,
+    slippagePercentage: Option[float]
   ) =
     var
       toContractAddress: Address
@@ -473,6 +476,7 @@ QtObject:
           $route.gasFees.maxFeePerGasM
           )
         txData.data = data
+        txData.slippagePercentage = slippagePercentage
 
         let path = self.createPath(route, txData, mtCommand.toAsset, mtCommand.toAddress)
         paths.add(path)
@@ -500,7 +504,8 @@ QtObject:
     usePassword: bool,
     doHashing: bool,
     tokenName: string,
-    isOwnerToken: bool
+    isOwnerToken: bool,
+    slippagePercentage: Option[float]
   ) =
     var finalPassword = ""
     if usePassword:
@@ -532,11 +537,11 @@ QtObject:
 
         let network = self.networkService.getNetworkByChainId(chainID)
         if not network.isNil and network.nativeCurrencySymbol == asset.symbol:
-          self.transferEth(fromAddr, toAddr, asset.symbol, toAsset.symbol, uuid, selectedRoutes, finalPassword, sendType)
+          self.transferEth(fromAddr, toAddr, asset.symbol, toAsset.symbol, uuid, selectedRoutes, finalPassword, sendType, slippagePercentage)
           return
 
       self.transferToken(fromAddr, toAddr, assetKey, asset, toAssetKey, toAsset, uuid, selectedRoutes, finalPassword,
-        sendType, tokenName, isOwnerToken)
+        sendType, tokenName, isOwnerToken, slippagePercentage)
 
     except Exception as e:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))

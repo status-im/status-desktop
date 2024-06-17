@@ -1,4 +1,4 @@
-import tables, NimQml, sequtils, sugar, stint, strutils, chronicles
+import tables, NimQml, sequtils, sugar, stint, strutils, chronicles, options
 
 import ./io_interface, ./view, ./controller, ./network_item, ./transaction_routes, ./suggested_route_item, ./suggested_route_model, ./gas_estimate_item, ./gas_fees_item, ./network_model
 import ../io_interface as delegate_interface
@@ -41,6 +41,7 @@ type TmpSendTransactionDetails = object
   resolvedSignatures: TransactionsSignatures
   tokenName: string
   isOwnerToken: bool
+  slippagePercentage: Option[float]
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -282,8 +283,9 @@ method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, 
     self.controller.authenticate()
 
 method authenticateAndTransferWithPaths*(self: Module, fromAddr: string, toAddr: string, assetKey: string, toAssetKey: string, uuid: string,
-  sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool, rawPaths: string) =
+  sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool, rawPaths: string, slippagePercentage: Option[float]) =
   self.tmpSendTransactionDetails.paths = rawPaths.convertToTransactionPathsDto()
+  self.tmpSendTransactionDetails.slippagePercentage = slippagePercentage
   self.authenticateAndTransfer(fromAddr, toAddr, assetKey, toAssetKey, uuid, sendType, selectedTokenName, selectedTokenIsOwnerToken)
 
 method onUserAuthenticated*(self: Module, password: string, pin: string) =
@@ -297,7 +299,7 @@ method onUserAuthenticated*(self: Module, password: string, pin: string) =
       self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
       self.tmpSendTransactionDetails.assetKey, self.tmpSendTransactionDetails.toAssetKey, self.tmpSendTransactionDetails.uuid,
       self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType, usePassword, doHashing,
-      self.tmpSendTransactionDetails.tokenName, self.tmpSendTransactionDetails.isOwnerToken
+      self.tmpSendTransactionDetails.tokenName, self.tmpSendTransactionDetails.isOwnerToken, self.tmpSendTransactionDetails.slippagePercentage
     )
 
 proc signOnKeycard(self: Module) =
@@ -344,6 +346,7 @@ method suggestedRoutes*(self: Module, accountFrom: string, accountTo: string, am
 
 method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) =
   self.tmpSendTransactionDetails.paths = suggestedRoutes.best
+  self.tmpSendTransactionDetails.slippagePercentage = none(float)
   let paths = suggestedRoutes.best.map(x => self.convertTransactionPathDtoToSuggestedRouteItem(x))
   let suggestedRouteModel = newSuggestedRouteModel()
   suggestedRouteModel.setItems(paths)

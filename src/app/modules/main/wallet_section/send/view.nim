@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, stint, sugar
+import NimQml, sequtils, strutils, stint, sugar, options
 
 import ./io_interface, ./accounts_model, ./account_item, ./network_model, ./network_item, ./suggested_route_item, ./transaction_routes
 import app/modules/shared_models/collectibles_model as collectibles
@@ -340,6 +340,14 @@ QtObject:
       SendType(sendType), lockedInAmounts)
   
   proc authenticateAndTransferWithParameters*(self: View, uuid: string, accountFrom: string, accountTo: string, token: string, toToken: string,
-    sendType: int, tokenName: string, tokenIsOwnerToken: bool, rawPaths: string) {.slot.} =
+    sendTypeInt: int, tokenName: string, tokenIsOwnerToken: bool, rawPaths: string, slippagePercentageString: string) {.slot.} =
+
+    let sendType = SendType(sendTypeInt)
+
+    var slippagePercentage: Option[float]
+    if sendType == SendType.Swap:
+      if slippagePercentageString.len > 0:
+        slippagePercentage = slippagePercentageString.parseFloat().some
+
     self.delegate.authenticateAndTransferWithPaths(accountFrom, accountTo, token,
-      toToken, uuid, SendType(sendType), tokenName, tokenIsOwnerToken, rawPaths)
+      toToken, uuid, sendType, tokenName, tokenIsOwnerToken, rawPaths, slippagePercentage)

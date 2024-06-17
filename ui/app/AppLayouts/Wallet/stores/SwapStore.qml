@@ -33,9 +33,9 @@ QtObject {
     }
 
     function authenticateAndTransfer(uuid, accountFrom, accountTo,
-            tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {
+            tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths, slippagePercentage) {
         root.walletSectionSendInst.authenticateAndTransferWithParameters(uuid, accountFrom, accountTo,
-            tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths)
+            tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths, slippagePercentage)
     }
 
     function getWei2Eth(wei, decimals) {
