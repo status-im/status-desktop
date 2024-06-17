@@ -6,17 +6,17 @@ from gui.components.settings.sync_new_device_popup import SyncNewDevicePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
-from gui.objects_map import names
+from gui.objects_map import settings_names, settings_names
 
 
 class SyncingSettingsView(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_SyncingView)
-        self._setup_syncing_button = Button(names.settings_Setup_Syncing_StatusButton)
-        self._backup_data_button = Button(names.settings_Backup_Data_StatusButton)
-        self._sync_new_device_instructions_header = TextLabel(names.settings_Sync_New_Device_Header)
-        self._sync_new_device_instructions_subtitle = TextLabel(names.settings_Sync_New_Device_SubTitle)
+        super().__init__(settings_names.mainWindow_SyncingView)
+        self._setup_syncing_button = Button(settings_names.settings_Setup_Syncing_StatusButton)
+        self._backup_data_button = Button(settings_names.settings_Backup_Data_StatusButton)
+        self._sync_new_device_instructions_header = TextLabel(settings_names.settings_Sync_New_Device_Header)
+        self._sync_new_device_instructions_subtitle = TextLabel(settings_names.settings_Sync_New_Device_SubTitle)
 
     @allure.step('Checking instructions elements: back up button presence')
     def is_backup_button_present(self):

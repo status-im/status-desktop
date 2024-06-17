@@ -19,26 +19,26 @@ from gui.elements.button import Button
 from gui.elements.list import List
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
-from gui.objects_map import names
+from gui.objects_map import wallet_names, settings_names, names
 from scripts.utils.decorators import close_exists
 
 
 class WalletScreen(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_WalletLayout)
+        super().__init__(wallet_names.mainWindow_WalletLayout)
         self.left_panel: LeftPanel = LeftPanel()
 
 
 class LeftPanel(QObject):
 
     def __init__(self):
-        super(LeftPanel, self).__init__(names.mainWallet_LeftTab)
-        self._saved_addresses_button = Button(names.mainWallet_Saved_Addresses_Button)
-        self._wallet_account_item = QObject(names.walletAccount_StatusListItem)
-        self._add_account_button = Button(names.mainWallet_Add_Account_Button)
-        self._all_accounts_button = Button(names.mainWallet_All_Accounts_Button)
-        self._all_accounts_balance = TextLabel(names.mainWallet_All_Accounts_Balance)
+        super(LeftPanel, self).__init__(wallet_names.mainWallet_LeftTab)
+        self._saved_addresses_button = Button(wallet_names.mainWallet_Saved_Addresses_Button)
+        self._wallet_account_item = QObject(wallet_names.walletAccount_StatusListItem)
+        self._add_account_button = Button(wallet_names.mainWallet_Add_Account_Button)
+        self._all_accounts_button = Button(wallet_names.mainWallet_All_Accounts_Button)
+        self._all_accounts_balance = TextLabel(wallet_names.mainWallet_All_Accounts_Balance)
 
     @allure.step('Get total balance visibility state')
     def is_total_balance_visible(self) -> bool:
@@ -136,17 +136,17 @@ class LeftPanel(QObject):
 class SavedAddressesView(QObject):
 
     def __init__(self):
-        super(SavedAddressesView, self).__init__(names.mainWindow_SavedAddressesView)
-        self._add_new_address_button = Button(names.mainWallet_Saved_Addresses_Add_Buttton)
-        self._address_list_item = QObject(names.savedAddressView_Delegate)
-        self._addresses_area = QObject(names.savedAddresses_area)
-        self._addresses_list_view = QObject(names.mainWallet_Saved_Addresses_List)
-        self._send_button = Button(names.send_StatusRoundButton)
-        self._open_menu_button = Button(names.savedAddressView_Delegate_menuButton)
-        self._saved_address_item = QObject(names.savedAddressView_Delegate)
+        super(SavedAddressesView, self).__init__(wallet_names.mainWindow_SavedAddressesView)
+        self._add_new_address_button = Button(wallet_names.mainWallet_Saved_Addresses_Add_Buttton)
+        self._address_list_item = QObject(wallet_names.savedAddressView_Delegate)
+        self._addresses_area = QObject(wallet_names.savedAddresses_area)
+        self._addresses_list_view = QObject(wallet_names.mainWallet_Saved_Addresses_List)
+        self._send_button = Button(wallet_names.send_StatusRoundButton)
+        self._open_menu_button = Button(wallet_names.savedAddressView_Delegate_menuButton)
+        self._saved_address_item = QObject(wallet_names.savedAddressView_Delegate)
 
     @property
-    @allure.step('Get saved addresses names')
+    @allure.step('Get saved addresses wallet_names')
     def address_names(self):
         address_names = []
         for child in walk_children(self._addresses_list_view.object):
@@ -193,9 +193,9 @@ class SavedAddressesView(QObject):
 class ManageTokensView(QObject):
 
     def __init__(self):
-        super(ManageTokensView, self).__init__(names.settingsContentBaseScrollView_manageTokensView_ManageTokensView)
-        self._window_item = QObject(names.statusDesktop_mainWindow)
-        self._token_item = QObject(names.settingsContentBaseScrollView_manageTokensDelegate_ManageTokensDelegate)
+        super(ManageTokensView, self).__init__(wallet_names.settingsContentBaseScrollView_manageTokensView_ManageTokensView)
+        self._window_item = QObject(wallet_names.statusDesktop_mainWindow)
+        self._token_item = QObject(wallet_names.settingsContentBaseScrollView_manageTokensDelegate_ManageTokensDelegate)
 
     @property
     @allure.step('Get tokens')
@@ -220,17 +220,17 @@ class ManageTokensView(QObject):
 class WalletAccountView(QObject):
 
     def __init__(self):
-        super(WalletAccountView, self).__init__(names.mainWindow_StatusSectionLayout_ContentItem)
-        self._account_name_text_label = TextLabel(names.mainWallet_Account_Name)
+        super(WalletAccountView, self).__init__(settings_names.mainWindow_StatusSectionLayout_ContentItem)
+        self._account_name_text_label = TextLabel(wallet_names.mainWallet_Account_Name)
         self._addresses_panel = QObject(names.mainWallet_Address_Panel)
-        self._send_button = Button(names.mainWindow_Send_Button)
-        self._filter_button = Button(names.filterButton_StatusFlatButton)
-        self._assets_combobox = List(names.cmbTokenOrder_SortOrderComboBox)
-        self._assets_tab_button = Button(names.rightSideWalletTabBar_Assets_StatusTabButton)
-        self._collectibles_tab_button = Button(names.rightSideWalletTabBar_Collectibles_StatusTabButton)
-        self._asset_item_delegate = QObject(names.itemDelegate)
-        self._asset_item = QObject(names.assetView_TokenListItem_TokenDelegate)
-        self._arrow_icon = QObject(names.arrow_icon_StatusIcon)
+        self._send_button = Button(wallet_names.mainWindow_Send_Button)
+        self._filter_button = Button(wallet_names.filterButton_StatusFlatButton)
+        self._assets_combobox = List(wallet_names.cmbTokenOrder_SortOrderComboBox)
+        self._assets_tab_button = Button(wallet_names.rightSideWalletTabBar_Assets_StatusTabButton)
+        self._collectibles_tab_button = Button(wallet_names.rightSideWalletTabBar_Collectibles_StatusTabButton)
+        self._asset_item_delegate = QObject(wallet_names.itemDelegate)
+        self._asset_item = QObject(wallet_names.assetView_TokenListItem_TokenDelegate)
+        self._arrow_icon = QObject(wallet_names.arrow_icon_StatusIcon)
 
     @property
     @allure.step('Get name of account')
