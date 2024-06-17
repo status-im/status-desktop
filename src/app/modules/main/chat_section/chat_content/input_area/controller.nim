@@ -13,6 +13,8 @@ import ../../../../../core/eventemitter
 import ../../../../../core/unique_event_emitter
 import ./link_preview_cache
 
+const MESSAGE_LINK_PREVIEWS_LIMIT = 5
+
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
@@ -193,6 +195,9 @@ proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
       else:
         otherAllowedUrls.add(metadata.url)
         allAllowedUrls.add(metadata.url)
+      continue
+
+    if allAllowedUrls.len == MESSAGE_LINK_PREVIEWS_LIMIT:
       continue
 
     # Split unfurling into 2 packs, which will be different RPCs.
