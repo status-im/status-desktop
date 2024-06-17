@@ -126,7 +126,7 @@ def test_mint_owner_token(keys_screen, main_window, user_account):
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Start minting'):
-        start_minting = select_network.click_mint()
+        start_minting = edit_owner_token_view.click_mint()
 
     with step('Verify fee text and sign transaction'):
         assert start_minting.get_fee_title == 'Mint ' + community_params[
