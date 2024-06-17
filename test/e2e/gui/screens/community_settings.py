@@ -1,3 +1,4 @@
+import pathlib
 import time
 import typing
 
@@ -180,12 +181,14 @@ class EditCommunityView(QObject):
 
     @allure.step('Set community logo without file upload dialog')
     def set_logo_without_file_upload_dialog(self, path):
-        self._cropped_image_edit_logo_item.object.cropImage('file://' + str(path))
+        fileuri = pathlib.Path(str(path)).as_uri()
+        self._cropped_image_edit_logo_item.object.cropImage(fileuri)
         return PictureEditPopup()
 
     @allure.step('Set community banner without file upload dialog')
     def set_banner_without_file_upload_dialog(self, path):
-        self._cropped_image_edit_banner_item.object.cropImage('file://' + str(path))
+        fileuri = pathlib.Path(str(path)).as_uri()
+        self._cropped_image_edit_banner_item.object.cropImage(fileuri)
         return PictureEditPopup()
 
     @property

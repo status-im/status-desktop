@@ -1,4 +1,5 @@
 import logging
+import pathlib
 import time
 import typing
 from abc import abstractmethod
@@ -333,7 +334,8 @@ class YourProfileView(OnboardingView):
     @allure.step('Set profile picture without file upload dialog')
     def set_profile_picture(self, path) -> PictureEditPopup:
         image_cropper = driver.waitForObjectExists(self._image_crop_workflow.real_name)
-        image_cropper.cropImage(('file://' + str(path)))
+        fileuri = pathlib.Path(str(path)).as_uri()
+        image_cropper.cropImage(fileuri)
         return PictureEditPopup()
 
     @allure.step('Set profile picture with file dialog upload')

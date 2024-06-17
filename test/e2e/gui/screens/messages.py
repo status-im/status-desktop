@@ -1,3 +1,4 @@
+import pathlib
 import time
 import typing
 from typing import List
@@ -420,7 +421,8 @@ class ChatMessagesView(QObject):
 
     @allure.step('Send image to chat')
     def send_image_to_chat(self, path):
-        self._chat_input.object.selectImageString('file://' + str(path))
+        fileuri = pathlib.Path(str(path)).as_uri()
+        self._chat_input.object.selectImageString(fileuri)
         for i in range(2):
             driver.nativeType('<Return>')
 

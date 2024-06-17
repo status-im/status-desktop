@@ -1,4 +1,5 @@
 import logging
+import pathlib
 import typing
 
 import allure
@@ -131,13 +132,15 @@ class CreateCommunityPopup(BasePopup):
     @allure.step('Set community logo without file upload dialog')
     def set_logo_without_file_upload_dialog(self, path):
         self._scroll.vertical_scroll_to(self._add_logo_button)
-        self._cropped_image_logo_item.object.cropImage('file://' + str(path))
+        fileuri = pathlib.Path(str(path)).as_uri()
+        self._cropped_image_logo_item.object.cropImage(fileuri)
         return PictureEditPopup()
 
     @allure.step('Set community banner without file upload dialog')
     def set_banner_without_file_upload_dialog(self, path):
         self._scroll.vertical_scroll_to(self._add_banner_button)
-        self._cropped_image_banner_item.object.cropImage('file://' + str(path))
+        fileuri = pathlib.Path(str(path)).as_uri()
+        self._cropped_image_banner_item.object.cropImage(fileuri)
         return PictureEditPopup()
 
     @allure.step('Get community color')
