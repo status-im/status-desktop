@@ -79,7 +79,7 @@ QtObject {
     }
 
     function linkTypeToIcon(linkType) {
-        if (linkType === Constants.socialLinkType.twitter) return "twitter"
+        if (linkType === Constants.socialLinkType.twitter) return "xtwitter"
         if (linkType === Constants.socialLinkType.personalSite) return "language"
         if (linkType === Constants.socialLinkType.github) return "github"
         if (linkType === Constants.socialLinkType.youtube) return "youtube"
