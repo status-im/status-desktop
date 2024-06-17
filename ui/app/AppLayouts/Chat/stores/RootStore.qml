@@ -490,8 +490,7 @@ QtObject {
     }
 
     // Needed for TX in chat for stickers and via contact
-
-    property var accounts: walletSectionSendInst.accounts
+    property var accounts: walletSectionAccounts.accounts
     property string currentCurrency: walletSection.currentCurrency
     property CurrenciesStore currencyStore: CurrenciesStore {}
     property var savedAddressesModel: walletSectionSavedAddresses.model

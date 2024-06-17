@@ -39,8 +39,13 @@ QtObject {
     property var overview: walletSectionOverview
     property bool balanceLoading: overview.balanceLoading
     property var accounts: walletSectionAccounts.accounts
-    property var receiveAccounts: walletSectionSend.accounts
-    property var selectedReceiveAccount: walletSectionSend.selectedReceiveAccount
+    property var selectedReceiveAccount: {
+        const acc = SQUtils.ModelUtils.getByKey(accounts, "address", walletSectionSend.selectedReceiveAccountAddress)
+        if (!acc) {
+            return SQUtils.ModelUtils.get(accounts, 0)
+        }
+        return acc
+    }
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
@@ -74,7 +79,7 @@ QtObject {
     }
 
     property var nonWatchAccounts: SortFilterProxyModel {
-        sourceModel: receiveAccounts
+        sourceModel: accounts
         proxyRoles: [
             ExpressionRole {
                 name: "color"
@@ -440,8 +445,8 @@ QtObject {
         walletSection.runEditAccountPopup(address)
     }
 
-    function switchReceiveAccount(index) {
-        walletSectionSend.switchReceiveAccount(index)
+    function switchReceiveAccount(model, index) {
+        walletSectionSend.switchReceiveAccount(SQUtils.ModelUtils.get(accounts, index, "address"))
     }
 
     function toggleWatchOnlyAccounts() {

@@ -199,7 +199,7 @@ StatusDialog {
         selectedAccount: !!popup.preSelectedAccount ? popup.preSelectedAccount: {}
         getNetworkShortNames: function(chainIds) {return store.getNetworkShortNames(chainIds)}
         onSelectedIndexChanged: {
-            store.switchSenderAccount(selectedIndex)
+            store.switchSenderAccount(ModelUtils.get(model, selectedIndex, "address"))
             if (d.isSelectedHoldingValidAsset) {
                 d.setSelectedHoldingId(d.selectedHolding.symbol, d.selectedHoldingType)
             }

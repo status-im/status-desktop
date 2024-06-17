@@ -10,10 +10,8 @@ import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/keycard/service as keycard_service
 import app_service/service/keycard/constants as keycard_constants
-import app/modules/shared/wallet_utils
 import app_service/service/transaction/dto
 import app/modules/shared_models/currency_amount
-import app_service/service/token/service
 import app_service/service/network/network_item as network_service_item
 
 import app/modules/shared_modules/collectibles/controller as collectiblesc
@@ -55,9 +53,6 @@ type
     tmpSendTransactionDetails: TmpSendTransactionDetails
     tmpPin: string
     tmpTxHashBeingProcessed: string
-    senderCurrentAccountIndex: int
-    # To-do we should create a dedicated module Receive
-    receiveCurrentAccountIndex: int
 
 # Forward declaration
 method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount
@@ -86,8 +81,6 @@ proc newModule*(
   result.view = newView(result)
 
   result.moduleLoaded = false
-  result.senderCurrentAccountIndex = 0
-  result.receiveCurrentAccountIndex = 0
 
 method delete*(self: Module) =
   self.view.delete
@@ -171,30 +164,6 @@ proc convertTransactionPathDtoToSuggestedRouteItem(self: Module, path: Transacti
     approvalGasFees = path.approvalGasFees
     )
 
-method refreshWalletAccounts*(self: Module) =
-  let walletAccounts = self.controller.getWalletAccounts()
-  let currency = self.controller.getCurrentCurrency()
-  let enabledChainIds = self.controller.getEnabledChainIds()
-  let currencyFormat = self.controller.getCurrencyFormat(currency)
-  let chainIds = self.controller.getChainIds()
-  let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
-
-  let items = walletAccounts.map(w => (block:
-    let currencyBalance = self.controller.getTotalCurrencyBalance(@[w.address], enabledChainIds)
-    walletAccountToWalletSendAccountItem(
-      w,
-      chainIds,
-      enabledChainIds,
-      currencyBalance,
-      currencyFormat,
-      areTestNetworksEnabled,
-    )
-  ))
-
-  self.view.setItems(items)
-  self.view.switchSenderAccount(self.senderCurrentAccountIndex)
-  self.view.switchReceiveAccount(self.receiveCurrentAccountIndex)
-
 proc refreshNetworks*(self: Module) =
   let networks = self.controller.getCurrentNetworks()
   let fromNetworks = networks.map(x => self.convertNetworkDtoToNetworkItem(x))
@@ -205,42 +174,8 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionSend", newQVariant(self.view))
 
   # these connections should be part of the controller's init method
-  self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
-
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
     self.refreshNetworks()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
-    let args = KeycardArgs(e)
-    if not args.success:
-      return
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
-    self.refreshWalletAccounts()
 
   self.controller.init()
   self.view.load()
@@ -249,7 +184,6 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  self.refreshWalletAccounts()
   self.refreshNetworks()
   self.moduleLoaded = true
   self.delegate.sendModuleDidLoad()
@@ -363,22 +297,18 @@ method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   if addresses.len == 0:
     return
-  self.view.switchSenderAccountByAddress(addresses[0])
-  self.view.switchReceiveAccountByAddress(addresses[0])
+  self.view.switchSenderAccount(addresses[0])
+  self.view.switchReceiveAccount(addresses[0])
 
 proc updateCollectiblesFilter*(self: Module) =
-  let senderAddress = self.view.getSenderAddressByIndex(self.senderCurrentAccountIndex)
+  let senderAddress = self.view.getSelectedSenderAccountAddress()
   let addresses = @[senderAddress]
   let chainIds = self.controller.getChainIds()
   self.collectiblesController.setFilterAddressesAndChains(addresses, chainIds)
   self.nestedCollectiblesModel.setAddress(senderAddress)
 
-method setSelectedSenderAccountIndex*(self: Module, index: int) =
-  self.senderCurrentAccountIndex = index
+method notifySelectedSenderAccountChanged*(self: Module) =
   self.updateCollectiblesFilter()
-
-method setSelectedReceiveAccountIndex*(self: Module, index: int) =
-  self.receiveCurrentAccountIndex = index
 
 method getCollectiblesModel*(self: Module): collectibles.Model =
   return self.collectiblesController.getModel()

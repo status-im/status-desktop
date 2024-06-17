@@ -1950,7 +1950,7 @@ Item {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return null
                 }
-                return WalletStore.RootStore.receiveAccounts
+                return WalletStore.RootStore.accounts
             }
 
             selectedAccount: {
@@ -1964,7 +1964,7 @@ Item {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return
                 }
-                WalletStore.RootStore.switchReceiveAccount(selectedIndex)
+                WalletStore.RootStore.switchReceiveAccount(accounts, selectedIndex)
             }
 
             onUpdatePreferredChains: {

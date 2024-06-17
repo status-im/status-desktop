@@ -50,6 +50,7 @@ proc switchAccount*(self: Module, accountIndex: int) =
   let keycardAccount = self.controller.isKeycardAccount(walletAccount)
   let currency = self.controller.getCurrentCurrency()
   let enabledChainIds = self.controller.getEnabledChainIds()
+  let chainIds = self.controller.getChainIds()
   let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
   let currencyBalance = self.controller.getTotalCurrencyBalance(walletAccount.address, enabledChainIds)
@@ -57,6 +58,8 @@ proc switchAccount*(self: Module, accountIndex: int) =
   let accountItem = walletAccountToWalletAccountsItem(
     walletAccount,
     keycardAccount,
+    chainIds,
+    enabledChainIds,
     currencyBalance,
     currencyFormat,
     areTestNetworksEnabled,
