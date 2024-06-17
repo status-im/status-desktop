@@ -9,7 +9,7 @@ from allure_commons._allure import step
 import driver
 from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, \
     LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
-from gui.screens.messages import MessagesScreen, ToolBar, ChatMessagesView
+from gui.screens.messages import MessagesScreen, ToolBar
 from tests.settings.settings_messaging import marks
 
 import configs.testpath
@@ -29,6 +29,9 @@ def test_1x1_chat(multiple_instances):
     messages_screen = MessagesScreen()
     emoji = 'sunglasses'
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
+    path = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
+    EMOJI_PATHES = [HEART_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, LAUGHING_EMOJI_PATH,
+                    SAD_EMOJI_PATH, ANGRY_EMOJI_PATH]
 
     with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
@@ -50,10 +53,8 @@ def test_1x1_chat(multiple_instances):
             aut_one.attach()
             main_window.prepare()
             settings = main_window.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
+            contact_request_form = settings.left_panel.open_messaging_settings().open_contacts_settings().open_contact_request_form()
+            contact_request_form.send(chat_key, f'Hello {user_two.name}')
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name} via activity center'):
             aut_two.attach()
@@ -70,16 +71,17 @@ def test_1x1_chat(multiple_instances):
             chat = main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_two.name)
             chat_message1 = \
                 ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
-            ChatMessagesView().send_message_to_group_chat(chat_message1)
+            messages_screen.group_chat.send_message_to_group_chat(chat_message1)
             message = chat.find_message_by_text(chat_message1, 0)
             additional_text = '?'
             time.sleep(5)
             message_actions = message.hover_message()
             message_actions.edit_message(additional_text)
-            message_objects = messages_screen.chat.messages(0)
-            message_items = [message.text for message in message_objects]
-            for message_item in message_items:
-                assert chat_message1 + additional_text in message_item
+            message_object = messages_screen.chat.messages(0)[0]
+            assert chat_message1 + additional_text in message_object.text, \
+                f"Message text is not found in last message"
+            assert message_object.delegate_button.object.isEdited, \
+                f"Message status was not changed to edited"
             main_window.hide()
 
         with step(f'User {user_two.name} opens 1x1 chat with {user_one.name}'):
@@ -91,47 +93,42 @@ def test_1x1_chat(multiple_instances):
             chat_message2 = \
                 ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
             messages_screen.group_chat.send_message_to_group_chat(chat_message2)
-            message_objects = messages_screen.chat.messages(0)
-            message_items = [message.text for message in message_objects]
-            for message_item in message_items:
-                assert chat_message2 in message_item
-            message_objects = messages_screen.chat.messages(1)
-            message_items = [message.text for message in message_objects]
-            for message_item in message_items:
-                assert chat_message1 in message_item
+            message_object_0 = messages_screen.chat.messages(0)[0]
+            assert chat_message2 in message_object_0.text, \
+                f"Message text is not found in the last message"
+            message_object_1 = messages_screen.chat.messages(1)[0]
+            assert chat_message1 in message_object_1.text,\
+                f"Message text is not found in the last message"
 
         with step(f'User {user_two.name} send emoji to {user_one.name}'):
             messages_screen.group_chat.send_emoji_to_chat(emoji)
-            message_objects = messages_screen.chat.messages(0)
-            message_items = [message.text for message in message_objects]
-            for message_item in message_items:
-                assert '😎' in message_item
+            message_object = messages_screen.chat.messages(0)[0]
+            assert '😎' in message_object.text
 
         with step(f'User {user_two.name} send image to {user_one.name} and verify it was sent'):
-            path = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
             messages_screen.group_chat.send_image_to_chat(str(path))
             message_object = messages_screen.chat.messages(0)[0]
-            assert message_object.image_message.visible
+            assert message_object.image_message.visible,\
+                f"Message text is not found in the last message"
             main_window.hide()
 
         with step(f'User {user_one.name}, received reply from {user_two.name}'):
             aut_one.attach()
             main_window.prepare()
             time.sleep(4)
-            message_objects = messages_screen.chat.messages(2)
-            message_items = [message.text for message in message_objects]
-            for message_item in message_items:
-                assert driver.waitFor(lambda: chat_message2 in message_item, timeout)
+            message_object = messages_screen.chat.messages(2)[0]
+            assert driver.waitFor(lambda: chat_message2 in message_object.text),\
+                f"Message text is not found in the last message"
 
         with step(f'User {user_one.name}, received emoji from {user_two.name}'):
-            message_objects = messages_screen.chat.messages(1)
-            message_items = [message.text for message in message_objects]
-            for message_item in message_items:
-                assert driver.waitFor(lambda: '😎' in message_item, timeout)
+            message_object = messages_screen.chat.messages(1)[0]
+            assert driver.waitFor(lambda: '😎' in message_object.text, timeout),\
+                f"Message text is not found in the last message"
 
         with step(f'User {user_one.name}, received image from {user_two.name}'):
             message_object = messages_screen.chat.messages(0)[0]
-            assert message_object.image_message.visible
+            assert message_object.image_message.visible,\
+                f"There is no image in the last message"
 
         with step(f'User {user_one.name}, reply to own message and verify that message displayed as a reply'):
             chat_message_reply = \
@@ -139,15 +136,15 @@ def test_1x1_chat(multiple_instances):
             message.hover_message().reply_own_message(chat_message_reply)
             chat = main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_two.name)
             message = chat.find_message_by_text(chat_message_reply, 0)
-            assert message.reply_corner.exists
+            assert message.reply_corner.exists,\
+                f"Last message does not have reply corner"
 
         with step(f'User {user_one.name}, add reaction to the last message and verify it was added'):
             occurrence = random.randint(1, 6)
             message.open_context_menu_for_message().add_reaction_to_message(occurrence)
-            EMOJI_PATHES = [HEART_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, LAUGHING_EMOJI_PATH,
-                            SAD_EMOJI_PATH, ANGRY_EMOJI_PATH]
             assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] == message.get_emoji_reactions_pathes()[0],
-                                  timeout)
+                                  timeout),\
+                f"Emoji reaction is not correct"
             main_window.hide()
 
         with step(f'User {user_two.name}, also see emoji reaction on the last message'):
@@ -155,7 +152,8 @@ def test_1x1_chat(multiple_instances):
             main_window.prepare()
             message = chat.find_message_by_text(chat_message_reply, 0)
             assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] == message.get_emoji_reactions_pathes()[0],
-                                  timeout)
+                                  timeout),\
+                f"Emoji reaction is not correct"
             main_window.hide()
 
         with step(f'User {user_one.name}, delete own message and verify it was deleted'):
@@ -167,12 +165,13 @@ def test_1x1_chat(multiple_instances):
         with step(f'User {user_one.name}, cannot delete {user_two.name} message'):
             message = messages_screen.left_panel.click_chat_by_name(user_two.name).find_message_by_text(chat_message2,
                                                                                                         3)
-            assert not message.hover_message().is_delete_button_visible()
+            assert not message.hover_message().is_delete_button_visible(),\
+                f"Delete button is visible although it should not be"
 
         with step(f'User {user_one.name}, clears chat history'):
-            ChatMessagesView().clear_history()
+            messages_screen.group_chat.clear_history()
             messages = messages_screen.chat.messages(index=None)
-            assert len(messages) == 0
+            assert len(messages) == 0, f"The history of messages is not empty"
             assert user_two.name in messages_screen.left_panel.get_chats_names, f'{chat} is not present in chats list'
             main_window.hide()
 
@@ -181,12 +180,12 @@ def test_1x1_chat(multiple_instances):
             main_window.prepare()
             messages_screen.left_panel.click_chat_by_name(user_one.name)
             messages = messages_screen.chat.messages(index=None)
-            assert len(messages) != 0
+            assert len(messages) != 0, f"The history of messages is empty"
 
         with step(f'User {user_two.name} close chat'):
             aut_two.attach()
             main_window.prepare()
-            ChatMessagesView().close_chat()
+            messages_screen.group_chat.close_chat()
             assert user_one.name not in messages_screen.left_panel.get_chats_names, f'{chat} is present in chats list'
             main_window.hide()
 
