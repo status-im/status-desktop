@@ -3,7 +3,7 @@ import allure
 import configs
 from gui.elements.button import Button
 from gui.elements.object import QObject
-from gui.objects_map import names, communities_names
+from gui.objects_map import names, communities_names, wallet_names
 
 
 class ChangesDetectedToastMessage(QObject):
@@ -38,8 +38,8 @@ class CustomSortOrderChangesDetectedToastMessage(ChangesDetectedToastMessage):
 
     def __init__(self):
         super(CustomSortOrderChangesDetectedToastMessage, self).__init__()
-        self._save_button = Button(names.mainWindow_Save_StatusFlatButton)
-        self._save_and_apply_button = Button(names.mainWindow_Save_and_apply_StatusButton)
+        self._save_button = Button(wallet_names.mainWindow_Save_StatusFlatButton)
+        self._save_and_apply_button = Button(wallet_names.mainWindow_Save_and_apply_StatusButton)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):

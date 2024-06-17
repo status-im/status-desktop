@@ -4,19 +4,19 @@ from gui.components.settings.confirm_switch_waku_mode_popup import SwitchWakuMod
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
-from gui.objects_map import names
+from gui.objects_map import settings_names
 
 
 class AdvancedSettingsView(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_AdvancedView)
-        self._scroll = Scroll(names.settingsContentBaseScrollView_Flickable)
+        super().__init__(settings_names.mainWindow_AdvancedView)
+        self._scroll = Scroll(settings_names.settingsContentBaseScrollView_Flickable)
         self._manage_community_on_testnet_button = Button(
-            names.manageCommunitiesOnTestnetButton_StatusSettingsLineButton)
-        self._enable_creation_community_button = Button(names.enableCreateCommunityButton_StatusSettingsLineButton)
-        self._light_mode_button = Button(names.settingsContentBaseScrollViewLightWakuModeBloomSelectorButton)
-        self._relay_mode_button = Button(names.settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton)
+            settings_names.manageCommunitiesOnTestnetButton_StatusSettingsLineButton)
+        self._enable_creation_community_button = Button(settings_names.enableCreateCommunityButton_StatusSettingsLineButton)
+        self._light_mode_button = Button(settings_names.settingsContentBaseScrollViewLightWakuModeBloomSelectorButton)
+        self._relay_mode_button = Button(settings_names.settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton)
 
     @allure.step('Switch manage community on testnet option')
     def switch_manage_on_community(self):

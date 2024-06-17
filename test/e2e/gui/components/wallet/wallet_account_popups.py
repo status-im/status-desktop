@@ -13,7 +13,7 @@ from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
-from gui.objects_map import names
+from gui.objects_map import names, onboarding_names
 
 GENERATED_PAGES_LIMIT = 20
 
@@ -223,7 +223,7 @@ class AddNewAccountPopup(BasePopup):
         self._seed_phrase_12_words_button = Button(names.mainWallet_AddEditAccountPopup_12WordsButton)
         self._seed_phrase_18_words_button = Button(names.mainWallet_AddEditAccountPopup_18WordsButton)
         self._seed_phrase_24_words_button = Button(names.mainWallet_AddEditAccountPopup_24WordsButton)
-        self._seed_phrase_word_text_edit = TextEdit(names.mainWindow_statusSeedPhraseInputField_TextEdit)
+        self._seed_phrase_word_text_edit = TextEdit(onboarding_names.mainWindow_statusSeedPhraseInputField_TextEdit)
         self._seed_phrase_phrase_key_name_text_edit = TextEdit(
             names.mainWallet_AddEditAccountPopup_ImportedSeedPhraseKeyName)
         self._seed_phrase_status_input = QObject(names.addAccountPopup_ImportedSeedPhraseKeyName_StatusInput)

@@ -11,7 +11,7 @@ from driver import objects_access
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
-from gui.objects_map import names
+from gui.objects_map import settings_names
 from gui.screens.community_settings import CommunitySettingsScreen
 
 LOG = logging.getLogger(__name__)
@@ -20,12 +20,12 @@ LOG = logging.getLogger(__name__)
 class CommunitiesSettingsView(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_CommunitiesView)
-        self._community_item = QObject(names.settingsContentBaseScrollView_listItem_StatusListItem)
-        self._community_template_image = QObject(names.settings_iconOrImage_StatusSmartIdenticon)
-        self._community_template_name_members = QObject(names.settings_StatusTextWithLoadingState)
-        self._community_template_description = TextLabel(names.settings_statusListItemSubTitle)
-        self._community_template_button = Button(names.settings_StatusFlatButton)
+        super().__init__(settings_names.mainWindow_CommunitiesView)
+        self._community_item = QObject(settings_names.settingsContentBaseScrollView_listItem_StatusListItem)
+        self._community_template_image = QObject(settings_names.settings_iconOrImage_StatusSmartIdenticon)
+        self._community_template_name_members = QObject(settings_names.settings_StatusTextWithLoadingState)
+        self._community_template_description = TextLabel(settings_names.settings_statusListItemSubTitle)
+        self._community_template_button = Button(settings_names.settings_StatusFlatButton)
 
     @property
     @allure.step('Get communities')
