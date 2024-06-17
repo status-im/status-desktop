@@ -422,10 +422,6 @@ QtObject {
         communitiesModuleInst.cleanJoinEditCommunityData()
     }
 
-    function getLatestBlockNumber(chainId) {
-        return walletSection.getChainIdForSend(chainId)
-    }
-
     function userCanJoin(id) {
         return communitiesModuleInst.userCanJoin(id)
     }

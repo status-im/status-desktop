@@ -350,7 +350,7 @@ Item {
         asynchronous: true
 
         sourceComponent: KeypairImportPopup {
-            store.keypairImportModule: root.store.walletSectionInst.keypairImportModule
+            store.keypairImportModule: RootStore.keypairImportModule
         }
 
         onLoaded: {
