@@ -1,5 +1,5 @@
 import sugar, sequtils, stint
-import uuids, chronicles
+import uuids, chronicles, options
 import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
@@ -116,9 +116,10 @@ proc suggestedRoutes*(self: Controller, accountFrom: string, accountTo: string, 
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string, toAssetKey: string,
     uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,
-    usePassword: bool, doHashing: bool, tokenName: string, isOwnerToken: bool) =
+    usePassword: bool, doHashing: bool, tokenName: string, isOwnerToken: bool,
+    slippagePercentage: Option[float]) =
   self.transactionService.transfer(from_addr, to_addr, assetKey, toAssetKey, uuid, selectedRoutes, password, sendType,
-    usePassword, doHashing, tokenName, isOwnerToken)
+    usePassword, doHashing, tokenName, isOwnerToken, slippagePercentage)
 
 proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAddr: string, uuid: string,
     signatures: TransactionsSignatures, selectedRoutes: seq[TransactionPathDto]) =

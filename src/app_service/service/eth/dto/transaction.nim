@@ -25,6 +25,8 @@ type
 
     tokenID*: Option[UInt256]     # (optional) chainID in case of a ERC721 transaction
 
+    slippagePercentage*: Option[float]    # (optional) max slippage percentage allowed in case of a Swap transaction
+
 proc `%`*(x: TransactionDataDto): JsonNode =
   result = newJobject()
   result["from"] = %x.source
@@ -59,6 +61,8 @@ proc `%`*(x: TransactionDataDto): JsonNode =
     result["bonderFee"] = %x.bonderFee.unsafeGet
   if x.tokenID.isSome:
     result["tokenID"] = %x.tokenID.unsafeGet
+  if x.slippagePercentage.isSome:
+    result["slippagePercentage"] = %x.slippagePercentage.unsafeGet
 
 type TransactionBridgeDto* = object
   bridgeName*: string

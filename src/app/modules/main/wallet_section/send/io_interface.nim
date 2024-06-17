@@ -1,4 +1,4 @@
-import stint
+import stint, options
 import app/modules/shared_models/currency_amount
 import app_service/service/transaction/dto
 import app/modules/shared_models/collectibles_model as collectibles
@@ -36,7 +36,8 @@ method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_add
   raise newException(ValueError, "No implementation available")
 
 method authenticateAndTransferWithPaths*(self: AccessInterface, from_addr: string, to_addr: string, assetKey: string,
-  toAssetKey: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool, rawPaths: string) {.base.} =
+  toAssetKey: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool, rawPaths: string,
+  slippagePercentage: Option[float]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =
