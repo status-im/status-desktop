@@ -2,14 +2,13 @@ import logging
 import os
 import signal
 import subprocess
-import time
 import typing
+import platform
 
 import allure
 import psutil
 
 import configs
-from configs.system import IS_WIN
 
 LOG = logging.getLogger(__name__)
 
@@ -33,22 +32,20 @@ def find_free_port(start: int, step: int):
 
 
 @allure.step('Kill process')
-def kill_process(pid, sig: signal.Signals = signal.SIGKILL):
-    LOG.debug('Sending %s to %d process', sig.name, pid)
-    try:
-        p = psutil.Process(pid)
+def kill_process(pid):
+    LOG.debug(f'Terminating process {pid}')
 
-    except ProcessLookupError as err:
-        LOG.error('Failed to find process %d: %s', pid, err)
-        raise err
-    for i in range(2):
-        try:
-            LOG.warning('Waiting for process to exit: %d', pid)
-            p.kill()
-            if not p.is_running():
-                break
-        except RuntimeError:
-            raise ('Failed to kill process: %d' % pid)
+    current_platform = platform.system()
+
+    try:
+        if current_platform == "Windows":
+            subprocess.call(f"taskkill /F /T /PID {str(pid)}")
+        elif current_platform in ["Linux", "Darwin"]:
+            os.kill(pid, signal.SIGKILL)
+        else:
+            raise NotImplementedError(f"Unsupported platform: {current_platform}")
+    except Exception as e:
+        print(f"Failed to terminate process {pid}: {e}")
 
 
 @allure.step('System execute command')
