@@ -108,8 +108,8 @@ class AccountPopup(BasePopup):
 
     @allure.step('Set eth address for account added from plus button')
     def set_origin_watched_address(self, value: str):
-        self._origin_combobox.click()
-        self._watched_address_origin_item.wait_until_appears().click()
+        self.click_origin_combobox()
+        self._watched_address_origin_item.click()
         assert getattr(self._origin_combobox.object, 'title') == WalletOrigin.WATCHED_ADDRESS_ORIGIN.value
         self._address_text_edit.text = value
         return self
@@ -131,6 +131,17 @@ class AccountPopup(BasePopup):
             else:
                 raise err
 
+    @allure.step('Click origin combobox')
+    def click_origin_combobox(self, attempts: int = 2):
+        self._origin_combobox.click()
+        try:
+            self._new_master_key_origin_item.wait_until_appears()
+        except AssertionError as err:
+            if attempts:
+                return self.click_origin_combobox(attempts - 1)
+            else:
+                raise err
+
     @allure.step('Set new seed phrase for account')
     def set_origin_new_seed_phrase(self, value: str):
         self.open_add_new_account_popup().generate_new_master_key(value)
@@ -138,7 +149,7 @@ class AccountPopup(BasePopup):
 
     @allure.step('Open add new account popup')
     def open_add_new_account_popup(self):
-        self._origin_combobox.click()
+        self.click_origin_combobox()
         return self.click_new_master_key()
 
     @allure.step('Set derivation path for account')
@@ -161,7 +172,7 @@ class AccountPopup(BasePopup):
 
     @allure.step('Click continue in keycard settings')
     def continue_in_keycard_settings(self):
-        self._origin_combobox.click()
+        self.click_origin_combobox()
         self.click_new_master_key()
         self._use_keycard_button.click()
         return self
