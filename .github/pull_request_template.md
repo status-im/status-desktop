@@ -41,7 +41,7 @@ What is the impact of these changes on the end user (before/after behaviour)
 Described potential risks and worst case scenarios.
 
 Tick **one**:
-- [ ] Low risk: 2 devs must perform testing as specified above and attach their results as comments to this PR.
-- [ ] High risk: QA team perform additional testing in the specified affected areas.
+- [ ] Low risk: 2 devs MUST perform testing as specified above and attach their results as comments to this PR **before** merging.
+- [ ] High risk: QA team MUST perform additional testing in the specified affected areas **before** merging.
 
 -->
