@@ -23,4 +23,25 @@
 
 ### Cool Spaceship Picture
 
-<!-- optional but cool ->
+<!-- optional but cool -->
+
+<!-- Uncomment this section for status-go upgrade/dogfooding pull requests
+
+### Impact on end user
+
+What is the impact of these changes on the end user (before/after behaviour)
+
+### How to test
+
+- How should one proceed with testing this PR.
+- What kind of user flows should be checked?
+
+### Risk 
+
+Described potential risks and worst case scenarios.
+
+Tick **one**:
+- [ ] Low risk: 2 devs must perform testing as specified above and attach their results as comments to this PR.
+- [ ] High risk: QA team perform additional testing in the specified affected areas.
+
+-->
