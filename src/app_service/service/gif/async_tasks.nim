@@ -4,7 +4,7 @@ include ../../../app/core/tasks/common
 type
   AsyncGetRecentGifsTaskArg = ref object of QObjectTaskArg
 
-const asyncGetRecentGifsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetRecentGifsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetRecentGifsTaskArg](argEncoded)
   try:
     let response = status_go.getRecentGifs()
@@ -17,7 +17,7 @@ const asyncGetRecentGifsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
 type
   AsyncGetFavoriteGifsTaskArg = ref object of QObjectTaskArg
 
-const asyncGetFavoriteGifsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetFavoriteGifsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetFavoriteGifsTaskArg](argEncoded)
   try:
     let response = status_go.getFavoriteGifs()
@@ -35,7 +35,7 @@ type
     event: string
     errorEvent: string
 
-const asyncTenorQuery: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncTenorQuery(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncTenorQueryArg](argEncoded)
   try:
 

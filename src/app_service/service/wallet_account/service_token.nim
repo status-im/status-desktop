@@ -87,7 +87,7 @@ proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
     self.updateAssetsLoadingState(waddress, true)
 
   let arg = BuildTokensTaskArg(
-    tptr: cast[ByteAddress](prepareTokensTask),
+    tptr: prepareTokensTask,
     vptr: cast[ByteAddress](self.vptr),
     slot: "onAllTokensBuilt",
     accounts: accounts,

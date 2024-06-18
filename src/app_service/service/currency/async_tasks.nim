@@ -2,7 +2,7 @@ type
   FetchAllCurrencyFormatsTaskArg = ref object of QObjectTaskArg
     discard
 
-const fetchAllCurrencyFormatsTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchAllCurrencyFormatsTaskArg(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchAllCurrencyFormatsTaskArg](argEncoded)
   let output = %* {
     "formats": ""

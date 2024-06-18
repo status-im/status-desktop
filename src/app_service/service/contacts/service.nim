@@ -619,7 +619,7 @@ QtObject:
     if(self.closingApp):
       return
     let arg = LookupContactTaskArg(
-      tptr: cast[ByteAddress](lookupContactTask),
+      tptr: lookupContactTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "ensResolved",
       value: value,
@@ -881,7 +881,7 @@ QtObject:
   proc requestContactInfo*(self: Service, pubkey: string) =
     try:
       let arg = AsyncRequestContactInfoTaskArg(
-        tptr: cast[ByteAddress](asyncRequestContactInfoTask),
+        tptr: asyncRequestContactInfoTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "asyncContactInfoLoaded",
         pubkey: pubkey,
@@ -915,7 +915,7 @@ QtObject:
     let arg = AsyncGetProfileShowcaseForContactTaskArg(
       pubkey: contactId,
       validate: validate,
-      tptr: cast[ByteAddress](asyncGetProfileShowcaseForContactTask),
+      tptr: asyncGetProfileShowcaseForContactTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "asyncProfileShowcaseForContactLoaded",
     )
@@ -942,7 +942,7 @@ QtObject:
   proc fetchProfileShowcaseAccountsByAddress*(self: Service, address: string) =
     let arg = FetchProfileShowcaseAccountsTaskArg(
       address: address,
-      tptr: cast[ByteAddress](fetchProfileShowcaseAccountsTask),
+      tptr: fetchProfileShowcaseAccountsTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onProfileShowcaseAccountsByAddressFetched",
     )

@@ -18,7 +18,7 @@ type
     chainId: int
     reason: string
 
-const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc lookupContactTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[LookupContactTaskArg](argEncoded)
   var output = %*{
     "id": "",
@@ -61,7 +61,7 @@ type
   AsyncRequestContactInfoTaskArg = ref object of QObjectTaskArg
     pubkey: string
 
-const asyncRequestContactInfoTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncRequestContactInfoTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestContactInfoTaskArg](argEncoded)
   try:
     let response = status_go.requestContactInfo(arg.pubkey)
@@ -81,7 +81,7 @@ type
     pubkey: string
     validate: bool
 
-const asyncGetProfileShowcaseForContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetProfileShowcaseForContactTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetProfileShowcaseForContactTaskArg](argEncoded)
   try:
     let response = status_go.getProfileShowcaseForContact(arg.pubkey, arg.validate)
@@ -102,7 +102,7 @@ type
   FetchProfileShowcaseAccountsTaskArg = ref object of QObjectTaskArg
     address: string
 
-const fetchProfileShowcaseAccountsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchProfileShowcaseAccountsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchProfileShowcaseAccountsTaskArg](argEncoded)
   var response = %* {
     "response": "",

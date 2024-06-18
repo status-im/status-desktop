@@ -77,7 +77,7 @@ proc addFirstSimpleBridgeTxFlag(paths: seq[TransactionPathDto]) : seq[Transactio
 
   return txPaths
 
-const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc getSuggestedRoutesTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetSuggestedRoutesTaskArg](argEncoded)
 
   try:
@@ -128,7 +128,7 @@ type
     address: string
     trxType: string
 
-const watchTransactionTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc watchTransactionTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[WatchTransactionTaskArg](argEncoded)
   try:
     let output = %*{
@@ -154,7 +154,7 @@ type
   GetCryptoServicesTaskArg* = ref object of QObjectTaskArg
     discard
 
-const getCryptoServicesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc getCryptoServicesTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetCryptoServicesTaskArg](argEncoded)
 
   try:
@@ -177,7 +177,7 @@ type
     txHash: string
     data: string
 
-const fetchDecodedTxDataTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchDecodedTxDataTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDecodedTxDataTaskArg](argEncoded)
   var data = %* {
     "txHash": arg.txHash

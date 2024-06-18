@@ -10,7 +10,7 @@ type
     myPublicKey*: string
     myWalletAddress*: string
 
-const checkEnsAvailabilityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc checkEnsAvailabilityTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[CheckEnsAvailabilityTaskArg](argEncoded)
   try:
     var desiredEnsUsername = arg.ensUsername & (if(arg.isStatus): ens_utils.STATUS_DOMAIN else: "")
@@ -53,7 +53,7 @@ type
     isStatus*: bool
     chainId: int
 
-const ensUsernameDetailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc ensUsernameDetailsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[EnsUsernamDetailsTaskArg](argEncoded)
   try:
 

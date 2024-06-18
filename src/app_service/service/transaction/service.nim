@@ -208,7 +208,7 @@ QtObject:
       address: fromAddress,
       trxType: trxType,
       data: data,
-      tptr: cast[ByteAddress](watchTransactionTask),
+      tptr: watchTransactionTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "watchTransactionResult",
     )
@@ -228,7 +228,7 @@ QtObject:
 
   proc fetchDecodedTxData*(self: Service, txHash: string, data: string) =
     let arg = FetchDecodedTxDataTaskArg(
-      tptr: cast[ByteAddress](fetchDecodedTxDataTask),
+      tptr: fetchDecodedTxDataTask,
       vptr: cast[ByteAddress](self.vptr),
       data: data,
       txHash: txHash,
@@ -581,7 +581,7 @@ QtObject:
       if toToken != nil:
         toTokenId = toToken.symbol
     let arg = GetSuggestedRoutesTaskArg(
-      tptr: cast[ByteAddress](getSuggestedRoutesTask),
+      tptr: getSuggestedRoutesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "suggestedRoutesReady",
       accountFrom: accountFrom,
@@ -603,7 +603,7 @@ QtObject:
 
   proc fetchCryptoServices*(self: Service) =
     let arg = GetCryptoServicesTaskArg(
-      tptr: cast[ByteAddress](getCryptoServicesTask),
+      tptr: getCryptoServicesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onFetchCryptoServices",
     )

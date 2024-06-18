@@ -112,7 +112,7 @@ QtObject:
 
   proc asyncLoadDevices*(self: Service) =
     let arg = AsyncLoadDevicesTaskArg(
-      tptr: cast[ByteAddress](asyncLoadDevicesTask),
+      tptr: asyncLoadDevicesTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "asyncDevicesLoaded",
     )
@@ -237,7 +237,7 @@ QtObject:
     self.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
 
     let arg = AsyncInputConnectionStringArg(
-      tptr: cast[ByteAddress](asyncInputConnectionStringTask),
+      tptr: asyncInputConnectionStringTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "inputConnectionStringForBootstrappingFinished",
       connectionString: connectionString,
@@ -359,7 +359,7 @@ QtObject:
     self.localPairingStatus = newLocalPairingStatus(PairingType.KeypairSync, LocalPairingMode.Receiver)
 
     let arg = AsyncInputConnectionStringArg(
-      tptr: cast[ByteAddress](asyncInputConnectionStringForImportingKeystoreTask),
+      tptr: asyncInputConnectionStringForImportingKeystoreTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "inputConnectionStringForImportingKeystoreFinished",
       connectionString: connectionString,

@@ -227,7 +227,7 @@ QtObject:
       self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, data)
     else:
       let arg = CheckEnsAvailabilityTaskArg(
-        tptr: cast[ByteAddress](checkEnsAvailabilityTask),
+        tptr: checkEnsAvailabilityTask,
         vptr: cast[ByteAddress](self.vptr),
         slot: "onEnsUsernameAvailabilityChecked",
         ensUsername: ensUsername,
@@ -268,7 +268,7 @@ QtObject:
       isStatus = true
 
     let arg = EnsUsernamDetailsTaskArg(
-      tptr: cast[ByteAddress](ensUsernameDetailsTask),
+      tptr: ensUsernameDetailsTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onEnsUsernameDetailsFetched",
       ensUsername: username,

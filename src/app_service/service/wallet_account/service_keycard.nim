@@ -1,6 +1,6 @@
   proc addKeycardOrAccountsAsync*(self: Service, keycard: KeycardDto, accountsComingFromKeycard: bool = false) =
     let arg = SaveOrUpdateKeycardTaskArg(
-      tptr: cast[ByteAddress](saveOrUpdateKeycardTask),
+      tptr: saveOrUpdateKeycardTask,
       vptr: cast[ByteAddress](self.vptr),
       slot: "onKeycardAdded",
       keycard: keycard,
@@ -59,7 +59,7 @@ proc addKeycardOrAccounts*(self: Service, keycard: KeycardDto, accountsComingFro
 
 proc removeMigratedAccountsForKeycard*(self: Service, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) =
   let arg = DeleteKeycardAccountsTaskArg(
-    tptr: cast[ByteAddress](deleteKeycardAccountsTask),
+    tptr: deleteKeycardAccountsTask,
     vptr: cast[ByteAddress](self.vptr),
     slot: "onMigratedAccountsForKeycardRemoved",
     keycard: KeycardDto(keyUid: keyUid, keycardUid: keycardUid, accountsAddresses: accountsToRemove)

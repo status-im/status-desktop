@@ -4,7 +4,7 @@ include ../../../app/core/tasks/common
 type
   AsyncLoadCommunitiesDataTaskArg = ref object of QObjectTaskArg
 
-const asyncLoadCommunitiesDataTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncLoadCommunitiesDataTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncLoadCommunitiesDataTaskArg](argEncoded)
   try:
     let responseTags = status_go.getCommunityTags()
@@ -32,7 +32,7 @@ type
     metricsType: CommunityMetricsType
     intervals: JsonNode
 
-const asyncCollectCommunityMetricsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncCollectCommunityMetricsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCollectCommunityMetricsTaskArg](argEncoded)
   try:
     let response = status_go.collectCommunityMetrics(arg.communityId, arg.metricsType.int, arg.intervals)
@@ -57,7 +57,7 @@ type
     shardCluster: int
     shardIndex: int
 
-const asyncRequestCommunityInfoTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncRequestCommunityInfoTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestCommunityInfoTaskArg](argEncoded)
   try:
     let response = status_go.requestCommunityInfo(arg.communityId, arg.tryDatabase, arg.shardCluster, arg.shardIndex)
@@ -77,7 +77,7 @@ const asyncRequestCommunityInfoTask: Task = proc(argEncoded: string) {.gcsafe, n
 type
   AsyncLoadCuratedCommunitiesTaskArg = ref object of QObjectTaskArg
 
-const asyncLoadCuratedCommunitiesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncLoadCuratedCommunitiesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncLoadCuratedCommunitiesTaskArg](argEncoded)
   try:
     let response = status_go.getCuratedCommunities()
@@ -95,7 +95,7 @@ type
     communityId: string
     requestId: string
 
-const asyncAcceptRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncAcceptRequestToJoinCommunityTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncAcceptRequestToJoinCommunityTaskArg](argEncoded)
   try:
     let response = status_go.acceptRequestToJoinCommunity(arg.requestId)
@@ -114,7 +114,7 @@ type
     pubKey: string
     deleteAllMessages: bool
 
-const asyncRemoveUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncRemoveUserFromCommunityTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCommunityMemberActionTaskArg](argEncoded)
   try:
     let response = status_go.removeUserFromCommunity(arg.communityId, arg.pubKey)
@@ -131,7 +131,7 @@ const asyncRemoveUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe
       "error": e.msg,
     })
 
-const asyncBanUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncBanUserFromCommunityTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCommunityMemberActionTaskArg](argEncoded)
   try:
     let response = status_go.banUserFromCommunity(arg.communityId, arg.pubKey, arg.deleteAllMessages)
@@ -145,7 +145,7 @@ const asyncBanUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, n
       "deleteAllMessages": arg.deleteAllMessages
     })
 
-const asyncUnbanUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncUnbanUserFromCommunityTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCommunityMemberActionTaskArg](argEncoded)
   try:
     let response = status_go.unbanUserFromCommunity(arg.communityId, arg.pubKey)
@@ -166,7 +166,7 @@ type
     signatures: seq[string]
     airdropAddress: string
 
-const asyncRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncRequestToJoinCommunityTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestToJoinCommunityTaskArg](argEncoded)
   try:
     let response = status_go.requestToJoinCommunity(arg.communityId, arg.ensName, arg.addressesToShare,
@@ -189,7 +189,7 @@ type
     signatures: seq[string]
     airdropAddress: string
 
-const asyncEditSharedAddressesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncEditSharedAddressesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncEditSharedAddressesTaskArg](argEncoded)
   try:
     let response = status_go.editSharedAddresses(arg.communityId, arg.addressesToShare, arg.signatures,
@@ -210,7 +210,7 @@ type
     communityId: string
     addresses: seq[string]
 
-const asyncCheckPermissionsToJoinTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncCheckPermissionsToJoinTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCheckPermissionsToJoinTaskArg](argEncoded)
   try:
     let response = status_go.checkPermissionsToJoinCommunity(arg.communityId, arg.addresses).result
@@ -231,7 +231,7 @@ type
     communityId: string
     memberPubkey: string
 
-const asyncGetRevealedAccountsForMemberTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetRevealedAccountsForMemberTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetRevealedAccountsArg](argEncoded)
   try:
     let response = status_go.getRevealedAccountsForMember(arg.communityId, arg.memberPubkey)
@@ -248,7 +248,7 @@ const asyncGetRevealedAccountsForMemberTask: Task = proc(argEncoded: string) {.g
       "error": e.msg,
     })
 
-const asyncGetRevealedAccountsForAllMembersTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetRevealedAccountsForAllMembersTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetRevealedAccountsArg](argEncoded)
   try:
     let response = status_go.getRevealedAccountsForAllMembers(arg.communityId)
@@ -267,7 +267,7 @@ type
   AsyncReevaluateCommunityMembersPermissionsArg = ref object of QObjectTaskArg
     communityId: string
 
-const asyncReevaluateCommunityMembersPermissionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncReevaluateCommunityMembersPermissionsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncReevaluateCommunityMembersPermissionsArg](argEncoded)
   try:
     let response = status_go.reevaluateCommunityMembersPermissions(arg.communityId)
@@ -288,7 +288,7 @@ type
     communityId: string
     shardIndex: int
 
-const asyncSetCommunityShardTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncSetCommunityShardTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSetCommunityShardArg](argEncoded)
   try:
     let response = status_go.setCommunityShard(arg.communityId, arg.shardIndex)

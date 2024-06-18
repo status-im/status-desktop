@@ -10,7 +10,7 @@ type
     password: string
     derivedFrom: string
 
-const fetchDerivedAddressesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchDerivedAddressesTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDerivedAddressesTaskArg](argEncoded)
   var output = %*{
     "derivedAddresses": "",
@@ -27,7 +27,7 @@ type
   FetchDerivedAddressesForMnemonicTaskArg* = ref object of FetchAddressesArg
     mnemonic: string
 
-const fetchDerivedAddressesForMnemonicTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchDerivedAddressesForMnemonicTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDerivedAddressesForMnemonicTaskArg](argEncoded)
   var output = %*{
     "derivedAddresses": "",
@@ -46,7 +46,7 @@ type
     chainId: int
     addresses: seq[string]
 
-const fetchDetailsForAddressesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchDetailsForAddressesTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDetailsForAddressesTaskArg](argEncoded)
   for address in arg.addresses:
     var data = %* {
@@ -84,7 +84,7 @@ type
     accounts: seq[string]
     storeResult: bool
 
-const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc prepareTokensTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[BuildTokensTaskArg](argEncoded)
   var output = %*{
     "result": "",
@@ -107,7 +107,7 @@ type
     keycard: KeycardDto
     accountsComingFromKeycard: bool
 
-const saveOrUpdateKeycardTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc saveOrUpdateKeycardTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[SaveOrUpdateKeycardTaskArg](argEncoded)
   var responseJson = %*{
     "success": false,
@@ -139,7 +139,7 @@ type
   DeleteKeycardAccountsTaskArg* = ref object of QObjectTaskArg
     keycard: KeycardDto
 
-const deleteKeycardAccountsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc deleteKeycardAccountsTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[DeleteKeycardAccountsTaskArg](argEncoded)
   var responseJson = %*{
     "success": false,
@@ -166,7 +166,7 @@ type
     url: string
     isMainUrl: bool
 
-const fetchChainIdForUrlTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchChainIdForUrlTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchChainIdForUrlTaskArg](argEncoded)
   try:
     let response = backend.fetchChainIDForURL(arg.url)
@@ -195,7 +195,7 @@ type
     seedPhrase: string
     password: string
 
-const migrateNonProfileKeycardKeypairToAppTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc migrateNonProfileKeycardKeypairToAppTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[MigrateNonProfileKeycardKeypairToAppTaskArg](argEncoded)
   var responseJson = %*{
     "success": false,
@@ -229,7 +229,7 @@ type
     currencySymbol: string
     timeInterval: BalanceHistoryTimeInterval
 
-const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc getTokenBalanceHistoryDataTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetTokenBalanceHistoryDataTaskArg](argEncoded)
   var response = %*{}
   try:

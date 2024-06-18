@@ -9,8 +9,7 @@ type
     connectionString: string
     configJSON: string
 
-const asyncLoadDevicesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-
+proc asyncLoadDevicesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncLoadDevicesTaskArg](argEncoded)
   try:
     let rpcResponse = status_installations.getOurInstallations()
@@ -24,7 +23,7 @@ const asyncLoadDevicesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
       "error": e.msg,
     })
 
-const asyncInputConnectionStringTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncInputConnectionStringTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncInputConnectionStringArg](argEncoded)
   try:
     let response = status_go.inputConnectionStringForBootstrapping(arg.connectionString, arg.configJSON)
@@ -34,7 +33,7 @@ const asyncInputConnectionStringTask: Task = proc(argEncoded: string) {.gcsafe, 
       "error": e.msg,
     })
 
-const asyncInputConnectionStringForImportingKeystoreTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncInputConnectionStringForImportingKeystoreTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncInputConnectionStringArg](argEncoded)
   try:
     let response = status_go.inputConnectionStringForImportingKeypairsKeystores(arg.connectionString, arg.configJSON)

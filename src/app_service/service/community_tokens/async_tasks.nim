@@ -36,7 +36,7 @@ type
     communityId: string
     signerPubKey: string
 
-const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetDeployOwnerContractsFeesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncDeployOwnerContractsFeesArg](argEncoded)
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
@@ -67,7 +67,7 @@ type
     tokenType: TokenType
     requestId: string
 
-const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetDeployFeesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetDeployFeesArg](argEncoded)
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
@@ -100,7 +100,7 @@ type
     newSignerPubKey: string
     requestId: string
 
-const asyncSetSignerFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncSetSignerFeesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSetSignerFeesArg](argEncoded)
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
@@ -132,7 +132,7 @@ type
     addressFrom: string
     requestId: string
 
-const asyncGetRemoteBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetRemoteBurnFeesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetRemoteBurnFees](argEncoded)
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
@@ -164,7 +164,7 @@ type
     addressFrom: string
     requestId: string
 
-const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetBurnFeesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetBurnFees](argEncoded)
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
@@ -195,7 +195,7 @@ type
     addressFrom: string
     requestId: string
 
-const asyncGetMintFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc asyncGetMintFeesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetMintFees](argEncoded)
   try:
     var gasTable: Table[ContractTuple, int] # gas per contract
@@ -229,7 +229,7 @@ type
     contractAddress*: string
     communityId*: string
 
-const fetchCollectibleOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchCollectibleOwnersTaskArg(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchCollectibleOwnersArg](argEncoded)
   try:
     var response = collectibles.getCollectibleOwnersByContractAddress(arg.chainId, arg.contractAddress)
@@ -278,7 +278,7 @@ type
     contractAddress*: string
     communityId*: string
 
-const fetchAssetOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc fetchAssetOwnersTaskArg(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchAssetOwnersArg](argEncoded)
   try:
     let addressesResponse = communities_backend.getCommunityMembersForWalletAddresses(arg.communityId, arg.chainId)
@@ -326,7 +326,7 @@ type
   GetCommunityTokensDetailsArg = ref object of QObjectTaskArg
     communityId*: string
 
-const getCommunityTokensDetailsTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc getCommunityTokensDetailsTaskArg(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetCommunityTokensDetailsArg](argEncoded)
 
   try:
@@ -343,7 +343,7 @@ const getCommunityTokensDetailsTaskArg: Task = proc(argEncoded: string) {.gcsafe
 
     proc getCommunityTokenBurnState(chainId: int, contractAddress: string): ContractTransactionStatus =
       let allPendingTransactions = getPendingTransactions()
-      
+
       let burnTransactions = allPendingTransactions.filter(x => x.typeValue == $PendingTransactionTypeDto.BurnCommunityToken)
 
       for transaction in burnTransactions:
@@ -391,7 +391,7 @@ const getCommunityTokensDetailsTaskArg: Task = proc(argEncoded: string) {.gcsafe
 
           burnState = getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
           remoteDestructedAddresses = getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
-        
+
           destructedAmount = getRemoteDestructedAmount(communityTokens, tokenDto.chainId, tokenDto.address)
 
         return %* {
@@ -437,7 +437,7 @@ const getCommunityTokensDetailsTaskArg: Task = proc(argEncoded: string) {.gcsafe
 type
   GetAllCommunityTokensArg = ref object of QObjectTaskArg
 
-const getAllCommunityTokensTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc getAllCommunityTokensTaskArg(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetAllCommunityTokensArg](argEncoded)
   try:
     let response = tokens_backend.getAllCommunityTokens()
@@ -458,7 +458,7 @@ type
     chainId*: int
     contractAddress*: string
 
-const getOwnerTokenOwnerAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+proc getOwnerTokenOwnerAddressTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetOwnerTokenOwnerAddressArgs](argEncoded)
   try:
     let response = tokens_backend.getOwnerTokenOwnerAddress(arg.chainId, arg.contractAddress)
