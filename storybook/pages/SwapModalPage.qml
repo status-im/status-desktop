@@ -96,11 +96,11 @@ SplitView {
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
                 swapInputParamsForm: SwapInputParamsForm {
+                    defaultToTokenKey: "STT"
                     onSelectedAccountAddressChanged: {
                         if (selectedAccountAddress !== accountComboBox.currentValue)
                             accountComboBox.currentIndex = accountComboBox.indexOfValue(selectedAccountAddress)
                     }
-                    fromTokenAmount: swapInput.text
                 }
                 swapAdaptor: SwapModalAdaptor {
                     swapStore: dSwapStore

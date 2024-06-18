@@ -13,9 +13,12 @@ QtObject {
     property int selectedNetworkChainId: -1
     property string fromTokensKey: ""
     property string fromTokenAmount: ""
-    property string toTokenKey: ""
+    property string toTokenKey: root.defaultToTokenKey
     property string toTokenAmount: ""
     property double selectedSlippage: 0.5
+
+    // default token key
+    property string defaultToTokenKey: ""
 
     onSelectedAccountAddressChanged: root.formValuesChanged()
     onSelectedNetworkChainIdChanged: root.formValuesChanged()
@@ -27,11 +30,15 @@ QtObject {
     function resetFormData() {
         selectedAccountAddress = ""
         selectedNetworkChainId = -1
+        selectedSlippage = 0.5
+        root.resetToAndFromTokenValues()
+    }
+
+    function resetToAndFromTokenValues() {
         fromTokensKey = ""
         fromTokenAmount = ""
-        toTokenKey = ""
+        toTokenKey = root.defaultToTokenKey
         toTokenAmount = ""
-        selectedSlippage = 0.5
     }
 
     function isFormFilledCorrectly() {

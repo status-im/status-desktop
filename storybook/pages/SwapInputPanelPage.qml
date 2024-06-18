@@ -36,6 +36,7 @@ SplitView {
             fromTokenAmount: ctrlFromTokenAmount.text
             toTokenKey: ctrlToTokenKey.text
             toTokenAmount: ctrlToTokenAmount.text
+            defaultToTokenKey: "STT"
         }
 
         readonly property SwapModalAdaptor adaptor: SwapModalAdaptor {

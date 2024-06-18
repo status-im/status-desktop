@@ -40,9 +40,10 @@ StatusDialog {
          })
 
         function fetchSuggestedRoutes() {
-            if (payPanel.valueValid && !!payPanel.selectedHoldingId) {
-                root.swapAdaptor.newFetchReset()
+            if (payPanel.valueValid && root.swapInputParamsForm.isFormFilledCorrectly()) {
+                root.swapAdaptor.validSwapProposalReceived = false
                 root.swapAdaptor.swapProposalLoading = true
+                root.swapAdaptor.swapOutputData.resetAllButReceivedTokenValuesForSwap()
                 debounceFetchSuggestedRoutes()
             }
         }
@@ -157,10 +158,14 @@ StatusDialog {
                 nonInteractiveTokensKey: receivePanel.selectedHoldingId
 
                 swapSide: SwapInputPanel.SwapSide.Pay
-                swapExchangeButtonWidth: swapButton.width
+                swapExchangeButtonWidth: swapExchangeButton.width
 
                 onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
-                onValueChanged: root.swapInputParamsForm.fromTokenAmount = value.toLocaleString(locale, 'f', -128)
+                onValueChanged: {
+                    if(root.swapInputParamsForm.fromTokensKey === selectedHoldingId) {
+                        root.swapInputParamsForm.fromTokenAmount = !tokenAmount && value === 0 ? "" : value.toLocaleString(locale, 'f', -128)
+                    }
+                }
                 onValueValidChanged: d.fetchSuggestedRoutes()
             }
 
@@ -186,7 +191,7 @@ StatusDialog {
                 nonInteractiveTokensKey: payPanel.selectedHoldingId
 
                 swapSide: SwapInputPanel.SwapSide.Receive
-                swapExchangeButtonWidth: swapButton.width
+                swapExchangeButtonWidth: swapExchangeButton.width
 
                 mainInputLoading: root.swapAdaptor.swapProposalLoading
                 bottomTextLoading: root.swapAdaptor.swapProposalLoading
@@ -200,8 +205,17 @@ StatusDialog {
             }
 
             SwapExchangeButton {
-                id: swapButton
+                id: swapExchangeButton
+                objectName: "swapExchangeButton"
                 anchors.centerIn: parent
+                onClicked: {
+                    const tempPayToken = root.swapInputParamsForm.fromTokensKey
+                    const tempPayAmount = root.swapInputParamsForm.fromTokenAmount
+                    root.swapInputParamsForm.fromTokensKey = root.swapInputParamsForm.toTokenKey
+                    root.swapInputParamsForm.fromTokenAmount = !!root.swapAdaptor.swapOutputData.toTokenAmount ? root.swapAdaptor.swapOutputData.toTokenAmount : root.swapInputParamsForm.toTokenAmount
+                    root.swapInputParamsForm.toTokenKey = tempPayToken
+                    root.swapInputParamsForm.toTokenAmount = tempPayAmount
+                }
             }
         }
 

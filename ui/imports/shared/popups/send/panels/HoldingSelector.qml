@@ -190,7 +190,7 @@ Item {
         height: parent.height
 
         defaultIconSource: Style.png("tokens/DEFAULT-TOKEN@3x")
-        placeholderText: d.isCurrentBrowsingTypeAsset ? qsTr("Select token") : qsTr("Select collectible")
+        placeholderText: d.isCurrentBrowsingTypeAsset ? qsTr("Select asset") : qsTr("Select collectible")
         property bool hasCommunityTokens: false
 
         comboBoxDelegate: Item {
