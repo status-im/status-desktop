@@ -9,7 +9,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups.Dialog 0.1
-import StatusQ.Controls 0.1
 
 import shared.popups.send.controls 1.0
 import shared.controls 1.0
@@ -37,11 +36,11 @@ StatusDialog {
     QtObject {
         id: d
          property var debounceFetchSuggestedRoutes: Backpressure.debounce(root, 1000, function() {
-                 root.swapAdaptor.fetchSuggestedRoutes(payPanel.rawValue)
+             root.swapAdaptor.fetchSuggestedRoutes(payPanel.rawValue)
          })
 
         function fetchSuggestedRoutes() {
-            if (payPanel.valueValid) {
+            if (payPanel.valueValid && !!payPanel.selectedHoldingId) {
                 root.swapAdaptor.newFetchReset()
                 root.swapAdaptor.swapProposalLoading = true
                 debounceFetchSuggestedRoutes()
@@ -59,6 +58,7 @@ StatusDialog {
             payPanel.reevaluateSelectedId()
         }
         function onSelectedNetworkChainIdChanged() {
+            networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
             payPanel.reevaluateSelectedId()
         }
     }
@@ -66,7 +66,7 @@ StatusDialog {
     Behavior on implicitHeight {
         NumberAnimation { duration: 1000; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
     }
-    
+
     onClosed: root.swapAdaptor.reset()
 
     header: Item {
@@ -101,7 +101,6 @@ StatusDialog {
                 HeaderTitleText {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                    id: modalHeader
                     text: qsTr("Swap")
                 }
                 StatusBaseText {
@@ -113,7 +112,6 @@ StatusDialog {
                     lineHeightMode: Text.FixedHeight
                     verticalAlignment: Text.AlignVCenter
                 }
-                // TODO: update this once https://github.com/status-im/status-desktop/issues/14780 is ready
                 NetworkFilter {
                     id: networkFilter
                     objectName: "networkFilter"
@@ -127,20 +125,6 @@ StatusDialog {
                         if (root.swapInputParamsForm.selectedNetworkChainId !== selection[0]) {
                             root.swapInputParamsForm.selectedNetworkChainId = selection[0]
                         }
-                    }
-                }
-
-                Connections {
-                    target: root.swapInputParamsForm
-                    function onSelectedNetworkChainIdChanged() {
-                        networkFilter.setChain(root.swapInputParamsForm.selectedNetworkChainId)
-                    }
-                }
-
-                Connections {
-                    target: root.swapInputParamsForm
-                    function onSelectedNetworkChainIdChanged() {
-                        networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
                     }
                 }
             }
@@ -162,18 +146,15 @@ StatusDialog {
                 }
 
                 currencyStore: root.swapAdaptor.currencyStore
-                flatNetworksModel: root.swapAdaptor.filteredFlatNetworksModel
-                processedAssetsModel: root.swapAdaptor.processedAssetsModel
+                flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
+                processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
 
                 tokenKey: root.swapInputParamsForm.fromTokensKey
-                tokenAmount: {
-                    // Only update if there is different in amount displayed
-                    if (root.swapInputParamsForm.fromTokenAmount !==
-                            SQUtils.AmountsArithmetic.fromString(value).toLocaleString(locale, 'f', -128)){
-                        return root.swapInputParamsForm.fromTokenAmount
-                    }
-                    return payPanel.tokenAmount
-                }
+                tokenAmount: root.swapInputParamsForm.fromTokenAmount
+
+                selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+                selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
+                nonInteractiveTokensKey: receivePanel.selectedHoldingId
 
                 swapSide: SwapInputPanel.SwapSide.Pay
                 swapExchangeButtonWidth: swapButton.width
@@ -194,11 +175,15 @@ StatusDialog {
                 }
 
                 currencyStore: root.swapAdaptor.currencyStore
-                flatNetworksModel: root.swapAdaptorfilteredFlatNetworksModel
-                processedAssetsModel: root.swapAdaptor.processedAssetsModel
+                flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
+                processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
 
                 tokenKey: root.swapInputParamsForm.toTokenKey
                 tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
+
+                selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+                selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
+                nonInteractiveTokensKey: payPanel.selectedHoldingId
 
                 swapSide: SwapInputPanel.SwapSide.Receive
                 swapExchangeButtonWidth: swapButton.width
@@ -307,7 +292,6 @@ StatusDialog {
                         objectName: "maxFeesText"
                         text: qsTr("Max fees:")
                         color: Theme.palette.directColor5
-                        font.pixelSize: 15
                         font.weight: Font.Medium
                     }
                     StatusTextWithLoadingState {
@@ -319,7 +303,6 @@ StatusDialog {
                                                 root.swapAdaptor.currencyStore.currentCurrency) :
                                             "--"
                         customColor: Theme.palette.directColor4
-                        font.pixelSize: 15
                         font.weight: Font.Medium
                         loading: root.swapAdaptor.swapProposalLoading
                     }
@@ -353,4 +336,3 @@ StatusDialog {
         }
     }
 }
-

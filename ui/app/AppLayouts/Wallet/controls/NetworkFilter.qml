@@ -183,7 +183,9 @@ StatusComboBox {
             value: root.selection[0] ?? -1
         }
 
-        readonly property string singleSelectionIconUrl: singleSelectionItem.item.iconUrl ?? ""
+        readonly property string singleSelectionIconUrl: singleSelectionItem.item.iconUrl ? (singleSelectionItem.item.isTest ? singleSelectionItem.item.iconUrl + "-test"
+                                                                                                                             : singleSelectionItem.item.iconUrl)
+                                                                                          : ""
         readonly property string singleCelectionChainName: singleSelectionItem.item.chainName ?? ""
 
         readonly property string titleText: {
