@@ -21,10 +21,6 @@
 
 <!-- screenshot (or gif/video) that demonstrates the functionality, specially important if it's a bug fix. -->
 
-### Cool Spaceship Picture
-
-<!-- optional but cool -->
-
 <!-- Uncomment this section for status-go upgrade/dogfooding pull requests
 
 ### Impact on end user
@@ -45,3 +41,7 @@ Tick **one**:
 - [ ] High risk: QA team MUST perform additional testing in the specified affected areas **before** merging.
 
 -->
+
+### Cool Spaceship Picture
+
+<!-- optional but cool -->
