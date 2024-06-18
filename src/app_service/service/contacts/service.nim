@@ -474,9 +474,11 @@ QtObject:
     self.events.emit(signal, ContactArgs(contactId: publicKey))
 
   proc parseContactsResponse*(self: Service, response: RpcResponse[JsonNode]) =
-    if response.result["contacts"] != nil:
-      for contactJson in response.result["contacts"]:
-        self.updateContact(contactJson.toContactsDto())
+    let contacts = response.result{"contacts"}
+    if contacts == nil:
+      return
+    for contactJson in contacts:
+      self.updateContact(contactJson.toContactsDto())
 
   proc sendContactRequest*(self: Service, publicKey: string, message: string) =
     # Prefetch contact to avoid race condition with AC notification
@@ -720,7 +722,10 @@ QtObject:
         return
 
       self.parseContactsResponse(response)
-      self.parseContactsResponse(response)
+
+      if self.contacts.hasKey(publicKey):
+        self.contacts[publicKey].dto.trustStatus = TrustStatus.Unknown
+        
       self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, isUntrustworthy: false))
     except Exception as e:
       error "error in removeTrustStatus request", msg = e.msg
