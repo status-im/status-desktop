@@ -85,6 +85,28 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
   createDir(tmpDir)
   createDir(logDir)
 
+proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, file: cstring, function: cstring, line: cint) {.cdecl, exportc.} =
+  logScope:
+    topics = "qt"
+    text = $message
+    file = $file & ":" & $line
+    function = $function
+    category = $category
+
+  case int(messageType):
+    of 0: # QtDebugMsg
+      debug "qt message"
+    of 1: # QtWarningMsg
+      warn "qt warning"
+    of 2: # QtCriticalMsg
+      error "qt error"
+    of 3: # QtFatalMsg
+      fatal "qt fatal error"
+    of 4: # QtInfoMsg
+      info "qt message"
+    else:
+      warn "qt message of unknown type", messageType = int(messageType)
+
 proc mainProc() =
 
   when defined(macosx) and defined(arm64):
@@ -160,6 +182,7 @@ proc mainProc() =
     app.icon(app.applicationDirPath & statusAppIconPath)
 
   prepareLogging()
+  installMessageHandler(logHandlerCallback)
 
   singletonInstance.engine.addImportPath("qrc:/")
   singletonInstance.engine.addImportPath("qrc:/./imports")
@@ -203,9 +226,7 @@ proc mainProc() =
   keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
   setupRemoteSignalsHandling()
 
-  info fmt("Version: {APP_VERSION}")
-  info fmt("Commit: {GIT_COMMIT}")
-  info "Current date:", currentDateTime=now()
+  info "app info", version=APP_VERSION, commit=GIT_COMMIT, currentDateTime=now()
 
   info "starting application controller..."
   appController.start()
