@@ -16,6 +16,10 @@ QtObject {
     function reset() {
         root.fromTokenAmount = ""
         root.toTokenAmount = ""
+        root.resetAllButReceivedTokenValuesForSwap()
+    }
+
+    function resetAllButReceivedTokenValuesForSwap() {
         root.totalFees = 0
         root.bestRoutes = []
         root.approvalNeeded = false

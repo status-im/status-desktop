@@ -37,14 +37,7 @@ Control {
     onTokenKeyChanged: Qt.callLater(reevaluateSelectedId)
 
     property string tokenAmount
-    onTokenAmountChanged: {
-        if (tokenAmount === "") {
-            amountToSendInput.input.input.edit.clear()
-            return
-        }
-        Qt.callLater(() => amountToSendInput.input.text =
-                     SQUtils.AmountsArithmetic.fromString(tokenAmount).toFixed().replace('.', LocaleUtils.userInputLocale.decimalPoint))
-    }
+    onTokenAmountChanged: Qt.callLater(d.updateInputText)
 
     property int swapSide: SwapInputPanel.SwapSide.Pay
     property bool fiatInputInteractive
@@ -53,10 +46,8 @@ Control {
     property bool interactive: true
 
     function reevaluateSelectedId() {
-        if (!!tokenKey) {
-            holdingSelector.selectToken(tokenKey)
-            d.selectedHolding = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey)
-        }
+        holdingSelector.selectToken(tokenKey)
+        d.selectedHolding = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey)
     }
 
     // output API
@@ -106,6 +97,17 @@ Control {
             enabledChainIds: root.selectedNetworkChainId !== -1 ? [root.selectedNetworkChainId] : []
             accountAddress: root.selectedAccountAddress || ""
             searchString: holdingSelector.searchString
+        }
+
+        function updateInputText() {
+            if (!tokenAmount) {
+                amountToSendInput.input.input.edit.clear()
+                return
+            }
+            let amountToSet = SQUtils.AmountsArithmetic.fromString(tokenAmount).toFixed().replace('.', LocaleUtils.userInputLocale.decimalPoint)
+            if (amountToSendInput.input.text !== amountToSet) {
+                amountToSendInput.input.text = amountToSet
+            }
         }
     }
 

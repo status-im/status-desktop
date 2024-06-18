@@ -181,7 +181,7 @@ ComboBox {
     Component {
         id: textContentItem
         StatusBaseText {
-            objectName: "holdingSelectorsContentItemText"
+            objectName: "tokenSelectorContentItemText"
             font.pixelSize: root.font.pixelSize
             font.weight: Font.Medium
             color: Theme.palette.primaryColor1
@@ -196,13 +196,13 @@ ComboBox {
                                                                       : ""
             spacing: root.spacing
             StatusRoundedImage {
-                objectName: "holdingSelectorsTokenIcon"
+                objectName: "tokenSelectorIcon"
                 Layout.preferredWidth: 20
                 Layout.preferredHeight: 20
                 image.source: Constants.tokenIcon(parent.currentSymbol)
             }
             StatusBaseText {
-                objectName: "holdingSelectorsContentItemText"
+                objectName: "tokenSelectorContentItemText"
                 font.pixelSize: 28
                 color: root.hovered ? Theme.palette.blue : Theme.palette.darkBlue
                 text: parent.currentSymbol

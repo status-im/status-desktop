@@ -168,13 +168,6 @@ QObject {
         root.swapProposalLoading = false
     }
 
-    // this function will not reset input params but only the output ones and loading states
-    function newFetchReset() {
-        root.swapOutputData.reset()
-        root.validSwapProposalReceived = false
-        root.swapProposalLoading = false
-    }
-
     function getNetworkShortNames(chainIds) {
         var networkString = ""
         let chainIdsArray = chainIds.split(":")
@@ -212,8 +205,8 @@ QObject {
 
     function fetchSuggestedRoutes(cryptoValueRaw) {
         if (root.swapFormData.isFormFilledCorrectly() && !!cryptoValueRaw) {
+            root.swapProposalLoading = true
             root.swapOutputData.reset()
-            root.validSwapProposalReceived = false
 
             // Identify new swap with a different uuid
             d.uuid = Utils.uuid()
@@ -228,7 +221,6 @@ QObject {
                                                 disabledChainIds, disabledChainIds, preferedChainIds,
                                                 Constants.SendType.Swap, "")
         } else {
-            root.validSwapProposalReceived = false
             root.swapProposalLoading = false
         }
     }

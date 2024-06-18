@@ -43,13 +43,17 @@ Item {
     implicitHeight: comboBox.implicitHeight
 
     onSelectedItemChanged: {
-        d.iconSource = itemIconSourceFn(selectedItem) ?? defaultIconSource
-        d.text = itemTextFn(selectedItem) ?? placeholderText
+        let iconSource = itemIconSourceFn(selectedItem)
+        d.iconSource =  !selectedItem ? "" : !!iconSource ? iconSource : defaultIconSource
+        let itemText = itemTextFn(selectedItem)
+        d.text = !!itemText ? itemText : placeholderText
     }
 
     onHoveredItemChanged: {
-        d.iconSource = itemIconSourceFn(hoveredItem) ?? defaultIconSource
-        d.text = itemTextFn(hoveredItem) ?? placeholderText
+        let iconSource = itemIconSourceFn(hoveredItem)
+        d.iconSource = !!iconSource ? iconSource : defaultIconSource
+        let itemText = itemTextFn(hoveredItem)
+        d.text = !!itemText ? itemText : placeholderText
     }
 
     QtObject {
@@ -105,7 +109,7 @@ Item {
             StatusBaseText {
                 objectName: "holdingSelectorsContentItemText"
                 Layout.fillWidth: true
-                font.pixelSize: root.contentTextSize
+                font.pixelSize: !selectedItem && !hoveredItem ? Theme.primaryTextFontSize : root.contentTextSize
                 elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter
                 color: Theme.palette.primaryColor1
