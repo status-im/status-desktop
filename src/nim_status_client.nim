@@ -89,7 +89,7 @@ proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, 
   logScope:
     topics = "qt"
     text = $message
-    file = $file & ":" & $line
+    source_file = $file & ":" & $line
     function = $function
     category = $category
 
