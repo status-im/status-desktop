@@ -443,7 +443,7 @@ StatusDialog {
                     break
                 }
                 case SessionRequest.methods.signTransaction.name: {
-                    let tx = SessionRequest.methods.signTransaction.getTxFromData(root.payloadData)
+                    let tx = SessionRequest.methods.signTransaction.getTxObjFromData(root.payloadData)
                     payloadToDisplay = JSON.stringify(tx, null, 2)
                     userDisplayNaming = SessionRequest.methods.signTransaction.requestDisplay
                     break
