@@ -663,6 +663,7 @@ QtObject:
       kdfIterations: account.kdfIterations,
       passwordHash: passwordHash,
       walletSecretsConfig: self.buildWalletSecrets(),
+      bandwidthStatsEnabled: true,
     )
 
     if main_constants.runtimeLogLevelSet():
