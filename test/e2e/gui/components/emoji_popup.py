@@ -31,9 +31,9 @@ class EmojiPopup(QObject):
         try:
             time.sleep(0.5)
             self._emoji_item.click()
+            self._emoji_item.wait_until_hidden()
         except LookupError as err:
             if attempts:
                 return self.select(name, attempts - 1)
             else:
                 raise err
-        EmojiPopup().wait_until_hidden()

@@ -83,9 +83,19 @@ class AccountPopup(BasePopup):
 
     @allure.step('Set emoji for account')
     def set_emoji(self, value: str):
-        self._emoji_button.click()
-        EmojiPopup().wait_until_appears(timeout_msec=10000).select(value)
+        self.click_emoji_button().select(value)
         return self
+
+    @allure.step('Click emoji button')
+    def click_emoji_button(self, attempts: int = 2):
+        self._emoji_button.click()
+        try:
+            return EmojiPopup().wait_until_appears(timeout_msec=10000)
+        except AssertionError as err:
+            if attempts:
+                return self.click_emoji_button(attempts - 1)
+            else:
+                raise err
 
     @allure.step('Get emoji id from account header')
     def get_emoji_from_account_title(self):
@@ -99,7 +109,7 @@ class AccountPopup(BasePopup):
     @allure.step('Set eth address for account added from plus button')
     def set_origin_watched_address(self, value: str):
         self._origin_combobox.click()
-        self._watched_address_origin_item.click()
+        self._watched_address_origin_item.wait_until_appears().click()
         assert getattr(self._origin_combobox.object, 'title') == WalletOrigin.WATCHED_ADDRESS_ORIGIN.value
         self._address_text_edit.text = value
         return self
@@ -129,8 +139,7 @@ class AccountPopup(BasePopup):
     @allure.step('Open add new account popup')
     def open_add_new_account_popup(self):
         self._origin_combobox.click()
-        self.click_new_master_key()
-        return AddNewAccountPopup().wait_until_appears()
+        return self.click_new_master_key()
 
     @allure.step('Set derivation path for account')
     def set_derivation_path(self, value: str, index: int, password: str):

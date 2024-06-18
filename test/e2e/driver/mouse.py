@@ -39,6 +39,8 @@ def press_and_move(
 ):
     squish.mouseMove(obj, x, y)
     squish.mousePress(obj, x, y, mouse)
+    time.sleep(0.5)
     move(obj, x, y, dx, dy, step, sleep)
+    time.sleep(0.5)
     squish.mouseRelease(mouse)
     time.sleep(1)
