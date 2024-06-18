@@ -21,17 +21,10 @@ StatusButton {
 
     locale: LocaleUtils.userInputLocale
 
-    QtObject {
-        id: d
-
-        readonly property string maxInputBalanceFormatted:
-            root.formatCurrencyAmount(Math.trunc(root.maxSafeValue*100)/100, root.symbol)
-    }
-
     implicitHeight: 22
 
     type: valid ? StatusBaseButton.Type.Normal : StatusBaseButton.Type.Danger
-    text: qsTr("Max. %1").arg(value === 0 ? locale.zeroDigit : d.maxInputBalanceFormatted)
+    text: qsTr("Max. %1").arg(value === 0 ? locale.zeroDigit : root.formatCurrencyAmount(maxSafeValue, root.symbol))
 
     horizontalPadding: 8
     verticalPadding: 3

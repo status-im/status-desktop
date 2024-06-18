@@ -9,10 +9,9 @@ import StatusQ.Core.Utils 0.1
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.popups.swap 1.0
+import AppLayouts.Wallet.adaptors 1.0
 
 import shared.stores 1.0
-
-import SortFilterProxyModel 0.2
 
 import Models 1.0
 import Storybook 1.0
@@ -45,6 +44,14 @@ Item {
             }
             swapOutputData: SwapOutputData {}
         }
+
+        readonly property var tokenSelectorAdaptor: TokenSelectorViewAdaptor {
+            assetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
+            flatNetworksModel: d.adaptor.swapStore.flatNetworks
+            currentCurrency: d.adaptor.currencyStore.currentCurrency
+
+            accountAddress: d.adaptor.swapFormData.selectedAccountAddress
+        }
     }
 
     Component {
@@ -53,8 +60,8 @@ Item {
             anchors.centerIn: parent
 
             currencyStore: d.adaptor.currencyStore
-            flatNetworksModel: d.adaptor.filteredFlatNetworksModel
-            processedAssetsModel: d.adaptor.processedAssetsModel
+            flatNetworksModel: d.adaptor.swapStore.flatNetworks
+            processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
         }
     }
 
@@ -114,7 +121,8 @@ Item {
                 { tag: "1234567890", tokenAmount: "1234567890", valid: true },
                 { tag: "1234567890.1234567890", tokenAmount: "1234567890.1234567890", valid: true },
                 { tag: "abc", tokenAmount: "abc", valid: false },
-                { tag: "NaN", tokenAmount: "NaN", valid: false }
+                { tag: "NaN", tokenAmount: NaN, valid: false },
+                { tag: "<empty>", tokenAmount: "", valid: false }
             ]
         }
 
@@ -136,7 +144,7 @@ Item {
 
             const holdingSelector = findChild(controlUnderTest, "holdingSelector")
             verify(!!holdingSelector)
-            tryCompare(holdingSelector.selectedItem, "symbol", tokenSymbol)
+            tryCompare(holdingSelector, "currentTokensKey", tokenSymbol)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
@@ -182,13 +190,13 @@ Item {
             mouseClick(holdingSelector)
             waitForRendering(holdingSelector)
 
-            const assetSelectorList = findChild(holdingSelector, "assetSelectorList")
+            const assetSelectorList = findChild(holdingSelector, "tokenSelectorListview")
             verify(!!assetSelectorList)
             waitForRendering(assetSelectorList)
 
-            const sttDelegate = findChild(assetSelectorList, "AssetSelector_ItemDelegate_STT")
+            const sttDelegate = findChild(assetSelectorList, "tokenSelectorAssetDelegate_STT")
             verify(!!sttDelegate)
-            mouseClick(sttDelegate, 40, 40) // center might be covered by tags
+            mouseClick(sttDelegate)
 
             tryCompare(controlUnderTest, "selectedHoldingId", "STT")
 
@@ -303,9 +311,6 @@ Item {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
             verify(!!controlUnderTest)
 
-            controlUnderTest.mainInputLoading = true
-            controlUnderTest.bottomTextLoading = true
-
             const maxTagButton = findChild(controlUnderTest, "maxTagButton")
             verify(!!maxTagButton)
             verify(!maxTagButton.visible)
@@ -313,11 +318,8 @@ Item {
             const holdingSelector = findChild(controlUnderTest, "holdingSelector")
             verify(!!holdingSelector)
 
-            const assetSelectorList = findChild(holdingSelector, "assetSelectorList")
+            const assetSelectorList = findChild(holdingSelector, "tokenSelectorListview")
             verify(!!assetSelectorList)
-
-            const assetSelectorButton = findChild(controlUnderTest, "assetSelectorButton")
-            verify(!!assetSelectorButton)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
@@ -325,30 +327,32 @@ Item {
             const bottomItemText = findChild(amountToSendInput, "bottomItemText")
             verify(!!bottomItemText)
 
-            for (let i= 0; i < d.adaptor.processedAssetsModel.count; i++) {
-                let modelItemToTest = ModelUtils.get(d.adaptor.processedAssetsModel, i)
-                mouseClick(assetSelectorButton)
+            for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
+                let modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
+                mouseClick(holdingSelector)
                 waitForRendering(assetSelectorList)
 
                 let delToTest = assetSelectorList.itemAtIndex(i)
                 verify(!!delToTest)
-                mouseClick(delToTest, 40, 40) // center might be covered by tags
+                mouseClick(delToTest)
 
-                waitForRendering(maxTagButton)
+                waitForRendering(controlUnderTest)
                 verify(maxTagButton.visible)
                 verify(!maxTagButton.text.endsWith(modelItemToTest.symbol))
-                compare(maxTagButton.type, modelItemToTest.currentBalance === 0 ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal)
+                tryCompare(maxTagButton, "type", modelItemToTest.currentBalance === 0 ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal)
 
                 // check input value and state
                 mouseClick(maxTagButton)
                 waitForRendering(amountToSendInput)
 
-                compare(amountToSendInput.input.text, modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValueAsString)
+                tryCompare(amountToSendInput.input, "text", modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValueAsString)
                 compare(controlUnderTest.value, maxTagButton.maxSafeValue)
                 verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
                 compare(bottomItemText.text, d.adaptor.formatCurrencyAmount(
                             maxTagButton.maxSafeValue * amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount,
                             d.adaptor.currencyStore.currentCurrency))
+
+                amountToSendInput.input.input.edit.clear()
             }
         }
 
@@ -366,11 +370,8 @@ Item {
             const holdingSelector = findChild(controlUnderTest, "holdingSelector")
             verify(!!holdingSelector)
 
-            const assetSelectorList = findChild(holdingSelector, "assetSelectorList")
+            const assetSelectorList = findChild(holdingSelector, "tokenSelectorListview")
             verify(!!assetSelectorList)
-
-            const assetSelectorButton = findChild(controlUnderTest, "assetSelectorButton")
-            verify(!!assetSelectorButton)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
@@ -388,22 +389,22 @@ Item {
 
             compare(amountToSendInput.input.text, "5.42")
 
-            for (let i= 0; i < d.adaptor.processedAssetsModel.count; i++) {
-                let modelItemToTest = ModelUtils.get(d.adaptor.processedAssetsModel, i)
-                mouseClick(assetSelectorButton)
-                waitForRendering(assetSelectorList)
+            for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
+                let modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
+                mouseClick(holdingSelector)
+                waitForRendering(holdingSelector)
 
                 let delToTest = assetSelectorList.itemAtIndex(i)
                 verify(!!delToTest)
-                mouseClick(delToTest, 40, 40) // center might be covered by tags
+                mouseClick(delToTest)
 
                 // check input value and state
-                waitForRendering(amountToSendInput)
+                waitForItemPolished(controlUnderTest)
 
                 compare(amountToSendInput.input.text, "5.42")
-                compare(bottomItemText.text, d.adaptor.formatCurrencyAmount(
-                            numberTested * amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount,
-                            d.adaptor.currencyStore.currentCurrency))
+                tryCompare(bottomItemText, "text", d.adaptor.formatCurrencyAmount(
+                               numberTested * amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount,
+                               d.adaptor.currencyStore.currentCurrency))
                 compare(controlUnderTest.value, numberTested)
                 compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
                 compare(controlUnderTest.valueValid, numberTested <= maxTagButton.maxSafeValue)
@@ -415,7 +416,7 @@ Item {
         function test_if_values_are_reset_after_setting_tokenAmount_as_empty() {
             const tokenKeyToTest = "ETH"
             let numberTestedString = "1.0001"
-            let modelItemToTest = ModelUtils.getByKey(d.adaptor.processedAssetsModel, "tokensKey", tokenKeyToTest)
+            let modelItemToTest = ModelUtils.getByKey(d.tokenSelectorAdaptor.outputAssetsModel, "tokensKey", tokenKeyToTest)
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {
                                                          swapSide: SwapInputPanel.SwapSide.Pay,
                                                          tokenKey: tokenKeyToTest,
@@ -442,12 +443,11 @@ Item {
 
             numberTestedString = ""
             numberTested = 0
-            mouseClick(amountToSendInput)
             controlUnderTest.tokenAmount = numberTestedString
-            waitForRendering(amountToSendInput)
+            waitForItemPolished(controlUnderTest)
 
-            compare(amountToSendInput.input.text, numberTestedString)
-            compare(controlUnderTest.value, numberTested)
+            tryCompare(amountToSendInput.input, "text", numberTestedString)
+            tryCompare(controlUnderTest, "value", numberTested)
             compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(numberTested, modelItemToTest.decimals).toString())
             compare(controlUnderTest.valueValid, false)
             compare(controlUnderTest.selectedHoldingId, tokenKeyToTest)

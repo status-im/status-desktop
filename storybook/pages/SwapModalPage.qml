@@ -35,13 +35,6 @@ SplitView {
         function launchPopup() {
             swapModal.createObject(root)
         }
-        function getNetwork() {
-            let selectedChain = -1
-            if (networksComboBox.model.count > 0 && networksComboBox.currentIndex >= 0) {
-                selectedChain = ModelUtils.get(networksComboBox.model, networksComboBox.currentIndex, "chainId")
-            }
-            return selectedChain
-        }
 
         readonly property SwapTransactionRoutes dummySwapTransactionRoutes: SwapTransactionRoutes{}
     }
@@ -103,19 +96,11 @@ SplitView {
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
                 swapInputParamsForm: SwapInputParamsForm {
-                    selectedAccountAddress: accountComboBox.currentValue ?? ""
-
-                    selectedNetworkChainId: d.getNetwork()
-                    fromTokensKey: fromTokenComboBox.currentValue
-                    fromTokenAmount: swapInput.text
-                    toTokenKey: toTokenComboBox.currentValue
                     onSelectedAccountAddressChanged: {
                         if (selectedAccountAddress !== accountComboBox.currentValue)
                             accountComboBox.currentIndex = accountComboBox.indexOfValue(selectedAccountAddress)
                     }
-                    Binding on selectedAccountAddress {
-                        value: accountComboBox.currentValue ?? ""
-                    }
+                    fromTokenAmount: swapInput.text
                 }
                 swapAdaptor: SwapModalAdaptor {
                     swapStore: dSwapStore
@@ -132,12 +117,27 @@ SplitView {
                 Binding {
                     target: swapInputParamsForm
                     property: "fromTokensKey"
-                    value: fromTokenComboBox.currentValue
+                    value: fromTokenComboBox.currentValue ?? ""
                 }
                 Binding {
                     target: swapInputParamsForm
                     property: "toTokenKey"
-                    value: toTokenComboBox.currentValue
+                    value: toTokenComboBox.currentValue ?? ""
+                }
+                Binding {
+                    target: swapInputParamsForm
+                    property: "selectedNetworkChainId"
+                    value: networksComboBox.currentValue ?? -1
+                }
+                Binding {
+                    target: swapInputParamsForm
+                    property: "selectedAccountAddress"
+                    value: accountComboBox.currentValue ?? ""
+                }
+                Binding {
+                    target: swapInputParamsForm
+                    property: "fromTokenAmount"
+                    value: swapInput.text
                 }
             }
         }
@@ -184,6 +184,7 @@ SplitView {
             ComboBox {
                 id: networksComboBox
                 textRole: "chainName"
+                valueRole: "chainId"
                 model: d.filteredNetworksModel
                 currentIndex: 0
                 onCountChanged: currentIndex = 0
@@ -201,7 +202,7 @@ SplitView {
 
             StatusInput {
                 id: swapInput
-                Layout.preferredWidth: 100
+                Layout.preferredWidth: 250
                 label: "Token amount to swap"
                 text: ""
             }

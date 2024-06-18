@@ -23,6 +23,7 @@ QObject {
       - balances: submodel -> [ chainId:int, account:string, balance:BigIntString, iconUrl:string ]
 
       Computed values:
+      - currentBalance: double (amount of tokens)
       - currencyBalance: double (e.g. `1000.42` in user's fiat currency)
       - currencyBalanceAsString: string (e.g. "1 000,42 CZK" formatted as a string according to the user's locale)
       - balanceAsString: string (`1.42` formatted as e.g. "1,42" in user's locale)
@@ -63,11 +64,16 @@ QObject {
             }
         ]
 
-        // FIXME optionally sort/filter by wallet controller as well
         sorters: [
+            RoleSorter {
+                roleName: "sectionId"
+            },
             RoleSorter {
                 roleName: "currencyBalance"
                 sortOrder: Qt.DescendingOrder
+            },
+            RoleSorter {
+                roleName: "name"
             }
         ]
     }
@@ -93,6 +99,20 @@ QObject {
             readonly property string currencyBalanceAsString:
                 currencyBalance ? LocaleUtils.currencyAmountToLocaleString({amount: currencyBalance, symbol: root.currentCurrency, displayDecimals})
                                 : ""
+
+            readonly property string sectionId: {
+                if (root.enabledChainIds.length === 1) {
+                    return currentBalance ? "section_%1".arg(root.enabledChainIds[0]) : "section_zzz"
+                }
+                return ""
+            }
+            readonly property string sectionName: {
+                if (root.enabledChainIds.length === 1) {
+                    return currentBalance ? qsTr("Your assets on %1").arg(ModelUtils.getByKey(root.flatNetworksModel, "chainId", root.enabledChainIds[0], "chainName"))
+                                          : qsTr("Popular assets")
+                }
+                return ""
+            }
 
             readonly property var balances: this
 
@@ -160,7 +180,7 @@ QObject {
             }
         }
 
-        exposedRoles: ["balances", "currencyBalance", "currencyBalanceAsString", "balanceAsString"]
+        exposedRoles: ["balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "sectionId", "sectionName"]
         expectedRoles: ["communityId", "balances", "decimals", "marketDetails"]
     }
 }

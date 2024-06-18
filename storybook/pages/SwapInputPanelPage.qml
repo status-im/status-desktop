@@ -30,12 +30,12 @@ SplitView {
         id: d
 
         readonly property SwapInputParamsForm swapInputParamsForm: SwapInputParamsForm {
-            selectedNetworkChainId: ctrlSelectedNetworkChainId.currentValue
+            selectedAccountAddress: ctrlAccount.currentValue ?? ""
+            selectedNetworkChainId: ctrlSelectedNetworkChainId.currentValue ?? -1
             fromTokensKey: ctrlFromTokensKey.text
             fromTokenAmount: ctrlFromTokenAmount.text
             toTokenKey: ctrlToTokenKey.text
             toTokenAmount: ctrlToTokenAmount.text
-            selectedAccountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         }
 
         readonly property SwapModalAdaptor adaptor: SwapModalAdaptor {
@@ -78,7 +78,11 @@ SplitView {
 
                 currencyStore: d.adaptor.currencyStore
                 flatNetworksModel: d.adaptor.swapStore.flatNetworks
-                processedAssetsModel: d.adaptor.processedAssetsModel
+                processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
+
+                selectedNetworkChainId: d.swapInputParamsForm.selectedNetworkChainId
+                selectedAccountAddress: d.swapInputParamsForm.selectedAccountAddress
+                nonInteractiveTokensKey: receivePanel.selectedHoldingId
 
                 tokenKey: d.swapInputParamsForm.fromTokensKey
                 tokenAmount: d.swapInputParamsForm.fromTokenAmount
@@ -99,8 +103,12 @@ SplitView {
                 }
 
                 currencyStore: d.adaptor.currencyStore
-                flatNetworksModel: d.adaptor.filteredFlatNetworksModel
-                processedAssetsModel: d.adaptor.processedAssetsModel
+                flatNetworksModel: d.adaptor.swapStore.flatNetworks
+                processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
+
+                selectedNetworkChainId: d.swapInputParamsForm.selectedNetworkChainId
+                selectedAccountAddress: d.swapInputParamsForm.selectedAccountAddress
+                nonInteractiveTokensKey: payPanel.selectedHoldingId
 
                 tokenKey: d.swapInputParamsForm.toTokenKey
                 tokenAmount: d.swapInputParamsForm.toTokenAmount
@@ -145,6 +153,24 @@ SplitView {
                     currentIndex: -1 // all chains
                 }
             }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Label { text: "Account:" }
+                ComboBox {
+                    Layout.fillWidth: true
+                    id: ctrlAccount
+                    textRole: "name"
+                    valueRole: "address"
+                    displayText: currentText || "All accounts"
+                    model: SortFilterProxyModel {
+                        sourceModel: d.adaptor.swapStore.accounts
+                        sorters: RoleSorter { roleName: "position" }
+                    }
+                    currentIndex: -1
+                }
+            }
+
 
             RowLayout {
                 Layout.fillWidth: true

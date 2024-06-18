@@ -61,7 +61,7 @@ Control {
         StatusBaseText {
             Layout.fillWidth: true
             Layout.topMargin: -12
-            text: qsTr("Maximum deviation in price due to market volatility and liquidity allowed before the swap is cancelled. (0.5% default).")
+            text: qsTr("Maximum deviation in price due to market volatility and liquidity allowed before the swap is cancelled. (%L1% default).").arg(slippageSelector.defaultValue)
             wrapMode: Text.Wrap
             color: Theme.palette.directColor5
         }

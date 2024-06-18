@@ -11,9 +11,10 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.stores 1.0
+import AppLayouts.Wallet.adaptors 1.0
 
 import shared.popups.send.views 1.0
-import shared.popups.send.panels 1.0
 
 import utils 1.0
 import shared.stores 1.0
@@ -28,11 +29,21 @@ Control {
     required property var flatNetworksModel
     required property var processedAssetsModel
 
+    property int selectedNetworkChainId: -1
+    property string selectedAccountAddress
+    property string nonInteractiveTokensKey
+
     property string tokenKey
-    onTokenKeyChanged: reevaluateSelectedId()
+    onTokenKeyChanged: Qt.callLater(reevaluateSelectedId)
+
     property string tokenAmount
     onTokenAmountChanged: {
-        Qt.callLater(() => amountToSendInput.input.text = !!tokenAmount ? SQUtils.AmountsArithmetic.fromString(tokenAmount).toLocaleString(locale, 'f', -128): "")
+        if (tokenAmount === "") {
+            amountToSendInput.input.input.edit.clear()
+            return
+        }
+        Qt.callLater(() => amountToSendInput.input.text =
+                     SQUtils.AmountsArithmetic.fromString(tokenAmount).toFixed().replace('.', LocaleUtils.userInputLocale.decimalPoint))
     }
 
     property int swapSide: SwapInputPanel.SwapSide.Pay
@@ -41,17 +52,19 @@ Control {
     property bool bottomTextLoading
     property bool interactive: true
 
+    function reevaluateSelectedId() {
+        if (!!tokenKey) {
+            holdingSelector.selectToken(tokenKey)
+            d.selectedHolding = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey)
+        }
+    }
+
     // output API
-    readonly property string selectedHoldingId: d.selectedHoldingId
+    readonly property string selectedHoldingId: holdingSelector.currentTokensKey
     readonly property double value: amountToSendInput.cryptoValueToSendFloat
     readonly property string rawValue: amountToSendInput.cryptoValueToSend
     readonly property bool valueValid: amountToSendInput.inputNumberValid
     readonly property bool amountEnteredGreaterThanBalance: value > maxSendButton.maxSafeValue
-    function reevaluateSelectedId() {
-        if (!!tokenKey) {
-            Qt.callLater(d.setSelectedHoldingId, tokenKey, Constants.TokenType.ERC20)
-        }
-    }
 
     // visual properties
     property int swapExchangeButtonWidth: 44
@@ -76,35 +89,30 @@ Control {
     QtObject {
         id: d
 
-        function setSelectedHoldingId(holdingId, holdingType) {
-            let holding = SQUtils.ModelUtils.getByKey(root.processedAssetsModel, "symbol", holdingId)
-            d.selectedHoldingId = holdingId
-            d.setSelectedHolding(holding, holdingType)
-        }
+        property var selectedHolding: SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey)
 
-        function setSelectedHolding(holding, holdingType) {
-            d.selectedHoldingType = holdingType
-            d.selectedHolding = holding
-            holdingSelector.setSelectedItem(holding, holdingType)
-        }
-
-        property var selectedHolding: null
-        property var selectedHoldingType: Constants.TokenType.Unknown
-        property string selectedHoldingId
-
-        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.TokenType.ERC20
-        readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.currentCurrencyBalance : 0
+        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding
+        readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.currencyBalance : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
-        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? root.currencyStore.currentCurrency :
-                                                                              !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
-        property string searchText
+        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? root.currencyStore.currentCurrency
+                                                                            : (!!selectedHolding ? selectedHolding.symbol : "")
+
+        readonly property var adaptor: TokenSelectorViewAdaptor {
+            assetsModel: root.processedAssetsModel
+            flatNetworksModel: root.flatNetworksModel
+            currentCurrency: root.currencyStore.currentCurrency
+
+            enabledChainIds: root.selectedNetworkChainId !== -1 ? [root.selectedNetworkChainId] : []
+            accountAddress: root.selectedAccountAddress || ""
+            searchString: holdingSelector.searchString
+        }
     }
 
     background: Shape {
         id: shape
 
-        property int radius: 16
+        property int radius: Style.current.radius
         property int leftTopRadius: radius
         property int rightTopRadius: radius
         property int leftBottomRadius: radius
@@ -190,14 +198,13 @@ Control {
                 objectName: "amountToSendInput"
                 caption: root.caption
                 interactive: root.interactive
-                selectedHolding: d.selectedHolding
+                selectedHolding: d.selectedHolding // FIXME shouldn't be necesary to pass the whole object
+
                 fiatInputInteractive: root.fiatInputInteractive
                 input.input.edit.color: !input.valid ? Theme.palette.dangerColor1 : maxSendButton.hovered ? Theme.palette.baseColor1
                                                                                                           : Theme.palette.directColor1
 
-                multiplierIndex: d.isSelectedHoldingValidAsset && !!holdingSelector.selectedItem && !!holdingSelector.selectedItem.decimals
-                                 ? holdingSelector.selectedItem.decimals
-                                 : 0
+                multiplierIndex: !!d.selectedHolding ? d.selectedHolding.decimals : 0
 
                 maxInputBalance: (root.swapSide === SwapInputPanel.SwapSide.Receive || !d.isSelectedHoldingValidAsset) ? Number.POSITIVE_INFINITY
                                                                                                                        : maxSendButton.maxSafeValue
@@ -212,37 +219,14 @@ Control {
 
             Item { Layout.fillHeight: true }
 
-            HoldingSelector {
+            TokenSelector {
                 id: holdingSelector
                 objectName: "holdingSelector"
                 Layout.rightMargin: d.isSelectedHoldingValidAsset ? -root.padding : 0
                 Layout.alignment: Qt.AlignRight
-                Layout.preferredHeight: 38
-
-                searchPlaceholderText: qsTr("Search asset name or symbol")
-                assetsModel: SortFilterProxyModel {
-                    sourceModel: root.processedAssetsModel
-                    filters: FastExpressionFilter {
-                        function search(symbol, name, searchString) {
-                            return (symbol.toUpperCase().includes(searchString.toUpperCase())
-                                    || name.toUpperCase().includes(searchString.toUpperCase()))
-                        }
-                        expression: search(model.symbol, model.name, d.searchText)
-                        expectedRoles: ["symbol", "name"]
-                    }
-                }
-                networksModel: root.flatNetworksModel
-                formatCurrentCurrencyAmount: function(balance) {
-                    return root.currencyStore.formatCurrencyAmount(balance, root.currencyStore.currentCurrency)
-                }
-                formatCurrencyAmountFromBigInt: function(balance, symbol, decimals) {
-                    return root.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, {noSymbol: true})
-                }
-                onItemSelected: {
-                    d.setSelectedHoldingId(holdingId, holdingType)
-                    amountToSendInput.input.forceActiveFocus()
-                }
-                onSearchTextChanged: d.searchText = searchText
+                model: d.adaptor.outputAssetsModel
+                nonInteractiveDelegateKey: root.nonInteractiveTokensKey
+                onActivated: amountToSendInput.input.forceActiveFocus()
             }
 
             Item { Layout.fillHeight: !maxSendButton.visible }

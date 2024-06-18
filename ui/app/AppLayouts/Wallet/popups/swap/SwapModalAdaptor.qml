@@ -23,8 +23,6 @@ QObject {
     property bool validSwapProposalReceived: false
     property bool swapProposalLoading: false
 
-    property bool showCommunityTokens
-
     // To expose the selected from and to Token from the SwapModal
     readonly property var fromToken: fromTokenEntry.item
     readonly property var toToken: toTokenEntry.item
@@ -64,50 +62,6 @@ QObject {
         filters: ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled }
     }
 
-    // Model prepared to provide filtered and sorted assets as per the advanced Settings in token management
-    readonly property var processedAssetsModel: SortFilterProxyModel {
-        property real displayAssetsBelowBalanceThresholdAmount: root.walletAssetsStore.walletTokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
-        sourceModel: d.assetsWithFilteredBalances
-        proxyRoles: [
-            FastExpressionRole {
-                name: "currentBalance"
-                expression: {
-                    // FIXME recalc when selectedNetworkChainId changes
-                    root.swapFormData.selectedNetworkChainId
-                    return d.getTotalBalance(model.balances, model.decimals)
-                }
-                expectedRoles: ["balances", "decimals"]
-            },
-            FastExpressionRole {
-                name: "currentCurrencyBalance"
-                expression: {
-                    if (!!model.marketDetails) {
-                        return model.currentBalance * model.marketDetails.currencyPrice.amount
-                    }
-                    return 0
-                }
-                expectedRoles: ["marketDetails", "currentBalance"]
-            }
-        ]
-        filters: [
-            FastExpressionFilter {
-                expression: {
-                    root.walletAssetsStore.assetsController.revision
-
-                    if (!root.walletAssetsStore.assetsController.filterAcceptsSymbol(model.symbol)) // explicitely hidden
-                        return false
-                    if (!!model.communityId)
-                        return root.showCommunityTokens
-                    if (root.walletAssetsStore.walletTokensStore.displayAssetsBelowBalance)
-                        return model.currentCurrencyBalance > processedAssetsModel.displayAssetsBelowBalanceThresholdAmount
-                    return true
-                }
-                expectedRoles: ["symbol", "communityId", "currentCurrencyBalance"]
-            }
-        ]
-        // FIXME sort by assetsController instead, to have the sorting/order as in the main wallet view
-    }
-
     ModelEntry {
         id: fromTokenEntry
         sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
@@ -133,27 +87,6 @@ QObject {
         id: d
 
         property string uuid
-
-        // Internal model filtering balances by the account selected in the AccountsModalHeader
-        readonly property SubmodelProxyModel assetsWithFilteredBalances: SubmodelProxyModel {
-            sourceModel: root.walletAssetsStore.groupedAccountAssetsModel
-            submodelRoleName: "balances"
-            delegateModel: SortFilterProxyModel {
-                sourceModel: submodel
-
-                filters: [
-                    ValueFilter {
-                        roleName: "chainId"
-                        value: root.swapFormData.selectedNetworkChainId
-                        enabled: root.swapFormData.selectedNetworkChainId !== -1
-                    },
-                    ValueFilter {
-                        roleName: "account"
-                        value: root.swapFormData.selectedAccountAddress
-                    }
-                ]
-            }
-        }
 
        readonly property SubmodelProxyModel filteredBalancesModel: SubmodelProxyModel {
             sourceModel: root.walletAssetsStore.baseGroupedAccountAssetModel
@@ -200,17 +133,6 @@ QObject {
                 formattedBalance: root.formatCurrencyAmount(.0 , root.fromToken.symbol)
             }
         }
-
-        /* Internal function to calculate total balance */
-        function getTotalBalance(balances, decimals, chainIds = [root.swapFormData.selectedNetworkChainId]) {
-            let totalBalance = 0
-            for(let i=0; i<balances.count; i++) {
-                let balancePerAddressPerChain = ModelUtils.get(balances, i)
-                if (chainIds.includes(-1) || chainIds.includes(balancePerAddressPerChain.chainId))
-                    totalBalance += AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
-            }
-            return totalBalance
-        }
     }
 
     Connections {
@@ -224,10 +146,11 @@ QObject {
             if(txRoutes.suggestedRoutes.count === 1) {
                 root.validSwapProposalReceived = true
                 root.swapOutputData.bestRoutes =  txRoutes.suggestedRoutes
-                root.swapOutputData.toTokenAmount = root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.toToken.decimals).toString()
+                root.swapOutputData.toTokenAmount = AmountsArithmetic.div(AmountsArithmetic.fromString(txRoutes.amountToReceive), AmountsArithmetic.fromNumber(1, root.toToken.decimals)).toString()
+
                 let gasTimeEstimate = txRoutes.gasTimeEstimate
                 let totalTokenFeesInFiat = 0
-                if (!!root.fromToken && !!root.fromToken .marketDetails && !!root.fromToken.marketDetails.currencyPrice)
+                if (!!root.fromToken && !!root.fromToken.marketDetails && !!root.fromToken.marketDetails.currencyPrice)
                     totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.fromToken.marketDetails.currencyPrice.amount
                 root.swapOutputData.totalFees = root.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
                 root.swapOutputData.approvalNeeded = ModelUtils.get(root.swapOutputData.bestRoutes, 0, "route").approvalRequired
