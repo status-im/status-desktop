@@ -9,7 +9,7 @@ import configs
 import driver
 import shortuuid
 from datetime import datetime
-from configs.system import IS_LIN
+from configs.system import get_platform
 from driver import context
 from driver.server import SquishServer
 from gui.objects_map.names import statusDesktop_mainWindow
@@ -54,7 +54,7 @@ class AUT:
                 rect = driver.object.globalBounds(driver.waitForObject(statusDesktop_mainWindow))
                 img = ImageGrab.grab(
                     bbox=(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height),
-                    xdisplay=configs.system.DISPLAY if IS_LIN else None)
+                    xdisplay=configs.system.DISPLAY if get_platform() == "Linux" else None)
                 view = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
                 cv2.imwrite(str(screenshot), view)
 

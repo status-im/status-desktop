@@ -9,6 +9,7 @@ import allure
 import psutil
 
 import configs
+from configs.system import get_platform
 
 LOG = logging.getLogger(__name__)
 
@@ -35,15 +36,13 @@ def find_free_port(start: int, step: int):
 def kill_process(pid):
     LOG.debug(f'Terminating process {pid}')
 
-    current_platform = platform.system()
-
     try:
-        if current_platform == "Windows":
+        if get_platform() == "Windows":
             subprocess.call(f"taskkill /F /T /PID {str(pid)}")
-        elif current_platform in ["Linux", "Darwin"]:
+        elif get_platform() in ["Linux", "Darwin"]:
             os.kill(pid, signal.SIGKILL)
         else:
-            raise NotImplementedError(f"Unsupported platform: {current_platform}")
+            raise NotImplementedError(f"Unsupported platform: {get_platform()}")
     except Exception as e:
         print(f"Failed to terminate process {pid}: {e}")
 

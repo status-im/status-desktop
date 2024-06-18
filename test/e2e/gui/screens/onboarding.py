@@ -419,7 +419,7 @@ class YourEmojihashAndIdenticonRingView(OnboardingView):
     def next(self):
         self._next_button.click()
         time.sleep(1)
-        if configs.system.IS_MAC:
+        if configs.system.get_platform() == "Darwin":
             return AllowNotificationsView().wait_until_appears()
 
     @allure.step('Go back')

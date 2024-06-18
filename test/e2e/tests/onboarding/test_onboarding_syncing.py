@@ -86,7 +86,7 @@ def test_sync_device_during_onboarding(multiple_instances):
             sync_result.sign_in()
             SplashScreen().wait_until_hidden()
             YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
-            if configs.system.IS_MAC:
+            if configs.system.get_platform() == "Darwin":
                 AllowNotificationsView().start_using_status()
             SplashScreen().wait_until_appears().wait_until_hidden()
             if not configs.system.TEST_MODE:
