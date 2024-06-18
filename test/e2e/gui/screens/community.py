@@ -10,6 +10,7 @@ from constants import UserChannel, ColorCodes
 from driver.objects_access import walk_children
 from gui.components.community.community_category_popup import NewCategoryPopup, EditCategoryPopup, CategoryPopup
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
+from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.community.welcome_community import WelcomeCommunityPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.delete_popup import DeletePopup, DeleteCategoryPopup
@@ -208,6 +209,7 @@ class LeftPanel(QObject):
             communities_names.scrollView_addButton_StatusChatListCategoryItemButton)
         self._more_button = Button(communities_names.scrollView_menuButton_StatusChatListCategoryItemButton)
         self._arrow_button = Button(communities_names.scrollView_toggleButton_StatusChatListCategoryItemButton)
+        self._add_members_button = Button(names.scrollView_Add_members_StatusButton)
 
     @property
     @allure.step('Get community logo')
@@ -379,6 +381,11 @@ class LeftPanel(QObject):
     @allure.step('Right click on left panel')
     def right_click_on_panel(self):
         super(LeftPanel, self).right_click()
+
+    @allure.step('Invite people to community')
+    def invite_people_to_community(self, contacts: typing.List[str], message: str):
+        self._add_members_button.click()
+        InviteContactsPopup().wait_until_appears().invite(contacts, message)
 
 
 class Chat(QObject):
