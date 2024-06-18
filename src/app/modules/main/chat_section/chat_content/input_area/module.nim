@@ -65,7 +65,7 @@ method getModuleAsVariant*(self: Module): QVariant =
 proc getChatId*(self: Module): string =
   return self.controller.getChatId()
 
-method sendImages*(self: Module, imagePathsAndDataJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview]): string =
+method sendImages*(self: Module, imagePathsAndDataJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview]) =
   self.controller.sendImages(imagePathsAndDataJson, msg, replyTo, singletonInstance.userProfile.getPreferredName(), linkPreviews)
 
 method sendChatMessage*(
@@ -136,3 +136,9 @@ method setUrls*(self: Module, urls: seq[string]) =
 
 method getContactDetails*(self: Module, contactId: string): ContactDetails =
   return self.controller.getContactDetails(contactId)
+
+method onSendingMessageSuccess*(self: Module) =
+  self.view.emitSendingMessageSuccess()
+
+method onSendingMessageFailure*(self: Module) =
+  self.view.emitSendingMessageFailure()

@@ -1,10 +1,10 @@
-import NimQml, Tables, json, sequtils, stew/shims/strformat, chronicles, os, strutils, uuids, base64
+import NimQml, Tables, json, sequtils, chronicles, os, strutils, uuids, base64
 import std/[times, os]
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ./dto/chat as chat_dto
 import ../message/dto/message as message_dto
-import ../message/dto/link_preview
+import ../message/dto/[link_preview, standard_link_preview, status_link_preview]
 import ../activity_center/dto/notification as notification_dto
 import ../community/dto/community as community_dto
 import ../contacts/service as contact_service
@@ -420,61 +420,94 @@ QtObject:
       error "Error deleting channel", chatId, msg = e.msg
       return
 
-  proc sendImages*(self: Service,
+  proc asyncSendImages*(self: Service,
                    chatId: string,
                    imagePathsAndDataJson: string,
                    msg: string,
                    replyTo: string,
                    preferredUsername: string = "",
-                   linkPreviews: seq[LinkPreview] = @[]): string =
-    result = ""
+                   linkPreviews: seq[LinkPreview] = @[]) =
+
+
+    let arg = AsyncSendImagesTaskArg(
+      tptr: asyncSendImagesTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncSendImagesDone",
+      chatId: chatId,
+      imagePathsAndDataJson: imagePathsAndDataJson,
+      tempDir: TMPDIR,
+      msg: msg,
+      replyTo: replyTo,
+      preferredUsername: preferredUsername,
+      linkPreviews: %linkPreviews,
+    )
+
+    self.threadpool.start(arg)
+
+  proc onAsyncSendImagesDone*(self: Service, rpcResponseJson: string) {.slot.} =
+    let rpcResponseObj = rpcResponseJson.parseJson
     try:
-      var images = Json.decode(imagePathsAndDataJson, seq[string])
-      let base64JPGPrefix = "data:image/jpeg;base64,"
-      var imagePaths: seq[string] = @[]
 
-      for imagePathOrSource in images.mitems:
-        let imagePath = image_resizer(imagePathOrSource, 2000, TMPDIR)
-        if imagePath != "":
-          imagePaths.add(imagePath)
+      let errorString = rpcResponseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
 
-      let response = status_chat.sendImages(chatId, imagePaths, msg, replyTo, preferredUsername, linkPreviews)
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
 
-      for imagePath in imagePaths:
-        removeFile(imagePath)
-
-      discard self.processMessengerResponse(response)
+      discard self.processMessengerResponse(rpcResponse)
     except Exception as e:
       error "Error sending images", msg = e.msg
-      result = fmt"Error sending images: {e.msg}"
+      self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: rpcResponseObj["chatId"].getStr))
 
-  proc sendChatMessage*(
-    self: Service,
-    chatId: string,
-    msg: string,
-    replyTo: string,
-    contentType: int,
-    preferredUsername: string = "",
-    linkPreviews: seq[LinkPreview] = @[],
-    communityId: string = "") =
+  proc asyncSendChatMessage*(self: Service,
+      chatId: string,
+      msg: string,
+      replyTo: string,
+      contentType: int,
+      preferredUsername: string = "",
+      linkPreviews: seq[LinkPreview] = @[],
+      communityId: string = "") =
     try:
       let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
       let processedMsg = message_common.replaceMentionsWithPubKeys(allKnownContacts, msg)
 
-      let response = status_chat.sendChatMessage(
-        chatId,
-        processedMsg,
-        replyTo,
-        contentType,
-        preferredUsername,
-        linkPreviews,
-        communityId) # Only send a community ID for the community invites
+      let (standardLinkPreviews, statusLinkPreviews) = extractLinkPreviewsLists(linkPreviews)
 
-      let (chats, messages) = self.processMessengerResponse(response)
-      if chats.len == 0 or messages.len == 0:
-        self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: chatId))
+      let arg = AsyncSendMessageTaskArg(
+        tptr: asyncSendMessageTask,
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncSendMessageDone",
+        chatId: chatId,
+        processedMsg: processedMsg,
+        replyTo: replyTo,
+        contentType: contentType,
+        preferredUsername: preferredUsername,
+        communityId: communityId, # Only send a community ID for the community invites
+        standardLinkPreviews: %standardLinkPreviews,
+        statusLinkPreviews: %statusLinkPreviews,
+      )
+
+      self.threadpool.start(arg)
     except Exception as e:
       error "Error sending message", msg = e.msg
+      self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: chatId))
+
+  proc onAsyncSendMessageDone*(self: Service, rpcResponseJson: string) {.slot.} =
+    let rpcResponseObj = rpcResponseJson.parseJson
+    try:
+
+      let errorString = rpcResponseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
+
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      
+      let (chats, messages) = self.processMessengerResponse(rpcResponse)
+      if chats.len == 0 or messages.len == 0:
+        raise newException(CatchableError, "no chat or message returned")
+    except Exception as e:
+      error "Error sending message", msg = e.msg
+      self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: rpcResponseObj["chatId"].getStr))
 
   proc requestAddressForTransaction*(self: Service, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
     try:

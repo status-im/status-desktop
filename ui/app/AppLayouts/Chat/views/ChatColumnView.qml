@@ -80,6 +80,8 @@ Item {
         id: d
         readonly property var activeChatContentModule: d.getChatContentModule(root.activeChatId)
 
+        property bool sending: false
+
         readonly property var urlsList: {
             if (!d.activeChatContentModule) {
                 return
@@ -252,6 +254,18 @@ Item {
             }
         }
 
+
+        Connections {
+            enabled: !!d.activeChatContentModule
+            target: d.activeChatContentModule.inputAreaModule
+            function onMessageSuccessfullySent() {
+                d.sending = false
+            }
+            function onMessageFailedToBeSent() {
+                d.sending = false
+            }
+        }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.margins: Style.current.smallPadding
@@ -276,6 +290,7 @@ Item {
                                  && root.rootStore.sectionDetails.joined
                                  && !root.rootStore.sectionDetails.amIBanned
                                  && root.rootStore.isUserAllowedToSendMessage
+                                 && !d.sending
                     }
 
                     store: root.rootStore
@@ -297,6 +312,9 @@ Item {
                             }
                             if (!root.canPost) {
                                 return qsTr("Sorry, you don't have permissions to post in this channel.")
+                            }
+                            if (d.sending) {
+                                return qsTr("Sending in progress...")
                             }
                             return root.rootStore.chatInputPlaceHolderText
                         } else {
@@ -348,9 +366,10 @@ Item {
                          {
                              Global.playSendMessageSound()
 
-                             chatInput.setText("")
-                             chatInput.textInput.textFormat = TextEdit.PlainText;
-                             chatInput.textInput.textFormat = TextEdit.RichText;
+                            chatInput.setText("")
+                            chatInput.textInput.textFormat = TextEdit.PlainText;
+                            chatInput.textInput.textFormat = TextEdit.RichText;
+                            d.sending = true
                          }
                     }
 

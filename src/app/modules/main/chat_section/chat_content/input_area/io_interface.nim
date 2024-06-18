@@ -22,7 +22,7 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, contentType: int, linkPreviews: seq[LinkPreview]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendImages*(self: AccessInterface, imagePathsJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview]): string {.base.} =
+method sendImages*(self: AccessInterface, imagePathsJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestAddressForTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
@@ -137,4 +137,10 @@ method setUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onSendingMessageSuccess*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onSendingMessageFailure*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

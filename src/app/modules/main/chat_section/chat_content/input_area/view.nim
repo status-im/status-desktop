@@ -56,7 +56,7 @@ QtObject:
     self.delegate.setText(msg, false)
     self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
 
-  proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string): string {.slot.} =
+  proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string) {.slot.} =
     # FIXME: Update this when `setText` is async.
     self.delegate.setText(msg, false)
     self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews())
@@ -154,3 +154,11 @@ QtObject:
   QtProperty[QVariant] urlsModel:
     read = getUrlsModel
     notify = urlsModelChanged
+
+  proc messageSuccessfullySent*(self: View) {.signal.}
+  proc emitSendingMessageSuccess*(self: View) =
+    self.messageSuccessfullySent()
+
+  proc messageFailedToBeSent*(self: View) {.signal.}
+  proc emitSendingMessageFailure*(self: View) =
+    self.messageFailedToBeSent()
