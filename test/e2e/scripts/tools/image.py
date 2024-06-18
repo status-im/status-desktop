@@ -12,7 +12,7 @@ from PIL import ImageGrab
 import configs
 import constants
 import driver
-from configs.system import IS_LIN
+from configs.system import get_platform
 from scripts.tools.ocv import Ocv
 from scripts.utils.system_path import SystemPath
 
@@ -57,7 +57,7 @@ class Image:
         rect = driver.object.globalBounds(driver.waitForObject(self.object_name))
         img = ImageGrab.grab(
             bbox=(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height),
-            xdisplay=configs.system.DISPLAY if IS_LIN else None
+            xdisplay=configs.system.DISPLAY if get_platform() == "Linux" else None
         )
         self._view = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
 
@@ -212,7 +212,7 @@ def compare(actual: Image,
             ):
     expected_fp = None
     if isinstance(expected, str):
-        expected_fp = configs.testpath.TEST_VP / configs.system.OS_ID / expected
+        expected_fp = configs.testpath.TEST_VP / configs.system.get_platform() / expected
         if not expected_fp.exists():
             expected_fp = configs.testpath.TEST_VP / expected
         expected = expected_fp

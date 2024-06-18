@@ -183,11 +183,11 @@ class MainWindow(Window):
         create_password_view = profile_view.next()
         confirm_password_view = create_password_view.create_password(user_account.password)
         confirm_password_view.confirm_password(user_account.password)
-        if configs.system.IS_MAC:
+        if configs.system.get_platform() == "Darwin":
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
         YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
-        if configs.system.IS_MAC:
+        if configs.system.get_platform() == "Darwin":
             AllowNotificationsView().start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE:

@@ -86,7 +86,7 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
 
     with step('Confirm password and login'):
         confirm_password_view.confirm_password(password)
-        if configs.system.IS_MAC:
+        if configs.system.get_platform() == "Darwin":
             assert BiometricsView().is_touch_id_button_visible(), f"TouchID button is not found"
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
@@ -99,7 +99,7 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
 
     with step('Click Start using Status'):
         next_view = emoji_hash_identicon_view.next()
-        if configs.system.IS_MAC:
+        if configs.system.get_platform() == "Darwin":
             next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE:

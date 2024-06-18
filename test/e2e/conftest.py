@@ -7,7 +7,7 @@ import pytest
 from PIL import ImageGrab
 
 import configs
-from configs.system import IS_LIN
+from configs.system import get_platform
 from fixtures.path import generate_test_info
 from scripts.utils.system_path import SystemPath
 
@@ -62,7 +62,7 @@ def pytest_exception_interact(node):
     node_dir: SystemPath = configs.testpath.RUN / test_path / test_name / test_params
     node_dir.mkdir(parents=True, exist_ok=True)
     screenshot = node_dir / f'screenshot_{datetime.today().strftime("%Y-%m-%d %H-%M-%S")}.png'
-    ImageGrab.grab(xdisplay=configs.system.DISPLAY if IS_LIN else None).save(screenshot)
+    ImageGrab.grab(xdisplay=configs.system.DISPLAY if get_platform() == "Linux" else None).save(screenshot)
     allure.attach(
         name='Screenshot on fail',
         body=screenshot.read_bytes(),

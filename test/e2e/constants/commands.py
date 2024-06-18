@@ -1,4 +1,4 @@
-import configs.system
+from configs import system
 
 # Buttons
 BACKSPACE = 'Backspace'
@@ -9,5 +9,5 @@ RETURN = 'Return'
 SHIFT = 'Shift'
 
 # Combinations
-SELECT_ALL = f'{CTRL if configs.system.IS_WIN else COMMAND}+A'
+SELECT_ALL = f'{CTRL if system.get_platform() == "Windows" else COMMAND}+A'
 OPEN_GOTO = f'{COMMAND}+{SHIFT}+G'

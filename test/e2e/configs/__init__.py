@@ -3,6 +3,7 @@ import logging
 from os import path
 from scripts.utils.system_path import SystemPath
 from . import testpath, timeouts, testrail, squish, system
+from .system import get_platform
 
 LOG = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ except ImportError:
 
 if AUT_PATH is None:
     exit('Please add "AUT_PATH" in ./configs/_local.py')
-if system.IS_WIN and 'bin' not in AUT_PATH:
+if get_platform() == "Windows" and 'bin' not in AUT_PATH:
     exit('Please use launcher from "bin" folder in "AUT_PATH"')
 AUT_PATH = SystemPath(AUT_PATH)
 
