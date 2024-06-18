@@ -33,6 +33,27 @@ QObject {
         return controller.signTypedDataV4(address, password, typedDataJson)
     }
 
+    // Remove leading zeros from hex number as expected by status-go
+    function stripLeadingZeros(hexNumber) {
+        let fixed = hexNumber.replace(/^0x0*/, '0x')
+        return fixed == '0x' ? '0x0' : fixed;
+    }
+
+    // Returns the hex encoded signature of the transaction or empty string if error
+    function signTransaction(topic, id, address, chainId, password, txObj) {
+        // Strip leading zeros from numbers as expected by status-go
+        let tx = {
+            data: txObj.data,
+            from: txObj.from,
+            gasLimit: stripLeadingZeros(txObj.gasLimit),
+            gasPrice: stripLeadingZeros(txObj.gasPrice),
+            nonce: stripLeadingZeros(txObj.nonce),
+            to: txObj.to,
+            value: stripLeadingZeros(txObj.value)
+        }
+        return controller.signTransaction(address, chainId, password, JSON.stringify(tx))
+    }
+
     /// \c getDapps triggers an async response to \c dappsListReceived
     function getDapps() {
         return controller.getDapps()

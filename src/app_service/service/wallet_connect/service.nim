@@ -1,8 +1,10 @@
-import NimQml, chronicles, times
+import NimQml, chronicles, times, json
 
 import backend/wallet_connect as status_go
+import backend/wallet
 
 import app_service/service/settings/service as settings_service
+import app_service/common/wallet_constants
 
 import app/global/global_singleton
 
@@ -92,3 +94,38 @@ QtObject:
 
   proc signTypedDataV4*(self: Service, address: string, password: string, typedDataJson: string): string =
     return status_go.signTypedData(address, password, typedDataJson)
+
+  proc signTransaction*(self: Service, address: string, chainId: int, password: string, txJson: string): string =
+    var buildTxResponse: JsonNode
+    var err = wallet.buildTransaction(buildTxResponse, chainId, txJson)
+    if err.len > 0:
+      error "status-go - wallet_buildTransaction failed", err=err
+      return ""
+    if buildTxResponse.isNil or buildTxResponse.kind != JsonNodeKind.JObject or
+      not buildTxResponse.hasKey("txArgs") or not buildTxResponse.hasKey("messageToSign"):
+        error "unexpected buildTransaction response"
+        return ""
+    var txToBeSigned = buildTxResponse["messageToSign"].getStr
+    if txToBeSigned.len != wallet_constants.TX_HASH_LEN_WITH_PREFIX:
+      error "unexpected tx hash length"
+      return ""
+
+    var signMsgRes: JsonNode
+    err = wallet.signMessage(signMsgRes,
+          txToBeSigned,
+          address,
+          hashPassword(password))
+    if err.len > 0:
+      error "status-go - wallet_signMessage failed", err=err
+    let signature = singletonInstance.utils.removeHexPrefix(signMsgRes.getStr)
+
+    var txResponse: JsonNode
+    err = wallet.buildRawTransaction(txResponse, chainId, $buildTxResponse["txArgs"], signature)
+    if err.len > 0:
+      error "status-go - wallet_buildRawTransaction failed", err=err
+      return ""
+    if txResponse.isNil or txResponse.kind != JsonNodeKind.JObject or not txResponse.hasKey("rawTx"):
+      error "unexpected buildRawTransaction response"
+      return ""
+
+    return txResponse["rawTx"].getStr

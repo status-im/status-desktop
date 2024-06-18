@@ -149,6 +149,17 @@ ConnectedDappsButton {
                 root.wcService.requestHandler.rejectSessionRequest(request, userRejected)
                 close()
             }
+
+            Connections {
+                target: root.wcService.requestHandler
+
+                function onMaxFeesUpdated(maxFees, symbol) {
+                    maxFeesText = `${maxFees.toFixed(2)} ${symbol}`
+                }
+                function onEstimatedTimeUpdated(minMinutes, maxMinutes) {
+                    estimatedTimeText = qsTr("%1-%2mins").arg(minMinutes).arg(maxMinutes)
+                }
+            }
         }
     }
 

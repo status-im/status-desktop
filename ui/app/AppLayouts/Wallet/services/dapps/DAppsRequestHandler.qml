@@ -32,6 +32,8 @@ QObject {
     signal sessionRequest(SessionRequestResolved request)
     signal displayToastMessage(string message, bool error)
     signal sessionRequestResult(/*model entry of SessionRequestResolved*/ var request, bool isSuccess)
+    signal maxFeesUpdated(real maxFees, string symbol)
+    signal estimatedTimeUpdated(int minMinutes, int maxMinutes)
 
     Connections {
         target: sdk
@@ -119,7 +121,9 @@ QObject {
                 method,
                 account,
                 network,
-                data
+                data,
+                maxFeesText: "-",
+                estimatedTimeText: "-"
             })
             if (obj === null) {
                 console.error("Error creating SessionRequestResolved for event")
@@ -141,6 +145,12 @@ QObject {
                 }
                 obj.resolveDappInfoFromSession(session)
                 root.sessionRequest(obj)
+                // TODO #15192: update maxFees
+                let gasLimit = parseFloat(parseInt(event.params.request.params[0].gasLimit, 16));
+                let gasPrice = parseFloat(parseInt(event.params.request.params[0].gasPrice, 16));
+                root.maxFeesUpdated((gasLimit * gasPrice)/1000000000, "Gwei")
+                // TODO #15192: update estimatedTime
+                root.estimatedTimeUpdated(3, 12)
             })
 
             return obj
@@ -244,9 +254,9 @@ QObject {
                                         request.account.address, password,
                                         SessionRequest.methods.signTypedData_v4.getMessageFromData(request.data))
                 } else if (request.method === SessionRequest.methods.signTransaction.name) {
+                    let txObj = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
                     signedMessage = store.signTransaction(request.topic, request.id,
-                                        request.account.address, password,
-                                        SessionRequest.methods.signTransaction.getTxFromData(request.data))
+                                        request.account.address, request.network.chainId, password, txObj)
                 }
                 let isSuccessful = (signedMessage != "")
                 if (isSuccessful) {

@@ -30,7 +30,7 @@ QtObject {
             readonly property string requestDisplay: qsTr("sign this transaction")
 
             function buildDataObject(tx) { return {tx} }
-            function getTxFromData(data) { return data.tx }
+            function getTxObjFromData(data) { return data.tx }
         }
 
         readonly property QtObject sendTransaction: QtObject {
