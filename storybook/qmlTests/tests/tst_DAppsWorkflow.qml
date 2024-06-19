@@ -537,7 +537,7 @@ Item {
     //         waitForRendering(controlUnderTest)
     //         compare(dappsListReadySpy.count, 1, "expected dappsListReady signal to be emitted")
 
-    //         let popup = findChild(controlUnderTest, "dappsPopup")
+    //         let popup = findChild(controlUnderTest, "dappsListPopup")
     //         verify(!!popup)
     //         verify(popup.opened)
 
@@ -553,7 +553,7 @@ Item {
     //         mouseClick(controlUnderTest)
     //         waitForRendering(controlUnderTest)
 
-    //         let popup = findChild(controlUnderTest, "dappsPopup")
+    //         let popup = findChild(controlUnderTest, "dappsListPopup")
     //         verify(!!popup)
     //         verify(popup.opened)
 

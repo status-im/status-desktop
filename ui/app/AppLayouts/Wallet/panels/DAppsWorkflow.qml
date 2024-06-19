@@ -11,19 +11,18 @@ import AppLayouts.Wallet.services.dapps.types 1.0
 import shared.stores 1.0
 import utils 1.0
 
-ConnectedDappsButton {
+DappsComboBox {
     id: root
 
     required property WalletConnectService wcService
 
-    signal dappsListReady()
     signal pairWCReady()
 
-    onClicked: {
-        dappsListLoader.active = true
-    }
+    model: root.wcService.dappsModel
 
-    highlighted: dappsListLoader.active
+    onPairDapp: {
+        pairWCLoader.active = true
+    }
 
     Loader {
         id: pairWCLoader
@@ -44,34 +43,6 @@ ConnectedDappsButton {
                 root.wcService.pair(uri)
                 this.isPairing = true
             }
-        }
-    }
-
-    Loader {
-        id: dappsListLoader
-
-        active: false
-
-        onLoaded: {
-            item.open()
-            root.dappsListReady()
-        }
-
-        sourceComponent: DAppsListPopup {
-            visible: true
-
-            model: root.wcService.dappsModel
-
-            onPairWCDapp: {
-                pairWCLoader.active = true
-                this.close()
-            }
-
-            onOpened: {
-                this.x = root.width - this.contentWidth - 2 * this.padding
-                this.y = root.height + 4
-            }
-            onClosed: dappsListLoader.active = false
         }
     }
 
