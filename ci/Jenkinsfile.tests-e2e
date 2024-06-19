@@ -83,7 +83,7 @@ pipeline {
     /* Runtime flag to make testing of the app easier.  Switched off: unpredictable app behavior under new tests */
     /* STATUS_RUNTIME_TEST_MODE = 'True' */
 
-    QT_LOGGING_RULES = '*.warning=true;qt.qpa.*info=true'
+    QT_LOGGING_RULES = '*.warning=true'
     QT_DEBUG_PLUGINS = 1
   }
 
