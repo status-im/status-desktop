@@ -6,6 +6,10 @@ import SortFilterProxyModel 0.2
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import shared.stores 1.0
 
+import AppLayouts.Wallet.stores 1.0 as WalletStore
+
+import StatusQ 0.1
+
 QtObject {
     id: root
 
@@ -45,7 +49,9 @@ QtObject {
         }
     }
 
-    property var collectiblesModel: SortFilterProxyModel {
+    readonly property var tmp: SortFilterProxyModel {
+        id: tmpSfpm
+
         sourceModel: communitiesModuleInst.collectiblesModel
 
         proxyRoles: ExpressionRole {
@@ -55,6 +61,55 @@ QtObject {
             name: "iconSource"
             expression: collectibleIcon(model.icon)
         }
+    }
+
+    readonly property var tmp2: ObjectProxyModel {
+
+        sourceModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
+
+        delegate: QtObject {
+            readonly property string key: model.symbol
+            readonly property string shortName: model.collectionName ? model.collectionName : model.collectionUid ? model.collectionUid : ""
+            readonly property string symbol: shortName
+            readonly property int category: 1
+        }
+
+        exposedRoles: ["key", "symbol", "shortName"]
+        expectedRoles: ["symbol", "collectionName", "collectionUid"]
+    }
+
+    readonly property var tmp3: SortFilterProxyModel {
+        id: tmpSfpm2
+
+        sourceModel: tmp2
+
+        filters: ValueFilter {
+            roleName: "communityId"
+            value: ""
+        }
+    }
+
+    property var r: RolesRenamingModel {
+        id: renaming
+
+        sourceModel: tmpSfpm2
+
+        mapping: RoleRename {
+            from: "mediaUrl"
+            to: "iconSource"
+        }
+    }
+
+    property var collectiblesModel: ConcatModel {
+
+        sources: [
+            SourceModel {
+                model: tmpSfpm
+            },
+            SourceModel {
+                model: renaming
+            }
+        ]
     }
 
     function prepareTokenModelForCommunity(publicKey) {
