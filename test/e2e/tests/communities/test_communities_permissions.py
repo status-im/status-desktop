@@ -20,7 +20,6 @@ pytestmark = marks
                  'Manage community: Adding new permissions, Editing permissions, Deleting permission')
 @pytest.mark.case(703632, 705014, 705016)
 @pytest.mark.parametrize('params', [constants.community_params])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/15246")
 def test_add_edit_and_remove_permissions(main_screen: MainWindow, params):
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
@@ -184,7 +183,6 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params):
 
 
 @pytest.mark.parametrize('params', [constants.community_params])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/15246")
 def test_add_5_member_role_permissions(main_screen: MainWindow, params):
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
