@@ -183,10 +183,11 @@ inCommunityTagListItem = {"container": mainWindow_PermissionsView, "objectName":
 edit_pencil_icon_StatusIcon = {"container": mainWindow_PermissionsView, "objectName": "edit_pencil-icon", "type": "StatusIcon", "visible": True}
 delete_icon_StatusIcon = {"container": mainWindow_PermissionsView, "objectName": "delete-icon", "type": "StatusIcon", "visible": True}
 hide_icon_StatusIcon = {"container": mainWindow_PermissionsView, "objectName": "hide-icon", "type": "StatusIcon", "visible": True}
+copy_icon_StatusIcon = {"container": mainWindow_PermissionsView, "objectName": "copy-icon", "type": "StatusIcon", "visible": True}
 editPermissionView_settingsDirtyToastMessage_SettingsDirtyToastMessage = {"container": mainWindow_editPermissionView_EditPermissionView, "id": "settingsDirtyToastMessage", "type": "SettingsDirtyToastMessage", "unnamed": 1, "visible": True}
 update_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 isAllowedToEditPermissionView_StatusListItemTag = {"container": mainWindow_editPermissionView_EditPermissionView, "type": "StatusListItemTag", "unnamed": 1, "visible": True}
-memberRoleLimitWarning = {"container": mainWindow_editPermissionView_EditPermissionView, "id": "duplicationPanel", "type": "WarningPanel", "unnamed": 1, "visible": True}
+editPermissionView_duplicationPanel_WarningPanel = {"container": mainWindow_editPermissionView_EditPermissionView, "objectName": "duplicationPanel", "type": "WarningPanel", "visible": True}
 
 # Edit Community
 mainWindow_communityEditPanelScrollView_EditSettingsPanel = {"container": statusDesktop_mainWindow, "objectName": "communityEditPanelScrollView", "type": "EditSettingsPanel", "visible": True}

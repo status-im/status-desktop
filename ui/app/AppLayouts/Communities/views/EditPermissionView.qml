@@ -590,6 +590,7 @@ StatusScrollView {
 
         WarningPanel {
             id: duplicationPanel
+            objectName: "duplicationPanel"
 
             Layout.fillWidth: true
             Layout.topMargin: 50 // by desing
