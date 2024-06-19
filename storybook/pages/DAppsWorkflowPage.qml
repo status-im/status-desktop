@@ -341,7 +341,7 @@ Item {
         function startTestCase() {
             d.activeTestCase = settings.testCase
             if(root.visible) {
-                dappsWorkflow.clicked()
+                dappsWorkflow.popup.open()
             }
         }
 
