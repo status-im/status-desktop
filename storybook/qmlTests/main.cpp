@@ -14,6 +14,8 @@ public slots:
         QGuiApplication::setOrganizationName(QStringLiteral("Status"));
         QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
 
+        qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", QByteArrayLiteral("1"));
+        
         const QStringList additionalImportPaths {
             STATUSQ_MODULE_IMPORT_PATH,
             QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
