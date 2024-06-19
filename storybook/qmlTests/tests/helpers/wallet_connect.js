@@ -54,6 +54,13 @@ const dappMetadataJsonString = `{
     "url": "${dappUrl}"
 }`
 
+// https://metamask.github.io/test-dapp/ use case that doesn't have icons
+const noIconsDappMetadataJsonString = `{
+    "description": "This is the E2e Test Dapp",
+    "name": "${dappName}",
+    "url": "${dappUrl}"
+}`
+
 const verifiedContextJsonString = `{
     "verified": {
         "origin": "https://app.test.org",
@@ -62,7 +69,12 @@ const verifiedContextJsonString = `{
     }
 }`
 
-function formatSessionProposal() {
+function formatSessionProposal(custom) {
+    var dappMetadataJsonStringOverride = dappMetadataJsonString
+    if (custom && custom.dappMetadataJsonString) {
+        dappMetadataJsonStringOverride = custom.dappMetadataJsonString
+    }
+
     return `{
     "id": 1715976881734096,
     "params": {
@@ -71,7 +83,7 @@ function formatSessionProposal() {
         "optionalNamespaces": ${optionalNamespacesJsonString},
         "pairingTopic": "50fba141cdb5c015493c2907c46bacf9f7cbd7c8e3d4e97df891f18dddcff69c",
         "proposer": {
-            "metadata": ${dappMetadataJsonString},
+            "metadata": ${dappMetadataJsonStringOverride},
             "publicKey": "095d9992ca0eb6081cabed26faf48919162fd70cc66d639f118a60507ae0463d"
         },
         "relays": [
@@ -98,7 +110,11 @@ function formatBuildApprovedNamespacesResult(networksArray, accountsArray) {
   }`
 }
 
-function formatApproveSessionResponse(networksArray, accountsArray) {
+function formatApproveSessionResponse(networksArray, accountsArray, custom) {
+    var dappMetadataJsonStringOverride = dappMetadataJsonString
+    if (custom && custom.dappMetadataJsonString) {
+        dappMetadataJsonStringOverride = custom.dappMetadataJsonString
+    }
     let chainsStr = networksArray.map(chainId => `"eip155:${chainId}"`).join(',')
     let accountsStr = accountsArray.map(address => networksArray.map(chainId => `"eip155:${chainId}:${address}"`).join(',')).join(',')
     return `{
@@ -116,7 +132,7 @@ function formatApproveSessionResponse(networksArray, accountsArray) {
         "optionalNamespaces": ${optionalNamespacesJsonString},
         "pairingTopic": "50fba141cdb5c015493c2907c46bacf9f7cbd7c8e3d4e97df891f18dddcff69c",
         "peer": {
-            "metadata": ${dappMetadataJsonString},
+            "metadata": ${dappMetadataJsonStringOverride},
             "publicKey": "095d9992ca0eb6081cabed26faf48919162fd70cc66d639f118a60507ae0463d"
         },
         "relay": {

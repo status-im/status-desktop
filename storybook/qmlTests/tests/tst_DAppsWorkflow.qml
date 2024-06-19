@@ -25,7 +25,7 @@ Item {
     width: 600
     height: 400
 
-    // TODO #15151 fix CI crash and re-enable tests
+    // // TODO #15151 fix CI crash and re-enable tests
     // Component {
     //     id: sdkComponent
 
@@ -79,13 +79,15 @@ Item {
     //     id: dappsStoreComponent
 
     //     DAppsStore {
+    //         property string dappsListReceivedJsonStr: '[]'
+
     //         signal dappsListReceived(string dappsJson)
     //         signal userAuthenticated(string topic, string id, string password, string pin)
     //         signal userAuthenticationFailed(string topic, string id)
 
     //         // By default, return no dapps in store
     //         function getDapps() {
-    //             dappsListReceived('[]')
+    //             dappsListReceived(dappsListReceivedJsonStr)
     //             return true
     //         }
 
@@ -333,8 +335,54 @@ Item {
     // }
 
     // Component {
-    //     id: componentUnderTest
-    //     DAppsWorkflow {
+    //     id: dappsListProviderComponent
+    //     DAppsListProvider {
+    //     }
+    // }
+
+    // TestCase {
+    //     name: "DAppsListProvider"
+
+    //     property DAppsListProvider provider: null
+
+    //     readonly property var dappsListReceivedJsonStr: '[{"url":"https://tst1.com","name":"name1","iconUrl":"https://tst1.com/u/1"},{"url":"https://tst2.com","name":"name2","iconUrl":"https://tst2.com/u/2"}]'
+
+    //     function init() {
+    //         // Simulate the SDK not being ready
+    //         let sdk = createTemporaryObject(sdkComponent, root, {projectId: "12ab", sdkReady: false})
+    //         verify(!!sdk)
+    //         let store = createTemporaryObject(dappsStoreComponent, root, {
+    //             dappsListReceivedJsonStr: dappsListReceivedJsonStr
+    //         })
+    //         verify(!!store)
+    //         provider = createTemporaryObject(dappsListProviderComponent, root, {sdk: sdk, store: store})
+    //         verify(!!provider)
+    //     }
+
+    //     function cleanup() {
+    //     }
+
+    //     // Implemented as a regression to metamask not having icons which failed dapps list
+    //     function test_TestUpdateDapps() {
+    //         provider.updateDapps()
+
+    //         // Validate that persistance fallback is working
+    //         compare(provider.dappsModel.count, 2, "expected dappsModel have the right number of elements")
+    //         let persistanceList = JSON.parse(dappsListReceivedJsonStr)
+    //         compare(provider.dappsModel.get(0).url, persistanceList[0].url, "expected url to be set")
+    //         compare(provider.dappsModel.get(0).iconUrl, persistanceList[0].iconUrl, "expected iconUrl to be set")
+    //         compare(provider.dappsModel.get(1).name, persistanceList[1].name, "expected name to be set")
+
+    //         // Validate that SDK's `getActiveSessions` is not called if not ready
+    //         let sdk = provider.sdk
+    //         compare(sdk.getActiveSessionsCallbacks.length, 0, "expected no calls to sdk.getActiveSessions yet")
+    //         sdk.sdkReady = true
+    //         compare(sdk.getActiveSessionsCallbacks.length, 1, "expected a call to sdk.getActiveSessions when SDK becomes ready")
+    //         let callback = sdk.getActiveSessionsCallbacks[0].callback
+    //         let session = JSON.parse(Testing.formatApproveSessionResponse([1, 2], ["0x1"], {dappMetadataJsonString: Testing.noIconsDappMetadataJsonString}))
+    //         callback({"b536a": session, "b537b": session})
+    //         compare(provider.dappsModel.count, 1, "expected dappsModel have the SDK's reported dapps")
+    //         compare(provider.dappsModel.get(0).iconUrl, "", "expected iconUrl to be missing")
     //     }
     // }
 
@@ -418,7 +466,13 @@ Item {
     //     }
     // }
 
-    // TODO #15151: this TestCase if placed before ServiceHelpers was not run with `when: windowShown`. Check if related to the CI crash
+    // Component {
+    //     id: componentUnderTest
+    //     DAppsWorkflow {
+    //     }
+    // }
+
+    // // TODO #15151: this TestCase if placed before ServiceHelpers was not run with `when: windowShown`. Check if related to the CI crash
     // TestCase {
     //     id: dappsWorkflowTest
 

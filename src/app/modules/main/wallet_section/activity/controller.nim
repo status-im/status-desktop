@@ -249,12 +249,10 @@ QtObject:
 
     # setup other event handlers
     self.eventsHandler.onFilteringDone(proc (jsonObj: JsonNode) =
-      echo "@dd eventsHandler.onFilteringDone: ", $jsonObj
       self.processResponse(jsonObj)
     )
 
     self.eventsHandler.onFilteringUpdateDone(proc (jn: JsonNode) =
-      echo "@dd eventsHandler.onFilteringUpdateDone: ", $jn
       if jn.kind != JArray:
         error "expected an array"
 

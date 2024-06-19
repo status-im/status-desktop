@@ -54,17 +54,18 @@ QObject {
                 sdk.getActiveSessions((sessions) => {
                     root.store.dappsListReceived.disconnect(dappsListReceivedFn);
 
-                    // TODO #14755: on SDK dApps refresh update the model that has data source from persistence instead of using reset
-                    dapps.clear();
-
                     let tmpMap = {}
                     for (let key in sessions) {
                         let dapp = sessions[key].peer.metadata
-                        if (dapp.icons.length > 0) {
+                        if (!!dapp.icons && dapp.icons.length > 0) {
                             dapp.iconUrl = dapp.icons[0]
+                        } else {
+                            dapp.iconUrl = ""
                         }
                         tmpMap[dapp.url] = dapp;
                     }
+                    // TODO #14755: on SDK dApps refresh update the model that has data source from persistence instead of using reset
+                    dapps.clear();
                     // Iterate tmpMap and fill dapps
                     for (let key in tmpMap) {
                         dapps.append(tmpMap[key]);
