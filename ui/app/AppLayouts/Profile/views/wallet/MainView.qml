@@ -27,6 +27,7 @@ Column {
     signal goToDappPermissionsView()
     signal goToManageTokensView()
     signal goToSavedAddressesView()
+    signal goToRouterTestView()
 
     signal runRenameKeypairFlow(var model)
     signal runRemoveKeypairFlow(var model)
@@ -167,6 +168,21 @@ Column {
         height: 64
         width: parent.width
         onClicked: goToSavedAddressesView()
+        components: [
+            StatusIcon {
+                icon: "next"
+                color: Theme.palette.baseColor1
+            }
+        ]
+    }
+
+    Separator {}
+
+    StatusListItem {
+        title: qsTr("Test the Router")
+        height: 64
+        width: parent.width
+        onClicked: root.goToRouterTestView()
         components: [
             StatusIcon {
                 icon: "next"

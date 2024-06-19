@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, stint, sugar
+import NimQml, Tables, json, sequtils, strutils, stint, sugar
 
 import ./io_interface, ./accounts_model, ./account_item, ./network_model, ./network_item, ./suggested_route_item, ./transaction_routes
 import app/modules/shared_models/collectibles_model as collectibles
@@ -246,6 +246,32 @@ QtObject:
       parseAmount(amount), self.selectedAssetKey, self.selectedToAssetKey, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
       self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(),
       self.sendType, self.fromNetworksModel.getRouteLockedChainIds())
+
+  proc suggestedRoutesV2*(self: View, accountFrom: string, accountTo: string, amount: string, token: string, toToken: string,
+    disabledFromChainIDs: string, disabledToChainIDs: string, preferredChainIDs: string, sendType: int, lockedInAmounts: string,
+    extraParamsJson: string): string {.slot.} =
+    var
+      parsedAmount = stint.u256(0)
+      disabledFromChainIDsArray: seq[int]
+      disabledToChainIDsArray: seq[int]
+      preferredChainIDsArray: seq[int]
+      lockedInAmountsTable: Table[string, string]
+      extraParamsTable: Table[string, string]
+
+    try:
+      parsedAmount = amount.parse(Uint256)
+      disabledFromChainIDsArray = map(parseJson(disabledFromChainIDs).getElems(), proc(x:JsonNode):int = x.getInt())
+      disabledToChainIDsArray = map(parseJson(disabledToChainIDs).getElems(), proc(x:JsonNode):int = x.getInt())
+      preferredChainIDsArray = map(parseJson(preferredChainIDs).getElems(), proc(x:JsonNode):int = x.getInt())
+      for chainId, lockedAmount in parseJson(lockedInAmounts):
+        lockedInAmountsTable[chainId] = lockedAmount.getStr()
+      for key, value in parseJson(extraParamsJson):
+        extraParamsTable[key] = value.getStr()
+    except Exception as e:
+      discard
+
+    return self.delegate.suggestedRoutesV2(accountFrom, accountTo, parsedAmount, token, toToken, disabledFromChainIDsArray,
+      disabledToChainIDsArray, preferredChainIDsArray, (SendType)sendType, lockedInAmountsTable, extraParamsTable)
 
   proc switchSenderAccountByAddress*(self: View, address: string) =
     let (account, index) = self.senderAccounts.getItemByAddress(address)

@@ -360,6 +360,13 @@ method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) 
     rawPaths = suggestedRoutes.rawBest)
   self.view.setTransactionRoute(transactionRoutes)
 
+method suggestedRoutesV2*(self: Module, accountFrom: string, accountTo: string, amount: Uint256, token: string, toToken: string,
+  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: Table[string, string],
+  extraParamsTable: Table[string, string]): string =
+  discard
+  return self.controller.suggestedRoutesV2(accountFrom, accountTo, amount, token, toToken, disabledFromChainIDs,
+    disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts, extraParamsTable)
+
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   if addresses.len == 0:
     return
