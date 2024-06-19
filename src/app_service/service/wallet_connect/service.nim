@@ -103,7 +103,7 @@ QtObject:
       return ""
     if buildTxResponse.isNil or buildTxResponse.kind != JsonNodeKind.JObject or
       not buildTxResponse.hasKey("txArgs") or not buildTxResponse.hasKey("messageToSign"):
-        error "unexpected buildTransaction response"
+        error "unexpected wallet_buildTransaction response"
         return ""
     var txToBeSigned = buildTxResponse["messageToSign"].getStr
     if txToBeSigned.len != wallet_constants.TX_HASH_LEN_WITH_PREFIX:
