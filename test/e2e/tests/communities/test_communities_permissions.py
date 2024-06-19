@@ -3,15 +3,14 @@ import pytest
 from allure_commons._allure import step
 
 import configs
-from gui.components.changes_detected_popup import PermissionsChangesDetectedToastMessage
-from gui.components.delete_popup import DeletePermissionPopup
-from gui.screens.community_settings import PermissionsIntroView
-from . import marks
-
 import constants
 import driver
-from constants.community_settings import ToastMessages, LimitWarnings
+from constants.community_settings import ToastMessages, LimitWarnings, PermissionsElements
+from gui.components.changes_detected_popup import PermissionsChangesDetectedToastMessage
+from gui.components.delete_popup import DeletePermissionPopup
 from gui.main_window import MainWindow
+from gui.screens.community_settings import PermissionsIntroView
+from . import marks
 
 pytestmark = marks
 
@@ -182,6 +181,31 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params):
             assert ToastMessages.DELETE_PERMISSION_TOAST.value in messages, \
                 f"Toast message is incorrect, current message is {message}"
 
+    with step('Create new permission'):
+        new_permission_data = {
+            'checkbox_state': True,
+            'first_asset': 'ETH',
+            'amount': '6',
+            'allowed_to': 'becomeMember'
+        }
+        permissions_settings = permissions_intro_view.add_new_permission()
+        permissions_settings.set_who_holds_checkbox_state(new_permission_data['checkbox_state'])
+        permissions_settings.set_who_holds_asset_and_amount(new_permission_data['first_asset'],
+                                                            new_permission_data['amount'])
+        permissions_settings.set_is_allowed_to(new_permission_data['allowed_to'])
+        permissions_settings.create_permission()
+
+    with step('Duplicate created permission and verify correct duplicate warning appears'):
+        permission_view = permissions_intro_view.click_duplicate_permission()
+        assert permission_view.get_warning_text() == PermissionsElements.DUPLICATE_WARNING.value
+        permissions_settings.set_who_holds_asset_and_amount('Aragon', '10')
+        permissions_settings.create_permission()
+
+    with step('Duplicated permission is displayed on permission page'):
+        assert driver.waitFor(
+            lambda: '10 ANT' in permissions_settings.get_who_holds_tags_titles(),
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
 
 @pytest.mark.parametrize('params', [constants.community_params])
 @pytest.mark.critical
@@ -270,7 +294,7 @@ def test_add_5_member_role_permissions(main_screen: MainWindow, params):
                                                             extra_permission_data['amount'])
         permissions_settings.set_is_allowed_to(extra_permission_data['allowed_to'])
 
-        assert permissions_settings.is_member_role_warning_text_present(), 'Member role limit warning is not displayed'
-        assert permissions_settings.get_member_role_limit_warning_text() \
+        assert permissions_settings.is_warning_text_present(), 'Member role limit warning is not displayed'
+        assert permissions_settings.get_warning_text() \
                == LimitWarnings.MEMBER_ROLE_LIMIT_WARNING.value, \
             f'Warning text about become a member limit reached is incorrect'

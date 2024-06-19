@@ -372,6 +372,7 @@ class PermissionsIntroView(QObject):
         self._edit_permission_button = QObject(communities_names.edit_pencil_icon_StatusIcon)
         self._delete_permission_button = QObject(communities_names.delete_icon_StatusIcon)
         self._hide_icon = QObject(communities_names.hide_icon_StatusIcon)
+        self._duplicate_icon = QObject(communities_names.copy_icon_StatusIcon)
 
     @property
     @allure.step('Get hide icon visibility')
@@ -419,6 +420,11 @@ class PermissionsIntroView(QObject):
     def click_delete_permission(self):
         self._delete_permission_button.click()
 
+    @allure.step('Click duplicate permission button')
+    def click_duplicate_permission(self):
+        self._duplicate_icon.click()
+        return PermissionsSettingsView().wait_until_appears()
+
 
 class PermissionsSettingsView(QObject):
     def __init__(self):
@@ -440,15 +446,18 @@ class PermissionsSettingsView(QObject):
         self._is_allowed_tag = QObject(communities_names.isAllowedTagListItem)
         self._in_community_in_channel_tag = QObject(communities_names.inCommunityTagListItem)
         self._is_allowed_to_edit_tag = QObject(communities_names.isAllowedToEditPermissionView_StatusListItemTag)
-        self._member_role_limit_warning = QObject(communities_names.memberRoleLimitWarning)
+        self._warning_panel = QObject(communities_names.editPermissionView_duplicationPanel_WarningPanel)
 
-    @allure.step('Verify member role limit warning is present')
-    def is_member_role_warning_text_present(self):
-        return self._member_role_limit_warning.exists
+    @allure.step('Verify warning panel is present')
+    def is_warning_text_present(self):
+        return self._warning_panel.exists
 
-    @allure.step('Get warning text')
-    def get_member_role_limit_warning_text(self):
-        return str(self._member_role_limit_warning.object.text)
+    @allure.step('Get text from warning panel')
+    def get_warning_text(self):
+        if self._warning_panel.exists:
+            return self._warning_panel.object.text
+        else:
+            raise LookupError
 
     @allure.step('Get titles of Who holds tags')
     def get_who_holds_tags_titles(self, attempt: int = 2) -> typing.List[str]:
