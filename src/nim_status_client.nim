@@ -87,11 +87,11 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
 
 proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, file: cstring, function: cstring, line: cint) {.cdecl, exportc.} =
   logScope:
+    chroniclesLineNumbers = false
     topics = "qt"
-    text = $message
-    source_file = $file & ":" & $line
-    function = $function
     category = $category
+    file = $file & ":" & $line
+    text = $message
 
   case int(messageType):
     of 0: # QtDebugMsg
