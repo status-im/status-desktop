@@ -102,8 +102,7 @@ proc init*(self: Controller) =
     self.delegate.onSendingMessageSuccess()
 
   self.events.on(SIGNAL_SENDING_FAILED) do(e:Args):
-    let args = ChatArgs(e)
-    echo "failed"
+    let args = MessageSendingFailure(e)
     if self.chatId != args.chatId:
       return
     self.delegate.onSendingMessageFailure()

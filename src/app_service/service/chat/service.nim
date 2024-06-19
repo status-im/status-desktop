@@ -47,6 +47,10 @@ type
     chat*: ChatDto
     message*: MessageDto
 
+  MessageSendingFailure* = ref object of Args
+    chatId*: string
+    error*: string
+
   MessageArgs* = ref object of Args
     id*: string
     channel*: string
@@ -457,7 +461,7 @@ QtObject:
       discard self.processMessengerResponse(rpcResponse)
     except Exception as e:
       error "Error sending images", msg = e.msg
-      self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: rpcResponseObj["chatId"].getStr))
+      self.events.emit(SIGNAL_SENDING_FAILED, MessageSendingFailure(chatId: rpcResponseObj["chatId"].getStr, error: e.msg))
 
   proc asyncSendChatMessage*(self: Service,
       chatId: string,
@@ -490,7 +494,7 @@ QtObject:
       self.threadpool.start(arg)
     except Exception as e:
       error "Error sending message", msg = e.msg
-      self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: chatId))
+      self.events.emit(SIGNAL_SENDING_FAILED, MessageSendingFailure(chatId: chatId, error: e.msg))
 
   proc onAsyncSendMessageDone*(self: Service, rpcResponseJson: string) {.slot.} =
     let rpcResponseObj = rpcResponseJson.parseJson
@@ -507,7 +511,7 @@ QtObject:
         raise newException(CatchableError, "no chat or message returned")
     except Exception as e:
       error "Error sending message", msg = e.msg
-      self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: rpcResponseObj["chatId"].getStr))
+      self.events.emit(SIGNAL_SENDING_FAILED, MessageSendingFailure(chatId: rpcResponseObj["chatId"].getStr, error: e.msg))
 
   proc requestAddressForTransaction*(self: Service, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
     try:

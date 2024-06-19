@@ -79,10 +79,10 @@ proc init*(self: Controller) =
     self.delegate.onSendingMessageSuccess(args.message)
 
   self.events.on(SIGNAL_SENDING_FAILED) do(e:Args):
-    let args = ChatArgs(e)
+    let args = MessageSendingFailure(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onSendingMessageError()
+    self.delegate.onSendingMessageError(args.error)
 
   self.events.on(SIGNAL_ENVELOPE_SENT) do(e:Args):
     let args = EnvelopeSentArgs(e)

@@ -80,7 +80,7 @@ Item {
         id: d
         readonly property var activeChatContentModule: d.getChatContentModule(root.activeChatId)
 
-        property bool sending: false
+        property bool sendingInProgress: !!d.activeChatContentModule? d.activeChatContentModule.inputAreaModule.sendingInProgress : false
 
         readonly property var urlsList: {
             if (!d.activeChatContentModule) {
@@ -254,18 +254,6 @@ Item {
             }
         }
 
-
-        Connections {
-            enabled: !!d.activeChatContentModule
-            target: d.activeChatContentModule.inputAreaModule
-            function onMessageSuccessfullySent() {
-                d.sending = false
-            }
-            function onMessageFailedToBeSent() {
-                d.sending = false
-            }
-        }
-
         RowLayout {
             Layout.fillWidth: true
             Layout.margins: Style.current.smallPadding
@@ -290,7 +278,7 @@ Item {
                                  && root.rootStore.sectionDetails.joined
                                  && !root.rootStore.sectionDetails.amIBanned
                                  && root.rootStore.isUserAllowedToSendMessage
-                                 && !d.sending
+                                 && !d.sendingInProgress
                     }
 
                     store: root.rootStore
@@ -313,8 +301,8 @@ Item {
                             if (!root.canPost) {
                                 return qsTr("Sorry, you don't have permissions to post in this channel.")
                             }
-                            if (d.sending) {
-                                return qsTr("Sending in progress...")
+                            if (d.sendingInProgress) {
+                                return qsTr("Sending...")
                             }
                             return root.rootStore.chatInputPlaceHolderText
                         } else {
@@ -357,20 +345,19 @@ Item {
                             return
                         }
 
-                         if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
-                                                        event,
-                                                        chatInput.getTextWithPublicKeys(),
-                                                        chatInput.isReply? chatInput.replyMessageId : "",
-                                                        chatInput.fileUrlsAndSources
-                                                        ))
-                         {
-                             Global.playSendMessageSound()
+                        if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
+                                                    event,
+                                                    chatInput.getTextWithPublicKeys(),
+                                                    chatInput.isReply? chatInput.replyMessageId : "",
+                                                    chatInput.fileUrlsAndSources
+                                                    ))
+                        {
+                            Global.playSendMessageSound()
 
                             chatInput.setText("")
                             chatInput.textInput.textFormat = TextEdit.PlainText;
                             chatInput.textInput.textFormat = TextEdit.RichText;
-                            d.sending = true
-                         }
+                        }
                     }
 
                     onKeyUpPress: {

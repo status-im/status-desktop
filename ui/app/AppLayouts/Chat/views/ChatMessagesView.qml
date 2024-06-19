@@ -86,7 +86,8 @@ Item {
             chatLogView.positionViewAtBeginning()
         }
 
-        function onSendingMessageFailed() {
+        function onSendingMessageFailed(error) {
+            sendingMsgFailedPopup.error = error
             sendingMsgFailedPopup.open()
         }
 
@@ -377,9 +378,11 @@ Item {
     }
 
     MessageDialog {
+        property string error
+
         id: sendingMsgFailedPopup
         standardButtons: StandardButton.Ok
-        text: qsTr("Failed to send message.")
+        text: qsTr("Failed to send message.\n" + error)
         icon: StandardIcon.Critical
     }
 

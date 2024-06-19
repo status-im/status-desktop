@@ -433,8 +433,8 @@ method onSendingMessageSuccess*(self: Module, message: MessageDto) =
   self.view.emitSendingMessageSuccessSignal()
   self.removeNewMessagesMarker()
 
-method onSendingMessageError*(self: Module) =
-  self.view.emitSendingMessageErrorSignal()
+method onSendingMessageError*(self: Module, error: string) =
+  self.view.emitSendingMessageErrorSignal(error)
 
 method onEnvelopeSent*(self: Module, messagesIds: seq[string]) =
   for messageId in messagesIds:

@@ -15,9 +15,12 @@ QtObject:
       linkPreviewModelVariant: QVariant
       urlsModel: urls_model.Model
       urlsModelVariant: QVariant
+      sendingInProgress: bool
       askToEnableLinkPreview: bool
       emojiReactionsModel: emoji_reactions_model.Model
       emojiReactionsModelVariant: QVariant
+
+  proc setSendingInProgress*(self: View, value: bool)
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -55,11 +58,13 @@ QtObject:
     # FIXME: Update this when `setText` is async.
     self.delegate.setText(msg, false)
     self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
+    self.setSendingInProgress(true)
 
   proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string) {.slot.} =
     # FIXME: Update this when `setText` is async.
     self.delegate.setText(msg, false)
     self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews())
+    self.setSendingInProgress(true)
 
   proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
     self.delegate.acceptRequestAddressForTransaction(messageId, address)
@@ -155,10 +160,20 @@ QtObject:
     read = getUrlsModel
     notify = urlsModelChanged
 
-  proc messageSuccessfullySent*(self: View) {.signal.}
-  proc emitSendingMessageSuccess*(self: View) =
-    self.messageSuccessfullySent()
+  proc sendingInProgressChanged(self: View) {.signal.}
+  proc getSendingInProgress*(self: View): bool {.slot.} =
+    return self.sendingInProgress
 
-  proc messageFailedToBeSent*(self: View) {.signal.}
+  QtProperty[bool] sendingInProgress:
+    read = getSendingInProgress
+    notify = sendingInProgressChanged
+
+  proc setSendingInProgress*(self: View, value: bool) =
+    self.sendingInProgress = value
+    self.sendingInProgressChanged()
+
+  proc emitSendingMessageSuccess*(self: View) =
+    self.setSendingInProgress(false)
+
   proc emitSendingMessageFailure*(self: View) =
-    self.messageFailedToBeSent()
+    self.setSendingInProgress(false)
