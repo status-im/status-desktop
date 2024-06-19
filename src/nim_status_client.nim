@@ -1,4 +1,4 @@
-import NimQml, chronicles, os, stew/shims/strformat, strutils, times, md5, json
+import NimQml, chronicles, os, stew/shims/strformat, strutils, times, md5, json, re
 
 import status_go
 import keycard_go
@@ -86,12 +86,19 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
   createDir(logDir)
 
 proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, file: cstring, function: cstring, line: cint) {.cdecl, exportc.} =
+  var text = $message
+  let fileString = $file
+
+  if fileString != "" and text.startsWith(fileString):
+    text = text[fileString.len..^1]              # Remove filepath
+    text = text.replace(re"[:0-9]+:\s*")  # Remove line, column, colons and space separator
+
   logScope:
     chroniclesLineNumbers = false
     topics = "qt"
     category = $category
-    file = $file & ":" & $line
-    text = $message
+    file = fileString & ":" & $line
+    text
 
   case int(messageType):
     of 0: # QtDebugMsg
