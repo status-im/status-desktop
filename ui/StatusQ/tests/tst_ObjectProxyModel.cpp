@@ -313,7 +313,6 @@ private slots:
 
         ModelSignalsSpy signalsSpy(&model);
 
-
         QObject* proxy = model.proxyObject(0);
         proxy->setProperty("extraValue", 42);
 
@@ -375,7 +374,6 @@ private slots:
         ModelSignalsSpy signalsSpy(&model);
 
         QObject* proxy = model.proxyObject(0);
-
 
         // dataChanged signal emission is scheduled to event loop, not called
         // immediately. In the meantime the source may be cleared and then no
@@ -680,6 +678,73 @@ private slots:
         QCOMPARE(sourceModelChangedSpy.count(), 2);
         QCOMPARE(model.rowCount(), 0);
         QCOMPARE(model.roleNames().size(), 0);
+    }
+
+    void sourceModelDataChangeTest() {
+        QQmlEngine engine;
+        QQmlComponent delegate(&engine);
+
+        auto delegateData = R"(
+            import QtQml 2.15
+            QtObject {
+                readonly property int doubledBalance: model.balance * 2
+            }
+        )";
+
+        delegate.setData(delegateData, QUrl());
+
+        ObjectProxyModel model;
+
+        auto source = R"([
+            { balance: 4 },
+            { balance: 10 }
+        ])";
+
+        ListModelWrapper sourceModel(engine, source);
+
+        model.setSourceModel(sourceModel);
+        model.setDelegate(&delegate);
+
+        model.setExpectedRoles(QStringList({ QStringLiteral("balance") }));
+        model.setExposedRoles({ QStringLiteral("doubledBalance")});
+
+        ModelSignalsSpy signalsSpy(&model);
+
+        sourceModel.setProperty(0, "balance", 42);
+        sourceModel.setProperty(1, "balance", 0);
+
+        {
+            ListModelWrapper expected(engine, R"([
+                { balance: 42, doubledBalance: 84 },
+                { balance: 0, doubledBalance: 0 }
+            ])");
+
+            QVERIFY(isSame(&model, expected));
+            QCOMPARE(signalsSpy.count(), 2);
+            QCOMPARE(signalsSpy.dataChangedSpy.count(), 2);
+        }
+
+        QTest::qWait(100);
+        QCOMPARE(signalsSpy.count(), 2);
+        QCOMPARE(signalsSpy.dataChangedSpy.count(), 2);
+
+        sourceModel.setProperty(0, "balance", 1);
+        sourceModel.setProperty(1, "balance", 2);
+
+        {
+            ListModelWrapper expected(engine, R"([
+                { balance: 1, doubledBalance: 2 },
+                { balance: 2, doubledBalance: 4 }
+            ])");
+
+            QVERIFY(isSame(&model, expected));
+            QCOMPARE(signalsSpy.count(), 4);
+            QCOMPARE(signalsSpy.dataChangedSpy.count(), 4);
+        }
+
+        QTest::qWait(100);
+        QCOMPARE(signalsSpy.count(), 5);
+        QCOMPARE(signalsSpy.dataChangedSpy.count(), 5);
     }
 };
 

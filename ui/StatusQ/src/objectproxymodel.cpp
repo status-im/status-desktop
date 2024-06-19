@@ -61,20 +61,25 @@ void ObjectProxyModel::setSourceModel(QAbstractItemModel* model)
     });
 
     connect(model, &QAbstractItemModel::dataChanged, this,
-            [this](const QModelIndex& topLeft, const QModelIndex& bottomRight,
-            const QVector<int>& roles)
+            [this, model](const QModelIndex& topLeft,
+                const QModelIndex& bottomRight, const QVector<int>& roles)
     {
+        if (!topLeft.isValid() || !bottomRight.isValid())
+            return;
+
         auto first = topLeft.row();
         auto last = bottomRight.row();
-
-        auto model = sourceModel();
 
         for (auto idx = first; idx <= last; idx++) {
             auto rowData = m_container[idx].rowData;
 
+            if (rowData == nullptr)
+                continue;
+
             QHashIterator i(m_expectedRoleNames);
             while (i.hasNext()) {
                 i.next();
+
                 rowData->insert(i.value(),
                                 model->data(model->index(idx, 0), i.key()));
             }
@@ -232,11 +237,11 @@ void ObjectProxyModel::emitAllDataChanged()
     if (count == 0)
         return;
 
+    if (m_expectedRoles.isEmpty())
+        return;
+
     QVector<int> roles(m_exposedRolesSet.cbegin(),
                        m_exposedRolesSet.cend());
-
-    if (roles.empty())
-        return;
 
     emit this->dataChanged(index(0, 0), index(count - 1, 0), roles);
 }
