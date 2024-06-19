@@ -197,13 +197,13 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
         return;
     }
 
-    QByteArray localMsg = msg.toLocal8Bit();
+    auto localMessage = msg.toLocal8Bit();
+    const char* message = localMessage.constData();
     const char* category = context.category ? context.category : "";
     const char* file = context.file ? context.file : "";
     const char* function = context.function ? context.function : "";
-
     int messageType = int(type);
-    const char* message = localMsg.constData();
+
     messageHandlerCallback(messageType, message, category, file, function, context.line);
 }
 
