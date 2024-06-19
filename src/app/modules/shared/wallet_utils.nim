@@ -5,6 +5,9 @@ import app_service/service/currency/dto as currency_dto
 import ../main/wallet_section/accounts/item as wallet_accounts_item
 import ../main/wallet_section/send/account_item as wallet_send_account_item
 
+import backend/collectibles_types as collectibles
+import app_service/common/types
+
 proc currencyAmountToItem*(amount: float64, format: CurrencyFormatDto) : CurrencyAmount =
   return newCurrencyAmount(
     amount,
@@ -72,3 +75,11 @@ proc walletAccountToWalletSendAccountItem*(w: WalletAccountDto, chainIds: seq[in
     w.testPreferredChainIds,
     canSend=w.walletType != "watch" and (w.operable==AccountFullyOperable or w.operable==AccountPartiallyOperable)
   )
+
+proc contractTypeToTokenType*(contractType : ContractType): TokenType =
+  case contractType:
+    of ContractType.ContractTypeUnknown: return TokenType.Unknown
+    of ContractType.ContractTypeERC20: return TokenType.ERC20
+    of ContractType.ContractTypeERC721: return TokenType.ERC721
+    of ContractType.ContractTypeERC1155: return TokenType.ERC1155
+    else: return TokenType.Unknown

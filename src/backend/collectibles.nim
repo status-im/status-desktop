@@ -14,6 +14,7 @@ type
     ProfileShowcase
     WalletSend
     AllCollectibles
+    Search
 
 # Declared in services/wallet/collectibles/service.go
 const eventCollectiblesOwnershipUpdateStarted*: string = "wallet-collectibles-ownership-update-started"
@@ -26,6 +27,8 @@ const eventCollectiblesDataUpdated*: string = "wallet-collectibles-data-updated"
 const eventOwnedCollectiblesFilteringDone*: string = "wallet-owned-collectibles-filtering-done"
 const eventGetCollectiblesDetailsDone*: string = "wallet-get-collectibles-details-done"
 const eventGetCollectionSocialsDone*: string ="wallet-get-collection-socials-done"
+const eventSearchCollectiblesDone*: string ="wallet-search-collectibles-done"
+const eventSearchCollectionsDone*: string ="wallet-search-collections-done"
 
 const invalidTimestamp*: int = -1
 
@@ -67,6 +70,22 @@ type
     collectibles*: seq[Collectible]
     errorCode*: ErrorCode
 
+  # Mirrors services/wallet/collectibles/service.go SearchCollectiblesResponse
+  SearchCollectiblesResponse* = object
+    collectibles*: seq[Collectible]
+    nextCursor*: string
+    previousCursor*: string
+    provider*: string
+    errorCode*: ErrorCode
+
+  # Mirrors services/wallet/collectibles/service.go SearchCollectionsResponse
+  SearchCollectionsResponse* = object
+    collections*: seq[Collection]
+    nextCursor*: string
+    previousCursor*: string
+    provider*: string
+    errorCode*: ErrorCode
+
   CommunityCollectiblesReceivedPayload* = object
     collectibles*: seq[Collectible]
 
@@ -90,6 +109,23 @@ type
   FetchCriteria* = object
     fetchType*: FetchType
     maxCacheAgeSeconds*: int
+  
+  # see status-go/services/wallet/collectibles/manager.go SearchCollectionsParams
+  SearchCollectionsParams* = object
+    chainID*: int
+    text*: string
+    cursor*: string
+    limit*: int
+    providerID*: string
+
+  # see status-go/services/wallet/collectibles/manager.go SearchCollectiblesParams
+  SearchCollectiblesParams* = object
+    chainID*: int
+    contractAddress*: string
+    text*: string
+    cursor*: string
+    limit*: int
+    providerID*: string
 
 # CollectibleOwnershipState
 proc `$`*(self: OwnershipStatus): string =
@@ -176,6 +212,13 @@ proc `%`*(t: CollectibleDataType): JsonNode {.inline.} =
 proc `%`*(t: ref CollectibleDataType): JsonNode {.inline.} =
   return %(t[])
 
+# CollectionDataType
+proc `%`*(t: CollectionDataType): JsonNode {.inline.} =
+  result = %(t.int)
+
+proc `%`*(t: ref CollectionDataType): JsonNode {.inline.} =
+  return %(t[])
+
 # FetchCriteria
 proc `$`*(self: FetchCriteria): string =
   return fmt"""FetchCriteria(
@@ -190,6 +233,47 @@ proc `%`*(t: FetchCriteria): JsonNode {.inline.} =
 
 proc `%`*(t: ref FetchCriteria): JsonNode {.inline.} =
   return %(t[])
+
+#SearchCollectionsParams
+proc `$`*(self: SearchCollectionsParams): string =
+  return fmt"""SearchCollectionsParams(
+    chainID:{self.chainID}, 
+    text:{self.text}, 
+    cursor:{self.cursor}, 
+    limit:{self.limit}, 
+    providerID:{self.providerID}
+    """
+
+proc `%`*(t: SearchCollectionsParams): JsonNode {.inline.} =
+  result = newJObject()
+  result["chain_id"] = %t.chainID
+  result["text"] = %t.text
+  result["cursor"] = %t.cursor
+  result["limit"] = %t.limit
+  result["provider_id"] = %t.providerID
+
+proc `%`*(t: ref SearchCollectionsParams): JsonNode {.inline.} =
+  return %(t[])
+
+#SearchCollectiblesParams
+proc `$`*(self: SearchCollectiblesParams): string =
+  return fmt"""SearchCollectiblesParams(
+    chainID:{self.chainID}, 
+    contractAddress:{self.contractAddress}, 
+    text:{self.text}, 
+    cursor:{self.cursor}, 
+    limit:{self.limit}, 
+    providerID:{self.providerID}
+    """
+
+proc `%`*(t: SearchCollectiblesParams): JsonNode {.inline.} =
+  result = newJObject()
+  result["chain_id"] = %t.chainID
+  result["contract_address"] = %t.contractAddress
+  result["text"] = %t.text
+  result["cursor"] = %t.cursor
+  result["limit"] = %t.limit
+  result["provider_id"] = %t.providerID
 
 # Responses
 proc fromJson*(e: JsonNode, T: typedesc[GetOwnedCollectiblesResponse]): GetOwnedCollectiblesResponse {.inline.} =
@@ -225,6 +309,32 @@ proc fromJson*(e: JsonNode, T: typedesc[GetCollectiblesByUniqueIDResponse]): Get
 
   result = T(
     collectibles: collectibles,
+    errorCode: ErrorCode(e["errorCode"].getInt())
+  )
+
+proc fromJson*(e: JsonNode, T: typedesc[SearchCollectiblesResponse]): SearchCollectiblesResponse {.inline.} =
+  var collectibles: seq[Collectible] = @[]
+  for item in e["collectibles"].getElems():
+    collectibles.add(fromJson(item, Collectible))
+
+  result = T(
+    collectibles: collectibles,
+    nextCursor: e["nextCursor"].getStr(),
+    previousCursor: e["previousCursor"].getStr(),
+    provider: e["provider"].getStr(),
+    errorCode: ErrorCode(e["errorCode"].getInt())
+  )
+
+proc fromJson*(e: JsonNode, T: typedesc[SearchCollectionsResponse]): SearchCollectionsResponse {.inline.} =
+  var collections: seq[Collection] = @[]
+  for item in e["collections"].getElems():
+    collections.add(fromJson(item, Collection))
+
+  result = T(
+    collections: collections,
+    nextCursor: e["nextCursor"].getStr(),
+    previousCursor: e["previousCursor"].getStr(),
+    provider: e["provider"].getStr(),
     errorCode: ErrorCode(e["errorCode"].getInt())
   )
 
@@ -277,6 +387,16 @@ rpc(fetchCollectionSocialsAsync, "wallet"):
 
 rpc(refetchOwnedCollectibles, "wallet"):
   discard
+
+rpc(searchCollectionsAsync, "wallet"):
+  requestId: int32
+  params: SearchCollectionsParams
+  dataType: CollectionDataType
+
+rpc(searchCollectiblesAsync, "wallet"):
+  requestId: int32
+  params: SearchCollectiblesParams
+  dataType: CollectibleDataType
 
 rpc(updateCollectiblePreferences, "accounts"):
   preferences: seq[CollectiblePreferences]

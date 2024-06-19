@@ -12,6 +12,7 @@ QtObject {
 
     /* PRIVATE: Modules used to get data from backend */
     readonly property var _allCollectiblesModule: !!walletSectionAllCollectibles ? walletSectionAllCollectibles : null
+    readonly property var _collectiblesSearchModule : !!walletSectionCollectiblesSearch ? walletSectionCollectiblesSearch : null
 
     /* This list contains the complete list of collectibles with separate
        entry per collectible which has a unique [network + contractAddress + tokenID] */
@@ -103,4 +104,26 @@ QtObject {
     function getDetailedCollectible(chainId, contractAddress, tokenId) {
         walletSection.collectibleDetailsController.getDetailedCollectible(chainId, contractAddress, tokenId)
     }
+
+    /* The following are used to search for collections */
+    readonly property var _collectionsSearchController: !!root._collectiblesSearchModule ? root._collectiblesSearchModule.collectionsSearchController : null
+    function searchCollections(chainId, text) {
+        root._collectionsSearchController.search(chainId, text)
+    }
+    
+    /* The following are used to display the collection search results */
+    readonly property var collectionsSearchResults: !!root._collectionsSearchController ? root._collectionsSearchController.model : null
+    readonly property bool areCollectionsSearchResultsFetching: !!root._collectionsSearchController ? root._collectionsSearchController.isFetching : true
+    readonly property bool areCollectionsSearchResultsError: !!root._collectionsSearchController ? root._collectionsSearchController.isError : false
+
+    /* The following are used to search for collectibles */
+    readonly property var _collectiblesSearchController: !!root._collectiblesSearchModule ? root._collectiblesSearchModule.collectiblesSearchController : null
+    function searchCollectibles(chainId, contractAddress, text) {
+        root._collectiblesSearchController.search(chainId, contractAddress, text)
+    }
+    
+    /* The following are used to display the collection search results */
+    readonly property var collectiblesSearchResults: !!root._collectiblesSearchController ? root._collectiblesSearchController.model : null
+    readonly property bool areCollectiblesSearchResultsFetching: !!root._collectiblesSearchController ? root._collectiblesSearchController.isFetching : true
+    readonly property bool areCollectiblesSearchResultsError: !!root._collectiblesSearchController ? root._collectiblesSearchController.isError : false
 }

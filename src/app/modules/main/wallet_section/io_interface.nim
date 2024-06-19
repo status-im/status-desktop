@@ -49,6 +49,9 @@ method allTokensModuleDidLoad*(self: AccessInterface) {.base.} =
 method allCollectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method searchCollectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method collectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
