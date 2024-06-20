@@ -70,7 +70,8 @@ StatusDialog {
     onClosed: root.swapAdaptor.reset()
 
     header: Item {
-        height: selector.height
+        implicitHeight: selector.implicitHeight
+        implicitWidth: selector.implicitWidth
         anchors.top: parent.top
         anchors.topMargin: -height - 18
         AccountSelectorHeader {
