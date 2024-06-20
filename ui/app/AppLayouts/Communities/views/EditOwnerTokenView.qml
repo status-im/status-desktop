@@ -224,6 +224,7 @@ StatusScrollView {
             Layout.bottomMargin: Style.current.padding
 
             enabled: root.feeText && !root.feeErrorText
+            objectName: "mintButton"
             text: qsTr("Mint")
 
             onClicked: root.mintClicked()
@@ -276,6 +277,7 @@ StatusScrollView {
 
         NetworkFilter {
             id: netFilter
+            objectName: "netFilter"
 
             Layout.fillWidth: true
 

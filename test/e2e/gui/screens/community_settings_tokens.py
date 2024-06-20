@@ -147,6 +147,7 @@ class EditOwnerTokenView(QObject):
         super(EditOwnerTokenView, self).__init__(communities_names.mainWindow_editOwnerTokenView_EditOwnerTokenView)
         self._scroll = Scroll(communities_names.editOwnerTokenView_Flickable)
         self._select_account_combobox = QObject(communities_names.editOwnerTokenView_CustomComboItem)
+        self._select_network_filter = QObject(communities_names.editOwnerTokenView_netFilter_NetworkFilter)
         self._select_network_combobox = QObject(communities_names.editOwnerTokenView_comboBox_ComboBox)
         self._mainnet_network_item = QObject(communities_names.mainnet_NetworkSelectItemDelegate)
         self._mint_button = Button(communities_names.editOwnerTokenView_Mint_StatusButton)
@@ -254,9 +255,9 @@ class EditOwnerTokenView(QObject):
 
     @allure.step('Select Mainnet network')
     def select_mainnet_network(self, attempts: int = 2):
-        if not self._select_network_combobox.is_visible:
-            self._scroll.vertical_down_to(self._select_network_combobox)
-        self._select_network_combobox.click()
+        if not self._select_network_filter.is_visible:
+            self._scroll.vertical_down_to(self._select_network_filter)
+        self._select_network_filter.click()
         try:
             self._mainnet_network_item.wait_until_appears()
             self._mainnet_network_item.click()
