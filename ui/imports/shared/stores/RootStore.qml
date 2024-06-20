@@ -37,10 +37,6 @@ QtObject {
 
     property var flatNetworks: networksModule.flatNetworks
 
-    function hex2Dec(value) {
-        return globalUtils.hex2Dec(value)
-    }
-
     readonly property var formationChars: (["*", "`", "~"])
     function getSelectedTextWithFormationChars(messageInputField) {
         let i = 1

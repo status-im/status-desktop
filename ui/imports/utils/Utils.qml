@@ -963,4 +963,8 @@ QtObject {
     function getUrlStatus(url) {
         return globalUtilsInst.isValidURL(url)
     }
+
+    function getQrCode(address) {
+        return globalUtilsInst.qrCode(address)
+    }
 }

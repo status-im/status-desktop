@@ -34,7 +34,7 @@ StatusModal {
     property bool switchingAccounsEnabled: true
     property bool changingPreferredChainsEnabled: true
 
-    property string qrImageSource: store.getQrCode(d.visibleAddress)
+    property string qrImageSource: Utils.getQrCode(d.visibleAddress)
     property var getNetworkShortNames: function(chainIDsString) {
         return store.getNetworkShortNames(chainIDsString)
     }

@@ -130,15 +130,6 @@ QtObject {
             tokensList: walletAssetsStore.groupedAccountAssetsModel
         }
 
-        property var chainColors: ({})
-
-        function initChainColors(model) {
-            for (let i = 0; i < model.count; i++) {
-                const item = SQUtils.ModelUtils.get(model, i)
-                chainColors[item.shortName] = item.chainColor
-            }
-        }
-
         readonly property Connections walletSectionConnections: Connections {
             target: root.walletSectionInst
             function onWalletAccountRemoved(address) {
@@ -153,18 +144,11 @@ QtObject {
         }
     }
 
-    function colorForChainShortName(chainShortName) {
-        return d.chainColors[chainShortName]
-    }
 
     property var flatNetworks: networksModule.flatNetworks
     property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
         sourceModel: root.flatNetworks
         filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
-    }
-
-    onFlatNetworksChanged: {
-        d.initChainColors(flatNetworks)
     }
 
     property var cryptoRampServicesModel: walletSectionBuySellCrypto.model
@@ -226,10 +210,6 @@ QtObject {
 
     function updateCurrency(newCurrency) {
         walletSection.updateCurrency(newCurrency)
-    }
-
-    function getQrCode(address) {
-        return globalUtils.qrCode(address)
     }
 
     function getNameForWalletAddress(address) {
@@ -316,45 +296,13 @@ QtObject {
         if (acc) {
             res = {type: RootStore.LookupType.Account, object: acc}
         } else {
-            let sa = SQUtils.ModelUtils.getByKey(walletSectionSavedAddresses.model, "address", address)
+            let sa = SQUtils.ModelUtils.getByKey(walletSectionSavedAddressesInst.model, "address", address)
             if (sa) {
                 res = {type: RootStore.LookupType.SavedAddress, object: sa}
             }
         }
 
         return res
-    }
-
-    function getAssetForSendTx(tx) {
-        if (tx.isNFT) {
-            return {
-                uid: tx.tokenID,
-                chainId: tx.chainId,
-                name: tx.nftName,
-                imageUrl: tx.nftImageUrl,
-                collectionUid: "",
-                collectionName: ""
-            }
-        } else {
-            return tx.symbol
-        }
-    }
-
-    function isTxRepeatable(tx) {
-        if (!tx || tx.txType !== Constants.TransactionType.Send)
-            return false
-
-        let res = root.lookupAddressObject(tx.sender)
-        if (!res || res.type !== RootStore.LookupType.Account || res.object.walletType == Constants.watchWalletType)
-            return false
-
-        if (tx.isNFT) {
-            // TODO #12275: check if account owns enough NFT
-        } else {
-            // TODO #12275: Check if account owns enough tokens
-        }
-
-        return true
     }
 
     function isOwnedAccount(address) {
@@ -391,10 +339,6 @@ QtObject {
         networksModule.toggleNetwork(chainId)
     }
 
-    function copyToClipboard(text) {
-        globalUtils.copyToClipboard(text)
-    }
-
     function runAddAccountPopup() {
         walletSection.runAddAccountPopup(false)
     }
@@ -409,10 +353,6 @@ QtObject {
 
     function switchReceiveAccountByAddress(address) {
         walletSectionSend.switchReceiveAccountByAddress(address)
-    }
-
-    function toggleWatchOnlyAccounts() {
-        walletSection.toggleWatchOnlyAccounts()
     }
 
     function getAllNetworksChainIds() {
@@ -494,16 +434,6 @@ QtObject {
         }
     }
 
-    function getExplorerNameForNetwork(networkShortName)  {
-        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
-            return qsTr("Arbiscan Explorer")
-        }
-        if (networkShortName === Constants.networkShortChainNames.optimism) {
-            return qsTr("Optimism Explorer")
-        }
-        return qsTr("Etherscan Explorer")
-    }
-
     function getOpenSeaNetworkName(networkShortName) {
         let networkName = Constants.openseaExplorerLinks.ethereum
         if (networkShortName === Constants.networkShortChainNames.mainnet) {
@@ -553,8 +483,4 @@ QtObject {
         return "%1/assets/%2/%3/%4".arg(baseLink).arg(networkName).arg(contractAddress).arg(tokenId)
     }
 
-    function getTwitterLink(twitterHandle) {
-        const prefix = Constants.socialLinkPrefixesByType[Constants.socialLinkType.twitter]
-        return prefix + twitterHandle
-    }
 }

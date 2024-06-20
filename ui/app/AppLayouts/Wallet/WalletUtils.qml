@@ -7,9 +7,36 @@ import StatusQ.Core.Theme 0.1
 
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import "stores" as WalletStores
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 QtObject {
+
+    property QtObject _d: QtObject {
+        id: d
+
+        property var chainColors: ({})
+
+        function initChainColors(model) {
+            for (let i = 0; i < model.count; i++) {
+                const item = SQUtils.ModelUtils.get(model, i)
+                chainColors[item.shortName] = item.chainColor
+            }
+        }
+
+        function colorForChainShortName(chainShortName) {
+            return d.chainColors[chainShortName]
+        }
+
+        readonly property Connections walletRootStoreConnections: Connections {
+            target: WalletStores.RootStore
+
+            function onFlatNetworksChanged() {
+                d.initChainColors(WalletStores.RootStore.flatNetworks)
+            }
+        }
+
+    }
+
     function colorizedChainPrefix(prefix) {
         if (!prefix)
             return ""
@@ -21,7 +48,7 @@ QtObject {
 
         for (let i in prefixes) {
             const pref = prefixes[i]
-            let col = WalletStores.RootStore.colorForChainShortName(pref)
+            let col = d.colorForChainShortName(pref)
             if (!col)
                 col = defaultColor
 
@@ -72,5 +99,52 @@ QtObject {
         }
 
         return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
+    }
+
+    function getAssetForSendTx(tx) {
+        if (tx.isNFT) {
+            return {
+                uid: tx.tokenID,
+                chainId: tx.chainId,
+                name: tx.nftName,
+                imageUrl: tx.nftImageUrl,
+                collectionUid: "",
+                collectionName: ""
+            }
+        } else {
+            return tx.symbol
+        }
+    }
+
+    function isTxRepeatable(tx) {
+        if (!tx || tx.txType !== Constants.TransactionType.Send)
+            return false
+
+        let res = root.lookupAddressObject(tx.sender)
+        if (!res || res.type !== RootStore.LookupType.Account || res.object.walletType == Constants.watchWalletType)
+            return false
+
+        if (tx.isNFT) {
+            // TODO #12275: check if account owns enough NFT
+        } else {
+            // TODO #12275: Check if account owns enough tokens
+        }
+
+        return true
+    }
+
+    function getExplorerNameForNetwork(networkShortName)  {
+        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
+            return qsTr("Arbiscan Explorer")
+        }
+        if (networkShortName === Constants.networkShortChainNames.optimism) {
+            return qsTr("Optimism Explorer")
+        }
+        return qsTr("Etherscan Explorer")
+    }
+
+    function getTwitterLink(twitterHandle) {
+        const prefix = Constants.socialLinkPrefixesByType[Constants.socialLinkType.twitter]
+        return prefix + twitterHandle
     }
 }
