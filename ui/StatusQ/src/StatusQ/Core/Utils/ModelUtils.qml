@@ -138,4 +138,22 @@ QtObject {
     function roleNames(model) {
         return Internal.ModelUtils.roleNames(model)
     }
+
+    /// Returns the first model entry that satisfies the condition function or null if none is found.
+    function getFirstModelEntryIf(model, conditionFn) {
+        if (!model)
+            return null
+
+        const count = model.rowCount()
+
+        for (let i = 0; i < count; i++) {
+            const modelItem = Internal.ModelUtils.get(model, i)
+
+            if (conditionFn(modelItem)) {
+                return modelItem
+            }
+        }
+
+        return null
+    }
 }

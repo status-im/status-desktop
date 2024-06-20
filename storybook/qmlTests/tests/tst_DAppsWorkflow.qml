@@ -78,6 +78,7 @@ Item {
     // Component {
     //     id: dappsStoreComponent
 
+
     //     DAppsStore {
     //         property string dappsListReceivedJsonStr: '[]'
 
@@ -133,7 +134,7 @@ Item {
     //                 emoji: "😋"
     //                 color: "#2A4AF5"
     //             }
-    //             ListElement { address: "0x3" }
+    //             ListElement { address: "0x3a" }
     //         }
     //         readonly property ListModel ownAccounts: accounts
     //     }
@@ -182,6 +183,23 @@ Item {
     //         store.userAuthenticated(td.topic, td.request.id, "password", "")
     //         compare(store.signMessageCalls.length, 1, "expected a call to store.signMessage")
     //         compare(store.signMessageCalls[0].message, td.request.data)
+    //     }
+
+    //     function test_onSessionRequestEventDifferentCaseForAddress() {
+    //         let sdk = handler.sdk
+
+    //         let testAddressUpper = "0x3A"
+    //         let chainId = 2
+    //         let  method = "personal_sign"
+    //         let message = "hello world"
+    //         let params = [Helpers.strToHex(message), testAddressUpper]
+    //         let topic = "b536a"
+    //         let session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+    //         // Expect to have calls to getActiveSessions from service initialization
+    //         let prevRequests = sdk.getActiveSessionsCallbacks.length
+    //         sdk.sessionRequestEvent(session)
+
+    //         compare(sdk.getActiveSessionsCallbacks.length, 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
     //     }
     // }
 
@@ -298,7 +316,7 @@ Item {
     //         let walletStore = service.walletStore
     //         let store = service.store
 
-    //         let testAddress = "0x3"
+    //         let testAddress = "0x3a"
     //         let chainId = 2
     //         let  method = "personal_sign"
     //         let message = "hello world"

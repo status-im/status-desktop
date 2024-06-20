@@ -112,8 +112,20 @@ QObject {
         function resolveAsync(event) {
             let method = event.params.request.method
             let account = lookupAccountFromEvent(event, method)
+            if(!account) {
+                console.error("Error finding account for event", JSON.stringify(event))
+                return null
+            }
             let network = lookupNetworkFromEvent(event, method)
+            if(!network) {
+                console.error("Error finding network for event", JSON.stringify(event))
+                return null
+            }
             let data = extractMethodData(event, method)
+            if(!data) {
+                console.error("Error in event data lookup", JSON.stringify(event))
+                return null
+            }
             let obj = sessionRequestComponent.createObject(null, {
                 event,
                 topic: event.topic,
@@ -175,7 +187,9 @@ QObject {
                 }
                 address = event.params.request.params[0].from
             }
-            return ModelUtils.getByKey(walletStore.ownAccounts, "address", address)
+            return ModelUtils.getFirstModelEntryIf(walletStore.ownAccounts, (account) => {
+                return account.address.toLowerCase() === address.toLowerCase()
+            })
         }
 
         /// Returns null if the network is not found
