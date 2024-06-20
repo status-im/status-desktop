@@ -56,15 +56,15 @@ QtObject:
       replyTo: string,
       contentType: int) {.slot.} =
     # FIXME: Update this when `setText` is async.
+    self.setSendingInProgress(true)
     self.delegate.setText(msg, false)
     self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
-    self.setSendingInProgress(true)
 
   proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string) {.slot.} =
     # FIXME: Update this when `setText` is async.
+    self.setSendingInProgress(true)
     self.delegate.setText(msg, false)
     self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews())
-    self.setSendingInProgress(true)
 
   proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
     self.delegate.acceptRequestAddressForTransaction(messageId, address)
