@@ -105,11 +105,12 @@ o_Flickable = {"container": mainWindow_OwnerTokenWelcomeView, "type": "Flickable
 mainWindow_editOwnerTokenView_EditOwnerTokenView = {"container": mainWindow_StatusWindow, "id": "editOwnerTokenView", "type": "EditOwnerTokenView", "unnamed": 1, "visible": True}
 editOwnerTokenView_Flickable = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "Flickable", "unnamed": 1, "visible": True}
 editOwnerTokenView_CustomComboItem = {"checkable": False, "container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "CustomComboItem", "unnamed": 1, "visible": True}
-editOwnerTokenView_comboBox_ComboBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "id": "comboBox", "occurrence": 2, "type": "ComboBox", "unnamed": 1, "visible": True}
+editOwnerTokenView_netFilter_NetworkFilter = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "netFilter", "type": "NetworkFilter", "visible": True}
+editOwnerTokenView_comboBox_ComboBox = {"container": editOwnerTokenView_netFilter_NetworkFilter, "id": "comboBox", "occurrence": 2, "type": "ComboBox", "unnamed": 1, "visible": True}
 mainnet_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 0, "objectName": "Mainnet", "type": "NetworkSelectItemDelegate", "visible": True}
 optimism_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 1, "objectName": "Optimism", "type": "NetworkSelectItemDelegate", "visible": True}
 arbitrum_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 2, "objectName": "Arbitrum", "type": "NetworkSelectItemDelegate", "visible": True}
-editOwnerTokenView_Mint_StatusButton = {"checkable": False, "container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "StatusButton", "unnamed": 1, "visible": True}
+editOwnerTokenView_Mint_StatusButton = {"checkable": False, "container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "mintButton", "type": "StatusButton", "visible": True}
 editOwnerTokenView_FeeRow = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "FeeRow", "unnamed": 1, "visible": True}
 editOwnerTokenView_fees_StatusBaseText = {"container": editOwnerTokenView_FeeRow, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 

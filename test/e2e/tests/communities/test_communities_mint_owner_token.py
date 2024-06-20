@@ -117,7 +117,7 @@ def test_mint_owner_token(keys_screen, main_window, user_account):
             assert edit_owner_token_view.get_destructible_box_content(1) == 'Yes'
 
     with step('Select Mainnet network'):
-        select_network = edit_owner_token_view.select_mainnet_network()
+        edit_owner_token_view.select_mainnet_network()
 
     with step('Verify fees title and gas fees exist'):
         assert driver.waitFor(lambda: edit_owner_token_view.get_fee_title == 'Mint ' + community_params[
