@@ -8,6 +8,7 @@ import ../message/dto/link_preview
 import ../activity_center/dto/notification as notification_dto
 import ../community/dto/community as community_dto
 import ../contacts/service as contact_service
+import ../settings/service as settings_service
 import ../../../backend/chat as status_chat
 import ../../../backend/communities as status_communities
 import ../../../backend/group_chat as status_group_chat
@@ -281,6 +282,10 @@ QtObject:
           # TODO add the channel back to `chat` when it is refactored
           self.updateOrAddChat(chat)
           chats.add(chat)
+      # The display name can be modified when sending in case the user had a very old display name taht is no longer accepted
+      if response.result{"settings"} != nil:
+        if response.result["settings"][0]{"name"}.getStr == KEY_DISPLAY_NAME:
+          self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: response.result["settings"][0]["value"].getStr))
     return (chats, messages)
 
   proc signalChatsAndMessagesUpdates*(self: Service, chats: seq[ChatDto], messages: seq[MessageDto]) =
