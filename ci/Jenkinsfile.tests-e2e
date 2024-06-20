@@ -76,6 +76,9 @@ pipeline {
 
     TESTRAIL_URL = 'https://ethstatus.testrail.net'
     TESTRAIL_PROJECT_ID = 17
+    /* Override QT xcb plugin with linux to avoid errors like:
+     * "Could not load the Qt platform plugin "xcb" in "" even though it was found." */
+    QT_QPA_PLATFORM = "linuxfb"
 
     /* Runtime flag to make testing of the app easier.  Switched off: unpredictable app behavior under new tests */
     /* STATUS_RUNTIME_TEST_MODE = 'True' */
