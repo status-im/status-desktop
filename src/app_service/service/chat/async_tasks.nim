@@ -62,3 +62,77 @@ proc asyncCheckAllChannelsPermissionsTask(argEncoded: string) {.gcsafe, nimcall.
       "communityId": arg.communityId,
       "error": e.msg,
     })
+
+type
+  AsyncSendMessageTaskArg = ref object of QObjectTaskArg
+    chatId: string
+    processedMsg: string
+    replyTo: string
+    contentType: int
+    preferredUsername: string
+    communityId: string
+    standardLinkPreviews: JsonNode
+    statusLinkPreviews: JsonNode
+
+const asyncSendMessageTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSendMessageTaskArg](argEncoded)
+  try:
+    
+    let response = status_chat.sendChatMessage(
+      arg.chatId,
+      arg.processedMsg,
+      arg.replyTo,
+      arg.contentType,
+      arg.preferredUsername,
+      arg.standardLinkPreviews,
+      arg.statusLinkPreviews,
+      arg.communityId)
+
+    arg.finish(%* {
+      "response": response,
+      "chatId": arg.chatId,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+      "chatId": arg.chatId,
+    })
+
+type
+  AsyncSendImagesTaskArg = ref object of QObjectTaskArg
+    chatId: string
+    imagePathsAndDataJson: string
+    tempDir: string
+    msg: string
+    replyTo: string
+    preferredUsername: string
+    linkPreviews: JsonNode
+
+const asyncSendImagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSendImagesTaskArg](argEncoded)
+  try:
+    var images = Json.decode(arg.imagePathsAndDataJson, seq[string])
+    var imagePaths: seq[string] = @[]
+
+    for imagePathOrSource in images.mitems:
+      let imagePath = image_resizer(imagePathOrSource, 2000, arg.tempDir)
+      if imagePath != "":
+        imagePaths.add(imagePath)
+
+    let response = status_chat.sendImages(arg.chatId, imagePaths, arg.msg, arg.replyTo, arg.preferredUsername,
+      arg.linkPreviews)
+
+    for imagePath in imagePaths:
+      removeFile(imagePath)
+
+    arg.finish(%* {
+      "response": response,
+      "chatId": arg.chatId,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+      "chatId": arg.chatId,
+    })

@@ -151,7 +151,7 @@ proc sendSticker*(
     replyTo: string,
     sticker: StickerDto,
     preferredUsername: string) =
-  self.stickerService.sendSticker(channelId, replyTo, sticker, preferredUsername)
+  self.stickerService.asyncSendSticker(channelId, replyTo, sticker, preferredUsername)
 
 proc wei2Eth*(self: Controller, price: Stuint[256]): string =
   eth_utils.wei2Eth(price)

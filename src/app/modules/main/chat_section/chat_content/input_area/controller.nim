@@ -95,6 +95,18 @@ proc init*(self: Controller) =
     self.unfurlingPlanActiveRequest = ""
     self.handleUnfurlingPlan(self.unfurlingPlanActiveRequestUnfurlAfter)
 
+  self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
+    let args = MessageSendingSuccess(e)
+    if self.chatId != args.chat.id:
+      return
+    self.delegate.onSendingMessageSuccess()
+
+  self.events.on(SIGNAL_SENDING_FAILED) do(e:Args):
+    let args = MessageSendingFailure(e)
+    if self.chatId != args.chatId:
+      return
+    self.delegate.onSendingMessageFailure()
+
 proc getChatId*(self: Controller): string =
   return self.chatId
 
@@ -116,9 +128,9 @@ proc sendImages*(self: Controller,
                  msg: string,
                  replyTo: string,
                  preferredUsername: string = "",
-                 linkPreviews: seq[LinkPreview]): string =
+                 linkPreviews: seq[LinkPreview]) =
   self.resetLinkPreviews()
-  self.chatService.sendImages(
+  self.chatService.asyncSendImages(
     self.chatId,
     imagePathsAndDataJson,
     msg,
@@ -134,7 +146,7 @@ proc sendChatMessage*(self: Controller,
                       preferredUsername: string = "",
                       linkPreviews: seq[LinkPreview]) =
   self.resetLinkPreviews()
-  self.chatService.sendChatMessage(self.chatId,
+  self.chatService.asyncSendChatMessage(self.chatId,
     msg,
     replyTo,
     contentType,

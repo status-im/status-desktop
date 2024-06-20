@@ -15,9 +15,12 @@ QtObject:
       linkPreviewModelVariant: QVariant
       urlsModel: urls_model.Model
       urlsModelVariant: QVariant
+      sendingInProgress: bool
       askToEnableLinkPreview: bool
       emojiReactionsModel: emoji_reactions_model.Model
       emojiReactionsModelVariant: QVariant
+
+  proc setSendingInProgress*(self: View, value: bool)
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -53,11 +56,13 @@ QtObject:
       replyTo: string,
       contentType: int) {.slot.} =
     # FIXME: Update this when `setText` is async.
+    self.setSendingInProgress(true)
     self.delegate.setText(msg, false)
     self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
 
-  proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string): string {.slot.} =
+  proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string) {.slot.} =
     # FIXME: Update this when `setText` is async.
+    self.setSendingInProgress(true)
     self.delegate.setText(msg, false)
     self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews())
 
@@ -154,3 +159,21 @@ QtObject:
   QtProperty[QVariant] urlsModel:
     read = getUrlsModel
     notify = urlsModelChanged
+
+  proc sendingInProgressChanged(self: View) {.signal.}
+  proc getSendingInProgress*(self: View): bool {.slot.} =
+    return self.sendingInProgress
+
+  QtProperty[bool] sendingInProgress:
+    read = getSendingInProgress
+    notify = sendingInProgressChanged
+
+  proc setSendingInProgress*(self: View, value: bool) =
+    self.sendingInProgress = value
+    self.sendingInProgressChanged()
+
+  proc emitSendingMessageSuccess*(self: View) =
+    self.setSendingInProgress(false)
+
+  proc emitSendingMessageFailure*(self: View) =
+    self.setSendingInProgress(false)

@@ -80,6 +80,8 @@ Item {
         id: d
         readonly property var activeChatContentModule: d.getChatContentModule(root.activeChatId)
 
+        property bool sendingInProgress: !!d.activeChatContentModule? d.activeChatContentModule.inputAreaModule.sendingInProgress : false
+
         readonly property var urlsList: {
             if (!d.activeChatContentModule) {
                 return
@@ -276,6 +278,7 @@ Item {
                                  && root.rootStore.sectionDetails.joined
                                  && !root.rootStore.sectionDetails.amIBanned
                                  && root.rootStore.isUserAllowedToSendMessage
+                                 && !d.sendingInProgress
                     }
 
                     store: root.rootStore
@@ -297,6 +300,9 @@ Item {
                             }
                             if (!root.canPost) {
                                 return qsTr("Sorry, you don't have permissions to post in this channel.")
+                            }
+                            if (d.sendingInProgress) {
+                                return qsTr("Sending...")
                             }
                             return root.rootStore.chatInputPlaceHolderText
                         } else {
@@ -339,19 +345,19 @@ Item {
                             return
                         }
 
-                         if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
-                                                        event,
-                                                        chatInput.getTextWithPublicKeys(),
-                                                        chatInput.isReply? chatInput.replyMessageId : "",
-                                                        chatInput.fileUrlsAndSources
-                                                        ))
-                         {
-                             Global.playSendMessageSound()
+                        if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
+                                                    event,
+                                                    chatInput.getTextWithPublicKeys(),
+                                                    chatInput.isReply? chatInput.replyMessageId : "",
+                                                    chatInput.fileUrlsAndSources
+                                                    ))
+                        {
+                            Global.playSendMessageSound()
 
-                             chatInput.setText("")
-                             chatInput.textInput.textFormat = TextEdit.PlainText;
-                             chatInput.textInput.textFormat = TextEdit.RichText;
-                         }
+                            chatInput.setText("")
+                            chatInput.textInput.textFormat = TextEdit.PlainText;
+                            chatInput.textInput.textFormat = TextEdit.RichText;
+                        }
                     }
 
                     onKeyUpPress: {

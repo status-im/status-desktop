@@ -93,3 +93,38 @@ proc installStickerPackTask(argEncoded: string) {.gcsafe, nimcall.} =
     error "Error installing stickers", message = getCurrentExceptionMsg()
   let tpl: tuple[packId: string, installed: bool] = (arg.packId, installed)
   arg.finish(tpl)
+
+type
+  AsyncSendStickerTaskArg = ref object of QObjectTaskArg
+    chatId: string
+    replyTo: string
+    stickerHash: string
+    stickerPackId: string
+    preferredUsername: string
+
+const asyncSendStickerTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSendStickerTaskArg](argEncoded)
+  try:
+    let response = status_chat.sendChatMessage(
+      arg.chatId,
+      "You can see a nice sticker here!",
+      arg.replyTo,
+      ContentType.Sticker.int,
+      arg.preferredUsername,
+      standardLinkPreviews = JsonNode(),
+      statusLinkPreviews = JsonNode(),
+      communityId = "", # communityId is not necessary when sending a sticker
+      arg.stickerHash,
+      arg.stickerPackId,
+    )
+
+    arg.finish(%* {
+      "response": response,
+      "chatId": arg.chatId,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+      "chatId": arg.chatId,
+    })

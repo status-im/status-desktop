@@ -345,24 +345,38 @@ QtObject:
     except RpcException:
       error "Error removing installed sticker", message = getCurrentExceptionMsg()
 
-  proc sendSticker*(
+  proc asyncSendSticker*(
       self: Service,
       chatId: string,
       replyTo: string,
       sticker: StickerDto,
       preferredUsername: string) =
-    let response = status_chat.sendChatMessage(
-        chatId,
-        "Update to latest version to see a nice sticker here!",
-        replyTo,
-        ContentType.Sticker.int,
-        preferredUsername,
-        linkPreviews = @[],
-        communityId = "", # communityId is not necessary when sending a sticker
-        sticker.hash,
-        sticker.packId)
-    discard self.chatService.processMessengerResponse(response)
+    let arg = AsyncSendStickerTaskArg(
+      tptr: asyncSendStickerTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncSendStickerDone",
+      chatId: chatId,
+      replyTo: replyTo,
+      stickerHash: sticker.hash,
+      stickerPackId: sticker.packId,
+      preferredUsername: preferredUsername,
+    )
+
+    self.threadpool.start(arg)
     self.addStickerToRecent(sticker)
+
+  proc onAsyncSendStickerDone*(self: Service, rpcResponseJson: string) {.slot.} =
+    let rpcResponseObj = rpcResponseJson.parseJson
+    try:
+      let errorString = rpcResponseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
+
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      discard self.chatService.processMessengerResponse(rpcResponse)
+    except Exception as e:
+      error "Error sending sticker", msg = e.msg
+      self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: rpcResponseObj["chatId"].getStr))
 
   proc removeRecentStickers*(self: Service, packId: string) =
     self.recentStickers.keepItIf(it.packId != packId)
