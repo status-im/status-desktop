@@ -95,11 +95,11 @@ def test_add_a_contact_from_community_member_list(multiple_instances):
             with step('Enable creation of community option'):
                 settings = main_screen.left_panel.open_settings()
                 settings.left_panel.open_advanced_settings().enable_creation_of_communities()
-            main_screen.create_community(community_params['name'], community_params['description'],
-                                         community_params['intro'], community_params['outro'],
-                                         community_params['logo']['fp'], community_params['banner']['fp'])
-            main_screen.left_panel.invite_people_in_community([user_one.name], 'Message', community_params['name'])
-            main_screen.left_panel.invite_people_in_community([user_three.name], 'Message', community_params['name'])
+            community = main_screen.create_community(community_params['name'], community_params['description'],
+                                                     community_params['intro'], community_params['outro'],
+                                                     community_params['logo']['fp'], community_params['banner']['fp'])
+            community.left_panel.invite_people_to_community([user_one.name], 'Message')
+            community.left_panel.invite_people_to_community([user_three.name], 'Message')
             main_screen.hide()
 
         with step(f'User {user_three.name}, accept invitation from {user_two.name}'):
