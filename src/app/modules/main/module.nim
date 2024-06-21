@@ -333,6 +333,12 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     # We will update the model later when we finish loading the accounts
     self.controller.asyncGetRevealedAccountsForAllMembers(communityDetails.id)
 
+    # If there are tokens already in the model, we should keep the existing community tokens, until
+    # getCommunityTokensDetailsAsync will trigger onCommunityTokensDetailsLoaded
+    let existingCommunity = self.view.model().getItemById(communityDetails.id)
+    if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
+      communityTokensItems = existingCommunity.communityTokens.items
+
   let (unviewedCount, notificationsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
     communityDetails.id,
     communityDetails.muted,
