@@ -72,6 +72,13 @@ class QObject:
     @allure.step('Get checked {0}')
     def is_checked(self) -> bool:
         return getattr(self.object, 'checked')
+    
+    @property
+    @allure.step('Get checkState {0}')
+    def checkState(self) -> int:
+        if hasattr(self.object, 'checkState'):
+            return getattr(self.object, 'checkState')
+        return 2 if self.is_checked else 0
 
     @property
     @allure.step('Get visible {0}')
