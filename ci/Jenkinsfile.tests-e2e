@@ -82,10 +82,6 @@ pipeline {
 
     /* Runtime flag to make testing of the app easier.  Switched off: unpredictable app behavior under new tests */
     /* STATUS_RUNTIME_TEST_MODE = 'True' */
-
-    QT_LOGGING_RULES = '*.warning=true'
-    QT_DEBUG_PLUGINS = 1
-    QT_QPA_PLATFORM_PLUGIN_PATH = '/opt/qt/5.15.2/gcc_64/plugins'
   }
 
   stages {
