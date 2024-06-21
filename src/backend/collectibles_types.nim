@@ -22,9 +22,13 @@ type
     contractID*: ContractID
     tokenID*: UInt256
 
-  # see status-go/services/wallet/collectibles/service.go CollectibleDataType
+  # see status-go/services/wallet/collectibles/types.go CollectibleDataType
   CollectibleDataType* {.pure.} = enum
     UniqueID, Header, Details, CommunityHeader
+
+  # see status-go/services/wallet/collectibles/types.go CollectionDataType
+  CollectionDataType* {.pure.} = enum
+    ContractID, Details
 
   # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleTrait
   CollectibleTrait* = ref object of RootObj
@@ -73,6 +77,13 @@ type
     latestTxHash*: Option[string]
     receivedAmount*: Option[float64]
     contractType*: Option[ContractType]
+  
+  Collection* = ref object of RootObj
+    dataType*: CollectionDataType
+    id* : ContractID
+    communityId*: string
+    contractType*: ContractType
+    collectionData*: Option[CollectionData]
 
   CollectionSocials* = ref object of RootObj
     website*: string
@@ -405,6 +416,33 @@ proc fromJson*(t: JsonNode, T: typedesc[Collectible]): Collectible {.inline.} =
     result.contractType = none(ContractType)
 
 proc toIds(self: seq[Collectible]): seq[CollectibleUniqueID] =
+  result = @[]
+  for c in self:
+    result.add(c.id)
+
+# Collection
+proc `$`*(self: Collection): string =
+  return fmt"""Collection(
+    dataType:{self.dataType},
+    id:{self.id},
+    contractType:{self.contractType},
+    collectionData:{self.collectionData},
+    communityId:{self.communityId}
+  )"""
+
+proc fromJson*(t: JsonNode, T: typedesc[Collection]): Collection {.inline.} =
+  result = Collection()
+  result.dataType = t["data_type"].getInt().CollectionDataType
+  result.id = fromJson(t["id"], ContractID)
+  let collectionDataNode = t{"collection_data"}
+  if collectionDataNode != nil and collectionDataNode.kind != JNull:
+    result.collectionData = some(fromJson(collectionDataNode, CollectionData))
+  else:
+    result.collectionData = none(CollectionData)
+  result.communityId = t["community_id"].getStr
+  result.contractType = ContractType(t["contract_type"].getInt())
+
+proc toIds(self: seq[Collection]): seq[ContractID] =
   result = @[]
   for c in self:
     result.add(c.id)

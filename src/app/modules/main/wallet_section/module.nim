@@ -7,6 +7,7 @@ import ../io_interface as delegate_interface
 import ./accounts/module as accounts_module
 import ./all_tokens/module as all_tokens_module
 import ./all_collectibles/module as all_collectibles_module
+import ./collectibles_search/module as collectibles_search_module
 import ./assets/module as assets_module
 import ./saved_addresses/module as saved_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
@@ -65,6 +66,7 @@ type
     accountsModule: accounts_module.AccessInterface
     allTokensModule: all_tokens_module.AccessInterface
     allCollectiblesModule: all_collectibles_module.AccessInterface
+    collectiblesSearchModule: collectibles_search_module.AccessInterface
     assetsModule: assets_module.AccessInterface
     sendModule: send_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
@@ -131,6 +133,7 @@ proc newModule*(
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService, settingsService, communityTokensService)
   let allCollectiblesModule = all_collectibles_module.newModule(result, events, collectibleService, networkService, walletAccountService, settingsService)
   result.allCollectiblesModule = allCollectiblesModule
+  result.collectiblesSearchModule = collectibles_search_module.newModule(result, events, networkService)
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService,
     currencyService)
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService,
@@ -176,6 +179,7 @@ method delete*(self: Module) =
   self.accountsModule.delete
   self.allTokensModule.delete
   self.allCollectiblesModule.delete
+  self.collectiblesSearchModule.delete
   self.assetsModule.delete
   self.savedAddressesModule.delete
   self.buySellCryptoModule.delete
@@ -335,6 +339,7 @@ method load*(self: Module) =
   self.accountsModule.load()
   self.allTokensModule.load()
   self.allCollectiblesModule.load()
+  self.collectiblesSearchModule.load()
   self.assetsModule.load()
   self.savedAddressesModule.load()
   self.buySellCryptoModule.load()
@@ -354,6 +359,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.allCollectiblesModule.isLoaded()):
+    return
+
+  if(not self.collectiblesSearchModule.isLoaded()):
     return
 
   if(not self.assetsModule.isLoaded()):
@@ -395,6 +403,9 @@ method allTokensModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method allCollectiblesModuleDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
+
+method searchCollectiblesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method collectiblesModuleDidLoad*(self: Module) =

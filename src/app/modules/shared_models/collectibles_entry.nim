@@ -6,8 +6,7 @@ import collectible_trait_model
 import collectible_ownership_model
 import app_service/service/community_tokens/dto/community_token
 import app_service/common/types
-
-const invalidTimestamp* = high(int)
+import app/modules/shared/wallet_utils
 
 # Additional data needed to build an Entry, which is
 # not included in the backend data and needs to be
@@ -372,14 +371,6 @@ QtObject:
     self.communityPrivilegesLevelChanged()
     self.communityImageChanged()
     return true
-
-  proc contractTypeToTokenType(contractType : ContractType): TokenType =
-    case contractType:
-      of ContractType.ContractTypeUnknown: return TokenType.Unknown
-      of ContractType.ContractTypeERC20: return TokenType.ERC20
-      of ContractType.ContractTypeERC721: return TokenType.ERC721
-      of ContractType.ContractTypeERC1155: return TokenType.ERC1155
-      else: return TokenType.Unknown
 
   proc newCollectibleDetailsFullEntry*(data: backend.Collectible, extradata: ExtraData): CollectiblesEntry =
     new(result, delete)
