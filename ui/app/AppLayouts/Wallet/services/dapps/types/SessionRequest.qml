@@ -6,6 +6,8 @@ import utils 1.0
 
 QtObject {
     /// Supported methods
+    /// userString is used in the context `dapp.url #{userString} <accepted/rejected>`
+    /// requestDisplay is used in the context `dApp wants you to ${requestDisplay} with <Account Name Here>`
     property QtObject methods: QtObject {
         readonly property QtObject personalSign: QtObject {
             readonly property string name: Constants.personal_sign
@@ -35,8 +37,11 @@ QtObject {
 
         readonly property QtObject sendTransaction: QtObject {
             readonly property string name: "eth_sendTransaction"
-            readonly property string userString: qsTr("send transaction")
-            //function buildDataObject(message) { return {/* TODO #15126 */}}
+            readonly property string userString: qsTr("transaction")
+            readonly property string requestDisplay: qsTr("sign this transaction")
+
+            function buildDataObject(tx) { return {tx}}
+            function getTxObjFromData(data) { return data.tx }
         }
         readonly property var all: [personalSign, signTypedData_v4, signTransaction, sendTransaction]
     }

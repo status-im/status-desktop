@@ -307,6 +307,11 @@ Item {
                 console.info(`calling mocked DAppsStore.signTransaction(${topic}, ${id}, ${address}, ${chainId}, ${password}, ${tx})`)
                 return "0xf8672a8402fb7acf82520894e2d622c817878da5143bbe06866ca8e35273ba8a80808401546d71a04fc89c2f007c3b27d0fcff07d3e69c29f940967fab4caf525f9af72dadb48befa00c5312a3cb6f50328889ad361a0c88bb9d1b1a4fc510f6783b287930b4e187b5"
             }
+
+            function sendTransaction(topic, id, address, chainId, password, tx) {
+                console.info(`calling mocked DAppsStore.sendTransaction(${topic}, ${id}, ${address}, ${chainId}, ${password}, ${tx})`)
+                return "0xf8672a8402fb7acf82520894e2d622c817878da5143bbe068"
+            }
         }
 
         walletStore: WalletStore {

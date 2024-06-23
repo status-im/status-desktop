@@ -32,7 +32,7 @@ QObject {
     signal sessionRequest(SessionRequestResolved request)
     signal displayToastMessage(string message, bool error)
     signal sessionRequestResult(/*model entry of SessionRequestResolved*/ var request, bool isSuccess)
-    signal maxFeesUpdated(real maxFees, string symbol)
+    signal maxFeesUpdated(real maxFees, int maxFeesWei, bool haveEnoughFunds, string symbol)
     signal estimatedTimeUpdated(int minMinutes, int maxMinutes)
 
     Connections {
@@ -134,8 +134,10 @@ QObject {
                 account,
                 network,
                 data,
-                maxFeesText: "-",
-                estimatedTimeText: "-"
+                maxFeesText: "?",
+                maxFeesEthText: "?",
+                enoughFunds: false,
+                estimatedTimeText: "?"
             })
             if (obj === null) {
                 console.error("Error creating SessionRequestResolved for event")
@@ -143,9 +145,7 @@ QObject {
             }
 
             // Check later to have a valid request object
-            if (!SessionRequest.getSupportedMethods().includes(method)
-                // TODO  #14927: support method eth_sendTransaction
-                || method == SessionRequest.methods.sendTransaction.name) {
+            if (!SessionRequest.getSupportedMethods().includes(method)) {
                 console.error("Unsupported method", method)
                 return null
             }
@@ -160,9 +160,10 @@ QObject {
                 // TODO #15192: update maxFees
                 let gasLimit = parseFloat(parseInt(event.params.request.params[0].gasLimit, 16));
                 let gasPrice = parseFloat(parseInt(event.params.request.params[0].gasPrice, 16));
-                root.maxFeesUpdated((gasLimit * gasPrice)/1000000000, "Gwei")
+                let maxFees = gasLimit * gasPrice
+                root.maxFeesUpdated(maxFees/1000000000, maxFees, true, "Gwei")
                 // TODO #15192: update estimatedTime
-                root.estimatedTimeUpdated(3, 12)
+                root.estimatedTimeUpdated(1, 12)
             })
 
             return obj
@@ -181,7 +182,8 @@ QObject {
                     return null
                 }
                 address = event.params.request.params[0]
-            } else if (method === SessionRequest.methods.signTransaction.name) {
+            } else if (method === SessionRequest.methods.signTransaction.name
+                    || method === SessionRequest.methods.sendTransaction.name) {
                 if (event.params.request.params.length == 0) {
                     return null
                 }
@@ -233,6 +235,12 @@ QObject {
                 }
                 let tx = event.params.request.params[0]
                 return SessionRequest.methods.signTransaction.buildDataObject(tx)
+            } else if (method === SessionRequest.methods.sendTransaction.name) {
+                if (event.params.request.params.length == 0) {
+                    return null
+                }
+                let tx = event.params.request.params[0]
+                return SessionRequest.methods.sendTransaction.buildDataObject(tx)
             } else {
                 return null
             }
@@ -256,26 +264,30 @@ QObject {
             }
 
             if (password !== "") {
-                var signedMessage = ""
+                var actionResult = ""
                 if (request.method === SessionRequest.methods.personalSign.name) {
                     // TODO #14756: clarify why prefixing the message fails the test app https://react-app.walletconnect.com/
                     //let finalMessage = "\x19Ethereum Signed Message:\n" + originalMessage.length + originalMessage
-                    signedMessage = store.signMessage(request.topic, request.id,
+                    actionResult = store.signMessage(request.topic, request.id,
                                         request.account.address, password,
                                         SessionRequest.methods.personalSign.getMessageFromData(request.data))
                 } else if (request.method === SessionRequest.methods.signTypedData_v4.name) {
-                    signedMessage = store.signTypedDataV4(request.topic, request.id,
+                    actionResult = store.signTypedDataV4(request.topic, request.id,
                                         request.account.address, password,
                                         SessionRequest.methods.signTypedData_v4.getMessageFromData(request.data))
                 } else if (request.method === SessionRequest.methods.signTransaction.name) {
                     let txObj = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
-                    signedMessage = store.signTransaction(request.topic, request.id,
+                    actionResult = store.signTransaction(request.topic, request.id,
+                                        request.account.address, request.network.chainId, password, txObj)
+                } else if (request.method === SessionRequest.methods.sendTransaction.name) {
+                    let txObj = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
+                    actionResult = store.sendTransaction(request.topic, request.id,
                                         request.account.address, request.network.chainId, password, txObj)
                 }
-                let isSuccessful = (signedMessage != "")
+                let isSuccessful = (actionResult != "")
                 if (isSuccessful) {
                     // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
-                    sdk.acceptSessionRequest(request.topic, request.id, signedMessage)
+                    sdk.acceptSessionRequest(request.topic, request.id, actionResult)
                 } else {
                     root.sessionRequestResult(request, isSuccessful)
                 }

@@ -20,6 +20,7 @@ import shared.popups.walletconnect 1.0
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.services.dapps.types 1.0
 
 import utils 1.0
 import shared.stores 1.0
@@ -53,6 +54,8 @@ Item {
                 payloadData: d.currentPayload ? d.currentPayload.payloadData : null
                 method: d.currentPayload ? d.currentPayload.method : ""
                 maxFeesText: d.currentPayload ? d.currentPayload.maxFeesText : ""
+                maxFeesEthText: d.currentPayload ? d.currentPayload.maxFeesEthText : ""
+                enoughFunds: settings.enoughFunds
                 estimatedTimeText: d.currentPayload ? d.currentPayload.estimatedTimeText : ""
 
                 account: d.selectedAccount
@@ -119,6 +122,13 @@ Item {
                     d.currentPayload = d.payloadOptions[currentIndex]
                 }
             }
+            StatusCheckBox {
+                id: enoughFundsCheckBox
+
+                text: "Enough funds"
+                checked: settings.enoughFunds
+                onCheckedChanged: settings.enoughFunds = checked
+            }
 
             Item { Layout.fillHeight: true }
         }
@@ -132,6 +142,7 @@ Item {
         property string dappIcon: "https://opensea.io/static/images/logos/opensea-logo.svg"
         property string accountDisplay: "helloworld"
         property int payloadMethod: 0
+        property bool enoughFunds: true
     }
 
     QtObject {
@@ -152,21 +163,31 @@ Item {
         readonly property var payloadOptions: [
             {
                 payloadData: {"message":"This is a message to sign.\nSigning this will prove ownership of the account."},
-                method: "personal_sign",
+                method: SessionRequest.methods.personalSign.name,
                 maxFeesText: "",
+                maxFeesEthText: "",
                 estimatedTimeText: ""
             },
             {
                 payloadData: {"message": "{\"types\":{\"EIP712Domain\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"version\",\"type\":\"string\"},{\"name\":\"chainId\",\"type\":\"uint256\"},{\"name\":\"verifyingContract\",\"type\":\"address\"}],\"Person\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"wallet\",\"type\":\"address\"}],\"Mail\":[{\"name\":\"from\",\"type\":\"Person\"},{\"name\":\"to\",\"type\":\"Person\"},{\"name\":\"contents\",\"type\":\"string\"}]},\"primaryType\":\"Mail\",\"domain\":{\"name\":\"Ether Mail\",\"version\":\"1\",\"chainId\":1,\"verifyingContract\":\"0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC\"},\"message\":{\"from\":{\"name\":\"Cow\",\"wallet\":\"0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826\"},\"to\":{\"name\":\"Bob\",\"wallet\":\"0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB\"},\"contents\":\"Hello, Bob!\"}}"},
-                method: "eth_signTypedData_v4",
+                method: SessionRequest.methods.signTypedData_v4.name,
                 maxFeesText: "",
+                maxFeesEthText: "",
                 estimatedTimeText: ""
             },
             {
                 payloadData: {"tx":{"data":"0x","from":"0xE2d622C817878dA5143bBE06866ca8E35273Ba8a","gasLimit":"0x5208","gasPrice":"0x048ddbc5","nonce":"0x2a","to":"0xE2d622C817878dA5143bBE06866ca8E35273Ba8a","value":"0x00"}},
-                method: "eth_signTransaction",
+                method: SessionRequest.methods.signTransaction.name,
                 maxFeesText: "1.82 EUR",
+                maxFeesEthText: "0.0001 ETH",
                 estimatedTimeText: "3-5 mins"
+            },
+            {
+                payloadData: {"tx":{"data":"0x","from":"0xE2d622C817878dA5143bBE06866ca8E35273Ba8a","gasLimit":"0x5208","gasPrice":"0x048ddbc5","nonce":"0x2a","to":"0xE2d622C817878dA5143bBE06866ca8E35273Ba8a","value":"0x00"}},
+                method: SessionRequest.methods.sendTransaction.name,
+                maxFeesText: "0.92 EUR",
+                maxFeesEthText: "0.00005 ETH",
+                estimatedTimeText: "1-2 mins"
             }
         ]
     }

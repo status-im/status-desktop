@@ -58,3 +58,6 @@ QtObject:
 
   proc signTransaction*(self: Controller, address: string, chainId: int, password: string, txJson: string): string {.slot.} =
     return self.service.signTransaction(address, chainId, password, txJson)
+
+  proc sendTransaction*(self: Controller, address: string, chainId: int, password: string, txJson: string): string {.slot.} =
+    return self.service.sendTransaction(address, chainId, password, txJson)
