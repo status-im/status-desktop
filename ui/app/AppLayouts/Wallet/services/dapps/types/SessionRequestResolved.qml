@@ -29,6 +29,8 @@ QObject {
     readonly property alias dappIcon: d.dappIcon
 
     readonly property string maxFeesText: ""
+    readonly property string maxFeesEthText: ""
+    readonly property bool enoughFunds: false
     readonly property string estimatedTimeText: ""
 
     function resolveDappInfoFromSession(session) {

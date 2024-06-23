@@ -130,6 +130,8 @@ ConnectedDappsButton {
             payloadData: request.data
             method: request.method
             maxFeesText: request.maxFeesText
+            maxFeesEthText: request.maxFeesEthText
+            enoughFunds: request.enoughFunds
             estimatedTimeText: request.estimatedTimeText
 
             visible: true
@@ -153,8 +155,14 @@ ConnectedDappsButton {
             Connections {
                 target: root.wcService.requestHandler
 
-                function onMaxFeesUpdated(maxFees, symbol) {
+                function onMaxFeesUpdated(maxFees, maxFeesWei, haveEnoughFunds, symbol) {
                     maxFeesText = `${maxFees.toFixed(2)} ${symbol}`
+                    var ethStr = "?"
+                    if (globalUtils) {
+                        ethStr = globalUtils.wei2Eth(maxFeesWei, 9)
+                    }
+                    maxFeesEthText = `${ethStr} ETH`
+                    enoughFunds = haveEnoughFunds
                 }
                 function onEstimatedTimeUpdated(minMinutes, maxMinutes) {
                     estimatedTimeText = qsTr("%1-%2mins").arg(minMinutes).arg(maxMinutes)

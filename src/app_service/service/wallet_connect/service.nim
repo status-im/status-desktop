@@ -5,6 +5,7 @@ import backend/wallet
 
 import app_service/service/settings/service as settings_service
 import app_service/common/wallet_constants
+from app_service/service/transaction/dto import PendingTransactionTypeDto
 
 import app/global/global_singleton
 
@@ -129,3 +130,39 @@ QtObject:
       return ""
 
     return txResponse["rawTx"].getStr
+
+  proc sendTransaction*(self: Service, address: string, chainId: int, password: string, txJson: string): string =
+    var buildTxResponse: JsonNode
+    var err = wallet.buildTransaction(buildTxResponse, chainId, txJson)
+    if err.len > 0:
+      error "status-go - wallet_buildTransaction failed", err=err
+      return ""
+    if buildTxResponse.isNil or buildTxResponse.kind != JsonNodeKind.JObject or
+      not buildTxResponse.hasKey("txArgs") or not buildTxResponse.hasKey("messageToSign"):
+        error "unexpected wallet_buildTransaction response"
+        return ""
+    var txToBeSigned = buildTxResponse["messageToSign"].getStr
+    if txToBeSigned.len != wallet_constants.TX_HASH_LEN_WITH_PREFIX:
+      error "unexpected tx hash length"
+      return ""
+
+    var signMsgRes: JsonNode
+    err = wallet.signMessage(signMsgRes,
+          txToBeSigned,
+          address,
+          hashPassword(password))
+    if err.len > 0:
+      error "status-go - wallet_signMessage failed", err=err
+    let signature = singletonInstance.utils.removeHexPrefix(signMsgRes.getStr)
+
+    var txResponse: JsonNode
+    err = wallet.sendTransactionWithSignature(txResponse, chainId,
+            $PendingTransactionTypeDto.WalletConnectTransfer, $buildTxResponse["txArgs"], signature)
+    if err.len > 0:
+      error "status-go - sendTransactionWithSignature failed", err=err
+      return ""
+    if txResponse.isNil or txResponse.kind != JsonNodeKind.JString:
+      error "unexpected sendTransactionWithSignature response"
+      return ""
+
+    return txResponse.getStr

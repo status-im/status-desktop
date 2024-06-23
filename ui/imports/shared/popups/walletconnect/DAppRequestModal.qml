@@ -25,8 +25,10 @@ StatusDialog {
     required property url dappIcon
     required property string method
     required property var payloadData
-    required property string maxFeesText
-    required property string estimatedTimeText
+    property string maxFeesText: ""
+    property string maxFeesEthText: ""
+    property bool enoughFunds: false
+    property string estimatedTimeText: ""
 
     required property var account
     property var network: null
@@ -126,6 +128,13 @@ StatusDialog {
                         Item {Layout.fillWidth: true }
                     }
                 }
+
+                StatusBaseText {
+                    text: qsTr("Network")
+                    font.pixelSize: 13
+                    color: Theme.palette.directColor1
+                }
+
                 // TODO #14762: implement proper control to display the chain
                 Rectangle {
                     Layout.fillWidth: true
@@ -161,6 +170,62 @@ StatusDialog {
                             font.pixelSize: 13
                         }
                         Item {Layout.fillWidth: true }
+                    }
+                }
+
+                StatusBaseText {
+                    text: qsTr("Fees")
+                    font.pixelSize: 13
+                    color: Theme.palette.directColor1
+                    visible: d.isTransaction()
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 76
+
+                    visible: root.network !== null && d.isTransaction()
+
+                    radius: 8
+                    border.width: 1
+                    border.color: Theme.palette.baseColor2
+                    color: "transparent"
+
+                    RowLayout {
+                        spacing: 12
+                        anchors.fill: parent
+                        anchors.margins: 16
+
+                        StatusBaseText {
+                            text: qsTr("Max. fees on %1").arg(!!root.network && root.network.chainName)
+
+                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                            font.pixelSize: 13
+                            color: Theme.palette.baseColor1
+                        }
+
+                        Item {Layout.fillWidth: true }
+
+                        ColumnLayout {
+                            StatusBaseText {
+                                text: root.maxFeesText
+
+                                Layout.alignment: Qt.AlignRight
+
+                                font.pixelSize: 13
+                                color: root.enoughFunds ? Theme.palette.directColor1 : Theme.palette.dangerColor1
+                            }
+
+                            StatusBaseText {
+                                text: root.maxFeesEthText
+
+                                Layout.alignment: Qt.AlignRight
+
+                                font.pixelSize: 13
+                                color: root.enoughFunds ? Theme.palette.baseColor1 : Theme.palette.dangerColor1
+                            }
+                        }
                     }
                 }
             }
@@ -248,7 +313,7 @@ StatusDialog {
             visible: !!root.maxFeesText
 
             font.pixelSize: 16
-            font.weight: Font.DemiBold
+            color: root.enoughFunds ? Theme.palette.directColor1 : Theme.palette.dangerColor1
         }
         StatusBaseText {
             text: qsTr("No fees")
@@ -269,7 +334,6 @@ StatusDialog {
         StatusBaseText {
             text: root.estimatedTimeText
             font.pixelSize: 16
-            font.weight: Font.DemiBold
         }
     }
 
@@ -426,6 +490,10 @@ StatusDialog {
         property string payloadToDisplay: ""
         property string userDisplayNaming: ""
 
+        function isTransaction() {
+            return root.method === SessionRequest.methods.signTransaction.name || root.method === SessionRequest.methods.sendTransaction.name
+        }
+
         function updateDisplay() {
             if (!root.payloadData)
                 return
@@ -446,6 +514,12 @@ StatusDialog {
                     let tx = SessionRequest.methods.signTransaction.getTxObjFromData(root.payloadData)
                     payloadToDisplay = JSON.stringify(tx, null, 2)
                     userDisplayNaming = SessionRequest.methods.signTransaction.requestDisplay
+                    break
+                }
+                case SessionRequest.methods.sendTransaction.name: {
+                    let tx = SessionRequest.methods.sendTransaction.getTxObjFromData(root.payloadData)
+                    payloadToDisplay = JSON.stringify(tx, null, 2)
+                    userDisplayNaming = SessionRequest.methods.sendTransaction.requestDisplay
                     break
                 }
             }

@@ -39,10 +39,9 @@ QObject {
         return fixed == '0x' ? '0x0' : fixed;
     }
 
-    // Returns the hex encoded signature of the transaction or empty string if error
-    function signTransaction(topic, id, address, chainId, password, txObj) {
-        // Strip leading zeros from numbers as expected by status-go
-        let tx = {
+    // Strip leading zeros from numbers as expected by status-go
+    function prepareTxForStatusGo(txObj) {
+        return {
             data: txObj.data,
             from: txObj.from,
             gasLimit: stripLeadingZeros(txObj.gasLimit),
@@ -51,7 +50,17 @@ QObject {
             to: txObj.to,
             value: stripLeadingZeros(txObj.value)
         }
+    }
+    // Returns the hex encoded signature of the transaction or empty string if error
+    function signTransaction(topic, id, address, chainId, password, txObj) {
+        let tx = prepareTxForStatusGo(txObj)
         return controller.signTransaction(address, chainId, password, JSON.stringify(tx))
+    }
+
+    // Returns the hash of the transaction or empty string if error
+    function sendTransaction(topic, id, address, chainId, password, txObj) {
+        let tx = prepareTxForStatusGo(txObj)
+        return controller.sendTransaction(address, chainId, password, JSON.stringify(tx))
     }
 
     /// \c getDapps triggers an async response to \c dappsListReceived
