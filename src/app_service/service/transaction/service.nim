@@ -45,6 +45,7 @@ const SIGNAL_HISTORY_ERROR* = "historyError"
 const SIGNAL_CRYPTO_SERVICES_READY* = "cryptoServicesReady"
 const SIGNAL_TRANSACTION_DECODED* = "transactionDecoded"
 const SIGNAL_OWNER_TOKEN_SENT* = "ownerTokenSent"
+const SIGNAL_TRANSACTION_SENDING_COMPLETE* = "transactionSendingComplete"
 
 const SIMPLE_TX_BRIDGE_NAME = "Transfer"
 const HOP_TX_BRIDGE_NAME = "Hop"
@@ -170,6 +171,7 @@ QtObject:
         if tokenMetadata.isOwnerToken:
           let status = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
           self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(chainId: receivedData.chainId, txHash: receivedData.transactionHash, tokenName: tokenMetadata.tokenName, status: status))
+        self.events.emit(SIGNAL_TRANSACTION_SENDING_COMPLETE, receivedData)
       except Exception as e:
         debug "Not the owner token transfer", msg=e.msg
 

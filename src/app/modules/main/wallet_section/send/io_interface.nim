@@ -92,3 +92,6 @@ method onTransactionSigned*(self: AccessInterface, keycardFlowType: string, keyc
 
 method hasGas*(self: AccessInterface, accountAddress: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method transactionSendingComplete*(self: AccessInterface, txHash: string, success: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

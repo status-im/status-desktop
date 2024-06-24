@@ -388,3 +388,7 @@ QtObject:
 
     self.delegate.authenticateAndTransferWithPaths(accountFrom, accountTo, token,
       toToken, uuid, sendType, tokenName, tokenIsOwnerToken, rawPaths, slippagePercentage)
+
+  proc transactionSendingComplete*(self: View, txHash: string, success: bool) {.signal.}
+  proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, success: bool) =
+    self.transactionSendingComplete(txHash, success)

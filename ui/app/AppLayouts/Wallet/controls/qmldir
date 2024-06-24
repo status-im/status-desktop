@@ -19,3 +19,4 @@ CollectibleLinksTags 1.0 CollectibleLinksTags.qml
 SwapExchangeButton 1.0 SwapExchangeButton.qml
 EditSlippagePanel 1.0 EditSlippagePanel.qml
 TokenSelector 1.0 TokenSelector.qml
+SwapModalFooterInfoComponent 1.0 SwapModalFooterInfoComponent.qml

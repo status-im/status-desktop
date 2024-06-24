@@ -128,7 +128,7 @@ QtObject {
                     isFirstSimpleTx:true,
                     isFirstBridgeTx:true,
                     approvalRequired:true,
-                    approvalGasFees:0.0,
+                    approvalGasFees:0.100000000000000007,
                     approvalAmountRequired:"0",
                     approvalContractAddress:"0x216b4b4ba9f3e719726886d34a177484278bfcae"
                 }

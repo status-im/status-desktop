@@ -28,6 +28,9 @@ Item {
 
     readonly property var swapStore: SwapStore {
         signal suggestedRoutesReady(var txRoutes)
+        signal transactionSent(var chainId,var txHash, var uuid, var error)
+        signal transactionSendingComplete(var txHash,  var success)
+
         readonly property var accounts: WalletAccountsModel {}
         readonly property var flatNetworks: NetworksModel.flatNetworks
         readonly property bool areTestNetworksEnabled: true
@@ -35,7 +38,13 @@ Item {
             return wei/(10**decimals)
         }
         function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amount, tokenFrom, tokenTo,
-                                      disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {}
+                                      disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {
+                    swapStore.fetchSuggestedRoutesCalled()
+        }
+        function authenticateAndTransfer(uuid, accountFrom, accountTo, tokenFrom,
+                                         tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {}
+        // local signals for testing function calls
+        signal fetchSuggestedRoutesCalled()
     }
 
     readonly property var swapAdaptor: SwapModalAdaptor {
@@ -79,6 +88,12 @@ Item {
         id: formValuesChanged
         target: swapFormData
         signalName: "formValuesChanged"
+    }
+
+    SignalSpy {
+        id: fetchSuggestedRoutesCalled
+        target: swapStore
+        signalName: "fetchSuggestedRoutesCalled"
     }
 
     TestCase {
@@ -547,17 +562,17 @@ Item {
 
             // set input values in the form correctly
             root.swapFormData.fromTokensKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(0).key
-            compare(formValuesChanged.count, 1)
+            formValuesChanged.wait()
             root.swapFormData.toTokenKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(1).key
             root.swapFormData.fromTokenAmount = "0.001"
-            compare(formValuesChanged.count, 2)
+            formValuesChanged.wait()
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-            compare(formValuesChanged.count, 3)
+            formValuesChanged.wait()
             root.swapFormData.selectedAccountAddress = root.swapAdaptor.nonWatchAccounts.get(0).address
-            compare(formValuesChanged.count, 4)
+            formValuesChanged.wait()
 
             // wait for fetchSuggestedRoutes function to be called
-            wait(1000)
+            fetchSuggestedRoutesCalled.wait()
 
             // verify loading state was set and no errors currently
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
@@ -591,10 +606,10 @@ Item {
 
             // edit some params to retry swap
             root.swapFormData.fromTokenAmount = "0.00011"
-            compare(formValuesChanged.count, 5)
+            formValuesChanged.wait()
 
             // wait for fetchSuggestedRoutes function to be called
-            wait(1000)
+            fetchSuggestedRoutesCalled.wait()
 
             // verify loading state was set and no errors currently
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
@@ -640,10 +655,10 @@ Item {
 
             // edit some params to retry swap
             root.swapFormData.fromTokenAmount = "0.012"
-            compare(formValuesChanged.count, 6)
+            formValuesChanged.wait()
 
             // wait for fetchSuggestedRoutes function to be called
-            wait(1000)
+            fetchSuggestedRoutesCalled.wait()
 
             // verify loading state was set and no errors currently
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
@@ -1007,7 +1022,7 @@ Item {
             root.swapFormData.fromTokenAmount = valueToExchangeString
             root.swapFormData.toTokenKey = "STT"
 
-            compare(formValuesChanged.count, 3)
+            formValuesChanged.wait()
 
             // Launch popup
             launchAndVerfyModal()
@@ -1065,7 +1080,7 @@ Item {
             root.swapFormData.fromTokensKey = "ETH"
             root.swapFormData.toTokenKey = "STT"
 
-            compare(formValuesChanged.count, 3)
+            formValuesChanged.wait()
 
             const payPanel = findChild(controlUnderTest, "payPanel")
             verify(!!payPanel)
@@ -1095,7 +1110,7 @@ Item {
             maxTagButton.clicked()
             waitForItemPolished(payPanel)
 
-            tryCompare(formValuesChanged, "count", 3)
+            formValuesChanged.wait()
 
             verify(amountToSendInput.interactive)
             verify(amountToSendInput.input.input.edit.cursorVisible)
@@ -1286,6 +1301,159 @@ Item {
 
                 closeAndVerfyModal()
             }
+        }
+
+        function test_approval_flow_button_states() {
+            root.swapAdaptor.reset()
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const maxFeesValue = findChild(controlUnderTest, "maxFeesValue")
+            verify(!!maxFeesValue)
+            const signButton = findChild(controlUnderTest, "signButton")
+            verify(!!signButton)
+            const errorTag = findChild(controlUnderTest, "errorTag")
+            verify(!!errorTag)
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const receivePanel = findChild(controlUnderTest, "receivePanel")
+            verify(!!receivePanel)
+
+            // Check max fees values and sign button state when nothing is set
+            compare(maxFeesValue.text, "--")
+            verify(!signButton.enabled)
+            verify(!errorTag.visible)
+
+            // set input values in the form correctly
+            root.swapFormData.fromTokensKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(0).key
+            formValuesChanged.wait()
+            root.swapFormData.toTokenKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(1).key
+            root.swapFormData.fromTokenAmount = "0.001"
+            formValuesChanged.wait()
+            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+            formValuesChanged.wait()
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            formValuesChanged.wait()
+
+            // wait for fetchSuggestedRoutes function to be called
+            fetchSuggestedRoutesCalled.wait()
+
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
+
+            // emit event with route that needs no approval
+            let txRoutes = root.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
+            txRoutes.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txRoutes)
+
+            // calculation needed for total fees
+            let gasTimeEstimate = txRoutes.gasTimeEstimate
+            let totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
+            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+            let bestPath = SQUtils.ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
+
+            // verify loading state removed and data is displayed as expected on the Modal
+            verify(root.swapAdaptor.validSwapProposalReceived)
+            verify(!root.swapAdaptor.swapProposalLoading)
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, SQUtils.AmountsArithmetic.div(
+                        SQUtils.AmountsArithmetic.fromString(txRoutes.amountToReceive),
+                        SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.toToken.decimals)).toString())
+            compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
+            compare(root.swapAdaptor.swapOutputData.bestRoutes, txRoutes.suggestedRoutes)
+            compare(root.swapAdaptor.swapOutputData.hasError, false)
+            compare(root.swapAdaptor.swapOutputData.estimatedTime, bestPath.estimatedTime)
+            compare(root.swapAdaptor.swapOutputData.txProviderName, bestPath.bridgeName)
+            compare(root.swapAdaptor.swapOutputData.approvalNeeded, true)
+            compare(root.swapAdaptor.swapOutputData.approvalGasFees, bestPath.approvalGasFees.toString())
+            compare(root.swapAdaptor.swapOutputData.approvalAmountRequired, bestPath.approvalAmountRequired)
+            compare(root.swapAdaptor.swapOutputData.approvalContractAddress, bestPath.approvalContractAddress)
+
+            verify(!errorTag.visible)
+            verify(signButton.enabled)
+            verify(!signButton.loading)
+            compare(signButton.text, qsTr("Approve %1").arg(root.swapAdaptor.fromToken.symbol))
+            // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
+            compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
+                        root.swapAdaptor.swapOutputData.approvalGasFees,
+                        root.swapAdaptor.currencyStore.currentCurrency))
+
+            // simulate user click on approve button and approval failed
+            root.swapStore.transactionSent(root.swapFormData.selectedNetworkChainId, "0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", root.swapAdaptor.uuid, "")
+
+            verify(root.swapAdaptor.approvalPending)
+            verify(!root.swapAdaptor.approvalSuccessful)
+            verify(!errorTag.visible)
+            verify(!signButton.enabled)
+            verify(signButton.loading)
+            compare(signButton.text, qsTr("Approving %1").arg(root.swapAdaptor.fromToken.symbol))
+            // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
+            compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
+                        root.swapAdaptor.swapOutputData.approvalGasFees,
+                        root.swapAdaptor.currencyStore.currentCurrency))
+
+            // simulate approval tx was unsuccessful
+            root.swapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", false)
+
+            verify(!root.swapAdaptor.approvalPending)
+            verify(!root.swapAdaptor.approvalSuccessful)
+            verify(!errorTag.visible)
+            verify(signButton.enabled)
+            verify(!signButton.loading)
+            compare(signButton.text, qsTr("Approve %1").arg(root.swapAdaptor.fromToken.symbol))
+            // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
+            compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
+                        root.swapAdaptor.swapOutputData.approvalGasFees,
+                        root.swapAdaptor.currencyStore.currentCurrency))
+
+            // simulate user click on approve button and successful approval tx made
+            signButton.clicked()
+            root.swapStore.transactionSent(root.swapFormData.selectedNetworkChainId, "0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", root.swapAdaptor.uuid, "")
+
+            verify(root.swapAdaptor.approvalPending)
+            verify(!root.swapAdaptor.approvalSuccessful)
+            verify(!errorTag.visible)
+            verify(!signButton.enabled)
+            verify(signButton.loading)
+            compare(signButton.text, qsTr("Approving %1").arg(root.swapAdaptor.fromToken.symbol))
+            // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
+            compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
+                        root.swapAdaptor.swapOutputData.approvalGasFees,
+                        root.swapAdaptor.currencyStore.currentCurrency))
+
+            // simulate approval tx was successful
+            signButton.clicked()
+            root.swapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", true)
+
+            // check if fetchSuggestedRoutes called
+            fetchSuggestedRoutesCalled.wait()
+
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
+
+            verify(!root.swapAdaptor.approvalPending)
+            verify(!root.swapAdaptor.approvalSuccessful)
+            verify(!errorTag.visible)
+            verify(!signButton.enabled)
+            verify(!signButton.loading)
+            compare(signButton.text, qsTr("Swap"))
+            compare(maxFeesValue.text,  Constants.dummyText)
+
+            let txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txHasRouteNoApproval)
+
+            verify(!root.swapAdaptor.approvalPending)
+            verify(!root.swapAdaptor.approvalSuccessful)
+            verify(!errorTag.visible)
+            verify(signButton.enabled)
+            verify(!signButton.loading)
+            compare(signButton.text, qsTr("Swap"))
+            compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
+                        root.swapAdaptor.swapOutputData.totalFees,
+                        root.swapAdaptor.currencyStore.currentCurrency))
+            closeAndVerfyModal()
         }
     }
 }

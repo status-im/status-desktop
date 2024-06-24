@@ -73,4 +73,19 @@ QtObject {
 
         return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
     }
+
+    function getLabelForEstimatedTxTime(estimatedFlag) {
+        switch(estimatedFlag) {
+        case Constants.TransactionEstimatedTime.Unknown:
+            return qsTr("~ Unknown")
+        case Constants.TransactionEstimatedTime.LessThanOneMin :
+            return qsTr("< 1 minute")
+        case Constants.TransactionEstimatedTime.LessThanThreeMins :
+            return qsTr("< 3 minutes")
+        case Constants.TransactionEstimatedTime.LessThanFiveMins:
+            return qsTr("< 5 minutes")
+        default:
+            return qsTr("> 5 minutes")
+        }
+    }
 }

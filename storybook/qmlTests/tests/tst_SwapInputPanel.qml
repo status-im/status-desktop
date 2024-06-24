@@ -413,7 +413,7 @@ Item {
                 mouseClick(delToTest)
 
                 // check input value and state
-                waitForItemPolished(controlUnderTest)
+                waitForRendering(controlUnderTest)
 
                 compare(amountToSendInput.input.text, "5.42")
                 const marketPrice = !!amountToSendInput.selectedHolding ? amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount : 0

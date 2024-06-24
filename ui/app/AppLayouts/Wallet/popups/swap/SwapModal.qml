@@ -42,6 +42,8 @@ StatusDialog {
             if (payPanel.valueValid && root.swapInputParamsForm.isFormFilledCorrectly()) {
                 root.swapAdaptor.validSwapProposalReceived = false
                 root.swapAdaptor.swapProposalLoading = true
+                root.swapAdaptor.approvalPending = false
+                root.swapAdaptor.approvalSuccessful = false
                 root.swapAdaptor.swapOutputData.resetAllButReceivedTokenValuesForSwap()
                 debounceFetchSuggestedRoutes()
             }
@@ -60,6 +62,16 @@ StatusDialog {
         function onSelectedNetworkChainIdChanged() {
             networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
             payPanel.reevaluateSelectedId()
+        }
+    }
+
+    Connections {
+        target: root.swapAdaptor
+        function onApprovalSuccessfulChanged() {
+            // perform a recalculation to make sure expected outcome shown is accurate
+            if(root.swapAdaptor.approvalSuccessful) {
+                d.fetchSuggestedRoutes()
+            }
         }
     }
 
@@ -233,17 +245,6 @@ StatusDialog {
                 }
             }
 
-            /* TODO: remove! Needed only till sign after approval is implemented under
-               https://github.com/status-im/status-desktop/issues/14833 */
-            StatusButton {
-                text: "Final Swap after Approval"
-                visible: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.swapOutputData.approvalNeeded
-                onClicked: {
-                    swapAdaptor.sendSwapTx()
-                    close()
-                }
-            }
-
             EditSlippagePanel {
                 id: editSlippagePanel
                 objectName: "editSlippagePanel"
@@ -264,7 +265,7 @@ StatusDialog {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Style.current.smallPadding
                 text: {
-                    if (payPanel.amountEnteredGreaterThanBalance)   {
+                    if (payPanel.amountEnteredGreaterThanBalance) {
                         return qsTr("Insufficient funds for swap")
                     }
                     return qsTr("An error has occured, please try again")
@@ -323,34 +324,60 @@ StatusDialog {
                     }
                     StatusTextWithLoadingState {
                         objectName: "maxFeesValue"
-                        text: loading ? Constants.dummyText :
-                                        root.swapAdaptor.validSwapProposalReceived ?
-                                            root.swapAdaptor.currencyStore.formatCurrencyAmount(
+                        text: {
+                            if(root.swapAdaptor.swapProposalLoading) {
+                                return Constants.dummyText
+                            }
+
+                            if(root.swapAdaptor.validSwapProposalReceived) {
+                                if(root.swapAdaptor.swapOutputData.approvalNeeded) {
+                                    return root.swapAdaptor.currencyStore.formatCurrencyAmount(
+                                                root.swapAdaptor.swapOutputData.approvalGasFees,
+                                                root.swapAdaptor.currencyStore.currentCurrency)
+
+                                } else {
+                                    return root.swapAdaptor.currencyStore.formatCurrencyAmount(
                                                 root.swapAdaptor.swapOutputData.totalFees,
-                                                root.swapAdaptor.currencyStore.currentCurrency) :
-                                            "--"
+                                                root.swapAdaptor.currencyStore.currentCurrency)
+                                }
+                            }
+
+                            return "--"
+                        }
                         customColor: Theme.palette.directColor4
                         font.weight: Font.Medium
                         loading: root.swapAdaptor.swapProposalLoading
                     }
                 }
+                /* TODO: https://github.com/status-im/status-desktop/issues/15313
+                will introduce having loading button and showing text on the side*/
                 StatusButton {
                     objectName: "signButton"
+                    readonly property string fromTokenSymbol: !!root.swapAdaptor.fromToken ? root.swapAdaptor.fromToken.symbol ?? "" : ""
+                    loading: root.swapAdaptor.approvalPending
                     icon.name: "password"
-                    /* TODO: Handling the next step agter approval of spending cap TBD under
-                       https://github.com/status-im/status-desktop/issues/14833 */
-                    text: root.swapAdaptor.validSwapProposalReceived &&
-                          root.swapAdaptor.swapOutputData.approvalNeeded ?
-                              qsTr("Approve %1").arg(!!root.swapAdaptor.fromToken ? root.swapAdaptor.fromToken.symbol: "") :
-                              qsTr("Swap")
+                    text: {
+                        if(root.swapAdaptor.validSwapProposalReceived) {
+                            if (root.swapAdaptor.approvalPending) {
+                                return qsTr("Approving %1").arg(fromTokenSymbol)
+                            } else if(root.swapAdaptor.swapOutputData.approvalNeeded) {
+                                return qsTr("Approve %1").arg(fromTokenSymbol)
+                            }
+                        }
+                        return qsTr("Swap")
+                    }
+                    tooltip.text: root.swapAdaptor.validSwapProposalReceived &&
+                                  root.swapAdaptor.swapOutputData.approvalNeeded ?
+                                      qsTr("Approve %1 spending cap to Swap").arg(fromTokenSymbol) : ""
                     disabledColor: Theme.palette.directColor8
                     enabled: root.swapAdaptor.validSwapProposalReceived &&
                              editSlippagePanel.valid &&
-                             !payPanel.amountEnteredGreaterThanBalance
+                             !payPanel.amountEnteredGreaterThanBalance &&
+                             !root.swapAdaptor.approvalPending
                     onClicked: {
                         if (root.swapAdaptor.validSwapProposalReceived ){
                             if(root.swapAdaptor.swapOutputData.approvalNeeded) {
-                                swapAdaptor.sendApproveTx()
+                                Global.openPopup(swapSignApprovePopup)
                             }
                             else {
                                 swapAdaptor.sendSwapTx()
@@ -360,6 +387,38 @@ StatusDialog {
                     }
                 }
             }
+        }
+    }
+
+    /* TODO: this is only temporary placeholder and should be replaced completely by
+    https://github.com/status-im/status-desktop/issues/14785 */
+    Component {
+        id: swapSignApprovePopup
+        SwapSignApprovePopup {
+            id: approvePopup
+            destroyOnClose: true
+            loading: root.swapAdaptor.swapProposalLoading
+            swapSignApproveInputForm: SwapSignApproveInputForm {
+                selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
+                selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+                tokensKey: root.swapInputParamsForm.fromTokensKey
+                estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
+                swapProviderName: root.swapAdaptor.swapOutputData.txProviderName
+                approvalGasFees: root.swapAdaptor.swapOutputData.approvalGasFees
+                approvalAmountRequired: root.swapAdaptor.swapOutputData.approvalAmountRequired
+                approvalContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
+            }
+            adaptor: SwapSignApproveAdaptor {
+                swapStore: root.swapAdaptor.swapStore
+                walletAssetsStore: root.swapAdaptor.walletAssetsStore
+                currencyStore: root.swapAdaptor.currencyStore
+                inputFormData: approvePopup.swapSignApproveInputForm
+            }
+            onSign: {
+                root.swapAdaptor.sendApproveTx()
+                close()
+            }
+            onReject: close()
         }
     }
 }

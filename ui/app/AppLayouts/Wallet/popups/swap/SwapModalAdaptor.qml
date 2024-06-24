@@ -23,9 +23,15 @@ QObject {
     property bool validSwapProposalReceived: false
     property bool swapProposalLoading: false
 
+    // the below 2 properties holds the state of finding a swap proposal
+    property bool approvalPending: false
+    property bool approvalSuccessful: false
+
     // To expose the selected from and to Token from the SwapModal
     readonly property var fromToken: fromTokenEntry.item
     readonly property var toToken: toTokenEntry.item
+
+    readonly property string uuid: d.uuid
 
     readonly property var nonWatchAccounts: SortFilterProxyModel {
         sourceModel: root.swapStore.accounts
@@ -70,31 +76,12 @@ QObject {
         filters: ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled }
     }
 
-    ModelEntry {
-        id: fromTokenEntry
-        sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
-        key: "key"
-        value: root.swapFormData.fromTokensKey
-    }
-
-    ModelEntry {
-        id: toTokenEntry
-        sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
-        key: "key"
-        value: root.swapFormData.toTokenKey
-    }
-
-    ModelEntry {
-        id: selectedAccountEntry
-        sourceModel: root.nonWatchAccounts
-        key: "address"
-        value: root.swapFormData.selectedAccountAddress
-    }
-
     QtObject {
         id: d
 
         property string uuid
+        // storing txHash to verify against tx completed event
+        property string txHash
 
         readonly property SubmodelProxyModel filteredBalancesModel: SubmodelProxyModel {
             sourceModel: root.walletAssetsStore.baseGroupedAccountAssetModel
@@ -141,6 +128,27 @@ QObject {
         }
     }
 
+    ModelEntry {
+        id: fromTokenEntry
+        sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+        key: "key"
+        value: root.swapFormData.fromTokensKey
+    }
+
+    ModelEntry {
+        id: toTokenEntry
+        sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+        key: "key"
+        value: root.swapFormData.toTokenKey
+    }
+
+    ModelEntry {
+        id: selectedAccountEntry
+        sourceModel: root.nonWatchAccounts
+        key: "address"
+        value: root.swapFormData.selectedAccountAddress
+    }
+
     Connections {
         target: root.swapStore
         function onSuggestedRoutesReady(txRoutes) {
@@ -163,10 +171,36 @@ QObject {
                 if (!!root.fromToken && !!root.fromToken.marketDetails && !!root.fromToken.marketDetails.currencyPrice)
                     totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.fromToken.marketDetails.currencyPrice.amount
                 root.swapOutputData.totalFees = root.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
-                root.swapOutputData.approvalNeeded = ModelUtils.get(root.swapOutputData.bestRoutes, 0, "route").approvalRequired
+                let bestPath = ModelUtils.get(root.swapOutputData.bestRoutes, 0, "route")
+                root.swapOutputData.approvalNeeded = !!bestPath ? bestPath.approvalRequired: false
+                root.swapOutputData.approvalGasFees = !!bestPath ? bestPath.approvalGasFees.toString() : ""
+                root.swapOutputData.approvalAmountRequired = !!bestPath ? bestPath.approvalAmountRequired: ""
+                root.swapOutputData.approvalContractAddress = !!bestPath ? bestPath.approvalContractAddress: ""
+                 root.swapOutputData.estimatedTime = !!bestPath ? bestPath.estimatedTime: Constants.TransactionEstimatedTime.Unknown
+                root.swapOutputData.txProviderName = !!bestPath ? bestPath.bridgeName: ""
             }
             else {
                 root.swapOutputData.hasError = true
+            }
+        }
+
+        function onTransactionSent(chainId, txHash, uuid, error) {
+            if(root.swapOutputData.approvalNeeded) {
+                if (uuid !== d.uuid || !!error) {
+                    root.approvalPending = false
+                    root.approvalSuccessful = false
+                    return
+                }
+                root.approvalPending = true
+                d.txHash = txHash
+            }
+        }
+
+        function onTransactionSendingComplete(txHash, success) {
+            if(d.txHash === txHash && root.swapOutputData.approvalNeeded && root.approvalPending) {
+                root.approvalPending = false
+                root.approvalSuccessful = success
+                d.txHash = ""
             }
         }
     }
@@ -176,6 +210,9 @@ QObject {
         root.swapOutputData.reset()
         root.validSwapProposalReceived = false
         root.swapProposalLoading = false
+        root.approvalPending = false
+        root.approvalSuccessful = false
+        d.txHash = ""
     }
 
     function getNetworkShortNames(chainIds) {
@@ -230,6 +267,8 @@ QObject {
     }
 
     function sendApproveTx() {
+        root.approvalPending = true
+
         let account = selectedAccountEntry.item
         let accountAddress = account.address
 

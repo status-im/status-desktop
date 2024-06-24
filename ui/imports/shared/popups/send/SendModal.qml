@@ -490,7 +490,7 @@ StatusDialog {
         function onSuggestedRoutesReady(txRoutes) {
             popup.bestRoutes =  txRoutes.suggestedRoutes
             let gasTimeEstimate = txRoutes.gasTimeEstimate
-            d.totalTimeEstimate = popup.store.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
+            d.totalTimeEstimate = WalletUtils.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
             let totalTokenFeesInFiat = 0
             if (!!d.selectedHolding && !!d.selectedHolding.marketDetails && !!d.selectedHolding.marketDetails.currencyPrice)
                 totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * d.selectedHolding.marketDetails.currencyPrice.amount

@@ -20,6 +20,8 @@ QtObject:
     isFirstBridgeTx: bool
     approvalRequired: bool
     approvalGasFees: float
+    approvalAmountRequired: string
+    approvalContractAddress: string
 
   proc setup*(self: SuggestedRouteItem,
     bridgeName: string,
@@ -37,7 +39,9 @@ QtObject:
     isFirstSimpleTx: bool,
     isFirstBridgeTx: bool,
     approvalRequired: bool,
-    approvalGasFees: float
+    approvalGasFees: float,
+    approvalAmountRequired: string,
+    approvalContractAddress: string,
   ) =
     self.QObject.setup
     self.bridgeName = bridgeName
@@ -56,6 +60,8 @@ QtObject:
     self.isFirstBridgeTx = isFirstBridgeTx
     self.approvalRequired = approvalRequired
     self.approvalGasFees = approvalGasFees
+    self.approvalAmountRequired = approvalAmountRequired
+    self.approvalContractAddress = approvalContractAddress
 
   proc delete*(self: SuggestedRouteItem) =
       self.QObject.delete
@@ -76,11 +82,14 @@ QtObject:
     isFirstSimpleTx: bool = false,
     isFirstBridgeTx: bool = false,
     approvalRequired: bool = false,
-    approvalGasFees: float = 0
+    approvalGasFees: float = 0,
+    approvalAmountRequired: string = "",
+    approvalContractAddress: string = ""
     ): SuggestedRouteItem =
       new(result, delete)
       result.setup(bridgeName, fromNetwork, toNetwork, maxAmountIn, amountIn, amountOut, gasAmount, gasFees, tokenFees,
-        cost, estimatedTime, amountInLocked, isFirstSimpleTx, isFirstBridgeTx, approvalRequired, approvalGasFees)
+        cost, estimatedTime, amountInLocked, isFirstSimpleTx, isFirstBridgeTx, approvalRequired, approvalGasFees,
+        approvalAmountRequired, approvalContractAddress)
 
   proc `$`*(self: SuggestedRouteItem): string =
     result = "SuggestedRouteItem("
@@ -100,6 +109,8 @@ QtObject:
     result = result & "\nisFirstBridgeTx: " & $self.isFirstBridgeTx
     result = result & "\napprovalRequired: " & $self.approvalRequired
     result = result & "\napprovalGasFees: " & $self.approvalGasFees
+    result = result & "\napprovalAmountRequired: " & $self.approvalAmountRequired
+    result = result & "\napprovalContractAddress: " & $self.approvalContractAddress
     result = result & ")"
 
   proc bridgeNameChanged*(self: SuggestedRouteItem) {.signal.}
@@ -213,3 +224,17 @@ QtObject:
   QtProperty[float] approvalGasFees:
     read = getApprovalGasFees
     notify = approvalGasFeesChanged
+
+  proc approvalAmountRequiredChanged*(self: SuggestedRouteItem) {.signal.}
+  proc getApprovalAmountRequired*(self: SuggestedRouteItem): string {.slot.} =
+    return self.approvalAmountRequired
+  QtProperty[string] approvalAmountRequired:
+    read = getApprovalAmountRequired
+    notify = approvalAmountRequiredChanged
+
+  proc approvalContractAddressChanged*(self: SuggestedRouteItem) {.signal.}
+  proc getApprovalContractAddress*(self: SuggestedRouteItem): string {.slot.} =
+    return self.approvalContractAddress
+  QtProperty[string] approvalContractAddress:
+    read = getApprovalContractAddress
+    notify = approvalContractAddressChanged

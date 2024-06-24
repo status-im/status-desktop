@@ -1323,5 +1323,18 @@ QtObject {
         but in case the logic for keys changes in the backend, it should be updated here as well */
         readonly property string testStatusTokenKey: "STT"
         readonly property string mainnetStatusTokenKey: "SNT"
+        /* TODO: https://github.com/status-im/status-desktop/issues/15329
+        This is only added temporarily until we have an api from the backend in order to get
+        this list dynamically */
+        readonly property string paraswapIcon: "paraswap"
+        readonly property string paraswapUrl: "app.paraswap.io"
+    }
+
+    enum TransactionEstimatedTime {
+        Unknown = 0,
+        LessThanOneMin,
+        LessThanThreeMins,
+        LessThanFiveMins,
+        MoreThanFiveMins
     }
 }
