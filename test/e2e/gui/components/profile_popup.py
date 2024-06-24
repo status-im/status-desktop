@@ -5,6 +5,8 @@ import configs
 import constants
 import driver
 from gui.components.base_popup import BasePopup
+from gui.components.context_menu import ContextMenu
+from gui.components.settings.review_contact_request_popup import AcceptRequestFromProfile
 from gui.components.settings.send_contact_request_popup import SendContactRequestFromProfile
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -94,13 +96,33 @@ class ProfilePopupFromMembers(ProfilePopup):
     def __init__(self):
         super(ProfilePopupFromMembers, self).__init__()
         self._send_request_button = Button(names.send_contact_request_StatusButton)
-        self._request_id_request_button = Button(names.request_ID_verification_StatusFlatButton)
+        self._review_request_button = Button(names.review_contact_request_StatusButton)
+        self._send_message_button = Button(names.send_Message_StatusButton)
+        self._menu_button = Button(names.menuButton_StatusFlatButton)
 
     @allure.step('Click send request button')
     def send_request(self):
         self._send_request_button.click()
         return SendContactRequestFromProfile().wait_until_appears()
 
-    @allure.step('Get request id button visibility state')
-    def is_request_id_button_visible(self):
-        return self._request_id_request_button.is_visible
+    @allure.step('Get send request button visibilty state')
+    def is_send_request_button_visible(self):
+        return self._send_request_button.is_visible
+
+    @allure.step('Click review contact request button')
+    def review_contact_request(self):
+        self._review_request_button.click()
+        return AcceptRequestFromProfile().wait_until_appears()
+
+    @allure.step('Get send message button visibility state')
+    def is_send_message_button_visible(self):
+        return self._send_message_button.is_visible
+
+    @allure.step('Click menu button')
+    def click_menu_button(self):
+        self._menu_button.click()
+
+    @allure.step('Choose option from context menu')
+    def choose_context_menu_option(self, value: str):
+        self.click_menu_button()
+        ContextMenu().select(value)
