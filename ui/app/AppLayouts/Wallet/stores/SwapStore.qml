@@ -17,11 +17,19 @@ QtObject {
     readonly property var walletSectionSendInst: walletSectionSend
 
     signal suggestedRoutesReady(var txRoutes)
+    signal transactionSent(var chainId, var txHash, var uuid, var error)
+    signal transactionSendingComplete(var txHash,  var success)
 
     readonly property Connections walletSectionSendConnections: Connections {
         target: root.walletSectionSendInst
         function onSuggestedRoutesReady(txRoutes) {
             root.suggestedRoutesReady(txRoutes)
+        }
+        function onTransactionSent(chainId, txHash, uuid, error) {
+            root.transactionSent(chainId, txHash, uuid, error)
+        }
+        function onTransactionSendingComplete(txHash, success) {
+            root.transactionSendingComplete(txHash, success)
         }
     }
 

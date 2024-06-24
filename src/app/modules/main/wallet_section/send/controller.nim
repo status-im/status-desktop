@@ -76,6 +76,10 @@ proc init*(self: Controller) =
     var data = WalletSignal(e)
     self.delegate.prepareSignaturesForTransactions(data.txHashes)
 
+  self.events.on(SIGNAL_TRANSACTION_SENDING_COMPLETE) do(e:Args):
+    let args = TransactionMinedArgs(e)
+    self.delegate.transactionSendingComplete(args.transactionHash, args.success)
+
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 

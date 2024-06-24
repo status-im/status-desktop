@@ -40,7 +40,7 @@ Item {
         target: walletSection
 
         function onFilterChanged(address) {
-            RootStore.selectedAddress = address == "" ? "" : address
+            RootStore.selectedAddress = address === "" ? "" : address
         }
 
         function onDisplayKeypairImportPopup() {
@@ -214,7 +214,9 @@ Item {
                                                                   hasFloatingButtons: true
                                                               })
             onLaunchSwapModal: {
-                d.swapFormData.selectedAccountAddress = RootStore.selectedAddress
+                d.swapFormData.selectedAccountAddress = !!RootStore.selectedAddress ?
+                            RootStore.selectedAddress :
+                            StatusQUtils.ModelUtils.get(RootStore.nonWatchAccounts,0, "address")
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 d.swapFormData.fromTokensKey = tokensKey
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
@@ -333,7 +335,9 @@ Item {
             }
             onLaunchSwapModal: {
                 d.swapFormData.fromTokensKey =  ""
-                d.swapFormData.selectedAccountAddress = RootStore.selectedAddress
+                d.swapFormData.selectedAccountAddress = !!RootStore.selectedAddress ?
+                            RootStore.selectedAddress :
+                            StatusQUtils.ModelUtils.get(RootStore.nonWatchAccounts,0, "address")
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey

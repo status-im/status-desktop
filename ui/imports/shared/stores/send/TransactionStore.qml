@@ -84,29 +84,6 @@ QtObject {
         return globalUtils.plainText(text)
     }
 
-    enum EstimatedTime {
-        Unknown = 0,
-        LessThanOneMin,
-        LessThanThreeMins,
-        LessThanFiveMins,
-        MoreThanFiveMins
-    }
-
-    function getLabelForEstimatedTxTime(estimatedFlag) {
-        switch(estimatedFlag) {
-        case TransactionStore.EstimatedTime.Unknown:
-            return qsTr("~ Unknown")
-        case TransactionStore.EstimatedTime.LessThanOneMin :
-            return qsTr("< 1 minute")
-        case TransactionStore.EstimatedTime.LessThanThreeMins :
-            return qsTr("< 3 minutes")
-        case TransactionStore.EstimatedTime.LessThanFiveMins:
-            return qsTr("< 5 minutes")
-        default:
-            return qsTr("> 5 minutes")
-        }
-    }
-
     function getAsset(assetsList, symbol) {
         for(var i=0; i< assetsList.rowCount();i++) {
             let asset = assetsList.get(i)

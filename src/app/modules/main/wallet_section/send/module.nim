@@ -171,7 +171,9 @@ proc convertTransactionPathDtoToSuggestedRouteItem(self: Module, path: Transacti
     isFirstSimpleTx = path.isFirstSimpleTx,
     isFirstBridgeTx = path.isFirstBridgeTx,
     approvalRequired = path.approvalRequired,
-    approvalGasFees = path.approvalGasFees
+    approvalGasFees = path.approvalGasFees,
+    approvalAmountRequired = $path.approvalAmountRequired,
+    approvalContractAddress = path.approvalContractAddress
     )
 
 method refreshWalletAccounts*(self: Module) =
@@ -445,3 +447,6 @@ method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: 
 
 method hasGas*(self: Module, accountAddress: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool =
   return self.controller.hasGas(accountAddress, chainId, nativeGasSymbol, requiredGas)
+
+method transactionSendingComplete*(self: Module, txHash: string, success: bool) =
+  self.view.sendtransactionSendingCompleteSignal(txHash, success)
