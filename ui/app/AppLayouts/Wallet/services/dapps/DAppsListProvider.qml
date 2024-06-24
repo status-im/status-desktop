@@ -45,11 +45,6 @@ QObject {
                 root.store.dappsListReceived.disconnect(dappsListReceivedFn);
             }
 
-            // TODO DEV: check if still holds true
-            // Reasons to postpone `getDapps` call:
-            // - the first recent made session will always have `active` prop set to false
-            // - expiration date won't be the correct one, but one used in session proposal
-            // - the list of dapps will display successfully made pairing as inactive
             getActiveSessionsFn = () => {
                 sdk.getActiveSessions((sessions) => {
                     root.store.dappsListReceived.disconnect(dappsListReceivedFn);

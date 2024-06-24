@@ -99,7 +99,7 @@ WalletConnectSDKBase {
 
             d.engine.runJavaScript(`wc.init("${root.projectId}").catch((error) => {wc.statusObject.sdkInitialized("SDK init error: "+error);})`, function(result) {
 
-                console.debug(`WC WalletConnectSDK.wcCall.init; response: ${JSON.stringify(result, null, 2)}`)
+                console.debug(`WC WalletConnectSDK.wcCall.init; response: ${JSON.stringify(result)}`)
 
                 if (result && !!result.error)
                 {
@@ -113,7 +113,7 @@ WalletConnectSDKBase {
 
             if (d.engine) {
                 d.engine.runJavaScript(`wc.getPairings()`, function(result) {
-                    console.debug(`WC WalletConnectSDK.wcCall.getPairings; result: ${JSON.stringify(result, null, 2)}`)
+                    console.debug(`WC WalletConnectSDK.wcCall.getPairings; result: ${JSON.stringify(result)}`)
 
                     if (callback && result) {
                         callback(result)
@@ -127,12 +127,6 @@ WalletConnectSDKBase {
 
             if (d.engine) {
                 d.engine.runJavaScript(`wc.getActiveSessions()`, function(result) {
-                    var allSessions = ""
-                    for (var key of Object.keys(result)) {
-                        allSessions += `\nsessionTopic: ${key}  relatedPairingTopic: ${result[key].pairingTopic}`;
-                    }
-                    console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions; result: ${allSessions}`)
-
                     if (callback && result) {
                         callback(result)
                     }
@@ -294,7 +288,7 @@ WalletConnectSDKBase {
             console.debug(`WC WalletConnectSDK.wcCall.auth; cacaoPayload: ${JSON.stringify(cacaoPayload)}, address: ${address}`)
 
             d.engine.runJavaScript(`wc.formatAuthMessage(${JSON.stringify(cacaoPayload)}, "${address}")`, function(result) {
-                console.debug(`WC WalletConnectSDK.wcCall.formatAuthMessage; response: ${JSON.stringify(result, null, 2)}`)
+                console.debug(`WC WalletConnectSDK.wcCall.formatAuthMessage; response: ${JSON.stringify(result)}`)
 
                 root.authMessageFormated(result, address)
             })
@@ -373,12 +367,12 @@ WalletConnectSDKBase {
         }
 
         function onBuildApprovedNamespacesResponse(approvedNamespaces, error) {
-            console.debug(`WC WalletConnectSDK.onBuildApprovedNamespacesResponse; approvedNamespaces: ${approvedNamespaces ? JSON.stringify(approvedNamespaces, null, 2) : "-"}, error: ${error}`)
+            console.debug(`WC WalletConnectSDK.onBuildApprovedNamespacesResponse; approvedNamespaces: ${approvedNamespaces ? JSON.stringify(approvedNamespaces) : "-"}, error: ${error}`)
             root.buildApprovedNamespacesResult(approvedNamespaces, error)
         }
 
         function onApproveSessionResponse(session, error) {
-            console.debug(`WC WalletConnectSDK.onApproveSessionResponse; sessionTopic: ${JSON.stringify(session, null, 2)}, error: ${error}`)
+            console.debug(`WC WalletConnectSDK.onApproveSessionResponse; sessionTopic: ${JSON.stringify(session)}, error: ${error}`)
             root.approveSessionResult(session, error)
         }
 
@@ -400,51 +394,51 @@ WalletConnectSDKBase {
         }
 
         function onSessionProposal(details) {
-            console.debug(`WC WalletConnectSDK.onSessionProposal; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC WalletConnectSDK.onSessionProposal; details: ${JSON.stringify(details)}`)
             root.sessionProposal(details)
         }
 
         function onSessionUpdate(details) {
-            console.debug(`WC TODO WalletConnectSDK.onSessionUpdate; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionUpdate; details: ${JSON.stringify(details)}`)
         }
 
         function onSessionExtend(details) {
-            console.debug(`WC TODO WalletConnectSDK.onSessionExtend; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionExtend; details: ${JSON.stringify(details)}`)
         }
 
         function onSessionPing(details) {
-            console.debug(`WC TODO WalletConnectSDK.onSessionPing; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionPing; details: ${JSON.stringify(details)}`)
         }
 
         function onSessionDelete(details) {
-            console.debug(`WC WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details)}`)
             root.sessionDelete(details.topic, "")
         }
 
         function onSessionExpire(details) {
-            console.debug(`WC TODO WalletConnectSDK.onSessionExpire; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionExpire; details: ${JSON.stringify(details)}`)
         }
 
         function onSessionRequest(details) {
-            console.debug(`WC WalletConnectSDK.onSessionRequest; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC WalletConnectSDK.onSessionRequest; details: ${JSON.stringify(details)}`)
             root.sessionRequestEvent(details)
         }
 
         function onSessionRequestSent(details) {
-            console.debug(`WC TODO WalletConnectSDK.onSessionRequestSent; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionRequestSent; details: ${JSON.stringify(details)}`)
         }
 
         function onSessionEvent(details) {
-            console.debug(`WC TODO WalletConnectSDK.onSessionEvent; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionEvent; details: ${JSON.stringify(details)}`)
         }
 
         function onProposalExpire(details) {
-            console.debug(`WC WalletConnectSDK.onProposalExpire; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC WalletConnectSDK.onProposalExpire; details: ${JSON.stringify(details)}`)
             root.sessionProposalExpired()
         }
 
         function onAuthRequest(details) {
-            console.debug(`WC WalletConnectSDK.onAuthRequest; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC WalletConnectSDK.onAuthRequest; details: ${JSON.stringify(details)}`)
             root.authRequest(details)
         }
 
