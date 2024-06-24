@@ -19,6 +19,7 @@ ComboBox {
 
     signal dappsListReady
     signal pairDapp
+    signal disconnectDapp(string dappUrl)
 
     implicitHeight: 38
     implicitWidth: 38
@@ -54,11 +55,15 @@ ComboBox {
 
     delegate: DAppDelegate {
         width: ListView.view.width
+
+        onDisconnectDapp: (dappUrl) => {
+            root.disconnectDapp(dappUrl)
+        }
     }
 
     popup: DAppsListPopup {
         objectName: "dappsListPopup"
-        
+
         x: root.width - width
         y: root.height + 4
 

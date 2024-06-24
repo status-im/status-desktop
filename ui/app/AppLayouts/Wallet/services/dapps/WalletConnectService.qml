@@ -64,8 +64,20 @@ QObject {
         wcSDK.rejectSession(id)
     }
 
-    function disconnectDapp(sessionTopic) {
+    function disconnectSession(sessionTopic) {
         wcSDK.disconnectSession(sessionTopic)
+    }
+
+    function disconnectDapp(url) {
+        wcSDK.getActiveSessions((sessions) => {
+            for (let key in sessions) {
+                let dapp = sessions[key].peer.metadata
+                let topic = sessions[key].topic
+                if (dapp.url == url) {
+                    wcSDK.disconnectSession(topic)
+                }
+            }
+        });
     }
 
     signal connectDApp(var dappChains, var sessionProposal, var approvedNamespaces)
@@ -133,6 +145,9 @@ QObject {
         }
 
         function onSessionDelete(topic, err) {
+            store.deactivateWalletConnectSession(topic)
+            dappsProvider.updateDapps()
+
             const app_url = d.currentSessionProposal ? d.currentSessionProposal.params.proposer.metadata.url : "-"
             const app_domain = StringUtils.extractDomainFromLink(app_url)
             if(err) {

@@ -16,6 +16,10 @@ QObject {
         return controller.addWalletConnectSession(sessionJson)
     }
 
+    function deactivateWalletConnectSession(topic) {
+        return controller.deactivateWalletConnectSession(topic)
+    }
+
     function authenticateUser(topic, id, address) {
         let ok = controller.authenticateUser(topic, id, address)
         if(!ok) {

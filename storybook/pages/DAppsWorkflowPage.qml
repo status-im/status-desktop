@@ -108,14 +108,46 @@ Item {
                 color: "grey"
             }
 
+            StatusBaseText { text: "Requests Queue" }
+
             ListView {
                 Layout.fillWidth: true
+                Layout.preferredHeight: Math.min(50, contentHeight)
                 model: walletConnectService.requestHandler.requestsModel
                 delegate: RowLayout {
                     StatusBaseText {
                         text: SQUtils.Utils.elideAndFormatWalletAddress(model.topic, 6, 4)
                         Layout.fillWidth: true
                     }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: "grey"
+            }
+
+            StatusBaseText { text: "Persisted Sessions" }
+
+            ListView {
+                Layout.fillWidth: true
+                Layout.preferredHeight: Math.min(100, contentHeight)
+                model: sessionsModel
+                delegate: RowLayout {
+                    StatusBaseText {
+                        text: SQUtils.Utils.elideAndFormatWalletAddress(model.topic, 6, 4)
+                        Layout.fillWidth: true
+                    }
+                }
+            }
+
+            StatusButton {
+                text: qsTr("Clear Persistance")
+                visible: sessionsModel.count > 0
+                onClicked: {
+                    settings.persistedSessions = "[]"
+                    d.updateSessionsModelAndAddNewIfNotNull(null)
                 }
             }
 
@@ -268,19 +300,26 @@ Item {
                 console.info("Persist Session", sessionJson)
 
                 let session = JSON.parse(sessionJson)
+                d.updateSessionsModelAndAddNewIfNotNull(session)
 
-                let firstIconUrl = session.peer.metadata.icons.length > 0 ? session.peer.metadata.icons[0] : ""
-                let persistedDapp = {
-                    "name": session.peer.metadata.name,
-                    "url": session.peer.metadata.url,
-                    "iconUrl": firstIconUrl
-                }
-                d.persistedDapps.push(persistedDapp)
+                return true
+            }
+
+            function deactivateWalletConnectSession(topic) {
+                console.info("Deactivate Persisted Session", topic)
+
+                let sessions = JSON.parse(settings.persistedSessions)
+                let newSessions = sessions.filter(function(session) {
+                    return session.topic !== topic
+                })
+                settings.persistedSessions = JSON.stringify(newSessions)
+                d.updateSessionsModelAndAddNewIfNotNull(null)
                 return true
             }
 
             function getDapps() {
-                this.dappsListReceived(JSON.stringify(d.persistedDapps))
+                let dappsJson = JSON.stringify(d.persistedDapps)
+                this.dappsListReceived(dappsJson)
                 return true
             }
 
@@ -323,7 +362,7 @@ Item {
             }
             property var accounts: customAccountsModel.count > 0 ? customAccountsModel : defaultAccountsModel
             readonly property ListModel nonWatchAccounts: accounts
-            
+
             function getNetworkShortNames(chainIds) {
                 return "eth:oeth:arb"
             }
@@ -355,15 +394,43 @@ Item {
         readonly property int openDappsTestCase: 1
         readonly property int openPairTestCase: 2
 
-        property var persistedDapps: [
-            {"name":"Test dApp 1", "url":"https://dapp.test/1","iconUrl":"https://se-sdk-dapp.vercel.app/assets/eip155:1.png"},
-            {"name":"Test dApp 2", "url":"https://dapp.test/2","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"},
-            {"name":"Test dApp 3", "url":"https://dapp.test/3","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"},
-            {"name":"Test dApp 4 - very long name !!!!!!!!!!!!!!!!", "url":"https://dapp.test/4","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"},
-            {"name":"Test dApp 5 - very long url", "url":"https://dapp.test/very_long/url/unusual","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"},
-            {"name":"Test dApp 6", "url":"https://dapp.test/6","iconUrl":"https://react-app.walletconnect.com/assets/eip155-1.png"}
-        ]
+        ListModel {
+            id: sessionsModel
+        }
 
+        function updateSessionsModelAndAddNewIfNotNull(newSession) {
+            var sessions = JSON.parse(settings.persistedSessions)
+            if (!!newSession) {
+                sessions.push(newSession)
+                settings.persistedSessions = JSON.stringify(sessions)
+            }
+
+            sessionsModel.clear()
+            d.persistedDapps = []
+            sessions.forEach(function(session) {
+                sessionsModel.append(session)
+
+                let firstIconUrl = session.peer.metadata.icons.length > 0 ? session.peer.metadata.icons[0] : ""
+                let persistedDapp = {
+                    "name": session.peer.metadata.name,
+                    "url": session.peer.metadata.url,
+                    "iconUrl": firstIconUrl,
+                    "topic": session.topic
+                }
+                var found = false
+                for (var i = 0; i < d.persistedDapps.length; i++) {
+                    if (d.persistedDapps[i].url == persistedDapp.url) {
+                        found = true
+                        break
+                    }
+                }
+                if (!found) {
+                    d.persistedDapps.push(persistedDapp)
+                }
+            })
+        }
+
+        property var persistedDapps: []
         ListModel {
             id: customAccountsModel
         }
@@ -387,6 +454,11 @@ Item {
         property bool enableSDK: true
         property bool pending : false
         property string customAccounts: ""
+        property string persistedSessions: "[]"
+    }
+
+    Component.onCompleted: {
+        d.updateSessionsModelAndAddNewIfNotNull(null)
     }
 }
 
