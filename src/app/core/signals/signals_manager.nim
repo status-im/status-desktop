@@ -1,5 +1,6 @@
-import NimQml, json, strutils, chronicles, json_serialization
+import NimQml, json, strutils, chronicles, json_serialization, strutils
 import ../eventemitter
+import dev/benchmark as benchmark
 
 include types
 
@@ -64,6 +65,13 @@ QtObject:
 
   proc receiveChroniclesLogEvent(self: SignalsManager, signal: string) {.slot.} =
     self.processSignal(signal, allowLogging=false)
+
+  proc logEvent(self: SignalsManager, logStr: string) {.slot.} =
+    if "benchmark start" in logStr:
+      benchmark.markCallsOfInterest = true
+    if "benchmark end" in logStr:
+      benchmark.markCallsOfInterest = false
+    info "QML logEvent", data = logStr
 
   proc decode(self: SignalsManager, jsonSignal: JsonNode): Signal =
     let signalString = jsonSignal{"type"}.getStr

@@ -1,4 +1,4 @@
-import times, macros, strutils, locks, algorithm
+import times, macros, strutils, locks, algorithm, std/exitprocs, std/locks
 # benchmark measure execution time of block of code.
 # usage:
 #   import os, strutils, times
@@ -45,6 +45,8 @@ type
     numRuns*: int
     totalTime*: float
     procName*: cstring
+    numRunsOnMainThread*: int
+    callOfInterest*: bool
 
   ProcBenchmarkPtr* = ptr ProcBenchmark
 
@@ -53,11 +55,13 @@ type
     len*: int
     maxLen*: int
 
-  BenchmarkResult = tuple[procName: string, numRuns: int, totalTime: float, weight: float]
+  BenchmarkResult = tuple[procName: string, numRuns: int, totalTime: float, weight: float, numRunsOnMainThread: int, callOfInterest: bool]
 
 var 
   lock: Lock
   benchmarkResults: ptr SharedProcBenchmarkArr
+  threadId: int
+  markCallsOfInterest*: bool = false
 
 # Forward declarations
 proc registerDuration*(name: string, startTime: float, endTime: float) {.gcsafe.}
@@ -70,7 +74,8 @@ proc writeToFile(resultsToWrite: seq[BenchmarkResult])
 proc resultCmp(x, y: BenchmarkResult): int
 # End of forward declarations
 
-addQuitProc(quitCallback)
+exitprocs.addExitProc(quitCallback)
+threadId = getThreadId()
 
 macro benchmarkProc*(procDef: untyped): untyped =
   procDef.expectKind(nnkProcDef)
@@ -96,6 +101,9 @@ proc registerDuration*(name: string, startTime: float, endTime: float) {.gcsafe.
       if benchmarkResults.data[i].procName == name.cstring:
         benchmarkResults.data[i].numRuns += 1
         benchmarkResults.data[i].totalTime += endTime - startTime
+        if getThreadId() == threadId:
+          benchmarkResults.data[i].numRunsOnMainThread += 1
+        benchmarkResults.data[i].callOfInterest = markCallsOfInterest or benchmarkResults.data[i].callOfInterest
         found = true
       if found:
         break
@@ -113,6 +121,13 @@ proc registerDuration*(name: string, startTime: float, endTime: float) {.gcsafe.
       newProcBenchmark.procName = namePtr
       newProcBenchmark.numRuns = 1
       newProcBenchmark.totalTime = endTime - startTime
+      if getThreadId() == threadId:
+        newProcBenchmark.numRunsOnMainThread = 1
+      else:
+        newProcBenchmark.numRunsOnMainThread = 0
+      
+      newProcBenchmark.callOfInterest = markCallsOfInterest
+
       benchmarkResults.data[benchmarkResults.len] = newProcBenchmark
       benchmarkResults.len += 1
       
@@ -156,7 +171,7 @@ proc aggregateData(): seq[BenchmarkResult] =
   withLock lock:
     for i in 0 ..< benchmarkResults.len:
       totalWeight += benchmarkResults.data[i].totalTime
-      result.add(($(benchmarkResults.data[i].procName), benchmarkResults.data[i].numRuns, benchmarkResults.data[i].totalTime, 0.0))
+      result.add(($(benchmarkResults.data[i].procName), benchmarkResults.data[i].numRuns, benchmarkResults.data[i].totalTime, 0.0, benchmarkResults.data[i].numRunsOnMainThread, benchmarkResults.data[i].callOfInterest))
 
   result.sort(resultCmp)
   for i in 0 ..< result.len:
@@ -171,13 +186,15 @@ proc writeToFile(resultsToWrite: seq[BenchmarkResult]) =
   except:
     echo "Could not open file procBenchmark.txt for writing"
     return
-  file.writeLine("Procedure, Number of runs, Total time in ms, Avg time in ms, Weight")
+  file.writeLine("Procedure, Number of runs, Total time in ms, Avg time in ms, Weight, Number of runs on main thread, Call of interest")
   for entry in resultsToWrite:
     file.writeLine(entry.procName & 
                   "," & $entry.numRuns & 
                   "," & $(entry.totalTime * 1000) & 
                   "," & $((entry.totalTime / entry.numRuns.float) * 1000) & 
-                  "," & $(entry.weight * 100) & "%")
+                  "," & $(entry.weight * 100) & "%" &
+                  "," & $(entry.numRunsOnMainThread) &
+                  "," & $(entry.callOfInterest))
   file.close()
 
 proc resultCmp(x, y: BenchmarkResult): int =

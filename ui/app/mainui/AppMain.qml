@@ -1152,8 +1152,10 @@ Item {
                         }
                         if (activeSectionType === Constants.appSection.communitiesPortal)
                             return Constants.appViewStackIndex.communitiesPortal
-                        if (activeSectionType === Constants.appSection.wallet)
+                        if (activeSectionType === Constants.appSection.wallet) {
+                            print ("benchmark start")
                             return Constants.appViewStackIndex.wallet
+                        }
                         if (activeSectionType === Constants.appSection.browser)
                             return Constants.appViewStackIndex.browser
                         if (activeSectionType === Constants.appSection.profile)
@@ -1287,6 +1289,7 @@ Item {
                             sendModalPopup: sendModal
                             networkConnectionStore: appMain.networkConnectionStore
                             appMainVisible: appMain.visible
+                            Component.onCompleted: print ("benchmark end")
                         }
                         onLoaded: {
                             item.resetView()

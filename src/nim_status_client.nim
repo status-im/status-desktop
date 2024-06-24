@@ -202,6 +202,7 @@ proc mainProc() =
   signalsManagerQObjPointer = cast[pointer](statusFoundation.signalsManager.vptr)
   keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
   setupRemoteSignalsHandling()
+  registerLogHandler(signalsManagerQObjPointer)
 
   info fmt("Version: {APP_VERSION}")
   info fmt("Commit: {GIT_COMMIT}")

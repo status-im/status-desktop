@@ -104,6 +104,8 @@ DOS_API void DOS_CALL dos_qguiapplication_exec(void);
 /// \note This method was created because status-go has a non-QT event loop
 DOS_API void DOS_CALL dos_signal(DosQObject *vptr, const char *signal, const char *slot);
 
+DOS_API void DOS_CALL dos_register_log_handler(DosQObject *vptr);
+
 DOS_API DosQNetworkConfigurationManager *DOS_CALL dos_qncm_create();
 
 DOS_API char * DOS_CALL dos_plain_text(char* htmlString);

@@ -114,6 +114,7 @@ class QMLNetworkAccessFactory : public QQmlNetworkAccessManagerFactory
 };
 
 QString QMLNetworkAccessFactory::tmpPath = "";
+QObject* log_handler = nullptr;
 
 QNetworkAccessManager* QMLNetworkAccessFactory::create(QObject* parent)
 {
@@ -211,8 +212,12 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
         fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
         break;
     default:
-        fprintf(stderr, "Default: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+        fprintf(stderr, "!Default: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
         break;
+    }
+
+    if (log_handler != nullptr) {
+        QMetaObject::invokeMethod(log_handler, "logEvent", Qt::QueuedConnection, Q_ARG(QString, QStringLiteral("%1 (%2:%3, %4)").arg(localMsg.constData()).arg(file).arg(context.line).arg(function)));
     }
 }
 
@@ -1099,6 +1104,14 @@ void dos_signal(::DosQObject *vptr, const char *signal, const char *slot) //
     std::string signal_copy = signal;
     std::string slot_copy = slot;
     QMetaObject::invokeMethod(qobject, slot_copy.c_str(), Qt::QueuedConnection, Q_ARG(QString, signal_copy.c_str()));
+}
+
+void dos_register_log_handler(::DosQObject *vptr)
+{
+   log_handler = static_cast<QObject *>(vptr);
+   QObject::connect(log_handler, &QObject::destroyed, []() {
+       log_handler = nullptr;
+   });
 }
 
 void dos_qmetaobject_delete(::DosQMetaObject *vptr)

@@ -1,6 +1,8 @@
 import json, json_serialization, stew/shims/strformat, chronicles
 import status_go
 import response_type
+import dev/benchmark
+import std/times
 
 export response_type
 
@@ -25,6 +27,10 @@ proc makePrivateRpcCall*(
     raise newException(RpcException, "db closed due to profile migration")
   try:
     debug "NewBE_callPrivateRPC", rpc_method=methodName
+
+    let cpuTime = cpuTime()
+    defer: registerDuration(methodName, cpuTime, cpuTime())
+
     let rpcResponseRaw = status_go.callPrivateRPC($inputJSON)
     result = Json.decode(rpcResponseRaw, RpcResponse[JsonNode])
     if(not result.error.isNil):
@@ -77,7 +83,7 @@ proc callPrivateRPC*(
 
 proc callPrivateRPCNoDecode*(
   methodName: string, payload = %* []
-): string {.raises: [RpcException].} =
+): string {.raises: [RpcException, Exception].} =
   let inputJSON = %* {
     "jsonrpc": "2.0",
     "method": methodName,
