@@ -396,6 +396,8 @@ method onCommunityChannelEdited*(self: Module, chatDto: ChatDto) =
   self.view.chatDetails.setCanView(chatDto.canView)
   self.view.chatDetails.setCanPostReactions(chatDto.canPostReactions)
   self.view.chatDetails.setHideIfPermissionsNotMet(chatDto.hideIfPermissionsNotMet)
+  self.view.chatDetails.setName(chatDto.name)
+  self.view.chatDetails.setIcon(chatDto.icon)
 
   self.messagesModule.updateChatFetchMoreMessages()
   self.messagesModule.updateChatIdentifier()
