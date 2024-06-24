@@ -17,7 +17,7 @@ MouseArea {
     required property string url
     required property string iconUrl
 
-    signal disconnectDapp()
+    signal disconnectDapp(string dappUrl)
 
     RowLayout {
         anchors.fill: parent
@@ -98,8 +98,7 @@ MouseArea {
             tooltip.text: qsTr("Disconnect dApp")
 
             onClicked: {
-                console.debug(`TODO #14755 - Disconnect ${root.name}`)
-                // root.disconnectDapp()
+                root.disconnectDapp(root.url)
             }
         }
     }

@@ -71,6 +71,10 @@ QtObject:
     # TODO #14588: call it async
     return status_go.addSession(session_json)
 
+  proc addSession*(self: Service, topic: string): bool =
+    # TODO #14588: call it async
+    return status_go.deactivateSession(topic)
+
   proc getDapps*(self: Service): string =
     let validAtEpoch = now().toTime().toUnix()
     let testChains = self.settingsService.areTestNetworksEnabled()

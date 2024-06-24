@@ -27,6 +27,10 @@ DappsComboBox {
         pairWCLoader.active = true
     }
 
+    onDisconnectDapp: (dappUrl) => {
+        root.wcService.disconnectDapp(dappUrl)
+    }
+
     Loader {
         id: pairWCLoader
 
@@ -94,7 +98,7 @@ DappsComboBox {
 
             onDisconnect: {
                 connectDappLoader.active = false
-                root.wcService.disconnectDapp(sessionTopic)
+                root.wcService.disconnectSession(sessionTopic)
             }
         }
     }
