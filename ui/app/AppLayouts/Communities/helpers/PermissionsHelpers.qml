@@ -12,7 +12,20 @@ import utils 1.0
 
 QtObject {
     function getTokenByKey(model, key) {
-        return Internal.PermissionUtils.getTokenByKey(model, key)
+        var item
+        // key format:
+        // chainId+address[+tokenId] - ERC721
+        // symbol - ERC20
+        // collectionUid model role keeps chainId+address for every ERC721
+        // key model role keeps: symbol for ERC20, chainId+address for community ERC721 tokens, chainId+address+tokenId for ERC721 tokens from wallet
+        let collectionUid = PermissionsHelpers.getCollectionUidFromKey(key)
+        if(collectionUid !== "") {
+            item = ModelUtils.getByKey(model, "collectionUid", collectionUid)
+        } else {
+            item = Internal.PermissionUtils.getTokenByKey(model, key)
+        }
+
+        return item
     }
 
     function getTokenNameByKey(model, key) {
@@ -31,9 +44,10 @@ QtObject {
 
     function getTokenIconByKey(model, key) {
         const item = getTokenByKey(model, key)
+        const defaultIcon = Style.png("tokens/DEFAULT-TOKEN")
         if (item)
-            return item.iconSource ?? ""
-        return ""
+            return item.iconSource ? item.iconSource : defaultIcon
+        return defaultIcon
     }
 
     function getTokenDecimalsByKey(model, key) {
@@ -112,5 +126,15 @@ QtObject {
             return ownerTokenSymbolTag + shortName.toUpperCase()
         else
             return tMasterTokenSymbolTag + shortName.toUpperCase()
+    }
+
+    function getCollectionUidFromKey(key) {
+        const parts = key.split('+');
+        if(parts.length === 2)
+            return key
+        else if(parts.length === 3)
+            return parts[0]+"+"+parts[1]
+        else
+            return ""
     }
 }

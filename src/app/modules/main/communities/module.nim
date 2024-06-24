@@ -549,8 +549,9 @@ method requestCancelDiscordChannelImport*(self: Module, discordChannelId: string
 proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, communityId: string, supply: string,
     infiniteSupply: bool, privilegesLevel: int): TokenListItem =
   let communityTokenDecimals = if token.tokenType == TokenType.ERC20: 18 else: 0
+  let key = if token.tokenType == TokenType.ERC721: token.getContractIdFromFirstAddress() else: token.symbol
   result = initTokenListItem(
-    key = token.symbol,
+    key = key,
     name = token.name,
     symbol = token.symbol,
     color = "", # community tokens don't have `color`
@@ -911,7 +912,8 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
         tokenCriteriaItem.amount,
         tokenCriteriaItem.`type`,
         tokenCriteriaItem.ensPattern,
-        criteriaResult.criteria[index]
+        criteriaResult.criteria[index],
+        tokenCriteriaItem.addresses
       )
 
       if criteriaResult.criteria[index] == false:
