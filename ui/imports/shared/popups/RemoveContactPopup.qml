@@ -52,6 +52,7 @@ CommonContactDialog {
         StatusButton {
             type: StatusBaseButton.Type.Danger
             text: qsTr("Remove contact")
+            objectName: "removeContactButton"
             onClicked: root.accepted()
         }
     }

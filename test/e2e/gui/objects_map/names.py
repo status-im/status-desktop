@@ -99,7 +99,11 @@ edit_TextEdit = {"container": ProfileContentItem, "id": "edit", "type": "TextEdi
 https_status_app_StatusBaseText = {"container": edit_TextEdit, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 copy_icon_CopyButton = {"container": ProfileContentItem, "objectName": "copy-icon", "type": "CopyButton", "visible": True}
 request_ID_verification_StatusFlatButton = {"checkable": False, "container": ProfileContentItem, "objectName": "requestIDVerification_StatusItem", "type": "StatusFlatButton", "visible": True}
+send_Message_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "sendMessageButton", "type": "StatusButton", "visible": True}
 send_contact_request_StatusButton = {"checkable": False, "container": ProfileContentItem, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
+review_contact_request_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "profileDialog_reviewContactRequestButton", "type": "StatusButton", "visible": True}
+profileDialogView_ContentItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialogView", "type": "ContentItem", "visible": True}
+menuButton_StatusFlatButton = {"checkable": False, "container": profileDialogView_ContentItem, "id": "menuButton", "type": "StatusFlatButton", "unnamed": 1, "visible": True}
 
 # Welcome Status Popup
 betaConsent_StatusModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "desktopBetaStatusModal", "type": "StatusModal", "visible": True}
@@ -188,6 +192,13 @@ sendContactRequestModal_SayWhoYouAre_Input_TextEdit = {"container": statusDeskto
 send_Contact_Request_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_Send_Button", "type": "StatusButton", "visible": True}
 send_contact_request_StatusButton_2 = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sendContactRequestButton", "type": "StatusButton", "visible": True}
 profileSendContactRequestModal_sayWhoYouAreInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sayWhoYouAreInput", "type": "TextEdit", "visible": True}
+
+# Review Contact Request
+ignore_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "ignoreButton", "type": "StatusFlatButton", "visible": True}
+accept_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "acceptButton", "type": "StatusButton", "visible": True}
+
+# RemoveContactPopup
+remove_contact_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "removeContactButton", "type": "StatusButton", "visible": True}
 
 """ Common """
 

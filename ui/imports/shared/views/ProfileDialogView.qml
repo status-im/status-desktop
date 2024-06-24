@@ -122,6 +122,7 @@ Pane {
         StatusButton {
             size: StatusButton.Size.Small
             text: qsTr("Send Message")
+            objectName: "sendMessageButton"
             onClicked: {
                 root.contactsStore.joinPrivateChat(root.publicKey)
                 root.closeRequested()
