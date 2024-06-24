@@ -1,4 +1,5 @@
-import stew/shims/strformat
+import stew/shims/strformat, tables
+import backend/collectibles_types
 
 type
   TokenCriteriaItem* = object
@@ -8,6 +9,7 @@ type
     `type`*: int
     ensPattern*: string
     criteriaMet*: bool
+    addresses*: Table[int, string]
 
 proc initTokenCriteriaItem*(
   symbol: string,
@@ -15,7 +17,8 @@ proc initTokenCriteriaItem*(
   amount: string,
   `type`: int,
   ensPattern: string,
-  criteriaMet: bool
+  criteriaMet: bool,
+  addresses: Table[int, string]
 ): TokenCriteriaItem =
   result.symbol = symbol
   result.name = name
@@ -23,6 +26,7 @@ proc initTokenCriteriaItem*(
   result.ensPattern = ensPattern
   result.amount = amount
   result.criteriaMet = criteriaMet
+  result.addresses = addresses
 
 proc `$`*(self: TokenCriteriaItem): string =
   result = fmt"""TokenCriteriaItem(
@@ -31,7 +35,8 @@ proc `$`*(self: TokenCriteriaItem): string =
     amount: {self.amount},
     type: {self.type},
     ensPattern: {self.ensPattern},
-    criteriaMet: {self.criteriaMet}
+    criteriaMet: {self.criteriaMet},
+    addresses: {self.addresses}
     ]"""
 
 proc getType*(self: TokenCriteriaItem): int =
@@ -51,3 +56,12 @@ proc getEnsPattern*(self: TokenCriteriaItem): string =
 
 proc getCriteriaMet*(self: TokenCriteriaItem): bool =
   return self.criteriaMet
+
+proc getAddresses*(self: TokenCriteriaItem): Table[int, string] =
+  return self.addresses
+
+proc getContractIdFromFirstAddress*(self: TokenCriteriaItem): string =
+  for chainID, address in self.addresses:
+    let contractId = ContractID(chainID: chainID, address: address)
+    return contractId.toString()
+  return ""

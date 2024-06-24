@@ -18,6 +18,7 @@ type
     CollectionUid
     CollectionName
     CollectionSlug
+    CollectionImageUrl
     IsLoading
     Ownership
     # Community-related roles
@@ -139,6 +140,7 @@ QtObject:
       CollectibleRole.CollectionUid.int:"collectionUid",
       CollectibleRole.CollectionName.int:"collectionName",
       CollectibleRole.CollectionSlug.int:"collectionSlug",
+      CollectibleRole.CollectionImageUrl.int:"collectionImageUrl",
       CollectibleRole.IsLoading.int:"isLoading",
       CollectibleRole.Ownership.int:"ownership",
       CollectibleRole.CommunityId.int:"communityId",
@@ -153,9 +155,7 @@ QtObject:
 
     if (index.row < 0 or index.row >= self.getCount()):
       return
-
     let enumRole = role.CollectibleRole
-
     if index.row < self.items.len:
       let item = self.items[index.row]
       case enumRole:
@@ -183,6 +183,8 @@ QtObject:
         result = newQVariant(item.getCollectionName())
       of CollectibleRole.CollectionSlug:
         result = newQVariant(item.getCollectionSlug())
+      of CollectibleRole.CollectionImageUrl:
+        result = newQVariant(item.getCollectionImageURL())
       of CollectibleRole.IsLoading:
         result = newQVariant(false)
       of CollectibleRole.Ownership:
@@ -195,6 +197,10 @@ QtObject:
         result = newQVariant(item.getTokenType())
       of CollectibleRole.Soulbound:
         result = newQVariant(item.getSoulbound())
+      else:
+        result = newQVariant()
+    else:
+      result = newQVariant()
 
   proc resetCollectibleItems(self: Model, newItems: seq[CollectiblesEntry] = @[]) =
     self.beginResetModel()

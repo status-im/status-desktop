@@ -1010,7 +1010,8 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
           tokenCriteriaItem.amount,
           tokenCriteriaItem.`type`,
           tokenCriteriaItem.ensPattern,
-          criteriaResult.criteria[index]
+          criteriaResult.criteria[index],
+          tokenCriteriaItem.addresses
         )
 
         if criteriaResult.criteria[index] == false:
@@ -1530,11 +1531,12 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
   let tokenCriteriaJsonObj = tokenCriteriaJson.parseJson
   for tokenCriteria in tokenCriteriaJsonObj:
 
+    let tokenKey = tokenCriteria{"key"}.getStr()
     var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
     if tokenCriteriaDto.`type` == TokenType.ERC20:
-      tokenCriteriaDto.decimals = self.controller.getTokenDecimals(tokenCriteriaDto.symbol)
+      tokenCriteriaDto.decimals = self.controller.getTokenDecimals(tokenKey)
 
-    let contractAddresses = self.controller.getContractAddressesForToken(tokenCriteriaDto.symbol)
+    let contractAddresses = self.controller.getContractAddressesForToken(tokenKey)
     if contractAddresses.len == 0 and tokenCriteriaDto.`type` != TokenType.ENS:
       if permissionId == "":
         self.onCommunityTokenPermissionCreationFailed(communityId)

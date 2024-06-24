@@ -127,12 +127,20 @@ Item {
                     AnyOf {
                         enabled: root.showAllTokensMode
 
-                        /*
-                        // this category is not used
                         ValueFilter {
                             roleName: "category"
                             value: TokenCategories.Category.Own
-                        }*/
+                        }
+
+                        ValueFilter {
+                            roleName: "category"
+                            value: TokenCategories.Category.General
+                        }
+
+                        ValueFilter {
+                            roleName: "category"
+                            value: TokenCategories.Category.Community
+                        }
 
                         AllOf {
                             ValueFilter {

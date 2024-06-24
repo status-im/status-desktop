@@ -273,8 +273,7 @@ StackView {
                     const holdings = dirtyValues.holdingsRequired ?
                                        ModelUtils.modelToArray(
                                            dirtyValues.selectedHoldingsModel,
-                                           ["key", "type", "amount"]) : []
-
+                                           ["key", "type", "amount", "symbol"]) : []
                     const channels = root.showChannelSelector ?
                                    ModelUtils.modelToArray(
                                        dirtyValues.selectedChannelsModel, ["key"]) :
@@ -295,9 +294,8 @@ StackView {
                     const holdings = dirtyValues.holdingsRequired ?
                                        ModelUtils.modelToArray(
                                            dirtyValues.selectedHoldingsModel,
-                                           ["key", "type", "amount"])
+                                           ["key", "type", "amount", "symbol"])
                                      : []
-
                     const channels = ModelUtils.modelToArray(
                                        dirtyValues.selectedChannelsModel, ["key"])
 

@@ -49,39 +49,56 @@ QtObject {
         }
     }
 
-    readonly property var tmp: SortFilterProxyModel {
-        id: tmpSfpm
-
+    readonly property var communityCollectiblesModelWithCollectionRoles: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.collectiblesModel
 
-        proxyRoles: ExpressionRole {
-            function collectibleIcon(icon) {
-                return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
-            }
+        proxyRoles: [
+            ExpressionRole {
+                function collectibleIcon(icon) {
+                    return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+                }
             name: "iconSource"
             expression: collectibleIcon(model.icon)
-        }
+            },
+            ExpressionRole {
+            name: "collectionUid"
+            expression: model.key
+            },
+            ExpressionRole {
+                function collectibleIcon(icon) {
+                    return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+                }
+            name: "collectionImageUrl"
+            expression: collectibleIcon(model.icon)
+            }
+        ]
     }
 
-    readonly property var tmp2: ObjectProxyModel {
+    readonly property var walletCollectiblesModel: ObjectProxyModel {
 
         sourceModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
 
         delegate: QtObject {
-            readonly property string key: model.symbol
+            readonly property string key: model.symbol ?? ""
             readonly property string shortName: model.collectionName ? model.collectionName : model.collectionUid ? model.collectionUid : ""
             readonly property string symbol: shortName
-            readonly property int category: 1
+            readonly property string name: shortName
+            readonly property int category: 1 // Own
         }
 
-        exposedRoles: ["key", "symbol", "shortName"]
+        exposedRoles: ["key", "symbol", "shortName", "name", "category"]
         expectedRoles: ["symbol", "collectionName", "collectionUid"]
     }
 
-    readonly property var tmp3: SortFilterProxyModel {
-        id: tmpSfpm2
+    readonly property var walletCollectiblesGroupingModel: GroupingModel {
+        sourceModel: walletCollectiblesModel
 
-        sourceModel: tmp2
+        groupingRoleName: "collectionUid"
+        submodelRoleName: "subnames"
+    }
+
+    readonly property var walletNonCommunityCollectiblesModel: SortFilterProxyModel {
+        sourceModel: walletCollectiblesGroupingModel
 
         filters: ValueFilter {
             roleName: "communityId"
@@ -89,10 +106,8 @@ QtObject {
         }
     }
 
-    property var r: RolesRenamingModel {
-        id: renaming
-
-        sourceModel: tmpSfpm2
+    property var walletCollectiblesWithIconSourceModel: RolesRenamingModel {
+        sourceModel: walletNonCommunityCollectiblesModel
 
         mapping: RoleRename {
             from: "mediaUrl"
@@ -101,13 +116,12 @@ QtObject {
     }
 
     property var collectiblesModel: ConcatModel {
-
         sources: [
             SourceModel {
-                model: tmpSfpm
+                model: communityCollectiblesModelWithCollectionRoles
             },
             SourceModel {
-                model: renaming
+                model: walletCollectiblesWithIconSourceModel
             }
         ]
     }

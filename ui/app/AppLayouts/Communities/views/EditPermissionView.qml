@@ -245,9 +245,10 @@ StatusScrollView {
 
                 function addItem(type, item, amount) {
                     const key = item.key
+                    const symbol = item.symbol
 
                     d.dirtyValues.selectedHoldingsModel.append(
-                                { type, key, amount })
+                                { type, key, amount, symbol })
                 }
 
                 function prepareUpdateIndex(key) {
@@ -310,7 +311,7 @@ StatusScrollView {
 
                     d.dirtyValues.selectedHoldingsModel.set(
                                 itemIndex,
-                                { type: Constants.TokenType.ERC721, key, amount: String(amount) })
+                                { type: Constants.TokenType.ERC721, key, amount: String(amount), symbol: modelItem.symbol })
                     dropdown.close()
                 }
 
