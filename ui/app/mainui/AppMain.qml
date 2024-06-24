@@ -1796,7 +1796,7 @@ Item {
         }
 
         Connections {
-            target: WalletStore.RootStore.walletSectionSavedAddressesInst
+            target: WalletStore.RootStore
 
             function onSavedAddressAddedOrUpdated(added: bool, name: string, address: string, errorMsg: string) {
                 WalletStore.RootStore.addingSavedAddress = false
@@ -1872,7 +1872,7 @@ Item {
         }
 
         Connections {
-            target: WalletStore.RootStore.walletSectionSavedAddressesInst
+            target: WalletStore.RootStore
 
             function onSavedAddressDeleted(name: string, address: string, errorMsg: string) {
                 WalletStore.RootStore.deletingSavedAddress = false

@@ -28,7 +28,11 @@ QtObject {
     }
 
     /* This property holds address of currently selected account in Wallet Main layout  */
-    readonly property var addressFilters: walletSection.addressFilters
+    readonly property var addressFilters: walletSectionInst.addressFilters
+    readonly property var keypairImportModule: walletSectionInst.keypairImportModule
+    readonly property string signingPhrase: walletSectionInst.signingPhrase
+    readonly property string mnemonicBackedUp: walletSectionInst.isMnemonicBackedUp
+
     /* This property holds networks currently selected in the Wallet Main layout  */
     readonly property var networkFilters: networksModule.enabledChainIds
 
@@ -44,19 +48,6 @@ QtObject {
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
-
-    // "walletSection" is a context property slow to lookup, so we cache it here
-    property var mainModuleInst: mainModule
-    property var walletSectionInst: walletSection
-    property var walletSectionSavedAddressesInst: walletSectionSavedAddresses
-    property var totalCurrencyBalance: walletSectionInst.totalCurrencyBalance
-    property var activityController: walletSectionInst.activityController
-    property var tmpActivityController0: walletSectionInst.tmpActivityController0
-    property var tmpActivityController1: walletSectionInst.tmpActivityController1
-    property var activityDetailsController: walletSectionInst.activityDetailsController
-    property string signingPhrase: walletSectionInst.signingPhrase
-    property string mnemonicBackedUp: walletSectionInst.isMnemonicBackedUp
-    property var walletConnectController: walletSectionInst.walletConnectController
 
     property CollectiblesStore collectiblesStore: CollectiblesStore {}
 
@@ -105,8 +96,34 @@ QtObject {
         return store
     }
 
+    // "walletSection" is a context property slow to lookup, so we cache it here
+    readonly property var walletSectionInst: walletSection
+    readonly property var totalCurrencyBalance: walletSectionInst.totalCurrencyBalance
+
+    readonly property var activityController: walletSectionInst.activityController
+    readonly property var tmpActivityController0: walletSectionInst.tmpActivityController0
+    readonly property var tmpActivityController1: walletSectionInst.tmpActivityController1
+    readonly property var activityDetailsController: walletSectionInst.activityDetailsController
+    readonly property var walletConnectController: walletSectionInst.walletConnectController
+
+    signal savedAddressAddedOrUpdated(added: bool, name: string, address: string, errorMsg: string)
+    signal savedAddressDeleted(name: string, address: string, errorMsg: string)
+
     property QtObject _d: QtObject {
         id: d
+
+        readonly property var mainModuleInst: mainModule
+
+        readonly property Connections walletSectionSavedAddressesConnections: Connections{
+            target: walletSectionSavedAddresses
+
+            function onSavedAddressAddedOrUpdated(added: bool, name: string, address: string, errorMsg: string) {
+                root.savedAddressAddedOrUpdated(added, name, address , errorMsg);
+            }
+            function onSavedAddressDeleted(name: string, address: string, errorMsg: string) {
+                root.savedAddressDeleted(name, address, errorMsg)
+            }
+        }
 
         property var activityFiltersStoreDictionary: ({})
         readonly property Component activityFilterStoreComponent: ActivityFiltersStore{
@@ -177,48 +194,6 @@ QtObject {
     property int currentViewedHoldingType
     readonly property var currentViewedCollectible: collectiblesStore.detailedCollectible
 
-    // This should be exposed to the UI via "walletModule", WalletModule should use
-    // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).
-    // Then in the View of WalletModule we may have either QtProperty or
-    // Q_INVOKABLE function (proc marked as slot) depends on logic/need.
-    // The only need for onboardingModel here is actually to check if an account
-    // has been just created or an old one.
-
-    //property bool firstTimeLogin: onboardingModel.isFirstTimeLogin
-
-    // example wallet model
-    property ListModel exampleWalletModel: ListModel {
-        ListElement {
-            name: "Status account"
-            address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
-            balance: "12.00 USD"
-            color: "#7CDA00"
-        }
-
-        ListElement {
-            name: "Test account 1"
-            address: "0x2Ef1...E0Ba"
-            balance: "12.00 USD"
-            color: "#FA6565"
-        }
-        ListElement {
-            name: "Status account"
-            address: "0x2Ef1...E0Ba"
-            balance: "12.00 USD"
-            color: "#7CDA00"
-        }
-    }
-
-    property ListModel exampleAssetModel: ListModel {
-        ListElement {
-            name: "Ethereum"
-            symbol: "ETH"
-            balance: "3423 ETH"
-            address: "token-icons/eth"
-            currencyBalance: "123 USD"
-        }
-    }
-
     function canProfileProveOwnershipOfProvidedAddresses(addresses) {
         return walletSection.canProfileProveOwnershipOfProvidedAddresses(JSON.stringify(addresses))
     }
@@ -249,20 +224,12 @@ QtObject {
         return walletSectionAccounts.deleteAccount(address)
     }
 
-    function updateCurrentAccount(address, accountName, colorId, emoji) {
-        return walletSectionAccounts.updateAccount(address, accountName, colorId, emoji)
-    }
-
     function updateCurrency(newCurrency) {
         walletSection.updateCurrency(newCurrency)
     }
 
     function getQrCode(address) {
         return globalUtils.qrCode(address)
-    }
-
-    function hex2Dec(value) {
-        return globalUtils.hex2Dec(value)
     }
 
     function getNameForWalletAddress(address) {
@@ -481,7 +448,7 @@ QtObject {
     property Stores.CurrenciesStore currencyStore: Stores.CurrenciesStore {}
 
     function addressWasShown(address) {
-        return root.mainModuleInst.addressWasShown(address)
+        return d.mainModuleInst.addressWasShown(address)
     }
 
     function getExplorerDomain(networkShortName) {
