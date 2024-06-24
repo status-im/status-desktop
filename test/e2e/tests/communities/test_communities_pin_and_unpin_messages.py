@@ -25,14 +25,17 @@ pytestmark = marks
                  'Edit chat - Remove pinned message (when any member can pin is disabled)')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
 @pytest.mark.case(703255, 703256, 703510)
-def test_join_community_and_pin_unpin_message(multiple_instances):
-    user_one: UserAccount = constants.user_account_one
-    user_two: UserAccount = constants.user_account_two
+@pytest.mark.parametrize('user_data_one, user_data_two', [
+    (configs.testpath.TEST_USER_DATA / 'group_chat_user_1', configs.testpath.TEST_USER_DATA / 'group_chat_user_2')
+])
+def test_join_community_and_pin_unpin_message(multiple_instances, user_data_one, user_data_two):
+    user_one: UserAccount = constants.group_chat_user_1
+    user_two: UserAccount = constants.group_chat_user_2
     community_params = deepcopy(constants.community_params)
     community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
     main_screen = MainWindow()
 
-    with multiple_instances() as aut_one, multiple_instances() as aut_two:
+    with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(user_data=user_data_two) as aut_two:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()
@@ -40,36 +43,11 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
                 main_screen.authorize_user(account)
                 main_screen.hide()
 
-        with step(f'User {user_two.name}, get chat key'):
-            aut_two.attach()
-            main_screen.prepare()
-            profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
-            main_screen.hide()
-
-        with step(f'User {user_one.name}, send contact request to {user_two.name}'):
-            aut_one.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
-            main_screen.hide()
-
-        with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
-            aut_two.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contacts_settings.accept_contact_request(user_one.name)
-
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
-            with step('Enable creation of community option'):
-                settings = main_screen.left_panel.open_settings()
-                settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+            aut_two.attach()
+            main_screen.prepare()
+            settings = main_screen.left_panel.open_settings()
+            settings.left_panel.open_advanced_settings().enable_creation_of_communities()
             community = main_screen.create_community(community_params['name'], community_params['description'],
                                                      community_params['intro'], community_params['outro'],
                                                      community_params['logo']['fp'], community_params['banner']['fp'])

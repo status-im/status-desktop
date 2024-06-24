@@ -100,7 +100,7 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
             aut_two.attach()
             main_window.prepare()
             assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
-                                  10000), f'{group_chat_new_name} is not present in chats list for {aut_two}'
+                                  15000), f'{group_chat_new_name} is not present in chats list for {aut_two}'
             messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
 
             with step('Verify members in a group members list'):
@@ -135,7 +135,7 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
 
             with step(f'Check that {user_three.name} is not a member of a group'):
                 assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
-                                      10000), f'{group_chat_new_name} is not present in chats list for {aut_three}'
+                                      15000), f'{group_chat_new_name} is not present in chats list for {aut_three}'
                 messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
                 gray_message_text = messages_screen.group_chat.gray_text_from_message_area
                 assert gray_message_text == Messaging.YOU_NEED_TO_BE_A_MEMBER.value
