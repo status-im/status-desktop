@@ -195,10 +195,6 @@ QObject {
         return root.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
     }
 
-    function getAllChainIds() {
-        return ModelUtils.joinModelEntries(root.filteredFlatNetworksModel, "chainId", ":")
-    }
-
     function getDisabledChainIds(enabledChainId) {
         let disabledChainIds = []
         let chainIds = ModelUtils.modelToFlatArray(root.filteredFlatNetworksModel, "chainId")
@@ -210,8 +206,8 @@ QObject {
         return disabledChainIds.join(":")
     }
 
-    function fetchSuggestedRoutes(cryptoValueRaw) {
-        if (root.swapFormData.isFormFilledCorrectly() && !!cryptoValueRaw) {
+    function fetchSuggestedRoutes(cryptoValueInRaw) {
+        if (root.swapFormData.isFormFilledCorrectly() && !!cryptoValueInRaw) {
             root.swapOutputData.reset()
             root.validSwapProposalReceived = false
 
@@ -221,12 +217,10 @@ QObject {
             let account = selectedAccountEntry.item
             let accountAddress = account.address
             let disabledChainIds = getDisabledChainIds(root.swapFormData.selectedNetworkChainId)
-            let preferedChainIds = getAllChainIds()
 
             root.swapStore.fetchSuggestedRoutes(accountAddress, accountAddress,
-                                                cryptoValueRaw, root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
-                                                disabledChainIds, disabledChainIds, preferedChainIds,
-                                                Constants.SendType.Swap, "")
+                                                cryptoValueInRaw, "0", root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
+                                                disabledChainIds, disabledChainIds, Constants.SendType.Swap, "")
         } else {
             root.validSwapProposalReceived = false
             root.swapProposalLoading = false

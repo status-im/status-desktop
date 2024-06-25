@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, stint, sugar, options
+import NimQml, Tables, json, sequtils, strutils, stint, sugar, options, chronicles
 
 import ./io_interface, ./accounts_model, ./account_item, ./network_model, ./network_item, ./suggested_route_item, ./transaction_routes
 import app/modules/shared_models/collectibles_model as collectibles
@@ -218,14 +218,6 @@ QtObject:
   proc sendTransactionSentSignal*(self: View, chainId: int, txHash: string, uuid: string, error: string) =
     self.transactionSent(chainId, txHash, uuid, error)
 
-  proc parseAmount(amount: string): Uint256 =
-    var parsedAmount = stint.u256(0)
-    try:
-      parsedAmount = amount.parse(Uint256)
-    except Exception as e:
-      discard
-    return parsedAmount
-  
   proc parseChainIds(chainIds: string): seq[int] =
     var parsedChainIds: seq[int] = @[]
     for chainId in chainIds.split(':'):
@@ -241,11 +233,28 @@ QtObject:
     self.transactionRoutes = routes
     self.suggestedRoutesReady(newQVariant(self.transactionRoutes))
 
-  proc suggestedRoutes*(self: View, amount: string) {.slot.} =
-    self.delegate.suggestedRoutes(self.selectedSenderAccount.address(), self.selectedRecipient,
-      parseAmount(amount), self.selectedAssetKey, self.selectedToAssetKey, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
-      self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(),
-      self.sendType, self.fromNetworksModel.getRouteLockedChainIds())
+  proc suggestedRoutes*(self: View, amountIn: string, amountOut: string, extraParamsJson: string) {.slot.} =
+    var extraParamsTable: Table[string, string]
+    try:
+      if extraParamsJson.len > 0:
+        for key, value in parseJson(extraParamsJson):
+          extraParamsTable[key] = value.getStr()
+    except Exception as e:
+      error "Error parsing extraParamsJson: ", msg=e.msg
+
+    self.delegate.suggestedRoutes(
+      self.sendType,
+      self.selectedSenderAccount.address(),
+      self.selectedRecipient,
+      self.selectedAssetKey,
+      amountIn,
+      self.selectedToAssetKey,
+      amountOut,
+      self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
+      self.toNetworksModel.getRouteDisabledNetworkChainIds(),
+      self.fromNetworksModel.getRouteLockedChainIds(),
+      extraParamsTable
+    )
 
   proc switchSenderAccountByAddress*(self: View, address: string) {.slot.} =
     let (account, index) = self.senderAccounts.getItemByAddress(address)
@@ -332,13 +341,37 @@ QtObject:
     return self.fromNetworksModel.getIconUrl(chainId)
 
 # "Stateless" methods
-  proc fetchSuggestedRoutesWithParameters*(self: View, accountFrom: string, accountTo: string, amount: string, token: string, toToken: string,
-    disabledFromChainIDs: string, disabledToChainIDs: string, preferredChainIDs: string, sendType: int, lockedInAmounts: string) {.slot.} =
-    self.delegate.suggestedRoutes(accountFrom, accountTo,
-      parseAmount(amount), token, toToken, 
-      parseChainIds(disabledFromChainIDs), parseChainIds(disabledToChainIDs), parseChainIds(preferredChainIDs),
-      SendType(sendType), lockedInAmounts)
-  
+  proc fetchSuggestedRoutesWithParameters*(self: View,
+    accountFrom: string,
+    accountTo: string,
+    amountIn: string,
+    amountOut: string,
+    token: string,
+    toToken: string,
+    disabledFromChainIDs: string,
+    disabledToChainIDs: string,
+    sendType: int,
+    lockedInAmounts: string) {.slot.} =
+      # Prepare lockedInAmountsTable
+      var lockedInAmountsTable = Table[string, string] : initTable[string, string]()
+      try:
+        for chainId, lockedAmount in parseJson(lockedInAmounts):
+          lockedInAmountsTable[chainId] = lockedAmount.getStr
+      except:
+        discard
+      # Resolve the best route
+      self.delegate.suggestedRoutes(
+        SendType(sendType),
+        accountFrom,
+        accountTo,
+        token,
+        amountIn,
+        toToken,
+        amountOut,
+        parseChainIds(disabledFromChainIDs),
+        parseChainIds(disabledToChainIDs),
+        lockedInAmountsTable)
+
   proc authenticateAndTransferWithParameters*(self: View, uuid: string, accountFrom: string, accountTo: string, token: string, toToken: string,
     sendTypeInt: int, tokenName: string, tokenIsOwnerToken: bool, rawPaths: string, slippagePercentageString: string) {.slot.} =
 

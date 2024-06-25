@@ -339,11 +339,6 @@ method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: stri
     return
   self.view.sendTransactionSentSignal(chainId, txHash, uuid, error)
 
-method suggestedRoutes*(self: Module, accountFrom: string, accountTo: string, amount: UInt256, token: string, toToken: string,
-  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string) =
-  self.controller.suggestedRoutes(accountFrom, accountTo, amount, token, toToken, disabledFromChainIDs,
-    disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
-
 method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) =
   self.tmpSendTransactionDetails.paths = suggestedRoutes.best
   self.tmpSendTransactionDetails.slippagePercentage = none(float)
@@ -362,6 +357,32 @@ method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) 
     toNetworksModel = toNetworksModel,
     rawPaths = suggestedRoutes.rawBest)
   self.view.setTransactionRoute(transactionRoutes)
+
+method suggestedRoutes*(self: Module,
+  sendType: SendType,
+  accountFrom: string,
+  accountTo: string,
+  token: string,
+  amountIn: string,
+  toToken: string = "",
+  amountOut: string = "",
+  disabledFromChainIDs: seq[int] = @[],
+  disabledToChainIDs: seq[int] = @[],
+  lockedInAmounts: Table[string, string] = initTable[string, string](),
+  extraParamsTable: Table[string, string] = initTable[string, string]()) =
+  self.controller.suggestedRoutes(
+    sendType,
+    accountFrom,
+    accountTo,
+    token,
+    amountIn,
+    toToken,
+    amountOut,
+    disabledFromChainIDs,
+    disabledToChainIDs,
+    lockedInAmounts,
+    extraParamsTable
+  )
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   if addresses.len == 0:

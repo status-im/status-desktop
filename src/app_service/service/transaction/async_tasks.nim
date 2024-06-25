@@ -41,6 +41,7 @@ proc getFeesTotal*(paths: seq[TransactionPathDto]): FeesDto =
 
     fees.totalFeesInEth += getGasEthValue(optimalPrice, path.gasAmount)
     fees.totalFeesInEth += parseFloat(service_conversion.wei2Eth(service_conversion.gwei2Wei(path.gasFees.l1GasFee)))
+    fees.totalFeesInEth += path.approvalGasFees
     fees.totalTokenFees += path.tokenFees
     fees.totalTime += path.estimatedTime
   return fees
@@ -77,47 +78,6 @@ proc addFirstSimpleBridgeTxFlag(paths: seq[TransactionPathDto]) : seq[Transactio
 
   return txPaths
 
-proc getSuggestedRoutesTask*(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[GetSuggestedRoutesTaskArg](argEncoded)
-
-  try:
-    let amountAsHex = "0x" & eth_utils.stripLeadingZeros(arg.amount.toHex)
-    var lockedInAmounts = Table[string, string] : initTable[string, string]()
-
-    try:
-      for chainId, lockedAmount in parseJson(arg.lockedInAmounts):
-        lockedInAmounts[chainId] = lockedAmount.getStr
-    except:
-      discard
-
-    let response = eth.suggestedRoutes(arg.accountFrom, arg.accountTo, amountAsHex, arg.token, arg.toToken, arg.disabledFromChainIDs,
-      arg.disabledToChainIDs, arg.preferredChainIDs, ord(arg.sendType), lockedInAmounts).result
-    var bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
-
-    # retry along with unpreferred chains incase no route is possible with preferred chains
-    if arg.sendType != SendType.Swap and bestPaths.len == 0 and arg.preferredChainIDs.len > 0:
-      let response = eth.suggestedRoutes(arg.accountFrom, arg.accountTo, amountAsHex, arg.token, arg.toToken, arg.disabledFromChainIDs,
-        arg.disabledToChainIDs, @[], ord(arg.sendType), lockedInAmounts).result
-      bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
-
-    bestPaths.sort(sortAsc[TransactionPathDto])
-
-    let output = %*{
-      "suggestedRoutes": SuggestedRoutesDto(
-        best: addFirstSimpleBridgeTxFlag(bestPaths),
-        gasTimeEstimate: getFeesTotal(bestPaths),
-        amountToReceive: getTotalAmountToReceive(bestPaths),
-        toNetworks: getToNetworksList(bestPaths)),
-      "error": ""
-    }
-    arg.finish(output)
-
-  except Exception as e:
-    let output = %* {
-     "suggestedRoutes": SuggestedRoutesDto(best: @[], gasTimeEstimate: FeesDto(), amountToReceive: stint.u256(0), toNetworks: @[]),
-      "error": fmt"Error getting suggested routes: {e.msg}"
-    }
-    arg.finish(output)
 
 
 type

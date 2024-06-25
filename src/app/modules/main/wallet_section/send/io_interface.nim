@@ -1,4 +1,4 @@
-import stint, options
+import Tables, options
 import app/modules/shared_models/currency_amount
 import app_service/service/transaction/dto
 import app/modules/shared_models/collectibles_model as collectibles
@@ -24,8 +24,18 @@ method refreshWalletAccounts*(self: AccessInterface) {.base.} =
 method getTokenBalance*(self: AccessInterface, address: string, chainId: int, tokensKey: string): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method suggestedRoutes*(self: AccessInterface, accountFrom: string, accountTo: string, amount: UInt256, token: string, toToken: string,
-  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string) {.base.} =
+method suggestedRoutes*(self: AccessInterface,
+  sendType: SendType,
+  accountFrom: string,
+  accountTo: string,
+  token: string,
+  amountIn: string,
+  toToken: string = "",
+  amountOut: string = "",
+  disabledFromChainIDs: seq[int] = @[],
+  disabledToChainIDs: seq[int] = @[],
+  lockedInAmounts: Table[string, string] = initTable[string, string](),
+  extraParamsTable: Table[string, string] = initTable[string, string]()) {.base.} =
     raise newException(ValueError, "No implementation available")
 
 method suggestedRoutesReady*(self: AccessInterface, suggestedRoutes: SuggestedRoutesDto) {.base.} =
