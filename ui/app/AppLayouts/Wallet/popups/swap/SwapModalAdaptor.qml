@@ -34,12 +34,20 @@ QObject {
             value: Constants.watchWalletType
             inverted: true
         }
-        sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
+        sorters: [
+            RoleSorter { roleName: "currencyBalanceDouble"; sortOrder: Qt.DescendingOrder },
+            RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
+        ]
         proxyRoles: [
             FastExpressionRole {
                 name: "accountBalance"
                 expression: d.processAccountBalance(model.address)
                 expectedRoles: ["address"]
+            },
+            FastExpressionRole {
+                name: "currencyBalanceDouble"
+                expression: model.currencyBalance.amount
+                expectedRoles: ["currencyBalance"]
             },
             FastExpressionRole {
                 name: "fromToken"
@@ -88,7 +96,7 @@ QObject {
 
         property string uuid
 
-       readonly property SubmodelProxyModel filteredBalancesModel: SubmodelProxyModel {
+        readonly property SubmodelProxyModel filteredBalancesModel: SubmodelProxyModel {
             sourceModel: root.walletAssetsStore.baseGroupedAccountAssetModel
             submodelRoleName: "balances"
             delegateModel: SortFilterProxyModel {
@@ -119,10 +127,8 @@ QObject {
 
             let balancesModel = ModelUtils.getByKey(filteredBalancesModel, "tokensKey", root.swapFormData.fromTokensKey, "balances")
             let accountBalance = ModelUtils.getByKey(balancesModel, "account", address)
-            if(accountBalance) {
-                let balance = AmountsArithmetic.toNumber(accountBalance.balance, root.fromToken.decimals)
-                let formattedBalance = root.formatCurrencyAmount(balance, root.fromToken.symbol)
-                accountBalance.formattedBalance = formattedBalance
+            if(accountBalance && accountBalance.balance !== "0") {
+                accountBalance.formattedBalance = root.formatCurrencyAmountFromBigInt(accountBalance.balance, root.fromToken.symbol, root.fromToken.decimals)
                 return accountBalance
             }
 
@@ -130,7 +136,7 @@ QObject {
                 balance: "0",
                 iconUrl: network.iconUrl,
                 chainColor: network.chainColor,
-                formattedBalance: root.formatCurrencyAmount(.0 , root.fromToken.symbol)
+                formattedBalance: "0 %1".arg(root.fromToken.symbol)
             }
         }
     }

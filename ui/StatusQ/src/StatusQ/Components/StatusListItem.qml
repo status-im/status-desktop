@@ -351,6 +351,8 @@ Rectangle {
                     Layout.alignment: Qt.AlignVCenter
                     padding: 0
 
+                    ScrollBar.horizontal.policy: root.tagsScrollBarVisible ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
+
                     Row {
                         id: row
                         spacing: 4

@@ -20,6 +20,10 @@ AccountSelector {
         objectName: "headerBackground"
         radius: 8
         color: d.headerStyleBackgroundColor
+
+        HoverHandler {
+            cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
+        }
     }
 
     contentItem: RowLayout {
@@ -48,8 +52,7 @@ AccountSelector {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-            font.pixelSize: 15
-            color: Theme.palette.indirectColor1
+            color: Utils.getContrastingColor(d.headerStyleBackgroundColor)
         }
     }
 

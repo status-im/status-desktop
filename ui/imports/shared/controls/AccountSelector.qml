@@ -24,7 +24,7 @@ import shared.controls 1.0
     currencyBalance         [var]    - fiat currency balance
         amount              [number] - amount of currency e.g. 1234
         symbol              [string] - currency symbol e.g. "USD"
-        optDisplayDecimals  [number] - optional number of decimals to display
+        displayDecimals     [number] - optional number of decimals to display
         stripTrailingZeroes [bool]   - strip trailing zeroes
     walletType              [string] - wallet type e.g. Constants.watchWalletType. See `Constants` for possible values
     migratedToKeycard       [bool]   - whether account is migrated to keycard
@@ -42,7 +42,7 @@ StatusComboBox {
     property string selectedAddress: ""
     // output property for selected account
     readonly property alias currentAccount: selectedEntry.item
-    readonly property string currentAccountAddress: root.control.currentValue ?? ""
+    readonly property string currentAccountAddress: d.currentAccountSelection
 
     // styling options
     type: StatusComboBox.Type.Secondary
@@ -99,6 +99,8 @@ StatusComboBox {
 
         required property var model
 
+        tagsScrollBarVisible: false
+
         width: ListView.view.width
         name: model.name
         address: model.address
@@ -122,7 +124,7 @@ StatusComboBox {
         id: selectedEntry
         sourceModel: root.model ?? null
         key: "address"
-        value: control.currentValue
+        value: d.currentAccountSelection
     }
 
     QtObject {

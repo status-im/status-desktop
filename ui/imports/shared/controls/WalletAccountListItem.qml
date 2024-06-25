@@ -40,12 +40,13 @@ StatusListItem {
     title: root.name
     subTitle:{
         if(!!root.address) {
-            let elidedAddress = StatusQUtils.Utils.elideText(root.address,6,4)
+            let elidedAddress = StatusQUtils.Utils.elideAndFormatWalletAddress(root.address)
             return sensor.containsMouse ? root.chainShortNames ||  Utils.richColorText(elidedAddress, Theme.palette.directColor1) : elidedAddress
         }
         return ""
     }
     statusListItemSubTitle.wrapMode: Text.NoWrap
+    statusListItemSubTitle.font.family: Theme.palette.monoFont.name
     asset.emoji: root.emoji
     asset.color: root.walletColor
     asset.name: root.emoji ? "filled-account": ""
@@ -82,6 +83,7 @@ StatusListItem {
         }
     ]
 
+    tagsScrollBarVisible: false
     inlineTagModel: !!root.accountBalance && !!root.accountBalance.formattedBalance ? 1 : 0
     inlineTagDelegate: StatusListItemTag {
         objectName: "inlineTagDelegate_" +  index
