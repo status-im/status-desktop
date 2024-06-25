@@ -7,6 +7,9 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Wallet.stores 1.0 as WalletStores
+
 /*!
    \qmltype TransactionAddressTile
    \inherits TransactionDataTile
@@ -41,10 +44,10 @@ TransactionDataTile {
        \qmlproperty var TransactionAddressTile::rootStore
        This property holds rootStore object used to retrive data for each address.
     */
-    property var rootStore
+    property WalletStores.RootStore rootStore
 
     /* /internal Property hold reference to contacts store to refresh contact data on any change. */
-    property var contactsStore
+    property ProfileStores.ContactsStore contactsStore
 
     implicitHeight: transactionColumn.height + transactionColumn.spacing + root.topPadding + root.bottomPadding
     buttonIconName: "more"

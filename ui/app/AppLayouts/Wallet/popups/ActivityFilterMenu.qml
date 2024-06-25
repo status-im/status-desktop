@@ -5,10 +5,12 @@ import StatusQ.Popups 0.1
 import "../controls"
 import "./filterSubMenus"
 
+import AppLayouts.Wallet.stores 1.0 as WalletStores
+
 StatusMenu {
     id: root
 
-    property var store
+    property WalletStores.RootStore store
 
     // Time filter
     property int selectedTime: ActivityFilterMenu.All

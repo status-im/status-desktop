@@ -10,10 +10,12 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 CommonContactDialog {
     id: root
 
-    required property var contactsStore
+    required property ProfileStores.ContactsStore contactsStore
 
     signal verificationRefused(string senderPublicKey)
     signal responseSent(string senderPublicKey, string response)

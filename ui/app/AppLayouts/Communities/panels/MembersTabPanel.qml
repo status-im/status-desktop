@@ -14,6 +14,7 @@ import shared.views.chat 1.0
 import shared.controls.chat 1.0
 import shared.controls 1.0
 
+import AppLayouts.Chat.stores 1.0
 import AppLayouts.Communities.layouts 1.0
 
 import SortFilterProxyModel 0.2
@@ -23,7 +24,7 @@ Item {
 
     property string placeholderText
     property var model
-    property var rootStore
+    property RootStore rootStore
     property int memberRole: Constants.memberRole.none
 
     readonly property bool isOwner: memberRole === Constants.memberRole.owner

@@ -15,6 +15,8 @@ import shared.status 1.0
 import shared.controls 1.0
 import shared.views.chat 1.0
 
+import AppLayouts.Profile.stores 1.0
+
 import "../helpers"
 import "../controls"
 import "../popups"
@@ -28,8 +30,8 @@ ColumnLayout {
     // Important: each chat/channel has its own ChatContentModule
     property var chatContentModule
     property var chatSectionModule
-    property var rootStore
-    property var contactsStore
+    property RootStore rootStore
+    property ContactsStore contactsStore
     property string chatId
     property int chatType: Constants.chatType.unknown
 
@@ -45,7 +47,7 @@ ColumnLayout {
     property bool isUserAllowedToSendMessage: root.rootStore.isUserAllowedToSendMessage
     property bool stickersLoaded: false
 
-    readonly property var messageStore: MessageStore {
+    readonly property MessageStore messageStore: MessageStore {
         messageModule: chatContentModule ? chatContentModule.messagesModule : null
         chatSectionModule: root.rootStore.chatCommunitySectionModule
     }

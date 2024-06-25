@@ -19,7 +19,9 @@ import SortFilterProxyModel 0.2
 
 import "../panels"
 import "../popups"
+import AppLayouts.Chat.stores 1.0
 import AppLayouts.Communities.popups 1.0
+import AppLayouts.Profile.stores 1.0
 
 Item {
     id: root
@@ -31,8 +33,8 @@ Item {
     // This module is set from `ChatLayout` (each `ChatLayout` has its own chatSectionModule)
     property var chatSectionModule
 
-    property var store
-    property var contactsStore
+    property RootStore store
+    property ContactsStore contactsStore
     property var emojiPopup
 
     signal openProfileClicked()

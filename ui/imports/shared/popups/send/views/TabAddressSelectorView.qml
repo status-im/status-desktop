@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.3
 import utils 1.0
 import shared.controls 1.0 as SharedControls
 import shared.stores 1.0
+import shared.stores.send 1.0 as SharedSendStores
 
 import AppLayouts.Wallet 1.0
 
@@ -16,8 +17,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import utils 1.0
-
 import "../panels"
 import "../controls"
 import "../views"
@@ -26,7 +25,7 @@ Item {
     id: root
 
     property var selectedAccount
-    property var store
+    property SharedSendStores.TransactionStore store
 
     signal recipientSelected(var recipient, int type)
 

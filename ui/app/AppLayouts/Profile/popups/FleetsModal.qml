@@ -7,6 +7,8 @@ import shared 1.0
 import shared.popups 1.0
 import shared.status 1.0
 
+import AppLayouts.Profile.stores 1.0
+
 import "../controls"
 
 // TODO: replace with StatusModal
@@ -14,7 +16,7 @@ ModalPopup {
     id: popup
     title: qsTr("Fleet")
 
-    property var advancedStore
+    property AdvancedStore advancedStore
 
     property string newFleet: "";
 

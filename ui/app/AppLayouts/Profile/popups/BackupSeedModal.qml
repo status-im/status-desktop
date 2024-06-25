@@ -12,12 +12,14 @@ import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 import "backupseed"
 
 StatusStackModal {
     id: root
 
-    property var privacyStore
+    property ProfileStores.PrivacyStore privacyStore
 
     onCurrentIndexChanged: {
         //StatusAnimatedStack doesn't handle well items' visibility,

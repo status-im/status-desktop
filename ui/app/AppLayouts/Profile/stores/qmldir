@@ -6,3 +6,7 @@ DevicesStore 1.0 DevicesStore.qml
 ProfileSectionStore 1.0 ProfileSectionStore.qml
 WalletStore 1.0 WalletStore.qml
 ContactsStore 1.0 ContactsStore.qml
+AdvancedStore 1.0 AdvancedStore.qml
+MessagingStore 1.0 MessagingStore.qml
+PrivacyStore 1.0 PrivacyStore.qml
+EnsUsernamesStore 1.0 EnsUsernamesStore.qml

@@ -17,11 +17,12 @@ import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Profile.popups 1.0
+import AppLayouts.Profile.stores 1.0
 
 SettingsContentBase {
     id: root
 
-    property var privacyStore
+    property PrivacyStore privacyStore
 
     readonly property bool biometricsEnabled: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
 

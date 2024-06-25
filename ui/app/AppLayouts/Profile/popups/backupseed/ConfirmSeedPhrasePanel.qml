@@ -9,12 +9,14 @@ import StatusQ.Controls 0.1
 import shared.panels 1.0
 import utils 1.0
 
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 BackupSeedStepBase {
     id: root
 
     property var seedPhrase: []
     property bool hideSeed: true
-    property var privacyStore
+    property ProfileStores.PrivacyStore privacyStore
 
     titleText: qsTr("Write down your 12-word seed phrase to keep offline")
 

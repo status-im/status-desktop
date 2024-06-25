@@ -1,7 +1,9 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
+import AppLayouts.stores 1.0 as AppLayoutStores
 import AppLayouts.Communities.popups 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 import utils 1.0
 
 import Storybook 1.0
@@ -106,7 +108,7 @@ SplitView {
                     name: "community-name"
                 })
 
-                rootStore: QtObject {
+                rootStore: AppLayoutStores.RootStore {
                     function communityHasMember(communityId, pubKey) {
                         return false
                     }
@@ -119,7 +121,7 @@ SplitView {
                     }
                 }
 
-                contactsStore: QtObject {
+                contactsStore: ProfileStores.ContactsStore {
                     readonly property ListModel myContactsModel: ListModel {
                         Component.onCompleted: {
                             for (let i = 0; i < 20; i++) {

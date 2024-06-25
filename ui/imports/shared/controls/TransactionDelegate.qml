@@ -9,9 +9,11 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import utils 1.0
 import shared 1.0
+import shared.stores 1.0 as SharedStores
 
 /*!
    \qmltype TransactionDelegate
@@ -46,8 +48,8 @@ StatusListItem {
     property bool showAllAccounts: false
     property bool displayValues: true
 
-    required property var rootStore
-    required property var walletRootStore
+    required property SharedStores.RootStore rootStore
+    required property WalletStores.RootStore walletRootStore
 
     readonly property bool isModelDataValid: modelData !== undefined && !!modelData
 

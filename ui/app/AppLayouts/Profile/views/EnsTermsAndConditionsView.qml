@@ -18,11 +18,13 @@ import StatusQ.Components 0.1
 
 import AppLayouts.Wallet.stores 1.0
 
+import "../stores"
+
 Item {
     id: root
 
-    property var ensUsernamesStore
-    property var contactsStore
+    property EnsUsernamesStore ensUsernamesStore
+    property ContactsStore contactsStore
     required property TransactionStore transactionStore
     property WalletAssetsStore walletAssetsStore
     property string username: ""

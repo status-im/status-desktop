@@ -26,8 +26,8 @@ Item {
     id: root
 
     property var token: ({})
-    property var currencyStore
-    property var networkConnectionStore
+    property CurrenciesStore currencyStore
+    property NetworkConnectionStore networkConnectionStore
     property var allNetworksModel
     property var networkFilters
     /*required*/ property string address: ""
@@ -35,7 +35,7 @@ Item {
 
     QtObject {
         id: d
-        property var marketValueStore : RootStore.marketValueStore
+        property TokenMarketValuesStore marketValueStore : RootStore.marketValueStore
         readonly property string symbol: !!root.token? root.token.symbol?? "" : ""
         property bool marketDetailsLoading: !!root.token? root.token.marketDetailsLoading?? false : false
         property bool tokenDetailsLoading: !!root.token? root.token.detailsLoading?? false: false
@@ -130,7 +130,7 @@ Item {
                     id: graphDetail
 
                     property int selectedGraphType: AssetsDetailView.GraphType.Price
-                    property var selectedStore: d.marketValueStore
+                    property TokenMarketValuesStore selectedStore: d.marketValueStore
 
                     function dataReady() {
                         return typeof selectedStore != "undefined"

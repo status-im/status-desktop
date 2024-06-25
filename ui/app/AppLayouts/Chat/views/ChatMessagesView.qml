@@ -18,6 +18,9 @@ import shared.status 1.0
 import shared.controls 1.0
 import shared.views.chat 1.0
 
+import AppLayouts.Chat.stores 1.0
+import AppLayouts.Profile.stores 1.0
+
 import "../controls"
 import "../panels"
 
@@ -25,10 +28,10 @@ Item {
     id: root
 
     property var chatContentModule
-    property var rootStore
-    property var messageStore
-    property var usersStore
-    property var contactsStore
+    property RootStore rootStore
+    property MessageStore messageStore
+    property UsersStore usersStore
+    property ContactsStore contactsStore
     property string channelEmoji
 
     property var emojiPopup

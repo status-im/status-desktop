@@ -73,7 +73,7 @@ QtObject {
     }
 
     property var stickersModuleInst: stickersModule
-    property var stickersStore: StickersStore {
+    property StickersStore stickersStore: StickersStore {
         stickersModule: stickersModuleInst
     }
 

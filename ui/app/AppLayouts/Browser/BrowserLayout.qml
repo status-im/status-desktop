@@ -15,7 +15,10 @@ import shared.controls 1.0
 import shared 1.0
 import shared.status 1.0
 import shared.popups.send 1.0
+import shared.stores 1.0
 import shared.stores.send 1.0
+
+import "../Wallet/stores"
 
 import "popups"
 import "controls"
@@ -29,12 +32,11 @@ import "stores"
 StatusSectionLayout {
     id: root
 
-    property var globalStore
     property var sendTransactionModal
     required property TransactionStore transactionStore
-    required property var assetsStore
-    required property var currencyStore
-    required property var tokensStore
+    required property TokensStore tokensStore
+    required property WalletAssetsStore walletAssetsStore
+    required property CurrenciesStore currencyStore
 
     function openUrlInNewTab(url) {
         var tab = _internal.addNewTab()
@@ -433,7 +435,7 @@ StatusSectionLayout {
         Component  {
             id: browserWalletMenu
             BrowserWalletMenu {
-                assetsStore: root.assetsStore
+                walletAssetsStore: root.walletAssetsStore
                 currencyStore: root.currencyStore
                 tokensStore: root.tokensStore
                 property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)

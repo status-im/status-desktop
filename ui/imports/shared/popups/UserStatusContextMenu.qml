@@ -11,10 +11,12 @@ import shared.controls.chat.menuItems 1.0
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
+import AppLayouts.stores 1.0
+
 StatusMenu {
     id: root
 
-    property var store
+    property RootStore store
 
     ProfileHeader {
         width: parent.width

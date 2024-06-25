@@ -15,6 +15,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.popups.keypairimport 1.0
 import shared.status 1.0
+import shared.stores 1.0 as SharedStores
 
 import "../stores"
 import "../controls"
@@ -31,9 +32,9 @@ SettingsContentBase {
 
     property var emojiPopup
     property ProfileSectionStore rootStore
-    property var walletStore: rootStore.walletStore
+    property WalletStore walletStore: rootStore.walletStore
     required property TokensStore tokensStore
-    property var networkConnectionStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     required property WalletAssetsStore assetsStore
     required property CollectiblesStore collectiblesStore
 

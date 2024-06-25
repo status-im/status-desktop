@@ -16,6 +16,8 @@ import shared.views 1.0
 import shared.controls.chat 1.0
 import shared.controls.chat.menuItems 1.0
 
+import AppLayouts.Profile.stores 1.0
+
 StatusListItem {
     id: root
 
@@ -23,7 +25,7 @@ StatusListItem {
     height: visible ? implicitHeight : 0
     title: root.name
 
-    property var contactsStore
+    property ContactsStore contactsStore
 
     property string name
     property string publicKey

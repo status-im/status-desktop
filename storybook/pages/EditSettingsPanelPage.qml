@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import mainui 1.0
 import shared.stores 1.0
+import AppLayouts.stores 1.0 as AppLayoutsStores
 import AppLayouts.Communities.panels 1.0
 
 import Storybook 1.0
@@ -14,7 +15,7 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: QtObject {}
+        rootStore: AppLayoutsStores.RootStore {}
         communityTokensStore: CommunityTokensStore {}
     }
 

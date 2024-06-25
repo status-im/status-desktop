@@ -8,6 +8,7 @@ import SortFilterProxyModel 0.2
 import AppLayouts.Wallet 1.0
 
 import utils 1.0
+import shared.stores 1.0
 import shared.stores.send 1.0
 import shared.controls 1.0
 
@@ -77,7 +78,7 @@ StatusDialog {
                                             popup.preSelectedSendType === Constants.SendType.ENSSetPubKey ||
                                             popup.preSelectedSendType === Constants.SendType.StickersBuy
 
-        readonly property var currencyStore: store.currencyStore
+        readonly property CurrenciesStore currencyStore: store.currencyStore
         readonly property int errorType: !amountToSendInput.input.valid && (!isCollectiblesTransfer) ? Constants.SendAmountExceedsBalance :
                                                                           (popup.bestRoutes && popup.bestRoutes.count === 0 &&
                                                                            !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?

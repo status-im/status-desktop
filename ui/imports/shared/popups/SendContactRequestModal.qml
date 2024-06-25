@@ -10,10 +10,12 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups.Dialog 0.1
 
+import AppLayouts.stores 1.0 as AppLayoutStores
+
 CommonContactDialog {
     id: root
 
-    property var rootStore
+    property AppLayoutStores.RootStore rootStore
 
     property string labelText: qsTr("Why should they accept your contact request?")
     property string challengeText: qsTr("Write a short message telling them who you are...")

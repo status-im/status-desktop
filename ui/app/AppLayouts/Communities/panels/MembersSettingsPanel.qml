@@ -4,13 +4,14 @@ import QtQuick.Layouts 1.15
 import StatusQ.Controls 0.1
 import utils 1.0
 
+import AppLayouts.Chat.stores 1.0
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.popups 1.0
 
 SettingsPage {
     id: root
 
-    property var rootStore
+    property RootStore rootStore
     property var membersModel
     property var bannedMembersModel
     property var pendingMemberRequestsModel

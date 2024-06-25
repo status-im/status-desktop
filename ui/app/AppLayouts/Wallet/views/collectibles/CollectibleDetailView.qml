@@ -10,13 +10,16 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.stores 1.0
 
 import utils 1.0
 import shared.controls 1.0
 import shared.views 1.0
 import shared.popups 1.0
+import shared.stores 1.0 as SharedStores
 
-import "../../stores"
+import AppLayouts.Wallet.stores 1.0
+
 import "../../controls"
 
 Item {
@@ -24,9 +27,9 @@ Item {
 
     signal launchTransactionDetail(string txID)
 
-    required property var rootStore
-    required property var walletRootStore
-    required property var communitiesStore
+    required property SharedStores.RootStore rootStore
+    required property RootStore walletRootStore
+    required property CommunitiesStore communitiesStore
 
     required property var collectible
     property var activityModel

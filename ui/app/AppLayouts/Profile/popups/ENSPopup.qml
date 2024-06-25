@@ -13,10 +13,12 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 
+import AppLayouts.Profile.stores 1.0
+
 StatusDialog {
     id: root
 
-    property var ensUsernamesStore
+    property EnsUsernamesStore ensUsernamesStore
 
     title: qsTr("Primary username")
     standardButtons: Dialog.ApplyRole
