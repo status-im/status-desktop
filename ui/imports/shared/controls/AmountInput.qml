@@ -42,8 +42,8 @@ Input {
         const amountNumber = SQUtils.AmountsArithmetic.toNumber(
                                amount, multiplierIndex)
 
-        root.text = LocaleUtils.numberToLocaleString(amountNumber, -1,
-                                                     root.locale)
+        const precision = LocaleUtils.fractionalPartLength(amountNumber)
+        root.text = LocaleUtils.numberToLocaleString(amountNumber, precision, root.locale)
     }
 
     onTextChanged: d.validate()
