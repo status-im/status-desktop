@@ -27,17 +27,14 @@ StatusDialog {
     objectName: "swapModal"
 
     implicitWidth: 556
-    topPadding: 0
-    bottomPadding: Style.current.xlPadding
-    leftPadding: Style.current.xlPadding
-    rightPadding: Style.current.xlPadding
+    padding: 0
     backgroundColor: Theme.palette.baseColor3
 
     QtObject {
         id: d
-         property var debounceFetchSuggestedRoutes: Backpressure.debounce(root, 1000, function() {
-             root.swapAdaptor.fetchSuggestedRoutes(payPanel.rawValue)
-         })
+        property var debounceFetchSuggestedRoutes: Backpressure.debounce(root, 1000, function() {
+            root.swapAdaptor.fetchSuggestedRoutes(payPanel.rawValue)
+        })
 
         function fetchSuggestedRoutes() {
             if (payPanel.valueValid && root.swapInputParamsForm.isFormFilledCorrectly()) {
@@ -88,176 +85,187 @@ StatusDialog {
         }
     }
 
-    contentItem: ColumnLayout {
-        spacing: Style.current.padding
-        clip: true
+    StatusScrollView {
+        anchors.fill: parent
+        contentWidth: availableWidth
+        topPadding: 0
+        bottomPadding: Style.current.xlPadding
 
-        // without this Column, the whole popup resizing when the network selector popup is clicked
-        Column {
-            Layout.fillWidth: true
-            spacing: 0
-            RowLayout {
-                width: parent.width
-                spacing: 12
-                HeaderTitleText {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                    text: qsTr("Swap")
-                }
-                StatusBaseText {
-                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                    text: qsTr("On:")
-                    color: Theme.palette.baseColor1
-                    font.pixelSize: 13
-                    lineHeight: 38
-                    lineHeightMode: Text.FixedHeight
-                    verticalAlignment: Text.AlignVCenter
-                }
-                NetworkFilter {
-                    id: networkFilter
-                    objectName: "networkFilter"
-                    Layout.alignment: Qt.AlignVCenter
-                    multiSelection: false
-                    showSelectionIndicator: false
-                    showTitle: false
-                    flatNetworks: root.swapAdaptor.filteredFlatNetworksModel
-                    selection: [root.swapInputParamsForm.selectedNetworkChainId]
-                    onSelectionChanged: {
-                        if (root.swapInputParamsForm.selectedNetworkChainId !== selection[0]) {
-                            root.swapInputParamsForm.selectedNetworkChainId = selection[0]
+        ColumnLayout {
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.halfPadding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.halfPadding
+            spacing: Style.current.padding
+            clip: true
+
+            // without this Column, the whole popup resizing when the network selector popup is clicked
+            Column {
+                Layout.fillWidth: true
+                spacing: 0
+                RowLayout {
+                    width: parent.width
+                    spacing: 12
+                    HeaderTitleText {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                        text: qsTr("Swap")
+                    }
+                    StatusBaseText {
+                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                        text: qsTr("On:")
+                        color: Theme.palette.baseColor1
+                        font.pixelSize: 13
+                        lineHeight: 38
+                        lineHeightMode: Text.FixedHeight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    NetworkFilter {
+                        id: networkFilter
+                        objectName: "networkFilter"
+                        Layout.alignment: Qt.AlignVCenter
+                        multiSelection: false
+                        showSelectionIndicator: false
+                        showTitle: false
+                        flatNetworks: root.swapAdaptor.filteredFlatNetworksModel
+                        selection: [root.swapInputParamsForm.selectedNetworkChainId]
+                        onSelectionChanged: {
+                            if (root.swapInputParamsForm.selectedNetworkChainId !== selection[0]) {
+                                root.swapInputParamsForm.selectedNetworkChainId = selection[0]
+                            }
                         }
                     }
                 }
             }
-        }
 
-        Item {
-            Layout.fillWidth: true
-            Layout.topMargin: 2
-            Layout.preferredHeight: payPanel.height + receivePanel.height + 4
+            Item {
+                Layout.fillWidth: true
+                Layout.margins: 2
+                Layout.preferredHeight: payPanel.height + receivePanel.height + 4
 
-            SwapInputPanel {
-                id: payPanel
-                objectName: "payPanel"
+                SwapInputPanel {
+                    id: payPanel
+                    objectName: "payPanel"
 
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    top: parent.top
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        top: parent.top
+                    }
+
+                    currencyStore: root.swapAdaptor.currencyStore
+                    flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
+                    processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
+
+                    tokenKey: root.swapInputParamsForm.fromTokensKey
+                    tokenAmount: root.swapInputParamsForm.fromTokenAmount
+
+                    selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+                    selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
+                    nonInteractiveTokensKey: receivePanel.selectedHoldingId
+
+                    swapSide: SwapInputPanel.SwapSide.Pay
+                    swapExchangeButtonWidth: swapExchangeButton.width
+
+                    onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
+                    onValueChanged: {
+                        if(root.swapInputParamsForm.fromTokensKey === selectedHoldingId) {
+                            root.swapInputParamsForm.fromTokenAmount = !tokenAmount && value === 0 ? "" : value.toLocaleString(locale, 'f', -128)
+                        }
+                    }
+                    onValueValidChanged: d.fetchSuggestedRoutes()
                 }
 
-                currencyStore: root.swapAdaptor.currencyStore
-                flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
-                processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
+                SwapInputPanel {
+                    id: receivePanel
+                    objectName: "receivePanel"
 
-                tokenKey: root.swapInputParamsForm.fromTokensKey
-                tokenAmount: root.swapInputParamsForm.fromTokenAmount
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        bottom: parent.bottom
+                    }
 
-                selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-                selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
-                nonInteractiveTokensKey: receivePanel.selectedHoldingId
+                    currencyStore: root.swapAdaptor.currencyStore
+                    flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
+                    processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
 
-                swapSide: SwapInputPanel.SwapSide.Pay
-                swapExchangeButtonWidth: swapExchangeButton.width
+                    tokenKey: root.swapInputParamsForm.toTokenKey
+                    tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
 
-                onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
-                onValueChanged: {
-                    if(root.swapInputParamsForm.fromTokensKey === selectedHoldingId) {
-                        root.swapInputParamsForm.fromTokenAmount = !tokenAmount && value === 0 ? "" : value.toLocaleString(locale, 'f', -128)
+                    selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+                    selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
+                    nonInteractiveTokensKey: payPanel.selectedHoldingId
+
+                    swapSide: SwapInputPanel.SwapSide.Receive
+                    swapExchangeButtonWidth: swapExchangeButton.width
+
+                    mainInputLoading: root.swapAdaptor.swapProposalLoading
+                    bottomTextLoading: root.swapAdaptor.swapProposalLoading
+
+                    onSelectedHoldingIdChanged: root.swapInputParamsForm.toTokenKey = selectedHoldingId
+
+                    /* TODO: keep this input as disabled until the work for adding a param to handle to
+                    and from tokens inputed is supported by backend under
+                    https://github.com/status-im/status-desktop/issues/15095 */
+                    interactive: false
+                }
+
+                SwapExchangeButton {
+                    id: swapExchangeButton
+                    objectName: "swapExchangeButton"
+                    anchors.centerIn: parent
+                    onClicked: {
+                        const tempPayToken = root.swapInputParamsForm.fromTokensKey
+                        const tempPayAmount = root.swapInputParamsForm.fromTokenAmount
+                        root.swapInputParamsForm.fromTokensKey = root.swapInputParamsForm.toTokenKey
+                        root.swapInputParamsForm.fromTokenAmount = !!root.swapAdaptor.swapOutputData.toTokenAmount ? root.swapAdaptor.swapOutputData.toTokenAmount : root.swapInputParamsForm.toTokenAmount
+                        root.swapInputParamsForm.toTokenKey = tempPayToken
+                        root.swapInputParamsForm.toTokenAmount = tempPayAmount
                     }
                 }
-                onValueValidChanged: d.fetchSuggestedRoutes()
             }
 
-            SwapInputPanel {
-                id: receivePanel
-                objectName: "receivePanel"
-
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    bottom: parent.bottom
-                }
-
-                currencyStore: root.swapAdaptor.currencyStore
-                flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
-                processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
-
-                tokenKey: root.swapInputParamsForm.toTokenKey
-                tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
-
-                selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-                selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
-                nonInteractiveTokensKey: payPanel.selectedHoldingId
-
-                swapSide: SwapInputPanel.SwapSide.Receive
-                swapExchangeButtonWidth: swapExchangeButton.width
-
-                mainInputLoading: root.swapAdaptor.swapProposalLoading
-                bottomTextLoading: root.swapAdaptor.swapProposalLoading
-
-                onSelectedHoldingIdChanged: root.swapInputParamsForm.toTokenKey = selectedHoldingId
-
-                /* TODO: keep this input as disabled until the work for adding a param to handle to
-                   and from tokens inputed is supported by backend under
-                   https://github.com/status-im/status-desktop/issues/15095 */
-                interactive: false
-            }
-
-            SwapExchangeButton {
-                id: swapExchangeButton
-                objectName: "swapExchangeButton"
-                anchors.centerIn: parent
+            /* TODO: remove! Needed only till sign after approval is implemented under
+               https://github.com/status-im/status-desktop/issues/14833 */
+            StatusButton {
+                text: "Final Swap after Approval"
+                visible: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.swapOutputData.approvalNeeded
                 onClicked: {
-                    const tempPayToken = root.swapInputParamsForm.fromTokensKey
-                    const tempPayAmount = root.swapInputParamsForm.fromTokenAmount
-                    root.swapInputParamsForm.fromTokensKey = root.swapInputParamsForm.toTokenKey
-                    root.swapInputParamsForm.fromTokenAmount = !!root.swapAdaptor.swapOutputData.toTokenAmount ? root.swapAdaptor.swapOutputData.toTokenAmount : root.swapInputParamsForm.toTokenAmount
-                    root.swapInputParamsForm.toTokenKey = tempPayToken
-                    root.swapInputParamsForm.toTokenAmount = tempPayAmount
+                    swapAdaptor.sendSwapTx()
+                    close()
                 }
             }
-        }
 
-        /* TODO: remove! Needed only till sign after approval is implemented under
-           https://github.com/status-im/status-desktop/issues/14833 */
-        StatusButton {
-            text: "Final Swap after Approval"
-            visible: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.swapOutputData.approvalNeeded
-            onClicked: {
-                swapAdaptor.sendSwapTx()
-                close()
-            }
-        }
-
-        EditSlippagePanel {
-            id: editSlippagePanel
-            objectName: "editSlippagePanel"
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            visible: editSlippageButton.checked
-            selectedToToken: root.swapAdaptor.toToken
-            toTokenAmount: root.swapAdaptor.swapOutputData.toTokenAmount
-            loading: root.swapAdaptor.swapProposalLoading
-            onSlippageValueChanged: {
-                root.swapInputParamsForm.selectedSlippage = slippageValue
-            }
-        }
-
-        ErrorTag {
-            objectName: "errorTag"
-            visible: root.swapAdaptor.swapOutputData.hasError || payPanel.amountEnteredGreaterThanBalance
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Style.current.smallPadding
-            text: {
-                if (payPanel.amountEnteredGreaterThanBalance)   {
-                    return qsTr("Insufficient funds for swap")
+            EditSlippagePanel {
+                id: editSlippagePanel
+                objectName: "editSlippagePanel"
+                Layout.fillWidth: true
+                Layout.topMargin: Style.current.padding
+                visible: editSlippageButton.checked
+                selectedToToken: root.swapAdaptor.toToken
+                toTokenAmount: root.swapAdaptor.swapOutputData.toTokenAmount
+                loading: root.swapAdaptor.swapProposalLoading
+                onSlippageValueChanged: {
+                    root.swapInputParamsForm.selectedSlippage = slippageValue
                 }
-                return qsTr("An error has occured, please try again")
             }
-            buttonText: qsTr("Buy crypto")
-            buttonVisible: payPanel.amountEnteredGreaterThanBalance
-            onButtonClicked: Global.openBuyCryptoModalRequested()
+
+            ErrorTag {
+                objectName: "errorTag"
+                visible: root.swapAdaptor.swapOutputData.hasError || payPanel.amountEnteredGreaterThanBalance
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: Style.current.smallPadding
+                text: {
+                    if (payPanel.amountEnteredGreaterThanBalance)   {
+                        return qsTr("Insufficient funds for swap")
+                    }
+                    return qsTr("An error has occured, please try again")
+                }
+                buttonText: qsTr("Buy crypto")
+                buttonVisible: payPanel.amountEnteredGreaterThanBalance
+                onButtonClicked: Global.openBuyCryptoModalRequested()
+            }
         }
     }
 
@@ -272,7 +280,6 @@ StatusDialog {
                     objectName: "maxSlippageText"
                     text: qsTr("Max slippage:")
                     color: Theme.palette.directColor5
-                    font.pixelSize: 15
                     font.weight: Font.Medium
                 }
                 RowLayout {
@@ -280,7 +287,6 @@ StatusDialog {
                         objectName: "maxSlippageValue"
                         text: "%1%".arg(LocaleUtils.numberToLocaleString(root.swapInputParamsForm.selectedSlippage))
                         color: Theme.palette.directColor4
-                        font.pixelSize: 15
                         font.weight: Font.Medium
                     }
                     StatusFlatButton {
