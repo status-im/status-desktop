@@ -56,18 +56,13 @@ Item {
     readonly property var tokenSelectorAdaptor: TokenSelectorViewAdaptor {
         assetsModel: swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
         flatNetworksModel: swapStore.flatNetworks
-        currentCurrency: swapAdaptor.currencyStore
+        currentCurrency: swapAdaptor.currencyStore.currentCurrency
 
         enabledChainIds: !!root.swapFormData && root.swapFormData.selectedNetworkChainId !== - 1 ? [root.swapFormData.selectedNetworkChainId] : []
         accountAddress: !!root.swapFormData && root.swapFormData.selectedAccountAddress
     }
 
-    property SwapInputParamsForm swapFormData: null
-
-    Component {
-        id: swapFormDataComponent
-        SwapInputParamsForm { }
-    }
+    property SwapInputParamsForm swapFormData: SwapInputParamsForm { }
 
     Component {
         id: componentUnderTest
@@ -92,7 +87,6 @@ Item {
         // helper functions -------------------------------------------------------------
 
         function init() {
-            root.swapFormData = createTemporaryObject(swapFormDataComponent, root)
             swapAdaptor.swapFormData = root.swapFormData
             controlUnderTest = createTemporaryObject(componentUnderTest, root, { swapInputParamsForm: root.swapFormData})
         }
@@ -213,7 +207,6 @@ Item {
         }
 
         function test_floating_header_list_items() {
-            skip("Randomly failing")
             // Launch popup and account selection modal
             launchAndVerfyModal()
             const accountsModalHeader = getAndVerifyAccountsModalHeader()
@@ -221,6 +214,7 @@ Item {
 
             const comboBoxList = findChild(controlUnderTest, "accountSelectorList")
             verify(!!comboBoxList)
+            waitForRendering(comboBoxList)
 
             for(let i =0; i< comboBoxList.model.count; i++) {
                 let delegateUnderTest = comboBoxList.itemAtIndex(i)
@@ -515,7 +509,6 @@ Item {
         }
 
         function test_modal_swap_proposal_setup() {
-            skip("Randomly failing")
             root.swapAdaptor.reset()
 
             // Launch popup
@@ -610,7 +603,11 @@ Item {
             verify(root.swapAdaptor.validSwapProposalReceived)
             verify(!root.swapAdaptor.swapProposalLoading)
             compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
-            compare(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals).toString())
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount,
+                    SQUtils.AmountsArithmetic.div(
+                        SQUtils.AmountsArithmetic.fromString(txRoutes.amountToReceive),
+                        SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.toToken.decimals)
+                        ).toString())
 
             // calculation needed for total fees
             let gasTimeEstimate = txRoutes.gasTimeEstimate
@@ -633,7 +630,9 @@ Item {
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
             compare(receivePanel.value, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
-            compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapAdaptor.toToken.decimals).toString())
+            compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(
+                        LocaleUtils.numberFromLocaleString(root.swapAdaptor.swapOutputData.toTokenAmount, Qt.locale()),
+                        root.swapAdaptor.toToken.decimals).toString())
 
             // edit some params to retry swap
             root.swapFormData.fromTokenAmount = "0.012"
@@ -653,7 +652,9 @@ Item {
             verify(root.swapAdaptor.validSwapProposalReceived)
             verify(!root.swapAdaptor.swapProposalLoading)
             compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
-            compare(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapStore.getWei2Eth(txRoutes2.amountToReceive, root.swapAdaptor.toToken.decimals).toString())
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, SQUtils.AmountsArithmetic.div(
+                        SQUtils.AmountsArithmetic.fromString(txRoutes.amountToReceive),
+                        SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.toToken.decimals)).toString())
 
             // calculation needed for total fees
             gasTimeEstimate = txRoutes2.gasTimeEstimate
@@ -676,7 +677,9 @@ Item {
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
             compare(receivePanel.value, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
-            compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(root.swapAdaptor.swapOutputData.toTokenAmount, root.swapAdaptor.toToken.decimals).toString())
+            compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(
+                        LocaleUtils.numberFromLocaleString(root.swapAdaptor.swapOutputData.toTokenAmount, Qt.locale()),
+                        root.swapAdaptor.toToken.decimals).toString())
         }
 
         function test_modal_pay_input_default() {
