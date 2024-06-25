@@ -87,7 +87,7 @@ def test_create_edit_remove_community_category(main_screen: MainWindow, category
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
 def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow):
     with step('Choose community user is not owner of'):
-        community_screen = main_screen.left_panel.select_community('Super community')
+        community_screen = main_screen.left_panel.select_community('Community with 2 users')
 
     with step('Verify that member cannot add category'):
         with step('Verify that create channel or category button is not present'):
