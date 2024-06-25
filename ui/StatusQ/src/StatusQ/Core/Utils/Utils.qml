@@ -227,7 +227,7 @@ QtObject {
     }
 
     function elideAndFormatWalletAddress(address) {
-        return elideText(address, 5, 3).replace(
+        return elideText(address, 6, 4).replace(
                     "0x", "0" + String.fromCodePoint(0x00D7))
     }
 

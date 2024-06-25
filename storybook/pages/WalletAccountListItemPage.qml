@@ -20,7 +20,7 @@ SplitView {
             emoji: emojiField.text
             walletColor: walletColorField.text
             currencyBalance: QtObject {
-                readonly property double amount: parseInt(currencyBalanceField.text)
+                readonly property double amount: parseFloat(currencyBalanceField.text)
                 readonly property string symbol: "USD"
                 readonly property int displayDecimals: 4
                 readonly property bool stripTrailingZeroes: false
