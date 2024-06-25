@@ -1,4 +1,4 @@
-import json, strutils, stint, json_serialization, stew/shims/strformat, sugar, sequtils
+import json, strutils, stint, json_serialization, stew/shims/strformat
 
 import
   web3/ethtypes
@@ -334,7 +334,7 @@ proc convertToTransactionPathsDto*(jsonObj: JsonNode): seq[TransactionPathDto] =
 
 proc convertToTransactionPathsDto*(paths: string): seq[TransactionPathDto] =
   return paths.parseJson.convertToTransactionPathsDto()
-  
+
 type
   FeesDto* = ref object
     totalFeesInEth*: float
@@ -384,19 +384,3 @@ type
     amountToReceive*: UInt256
     toNetworks*: seq[SendToNetwork]
 
-proc `$`*(self: SuggestedRoutesDto): string =
-  return fmt"""SuggestedRoutesDto(
-    best:{self.best},
-    rawBest:{self.rawBest},
-    gasTimeEstimate:{self.gasTimeEstimate},
-    amountToReceive:{self.amountToReceive},
-    toNetworks:{self.toNetworks},
-  )"""
-
-proc convertToSuggestedRoutesDto*(jsonObj: JsonNode): SuggestedRoutesDto =
-  result = SuggestedRoutesDto()
-  result.rawBest = $jsonObj["suggestedRoutes"]["best"]
-  result.best = result.rawBest.convertToTransactionPathsDto()
-  result.gasTimeEstimate = jsonObj["suggestedRoutes"]["gasTimeEstimate"].convertToFeesDto()
-  result.amountToReceive = stint.u256(jsonObj["suggestedRoutes"]["amountToReceive"].getStr)
-  result.toNetworks = jsonObj["suggestedRoutes"]["toNetworks"].getElems().map(x => x.convertSendToNetwork())

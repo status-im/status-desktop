@@ -1,7 +1,9 @@
-import json, options
+import json, options, sequtils, sugar, chronicles
 
 import base
 import signal_type
+
+import app_service/service/transaction/dtoV2
 
 const SignTransactionsEventType* = "sing-transactions"
 
@@ -17,20 +19,20 @@ type WalletSignal* = ref object of Signal
   message*: string
   requestId*: Option[int]
   txHashes*: seq[string]
+  uuid*: string
+  bestRoute*: seq[TransactionPathDtoV2]
+  error*: string
+  errorCode*: string
 
-proc fromEvent*(T: type WalletSignal, jsonSignal: JsonNode): WalletSignal =
+proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNode): WalletSignal =
   result = WalletSignal()
   result.signalType = SignalType.Wallet
-  result.content = $jsonSignal
   let event = jsonSignal["event"]
-  if event.kind != JNull:
+  if event.kind == JNull:
+    return
+  if signalType == SignalType.Wallet:
+    result.content = $jsonSignal
     result.eventType = event["type"].getStr
-    if result.eventType == SignTransactionsEventType:
-      if event["transactions"].kind != JArray:
-        return
-      for tx in event["transactions"]:
-        result.txHashes.add(tx.getStr)
-      return
     result.blockNumber = event{"blockNumber"}.getInt
     result.erc20 = event{"erc20"}.getBool
     result.accounts = @[]
@@ -43,3 +45,23 @@ proc fromEvent*(T: type WalletSignal, jsonSignal: JsonNode): WalletSignal =
     const requestIdName = "requestId"
     if event.contains(requestIdName):
       result.requestId = some(event[requestIdName].getInt())
+    return
+  if signalType == SignalType.WalletSignTransactions:
+    if event.kind != JArray:
+      return
+    for tx in event:
+      result.txHashes.add(tx.getStr)
+    return
+  if signalType == SignalType.WalletSuggestedRoutes:
+    try:
+      if event.contains("Uuid"):
+        result.uuid = event["Uuid"].getStr()
+      if event.contains("Best"):
+        result.bestRoute = event["Best"].getElems().map(x => x.toTransactionPathDtoV2())
+      if event.contains("details"):
+        result.error = event["details"].getStr
+      if event.contains("code"):
+        result.errorCode = event["code"].getStr
+    except:
+      error "Error parsing best route"
+    return
