@@ -13,5 +13,5 @@ def waitFor(condition, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     return True
 
 
-def isFrozen(timeout_msec):
-    return driver.currentApplicationContext().isFrozen(timeout_msec)
+def isFrozen(timeout_sec):
+    return driver.currentApplicationContext().isFrozen(timeout_sec)
