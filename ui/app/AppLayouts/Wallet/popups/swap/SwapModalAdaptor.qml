@@ -107,7 +107,7 @@ QObject {
         }
 
         function processAccountBalance(address) {
-            if (!root.swapFormData.fromTokensKey) {
+            if (!root.swapFormData.fromTokensKey || !root.fromToken) {
                 return null
             }
 

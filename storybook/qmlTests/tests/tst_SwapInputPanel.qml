@@ -348,8 +348,9 @@ Item {
                 tryCompare(amountToSendInput.input, "text", modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValueAsString)
                 compare(controlUnderTest.value, maxTagButton.maxSafeValue)
                 verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
+                const marketPrice = !!amountToSendInput.selectedHolding ? amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount : 0
                 compare(bottomItemText.text, d.adaptor.formatCurrencyAmount(
-                            maxTagButton.maxSafeValue * amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount,
+                            maxTagButton.maxSafeValue * marketPrice,
                             d.adaptor.currencyStore.currentCurrency))
 
                 amountToSendInput.input.input.edit.clear()
@@ -402,8 +403,9 @@ Item {
                 waitForItemPolished(controlUnderTest)
 
                 compare(amountToSendInput.input.text, "5.42")
+                const marketPrice = !!amountToSendInput.selectedHolding ? amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount : 0
                 tryCompare(bottomItemText, "text", d.adaptor.formatCurrencyAmount(
-                               numberTested * amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount,
+                               numberTested * marketPrice,
                                d.adaptor.currencyStore.currentCurrency))
                 compare(controlUnderTest.value, numberTested)
                 compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
