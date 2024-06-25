@@ -66,9 +66,10 @@ QtObject {
         walletSectionSendInst.authenticateAndTransfer(uuid)
     }
 
-    function suggestedRoutes(amount) {
-        const value = AmountsArithmetic.fromNumber(amount)
-        walletSectionSendInst.suggestedRoutes(value.toFixed())
+    function suggestedRoutes(amountIn, amountOut = "0", extraParamsJson = "") {
+        const valueIn = AmountsArithmetic.fromNumber(amountIn)
+        const valueOut = AmountsArithmetic.fromNumber(amountOut)
+        walletSectionSendInst.suggestedRoutes(valueIn.toFixed(), valueOut.toFixed(), extraParamsJson)
     }
 
     function resolveENS(value) {

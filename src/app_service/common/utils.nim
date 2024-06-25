@@ -1,4 +1,5 @@
-import json, times, strutils, sugar, os, re, chronicles
+import json, times, stint, strutils, sugar, os, re, chronicles
+
 import nimcrypto
 import account_constants
 
@@ -7,12 +8,12 @@ import ../../constants as main_constants
 const STATUS_DOMAIN* = ".stateofus.eth"
 const ETH_DOMAIN* = ".eth"
 
-proc arrayContains*[T](arr: seq[T], value: T): bool = 
+proc arrayContains*[T](arr: seq[T], value: T): bool =
   return arr.any(x => x == value)
 
 proc hashPassword*(password: string, lower: bool = true): string =
   let hashed = "0x" & $keccak_256.digest(password)
-  
+
   if lower:
     return hashed.toLowerAscii()
 
@@ -71,7 +72,7 @@ proc validateLink*(link: string): bool =
 proc isPathOutOfTheDefaultStatusDerivationTree*(path: string): bool =
   if not path.startsWith(account_constants.PATH_WALLET_ROOT&"/") or
     path.count("'") != 3 or
-    path.count("/") != 5: 
+    path.count("/") != 5:
       return true
   return false
 
@@ -82,3 +83,11 @@ proc intersectSeqs*[T](seq1, seq2: seq[T]): seq[T] =
   for item in seq1:
     if item in seq2:
       result.add(item)
+
+proc stringToUint256*(value: string): Uint256 =
+  var parsedValue = stint.u256(0)
+  try:
+    parsedValue = value.parse(Uint256)
+  except Exception as e:
+    discard
+  return parsedValue

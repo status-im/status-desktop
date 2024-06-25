@@ -1,4 +1,4 @@
-import sugar, sequtils, stint
+import Tables, sugar, sequtils
 import uuids, chronicles, options
 import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
@@ -71,10 +71,8 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
     self.delegate.suggestedRoutesReady(SuggestedRoutesArgs(e).suggestedRoutes)
 
-  self.events.on(SignalType.Wallet.event) do(e:Args):
+  self.events.on(SignalType.WalletSignTransactions.event) do(e:Args):
     var data = WalletSignal(e)
-    if data.eventType != SignTransactionsEventType:
-      return
     self.delegate.prepareSignaturesForTransactions(data.txHashes)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
@@ -109,10 +107,20 @@ proc authenticate*(self: Controller, keyUid = "") =
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-proc suggestedRoutes*(self: Controller, accountFrom: string, accountTo: string, amount: Uint256, token: string, toToken: string,
-  disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string) =
-  self.transactionService.suggestedRoutes(accountFrom, accountTo, amount, token, toToken, disabledFromChainIDs,
-    disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
+proc suggestedRoutes*(self: Controller,
+    sendType: SendType,
+    accountFrom: string,
+    accountTo: string,
+    token: string,
+    amountIn: string,
+    toToken: string = "",
+    amountOut: string = "",
+    disabledFromChainIDs: seq[int] = @[],
+    disabledToChainIDs: seq[int] = @[],
+    lockedInAmounts: Table[string, string] = initTable[string, string](),
+    extraParamsTable: Table[string, string] = initTable[string, string]()) =
+  self.transactionService.suggestedRoutes(sendType, accountFrom, accountTo, token, amountIn, toToken, amountOut,
+    disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string, toAssetKey: string,
     uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,

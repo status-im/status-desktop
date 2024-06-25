@@ -205,12 +205,12 @@ QtObject:
         disbaledChains.add(item.getChainId())
     return disbaledChains
 
-  proc getRouteLockedChainIds*(self: NetworkModel): string =
-    var jsonObject = newJObject()
+  proc getRouteLockedChainIds*(self: NetworkModel): Table[string, string] =
+    var lockedChains: Table[string, string]
     for item in self.items:
       if item.getLocked():
-        jsonObject[$item.getChainId()] = %* ("0x" & item.getLockedAmount())
-    return $jsonObject
+        lockedChains[$item.getChainId()] = "0x" & item.getLockedAmount()
+    return lockedChains
 
   proc updateRoutePreferredChains*(self: NetworkModel, chainIds: string) =
     try:
@@ -232,12 +232,6 @@ QtObject:
     except:
       discard
 
-  proc getRoutePreferredNetworkChainIds*(self: NetworkModel): seq[int] =
-    var preferredChains: seq[int] = @[]
-    for item in self.items:
-      if item.getIsPreferred():
-        preferredChains.add(item.getChainId())
-    return preferredChains
 
   proc disableRouteUnpreferredChains*(self: NetworkModel) =
     for i in 0 ..< self.items.len:

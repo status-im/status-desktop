@@ -1,4 +1,4 @@
-import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, stew/shims/strformat, algorithm
+import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, algorithm, uuids, stew/shims/strformat
 
 import backend/collectibles as collectibles
 import backend/transactions as transactions
@@ -23,6 +23,7 @@ import app_service/service/settings/service as settings_service
 import app_service/service/eth/dto/transaction as transaction_data_dto
 import app_service/service/eth/dto/[coder, method_dto]
 import ./dto as transaction_dto
+import ./dtoV2
 import ./cryptoRampDto
 import app_service/service/eth/utils as eth_utils
 import app_service/common/conversion
@@ -128,6 +129,9 @@ QtObject:
     settingsService: settings_service.Service
     tokenService: token_service.Service
 
+  ## Forward declarations
+  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], error: string, errCode: string)
+
   proc delete*(self: Service) =
     self.QObject.delete
 
@@ -154,6 +158,10 @@ QtObject:
           self.events.emit(SIGNAL_HISTORY_NON_ARCHIVAL_NODE, Args())
         of transactions.EventFetchingHistoryError:
           self.events.emit(SIGNAL_HISTORY_ERROR, Args())
+
+    self.events.on(SignalType.WalletSuggestedRoutes.event) do(e:Args):
+      var data = WalletSignal(e)
+      self.suggestedRoutesV2Ready(data.uuid, data.bestRoute, data.error, data.errorCode)
 
     self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
       try:
@@ -561,46 +569,106 @@ QtObject:
     except Exception as e:
       error "Error getting suggested fees", msg = e.msg
 
-  proc suggestedRoutesReady*(self: Service, suggestedRoutes: string) {.slot.} =
-    var suggestedRoutesDto: SuggestedRoutesDto = SuggestedRoutesDto()
-    try:
-      let responseObj = suggestedRoutes.parseJson
-      suggestedRoutesDto = responseObj.convertToSuggestedRoutesDto()
-    except Exception as e:
-      error "error handling suggestedRoutesReady response", errDesription=e.msg
-    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutesDto))
+  proc convertToOldRoute(route: seq[TransactionPathDtoV2]): seq[TransactionPathDto] =
+    const
+      gweiDecimals = 9
+      ethDecimals = 18
+    for p in route:
+      var
+        fees = SuggestedFeesDto()
+        trPath = TransactionPathDto()
 
-  proc suggestedRoutes*(self: Service, accountFrom: string, accountTo: string, amount: Uint256, token: string, toToken: string,
-    disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string) =
-    var
-      tokenId: string
-      toTokenId: string
+      try:
+        # prepare fees
+        fees.gasPrice = 0
+        var value = conversion.wei2Eth(input = p.txBaseFee, decimals = gweiDecimals)
+        fees.baseFee = parseFloat(value)
+        value = conversion.wei2Eth(input = p.txPriorityFee, decimals = gweiDecimals)
+        fees.maxPriorityFeePerGas = parseFloat(value)
+        value = conversion.wei2Eth(input = p.suggestedLevelsForMaxFeesPerGas.low, decimals = gweiDecimals)
+        fees.maxFeePerGasL = parseFloat(value)
+        value = conversion.wei2Eth(input = p.suggestedLevelsForMaxFeesPerGas.medium, decimals = gweiDecimals)
+        fees.maxFeePerGasM = parseFloat(value)
+        value = conversion.wei2Eth(input = p.suggestedLevelsForMaxFeesPerGas.high, decimals = gweiDecimals)
+        fees.maxFeePerGasH = parseFloat(value)
+        value = conversion.wei2Eth(input = p.txL1Fee, decimals = gweiDecimals)
+        fees.l1GasFee = parseFloat(value)
+        fees.eip1559Enabled = true
 
-    if self.isCollectiblesTransfer(sendType):
-      tokenId = token
-    else:
-      let token = self.tokenService.getTokenBySymbolByTokensKey(token)
-      if token != nil:
-        tokenId = token.symbol
-      let toToken = self.tokenService.getTokenBySymbolByTokensKey(toToken)
-      if toToken != nil:
-        toTokenId = toToken.symbol
-    let arg = GetSuggestedRoutesTaskArg(
-      tptr: getSuggestedRoutesTask,
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "suggestedRoutesReady",
-      accountFrom: accountFrom,
-      accountTo: accountTo,
-      amount: amount,
-      token: tokenId,
-      toToken: toTokenId,
-      disabledFromChainIDs: disabledFromChainIDs,
-      disabledToChainIDs: disabledToChainIDs,
-      preferredChainIDs: preferredChainIDs,
-      sendType: sendType,
-      lockedInAmounts: lockedInAmounts
+        # prepare tx path
+        trPath.bridgeName = p.processorName
+        trPath.fromNetwork = p.fromChain
+        trPath.toNetwork = p.toChain
+        trPath.gasFees = fees
+        # trPath.cost = not in use for old approach in the desktop app
+        value = conversion.wei2Eth(input = p.txTokenFees, decimals = p.fromToken.decimals)
+        trPath.tokenFees = parseFloat(value)
+        value = conversion.wei2Eth(input = p.txBonderFees, decimals = p.fromToken.decimals)
+        trPath.bonderFees = value
+        trPath.tokenFees += parseFloat(value) # we add bonder fees to the token fees cause in the UI, atm, we show only token fees
+        trPath.maxAmountIn = stint.fromHex(UInt256, "0x0")
+        trPath.amountIn = p.amountIn
+        trPath.amountOut = p.amountOut
+        trPath.approvalRequired = p.approvalRequired
+        trPath.approvalAmountRequired = p.approvalAmountRequired
+        trPath.approvalContractAddress = p.approvalContractAddress
+        trPath.amountInLocked = p.amountInLocked
+        trPath.estimatedTime = p.estimatedTime
+        trPath.gasAmount = p.txGasAmount
+
+        value = conversion.wei2Eth(p.suggestedLevelsForMaxFeesPerGas.medium,  decimals = ethDecimals)
+        trPath.approvalGasFees = parseFloat(value) * float64(p.approvalGasAmount)
+        value = conversion.wei2Eth(p.approvalL1Fee,  decimals = ethDecimals)
+        trPath.approvalGasFees += parseFloat(value)
+
+        trPath.isFirstSimpleTx = false
+        trPath.isFirstBridgeTx = false
+      except Exception as e:
+        error "Error converting to old path", msg = e.msg
+
+      # add tx path to the list
+      result.add(trPath)
+
+    result.sort(sortAsc[TransactionPathDto])
+
+  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], error: string, errCode: string) =
+    # TODO: refactor sending modal part of the app, but for now since we're integrating the router v2 just map params to the old dto
+
+    var oldRoute = convertToOldRoute(route)
+
+    let suggestedDto = SuggestedRoutesDto(
+      best: addFirstSimpleBridgeTxFlag(oldRoute),
+      gasTimeEstimate: getFeesTotal(oldRoute),
+      amountToReceive: getTotalAmountToReceive(oldRoute),
+      toNetworks: getToNetworksList(oldRoute),
     )
-    self.threadpool.start(arg)
+    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedDto))
+
+  proc suggestedRoutes*(self: Service,
+    sendType: SendType,
+    accountFrom: string,
+    accountTo: string,
+    token: string,
+    amountIn: string,
+    toToken: string = "",
+    amountOut: string = "",
+    disabledFromChainIDs: seq[int] = @[],
+    disabledToChainIDs: seq[int] = @[],
+    lockedInAmounts: Table[string, string] = initTable[string, string](),
+    extraParamsTable: Table[string, string] = initTable[string, string]()) =
+
+    let
+      bigAmountIn = common_utils.stringToUint256(amountIn)
+      bigAmountOut = common_utils.stringToUint256(amountOut)
+      amountInHex = "0x" & eth_utils.stripLeadingZeros(bigAmountIn.toHex)
+      amountOutHex = "0x" & eth_utils.stripLeadingZeros(bigAmountOut.toHex)
+
+    try:
+      let uuid = $genUUID()
+      let res = eth.suggestedRoutesV2Async(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
+        toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
+    except CatchableError as e:
+      error "suggestedRoutes", exception=e.msg
 
   proc onFetchCryptoServices*(self: Service, response: string) {.slot.} =
     let cryptoServices = parseJson(response){"result"}.getElems().map(x => x.toCryptoRampDto())

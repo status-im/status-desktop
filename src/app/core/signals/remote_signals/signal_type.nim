@@ -3,7 +3,10 @@
 type SignalType* {.pure.} = enum
   Message = "messages.new"
   MessageDelivered = "message.delivered"
+  ## Wallet Signals
   Wallet = "wallet"
+  WalletSignTransactions = "wallet.sign.transactions"
+  WalletSuggestedRoutes = "wallet.suggested.routes"
   NodeReady = "node.ready"
   NodeCrashed = "node.crashed"
   NodeStarted = "node.started"

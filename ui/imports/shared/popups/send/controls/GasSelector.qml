@@ -57,9 +57,9 @@ Item {
                     return fee
                 }
                 property double totalGasAmountL1Eth: {
-                    let maxFees = modelData.gasFees.maxFeePerGasM
-                    let gasPrice = modelData.gasFees.eip1559Enabled? maxFees : modelData.gasFees.gasPrice
-                    return root.getGasEthValue(gasPrice , modelData.gasFees.l1GasFee)
+                    const l1FeeInGWei = modelData.gasFees.l1GasFee
+                    const l1FeeInEth = globalUtils.wei2Eth(l1FeeInGWei, 9)
+                    return l1FeeInEth
                 }
 
                 property double totalGasAmountEth: {
