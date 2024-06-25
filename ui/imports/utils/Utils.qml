@@ -961,6 +961,8 @@ QtObject {
     }
 
     function getUrlStatus(url) {
-        return globalUtilsInst.isValidURL(url)
+        // TODO: Analyse and implement
+        // #15331
+        return true
     }
 }
