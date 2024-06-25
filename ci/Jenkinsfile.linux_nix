@@ -1,0 +1,119 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@linux-use-nix'
+
+/* Options section can't access functions in objects. */
+def isPRBuild = utils.isPRBuild()
+
+pipeline {
+  agent { label 'linux && x86_64 && nix-2.14' }
+
+  parameters {
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether release credentials are used.',
+      defaultValue: params.RELEASE ?: false
+    )
+    booleanParam(
+      name: 'INCLUDE_DEBUG_SYMBOLS',
+      description: 'Decides whether binaries are built with debug symbols.',
+      defaultValue: params.INCLUDE_DEBUG_SYMBOLS ?: false
+    )
+    choice(
+      name: 'VERBOSE',
+      description: 'Level of verbosity based on nimbus-build-system setup.',
+      choices: ['0', '1', '2']
+    )
+    string(
+      name: 'NIMFLAGS',
+      description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
+      defaultValue: '--colors:off'
+    )
+    booleanParam(
+      name: 'USE_MOCKED_KEYCARD_LIB',
+      description: 'Decides whether the mocked status-keycard-go library is built.',
+      defaultValue: false
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 25, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '1',
+    ))
+    /* Allows combined build to copy */
+    copyArtifactPermission('/status-desktop/*')
+    /* Abort old PR builds. */
+    disableConcurrentBuilds(
+      abortPrevious: isPRBuild
+    )
+  }
+
+  environment {
+    TARGET = "linux/${getArch()}"
+    /* Improve make performance */
+    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    /* Avoid weird bugs caused by stale cache. */
+    QML_DISABLE_DISK_CACHE = "true"
+    /* Control output the filename */
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch())}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch())}"
+  }
+
+  stages {
+    stage('Deps') {
+      steps { script {
+        nix.shell('make update --debug V=1', pure: true)
+        nix.shell('make deps --debug V=1', pure: true)
+      } }
+    }
+
+    stage('status-go') {
+      steps { script {
+        nix.shell('make status-go --debug V=1', pure: true)
+      } }
+    }
+
+    stage('Package') {
+      steps { script {
+        linux.bundle('--debug=b tgz-linux', 1, true)
+      } }
+    }
+
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps { script {
+            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_TARBALL)
+            jenkins.setBuildDesc(AppImage: env.PKG_URL)
+          } }
+        }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
+          } }
+        }
+      }
+    }
+  }
+
+  post {
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
+    // Windows workspace often becomes broken if stoped during checkout.
+    // Post cleanup will fail too.
+    // Use 'Wipe out repository and force clone' manual UI option to prevent it.
+    cleanup { cleanWs() }
+  }
+}
+
+def getArch() {
+  def tokens = Thread.currentThread().getName().split('/')
+  for (def arch in ['x86_64', 'aarch64']) {
+    if (tokens.contains(arch)) { return arch }
+  }
+}

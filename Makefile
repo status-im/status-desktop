@@ -569,16 +569,22 @@ endif
 
 nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
 
-_APPIMAGE_TOOL := appimagetool-x86_64.AppImage
-APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
+ifdef IN_NIX_SHELL
+APPIMAGE_TOOL := appimagetool
+else
+APPIMAGE_TOOL := tmp/linux/tools/appimagetool
+endif
 
+_APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 $(APPIMAGE_TOOL):
+ifndef IN_NIX_SHELL
 	echo -e "\033[92mFetching:\033[39m appimagetool"
 	rm -rf tmp/linux
 	mkdir -p tmp/linux/tools
 	wget -nv https://github.com/AppImage/AppImageKit/releases/download/continuous/$(_APPIMAGE_TOOL)
-	mv $(_APPIMAGE_TOOL) tmp/linux/tools/
+	mv $(_APPIMAGE_TOOL) tmp/linux/tools/appimagetool
 	chmod +x $(APPIMAGE_TOOL)
+endif
 
 STATUS_CLIENT_APPIMAGE ?= pkg/Status.AppImage
 STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
@@ -623,16 +629,22 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp bin/StatusQ/* tmp/linux/dist/usr/bin/StatusQ
 
 	# Libraries
+ifndef IN_NIX_SHELL
 	cp -r /usr/lib/x86_64-linux-gnu/nss tmp/linux/dist/usr/lib/
 	cp -P /usr/lib/x86_64-linux-gnu/libgst* tmp/linux/dist/usr/lib/
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
+endif
 	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
 	cp $(STATUSKEYCARDGO) tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
+
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs
+ifdef IN_NIX_SHELL
+	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/bin/nim_status_client
+endif
 
 	# Qt plugins
 	cp $(FCITX5_QT) tmp/linux/dist/usr/plugins/platforminputcontexts/
@@ -642,6 +654,10 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 
 	mkdir -p pkg
 	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
+ifdef IN_NIX_SHELL
+	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 $(STATUS_CLIENT_APPIMAGE)
+endif
+
 # if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature
 ifdef LINUX_GPG_PRIVATE_KEY_FILE
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_APPIMAGE)
