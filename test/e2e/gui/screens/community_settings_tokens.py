@@ -7,6 +7,7 @@ import driver
 from constants.community_settings import MintOwnerTokensElements
 from gui.components.sign_transaction_popup import SignTransactionPopup
 from gui.elements.button import Button
+from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_label import TextLabel
@@ -149,7 +150,7 @@ class EditOwnerTokenView(QObject):
         self._select_account_combobox = QObject(communities_names.editOwnerTokenView_CustomComboItem)
         self._select_network_filter = QObject(communities_names.editOwnerTokenView_netFilter_NetworkFilter)
         self._select_network_combobox = QObject(communities_names.editOwnerTokenView_comboBox_ComboBox)
-        self._mainnet_network_item = QObject(communities_names.mainnet_NetworkSelectItemDelegate)
+        self._mainnet_network_item = CheckBox(communities_names.mainnet_StatusRadioButton)
         self._mint_button = Button(communities_names.editOwnerTokenView_Mint_StatusButton)
         self._fees_text_object = TextLabel(communities_names.editOwnerTokenView_fees_StatusBaseText)
         self._crown_icon = QObject(communities_names.editOwnerTokenView_crown_icon_StatusIcon)
@@ -160,6 +161,7 @@ class EditOwnerTokenView(QObject):
         self._transferable_box = QObject(communities_names.editOwnerTokenView_transferableBox)
         self._destructible_box = QObject(communities_names.editOwnerTokenView_destructibleBox)
         self._edit_owner_token_text_object = TextLabel(communities_names.editOwnerTokenView_Owner_StatusBaseText)
+        self._fees_box = QObject(communities_names.editOwnerTokenView_Fees_FeesBox)
 
     @property
     @allure.step('Get fee title')
@@ -255,8 +257,8 @@ class EditOwnerTokenView(QObject):
 
     @allure.step('Select Mainnet network')
     def select_mainnet_network(self, attempts: int = 2):
-        if not self._select_network_filter.is_visible:
-            self._scroll.vertical_down_to(self._select_network_filter)
+        if not self._fees_box.is_visible:
+            self._scroll.vertical_down_to(self._fees_box)
         self._select_network_filter.click()
         try:
             self._mainnet_network_item.wait_until_appears()
