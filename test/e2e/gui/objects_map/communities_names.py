@@ -110,6 +110,10 @@ editOwnerTokenView_comboBox_ComboBox = {"container": editOwnerTokenView_netFilte
 mainnet_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 0, "objectName": "Mainnet", "type": "NetworkSelectItemDelegate", "visible": True}
 optimism_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 1, "objectName": "Optimism", "type": "NetworkSelectItemDelegate", "visible": True}
 arbitrum_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 2, "objectName": "Arbitrum", "type": "NetworkSelectItemDelegate", "visible": True}
+optimism_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionRadioButton_Optimism", "type": "StatusRadioButton", "visible": True}
+mainnet_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionRadioButton_Mainnet", "type": "StatusRadioButton", "visible": True}
+arbitrum_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionRadioButton_Arbitrum", "type": "StatusRadioButton", "visible": True}
+
 editOwnerTokenView_Mint_StatusButton = {"checkable": False, "container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "mintButton", "type": "StatusButton", "visible": True}
 editOwnerTokenView_FeeRow = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "FeeRow", "unnamed": 1, "visible": True}
 editOwnerTokenView_fees_StatusBaseText = {"container": editOwnerTokenView_FeeRow, "type": "StatusBaseText", "unnamed": 1, "visible": True}
@@ -122,6 +126,7 @@ editOwnerTokenView_remainingBox = {"container": mainWindow_editOwnerTokenView_Ed
 editOwnerTokenView_transferableBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "transferableBox", "type": "CustomPreviewBox", "visible": True}
 editOwnerTokenView_destructibleBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "destructibleBox", "type": "CustomPreviewBox", "visible": True}
 editOwnerTokenView_token_sale_icon_StatusIcon = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "token-sale-icon", "type": "StatusIcon", "visible": True}
+editOwnerTokenView_Fees_FeesBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "FeesBox", "unnamed": 1, "visible": True}
 
 # Minted tokens view
 mainWindow_MintedTokensView = {"container": mainWindow_StatusWindow, "type": "MintedTokensView", "unnamed": 1, "visible": True}
