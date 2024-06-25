@@ -113,6 +113,7 @@ QtObject {
         id: d
 
         readonly property var mainModuleInst: mainModule
+        readonly property var walletSectionSavedAddressesInst: walletSectionSavedAddresses
 
         readonly property Connections walletSectionSavedAddressesConnections: Connections{
             target: walletSectionSavedAddresses
@@ -284,7 +285,7 @@ QtObject {
             isTest: false,
         }
 
-        const jsonObj = root.walletSectionSavedAddressesInst.getSavedAddressAsJson(address)
+        const jsonObj = d.walletSectionSavedAddressesInst.getSavedAddressAsJson(address)
 
         try {
             return JSON.parse(jsonObj)
