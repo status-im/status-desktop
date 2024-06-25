@@ -25,13 +25,8 @@ SplitView {
 
     QtObject {
         id: d
-        readonly property var accountsModel: WalletAccountsModel {}
         readonly property var tokenBySymbolModel: TokensBySymbolModel {}
-        readonly property var flatNetworksModel: NetworksModel.flatNetworks
-        readonly property var filteredNetworksModel: SortFilterProxyModel {
-            sourceModel: d.flatNetworksModel
-            filters: ValueFilter { roleName: "isTest"; value: areTestNetworksEnabledCheckbox.checked }
-        }
+
         function launchPopup() {
             swapModal.createObject(root)
         }
@@ -59,8 +54,8 @@ SplitView {
         SwapStore {
             id: dSwapStore
             signal suggestedRoutesReady(var txRoutes)
-            readonly property var accounts: d.accountsModel
-            readonly property var flatNetworks: d.flatNetworksModel
+            readonly property var accounts: WalletAccountsModel {}
+            readonly property var flatNetworks: NetworksModel.flatNetworks
             readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
 
             function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
@@ -83,8 +78,28 @@ SplitView {
 
         TokensStore {
             id: tokensStore
-            readonly property var plainTokensBySymbolModel: TokensBySymbolModel {}
+            plainTokensBySymbolModel: TokensBySymbolModel {}
             getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
+        }
+
+        SwapModalAdaptor {
+            id: adaptor
+            swapStore: dSwapStore
+            walletAssetsStore: WalletAssetsStore {
+                id: thisWalletAssetStore
+                walletTokensStore: tokensStore
+                readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
+                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+            }
+            currencyStore: CurrenciesStore {}
+            swapFormData: SwapInputParamsForm {
+                defaultToTokenKey: "STT"
+                onSelectedAccountAddressChanged: {
+                    if (selectedAccountAddress !== accountComboBox.currentValue)
+                        accountComboBox.currentIndex = accountComboBox.indexOfValue(selectedAccountAddress)
+                }
+            }
+            swapOutputData: SwapOutputData{}
         }
 
         Component {
@@ -95,24 +110,36 @@ SplitView {
                 modal: false
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
-                swapInputParamsForm: SwapInputParamsForm {
-                    defaultToTokenKey: "STT"
-                    onSelectedAccountAddressChanged: {
-                        if (selectedAccountAddress !== accountComboBox.currentValue)
-                            accountComboBox.currentIndex = accountComboBox.indexOfValue(selectedAccountAddress)
+                swapInputParamsForm: adaptor.swapFormData
+                swapAdaptor: adaptor
+                plainTokensBySymbolModel: ListModel {
+                    ListElement {
+                        key: "aave"
+                        name: "Aave"
+                        symbol: "AAVE"
+                        image: "https://cryptologos.cc/logos/aave-aave-logo.png"
+                        communityId: ""
+                        decimals: 18
+                        marketDetails: []
                     }
-                }
-                swapAdaptor: SwapModalAdaptor {
-                    swapStore: dSwapStore
-                    walletAssetsStore: WalletAssetsStore {
-                        id: thisWalletAssetStore
-                        walletTokensStore: tokensStore
-                        readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                        assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+                    ListElement {
+                        key: "usdc"
+                        name: "USDC"
+                        symbol: "USDC"
+                        image: ""
+                        communityId: ""
+                        decimals: 18
+                        marketDetails: []
                     }
-                    currencyStore: CurrenciesStore {}
-                    swapFormData: modal.swapInputParamsForm
-                    swapOutputData: SwapOutputData{}
+                    ListElement {
+                        key: "hst"
+                        name: "Decision Token"
+                        symbol: "HST"
+                        image: ""
+                        communityId: ""
+                        decimals: 18
+                        marketDetails: []
+                    }
                 }
                 Binding {
                     target: swapInputParamsForm
@@ -166,15 +193,7 @@ SplitView {
                 id: accountComboBox
                 textRole: "name"
                 valueRole: "address"
-                model: SortFilterProxyModel {
-                    sourceModel: d.accountsModel
-                    filters: ValueFilter {
-                        roleName: "walletType"
-                        value: Constants.watchWalletType
-                        inverted: true
-                    }
-                    sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
-                }
+                model: adaptor.nonWatchAccounts
                 currentIndex: 0
             }
 
@@ -185,7 +204,7 @@ SplitView {
                 id: networksComboBox
                 textRole: "chainName"
                 valueRole: "chainId"
-                model: d.filteredNetworksModel
+                model: adaptor.filteredFlatNetworksModel
                 currentIndex: 0
                 onCountChanged: currentIndex = 0
             }

@@ -6,7 +6,7 @@ StatusListView {
     id: root
 
     // expected model structure:
-    // tokensKey, name, symbol, decimals, currencyBalanceAsString (computed), marketDetails, balances -> [ chainId, address, balance, iconUrl ]
+    // tokensKey, name, symbol, decimals, currencyBalanceAsString (computed), iconSource, marketDetails, balances -> [ chainId, address, balance, iconUrl ]
 
     // output API
     signal tokenSelected(string tokensKey)
@@ -20,7 +20,8 @@ StatusListView {
         tokensKey: model.tokensKey
         name: model.name
         symbol: model.symbol
-        currencyBalanceAsString: model.currencyBalanceAsString
+        currencyBalanceAsString: model.currencyBalanceAsString ?? ""
+        iconSource: model.iconSource
         balancesModel: model.balances
 
         onAssetSelected: (tokensKey) => root.tokenSelected(tokensKey)

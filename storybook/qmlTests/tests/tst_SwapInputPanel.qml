@@ -21,6 +21,17 @@ Item {
     width: 600
     height: 400
 
+    ListModel {
+        id: plainTokensModel
+        ListElement {
+            key: "aave"
+            name: "Aave"
+            symbol: "AAVE"
+            image: "https://cryptologos.cc/logos/aave-aave-logo.png"
+            communityId: ""
+        }
+    }
+
     QtObject {
         id: d
 
@@ -47,6 +58,7 @@ Item {
 
         readonly property var tokenSelectorAdaptor: TokenSelectorViewAdaptor {
             assetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
+            plainTokensBySymbolModel: plainTokensModel
             flatNetworksModel: d.adaptor.swapStore.flatNetworks
             currentCurrency: d.adaptor.currencyStore.currentCurrency
 
@@ -62,6 +74,7 @@ Item {
             currencyStore: d.adaptor.currencyStore
             flatNetworksModel: d.adaptor.swapStore.flatNetworks
             processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
+            plainTokensBySymbolModel: plainTokensModel
         }
     }
 

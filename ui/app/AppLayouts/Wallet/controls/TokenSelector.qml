@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.0
+import QtQuick.Window 2.15
 
 import StatusQ 0.1
 import StatusQ.Components 0.1
@@ -84,7 +85,6 @@ ComboBox {
 
     popup.width: 380
     popup.x: root.width - popup.width
-    popup.y: root.height
     popup.margins: Style.current.halfPadding
     popup.background: Rectangle {
         color: Theme.palette.statusSelect.menuItemBackgroundColor
@@ -172,7 +172,8 @@ ComboBox {
         tokensKey: model.tokensKey
         name: model.name
         symbol: model.symbol
-        currencyBalanceAsString: model.currencyBalanceAsString
+        currencyBalanceAsString: model.currencyBalanceAsString ?? ""
+        iconSource: model.iconSource
         balancesModel: model.balances
 
         onAssetSelected: (tokensKey) => root.selectToken(tokensKey)
@@ -192,20 +193,19 @@ ComboBox {
     Component {
         id: iconTextContentItem
         RowLayout {
-            readonly property string currentSymbol: d.isTokenSelected ? ModelUtils.getByKey(model, "tokensKey", d.currentTokensKey, "symbol")
-                                                                      : ""
             spacing: root.spacing
             StatusRoundedImage {
                 objectName: "tokenSelectorIcon"
                 Layout.preferredWidth: 20
                 Layout.preferredHeight: 20
-                image.source: Constants.tokenIcon(parent.currentSymbol)
+                image.source: ModelUtils.getByKey(model, "tokensKey", d.currentTokensKey, "iconSource")
+                image.sourceSize: Qt.size(width*root.Screen.devicePixelRatio, height*root.Screen.devicePixelRatio)
             }
             StatusBaseText {
                 objectName: "tokenSelectorContentItemText"
                 font.pixelSize: 28
                 color: root.hovered ? Theme.palette.blue : Theme.palette.darkBlue
-                text: parent.currentSymbol
+                text: ModelUtils.getByKey(model, "tokensKey", d.currentTokensKey, "symbol")
             }
         }
     }

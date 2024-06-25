@@ -44,7 +44,7 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 1.25,
                                   symbol: "USD",
-                                  displayDecimals: 4,
+                                  displayDecimals: 2,
                                   stripTrailingZeroes: false}),
             migratedToKeycard: true
         },
@@ -70,7 +70,7 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 10,
                                   symbol: "USD",
-                                  displayDecimals: 4,
+                                  displayDecimals: 2,
                                   stripTrailingZeroes: false}),
             migratedToKeycard: false
         },
@@ -105,7 +105,7 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 110.05,
                                   symbol: "USD",
-                                  displayDecimals: 4,
+                                  displayDecimals: 2,
                                   stripTrailingZeroes: false}),
             migratedToKeycard: false
         },
@@ -122,7 +122,7 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 3,
                                   symbol: "USD",
-                                  displayDecimals: 4,
+                                  displayDecimals: 2,
                                   stripTrailingZeroes: false}),
             migratedToKeycard: false
         },
@@ -148,7 +148,7 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 999,
                                   symbol: "USD",
-                                  displayDecimals: 4,
+                                  displayDecimals: 2,
                                   stripTrailingZeroes: false}),
             migratedToKeycard: false
         }

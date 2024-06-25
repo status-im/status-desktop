@@ -28,6 +28,7 @@ Control {
     required property CurrenciesStore currencyStore
     required property var flatNetworksModel
     required property var processedAssetsModel
+    property var plainTokensBySymbolModel // optional all tokens model, no balances
 
     property int selectedNetworkChainId: -1
     property string selectedAccountAddress
@@ -54,6 +55,7 @@ Control {
     readonly property string selectedHoldingId: holdingSelector.currentTokensKey
     readonly property double value: amountToSendInput.cryptoValueToSendFloat
     readonly property string rawValue: amountToSendInput.cryptoValueToSend
+    readonly property int rawValueMultiplierIndex: amountToSendInput.multiplierIndex
     readonly property bool valueValid: amountToSendInput.inputNumberValid
     readonly property bool amountEnteredGreaterThanBalance: value > maxSendButton.maxSafeValue
 
@@ -83,17 +85,19 @@ Control {
         property var selectedHolding: SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey)
 
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding
-        readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.currencyBalance : 0
-        readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
+        readonly property double maxFiatBalance: isSelectedHoldingValidAsset && !!selectedHolding.currencyBalance ? selectedHolding.currencyBalance : 0
+        readonly property double maxCryptoBalance: isSelectedHoldingValidAsset && !!selectedHolding.currentBalance ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? root.currencyStore.currentCurrency
                                                                             : (!!selectedHolding ? selectedHolding.symbol : "")
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.processedAssetsModel
+            plainTokensBySymbolModel: root.plainTokensBySymbolModel
             flatNetworksModel: root.flatNetworksModel
             currentCurrency: root.currencyStore.currentCurrency
 
+            showAllTokens: true
             enabledChainIds: root.selectedNetworkChainId !== -1 ? [root.selectedNetworkChainId] : []
             accountAddress: root.selectedAccountAddress || ""
             searchString: holdingSelector.searchString
@@ -206,7 +210,7 @@ Control {
                 input.input.edit.color: !input.valid ? Theme.palette.dangerColor1 : maxSendButton.hovered ? Theme.palette.baseColor1
                                                                                                           : Theme.palette.directColor1
 
-                multiplierIndex: !!d.selectedHolding ? d.selectedHolding.decimals : 0
+                multiplierIndex: d.selectedHolding && d.selectedHolding.decimals ? d.selectedHolding.decimals : 0
 
                 maxInputBalance: (root.swapSide === SwapInputPanel.SwapSide.Receive || !d.isSelectedHoldingValidAsset) ? Number.POSITIVE_INFINITY
                                                                                                                        : maxSendButton.maxSafeValue

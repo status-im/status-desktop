@@ -13,6 +13,17 @@ Item {
     width: 600
     height: 400
 
+    ListModel {
+        id: plainTokensModel
+        ListElement {
+            key: "aave"
+            name: "Aave"
+            symbol: "AAVE"
+            image: "https://cryptologos.cc/logos/aave-aave-logo.png"
+            communityId: ""
+        }
+    }
+
     QtObject {
         id: d
 
@@ -28,6 +39,7 @@ Item {
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: d.assetsStore.groupedAccountAssetsModel
+            plainTokensBySymbolModel: plainTokensModel
             flatNetworksModel: d.flatNetworks
             currentCurrency: "USD"
 
@@ -216,6 +228,32 @@ Item {
             verify(!!ethDelegate)
             tryCompare(ethDelegate, "tokensKey", "ETH")
             compare(ethDelegate.ListView.section, "Popular assets")
+        }
+
+        function test_plainTokenDelegate() {
+            verify(!!controlUnderTest)
+
+            d.adaptor.showAllTokens = true
+            const tokensKey = "aave"
+
+            mouseClick(controlUnderTest)
+            waitForItemPolished(controlUnderTest)
+
+            const listview = findChild(controlUnderTest.popup.contentItem, "tokenSelectorListview")
+            verify(!!listview)
+            waitForItemPolished(listview)
+
+            const delegate = findChild(listview, "tokenSelectorAssetDelegate_%1".arg(tokensKey))
+            verify(!!delegate)
+            tryCompare(delegate, "tokensKey", tokensKey)
+            tryCompare(delegate, "currencyBalanceAsString", "")
+
+            // click the delegate, verify the signal has been fired and has the correct "tokensKey" as argument
+            mouseClick(delegate)
+            tryCompare(signalSpy, "count", 1)
+            compare(signalSpy.signalArguments[0][0], tokensKey)
+            compare(controlUnderTest.currentTokensKey, tokensKey)
+            d.adaptor.showAllTokens = false
         }
     }
 }

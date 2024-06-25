@@ -36,7 +36,6 @@ Item {
         id: componentUnderTest
         TokenSelectorView {
             anchors.fill: parent
-
             model: d.adaptor.outputAssetsModel
         }
     }
