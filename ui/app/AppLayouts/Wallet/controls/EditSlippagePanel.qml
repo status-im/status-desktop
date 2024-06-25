@@ -95,12 +95,9 @@ Control {
             }
             StatusTextWithLoadingState {
                 text: {
-                    let amount = !!root.toTokenAmount ? SQUtils.AmountsArithmetic.fromString(root.toTokenAmount) : NaN
-                    let percentageAmount = 0
-                    if(!Number.isNaN(amount)) {
-                        percentageAmount = (amount - ((amount/100) * slippageSelector.value))
-                    }
-                    return ("%1 %2").arg(LocaleUtils.numberToLocaleString(percentageAmount)).arg(d.selectedToTokenSymbol)
+                    const amount = !!root.toTokenAmount ? SQUtils.AmountsArithmetic.fromString(root.toTokenAmount).times(1 - slippageSelector.value/100)
+                                                        : 0
+                    return ("%1 %2").arg(LocaleUtils.numberToLocaleString(amount.toFixed())).arg(d.selectedToTokenSymbol)
                 }
                 font.pixelSize: 13
                 font.weight: Font.Medium

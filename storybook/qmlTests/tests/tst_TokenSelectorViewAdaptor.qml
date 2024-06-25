@@ -13,6 +13,17 @@ Item {
     width: 600
     height: 400
 
+    ListModel {
+        id: plainTokensModel
+        ListElement {
+            key: "aave"
+            name: "Aave"
+            symbol: "AAVE"
+            image: "https://cryptologos.cc/logos/aave-aave-logo.png"
+            communityId: ""
+        }
+    }
+
     QtObject {
         id: d
 
@@ -33,6 +44,7 @@ Item {
             assetsModel: d.assetsStore.groupedAccountAssetsModel
             flatNetworksModel: d.flatNetworks
             currentCurrency: "USD"
+            plainTokensBySymbolModel: plainTokensModel
         }
     }
 
@@ -72,6 +84,20 @@ Item {
 
             // turning them back off, verify we are back to the original number of items
             controlUnderTest.showCommunityAssets = false
+            tryCompare(controlUnderTest.outputAssetsModel, "count", originalCount)
+        }
+
+        function test_allTokens() {
+            verify(!!controlUnderTest)
+
+            const originalCount = controlUnderTest.outputAssetsModel.count
+
+            // turn on showing all tokens, verify we now have more items
+            controlUnderTest.showAllTokens = true
+            tryVerify(() => controlUnderTest.outputAssetsModel.count > originalCount)
+
+            // turning them back off, verify we are back to the original number of items
+            controlUnderTest.showAllTokens = false
             tryCompare(controlUnderTest.outputAssetsModel, "count", originalCount)
         }
 

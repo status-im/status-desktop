@@ -24,6 +24,8 @@ StatusDialog {
     required property SwapInputParamsForm swapInputParamsForm
     required property SwapModalAdaptor swapAdaptor
 
+    property var plainTokensBySymbolModel: swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+
     objectName: "swapModal"
 
     implicitWidth: 556
@@ -156,6 +158,7 @@ StatusDialog {
                     currencyStore: root.swapAdaptor.currencyStore
                     flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
+                    plainTokensBySymbolModel: root.plainTokensBySymbolModel
 
                     tokenKey: root.swapInputParamsForm.fromTokensKey
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
@@ -168,9 +171,12 @@ StatusDialog {
                     swapExchangeButtonWidth: swapExchangeButton.width
 
                     onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
-                    onValueChanged: {
+                    onRawValueChanged: {
                         if(root.swapInputParamsForm.fromTokensKey === selectedHoldingId) {
-                            root.swapInputParamsForm.fromTokenAmount = !tokenAmount && value === 0 ? "" : value.toLocaleString(locale, 'f', -128)
+                            const amount = !tokenAmount && value === 0 ? "" :
+                                                                         SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(rawValue),
+                                                                                                       SQUtils.AmountsArithmetic.fromNumber(1, rawValueMultiplierIndex)).toString()
+                            root.swapInputParamsForm.fromTokenAmount = amount
                         }
                     }
                     onValueValidChanged: d.fetchSuggestedRoutes()
@@ -189,6 +195,7 @@ StatusDialog {
                     currencyStore: root.swapAdaptor.currencyStore
                     flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
+                    plainTokensBySymbolModel: root.plainTokensBySymbolModel
 
                     tokenKey: root.swapInputParamsForm.toTokenKey
                     tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount

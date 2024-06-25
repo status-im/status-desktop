@@ -6,6 +6,8 @@ import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
 
+import utils 1.0
+
 QObject {
     id: root
 
@@ -27,14 +29,23 @@ QObject {
       - currencyBalance: double (e.g. `1000.42` in user's fiat currency)
       - currencyBalanceAsString: string (e.g. "1 000,42 CZK" formatted as a string according to the user's locale)
       - balanceAsString: string (`1.42` formatted as e.g. "1,42" in user's locale)
+      - iconSource: string
     */
 
     // input API
     required property var assetsModel
+
+    // expected roles: key, name, symbol, image, communityId
+    property var plainTokensBySymbolModel // optional all tokens model, no balances
+
+    // expected roles: chainId, chainName, iconUrl
     required property var flatNetworksModel
-    required property string currentCurrency // CurrenciesStore.currentCurrency, e.g. "USD"
+
+    // CurrenciesStore.currentCurrency, e.g. "USD"
+    required property string currentCurrency
 
     // optional filter properties; empty/default values means no filtering
+    property bool showAllTokens // whether to show all tokens, or just the ones we own
     property var enabledChainIds: []
     property string accountAddress
     property bool showCommunityAssets
@@ -42,7 +53,41 @@ QObject {
 
     // output model
     readonly property SortFilterProxyModel outputAssetsModel: SortFilterProxyModel {
-        sourceModel: assetsObjectProxyModel
+        sourceModel: showAllTokens && !!plainTokensBySymbolModel ? concatModel : assetsObjectProxyModel
+
+        proxyRoles: [
+            FastExpressionRole {
+                name: "sectionId"
+                expression: {
+                    if (!model.currentBalance)
+                        return "section_zzz"
+
+                    if (root.enabledChainIds.length === 1)
+                        return "section_%1".arg(root.enabledChainIds[0])
+                }
+                expectedRoles: ["currentBalance"]
+            },
+            FastExpressionRole {
+                name: "sectionName"
+                function getSectionName(sectionId, hasBalance) {
+                    if (sectionId === "section_zzz")
+                        return qsTr("Popular assets")
+
+                    if (root.enabledChainIds.length === 1 && hasBalance)
+                        return qsTr("Your assets on %1").arg(ModelUtils.getByKey(root.flatNetworksModel, "chainId", root.enabledChainIds[0], "chainName"))
+                }
+                expression: getSectionName(model.sectionId, !!model.currentBalance)
+                expectedRoles: ["sectionId", "currentBalance"]
+            },
+            FastExpressionRole {
+                function tokenIcon(symbol) {
+                    return Constants.tokenIcon(symbol)
+                }
+                name: "iconSource"
+                expression: model.image || tokenIcon(model.symbol)
+                expectedRoles: ["image", "symbol"]
+            }
+        ]
 
         filters: [
             AnyOf {
@@ -68,17 +113,57 @@ QObject {
             RoleSorter {
                 roleName: "sectionId"
             },
-            RoleSorter {
-                roleName: "currencyBalance"
-                sortOrder: Qt.DescendingOrder
+            FastExpressionSorter {
+                expression: {
+                    if (modelLeft.sectionId === "section_zzz" && modelRight.sectionId === "section_zzz")
+                        return 0
+
+                    const lhs = modelLeft.currencyBalance
+                    const rhs = modelRight.currencyBalance
+                    if (lhs < rhs)
+                        return 1
+                    else if (lhs > rhs)
+                        return -1
+                    return 0
+                }
+                expectedRoles: ["currencyBalance", "sectionId"]
             },
             RoleSorter {
                 roleName: "name"
             }
+            // FIXME #15277 sort by assetsController instead, to have the sorting/order as in the main wallet view
         ]
     }
 
     // internals
+    RolesRenamingModel {
+        id: renamedTokensBySymbolModel
+        sourceModel: root.plainTokensBySymbolModel
+        mapping: [
+            RoleRename {
+                from: "key"
+                to: "tokensKey"
+            }
+        ]
+    }
+
+    ConcatModel {
+        id: concatModel
+        sources: [
+            SourceModel {
+                model: renamedTokensBySymbolModel
+                markerRoleValue: "plain_tokens_model"
+            },
+            SourceModel {
+                model: assetsObjectProxyModel
+                markerRoleValue: "wallet_assets_model"
+            }
+        ]
+
+        markerRoleName: "which_model"
+        expectedRoles: ["tokensKey", "name", "symbol", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "communityId", "marketDetails"]
+    }
+
     ObjectProxyModel {
         id: assetsObjectProxyModel
         sourceModel: root.assetsModel
@@ -99,20 +184,6 @@ QObject {
             readonly property string currencyBalanceAsString:
                 currencyBalance ? LocaleUtils.currencyAmountToLocaleString({amount: currencyBalance, symbol: root.currentCurrency, displayDecimals})
                                 : ""
-
-            readonly property string sectionId: {
-                if (root.enabledChainIds.length === 1) {
-                    return currentBalance ? "section_%1".arg(root.enabledChainIds[0]) : "section_zzz"
-                }
-                return ""
-            }
-            readonly property string sectionName: {
-                if (root.enabledChainIds.length === 1) {
-                    return currentBalance ? qsTr("Your assets on %1").arg(ModelUtils.getByKey(root.flatNetworksModel, "chainId", root.enabledChainIds[0], "chainName"))
-                                          : qsTr("Popular assets")
-                }
-                return ""
-            }
 
             readonly property var balances: this
 
@@ -180,7 +251,7 @@ QObject {
             }
         }
 
-        exposedRoles: ["balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "sectionId", "sectionName"]
+        exposedRoles: ["balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString"]
         expectedRoles: ["communityId", "balances", "decimals", "marketDetails"]
     }
 }

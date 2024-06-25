@@ -12,9 +12,9 @@ import StatusQ.Core.Utils 0.1
 import Storybook 1.0
 import Models 1.0
 
-import SortFilterProxyModel 0.2
-
 import AppLayouts.Wallet.views 1.0
+
+import utils 1.0
 
 SplitView {
     id: root
@@ -46,6 +46,7 @@ SplitView {
                 name: "Ethereum"
                 symbol: "ETH"
                 currencyBalanceAsString: "14,456.42 USD"
+                iconSource: Constants.tokenIcon(symbol)
                 balancesModel: ListModel {
                     readonly property var data: [
                         { chainId: 1, balanceAsString: "1234.50", iconUrl: "network/Network=Ethereum" },

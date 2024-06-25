@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -16,6 +17,7 @@ ItemDelegate {
     required property string name
     required property string symbol
     required property string currencyBalanceAsString
+    required property string iconSource
     // expected structure: balancesModel -> model.balances submodel [chainId: int, balance: BigIntString] + flatNetworks [account:string, iconUrl: string]
     required property var balancesModel
 
@@ -34,7 +36,7 @@ ItemDelegate {
 
     icon.width: 32
     icon.height: 32
-    icon.source: Constants.tokenIcon(symbol)
+    icon.source: iconSource
 
     enabled: interactive
 
@@ -55,6 +57,7 @@ ItemDelegate {
             Layout.preferredWidth: root.icon.width
             Layout.preferredHeight: root.icon.height
             image.source: root.icon.source
+            image.sourceSize: Qt.size(width*root.Screen.devicePixelRatio, height*root.Screen.devicePixelRatio)
         }
 
         ColumnLayout {

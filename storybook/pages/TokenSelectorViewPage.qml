@@ -27,6 +27,31 @@ SplitView {
 
     Logs { id: logs }
 
+    ListModel {
+        id: plainTokensModel
+        ListElement {
+            key: "aave"
+            name: "Aave"
+            symbol: "AAVE"
+            image: "https://cryptologos.cc/logos/aave-aave-logo.png"
+            communityId: ""
+        }
+        ListElement {
+            key: "usdc"
+            name: "USDC"
+            symbol: "USDC"
+            image: ""
+            communityId: ""
+        }
+        ListElement {
+            key: "hst"
+            name: "Decision Token"
+            symbol: "HST"
+            image: "https://etherscan.io/token/images/horizonstate2_28.png"
+            communityId: ""
+        }
+    }
+
     QtObject {
         id: d
 
@@ -69,10 +94,12 @@ SplitView {
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: d.assetsStore.groupedAccountAssetsModel
+            plainTokensBySymbolModel: plainTokensModel
             flatNetworksModel: d.flatNetworks
             enabledChainIds: d.enabledChainIds
             currentCurrency: d.currencyStore.currentCurrency
 
+            showAllTokens: ctrlShowAllTokens.checked
             accountAddress: ctrlAccount.currentValue ?? ""
             showCommunityAssets: ctrlShowCommunityAssets.checked
             searchString: ctrlSearch.text
@@ -99,6 +126,7 @@ SplitView {
 
             // tokensKey, name, symbol, decimals, currentCurrencyBalance (computed), marketDetails, balances -> [ chainId, address, balance, iconUrl ]
             TokenSelectorView {
+                id: tokenSelector
                 anchors.fill: parent
 
                 model: d.adaptor.outputAssetsModel
@@ -170,6 +198,16 @@ SplitView {
                         Layout.fillWidth: true
                         id: ctrlSearch
                         placeholderText: "Token name or symbol"
+                    }
+                }
+                Switch {
+                    id: ctrlShowAllTokens
+                    text: "Show all tokens"
+                    checked: true
+                    onToggled: {
+                        // NB: ListView doesn't like changing models at runtime
+                        tokenSelector.model = null
+                        tokenSelector.model = d.adaptor.outputAssetsModel
                     }
                 }
                 Switch {

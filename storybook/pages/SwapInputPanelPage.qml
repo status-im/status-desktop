@@ -26,6 +26,31 @@ SplitView {
 
     Logs { id: logs }
 
+    ListModel {
+        id: plainTokensModel
+        ListElement {
+            key: "aave"
+            name: "Aave"
+            symbol: "AAVE"
+            image: "https://cryptologos.cc/logos/aave-aave-logo.png"
+            communityId: ""
+        }
+        ListElement {
+            key: "usdc"
+            name: "USDC"
+            symbol: "USDC"
+            image: ""
+            communityId: ""
+        }
+        ListElement {
+            key: "hst"
+            name: "Decision Token"
+            symbol: "HST"
+            image: "https://etherscan.io/token/images/horizonstate2_28.png"
+            communityId: ""
+        }
+    }
+
     QtObject {
         id: d
 
@@ -80,6 +105,7 @@ SplitView {
                 currencyStore: d.adaptor.currencyStore
                 flatNetworksModel: d.adaptor.swapStore.flatNetworks
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
+                plainTokensBySymbolModel: plainTokensModel
 
                 selectedNetworkChainId: d.swapInputParamsForm.selectedNetworkChainId
                 selectedAccountAddress: d.swapInputParamsForm.selectedAccountAddress
@@ -106,6 +132,7 @@ SplitView {
                 currencyStore: d.adaptor.currencyStore
                 flatNetworksModel: d.adaptor.swapStore.flatNetworks
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
+                plainTokensBySymbolModel: plainTokensModel
 
                 selectedNetworkChainId: d.swapInputParamsForm.selectedNetworkChainId
                 selectedAccountAddress: d.swapInputParamsForm.selectedAccountAddress
@@ -201,7 +228,6 @@ SplitView {
                 TextField {
                     Layout.fillWidth: true
                     id: ctrlToTokenKey
-                    text: "STT"
                 }
             }
             RowLayout {
