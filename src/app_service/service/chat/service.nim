@@ -431,22 +431,28 @@ QtObject:
                    replyTo: string,
                    preferredUsername: string = "",
                    linkPreviews: seq[LinkPreview] = @[]) =
+    try:
+      let (standardLinkPreviews, statusLinkPreviews) = extractLinkPreviewsLists(linkPreviews)
 
+      let arg = AsyncSendImagesTaskArg(
+        tptr: asyncSendImagesTask,
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncSendImagesDone",
+        chatId: chatId,
+        imagePathsAndDataJson: imagePathsAndDataJson,
+        tempDir: TMPDIR,
+        msg: msg,
+        replyTo: replyTo,
+        preferredUsername: preferredUsername,
+        standardLinkPreviews: %standardLinkPreviews,
+        statusLinkPreviews: %statusLinkPreviews,
+      )
 
-    let arg = AsyncSendImagesTaskArg(
-      tptr: asyncSendImagesTask,
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onAsyncSendImagesDone",
-      chatId: chatId,
-      imagePathsAndDataJson: imagePathsAndDataJson,
-      tempDir: TMPDIR,
-      msg: msg,
-      replyTo: replyTo,
-      preferredUsername: preferredUsername,
-      linkPreviews: %linkPreviews,
-    )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error sending images", msg = e.msg
+      self.events.emit(SIGNAL_SENDING_FAILED, MessageSendingFailure(chatId: chatId, error: e.msg))
 
-    self.threadpool.start(arg)
 
   proc onAsyncSendImagesDone*(self: Service, rpcResponseJson: string) {.slot.} =
     let rpcResponseObj = rpcResponseJson.parseJson
