@@ -1,7 +1,9 @@
 import json, std/options
 import wallet_secretes_config
+import api_config
 
 export wallet_secretes_config
+export api_config
 
 type
   LoginAccountRequest* = object
@@ -14,7 +16,7 @@ type
     keycardWhisperPrivateKey*: string
     mnemonic*: string
     walletSecretsConfig*: WalletSecretsConfig
-    apiConfig*: Option[JsonNode]
+    apiConfig*: APIConfig
 
 proc toJson*(self: LoginAccountRequest): JsonNode =
   result = %* {
@@ -26,9 +28,7 @@ proc toJson*(self: LoginAccountRequest): JsonNode =
     "bandwidthStatsEnabled": self.bandwidthStatsEnabled,
     "keycardWhisperPrivateKey": self.keycardWhisperPrivateKey,
     "mnemonic": self.mnemonic,
+    "apiConfig": self.apiConfig
   }
   for key, value in self.walletSecretsConfig.toJson().pairs():
     result[key] = value
-
-  if self.apiConfig.isSome():
-    result["apiConfig"] = %self.apiConfig.get()

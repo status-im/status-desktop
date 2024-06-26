@@ -1,9 +1,11 @@
 import json, std/options
-import ./wallet_secretes_config
-import ./image_crop_rectangle
+import wallet_secretes_config
+import image_crop_rectangle
+import api_config
 
 export wallet_secretes_config
 export image_crop_rectangle
+export api_config
 
 type
   CreateAccountRequest* = object
@@ -40,7 +42,7 @@ type
 
     keycardInstanceUID*: string
     keycardPairingDataFile*: string
-    apiConfig*: Option[JsonNode]
+    apiConfig*: APIConfig
 
 proc toJson*(self: CreateAccountRequest): JsonNode =
   result = %*{
@@ -60,6 +62,7 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "upstreamConfig": self.upstreamConfig,
     "keycardInstanceUID": self.keycardInstanceUID,
     "keycardPairingDataFile": self.keycardPairingDataFile,
+    "apiConfig": self.apiConfig
   }
 
   if self.logLevel.isSome():
@@ -91,6 +94,3 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
 
   for key, value in self.walletSecretsConfig.toJson().pairs():
     result[key] = value
-
-  if self.apiConfig.isSome():
-    result["apiConfig"] = %self.apiConfig.get()
