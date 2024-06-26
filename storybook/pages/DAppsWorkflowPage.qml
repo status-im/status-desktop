@@ -374,6 +374,7 @@ Item {
         property string pairUri: ""
         property bool testNetworks: false
         property bool enableSDK: true
+        property bool pending : false
         property string customAccounts: ""
     }
 }
