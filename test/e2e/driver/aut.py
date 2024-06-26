@@ -1,3 +1,5 @@
+import time
+
 import allure
 import logging
 import cv2
@@ -117,6 +119,7 @@ class AUT:
         LOG.info('Stopping AUT: %s', self.path)
         self.detach_context()
         local_system.kill_process(self.pid)
+        time.sleep(1)
 
     @allure.step("Start and attach AUT")
     def launch(self) -> 'AUT':
