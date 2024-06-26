@@ -1,4 +1,5 @@
 import logging
+import time
 import typing
 
 import configs.testpath
@@ -43,6 +44,7 @@ class SquishServer:
             return
         LOG.info('Stopping Squish Server with PID: %d', cls.pid)
         local_system.kill_process(cls.pid)
+        time.sleep(1)
         cls.pid = None
         cls.port = None
 
