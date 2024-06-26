@@ -2,8 +2,6 @@ import NimQml, chronicles
 import io_interface
 import selected_login_account
 import internal/[state, state_wrapper]
-import models/generated_account_model as gen_acc_model
-import models/generated_account_item as gen_acc_item
 import models/login_account_model as login_acc_model
 import models/login_account_item as login_acc_item
 import models/fetching_data_model as fetch_model
@@ -25,8 +23,6 @@ QtObject:
       showBeforeGetStartedPopup: bool
       currentStartupState: StateWrapper
       currentStartupStateVariant: QVariant
-      generatedAccountsModel: gen_acc_model.Model
-      generatedAccountsModelVariant: QVariant
       selectedLoginAccount: SelectedLoginAccount
       selectedLoginAccountVariant: QVariant
       loginAccountsModel: login_acc_model.Model
@@ -41,8 +37,6 @@ QtObject:
   proc delete*(self: View) =
     self.currentStartupStateVariant.delete
     self.currentStartupState.delete
-    self.generatedAccountsModel.delete
-    self.generatedAccountsModelVariant.delete
     self.selectedLoginAccount.delete
     self.selectedLoginAccountVariant.delete
     self.loginAccountsModel.delete
@@ -62,8 +56,6 @@ QtObject:
     result.appState = AppState.StartupState
     result.currentStartupState = newStateWrapper()
     result.currentStartupStateVariant = newQVariant(result.currentStartupState)
-    result.generatedAccountsModel = gen_acc_model.newModel()
-    result.generatedAccountsModelVariant = newQVariant(result.generatedAccountsModel)
     result.selectedLoginAccount = newSelectedLoginAccount()
     result.selectedLoginAccountVariant = newQVariant(result.selectedLoginAccount)
     result.loginAccountsModel = login_acc_model.newModel()
@@ -138,35 +130,6 @@ QtObject:
   proc emitLogOut*(self: View) =
     self.logOut()
 
-  proc generatedAccountsModelChanged*(self: View) {.signal.}
-  proc getGeneratedAccountsModel(self: View): QVariant {.slot.} =
-    return self.generatedAccountsModelVariant
-  proc setGeneratedAccountList*(self: View, accounts: seq[gen_acc_item.Item]) =
-    self.generatedAccountsModel.setItems(accounts)
-    self.generatedAccountsModelChanged()
-  QtProperty[QVariant] generatedAccountsModel:
-    read = getGeneratedAccountsModel
-    notify = generatedAccountsModelChanged
-
-  proc importedAccountChanged*(self: View) {.signal.}
-  proc getImportedAccountAlias*(self: View): string {.slot.} =
-    return self.delegate.getImportedAccount().alias
-  QtProperty[string] importedAccountAlias:
-    read = getImportedAccountAlias
-    notify = importedAccountChanged
-
-  proc getImportedAccountAddress*(self: View): string {.slot.} =
-    return self.delegate.getImportedAccount().address
-  QtProperty[string] importedAccountAddress:
-    read = getImportedAccountAddress
-    notify = importedAccountChanged
-
-  proc getImportedAccountPubKey*(self: View): string {.slot.} =
-    return self.delegate.getImportedAccount().derivedAccounts.whisper.publicKey
-  QtProperty[string] importedAccountPubKey:
-    read = getImportedAccountPubKey
-    notify = importedAccountChanged
-
   proc generateImage*(self: View, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
     return self.delegate.generateImage(imageUrl, aX, aY, bX, bY)
 
@@ -206,9 +169,6 @@ QtObject:
 
   proc validMnemonic*(self: View, mnemonic: string): bool {.slot.} =
     return self.delegate.validMnemonic(mnemonic)
-
-  proc importAccountSuccess*(self: View) =
-    self.importedAccountChanged()
 
   proc selectedLoginAccountChanged*(self: View) {.signal.}
   proc getSelectedLoginAccount(self: View): QVariant {.slot.} =

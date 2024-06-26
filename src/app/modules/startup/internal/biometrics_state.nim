@@ -29,16 +29,16 @@ proc command(self: BiometricsState, controller: Controller, storeToKeychain: boo
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
     controller.importAccountAndLogin(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
+    controller.storeKeycardAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
+    controller.storeKeycardAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
     controller.setupKeycardAccount(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.LostKeycardReplacement:
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())
   elif self.flowType == FlowType.LostKeycardConvertToRegularAccount:
-    controller.loginAccountKeycardUsingSeedPhrase(storeToKeychain)
+    controller.loginAccountKeycard(storeToKeychain, keycardReplacement = false)
 
 method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   self.command(controller, true)
@@ -49,10 +49,6 @@ method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
 method resolveKeycardNextState*(self: BiometricsState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   if self.flowType == FlowType.LostKeycardReplacement:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
-      keycardEvent.error.len == 0:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
-        var storeToKeychainValue = LS_VALUE_NEVER
-        if self.storeToKeychain:
-          storeToKeychainValue = LS_VALUE_NOT_NOW
-        controller.loginAccountKeycard(storeToKeychainValue, keycardReplacement = true)
+        controller.loginAccountKeycard(self.storeToKeychain, keycardReplacement = true)

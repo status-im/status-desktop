@@ -7,7 +7,7 @@ export image_crop_rectangle
 
 type
   CreateAccountRequest* = object
-    backupDisabledDataDir*: string
+    rootDataDir*: string
     kdfIterations*: int
     deviceName*: string
     displayName*: string
@@ -38,9 +38,12 @@ type
     torrentConfigEnabled*: Option[bool]
     torrentConfigPort*: Option[int]
 
+    keycardInstanceUID*: string
+    keycardPairingDataFile*: string
+
 proc toJson*(self: CreateAccountRequest): JsonNode =
   result = %*{
-    "backupDisabledDataDir": self.backupDisabledDataDir,
+    "rootDataDir": self.rootDataDir,
     "kdfIterations": self.kdfIterations,
     "deviceName": self.deviceName,
     "displayName": self.displayName,
@@ -54,6 +57,8 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "logEnabled": self.logEnabled,
     "previewPrivacy": self.previewPrivacy,
     "upstreamConfig": self.upstreamConfig,
+    "keycardInstanceUID": self.keycardInstanceUID,
+    "keycardPairingDataFile": self.keycardPairingDataFile,
   }
 
   if self.logLevel.isSome():

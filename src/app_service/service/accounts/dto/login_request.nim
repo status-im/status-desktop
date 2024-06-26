@@ -1,5 +1,7 @@
 import json
-import ./wallet_secretes_config
+import wallet_secretes_config
+
+export wallet_secretes_config
 
 type
   LoginAccountRequest* = object
@@ -9,6 +11,8 @@ type
     runtimeLogLevel*: string
     wakuV2Nameserver*: string
     bandwidthStatsEnabled*: bool
+    keycardWhisperPrivateKey*: string
+    mnemonic*: string
     walletSecretsConfig*: WalletSecretsConfig
 
 proc toJson*(self: LoginAccountRequest): JsonNode =
@@ -19,6 +23,8 @@ proc toJson*(self: LoginAccountRequest): JsonNode =
     "runtimeLogLevel": self.runtimeLogLevel,
     "wakuV2Nameserver": self.wakuV2Nameserver,
     "bandwidthStatsEnabled": self.bandwidthStatsEnabled,
+    "keycardWhisperPrivateKey": self.keycardWhisperPrivateKey,
+    "mnemonic": self.mnemonic,
   }
   for key, value in self.walletSecretsConfig.toJson().pairs():
     result[key] = value

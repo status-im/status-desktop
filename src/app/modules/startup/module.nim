@@ -3,7 +3,6 @@ import NimQml, chronicles
 import io_interface
 import view, controller
 import internal/[state, state_factory]
-import models/generated_account_item as gen_acc_item
 import models/login_account_item as login_acc_item
 import models/fetching_data_model as fetch_model
 import app/global/global_singleton
@@ -118,12 +117,6 @@ proc extractImages(self: Module, account: AccountDto, thumbnailImage: var string
 method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("startupModule", self.viewVariant)
   self.controller.init()
-
-  let generatedAccounts = self.controller.getGeneratedAccounts()
-  var accounts: seq[gen_acc_item.Item]
-  for acc in generatedAccounts:
-    accounts.add(gen_acc_item.initItem(acc.id, acc.alias, acc.address, acc.derivedAccounts.whisper.publicKey, acc.keyUid))
-  self.view.setGeneratedAccountList(accounts)
 
   if self.controller.shouldStartWithOnboardingScreen():
     self.view.setCurrentStartupState(newWelcomeState(state.FlowType.General, nil))
@@ -262,9 +255,6 @@ method onQuinaryActionClicked*[T](self: Module[T]) =
   self.view.setCurrentStartupState(nextState)
   debug "quinary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
 
-method getImportedAccount*[T](self: Module[T]): GeneratedAccountDto =
-  return self.controller.getImportedAccount()
-
 method generateImage*[T](self: Module[T], imageUrl: string, aX: int, aY: int, bX: int, bY: int): string =
   return self.controller.generateImage(imageUrl, aX, aY, bX, bY)
 
@@ -303,9 +293,6 @@ method emitStartupError*[T](self: Module[T], error: string, errType: StartupErro
 
 method validMnemonic*[T](self: Module[T], mnemonic: string): bool =
   return self.controller.validMnemonic(mnemonic)
-
-method importAccountSuccess*[T](self: Module[T]) =
-  self.view.importAccountSuccess()
 
 method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
   self.controller.cancelCurrentFlow()
@@ -534,9 +521,6 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
             return
           self.view.setCurrentStartupState(newState)
           debug "new state for onboarding/login flow continuation after shared flow is terminated", setCurrFlow=newState.flowType(), newCurrState=newState.stateType()
-
-method storeDefaultKeyPairForNewKeycardUser*[T](self: Module[T]) =
-  self.delegate.storeDefaultKeyPairForNewKeycardUser()
 
 method syncKeycardBasedOnAppWalletStateAfterLogin*[T](self: Module[T]) =
   self.delegate.syncKeycardBasedOnAppWalletStateAfterLogin()

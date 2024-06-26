@@ -22,7 +22,7 @@ logScope:
 
 type ProfileImageDetails = object
   url*: string
-  croppedImage*: string # TODO: Remove after https://github.com/status-im/status-go/issues/4977
+  croppedImage*: string
   cropRectangle*: ImageCropRectangle
 
 type
@@ -189,7 +189,9 @@ proc init*(self: Controller) =
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
-# This is used when fetching backup failed and we create a new displayName and profileImage.
+# This is used in 2 flows, in case fetching backup failed and we create a new displayName and profileImage:
+#   1. FirstRunOldUserImportSeedPhrase
+#   2. FirstRunOldUserKeycardImport
 # At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
@@ -200,12 +202,6 @@ proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
 
 proc checkFetchingStatusAndProceed*(self: Controller) =
   self.delegate.checkFetchingStatusAndProceed()
-
-proc getGeneratedAccounts*(self: Controller): seq[GeneratedAccountDto] =
-  return self.accountsService.generatedAccounts()
-
-proc getImportedAccount*(self: Controller): GeneratedAccountDto =
-  return self.accountsService.getImportedAccount()
 
 proc getPasswordStrengthScore*(self: Controller, password, userName: string): int =
   return self.generalService.getPasswordStrengthScore(password, userName)
@@ -348,7 +344,6 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   let selectedAccount = self.getSelectedLoginAccount()
   self.keychainService.tryToObtainData(selectedAccount.keyUid)
 
-# TODO: Remove when implemented https://github.com/status-im/status-go/issues/4977
 proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:
     return
@@ -375,6 +370,7 @@ proc validMnemonic*(self: Controller, mnemonic: string): bool =
 
 # validateMnemonicForImport checks if mnemonic is valid and not yet saved in local database
 proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
+
   let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
   if err.len != 0:
     self.delegate.emitStartupError(err, StartupErrorType.ImportAccError)
@@ -386,16 +382,6 @@ proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
 
   self.setSeedPhrase(mnemonic)
   return true
-
-# TODO: Remove after https://github.com/status-im/status-go/issues/4977
-proc importMnemonic*(self: Controller): bool =
-  let error = self.accountsService.importMnemonic(self.tmpSeedPhrase)
-  if(error.len == 0):
-    self.delegate.importAccountSuccess()
-    return true
-  else:
-    self.delegate.emitStartupError(error, StartupErrorType.ImportAccError)
-    return false
 
 proc setupKeychain(self: Controller, store: bool) =
   if store:
@@ -425,6 +411,7 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
     self.connectToFetchingFromWakuEvents()
   else:
     self.delegate.moveToLoadingAppState()
+
   let error = self.accountsService.importAccountAndLogin(
     self.tmpSeedPhrase, 
     self.tmpPassword, 
@@ -433,56 +420,48 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
     self.tmpProfileImageDetails.url,
     self.tmpProfileImageDetails.cropRectangle,
   )
+
   self.processCreateAccountResult(error, storeToKeychain)
 
-proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
-  if self.importMnemonic():
-    self.delegate.moveToLoadingAppState()
-    if newKeycard:
-      self.delegate.storeDefaultKeyPairForNewKeycardUser()
-      self.storeMetadataForNewKeycardUser()
-    else:
-      self.syncKeycardBasedOnAppWalletStateAfterLogin()
-    let (_, flowEvent) = self.keycardService.getLastReceivedKeycardData() # we need this to get the correct instanceUID
-    self.accountsService.setupAccountKeycard(flowEvent, self.tmpDisplayName, useImportedAcc = true)
-    self.setupKeychain(storeToKeychain)
-  else:
-    error "an error ocurred while importing mnemonic"
+# NOTE: Called during FirstRunNewUserNewKeycardKeys and FirstRunNewUserImportSeedPhraseIntoKeycard
+# WARNING: Reuse `importAccountAndLogin` with custom parameters
+proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool = true) =
+  self.delegate.moveToLoadingAppState()
+  self.storeMetadataForNewKeycardUser()
+  let (_, flowEvent) = self.keycardService.getLastReceivedKeycardData()
+  let error = self.accountsService.importAccountAndLogin(
+    self.tmpSeedPhrase, 
+    password = "", # For keycard it will be substituted with`encryption.publicKey` in status-go
+    false, 
+    self.tmpDisplayName, 
+    self.tmpProfileImageDetails.url,
+    self.tmpProfileImageDetails.cropRectangle,
+    keycardInstanceUID = flowEvent.instanceUID,
+  )
+  self.processCreateAccountResult(error, storeToKeychain)
 
+# NOTE: Called during FirstRunOldUserKeycardImport
 proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
   if self.tmpKeycardEvent.keyUid.len == 0 or
     self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
       self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
       return
+
   if recoverAccount:
     self.delegate.prepareAndInitFetchingData()
     self.connectToFetchingFromWakuEvents()
-  if self.tmpSeedPhrase.len > 0:
-    # if `tmpSeedPhrase` is not empty means user has recovered keycard via seed phrase
-    let accFromSeedPhrase = self.accountsService.createAccountFromMnemonic(self.tmpSeedPhrase, includeEncryption = true,
-      includeWhisper = true, includeRoot = true, includeDefaultWallet = true, includeEip1581 = true)
-    self.tmpKeycardEvent.masterKey.privateKey = accFromSeedPhrase.privateKey
-    self.tmpKeycardEvent.masterKey.publicKey = accFromSeedPhrase.publicKey
-    self.tmpKeycardEvent.masterKey.address = accFromSeedPhrase.address
-    self.tmpKeycardEvent.whisperKey.privateKey = accFromSeedPhrase.derivedAccounts.whisper.privateKey
-    self.tmpKeycardEvent.whisperKey.publicKey = accFromSeedPhrase.derivedAccounts.whisper.publicKey
-    self.tmpKeycardEvent.whisperKey.address = accFromSeedPhrase.derivedAccounts.whisper.address
-    self.tmpKeycardEvent.walletKey.privateKey = accFromSeedPhrase.derivedAccounts.defaultWallet.privateKey
-    self.tmpKeycardEvent.walletKey.publicKey = accFromSeedPhrase.derivedAccounts.defaultWallet.publicKey
-    self.tmpKeycardEvent.walletKey.address = accFromSeedPhrase.derivedAccounts.defaultWallet.address
-    self.tmpKeycardEvent.walletRootKey.privateKey = accFromSeedPhrase.derivedAccounts.walletRoot.privateKey
-    self.tmpKeycardEvent.walletRootKey.publicKey = accFromSeedPhrase.derivedAccounts.walletRoot.publicKey
-    self.tmpKeycardEvent.walletRootKey.address = accFromSeedPhrase.derivedAccounts.walletRoot.address
-    self.tmpKeycardEvent.eip1581Key.privateKey = accFromSeedPhrase.derivedAccounts.eip1581.privateKey
-    self.tmpKeycardEvent.eip1581Key.publicKey = accFromSeedPhrase.derivedAccounts.eip1581.publicKey
-    self.tmpKeycardEvent.eip1581Key.address = accFromSeedPhrase.derivedAccounts.eip1581.address
-    self.tmpKeycardEvent.encryptionKey.privateKey = accFromSeedPhrase.derivedAccounts.encryption.privateKey
-    self.tmpKeycardEvent.encryptionKey.publicKey = accFromSeedPhrase.derivedAccounts.encryption.publicKey
-    self.tmpKeycardEvent.encryptionKey.address = accFromSeedPhrase.derivedAccounts.encryption.address
 
   self.syncKeycardBasedOnAppWalletStateAfterLogin()
-  self.accountsService.setupAccountKeycard(self.tmpKeycardEvent, self.tmpDisplayName, useImportedAcc = false, recoverAccount)
-  self.setupKeychain(storeToKeychain)
+
+  let error = self.accountsService.restoreKeycardAccountAndLogin(
+    self.tmpKeycardEvent,
+    recoverAccount, 
+    self.tmpDisplayName, 
+    self.tmpProfileImageDetails.url,
+    self.tmpProfileImageDetails.cropRectangle,
+  )
+  
+  self.processCreateAccountResult(error, storeToKeychain)
 
 proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
   return self.accountsService.openedAccounts()
@@ -509,51 +488,41 @@ proc isSelectedAccountAKeycardAccount*(self: Controller): bool =
   let selectedAccount = self.getSelectedLoginAccount()
   return selectedAccount.keycardPairing.len > 0
 
-proc login*(self: Controller) =
+proc login*(self: Controller, keycard: bool = false, keycardReplacement: bool = false) =
   self.delegate.moveToLoadingAppState()
-  let selectedAccount = self.getSelectedLoginAccount()
-  self.accountsService.login(selectedAccount, hashPassword(self.tmpPassword))
+
+  var passwordHash, chatPrivateKey, mnemonic = ""
+
+  if not keycard:
+    passwordHash = hashPassword(self.tmpPassword) 
+  else:
+    passwordHash = self.tmpKeycardEvent.encryptionKey.publicKey
+    chatPrivateKey = self.tmpKeycardEvent.whisperKey.privateKey
+    mnemonic = self.tmpSeedPhrase
+
+  if keycard and keycardReplacement:
+    self.delegate.applyKeycardReplacementAfterLogin()
+      
+  self.accountsService.login(
+    self.getSelectedLoginAccount(),
+    passwordHash,
+    chatPrivateKey,
+    mnemonic,
+  )
 
 proc loginLocalPairingAccount*(self: Controller) =
   self.delegate.moveToLoadingAppState()
-  if self.localPairingStatus.chatKey.len == 0:
-    self.accountsService.login(self.localPairingStatus.account, self.localPairingStatus.password)
-  else:
-    var kcEvent = KeycardEvent()
-    kcEvent.keyUid = self.localPairingStatus.account.keyUid
-    kcEvent.whisperKey.privateKey = self.localPairingStatus.chatKey
-    kcEvent.encryptionKey.publicKey = self.localPairingStatus.password
-    discard self.accountsService.loginAccountKeycard(self.localPairingStatus.account, kcEvent)
-
-proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, keycardReplacement = false) =
-  if keycardReplacement:
-    self.delegate.applyKeycardReplacementAfterLogin()
-  singletonInstance.localAccountSettings.setStoreToKeychainValue(storeToKeychainValue)
-  self.delegate.moveToLoadingAppState()
-  let selAcc = self.getSelectedLoginAccount()
-  let error = self.accountsService.loginAccountKeycard(selAcc, self.tmpKeycardEvent)
-  if(error.len > 0):
-    self.delegate.emitAccountLoginError(error)
-
-proc loginAccountKeycardUsingSeedPhrase*(self: Controller, storeToKeychain: bool) =
-  let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true, includeWhisper = true)
-  let selAcc = self.getSelectedLoginAccount()
-
-  var kcData = KeycardEvent(
-    keyUid: acc.keyUid,
-    masterKey: KeyDetails(address: acc.address),
-    whisperKey: KeyDetails(privateKey: acc.derivedAccounts.whisper.privateKey),
-    encryptionKey: KeyDetails(publicKey: acc.derivedAccounts.encryption.publicKey)
+  self.accountsService.login(
+    self.localPairingStatus.account,
+    self.localPairingStatus.password,
+    chatPrivateKey = self.localPairingStatus.chatKey
   )
-  if acc.derivedAccounts.whisper.privateKey.startsWith("0x"):
-    kcData.whisperKey.privateKey = acc.derivedAccounts.whisper.privateKey[2..^1]
 
-  self.setupKeychain(storeToKeychain)
-
-  self.delegate.moveToLoadingAppState()
-  let error = self.accountsService.loginAccountKeycard(selAcc, kcData)
-  if(error.len > 0):
-    self.delegate.emitAccountLoginError(error)
+# FIXME: Why do we even have storeToKeychain during login? Makes no sense
+# https://github.com/status-im/status-desktop/issues/15167
+proc loginAccountKeycard*(self: Controller, storeToKeychain: bool, keycardReplacement = false) =
+  # singletonInstance.localAccountSettings.setStoreToKeychainValue(storeToKeychainValue)
+  self.login(keycard = true, keycardReplacement = keycardReplacement)
 
 proc convertKeycardProfileKeypairToRegular*(self: Controller) =
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
@@ -633,8 +602,8 @@ proc buildSeedPhrasesFromIndexes*(self: Controller, seedPhraseIndexes: seq[int])
 proc generateRandomPUK*(self: Controller): string =
   return self.keycardService.generateRandomPUK()
 
+# Stores metadata, default Status account only, to the keycard for a newly created keycard user.
 proc storeMetadataForNewKeycardUser(self: Controller) =
-  ## Stores metadata, default Status account only, to the keycard for a newly created keycard user.
   let paths = @[account_constants.PATH_DEFAULT_WALLET]
   self.runStoreMetadataFlow(self.getDisplayName(), self.getPin(), paths)
 

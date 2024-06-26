@@ -75,9 +75,6 @@ QtObject:
       return "0"
     return $stint.fromHex(StUint[256], value)
 
-  proc generateAlias*(self: Utils, pk: string): string {.slot.} =
-    return generateAliasFromPk(pk)
-
   proc readTextFile*(self: Utils, filepath: string): string {.slot.} =
     try:
       return readFile(filepath)

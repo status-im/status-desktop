@@ -50,7 +50,6 @@ logScope:
 
 type
   AppController* = ref object of RootObj
-    storeDefaultKeyPair: bool
     syncKeycardBasedOnAppWalletState: bool
     applyKeycardReplacement: bool
     changedKeycardUids: seq[tuple[oldKcUid: string, newKcUid: string]] # used in case user unlocked keycard during onboarding using seed phrase
@@ -120,7 +119,6 @@ proc userLoggedIn*(self: AppController): string
 proc appReady*(self: AppController)
 proc logout*(self: AppController)
 proc finishAppLoading*(self: AppController)
-proc storeDefaultKeyPairForNewKeycardUser*(self: AppController)
 proc syncKeycardBasedOnAppWalletStateAfterLogin*(self: AppController)
 proc applyKeycardReplacementAfterLogin*(self: AppController)
 proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AppController, oldKeycardUid: string, newKeycardUid: string)
@@ -146,7 +144,6 @@ proc connect(self: AppController) =
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
-  result.storeDefaultKeyPair = false
   result.syncKeycardBasedOnAppWalletState = false
   result.applyKeycardReplacement = false
   result.statusFoundation = statusFoundation
@@ -592,9 +589,6 @@ proc applyNecessaryActionsAfterLoggingIn(self: AppController) =
     let newUid = self.changedKeycardUids[^1].newKcUid
     discard self.walletAccountService.updateKeycardUid(oldUid, newUid)
     discard self.walletAccountService.setKeycardUnlocked(singletonInstance.userProfile.getKeyUid(), newUid)
-
-proc storeDefaultKeyPairForNewKeycardUser*(self: AppController) =
-  self.storeDefaultKeyPair = true
 
 proc syncKeycardBasedOnAppWalletStateAfterLogin*(self: AppController) =
   self.syncKeycardBasedOnAppWalletState = true

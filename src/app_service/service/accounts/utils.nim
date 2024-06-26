@@ -1,4 +1,3 @@
-import json
 import ../../../backend/accounts as status_account
 import ../../common/conversion
 
@@ -41,9 +40,6 @@ proc compressCommunityKey*(publicKey: string): string =
 
   except Exception as e:
     echo "error: `compressCommunityKey` " & $e.name & "  msg: " & $e.msg
-
-proc generateAliasFromPk*(publicKey: string): string =
-  return status_account.generateAlias(publicKey).result.getStr
 
 proc isAlias*(value: string): bool =
   return status_account.isAlias(value)
