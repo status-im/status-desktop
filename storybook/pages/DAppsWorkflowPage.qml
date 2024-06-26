@@ -143,6 +143,8 @@ Item {
 
                     Layout.fillWidth: true
                 }
+
+                StatusBaseText { text: "Pending" }
             }
 
             ComboBox {
@@ -374,6 +376,7 @@ Item {
         property string pairUri: ""
         property bool testNetworks: false
         property bool enableSDK: true
+        property bool pending : false
         property string customAccounts: ""
     }
 }
