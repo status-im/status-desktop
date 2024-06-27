@@ -2,3 +2,4 @@ PairWCModal 1.0 PairWCModal.qml
 DAppsListPopup 1.0 DAppsListPopup.qml
 ConnectDAppModal 1.0 ConnectDAppModal.qml
 DAppRequestModal 1.0 DAppRequestModal.qml
+DAppsUriCopyInstructionsPopup 1.0 DAppsUriCopyInstructionsPopup.qml

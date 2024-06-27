@@ -25,11 +25,19 @@ import SortFilterProxyModel 0.2
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Profile.stores 1.0
 
-import utils 1.0
+import mainui 1.0
 import shared.stores 1.0
+import utils 1.0
 
 Item {
     id: root
+
+    // Needed for DAppsWorkflow->PairWCModal to open its instructions popup
+    Popups {
+        popupParent: root
+        rootStore: QtObject {}
+        communityTokensStore: QtObject {}
+    }
 
     SplitView {
         anchors.fill: parent
@@ -371,3 +379,4 @@ Item {
 }
 
 // category: Wallet
+// https://www.figma.com/design/HrmZp1y4S77QJezRFRl6ku/dApp-Interactions---Milestone-1?node-id=3649-30334&t=t5qqtR3RITR4yCOx-0
