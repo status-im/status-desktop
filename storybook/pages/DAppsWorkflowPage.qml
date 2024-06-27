@@ -98,7 +98,7 @@ Item {
                     })
                 }
                 Layout.fillWidth: true
-                Layout.preferredHeight: !!text ? 400 : undefined
+                Layout.preferredHeight: !!text ? 400 : -1
             }
 
             Rectangle {
