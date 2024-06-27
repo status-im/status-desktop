@@ -110,6 +110,11 @@ Item {
             function signTypedDataV4(topic, id, address, password, message) {
                 signTypedDataV4Calls.push({topic, id, address, password, message})
             }
+
+            property var updateWalletConnectSessionsCalls: []
+            function updateWalletConnectSessions(activeTopicsJson) {
+                updateWalletConnectSessionsCalls.push({activeTopicsJson})
+            }
         }
     }
 
@@ -409,6 +414,10 @@ Item {
             callback({"b536a": session, "b537b": session})
             compare(provider.dappsModel.count, 1, "expected dappsModel have the SDK's reported dapps")
             compare(provider.dappsModel.get(0).iconUrl, "", "expected iconUrl to be missing")
+            let updateCalls = provider.store.updateWalletConnectSessionsCalls
+            compare(updateCalls.length, 1, "expected a call to store.updateWalletConnectSessions")
+            verify(updateCalls[0].activeTopicsJson.includes("b536a"))
+            verify(updateCalls[0].activeTopicsJson.includes("b537b"))
         }
     }
 
