@@ -49,15 +49,15 @@ QObject {
 
     // Strip leading zeros from numbers as expected by status-go
     function prepareTxForStatusGo(txObj) {
-        return {
-            data: txObj.data,
-            from: txObj.from,
-            gasLimit: stripLeadingZeros(txObj.gasLimit),
-            gasPrice: stripLeadingZeros(txObj.gasPrice),
-            nonce: stripLeadingZeros(txObj.nonce),
-            to: txObj.to,
-            value: stripLeadingZeros(txObj.value)
-        }
+        let tx = {}
+        if (txObj.data) { tx.data = txObj.data }
+        if (txObj.from) { tx.from = txObj.from }
+        if (txObj.gasLimit) { tx.gasLimit = stripLeadingZeros(txObj.gasLimit) }
+        if (txObj.gasPrice) { tx.gasPrice = stripLeadingZeros(txObj.gasPrice) }
+        if (txObj.nonce) { tx.nonce = stripLeadingZeros(txObj.nonce) }
+        if (txObj.to) { tx.to = txObj.to }
+        if (txObj.value) { tx.value = stripLeadingZeros(txObj.value) }
+        return tx
     }
     // Returns the hex encoded signature of the transaction or empty string if error
     function signTransaction(topic, id, address, chainId, password, txObj) {
