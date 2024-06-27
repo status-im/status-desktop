@@ -18,7 +18,7 @@ type
     AddressPerChain
     Decimals
     Image
-    # Native, Erc20, Erc721
+    # Native, Erc20, Erc721, Erc1155
     Type
     # only be valid if source is custom
     CommunityId
