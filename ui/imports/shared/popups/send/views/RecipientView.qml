@@ -104,8 +104,10 @@ Loader {
             let result = store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !isCollectiblesTransfer)
             if(!!result.address) {
                 root.addressText = result.address
-                if(!!root.item.input)
+                if(!!root.item.input) {
                     root.item.input.text = result.formattedText
+                    root.item.input.edit.cursorPosition = root.item.input.edit.length
+                }
             }
             root.recalculateRoutesAndFees()
         }
@@ -183,11 +185,22 @@ Loader {
             input.background.color: Theme.palette.indirectColor1
             input.background.border.width: 0
             input.implicitHeight: 56
-            input.clearable: root.interactive
+            input.clearable: false // custom button below
             input.edit.readOnly: !root.interactive
             multiline: false
             input.edit.textFormat: TextEdit.RichText
-            text: addressText
+            text: root.addressText
+
+            function validateInput() {
+                const plainText = store.plainText(recipientInput.text)
+                root.isLoading()
+                if (Utils.isValidEns(plainText)) {
+                    d.isPending = true
+                    d.resolveENS(plainText)
+                } else {
+                    d.waitTimer.restart()
+                }
+            }
 
             input.rightComponent: RowLayout {
                 StatusButton {
@@ -195,8 +208,14 @@ Loader {
                     borderColor: Theme.palette.primaryColor1
                     size: StatusBaseButton.Size.Tiny
                     text: qsTr("Paste")
-                    visible: !store.plainText(recipientInput.text)
-                    onClicked: recipientInput.input.edit.paste()
+                    visible: recipientInput.input.edit.length === 0 && recipientInput.input.edit.canPaste
+                    focusPolicy: Qt.NoFocus
+                    onClicked: {
+                        recipientInput.input.edit.forceActiveFocus()
+                        recipientInput.input.edit.paste()
+                        recipientInput.input.edit.cursorPosition = recipientInput.input.edit.length
+                        recipientInput.validateInput()
+                    }
                 }
                 StatusIcon {
                     Layout.preferredWidth: 16
@@ -206,7 +225,7 @@ Loader {
                     visible: root.ready
                 }
                 StatusClearButton {
-                    visible: !!store.plainText(recipientInput.text)
+                    visible: recipientInput.input.edit.length !== 0 && root.interactive
                     onClicked: {
                         recipientInput.input.edit.clear()
                         d.clearValues()
@@ -214,22 +233,7 @@ Loader {
                 }
             }
             Keys.onTabPressed: event.accepted = true
-            Keys.onReleased: {
-                let plainText =  store.plainText(input.edit.text)
-                if(!plainText) {
-                    d.clearValues()
-                }
-                else {
-                    root.isLoading()
-                    if(Utils.isValidEns(plainText)) {
-                        d.isPending = true
-                        d.resolveENS(plainText)
-                    }
-                    else {
-                        d.waitTimer.restart()
-                    }
-                }
-            }
+            Keys.onReleased: recipientInput.validateInput()
         }
     }
 
