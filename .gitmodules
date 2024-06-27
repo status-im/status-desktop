@@ -114,3 +114,8 @@
 [submodule "vendor/qzxing"]
 	path = vendor/qzxing
 	url = https://github.com/status-im/qzxing.git
+[submodule "vendor/nim-libbacktrace"]
+	path = vendor/nim-libbacktrace
+	url = https://github.com/status-im/nim-libbacktrace.git
+	ignore = untracked
+	branch = master
