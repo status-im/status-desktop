@@ -575,6 +575,11 @@ QtObject:
         error "error while mute chat ", msg
         return
 
+      # There is no response except an error, so we can just modify the chat ourselves
+      var chat = self.chats[chatID]
+      chat.muted = true
+      self.updateOrAddChat(chat)
+
       self.events.emit(SIGNAL_CHAT_MUTED, ChatArgs(chatId: chatId))
     except Exception as e:
       let errDesription = e.msg
@@ -592,6 +597,11 @@ QtObject:
         let msg = response.error.message & " chatId=" & chatId
         error "error while unmute chat ", msg
         return
+
+      # There is no response except an error, so we can just modify the chat ourselves
+      var chat = self.chats[chatID]
+      chat.muted = false
+      self.updateOrAddChat(chat)
 
       self.events.emit(SIGNAL_CHAT_UNMUTED, ChatArgs(chatId: chatId))
     except Exception as e:

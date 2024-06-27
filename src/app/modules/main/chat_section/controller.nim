@@ -132,7 +132,6 @@ proc init*(self: Controller) =
     let chat = self.chatService.getChatById(args.chatId)
     self.delegate.onMarkMessageAsUnread(chat)
 
-
   self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
     let args = chat_service.ChatArgs(e)
     self.delegate.onCommunityChannelDeletedOrChatLeft(args.chatId)
