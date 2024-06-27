@@ -5,3 +5,4 @@ ConnectionStatusTag 1.0 ConnectionStatusTag.qml
 DAppSignRequestModal 1.0 DAppSignRequestModal.qml
 DAppsUriCopyInstructionsPopup 1.0 DAppsUriCopyInstructionsPopup.qml
 RoundImageWithBadge 1.0 RoundImageWithBadge.qml
+DAppConfirmDisconnectPopup 1.0 DAppConfirmDisconnectPopup.qml

@@ -5,6 +5,8 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+import utils 1.0
+
 ColumnLayout {
     id: root
 
@@ -48,7 +50,7 @@ ColumnLayout {
                 bgRadius: bgWidth / 2
                 bgBorderWidth: 2
                 bgBorderColor: Theme.palette.statusAppLayout.backgroundColor
-                source: "assets/sign.svg"
+                source: Style.svg("sign")
             }
         }
     }

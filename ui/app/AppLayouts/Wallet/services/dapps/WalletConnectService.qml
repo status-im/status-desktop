@@ -119,6 +119,10 @@ QObject {
         });
     }
 
+    function getDApp(dAppUrl) {
+        return ModelUtils.getByKey(dappsModel, "url", dAppUrl);
+    }
+
     signal connectDApp(var dappChains, var sessionProposal, var approvedNamespaces)
     signal approveSessionResult(var session, var error)
     signal sessionRequest(SessionRequestResolved request)
