@@ -107,7 +107,8 @@ type
     msg: string
     replyTo: string
     preferredUsername: string
-    linkPreviews: JsonNode
+    standardLinkPreviews: JsonNode
+    statusLinkPreviews: JsonNode
 
 const asyncSendImagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSendImagesTaskArg](argEncoded)
@@ -120,8 +121,15 @@ const asyncSendImagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       if imagePath != "":
         imagePaths.add(imagePath)
 
-    let response = status_chat.sendImages(arg.chatId, imagePaths, arg.msg, arg.replyTo, arg.preferredUsername,
-      arg.linkPreviews)
+    let response = status_chat.sendImages(
+      arg.chatId,
+      imagePaths,
+      arg.msg,
+      arg.replyTo,
+      arg.preferredUsername,
+      arg.standardLinkPreviews,
+      arg.statusLinkPreviews,
+    )
 
     for imagePath in imagePaths:
       removeFile(imagePath)
