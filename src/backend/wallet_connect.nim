@@ -15,6 +15,12 @@ import app_service/common/utils
 rpc(addWalletConnectSession, "wallet"):
   sessionJson: string
 
+rpc(disconnectWalletConnectSession, "wallet"):
+  topic: string
+
+rpc(getWalletConnectActiveSessions, "wallet"):
+  validAtTimestamp: int
+
 rpc(signTypedDataV4, "wallet"):
   typedJson: string
   address: string
@@ -30,6 +36,33 @@ proc addSession*(sessionJson: string): bool =
   except Exception as e:
     warn "AddWalletConnectSession failed: ", "msg", e.msg
     return false
+
+proc disconnectSession*(topic: string): bool =
+  try:
+    let rpcRes = disconnectWalletConnectSession(topic)
+    return isSuccessResponse(rpcRes):
+  except Exception as e:
+    warn "wallet_disconnectWalletConnectSession failed: ", "msg", e.msg
+    return false
+
+proc getActiveSessions*(validAtTimestamp: int): JsonNode =
+  try:
+    let rpcRes = getWalletConnectActiveSessions(validAtTimestamp)
+    if(not isSuccessResponse(rpcRes)):
+      return nil
+
+    let jsonResultStr = rpcRes.result.getStr()
+    if jsonResultStr == "null":
+      return nil
+
+    if rpcRes.result.kind != JArray:
+      error "Unexpected result kind: ", rpcRes.result.kind
+      return nil
+
+    return rpcRes.result
+  except Exception as e:
+    warn "GetWalletConnectActiveSessions failed: ", "msg", e.msg
+    return nil
 
 proc getDapps*(validAtEpoch: int64, testChains: bool): string =
   try:

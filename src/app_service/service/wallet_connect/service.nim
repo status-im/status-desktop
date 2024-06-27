@@ -71,9 +71,38 @@ QtObject:
     # TODO #14588: call it async
     return status_go.addSession(session_json)
 
-  proc addSession*(self: Service, topic: string): bool =
+  proc deactivateSession*(self: Service, topic: string): bool =
     # TODO #14588: call it async
-    return status_go.deactivateSession(topic)
+    return status_go.disconnectSession(topic)
+
+  proc updateSessionsMarkedAsActive*(self: Service, activeTopicsJson: string) =
+    # TODO #14588: call it async
+    let activeTopicsJN = parseJson(activeTopicsJson)
+    if activeTopicsJN.kind != JArray:
+      error "invalid array of json strings"
+      return
+
+    var activeTopics = newSeq[string]()
+    for i in 0 ..< activeTopicsJN.len:
+      if activeTopicsJN[i].kind != JString:
+        error "bad topic entry at", i
+        return
+      activeTopics.add(activeTopicsJN[i].getStr())
+
+    let sessions = status_go.getActiveSessions(0)
+    if sessions.isNil:
+      error "failed to get active sessions"
+      return
+
+    for session in sessions:
+      if session.kind != JObject or not session.hasKey("topic"):
+        error "unexpected session object"
+        continue
+
+      let topic = session["topic"].getStr()
+      if not activeTopics.contains(topic):
+        if not status_go.disconnectSession(topic):
+          error "failed to mark session as disconnected", topic
 
   proc getDapps*(self: Service): string =
     let validAtEpoch = now().toTime().toUnix()

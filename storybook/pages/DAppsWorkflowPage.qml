@@ -317,6 +317,20 @@ Item {
                 return true
             }
 
+            function updateWalletConnectSessions(activeTopicsJson) {
+                console.info("Update Persisted Sessions", activeTopicsJson)
+
+                let activeTopics = JSON.parse(activeTopicsJson)
+                let sessions = JSON.parse(settings.persistedSessions)
+                let newSessions = sessions.filter(function(session) {
+                    return activeTopics.includes(session.topic)
+                })
+                settings.persistedSessions = JSON.stringify(newSessions)
+                d.updateSessionsModelAndAddNewIfNotNull(null)
+                return true
+            }
+
+
             function getDapps() {
                 let dappsJson = JSON.stringify(d.persistedDapps)
                 this.dappsListReceived(dappsJson)
