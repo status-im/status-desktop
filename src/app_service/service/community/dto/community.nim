@@ -415,11 +415,6 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("encrypted", result.encrypted)
   discard jsonObj.getProp("isMember", result.isMember)
 
-  var chatsObj: JsonNode
-  if(jsonObj.getProp("chats", chatsObj)):
-    for _, chatObj in chatsObj:
-      result.chats.add(chatObj.toChatDto(result.id))
-
   var categoriesObj: JsonNode
   if(jsonObj.getProp("categories", categoriesObj)):
     for _, categoryObj in categoriesObj:
@@ -447,6 +442,11 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
     for memberId, memberObj in membersObj:
       result.members.add(toChannelMember(memberObj, memberId))
+
+  var chatsObj: JsonNode
+  if(jsonObj.getProp("chats", chatsObj)):
+    for _, chatObj in chatsObj:
+      result.chats.add(chatObj.toChatDto(result.id, result.members))
 
   var tagsObj: JsonNode
   if(jsonObj.getProp("tags", tagsObj)):
@@ -609,6 +609,14 @@ proc getCommunityChat*(self: CommunityDto, chatId: string): ChatDto =
   let chats = self.getCommunityChats(@[chatId])
   if chats.len > 0:
     return chats[0]
+
+proc getCommunityChatIndex*(self: CommunityDto, chatId: string): int =
+  var idx = 0
+  for communityChat in self.chats:
+    if chatId == communityChat.id:
+      return idx
+    idx.inc()
+  return -1
 
 proc hasCommunityChat*(self: CommunityDto, chatId: string): bool =
   for communityChat in self.chats:
