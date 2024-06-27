@@ -20,6 +20,10 @@ QObject {
         return controller.deactivateWalletConnectSession(topic)
     }
 
+    function updateWalletConnectSessions(activeTopicsJson) {
+        return controller.updateSessionsMarkedAsActive(activeTopicsJson)
+    }
+
     function authenticateUser(topic, id, address) {
         let ok = controller.authenticateUser(topic, id, address)
         if(!ok) {

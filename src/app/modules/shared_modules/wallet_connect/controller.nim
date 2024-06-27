@@ -30,6 +30,9 @@ QtObject:
   proc deactivateWalletConnectSession*(self: Controller, topic: string): bool {.slot.} =
     return self.service.deactivateSession(topic)
 
+  proc updateSessionsMarkedAsActive*(self: Controller, activeTopicsJson: string) {.slot.} =
+    self.service.updateSessionsMarkedAsActive(activeTopicsJson)
+
   proc dappsListReceived*(self: Controller, dappsJson: string) {.signal.}
 
   # Emits signal dappsListReceived with the list of dApps
