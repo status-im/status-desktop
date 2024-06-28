@@ -12,6 +12,7 @@
 #include "StatusQ/functionaggregator.h"
 #include "StatusQ/groupingmodel.h"
 #include "StatusQ/leftjoinmodel.h"
+#include "StatusQ/modelcount.h"
 #include "StatusQ/modelentry.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/movablemodel.h"
@@ -70,6 +71,9 @@ public:
         qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0, 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
         qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");
         qmlRegisterType<SnapshotObject>("StatusQ", 0, 1, "SnapshotObject");
+
+        qmlRegisterUncreatableType<ModelCount>("StatusQ", 0, 1,
+                                               "ModelCount", "This is attached type, cannot be created directly.");
 
         qmlRegisterSingletonType<ModelUtilsInternal>(
             "StatusQ.Internal", 0, 1, "ModelUtils", &ModelUtilsInternal::qmlInstance);
