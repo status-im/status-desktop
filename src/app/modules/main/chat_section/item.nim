@@ -40,6 +40,7 @@ type
     canView: bool
     viewersCanPostReactions: bool
     hideIfPermissionsNotMet: bool
+    missingEncryptionKey: bool
 
 proc initItem*(
     id,
@@ -73,6 +74,7 @@ proc initItem*(
     canPostReactions = true,
     viewersCanPostReactions = true,
     hideIfPermissionsNotMet: bool,
+    missingEncryptionKey: bool
     ): Item =
   result = Item()
   result.id = id
@@ -107,6 +109,7 @@ proc initItem*(
   result.canPostReactions = canPostReactions
   result.viewersCanPostReactions = viewersCanPostReactions
   result.hideIfPermissionsNotMet = hideIfPermissionsNotMet
+  result.missingEncryptionKey = missingEncryptionKey
 
 proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
@@ -358,3 +361,9 @@ proc `viewersCanPostReactions=`*(self: Item, value: bool) =
 
 proc hideBecausePermissionsAreNotMet*(self: Item): bool =
   self.hideIfPermissionsNotMet and not self.canPost and not self.canView
+
+proc missingEncryptionKey*(self: Item): bool =
+  self.missingEncryptionKey
+
+proc `missingEncryptionKey=`*(self: var Item, value: bool) =
+  self.missingEncryptionKey = value

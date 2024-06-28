@@ -275,6 +275,7 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
         category.id,
         category.position,
         hideIfPermissionsNotMet = false,
+        missingEncryptionKey = false,
       )
 
   if insertIntoModel:
@@ -530,7 +531,7 @@ method activeItemSet*(self: Module, itemId: string) =
   if self.controller.isCommunity():
     let community = self.controller.getMyCommunity()
     if not community.isPrivilegedUser:
-      if not chat_item.canView or not chat_item.canPost:
+      if not chat_item.missingEncryptionKey and (not chat_item.canView or not chat_item.canPost):
         # User doesn't have full access to this channel. Check permissions to know what is missing
         self.controller.asyncCheckChannelPermissions(mySectionId, activeChatId)
 
@@ -699,6 +700,7 @@ proc getChatItemFromChatDto(
   var canPostReactions = true
   var hideIfPermissionsNotMet = false
   var viewersCanPostReactions = true
+  var missingEncryptionKey = false
   if self.controller.isCommunity:
     let communityChat = community.getCommunityChat(chatDto.id)
     # NOTE: workaround for new community chat, which is delivered in chatDto before the community will know about that
@@ -710,12 +712,14 @@ proc getChatItemFromChatDto(
       canPostReactions = communityChat.canPostReactions
       hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
       viewersCanPostReactions = communityChat.viewersCanPostReactions
+      missingEncryptionKey = communityChat.missingEncryptionKey
     else:
       canPost = chatDto.canPost
       canView = chatDto.canView
       canPostReactions = chatDto.canPostReactions
       hideIfPermissionsNotMet = chatDto.hideIfPermissionsNotMet
       viewersCanPostReactions = chatDto.viewersCanPostReactions
+      missingEncryptionKey = chatDto.missingEncryptionKey
 
   result = chat_item.initItem(
     chatDto.id,
@@ -754,6 +758,7 @@ proc getChatItemFromChatDto(
     canPostReactions = canPostReactions,
     viewersCanPostReactions = viewersCanPostReactions,
     hideIfPermissionsNotMet = hideIfPermissionsNotMet,
+    missingEncryptionKey = missingEncryptionKey
   )
 
 proc addNewChat(
@@ -1386,6 +1391,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       c.position,
       categoryId="",
       hideIfPermissionsNotMet=false,
+      missingEncryptionKey=false,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem)
   let catChats = self.controller.getChats(communityId, categoryId)
@@ -1409,6 +1415,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       c.position,
       categoryId,
       hideIfPermissionsNotMet=false,
+      missingEncryptionKey=false,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem, ignoreCategory = true)
 
@@ -1473,6 +1480,7 @@ method addOrUpdateChat(self: Module,
     self.changeCanPostValues(chat.id, result.canPost, result.canView, result.canPostReactions, result.viewersCanPostReactions)
     self.updatePermissionsRequiredOnChat(chat.id)
     self.updateChatLocked(chat.id)
+    self.view.chatsModel().updateMissingEncryptionKey(chat.id, result.missingEncryptionKey)
     if (chat.chatType == ChatType.PrivateGroupChat):
       self.onGroupChatDetailsUpdated(chat.id, chat.name, chat.color, chat.icon)
     elif (chat.chatType != ChatType.OneToOne):

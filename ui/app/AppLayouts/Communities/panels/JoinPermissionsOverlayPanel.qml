@@ -25,6 +25,7 @@ Control {
     property bool requiresRequest: false
     property int requestToJoinState: Constants.RequestToJoinState.None
     property bool isInvitationPending: root.requestToJoinState !== Constants.RequestToJoinState.None
+    property bool missingEncryptionKey: false
 
     property bool isJoinRequestRejected: false
     property string communityName
@@ -50,7 +51,9 @@ Control {
         readonly property string channelRequirementsNotMetText: qsTr("Channel requirements not met")
         readonly property string channelMembershipRequestPendingText: qsTr("Channel Membership Request Pending...")
         readonly property string membershipRequestRejectedText: qsTr("Membership Request Rejected")
-        readonly property string allChannelsAreHiddenBecauseNotPermittedText: qsTr("Sorry, you don't hodl the necessary tokens to view or post in any of <b>%1</b> channels").arg(root.communityName)
+        readonly property string allChannelsAreHiddenBecauseNotPermittedText: qsTr("Sorry, you don't hold the necessary tokens to view or post in any of <b>%1</b> channels").arg(root.communityName)
+        readonly property string requirementsCheckPendingText: qsTr("Requirements check pending...")
+        readonly property string missingEncryptionKeyText: qsTr("Encryption key has not arrived yet...")
 
         readonly property bool onlyPrivateNotMetPermissions: (d.visiblePermissionsModel.count === 0) && root.communityHoldingsModel.count > 0
 
@@ -174,6 +177,7 @@ Control {
             Layout.alignment: Qt.AlignHCenter
             visible: !root.showOnlyPanels
                      && !root.requirementsCheckPending
+                     && !root.missingEncryptionKey
                      && (root.isJoinRequestRejected || !root.requirementsMet)
                      && !d.onlyPrivateNotMetPermissions
                      && !root.allChannelsAreHiddenBecauseNotPermitted
@@ -182,9 +186,10 @@ Control {
             color: Theme.palette.dangerColor1
         }
 
-        RequirementsCheckPendingLoader {
-            visible: root.requirementsCheckPending
+        BlinkingText {
             Layout.alignment: Qt.AlignHCenter
+            visible: root.requirementsCheckPending || root.missingEncryptionKey
+            text: root.missingEncryptionKey ? d.missingEncryptionKeyText : d.requirementsCheckPendingText
         }
     }
 }

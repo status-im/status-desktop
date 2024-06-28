@@ -7,8 +7,6 @@ import StatusQ.Core.Theme 0.1
 StatusBaseText {
     id: root
 
-    text: qsTr("Requirements check pending...")
-
     color: Theme.palette.dangerColor1
 
     SequentialAnimation {
