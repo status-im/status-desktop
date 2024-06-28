@@ -41,14 +41,15 @@ def test_change_own_display_name(main_screen: MainWindow, user_account, new_name
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703003', 'Switch state to online')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703004', 'Switch state to automatic')
 @pytest.mark.case(703002, 703003, 703004)
-def test_switch_state_to_offline_online_automatic(multiple_instances):
-    user_one: UserAccount = constants.user_with_random_attributes_1
-    user_two: UserAccount = constants.user_with_random_attributes_2
-    community_params = deepcopy(constants.community_params)
-    community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
+@pytest.mark.parametrize('user_data_one, user_data_two', [
+    (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic')
+])
+def test_switch_state_to_offline_online_automatic(multiple_instances, user_data_one, user_data_two):
+    user_one: UserAccount = constants.user_account_one
+    user_two: UserAccount = constants.user_account_two
     main_screen = MainWindow()
 
-    with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
+    with (multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(user_data=user_data_two) as aut_two):
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()
@@ -56,76 +57,23 @@ def test_switch_state_to_offline_online_automatic(multiple_instances):
                 main_screen.authorize_user(account)
                 main_screen.hide()
 
-        with step(f'User {user_two.name}, get chat key'):
-            aut_two.attach()
-            main_screen.prepare()
-            profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
-            main_screen.hide()
-
-        with step(f'User {user_one.name}, send contact request to {user_two.name}'):
-            aut_one.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
-            main_screen.hide()
-
-        with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
-            aut_two.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contacts_settings.accept_contact_request(user_one.name)
-
-        with step(f'User {user_two.name}, create community and invite {user_one.name}'):
-            with step('Enable creation of community option'):
-                settings = main_screen.left_panel.open_settings()
-                settings.left_panel.open_advanced_settings().enable_creation_of_communities()
-            community = main_screen.create_community(community_params['name'], community_params['description'],
-                                                     community_params['intro'], community_params['outro'],
-                                                     community_params['logo']['fp'], community_params['banner']['fp'])
-            community.left_panel.invite_people_to_community([user_one.name], 'Message')
-            main_screen.hide()
-
-        with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
-            aut_one.attach()
-            main_screen.prepare()
-            messages_view = main_screen.left_panel.open_messages_screen()
-            chat = messages_view.left_panel.click_chat_by_name(user_two.name)
-            community_screen = chat.accept_community_invite(community_params['name'], '0')
-
-        with step(f'User {user_one.name}, verify welcome community popup'):
-            welcome_popup = community_screen.left_panel.open_welcome_community_popup()
-            assert community_params['name'] in welcome_popup.title
-            assert community_params['intro'] == welcome_popup.intro
-            welcome_popup.join().authenticate(user_one.password)
-            assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
-                                  8000), 'Join community button not hidden'
-            main_screen.hide()
-
         with step(f'User {user_two.name}, switch state to offline'):
             aut_two.attach()
             main_screen.prepare()
-            settings = main_screen.left_panel
-            settings.set_user_to_offline()
+            main_screen.left_panel.set_user_to_offline()
             main_screen.hide()
 
         with step(f'User {user_one.name}, sees {user_two.name} as offline'):
             aut_one.attach()
             main_screen.prepare()
+            community_screen = main_screen.left_panel.select_community('Community with 2 users')
             assert community_screen.right_panel.member_is_offline(1)
             main_screen.hide()
 
         with step(f'User {user_two.name}, switch state to online'):
             aut_two.attach()
             main_screen.prepare()
-            settings = main_screen.left_panel
-            settings.set_user_to_online()
+            main_screen.left_panel.set_user_to_online()
             main_screen.hide()
 
         with step(f'User {user_one.name}, sees {user_two.name} as online'):
