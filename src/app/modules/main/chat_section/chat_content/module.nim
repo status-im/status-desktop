@@ -97,7 +97,7 @@ method load*(self: Module, chatItem: chat_item.Item) =
     chatItem.color, chatItem.description, chatItem.emoji, chatItem.hasUnreadMessages, chatItem.notificationsCount,
     chatItem.highlight, chatItem.muted, chatItem.position, isUntrustworthy = trustStatus == TrustStatus.Untrustworthy,
     isContact, chatItem.blocked, chatItem.canPost, chatItem.canView, chatItem.canPostReactions,
-    chatItem.hideIfPermissionsNotMet)
+    chatItem.hideIfPermissionsNotMet, chatItem.missingEncryptionKey)
   
   self.view.chatDetailsChanged()
 
@@ -382,6 +382,7 @@ method onChatUpdated*(self: Module, chatItem: chat_item.Item) =
   self.view.chatDetails.setCanView(chatItem.canView)
   self.view.chatDetails.setCanPostReactions(chatItem.canPostReactions)
   self.view.chatDetails.setHideIfPermissionsNotMet(chat_item.hideIfPermissionsNotMet)
+  self.view.chatDetails.setMissingEncryptionKey(chat_item.missingEncryptionKey)
 
   self.messagesModule.updateChatFetchMoreMessages()
   self.messagesModule.updateChatIdentifier()
@@ -398,6 +399,7 @@ method onCommunityChannelEdited*(self: Module, chatDto: ChatDto) =
   self.view.chatDetails.setHideIfPermissionsNotMet(chatDto.hideIfPermissionsNotMet)
   self.view.chatDetails.setName(chatDto.name)
   self.view.chatDetails.setIcon(chatDto.icon)
+  self.view.chatDetails.setMissingEncryptionKey(chatDto.missingEncryptionKey)
 
   self.messagesModule.updateChatFetchMoreMessages()
   self.messagesModule.updateChatIdentifier()

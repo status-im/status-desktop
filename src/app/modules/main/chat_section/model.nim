@@ -42,6 +42,7 @@ type
     HideIfPermissionsNotMet
     ShouldBeHiddenBecausePermissionsAreNotMet #this is a complex role which depends on other roles
                                               #(MemberRole , HideIfPermissionsNotMet, canPost and canView)
+    MissingEncryptionKey
 
 QtObject:
   type
@@ -143,7 +144,8 @@ QtObject:
       ModelRole.CanView.int:"canView",
       ModelRole.CanPostReactions.int:"canPostReactions",
       ModelRole.ViewersCanPostReactions.int:"viewersCanPostReactions",
-      ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int:"shouldBeHiddenBecausePermissionsAreNotMet"
+      ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int:"shouldBeHiddenBecausePermissionsAreNotMet",
+      ModelRole.MissingEncryptionKey.int:"missingEncryptionKey",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -223,6 +225,8 @@ QtObject:
       result = newQVariant(item.hideIfPermissionsNotMet)
     of ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet:
       return newQVariant(self.itemShouldBeHiddenBecauseNotPermitted(item))
+    of ModelRole.MissingEncryptionKey:
+      return newQVariant(item.missingEncryptionKey)
 
   proc getItemIdxById(items: seq[Item], id: string): int =
     var idx = 0
@@ -724,3 +728,14 @@ QtObject:
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Active.int, ModelRole.LoaderActive.int])
+
+  proc updateMissingEncryptionKey*(self: Model, id: string, missingEncryptionKey: bool) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+
+    if self.items[index].missingEncryptionKey != missingEncryptionKey:
+      self.items[index].missingEncryptionKey = missingEncryptionKey
+      let modelIndex = self.createIndex(index, 0, nil)
+      defer: modelIndex.delete
+      self.dataChanged(modelIndex, modelIndex, @[ModelRole.MissingEncryptionKey.int])

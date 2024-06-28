@@ -27,6 +27,7 @@ QtObject:
     canView: bool
     canPostReactions: bool
     hideIfPermissionsNotMet: bool
+    missingEncryptionKey: bool
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -56,6 +57,7 @@ QtObject:
       canView: bool = true,
       canPostReactions: bool = true,
       hideIfPermissionsNotMet: bool,
+      missingEncryptionKey: bool,
     ) =
     self.id = id
     self.`type` = `type`
@@ -79,6 +81,7 @@ QtObject:
     self.canView = canView
     self.canPostReactions = canPostReactions
     self.hideIfPermissionsNotMet = hideIfPermissionsNotMet
+    self.missingEncryptionKey = missingEncryptionKey
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
@@ -297,3 +300,14 @@ QtObject:
   proc setHideIfPermissionsNotMet*(self: ChatDetails, value: bool) =
     self.hideIfPermissionsNotMet = value
     self.hideIfPermissionsNotMetChanged()
+
+  proc missingEncryptionKeyChanged(self: ChatDetails) {.signal.}
+  proc getMissingEncryptionKey(self: ChatDetails): bool {.slot.} =
+    return self.missingEncryptionKey
+  QtProperty[bool] missingEncryptionKey:
+    read = getMissingEncryptionKey
+    notify = missingEncryptionKeyChanged
+
+  proc setMissingEncryptionKey*(self: ChatDetails, value: bool) =
+    self.missingEncryptionKey = value
+    self.missingEncryptionKeyChanged()
