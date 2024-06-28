@@ -26,7 +26,7 @@ public:
     Q_INVOKABLE QString typeName(const QVariant &obj) const;
     Q_INVOKABLE QJSValue modelRoles(QAbstractItemModel *model) const;
 
-    Q_INVOKABLE QObject* findChild(QObject* obj, const QString& name) const;
+    Q_INVOKABLE QObject* findChild(QObject* parent, const QString& name) const;
 
     static Monitor& instance();
     static QObject* qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine);

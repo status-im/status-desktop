@@ -17,7 +17,6 @@ Component {
         Settings {
             property alias tabIndex: tabBar.currentIndex
             property alias modelObjectName: objectNameTextFiled.text
-            property alias modelObjectRootName: rootTextField.text
         }
 
         TabBar {
@@ -287,27 +286,9 @@ Component {
                 }
             }
 
-            Item {
+            Pane {
                 ColumnLayout {
                     anchors.fill: parent
-
-                    Label {
-                        Layout.fillWidth: true
-                        wrapMode: Text.Wrap
-
-                        text: "Note: 'applicationWindow' is good root object in"
-                              + " most cases. 'WalletStores.RootStore' and"
-                              + " `SharedStores.RootStore` are also exposed for"
-                              + " convenience for models created within those singletons. \n\n"
-                              + " Hack (see #15181): If you want to inspect a model that is not"
-                              + " from the root object (under a repeater), add objectName to a dummy object in AppMain.qml: \n"
-                              + " property var modelIWantToInspect: SortFilterProxyModel { \n"
-                              + "   objectName: \"YYY\" \n"
-                              + " } \n"
-                              + " and inside your item add something like this: \n"
-                              + " Component.onCompleted: appMain.modelIWantToInspect.sourceModel = this.model \n"
-                              + " Then you can use 'YYY' as the object name in this search."
-                    }
 
                     RowLayout {
                         Layout.fillHeight: false
@@ -320,38 +301,46 @@ Component {
                         TextField {
                             id: objectNameTextFiled
 
+                            Layout.fillWidth: true
+
                             selectByMouse: true
-                        }
-
-                        Label {
-                            text: "Root:"
-                        }
-
-                        TextField {
-                            id: rootTextField
-
-                            text: "applicationWindow"
-                            selectByMouse: true
+                            onAccepted: searchButton.clicked()
                         }
 
                         Button {
+                            id: searchButton
+
                             text: "Search"
 
                             onClicked: {
-                                let rootObj = null
+                                const roots = [
+                                    applicationWindow,
+                                    WalletStores.RootStore,
+                                    SharedStores.RootStore
+                                ]
 
-                                try {
-                                    rootObj = eval(rootTextField.text)
-                                } catch (error) {
-                                    objLabel.objStr = "Root object not found!"
+                                let obj = null
+
+                                for (let root of roots) {
+                                    obj = Monitor.findChild(root, objectNameTextFiled.text)
+
+                                    if (obj)
+                                        break
+                                }
+
+                                if (!obj) {
+                                    objLabel.objStr = "Model not found"
+                                    rolesModelContent.model = null
                                     return
                                 }
 
-                                const obj = Monitor.findChild(
-                                              rootObj, objectNameTextFiled.text)
+                                if (!Monitor.isModel(obj)) {
+                                    objLabel.objStr = "Found object is not a model"
+                                    rolesModelContent.model = null
+                                    return
+                                }
 
-                                objLabel.objStr = obj && Monitor.isModel(obj)
-                                        ? obj.toString() : "Model not found!"
+                                objLabel.objStr = obj.toString()
                                 rolesModelContent.model = obj
                             }
                         }
