@@ -64,6 +64,10 @@ DOS_API void DOS_CALL dos_qtwebview_initialize(void);
 
 DOS_API void DOS_CALL dos_qguiapplication_try_enable_threaded_renderer();
 
+typedef void (DOS_CALL *MessageHandlerCallback)(int type, const char* data, const char* category, const char* file, const char* func, int line);
+
+DOS_API void dos_installMessageHandler(MessageHandlerCallback logHandler);
+
 /// \brief Create a QGuiApplication
 /// \note The created QGuiApplication should be freed by calling dos_qguiapplication_delete()
 DOS_API void DOS_CALL dos_qguiapplication_create();
