@@ -27,7 +27,7 @@ proc getCuratedCommunities*(): RpcResponse[JsonNode] =
   result = callPrivateRPC("curatedCommunities".prefix, payload)
 
 proc getAllCommunities*(): RpcResponse[JsonNode] =
-  result = callPrivateRPC("communities".prefix)
+  result = callPrivateRPC("serializedCommunities".prefix)
 
 proc isDisplayNameDupeOfCommunityMember*(displayName: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("isDisplayNameDupeOfCommunityMember".prefix, %* [displayName])
