@@ -119,7 +119,7 @@ class AUT:
         LOG.info('Stopping AUT: %s', self.path)
         self.detach_context()
         local_system.kill_process(self.pid)
-        time.sleep(1)
+        time.sleep(1) # FIXME: Implement waiting for process to actually exit.
 
     @allure.step("Start and attach AUT")
     def launch(self) -> 'AUT':
