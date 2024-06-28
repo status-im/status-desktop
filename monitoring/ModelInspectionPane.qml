@@ -83,6 +83,8 @@ Pane {
         }
 
         Label {
+            visible: listView.count
+
             text: "Hint: use right/left button click on a column " +
                   "header to adjust width, press cell content to " +
                   "see full value"

@@ -4,7 +4,9 @@
 #include <QDebug>
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
+#include <QQuickItem>
 #include <QQuickWindow>
+#include <QSet>
 
 void Monitor::initialize(QQmlApplicationEngine* engine)
 {
@@ -47,9 +49,34 @@ bool Monitor::isModel(const QVariant &obj) const
     return qobject_cast<QAbstractItemModel*>(obj.value<QObject*>()) != nullptr;
 }
 
-QObject* Monitor::findChild(QObject* obj, const QString& name) const
+QObject* Monitor::findChild(QObject* parent, const QString& name) const
 {
-    return obj == nullptr ? nullptr : obj->findChild<QObject*>(name);
+    if (!parent)
+        return nullptr;
+
+    QSet<QObject*> children(parent->children().cbegin(),
+                            parent->children().cend());
+
+    if (auto quickItem = qobject_cast<QQuickItem*>(parent)) {
+        QList<QQuickItem*> visualChildren = quickItem->childItems();
+
+        for (auto c : visualChildren)
+            children << c;
+    }
+
+    for (auto c : qAsConst(children)) {
+        if (c->objectName() == name)
+            return c;
+    }
+
+    for (auto c : qAsConst(children)) {
+        auto obj = findChild(c, name);
+
+        if (obj)
+            return obj;
+    }
+
+    return nullptr;
 }
 
 QString Monitor::typeName(const QVariant &obj) const
