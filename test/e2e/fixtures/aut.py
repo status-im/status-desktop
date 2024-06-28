@@ -21,6 +21,8 @@ def options(request):
 
 @pytest.fixture
 def application_logs():
+    LOG.info('This is application logs fixture yield')
+    print("application logs fixture yield")
     yield
     if configs.testpath.STATUS_DATA.exists():
         for app_data in configs.testpath.STATUS_DATA.iterdir():
@@ -47,6 +49,8 @@ def aut(user_data) -> AUT:
     if not configs.AUT_PATH.exists():
         pytest.exit(f"Application not found: {configs.AUT_PATH}")
     _aut = AUT(user_data=user_data)
+    LOG.info('This is aut fixture yield')
+    print("aut fixture yield")
     yield _aut
 
 
@@ -57,6 +61,8 @@ def multiple_instances(user_data):
             pytest.exit(f"Application not found: {configs.AUT_PATH}")
         return AUT(user_data=user_data)
 
+    LOG.info('This is multiple instances fixture yield')
+    print("multiple instances logs fixture yield")
     yield _aut
 
 
@@ -64,6 +70,8 @@ def multiple_instances(user_data):
 def main_window(aut: AUT, user_data):
     aut.launch()
     LOG.debug('Waiting for main window...')
+    LOG.info('This is main window fixture yield')
+    print("main window fixture yield")
     yield MainWindow().wait_until_appears().prepare()
     aut.stop()
 
@@ -75,6 +83,8 @@ def user_account(request) -> UserAccount:
         assert isinstance(user_account, UserAccount)
     else:
         user_account = constants.user.user_account_one
+    LOG.info('This is user account fixture yield')
+    print("user account fixture yield")
     yield user_account
 
 
