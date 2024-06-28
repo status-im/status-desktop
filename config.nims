@@ -63,3 +63,8 @@ switch("warning", "UseBase:on")
 switch("warning", "UnusedImport:on")
 switch("warning", "Deprecated:on")
 switch("warning", "HoleEnumConv:on")
+
+when defined(gcc):
+  # GCC 14+ introduces new strictness for pointer types that not all nim libraries are compatible with
+  switch("passc", "-Wno-error=incompatible-pointer-types")
+
