@@ -115,3 +115,7 @@ add_test(NAME SnapshotObjectTest COMMAND SnapshotObjectTest)
 add_executable(GroupingModelTest tst_GroupingModel.cpp)
 target_link_libraries(GroupingModelTest PRIVATE Qt5::Qml StatusQ StatusQTestLib)
 add_test(NAME GroupingModelTest COMMAND GroupingModelTest)
+
+add_executable(ModelCountTest tst_ModelCount.cpp)
+target_link_libraries(ModelCountTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME ModelCountTest COMMAND ModelCountTest)

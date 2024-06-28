@@ -102,6 +102,7 @@ add_library(StatusQ SHARED
         include/StatusQ/functionaggregator.h
         include/StatusQ/groupingmodel.h
         include/StatusQ/leftjoinmodel.h
+        include/StatusQ/modelcount.h
         include/StatusQ/modelentry.h
         include/StatusQ/modelsyncedcontainer.h
         include/StatusQ/modelutilsinternal.h
@@ -130,6 +131,7 @@ add_library(StatusQ SHARED
         src/functionaggregator.cpp
         src/groupingmodel.cpp
         src/leftjoinmodel.cpp
+        src/modelcount.cpp
         src/modelentry.cpp
         src/modelutilsinternal.cpp
         src/movablemodel.cpp
