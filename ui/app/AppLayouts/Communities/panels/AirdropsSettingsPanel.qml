@@ -123,7 +123,6 @@ StackView {
 
                 onAirdropClicked: {
                     root.airdropClicked(airdropTokens, addresses, feeAccountAddress)
-                    root.pop(StackView.Immediate)
                 }
 
                 onNavigateToMintTokenSettings: root.navigateToMintTokenSettings(isAssetType)

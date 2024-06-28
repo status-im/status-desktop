@@ -712,6 +712,7 @@ StatusSectionLayout {
             case Constants.ContractTransactionStatus.InProgress:
                 title = qsTr("Airdrop on %1 in progress...").arg(chainName)
                 loading = true
+                airdropPanel.navigateBack()
                 break
             case Constants.ContractTransactionStatus.Completed:
                 title = qsTr("Airdrop on %1 in complete").arg(chainName)
