@@ -24,9 +24,14 @@ def application_logs():
     yield
     if configs.testpath.STATUS_DATA.exists():
         for app_data in configs.testpath.STATUS_DATA.iterdir():
-            for log in (app_data / 'logs').glob('*.log'):
-                allure.attach.file(log, name=str(log.name), attachment_type=allure.attachment_type.TEXT)
-                log.unlink()  # FIXME: it does not work on Windows, permission error
+            for log_dir in ['logs', 'data']:
+                log_path = app_data / log_dir
+                for log in log_path.glob('*.log'):
+                    allure.attach.file(log, name=str(log.name), attachment_type=allure.attachment_type.TEXT)
+                    try:
+                        log.unlink()  # FIXME: it does not work on Windows, permission error
+                    except PermissionError:
+                        print(f"Permission error: {log} could not be deleted.")
 
 
 @pytest.fixture
