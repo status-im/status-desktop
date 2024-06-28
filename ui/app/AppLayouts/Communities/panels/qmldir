@@ -1,6 +1,7 @@
 AirdropsSettingsPanel 1.0 AirdropsSettingsPanel.qml
 BackUpCommuntyBannerPanel 1.0 BackUpCommuntyBannerPanel.qml
 BannerPanel 1.0 BannerPanel.qml
+BlinkingText 1.0 BlinkingText.qml
 ChannelsAndCategoriesBannerPanel 1.0 ChannelsAndCategoriesBannerPanel.qml
 ChatPermissionQualificationPanel 1.0 ChatPermissionQualificationPanel.qml
 ColorPanel 1.0 ColorPanel.qml
@@ -28,7 +29,6 @@ PrivilegedTokenArtworkPanel 1.0 PrivilegedTokenArtworkPanel.qml
 ProfilePopupInviteFriendsPanel 1.0 ProfilePopupInviteFriendsPanel.qml
 ProfilePopupInviteMessagePanel 1.0 ProfilePopupInviteMessagePanel.qml
 ProfilePopupOverviewPanel 1.0 ProfilePopupOverviewPanel.qml
-RequirementsCheckPendingLoader 1.0 RequirementsCheckPendingLoader.qml
 SharedAddressesAccountSelector 1.0 SharedAddressesAccountSelector.qml
 SharedAddressesPanel 1.0 SharedAddressesPanel.qml
 SharedAddressesSigningPanel 1.0 SharedAddressesSigningPanel.qml

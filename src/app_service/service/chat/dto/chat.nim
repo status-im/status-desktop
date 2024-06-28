@@ -95,6 +95,7 @@ type ChatDto* = object
   permissions*: Permission
   hideIfPermissionsNotMet*: bool
   tokenGated*: bool
+  missingEncryptionKey*: bool
 
 type ClearedHistoryDto* = object
   chatId*: string
@@ -130,7 +131,9 @@ proc `$`*(self: ChatDto): string =
     categoryId: {self.categoryId},
     position: {self.position},
     highlight: {self.highlight},
-    hideIfPermissionsNotMet: {self.hideIfPermissionsNotMet}
+    hideIfPermissionsNotMet: {self.hideIfPermissionsNotMet},
+    tokenGated: {self.tokenGated},
+    missingEncryptionKey: {self.missingEncryptionKey}
     )"""
 
 proc toCheckPermissionsResultDto*(jsonObj: JsonNode): CheckPermissionsResultDto =
@@ -264,6 +267,7 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
     discard jsonObj.getProp("categoryID", result.categoryId)
   discard jsonObj.getProp("hideIfPermissionsNotMet", result.hideIfPermissionsNotMet)
   discard jsonObj.getProp("tokenGated", result.tokenGated)
+  discard jsonObj.getProp("missingEncryptionKey", result.missingEncryptionKey)
   discard jsonObj.getProp("position", result.position)
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("profile", result.profile)

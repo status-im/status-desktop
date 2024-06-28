@@ -649,7 +649,9 @@ QtObject:
               chat.viewersCanPostReactions != prevChat.viewersCanPostReactions or
               chat.canPost != prevChat.canPost or
               chat.canView != prevChat.canView or
-              chat.hideIfPermissionsNotMet != prevChat.hideIfPermissionsNotMet:
+              chat.hideIfPermissionsNotMet != prevChat.hideIfPermissionsNotMet or
+              chat.tokenGated != prevChat.tokenGated or
+              chat.missingEncryptionKey != prevChat.missingEncryptionKey:
             var updatedChat = chat
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
 
