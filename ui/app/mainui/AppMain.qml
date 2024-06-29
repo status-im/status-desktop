@@ -2057,7 +2057,7 @@ Item {
             store: DAppsStore {
                 controller: WalletStore.RootStore.walletConnectController
             }
-            walletStore: appMain.rootStore.profileSectionStore.walletStore
+            walletRootStore: WalletStore.RootStore
 
             Component.onCompleted: {
                 Global.walletConnectService = walletConnectService

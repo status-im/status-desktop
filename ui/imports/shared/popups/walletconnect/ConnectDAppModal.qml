@@ -22,73 +22,81 @@ import shared.popups.walletconnect.controls 1.0
 import AppLayouts.Wallet.controls 1.0
 
 import utils 1.0
+import shared.popups.walletconnect.private 1.0
 
 StatusDialog {
     id: root
 
-    width: 480
-    implicitHeight: d.connectionStatus === root.notConnectedStatus ? 633 : 681
+    /*
+        Accounts model
 
+        Expected model structure:
+        name                    [string] - account name e.g. "Piggy Bank"
+        address                 [string] - wallet account address e.g. "0x1234567890"
+        colorizedChainPrefixes  [string] - chain prefixes with rich text colors e.g. "<font color=\"red\">eth:</font><font color=\"blue\">oeth:</font><font color=\"green\">arb:</font>"
+        emoji                   [string] - emoji for account e.g. "🐷"
+        colorId                 [string] - color id for account e.g. "1"
+        currencyBalance         [var]    - fiat currency balance
+            amount              [number] - amount of currency e.g. 1234
+            symbol              [string] - currency symbol e.g. "USD"
+            optDisplayDecimals  [number] - optional number of decimals to display
+            stripTrailingZeroes [bool]   - strip trailing zeroes
+        walletType              [string] - wallet type e.g. Constants.watchWalletType. See `Constants` for possible values
+        migratedToKeycard       [bool]   - whether account is migrated to keycard
+        accountBalance          [var]    - account balance for a specific network
+            formattedBalance    [string] - formatted balance e.g. "1234.56B"
+            balance             [string] - balance e.g. "123456000000"
+            iconUrl             [string] - icon url e.g. "network/Network=Hermez"
+            chainColor          [string] - chain color e.g. "#FF0000"
+    */
     required property var accounts
+    /*
+      Networks model
+      Expected model structure:
+        chainName      [string]          - chain long name. e.g. "Ethereum" or "Optimism"
+        chainId        [int]             - chain unique identifier
+        iconUrl        [string]          - SVG icon name. e.g. "network/Network=Ethereum"
+        layer          [int]             - chain layer. e.g. 1 or 2
+        isTest         [bool]            - true if the chain is a testnet
+    */
     required property var flatNetworks
 
-    readonly property alias selectedAccount: d.selectedAccount
+    property alias dAppUrl: dappCard.dAppUrl
+    property alias dAppName: dappCard.name
+    property alias dAppIconUrl: dappCard.iconUrl
+    property alias connectionStatus: d.connectionStatus
+
+    /*
+        Selected account address holds the initial account address selection for the account selector.
+        It is used to preselect the account in the account selector.
+    */
+    property string selectedAccountAddress: contextCard.selectedAccount.address ?? ""
+
+    readonly property alias selectedAccount: contextCard.selectedAccount
     readonly property alias selectedChains: d.selectedChains
 
     readonly property int notConnectedStatus: 0
     readonly property int connectionSuccessfulStatus: 1
     readonly property int connectionFailedStatus: 2
 
-    function openWithFilter(dappChains, proposer) {
-        d.connectionStatus = root.notConnectedStatus
-        d.afterTwoSecondsFromStatus = false
-
-        let m = proposer.metadata
-        dappCard.name = m.name
-        dappCard.url = m.url
-        if(m.icons.length > 0) {
-            dappCard.iconUrl = m.icons[0]
-        } else {
-            dappCard.iconUrl = ""
-        }
-
-        d.dappChains.clear()
-        for (let i = 0; i < dappChains.length; i++) {
-            // Convert to int
-            d.dappChains.append({ chainId: parseInt(dappChains[i]) })
-        }
-
-        root.open()
-    }
-
     function pairSuccessful(session) {
         d.connectionStatus = root.connectionSuccessfulStatus
-        closeAndRetryTimer.start()
     }
     function pairFailed(session, err) {
         d.connectionStatus = root.connectionFailedStatus
-        closeAndRetryTimer.start()
-    }
-
-    Timer {
-        id: closeAndRetryTimer
-
-        interval: 2000
-        running: false
-        repeat: false
-
-        onTriggered: {
-            d.afterTwoSecondsFromStatus = true
-        }
     }
 
     signal connect()
     signal decline()
     signal disconnect()
 
+    width: 480
+    implicitHeight: !d.connectionAttempted ? 633 : 681
+    
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-    title: qsTr("Connection request")
+    title: d.connectionSuccessful ? qsTr("dApp connected") :
+                                    qsTr("Connection request")
 
     padding: 20
 
@@ -98,37 +106,40 @@ StatusDialog {
 
         DAppCard {
             id: dappCard
-
-            afterTwoSecondsFromStatus: d.afterTwoSecondsFromStatus
-
-            isConnectedSuccessfully: d.connectionStatus === root.connectionSuccessfulStatus
-            isConnectionFailed: d.connectionStatus === root.connectionFailedStatus
-            isConnectionStarted: d.connectionStatus !== root.notConnectedStatus
-            isConnectionFailedOrDisconnected: d.connectionStatus !== root.connectionSuccessfulStatus
-
-            Layout.alignment: Qt.AlignHCenter
+            Layout.maximumWidth: root.availableWidth - Layout.leftMargin * 2
             Layout.leftMargin: 12
             Layout.rightMargin: Layout.leftMargin
-            Layout.topMargin: 20
+            Layout.topMargin: 14
             Layout.bottomMargin: Layout.topMargin
         }
 
         ContextCard {
+            id: contextCard
+            Layout.maximumWidth: root.availableWidth
             Layout.fillWidth: true
-            accountsProxy: d.accountsProxy
-            selectedAccount: d.selectedAccount
-            selectedChains: d.selectedChains
-            filteredChains: d.filteredChains
-            notConnected: d.connectionStatus === root.notConnectedStatus
+
+            selectedAccountAddress: root.selectedAccountAddress
+            connectionAttempted: d.connectionAttempted
+            accountsModel: d.accountsProxy
+            chainsModel: root.flatNetworks
+            chainSelection: d.selectedChains
+
+            onChainSelectionChanged: {
+                if (d.selectedChains !== chainSelection) {
+                    d.selectedChains = chainSelection
+                }
+            }
         }
 
         PermissionsCard {
+            Layout.maximumWidth: root.availableWidth
             Layout.fillWidth: true
 
-            Layout.leftMargin: 12
+            Layout.leftMargin: 16
             Layout.rightMargin: Layout.leftMargin
-            Layout.topMargin: 20
+            Layout.topMargin: 12
             Layout.bottomMargin: Layout.topMargin
+            dappName: dappCard.name
         }
     }
 
@@ -136,31 +147,39 @@ StatusDialog {
         id: footer
         rightButtons: ObjectModel {
             StatusButton {
+                objectName: "rejectButton"
                 height: 44
-                text: qsTr("Decline")
+                text: qsTr("Reject")
 
-                visible: d.connectionStatus === root.notConnectedStatus
+                visible: !d.connectionAttempted
 
                 onClicked: root.decline()
             }
-            StatusButton {
+            StatusFlatButton {
+                objectName: "disconnectButton"
                 height: 44
                 text: qsTr("Disconnect")
 
-                visible: d.connectionStatus === root.connectionSuccessfulStatus
+                visible: d.connectionSuccessful
 
                 type: StatusBaseButton.Type.Danger
 
                 onClicked: root.disconnect()
             }
             StatusButton {
+                objectName: "primaryActionButton"
                 height: 44
-                text: d.connectionStatus === root.notConnectedStatus
-                            ? qsTr("Connect")
-                            : qsTr("Close")
+                text: d.connectionAttempted
+                            ? qsTr("Close")
+                            : qsTr("Connect")
+                enabled: {
+                    if (!d.connectionAttempted)
+                        return root.selectedChains.length > 0
+                    return true
+                }
 
                 onClicked: {
-                    if (d.connectionStatus === root.notConnectedStatus)
+                    if (!d.connectionAttempted)
                         root.connect()
                     else
                         root.close()
@@ -178,27 +197,19 @@ StatusDialog {
             sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
         }
 
-        property var selectedAccount: ({})
         property var selectedChains: allChainIdsAggregator.value
 
-        readonly property var filteredChains: LeftJoinModel {
-            leftModel: d.dappChains
-            rightModel: root.flatNetworks
-
-            joinRole: "chainId"
-        }
-
         readonly property FunctionAggregator allChainIdsAggregator: FunctionAggregator {
-            model: d.filteredChains
+            model: root.flatNetworks
             initialValue: []
             roleName: "chainId"
 
             aggregateFunction: (aggr, value) => [...aggr, value]
         } 
 
-        readonly property var dappChains: ListModel {}
-
-        property int connectionStatus: notConnectedStatus
-        property bool afterTwoSecondsFromStatus: false
+        property int connectionStatus: root.notConnectedStatus
+        readonly property bool connectionSuccessful: d.connectionStatus === root.connectionSuccessfulStatus
+        readonly property bool connectionFailed: d.connectionStatus === root.connectionFailedStatus
+        readonly property bool connectionAttempted: d.connectionStatus !== root.notConnectedStatus
     }
 }

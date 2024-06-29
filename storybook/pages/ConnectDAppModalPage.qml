@@ -27,48 +27,28 @@ import shared.stores 1.0
 Item {
     id: root
 
-    function openModal() {
-        modal.openWithFilter([1, 42161], JSON.parse(`{
-            "metadata": {
-                "description": "React App for WalletConnect",
-                "icons": [
-                    "https://avatars.githubusercontent.com/u/37784886"
-                ],
-                "name": "React App",
-                "url": "https://react-app.walletconnect.com",
-                "verifyUrl": "https://verify.walletconnect.com"
-            },
-            "publicKey": "300a6a1df4cb0cd73eb652f11845f35a318541eb18ab369860be85c0c2ada54a"
-        }`))
-        if (pairedCheckbox.checked) {
-            pairedResultTimer.restart()
-        }
-    }
-
     // qml Splitter
     SplitView {
         anchors.fill: parent
 
-        ColumnLayout {
+        PopupBackground {
             SplitView.fillWidth: true
 
-            Component.onCompleted: root.openModal()
-
-            StatusButton {
-                id: openButton
-
-                Layout.alignment: Qt.AlignHCenter
-                Layout.margins: 20
-
-                text: "Open ConnectDAppModal"
-
-                onClicked: root.openModal()
+            Button {
+                text: "Open"
+                onClicked: modal.open()
+                anchors.centerIn: parent
             }
 
             ConnectDAppModal {
                 id: modal
 
                 anchors.centerIn: parent
+
+                modal: false
+                closePolicy: Popup.NoAutoClose
+
+                visible: true
 
                 spacing: 8
 
@@ -78,9 +58,12 @@ Item {
                     sourceModel: NetworksModel.flatNetworks
                     filters: ValueFilter { roleName: "isTest"; value: false; }
                 }
-            }
 
-            ColumnLayout {}
+                dAppUrl: dAppUrlField.text
+                dAppName:  dAppNameField.text
+                dAppIconUrl: hasIconCheckbox.checked ? "https://avatars.githubusercontent.com/u/37784886" : ""
+                connectionStatus: pairedCheckbox.checked ? pairedStatusCheckbox.checked ? connectionSuccessfulStatus : connectionFailedStatus : notConnectedStatus
+            }
         }
 
         ColumnLayout {
@@ -100,6 +83,29 @@ Item {
 
                 checked: true
             }
+            CheckBox {
+                id: hasIconCheckbox
+
+                text: "Has Icon"
+
+                checked: true
+            }
+            Label {
+                text: "DappName"
+            }
+            TextField {
+                id: dAppNameField
+
+                text: "React App"
+            }
+            Label {
+                text: "DApp URL"
+            }
+            TextField {
+                id: dAppUrlField
+
+                text: "https://react-app.walletconnect.com"
+            }
             Item { Layout.fillHeight: true }
         }
     }
@@ -111,13 +117,7 @@ Item {
         running: false
         repeat: false
         onTriggered: {
-            if (pairedCheckbox.checked) {
-                if (pairedStatusCheckbox.checked) {
-                    modal.pairSuccessful(null)
-                } else {
-                    modal.pairFailed(null, "Pairing failed")
-                }
-            }
+
         }
     }
 }

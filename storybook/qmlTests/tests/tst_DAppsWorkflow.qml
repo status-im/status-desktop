@@ -14,6 +14,7 @@ import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Wallet.services.dapps.types 1.0
 import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import shared.stores 1.0
 
@@ -115,8 +116,9 @@ Item {
     Component {
         id: walletStoreComponent
 
-        WalletStore {
-            readonly property ListModel flatNetworks: ListModel {
+        WalletStores.RootStore {
+            property string selectedAddress: ""
+            readonly property ListModel filteredFlatModel: ListModel {
                 ListElement { chainId: 1 }
                 ListElement {
                     chainId: 2
@@ -125,7 +127,7 @@ Item {
                 }
             }
 
-            readonly property ListModel accounts: ListModel {
+            readonly property ListModel nonWatchAccounts: ListModel {
                 ListElement {address: "0x1"}
                 ListElement {
                     address: "0x2"
@@ -135,9 +137,9 @@ Item {
                 }
                 ListElement { address: "0x3a" }
             }
-            readonly property ListModel ownAccounts: accounts
-
-
+            function getNetworkShortNames(chainIds) {
+                 return "eth:oeth:arb"
+             }
         }
     }
 
@@ -167,7 +169,12 @@ Item {
             verify(!!sdk)
             let store = createTemporaryObject(dappsStoreComponent, root)
             verify(!!store)
-            handler = createTemporaryObject(dappsRequestHandlerComponent, root, {sdk: sdk, store: store, walletStore: walletStore})
+            handler = createTemporaryObject(dappsRequestHandlerComponent, root, {
+                sdk: sdk,
+                store: store,
+                accountsModel: walletStore.nonWatchAccounts,
+                networksModel: walletStore.filteredFlatModel
+            })
             verify(!!handler)
         }
 
@@ -176,7 +183,7 @@ Item {
         }
 
         function test_TestAuthentication() {
-            let td = mockSessionRequestEvent(this, handler.sdk, handler.walletStore)
+            let td = mockSessionRequestEvent(this, handler.sdk, handler.accountsModel, handler.networksModel)
             handler.authenticate(td.request)
             compare(handler.store.authenticateUserCalls.length, 1, "expected a call to store.authenticateUser")
 
@@ -239,7 +246,7 @@ Item {
             verify(!!sdk)
             let store = createTemporaryObject(dappsStoreComponent, root)
             verify(!!store)
-            service = createTemporaryObject(serviceComponent, root, {wcSDK: sdk, store: store, walletStore: walletStore})
+            service = createTemporaryObject(serviceComponent, root, {wcSDK: sdk, store: store, walletRootStore: walletStore})
             verify(!!service)
         }
 
@@ -251,7 +258,7 @@ Item {
         function test_TestPairing() {
             // All calls to SDK are expected as events to be made by the wallet connect SDK
             let sdk = service.wcSDK
-            let walletStore = service.walletStore
+            let walletStore = service.walletRootStore
             let store = service.store
 
             service.pair("wc:12ab@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=12ab")
@@ -262,12 +269,12 @@ Item {
             var args = sdk.buildApprovedNamespacesCalls[0]
             verify(!!args.supportedNamespaces, "expected supportedNamespaces to be set")
             let chainsForApproval = args.supportedNamespaces.eip155.chains
-            let networksArray = ModelUtils.modelToArray(walletStore.flatNetworks).map(entry => entry.chainId)
+            let networksArray = ModelUtils.modelToArray(walletStore.filteredFlatModel).map(entry => entry.chainId)
             verify(networksArray.every(chainId => chainsForApproval.some(eip155Chain => eip155Chain === `eip155:${chainId}`)),
                 "expect all the networks to be present")
             // We test here all accounts for one chain only, we have separate tests to validate that all accounts are present
             let allAccountsForApproval = args.supportedNamespaces.eip155.accounts
-            let accountsArray = ModelUtils.modelToArray(walletStore.accounts).map(entry => entry.address)
+            let accountsArray = ModelUtils.modelToArray(walletStore.nonWatchAccounts).map(entry => entry.address)
             verify(accountsArray.every(address => allAccountsForApproval.some(eip155Address => eip155Address === `eip155:${networksArray[0]}:${address}`)),
                 "expect at least all accounts for the first chain to be present"
             )
@@ -276,11 +283,11 @@ Item {
             sdk.buildApprovedNamespacesResult(allApprovedNamespaces, "")
             compare(connectDAppSpy.count, 1, "expected a call to service.connectDApp")
             let connectArgs = connectDAppSpy.signalArguments[0]
-            compare(connectArgs[connectDAppSpy.argPos.dappChains], networksArray, "expected all provided networks (walletStore.flatNetworks) for the dappChains")
+            compare(connectArgs[connectDAppSpy.argPos.dappChains], networksArray, "expected all provided networks (walletStore.filteredFlatModel) for the dappChains")
             verify(!!connectArgs[connectDAppSpy.argPos.sessionProposalJson], "expected sessionProposalJson to be set")
             verify(!!connectArgs[connectDAppSpy.argPos.availableNamespaces], "expected availableNamespaces to be set")
 
-            let selectedAccount = walletStore.accounts.get(1)
+            let selectedAccount = walletStore.nonWatchAccounts.get(1)
             service.approvePairSession(connectArgs[connectDAppSpy.argPos.sessionProposalJson], connectArgs[connectDAppSpy.argPos.dappChains], selectedAccount)
             compare(sdk.buildApprovedNamespacesCalls.length, 2, "expected a call to sdk.buildApprovedNamespaces")
             args = sdk.buildApprovedNamespacesCalls[1]
@@ -314,7 +321,7 @@ Item {
         function test_SessionRequestMainFlow() {
             // All calls to SDK are expected as events to be made by the wallet connect SDK
             let sdk = service.wcSDK
-            let walletStore = service.walletStore
+            let walletStore = service.walletRootStore
             let store = service.store
 
             let testAddress = "0x3a"
@@ -519,7 +526,7 @@ Item {
             verify(!!sdk)
             let store = createTemporaryObject(dappsStoreComponent, root)
             verify(!!store)
-            let service = createTemporaryObject(serviceComponent, root, {wcSDK: sdk, store: store, walletStore: walletStore})
+            let service = createTemporaryObject(serviceComponent, root, {wcSDK: sdk, store: store, walletRootStore: walletStore})
             verify(!!service)
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {wcService: service})
             verify(!!controlUnderTest)
@@ -581,7 +588,7 @@ Item {
             waitForRendering(controlUnderTest)
 
             let service = controlUnderTest.wcService
-            let td = mockSessionRequestEvent(this, service.wcSDK, service.walletStore)
+            let td = mockSessionRequestEvent(this, service.wcSDK, service.walletRootStore.nonWatchAccounts, service.walletRootStore.filteredFlatModel)
 
             waitForRendering(controlUnderTest)
             let popup = findChild(controlUnderTest, "dappsRequestModal")
@@ -604,7 +611,7 @@ Item {
             waitForRendering(controlUnderTest)
 
             let service = controlUnderTest.wcService
-            let td = mockSessionRequestEvent(this, service.wcSDK, service.walletStore)
+            let td = mockSessionRequestEvent(this, service.wcSDK, service.walletRootStore.nonWatchAccounts, service.walletRootStore.filteredFlatModel)
 
             waitForRendering(controlUnderTest)
             let popup = findChild(controlUnderTest, "dappsRequestModal")
@@ -625,9 +632,9 @@ Item {
         }
     }
 
-    function mockSessionRequestEvent(tc, sdk, walletStore) {
-        let account = walletStore.accounts.get(1)
-        let network = walletStore.flatNetworks.get(1)
+    function mockSessionRequestEvent(tc, sdk, accountsModel, networksMdodel) {
+        let account = accountsModel.get(1)
+        let network = networksMdodel.get(1)
         let method = "personal_sign"
         let message = "hello world"
         let params = [Helpers.strToHex(message), account.address]

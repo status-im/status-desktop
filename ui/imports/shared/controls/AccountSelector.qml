@@ -48,10 +48,7 @@ StatusComboBox {
     type: StatusComboBox.Type.Secondary
     size: StatusComboBox.Size.Small
 
-    currentIndex: {
-        if (count === 0) return
-        return Math.max(control.indexOfValue(d.currentAccountSelection), 0)
-    }
+    currentIndex: 0
 
     objectName: "accountSelector"
     popupContentItemObjectName: "accountSelectorList"
@@ -129,10 +126,10 @@ StatusComboBox {
 
     QtObject {
         id: d
-        property string currentAccountSelection: root.selectedAddress
+        property string currentAccountSelection: root.selectedAddress || root.currentValue
 
         Binding on currentAccountSelection {
-            value: root.selectedAddress
+            value: root.selectedAddress || root.currentValue
         }
     }
 }
