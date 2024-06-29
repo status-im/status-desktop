@@ -2,6 +2,9 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
+import SortFilterProxyModel 0.2
+
 import AppLayouts.Wallet.controls 1.0
 
 import shared.popups.walletconnect 1.0
@@ -51,19 +54,34 @@ DappsComboBox {
 
         active: false
 
-        onLoaded: item.openWithFilter(dappChains, sessionProposal.params.proposer)
-
         property var dappChains: []
         property var sessionProposal: null
         property var availableNamespaces: null
         property var sessionTopic: null
+        readonly property var proposalMedatada: !!sessionProposal
+                                                ? sessionProposal.params.proposer.metadata 
+                                                : { name: "", url: "", icons: [] }
 
         sourceComponent: ConnectDAppModal {
             visible: true
 
             onClosed: connectDappLoader.active = false
             accounts: root.wcService.validAccounts
-            flatNetworks: root.wcService.flatNetworks
+            flatNetworks: SortFilterProxyModel {
+                sourceModel: root.wcService.flatNetworks
+                filters: [
+                    FastExpressionFilter {
+                        inverted: true
+                        expression: connectDappLoader.dappChains.indexOf(chainId) === -1
+                        expectedRoles: ["chainId"]
+                    }
+                ]
+            }
+            selectedAccountAddress: root.wcService.selectedAccountAddress
+
+            dAppUrl: proposalMedatada.url
+            dAppName: proposalMedatada.name
+            dAppIconUrl: !!proposalMedatada.icons && proposalMedatada.icons.length > 0 ? proposalMedatada.icons[0] : ""
 
             onConnect: {
                 root.wcService.approvePairSession(sessionProposal, selectedChains, selectedAccount)
@@ -171,9 +189,6 @@ DappsComboBox {
         }
 
         function onApproveSessionResult(session, err) {
-            connectDappLoader.dappChains = []
-            connectDappLoader.sessionProposal = null
-            connectDappLoader.availableNamespaces = null
             connectDappLoader.sessionTopic = session.topic
 
             let modal = connectDappLoader.item

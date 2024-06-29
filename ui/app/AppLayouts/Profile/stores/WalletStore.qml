@@ -43,13 +43,27 @@ QtObject {
     property var originModel: accountsModule.keyPairModel
     property var ownAccounts: SortFilterProxyModel {
         sourceModel: root.accounts
-        proxyRoles:  FastExpressionRole {
-            name: "preferredSharingChainShortNames"
-            expression: {
-                return root.networksModuleInst.getNetworkShortNames(model.preferredSharingChainIds)
+        proxyRoles: [
+            FastExpressionRole {
+                name: "preferredSharingChainShortNames"
+                expression: {
+                    return root.networksModuleInst.getNetworkShortNames(model.preferredSharingChainIds)
+                }
+                expectedRoles: ["preferredSharingChainIds"]
+            },
+            FastExpressionRole {
+                name: "color"
+
+                function getColor(colorId) {
+                    return Utils.getColorForId(colorId)
+                }
+
+                // Direct call for singleton function is not handled properly by
+                // SortFilterProxyModel that's why helper function is used instead.
+                expression: { return getColor(model.colorId) }
+                expectedRoles: ["colorId"]
             }
-            expectedRoles: ["preferredSharingChainIds"]
-        }
+        ]
         filters: ValueFilter {
             roleName: "walletType"
             value: Constants.watchWalletType

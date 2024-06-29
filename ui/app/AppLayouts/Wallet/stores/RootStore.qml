@@ -7,6 +7,7 @@ import shared.stores 1.0 as Stores
 
 import utils 1.0
 
+import StatusQ 0.1
 import SortFilterProxyModel 0.2
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
@@ -65,7 +66,7 @@ QtObject {
     property var nonWatchAccounts: SortFilterProxyModel {
         sourceModel: accounts
         proxyRoles: [
-            ExpressionRole {
+            FastExpressionRole {
                 name: "color"
 
                 function getColor(colorId) {
@@ -75,6 +76,7 @@ QtObject {
                 // Direct call for singleton function is not handled properly by
                 // SortFilterProxyModel that's why helper function is used instead.
                 expression: { return getColor(model.colorId) }
+                expectedRoles: ["colorId"]
             }
         ]
         filters: ValueFilter {
@@ -159,8 +161,8 @@ QtObject {
         return d.chainColors[chainShortName]
     }
 
-    property var flatNetworks: networksModule.flatNetworks
-    property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
+    readonly property var flatNetworks: networksModule.flatNetworks
+    readonly property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
         sourceModel: root.flatNetworks
         filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
     }

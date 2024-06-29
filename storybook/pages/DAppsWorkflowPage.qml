@@ -18,6 +18,7 @@ import Models 1.0
 import Storybook 1.0
 
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.services.dapps 1.0
 
 import SortFilterProxyModel 0.2
@@ -314,13 +315,18 @@ Item {
             }
         }
 
-        walletStore: WalletStore {
-            property var flatNetworks: SortFilterProxyModel {
+        walletRootStore: WalletStores.RootStore {
+            property string selectedAddress: ""
+            property var filteredFlatModel: SortFilterProxyModel {
                 sourceModel: NetworksModel.flatNetworks
                 filters: ValueFilter { roleName: "isTest"; value: settings.testNetworks; }
             }
             property var accounts: customAccountsModel.count > 0 ? customAccountsModel : defaultAccountsModel
-            readonly property ListModel ownAccounts: accounts
+            readonly property ListModel nonWatchAccounts: accounts
+            
+            function getNetworkShortNames(chainIds) {
+                return "eth:oeth:arb"
+            }
         }
 
         onDisplayToastMessage: (message, isErr) => {
