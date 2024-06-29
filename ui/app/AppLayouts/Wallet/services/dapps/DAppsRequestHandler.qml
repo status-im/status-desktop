@@ -14,8 +14,9 @@ QObject {
     id: root
 
     required property WalletConnectSDKBase sdk
-    required property var walletStore
     required property DAppsStore store
+    required property var accountsModel
+    required property var networksModel
 
     property alias requestsModel: requests
 
@@ -187,8 +188,9 @@ QObject {
                 }
                 address = event.params.request.params[0].from
             }
-            return ModelUtils.getFirstModelEntryIf(walletStore.ownAccounts, (account) => {
-                return account.address.toLowerCase() === address.toLowerCase()
+            return ModelUtils.getFirstModelEntryIf(root.accountsModel, (account) => {
+                print ("!!!!!!", account.address.toLowerCase(), address.toLowerCase())
+                return account.address.toLowerCase() === address.toLowerCase();
             })
         }
 
@@ -198,13 +200,7 @@ QObject {
                 return null
             }
             let chainId = Helpers.chainIdFromEip155(event.params.chainId)
-            for (let i = 0; i < walletStore.flatNetworks.count; i++) {
-                let network = ModelUtils.get(walletStore.flatNetworks, i)
-                if (network.chainId === chainId) {
-                    return network
-                }
-            }
-            return null
+            return ModelUtils.getByKey(root.networksModel, "chainId", chainId)
         }
 
         function extractMethodData(event, method) {

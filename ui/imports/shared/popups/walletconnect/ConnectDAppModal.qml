@@ -25,11 +25,51 @@ import utils 1.0
 StatusDialog {
     id: root
 
-    width: 480
-    implicitHeight: d.connectionStatus === root.notConnectedStatus ? 633 : 681
+    /*
+        Accounts model
 
+        Expected model structure:
+        name                    [string] - account name e.g. "Piggy Bank"
+        address                 [string] - wallet account address e.g. "0x1234567890"
+        colorizedChainPrefixes  [string] - chain prefixes with rich text colors e.g. "<font color=\"red\">eth:</font><font color=\"blue\">oeth:</font><font color=\"green\">arb:</font>"
+        emoji                   [string] - emoji for account e.g. "🐷"
+        colorId                 [string] - color id for account e.g. "1"
+        currencyBalance         [var]    - fiat currency balance
+            amount              [number] - amount of currency e.g. 1234
+            symbol              [string] - currency symbol e.g. "USD"
+            optDisplayDecimals  [number] - optional number of decimals to display
+            stripTrailingZeroes [bool]   - strip trailing zeroes
+        walletType              [string] - wallet type e.g. Constants.watchWalletType. See `Constants` for possible values
+        migratedToKeycard       [bool]   - whether account is migrated to keycard
+        accountBalance          [var]    - account balance for a specific network
+            formattedBalance    [string] - formatted balance e.g. "1234.56B"
+            balance             [string] - balance e.g. "123456000000"
+            iconUrl             [string] - icon url e.g. "network/Network=Hermez"
+            chainColor          [string] - chain color e.g. "#FF0000"
+    */
     required property var accounts
+    /*
+      Networks model
+      Expected model structure:
+        chainName      [string]          - chain long name. e.g. "Ethereum" or "Optimism"
+        chainId        [int]             - chain unique identifier
+        iconUrl        [string]          - SVG icon name. e.g. "network/Network=Ethereum"
+        layer          [int]             - chain layer. e.g. 1 or 2
+        isTest         [bool]            - true if the chain is a testnet
+    */
     required property var flatNetworks
+
+    property alias dAppUrl: dappCard.dAppUrl
+    property alias dAppName: dappCard.name
+    property alias dAppIconUrl: dappCard.iconUrl
+    property alias connectionStatus: d.connectionStatus
+    property var dAppChains: []
+
+    /*
+        Selected account address holds the initial account address selection for the account selector.
+        It is used to preselect the account in the account selector.
+    */
+    property string selectedAccountAddress: d.selectedAccount.address
 
     readonly property alias selectedAccount: d.selectedAccount
     readonly property alias selectedChains: d.selectedChains
@@ -38,56 +78,26 @@ StatusDialog {
     readonly property int connectionSuccessfulStatus: 1
     readonly property int connectionFailedStatus: 2
 
-    function openWithFilter(dappChains, proposer) {
-        d.connectionStatus = root.notConnectedStatus
-        d.afterTwoSecondsFromStatus = false
-
-        let m = proposer.metadata
-        dappCard.name = m.name
-        dappCard.url = m.url
-        if(m.icons.length > 0) {
-            dappCard.iconUrl = m.icons[0]
-        } else {
-            dappCard.iconUrl = ""
-        }
-
-        d.dappChains.clear()
-        for (let i = 0; i < dappChains.length; i++) {
-            // Convert to int
-            d.dappChains.append({ chainId: parseInt(dappChains[i]) })
-        }
-
-        root.open()
-    }
-
     function pairSuccessful(session) {
         d.connectionStatus = root.connectionSuccessfulStatus
-        closeAndRetryTimer.start()
     }
     function pairFailed(session, err) {
         d.connectionStatus = root.connectionFailedStatus
-        closeAndRetryTimer.start()
-    }
-
-    Timer {
-        id: closeAndRetryTimer
-
-        interval: 2000
-        running: false
-        repeat: false
-
-        onTriggered: {
-            d.afterTwoSecondsFromStatus = true
-        }
     }
 
     signal connect()
     signal decline()
     signal disconnect()
 
+    width: 480
+    implicitHeight: !d.connectionAttempted ? 633 : 681
+    
+    onAboutToShow: d.syncDAppChainsModel()
+
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-    title: qsTr("Connection request")
+    title: d.connectionSuccessful ? qsTr("dApp connected") :
+                                    qsTr("Connection request")
 
     padding: 20
 
@@ -97,24 +107,25 @@ StatusDialog {
 
         DAppCard {
             id: dappCard
-
-            Layout.alignment: Qt.AlignHCenter
+            Layout.maximumWidth: root.availableWidth - Layout.leftMargin * 2
             Layout.leftMargin: 12
             Layout.rightMargin: Layout.leftMargin
-            Layout.topMargin: 20
+            Layout.topMargin: 14
             Layout.bottomMargin: Layout.topMargin
         }
 
         ContextCard {
+            Layout.maximumWidth: root.availableWidth
             Layout.fillWidth: true
         }
 
         PermissionsCard {
+            Layout.maximumWidth: root.availableWidth
             Layout.fillWidth: true
 
-            Layout.leftMargin: 12
+            Layout.leftMargin: 16
             Layout.rightMargin: Layout.leftMargin
-            Layout.topMargin: 20
+            Layout.topMargin: 12
             Layout.bottomMargin: Layout.topMargin
         }
     }
@@ -123,31 +134,39 @@ StatusDialog {
         id: footer
         rightButtons: ObjectModel {
             StatusButton {
+                objectName: "rejectButton"
                 height: 44
-                text: qsTr("Decline")
+                text: qsTr("Reject")
 
-                visible: d.connectionStatus === root.notConnectedStatus
+                visible: !d.connectionAttempted
 
                 onClicked: root.decline()
             }
-            StatusButton {
+            StatusFlatButton {
+                objectName: "disconnectButton"
                 height: 44
                 text: qsTr("Disconnect")
 
-                visible: d.connectionStatus === root.connectionSuccessfulStatus
+                visible: d.connectionSuccessful
 
                 type: StatusBaseButton.Type.Danger
 
                 onClicked: root.disconnect()
             }
             StatusButton {
+                objectName: "primaryActionButton"
                 height: 44
-                text: d.connectionStatus === root.notConnectedStatus
-                            ? qsTr("Connect")
-                            : qsTr("Close")
+                text: d.connectionAttempted
+                            ? qsTr("Close")
+                            : qsTr("Connect")
+                enabled: {
+                    if (!d.connectionAttempted)
+                        return root.selectedChains.length > 0
+                    return true
+                }
 
                 onClicked: {
-                    if (d.connectionStatus === root.notConnectedStatus)
+                    if (!d.connectionAttempted)
                         root.connect()
                     else
                         root.close()
@@ -186,10 +205,14 @@ StatusDialog {
                     id: accountsDropdown
 
                     Layout.preferredWidth: 204
-
-                    control.enabled: d.connectionStatus === root.notConnectedStatus && count > 1
+                    Layout.preferredHeight: 38
+                    control.horizontalPadding: 12
+                    control.verticalPadding: 4
+                    control.enabled: !d.connectionAttempted && count > 1
                     model: d.accountsProxy
                     onCurrentAccountChanged: d.selectedAccount = currentAccount
+                    indicator.visible: control.enabled
+                    selectedAddress: root.selectedAccountAddress
                 }
             }
 
@@ -200,7 +223,7 @@ StatusDialog {
             }
 
             RowLayout {
-                Layout.margins: 16
+                Layout.margins: 15
 
                 StatusBaseText {
                     text: qsTr("On")
@@ -210,12 +233,13 @@ StatusDialog {
 
                 NetworkFilter {
                     id: networkFilter
+                    objectName: "networkFilter"
                     Layout.preferredWidth: accountsDropdown.Layout.preferredWidth
 
                     flatNetworks: d.filteredChains
                     showTitle: true
                     multiSelection: true
-                    selectionAllowed: d.connectionStatus === root.notConnectedStatus && d.allChainIdsAggregator.value.length > 1
+                    selectionAllowed: !d.connectionAttempted && d.allChainIdsAggregator.value.length > 1
                     selection: d.selectedChains
 
                     onSelectionChanged: {
@@ -229,122 +253,66 @@ StatusDialog {
     }
 
     component DAppCard: ColumnLayout {
+        id: dappCardLayout
         property alias name: appNameText.text
-        property alias url: appUrlText.text
-        property string iconUrl: ""
+        property url dAppUrl: ""
+        property url iconUrl: ""
 
-        Rectangle {
+        spacing: Style.current.padding
+
+        RoundImageWithBadge {
+            objectName: "dappIcon"
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: 72
             Layout.preferredHeight: Layout.preferredWidth
 
-            radius: width / 2
-            color: Theme.palette.primaryColor3
+            imageUrl: iconUrl
+        }
 
-            StatusRoundedImage {
-                id: iconDisplay
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 4
 
-                anchors.fill: parent
-
-                visible: !fallbackImage.visible
-
-                image.source: iconUrl
+            StatusBaseText {
+                id: appNameText
+                objectName: "appNameText"
+                Layout.fillWidth: true
+                Layout.maximumWidth: dappCardLayout.width
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+                font.bold: true
+                font.pixelSize: 17
             }
 
-            StatusIcon {
-                id: fallbackImage
-
-                anchors.centerIn: parent
-
-                width: 40
-                height: 40
-
-                icon: "dapp"
-                color: Theme.palette.primaryColor1
-
-                visible: iconDisplay.image.isLoading || iconDisplay.image.isError || !iconUrl
+            StatusFlatButton {
+                id: appUrlText
+                objectName: "appUrlControl"
+                Layout.alignment: Qt.AlignHCenter
+                Layout.maximumWidth: dappCardLayout.width
+                icon.name: "external-link"
+                icon.color: hovered ? Theme.palette.baseColor1 : Theme.palette.directColor1
+                textPosition: StatusBaseButton.TextPosition.Left
+                size: StatusBaseButton.Size.Tiny
+                textColor: Theme.palette.directColor1
+                hoverColor: "transparent"
+                spacing: 0
+                font.pixelSize: 15
+                font.weight: Font.Normal
+                horizontalPadding: 0
+                verticalPadding: 0
+                text: StringUtils.extractDomainFromLink(dAppUrl)
+                onClicked: {
+                    Global.openLinkWithConfirmation(dAppUrl, text)
+                }
             }
         }
 
-        StatusBaseText {
-            id: appNameText
-
+        ConnectionStatusTag {
             Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 4
-
-            font.bold: true
-            font.pixelSize: 17
-        }
-
-        // TODO replace with the proper URL control
-        StatusLinkText {
-            id: appUrlText
-
-            Layout.alignment: Qt.AlignHCenter
-            font.pixelSize: 15
-        }
-
-        Rectangle {
-            Layout.preferredWidth: pairingStatusLayout.implicitWidth + 32
-            Layout.preferredHeight: pairingStatusLayout.implicitHeight + 14
-
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 16
-
-            visible: d.connectionStatus !== root.notConnectedStatus
-
-            color: d.connectionStatus === root.connectionSuccessfulStatus
-                        ? d.afterTwoSecondsFromStatus
-                            ? Theme.palette.successColor2
-                            : Theme.palette.successColor3
-                        : d.afterTwoSecondsFromStatus
-                            ? "transparent"
-                            : Theme.palette.dangerColor3
-            border.color: d.connectionStatus === root.connectionSuccessfulStatus
-                                ? Theme.palette.successColor2
-                                : Theme.palette.dangerColor2
-            border.width: 1
-            radius: height / 2
-
-            RowLayout {
-                id: pairingStatusLayout
-
-                anchors.centerIn: parent
-
-                spacing: 8
-
-                Rectangle {
-                    width: 6
-                    height: 6
-                    radius: width / 2
-
-                    visible: d.connectionStatus === root.connectionSuccessfulStatus
-                    color: Theme.palette.successColor1
-                }
-
-                StatusIcon {
-                    Layout.preferredWidth: 16
-                    Layout.preferredHeight: 16
-
-                    visible: d.connectionStatus !== root.connectionSuccessfulStatus
-
-                    color: Theme.palette.dangerColor1
-                    icon: "warning"
-                }
-
-                StatusBaseText {
-                    text: {
-                        if (d.connectionStatus === root.connectionSuccessfulStatus)
-                            return qsTr("Connected. You can now go back to the dApp.")
-                        else if (d.connectionStatus === root.connectionFailedStatus)
-                            return qsTr("Error connecting to dApp. Close and try again")
-                        return ""
-                    }
-
-                    font.pixelSize: 12
-                    color: d.connectionStatus === root.connectionSuccessfulStatus ? Theme.palette.directColor1 : Theme.palette.dangerColor1
-                }
-            }
+            Layout.maximumWidth: dappCardLayout.width
+            objectName: "connectionStatusTag"
+            success: d.connectionSuccessful
+            visible: d.connectionAttempted
         }
     }
 
@@ -352,20 +320,23 @@ StatusDialog {
         spacing: 8
 
         StatusBaseText {
-            text: qsTr("Uniswap Interface will be able to:")
-
+            objectName: "permissionsTitle"
+            text: qsTr("%1 will be able to:").arg(dappCard.name)
+            Layout.preferredHeight: 18
             font.pixelSize: 13
             color: Theme.palette.baseColor1
         }
 
         StatusBaseText {
             text: qsTr("Check your account balance and activity")
+            Layout.preferredHeight: 18
 
             font.pixelSize: 13
         }
 
         StatusBaseText {
             text: qsTr("Request transactions and message signing")
+            Layout.preferredHeight: 18
 
             font.pixelSize: 13
         }
@@ -400,7 +371,17 @@ StatusDialog {
 
         readonly property var dappChains: ListModel {}
 
-        property int connectionStatus: notConnectedStatus
-        property bool afterTwoSecondsFromStatus: false
+        property int connectionStatus: root.notConnectedStatus
+        readonly property bool connectionSuccessful: d.connectionStatus === root.connectionSuccessfulStatus
+        readonly property bool connectionFailed: d.connectionStatus === root.connectionFailedStatus
+        readonly property bool connectionAttempted: d.connectionStatus !== root.notConnectedStatus
+
+        function syncDAppChainsModel() {
+            d.dappChains.clear()
+            for (let i = 0; i < root.dAppChains.length; i++) {
+                // Convert to int
+                d.dappChains.append({ chainId: parseInt(root.dAppChains[i]) })
+            }
+        }
     }
 }

@@ -80,12 +80,13 @@ ConnectedDappsButton {
 
         active: false
 
-        onLoaded: item.openWithFilter(dappChains, sessionProposal.params.proposer)
-
         property var dappChains: []
         property var sessionProposal: null
         property var availableNamespaces: null
         property var sessionTopic: null
+        readonly property var proposalMedatada: !!sessionProposal
+                                                ? sessionProposal.params.proposer.metadata 
+                                                : { name: "", url: "", icons: [] }
 
         sourceComponent: ConnectDAppModal {
             visible: true
@@ -93,6 +94,12 @@ ConnectedDappsButton {
             onClosed: connectDappLoader.active = false
             accounts: root.wcService.validAccounts
             flatNetworks: root.wcService.flatNetworks
+            selectedAccountAddress: root.wcService.selectedAccountAddress
+
+            dAppUrl: proposalMedatada.url
+            dAppName: proposalMedatada.name
+            dAppIconUrl: !!proposalMedatada.icons && proposalMedatada.icons.length > 0 ? proposalMedatada.icons[0] : ""
+            dAppChains: dappChains
 
             onConnect: {
                 root.wcService.approvePairSession(sessionProposal, selectedChains, selectedAccount)
@@ -192,9 +199,6 @@ ConnectedDappsButton {
         }
 
         function onApproveSessionResult(session, err) {
-            connectDappLoader.dappChains = []
-            connectDappLoader.sessionProposal = null
-            connectDappLoader.availableNamespaces = null
             connectDappLoader.sessionTopic = session.topic
 
             let modal = connectDappLoader.item
