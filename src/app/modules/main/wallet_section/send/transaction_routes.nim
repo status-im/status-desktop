@@ -4,6 +4,7 @@ import ./gas_estimate_item, ./suggested_route_model, ./network_model
 
 QtObject:
   type TransactionRoutes* = ref object of QObject
+    uuid: string
     suggestedRoutes: SuggestedRouteModel
     gasTimeEstimate: GasEstimateItem
     amountToReceive: UInt256
@@ -11,6 +12,7 @@ QtObject:
     rawPaths: string
 
   proc setup*(self: TransactionRoutes,
+    uuid: string,
     suggestedRoutes: SuggestedRouteModel,
     gasTimeEstimate: GasEstimateItem,
     amountToReceive: UInt256,
@@ -18,6 +20,7 @@ QtObject:
     rawPaths: string
     ) =
       self.QObject.setup
+      self.uuid = uuid
       self.suggestedRoutes = suggestedRoutes
       self.gasTimeEstimate = gasTimeEstimate
       self.amountToReceive = amountToReceive
@@ -28,6 +31,7 @@ QtObject:
       self.QObject.delete
 
   proc newTransactionRoutes*(
+    uuid: string = "",
     suggestedRoutes: SuggestedRouteModel = newSuggestedRouteModel(),
     gasTimeEstimate: GasEstimateItem = newGasEstimateItem(),
     amountToReceive: UInt256 = stint.u256(0),
@@ -35,16 +39,24 @@ QtObject:
     rawPaths: string = ""
     ): TransactionRoutes =
     new(result, delete)
-    result.setup(suggestedRoutes, gasTimeEstimate, amountToReceive, toNetworksModel, rawPaths)
+    result.setup(uuid, suggestedRoutes, gasTimeEstimate, amountToReceive, toNetworksModel, rawPaths)
 
   proc `$`*(self: TransactionRoutes): string =
     result = fmt"""TransactionRoutes(
+      uuid: {self.uuid},
       suggestedRoutes: {self.suggestedRoutes},
       gasTimeEstimate: {self.gasTimeEstimate},
       amountToReceive: {self.amountToReceive},
       toNetworksModel: {self.toNetworksModel},
       rawPaths: {self.rawPaths},
       ]"""
+
+  proc uuidChanged*(self: TransactionRoutes) {.signal.}
+  proc getUuid*(self: TransactionRoutes): string {.slot.} =
+    return self.uuid
+  QtProperty[string] uuid:
+    read = getUuid
+    notify = uuidChanged
 
   proc suggestedRoutesChanged*(self: TransactionRoutes) {.signal.}
   proc getSuggestedRoutes*(self: TransactionRoutes): QVariant {.slot.} =

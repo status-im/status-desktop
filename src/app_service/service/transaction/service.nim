@@ -1,4 +1,4 @@
-import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, uuids, stew/shims/strformat
+import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, stew/shims/strformat
 
 import backend/collectibles as collectibles
 import backend/transactions as transactions
@@ -110,6 +110,7 @@ type
 
 type
   SuggestedRoutesArgs* = ref object of Args
+    uuid*: string
     suggestedRoutes*: SuggestedRoutesDto
 
 type
@@ -583,9 +584,10 @@ QtObject:
       amountToReceive: getTotalAmountToReceive(oldRoute),
       toNetworks: getToNetworksList(oldRoute),
     )
-    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedDto))
+    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(uuid: uuid, suggestedRoutes: suggestedDto))
 
   proc suggestedRoutes*(self: Service,
+    uuid: string,
     sendType: SendType,
     accountFrom: string,
     accountTo: string,
@@ -605,7 +607,6 @@ QtObject:
       amountOutHex = "0x" & eth_utils.stripLeadingZeros(bigAmountOut.toHex)
 
     try:
-      let uuid = $genUUID()
       let res = eth.suggestedRoutesV2Async(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
         toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
     except CatchableError as e:

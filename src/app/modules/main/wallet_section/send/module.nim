@@ -345,7 +345,7 @@ method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: stri
     return
   self.view.sendTransactionSentSignal(chainId, txHash, uuid, error)
 
-method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) =
+method suggestedRoutesReady*(self: Module, uuid: string, suggestedRoutes: SuggestedRoutesDto) =
   self.tmpSendTransactionDetails.paths = suggestedRoutes.best
   self.tmpSendTransactionDetails.slippagePercentage = none(float)
   let paths = suggestedRoutes.best.map(x => self.convertTransactionPathDtoToSuggestedRouteItem(x))
@@ -357,6 +357,7 @@ method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) 
   toNetworksModel.setItems(networks)
   self.view.updatedNetworksWithRoutes(paths, gasTimeEstimate.getTotalFeesInEth())
   let transactionRoutes = newTransactionRoutes(
+    uuid = uuid,
     suggestedRoutes = suggestedRouteModel,
     gasTimeEstimate = gasTimeEstimate,
     amountToReceive = suggestedRoutes.amountToReceive,
@@ -365,6 +366,7 @@ method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) 
   self.view.setTransactionRoute(transactionRoutes)
 
 method suggestedRoutes*(self: Module,
+  uuid: string,
   sendType: SendType,
   accountFrom: string,
   accountTo: string,
@@ -377,6 +379,7 @@ method suggestedRoutes*(self: Module,
   lockedInAmounts: Table[string, string] = initTable[string, string](),
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
   self.controller.suggestedRoutes(
+    uuid,
     sendType,
     accountFrom,
     accountTo,

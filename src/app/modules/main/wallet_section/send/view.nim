@@ -1,4 +1,5 @@
 import NimQml, Tables, json, sequtils, strutils, stint, sugar, options, chronicles
+import uuids
 
 import ./io_interface, ./accounts_model, ./account_item, ./network_model, ./network_item, ./suggested_route_item, ./transaction_routes
 import app/modules/shared_models/collectibles_model as collectibles
@@ -243,6 +244,7 @@ QtObject:
       error "Error parsing extraParamsJson: ", msg=e.msg
 
     self.delegate.suggestedRoutes(
+      $genUUID(),
       self.sendType,
       self.selectedSenderAccount.address(),
       self.selectedRecipient,
@@ -342,6 +344,7 @@ QtObject:
 
 # "Stateless" methods
   proc fetchSuggestedRoutesWithParameters*(self: View,
+    uuid: string,
     accountFrom: string,
     accountTo: string,
     amountIn: string,
@@ -361,6 +364,7 @@ QtObject:
         discard
       # Resolve the best route
       self.delegate.suggestedRoutes(
+        uuid,
         SendType(sendType),
         accountFrom,
         accountTo,
