@@ -6,11 +6,6 @@ import stint
 import ../../../backend/backend as backend
 import ../../common/conversion as service_conversion
 
-proc sortAsc[T](t1, t2: T): int =
-  if (t1.fromNetwork.chainId > t2.fromNetwork.chainId): return 1
-  elif (t1.fromNetwork.chainId < t2.fromNetwork.chainId): return -1
-  else: return 0
-
 type
   GetSuggestedRoutesTaskArg* = ref object of QObjectTaskArg
     accountFrom: string
@@ -23,62 +18,6 @@ type
     preferredChainIDs: seq[int]
     sendType: SendType
     lockedInAmounts: string
-
-proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
-  let weiValue = service_conversion.gwei2Wei(gweiValue) * u256(gasLimit)
-  let ethValue = parseFloat(service_conversion.wei2Eth(weiValue))
-  return ethValue
-
-proc getFeesTotal*(paths: seq[TransactionPathDto]): FeesDto =
-  var fees: FeesDto = FeesDto()
-  if(paths.len == 0):
-    return fees
-
-  for path in paths:
-    var optimalPrice = path.gasFees.gasPrice
-    if path.gasFees.eip1559Enabled:
-      optimalPrice = path.gasFees.maxFeePerGasM
-
-    fees.totalFeesInEth += getGasEthValue(optimalPrice, path.gasAmount)
-    fees.totalFeesInEth += parseFloat(service_conversion.wei2Eth(service_conversion.gwei2Wei(path.gasFees.l1GasFee)))
-    fees.totalFeesInEth += path.approvalGasFees
-    fees.totalTokenFees += path.tokenFees
-    fees.totalTime += path.estimatedTime
-  return fees
-
-proc getTotalAmountToReceive*(paths: seq[TransactionPathDto]): UInt256 =
-  var totalAmountToReceive: UInt256 = stint.u256(0)
-  for path in paths:
-    totalAmountToReceive += path.amountOut
-
-  return totalAmountToReceive
-
-proc getToNetworksList*(paths: seq[TransactionPathDto]): seq[SendToNetwork] =
-  var networkMap: Table[int, SendToNetwork] = initTable[int, SendToNetwork]()
-  for path in paths:
-    if(networkMap.hasKey(path.toNetwork.chainId)):
-      networkMap[path.toNetwork.chainId].amountOut = networkMap[path.toNetwork.chainId].amountOut + path.amountOut
-    else:
-      networkMap[path.toNetwork.chainId] = SendToNetwork(chainId: path.toNetwork.chainId, chainName: path.toNetwork.chainName, iconUrl: path.toNetwork.iconURL, amountOut: path.amountOut)
-  return toSeq(networkMap.values)
-
-proc addFirstSimpleBridgeTxFlag(paths: seq[TransactionPathDto]) : seq[TransactionPathDto] =
-  let txPaths = paths
-  var firstSimplePath: bool = false
-  var firstBridgePath: bool = false
-
-  for path in txPaths:
-    if not firstSimplePath:
-      firstSimplePath = true
-      path.isFirstSimpleTx = true
-    if path.bridgeName != "Transfer":
-      if not firstBridgePath:
-        firstBridgePath = false
-        path.isFirstBridgeTx = true
-
-  return txPaths
-
-
 
 type
   WatchTransactionTaskArg* = ref object of QObjectTaskArg
