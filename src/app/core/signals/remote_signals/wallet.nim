@@ -1,4 +1,4 @@
-import json, options, sequtils, sugar, chronicles
+import json, options, chronicles
 
 import base
 import signal_type
@@ -20,6 +20,7 @@ type WalletSignal* = ref object of Signal
   requestId*: Option[int]
   txHashes*: seq[string]
   uuid*: string
+  bestRouteRaw*: string
   bestRoute*: seq[TransactionPathDtoV2]
   error*: string
   errorCode*: string
@@ -57,7 +58,9 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
       if event.contains("Uuid"):
         result.uuid = event["Uuid"].getStr()
       if event.contains("Best"):
-        result.bestRoute = event["Best"].getElems().map(x => x.toTransactionPathDtoV2())
+        let bestRouteJsonNode = event["Best"]
+        result.bestRouteRaw = $bestRouteJsonNode
+        result.bestRoute = bestRouteJsonNode.toTransactionPathsDtoV2()
       if event.contains("details"):
         result.error = event["details"].getStr
       if event.contains("code"):

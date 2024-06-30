@@ -1,10 +1,11 @@
 import json, strutils, stint, json_serialization, stew/shims/strformat
+import Tables, sequtils
 
 import
   web3/ethtypes
 
 include  ../../common/json_utils
-import ../network/dto
+import ../network/dto, ../token/dto
 import ../../common/conversion as service_conversion
 
 import ./backend/transactions
@@ -238,6 +239,8 @@ type
     bridgeName*: string
     fromNetwork*: NetworkDto
     toNetwork*: NetworkDto
+    fromToken*: TokenDto  # Only populated when converting from V2
+    toToken*: TokenDto  # Only populated when converting from V2
     maxAmountIn* : UInt256
     amountIn*: UInt256
     amountOut*: UInt256
@@ -260,6 +263,8 @@ proc `$`*(self: TransactionPathDto): string =
     bridgeName:{self.bridgeName},
     fromNetwork:{self.fromNetwork},
     toNetwork:{self.toNetwork},
+    fromToken:{self.fromToken},
+    toToken:{self.toToken},
     maxAmountIn:{self.maxAmountIn},
     amountIn:{self.amountIn},
     amountOut:{self.amountOut},
@@ -277,32 +282,6 @@ proc `$`*(self: TransactionPathDto): string =
     approvalContractAddress:{self.approvalContractAddress},
     gasFees:{$self.gasFees}
   )"""
-
-proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
-  result = TransactionPathDto()
-  discard jsonObj.getProp("BridgeName", result.bridgeName)
-  result.fromNetwork = Json.decode($jsonObj["From"], NetworkDto, allowUnknownFields = true)
-  result.toNetwork = Json.decode($jsonObj["To"], NetworkDto, allowUnknownFields = true)
-  result.gasFees = jsonObj["GasFees"].toSuggestedFeesDto()
-  var stringValue: string
-  if jsonObj.getProp("Cost", stringValue) and stringValue.len > 0:
-    result.cost = parseFloat(stringValue)
-  if jsonObj.getProp("TokenFees", stringValue) and stringValue.len > 0:
-    result.tokenFees = parseFloat(stringValue)
-  result.bonderFees = jsonObj{"BonderFees"}.getStr
-  result.maxAmountIn = stint.fromHex(UInt256, jsonObj{"MaxAmountIn"}.getStr)
-  result.amountIn = stint.fromHex(UInt256, jsonObj{"AmountIn"}.getStr)
-  result.amountOut = stint.fromHex(UInt256, jsonObj{"AmountOut"}.getStr)
-  result.estimatedTime = jsonObj{"EstimatedTime"}.getInt
-  discard jsonObj.getProp("GasAmount", result.gasAmount)
-  discard jsonObj.getProp("AmountInLocked", result.amountInLocked)
-  result.isFirstSimpleTx = false
-  result.isFirstBridgeTx = false
-  discard jsonObj.getProp("ApprovalRequired", result.approvalRequired)
-  result.approvalAmountRequired = stint.fromHex(UInt256, jsonObj{"ApprovalAmountRequired"}.getStr)
-  if jsonObj.getProp("ApprovalGasFees", stringValue) and stringValue.len > 0:
-    result.approvalGasFees = parseFloat(stringValue)
-  discard jsonObj.getProp("ApprovalContractAddress", result.approvalContractAddress)
 
 proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result = TransactionPathDto()
@@ -325,15 +304,6 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.approvalAmountRequired = stint.u256(jsonObj{"approvalAmountRequired"}.getStr)
   discard jsonObj.getProp("approvalGasFees", result.approvalGasFees)
   discard jsonObj.getProp("approvalContractAddress", result.approvalContractAddress)
-
-proc convertToTransactionPathsDto*(jsonObj: JsonNode): seq[TransactionPathDto] =
-  result = @[]
-  for path in jsonObj.getElems():
-    result.add(path.convertToTransactionPathDto())
-  return result
-
-proc convertToTransactionPathsDto*(paths: string): seq[TransactionPathDto] =
-  return paths.parseJson.convertToTransactionPathsDto()
 
 type
   FeesDto* = ref object
@@ -379,8 +349,61 @@ proc convertSendToNetwork*(jsonObj: JsonNode): SendToNetwork =
 type
   SuggestedRoutesDto* = ref object
     best*: seq[TransactionPathDto]
-    rawBest*: string
+    rawBest*: string # serialized seq[TransactionPathDtoV2]
     gasTimeEstimate*: FeesDto
     amountToReceive*: UInt256
     toNetworks*: seq[SendToNetwork]
 
+proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
+  let weiValue = service_conversion.gwei2Wei(gweiValue) * u256(gasLimit)
+  let ethValue = parseFloat(service_conversion.wei2Eth(weiValue))
+  return ethValue
+
+proc getFeesTotal*(paths: seq[TransactionPathDto]): FeesDto =
+  var fees: FeesDto = FeesDto()
+  if(paths.len == 0):
+    return fees
+
+  for path in paths:
+    var optimalPrice = path.gasFees.gasPrice
+    if path.gasFees.eip1559Enabled:
+      optimalPrice = path.gasFees.maxFeePerGasM
+
+    fees.totalFeesInEth += getGasEthValue(optimalPrice, path.gasAmount)
+    fees.totalFeesInEth += parseFloat(service_conversion.wei2Eth(service_conversion.gwei2Wei(path.gasFees.l1GasFee)))
+    fees.totalFeesInEth += path.approvalGasFees
+    fees.totalTokenFees += path.tokenFees
+    fees.totalTime += path.estimatedTime
+  return fees
+
+proc getTotalAmountToReceive*(paths: seq[TransactionPathDto]): UInt256 =
+  var totalAmountToReceive: UInt256 = stint.u256(0)
+  for path in paths:
+    totalAmountToReceive += path.amountOut
+
+  return totalAmountToReceive
+
+proc getToNetworksList*(paths: seq[TransactionPathDto]): seq[SendToNetwork] =
+  var networkMap: Table[int, SendToNetwork] = initTable[int, SendToNetwork]()
+  for path in paths:
+    if(networkMap.hasKey(path.toNetwork.chainId)):
+      networkMap[path.toNetwork.chainId].amountOut = networkMap[path.toNetwork.chainId].amountOut + path.amountOut
+    else:
+      networkMap[path.toNetwork.chainId] = SendToNetwork(chainId: path.toNetwork.chainId, chainName: path.toNetwork.chainName, iconUrl: path.toNetwork.iconURL, amountOut: path.amountOut)
+  return toSeq(networkMap.values)
+
+proc addFirstSimpleBridgeTxFlag*(paths: seq[TransactionPathDto]) : seq[TransactionPathDto] =
+  let txPaths = paths
+  var firstSimplePath: bool = false
+  var firstBridgePath: bool = false
+
+  for path in txPaths:
+    if not firstSimplePath:
+      firstSimplePath = true
+      path.isFirstSimpleTx = true
+    if path.bridgeName != "Transfer":
+      if not firstBridgePath:
+        firstBridgePath = false
+        path.isFirstBridgeTx = true
+
+  return txPaths
