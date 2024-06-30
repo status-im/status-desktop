@@ -400,6 +400,10 @@ QtObject:
     except Exception as e:
       self.sendTransactionSentSignal(from_addr, to_addr, uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
 
+  proc mustIgnoreApprovalRequests(sendType: SendType): bool =
+    # Swap requires approvals to be done in advance in a separate Tx
+    return sendType == SendType.Swap
+
   # in case of collectibles transfer, assetKey is used to get the contract address and token id
   # in case of asset transfer, asset is valid and used to get the asset symbol and contract address
   proc transferToken(
@@ -461,7 +465,7 @@ QtObject:
         if not route.gasFees.eip1559Enabled:
           gasFees = $route.gasFees.gasPrice
 
-        if route.approvalRequired:
+        if route.approvalRequired and not mustIgnoreApprovalRequests(sendType):
           let approvalPath = self.createApprovalPath(route, mtCommand.fromAddress, toContractAddress, gasFees)
           paths.add(approvalPath)
 
