@@ -34,7 +34,7 @@ Item {
         function getWei2Eth(wei, decimals) {
             return wei/(10**decimals)
         }
-        function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
+        function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amount, tokenFrom, tokenTo,
                                       disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {}
     }
 

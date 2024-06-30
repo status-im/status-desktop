@@ -69,7 +69,8 @@ proc init*(self: Controller) =
     self.delegate.onUserAuthenticated(args.password, args.pin)
 
   self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
-    self.delegate.suggestedRoutesReady(SuggestedRoutesArgs(e).suggestedRoutes)
+    let args = SuggestedRoutesArgs(e)
+    self.delegate.suggestedRoutesReady(args.uuid, args.suggestedRoutes)
 
   self.events.on(SignalType.WalletSignTransactions.event) do(e:Args):
     var data = WalletSignal(e)
@@ -108,6 +109,7 @@ proc authenticate*(self: Controller, keyUid = "") =
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
 proc suggestedRoutes*(self: Controller,
+    uuid: string,
     sendType: SendType,
     accountFrom: string,
     accountTo: string,
@@ -119,7 +121,7 @@ proc suggestedRoutes*(self: Controller,
     disabledToChainIDs: seq[int] = @[],
     lockedInAmounts: Table[string, string] = initTable[string, string](),
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
-  self.transactionService.suggestedRoutes(sendType, accountFrom, accountTo, token, amountIn, toToken, amountOut,
+  self.transactionService.suggestedRoutes(uuid, sendType, accountFrom, accountTo, token, amountIn, toToken, amountOut,
     disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string, toAssetKey: string,

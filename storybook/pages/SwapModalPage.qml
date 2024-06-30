@@ -58,12 +58,12 @@ SplitView {
             readonly property var flatNetworks: NetworksModel.flatNetworks
             readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
 
-            function fetchSuggestedRoutes(accountFrom, accountTo, amount, tokenFrom, tokenTo,
+            function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amount, tokenFrom, tokenTo,
                                           disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {
-                console.debug("fetchSuggestedRoutes called >> accountFrom = ",accountFrom, " accountTo =",
-                              accountTo, "amount = ",amount, " tokenFrom = ",tokenFrom, " tokenTo = ", tokenTo,
-                              " disabledFromChainIDs = ",disabledFromChainIDs, " disabledToChainIDs = ",disabledToChainIDs,
-                              " preferredChainIDs = ",preferredChainIDs, " sendType =", sendType, " lockedInAmounts = ",lockedInAmounts)
+                console.debug("fetchSuggestedRoutes called >> uuid = ", uuid, " accountFrom = ", accountFrom, " accountTo =",
+                              accountTo, "amount = ", amount, " tokenFrom = ", tokenFrom, " tokenTo = ", tokenTo,
+                              " disabledFromChainIDs = ", disabledFromChainIDs, " disabledToChainIDs = ", disabledToChainIDs,
+                              " preferredChainIDs = ", preferredChainIDs, " sendType =", sendType, " lockedInAmounts = ", lockedInAmounts)
             }
             function authenticateAndTransfer(uuid, accountFrom, accountTo, tokenFrom,
                                              tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {

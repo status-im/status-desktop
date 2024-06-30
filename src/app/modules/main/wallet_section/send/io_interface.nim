@@ -25,6 +25,7 @@ method getTokenBalance*(self: AccessInterface, address: string, chainId: int, to
   raise newException(ValueError, "No implementation available")
 
 method suggestedRoutes*(self: AccessInterface,
+  uuid: string,
   sendType: SendType,
   accountFrom: string,
   accountTo: string,
@@ -38,7 +39,7 @@ method suggestedRoutes*(self: AccessInterface,
   extraParamsTable: Table[string, string] = initTable[string, string]()) {.base.} =
     raise newException(ValueError, "No implementation available")
 
-method suggestedRoutesReady*(self: AccessInterface, suggestedRoutes: SuggestedRoutesDto) {.base.} =
+method suggestedRoutesReady*(self: AccessInterface, uuid: string, suggestedRoutes: SuggestedRoutesDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_addr: string, assetKey: string,

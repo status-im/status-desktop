@@ -144,6 +144,10 @@ QObject {
     Connections {
         target: root.swapStore
         function onSuggestedRoutesReady(txRoutes) {
+            if (txRoutes.uuid !== d.uuid) {
+                // Suggested routes for a different fetch, ignore
+                return
+            }
             root.swapOutputData.reset()
             root.validSwapProposalReceived = false
             root.swapProposalLoading = false
@@ -207,17 +211,17 @@ QObject {
 
     function fetchSuggestedRoutes(cryptoValueInRaw) {
         if (root.swapFormData.isFormFilledCorrectly() && !!cryptoValueInRaw) {
-            root.swapProposalLoading = true
-            root.swapOutputData.reset()
-
             // Identify new swap with a different uuid
             d.uuid = Utils.uuid()
+
+            root.swapProposalLoading = true
+            root.swapOutputData.reset()
 
             let account = selectedAccountEntry.item
             let accountAddress = account.address
             let disabledChainIds = getDisabledChainIds(root.swapFormData.selectedNetworkChainId)
 
-            root.swapStore.fetchSuggestedRoutes(accountAddress, accountAddress,
+            root.swapStore.fetchSuggestedRoutes(d.uuid, accountAddress, accountAddress,
                                                 cryptoValueInRaw, "0", root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
                                                 disabledChainIds, disabledChainIds, Constants.SendType.Swap, "")
         } else {
