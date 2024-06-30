@@ -16,7 +16,8 @@ type
     nonce*: Option[Nonce]        # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
     txType*: string
 
-    chainID*: Option[int]     # (optional) chainID in case of a bridge hop transaction
+    chainID*: Option[int]     # (optional) source chainID
+    chainIDTo*: Option[int]     # (optional) destination chainID
     symbol*: Option[string]      # (optional) symbol in case of a bridge hop transaction
     recipient*: Option[Address]  # (optional) recipient in case of a bridge hop transaction
     amount*: Option[UInt256]         # (optional) amount in case of a bridge hop transaction
@@ -25,6 +26,8 @@ type
 
     tokenID*: Option[UInt256]     # (optional) chainID in case of a ERC721 transaction
 
+    tokenIdFrom*: Option[string]    # (optional) source token symbol
+    tokenIdTo*: Option[string]    # (optional) destination token symbol
     slippagePercentage*: Option[float]    # (optional) max slippage percentage allowed in case of a Swap transaction
 
 proc `%`*(x: TransactionDataDto): JsonNode =
@@ -49,6 +52,8 @@ proc `%`*(x: TransactionDataDto): JsonNode =
     result["nonce"] = %x.nonce.unsafeGet
   if x.chainID.isSome:
     result["chainId"] = %x.chainID.unsafeGet
+  if x.chainIDTo.isSome:
+    result["chainIdTo"] = %x.chainIDTo.unsafeGet
   if x.symbol.isSome:
     result["symbol"] = %x.symbol.unsafeGet
   if x.recipient.isSome:
@@ -61,6 +66,10 @@ proc `%`*(x: TransactionDataDto): JsonNode =
     result["bonderFee"] = %x.bonderFee.unsafeGet
   if x.tokenID.isSome:
     result["tokenID"] = %x.tokenID.unsafeGet
+  if x.tokenIdFrom.isSome:
+    result["tokenIdFrom"] = %x.tokenIdFrom.unsafeGet
+  if x.tokenIdTo.isSome:
+    result["tokenIdTo"] = %x.tokenIdTo.unsafeGet
   if x.slippagePercentage.isSome:
     result["slippagePercentage"] = %x.slippagePercentage.unsafeGet
 

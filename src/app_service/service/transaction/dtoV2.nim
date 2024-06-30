@@ -5,6 +5,7 @@
 # include  app_service/common/json_utils
 
 import json, strutils, stint, json_serialization
+import sequtils, sugar
 
 import
   web3/ethtypes
@@ -24,6 +25,7 @@ type
     fromChain*: NetworkDto
     toChain*: NetworkDto
     fromToken*: TokenDto
+    toToken*: TokenDto
     amountIn*: UInt256
     amountInLocked*: bool
     amountOut*: UInt256
@@ -59,6 +61,7 @@ proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   result.fromChain = Json.decode($jsonObj["FromChain"], NetworkDto, allowUnknownFields = true)
   result.toChain = Json.decode($jsonObj["ToChain"], NetworkDto, allowUnknownFields = true)
   result.fromToken = Json.decode($jsonObj["FromToken"], TokenDto, allowUnknownFields = true)
+  result.toToken = Json.decode($jsonObj["ToToken"], TokenDto, allowUnknownFields = true)
   result.amountIn = stint.fromHex(UInt256, jsonObj{"AmountIn"}.getStr)
   discard jsonObj.getProp("AmountInLocked", result.amountInLocked)
   result.amountOut = stint.fromHex(UInt256, jsonObj{"AmountOut"}.getStr)
@@ -77,3 +80,9 @@ proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   discard jsonObj.getProp("ApprovalGasAmount", result.approvalGasAmount)
   result.approvalL1Fee = stint.fromHex(UInt256, jsonObj{"ApprovalL1Fee"}.getStr)
   result.estimatedTime = jsonObj{"EstimatedTime"}.getInt
+
+proc toTransactionPathsDtoV2*(jsonObj: JsonNode): seq[TransactionPathDtoV2] =
+  return jsonObj.getElems().map(x => x.toTransactionPathDtoV2())
+
+proc toTransactionPathsDtoV2*(rawPaths: string): seq[TransactionPathDtoV2] =
+  return rawPaths.parseJson.toTransactionPathsDtoV2()

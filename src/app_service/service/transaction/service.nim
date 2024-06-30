@@ -1,4 +1,4 @@
-import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, algorithm, uuids, stew/shims/strformat
+import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, uuids, stew/shims/strformat
 
 import backend/collectibles as collectibles
 import backend/transactions as transactions
@@ -6,7 +6,6 @@ import backend/backend
 import backend/eth
 
 import app_service/service/ens/utils as ens_utils
-import app_service/common/conversion as common_conversion
 import app_service/common/utils as common_utils
 import app_service/common/types as common_types
 
@@ -24,9 +23,9 @@ import app_service/service/eth/dto/transaction as transaction_data_dto
 import app_service/service/eth/dto/[coder, method_dto]
 import ./dto as transaction_dto
 import ./dtoV2
+import ./dto_conversion
 import ./cryptoRampDto
 import app_service/service/eth/utils as eth_utils
-import app_service/common/conversion
 
 
 export transaction_dto
@@ -130,7 +129,7 @@ QtObject:
     tokenService: token_service.Service
 
   ## Forward declarations
-  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], error: string, errCode: string)
+  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, error: string, errCode: string)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -161,7 +160,7 @@ QtObject:
 
     self.events.on(SignalType.WalletSuggestedRoutes.event) do(e:Args):
       var data = WalletSignal(e)
-      self.suggestedRoutesV2Ready(data.uuid, data.bestRoute, data.error, data.errorCode)
+      self.suggestedRoutesV2Ready(data.uuid, data.bestRoute, data.bestRouteRaw, data.error, data.errorCode)
 
     self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
       try:
@@ -299,7 +298,10 @@ QtObject:
       path.eRC1155TransferTx = eRC1155TransferTx
     elif(route.bridgeName == SWAP_PARASWAP_NAME):
       swapTx = txData
-      swapTx.chainID =  route.toNetwork.chainId.some
+      swapTx.chainID =  route.fromNetwork.chainId.some
+      swapTx.chainIDTo = route.toNetwork.chainId.some
+      swapTx.tokenIdFrom = route.fromToken.symbol.some
+      swapTx.tokenIdTo = route.toToken.symbol.some
       path.swapTx = swapTx
     else:
       cbridgeTx = txData
@@ -569,75 +571,14 @@ QtObject:
     except Exception as e:
       error "Error getting suggested fees", msg = e.msg
 
-  proc convertToOldRoute(route: seq[TransactionPathDtoV2]): seq[TransactionPathDto] =
-    const
-      gweiDecimals = 9
-      ethDecimals = 18
-    for p in route:
-      var
-        fees = SuggestedFeesDto()
-        trPath = TransactionPathDto()
-
-      try:
-        # prepare fees
-        fees.gasPrice = 0
-        var value = conversion.wei2Eth(input = p.txBaseFee, decimals = gweiDecimals)
-        fees.baseFee = parseFloat(value)
-        value = conversion.wei2Eth(input = p.txPriorityFee, decimals = gweiDecimals)
-        fees.maxPriorityFeePerGas = parseFloat(value)
-        value = conversion.wei2Eth(input = p.suggestedLevelsForMaxFeesPerGas.low, decimals = gweiDecimals)
-        fees.maxFeePerGasL = parseFloat(value)
-        value = conversion.wei2Eth(input = p.suggestedLevelsForMaxFeesPerGas.medium, decimals = gweiDecimals)
-        fees.maxFeePerGasM = parseFloat(value)
-        value = conversion.wei2Eth(input = p.suggestedLevelsForMaxFeesPerGas.high, decimals = gweiDecimals)
-        fees.maxFeePerGasH = parseFloat(value)
-        value = conversion.wei2Eth(input = p.txL1Fee, decimals = gweiDecimals)
-        fees.l1GasFee = parseFloat(value)
-        fees.eip1559Enabled = true
-
-        # prepare tx path
-        trPath.bridgeName = p.processorName
-        trPath.fromNetwork = p.fromChain
-        trPath.toNetwork = p.toChain
-        trPath.gasFees = fees
-        # trPath.cost = not in use for old approach in the desktop app
-        value = conversion.wei2Eth(input = p.txTokenFees, decimals = p.fromToken.decimals)
-        trPath.tokenFees = parseFloat(value)
-        value = conversion.wei2Eth(input = p.txBonderFees, decimals = p.fromToken.decimals)
-        trPath.bonderFees = value
-        trPath.tokenFees += parseFloat(value) # we add bonder fees to the token fees cause in the UI, atm, we show only token fees
-        trPath.maxAmountIn = stint.fromHex(UInt256, "0x0")
-        trPath.amountIn = p.amountIn
-        trPath.amountOut = p.amountOut
-        trPath.approvalRequired = p.approvalRequired
-        trPath.approvalAmountRequired = p.approvalAmountRequired
-        trPath.approvalContractAddress = p.approvalContractAddress
-        trPath.amountInLocked = p.amountInLocked
-        trPath.estimatedTime = p.estimatedTime
-        trPath.gasAmount = p.txGasAmount
-
-        value = conversion.wei2Eth(p.suggestedLevelsForMaxFeesPerGas.medium,  decimals = ethDecimals)
-        trPath.approvalGasFees = parseFloat(value) * float64(p.approvalGasAmount)
-        value = conversion.wei2Eth(p.approvalL1Fee,  decimals = ethDecimals)
-        trPath.approvalGasFees += parseFloat(value)
-
-        trPath.isFirstSimpleTx = false
-        trPath.isFirstBridgeTx = false
-      except Exception as e:
-        error "Error converting to old path", msg = e.msg
-
-      # add tx path to the list
-      result.add(trPath)
-
-    result.sort(sortAsc[TransactionPathDto])
-
-  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], error: string, errCode: string) =
+  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, error: string, errCode: string) =
     # TODO: refactor sending modal part of the app, but for now since we're integrating the router v2 just map params to the old dto
 
     var oldRoute = convertToOldRoute(route)
 
     let suggestedDto = SuggestedRoutesDto(
       best: addFirstSimpleBridgeTxFlag(oldRoute),
+      rawBest: routeRaw,
       gasTimeEstimate: getFeesTotal(oldRoute),
       amountToReceive: getTotalAmountToReceive(oldRoute),
       toNetworks: getToNetworksList(oldRoute),

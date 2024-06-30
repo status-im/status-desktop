@@ -12,6 +12,8 @@ import app_service/service/keycard/service as keycard_service
 import app_service/service/keycard/constants as keycard_constants
 import app/modules/shared/wallet_utils
 import app_service/service/transaction/dto
+import app_service/service/transaction/dtoV2
+import app_service/service/transaction/dto_conversion
 import app/modules/shared_models/currency_amount
 import app_service/service/token/service
 import app_service/service/network/network_item as network_service_item
@@ -284,7 +286,11 @@ method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, 
 
 method authenticateAndTransferWithPaths*(self: Module, fromAddr: string, toAddr: string, assetKey: string, toAssetKey: string, uuid: string,
   sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool, rawPaths: string, slippagePercentage: Option[float]) =
-  self.tmpSendTransactionDetails.paths = rawPaths.convertToTransactionPathsDto()
+  # Temporary until transaction service rework is completed
+  let pathsV2 = rawPaths.toTransactionPathsDtoV2()
+  let pathsV1 = pathsV2.convertToOldRoute().addFirstSimpleBridgeTxFlag()
+  
+  self.tmpSendTransactionDetails.paths = pathsV1
   self.tmpSendTransactionDetails.slippagePercentage = slippagePercentage
   self.authenticateAndTransfer(fromAddr, toAddr, assetKey, toAssetKey, uuid, sendType, selectedTokenName, selectedTokenIsOwnerToken)
 
