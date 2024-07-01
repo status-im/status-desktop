@@ -20,14 +20,14 @@ def options(request):
 
 
 @pytest.fixture
-def application_logs():
+def application_logs(aut):
     yield
     if configs.testpath.STATUS_DATA.exists():
         for app_data in configs.testpath.STATUS_DATA.iterdir():
             for log_dir in ['logs', 'data']:
                 log_path = app_data / log_dir
                 for log in log_path.glob('*.log'):
-                    allure.attach.file(log, name=str(log.name), attachment_type=allure.attachment_type.TEXT)
+                    allure.attach.file(log, name=str(log.name + 'for_' + aut.aut_id), attachment_type=allure.attachment_type.TEXT)
                     try:
                         log.unlink()  # FIXME: it does not work on Windows, permission error
                     except PermissionError:
