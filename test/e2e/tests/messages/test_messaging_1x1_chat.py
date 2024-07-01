@@ -10,12 +10,13 @@ import driver
 from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, \
     LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
 from gui.screens.messages import MessagesScreen, ToolBar
-from tests.settings.settings_messaging import marks
 
 import configs.testpath
 import constants
 from constants import UserAccount
 from gui.main_window import MainWindow
+
+from . import marks
 
 pytestmark = marks
 
