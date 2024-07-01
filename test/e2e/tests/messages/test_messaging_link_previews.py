@@ -10,9 +10,9 @@ from constants.links import external_link, link_to_status_community, status_user
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen, ToolBar
-from tests.settings.settings_messaging import marks
 
 import configs.testpath
+from . import marks
 
 pytestmark = marks
 
