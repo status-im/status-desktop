@@ -1,4 +1,4 @@
-import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, re, httpclient
+import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, re, httpclient, chronicles
 import stew/byteutils
 import ./utils/qrcodegen
 import ./utils/time_utils
@@ -132,7 +132,9 @@ QtObject:
     result = "data:image/svg+xml;utf8," & self.generateQRCodeSVG(text, 2)
 
   proc plainText*(self: Utils, text: string): string {.slot.} =
+    debug "plainText start"
     result = plain_text(text)
+    debug "plainText end", result
 
   proc escapeHtml*(self: Utils, text: string): string {.slot.} =
     result = escape_html(text)
