@@ -1,8 +1,11 @@
+
 # This method will group the account assets by symbol (in case of communiy, the token address)
 proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   var accountAddresses: seq[string] = @[]
   var accountTokens: seq[GroupedTokenItem] = @[]
-  defer: self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(accountAddresses:accountAddresses, accountTokens: accountTokens))
+  defer:
+    let timestamp = getTime().toUnix()
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(accountAddresses:accountAddresses, accountTokens: accountTokens, timestamp: timestamp))
   try:
     let responseObj = response.parseJson
     var storeResult: bool

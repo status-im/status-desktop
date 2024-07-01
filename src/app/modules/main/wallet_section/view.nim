@@ -29,6 +29,7 @@ QtObject:
       walletReady: bool
       addressFilters: string
       currentCurrency: string
+      lastReloadTimestamp: int64
 
   proc setup(self: View) =
     self.QObject.setup
@@ -267,3 +268,22 @@ QtObject:
 
   proc canProfileProveOwnershipOfProvidedAddresses*(self: View, addresses: string): bool {.slot.} =
     return self.delegate.canProfileProveOwnershipOfProvidedAddresses(addresses)
+
+  proc reloadAccountTokens*(self: View) {.slot.} =
+    self.delegate.reloadAccountTokens()
+
+  proc lastReloadTimestampChanged*(self: View) {.signal.}
+  proc setLastReloadTimestamp*(self: View, lastReloadTimestamp: int64) =
+    self.lastReloadTimestamp = lastReloadTimestamp
+    self.lastReloadTimestampChanged()
+  proc getLastReloadTimestamp(self: View): QVariant {.slot.} =
+    return newQVariant(self.lastReloadTimestamp)
+  QtProperty[QVariant] lastReloadTimestamp:
+    read = getLastReloadTimestamp
+    notify = lastReloadTimestampChanged
+
+
+  proc tokensReloaded*(self: View) {.signal.}
+  proc emitTokensReloaded*(self: View, timestamp: int64) =
+    self.setLastReloadTimestamp(timestamp)
+    self.tokensReloaded()
