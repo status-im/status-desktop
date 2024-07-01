@@ -19,6 +19,7 @@ import "../popups/send"
 import "../stores"
 import "../controls"
 
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Wallet.controls 1.0
@@ -310,13 +311,13 @@ ColumnLayout {
             enabled: {
                 if (!overview.isWatchOnlyAccount && !tx)
                     return false
-                return WalletStores.RootStore.isTxRepeatable(tx)
+                return WalletUtils.isTxRepeatable(tx)
             }
 
             onTriggered: {
                 if (!tx)
                     return
-                let asset = WalletStores.RootStore.getAssetForSendTx(tx)
+                let asset = WalletUtils.getAssetForSendTx(tx)
 
                 let req = Helpers.lookupAddressesForSendModal(tx.sender, tx.recipient, asset, tx.isNFT, tx.amount)
 

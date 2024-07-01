@@ -80,7 +80,7 @@ QtObject {
     }
 
     function copyToClipboard(value) {
-        globalUtils.copyToClipboard(value)
+        Utils.copyToClipboard(value)
     }
 
     function saveProfileIdentityChanges(displayName, bio, imageInfo) {

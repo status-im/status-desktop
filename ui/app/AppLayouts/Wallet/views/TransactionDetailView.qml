@@ -770,10 +770,10 @@ Item {
                         if (!d.isTransactionValid || root.overview.isWatchOnlyAccount)
                             return false
 
-                        return WalletStores.RootStore.isTxRepeatable(tx)
+                        return WalletUtils.isTxRepeatable(tx)
                     }
                     onClicked: {
-                        let asset = WalletStores.RootStore.getAssetForSendTx(tx)
+                        let asset = WalletUtils.getAssetForSendTx(tx)
                         let req = Helpers.lookupAddressesForSendModal(tx.sender, tx.recipient, asset, tx.isNFT, tx.amount)
 
                         root.sendModal.preSelectedAccount = req.preSelectedAccount
@@ -795,7 +795,7 @@ Item {
                     icon.width: 20
                     icon.height: 20
                     size: StatusButton.Small
-                    onClicked: RootStore.copyToClipboard(transactionHeader.getDetailsString(d.details))
+                    onClicked: Utils.copyToClipboard(transactionHeader.getDetailsString(d.details))
                 }
             }
         }

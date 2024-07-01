@@ -974,4 +974,8 @@ QtObject {
         // #15331
         return true
     }
+
+    function getQrCode(address) {
+        return globalUtilsInst.qrCode(address)
+    }
 }

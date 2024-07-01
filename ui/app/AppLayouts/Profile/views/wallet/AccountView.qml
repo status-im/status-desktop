@@ -196,7 +196,7 @@ ColumnLayout {
                 copyButtonEnabled: true
                 title: qsTr("Derivation Path")
                 subTitle: !!root.account? Utils.getPathForDisplay(root.account.path) : ""
-                onCopyClicked: root.walletStore.copyToClipboard(!!root.account? root.account.path : "")
+                onCopyClicked: Utils.copyToClipboard(!!root.account? root.account.path : "")
                 visible: !!subTitle && !d.privateKeyAccount && !d.watchOnlyAccount
             }
             Separator {
@@ -332,7 +332,7 @@ ColumnLayout {
         areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
         isGoerliEnabled: root.walletStore.isGoerliEnabled
         preferredSharedNetworkNamesArray: d.preferredSharingNetworkShortNames.split(":").filter(Boolean)
-        onCopyToClipboard: root.walletStore.copyToClipboard(address)
+        onCopyToClipboard: Utils.copyToClipboard(address)
     }
 
     WalletKeypairAccountMenu {

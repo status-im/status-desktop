@@ -277,7 +277,7 @@ StatusMenu {
             }
         }
         icon.name: "copy"
-        onTriggered: RootStore.copyToClipboard(d.selectedAddress)
+        onTriggered: Utils.copyToClipboard(d.selectedAddress)
     }
     StatusAction {
         id: showQrAction

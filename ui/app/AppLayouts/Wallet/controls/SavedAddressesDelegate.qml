@@ -178,7 +178,7 @@ StatusListItem {
             timeout: 1500
             autoDismissMenu: true
             onTriggered: {
-                store.copyToClipboard(d.visibleAddress)
+                Utils.copyToClipboard(d.visibleAddress)
             }
         }
 

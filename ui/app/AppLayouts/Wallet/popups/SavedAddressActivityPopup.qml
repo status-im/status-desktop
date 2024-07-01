@@ -227,7 +227,7 @@ StatusModal {
                         anchors.top: addressText.top
                         icon.name: "copy"
                         type: StatusRoundButton.Type.Tertiary
-                        onClicked: WalletStore.RootStore.copyToClipboard(d.visibleAddress)
+                        onClicked: Utils.copyToClipboard(d.visibleAddress)
                     }
                 }
 

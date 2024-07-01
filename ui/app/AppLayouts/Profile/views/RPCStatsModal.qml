@@ -148,7 +148,7 @@ StatusDialog {
             CopyToClipBoardButton {
                 id: copyToClipboardButton
 
-                onCopyClicked: root.walletStore.copyToClipboard(textToCopy)
+                onCopyClicked: Utils.copyToClipboard(textToCopy)
                 onPressed: function() {
                     let copiedText = "Total" + '\t' + d.totalFilteredCalls + " of " + d.totalCalls + '\n' + '\n'
                     for (let i = 0; i < resultsListView.model.count; i++) {

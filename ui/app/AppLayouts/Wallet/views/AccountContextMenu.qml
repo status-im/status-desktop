@@ -27,7 +27,7 @@ StatusMenu {
         icon.name: "copy"
         timeout: 1500
         enabled: !!root.account
-        onTriggered: RootStore.copyToClipboard(root.account.address?? "")
+        onTriggered: Utils.copyToClipboard(root.account.address?? "")
     }
 
     StatusMenuSeparator {

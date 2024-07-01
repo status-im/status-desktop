@@ -16,6 +16,7 @@ import shared.controls 1.0
 import shared.views 1.0
 import shared.popups 1.0
 
+import AppLayouts.Wallet 1.0
 import "../../stores"
 import "../../controls"
 
@@ -96,7 +97,7 @@ Item {
         networkShortName: !!collectible ? collectible.networkShortName : ""
         networkColor: !!collectible ?collectible.networkColor : ""
         networkIconURL: !!collectible ? collectible.networkIconUrl : ""
-        networkExplorerName: !!collectible ? root.walletRootStore.getExplorerNameForNetwork(collectible.networkShortName): ""
+        networkExplorerName: !!collectible ? WalletUtils.getExplorerNameForNetwork(collectible.networkShortName): ""
         collectibleLinkEnabled: Utils.getUrlStatus(d.collectibleLink)
         collectionLinkEnabled: (!!communityDetails && communityDetails.name)  || Utils.getUrlStatus(d.collectionLink)
         explorerLinkEnabled: Utils.getUrlStatus(d.blockExplorerLink)
@@ -338,7 +339,7 @@ Item {
                             primaryText: qsTr("Twitter")
                             secondaryText: !!collectible ? collectible.twitterHandle : ""
                             visible: !!collectible && collectible.twitterHandle
-                            onClicked: Global.openLinkWithConfirmation(root.walletRootStore.getTwitterLink(collectible.twitterHandle), Constants.socialLinkPrefixesByType[Constants.socialLinkType.twitter])
+                            onClicked: Global.openLinkWithConfirmation(WalletUtils.getTwitterLink(collectible.twitterHandle), Constants.socialLinkPrefixesByType[Constants.socialLinkType.twitter])
                         }
                     }
                 }
