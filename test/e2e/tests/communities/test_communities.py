@@ -186,6 +186,8 @@ def test_community_admin_kick_member_and_delete_message(multiple_instances):
             aut_one.attach()
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
+            assert driver.waitFor(lambda: user_two.name in messages_view.left_panel.get_chats_names,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
             community_screen = chat.accept_community_invite(community_params['name'], '0')
 

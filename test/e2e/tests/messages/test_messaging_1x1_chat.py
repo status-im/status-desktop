@@ -33,7 +33,7 @@ def test_1x1_chat(multiple_instances):
     EMOJI_PATHES = [HEART_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, LAUGHING_EMOJI_PATH,
                     SAD_EMOJI_PATH, ANGRY_EMOJI_PATH]
 
-    with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
+    with (multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two):
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()
@@ -68,7 +68,10 @@ def test_1x1_chat(multiple_instances):
         with step(f'User {user_one.name} send another message to {user_two.name}, edit it and verify it was changed'):
             aut_one.attach()
             main_window.prepare()
-            chat = main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_two.name)
+            left_panel_chat = main_window.left_panel.open_messages_screen().left_panel
+            assert driver.waitFor(lambda: user_two.name in left_panel_chat.get_chats_names,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            chat = left_panel_chat.click_chat_by_name(user_two.name)
             chat_message1 = \
                 ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
             messages_screen.group_chat.send_message_to_group_chat(chat_message1)
