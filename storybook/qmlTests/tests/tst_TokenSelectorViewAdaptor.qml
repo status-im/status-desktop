@@ -22,6 +22,14 @@ Item {
             image: "https://cryptologos.cc/logos/aave-aave-logo.png"
             communityId: ""
         }
+        // DAI should be filtered out
+        ListElement {
+            key: "DAI"
+            name: "Dai Stablecoin"
+            symbol: "DAI"
+            image: ""
+            communityId: ""
+        }
     }
 
     QtObject {
@@ -132,6 +140,17 @@ Item {
 
             // should have ~45.90 balance
             fuzzyCompare(delegate.currencyBalance, 45.90, 0.01)
+        }
+
+        function test_duplicatePlainTokens() {
+            verify(!!controlUnderTest)
+
+            controlUnderTest.showAllTokens = true
+            const searchText = "DAI"
+            controlUnderTest.searchString = searchText
+
+            // search yields 1 result
+            tryCompare(controlUnderTest.outputAssetsModel, "count", 1)
         }
     }
 }
