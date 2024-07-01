@@ -99,9 +99,10 @@ Item {
                     icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
                     asset.mirror: true
                     interactive: !loading
-
-                    tooltip.text: "Last refreshed " + LocaleUtils.formatRelativeTimestamp(
-                                      RootStore.walletSectionInst.lastReloadTimestamp*1000, true)
+                    readonly property string lastReloadTime: !!RootStore.walletSectionInst.lastReloadTimestamp ?
+                                              LocaleUtils.formatRelativeTimestamp(
+                                                            RootStore.walletSectionInst.lastReloadTimestamp * 1000) : ""
+                    tooltip.text: "Last refreshed " + lastReloadTime
 
                     Connections {
                         target: RootStore.walletSectionInst
