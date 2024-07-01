@@ -106,6 +106,21 @@ QObject {
                 roleName: "communityId"
                 value: ""
                 enabled: !root.showCommunityAssets
+            },
+            // duplicate tokens filter
+            FastExpressionFilter {
+                function hasDuplicateKey(tokensKey) {
+                    return ModelUtils.indexOf(assetsObjectProxyModel, "tokensKey", tokensKey) > -1
+                }
+
+                expression: {
+                    if (model.which_model === "plain_tokens_model") {
+                        return !hasDuplicateKey(model.tokensKey)
+                    }
+                    return true
+                }
+                expectedRoles: ["which_model", "tokensKey"]
+                enabled: root.showAllTokens
             }
         ]
 
