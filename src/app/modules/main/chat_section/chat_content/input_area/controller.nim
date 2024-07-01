@@ -1,5 +1,4 @@
-import io_interface, tables, sets
-
+import io_interface, tables, sets, chronicles
 
 import ../../../../../../app_service/service/settings/service as settings_service
 import ../../../../../../app_service/service/message/service as message_service
@@ -89,6 +88,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_URLS_UNFURLING_PLAN_READY) do(e: Args):
     let args = UrlsUnfurlingPlanDataArgs(e)
+    debug "SIGNAL_URLS_UNFURLING_PLAN_READY", requestUuid = args.requestUuid, unfurlingPlanActiveRequest = self.unfurlingPlanActiveRequest
     if self.unfurlingPlanActiveRequest != args.requestUuid:
       return
     self.unfurlingPlan = args.plan
@@ -179,6 +179,8 @@ proc shouldAskToEnableLinkPreview(self: Controller): bool =
   return self.linkPreviewPersistentSetting == UrlUnfurlingMode.AlwaysAsk and self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk
 
 proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
+  debug "setText start", text, unfurlNewUrls
+
   if text == "":
     self.resetLinkPreviews()
     self.delegate.setUrls(@[])
@@ -186,6 +188,7 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
 
   self.unfurlingPlanActiveRequestUnfurlAfter = unfurlNewUrls
   self.unfurlingPlanActiveRequest = self.messageService.asyncGetTextURLsToUnfurl(text)
+  debug "setText end", text, unfurlNewUrls, unfurlingPlanActiveRequest = self.unfurlingPlanActiveRequest
 
 proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
   var allUrls = newSeq[string]() # Used for URLs syntax highlighting only

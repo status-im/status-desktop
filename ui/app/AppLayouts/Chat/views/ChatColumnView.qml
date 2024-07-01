@@ -178,8 +178,11 @@ Item {
                 return
             }
             return Backpressure.debounce(this, 250, () => {
-                                             const messageText = root.rootStore.cleanMessageText(chatInput.textInput.text)
-                                             d.activeChatContentModule.inputAreaModule.setText(messageText)
+                                            console.log("QML.updateLinkPreviews")
+                                            console.time("updateLinkPreviews");
+                                            const messageText = root.rootStore.cleanMessageText(chatInput.textInput.text)
+                                            d.activeChatContentModule.inputAreaModule.setText(messageText)
+                                            console.timeEnd("updateLinkPreviews");
                                          })
         }
 
