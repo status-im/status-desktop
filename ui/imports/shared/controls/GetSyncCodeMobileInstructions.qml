@@ -2,6 +2,7 @@ import QtQuick 2.15
 
 import StatusQ.Core.Theme 0.1
 
+import shared.controls 1.0
 import shared.views 1.0
 
 Column {
@@ -12,12 +13,12 @@ Column {
 
     spacing: 4
 
-    GetSyncCodeInstruction {
+    DecoratedListItem {
         order: "1."
         text1: qsTr("Ensure both devices are on the same network")
     }
 
-    GetSyncCodeInstruction {
+    DecoratedListItem {
         order: "2."
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
@@ -27,7 +28,7 @@ Column {
         }
     }
 
-    GetSyncCodeInstruction {
+    DecoratedListItem {
         order: "3."
         text1: qsTr("Open your")
         icon: {
@@ -45,7 +46,7 @@ Column {
         text2Color: Theme.palette.directColor1
     }
 
-    GetSyncCodeInstruction {
+    DecoratedListItem {
         order: "4."
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
@@ -68,7 +69,7 @@ Column {
         text2Color: Theme.palette.directColor1
     }
 
-    GetSyncCodeInstruction {
+    DecoratedListItem {
         order: "5."
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
@@ -108,7 +109,7 @@ Column {
         }
     }
 
-    GetSyncCodeInstruction {
+    DecoratedListItem {
         order: "6."
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
@@ -140,7 +141,7 @@ Column {
         }
     }
 
-    GetSyncCodeInstruction {
+    DecoratedListItem {
         order: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {

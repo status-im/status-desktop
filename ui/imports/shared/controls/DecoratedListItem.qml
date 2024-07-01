@@ -14,10 +14,15 @@ RowLayout {
     property string text1: ""
     property color text1Color: Theme.palette.baseColor1
     property string icon: ""
+    property alias asset: icon1.asset
     property string text2: ""
     property string text2Color: ""
     property string text3: ""
     property color text3Color: Theme.palette.baseColor1
+    property string text4: ""
+    property color text4Color: Theme.palette.baseColor1
+    property string text5: ""
+    property color text5Color: Theme.palette.baseColor1
 
     StatusBaseText {
         visible: text
@@ -30,6 +35,7 @@ RowLayout {
         text: root.text1
     }
     StatusRoundIcon {
+        id: icon1
         visible: !!root.icon
         asset.name: root.icon
     }
@@ -42,5 +48,15 @@ RowLayout {
         visible: text
         color: root.text3Color
         text: root.text3
+    }
+    StatusBaseText {
+        visible: text
+        color: root.text4Color
+        text: root.text4
+    }
+    StatusBaseText {
+        visible: text
+        color: root.text5Color
+        text: root.text5
     }
 }
