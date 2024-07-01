@@ -40,7 +40,7 @@ RUN apt update -yq && apt install -yq software-properties-common \
  && add-apt-repository -y ppa:git-core/ppa \
  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
  && apt update -yq && apt full-upgrade -yq && apt install -yq --no-install-recommends --fix-missing  \
-    gnupg2 openssh-client ca-certificates locales sudo jq curl wget fuse s3cmd file llvm tk-dev xz-utils \
+    gnupg2 openssh-client ca-certificates locales sudo jq curl wget fuse s5cmd file llvm tk-dev xz-utils \
     git make build-essential pkg-config extra-cmake-modules gcc-9 g++-9 \
     libgl1-mesa-dev libsm6 libice6 libfontconfig1 libdbus-1-3 libssl-dev libz-dev \
     zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev unixodbc-dev libpq-dev \

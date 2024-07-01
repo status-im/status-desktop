@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.13'
+library 'status-jenkins-lib@v1.9.1'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -95,12 +95,12 @@ pipeline {
       parallel {
         stage('Upload 7Z') {
           steps { script {
-            zip_url = s3.uploadArtifact(env.STATUS_CLIENT_7Z)
+            zip_url = s5cmd.upload(env.STATUS_CLIENT_7Z)
           } }
         }
         stage('Upload EXE') {
           steps { script {
-            exe_url = s3.uploadArtifact(env.STATUS_CLIENT_EXE)
+            exe_url = s5cmd.upload(env.STATUS_CLIENT_EXE)
           } }
         }
       }

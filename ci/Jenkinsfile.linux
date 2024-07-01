@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.18'
+library 'status-jenkins-lib@v1.9.1'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -9,7 +9,7 @@ pipeline {
     /* Necessary image with Ubuntu 20.04 for older Glibc. */
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.4.1-qt5.15.2'
+      image 'statusteam/nim-status-client-build:1.4.2-qt5.15.2'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
@@ -99,7 +99,7 @@ pipeline {
       parallel {
         stage('Upload') {
           steps { script {
-            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_TARBALL)
+            env.PKG_URL = s5cmd.upload(env.STATUS_CLIENT_TARBALL)
             jenkins.setBuildDesc(AppImage: env.PKG_URL)
           } }
         }
