@@ -97,9 +97,9 @@ QtObject:
   proc init*(self: Service) =
     if self.doLogging:
       debug "init keycard using ", pairingsJson=status_const.KEYCARDPAIRINGDATAFILE
-    let initResp = keycard_go.keycardInitFlow(status_const.KEYCARDPAIRINGDATAFILE)
-    if self.doLogging:
-      debug "initialization response: ", initResp
+    # let initResp = keycard_go.keycardInitFlow(status_const.KEYCARDPAIRINGDATAFILE)
+    # if self.doLogging:
+    #   debug "initialization response: ", initResp
 
   proc processSignal(self: Service, signal: string) =
     var jsonSignal: JsonNode
@@ -174,10 +174,10 @@ QtObject:
   proc cancelCurrentFlow*(self: Service) =
     if self.busy:
       return
-    let response = keycard_go.keycardCancelFlow()
-    self.currentFlow = KCSFlowType.NoFlow
-    if self.doLogging:
-      debug "keycardCancelFlow", kcServiceCurrFlow=($self.currentFlow), response=response
+    # let response = keycard_go.keycardCancelFlow()
+    # self.currentFlow = KCSFlowType.NoFlow
+    # if self.doLogging:
+    #   debug "keycardCancelFlow", kcServiceCurrFlow=($self.currentFlow), response=response
 
   ##########################################################
   ## Used in test env only, for testing keycard flows
