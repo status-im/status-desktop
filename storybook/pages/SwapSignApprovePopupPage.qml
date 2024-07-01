@@ -48,17 +48,21 @@ SplitView {
                 modal: false
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
-                title: qsTr("Approve spending cap")
                 loading: loadingCheckBox.checked
                 swapSignApproveInputForm: SwapSignApproveInputForm {
                     selectedAccountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
                     selectedNetworkChainId: 11155111
-                    tokensKey: "DAI"
                     estimatedTime: 3
                     swapProviderName: "ParaSwap"
                     approvalGasFees: "2.789231893824e-06"
                     approvalAmountRequired: "10000000000000"
                     approvalContractAddress: "0x216b4b4ba9f3e719726886d34a177484278bfcae"
+                    fromTokensKey: "DAI"
+                    toTokensKey: "ETH"
+                    fromTokensAmount: "0.00100000000000003"
+                    toTokensAmount: "0.02925100"
+                    selectedSlippage: 0.5
+                    swapFees: 2.789231893824e-06
                 }
                 adaptor: SwapSignApproveAdaptor {
                     swapStore: SwapStore {
@@ -77,6 +81,7 @@ SplitView {
                     currencyStore: CurrenciesStore {}
                     inputFormData: modal.swapSignApproveInputForm
                 }
+                txType: isApprovalTx.checked ? SwapSignApprovePopup.TxType.Approve : SwapSignApprovePopup.TxType.Swap
             }
         }
     }
@@ -93,6 +98,12 @@ SplitView {
             CheckBox {
                 id: loadingCheckBox
                 text: "loading"
+                checked: false
+            }
+
+            CheckBox {
+                id: isApprovalTx
+                text: "approve tx"
                 checked: false
             }
         }

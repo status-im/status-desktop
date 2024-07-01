@@ -16,14 +16,17 @@ QObject {
 
     // To expose the selected from and to Token from the SwapModal
     readonly property var fromToken: fromTokenEntry.item
+    readonly property var toToken: toTokenEntry.item
     readonly property var selectedAccount: selectedAccountEntry.item
     readonly property var selectedNetwork: selectedNetworkEntry.item
+    readonly property var fromTokenContractAddress: fromTokenContractAddress.item
+    readonly property var toTokenContractAddress: toTokenContractAddress.item
 
     ModelEntry {
         id: fromTokenEntry
         sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
         key: "key"
-        value: root.inputFormData.tokensKey
+        value: root.inputFormData.fromTokensKey
     }
 
     ModelEntry {
@@ -36,6 +39,29 @@ QObject {
     ModelEntry {
         id: selectedNetworkEntry
         sourceModel: root.swapStore.flatNetworks
+        key: "chainId"
+        value: root.inputFormData.selectedNetworkChainId
+    }
+
+    ModelEntry {
+        id: toTokenEntry
+        sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+        key: "key"
+        value: root.inputFormData.toTokensKey
+    }
+
+    ModelEntry {
+        id: fromTokenContractAddress
+        sourceModel: !!root.fromToken ?
+                         root.fromToken.addressPerChain ?? null : null
+        key: "chainId"
+        value: root.inputFormData.selectedNetworkChainId
+    }
+
+    ModelEntry {
+        id: toTokenContractAddress
+        sourceModel: !!root.toToken ?
+                         root.toToken.addressPerChain ?? null : null
         key: "chainId"
         value: root.inputFormData.selectedNetworkChainId
     }
