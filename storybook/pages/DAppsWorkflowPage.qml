@@ -345,14 +345,20 @@ Item {
             }
 
             // hardcoded for https://react-app.walletconnect.com/
+            function signMessageUnsafe(topic, id, address, password, message) {
+                console.info(`calling mocked DAppsStore.signMessageUnsafe(${topic}, ${id}, ${address}, ${password}, ${message})`)
+                return "0xc8f39cb4cffa5c4659e0ccc7c417cc61d0cfc9e59de310368ac734065164f5515bfbaf4550d409896f7e2210b82a1cf65edcd77f696b4d3d24477fb81a90af8a1c"
+            }
+
+            // hardcoded for https://react-app.walletconnect.com/
             function signMessage(topic, id, address, password, message) {
                 console.info(`calling mocked DAppsStore.signMessage(${topic}, ${id}, ${address}, ${password}, ${message})`)
                 return "0x0b083acc1b3b612dd38e8e725b28ce9b2dd4936b4cf7922da4e4a3c6f44f7f4f6d3050ccb41455a2b85093f1bfadb10fc6a75d83bb590b2eb70e3447653459701c"
             }
 
             // hardcoded for https://react-app.walletconnect.com/
-            function signTypedDataV4(topic, id, address, password, typedDataJson) {
-                console.info(`calling mocked DAppsStore.signTypedDataV4(${topic}, ${id}, ${address}, ${password}, ${typedDataJson})`)
+            function safeSignTypedData(topic, id, address, password, typedDataJson, chainId, legacy) {
+                console.info(`calling mocked DAppsStore.safeSignTypedData(${topic}, ${id}, ${address}, ${password}, ${typedDataJson}, ${chainId}, ${legacy})`)
                 return "0xf8ceb3468319cc215523b67c24c4504b3addd9bf8de31c278038d7478c9b6de554f7d8a516cd5d6a066b7d48b81f03d9d6bb7d5d754513c08325674ebcc7efbc1b"
             }
 

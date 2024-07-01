@@ -327,10 +327,21 @@ StatusDialog {
                     userDisplayNaming = SessionRequest.methods.personalSign.requestDisplay
                     break
                 }
+                case SessionRequest.methods.sign.name: {
+                    payloadToDisplay = SessionRequest.methods.sign.getMessageFromData(root.payloadData)
+                    userDisplayNaming = SessionRequest.methods.sign.requestDisplay
+                    break
+                }
                 case SessionRequest.methods.signTypedData_v4.name: {
                     let messageObject = SessionRequest.methods.signTypedData_v4.getMessageFromData(root.payloadData)
                     payloadToDisplay = JSON.stringify(JSON.parse(messageObject), null, 2)
                     userDisplayNaming = SessionRequest.methods.signTypedData_v4.requestDisplay
+                    break
+                }
+                case SessionRequest.methods.signTypedData.name: {
+                    let messageObject = SessionRequest.methods.signTypedData.getMessageFromData(root.payloadData)
+                    payloadToDisplay = JSON.stringify(JSON.parse(messageObject), null, 2)
+                    userDisplayNaming = SessionRequest.methods.signTypedData.requestDisplay
                     break
                 }
                 case SessionRequest.methods.signTransaction.name: {

@@ -56,11 +56,14 @@ QtObject:
       self.userAuthenticationResult(topic, id, success, password, pin)
     )
 
+  proc signMessageUnsafe*(self: Controller, address: string, password: string, message: string): string {.slot.} =
+    return self.service.signMessageUnsafe(address, password, message)
+
   proc signMessage*(self: Controller, address: string, password: string, message: string): string {.slot.} =
     return self.service.signMessage(address, password, message)
 
-  proc signTypedDataV4*(self: Controller, address: string, password: string, typedDataJson: string): string {.slot.} =
-    return self.service.signTypedDataV4(address, password, typedDataJson)
+  proc safeSignTypedData*(self: Controller, address: string, password: string, typedDataJson: string, chainId: int, legacy: bool): string {.slot.} =
+    return self.service.safeSignTypedData(address, password, typedDataJson, chainId, legacy)
 
   proc signTransaction*(self: Controller, address: string, chainId: int, password: string, txJson: string): string {.slot.} =
     return self.service.signTransaction(address, chainId, password, txJson)

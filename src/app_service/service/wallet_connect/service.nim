@@ -123,11 +123,14 @@ QtObject:
     self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
     return true
 
+  proc signMessageUnsafe*(self: Service, address: string, password: string, message: string): string =
+    return status_go.signMessageUnsafe(address, password, message)
+
   proc signMessage*(self: Service, address: string, password: string, message: string): string =
     return status_go.signMessage(address, password, message)
 
-  proc signTypedDataV4*(self: Service, address: string, password: string, typedDataJson: string): string =
-    return status_go.signTypedData(address, password, typedDataJson)
+  proc safeSignTypedData*(self: Service, address: string, password: string, typedDataJson: string, chainId: int, legacy: bool): string =
+    return status_go.safeSignTypedData(address, password, typedDataJson, chainId, legacy)
 
   proc signTransaction*(self: Service, address: string, chainId: int, password: string, txJson: string): string =
     var buildTxResponse: JsonNode

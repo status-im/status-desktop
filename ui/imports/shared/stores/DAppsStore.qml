@@ -32,13 +32,18 @@ QObject {
     }
 
     // Returns the hex encoded signature of the message or empty string if error
+    function signMessageUnsafe(topic, id, address, password, message) {
+        return controller.signMessageUnsafe(address, password, message)
+    }
+
+    // Returns the hex encoded signature of the message or empty string if error
     function signMessage(topic, id, address, password, message) {
         return controller.signMessage(address, password, message)
     }
 
     // Returns the hex encoded signature of the typedDataJson or empty string if error
-    function signTypedDataV4(topic, id, address, password, typedDataJson) {
-        return controller.signTypedDataV4(address, password, typedDataJson)
+    function safeSignTypedData(topic, id, address, password, typedDataJson, chainId, legacy) {
+        return controller.safeSignTypedData(address, password, typedDataJson, chainId, legacy)
     }
 
     // Remove leading zeros from hex number as expected by status-go
