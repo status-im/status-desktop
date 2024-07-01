@@ -14,6 +14,7 @@ import SortFilterProxyModel 0.2
 import utils 1.0
 
 import "../controls"
+import "../stores"
 
 Item {
     id: root
@@ -25,6 +26,7 @@ Item {
 
     property alias headerButton: headerButton
     property alias networkFilter: networkFilter
+    property alias reloadButton: reloadButton
 
     signal buttonClicked()
 
@@ -38,6 +40,8 @@ Item {
         // account + balance
         RowLayout {
             spacing: Style.current.halfPadding
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+
             StatusBaseText {
                 objectName: "walletHeaderTitle"
                 Layout.alignment: Qt.AlignVCenter
@@ -73,6 +77,43 @@ Item {
             spacing: 16
             Layout.alignment: Qt.AlignTrailing
             Layout.topMargin: 5
+
+            Row {
+                Layout.alignment: Qt.AlignRight | Qt.AlignTop
+                Layout.preferredHeight: 38
+                spacing: 8
+
+                StatusButton {
+                    id: reloadButton
+                    size: StatusBaseButton.Size.Tiny
+                    loadingIndicatorSize: size
+                    height: parent.height
+                    width: height
+                    borderColor: Theme.palette.directColor7
+                    borderWidth: 1
+
+                    normalColor: Theme.palette.transparent
+                    hoverColor: Theme.palette.baseColor2
+
+                    icon.name: "refresh"
+                    icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    asset.mirror: true
+                    interactive: !loading
+
+                    tooltip.text: "Last refreshed " + RootStore.walletSectionInst.lastReloadTimestamp
+
+                    Connections {
+                        target: RootStore.walletSectionInst
+                        function onTokensReloaded() {
+                            reloadButton.loading = false
+                        }
+                    }
+                    onClicked: {
+                        loading = true
+                        RootStore.reloadWallet()
+                    }
+                }
+            }
 
             DAppsWorkflow {
                 Layout.alignment: Qt.AlignTop

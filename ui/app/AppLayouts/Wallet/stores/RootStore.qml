@@ -558,4 +558,8 @@ QtObject {
         const prefix = Constants.socialLinkPrefixesByType[Constants.socialLinkType.twitter]
         return prefix + twitterHandle
     }
+
+    function reloadWallet() {
+        walletSectionInst.reloadWallet()
+    }
 }
