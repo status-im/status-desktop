@@ -7,3 +7,4 @@ AddEditSavedAddressPopup 1.0 AddEditSavedAddressPopup.qml
 RemoveSavedAddressPopup 1.0 RemoveSavedAddressPopup.qml
 SavedAddressActivityPopup 1.0 SavedAddressActivityPopup.qml
 BuyCryptoModal 1.0 BuyCryptoModal.qml
+SignTransactionModalBase 1.0 SignTransactionModalBase.qml
