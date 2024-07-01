@@ -35,7 +35,9 @@ StatusListView {
     property var selection: []
 
     signal toggleNetwork(int chainId, int index)
-
+    
+    objectName: "networkSelectorList"
+    
     onSelectionChanged: {
         if (!root.multiSelection && selection.length > 1) {
             console.warn("Warning: Multi-selection is disabled, but multiple items are selected. Automatically selecting the last inserted item.")

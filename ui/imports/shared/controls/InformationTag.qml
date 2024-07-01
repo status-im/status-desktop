@@ -16,6 +16,7 @@ Control {
     property alias middleLabel: middleLabel
     property alias asset: smartIdenticon.asset
     property alias rightComponent: rightComponent.sourceComponent
+    property alias leftComponent: leftComponent.sourceComponent
     property bool loading: false
     property int secondarylabelMaxWidth: 100
 
@@ -48,6 +49,9 @@ Control {
     contentItem: RowLayout {
         spacing: root.spacing
         visible: !root.loading
+        Loader {
+            id: leftComponent
+        }
         StatusSmartIdenticon {
             id: smartIdenticon
             Layout.maximumWidth: visible ? 16 : 0
@@ -60,8 +64,10 @@ Control {
         }
         StatusBaseText {
             id: tagPrimaryLabel
+            Layout.maximumWidth: root.availableWidth
             font.pixelSize: Style.current.tertiaryTextFontSize
             visible: text !== ""
+            elide: Text.ElideRight
         }
         StatusBaseText {
             id: middleLabel
