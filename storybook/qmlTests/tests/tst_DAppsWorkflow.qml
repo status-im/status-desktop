@@ -106,9 +106,9 @@ Item {
             function signMessage(topic, id, address, password, message) {
                 signMessageCalls.push({topic, id, address, password, message})
             }
-            property var signTypedDataV4Calls: []
-            function signTypedDataV4(topic, id, address, password, message) {
-                signTypedDataV4Calls.push({topic, id, address, password, message})
+            property var safeSignTypedDataCalls: []
+            function safeSignTypedData(topic, id, address, password, message, chainId, legacy) {
+                safeSignTypedDataCalls.push({topic, id, address, password, message, chainId, legacy})
             }
 
             property var updateWalletConnectSessionsCalls: []
