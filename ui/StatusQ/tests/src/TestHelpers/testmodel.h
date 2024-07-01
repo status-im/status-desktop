@@ -29,6 +29,9 @@ public:
     // emits modelAboutToBeReset/modelReset, content remains the same
     void reset();
 
+    // emits modelAboutToBeReset/modelReset, content is removed
+    void resetAndClear();
+
 private:
     void initRoles();
 
