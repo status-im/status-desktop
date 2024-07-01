@@ -331,10 +331,10 @@ StatusDialog {
 
                             if(root.swapAdaptor.validSwapProposalReceived) {
                                 if(root.swapAdaptor.swapOutputData.approvalNeeded) {
+                                    let approvalGasFeesFiat = root.swapAdaptor.currencyStore.getFiatValue(root.swapAdaptor.swapOutputData.approvalGasFees, Constants.ethToken)
                                     return root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                                                root.swapAdaptor.swapOutputData.approvalGasFees,
+                                                approvalGasFeesFiat,
                                                 root.swapAdaptor.currencyStore.currentCurrency)
-
                                 } else {
                                     return root.swapAdaptor.currencyStore.formatCurrencyAmount(
                                                 root.swapAdaptor.swapOutputData.totalFees,
@@ -375,14 +375,9 @@ StatusDialog {
                              !payPanel.amountEnteredGreaterThanBalance &&
                              !root.swapAdaptor.approvalPending
                     onClicked: {
-                        if (root.swapAdaptor.validSwapProposalReceived ){
-                            if(root.swapAdaptor.swapOutputData.approvalNeeded) {
-                                Global.openPopup(swapSignApprovePopup)
-                            }
-                            else {
-                                swapAdaptor.sendSwapTx()
-                                close()
-                            }
+                        if (root.swapAdaptor.validSwapProposalReceived) {
+                            let txType = root.swapAdaptor.swapOutputData.approvalNeeded ? SwapSignApprovePopup.TxType.Approve : SwapSignApprovePopup.TxType.Swap
+                            Global.openPopup(swapSignApprovePopup, {"txType": txType})
                         }
                     }
                 }
@@ -401,12 +396,17 @@ StatusDialog {
             swapSignApproveInputForm: SwapSignApproveInputForm {
                 selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
                 selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-                tokensKey: root.swapInputParamsForm.fromTokensKey
                 estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
                 swapProviderName: root.swapAdaptor.swapOutputData.txProviderName
                 approvalGasFees: root.swapAdaptor.swapOutputData.approvalGasFees
                 approvalAmountRequired: root.swapAdaptor.swapOutputData.approvalAmountRequired
                 approvalContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
+                fromTokensKey: root.swapInputParamsForm.fromTokensKey
+                fromTokensAmount:  root.swapInputParamsForm.fromTokenAmount
+                toTokensKey: root.swapInputParamsForm.toTokenKey
+                toTokensAmount: root.swapAdaptor.swapOutputData.toTokenAmount
+                swapFees: root.swapAdaptor.swapOutputData.totalFees
+                selectedSlippage: root.swapInputParamsForm.selectedSlippage
             }
             adaptor: SwapSignApproveAdaptor {
                 swapStore: root.swapAdaptor.swapStore
@@ -415,8 +415,14 @@ StatusDialog {
                 inputFormData: approvePopup.swapSignApproveInputForm
             }
             onSign: {
-                root.swapAdaptor.sendApproveTx()
-                close()
+                if(txType === SwapSignApprovePopup.TxType.Approve) {
+                    root.swapAdaptor.sendApproveTx()
+                    close()
+                } else {
+                    root.swapAdaptor.sendSwapTx()
+                    close()
+                    root.close()
+                }
             }
             onReject: close()
         }
