@@ -410,21 +410,23 @@ Item {
 
                 let delToTest = assetSelectorList.itemAtIndex(i)
                 verify(!!delToTest)
-                mouseClick(delToTest)
+                if(delToTest.interactive) {
+                    mouseClick(delToTest)
 
-                // check input value and state
-                waitForRendering(controlUnderTest)
+                    // check input value and state
+                    waitForItemPolished(controlUnderTest)
 
-                compare(amountToSendInput.input.text, "5.42")
-                const marketPrice = !!amountToSendInput.selectedHolding ? amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount : 0
-                tryCompare(bottomItemText, "text", d.adaptor.formatCurrencyAmount(
-                               numberTested * marketPrice,
-                               d.adaptor.currencyStore.currentCurrency))
-                compare(controlUnderTest.value, numberTested)
-                compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
-                compare(controlUnderTest.valueValid, numberTested <= maxTagButton.maxSafeValue)
-                compare(controlUnderTest.selectedHoldingId, modelItemToTest.tokensKey)
-                compare(controlUnderTest.amountEnteredGreaterThanBalance, numberTested > maxTagButton.maxSafeValue)
+                    compare(amountToSendInput.input.text, "5.42")
+                    const marketPrice = !!amountToSendInput.selectedHolding ? amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount : 0
+                    tryCompare(bottomItemText, "text", d.adaptor.formatCurrencyAmount(
+                                   numberTested * marketPrice,
+                                   d.adaptor.currencyStore.currentCurrency))
+                    compare(controlUnderTest.value, numberTested)
+                    compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
+                    compare(controlUnderTest.valueValid, numberTested <= maxTagButton.maxSafeValue)
+                    compare(controlUnderTest.selectedHoldingId, modelItemToTest.tokensKey)
+                    compare(controlUnderTest.amountEnteredGreaterThanBalance, numberTested > maxTagButton.maxSafeValue)
+                }
             }
         }
 

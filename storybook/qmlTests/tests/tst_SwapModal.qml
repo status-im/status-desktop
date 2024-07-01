@@ -141,6 +141,7 @@ Item {
             mouseClick(accountsModalHeader)
             waitForRendering(accountsModalHeader)
             verify(!!accountsModalHeader.control.popup.opened)
+            mouseMove(accountsModalHeader)
             return accountsModalHeader
         }
 
@@ -565,6 +566,7 @@ Item {
             formValuesChanged.wait()
             root.swapFormData.toTokenKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(1).key
             root.swapFormData.fromTokenAmount = "0.001"
+            waitForRendering(receivePanel)
             formValuesChanged.wait()
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             formValuesChanged.wait()
@@ -606,6 +608,7 @@ Item {
 
             // edit some params to retry swap
             root.swapFormData.fromTokenAmount = "0.00011"
+            waitForRendering(receivePanel)
             formValuesChanged.wait()
 
             // wait for fetchSuggestedRoutes function to be called
@@ -655,6 +658,7 @@ Item {
 
             // edit some params to retry swap
             root.swapFormData.fromTokenAmount = "0.012"
+            waitForRendering(receivePanel)
             formValuesChanged.wait()
 
             // wait for fetchSuggestedRoutes function to be called
