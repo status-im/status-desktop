@@ -60,7 +60,10 @@ QtObject:
     return self.service.signMessage(address, password, message)
 
   proc signTypedDataV4*(self: Controller, address: string, password: string, typedDataJson: string): string {.slot.} =
-    return self.service.signTypedDataV4(address, password, typedDataJson)
+    return self.service.safeSignTypedDataV4(address, password, typedDataJson)
+
+  proc signTypedData*(self: Controller, address: string, password: string, typedDataJson: string): string {.slot.} =
+    return self.service.safeSignTypedData(address, password, typedDataJson)
 
   proc signTransaction*(self: Controller, address: string, chainId: int, password: string, txJson: string): string {.slot.} =
     return self.service.signTransaction(address, chainId, password, txJson)

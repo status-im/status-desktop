@@ -356,6 +356,12 @@ Item {
             }
 
             // hardcoded for https://react-app.walletconnect.com/
+            function signTypedData(topic, id, address, password, typedDataJson) {
+                console.info(`calling mocked DAppsStore.signTypedData(${topic}, ${id}, ${address}, ${password}, ${typedDataJson})`)
+                return "0xf8ceb3468319cc215523b67c24c4504b3addd9bf8de31c278038d7478c9b6de554f7d8a516cd5d6a066b7d48b81f03d9d6bb7d5d754513c08325674ebcc7efbc1b"
+            }
+
+            // hardcoded for https://react-app.walletconnect.com/
             function signTransaction(topic, id, address, chainId, password, tx) {
                 console.info(`calling mocked DAppsStore.signTransaction(${topic}, ${id}, ${address}, ${chainId}, ${password}, ${tx})`)
                 return "0xf8672a8402fb7acf82520894e2d622c817878da5143bbe06866ca8e35273ba8a80808401546d71a04fc89c2f007c3b27d0fcff07d3e69c29f940967fab4caf525f9af72dadb48befa00c5312a3cb6f50328889ad361a0c88bb9d1b1a4fc510f6783b287930b4e187b5"

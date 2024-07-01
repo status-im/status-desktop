@@ -126,8 +126,11 @@ QtObject:
   proc signMessage*(self: Service, address: string, password: string, message: string): string =
     return status_go.signMessage(address, password, message)
 
-  proc signTypedDataV4*(self: Service, address: string, password: string, typedDataJson: string): string =
-    return status_go.signTypedData(address, password, typedDataJson)
+  proc safeSignTypedDataV4*(self: Service, address: string, password: string, typedDataJson: string): string =
+    return status_go.safeSignTypedDataRpc(address, password, typedDataJson, false)
+
+  proc safeSignTypedData*(self: Service, address: string, password: string, typedDataJson: string): string =
+    return status_go.safeSignTypedDataRpc(address, password, typedDataJson, true)
 
   proc signTransaction*(self: Service, address: string, chainId: int, password: string, txJson: string): string =
     var buildTxResponse: JsonNode

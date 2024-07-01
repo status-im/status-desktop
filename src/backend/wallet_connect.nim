@@ -21,10 +21,11 @@ rpc(disconnectWalletConnectSession, "wallet"):
 rpc(getWalletConnectActiveSessions, "wallet"):
   validAtTimestamp: int
 
-rpc(signTypedDataV4, "wallet"):
+rpc(safeSignTypedData, "wallet"):
   typedJson: string
   address: string
   password: string
+  legacy: bool
 
 proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   return rpcResponse.error.isNil
@@ -93,14 +94,14 @@ proc signMessage*(address: string, password: string, message: string): string =
     warn "status_go.signMessage failed: ", "msg", e.msg
     return ""
 
-proc signTypedData*(address: string, password: string, typedDataJson: string): string =
+proc safeSignTypedDataRPC*(address: string, password: string, typedDataJson: string, chainId: int, legacy: bool): string =
   try:
-    let rpcRes = signTypedDataV4(typedDataJson, address, hashPassword(password))
+    let rpcRes = safeSignTypedData(typedDataJson, address, hashPassword(password), chainId, legacy)
 
     if not isSuccessResponse(rpcRes):
       return ""
 
     return rpcRes.result.getStr()
   except Exception as e:
-    warn "wallet_signTypedDataV4 failed: ", "msg", e.msg
+    warn "wallet_safeSignTypedData failed: ", "msg", e.msg
     return ""

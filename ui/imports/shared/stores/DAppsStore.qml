@@ -41,6 +41,11 @@ QObject {
         return controller.signTypedDataV4(address, password, typedDataJson)
     }
 
+    // Returns the hex encoded signature of the typedDataJson or empty string if error
+    function signTypedData(topic, id, address, password, typedDataJson) {
+        return controller.signTypedData(address, password, typedDataJson)
+    }
+
     // Remove leading zeros from hex number as expected by status-go
     function stripLeadingZeros(hexNumber) {
         let fixed = hexNumber.replace(/^0x0*/, '0x')

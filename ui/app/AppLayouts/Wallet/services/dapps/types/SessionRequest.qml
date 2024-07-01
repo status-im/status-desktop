@@ -17,6 +17,14 @@ QtObject {
             function buildDataObject(message) { return {message} }
             function getMessageFromData(data) { return data.message }
         }
+        readonly property QtObject sign: QtObject {
+            readonly property string name: "eth_sign"
+            readonly property string userString: qsTr("sign")
+            readonly property string requestDisplay: qsTr("sign this message")
+
+            function buildDataObject(message) { return {message} }
+            function getMessageFromData(data) { return data.message }
+        }
         readonly property QtObject signTypedData_v4: QtObject {
             readonly property string name: "eth_signTypedData_v4"
             readonly property string userString: qsTr("sign typed data")
@@ -25,7 +33,14 @@ QtObject {
             function buildDataObject(message) { return {message} }
             function getMessageFromData(data) { return data.message }
         }
+        readonly property QtObject signTypedData: QtObject {
+            readonly property string name: "eth_signTypedData"
+            readonly property string userString: qsTr("sign typed data")
+            readonly property string requestDisplay: qsTr("sign this message")
 
+            function buildDataObject(message) { return {message} }
+            function getMessageFromData(data) { return data.message }
+        }
         readonly property QtObject signTransaction: QtObject {
             readonly property string name: "eth_signTransaction"
             readonly property string userString: qsTr("sign transaction")
@@ -43,7 +58,7 @@ QtObject {
             function buildDataObject(tx) { return {tx}}
             function getTxObjFromData(data) { return data.tx }
         }
-        readonly property var all: [personalSign, signTypedData_v4, signTransaction, sendTransaction]
+        readonly property var all: [personalSign, sign, signTypedData_v4, signTypedData, signTransaction, sendTransaction]
     }
 
     function getSupportedMethods() {
