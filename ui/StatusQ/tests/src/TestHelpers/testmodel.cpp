@@ -134,6 +134,15 @@ void TestModel::reset()
     endResetModel();
 }
 
+void TestModel::resetAndClear()
+{
+    beginResetModel();
+    std::for_each(m_data.begin(), m_data.end(), [](auto& e) {
+        e.second.clear();
+    });
+    endResetModel();
+}
+
 void TestModel::initRoles()
 {
     m_roles.reserve(m_data.size());
