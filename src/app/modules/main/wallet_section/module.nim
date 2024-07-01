@@ -526,4 +526,4 @@ method canProfileProveOwnershipOfProvidedAddresses*(self: Module, addresses: str
   return true
 
 method reloadAccountTokens*(self: Module) =
-  self.walletAccountService.reloadAccountTokens()
+  self.controller.reloadAccountTokens()
