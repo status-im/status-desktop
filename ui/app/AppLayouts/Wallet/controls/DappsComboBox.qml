@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.15
 
 import shared.controls 1.0
 import shared.popups.walletconnect 1.0
+import shared.popups.walletconnect.controls 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
