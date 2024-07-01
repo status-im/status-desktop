@@ -100,7 +100,8 @@ Item {
                     asset.mirror: true
                     interactive: !loading
 
-                    tooltip.text: "Last refreshed " + RootStore.walletSectionInst.lastReloadTimestamp
+                    tooltip.text: "Last refreshed " + LocaleUtils.formatRelativeTimestamp(
+                                      RootStore.walletSectionInst.lastReloadTimestamp*1000, true)
 
                     Connections {
                         target: RootStore.walletSectionInst

@@ -1,5 +1,4 @@
 import NimQml, json
-import times
 
 import ./activity/controller as activityc
 import ./activity/details_controller as activity_detailsc
@@ -30,7 +29,7 @@ QtObject:
       walletReady: bool
       addressFilters: string
       currentCurrency: string
-      lastReloadTimestamp: string
+      lastReloadTimestamp: int64
 
   proc setup(self: View) =
     self.QObject.setup
@@ -273,31 +272,18 @@ QtObject:
   proc reloadWallet*(self: View) {.slot.} =
     self.delegate.reloadWallet()
 
-  proc formatTime(timestamp: DateTime): string =
-    let now = now()
-    let diff = now - timestamp
-
-    # Calculate daysDiff directly within the if statement
-    if int(diff.inDays) == 0:
-      return timestamp.format("hh:mm tt") & " today"
-    elif int(diff.inDays) == 1:
-      return timestamp.format("hh:mm tt") & " yesterday"
-    else:
-      return timestamp.format("MMM d hh:mm tt")
-
-
   proc lastReloadTimestampChanged*(self: View) {.signal.}
-  proc setLastReloadTimestamp*(self: View, lastReloadTimestamp: string) =
+  proc setLastReloadTimestamp*(self: View, lastReloadTimestamp: int64) =
     self.lastReloadTimestamp = lastReloadTimestamp
     self.lastReloadTimestampChanged()
-  proc getLastReloadTimestamp(self: View): string {.slot.} =
-    return self.lastReloadTimestamp
-  QtProperty[string] lastReloadTimestamp:
+  proc getLastReloadTimestamp(self: View): QVariant {.slot.} =
+    return newQVariant(self.lastReloadTimestamp)
+  QtProperty[QVariant] lastReloadTimestamp:
     read = getLastReloadTimestamp
     notify = lastReloadTimestampChanged
 
 
   proc tokensReloaded*(self: View) {.signal.}
-  proc emitTokensReloaded*(self: View, timestamp: DateTime) =
-    self.setLastReloadTimestamp(formatTime(timestamp))
+  proc emitTokensReloaded*(self: View, timestamp: int64) =
+    self.setLastReloadTimestamp(timestamp)
     self.tokensReloaded()
