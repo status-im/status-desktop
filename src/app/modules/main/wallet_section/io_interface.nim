@@ -120,3 +120,6 @@ method resetRpcStats*(self: AccessInterface) {.base.} =
 
 method canProfileProveOwnershipOfProvidedAddresses*(self: AccessInterface, addresses: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method reloadWallet*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
