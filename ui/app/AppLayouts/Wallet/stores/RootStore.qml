@@ -559,7 +559,7 @@ QtObject {
         return prefix + twitterHandle
     }
 
-    function reloadWallet() {
-        walletSectionInst.reloadWallet()
+    function reloadAccountTokens() {
+        walletSectionInst.reloadAccountTokens()
     }
 }

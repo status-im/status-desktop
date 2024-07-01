@@ -269,8 +269,8 @@ QtObject:
   proc canProfileProveOwnershipOfProvidedAddresses*(self: View, addresses: string): bool {.slot.} =
     return self.delegate.canProfileProveOwnershipOfProvidedAddresses(addresses)
 
-  proc reloadWallet*(self: View) {.slot.} =
-    self.delegate.reloadWallet()
+  proc reloadAccountTokens*(self: View) {.slot.} =
+    self.delegate.reloadAccountTokens()
 
   proc lastReloadTimestampChanged*(self: View) {.signal.}
   proc setLastReloadTimestamp*(self: View, lastReloadTimestamp: int64) =

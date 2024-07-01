@@ -111,7 +111,7 @@ Item {
                     }
                     onClicked: {
                         loading = true
-                        RootStore.reloadWallet()
+                        RootStore.reloadAccountTokens()
                     }
                 }
             }
