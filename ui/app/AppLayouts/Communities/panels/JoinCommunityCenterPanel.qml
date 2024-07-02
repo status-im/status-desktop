@@ -25,6 +25,7 @@ ColumnLayout {
 
     property bool requirementsMet: true
     property bool requirementsCheckPending: false
+    property bool missingEncryptionKey: false
 
     property var communityHoldingsModel
     property var viewOnlyHoldingsModel
@@ -145,6 +146,7 @@ ColumnLayout {
                     allChannelsAreHiddenBecauseNotPermitted: root.allChannelsAreHiddenBecauseNotPermitted
                     requirementsMet: root.requirementsMet
                     requirementsCheckPending: root.requirementsCheckPending
+                    missingEncryptionKey: root.missingEncryptionKey
                     requestToJoinState: root.requestToJoinState
                     isJoinRequestRejected: root.isJoinRequestRejected
                     requiresRequest: root.requiresRequest

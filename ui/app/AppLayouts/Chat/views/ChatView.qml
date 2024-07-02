@@ -51,6 +51,7 @@ StatusSectionLayout {
     readonly property var chatContentModule: rootStore.currentChatContentModule() || null
     readonly property bool canView: chatContentModule.chatDetails.canView
     readonly property bool canPost: chatContentModule.chatDetails.canPost
+    readonly property bool missingEncryptionKey: chatContentModule.chatDetails.missingEncryptionKey
 
     property bool hasViewOnlyPermissions: false
     property bool hasUnrestrictedViewOnlyPermission: false
@@ -243,9 +244,11 @@ StatusSectionLayout {
             collectiblesModel: root.collectiblesModel
             requestToJoinState: root.requestToJoinState
             requiresRequest: !root.amIMember
-            requirementsMet: (canView && viewOnlyPermissionsModel.count > 0) ||
-                             (canPost && viewAndPostPermissionsModel.count > 0)
+            requirementsMet: root.missingEncryptionKey ||
+                             (root.canView && viewOnlyPermissionsModel.count > 0) ||
+                             (root.canPost && viewAndPostPermissionsModel.count > 0)
             requirementsCheckPending: root.chatContentModule.permissionsCheckOngoing
+            missingEncryptionKey: root.missingEncryptionKey
             onRequestToJoinClicked: root.requestToJoinClicked()
             onInvitationPendingClicked: root.invitationPendingClicked()
         }
