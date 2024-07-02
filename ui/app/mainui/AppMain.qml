@@ -36,6 +36,8 @@ import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
+import StatusQ 0.1
 
 import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
@@ -1284,6 +1286,7 @@ Item {
                             store: appMain.rootStore
                             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                             communitiesStore: appMain.communitiesStore
+                            transactionStore: appMain.transactionStore
                             emojiPopup: statusEmojiPopup.item
                             sendModalPopup: sendModal
                             networkConnectionStore: appMain.networkConnectionStore
@@ -1946,25 +1949,32 @@ Item {
 
         sourceComponent: WalletPopups.ReceiveModal {
 
+            ModelEntry {
+                id: selectedReceiverAccount
+                key: "address"
+                sourceModel: appMain.transactionStore.accounts
+                value: appMain.transactionStore.selectedReceiverAccountAddress
+            }
+
             accounts: {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return null
                 }
-                return WalletStore.RootStore.receiveAccounts
+                return WalletStore.RootStore.accounts
             }
 
             selectedAccount: {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return showQR.selectedAccount
                 }
-                return WalletStore.RootStore.selectedReceiveAccount
+                return selectedReceiverAccount.item ?? ModelUtils.get(appMain.transactionStore.accounts, 0)
             }
 
             onUpdateSelectedAddress: (address) => {
                 if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                     return
                 }
-                WalletStore.RootStore.switchReceiveAccountByAddress(address)
+                appMain.transactionStore.setReceiverAccount(address)
             }
 
             onUpdatePreferredChains: {

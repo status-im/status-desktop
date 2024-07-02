@@ -78,7 +78,7 @@ Item {
                     root.ensUsernamesStore.authenticateAndRegisterEns(
                                 root.ensUsernamesStore.chainId,
                                 username,
-                                store.selectedSenderAccount.address,
+                                store.selectedSenderAccountAddress,
                                 path.gasAmount,
                                 eip1559Enabled ? "" : path.gasFees.gasPrice,
                                 eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",

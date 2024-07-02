@@ -217,8 +217,8 @@ SplitView {
                 }
                 ComboBox {
                     textRole: "name"
-                    model: txStore.senderAccounts
-                    onCurrentIndexChanged: loader.preSelectedAccount = txStore.senderAccounts.get(currentIndex)
+                    model: txStore.accounts
+                    onCurrentIndexChanged: loader.preSelectedAccount = txStore.accounts.get(currentIndex)
                 }
             }
 

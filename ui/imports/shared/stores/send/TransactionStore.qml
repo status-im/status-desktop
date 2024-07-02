@@ -21,12 +21,13 @@ QtObject {
     property var mainModuleInst: mainModule
     property var walletSectionSendInst: walletSectionSend
 
+    readonly property var accounts: walletSectionAccounts.accounts
+
     property var fromNetworksModel: walletSectionSendInst.fromNetworksModel
     property var toNetworksModel: walletSectionSendInst.toNetworksModel
     property var flatNetworksModel: networksModule.flatNetworks
-    property var senderAccounts: walletSectionSendInst.senderAccounts
-    property var selectedSenderAccount: walletSectionSendInst.selectedSenderAccount
-    property var accounts: walletSectionSendInst.accounts
+    readonly property string selectedReceiverAccountAddress: walletSectionSendInst.selectedReceiveAccountAddress
+    readonly property string selectedSenderAccountAddress: walletSectionSendInst.selectedSenderAccountAddress
     property var collectiblesModel: walletSectionSendInst.collectiblesModel
     property var nestedCollectiblesModel: walletSectionSendInst.nestedCollectiblesModel
     property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
@@ -146,8 +147,12 @@ QtObject {
         }
     }
 
-    function switchSenderAccountByAddress(address) {
-        walletSectionSendInst.switchSenderAccountByAddress(address)
+    function setSenderAccount(address) {
+        walletSectionSendInst.setSenderAccount(address)
+    }
+
+    function setReceiverAccount(address) {
+        walletSectionSendInst.setReceiverAccount(address)
     }
 
     function getNetworkShortNames(chainIds) {

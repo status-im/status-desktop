@@ -90,7 +90,7 @@ ModalPopup {
                         let eip1559Enabled = path.gasFees.eip1559Enabled
                         let maxFeePerGas = path.gasFees.maxFeePerGasM
                         stickerPackDetailsPopup.store.stickersStore.authenticateAndBuy(packId,
-                                                                                       store.selectedSenderAccount.address,
+                                                                                       store.selectedSenderAccountAddress,
                                                                                        path.gasAmount,
                                                                                        eip1559Enabled ? "" : path.gasFees.gasPrice,
                                                                                        eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",
