@@ -23,7 +23,7 @@ number of nodes to create.
 - `vendor/status-go/services/mailservers/fleet.go`
 
 The program will create the required nodes, and modify the fleet files. Afterwards you need to rebuild 
-`status-go` and `status-desktop`, so it uses the local fleet nodes instead of the default `eth.prod` nodes.
+`status-go` and `status-desktop`, so it uses the local fleet nodes instead of the default `shards.test` nodes.
 
 Once you're done with the fleet, press `CTRL+C` to shutdown the fleet
 
