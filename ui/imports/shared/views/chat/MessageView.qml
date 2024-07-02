@@ -616,7 +616,11 @@ Loader {
 
                     const interpretedMessage = root.messageStore.interpretMessage(message)
                     root.messageStore.setEditModeOff(root.messageId)
-                    root.messageStore.editMessage(root.messageId, root.messageContentType, interpretedMessage)
+                    root.messageStore.editMessage(
+                        root.messageId,
+                        Utils.isOnlyEmoji(message) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
+                        interpretedMessage
+                    )
                 }
 
                 pinnedMsgInfoText: root.isDiscordMessage ? qsTr("Pinned") : qsTr("Pinned by")
