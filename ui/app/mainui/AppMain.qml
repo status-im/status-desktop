@@ -25,7 +25,7 @@ import shared.popups 1.0
 import shared.popups.keycard 1.0
 import shared.status 1.0
 import shared.stores 1.0
-import shared.popups.send 1.0
+import shared.popups.send 1.0 as SendPopups
 import shared.popups.send.views 1.0
 import shared.stores.send 1.0
 
@@ -1500,7 +1500,7 @@ Item {
             function open(address = "") {
                 if (!!address) {
                     preSelectedRecipient = address
-                    preSelectedRecipientType = TabAddressSelectorView.Type.Address
+                    preSelectedRecipientType = SendPopups.Helpers.RecipientAddressObjectType.Address
                 }
                 this.active = true
                 this.item.open()
@@ -1520,7 +1520,7 @@ Item {
             property string preDefinedAmountToSend
             property bool onlyAssets: false
 
-            sourceComponent: SendModal {
+            sourceComponent: SendPopups.SendModal {
                 onlyAssets: sendModal.onlyAssets                
                 store: appMain.transactionStore
                 loginType: appMain.rootStore.loginType

@@ -6,21 +6,28 @@ import QtQml 2.15
 import utils 1.0
 import shared.stores 1.0
 import shared.stores.send 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
-import "./panels"
+import shared.popups.send.panels 1.0
 import "./controls"
 import "./views"
 
 QtObject {
     id: root
 
+    enum RecipientAddressObjectType {
+        Address, // Just a string with the address information / default
+        Account, // Wallet account object
+        SavedAddress, // Saved addresses object
+        RecentsAddress // Recent addresses object got from transactions history
+    }
+
     function createSendModalRequirements() {
         return {
             preSelectedAccount: null,
-            preSelectedRecipientType: TabAddressSelectorView.Type.Address,
+            preSelectedRecipientType: Helpers.RecipientAddressObjectType.Address,
             preSelectedRecipient: null,
             preSelectedHoldingType: Constants.TokenType.Unknown,
             preSelectedHolding: null,
@@ -31,30 +38,40 @@ QtObject {
     }
 
     // \c token is an collectible object in case of \c isCollectible == true otherwise a token code (e.g. "ETH")
-    function lookupAddressesForSendModal(senderAddress, recipientAddress, token, isCollectible, amount) {
+    function lookupAddressesForSendModal(accountsModel,
+                                         savedAddressesModel,
+                                         senderAddress,
+                                         recipientAddress,
+                                         token,
+                                         isCollectible,
+                                         amount) {
         let req = createSendModalRequirements()
 
         req.preSelectedSendType = Constants.SendType.Transfer
+
+        // Sender properties:
         let senderAccount = null
-        let resolvedAcc = WalletStores.RootStore.lookupAddressObject(senderAddress)
-        if (resolvedAcc && resolvedAcc.type == WalletStores.RootStore.LookupType.Account) {
-            req.preSelectedAccount = resolvedAcc.object
+        let resolvedAcc = SQUtils.ModelUtils.getByKey(accountsModel, "address", senderAddress)
+        if (resolvedAcc) {
+            req.preSelectedAccount = resolvedAcc
+            req.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Account
         }
 
-        let res = WalletStores.RootStore.lookupAddressObject(recipientAddress)
-        if (res) {
-            if (res.type == WalletStores.RootStore.LookupType.Account) {
-                req.preSelectedRecipientType = TabAddressSelectorView.Type.Account
-                req.preSelectedRecipient = res.object
-            } else if (res.type == WalletStores.RootStore.LookupType.SavedAddress) {
-                req.preSelectedRecipientType = TabAddressSelectorView.Type.SavedAddress
-                req.preSelectedRecipient = res.object
-            }
+        // Recipients properties:
+        const resAcc = SQUtils.ModelUtils.getByKey(accountsModel, "address", recipientAddress)
+        let resSaved = SQUtils.ModelUtils.getByKey(savedAddressesModel, "address", recipientAddress)
+        if (resAcc) {
+            req.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Account
+            req.preSelectedRecipient = resAcc
+        } else if (resSaved) {
+            req.preSelectedRecipientType = Helpers.RecipientAddressObjectType.SavedAddress
+            req.preSelectedRecipient = resSaved
         } else {
-            req.preSelectedRecipientType = TabAddressSelectorView.Type.Address
+            req.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
             req.preSelectedRecipient = recipientAddress
         }
 
+        // Holdings related properties:
         if (isCollectible) {
             req.preSelectedHoldingType = Constants.TokenType.ERC721
             req.preSelectedHolding = token

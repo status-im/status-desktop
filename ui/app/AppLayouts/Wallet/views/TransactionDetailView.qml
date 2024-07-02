@@ -774,7 +774,13 @@ Item {
                     }
                     onClicked: {
                         let asset = WalletStores.RootStore.getAssetForSendTx(tx)
-                        let req = Helpers.lookupAddressesForSendModal(tx.sender, tx.recipient, asset, tx.isNFT, tx.amount)
+                        const req = Helpers.lookupAddressesForSendModal(WalletStores.RootStore.accounts,
+                                                                      WalletStores.RootStore.savedAddresses,
+                                                                      tx.sender,
+                                                                      tx.recipient,
+                                                                      asset,
+                                                                      tx.isNFT,
+                                                                      tx.amount)
 
                         root.sendModal.preSelectedAccount = req.preSelectedAccount
                         root.sendModal.preSelectedRecipient = req.preSelectedRecipient

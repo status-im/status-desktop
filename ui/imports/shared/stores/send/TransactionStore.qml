@@ -32,7 +32,8 @@ QtObject {
     property var nestedCollectiblesModel: walletSectionSendInst.nestedCollectiblesModel
     property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var tmpActivityController0: walletSection.tmpActivityController0
-    property var tmpActivityController1: walletSection.tmpActivityController1
+    readonly property var _tmpActivityController1: walletSection.tmpActivityController1
+    readonly property var tempActivityController1Model: _tmpActivityController1.model
     property var savedAddressesModel: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model
         filters: [
@@ -225,5 +226,13 @@ QtObject {
 
     function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
         return currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
+    }
+
+    function updateRecentRecipientsActivity(walletAccount) {
+        if(walletAccount && walletAccount.address) {
+            _tmpActivityController1.setFilterAddressesJson(JSON.stringify([walletAccount.address]),
+                                                                      false)
+        }
+        _tmpActivityController1.updateFilter()
     }
 }
