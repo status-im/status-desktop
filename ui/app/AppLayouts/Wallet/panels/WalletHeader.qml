@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
+import QtQml 2.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -14,6 +15,7 @@ import SortFilterProxyModel 0.2
 import utils 1.0
 
 import "../controls"
+import "../stores"
 
 Item {
     id: root
@@ -73,6 +75,49 @@ Item {
             spacing: 16
             Layout.alignment: Qt.AlignTrailing
             Layout.topMargin: 5
+            Row {
+                Layout.alignment: Qt.AlignRight | Qt.AlignTop
+                Layout.preferredHeight: 38
+                spacing: 8
+
+                StatusButton {
+                    id: reloadButton
+                    size: StatusBaseButton.Size.Tiny
+                    loadingIndicatorSize: size
+                    height: parent.height
+                    width: height
+                    borderColor: Theme.palette.directColor7
+                    borderWidth: 1
+
+                    normalColor: Theme.palette.transparent
+                    hoverColor: Theme.palette.baseColor2
+
+                    icon.name: "refresh"
+                    icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    asset.mirror: true
+
+                    loading: RootStore.isAccountTokensReloading
+                    interactive: !loading && !throttleTimer.running
+                    readonly property string lastReloadTimeFormated: !!RootStore.lastReloadTimestamp ?
+                                                                 LocaleUtils.formatRelativeTimestamp(
+                                                                     RootStore.lastReloadTimestamp * 1000) : ""
+                    tooltip.text: qsTr("Last refreshed %1").arg(lastReloadTimeFormated)
+
+                    onClicked: RootStore.walletSectionInst.reloadAccountTokens()
+
+                    Timer {
+                        id: throttleTimer
+                        interval: 1000*60 //throttle for 1 min
+                        running: true // Start the timer immediately to disable manual reload initially, as automatic refresh is performed upon entering the wallet.
+                    }
+
+                    onLastReloadTimeFormatedChanged: {
+                        // Start the throttle timer whenever the tokens are reloaded,
+                        // which can be triggered by either automatic or manual reload.
+                        throttleTimer.restart()
+                    }
+                }
+            }
 
             DAppsWorkflow {
                 Layout.alignment: Qt.AlignTop

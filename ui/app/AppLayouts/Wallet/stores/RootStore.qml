@@ -104,6 +104,9 @@ QtObject {
     readonly property var activityDetailsController: walletSectionInst.activityDetailsController
     readonly property var walletConnectController: walletSectionInst.walletConnectController
 
+    readonly property bool isAccountTokensReloading: walletSectionInst.isAccountTokensReloading
+    readonly property double lastReloadTimestamp: walletSectionInst.lastReloadTimestamp
+
     signal savedAddressAddedOrUpdated(added: bool, name: string, address: string, errorMsg: string)
     signal savedAddressDeleted(name: string, address: string, errorMsg: string)
 
