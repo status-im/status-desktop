@@ -221,7 +221,7 @@ Item {
             width: tokenList.width
 
             balancesModel: LeftJoinModel {
-                leftModel: !!model & !!model.balances ? model.balances : null
+                leftModel: !!model & !!model.balancesModel ? model.balancesModel : null
                 rightModel: root.networksModel
                 joinRole: "chainId"
             }

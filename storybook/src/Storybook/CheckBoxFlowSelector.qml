@@ -13,6 +13,12 @@ Flow {
 
     property var selection: []
     property bool initialSelection
+    property bool exclusive: false
+
+    ButtonGroup {
+        id: checkboxGroup
+        exclusive: root.exclusive
+    }
 
     Repeater {
         id: repeater
@@ -33,6 +39,7 @@ Flow {
             text: modelData
             checked: root.initialSelection
             onToggled: repeater.update()
+            ButtonGroup.group: checkboxGroup
         }
 
         onItemAdded: update()
