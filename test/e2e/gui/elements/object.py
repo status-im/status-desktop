@@ -100,7 +100,7 @@ class QObject:
             x: int = None,
             y: int = None,
             button=None,
-            timeout=1,
+            timeout=1
     ):
         driver.mouseClick(
             self.object,
@@ -111,11 +111,16 @@ class QObject:
         LOG.info('%s: is clicked with Qt.LeftButton', self)
         LOG.info("Checking if application context is frozen")
 
-        if not isFrozen(timeout):
+        if timeout is None:
             pass
-        else:
-            LOG.info("Application context did not respond after click")
-            raise Exception(f'Application UI is not responding within {timeout} second(s)')
+
+        if timeout is not None:
+            if not isFrozen(timeout):
+                pass
+
+            else:
+                LOG.info("Application context did not respond after click")
+                raise Exception(f'Application UI is not responding within {timeout} second(s)')
 
     @allure.step('Native click {0}')
     def native_mouse_click(

@@ -287,6 +287,7 @@ SettingsContentBase {
 
                 BloomSelectorButton {
                     id: btnWakuV2Light
+                    objectName: "lightWakuModeButton"
                     buttonGroup: wakuV2Group
                     checkedByDefault: root.advancedStore.wakuV2LightClientEnabled
                     btnText: qsTr("Light mode")
@@ -297,6 +298,7 @@ SettingsContentBase {
 
                 BloomSelectorButton {
                     id: btnWakuV2Full
+                    objectName: "relayWakuModeButton"
                     buttonGroup: wakuV2Group
                     checkedByDefault: !root.advancedStore.wakuV2LightClientEnabled
                     btnText: qsTr("Relay mode")
@@ -721,6 +723,7 @@ SettingsContentBase {
             showCancelButton: true
             confirmationText: d.experimentalFeatureMessage
             confirmButtonLabel: qsTr("I understand")
+            confirmButtonObjectName: "leaveGroupConfirmationDialogLeaveButton"
             onConfirmButtonClicked: {
                 root.advancedStore.toggleExperimentalFeature(experimentalFeature)
                 experimentalFeature = ""

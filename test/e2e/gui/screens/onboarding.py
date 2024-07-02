@@ -613,6 +613,7 @@ class LoginView(QObject):
         self._password_object = QObject(names.mainWindow_txtPassword_Input)
         self._add_new_user_item = QObject(names.loginView_addNewUserItem_AccountMenuItemPanel)
         self._add_existing_user_item = QObject(names.o_AccountMenuItemPanel)
+        self._use_password_instead = QObject(names.mainWindowUsePasswordInsteadStatusBaseText)
 
     @property
     @allure.step('Get login error message')
@@ -625,6 +626,9 @@ class LoginView(QObject):
             self._change_account_button.hover()
             self._change_account_button.click()
             self.select_user_name(account.name)
+
+        if self._use_password_instead.is_visible:
+            self._use_password_instead.click()
 
         self._password_text_edit.text = account.password
         self._arrow_right_button.click()
