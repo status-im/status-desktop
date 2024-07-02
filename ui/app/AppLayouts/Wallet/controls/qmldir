@@ -14,8 +14,8 @@ MaxSendButton 1.0 MaxSendButton.qml
 InformationTileAssetDetails 1.0 InformationTileAssetDetails.qml
 StatusNetworkListItemTag 1.0 StatusNetworkListItemTag.qml
 CollectibleBalanceTag 1.0 CollectibleBalanceTag.qml
-ConnectedDappsButton 1.0 ConnectedDappsButton.qml
 CollectibleLinksTags 1.0 CollectibleLinksTags.qml
+DappsComboBox 1.0 DappsComboBox.qml
 SwapExchangeButton 1.0 SwapExchangeButton.qml
 EditSlippagePanel 1.0 EditSlippagePanel.qml
 TokenSelector 1.0 TokenSelector.qml
