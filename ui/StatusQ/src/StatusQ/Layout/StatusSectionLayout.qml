@@ -163,6 +163,7 @@ SplitView {
     }
 
     Control {
+        Accessible.role: Accessible.Cell
         SplitView.minimumWidth: (!!leftPanel) ? 304 : 0
         SplitView.preferredWidth: (!!leftPanel) ? 304 : 0
         SplitView.fillHeight: (!!leftPanel)
@@ -173,6 +174,7 @@ SplitView {
     }
 
     Control {
+        Accessible.role: Accessible.Cell
         SplitView.minimumWidth: (!!centerPanel) ? 300 : 0
         SplitView.fillWidth: (!!centerPanel)
         SplitView.fillHeight: (!!centerPanel)
@@ -219,6 +221,7 @@ SplitView {
     }
 
     Control {
+        Accessible.role: Accessible.Cell
         SplitView.preferredWidth: root.showRightPanel ? root.rightPanelWidth : 0
         SplitView.minimumWidth: root.showRightPanel ? 58 : 0
         opacity: root.showRightPanel ? 1.0 : 0.0

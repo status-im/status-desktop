@@ -1163,7 +1163,11 @@ Item {
                             return Constants.appViewStackIndex.node
 
                         // We should never end up here
-                        console.error("AppMain: Unknown section type")
+                        console.error("AppMain: Unknown section type: ", activeSectionType)
+                    }
+
+                    onCurrentIndexChanged: {
+                        console.log("<<< AppMain: current index changed: ", currentIndex)
                     }
 
                     // NOTE:
@@ -1320,6 +1324,12 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.profile
                         asynchronous: true
+                        onActiveChanged: {
+                            console.log("<<< ProfileLayout Loader active changed: ", active)
+                        }
+                        onStatusChanged: {
+                            console.log("<<< ProfileLayout Loader status changed: ", status)
+                        }
                         sourceComponent: ProfileLayout {
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
@@ -1331,6 +1341,13 @@ Item {
                             walletAssetsStore: appMain.walletAssetsStore
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
+
+                            Component.onCompleted: {
+                                console.log("<<< ProfileLayout component completed")
+                            }
+                            Component.onDestruction: {
+                                console.log("<<< ProfileLayout component destruction")
+                            }
                         }
                     }
 
