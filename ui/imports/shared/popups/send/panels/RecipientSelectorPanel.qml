@@ -16,8 +16,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import utils 1.0
-
 import "../panels"
 import "../controls"
 import "../views"
@@ -25,10 +23,12 @@ import "../views"
 Item {
     id: root
 
-    property var selectedAccount
-    property var store
+    property var savedAddressesModel
+    property var myAccountsModel
+    property var recentRecipientsModel
 
     signal recipientSelected(var recipient, int type)
+    signal recentRecipientsTabSelected
 
     enum Type {
         Address,
@@ -38,21 +38,16 @@ Item {
         None
     }
 
-    QtObject {
-        id: d
-
-        // Use Layer1 controller since this could go on top of other activity lists
-        readonly property var activityController: root.store.tmpActivityController1
-    }
-
     StatusTabBar {
-        id: accountSelectionTabBar
+        id: recipientTypeTabBar
+
         anchors.top: parent.top
         anchors.left: parent.left
         width: parent.width
 
         StatusTabButton {
             width: implicitWidth
+            objectName: "savedAddressesTab"
             text: qsTr("Saved")
         }
         StatusTabButton {
@@ -62,28 +57,29 @@ Item {
         }
         StatusTabButton {
             width: implicitWidth
+            objectName: "recentAddressesTab"
             text: qsTr("Recent")
         }
     }
 
     // To-do adapt to new design and make block white/black once the list items etc support new color scheme
     Rectangle {
-        anchors.top: accountSelectionTabBar.bottom
+        anchors.top: recipientTypeTabBar.bottom
         anchors.topMargin: -5
-        height: parent.height - accountSelectionTabBar.height
+        height: parent.height - recipientTypeTabBar.height
         width: parent.width
         color: Theme.palette.indirectColor1
         radius: 8
 
         StackLayout {
-            currentIndex: accountSelectionTabBar.currentIndex
-
+            currentIndex: recipientTypeTabBar.currentIndex
             anchors.fill: parent
 
             StatusListView {
                 id: savedAddresses
+                objectName: "savedAddressesList"
 
-                model: root.store.savedAddressesModel
+                model: root.savedAddressesModel
                 header: savedAddresses.count > 0 ? search : nothingInList
                 headerPositioning: ListView.OverlayHeader
                 delegate: SavedAddressListItem {
@@ -131,10 +127,7 @@ Item {
                     walletType: model.walletType
                     migratedToKeycard: model.migratedToKeycard ?? false
                     accountBalance: model.accountBalance ?? null
-                    chainShortNames: {
-                        const chainShortNames = store.getNetworkShortNames(model.preferredSharingChainIds)
-                        return WalletUtils.colorizedChainPrefix(chainShortNames)
-                    }
+                    chainShortNames: model.colorizedChainShortNames
                     onClicked: recipientSelected({name: model.name,
                                                      address: model.address,
                                                      color: model.color,
@@ -145,11 +138,12 @@ Item {
                                                  RecipientSelectorPanel.Type.Account)
                 }
 
-                model: root.store.accounts
+                model: root.myAccountsModel
             }
 
             StatusListView {
                 id: recents
+                objectName: "recentReceiversList"
 
                 header: StatusBaseText {
                     height: visible ? 56 : 0
@@ -195,28 +189,12 @@ Item {
                     onClicked: recipientSelected(entry, RecipientSelectorPanel.Type.RecentsAddress)
                 }
 
-                model: d.activityController.model
+                model: root.recentRecipientsModel
 
                 onVisibleChanged: {
                     if (visible) {
-                        updateRecentsActivity()
+                        root.recentRecipientsTabSelected()
                     }
-                }
-
-                Connections {
-                    target: root
-                    function onSelectedAccountChanged() {
-                        if (visible) {
-                            recents.updateRecentsActivity()
-                        }
-                    }
-                }
-
-                function updateRecentsActivity() {
-                    if(root.selectedAccount) {
-                        d.activityController.setFilterAddressesJson(JSON.stringify([root.selectedAccount.address]), false)
-                    }
-                    d.activityController.updateFilter()
                 }
             }
         }

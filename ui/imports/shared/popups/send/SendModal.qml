@@ -367,8 +367,11 @@ StatusDialog {
                     }
                     RecipientView {
                         id: recipientLoader
+
                         Layout.fillWidth: true
                         store: popup.store
+                        selectedRecipient: popup.preSelectedRecipient
+                        selectedRecipientType: popup.preSelectedRecipientType
                         isCollectiblesTransfer: d.isCollectiblesTransfer
                         isBridgeTx: d.isBridgeTx
                         interactive: popup.interactive
@@ -415,6 +418,15 @@ StatusDialog {
         }
 
         RecipientSelectorPanel {
+
+            function updateRecentRecipientsActivity() {
+                if(popup.preSelectedAccount) {
+                    popup.store.tmpActivityController1.setFilterAddressesJson(JSON.stringify([popup.preSelectedAccount.address]),
+                                                                              false)
+                }
+                popup.store.tmpActivityController1.updateFilter()
+            }
+
             Layout.fillHeight: true
             Layout.fillWidth:  true
             Layout.topMargin: Style.current.padding
@@ -422,14 +434,44 @@ StatusDialog {
             Layout.rightMargin: Style.current.xlPadding
 
             // TODO: To be removed after all other refactors done (initial tokens selector page removed, bridge modal separated)
-            // This panel must be shown by default if no receipient already selected, otherwise, hidden
+            // This panel must be shown by default if no recipient already selected, otherwise, hidden
             visible: !recipientLoader.ready && !d.isBridgeTx && !!d.selectedHolding
-            store: popup.store
-            selectedAccount: popup.preSelectedAccount
-            onRecipientSelected:  {
-                recipientLoader.selectedRecipientType = type
-                recipientLoader.selectedRecipient = recipient
+
+            savedAddressesModel: popup.store.savedAddressesModel
+            myAccountsModel: SortFilterProxyModel {
+                sourceModel: popup.store.accounts
+
+                proxyRoles: FastExpressionRole {
+                    function getColorizedChainShortNames(preferredSharingChainIds, address){
+                        const chainShortNames = popup.store.getNetworkShortNames(preferredSharingChainIds)
+                        return WalletUtils.colorizedChainPrefix(chainShortNames) + address
+                    }
+
+                    name: "colorizedChainShortNames"
+                    expectedRoles: ["preferredSharingChainIds", "address"]
+                    expression: getColorizedChainShortNames(model.preferredSharingChainIds, model.address)
+                }
             }
+            recentRecipientsModel: popup.store.tmpActivityController1.model // Use Layer1 controller since this could go on top of other activity lists
+
+            onRecipientSelected:  {
+                popup.preSelectedRecipientType = type
+                popup.preSelectedRecipient = recipient
+
+                // TO BE REMOVED:
+                recipientLoader.selectedRecipient = popup.preSelectedRecipient
+                recipientLoader.selectedRecipientType = popup.preSelectedRecipientType
+            }
+            onRecentRecipientsTabSelected: updateRecentRecipientsActivity()
+
+            //                Connections {
+            //                    target: root
+            //                    function onSelectedAccountChanged() {
+            //                        if (visible) {
+            //                            recents.updateRecentsActivity()
+            //                        }
+            //                    }
+            //                }
         }
 
         StatusScrollView {
