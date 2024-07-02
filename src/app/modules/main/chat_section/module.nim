@@ -948,6 +948,7 @@ method onCategoryUnmuted*(self: Module, categoryId: string) =
 
 method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
   self.view.chatsModel().changeMutedOnItemById(chatId, muted)
+  self.updateParentBadgeNotifications()
 
 proc changeCanPostValues*(self: Module, chatId: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool) =
   self.view.chatsModel().changeCanPostValues(chatId, canPost, canView, canPostReactions, viewersCanPostReactions)
