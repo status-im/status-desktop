@@ -17,10 +17,18 @@ import "./views"
 QtObject {
     id: root
 
+    enum RecipientAddressObjectType {
+        Address, // Just a string with the address information
+        Account, // Wallet account object
+        SavedAddress, // Saved addresses object
+        RecentsAddress, // Recent addresses object got from transactions history
+        None
+    }
+
     function createSendModalRequirements() {
         return {
             preSelectedAccount: null,
-            preSelectedRecipientType: RecipientSelectorPanel.Type.Address,
+            preSelectedRecipientType: Helpers.RecipientAddressObjectType.Address,
             preSelectedRecipient: null,
             preSelectedHoldingType: Constants.TokenType.Unknown,
             preSelectedHolding: null,
@@ -44,14 +52,14 @@ QtObject {
         let res = WalletStores.RootStore.lookupAddressObject(recipientAddress)
         if (res) {
             if (res.type == WalletStores.RootStore.LookupType.Account) {
-                req.preSelectedRecipientType = RecipientSelectorPanel.Type.Account
+                req.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Account
                 req.preSelectedRecipient = res.object
             } else if (res.type == WalletStores.RootStore.LookupType.SavedAddress) {
-                req.preSelectedRecipientType = RecipientSelectorPanel.Type.SavedAddress
+                req.preSelectedRecipientType = Helpers.RecipientAddressObjectType.SavedAddress
                 req.preSelectedRecipient = res.object
             }
         } else {
-            req.preSelectedRecipientType = RecipientSelectorPanel.Type.Address
+            req.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
             req.preSelectedRecipient = recipientAddress
         }
 

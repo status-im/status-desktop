@@ -1498,7 +1498,7 @@ Item {
             function open(address = "") {
                 if (!!address) {
                     preSelectedRecipient = address
-                    preSelectedRecipientType = RecipientSelectorPanel.Type.Address
+                    preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
                 }
                 this.active = true
                 this.item.open()

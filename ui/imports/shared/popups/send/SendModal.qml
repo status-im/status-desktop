@@ -33,7 +33,7 @@ StatusDialog {
     // expected content depends on the preSelectedRecipientType value.
     // If type Address this must be a string else it expects an object. See RecipientView.selectedRecipientType
     property var preSelectedRecipient
-    property int preSelectedRecipientType: RecipientSelectorPanel.Type.Address
+    property int preSelectedRecipientType: Helpers.RecipientAddressObjectType.Address
     property string preDefinedAmountToSend
     // token symbol
     property string preSelectedHoldingID
@@ -176,7 +176,7 @@ StatusDialog {
 
         if(!!popup.preSelectedRecipient) {
             recipientLoader.selectedRecipientType = popup.preSelectedRecipientType
-            if (popup.preSelectedRecipientType == RecipientSelectorPanel.Type.Address) {
+            if (popup.preSelectedRecipientType == Helpers.RecipientAddressObjectType.Address) {
                 recipientLoader.selectedRecipient = {address: popup.preSelectedRecipient}
             } else {
                 recipientLoader.selectedRecipient = popup.preSelectedRecipient
@@ -184,7 +184,7 @@ StatusDialog {
         }
 
         if(d.isBridgeTx) {
-            recipientLoader.selectedRecipientType = RecipientSelectorPanel.Type.Address
+            recipientLoader.selectedRecipientType = Helpers.RecipientAddressObjectType.Address
             recipientLoader.selectedRecipient = {address: popup.preSelectedAccount.address}
         }
     }

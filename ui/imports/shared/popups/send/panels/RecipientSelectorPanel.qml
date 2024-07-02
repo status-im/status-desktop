@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.3
 import utils 1.0
 import shared.controls 1.0 as SharedControls
 import shared.stores 1.0
+import shared.popups.send 1.0
 
 import AppLayouts.Wallet 1.0
 
@@ -86,7 +87,7 @@ Item {
                     implicitWidth: ListView.view.width
                     modelData: model
                     visible: !savedAddresses.headerItem.text || name.toLowerCase().includes(savedAddresses.headerItem.text)
-                    onClicked: recipientSelected(modelData, RecipientSelectorPanel.Type.SavedAddress)
+                    onClicked: recipientSelected(modelData, Helpers.RecipientAddressObjectType.SavedAddress)
                 }
                 Component {
                     id: search
@@ -135,7 +136,7 @@ Item {
                                                      walletType: model.walletType,
                                                      currencyBalance: model.currencyBalance,
                                                      preferredSharingChainIds: model.preferredSharingChainIds},
-                                                 RecipientSelectorPanel.Type.Account)
+                                                 Helpers.RecipientAddressObjectType.Account)
                 }
 
                 model: root.myAccountsModel
@@ -186,7 +187,7 @@ Item {
                             text: LocaleUtils.currencyAmountToLocaleString(entry.amountCurrency)
                         }
                     ]
-                    onClicked: recipientSelected(entry, RecipientSelectorPanel.Type.RecentsAddress)
+                    onClicked: recipientSelected(entry, Helpers.RecipientAddressObjectType.RecentsAddress)
                 }
 
                 model: root.recentRecipientsModel
