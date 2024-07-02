@@ -124,7 +124,6 @@ ComboBox {
         }
         StatusDialogDivider {
             Layout.fillWidth: true
-            visible: listview.count
         }
         StatusListView {
             id: listview
@@ -136,7 +135,7 @@ ComboBox {
             model: root.popup.visible ? root.delegateModel : null
             currentIndex: root.highlightedIndex
 
-            section.property: "sectionName"
+            section.property: searchBox.text === "" ? "sectionName" : ""
             section.delegate: StatusBaseText {
                 required property string section
                 width: parent.width
@@ -145,6 +144,17 @@ ComboBox {
                 color: Theme.palette.baseColor1
                 padding: Style.current.padding
             }
+        }
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 60
+            Layout.alignment: Qt.AlignCenter
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            visible: listview.count === 0
+            color: Theme.palette.baseColor1
+
+            text: qsTr("No assets found")
         }
     }
 
