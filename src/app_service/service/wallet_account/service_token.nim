@@ -169,6 +169,7 @@ proc checkRecentHistory*(self: Service, addresses: seq[string]) =
     error "error: ", errDescription
 
 proc reloadAccountTokens*(self: Service) =
+  self.events.emit(SIGNAL_WALLET_RESET_RELOAD_TIMER, Args())
   let addresses = self.getWalletAddresses()
   self.buildAllTokens(addresses, store = true)
   self.checkRecentHistory(addresses)
