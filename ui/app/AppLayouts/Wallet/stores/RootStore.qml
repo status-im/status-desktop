@@ -42,9 +42,7 @@ QtObject {
     property string backButtonName: ""
     property var overview: walletSectionOverview
     property bool balanceLoading: overview.balanceLoading
-    property var accounts: walletSectionAccounts.accounts
-    property var receiveAccounts: walletSectionSend.accounts
-    property var selectedReceiveAccount: walletSectionSend.selectedReceiveAccount
+    readonly property var accounts: walletSectionAccounts.accounts
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
@@ -65,7 +63,7 @@ QtObject {
     }
 
     property var nonWatchAccounts: SortFilterProxyModel {
-        sourceModel: receiveAccounts
+        sourceModel: accounts
         proxyRoles: [
             ExpressionRole {
                 name: "color"
@@ -406,10 +404,6 @@ QtObject {
 
     function runEditAccountPopup(address) {
         walletSection.runEditAccountPopup(address)
-    }
-
-    function switchReceiveAccountByAddress(address) {
-        walletSectionSend.switchReceiveAccountByAddress(address)
     }
 
     function toggleWatchOnlyAccounts() {

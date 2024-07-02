@@ -8,6 +8,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import utils 1.0
 import shared.controls 1.0
 import shared.popups.keypairimport 1.0
+import shared.stores.send 1.0
 
 import "popups"
 import "panels"
@@ -23,6 +24,7 @@ Item {
     property var store
     property var contactsStore
     property var communitiesStore
+    required property TransactionStore transactionStore
     property var emojiPopup: null
     property var sendModalPopup
     property var networkConnectionStore
@@ -284,6 +286,7 @@ Item {
             width: parent.width
             height: visible ? 61: implicitHeight
             walletStore: RootStore
+            transactionStore: root.transactionStore
             networkConnectionStore: root.networkConnectionStore
             isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible
             communityName: {

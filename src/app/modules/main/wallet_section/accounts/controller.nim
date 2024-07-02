@@ -74,3 +74,6 @@ proc updateWatchAccountHiddenFromTotalBalance*(self: Controller, address: string
 
 proc getTokensMarketValuesLoading*(self: Controller): bool =
   return self.walletAccountService.getTokensMarketValuesLoading()
+
+proc getChainIds*(self: Controller): seq[int] =
+  return self.networkService.getCurrentNetworks().map(n => n.chainId)

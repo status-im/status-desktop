@@ -153,8 +153,7 @@ QtObject {
     // Not Refactored Yet
 //    property var walletModelInst: walletModel
     property var userProfileInst: userProfile
-
-    property var accounts: walletSectionSendInst.accounts
+    readonly property var accounts: walletSectionAccounts.accounts
     // Not Refactored Yet
 //    property var profileModelInst: profileModel
 

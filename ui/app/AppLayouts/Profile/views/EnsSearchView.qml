@@ -78,7 +78,7 @@ Item {
                     root.ensUsernamesStore.authenticateAndSetPubKey(
                                 root.ensUsernamesStore.chainId,
                                 ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
-                                store.selectedSenderAccount.address,
+                                store.selectedSenderAccountAddress,
                                 path.gasAmount,
                                 eip1559Enabled ? "" : path.gasFees.gasPrice,
                                 "",

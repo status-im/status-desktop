@@ -3,7 +3,6 @@ import ../shared_models/[currency_amount, wallet_account_item]
 import app_service/service/currency/dto as currency_dto
 
 import ../main/wallet_section/accounts/item as wallet_accounts_item
-import ../main/wallet_section/send/account_item as wallet_send_account_item
 
 proc currencyAmountToItem*(amount: float64, format: CurrencyFormatDto) : CurrencyAmount =
   return newCurrencyAmount(
@@ -35,9 +34,10 @@ proc walletAccountToWalletAccountItem*(w: WalletAccountDto, keycardAccount: bool
   )
 
 proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: bool,
+  chainIds: seq[int], enabledChainIds: seq[int], 
   currencyBalance: float64, currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool,
   marketValuesLoading: bool): wallet_accounts_item.Item =
-  return wallet_accounts_item.initItem(
+  return wallet_accounts_item.newItem(
     w.name,
     w.address,
     w.path,
@@ -54,21 +54,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: boo
     areTestNetworksEnabled,
     w.prodPreferredChainIds,
     w.testPreferredChainIds,
-    w.hideFromTotalBalance
-  )
-
-proc walletAccountToWalletSendAccountItem*(w: WalletAccountDto, chainIds: seq[int], enabledChainIds: seq[int],
-  currencyBalance: float64, currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool): wallet_send_account_item.AccountItem =
-  return wallet_send_account_item.newAccountItem(
-    w.keyUid,
-    w.name,
-    w.address,
-    w.colorId,
-    w.emoji,
-    w.walletType,
-    currencyAmountToItem(currencyBalance, currencyFormat),
-    areTestNetworksEnabled,
-    w.prodPreferredChainIds,
-    w.testPreferredChainIds,
+    w.hideFromTotalBalance,
     canSend=w.walletType != "watch" and (w.operable==AccountFullyOperable or w.operable==AccountPartiallyOperable)
   )
+  

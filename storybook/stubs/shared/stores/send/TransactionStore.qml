@@ -13,10 +13,10 @@ QtObject {
     id: root
 
     readonly property CurrenciesStore currencyStore: CurrenciesStore {}
-    readonly property var senderAccounts: WalletSendAccountsModel {
-        Component.onCompleted: selectedSenderAccount = senderAccounts.get(0)
+    
+    readonly property var accounts: WalletSendAccountsModel {
+        Component.onCompleted: selectedSenderAccount = accounts.get(0)
     }
-    property var accounts: senderAccounts
 
     property WalletAssetsStore walletAssetStore
 
@@ -27,7 +27,7 @@ QtObject {
     property var flatNetworksModel: NetworksModel.flatNetworks
     property var fromNetworksModel: NetworksModel.sendFromNetworks
     property var toNetworksModel: NetworksModel.sendToNetworks
-    property var selectedSenderAccount: senderAccounts.get(0)
+    property var selectedSenderAccount: accounts.get(0)
     readonly property QtObject collectiblesModel: ManageCollectiblesModel {}
     readonly property QtObject nestedCollectiblesModel: WalletNestedCollectiblesModel {}
 
@@ -150,10 +150,11 @@ QtObject {
         }
     }
 
-    function switchSenderAccountByAddress(address) {
-        for (let i = 0; i < senderAccounts.count; i++) {
-            if (senderAccounts.get(i).address === address) {
-                selectedSenderAccount = senderAccounts.get(i)
+    function setSenderAccountByAddress(address) {
+        for (let i = 0; i < accounts.count; i++) {
+            const acc = accounts.get(i)
+            if (acc.address === address && accounts.canSend) {
+                selectedSenderAccount = accounts.get(i)
                 break
             }
         }
