@@ -89,7 +89,7 @@ func main() {
 
 	cluster := ClusterConfig{
 		Enabled:   true,
-		Fleet:     "eth.prod",
+		Fleet:     "shards.test",
 		BootNodes: []string{bootnodeENR},
 	}
 	for _, node := range mailservers {
@@ -108,7 +108,7 @@ func main() {
 	mailserverStrTemplate := `            Mailserver {
                 ID: "%s",
                 Address: "%s",
-                Fleet: "eth.prod",
+                Fleet: "shards.test",
                 Version: 1,
             },
 `
