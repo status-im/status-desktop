@@ -1,4 +1,3 @@
-import sugar, sequtils
 import io_interface
 
 import ../../../../core/eventemitter
@@ -222,4 +221,4 @@ proc fetchProfileShowcaseAccountsByAddress*(self: Controller, address: string) =
   self.contactsService.fetchProfileShowcaseAccountsByAddress(address)
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
+  return self.networkService.getEnabledChainIds()
