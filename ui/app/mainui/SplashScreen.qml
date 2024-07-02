@@ -11,6 +11,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         LoadingAnimation {
+            objectName: "loadingAnimation"
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: 128
             Layout.preferredHeight: 128
