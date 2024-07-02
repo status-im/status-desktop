@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
 ColumnLayout {
@@ -13,6 +14,7 @@ ColumnLayout {
 
     readonly property bool valid: input.valid && input.text.length > 0
     readonly property alias text: input.text
+    property alias pending: input.pending
 
     StatusBaseInput {
         id: input
@@ -76,12 +78,18 @@ ColumnLayout {
 
             readonly property bool showIcon: input.valid && input.text.length > 0
 
+            StatusLoadingIndicator {
+                anchors.centerIn: parent
+                color: Theme.palette.blue
+                visible: showIcon && input.pending
+            }
+
             StatusIcon {
                 anchors.centerIn: parent
 
                 icon: "tiny/tiny-checkmark"
                 color: Theme.palette.green
-                visible: showIcon
+                visible: showIcon && !input.pending
             }
 
             StatusButton {
