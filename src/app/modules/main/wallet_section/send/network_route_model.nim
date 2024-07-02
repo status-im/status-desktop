@@ -2,21 +2,13 @@ import NimQml, Tables, strutils, stew/shims/strformat, sequtils, sugar, json, st
 
 import app_service/service/network/types
 import app/modules/shared_models/currency_amount
-import ./network_item, ./suggested_route_item
+import ./network_route_item, ./suggested_route_item
 
 type
   ModelRole* {.pure.} = enum
     ChainId = UserRole + 1,
-    ChainName
-    IconUrl
-    ChainColor
-    ShortName
-    Layer
-    NativeCurrencyDecimals
-    NativeCurrencyName
-    NativeCurrencySymbol
-    IsEnabled
-    IsPreferred
+    IsRouteEnabled
+    IsRoutePreferred
     HasGas
     TokenBalance
     Locked
@@ -26,49 +18,41 @@ type
     ToNetworks
 
 QtObject:
-  type NetworkModel* = ref object of QAbstractListModel
-    items*: seq[NetworkItem]
+  type NetworkRouteModel* = ref object of QAbstractListModel
+    items*: seq[NetworkRouteItem]
 
-  proc delete(self: NetworkModel) =
+  proc delete(self: NetworkRouteModel) =
     self.items = @[]
     self.QAbstractListModel.delete
 
-  proc setup(self: NetworkModel) =
+  proc setup(self: NetworkRouteModel) =
     self.QAbstractListModel.setup
 
-  proc newNetworkModel*(): NetworkModel =
+  proc newNetworkRouteModel*(): NetworkRouteModel =
     new(result, delete)
     result.setup
 
-  proc `$`*(self: NetworkModel): string =
+  proc `$`*(self: NetworkRouteModel): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""[{i}]:({$self.items[i]})"""
 
-  proc countChanged(self: NetworkModel) {.signal.}
+  proc countChanged(self: NetworkRouteModel) {.signal.}
 
-  proc getCount(self: NetworkModel): int {.slot.} =
+  proc getCount(self: NetworkRouteModel): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
-  method rowCount*(self: NetworkModel, index: QModelIndex = nil): int =
+  method rowCount*(self: NetworkRouteModel, index: QModelIndex = nil): int =
     return self.items.len
 
-  method roleNames(self: NetworkModel): Table[int, string] =
+  method roleNames(self: NetworkRouteModel): Table[int, string] =
     {
       ModelRole.ChainId.int:"chainId",
-      ModelRole.ChainName.int:"chainName",
-      ModelRole.IconUrl.int:"iconUrl",
-      ModelRole.ShortName.int: "shortName",
-      ModelRole.Layer.int: "layer",
-      ModelRole.ChainColor.int: "chainColor",
-      ModelRole.NativeCurrencyDecimals.int:"nativeCurrencyDecimals",
-      ModelRole.NativeCurrencyName.int:"nativeCurrencyName",
-      ModelRole.NativeCurrencySymbol.int:"nativeCurrencySymbol",
-      ModelRole.IsEnabled.int:"isEnabled",
-      ModelRole.IsPreferred.int:"isPreferred",
+      ModelRole.IsRouteEnabled.int:"isRouteEnabled",
+      ModelRole.IsRoutePreferred.int:"isRoutePreferred",
       ModelRole.HasGas.int:"hasGas",
       ModelRole.TokenBalance.int:"tokenBalance",
       ModelRole.Locked.int:"locked",
@@ -78,7 +62,7 @@ QtObject:
       ModelRole.ToNetworks.int:"toNetworks"
     }.toTable
 
-  method data(self: NetworkModel, index: QModelIndex, role: int): QVariant =
+  method data(self: NetworkRouteModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
@@ -91,26 +75,10 @@ QtObject:
     case enumRole:
     of ModelRole.ChainId:
       result = newQVariant(item.getChainId())
-    of ModelRole.ChainName:
-      result = newQVariant(item.getChainName())
-    of ModelRole.IconUrl:
-      result = newQVariant(item.getIconURL())
-    of ModelRole.ShortName:
-      result = newQVariant(item.getShortName())
-    of ModelRole.Layer:
-      result = newQVariant(item.getLayer())
-    of ModelRole.ChainColor:
-      result = newQVariant(item.getChainColor())
-    of ModelRole.NativeCurrencyDecimals:
-      result = newQVariant(item.getNativeCurrencyDecimals())
-    of ModelRole.NativeCurrencyName:
-      result = newQVariant(item.getNativeCurrencyName())
-    of ModelRole.NativeCurrencySymbol:
-      result = newQVariant(item.getNativeCurrencySymbol())
-    of ModelRole.IsEnabled:
-      result = newQVariant(item.getIsEnabled())
-    of ModelRole.IsPreferred:
-      result = newQVariant(item.getIsPreferred())
+    of ModelRole.IsRouteEnabled:
+      result = newQVariant(item.getIsRouteEnabled())
+    of ModelRole.IsRoutePreferred:
+      result = newQVariant(item.getIsRoutePreferred())
     of ModelRole.HasGas:
       result = newQVariant(item.getHasGas())
     of ModelRole.TokenBalance:
@@ -126,22 +94,16 @@ QtObject:
     of ModelRole.ToNetworks:
       result = newQVariant(item.getToNetworks())
 
-  proc setItems*(self: NetworkModel, items: seq[NetworkItem]) =
+  proc setItems*(self: NetworkRouteModel, items: seq[NetworkRouteItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
 
-  proc getAllNetworksChainIds*(self: NetworkModel): seq[int] =
+  proc getAllNetworksChainIds*(self: NetworkRouteModel): seq[int] =
     return self.items.map(x => x.getChainId())
 
-  proc getNetworkNativeGasSymbol*(self: NetworkModel, chainId: int): string =
-    for item in self.items:
-      if item.getChainId() == chainId:
-        return item.getNativeCurrencySymbol()
-    return ""
-
-  proc reset*(self: NetworkModel) =
+  proc reset*(self: NetworkRouteModel) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
       defer: index.delete
@@ -149,15 +111,15 @@ QtObject:
       self.items[i].amountOut = ""
       self.items[i].resetToNetworks()
       self.items[i].hasGas = true
-      self.items[i].isEnabled = true
-      self.items[i].isPreferred = true
+      self.items[i].isRouteEnabled = true
+      self.items[i].isRoutePreferred = true
       self.items[i].locked =  false
       self.items[i].lockedAmount = ""
       self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int,
-        ModelRole.AmountOut.int, ModelRole.IsEnabled.int, ModelRole.IsPreferred.int, ModelRole.Locked.int,
+        ModelRole.AmountOut.int, ModelRole.IsRouteEnabled.int, ModelRole.IsRoutePreferred.int, ModelRole.Locked.int,
         ModelRole.LockedAmount.int])
 
-  proc updateTokenBalanceForSymbol*(self: NetworkModel, chainId: int, tokenBalance: CurrencyAmount) =
+  proc updateTokenBalanceForSymbol*(self: NetworkRouteModel, chainId: int, tokenBalance: CurrencyAmount) =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
@@ -165,7 +127,7 @@ QtObject:
         self.items[i].tokenBalance = tokenBalance
         self.dataChanged(index, index, @[ModelRole.TokenBalance.int])
 
-  proc updateFromNetworks*(self: NetworkModel, path: SuggestedRouteItem, hasGas: bool) =
+  proc updateFromNetworks*(self: NetworkRouteModel, path: SuggestedRouteItem, hasGas: bool) =
     for i in 0 ..< self.items.len:
       if path.getfromNetwork() == self.items[i].getChainId():
         let index = self.createIndex(i, 0, nil)
@@ -176,7 +138,7 @@ QtObject:
         self.items[i].locked = path.getAmountInLocked()
         self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int, ModelRole.Locked.int])
 
-  proc updateToNetworks*(self: NetworkModel, path: SuggestedRouteItem) =
+  proc updateToNetworks*(self: NetworkRouteModel, path: SuggestedRouteItem) =
     for i in 0 ..< self.items.len:
       if path.getToNetwork() == self.items[i].getChainId():
         let index = self.createIndex(i, 0, nil)
@@ -187,7 +149,7 @@ QtObject:
           self.items[i].amountOut = path.getAmountOut()
         self.dataChanged(index, index, @[ModelRole.AmountOut.int])
 
-  proc resetPathData*(self: NetworkModel) =
+  proc resetPathData*(self: NetworkRouteModel) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
       defer: index.delete
@@ -198,113 +160,88 @@ QtObject:
       self.items[i].amountOut = ""
       self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int, ModelRole.Locked.int, ModelRole.AmountOut.int])
 
-  proc getRouteDisabledNetworkChainIds*(self: NetworkModel): seq[int] =
+  proc getRouteDisabledNetworkChainIds*(self: NetworkRouteModel): seq[int] =
     var disbaledChains: seq[int] = @[]
     for item in self.items:
-      if not item.getIsEnabled():
+      if not item.getIsRouteEnabled():
         disbaledChains.add(item.getChainId())
     return disbaledChains
 
-  proc getRouteLockedChainIds*(self: NetworkModel): Table[string, string] =
+  proc getRouteLockedChainIds*(self: NetworkRouteModel): Table[string, string] =
     var lockedChains: Table[string, string]
     for item in self.items:
       if item.getLocked():
         lockedChains[$item.getChainId()] = "0x" & item.getLockedAmount()
     return lockedChains
 
-  proc updateRoutePreferredChains*(self: NetworkModel, chainIds: string) =
+  proc updateRoutePreferredChains*(self: NetworkRouteModel, chainIds: string) =
     try:
       for i in 0 ..< self.items.len:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
-        self.items[i].isPreferred = false
-        self.items[i].isEnabled = false
+        self.items[i].isRoutePreferred = false
+        self.items[i].isRouteEnabled = false
         if chainIds.len == 0:
-          if self.items[i].getLayer() == 1:
-            self.items[i].isPreferred = true
-            self.items[i].isEnabled = true
+          if self.items[i].getLayer() == NETWORK_LAYER_1:
+            self.items[i].isRoutePreferred = true
+            self.items[i].isRouteEnabled = true
         else:
           for chainID in chainIds.split(':'):
             if $self.items[i].getChainId() == chainID:
-              self.items[i].isPreferred = true
-              self.items[i].isEnabled = true
-        self.dataChanged(index, index, @[ModelRole.IsPreferred.int, ModelRole.IsEnabled.int])
+              self.items[i].isRoutePreferred = true
+              self.items[i].isRouteEnabled = true
+        self.dataChanged(index, index, @[ModelRole.IsRoutePreferred.int, ModelRole.IsRouteEnabled.int])
     except:
       discard
 
-
-  proc disableRouteUnpreferredChains*(self: NetworkModel) =
+  proc disableRouteUnpreferredChains*(self: NetworkRouteModel) =
     for i in 0 ..< self.items.len:
-      if not self.items[i].getIsPreferred():
+      if not self.items[i].getIsRoutePreferred():
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
-        self.items[i].isEnabled = false
-        self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
+        self.items[i].isRouteEnabled = false
+        self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
 
-  proc enableRouteUnpreferredChains*(self: NetworkModel) =
+  proc enableRouteUnpreferredChains*(self: NetworkRouteModel) =
     for i in 0 ..< self.items.len:
-      if not self.items[i].getIsPreferred():
+      if not self.items[i].getIsRoutePreferred():
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
-        self.items[i].isEnabled = true
-        self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
+        self.items[i].isRouteEnabled = true
+        self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
 
-  proc setAllNetworksAsRoutePreferredChains*(self: NetworkModel) {.slot.} =
+  proc setAllNetworksAsRoutePreferredChains*(self: NetworkRouteModel) {.slot.} =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
       defer: index.delete
-      self.items[i].isPreferred = true
-      self.dataChanged(index, index, @[ModelRole.IsPreferred.int])
+      self.items[i].isRoutePreferred = true
+      self.dataChanged(index, index, @[ModelRole.IsRoutePreferred.int])
 
-  proc getNetworkColor*(self: NetworkModel, shortName: string): string =
-    for item in self.items:
-      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
-        return item.getChainColor()
-    return ""
-
-  proc getNetworkChainId*(self: NetworkModel, shortName: string): int {.slot.} =
-    for item in self.items:
-      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
-        return item.getChainId()
-    return 0
-
-  proc getNetworkName*(self: NetworkModel, chainId: int): string  {.slot.} =
-    for item in self.items:
-      if item.getChainId() == chainId:
-        return item.getChainName()
-    return ""
-
-  proc getIconUrl*(self: NetworkModel, chainId: int): string =
-    for item in self.items:
-      if item.getChainId() == chainId:
-        return item.getIconURL()
-    return ""
-
-  proc toggleRouteDisabledChains*(self: NetworkModel, chainId: int) {.slot.} =
+  proc toggleRouteDisabledChains*(self: NetworkRouteModel, chainId: int) {.slot.} =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
-        self.items[i].isEnabled = not self.items[i].getIsEnabled()
-        self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
+        self.items[i].isRouteEnabled = not self.items[i].getIsRouteEnabled()
+        self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
 
-  proc setRouteDisabledChains*(self: NetworkModel, chainId: int, disabled: bool) {.slot.} =
+  proc setRouteDisabledChains*(self: NetworkRouteModel, chainId: int, disabled: bool) {.slot.} =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
-        self.items[i].isEnabled = not disabled
-        self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
+        self.items[i].isRouteEnabled = not disabled
+        self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
 
-  proc setRouteEnabledFromChains*(self: NetworkModel, chainId: int) {.slot.} =
+  proc setRouteEnabledFromChains*(self: NetworkRouteModel, chainId: int) {.slot.} =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      self.items[i].isEnabled = false
+      self.items[i].isRouteEnabled = false
       if(self.items[i].getChainId() == chainId):
-        self.items[i].isEnabled = true
-      self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
+        self.items[i].isRouteEnabled = true
+      self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
 
-  proc lockCard*(self: NetworkModel, chainId: int, amount: string, lock: bool) {.slot.} =
+  proc lockCard*(self: NetworkRouteModel, chainId: int, amount: string, lock: bool) {.slot.} =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
@@ -314,9 +251,3 @@ QtObject:
         if self.items[i].getLocked():
           self.items[i].lockedAmount = amount
           self.dataChanged(index, index, @[ModelRole.LockedAmount.int])
-
-  proc getLayer1Network*(self: NetworkModel): int =
-    for item in self.items:
-      if item.getLayer() == NETWORK_LAYER_1:
-        return item.getChainId()
-    return 0

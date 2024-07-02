@@ -9,6 +9,7 @@ import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ 0.1
 
 import "../controls"
 
@@ -20,6 +21,7 @@ RowLayout {
     property bool isLoading: false
     property bool isBridgeTx: false
     property bool isCollectiblesTransfer: false
+    property var fromNetworksList
     property var toNetworksList
     property var weiToEth: function(wei) {}
     property var formatCurrencyAmount: function () {}
@@ -71,7 +73,15 @@ RowLayout {
                 Repeater {
                     id: repeater
                     objectName: "networksList"
-                    model: isBridgeTx ? store.fromNetworksModel : root.toNetworksList
+                    model: LeftJoinModel {
+                        leftModel: {
+                            const m = isBridgeTx ? root.fromNetworksList : root.toNetworksList
+                            return !!m ? m : null
+                        }
+                        rightModel: root.store.flatNetworksModel
+                        joinRole: "chainId"
+                    }
+
                     delegate: isBridgeTx ? networkItem : routeItem
                 }
             }

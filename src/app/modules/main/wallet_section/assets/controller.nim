@@ -1,4 +1,3 @@
-import sugar, sequtils
 import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
@@ -39,7 +38,7 @@ proc init*(self: Controller) =
   discard
 
 proc getChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworks().map(n => n.chainId)
+  return self.networkService.getCurrentNetworksChainIds()
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()

@@ -1,6 +1,6 @@
 import NimQml, stew/shims/strformat, stint
 
-import ./gas_estimate_item, ./suggested_route_model, ./network_model
+import ./gas_estimate_item, ./suggested_route_model, ./network_route_model, ./io_interface
 
 QtObject:
   type TransactionRoutes* = ref object of QObject
@@ -8,7 +8,7 @@ QtObject:
     suggestedRoutes: SuggestedRouteModel
     gasTimeEstimate: GasEstimateItem
     amountToReceive: UInt256
-    toNetworksModel: NetworkModel
+    toNetworksRouteModel: NetworkRouteModel
     rawPaths: string
 
   proc setup*(self: TransactionRoutes,
@@ -16,7 +16,7 @@ QtObject:
     suggestedRoutes: SuggestedRouteModel,
     gasTimeEstimate: GasEstimateItem,
     amountToReceive: UInt256,
-    toNetworksModel: NetworkModel,
+    toNetworksRouteModel: NetworkRouteModel,
     rawPaths: string
     ) =
       self.QObject.setup
@@ -24,7 +24,7 @@ QtObject:
       self.suggestedRoutes = suggestedRoutes
       self.gasTimeEstimate = gasTimeEstimate
       self.amountToReceive = amountToReceive
-      self.toNetworksModel = toNetworksModel
+      self.toNetworksRouteModel = toNetworksRouteModel
       self.rawPaths = rawPaths
 
   proc delete*(self: TransactionRoutes) =
@@ -35,11 +35,11 @@ QtObject:
     suggestedRoutes: SuggestedRouteModel = newSuggestedRouteModel(),
     gasTimeEstimate: GasEstimateItem = newGasEstimateItem(),
     amountToReceive: UInt256 = stint.u256(0),
-    toNetworksModel: NetworkModel = newNetworkModel(),
+    toNetworksRouteModel: NetworkRouteModel = newNetworkRouteModel(),
     rawPaths: string = ""
     ): TransactionRoutes =
     new(result, delete)
-    result.setup(uuid, suggestedRoutes, gasTimeEstimate, amountToReceive, toNetworksModel, rawPaths)
+    result.setup(uuid, suggestedRoutes, gasTimeEstimate, amountToReceive, toNetworksRouteModel, rawPaths)
 
   proc `$`*(self: TransactionRoutes): string =
     result = fmt"""TransactionRoutes(
@@ -47,7 +47,7 @@ QtObject:
       suggestedRoutes: {self.suggestedRoutes},
       gasTimeEstimate: {self.gasTimeEstimate},
       amountToReceive: {self.amountToReceive},
-      toNetworksModel: {self.toNetworksModel},
+      toNetworksRouteModel: {self.toNetworksRouteModel},
       rawPaths: {self.rawPaths},
       ]"""
 
@@ -81,8 +81,8 @@ QtObject:
 
   proc toNetworksChanged*(self: TransactionRoutes) {.signal.}
   proc getToNetworks*(self: TransactionRoutes): QVariant {.slot.} =
-    return newQVariant(self.toNetworksModel)
-  QtProperty[QVariant] toNetworksModel:
+    return newQVariant(self.toNetworksRouteModel)
+  QtProperty[QVariant] toNetworksRouteModel:
     read = getToNetworks
     notify = toNetworksChanged
 

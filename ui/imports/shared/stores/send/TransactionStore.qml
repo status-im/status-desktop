@@ -23,9 +23,9 @@ QtObject {
 
     readonly property var accounts: walletSectionAccounts.accounts
 
-    property var fromNetworksModel: walletSectionSendInst.fromNetworksModel
-    property var toNetworksModel: walletSectionSendInst.toNetworksModel
     property var flatNetworksModel: networksModule.flatNetworks
+    readonly property var fromNetworksRouteModel: walletSectionSendInst.fromNetworksRouteModel
+    readonly property var toNetworksRouteModel: walletSectionSendInst.toNetworksRouteModel
     readonly property string selectedReceiverAccountAddress: walletSectionSendInst.selectedReceiveAccountAddress
     readonly property string selectedSenderAccountAddress: walletSectionSendInst.selectedSenderAccountAddress
     property var collectiblesModel: walletSectionSendInst.collectiblesModel
@@ -160,15 +160,15 @@ QtObject {
     }
 
     function toggleFromDisabledChains(chainId) {
-        fromNetworksModel.toggleRouteDisabledChains(chainId)
+        walletSectionSendInst.fromNetworksRouteModel.toggleRouteDisabledChains(chainId)
     }
 
     function toggleToDisabledChains(chainId) {
-        toNetworksModel.toggleRouteDisabledChains(chainId)
+        walletSectionSendInst.toNetworksRouteModel.toggleRouteDisabledChains(chainId)
     }
 
     function setRouteDisabledChains(chainId, disabled) {
-        toNetworksModel.setRouteDisabledChains(chainId, disabled)
+        walletSectionSendInst.toNetworksRouteModel.setRouteDisabledChains(chainId, disabled)
     }
 
     function setSelectedTokenName(tokenName) {
@@ -180,7 +180,7 @@ QtObject {
     }
 
     function setRouteEnabledFromChains(chainId) {
-        fromNetworksModel.setRouteEnabledFromChains(chainId)
+        walletSectionSendInst.fromNetworksRouteModel.setRouteEnabledFromChains(chainId)
     }
 
     function setSelectedAssetKey(assetsKey) {
@@ -188,7 +188,7 @@ QtObject {
     }
 
     function getNetworkName(chainId) {
-        return fromNetworksModel.getNetworkName(chainId)
+        return ModelUtils.getByKey(root.flatNetworksModel, "chainId", chainId, "chainName")
     }
 
     function updateRoutePreferredChains(chainIds) {
@@ -200,11 +200,11 @@ QtObject {
     }
 
     function setAllNetworksAsRoutePreferredChains() {
-        toNetworksModel.setAllNetworksAsRoutePreferredChains()
+        walletSectionSendInst.toNetworksRouteModel.setAllNetworksAsRoutePreferredChains()
     }
 
     function lockCard(chainId, amount, lock) {
-        fromNetworksModel.lockCard(chainId, amount, lock)
+        walletSectionSendInst.fromNetworksRouteModel.lockCard(chainId, amount, lock)
     }
 
     function resetStoredProperties() {

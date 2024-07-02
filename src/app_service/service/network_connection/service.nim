@@ -1,4 +1,4 @@
-import NimQml, chronicles, Tables, strutils, sequtils, sugar, json
+import NimQml, chronicles, Tables, strutils, sequtils, json
 
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
@@ -143,7 +143,7 @@ QtObject:
     var chaindIdsDown: seq[int] = @[]
     var lastSuccessAt: int = connection_status_backend.INVALID_TIMESTAMP # latest succesful connectinon between the down chains
 
-    let allChainIds = self.networkService.getCurrentNetworks().map(a => a.chainId)
+    let allChainIds = self.networkService.getCurrentNetworksChainIds()
     for id in allChainIds:
       if chainStatusTable.hasKey($id) and chainStatusTable[$id].value != connection_status_backend.StateValue.Unknown:
         if chainStatusTable[$id].value == connection_status_backend.StateValue.Connected:
