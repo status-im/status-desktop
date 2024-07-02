@@ -174,10 +174,10 @@ QtObject:
   proc cancelCurrentFlow*(self: Service) =
     if self.busy:
       return
-    let response = keycard_go.keycardCancelFlow()
-    self.currentFlow = KCSFlowType.NoFlow
-    if self.doLogging:
-      debug "keycardCancelFlow", kcServiceCurrFlow=($self.currentFlow), response=response
+    # let response = keycard_go.keycardCancelFlow()
+    # self.currentFlow = KCSFlowType.NoFlow
+    # if self.doLogging:
+    #   debug "keycardCancelFlow", kcServiceCurrFlow=($self.currentFlow), response=response
 
   ##########################################################
   ## Used in test env only, for testing keycard flows
