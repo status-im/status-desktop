@@ -88,26 +88,6 @@ QtObject {
         return SQUtils.ModelUtils.get(nestedCollectiblesModel, idx)
     }
 
-    function getHolding(holdingId, holdingType) {
-        if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(processedAssetsModel, holdingId)
-        } else if (holdingType === Constants.TokenType.ERC721) {
-            return getCollectible(holdingId)
-        } else {
-            return {}
-        }
-    }
-
-    function getSelectorHolding(holdingId, holdingType) {
-        if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(processedAssetsModel, holdingId)
-        } else if (holdingType === Constants.TokenType.ERC721) {
-            return getSelectorCollectible(holdingId)
-        } else {
-            return {}
-        }
-    }
-
     function assetToSelectorAsset(asset) {
         return asset
     }
@@ -254,84 +234,4 @@ QtObject {
     property bool showCommunityAssetsInSend: true
     property bool balanceThresholdEnabled: true
     property real balanceThresholdAmount
-
-    // Property set from TokenLIstView and HoldingSelector to search token by name, symbol or contract address
-    property string assetSearchString
-
-    // Model prepared to provide filtered and sorted assets as per the advanced Settings in token management
-    property var processedAssetsModel: SortFilterProxyModel {
-        sourceModel: walletAssetStore.groupedAccountAssetsModel
-        proxyRoles: [
-            FastExpressionRole {
-                name: "isCommunityAsset"
-                expression: !!model.communityId
-                expectedRoles: ["communityId"]
-            },
-            FastExpressionRole {
-                name: "currentBalance"
-                expression: __getTotalBalance(model.balances, model.decimals)
-                expectedRoles: ["balances", "decimals", "symbol"]
-            },
-            FastExpressionRole {
-                name: "currentCurrencyBalance"
-                expression: {
-                    if (!!model.marketDetails) {
-                        return model.currentBalance * model.marketDetails.currencyPrice.amount
-                    }
-                    return 0
-                }
-                expectedRoles: ["marketDetails", "currentBalance"]
-            }
-        ]
-        filters: [
-            FastExpressionFilter {
-                function search(symbol, name, addressPerChain, searchString) {
-                    return (
-                        symbol.startsWith(searchString.toUpperCase()) ||
-                                name.toUpperCase().startsWith(searchString.toUpperCase()) || __searchAddressInList(addressPerChain, searchString)
-                    )
-                }
-                expression: search(model.symbol, model.name, model.addressPerChain, root.assetSearchString)
-                expectedRoles: ["symbol", "name", "addressPerChain"]
-            },
-            ValueFilter {
-                roleName: "isCommunityAsset"
-                value: false
-                enabled: !showCommunityAssetsInSend
-            },
-            FastExpressionFilter {
-                expression: {
-                    return model.currentCurrencyBalance > balanceThresholdAmount
-                }
-                expectedRoles: ["currentCurrencyBalance"]
-                enabled: balanceThresholdEnabled
-            }
-        ]
-        sorters: RoleSorter {
-            roleName: "isCommunityAsset"
-        }
-    }
-
-    /* Internal function to search token address */
-    function __searchAddressInList(addressPerChain, searchString) {
-        let addressFound = false
-        let tokenAddresses = SQUtils.ModelUtils.modelToFlatArray(addressPerChain, "address")
-        for (let i =0; i< tokenAddresses.length; i++){
-            if(tokenAddresses[i].toUpperCase().startsWith(searchString.toUpperCase())) {
-                addressFound = true
-                break;
-            }
-        }
-        return addressFound
-    }
-
-    /* Internal function to calculate total balance */
-    function __getTotalBalance(balances, decimals) {
-        let totalBalance = 0
-        for(let i=0; i<balances.count; i++) {
-            let balancePerAddressPerChain = SQUtils.ModelUtils.get(balances, i)
-            totalBalance+=SQUtils.AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
-        }
-        return totalBalance
-    }
 }

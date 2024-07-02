@@ -110,26 +110,6 @@ QtObject {
         return ModelUtils.get(nestedCollectiblesModel, idx)
     }
 
-    function getHolding(holdingId, holdingType) {
-        if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(processedAssetsModel, holdingId)
-        } else if (holdingType === Constants.TokenType.ERC721 || holdingType === Constants.TokenType.ERC1155) {
-            return getCollectible(holdingId)
-        } else {
-            return {}
-        }
-    }
-
-    function getSelectorHolding(holdingId, holdingType) {
-        if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(processedAssetsModel, holdingId)
-        } else if (holdingType === Constants.TokenType.ERC721 || holdingType === Constants.TokenType.ERC1155) {
-            return getSelectorCollectible(holdingId)
-        } else {
-            return {}
-        }
-    }
-
     function assetToSelectorAsset(asset) {
         return asset
     }
@@ -223,7 +203,6 @@ QtObject {
     }
 
     function resetStoredProperties() {
-        assetSearchString = ""
         walletSectionSendInst.resetStoredProperties()
         nestedCollectiblesModel.currentCollectionUid = ""
     }
@@ -241,113 +220,5 @@ QtObject {
 
     function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
         return currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
-    }
-
-    // Property set from TokenLIstView and HoldingSelector to search token by name, symbol or contract address
-    property string assetSearchString
-
-    // Internal model filtering balances by the account selected on the SendModalPage
-    property SubmodelProxyModel __assetsWithFilteredBalances: SubmodelProxyModel {
-        sourceModel: walletAssetStore.groupedAccountAssetsModel
-        submodelRoleName: "balances"
-        delegateModel: SortFilterProxyModel {
-            sourceModel: submodel
-            filters: [
-                ValueFilter {
-                    roleName: "account"
-                    value: root.selectedSenderAccount.address
-                }
-            ]
-        }
-    }
-
-    readonly property Connections tokensStoreConnections: Connections {
-        target: tokensStore
-        function onDisplayAssetsBelowBalanceThresholdChanged() {
-            processedAssetsModel.displayAssetsBelowBalanceThresholdAmount = tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
-        }
-    }
-
-    // Model prepared to provide filtered and sorted assets as per the advanced Settings in token management
-    property var processedAssetsModel: SortFilterProxyModel {
-        property real displayAssetsBelowBalanceThresholdAmount: tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
-        sourceModel: __assetsWithFilteredBalances
-        proxyRoles: [
-            FastExpressionRole {
-                name: "isCommunityAsset"
-                expression: !!model.communityId
-                expectedRoles: ["communityId"]
-            },
-            FastExpressionRole {
-                name: "currentBalance"
-                expression: __getTotalBalance(model.balances, model.decimals)
-                expectedRoles: ["balances", "decimals"]
-            },
-            FastExpressionRole {
-                name: "currentCurrencyBalance"
-                expression: {
-                    if (!!model.marketDetails) {
-                        return model.currentBalance * model.marketDetails.currencyPrice.amount
-                    }
-                    return 0
-                }
-                expectedRoles: ["marketDetails", "currentBalance"]
-            }
-        ]
-        filters: [
-            FastExpressionFilter {
-                function search(symbol, name, addressPerChain, searchString) {
-                    return (
-                        symbol.toUpperCase().startsWith(searchString.toUpperCase()) ||
-                                name.toUpperCase().startsWith(searchString.toUpperCase()) || __searchAddressInList(addressPerChain, searchString)
-                    )
-                }
-                expression: search(symbol, name, addressPerChain, root.assetSearchString)
-                expectedRoles: ["symbol", "name", "addressPerChain"]
-            },
-            ValueFilter {
-                roleName: "isCommunityAsset"
-                value: false
-                enabled: !tokensStore.showCommunityAssetsInSend
-            },
-            FastExpressionFilter {
-                expression: {
-                    root.walletAssetStore.assetsController.revision
-
-                    if (!root.walletAssetStore.assetsController.filterAcceptsSymbol(model.symbol)) // explicitely hidden
-                        return false
-                    if (tokensStore.displayAssetsBelowBalance)
-                        return model.currentCurrencyBalance > processedAssetsModel.displayAssetsBelowBalanceThresholdAmount
-                    return true
-                }
-                expectedRoles: ["symbol", "currentCurrencyBalance"]
-            }
-        ]
-        sorters: RoleSorter {
-            roleName: "isCommunityAsset"
-        }
-    }
-
-    /* Internal function to search token address */
-    function __searchAddressInList(addressPerChain, searchString) {
-        let addressFound = false
-        let tokenAddresses = ModelUtils.modelToFlatArray(addressPerChain, "address")
-        for (let i =0; i< tokenAddresses.length; i++){
-            if(tokenAddresses[i].toUpperCase().startsWith(searchString.toUpperCase())) {
-                addressFound = true
-                break;
-            }
-        }
-        return addressFound
-    }
-
-    /* Internal function to calculate total balance */
-    function __getTotalBalance(balances, decimals) {
-        let totalBalance = 0
-        for(let i=0; i<balances.count; i++) {
-            let balancePerAddressPerChain = ModelUtils.get(balances, i)
-            totalBalance+=AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
-        }
-        return totalBalance
     }
 }

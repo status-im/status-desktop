@@ -211,7 +211,7 @@ Item {
                 property var totalBalance: model.totalBalance
                 property var marketDetails: model.marketDetails
                 property var decimals: model.decimals
-                property var balances: model.balances
+                property var balances: model.balancesModel
                 // collectible
                 property var uid: model.uid
                 property var iconUrl: model.iconUrl

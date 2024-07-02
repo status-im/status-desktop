@@ -25,6 +25,7 @@ import AppLayouts.Wallet.controls 1.0
 import "./panels"
 import "./controls"
 import "./views"
+import "./models"
 
 StatusDialog {
     id: popup
@@ -102,8 +103,18 @@ StatusDialog {
         property var hoveredHoldingType: Constants.TokenType.Unknown
         readonly property bool isHoveredHoldingValidAsset: !!hoveredHolding && hoveredHoldingType === Constants.TokenType.ERC20
 
+        function getHolding(holdingId, holdingType) {
+            if (holdingType === Constants.TokenType.ERC20) {
+                return store.getAsset(assetsAdaptor.model, holdingId)
+            } else if (holdingType === Constants.TokenType.ERC721 || holdingType === Constants.TokenType.ERC1155) {
+                return store.getCollectible(holdingId)
+            } else {
+                return {}
+            }
+        }
+
         function setSelectedHoldingId(holdingId, holdingType) {
-            let holding = store.getHolding(holdingId, holdingType)
+            let holding = getHolding(holdingId, holdingType)
             setSelectedHolding(holding, holdingType)
         }
 
@@ -115,7 +126,7 @@ StatusDialog {
         }
 
         function setHoveredHoldingId(holdingId, holdingType) {
-            let holding = store.getHolding(holdingId, holdingType)
+            let holding = getHolding(holdingId, holdingType)
             setHoveredHolding(holding, holdingType)
         }
 
@@ -146,6 +157,19 @@ StatusDialog {
 
             recalculateRoutesAndFees()
         }
+    }
+
+    SendModalAssetsAdaptor {
+        id: assetsAdaptor
+
+        controller: popup.store.walletAssetStore.assetsController
+        showCommunityAssets: popup.store.tokensStore.showCommunityAssetsInSend
+        tokensModel: popup.store.walletAssetStore.groupedAccountAssetsModel
+        account: popup.store.selectedSenderAccount.address
+        marketValueThreshold:
+            popup.store.tokensStore.displayAssetsBelowBalance
+            ? popup.store.tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
+            : 0
     }
 
     bottomPadding: 16
@@ -273,7 +297,8 @@ StatusDialog {
                         id: holdingSelector
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        assetsModel: popup.store.processedAssetsModel
+                        // assetsModel: popup.store.processedAssetsModel
+                        assetsModel: assetsAdaptor.model
                         collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                         networksModel: popup.store.flatNetworksModel
                         visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.TokenType.Unknown) ||
@@ -281,7 +306,7 @@ StatusDialog {
                         onItemSelected: {
                             d.setSelectedHoldingId(holdingId, holdingType)
                         }
-                        onSearchTextChanged: popup.store.assetSearchString = searchText
+                        onSearchTextChanged: assetsAdaptor.assetSearchString = assetSearchString
                         formatCurrentCurrencyAmount: function(balance){
                             return popup.store.currencyStore.formatCurrencyAmount(balance, popup.store.currencyStore.currentCurrency)
                         }
@@ -391,7 +416,7 @@ StatusDialog {
             Layout.bottomMargin: Style.current.xlPadding
             visible: !d.selectedHolding
 
-            assets: popup.store.processedAssetsModel
+            assets: assetsAdaptor.model
             collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
             networksModel: popup.store.flatNetworksModel
             onlyAssets: holdingSelector.onlyAssets
@@ -405,7 +430,7 @@ StatusDialog {
                     d.setHoveredHoldingId("", Constants.TokenType.Unknown)
                 }
             }
-            onAssetSearchStringChanged: store.assetSearchString = assetSearchString
+            onAssetSearchStringChanged: assetsAdaptor.assetSearchString = assetSearchString
             formatCurrentCurrencyAmount: function(balance){
                 return popup.store.currencyStore.formatCurrencyAmount(balance, popup.store.currencyStore.currentCurrency)
             }
