@@ -283,8 +283,11 @@ method load*(self: Module) =
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+    let args = TokensPerAccountArgs(e)
     self.setTotalCurrencyBalance()
     self.notifyModulesBalanceIsLoaded()
+    self.view.setLastReloadTimestamp(args.timestamp)
+    self.view.setIsAccountTokensReloading(false)
   self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
@@ -522,3 +525,7 @@ method canProfileProveOwnershipOfProvidedAddresses*(self: Module, addresses: str
     if keypair.migratedToKeycard():
       return false
   return true
+
+method reloadAccountTokens*(self: Module) =
+  self.view.setIsAccountTokensReloading(true)
+  self.controller.reloadAccountTokens()

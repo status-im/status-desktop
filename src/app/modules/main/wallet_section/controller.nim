@@ -68,3 +68,6 @@ proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto 
 
 proc hasPairedDevices*(self: Controller): bool =
   return self.walletAccountService.hasPairedDevices()
+
+proc reloadAccountTokens*(self: Controller) =
+  self.walletAccountService.reloadAccountTokens()
