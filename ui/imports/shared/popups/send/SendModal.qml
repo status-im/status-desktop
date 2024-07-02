@@ -22,7 +22,7 @@ import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Wallet.controls 1.0
 
-import "./panels"
+import shared.popups.send.panels 1.0
 import "./controls"
 import "./views"
 
@@ -33,7 +33,7 @@ StatusDialog {
     // expected content depends on the preSelectedRecipientType value.
     // If type Address this must be a string else it expects an object. See RecipientView.selectedRecipientType
     property var preSelectedRecipient
-    property int preSelectedRecipientType: TabAddressSelectorView.Type.Address
+    property int preSelectedRecipientType: RecipientSelectorPanel.Type.Address
     property string preDefinedAmountToSend
     // token symbol
     property string preSelectedHoldingID
@@ -176,7 +176,7 @@ StatusDialog {
 
         if(!!popup.preSelectedRecipient) {
             recipientLoader.selectedRecipientType = popup.preSelectedRecipientType
-            if (popup.preSelectedRecipientType == TabAddressSelectorView.Type.Address) {
+            if (popup.preSelectedRecipientType == RecipientSelectorPanel.Type.Address) {
                 recipientLoader.selectedRecipient = {address: popup.preSelectedRecipient}
             } else {
                 recipientLoader.selectedRecipient = popup.preSelectedRecipient
@@ -184,7 +184,7 @@ StatusDialog {
         }
 
         if(d.isBridgeTx) {
-            recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
+            recipientLoader.selectedRecipientType = RecipientSelectorPanel.Type.Address
             recipientLoader.selectedRecipient = {address: popup.preSelectedAccount.address}
         }
     }
@@ -414,15 +414,16 @@ StatusDialog {
             }
         }
 
-        TabAddressSelectorView {
-            id: addressSelector
+        RecipientSelectorPanel {
             Layout.fillHeight: true
             Layout.fillWidth:  true
             Layout.topMargin: Style.current.padding
             Layout.leftMargin: Style.current.xlPadding
             Layout.rightMargin: Style.current.xlPadding
-            visible: !recipientLoader.ready && !d.isBridgeTx && !!d.selectedHolding
 
+            // TODO: To be removed after all other refactors done (initial tokens selector page removed, bridge modal separated)
+            // This panel must be shown by default if no receipient already selected, otherwise, hidden
+            visible: !recipientLoader.ready && !d.isBridgeTx && !!d.selectedHolding
             store: popup.store
             selectedAccount: popup.preSelectedAccount
             onRecipientSelected:  {

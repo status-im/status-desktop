@@ -90,7 +90,7 @@ Item {
                     implicitWidth: ListView.view.width
                     modelData: model
                     visible: !savedAddresses.headerItem.text || name.toLowerCase().includes(savedAddresses.headerItem.text)
-                    onClicked: recipientSelected(modelData, TabAddressSelectorView.Type.SavedAddress)
+                    onClicked: recipientSelected(modelData, RecipientSelectorPanel.Type.SavedAddress)
                 }
                 Component {
                     id: search
@@ -142,7 +142,7 @@ Item {
                                                      walletType: model.walletType,
                                                      currencyBalance: model.currencyBalance,
                                                      preferredSharingChainIds: model.preferredSharingChainIds},
-                                                 TabAddressSelectorView.Type.Account)
+                                                 RecipientSelectorPanel.Type.Account)
                 }
 
                 model: root.store.accounts
@@ -192,7 +192,7 @@ Item {
                             text: LocaleUtils.currencyAmountToLocaleString(entry.amountCurrency)
                         }
                     ]
-                    onClicked: recipientSelected(entry, TabAddressSelectorView.Type.RecentsAddress)
+                    onClicked: recipientSelected(entry, RecipientSelectorPanel.Type.RecentsAddress)
                 }
 
                 model: d.activityController.model

@@ -27,6 +27,7 @@ import shared.status 1.0
 import shared.stores 1.0
 import shared.popups.send 1.0
 import shared.popups.send.views 1.0
+import shared.popups.send.panels 1.0
 import shared.stores.send 1.0
 
 import StatusQ.Core.Theme 0.1
@@ -1497,7 +1498,7 @@ Item {
             function open(address = "") {
                 if (!!address) {
                     preSelectedRecipient = address
-                    preSelectedRecipientType = TabAddressSelectorView.Type.Address
+                    preSelectedRecipientType = RecipientSelectorPanel.Type.Address
                 }
                 this.active = true
                 this.item.open()

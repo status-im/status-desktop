@@ -10,6 +10,7 @@ import AppLayouts.Wallet 1.0
 
 import shared.controls 1.0 as SharedControls
 import shared.stores.send 1.0
+import shared.popups.send.panels 1.0
 
 import utils 1.0
 
@@ -37,15 +38,15 @@ Loader {
 
     onSelectedRecipientChanged: {
         root.isLoading()
-        if(!!root.selectedRecipient && root.selectedRecipientType !== TabAddressSelectorView.Type.None) {
+        if(!!root.selectedRecipient && root.selectedRecipientType !== RecipientSelectorPanel.Type.None) {
             let preferredChainIds = []
             switch(root.selectedRecipientType) {
-            case TabAddressSelectorView.Type.Account: {
+            case RecipientSelectorPanel.Type.Account: {
                 root.addressText = root.selectedRecipient.address
                 preferredChainIds = root.selectedRecipient.preferredSharingChainIds
                 break
             }
-            case TabAddressSelectorView.Type.SavedAddress: {
+            case RecipientSelectorPanel.Type.SavedAddress: {
                 root.addressText = root.selectedRecipient.address
 
                 // Resolve before using
@@ -56,13 +57,13 @@ Loader {
                 preferredChainIds = store.getShortChainIds(root.selectedRecipient.chainShortNames)
                 break
             }
-            case TabAddressSelectorView.Type.RecentsAddress: {
+            case RecipientSelectorPanel.Type.RecentsAddress: {
                 let isIncoming = root.selectedRecipient.txType === Constants.TransactionType.Receive
                 root.addressText = isIncoming ? root.selectedRecipient.sender : root.selectedRecipient.recipient
                 root.item.input.text = root.addressText
                 break
             }
-            case TabAddressSelectorView.Type.Address: {
+            case RecipientSelectorPanel.Type.Address: {
                 root.addressText = root.selectedRecipient.address
                 root.item.input.text = root.selectedRecipient.address
                 break
@@ -91,7 +92,7 @@ Loader {
         function clearValues() {
             root.addressText = ""
             root.resolvedENSAddress = ""
-            root.selectedRecipientType = TabAddressSelectorView.Type.None
+            root.selectedRecipientType = RecipientSelectorPanel.Type.None
             root.selectedRecipient = null
         }
         property Timer waitTimer: Timer {
@@ -113,9 +114,9 @@ Loader {
         }
     }
 
-    sourceComponent: root.selectedRecipientType === TabAddressSelectorView.Type.SavedAddress
+    sourceComponent: root.selectedRecipientType === RecipientSelectorPanel.Type.SavedAddress
         ? savedAddressRecipient
-        : root.selectedRecipientType === TabAddressSelectorView.Type.Account
+        : root.selectedRecipientType === RecipientSelectorPanel.Type.Account
             ? myAccountRecipient : addressRecipient
 
     Component {

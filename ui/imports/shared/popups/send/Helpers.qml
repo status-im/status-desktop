@@ -10,7 +10,7 @@ import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import StatusQ.Core 0.1
 
-import "./panels"
+import shared.popups.send.panels 1.0
 import "./controls"
 import "./views"
 
@@ -20,7 +20,7 @@ QtObject {
     function createSendModalRequirements() {
         return {
             preSelectedAccount: null,
-            preSelectedRecipientType: TabAddressSelectorView.Type.Address,
+            preSelectedRecipientType: RecipientSelectorPanel.Type.Address,
             preSelectedRecipient: null,
             preSelectedHoldingType: Constants.TokenType.Unknown,
             preSelectedHolding: null,
@@ -44,14 +44,14 @@ QtObject {
         let res = WalletStores.RootStore.lookupAddressObject(recipientAddress)
         if (res) {
             if (res.type == WalletStores.RootStore.LookupType.Account) {
-                req.preSelectedRecipientType = TabAddressSelectorView.Type.Account
+                req.preSelectedRecipientType = RecipientSelectorPanel.Type.Account
                 req.preSelectedRecipient = res.object
             } else if (res.type == WalletStores.RootStore.LookupType.SavedAddress) {
-                req.preSelectedRecipientType = TabAddressSelectorView.Type.SavedAddress
+                req.preSelectedRecipientType = RecipientSelectorPanel.Type.SavedAddress
                 req.preSelectedRecipient = res.object
             }
         } else {
-            req.preSelectedRecipientType = TabAddressSelectorView.Type.Address
+            req.preSelectedRecipientType = RecipientSelectorPanel.Type.Address
             req.preSelectedRecipient = recipientAddress
         }
 
