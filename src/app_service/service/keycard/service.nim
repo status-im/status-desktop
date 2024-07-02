@@ -97,9 +97,9 @@ QtObject:
   proc init*(self: Service) =
     if self.doLogging:
       debug "init keycard using ", pairingsJson=status_const.KEYCARDPAIRINGDATAFILE
-    # let initResp = keycard_go.keycardInitFlow(status_const.KEYCARDPAIRINGDATAFILE)
-    # if self.doLogging:
-    #   debug "initialization response: ", initResp
+    let initResp = keycard_go.keycardInitFlow(status_const.KEYCARDPAIRINGDATAFILE)
+    if self.doLogging:
+      debug "initialization response: ", initResp
 
   proc processSignal(self: Service, signal: string) =
     var jsonSignal: JsonNode
