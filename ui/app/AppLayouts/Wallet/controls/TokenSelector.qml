@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.0
-import QtQuick.Window 2.15
 
 import StatusQ 0.1
 import StatusQ.Components 0.1
@@ -84,8 +83,9 @@ ComboBox {
     opacity: enabled ? 1 : 0.3
 
     popup.width: 380
+    popup.height: 380
     popup.x: root.width - popup.width
-    popup.margins: Style.current.halfPadding
+    popup.margins: Style.current.xlPadding*2
     popup.background: Rectangle {
         color: Theme.palette.statusSelect.menuItemBackgroundColor
         radius: Style.current.radius
@@ -100,6 +100,13 @@ ComboBox {
         }
     }
     popup.contentItem: ColumnLayout {
+        Connections {
+            target: root.popup
+            function onOpened() {
+                listview.positionViewAtBeginning()
+            }
+        }
+
         spacing: 0
         SearchBox {
             Layout.fillWidth: true
@@ -199,7 +206,6 @@ ComboBox {
                 Layout.preferredWidth: 20
                 Layout.preferredHeight: 20
                 image.source: ModelUtils.getByKey(model, "tokensKey", d.currentTokensKey, "iconSource")
-                image.sourceSize: Qt.size(width*root.Screen.devicePixelRatio, height*root.Screen.devicePixelRatio)
             }
             StatusBaseText {
                 objectName: "tokenSelectorContentItemText"

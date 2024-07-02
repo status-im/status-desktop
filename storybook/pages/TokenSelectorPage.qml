@@ -46,6 +46,14 @@ SplitView {
             image: "https://etherscan.io/token/images/horizonstate2_28.png"
             communityId: ""
         }
+        // DAI should be filtered out
+        ListElement {
+            key: "DAI"
+            name: "Dai Stablecoin"
+            symbol: "DAI"
+            image: ""
+            communityId: ""
+        }
     }
 
     QtObject {

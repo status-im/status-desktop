@@ -60,7 +60,7 @@ QObject {
                 name: "sectionId"
                 expression: {
                     if (!model.currentBalance)
-                        return "section_zzz"
+                        return d.favoritesSectionId
 
                     if (root.enabledChainIds.length === 1)
                         return "section_%1".arg(root.enabledChainIds[0])
@@ -70,7 +70,7 @@ QObject {
             FastExpressionRole {
                 name: "sectionName"
                 function getSectionName(sectionId, hasBalance) {
-                    if (sectionId === "section_zzz")
+                    if (sectionId === d.favoritesSectionId)
                         return qsTr("Popular assets")
 
                     if (root.enabledChainIds.length === 1 && hasBalance)
@@ -106,6 +106,21 @@ QObject {
                 roleName: "communityId"
                 value: ""
                 enabled: !root.showCommunityAssets
+            },
+            // duplicate tokens filter
+            FastExpressionFilter {
+                function hasDuplicateKey(tokensKey) {
+                    return ModelUtils.indexOf(assetsObjectProxyModel, "tokensKey", tokensKey) > -1
+                }
+
+                expression: {
+                    if (model.which_model === "plain_tokens_model") {
+                        return !hasDuplicateKey(model.tokensKey)
+                    }
+                    return true
+                }
+                expectedRoles: ["which_model", "tokensKey"]
+                enabled: root.showAllTokens
             }
         ]
 
@@ -115,7 +130,7 @@ QObject {
             },
             FastExpressionSorter {
                 expression: {
-                    if (modelLeft.sectionId === "section_zzz" && modelRight.sectionId === "section_zzz")
+                    if (modelLeft.sectionId === d.favoritesSectionId && modelRight.sectionId === d.favoritesSectionId)
                         return 0
 
                     const lhs = modelLeft.currencyBalance
@@ -136,6 +151,12 @@ QObject {
     }
 
     // internals
+    QtObject {
+        id: d
+
+        readonly property string favoritesSectionId: "section_zzz"
+    }
+
     RolesRenamingModel {
         id: renamedTokensBySymbolModel
         sourceModel: root.plainTokensBySymbolModel
