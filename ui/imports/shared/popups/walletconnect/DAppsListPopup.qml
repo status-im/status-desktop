@@ -18,6 +18,7 @@ Popup {
     required property var model
 
     signal pairWCDapp()
+    signal disconnectDapp(string dappUrl)
 
     modal: false
     padding: 8
@@ -191,8 +192,7 @@ Popup {
                 icon.name: "disconnect"
 
                 onClicked: {
-                    console.debug(`TODO #14755 - Disconnect ${name}`)
-                    //root.disconnectDapp()
+                    root.disconnectDapp(url)
                 }
             }
         }

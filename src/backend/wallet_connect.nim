@@ -15,10 +15,17 @@ import app_service/common/utils
 rpc(addWalletConnectSession, "wallet"):
   sessionJson: string
 
-rpc(signTypedDataV4, "wallet"):
+rpc(disconnectWalletConnectSession, "wallet"):
+  topic: string
+
+rpc(getWalletConnectActiveSessions, "wallet"):
+  validAtTimestamp: int
+
+rpc(safeSignTypedData, "wallet"):
   typedJson: string
   address: string
   password: string
+  legacy: bool
 
 proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   return rpcResponse.error.isNil
@@ -30,6 +37,33 @@ proc addSession*(sessionJson: string): bool =
   except Exception as e:
     warn "AddWalletConnectSession failed: ", "msg", e.msg
     return false
+
+proc disconnectSession*(topic: string): bool =
+  try:
+    let rpcRes = disconnectWalletConnectSession(topic)
+    return isSuccessResponse(rpcRes):
+  except Exception as e:
+    warn "wallet_disconnectWalletConnectSession failed: ", "msg", e.msg
+    return false
+
+proc getActiveSessions*(validAtTimestamp: int): JsonNode =
+  try:
+    let rpcRes = getWalletConnectActiveSessions(validAtTimestamp)
+    if(not isSuccessResponse(rpcRes)):
+      return nil
+
+    let jsonResultStr = rpcRes.result.getStr()
+    if jsonResultStr == "null":
+      return nil
+
+    if rpcRes.result.kind != JArray:
+      error "Unexpected result kind: ", rpcRes.result.kind
+      return nil
+
+    return rpcRes.result
+  except Exception as e:
+    warn "GetWalletConnectActiveSessions failed: ", "msg", e.msg
+    return nil
 
 proc getDapps*(validAtEpoch: int64, testChains: bool): string =
   try:
@@ -60,14 +94,14 @@ proc signMessage*(address: string, password: string, message: string): string =
     warn "status_go.signMessage failed: ", "msg", e.msg
     return ""
 
-proc signTypedData*(address: string, password: string, typedDataJson: string): string =
+proc safeSignTypedDataRPC*(address: string, password: string, typedDataJson: string, chainId: int, legacy: bool): string =
   try:
-    let rpcRes = signTypedDataV4(typedDataJson, address, hashPassword(password))
+    let rpcRes = safeSignTypedData(typedDataJson, address, hashPassword(password), chainId, legacy)
 
     if not isSuccessResponse(rpcRes):
       return ""
 
     return rpcRes.result.getStr()
   except Exception as e:
-    warn "wallet_signTypedDataV4 failed: ", "msg", e.msg
+    warn "wallet_safeSignTypedData failed: ", "msg", e.msg
     return ""

@@ -177,7 +177,14 @@ QObject {
                     return null
                 }
                 address = event.params.request.params[1]
-            } else if(method === SessionRequest.methods.signTypedData_v4.name) {
+            } else if (method === SessionRequest.methods.sign.name) {
+                if (event.params.request.params.length === 1) {
+                    return null
+                }
+                address = event.params.request.params[0]
+            } else if(method === SessionRequest.methods.signTypedData_v4.name ||
+                      method === SessionRequest.methods.signTypedData.name)
+            {
                 if (event.params.request.params.length < 2) {
                     return null
                 }
@@ -210,12 +217,15 @@ QObject {
         }
 
         function extractMethodData(event, method) {
-            if (method === SessionRequest.methods.personalSign.name) {
-                if (event.params.request.params.length == 0) {
+            if (method === SessionRequest.methods.personalSign.name ||
+                method === SessionRequest.methods.sign.name)
+            {
+                if (event.params.request.params.length < 1) {
                     return null
                 }
                 var message = ""
-                let messageParam = event.params.request.params[0]
+                let messageIndex = (method === SessionRequest.methods.personalSign.name ? 0 : 1)
+                let messageParam = event.params.request.params[messageIndex]
                 // There is no standard on how data is encoded. Therefore we support hex or utf8
                 if (Helpers.isHex(messageParam)) {
                     message = Helpers.hexToString(messageParam)
@@ -223,12 +233,17 @@ QObject {
                     message = messageParam
                 }
                 return SessionRequest.methods.personalSign.buildDataObject(message)
-            } else if (method === SessionRequest.methods.signTypedData_v4.name) {
+            } else if (method === SessionRequest.methods.signTypedData_v4.name ||
+                       method === SessionRequest.methods.signTypedData.name)
+            {
                 if (event.params.request.params.length < 2) {
                     return null
                 }
                 let jsonMessage = event.params.request.params[1]
-                return SessionRequest.methods.signTypedData_v4.buildDataObject(jsonMessage)
+                let methodObj = method === SessionRequest.methods.signTypedData_v4.name
+                    ? SessionRequest.methods.signTypedData_v4
+                    : SessionRequest.methods.signTypedData
+                return methodObj.buildDataObject(jsonMessage)
             } else if (method === SessionRequest.methods.signTransaction.name) {
                 if (event.params.request.params.length == 0) {
                     return null
@@ -265,7 +280,9 @@ QObject {
 
             if (password !== "") {
                 var actionResult = ""
-                if (request.method === SessionRequest.methods.personalSign.name) {
+                if (request.method === SessionRequest.methods.personalSign.name ||
+                    request.method === SessionRequest.methods.sign.name)
+                {
                     // TODO #14756: clarify why prefixing the message fails the test app https://react-app.walletconnect.com/
                     //let finalMessage = "\x19Ethereum Signed Message:\n" + originalMessage.length + originalMessage
                     actionResult = store.signMessage(request.topic, request.id,
@@ -275,6 +292,10 @@ QObject {
                     actionResult = store.signTypedDataV4(request.topic, request.id,
                                         request.account.address, password,
                                         SessionRequest.methods.signTypedData_v4.getMessageFromData(request.data))
+                } else if (request.method === SessionRequest.methods.signTypedData.name) {
+                    actionResult = store.signTypedData(request.topic, request.id,
+                                        request.account.address, password,
+                                        SessionRequest.methods.signTypedData.getMessageFromData(request.data))
                 } else if (request.method === SessionRequest.methods.signTransaction.name) {
                     let txObj = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
                     actionResult = store.signTransaction(request.topic, request.id,

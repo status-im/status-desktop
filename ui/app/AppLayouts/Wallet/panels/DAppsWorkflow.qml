@@ -67,6 +67,10 @@ ConnectedDappsButton {
                 this.close()
             }
 
+            onDisconnectDapp: (dappUrl) => {
+                wcService.disconnectDapp(dappUrl)
+            }
+
             onOpened: {
                 this.x = root.width - this.contentWidth - 2 * this.padding
                 this.y = root.height + 4
@@ -105,7 +109,7 @@ ConnectedDappsButton {
 
             onDisconnect: {
                 connectDappLoader.active = false
-                root.wcService.disconnectDapp(sessionTopic)
+                root.wcService.disconnectSession(sessionTopic)
             }
         }
     }
