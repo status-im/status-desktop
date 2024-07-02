@@ -178,6 +178,7 @@ StatusScrollView {
 
         FeesBox {
             id: feesBox
+            objectName: "feesBox"
 
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding

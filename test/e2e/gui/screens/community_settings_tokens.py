@@ -150,6 +150,8 @@ class EditOwnerTokenView(QObject):
         self._select_account_combobox = QObject(communities_names.editOwnerTokenView_CustomComboItem)
         self._select_network_filter = QObject(communities_names.editOwnerTokenView_netFilter_NetworkFilter)
         self._select_network_combobox = QObject(communities_names.editOwnerTokenView_comboBox_ComboBox)
+        self._select_account_combobox = QObject(communities_names.editOwnerTokenView_accountSelector_AccountSelector)
+        self._default_account_item = QObject(communities_names.account_1_WalletAccountListItem)
         self._mainnet_network_item = CheckBox(communities_names.mainnet_StatusRadioButton)
         self._mint_button = Button(communities_names.editOwnerTokenView_Mint_StatusButton)
         self._fees_text_object = TextLabel(communities_names.editOwnerTokenView_fees_StatusBaseText)
@@ -267,6 +269,21 @@ class EditOwnerTokenView(QObject):
         except AssertionError as err:
             if attempts:
                 self.select_mainnet_network(attempts - 1)
+            else:
+                raise err
+
+    @allure.step('Select default account')
+    def select_default_account(self, attempts: int = 2):
+        if not self._fees_box.is_visible:
+            self._scroll.vertical_down_to(self._fees_box)
+        self._select_account_combobox.click()
+        try:
+            self._default_account_item.wait_until_appears()
+            self._default_account_item.click()
+            return self
+        except AssertionError as err:
+            if attempts:
+                self.select_default_account(attempts - 1)
             else:
                 raise err
 

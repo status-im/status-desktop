@@ -127,6 +127,8 @@ editOwnerTokenView_transferableBox = {"container": mainWindow_editOwnerTokenView
 editOwnerTokenView_destructibleBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "destructibleBox", "type": "CustomPreviewBox", "visible": True}
 editOwnerTokenView_token_sale_icon_StatusIcon = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "token-sale-icon", "type": "StatusIcon", "visible": True}
 editOwnerTokenView_Fees_FeesBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "FeesBox", "unnamed": 1, "visible": True}
+editOwnerTokenView_accountSelector_AccountSelector = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "accountSelector", "type": "AccountSelector", "visible": True}
+account_1_WalletAccountListItem = {"container": statusDesktop_mainWindow_overlay, "index": 0, "objectName": "Account 1", "type": "WalletAccountListItem", "visible": True}
 
 # Minted tokens view
 mainWindow_MintedTokensView = {"container": mainWindow_StatusWindow, "type": "MintedTokensView", "unnamed": 1, "visible": True}
