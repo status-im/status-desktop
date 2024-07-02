@@ -238,6 +238,7 @@ QtObject:
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
         keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
         walletSecretsConfig: self.buildWalletSecrets(),
+        apiConfig: defaultApiConfig()
       )
 
   proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
@@ -421,6 +422,7 @@ QtObject:
       mnemonic: mnemonic,
       walletSecretsConfig: self.buildWalletSecrets(),
       bandwidthStatsEnabled: true,
+      apiConfig: defaultApiConfig()
     )
 
     if main_constants.runtimeLogLevelSet():
