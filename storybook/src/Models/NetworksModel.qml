@@ -66,7 +66,7 @@ QtObject {
                 nativeCurrencyDecimals: 18,
                 isTest: false,
                 layer: 1,
-                isEnabled: true,
+                isRouteEnabled: true,
             },
             {
                 chainId: 11155111,
@@ -80,7 +80,7 @@ QtObject {
                 nativeCurrencyDecimals: 18,
                 isTest: true,
                 layer: 1,
-                isEnabled: true,
+                isRouteEnabled: true,
             },
             {
                 chainId: 10,
@@ -94,7 +94,7 @@ QtObject {
                 nativeCurrencyDecimals: 18,
                 isTest:  false,
                 layer:   2,
-                isEnabled: true,
+                isRouteEnabled: true,
             },
             {
                 chainId: 420,
@@ -108,7 +108,7 @@ QtObject {
                 nativeCurrencyDecimals: 18,
                 isTest:  true,
                 layer:   2,
-                isEnabled: true,
+                isRouteEnabled: true,
             },
             {
                 chainId: 42161,
@@ -122,7 +122,7 @@ QtObject {
                 nativeCurrencyDecimals: 18,
                 isTest:  false,
                 layer:   2,
-                isEnabled: true,
+                isRouteEnabled: true,
             },
             {
                 chainId: 421613,
@@ -136,7 +136,7 @@ QtObject {
                 nativeCurrencyDecimals: 18,
                 isTest:  true,
                 layer:   2,
-                isEnabled: true,
+                isRouteEnabled: true,
             }]
         )
     }
@@ -174,8 +174,8 @@ QtObject {
                        nativeCurrencyDecimals: 18,
                        nativeCurrencyName: "Ether",
                        nativeCurrencySymbol: "ETH",
-                       isEnabled: true,
-                       isPreferred: true,
+                       isRouteEnabled: true,
+                       isRoutePreferred: true,
                        hasGas: true,
                        tokenBalance: ({
                             displayDecimals: true,
@@ -198,8 +198,8 @@ QtObject {
                         nativeCurrencyDecimals: 18,
                         nativeCurrencyName: "Ether",
                         nativeCurrencySymbol: "ETH",
-                        isEnabled: true,
-                        isPreferred: true,
+                        isRouteEnabled: true,
+                        isRoutePreferred: true,
                         hasGas: true,
                         tokenBalance: ({
                             displayDecimals: true,
@@ -223,8 +223,8 @@ QtObject {
                         nativeCurrencyDecimals: 18,
                         nativeCurrencyName: "Ether",
                         nativeCurrencySymbol: "ETH",
-                        isEnabled: true,
-                        isPreferred: true,
+                        isRouteEnabled: true,
+                        isRoutePreferred: true,
                         hasGas: true,
                         tokenBalance: ({
                             displayDecimals: true,
@@ -243,19 +243,19 @@ QtObject {
     readonly property var sendToNetworks: ListModel {
         function updateRoutePreferredChains(chainIds) {
             for( let i=0; i<count; i++) {
-                get(i).isPreferred = false
-                get(i).isEnabled = false
+                get(i).isRoutePreferred = false
+                get(i).isRouteEnabled = false
                 if(chainIds.length === 0) {
                     if(get(i).layer() === 1) {
-                        get(i).isPreferred = true
-                        get(i).isEnabled = true
+                        get(i).isRoutePreferred = true
+                        get(i).isRouteEnabled = true
                     }
                 }
                 else {
                     for (let k =0;k<chainIds.split(":").length;k++) {
                         if(get(i).chainId.toString() === chainIds[k].toString()) {
-                            get(i).isPreferred = true
-                            get(i).isEnabled = true
+                            get(i).isRoutePreferred = true
+                            get(i).isRouteEnabled = true
                         }
                     }
                 }
@@ -293,8 +293,8 @@ QtObject {
                        nativeCurrencyDecimals: 18,
                        nativeCurrencyName: "Ether",
                        nativeCurrencySymbol: "ETH",
-                       isEnabled: true,
-                       isPreferred: true,
+                       isRouteEnabled: true,
+                       isRoutePreferred: true,
                        hasGas: true,
                        tokenBalance: ({
                             displayDecimals: true,
@@ -317,8 +317,8 @@ QtObject {
                         nativeCurrencyDecimals: 18,
                         nativeCurrencyName: "Ether",
                         nativeCurrencySymbol: "ETH",
-                        isEnabled: true,
-                        isPreferred: true,
+                        isRouteEnabled: true,
+                        isRoutePreferred: true,
                         hasGas: true,
                         tokenBalance: ({
                             displayDecimals: true,
@@ -336,14 +336,15 @@ QtObject {
                         chainName: "Arbitrum",
                         iconUrl: ModelsData.networks.arbitrum,
                         isActive: false,
+                        isEnabled: true,
                         shortName: "ARB",
                         chainColor: "purple",
                         layer: 2,
                         nativeCurrencyDecimals: 18,
                         nativeCurrencyName: "Ether",
                         nativeCurrencySymbol: "ETH",
-                        isEnabled: true,
-                        isPreferred: true,
+                        isRouteEnabled: true,
+                        isRoutePreferred: true,
                         hasGas: true,
                         tokenBalance: ({
                             displayDecimals: true,

@@ -1,4 +1,3 @@
-import sugar, sequtils
 import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
@@ -40,7 +39,7 @@ proc deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
+  return self.networkService.getEnabledChainIds()
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
@@ -76,4 +75,4 @@ proc getTokensMarketValuesLoading*(self: Controller): bool =
   return self.walletAccountService.getTokensMarketValuesLoading()
 
 proc getChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworks().map(n => n.chainId)
+  return self.networkService.getCurrentNetworksChainIds()

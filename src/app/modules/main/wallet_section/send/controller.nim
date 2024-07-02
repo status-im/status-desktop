@@ -1,4 +1,4 @@
-import Tables, sugar, sequtils
+import Tables
 import uuids, chronicles, options
 import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
@@ -84,10 +84,7 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
   return self.walletAccountService.getWalletAccounts()
 
 proc getChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworks().map(n => n.chainId)
-
-proc getEnabledChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
+  return self.networkService.getCurrentNetworksChainIds()
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()

@@ -27,6 +27,8 @@ Item {
     property bool interactive: true
     property var weiToEth: function(wei) {}
     property var reCalculateSuggestedRoute: function() {}
+    property var fromNetworksList
+    property var toNetworksList
     property int errorType: Constants.NoError
     property bool isLoading
 
@@ -39,6 +41,8 @@ Item {
         function resetAllSetValues() {
             for(var i = 0; i<fromNetworksRepeater.count; i++) {
                 fromNetworksRepeater.itemAt(i).routeOnNetwork = 0
+            }
+            for(var i = 0; i<toNetworksRepeater.count; i++) {
                 toNetworksRepeater.itemAt(i).routeOnNetwork = 0
                 toNetworksRepeater.itemAt(i).bentLine = 0
             }
@@ -81,7 +85,7 @@ Item {
             }
             Repeater {
                 id: fromNetworksRepeater
-                model: store.fromNetworksModel
+                model: root.fromNetworksList
                 StatusCard {
                     id: fromNetwork
                     locale: LocaleUtils.userInputLocale
@@ -113,7 +117,7 @@ Item {
                     disableText: qsTr("Disable")
                     enableText: qsTr("Enable")
                     advancedMode: root.customMode
-                    disabled: !model.isEnabled
+                    disabled: !model.isRouteEnabled
                     clickable: root.interactive
                     onClicked: {
                         store.toggleFromDisabledChains(model.chainId)
@@ -163,12 +167,12 @@ Item {
 
             Repeater {
                 id: toNetworksRepeater
-                model: store.toNetworksModel
+                model: root.toNetworksList
                 StatusCard {
                     id: toCard
                     locale: LocaleUtils.userInputLocale
                     objectName: model.chainId
-                    property bool preferred: model.isPreferred
+                    property bool preferred: model.isRoutePreferred
                     property int bentLine: 0
                     property int routeOnNetwork: 0
                     primaryText: model.chainName
@@ -180,7 +184,7 @@ Item {
                     disabledText: qsTr("Disabled")
                     disableText:  qsTr("Disable")
                     enableText: qsTr("Enable")
-                    disabled: !model.isEnabled
+                    disabled: !model.isRouteEnabled
                     clickable: root.interactive
                     loading: root.isLoading
                     onClicked: {

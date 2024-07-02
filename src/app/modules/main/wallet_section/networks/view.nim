@@ -93,7 +93,7 @@ QtObject:
 
   proc getNetworkShortNames*(self: View, preferredNetworks: string): string {.slot.} =
     return self.flatNetworks.getNetworkShortNames(preferredNetworks, self.areTestNetworksEnabled)
-
+  
   proc getNetworkIds*(self: View, shortNames: string): string {.slot.} =
     return self.flatNetworks.getNetworkIds(shortNames, self.areTestNetworksEnabled)
 

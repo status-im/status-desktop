@@ -28,6 +28,8 @@ ColumnLayout {
     property var weiToEth: function(wei) {}
     property bool interactive: true
     property bool isBridgeTx: false
+    property var toNetworksList
+    property var fromNetworksList
     property int errorType: Constants.NoError
 
     signal reCalculateSuggestedRoute()
@@ -99,6 +101,8 @@ ColumnLayout {
                     reCalculateSuggestedRoute: function() {
                         root.reCalculateSuggestedRoute()
                     }
+                    toNetworksList: root.toNetworksList
+                    fromNetworksList: root.fromNetworksList
                     weiToEth: root.weiToEth
                     interactive: root.interactive
                     errorType: root.errorType

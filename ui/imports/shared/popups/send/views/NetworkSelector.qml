@@ -29,7 +29,9 @@ Item {
     property bool interactive: true
     property bool isBridgeTx: false
     property bool isCollectiblesTransfer: false
+    property var fromNetworksList
     property var toNetworksList
+    property var suggestedToNetworksList
     property int errorType: Constants.NoError
     property var bestRoutes
     property double totalFeesInFiat
@@ -86,7 +88,8 @@ Item {
                 store: root.store
                 errorMode: root.errorMode
                 errorType: root.errorType
-                toNetworksList: root.toNetworksList
+                fromNetworksList: root.fromNetworksList
+                toNetworksList: root.suggestedToNetworksList
                 // Collectibles don't have a symbol
                 selectedSymbol: !!root.selectedAsset && !!root.selectedAsset.symbol ? root.selectedAsset.symbol: ""
                 weiToEth: function(wei) {
@@ -119,6 +122,8 @@ Item {
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 selectedAsset: root.selectedAsset
                 onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute()
+                fromNetworksList: root.fromNetworksList
+                toNetworksList: root.toNetworksList
                 isLoading: root.isLoading
                 interactive: root.interactive
                 isBridgeTx: root.isBridgeTx
