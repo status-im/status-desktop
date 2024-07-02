@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Window 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -57,7 +56,6 @@ ItemDelegate {
             Layout.preferredWidth: root.icon.width
             Layout.preferredHeight: root.icon.height
             image.source: root.icon.source
-            image.sourceSize: Qt.size(width*root.Screen.devicePixelRatio, height*root.Screen.devicePixelRatio)
         }
 
         ColumnLayout {
