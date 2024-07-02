@@ -45,16 +45,12 @@ QObject {
                 root.store.dappsListReceived.disconnect(dappsListReceivedFn);
             }
 
-            // TODO DEV: check if still holds true
-            // Reasons to postpone `getDapps` call:
-            // - the first recent made session will always have `active` prop set to false
-            // - expiration date won't be the correct one, but one used in session proposal
-            // - the list of dapps will display successfully made pairing as inactive
             getActiveSessionsFn = () => {
                 sdk.getActiveSessions((sessions) => {
                     root.store.dappsListReceived.disconnect(dappsListReceivedFn);
 
                     let tmpMap = {}
+                    var topics = []
                     for (let key in sessions) {
                         let dapp = sessions[key].peer.metadata
                         if (!!dapp.icons && dapp.icons.length > 0) {
@@ -63,6 +59,7 @@ QObject {
                             dapp.iconUrl = ""
                         }
                         tmpMap[dapp.url] = dapp;
+                        topics.push(key)
                     }
                     // TODO #14755: on SDK dApps refresh update the model that has data source from persistence instead of using reset
                     dapps.clear();
@@ -70,6 +67,8 @@ QObject {
                     for (let key in tmpMap) {
                         dapps.append(tmpMap[key]);
                     }
+
+                    root.store.updateWalletConnectSessions(JSON.stringify(topics))
                 });
             }
 
