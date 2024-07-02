@@ -781,7 +781,7 @@ QtObject:
     let burnTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.BurnCommunityToken)
     for transaction in burnTransactions:
       try:
-        if transaction.chainId == chainId and transaction.to == contractAddress:
+        if transaction.chainId == chainId and transaction.to.toLower == contractAddress.toLower:
           return ContractTransactionStatus.InProgress
       except Exception:
         discard
