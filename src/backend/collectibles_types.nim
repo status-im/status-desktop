@@ -151,6 +151,13 @@ proc toContractID*(t: string): ContractID =
   var parts = t.split("+")
   return ContractID(chainID: parts[0].parseInt(), address: parts[1])
 
+proc isContractID*(t: string): bool =
+  try:
+    discard toContractID(t)
+    return true
+  except Exception:
+    return false
+
 # CollectibleUniqueID
 proc `$`*(self: CollectibleUniqueID): string =
   return fmt"""CollectibleUniqueID(

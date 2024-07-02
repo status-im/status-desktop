@@ -10,6 +10,8 @@ import ../../chat/dto/chat
 import ../../shared_urls/dto/url_data
 import ../../../../app_service/common/types
 
+import backend/collectibles_types
+
 type RequestToJoinType* {.pure.}= enum
   Pending = 1,
   Declined = 2,
@@ -291,7 +293,11 @@ proc toTokenCriteriaDto*(jsonObj: JsonNode): TokenCriteriaDto =
     if result.`type` == TokenType.ENS:
       discard jsonObj.getProp("key", result.ensPattern)
     else:
-      discard jsonObj.getProp("key", result.symbol)
+      var tmpSymbol = ""
+      discard jsonObj.getProp("key", tmpSymbol)
+      if not isContractID(tmpSymbol):
+        # overwrite only if key does not contain contractID
+        result.symbol = tmpSymbol
 
 proc toCommunityTokenPermissionDto*(jsonObj: JsonNode): CommunityTokenPermissionDto =
   result = CommunityTokenPermissionDto()
@@ -652,3 +658,9 @@ proc findOwner*(self: CommunityDto): ChatMember =
     if member.role == MemberRole.Owner:
       return member
   raise newException(ValueError, "No owner found in members list")
+
+proc getContractIdFromFirstAddress*(self: CommunityTokensMetadataDto): string =
+  for chainID, address in self.addresses:
+    let contractId = ContractID(chainID: chainID, address: address)
+    return contractId.toString()
+  return ""

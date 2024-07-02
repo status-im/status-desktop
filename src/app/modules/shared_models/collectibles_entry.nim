@@ -64,7 +64,7 @@ QtObject:
   proc hasCollectibleData(self: CollectiblesEntry): bool =
     return self.data != nil and isSome(self.data.collectibleData)
 
-  proc getCollectibleData(self: CollectiblesEntry): backend.CollectibleData =
+  proc getCollectibleData*(self: CollectiblesEntry): backend.CollectibleData =
     return self.data.collectibleData.get()
 
   proc hasCollectionData(self: CollectiblesEntry): bool =

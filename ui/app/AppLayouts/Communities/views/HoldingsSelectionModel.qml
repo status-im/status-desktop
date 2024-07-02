@@ -37,14 +37,17 @@ SortFilterProxyModel {
                 return item.decimals
             }
 
-            function getText(type, key, amount) {
+            function getText(type, key, amount, defaultText) {
                 const model = type === Constants.TokenType.ERC20
                             ? assetsModel
                             : collectiblesModel
-                const item = PermissionsHelpers.getTokenByKey(model, key)
 
-                const name = getName(type, item, key)
+                let item = PermissionsHelpers.getTokenByKey(model, key)
+                let name = getName(type, item, key)
                 const decimals = getDecimals(type, item)
+
+                if (name === "")
+                    name = defaultText
 
                 return PermissionsHelpers.setHoldingsTextFormat(
                             type, name, amount, decimals)
@@ -55,9 +58,9 @@ SortFilterProxyModel {
             expression: {
                 _assetsChanges.revision
                 _collectiblesChanges.revision
-                return getText(model.type, model.key, model.amount)
+                return getText(model.type, model.key, model.amount, model.symbol)
             }
-            expectedRoles: ["type", "key", "amount"]
+            expectedRoles: ["type", "key", "amount", "symbol", "shortName"]
         },
         FastExpressionRole {
             name: "imageSource"

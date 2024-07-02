@@ -6,6 +6,10 @@ import SortFilterProxyModel 0.2
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import shared.stores 1.0
 
+import AppLayouts.Wallet.stores 1.0 as WalletStore
+
+import StatusQ 0.1
+
 QtObject {
     id: root
 
@@ -45,16 +49,81 @@ QtObject {
         }
     }
 
-    property var collectiblesModel: SortFilterProxyModel {
+    readonly property var communityCollectiblesModelWithCollectionRoles: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.collectiblesModel
 
-        proxyRoles: ExpressionRole {
-            function collectibleIcon(icon) {
-                return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
-            }
+        proxyRoles: [
+            ExpressionRole {
+                function collectibleIcon(icon) {
+                    return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+                }
             name: "iconSource"
             expression: collectibleIcon(model.icon)
+            },
+            ExpressionRole {
+            name: "collectionUid"
+            expression: model.key
+            },
+            ExpressionRole {
+                function collectibleIcon(icon) {
+                    return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+                }
+            name: "collectionImageUrl"
+            expression: collectibleIcon(model.icon)
+            }
+        ]
+    }
+
+    readonly property var walletCollectiblesModel: ObjectProxyModel {
+
+        sourceModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
+
+        delegate: QtObject {
+            readonly property string key: model.symbol ?? ""
+            readonly property string shortName: model.collectionName ? model.collectionName : model.collectionUid ? model.collectionUid : ""
+            readonly property string symbol: shortName
+            readonly property string name: shortName
+            readonly property int category: 1 // Own
         }
+
+        exposedRoles: ["key", "symbol", "shortName", "name", "category"]
+        expectedRoles: ["symbol", "collectionName", "collectionUid"]
+    }
+
+    readonly property var walletCollectiblesGroupingModel: GroupingModel {
+        sourceModel: walletCollectiblesModel
+
+        groupingRoleName: "collectionUid"
+        submodelRoleName: "subnames"
+    }
+
+    readonly property var walletNonCommunityCollectiblesModel: SortFilterProxyModel {
+        sourceModel: walletCollectiblesGroupingModel
+
+        filters: ValueFilter {
+            roleName: "communityId"
+            value: ""
+        }
+    }
+
+    property var walletCollectiblesWithIconSourceModel: RolesRenamingModel {
+        sourceModel: walletNonCommunityCollectiblesModel
+
+        mapping: RoleRename {
+            from: "mediaUrl"
+            to: "iconSource"
+        }
+    }
+
+    property var collectiblesModel: ConcatModel {
+        sources: [
+            SourceModel {
+                model: communityCollectiblesModelWithCollectionRoles
+            },
+            SourceModel {
+                model: walletCollectiblesWithIconSourceModel
+            }
+        ]
     }
 
     function prepareTokenModelForCommunity(publicKey) {

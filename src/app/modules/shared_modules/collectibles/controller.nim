@@ -138,7 +138,6 @@ QtObject:
       else:
         offset = self.tempItems.len
     self.fetchFromStart = false
-
     let response = backend_collectibles.getOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.filter, offset, FETCH_BATCH_COUNT_DEFAULT, self.dataType, self.fetchCriteria)
     if response.error != nil:
       self.model.setIsFetching(false)

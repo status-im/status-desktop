@@ -95,7 +95,7 @@ StatusListView {
 
         name: model.name
         shortName: model.shortName ?? ""
-        iconSource: model.iconSource ?? ""
+        iconSource: model.iconSource ? model.iconSource : Style.png("tokens/DEFAULT-TOKEN")
         showSubItemsIcon: !!model.subItems && model.subItems.count > 0
         selected: root.checkedKeys.includes(model.key)
         amount: {

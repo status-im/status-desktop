@@ -80,7 +80,8 @@ proc buildTokenPermissionItem*(tokenPermission: CommunityTokenPermissionDto, cha
       tc.amountInWei,
       tc.`type`.int,
       tc.ensPattern,
-      false # tokenCriteriaMet will be updated by a call to checkPermissionsToJoin
+      false, # tokenCriteriaMet will be updated by a call to checkPermissionsToJoin
+      tc.contractAddresses
     )
 
     tokenCriteriaItems.add(tokenCriteriaItem)

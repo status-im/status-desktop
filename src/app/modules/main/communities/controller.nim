@@ -433,6 +433,12 @@ proc getKeypairByKeyUid*(self: Controller, keyUid: string): KeypairDto =
 proc getKeypairs*(self: Controller): seq[KeypairDto] =
   return self.walletAccountService.getKeypairs()
 
+proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+  return self.walletAccountService.getWalletAccounts()
+
+proc getEnabledChainIds*(self: Controller): seq[int] =
+  return self.walletAccountService.getEnabledChainIds()
+
 proc disconnectKeycardReponseSignal(self: Controller) =
   self.events.disconnect(self.connectionKeycardResponse)
 

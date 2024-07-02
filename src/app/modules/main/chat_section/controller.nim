@@ -21,6 +21,8 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 
+import backend/collectibles_types
+
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
@@ -731,9 +733,11 @@ proc getTokenDecimals*(self: Controller, symbol: string): int =
     return asset.decimals
   return 0
 
-proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int, string] =
+# find addresses by tokenKey from UI
+# tokenKey can be: symbol for ERC20, or chain+address[+tokenId] for ERC721
+proc getContractAddressesForToken*(self: Controller, tokenKey: string): Table[int, string] =
   var contractAddresses = initTable[int, string]()
-  let token = self.tokenService.findTokenBySymbol(symbol)
+  let token = self.tokenService.findTokenBySymbol(tokenKey)
   if token != nil:
     for addrPerChain in token.addressPerChainId:
       # depending on areTestNetworksEnabled (in getNetworkByChainId), contractAddresses will
@@ -742,9 +746,15 @@ proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int,
       if network == nil:
         continue
       contractAddresses[addrPerChain.chainId] = addrPerChain.address
-  let communityToken = self.communityService.getCommunityTokenBySymbol(self.getMySectionId(), symbol)
+  let communityToken = self.communityService.getCommunityTokenBySymbol(self.getMySectionId(), tokenKey)
   if communityToken.address != "":
     contractAddresses[communityToken.chainId] = communityToken.address
+  if contractAddresses.len == 0:
+    try:
+      let chainAndAddress = toContractID(tokenKey)
+      contractAddresses[chainAndAddress.chainID] = chainAndAddress.address
+    except Exception:
+      discard
   return contractAddresses
 
 proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
