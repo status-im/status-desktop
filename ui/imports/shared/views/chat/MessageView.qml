@@ -144,7 +144,7 @@ Loader {
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
     readonly property bool isExpired: d.getIsExpired(messageTimestamp, messageOutgoingStatus)
-    readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
+    readonly property bool isSending: messageOutgoingStatus === Constants.messageOutgoingStatus.sending && !isExpired
 
     function openProfileContextMenu(sender, mouse, isReply = false) {
         if (isReply && !quotedMessageFrom) {
@@ -289,7 +289,8 @@ Loader {
         }
 
         function getIsExpired(messageTimeStamp, messageOutgoingStatus) {
-            return (messageOutgoingStatus === Constants.sending && (Math.floor(messageTimeStamp) + 180000) < Date.now()) || messageOutgoingStatus === Constants.expired
+            return (messageOutgoingStatus === Constants.messageOutgoingStatus.sending && (Math.floor(messageTimeStamp) + 180000) < Date.now())
+                || messageOutgoingStatus === Constants.expired
         }
 
         function convertContentType(value) {
@@ -329,6 +330,17 @@ Loader {
             case Constants.messageContentType.gapType:
             default:
                 return StatusMessage.ContentType.Unknown;
+            }
+        }
+
+        function convertOutgoingStatus(value) {
+            switch (value) {
+            case Constants.messageOutgoingStatus.sending:
+                return StatusMessage.OutgoingStatus.Sending
+            case Constants.messageOutgoingStatus.sent:
+                return StatusMessage.OutgoingStatus.Sent
+            case Constants.messageOutgoingStatus.delivered:
+                return StatusMessage.OutgoingStatus.Delivered
             }
         }
 
@@ -646,6 +658,7 @@ Loader {
                     return ProfileUtils.displayName(contact.localNickname, contact.name, contact.displayName, contact.alias)
                 }
                 isInPinnedPopup: root.isInPinnedPopup
+                outgoingStatus: d.convertOutgoingStatus(messageOutgoingStatus)
                 hasExpired: root.isExpired
                 isSending: root.isSending
                 resendError: root.resendError

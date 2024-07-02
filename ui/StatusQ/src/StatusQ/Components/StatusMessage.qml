@@ -7,6 +7,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 
+import utils 1.0
+
 import "./private/statusMessage"
 
 Control {
@@ -27,6 +29,13 @@ Control {
         SystemMessageMutualEventAccepted = 16,
         SystemMessageMutualEventRemoved = 17,
         BridgeMessage = 18
+    }
+
+    enum OutgoingStatus {
+        Unknown = 0,
+        Sending,
+        Sent,
+        Delivered
     }
 
     property list<Item> quickActions
@@ -54,6 +63,7 @@ Control {
     property bool hasExpired: false
     property bool isSending: false
     property string resendError: ""
+    property int outgoingStatus: StatusMessage.OutgointStatus.Unknown
     property double timestamp: 0
     property var reactionsModel: []
 
@@ -111,6 +121,7 @@ Control {
     }
 
     hoverEnabled: (!root.isActiveMessage && !root.disableHover)
+    opacity: outgoingStatus === StatusMessage.OutgoingStatus.Sending ? 0.5 : 1.0
     background: Rectangle {
         color: {
             if (root.overrideBackground)
@@ -262,6 +273,7 @@ Control {
                             timestamp: root.timestamp
                             showFullTimestamp: root.isInPinnedPopup
                             displayNameClickable: root.profileClickable
+                            outgoingStatus: root.outgoingStatus
                         }
                     }
                     Loader {

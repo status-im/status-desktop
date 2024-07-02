@@ -28,6 +28,7 @@ Item {
     property bool displayNameClickable: true
     property string messageOriginInfo: ""
     property bool showFullTimestamp
+    property int outgoingStatus: StatusMessage.OutgoingStatus.Unknown
 
     signal clicked(var sender, var mouse)
     signal resendClicked()
