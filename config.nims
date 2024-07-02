@@ -68,3 +68,6 @@ when defined(gcc):
   # GCC 14+ introduces new strictness for pointer types that not all nim libraries are compatible with
   switch("passc", "-Wno-error=incompatible-pointer-types")
 
+--define:nimStackTraceOverride
+--stackTrace:off
+switch("import", "libbacktrace")
