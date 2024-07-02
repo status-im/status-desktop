@@ -13,6 +13,7 @@ QtObject {
     property color hoverColor
     property color disabledColor
     property int rotation
+    property bool mirror
 
     property bool isLetterIdenticon
     property bool useAcronymForLetterIdenticon: true

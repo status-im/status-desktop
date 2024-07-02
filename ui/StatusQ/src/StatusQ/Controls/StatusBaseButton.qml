@@ -55,6 +55,9 @@ Button {
     property int type: StatusBaseButton.Type.Normal
     property int textPosition: StatusBaseButton.TextPosition.Right
 
+    // use Size.Small as default value to not change old behavior which had default size of 20x20
+    property int  loadingIndicatorSize: StatusBaseButton.Size.Small
+
     property bool isRoundIcon: false
 
     QtObject {
@@ -69,8 +72,10 @@ Button {
         }
 
         readonly property bool iconOnly: root.display === AbstractButton.IconOnly || root.text === ""
-        readonly property int iconSize: {
-            switch(root.size) {
+        readonly property int iconSize: mapIconSize(root.size)
+
+        function mapIconSize(buttonSize) {
+            switch(buttonSize) {
             case StatusBaseButton.Size.Tiny:
                 return 16
             case StatusBaseButton.Size.Small:
@@ -152,6 +157,7 @@ Button {
                 StatusIcon {
                     icon: root.icon.name
                     rotation: root.asset.rotation
+                    mirror: root.asset.mirror
                     opacity: !root.loading && root.icon.name !== "" && root.display !== AbstractButton.TextOnly
                     color: root.icon.color
                 }
@@ -221,6 +227,8 @@ Button {
     Loader {
         anchors.centerIn: parent
         active: root.loading
+        width: d.mapIconSize(root.loadingIndicatorSize)
+        height: width
         sourceComponent: StatusLoadingIndicator {
             color: d.textColor
         }
