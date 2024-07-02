@@ -205,7 +205,10 @@ QtObject:
     read = getChainId
 
   proc getIsNFT*(self: ActivityEntry): bool {.slot.} =
-    return self.metadata.transferType.isSome() and self.metadata.transferType.unsafeGet() == TransferType.Erc721
+    if self.metadata.transferType.isNone():
+      return false
+    let transferType = self.metadata.transferType.unsafeGet()
+    return transferType == TransferType.Erc721 or transferType == TransferType.Erc1155
 
   QtProperty[bool] isNFT:
     read = getIsNFT
