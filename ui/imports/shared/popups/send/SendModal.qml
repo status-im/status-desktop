@@ -22,7 +22,7 @@ import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Wallet.controls 1.0
 
-import "./panels"
+import shared.popups.send.panels 1.0
 import "./controls"
 import "./views"
 import "./models"
@@ -31,10 +31,11 @@ StatusDialog {
     id: popup
 
     property var preSelectedAccount: selectedAccount
-    // expected content depends on the preSelectedRecipientType value.
-    // If type Address this must be a string else it expects an object. See RecipientView.selectedRecipientType
-    property var preSelectedRecipient
-    property int preSelectedRecipientType: TabAddressSelectorView.Type.Address
+
+    // Recipient properties definition
+    property alias preSelectedRecipient: recipientInputLoader.selectedRecipient
+    property alias preSelectedRecipientType: recipientInputLoader.selectedRecipientType
+
     property string preDefinedAmountToSend
     // token symbol
     property string preSelectedHoldingID
@@ -70,7 +71,7 @@ StatusDialog {
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         if(!!popup.preSelectedAccount && !!holdingSelector.selectedItem
-                && recipientLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)) {
+                && recipientInputLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)) {
             popup.isLoading = true
             popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSendInput.cryptoValueToSend)
         }
@@ -87,13 +88,13 @@ StatusDialog {
         readonly property var currencyStore: store.currencyStore
         readonly property int errorType: !amountToSendInput.input.valid && (!isCollectiblesTransfer) ? Constants.SendAmountExceedsBalance :
                                                                           (popup.bestRoutes && popup.bestRoutes.count === 0 &&
-                                                                           !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?
+                                                                           !!amountToSendInput.input.text && recipientInputLoader.ready && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
         readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.currentCurrencyBalance : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
-        readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
+        readonly property bool errorMode: popup.isLoading || !recipientInputLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
@@ -221,20 +222,6 @@ StatusDialog {
 
         if(!!popup.preDefinedAmountToSend) {
             amountToSendInput.input.text = Number(popup.preDefinedAmountToSend).toLocaleString(Qt.locale(), 'f', -128)
-        }
-
-        if(!!popup.preSelectedRecipient) {
-            recipientLoader.selectedRecipientType = popup.preSelectedRecipientType
-            if (popup.preSelectedRecipientType === TabAddressSelectorView.Type.Address) {
-                recipientLoader.selectedRecipient = {address: popup.preSelectedRecipient}
-            } else {
-                recipientLoader.selectedRecipient = popup.preSelectedRecipient
-            }
-        }
-
-        if(d.isBridgeTx) {
-            recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
-            recipientLoader.selectedRecipient = {address: popup.preSelectedAccount.address}
         }
     }
 
@@ -381,7 +368,7 @@ StatusDialog {
 
                         formatCurrencyAmount: d.currencyStore.formatCurrencyAmount
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
-                        input.input.tabNavItem: recipientLoader.item
+                        input.input.tabNavItem: recipientInputLoader.item
                         Keys.onTabPressed: event.accepted = true
                     }
 
@@ -419,7 +406,8 @@ StatusDialog {
                         color: Theme.palette.directColor1
                     }
                     RecipientView {
-                        id: recipientLoader
+                        id: recipientInputLoader
+
                         Layout.fillWidth: true
                         store: popup.store
                         isCollectiblesTransfer: d.isCollectiblesTransfer
@@ -467,21 +455,53 @@ StatusDialog {
             }
         }
 
-        TabAddressSelectorView {
-            id: addressSelector
+        RecipientSelectorPanel {
+            id: recipientsPanel
+
             Layout.fillHeight: true
             Layout.fillWidth:  true
             Layout.topMargin: Style.current.padding
             Layout.leftMargin: Style.current.xlPadding
             Layout.rightMargin: Style.current.xlPadding
             Layout.bottomMargin: Style.current.padding
-            visible: !recipientLoader.ready && !d.isBridgeTx && !!d.selectedHolding
 
-            store: popup.store
-            selectedAccount: popup.preSelectedAccount
+            // TODO: To be removed after all other refactors done (initial tokens selector page removed, bridge modal separated)
+            // This panel must be shown by default if no recipient already selected, otherwise, hidden
+            visible: !recipientInputLoader.ready && !d.isBridgeTx && !!d.selectedHolding
+
+            savedAddressesModel: popup.store.savedAddressesModel
+            myAccountsModel: SortFilterProxyModel {
+                sourceModel: popup.store.accounts
+
+                proxyRoles: FastExpressionRole {
+                    function getColorizedChainShortNames(preferredSharingChainIds, address){
+                        const chainShortNames = popup.store.getNetworkShortNames(preferredSharingChainIds)
+                        return WalletUtils.colorizedChainPrefix(chainShortNames) + address
+                    }
+
+                    name: "colorizedChainShortNames"
+                    expectedRoles: ["preferredSharingChainIds", "address"]
+                    expression: getColorizedChainShortNames(model.preferredSharingChainIds, model.address)
+                }
+            }
+            recentRecipientsModel: popup.store.tempActivityController1Model // Use Layer1 controller since this could go on top of other activity lists
+
             onRecipientSelected:  {
-                recipientLoader.selectedRecipientType = type
-                recipientLoader.selectedRecipient = recipient
+                popup.preSelectedRecipientType = type
+                popup.preSelectedRecipient = recipient
+            }
+
+            // Only request transactions history update if visually needed:
+            onRecentRecipientsTabSelected: popup.store.updateRecentRecipientsActivity(popup.preSelectedAccount)
+
+            Connections {
+                target: popup
+                function onPreSelectedAccountChanged() {
+                    // Only request transactions history update if visually needed:
+                    if(recipientsPanel.recentRecipientsTabVisible) {
+                        popup.store.updateRecentRecipientsActivity(popup.preSelectedAccount)
+                    }
+                }
             }
         }
 
@@ -499,7 +519,7 @@ StatusDialog {
 
             contentWidth: availableWidth
 
-            visible: recipientLoader.ready && !!d.selectedHolding && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
+            visible: recipientInputLoader.ready && !!d.selectedHolding && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
 
             objectName: "sendModalScroll"
 
@@ -514,8 +534,8 @@ StatusDialog {
 
                 store: popup.store
                 interactive: popup.interactive
-                selectedRecipient: recipientLoader.selectedRecipient
-                ensAddressOrEmpty: recipientLoader.resolvedENSAddress
+                selectedRecipient: popup.preSelectedRecipient
+                ensAddressOrEmpty: recipientInputLoader.resolvedENSAddress
                 amountToSend: amountToSendInput.cryptoValueToSendFloat
                 minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
                 minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
@@ -541,7 +561,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : d.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, d.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: recipientLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer) && !d.errorMode
+        visible: recipientInputLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer) && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }
 

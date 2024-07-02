@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.3
 import utils 1.0
 import shared.controls 1.0 as SharedControls
 import shared.stores 1.0
+import shared.popups.send 1.0
 
 import AppLayouts.Wallet 1.0
 
@@ -23,10 +24,16 @@ import "../views"
 Item {
     id: root
 
-    property var selectedAccount
-    property var store
+    property var savedAddressesModel
+    property var myAccountsModel
+    property var recentRecipientsModel
 
+    readonly property bool recentRecipientsTabVisible: recipientTypeTabBar.currentIndex === 2 // Recent tab
+
+    // This should only pass a `key` role to identify the object but not necessary to pass the complete object structure
+    // TODO issue: #15492
     signal recipientSelected(var recipient, int type)
+    signal recentRecipientsTabSelected
 
     enum Type {
         Address,
@@ -36,21 +43,16 @@ Item {
         None
     }
 
-    QtObject {
-        id: d
-
-        // Use Layer1 controller since this could go on top of other activity lists
-        readonly property var activityController: root.store.tmpActivityController1
-    }
-
     StatusTabBar {
-        id: accountSelectionTabBar
+        id: recipientTypeTabBar
+
         anchors.top: parent.top
         anchors.left: parent.left
         width: parent.width
 
         StatusTabButton {
             width: implicitWidth
+            objectName: "savedAddressesTab"
             text: qsTr("Saved")
         }
         StatusTabButton {
@@ -60,35 +62,38 @@ Item {
         }
         StatusTabButton {
             width: implicitWidth
+            objectName: "recentAddressesTab"
             text: qsTr("Recent")
         }
     }
 
     // To-do adapt to new design and make block white/black once the list items etc support new color scheme
     Rectangle {
-        anchors.top: accountSelectionTabBar.bottom
+        anchors.top: recipientTypeTabBar.bottom
         anchors.topMargin: -5
-        height: parent.height - accountSelectionTabBar.height
+        height: parent.height - recipientTypeTabBar.height
         width: parent.width
         color: Theme.palette.indirectColor1
         radius: 8
 
         StackLayout {
-            currentIndex: accountSelectionTabBar.currentIndex
-
+            currentIndex: recipientTypeTabBar.currentIndex
             anchors.fill: parent
 
             StatusListView {
                 id: savedAddresses
+                objectName: "savedAddressesList"
 
-                model: root.store.savedAddressesModel
+                model: root.savedAddressesModel
                 header: savedAddresses.count > 0 ? search : nothingInList
                 headerPositioning: ListView.OverlayHeader
                 delegate: SavedAddressListItem {
                     implicitWidth: ListView.view.width
                     modelData: model
                     visible: !savedAddresses.headerItem.text || name.toLowerCase().includes(savedAddresses.headerItem.text)
-                    onClicked: recipientSelected(modelData, TabAddressSelectorView.Type.SavedAddress)
+                    // This should only pass a `key` role to identify the saved addresses object but not necessary to pass the complete object structure
+                    // TODO issue: #15492
+                    onClicked: recipientSelected(modelData, Helpers.RecipientAddressObjectType.SavedAddress)
                 }
                 Component {
                     id: search
@@ -129,12 +134,12 @@ Item {
                     walletType: model.walletType
                     migratedToKeycard: model.migratedToKeycard ?? false
                     accountBalance: model.accountBalance ?? null
-                    chainShortNames: {
-                        const chainShortNames = store.getNetworkShortNames(model.preferredSharingChainIds)
-                        return WalletUtils.colorizedChainPrefix(chainShortNames)
-                    }
+                    chainShortNames: model.colorizedChainShortNames ?? ""
+                    // This should only pass a `key` role to identify the accounts object but not necessary to pass the complete object structure
+                    // TODO issue: #15492
                     onClicked: recipientSelected({name: model.name,
                                                      address: model.address,
+                                                     color: model.color,
                                                      colorId: model.colorId,
                                                      emoji: model.emoji,
                                                      walletType: model.walletType,
@@ -142,14 +147,16 @@ Item {
                                                      preferredSharingChainIds: model.preferredSharingChainIds,
                                                      migratedToKeycard: model.migratedToKeycard
                                                  },
-                                                 TabAddressSelectorView.Type.Account)
-                }
+                                                 Helpers.RecipientAddressObjectType.Account)
 
-                model: root.store.accounts
+                    }
+
+                model: root.myAccountsModel
             }
 
             StatusListView {
                 id: recents
+                objectName: "recentReceiversList"
 
                 header: StatusBaseText {
                     height: visible ? 56 : 0
@@ -192,31 +199,17 @@ Item {
                             text: LocaleUtils.currencyAmountToLocaleString(entry.amountCurrency)
                         }
                     ]
-                    onClicked: recipientSelected(entry, TabAddressSelectorView.Type.RecentsAddress)
+                    // This should only pass a `key` role to identify the recent activity object but not necessary to pass the complete object structure
+                    // TODO issue: #15492
+                    onClicked: recipientSelected(entry, Helpers.RecipientAddressObjectType.RecentsAddress)
                 }
 
-                model: d.activityController.model
+                model: root.recentRecipientsModel
 
                 onVisibleChanged: {
                     if (visible) {
-                        updateRecentsActivity()
+                        root.recentRecipientsTabSelected()
                     }
-                }
-
-                Connections {
-                    target: root
-                    function onSelectedAccountChanged() {
-                        if (visible) {
-                            recents.updateRecentsActivity()
-                        }
-                    }
-                }
-
-                function updateRecentsActivity() {
-                    if(root.selectedAccount) {
-                        d.activityController.setFilterAddressesJson(JSON.stringify([root.selectedAccount.address]), false)
-                    }
-                    d.activityController.updateFilter()
                 }
             }
         }

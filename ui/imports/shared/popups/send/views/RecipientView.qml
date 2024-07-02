@@ -10,6 +10,8 @@ import AppLayouts.Wallet 1.0
 
 import shared.controls 1.0 as SharedControls
 import shared.stores.send 1.0
+import shared.popups.send.panels 1.0
+import shared.popups.send 1.0
 
 import utils 1.0
 
@@ -24,7 +26,7 @@ Loader {
     property bool interactive: true
     property var selectedAsset
     property var selectedRecipient: null
-    property int selectedRecipientType
+    property int selectedRecipientType: Helpers.RecipientAddressObjectType.Address
 
     readonly property bool ready: (d.isAddressValid || !!resolvedENSAddress) && !d.isPending
     property string addressText
@@ -37,15 +39,15 @@ Loader {
 
     onSelectedRecipientChanged: {
         root.isLoading()
-        if(!!root.selectedRecipient && root.selectedRecipientType !== TabAddressSelectorView.Type.None) {
+        if(!!root.selectedRecipient) {
             let preferredChainIds = []
             switch(root.selectedRecipientType) {
-            case TabAddressSelectorView.Type.Account: {
+            case Helpers.RecipientAddressObjectType.Account: {
                 root.addressText = root.selectedRecipient.address
                 preferredChainIds = root.selectedRecipient.preferredSharingChainIds
                 break
             }
-            case TabAddressSelectorView.Type.SavedAddress: {
+            case Helpers.RecipientAddressObjectType.SavedAddress: {
                 root.addressText = root.selectedRecipient.address
 
                 // Resolve before using
@@ -56,15 +58,15 @@ Loader {
                 preferredChainIds = store.getShortChainIds(root.selectedRecipient.chainShortNames)
                 break
             }
-            case TabAddressSelectorView.Type.RecentsAddress: {
+            case Helpers.RecipientAddressObjectType.RecentsAddress: {
                 let isIncoming = root.selectedRecipient.txType === Constants.TransactionType.Receive
                 root.addressText = isIncoming ? root.selectedRecipient.sender : root.selectedRecipient.recipient
                 root.item.input.text = root.addressText
                 break
             }
-            case TabAddressSelectorView.Type.Address: {
-                root.addressText = root.selectedRecipient.address
-                root.item.input.text = root.selectedRecipient.address
+            case Helpers.RecipientAddressObjectType.Address: {
+                root.addressText = root.selectedRecipient
+                root.item.input.text = root.addressText
                 break
             }
             }
@@ -91,7 +93,7 @@ Loader {
         function clearValues() {
             root.addressText = ""
             root.resolvedENSAddress = ""
-            root.selectedRecipientType = TabAddressSelectorView.Type.None
+            root.selectedRecipientType = Helpers.RecipientAddressObjectType.Address
             root.selectedRecipient = null
         }
         property Timer waitTimer: Timer {
@@ -113,9 +115,9 @@ Loader {
         }
     }
 
-    sourceComponent: root.selectedRecipientType === TabAddressSelectorView.Type.SavedAddress
+    sourceComponent: root.selectedRecipientType === Helpers.RecipientAddressObjectType.SavedAddress
         ? savedAddressRecipient
-        : root.selectedRecipientType === TabAddressSelectorView.Type.Account
+        : root.selectedRecipientType === Helpers.RecipientAddressObjectType.Account
             ? myAccountRecipient : addressRecipient
 
     Component {
