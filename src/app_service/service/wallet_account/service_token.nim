@@ -2,7 +2,9 @@
 proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   var accountAddresses: seq[string] = @[]
   var accountTokens: seq[GroupedTokenItem] = @[]
-  defer: self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(accountAddresses:accountAddresses, accountTokens: accountTokens))
+  defer:
+    let timestamp = getTime().toUnix()
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(accountAddresses:accountAddresses, accountTokens: accountTokens, timestamp: timestamp))
   try:
     let responseObj = response.parseJson
     var storeResult: bool
@@ -166,6 +168,12 @@ proc checkRecentHistory*(self: Service, addresses: seq[string]) =
     error "error: ", errDescription
 
 proc reloadAccountTokens*(self: Service) =
+  try:
+    discard backend.restartWalletReloadTimer()
+  except Exception as e:
+    let errDesription = e.msg
+    error "error restartWalletReloadTimer: ", errDesription
+
   let addresses = self.getWalletAddresses()
   self.buildAllTokens(addresses, store = true)
   self.checkRecentHistory(addresses)

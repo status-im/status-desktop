@@ -331,3 +331,6 @@ rpc(getBalancesByChain, "wallet"):
   chainIds: seq[int]
   addresses: seq[string]
   tokenAddresses: seq[string]
+
+rpc(restartWalletReloadTimer, "wallet"):
+  discard
