@@ -9,6 +9,7 @@ QtObject {
 
     property string fromTokenAmount: ""
     property string toTokenAmount: ""
+    // TODO: this should be string but backend gas_estimate_item.nim passes this as float
     property real totalFees: 0
     property var bestRoutes: []
     property bool hasError

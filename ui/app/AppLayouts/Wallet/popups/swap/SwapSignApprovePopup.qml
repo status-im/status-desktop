@@ -24,18 +24,30 @@ StatusDialog {
     required property bool loading
     required property SwapSignApproveInputForm swapSignApproveInputForm
     required property SwapSignApproveAdaptor adaptor
+    property int txType: SwapSignApprovePopup.TxType.Swap
 
     signal sign()
     signal reject()
 
+    enum TxType {
+        Swap,
+        Approve
+    }
+
+    QtObject {
+        id: d
+        readonly property bool isApproveTx: root.txType === SwapSignApprovePopup.TxType.Approve
+        readonly property int defaultDecmials: 18
+    }
+
     objectName: "swapSignApproveModal"
     implicitWidth: 480
     padding: 20
-    title: qsTr("Approve spending cap")
+    title: d.isApproveTx ? qsTr("Approve spending cap"): qsTr("Sign Swap")
     /* TODO: https://github.com/status-im/status-desktop/issues/15329
     This is only added temporarily until we have an api from the backend in order to get
     this list dynamically */
-    subtitle: Constants.swap.paraswapUrl
+    subtitle: d.isApproveTx ? Constants.swap.paraswapUrl : qsTr("%1 to %2").arg(payToken.title).arg(receiveToken.title)
 
     contentItem: StatusScrollView {
         id: scrollView
@@ -55,9 +67,12 @@ StatusDialog {
                 }
                 StatusListItem {
                     width: parent.width
-                    title: SQUtils.AmountsArithmetic.div(
-                               SQUtils.AmountsArithmetic.fromString(swapSignApproveInputForm.approvalAmountRequired),
-                               SQUtils.AmountsArithmetic.fromNumber(1, !!root.adaptor.fromToken ? root.adaptor.fromToken.decimals: 18)).toString()
+                    title: {
+                        let bigAmount = SQUtils.AmountsArithmetic.div(
+                                SQUtils.AmountsArithmetic.fromString(swapSignApproveInputForm.approvalAmountRequired),
+                                SQUtils.AmountsArithmetic.fromNumber(1, !!root.adaptor.fromToken ? root.adaptor.fromToken.decimals: d.defaultDecmials)).toFixed()
+                        return bigAmount.replace('.', LocaleUtils.userInputLocale.decimalPoint)
+                    }
                     border.width: 1
                     border.color: Theme.palette.baseColor2
                     components: [
@@ -74,6 +89,7 @@ StatusDialog {
                         }
                     ]
                 }
+                visible: d.isApproveTx
             }
 
             Column {
@@ -81,7 +97,73 @@ StatusDialog {
                 spacing: Style.current.padding
                 StatusBaseText {
                     width: parent.width
-                    text: qsTr("Account")
+                    text: qsTr("Pay")
+                }
+                StatusListItem {
+                    id: payToken
+                    width: parent.width
+                    height: 76
+                    border.width: 1
+                    border.color: Theme.palette.baseColor2
+                    asset.name: !!root.adaptor.fromToken ?
+                                    Constants.tokenIcon(root.adaptor.fromToken.symbol): ""
+                    asset.isImage: true
+                    title: qsTr("%1 %2").arg(
+                               SQUtils.AmountsArithmetic.fromString(swapSignApproveInputForm.fromTokensAmount).toFixed().replace('.', LocaleUtils.userInputLocale.decimalPoint)).arg(
+                               !!root.adaptor.fromToken ? root.adaptor.fromToken.symbol: "")
+                    subTitle: SQUtils.Utils.elideText(root.adaptor.fromTokenContractAddress.address, 6, 4)
+                    components: [
+                        StatusRoundButton {
+                            type: StatusRoundButton.Type.Quinary
+                            radius: 8
+                            icon.name: "more"
+                            icon.color: Theme.palette.directColor5
+                            onClicked: {}
+                        }
+                    ]
+                }
+                visible: !d.isApproveTx
+            }
+
+            Column {
+                width: scrollView.availableWidth
+                spacing: Style.current.padding
+                StatusBaseText {
+                    width: parent.width
+                    text: qsTr("Receive")
+                }
+                StatusListItem {
+                    id: receiveToken
+                    width: parent.width
+                    height: 76
+                    border.width: 1
+                    border.color: Theme.palette.baseColor2
+                    asset.name: !!root.adaptor.toToken ?
+                                    Constants.tokenIcon(root.adaptor.toToken.symbol): ""
+                    asset.isImage: true
+                    title: qsTr("%1 %2").arg(
+                               SQUtils.AmountsArithmetic.fromString(swapSignApproveInputForm.toTokensAmount).toFixed().replace('.', LocaleUtils.userInputLocale.decimalPoint)).arg(
+                               !!root.adaptor.toToken ? root.adaptor.toToken.symbol: "")
+                    subTitle: SQUtils.Utils.elideText(root.adaptor.toTokenContractAddress.address, 6, 4)
+                    components: [
+                        StatusRoundButton {
+                            type: StatusRoundButton.Type.Quinary
+                            radius: 8
+                            icon.name: "more"
+                            icon.color: Theme.palette.directColor5
+                            onClicked: {}
+                        }
+                    ]
+                }
+                visible: !d.isApproveTx
+            }
+
+            Column {
+                width: scrollView.availableWidth
+                spacing: Style.current.padding
+                StatusBaseText {
+                    width: parent.width
+                    text: d.isApproveTx ?  qsTr("Account") : qsTr("In account")
                 }
                 WalletAccountListItem {
                     width: parent.width
@@ -117,9 +199,9 @@ StatusDialog {
                     asset.isImage: true
                     title: !!root.adaptor.fromToken ?
                                root.adaptor.fromToken.symbol  ?? "" : ""
-                    subTitle: SQUtils.Utils.elideText(contractAddressOnSelectedNetwork.item.address, 6, 4)
+                    subTitle: SQUtils.Utils.elideText(payContractAddressOnSelectedNetwork.item.address, 6, 4)
                     ModelEntry {
-                        id: contractAddressOnSelectedNetwork
+                        id: payContractAddressOnSelectedNetwork
                         sourceModel: !!root.adaptor.fromToken ?
                                          root.adaptor.fromToken.addressPerChain ?? null : null
                         key: "chainId"
@@ -135,6 +217,7 @@ StatusDialog {
                         }
                     ]
                 }
+                visible: d.isApproveTx
             }
 
             Column {
@@ -166,6 +249,7 @@ StatusDialog {
                         }
                     ]
                 }
+                visible: d.isApproveTx
             }
 
             Column {
@@ -213,14 +297,26 @@ StatusDialog {
                                 anchors.right: parent.right
                                 loading: root.loading
                                 text: {
-                                    let feesInFoat = root.adaptor.currencyStore.getFiatValue(root.swapSignApproveInputForm.approvalGasFees, Constants.ethToken)
-                                    return root.adaptor.currencyStore.formatCurrencyAmount(feesInFoat, root.adaptor.currencyStore.currentCurrency)
+                                    if(d.isApproveTx) {
+                                        let feesInFoat = root.adaptor.currencyStore.getFiatValue(root.swapSignApproveInputForm.approvalGasFees, Constants.ethToken)
+                                        return root.adaptor.currencyStore.formatCurrencyAmount(feesInFoat, root.adaptor.currencyStore.currentCurrency)
+                                    } else {
+                                        return root.adaptor.currencyStore.formatCurrencyAmount(root.swapSignApproveInputForm.swapFees, root.adaptor.currencyStore.currentCurrency)
+                                    }
                                 }
                             }
                             StatusTextWithLoadingState   {
                                 anchors.right: parent.right
                                 loading: root.loading
-                                text: root.adaptor.currencyStore.formatCurrencyAmount(root.swapSignApproveInputForm.approvalGasFees, Constants.ethToken)
+                                text: {
+                                    if(d.isApproveTx) {
+                                        return root.adaptor.currencyStore.formatCurrencyAmount(root.swapSignApproveInputForm.approvalGasFees, Constants.ethToken)
+                                    }
+                                    else {
+                                        let cryptoValue = root.adaptor.currencyStore.getCryptoValue(root.swapSignApproveInputForm.swapFees, Constants.ethToken)
+                                        return root.adaptor.currencyStore.formatCurrencyAmount(cryptoValue, Constants.ethToken)
+                                    }
+                                }
                             }
                         }
                     ]
@@ -235,8 +331,12 @@ StatusDialog {
             SwapModalFooterInfoComponent {
                 titleText: qsTr("Max fees:")
                 infoText: {
-                    let feesInFoat = root.adaptor.currencyStore.getFiatValue(root.swapSignApproveInputForm.approvalGasFees, Constants.ethToken)
-                    return root.adaptor.currencyStore.formatCurrencyAmount(feesInFoat, root.adaptor.currencyStore.currentCurrency)
+                    if(d.isApproveTx) {
+                        let feesInFoat = root.adaptor.currencyStore.getFiatValue(root.swapSignApproveInputForm.approvalGasFees, Constants.ethToken)
+                        return root.adaptor.currencyStore.formatCurrencyAmount(feesInFoat, root.adaptor.currencyStore.currentCurrency)
+                    } else {
+                        return root.adaptor.currencyStore.formatCurrencyAmount(root.swapSignApproveInputForm.swapFees, root.adaptor.currencyStore.currentCurrency)
+                    }
                 }
                 loading: root.loading
             }
@@ -245,6 +345,14 @@ StatusDialog {
                 titleText: qsTr("Est. time:")
                 infoText: WalletUtils.getLabelForEstimatedTxTime(root.swapSignApproveInputForm.estimatedTime)
                 loading: root.loading
+                visible: d.isApproveTx
+            }
+            SwapModalFooterInfoComponent {
+                Layout.maximumWidth: 60
+                titleText: qsTr("Max slippage:")
+                infoText: "%1%".arg(LocaleUtils.numberToLocaleString(root.swapSignApproveInputForm.selectedSlippage))
+                loading: root.loading
+                visible: !d.isApproveTx
             }
         }
 
