@@ -276,6 +276,8 @@ QtObject:
   proc lastReloadTimestampChanged*(self: View) {.signal.}
 
   proc setLastReloadTimestamp*(self: View, lastReloadTimestamp: int64) =
+    if lastReloadTimestamp == self.lastReloadTimestamp:
+      return
     self.lastReloadTimestamp = lastReloadTimestamp
     self.lastReloadTimestampChanged()
 
@@ -289,6 +291,8 @@ QtObject:
   proc isAccountTokensReloadingChanged*(self: View) {.signal.}
 
   proc setIsAccountTokensReloading*(self: View, isAccountTokensReloading: bool) =
+    if isAccountTokensReloading == self.isAccountTokensReloading:
+      return
     self.isAccountTokensReloading = isAccountTokensReloading
     self.isAccountTokensReloadingChanged()
 
