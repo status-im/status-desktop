@@ -345,14 +345,9 @@ proc getCommunityTokensDetailsTaskArg(argEncoded: string) {.gcsafe, nimcall.} =
       let allPendingTransactions = getPendingTransactions()
 
       let burnTransactions = allPendingTransactions.filter(x => x.typeValue == $PendingTransactionTypeDto.BurnCommunityToken)
-
       for transaction in burnTransactions:
-        try:
-          let communityToken = toCommunityTokenDto(parseJson(transaction.additionalData))
-          if communityToken.chainId == chainId and communityToken.address == contractAddress:
-            return ContractTransactionStatus.InProgress
-        except Exception:
-          discard
+        if transaction.chainId == chainId and transaction.to.toLower == contractAddress.toLower:
+          return ContractTransactionStatus.InProgress
       return ContractTransactionStatus.Completed
 
     proc getRemoteDestructedAddresses(chainId: int, contractAddress: string): seq[string] =
