@@ -58,7 +58,7 @@ ListView {
     }
 
     Connections {
-        target: root.model
+        target: root.model || null
 
         function onRowsInserted() {
             if (rowModel.count === 0)
