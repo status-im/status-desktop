@@ -63,6 +63,10 @@ Control {
     property int swapExchangeButtonWidth: 44
     property string caption: swapSide === SwapInputPanel.SwapSide.Pay ? qsTr("Pay") : qsTr("Receive")
 
+    function forceActiveFocus() {
+        amountToSendInput.input.forceActiveFocus()
+    }
+
     enum SwapSide {
         Pay = 0,
         Receive = 1

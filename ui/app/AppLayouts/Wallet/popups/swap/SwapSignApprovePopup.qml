@@ -351,7 +351,6 @@ StatusDialog {
                 Layout.maximumWidth: 60
                 titleText: qsTr("Max slippage:")
                 infoText: "%1%".arg(LocaleUtils.numberToLocaleString(root.swapSignApproveInputForm.selectedSlippage))
-                loading: root.loading
                 visible: !d.isApproveTx
             }
         }

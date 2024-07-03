@@ -19,6 +19,8 @@ QtObject {
 
     // default token key
     property string defaultToTokenKey: ""
+    // 15 seconds
+    property int autoRefreshTime: 15000
 
     onSelectedAccountAddressChanged: root.formValuesChanged()
     onSelectedNetworkChainIdChanged: root.formValuesChanged()
@@ -50,15 +52,13 @@ QtObject {
     }
 
     function isFormFilledCorrectly() {
+        let bigIntNumber = SQUtils.AmountsArithmetic.fromString(root.fromTokenAmount)
         return !!root.selectedAccountAddress &&
                 root.selectedNetworkChainId !== -1 &&
                 !!root.fromTokensKey && !!root.toTokenKey &&
-                ((!!root.fromTokenAmount &&
-                  !isNaN(SQUtils.AmountsArithmetic.fromString(root.fromTokenAmount)) &&
-                  SQUtils.AmountsArithmetic.fromString(root.fromTokenAmount) > 0) ||
-                 (!!root.toTokenAmount &&
-                  !isNaN(SQUtils.AmountsArithmetic.fromString(root.toTokenAmount)) &&
-                  SQUtils.AmountsArithmetic.fromString(root.toTokenAmount) > 0 )) &&
+                (!!root.fromTokenAmount &&
+                 !isNaN(bigIntNumber) &&
+                 SQUtils.AmountsArithmetic.cmp(bigIntNumber, 0) === 1) &&
                 root.selectedSlippage > 0
     }
 }

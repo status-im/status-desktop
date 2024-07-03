@@ -150,11 +150,7 @@ Item {
             // verify loading state was set and no errors currently
             verify(!root.swapAdaptor.validSwapProposalReceived)
             verify(root.swapAdaptor.swapProposalLoading)
-            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
-            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "")
-            compare(root.swapAdaptor.swapOutputData.totalFees, 0)
-            compare(root.swapAdaptor.swapOutputData.bestRoutes, [])
-            compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
+            compare(root.swapAdaptor.swapOutputData.rawPaths, [])
             compare(root.swapAdaptor.swapOutputData.hasError, false)
 
             // verfy input and output panels
@@ -589,7 +585,6 @@ Item {
             compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
             compare(root.swapAdaptor.swapOutputData.toTokenAmount, "")
             compare(root.swapAdaptor.swapOutputData.totalFees, 0)
-            compare(root.swapAdaptor.swapOutputData.bestRoutes, [])
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
             compare(root.swapAdaptor.swapOutputData.hasError, true)
             verify(errorTag.visible)
@@ -638,7 +633,6 @@ Item {
             let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
 
             compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
-            compare(root.swapAdaptor.swapOutputData.bestRoutes, txRoutes.suggestedRoutes)
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
             compare(root.swapAdaptor.swapOutputData.hasError, false)
             verify(!errorTag.visible)
@@ -686,7 +680,6 @@ Item {
             totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
 
             compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
-            compare(root.swapAdaptor.swapOutputData.bestRoutes, txRoutes2.suggestedRoutes)
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, true)
             compare(root.swapAdaptor.swapOutputData.hasError, false)
             verify(!errorTag.visible)
@@ -1333,7 +1326,6 @@ Item {
                         SQUtils.AmountsArithmetic.fromString(txRoutes.amountToReceive),
                         SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.toToken.decimals)).toString())
             compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
-            compare(root.swapAdaptor.swapOutputData.bestRoutes, txRoutes.suggestedRoutes)
             compare(root.swapAdaptor.swapOutputData.hasError, false)
             compare(root.swapAdaptor.swapOutputData.estimatedTime, bestPath.estimatedTime)
             compare(root.swapAdaptor.swapOutputData.txProviderName, bestPath.bridgeName)
@@ -1414,7 +1406,7 @@ Item {
 
             let txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
             txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
-            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txHasRouteNoApproval)
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval)
 
             verify(!root.swapAdaptor.approvalPending)
             verify(!root.swapAdaptor.approvalSuccessful)
@@ -1570,6 +1562,30 @@ Item {
             }
 
             closeAndVerfyModal()
+        }
+
+        function test_auto_refresh() {
+            // Asset chosen but no pay value set state -------------------------------------------------------------------------------
+            root.swapFormData.fromTokenAmount = "0.0001"
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            root.swapFormData.selectedNetworkChainId = 11155111
+            root.swapFormData.fromTokensKey = "ETH"
+            // for testing making it 1.5 seconds so as to not make tests running too long
+            root.swapFormData.autoRefreshTime = 1500
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            // check if fetchSuggestedRoutes called
+            fetchSuggestedRoutesCalled.wait()
+
+            // emit routes ready
+            let txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval)
+
+            // check if fetch occurs automatically after 15 seconds
+            fetchSuggestedRoutesCalled.wait()
         }
     }
 }

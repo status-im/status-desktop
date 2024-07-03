@@ -11,7 +11,6 @@ QtObject {
     property string toTokenAmount: ""
     // TODO: this should be string but backend gas_estimate_item.nim passes this as float
     property real totalFees: 0
-    property var bestRoutes: []
     property bool hasError
     property var rawPaths: []
     // need to check how this is done in new router v2, right now it is Enum type
@@ -22,24 +21,22 @@ QtObject {
     property string approvalAmountRequired
     property string approvalContractAddress
 
+    function resetPathInfoAndError() {
+        root.hasError = false
+        root.rawPaths = []
+    }
+
     function reset() {
         root.fromTokenAmount = ""
         root.toTokenAmount = ""
-        root.resetAllButReceivedTokenValuesForSwap()
-    }
-
-    function resetAllButReceivedTokenValuesForSwap() {
-        root.totalFees = 0
-        root.bestRoutes = []
-        root.approvalNeeded = false
-        root.hasError = false
-        root.rawPaths = []
+        root.txProviderName = ""
         root.estimatedTime = Constants.TransactionEstimatedTime.Unknown
-        txProviderName = ""
-        approvalNeeded = false
-        approvalGasFees = ""
-        approvalAmountRequired = ""
-        approvalContractAddress = ""
+        root.totalFees = 0
+        root.approvalNeeded = false
+        root.approvalGasFees = ""
+        root.approvalAmountRequired = ""
+        root.approvalContractAddress = ""
+        resetPathInfoAndError()
     }
 }
 

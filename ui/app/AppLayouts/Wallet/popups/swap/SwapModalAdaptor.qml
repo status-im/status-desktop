@@ -76,6 +76,8 @@ QObject {
         filters: ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled }
     }
 
+    signal suggestedRoutesReady()
+
     QtObject {
         id: d
 
@@ -163,7 +165,6 @@ QObject {
             // if valid route was found
             if(txRoutes.suggestedRoutes.count === 1) {
                 root.validSwapProposalReceived = true
-                root.swapOutputData.bestRoutes =  txRoutes.suggestedRoutes
                 root.swapOutputData.toTokenAmount = AmountsArithmetic.div(AmountsArithmetic.fromString(txRoutes.amountToReceive), AmountsArithmetic.fromNumber(1, root.toToken.decimals)).toString()
 
                 let gasTimeEstimate = txRoutes.gasTimeEstimate
@@ -171,7 +172,7 @@ QObject {
                 if (!!root.fromToken && !!root.fromToken.marketDetails && !!root.fromToken.marketDetails.currencyPrice)
                     totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.fromToken.marketDetails.currencyPrice.amount
                 root.swapOutputData.totalFees = root.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
-                let bestPath = ModelUtils.get(root.swapOutputData.bestRoutes, 0, "route")
+                let bestPath = ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
                 root.swapOutputData.approvalNeeded = !!bestPath ? bestPath.approvalRequired: false
                 root.swapOutputData.approvalGasFees = !!bestPath ? bestPath.approvalGasFees.toString() : ""
                 root.swapOutputData.approvalAmountRequired = !!bestPath ? bestPath.approvalAmountRequired: ""
@@ -182,6 +183,7 @@ QObject {
             else {
                 root.swapOutputData.hasError = true
             }
+            root.suggestedRoutesReady()
         }
 
         function onTransactionSent(chainId, txHash, uuid, error) {
@@ -247,12 +249,12 @@ QObject {
     }
 
     function fetchSuggestedRoutes(cryptoValueInRaw) {
+        root.swapFormData.toTokenAmount = ""
         if (root.swapFormData.isFormFilledCorrectly() && !!cryptoValueInRaw) {
             // Identify new swap with a different uuid
             d.uuid = Utils.uuid()
 
             root.swapProposalLoading = true
-            root.swapOutputData.reset()
 
             let account = selectedAccountEntry.item
             let accountAddress = account.address
@@ -263,6 +265,7 @@ QObject {
                                                 disabledChainIds, disabledChainIds, Constants.SendType.Swap, "")
         } else {
             root.swapProposalLoading = false
+            root.swapOutputData.reset()
         }
     }
 
