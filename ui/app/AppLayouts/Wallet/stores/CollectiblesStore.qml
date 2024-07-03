@@ -18,6 +18,8 @@ QtObject {
     readonly property var _allCollectiblesModel: !!root._allCollectiblesModule ? root._allCollectiblesModule.allCollectiblesModel : null
 
     readonly property var allCollectiblesModel: RolesRenamingModel {
+        objectName: "allCollectiblesModel"
+
         sourceModel: root._allCollectiblesModel
 
         mapping: [
@@ -85,6 +87,8 @@ QtObject {
 
     /* PRIVATE: This model joins the "Tokens By Symbol Model" and "Communities Model" by communityId */
     property LeftJoinModel _jointCollectiblesBySymbolModel: LeftJoinModel {
+        objectName: "jointCollectiblesBySymbolModel"
+
         leftModel: allCollectiblesModel
         rightModel: _renamedCommunitiesModel
         joinRole: "communityId"

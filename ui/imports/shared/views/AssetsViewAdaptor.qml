@@ -90,6 +90,8 @@ QObject {
     ObjectProxyModel {
         id: proxyModel
 
+        objectName: "assetsViewAdaptorProxyModel"
+
         sourceModel: root.tokensModel ?? null
 
         delegate: QObject {
