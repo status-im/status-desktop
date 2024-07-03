@@ -222,6 +222,12 @@ QtObject {
         return text.replace(/<[^>]*>?/gm, '')
     }
 
+    // based on php nl2br
+    function nl2br(str) {
+        var breakTag = '<br/>'
+        return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+    }
+
     function elideText(text, leftCharsCount, rightCharsCount = leftCharsCount) {
         return text.substr(0, leftCharsCount) + "…" + text.substr(text.length - rightCharsCount)
     }

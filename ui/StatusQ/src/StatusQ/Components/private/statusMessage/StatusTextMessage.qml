@@ -44,6 +44,9 @@ Item {
 
             let formattedMessage = Utils.linkifyAndXSS(root.messageDetails.messageText);
 
+            if (root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage)
+                formattedMessage = Utils.nl2br(formattedMessage)
+
             isQuote = (formattedMessage.startsWith("<blockquote>") && formattedMessage.endsWith("</blockquote>"));
 
             if (root.isEdited) {
@@ -56,17 +59,13 @@ Item {
 
             if (root.convertToSingleLine || isQuote)
                 formattedMessage = Utils.convertToSingleLine(formattedMessage)
-
             if (root.stripHtmlTags)
                 formattedMessage = Utils.stripHtmlTags(formattedMessage)
-
             // add emoji tags even after html striped
             formattedMessage = Emoji.parse(formattedMessage)
-
             if (root.stripHtmlTags)
                 // short return not to add styling when no html
                 return formattedMessage
-
             return Utils.getMessageWithStyle(formattedMessage)
         }
     }
