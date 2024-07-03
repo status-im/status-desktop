@@ -36,13 +36,20 @@ StatusDialog {
             root.swapAdaptor.fetchSuggestedRoutes(payPanel.rawValue)
         })
 
+        property Timer autoRefreshTimer: Timer {
+            interval: root.swapInputParamsForm.autoRefreshTime
+            running: false
+            repeat: false
+            onTriggered: d.fetchSuggestedRoutes()
+        }
+
         function fetchSuggestedRoutes() {
             if (payPanel.valueValid && root.swapInputParamsForm.isFormFilledCorrectly()) {
                 root.swapAdaptor.validSwapProposalReceived = false
                 root.swapAdaptor.swapProposalLoading = true
                 root.swapAdaptor.approvalPending = false
                 root.swapAdaptor.approvalSuccessful = false
-                root.swapAdaptor.swapOutputData.resetAllButReceivedTokenValuesForSwap()
+                root.swapAdaptor.swapOutputData.resetPathInfoAndError()
                 debounceFetchSuggestedRoutes()
             }
         }
@@ -70,6 +77,10 @@ StatusDialog {
             if(root.swapAdaptor.approvalSuccessful) {
                 d.fetchSuggestedRoutes()
             }
+        }
+        function onSuggestedRoutesReady() {
+            if(!root.swapAdaptor.swapProposalLoading)
+                d.autoRefreshTimer.restart()
         }
     }
 
@@ -257,6 +268,7 @@ StatusDialog {
                         root.swapInputParamsForm.fromTokenAmount = !!root.swapAdaptor.swapOutputData.toTokenAmount ? root.swapAdaptor.swapOutputData.toTokenAmount : root.swapInputParamsForm.toTokenAmount
                         root.swapInputParamsForm.toTokenKey = tempPayToken
                         root.swapInputParamsForm.toTokenAmount = tempPayAmount
+                        payPanel.forceActiveFocus()
                     }
                 }
             }

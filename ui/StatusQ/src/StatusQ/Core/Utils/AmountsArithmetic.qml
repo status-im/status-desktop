@@ -87,13 +87,16 @@ QtObject {
       The obtained amount can be multiplied or compared.
 
       Provided number is assumed to be an amount in basic units, an integer.
+
+      returns NaN in case the conversion fails.
      */
     function fromString(numStr) {
         console.assert(typeof numStr === "string")
-        const amount = new Big.Big(numStr)
-        // TODO: restore assert when permissions handled as bigints
-        //console.assert(amount.eq(amount.round()))
-        return amount
+        try {
+            return new Big.Big(numStr)
+        } catch(e) {
+            return NaN
+        }
     }
 
     /*!
