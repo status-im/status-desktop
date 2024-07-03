@@ -78,7 +78,7 @@ QObject {
         readonly property var ownProfile: QObject {
             readonly property string displayName: root.profileStore.displayName
             readonly property string ensName: root.profileStore.name
-            readonly property bool isEnsVerified: root.profileStore.name !== ""
+            readonly property bool isEnsVerified: root.profileStore.name !== "" && Utils.isValidEns(root.profileStore.name)
             readonly property string localNickname: ""
             readonly property string alias: root.profileStore.username
             readonly property string icon: root.profileStore.icon

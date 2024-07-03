@@ -108,7 +108,7 @@ Item {
             compare(contactDetails.profileStore.displayName,"myDisplayName", "Expected the profile store to be set")
             compare(contactDetails.displayName, contactDetails.profileStore.displayName, "Expected the display name to be set")
             compare(contactDetails.ensName, contactDetails.profileStore.name, "Expected the ens name to be set")
-            compare(contactDetails.ensVerified, true, "Expected the ensVerified to be set")
+            compare(contactDetails.ensVerified, false, "Expected the ensVerified to be set")
             compare(contactDetails.localNickname, "", "Expected the local nickname to be empty")
             compare(contactDetails.alias, contactDetails.profileStore.username, "Expected the alias to be set")
             compare(contactDetails.icon, contactDetails.profileStore.icon, "Expected the icon to be set")
