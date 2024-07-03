@@ -72,7 +72,6 @@ SplitView {
                 message: "Sending message"
                 isAReply: false
                 isContact: true
-                isSending: true
                 amISender: true
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Sending
@@ -85,10 +84,10 @@ SplitView {
                 message: "Sent message"
                 isAReply: false
                 isContact: true
-                isSending: true
                 amISender: true
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Sent
+                resendError: ""
             }
             ListElement {
                 timestamp: 1719769718000
@@ -98,10 +97,36 @@ SplitView {
                 message: "Delivered message"
                 isAReply: false
                 isContact: true
-                isSending: true
                 amISender: true
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                resendError: ""
+            }
+            ListElement {
+                timestamp: 1719769718000
+                senderId: "zq123456790"
+                senderDisplayName: "Alice"
+                contentType: StatusMessage.ContentType.Text
+                message: "Expired message"
+                isAReply: false
+                isContact: true
+                amISender: true
+                trustIndicator: StatusContactVerificationIcons.TrustedType.None
+                outgoingStatus: StatusMessage.OutgoingStatus.Expired
+                resendError: ""
+            }
+            ListElement {
+                timestamp: 1719769718000
+                senderId: "zq123456790"
+                senderDisplayName: "Alice"
+                contentType: StatusMessage.ContentType.Text
+                message: "Message with resend error"
+                isAReply: false
+                isContact: true
+                amISender: true
+                trustIndicator: StatusContactVerificationIcons.TrustedType.None
+                outgoingStatus: StatusMessage.OutgoingStatus.Expired
+                resendError: "can't send message on Tuesday"
             }
         }
         readonly property var colorHash: ListModel {
@@ -134,8 +159,8 @@ SplitView {
                     width: ListView.view.width
                     timestamp: model.timestamp
                     isAReply: model.isAReply
-                    isSending: model.isSending
                     outgoingStatus: model.outgoingStatus
+                    resendError: model.outgoingStatus === StatusMessage.OutgoingStatus.Expired ? model.resendError : ""
 
                     messageDetails {
                         readonly property bool isEnsVerified: model.senderDisplayName.endsWith(".eth")
@@ -170,6 +195,7 @@ SplitView {
                     onProfilePictureClicked: logs.logEvent("StatusMessage::profilePictureClicked")
                     onReplyProfileClicked: logs.logEvent("StatusMessage::replyProfileClicked")
                     onReplyMessageClicked: logs.logEvent("StatusMessage::replyMessageClicked")
+                    onResendClicked: logs.logEvent("StatusMessage::resendClicked")
                 }
             }
         }

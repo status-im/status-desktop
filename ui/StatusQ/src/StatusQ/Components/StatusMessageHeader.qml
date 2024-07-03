@@ -18,9 +18,6 @@ Item {
     property double timestamp: 0
 
     property string tertiaryDetail: sender.id
-    property string resendText: qsTr("Resend")
-    property bool showResendButton: false
-    property bool showSendingLoader: false
     property string resendError: ""
     property bool isContact: sender.isContact
     property int trustIndicator: sender.trustIndicator
@@ -29,12 +26,20 @@ Item {
     property string messageOriginInfo: ""
     property bool showFullTimestamp
     property int outgoingStatus: StatusMessage.OutgoingStatus.Unknown
+    property bool showOutgointStatusLabel: false
 
     signal clicked(var sender, var mouse)
     signal resendClicked()
 
     implicitHeight: layout.implicitHeight
     implicitWidth: layout.implicitWidth
+
+    QtObject {
+        id: d
+
+        readonly property bool expired: root.outgoingStatus === StatusMessage.OutgoingStatus.Expired
+        readonly property color outgoingStatusColor: expired ? Theme.palette.warningColor1 : Theme.palette.baseColor1
+    }
 
     RowLayout {
         id: layout
@@ -134,54 +139,10 @@ Item {
         }
 
         StatusTimeStampLabel {
-            verticalAlignment: Text.AlignVCenter
             id: timestampText
+            verticalAlignment: Text.AlignVCenter
             timestamp: root.timestamp
             showFullTimestamp: root.showFullTimestamp
-        }
-
-        Loader {
-            id: resendButtonLoader
-            active: showResendButton && !!timestampText.text
-            asynchronous: true
-            sourceComponent: StatusBaseText {
-                id: resendButton
-                verticalAlignment: Text.AlignVCenter
-                color: Theme.palette.dangerColor1
-                font.pixelSize: Theme.tertiaryTextFontSize
-                text: root.resendText
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onClicked: root.resendClicked()
-                }
-            }
-        }
-
-        Loader {
-            id: resendErrorTextLoader
-            active: resendError && !!timestampText.text
-            asynchronous: true
-            sourceComponent: StatusBaseText {
-                id: resendErrorText
-                verticalAlignment: Text.AlignVCenter
-                color: Theme.palette.baseColor1
-                font.pixelSize: Theme.tertiaryTextFontSize
-                text: qsTr("Failed to resend: %1").arg(resendError) // TODO replace this with the required design
-            }
-        }
-
-        Loader {
-            id: sendingInProgressLoader
-            active: showSendingLoader && !!timestampText.text
-            asynchronous: true
-            sourceComponent: StatusBaseText {
-                id: sendingInProgress
-                verticalAlignment: Text.AlignVCenter
-                color: Theme.palette.baseColor1
-                font.pixelSize: Theme.tertiaryTextFontSize
-                text: qsTr("Sending...") // TODO replace this with the required design
-            }
         }
 
         Component {
@@ -192,6 +153,79 @@ Item {
                 font.pixelSize: Theme.asideTextFontSize
                 color: Theme.palette.baseColor1
                 text: "•"
+            }
+        }
+
+        Loader {
+            id: deliveryStatusLoader
+            Layout.alignment: Qt.AlignVCenter
+            active: root.outgoingStatus !== StatusMessage.OutgoingStatus.Unknown
+            asynchronous: true
+            sourceComponent: RowLayout {
+                spacing: 0
+                StatusIcon {
+                    Layout.preferredHeight: 15
+                    Layout.preferredWidth: 15
+                    Layout.alignment: Qt.AlignVCenter
+                    color: d.outgoingStatusColor
+                    icon: {
+                        if (root.resendError != "")
+                            return "tiny/tiny-exclamation"
+                        switch (root.outgoingStatus) {
+                        case StatusMessage.OutgoingStatus.Delivered:
+                            return "tiny/message/delivered"
+                        case StatusMessage.OutgoingStatus.Sent:
+                            return "tiny/message/sent"
+                        case StatusMessage.OutgoingStatus.Sending:
+                            return "tiny/pending"
+                        case StatusMessage.OutgoingStatus.Expired:
+                            return "tiny/tiny-exclamation"
+                        default:
+                            return ""
+                        }
+                    }
+                }
+                Loader {
+                    active: root.showOutgointStatusLabel
+                    asynchronous: true
+                    sourceComponent: StatusBaseText {
+                        Layout.alignment: Qt.AlignVCenter
+                        color: d.outgoingStatusColor
+                        font.pixelSize: Theme.asideTextFontSize
+                        text: {
+                            if (root.resendError != "")
+                                return qsTr("Failed to resend: %1").arg(root.resendError)
+                            switch (root.outgoingStatus) {
+                            case StatusMessage.OutgoingStatus.Delivered:
+                                return qsTr("Delivered")
+                            case StatusMessage.OutgoingStatus.Sent:
+                                return qsTr("Sent")
+                            case StatusMessage.OutgoingStatus.Sending:
+                                return qsTr("Sending")
+                            case StatusMessage.OutgoingStatus.Expired:
+                                return qsTr("Sending failed")
+                            default:
+                                return ""
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Loader {
+            id: resendButtonLoader
+            active: root.showOutgointStatusLabel && d.expired
+            asynchronous: true
+            sourceComponent: StatusButton {
+                Layout.fillHeight: true
+                verticalPadding: 0
+                horizontalPadding: 5
+                size: StatusBaseButton.Tiny
+                type: StatusBaseButton.Warning
+                font.pixelSize: 11
+                text: qsTr("Resend")
+                onClicked: root.resendClicked()
             }
         }
 
