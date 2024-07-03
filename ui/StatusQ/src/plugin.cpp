@@ -75,6 +75,9 @@ public:
         qmlRegisterUncreatableType<ModelCount>("StatusQ", 0, 1,
                                                "ModelCount", "This is attached type, cannot be created directly.");
 
+        // Workaround for https://bugreports.qt.io/browse/QTBUG-86428
+        qmlRegisterAnonymousType<QAbstractItemModel>("StatusQ", 1);
+
         qmlRegisterSingletonType<ModelUtilsInternal>(
             "StatusQ.Internal", 0, 1, "ModelUtils", &ModelUtilsInternal::qmlInstance);
 
