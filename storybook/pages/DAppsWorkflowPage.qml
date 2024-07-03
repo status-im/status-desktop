@@ -18,7 +18,6 @@ import Models 1.0
 import Storybook 1.0
 
 import AppLayouts.Wallet.controls 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.services.dapps 1.0
 
 import SortFilterProxyModel 0.2
@@ -373,7 +372,7 @@ Item {
             }
         }
 
-        walletRootStore: WalletStores.RootStore {
+        walletRootStore: QObject {
             property string selectedAddress: ""
             property var filteredFlatModel: SortFilterProxyModel {
                 sourceModel: NetworksModel.flatNetworks

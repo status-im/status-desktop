@@ -14,7 +14,6 @@ import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Wallet.services.dapps.types 1.0
 import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.panels 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import shared.stores 1.0
 
@@ -121,7 +120,7 @@ Item {
     Component {
         id: walletStoreComponent
 
-        WalletStores.RootStore {
+        QtObject {
             property string selectedAddress: ""
             readonly property ListModel filteredFlatModel: ListModel {
                 ListElement { chainId: 1 }

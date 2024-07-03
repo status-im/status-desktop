@@ -5,7 +5,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Wallet.services.dapps.types 1.0
 import AppLayouts.Profile.stores 1.0
@@ -31,7 +30,7 @@ QObject {
 
     required property WalletConnectSDKBase wcSDK
     required property DAppsStore store
-    required property WalletStores.RootStore walletRootStore
+    required property var walletRootStore
 
     readonly property string selectedAccountAddress: walletRootStore.selectedAddress
 

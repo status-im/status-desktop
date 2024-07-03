@@ -21,6 +21,7 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.adaptors 1.0
 
 import shared.popups.send.panels 1.0
 import "./controls"
@@ -79,6 +80,12 @@ StatusDialog {
 
     QtObject {
         id: d
+
+        readonly property WalletAccountsAdaptor accountsAdaptor: WalletAccountsAdaptor {
+            accountsModel: popup.store.accounts
+            flatNetworksModel: popup.store.flatNetworksModel
+            areTestNetworksEnabled: popup.store.areTestNetworksEnabled
+        }
 
         property bool ensOrStickersPurpose: popup.preSelectedSendType === Constants.SendType.ENSRegister ||
                                             popup.preSelectedSendType === Constants.SendType.ENSRelease ||
@@ -470,20 +477,7 @@ StatusDialog {
             visible: !recipientInputLoader.ready && !d.isBridgeTx && !!d.selectedHolding
 
             savedAddressesModel: popup.store.savedAddressesModel
-            myAccountsModel: SortFilterProxyModel {
-                sourceModel: popup.store.accounts
-
-                proxyRoles: FastExpressionRole {
-                    function getColorizedChainShortNames(preferredSharingChainIds, address){
-                        const chainShortNames = popup.store.getNetworkShortNames(preferredSharingChainIds)
-                        return WalletUtils.colorizedChainPrefix(chainShortNames) + address
-                    }
-
-                    name: "colorizedChainShortNames"
-                    expectedRoles: ["preferredSharingChainIds", "address"]
-                    expression: getColorizedChainShortNames(model.preferredSharingChainIds, model.address)
-                }
-            }
+            myAccountsModel: d.accountsAdaptor.model
             recentRecipientsModel: popup.store.tempActivityController1Model // Use Layer1 controller since this could go on top of other activity lists
 
             onRecipientSelected:  {

@@ -261,7 +261,7 @@ Item {
                 mouseMove(delegateUnderTest, delegateUnderTest.width/2, delegateUnderTest.height/2)
                 verify(delegateUnderTest.sensor.containsMouse)
                 compare(delegateUnderTest.title, swapAdaptor.nonWatchAccounts.get(i).name)
-                compare(delegateUnderTest.subTitle, WalletUtils.colorizedChainPrefix(root.swapAdaptor.getNetworkShortNames(swapAdaptor.nonWatchAccounts.get(i).preferredSharingChainIds)), "Randomly failing locally. Add a bug if you see this failing in CI")
+                compare(delegateUnderTest.subTitle, WalletUtils.colorizedChainPrefix(WalletUtils.getNetworkShortNames(swapAdaptor.nonWatchAccounts.get(i).preferredSharingChainIds, root.swapStore.flatNetworks)), "Randomly failing locally. Add a bug if you see this failing in CI")
                 verify(delegateUnderTest.color, Theme.palette.baseColor2)
 
             }
