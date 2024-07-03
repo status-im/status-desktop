@@ -170,6 +170,7 @@ QtObject:
 
     return (chainIds, enable)
 
+  # TODO: To be removed once all qml calls to this method are removed. Normally the formatting methods should live in the qml project.
   proc getNetworkShortNames*(self: Model, preferredNetworks: string, areTestNetworksEnabled: bool): string =
     var networkString = ""
     let networks = preferredNetworks.split(":")
