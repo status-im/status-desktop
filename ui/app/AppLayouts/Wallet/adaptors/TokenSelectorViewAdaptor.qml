@@ -173,7 +173,7 @@ QObject {
 
     RolesRenamingModel {
         id: renamedTokensBySymbolModel
-        sourceModel: root.plainTokensBySymbolModel
+        sourceModel: root.plainTokensBySymbolModel || null
         mapping: [
             RoleRename {
                 from: "key"
