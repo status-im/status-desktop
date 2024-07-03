@@ -42,14 +42,18 @@ method delete*(self: Module) =
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let walletAccounts = self.controller.getWalletAccounts()
   let currency = self.controller.getCurrentCurrency()
+  let allChainIds = self.controller.getChainIds()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
   let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
+
   let items = walletAccounts.map(w => (block:
-    let keycardAccount = self.controller.isKeycardAccount(w)
     let currencyBalance = self.controller.getTotalCurrencyBalance(w.address, chainIds)
+    let keycardAccount = self.controller.isKeycardAccount(w)
     walletAccountToWalletAccountsItem(
       w,
       keycardAccount,
+      allChainIds,
+      chainIds,
       currencyBalance,
       currencyFormat,
       areTestNetworksEnabled,

@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.controls 1.0
+import shared.stores.send 1.0
 
 import "../controls"
 import "../popups"
@@ -17,6 +18,7 @@ Rectangle {
 
     property var walletStore
     property var networkConnectionStore
+    required property TransactionStore transactionStore
 
     // Community-token related properties:
     required property bool isCommunityOwnershipTransfer
@@ -52,7 +54,10 @@ Rectangle {
             icon.name: "send"
             text: root.isCommunityOwnershipTransfer ? qsTr("Send Owner token to transfer %1 Community ownership").arg(root.communityName) : qsTr("Send")
             interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
-            onClicked: root.launchSendModal()
+            onClicked: {
+                root.transactionStore.setSenderAccount(root.walletStore.selectedAddress)
+                root.launchSendModal()
+            }
             tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be sent to another wallet") : networkConnectionStore.sendBuyBridgeToolTipText
             visible: !walletStore.overview.isWatchOnlyAccount && walletStore.overview.canSend && !root.walletStore.showAllAccounts
         }
@@ -62,6 +67,7 @@ Rectangle {
             text: qsTr("Receive")
             visible: !root.walletStore.showAllAccounts
             onClicked: function () {
+                root.transactionStore.setReceiverAccount(root.walletStore.selectedAddress)
                 launchShareAddressModal()
             }
         }

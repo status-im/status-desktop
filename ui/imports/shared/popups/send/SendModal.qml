@@ -30,7 +30,7 @@ import "./models"
 StatusDialog {
     id: popup
 
-    property var preSelectedAccount: store.selectedSenderAccount
+    property var preSelectedAccount: selectedAccount
     // expected content depends on the preSelectedRecipientType value.
     // If type Address this must be a string else it expects an object. See RecipientView.selectedRecipientType
     property var preSelectedRecipient
@@ -56,6 +56,8 @@ StatusDialog {
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
+
+    readonly property var selectedAccount: selectedSenderAccountEntry.item ?? ModelUtils.get(store.accounts, 0)
 
     property var sendTransaction: function() {
         d.isPendingTx = true
@@ -165,11 +167,18 @@ StatusDialog {
         controller: popup.store.walletAssetStore.assetsController
         showCommunityAssets: popup.store.tokensStore.showCommunityAssetsInSend
         tokensModel: popup.store.walletAssetStore.groupedAccountAssetsModel
-        account: popup.store.selectedSenderAccount.address
+        account: popup.store.selectedSenderAccountAddress
         marketValueThreshold:
             popup.store.tokensStore.displayAssetsBelowBalance
             ? popup.store.tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
             : 0
+    }
+
+    ModelEntry {
+        id: selectedSenderAccountEntry
+        key: "address"
+        sourceModel: popup.store.accounts
+        value: popup.store.selectedSenderAccountAddress
     }
 
     bottomPadding: 16
@@ -224,7 +233,15 @@ StatusDialog {
         AccountSelectorHeader {
             id: accountSelector
             model: SortFilterProxyModel {
-                sourceModel: popup.store.senderAccounts
+                sourceModel: SortFilterProxyModel {
+                    sourceModel: popup.store.accounts
+                    filters: [
+                        ValueFilter {
+                            roleName: "canSend"
+                            value: true
+                        }
+                    ]
+                }
 
                 sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
                 proxyRoles: [
@@ -241,7 +258,7 @@ StatusDialog {
             }
             selectedAddress: !!popup.preSelectedAccount && !!popup.preSelectedAccount.address ? popup.preSelectedAccount.address : ""
             onCurrentAccountAddressChanged: {
-                store.switchSenderAccountByAddress(currentAccountAddress)
+                store.setSenderAccount(currentAccountAddress)
                 if (d.isSelectedHoldingValidAsset) {
                     d.setSelectedHoldingId(d.selectedHolding.symbol, d.selectedHoldingType)
                 }
