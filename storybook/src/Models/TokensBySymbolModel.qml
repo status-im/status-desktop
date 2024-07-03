@@ -47,7 +47,11 @@ ListModel {
             symbol: "STT",
             sources: ";" + status + ";",
             addressPerChain: [
-                {chainId: 5, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"}
+                {chainId: 5, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                { chainId: 420, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                { chainId: 421613, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                { chainId: 11155111, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                { chainId: 10, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
             ],
             decimals: 18,
             type: 1,
@@ -78,6 +82,8 @@ ListModel {
                 { chainId: 42161, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
                 { chainId: 5, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
                 { chainId: 11155111, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+                { chainId: 420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
+                { chainId: 421613, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
             ],
             decimals: 18,
             type: 1,
@@ -96,6 +102,94 @@ ListModel {
             },
             detailsLoading: false,
             marketDetailsLoading: false
+        },
+        {
+            key: "aave",
+            name: "Aave",
+            symbol: "AAVE",
+            image: "https://cryptologos.cc/logos/aave-aave-logo.png",
+            communityId: "",
+            sources: ";" + uniswap + ";" + status + ";",
+            addressPerChain: [
+                { chainId: 11155111, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+                { chainId: 421613, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+            ],
+            decimals: 18,
+            type: 1,
+            communityId: "",
+            description: "",
+            websiteUrl: "",
+            marketDetails: {
+                marketCap: ({amount: 3641953745.413845, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                highDay: ({amount: 1.000069852130498, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                lowDay: ({amount: 0.9989457077643417, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                changePctHour: 0.003162399421324529,
+                changePctDay: 0.0008257482387743841,
+                changePct24hour: 0.04426443627508443,
+                change24hour: 0.0004424433543155981,
+                currencyPrice: ({amount: 0.9999000202515163, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
+            },
+            detailsLoading: false,
+            marketDetailsLoading: false
+        },
+        {
+            key: "usdc",
+            name: "USDC",
+            symbol: "USDC",
+            image: "",
+            communityId: "",
+            sources: ";" + uniswap + ";" + status + ";",
+            addressPerChain: [
+                { chainId: 11155111, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+            ],
+            decimals: 18,
+            type: 1,
+            communityId: "",
+            description: "",
+            websiteUrl: "",
+            marketDetails: {
+                marketCap: ({amount: 3641953745.413845, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                highDay: ({amount: 1.000069852130498, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                lowDay: ({amount: 0.9989457077643417, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                changePctHour: 0.003162399421324529,
+                changePctDay: 0.0008257482387743841,
+                changePct24hour: 0.04426443627508443,
+                change24hour: 0.0004424433543155981,
+                currencyPrice: ({amount: 0.9999000202515163, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
+            },
+            detailsLoading: false,
+            marketDetailsLoading: false
+
+        },
+        {
+            key: "hst",
+            name: "Decision Token",
+            symbol: "HST",
+            image: "",
+            communityId: "",
+            sources: ";" + uniswap + ";" + status + ";",
+            addressPerChain: [
+                { chainId: 420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
+                { chainId: 421613, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+            ],
+            decimals: 18,
+            type: 1,
+            communityId: "",
+            description: "",
+            websiteUrl: "",
+            marketDetails: {
+                marketCap: ({amount: 3641953745.413845, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                highDay: ({amount: 1.000069852130498, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                lowDay: ({amount: 0.9989457077643417, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                changePctHour: 0.003162399421324529,
+                changePctDay: 0.0008257482387743841,
+                changePct24hour: 0.04426443627508443,
+                change24hour: 0.0004424433543155981,
+                currencyPrice: ({amount: 0.9999000202515163, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
+            },
+            detailsLoading: false,
+            marketDetailsLoading: false
+
         },
         {
             key: "0x6b175474e89094c44da98b954eedeac495271e0f",
@@ -155,7 +249,8 @@ ListModel {
             symbol: "MET",
             sources: ";" + custom + ";",
             addressPerChain: [
-                { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271d0f"}
+                { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271d0f"},
+                { chainId: 10, address: "0x6b175474e89094c44da98b954eedeac495271d0f"}
             ],
             decimals: 0,
             type: 1,

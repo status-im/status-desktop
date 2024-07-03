@@ -24,8 +24,6 @@ StatusDialog {
     required property SwapInputParamsForm swapInputParamsForm
     required property SwapModalAdaptor swapAdaptor
 
-    property var plainTokensBySymbolModel: swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
-
     objectName: "swapModal"
 
     implicitWidth: 556
@@ -146,6 +144,24 @@ StatusDialog {
                         onSelectionChanged: {
                             if (root.swapInputParamsForm.selectedNetworkChainId !== selection[0]) {
                                 root.swapInputParamsForm.selectedNetworkChainId = selection[0]
+                                if(!!root.swapAdaptor.fromToken && !!root.swapAdaptor.fromToken.addressPerChain) {
+                                    let fromTokenAddressOnSelectedChain = SQUtils.ModelUtils.getByKey(
+                                            root.swapAdaptor.fromToken.addressPerChain, "chainId",
+                                            root.swapInputParamsForm.selectedNetworkChainId, "address")
+                                    if(!fromTokenAddressOnSelectedChain) {
+                                        // reset from token as it doesnt exist on selected network
+                                        root.swapInputParamsForm.resetFromTokenValues()
+                                    }
+                                }
+                                if(!!root.swapAdaptor.toToken && !!root.swapAdaptor.toToken.addressPerChain) {
+                                    let toTokenAddressOnSelectedChain = SQUtils.ModelUtils.getByKey(
+                                            root.swapAdaptor.toToken.addressPerChain, "chainId",
+                                            root.swapInputParamsForm.selectedNetworkChainId, "address")
+                                    if(!toTokenAddressOnSelectedChain) {
+                                        // reset to token as it doesnt exist on selected network
+                                        root.swapInputParamsForm.resetToTokenValues(false)
+                                    }
+                                }
                             }
                         }
                     }
@@ -170,7 +186,7 @@ StatusDialog {
                     currencyStore: root.swapAdaptor.currencyStore
                     flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
-                    plainTokensBySymbolModel: root.plainTokensBySymbolModel
+                    plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
 
                     tokenKey: root.swapInputParamsForm.fromTokensKey
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
@@ -207,7 +223,7 @@ StatusDialog {
                     currencyStore: root.swapAdaptor.currencyStore
                     flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
-                    plainTokensBySymbolModel: root.plainTokensBySymbolModel
+                    plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
 
                     tokenKey: root.swapInputParamsForm.toTokenKey
                     tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount

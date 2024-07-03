@@ -121,6 +121,20 @@ QObject {
                 }
                 expectedRoles: ["which_model", "tokensKey"]
                 enabled: root.showAllTokens
+            },
+            // remove tokens not available on selected network(s)
+            FastExpressionFilter {
+                function isPresentOnEnabledNetworks(addressPerChain) {
+                    if(!addressPerChain)
+                           return true
+                    return !!ModelUtils.getFirstModelEntryIf(
+                                addressPerChain,
+                                (addPerChain) => {
+                                    return root.enabledChainIds.includes(addPerChain.chainId)
+                                })
+                }
+                expression: isPresentOnEnabledNetworks(model.addressPerChain)
+                expectedRoles: ["addressPerChain"]
             }
         ]
 

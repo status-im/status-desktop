@@ -29,6 +29,7 @@ Item {
             assetsModel: d.assetsStore.groupedAccountAssetsModel
             flatNetworksModel: d.flatNetworks
             currentCurrency: "USD"
+            enabledChainIds: ModelUtils.modelToFlatArray(d.flatNetworks, "chainId")
         }
     }
 

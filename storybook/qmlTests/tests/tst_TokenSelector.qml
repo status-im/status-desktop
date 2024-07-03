@@ -42,6 +42,7 @@ Item {
             plainTokensBySymbolModel: plainTokensModel
             flatNetworksModel: d.flatNetworks
             currentCurrency: "USD"
+            enabledChainIds: [420]
 
             Binding on searchString {
                 value: controlUnderTest ? controlUnderTest.searchString : ""
