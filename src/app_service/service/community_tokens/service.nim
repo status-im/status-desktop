@@ -1018,6 +1018,8 @@ QtObject:
     var errorCode = ComputeFeeErrorCode.Other
     if errorMessage.contains("403 Forbidden") or errorMessage.contains("exceed"):
       errorCode = ComputeFeeErrorCode.Infura
+    if errorMessage.contains("execution reverted"):
+      errorCode = ComputeFeeErrorCode.Revert
     return errorCode
 
   proc burnTokens*(self: Service, communityId: string, password: string, contractUniqueKey: string, amount: Uint256, addressFrom: string) =
