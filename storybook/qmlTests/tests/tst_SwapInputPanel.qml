@@ -34,6 +34,7 @@ Item {
 
     QtObject {
         id: d
+        readonly property int goOptChainId: 420
 
         readonly property SwapModalAdaptor adaptor: SwapModalAdaptor {
             swapStore: SwapStore {
@@ -63,6 +64,7 @@ Item {
             currentCurrency: d.adaptor.currencyStore.currentCurrency
 
             accountAddress: d.adaptor.swapFormData.selectedAccountAddress
+            enabledChainIds: [d.goOptChainId]
         }
     }
 
@@ -75,6 +77,8 @@ Item {
             flatNetworksModel: d.adaptor.swapStore.flatNetworks
             processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
             plainTokensBySymbolModel: plainTokensModel
+            selectedAccountAddress: d.adaptor.swapFormData.selectedAccountAddress
+            selectedNetworkChainId: d.goOptChainId
         }
     }
 

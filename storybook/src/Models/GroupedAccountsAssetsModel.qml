@@ -36,6 +36,17 @@ ListModel {
             ]
         },
         {
+            tokensKey: "aave",
+            balances: [
+                { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 10, balance: "559133758939097000" },
+                { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 420, balance: "0" },
+                { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 11155111, balance: "123456789123456789" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 420, balance: "123456789123456789" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 11155111, balance: "123456789123456789" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 42161, balance: "45123456789123456789" },
+            ]
+        },
+        {
             tokensKey: "0x6b175474e89094c44da98b954eedeac495271e0f",
             balances: [
                 { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 420, balance: "100" },

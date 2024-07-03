@@ -145,35 +145,6 @@ SplitView {
                 destroyOnClose: true
                 swapInputParamsForm: adaptor.swapFormData
                 swapAdaptor: adaptor
-                plainTokensBySymbolModel: ListModel {
-                    ListElement {
-                        key: "aave"
-                        name: "Aave"
-                        symbol: "AAVE"
-                        image: "https://cryptologos.cc/logos/aave-aave-logo.png"
-                        communityId: ""
-                        decimals: 18
-                        marketDetails: []
-                    }
-                    ListElement {
-                        key: "usdc"
-                        name: "USDC"
-                        symbol: "USDC"
-                        image: ""
-                        communityId: ""
-                        decimals: 18
-                        marketDetails: []
-                    }
-                    ListElement {
-                        key: "hst"
-                        name: "Decision Token"
-                        symbol: "HST"
-                        image: ""
-                        communityId: ""
-                        decimals: 18
-                        marketDetails: []
-                    }
-                }
                 Binding {
                     target: swapInputParamsForm
                     property: "fromTokensKey"

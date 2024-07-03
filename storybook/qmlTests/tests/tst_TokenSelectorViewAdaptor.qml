@@ -13,25 +13,6 @@ Item {
     width: 600
     height: 400
 
-    ListModel {
-        id: plainTokensModel
-        ListElement {
-            key: "aave"
-            name: "Aave"
-            symbol: "AAVE"
-            image: "https://cryptologos.cc/logos/aave-aave-logo.png"
-            communityId: ""
-        }
-        // DAI should be filtered out
-        ListElement {
-            key: "DAI"
-            name: "Dai Stablecoin"
-            symbol: "DAI"
-            image: ""
-            communityId: ""
-        }
-    }
-
     QtObject {
         id: d
 
@@ -52,7 +33,8 @@ Item {
             assetsModel: d.assetsStore.groupedAccountAssetsModel
             flatNetworksModel: d.flatNetworks
             currentCurrency: "USD"
-            plainTokensBySymbolModel: plainTokensModel
+            plainTokensBySymbolModel: TokensBySymbolModel{}
+            enabledChainIds: ModelUtils.modelToFlatArray(d.flatNetworks, "chainId")
         }
     }
 

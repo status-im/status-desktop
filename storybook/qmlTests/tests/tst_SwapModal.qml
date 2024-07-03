@@ -67,6 +67,7 @@ Item {
         assetsModel: swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
         flatNetworksModel: swapStore.flatNetworks
         currentCurrency: swapAdaptor.currencyStore.currentCurrency
+        plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
 
         enabledChainIds: !!root.swapFormData && root.swapFormData.selectedNetworkChainId !== - 1 ? [root.swapFormData.selectedNetworkChainId] : []
         accountAddress: !!root.swapFormData && root.swapFormData.selectedAccountAddress
@@ -893,41 +894,6 @@ Item {
             closeAndVerfyModal()
         }
 
-        function test_modal_switching_networks() {
-            // try setting value before popup is launched and check values
-            let valueToExchange = 0.3
-            let valueToExchangeString = valueToExchange.toString()
-            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
-            root.swapFormData.fromTokensKey = "ETH"
-            root.swapFormData.fromTokenAmount = valueToExchangeString
-
-            // Launch popup
-            launchAndVerfyModal()
-
-            const payPanel = findChild(controlUnderTest, "payPanel")
-            verify(!!payPanel)
-            const maxTagButton = findChild(payPanel, "maxTagButton")
-            verify(!!maxTagButton)
-
-            for (let i=0; i< root.swapAdaptor.filteredFlatNetworksModel.count; i++) {
-                root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(i).chainId
-                waitForRendering(payPanel)
-                let expectedToken = SQUtils.ModelUtils.getByKey(root.tokenSelectorAdaptor.outputAssetsModel, "tokensKey", "ETH")
-
-                // check states for the pay input selector
-                verify(maxTagButton.visible)
-                let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
-                compare(maxTagButton.text, qsTr("Max. %1").arg(maxPossibleValue === 0 ? "0"
-                                                                                      : root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true})))
-                compare(payPanel.selectedHoldingId, expectedToken.symbol)
-                compare(payPanel.valueValid, valueToExchange <= maxPossibleValue)
-                compare(payPanel.value, valueToExchange)
-                compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
-            }
-
-            closeAndVerfyModal()
-        }
-
         function test_modal_receive_input_default() {
             // Launch popup
             launchAndVerfyModal()
@@ -1182,17 +1148,21 @@ Item {
             }
         }
 
-        function test_modal_exchange_button_default_state() {
-            let default_test_data = [{fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
-                                     {fromToken: "", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
-                                     {fromToken: "ETH", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
-                                     {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
-                                     {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: ""},
-                                     {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: "50"},
-                                     {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: "50"},
-                                     {fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: "50"},
-                                     {fromToken: "", fromTokenAmount: "100", toToken: "", toTokenAmount: ""}]
+        function test_modal_exchange_button_default_state_data() {
+            return [
+                        {fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
+                        {fromToken: "", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
+                        {fromToken: "ETH", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
+                        {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
+                        {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: ""},
+                        {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: "50"},
+                        {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: "50"},
+                        {fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: "50"},
+                        {fromToken: "", fromTokenAmount: "100", toToken: "", toTokenAmount: ""}
+                    ]
+        }
 
+        function test_modal_exchange_button_default_state(data) {
             const payPanel = findChild(controlUnderTest, "payPanel")
             verify(!!payPanel)
             const receivePanel = findChild(controlUnderTest, "receivePanel")
@@ -1212,99 +1182,97 @@ Item {
             const receiveBottomItemText = findChild(receivePanel, "bottomItemText")
             verify(!!receiveBottomItemText)
 
-            for (let i =0; i< default_test_data.length; i++) {
-                root.swapAdaptor.reset()
+            root.swapAdaptor.reset()
 
-                // set network and address by default same
-                root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-                root.swapFormData.selectedAccountAddress = root.swapAdaptor.nonWatchAccounts.get(0).address
-                root.swapFormData.fromTokensKey = default_test_data[i].fromToken
-                root.swapFormData.fromTokenAmount = default_test_data[i].fromTokenAmount
-                root.swapFormData.toTokenKey = default_test_data[i].toToken
-                root.swapFormData.toTokenAmount = default_test_data[i].toTokenAmount
+            // set network and address by default same
+            root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
+            root.swapFormData.selectedAccountAddress = root.swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.fromTokensKey = data.fromToken
+            root.swapFormData.fromTokenAmount = data.fromTokenAmount
+            root.swapFormData.toTokenKey = data.toToken
+            root.swapFormData.toTokenAmount = data.toTokenAmount
 
-                let expectedFromTokenIcon = !!root.swapAdaptor.fromToken && !!root.swapAdaptor.fromToken.symbol ?
-                        Constants.tokenIcon(root.swapAdaptor.fromToken.symbol): ""
-                let expectedToTokenIcon = !!root.swapAdaptor.toToken && !!root.swapAdaptor.toToken.symbol ?
-                        Constants.tokenIcon(root.swapAdaptor.toToken.symbol): ""
+            let expectedFromTokenIcon = !!root.swapAdaptor.fromToken && !!root.swapAdaptor.fromToken.symbol ?
+                    Constants.tokenIcon(root.swapAdaptor.fromToken.symbol): ""
+            let expectedToTokenIcon = !!root.swapAdaptor.toToken && !!root.swapAdaptor.toToken.symbol ?
+                    Constants.tokenIcon(root.swapAdaptor.toToken.symbol): ""
 
-                // Launch popup
-                launchAndVerfyModal()
-                waitForRendering(payPanel)
-                waitForRendering(receivePanel)
+            // Launch popup
+            launchAndVerfyModal()
+            waitForRendering(payPanel)
+            waitForRendering(receivePanel)
 
-                let paytokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
-                verify(!!paytokenSelectorContentItemText)
-                let paytokenSelectorIcon = findChild(payPanel, "tokenSelectorIcon")
-                compare(!!default_test_data[i].fromToken , !!paytokenSelectorIcon)
-                let receivetokenSelectorContentItemText = findChild(receivePanel, "tokenSelectorContentItemText")
-                verify(!!receivetokenSelectorContentItemText)
-                let receivetokenSelectorIcon = findChild(receivePanel, "tokenSelectorIcon")
-                compare(!!default_test_data[i].toToken, !!receivetokenSelectorIcon)
+            let paytokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
+            verify(!!paytokenSelectorContentItemText)
+            let paytokenSelectorIcon = findChild(payPanel, "tokenSelectorIcon")
+            compare(!!data.fromToken , !!paytokenSelectorIcon)
+            let receivetokenSelectorContentItemText = findChild(receivePanel, "tokenSelectorContentItemText")
+            verify(!!receivetokenSelectorContentItemText)
+            let receivetokenSelectorIcon = findChild(receivePanel, "tokenSelectorIcon")
+            compare(!!data.toToken, !!receivetokenSelectorIcon)
 
-                // verify pay values
-                compare(payPanel.tokenKey, default_test_data[i].fromToken)
-                compare(payPanel.tokenAmount, default_test_data[i].fromTokenAmount)
-                verify(payAmountToSendInput.input.input.edit.cursorVisible)
-                compare(paytokenSelectorContentItemText.text, !!root.swapFormData.fromTokensKey ? root.swapFormData.fromTokensKey : qsTr("Select asset"))
-                compare(!!default_test_data[i].fromToken , !!paytokenSelectorIcon)
-                if(!!paytokenSelectorIcon) {
-                    compare(paytokenSelectorIcon.image.source, expectedFromTokenIcon)
-                }
-                verify(!!default_test_data[i].fromToken ? maxTagButton.visible: !maxTagButton.visible)
-
-                // verify receive values
-                compare(receivePanel.tokenKey, default_test_data[i].toToken)
-                compare(receivePanel.tokenAmount, default_test_data[i].toTokenAmount)
-                verify(!receiveAmountToSendInput.input.input.edit.cursorVisible)
-                compare(receivetokenSelectorContentItemText.text, !!root.swapFormData.toTokenKey ? root.swapFormData.toTokenKey : qsTr("Select asset"))
-                if(!!receivetokenSelectorIcon) {
-                    compare(receivetokenSelectorIcon.image.source, expectedToTokenIcon)
-                }
-
-                // click exchange button
-                swapExchangeButton.clicked()
-                waitForRendering(payPanel)
-                waitForRendering(receivePanel)
-
-                // verify form values
-                compare(root.swapFormData.fromTokensKey, default_test_data[i].toToken)
-                compare(root.swapFormData.fromTokenAmount, default_test_data[i].toTokenAmount)
-                compare(root.swapFormData.toTokenKey, default_test_data[i].fromToken)
-                compare(root.swapFormData.toTokenAmount, default_test_data[i].fromTokenAmount)
-
-                paytokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
-                verify(!!paytokenSelectorContentItemText)
-                paytokenSelectorIcon = findChild(payPanel, "tokenSelectorIcon")
-                compare(!!root.swapFormData.fromTokensKey , !!paytokenSelectorIcon)
-                receivetokenSelectorContentItemText = findChild(receivePanel, "tokenSelectorContentItemText")
-                verify(!!receivetokenSelectorContentItemText)
-                receivetokenSelectorIcon = findChild(receivePanel, "tokenSelectorIcon")
-                compare(!!root.swapFormData.toTokenKey, !!receivetokenSelectorIcon)
-
-                // verify pay values
-                compare(payPanel.tokenKey, default_test_data[i].toToken)
-                compare(payPanel.tokenAmount, default_test_data[i].toTokenAmount)
-                verify(payAmountToSendInput.input.input.edit.cursorVisible)
-                compare(paytokenSelectorContentItemText.text, !!default_test_data[i].toToken ? default_test_data[i].toToken : qsTr("Select asset"))
-                if(!!paytokenSelectorIcon) {
-                    compare(paytokenSelectorIcon.image.source, expectedToTokenIcon)
-                }
-                verify(!!default_test_data[i].toToken ? maxTagButton.visible: !maxTagButton.visible)
-                compare(maxTagButton.text, qsTr("Max. %1").arg(Qt.locale().zeroDigit))
-                compare(maxTagButton.type, (payAmountToSendInput.input.valid || !payAmountToSendInput.input.text) && maxTagButton.value > 0 ? StatusBaseButton.Type.Normal : StatusBaseButton.Type.Danger)
-
-                // verify receive values
-                compare(receivePanel.tokenKey, default_test_data[i].fromToken)
-                compare(receivePanel.tokenAmount, default_test_data[i].fromTokenAmount)
-                verify(!receiveAmountToSendInput.input.input.edit.cursorVisible)
-                compare(receivetokenSelectorContentItemText.text, !!default_test_data[i].fromToken ? default_test_data[i].fromToken : qsTr("Select asset"))
-                if(!!receivetokenSelectorIcon) {
-                    compare(receivetokenSelectorIcon.image.source, expectedFromTokenIcon)
-                }
-
-                closeAndVerfyModal()
+            // verify pay values
+            compare(payPanel.tokenKey, data.fromToken)
+            compare(payPanel.tokenAmount, data.fromTokenAmount)
+            verify(payAmountToSendInput.input.input.edit.cursorVisible)
+            compare(paytokenSelectorContentItemText.text, !!root.swapFormData.fromTokensKey ? root.swapFormData.fromTokensKey : qsTr("Select asset"))
+            compare(!!data.fromToken , !!paytokenSelectorIcon)
+            if(!!paytokenSelectorIcon) {
+                compare(paytokenSelectorIcon.image.source, expectedFromTokenIcon)
             }
+            verify(!!data.fromToken ? maxTagButton.visible: !maxTagButton.visible)
+
+            // verify receive values
+            compare(receivePanel.tokenKey, data.toToken)
+            compare(receivePanel.tokenAmount, data.toTokenAmount)
+            verify(!receiveAmountToSendInput.input.input.edit.cursorVisible)
+            compare(receivetokenSelectorContentItemText.text, !!root.swapFormData.toTokenKey ? root.swapFormData.toTokenKey : qsTr("Select asset"))
+            if(!!receivetokenSelectorIcon) {
+                compare(receivetokenSelectorIcon.image.source, expectedToTokenIcon)
+            }
+
+            // click exchange button
+            swapExchangeButton.clicked()
+            waitForRendering(payPanel)
+            waitForRendering(receivePanel)
+
+            // verify form values
+            compare(root.swapFormData.fromTokensKey, data.toToken)
+            compare(root.swapFormData.fromTokenAmount, data.toTokenAmount)
+            compare(root.swapFormData.toTokenKey, data.fromToken)
+            compare(root.swapFormData.toTokenAmount, data.fromTokenAmount)
+
+            paytokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
+            verify(!!paytokenSelectorContentItemText)
+            paytokenSelectorIcon = findChild(payPanel, "tokenSelectorIcon")
+            compare(!!root.swapFormData.fromTokensKey , !!paytokenSelectorIcon)
+            receivetokenSelectorContentItemText = findChild(receivePanel, "tokenSelectorContentItemText")
+            verify(!!receivetokenSelectorContentItemText)
+            receivetokenSelectorIcon = findChild(receivePanel, "tokenSelectorIcon")
+            compare(!!root.swapFormData.toTokenKey, !!receivetokenSelectorIcon)
+
+            // verify pay values
+            compare(payPanel.tokenKey, data.toToken)
+            compare(payPanel.tokenAmount, data.toTokenAmount)
+            verify(payAmountToSendInput.input.input.edit.cursorVisible)
+            compare(paytokenSelectorContentItemText.text, !!data.toToken ? data.toToken : qsTr("Select asset"))
+            if(!!paytokenSelectorIcon) {
+                compare(paytokenSelectorIcon.image.source, expectedToTokenIcon)
+            }
+            verify(!!data.toToken ? maxTagButton.visible: !maxTagButton.visible)
+            compare(maxTagButton.text, qsTr("Max. %1").arg(Qt.locale().zeroDigit))
+            compare(maxTagButton.type, (payAmountToSendInput.input.valid || !payAmountToSendInput.input.text) && maxTagButton.value > 0 ? StatusBaseButton.Type.Normal : StatusBaseButton.Type.Danger)
+
+            // verify receive values
+            compare(receivePanel.tokenKey, data.fromToken)
+            compare(receivePanel.tokenAmount, data.fromTokenAmount)
+            verify(!receiveAmountToSendInput.input.input.edit.cursorVisible)
+            compare(receivetokenSelectorContentItemText.text, !!data.fromToken ? data.fromToken : qsTr("Select asset"))
+            if(!!receivetokenSelectorIcon) {
+                compare(receivetokenSelectorIcon.image.source, expectedFromTokenIcon)
+            }
+
+            closeAndVerfyModal()
         }
 
         function test_approval_flow_button_states() {
@@ -1457,6 +1425,150 @@ Item {
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
                         root.swapAdaptor.swapOutputData.totalFees,
                         root.swapAdaptor.currencyStore.currentCurrency))
+            closeAndVerfyModal()
+        }
+
+        function test_modal_switching_networks_payPanel_data() {
+            return [
+                        {key: "ETH"},
+                        {key: "aave"}
+                    ]
+        }
+
+        function test_modal_switching_networks_payPanel(data) {
+            // try setting value before popup is launched and check values
+            let valueToExchange = 1
+            let valueToExchangeString = valueToExchange.toString()
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            root.swapFormData.fromTokensKey = data.key
+            root.swapFormData.fromTokenAmount = valueToExchangeString
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const maxTagButton = findChild(payPanel, "maxTagButton")
+            verify(!!maxTagButton)
+            const networkComboBox = findChild(controlUnderTest, "networkFilter")
+            verify(!!networkComboBox)
+            const errorTag = findChild(controlUnderTest, "errorTag")
+            verify(!!errorTag)
+
+            for (let i=0; i<networkComboBox.control.popup.contentItem.count; i++) {
+                // launch network selection popup
+                verify(!networkComboBox.control.popup.opened)
+                mouseClick(networkComboBox)
+                verify(networkComboBox.control.popup.opened)
+
+                let delegateUnderTest = networkComboBox.control.popup.contentItem.itemAtIndex(i)
+                verify(!!delegateUnderTest)
+                mouseClick(delegateUnderTest)
+
+                waitForRendering(payPanel)
+
+                const tokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
+                verify(!!tokenSelectorContentItemText)
+
+                let fromTokenExistsOnNetwork = false
+                let expectedToken = SQUtils.ModelUtils.getByKey(root.tokenSelectorAdaptor.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
+                if(!!expectedToken) {
+                    fromTokenExistsOnNetwork = !!SQUtils.ModelUtils.getByKey(expectedToken.addressPerChain, "chainId",networkComboBox.selection[0], "address")
+                }
+
+                if (!fromTokenExistsOnNetwork) {
+                    verify(!maxTagButton.visible)
+                    compare(payPanel.selectedHoldingId, "")
+                    verify(!payPanel.valueValid)
+                    compare(payPanel.value, 0)
+                    compare(payPanel.rawValue, "0")
+                    verify(!errorTag.visible)
+                    compare(tokenSelectorContentItemText.text, qsTr("Select asset"))
+                } else {
+                    // check states for the pay input selector
+                    verify(maxTagButton.visible)
+                    let balancesModel = SQUtils.ModelUtils.getByKey(root.tokenSelectorAdaptor.outputAssetsModel, "tokensKey", root.swapFormData.fromTokensKey, "balances")
+                    let balanceEntry = SQUtils.ModelUtils.getFirstModelEntryIf(balancesModel, (balance) => {
+                                                                                   return balance.account.toLowerCase() === root.swapFormData.selectedAccountAddress.toLowerCase() &&
+                                                                                   balance.chainId === root.swapFormData.selectedNetworkChainId
+                                                                               })
+                    let balance =  SQUtils.AmountsArithmetic.toNumber(
+                            SQUtils.AmountsArithmetic.fromString(balanceEntry.balance),
+                            expectedToken.decimals)
+
+                    let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(balance, expectedToken.symbol)
+                    compare(maxTagButton.text, qsTr("Max. %1").arg(
+                                maxPossibleValue === 0 ? "0" :
+                                                         root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true})))
+                    compare(payPanel.selectedHoldingId.toLowerCase(), expectedToken.symbol.toLowerCase())
+                    compare(payPanel.valueValid, valueToExchange <= maxPossibleValue)
+                    compare(payPanel.value, valueToExchange)
+                    compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
+                    compare(errorTag.visible, valueToExchange > maxPossibleValue)
+                    if(errorTag.visible)
+                        compare(errorTag.text, qsTr("Insufficient funds for swap"))
+                    compare(tokenSelectorContentItemText.text, expectedToken.symbol)
+                }
+            }
+
+            closeAndVerfyModal()
+        }
+
+        function test_modal_switching_networks_receivePanel_data() {
+                return [
+                            {key: "aave"},
+                            {key: "STT"}
+                        ]
+        }
+
+        function test_modal_switching_networks_receivePanel(data) {
+            // try setting value before popup is launched and check values
+            let valueToExchange = 1
+            let valueToExchangeString = valueToExchange.toString()
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromTokenAmount = valueToExchangeString
+            root.swapFormData.toTokenKey = data.key
+            console.error("root.swapFormData.toTokenKey = ",root.swapFormData.toTokenKey)
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const receivePanel = findChild(controlUnderTest, "receivePanel")
+            verify(!!receivePanel)
+            const networkComboBox = findChild(controlUnderTest, "networkFilter")
+            verify(!!networkComboBox)
+
+            for (let i=0; i<networkComboBox.control.popup.contentItem.count; i++) {
+                // launch network selection popup
+                verify(!networkComboBox.control.popup.opened)
+                mouseClick(networkComboBox)
+                verify(networkComboBox.control.popup.opened)
+
+                let delegateUnderTest = networkComboBox.control.popup.contentItem.itemAtIndex(i)
+                verify(!!delegateUnderTest)
+                mouseClick(delegateUnderTest)
+
+                waitForRendering(receivePanel)
+
+                const tokenSelectorContentItemText = findChild(receivePanel, "tokenSelectorContentItemText")
+                verify(!!tokenSelectorContentItemText)
+
+                let fromTokenExistsOnNetwork = false
+                let expectedToken = SQUtils.ModelUtils.getByKey(root.tokenSelectorAdaptor.plainTokensBySymbolModel, "key", root.swapFormData.toTokenKey)
+                if(!!expectedToken) {
+                    fromTokenExistsOnNetwork = !!SQUtils.ModelUtils.getByKey(expectedToken.addressPerChain, "chainId", networkComboBox.selection[0], "address")
+                }
+
+                if (!fromTokenExistsOnNetwork) {
+                    compare(receivePanel.selectedHoldingId, "")
+                    compare(tokenSelectorContentItemText.text, qsTr("Select asset"))
+                } else {
+                    compare(receivePanel.selectedHoldingId.toLowerCase(), expectedToken.symbol.toLowerCase())
+                    compare(tokenSelectorContentItemText.text, expectedToken.symbol)
+                }
+            }
+
             closeAndVerfyModal()
         }
     }

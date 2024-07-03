@@ -31,13 +31,21 @@ QtObject {
         selectedAccountAddress = ""
         selectedNetworkChainId = -1
         selectedSlippage = 0.5
-        root.resetToAndFromTokenValues()
+        root.resetFromTokenValues()
+        root.resetToTokenValues()
     }
 
-    function resetToAndFromTokenValues() {
+    function resetFromTokenValues() {
         fromTokensKey = ""
         fromTokenAmount = ""
-        toTokenKey = root.defaultToTokenKey
+    }
+
+    function resetToTokenValues(keepDefault = true) {
+        if(keepDefault) {
+            toTokenKey = root.defaultToTokenKey
+        } else {
+            toTokenKey = ""
+        }
         toTokenAmount = ""
     }
 

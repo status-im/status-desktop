@@ -21,6 +21,4 @@ QtObject {
     required property string approvalGasFees
     required property string approvalAmountRequired
     required property string approvalContractAddress
-
-
 }
