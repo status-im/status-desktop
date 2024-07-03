@@ -135,25 +135,25 @@ ComboBox {
             model: root.popup.visible ? root.delegateModel : null
             currentIndex: root.highlightedIndex
 
-            section.property: searchBox.text === "" ? "sectionName" : ""
+            section.property: "sectionName"
             section.delegate: StatusBaseText {
                 required property string section
+                visible: searchBox.text === ""
                 width: parent.width
                 elide: Text.ElideRight
-                text: section
+                text: visible ? section : ""
                 color: Theme.palette.baseColor1
                 padding: Style.current.padding
             }
         }
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.preferredHeight: 60
+            Layout.fillHeight: true
             Layout.alignment: Qt.AlignCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             visible: listview.count === 0
             color: Theme.palette.baseColor1
-
             text: qsTr("No assets found")
         }
     }
