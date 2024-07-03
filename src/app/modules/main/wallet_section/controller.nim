@@ -1,4 +1,3 @@
-import sequtils, sugar
 import io_interface
 import app_service/service/settings/service as settings_service
 import app_service/service/wallet_account/service as wallet_account_service
@@ -62,7 +61,7 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
   return self.walletAccountService.getWalletAccounts()
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
+  return self.networkService.getEnabledChainIds()
 
 proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
   return self.walletAccountService.getKeypairByAccountAddress(address)

@@ -1,6 +1,6 @@
 import tables, NimQml, sequtils, sugar, stint, strutils, chronicles, options
 
-import ./io_interface, ./view, ./controller, ./network_item, ./transaction_routes, ./suggested_route_item, ./suggested_route_model, ./gas_estimate_item, ./gas_fees_item, ./network_model
+import ./io_interface, ./view, ./controller, ./network_route_item, ./transaction_routes, ./suggested_route_item, ./suggested_route_model, ./gas_estimate_item, ./gas_fees_item, ./network_route_model
 import ../io_interface as delegate_interface
 import app/global/global_singleton
 import app/core/eventemitter
@@ -91,17 +91,10 @@ method delete*(self: Module) =
   self.nestedCollectiblesModel.delete
   self.collectiblesController.delete
 
-proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): network_item.NetworkItem =
-  result = initNetworkItem(
+proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): NetworkRouteItem =
+  result = initNetworkRouteItem(
       network.chainId,
-      network.chainName,
-      network.iconUrl,
-      chainColor = "",
-      shortName = "",
       layer = 0,
-      nativeCurrencyDecimals = 0,
-      nativeCurrencyName = "",
-      nativeCurrencySymbol = "",
       true,
       true,
       true,
@@ -111,17 +104,10 @@ proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): ne
       amountIn = "",
       $network.amountOut)
 
-proc convertNetworkDtoToNetworkItem(self: Module, network: network_service_item.NetworkItem): network_item.NetworkItem =
-  result = initNetworkItem(
-      network.chainId,
-      network.chainName,
-      network.iconUrl,
-      network.chainColor,
-      network.shortName,
+proc convertNetworkDtoToNetworkRouteItem(self: Module, network: network_service_item.NetworkItem): NetworkRouteItem =
+  result = initNetworkRouteItem(
+      network.chainId, 
       network.layer,
-      network.nativeCurrencyDecimals,
-      network.nativeCurrencyName,
-      network.nativeCurrencySymbol,
       true,
       false,
       true,
@@ -171,8 +157,8 @@ proc convertTransactionPathDtoToSuggestedRouteItem(self: Module, path: Transacti
 
 proc refreshNetworks*(self: Module) =
   let networks = self.controller.getCurrentNetworks()
-  let fromNetworks = networks.map(x => self.convertNetworkDtoToNetworkItem(x))
-  let toNetworks = networks.map(x => self.convertNetworkDtoToNetworkItem(x))
+  let fromNetworks = networks.map(x => self.convertNetworkDtoToNetworkRouteItem(x))
+  let toNetworks = networks.map(x => self.convertNetworkDtoToNetworkRouteItem(x))
   self.view.setNetworkItems(fromNetworks, toNetworks)
 
 method load*(self: Module) =
@@ -195,6 +181,12 @@ method viewDidLoad*(self: Module) =
 
 method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount =
   return self.controller.getTokenBalance(address, chainId, tokensKey)
+
+method getNetworkItem*(self: Module, chainId: int): network_service_item.NetworkItem =
+  let networks = self.controller.getCurrentNetworks().filter(x => x.chainId == chainId)
+  if networks.len == 0:
+    return nil
+  return networks[0]
 
 method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, assetKey: string, toAssetKey: string, uuid: string,
   sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) =
@@ -289,15 +281,15 @@ method suggestedRoutesReady*(self: Module, uuid: string, suggestedRoutes: Sugges
   suggestedRouteModel.setItems(paths)
   let gasTimeEstimate = self.convertFeesDtoToGasEstimateItem(suggestedRoutes.gasTimeEstimate)
   let networks = suggestedRoutes.toNetworks.map(x => self.convertSendToNetworkToNetworkItem(x))
-  let toNetworksModel = newNetworkModel()
-  toNetworksModel.setItems(networks)
+  let toNetworksRouteModel = newNetworkRouteModel()
+  toNetworksRouteModel.setItems(networks)
   self.view.updatedNetworksWithRoutes(paths, gasTimeEstimate.getTotalFeesInEth())
   let transactionRoutes = newTransactionRoutes(
     uuid = uuid,
     suggestedRoutes = suggestedRouteModel,
     gasTimeEstimate = gasTimeEstimate,
     amountToReceive = suggestedRoutes.amountToReceive,
-    toNetworksModel = toNetworksModel,
+    toNetworksRouteModel = toNetworksRouteModel,
     rawPaths = suggestedRoutes.rawBest)
   self.view.setTransactionRoute(transactionRoutes)
 
@@ -351,6 +343,27 @@ method getCollectiblesModel*(self: Module): collectibles.Model =
 method getNestedCollectiblesModel*(self: Module): nested_collectibles.Model =
   return self.nestedCollectiblesModel
 
+proc getNetworkColor(self: Module, shortName: string): string =
+  let networks = self.controller.getCurrentNetworks()
+  for network in networks:
+    if cmpIgnoreCase(network.chainName, shortName) == 0:
+      return network.chainColor
+  return ""
+
+proc getLayer1NetworkChainId*(self: Module): int =
+  let networks = self.controller.getCurrentNetworks()
+  for network in networks:
+    if network.layer == NETWORK_LAYER_1:
+      return network.chainId
+  return 0
+
+method getNetworkChainId*(self: Module, shortName: string): int =
+  let networks = self.controller.getCurrentNetworks()
+  for network in networks:
+    if cmpIgnoreCase(network.chainName, shortName) == 0:
+      return network.chainId
+  return 0
+
 method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: bool): string {.slot.} =
   var tempPreferredChains: seq[int]
   var chainFound = false
@@ -360,15 +373,15 @@ method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: 
     if word.startsWith("0x"):
       editedText = editedText & word
     else:
-      let chainColor = self.view.getNetworkColor(word)
+      let chainColor = self.getNetworkColor(word)
       if not chainColor.isEmptyOrWhitespace():
         chainFound = true
-        tempPreferredChains.add(self.view.getNetworkChainId(word))
+        tempPreferredChains.add(self.getNetworkChainId(word))
         editedText = editedText & "<span style='color: " & chainColor & "'>" & word & "</span>" & ":"
 
   if updateInStore:
     if not chainFound:
-      self.view.updateRoutePreferredChains(self.view.getLayer1NetworkChainId())
+      self.view.updateRoutePreferredChains($self.getLayer1NetworkChainId())
     else:
       self.view.updateRoutePreferredChains(tempPreferredChains.join(":"))
 

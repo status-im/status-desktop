@@ -187,10 +187,10 @@ SplitView {
                                 totalTime:2
                             },
                             amountToReceive: txStore.amountToSend - (txStore.amountToSend*5/100),
-                            toNetworksModel: dummyEventData.toModel
+                            toNetworksRouteModel: dummyEventData.toModel
                         }
-                        txStore.fromNetworksModel.updateFromNetworks(dummyEventData.suggestesRoutes)
-                        txStore.toNetworksModel.updateToNetworks(dummyEventData.suggestesRoutes)
+                        txStore.fromNetworksRouteModel.updateFromNetworks(dummyEventData.suggestesRoutes)
+                        txStore.toNetworksRouteModel.updateToNetworks(dummyEventData.suggestesRoutes)
                         txStore.walletSectionSendInst.suggestedRoutesReady(txRoutes)
                         txStore.suggestedRoutesCalled = false
                     }

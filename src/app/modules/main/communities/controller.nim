@@ -478,8 +478,8 @@ proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataTo
 proc removeCommunityChat*(self: Controller, communityId: string, channelId: string) =
   self.communityService.deleteCommunityChat(communityId, channelId)
 
-proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
-  return self.networksService.getCurrentNetworks()
+proc getCurrentNetworksChainIds*(self: Controller): seq[int] =
+  return self.networksService.getCurrentNetworksChainIds()
 
 proc promoteSelfToControlNode*(self: Controller, communityId: string) =
   self.communityService.promoteSelfToControlNode(communityId)

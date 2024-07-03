@@ -25,8 +25,8 @@ QtObject {
     }
 
     property var flatNetworksModel: NetworksModel.flatNetworks
-    property var fromNetworksModel: NetworksModel.sendFromNetworks
-    property var toNetworksModel: NetworksModel.sendToNetworks
+    property var fromNetworksRouteModel: NetworksModel.sendFromNetworks
+    property var toNetworksRouteModel: NetworksModel.sendToNetworks
     property var selectedSenderAccount: accounts.get(0)
     readonly property QtObject collectiblesModel: ManageCollectiblesModel {}
     readonly property QtObject nestedCollectiblesModel: WalletNestedCollectiblesModel {}
@@ -190,7 +190,7 @@ QtObject {
     }
 
     function updateRoutePreferredChains(chainIds) {
-        root.toNetworksModel.updateRoutePreferredChains(chainIds)
+        root.toNetworksRouteModel.updateRoutePreferredChains(chainIds)
     }
 
     function toggleShowUnPreferredChains() {
@@ -219,8 +219,8 @@ QtObject {
         root.selectedRecipient = ""
         root.selectedAssetKey = ""
         root.showUnPreferredChains = false
-        root.fromNetworksModel.reset()
-        root.toNetworksModel.reset()
+        root.fromNetworksRouteModel.reset()
+        root.toNetworksRouteModel.reset()
     }
 
     function getNetworkName(chainId) {

@@ -174,6 +174,19 @@ StatusDialog {
             : 0
     }
 
+    LeftJoinModel {
+        id: fromNetworksRouteModel
+        leftModel: popup.store.fromNetworksRouteModel
+        rightModel: popup.store.flatNetworksModel
+        joinRole: "chainId"
+    }
+    LeftJoinModel {
+        id: toNetworksRouteModel
+        leftModel: popup.store.toNetworksRouteModel
+        rightModel: popup.store.flatNetworksModel
+        joinRole: "chainId"
+    }
+
     ModelEntry {
         id: selectedSenderAccountEntry
         key: "address"
@@ -513,6 +526,8 @@ StatusDialog {
                 isCollectiblesTransfer: d.isCollectiblesTransfer
                 bestRoutes: popup.bestRoutes
                 totalFeesInFiat: d.totalFeesInFiat
+                fromNetworksList: fromNetworksRouteModel
+                toNetworksList: toNetworksRouteModel
             }
         }
     }
@@ -545,7 +560,7 @@ StatusDialog {
                 // If collectible
                 d.totalAmountToReceive = txRoutes.amountToReceive
             }
-            networkSelector.toNetworksList = txRoutes.toNetworksModel
+            networkSelector.suggestedToNetworksList = txRoutes.toNetworksRouteModel
             popup.isLoading = false
         }
     }

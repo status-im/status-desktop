@@ -55,7 +55,8 @@ StatusWindow {
             geometry.x > Screen.desktopAvailableWidth ||
             geometry.y > Screen.desktopAvailableHeight ||
             geometry.width > Screen.desktopAvailableWidth ||
-            geometry.height > Screen.desktopAvailableHeight)
+            geometry.height > Screen.desktopAvailableHeight ||
+            geometry.x < 0 || geometry.y < 0)
         {
             let screen = Qt.application.screens[0];
 
