@@ -49,6 +49,7 @@ StatusDialog {
 
     property color gradientColor: backgroundColor
     property url fromImageSource
+    property alias fromImageSmartIdenticon: fromImageSmartIdenticon
     property url toImageSource
     property alias headerMainText: headerMainText.text
     property alias headerSubTextLayout: headerSubTextLayout.children
@@ -65,6 +66,10 @@ StatusDialog {
         const big = SQUtils.AmountsArithmetic.fromString(number)
         const resultNum = decimals === -1 ? big.toFixed() : big.round(decimals).toFixed()
         return resultNum.replace('.', Qt.locale().decimalPoint)
+    }
+
+    function openLinkWithConfirmation(linkUrl) {
+        Global.openLinkWithConfirmation(linkUrl, SQUtils.StringUtils.extractDomainFromLink(linkUrl))
     }
 
     header: StatusDialogHeader {
@@ -102,7 +107,7 @@ StatusDialog {
                 Layout.fillWidth: true
                 Layout.leftMargin: -parent.anchors.leftMargin - scrollView.leftPadding
                 Layout.rightMargin: -parent.anchors.rightMargin - scrollView.rightPadding
-                Layout.preferredHeight: 266 // design
+                Layout.preferredHeight: childrenRect.height + 80 // 40 + 40 top/bottomMargin
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: root.gradientColor }
                     GradientStop { position: 1.0; color: root.backgroundColor }
@@ -117,6 +122,15 @@ StatusDialog {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.topMargin: 4
                         spacing: -10
+                        StatusSmartIdenticon {
+                            objectName: "fromImageIdenticon"
+                            id: fromImageSmartIdenticon
+                            width: 40
+                            height: 40
+                            asset.bgWidth: 40
+                            asset.bgHeight: 40
+                            visible: !!asset.name
+                        }
                         StatusRoundedImage {
                             objectName: "fromImage"
                             width: 42
@@ -124,6 +138,7 @@ StatusDialog {
                             border.width: 2
                             border.color: "transparent"
                             image.source: root.fromImageSource
+                            visible: root.fromImageSource.toString() !== ""
                         }
                         StatusRoundedImage {
                             objectName: "toImage"
