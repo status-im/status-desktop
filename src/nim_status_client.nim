@@ -86,6 +86,15 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
   createDir(logDir)
 
 proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, file: cstring, function: cstring, line: cint) {.cdecl, exportc.} =
+  # Initialize Nim GC stack bottom for foreign threads
+  # https://status-im.github.io/nim-style-guide/interop.html#calling-nim-code-from-other-languages
+  when declared(setupForeignThreadGc): 
+    setupForeignThreadGc()
+  when declared(nimGC_setStackBottom):
+    var locals {.volatile, noinit.}: pointer
+    locals = addr(locals)
+    nimGC_setStackBottom(locals)
+
   var text = $message
   let fileString = $file
 
