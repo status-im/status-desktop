@@ -22,6 +22,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
+    viewVariant: QVariant
     controller: all_collectibles_controller.Controller
     collectiblesController: collectibles_controller.Controller
     moduleLoaded: bool
@@ -48,15 +49,17 @@ proc newModule*(
   result.collectiblesController = collectiblesController
 
   result.view = newView(result)
+  result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  self.viewVariant.delete
   self.view.delete
   self.controller.delete
   self.collectiblesController.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionAllCollectibles", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSectionAllCollectibles", self.viewVariant)
 
   self.events.on(SIGNAL_COLLECTIBLE_PREFERENCES_UPDATED) do(e: Args):
     let args = ResultArgs(e)

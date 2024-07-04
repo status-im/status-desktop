@@ -18,6 +18,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
+    viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
     currentAccountIndex: int
@@ -35,10 +36,12 @@ proc newModule*(
   result.events = events
   result.currentAccountIndex = 0
   result.view = newView(result)
+  result.viewVariant = newQVariant(result.view)
   result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  self.viewVariant.delete
   self.view.delete
 
 proc switchAccount*(self: Module, accountIndex: int) =
@@ -69,7 +72,7 @@ proc switchAccount*(self: Module, accountIndex: int) =
   self.view.setData(accountItem)
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("browserSectionCurrentAccount", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("browserSectionCurrentAccount", self.viewVariant)
 
   self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
     let args = KeypairArgs(e)

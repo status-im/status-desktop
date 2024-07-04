@@ -14,6 +14,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
+    viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
 
@@ -26,10 +27,12 @@ proc newModule*(
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
+  result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, transactionService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  self.viewVariant.delete
   self.view.delete
   self.controller.delete
 
@@ -46,7 +49,7 @@ method updateCryptoServices*(self: Module, cryptoServices: seq[CryptoRampDto]) =
   self.view.setItems(items)
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionBuySellCrypto", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSectionBuySellCrypto", self.viewVariant)
   self.controller.fetchCryptoServices()
   self.controller.init()
   self.view.load()

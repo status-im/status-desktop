@@ -48,6 +48,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
+    viewVariant: QVariant
     controller: controller.Controller
     # Get the list of owned collectibles by the currently selected account
     collectiblesController: collectiblesc.Controller
@@ -82,10 +83,12 @@ proc newModule*(
   )
   result.nestedCollectiblesModel = nested_collectibles.newModel(result.collectiblesController.getModel())
   result.view = newView(result)
+  result.viewVariant = newQVariant(result.view)
 
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  self.viewVariant.delete
   self.view.delete
   self.controller.delete
   self.nestedCollectiblesModel.delete
@@ -162,7 +165,7 @@ proc refreshNetworks*(self: Module) =
   self.view.setNetworkItems(fromNetworks, toNetworks)
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionSend", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSectionSend", self.viewVariant)
 
   # these connections should be part of the controller's init method
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):

@@ -17,6 +17,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
+    viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
 
@@ -32,14 +33,16 @@ proc newModule*(
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
+  result.viewVariant = newQVariant(result.view)
   result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  self.viewVariant.delete
   self.view.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionAssets", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSectionAssets", self.viewVariant)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.view.modelsUpdated()

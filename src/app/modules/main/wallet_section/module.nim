@@ -56,6 +56,7 @@ type
     moduleLoaded: bool
     controller: controller.Controller
     view: View
+    viewVariant: QVariant
     filter: Filter
 
     # shared modules
@@ -171,6 +172,7 @@ proc newModule*(
   result.walletConnectController = wc_controller.newController(result.walletConnectService, walletAccountService)
 
   result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.walletConnectController)
+  result.viewVariant = newQVariant(result.view)
 
 method delete*(self: Module) =
   self.accountsModule.delete
@@ -181,6 +183,7 @@ method delete*(self: Module) =
   self.buySellCryptoModule.delete
   self.sendModule.delete
   self.controller.delete
+  self.viewVariant.delete
   self.view.delete
   self.activityController.delete
   for i in 0..self.tmpActivityControllers.len-1:
@@ -257,7 +260,7 @@ method setFilterAllAddresses*(self: Module) =
   self.notifyFilterChanged()
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSection", self.viewVariant)
 
   self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
     let args = KeypairArgs(e)
