@@ -187,33 +187,30 @@ void dos_qguiapplication_try_enable_threaded_renderer()
     qputenv("QSG_RENDER_LOOP", QByteArrayLiteral("threaded"));
 }
 
+static MessageHandlerCallback messageHandlerCallback = nullptr;
+
 // This catches the QT and QML logs and outputs them.
 // This is necessary on Windows, because otherwise we do not get any logs at all
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    QByteArray localMsg = msg.toLocal8Bit();
-    const char *file = context.file ? context.file : "";
-    const char *function = context.function ? context.function : "";
-    switch (type) {
-    case QtDebugMsg:
-        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
-        break;
-    case QtInfoMsg:
-        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
-        break;
-    case QtWarningMsg:
-        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
-        break;
-    case QtCriticalMsg:
-        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
-        break;
-    case QtFatalMsg:
-        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
-        break;
-    default:
-        fprintf(stderr, "Default: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
-        break;
+    if (messageHandlerCallback == nullptr) {
+        return;
     }
+
+    QByteArray localMsg = msg.toLocal8Bit();
+    const char* category = context.category ? context.category : "";
+    const char* file = context.file ? context.file : "";
+    const char* function = context.function ? context.function : "";
+
+    int messageType = int(type);
+    const char* message = localMsg.constData();
+    messageHandlerCallback(messageType, message, category, file, function, context.line);
+}
+
+void dos_installMessageHandler(MessageHandlerCallback messageHandler)
+{
+    messageHandlerCallback = messageHandler;
+    qInstallMessageHandler(myMessageOutput);
 }
 
 void dos_qguiapplication_create()
@@ -240,7 +237,6 @@ void dos_qguiapplication_create()
     // We increase js stack size to prevent "Maximum call stack size exceeded" on UI loading.
     qputenv("QV4_JS_MAX_STACK_SIZE", "10485760");
     qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", "1");
-    qInstallMessageHandler(myMessageOutput);
 
     new QGuiApplication(argc, argv);
 #ifdef Q_OS_MACOS
