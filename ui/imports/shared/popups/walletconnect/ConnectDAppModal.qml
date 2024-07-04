@@ -17,6 +17,7 @@ import StatusQ.Core.Theme 0.1
 import shared.controls 1.0
 // TODO extract the components to StatusQ
 import shared.popups.send.controls 1.0
+import shared.popups.walletconnect.controls 1.0
 
 import AppLayouts.Wallet.controls 1.0
 
@@ -98,6 +99,13 @@ StatusDialog {
         DAppCard {
             id: dappCard
 
+            afterTwoSecondsFromStatus: d.afterTwoSecondsFromStatus
+
+            isConnectedSuccessfully: d.connectionStatus === root.connectionSuccessfulStatus
+            isConnectionFailed: d.connectionStatus === root.connectionFailedStatus
+            isConnectionStarted: d.connectionStatus !== root.notConnectedStatus
+            isConnectionFailedOrDisconnected: d.connectionStatus !== root.connectionSuccessfulStatus
+
             Layout.alignment: Qt.AlignHCenter
             Layout.leftMargin: 12
             Layout.rightMargin: Layout.leftMargin
@@ -107,6 +115,11 @@ StatusDialog {
 
         ContextCard {
             Layout.fillWidth: true
+            accountsProxy: d.accountsProxy
+            selectedAccount: d.selectedAccount
+            selectedChains: d.selectedChains
+            filteredChains: d.filteredChains
+            notConnected: d.connectionStatus === root.notConnectedStatus
         }
 
         PermissionsCard {
@@ -153,221 +166,6 @@ StatusDialog {
                         root.close()
                 }
             }
-        }
-    }
-
-    component ContextCard: Rectangle {
-        id: contextCard
-
-        implicitWidth: contextLayout.implicitWidth
-        implicitHeight: contextLayout.implicitHeight
-
-        radius: 8
-        // TODO: the color matched the design color (grey4); It is also matching the intention or we should add some another color to the theme? (e.g. sectionBorder)?
-        border.color: Theme.palette.baseColor2
-        border.width: 1
-        color: "transparent"
-
-        ColumnLayout {
-            id: contextLayout
-
-            anchors.fill: parent
-
-            RowLayout {
-                Layout.margins: 16
-
-                StatusBaseText {
-                    text: qsTr("Connect with")
-
-                    Layout.fillWidth: true
-                }
-
-                AccountSelector {
-                    id: accountsDropdown
-
-                    Layout.preferredWidth: 204
-
-                    control.enabled: d.connectionStatus === root.notConnectedStatus && count > 1
-                    model: d.accountsProxy
-                    onCurrentAccountChanged: d.selectedAccount = currentAccount
-                }
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                height: 1
-                color: contextCard.border.color
-            }
-
-            RowLayout {
-                Layout.margins: 16
-
-                StatusBaseText {
-                    text: qsTr("On")
-
-                    Layout.fillWidth: true
-                }
-
-                NetworkFilter {
-                    id: networkFilter
-                    Layout.preferredWidth: accountsDropdown.Layout.preferredWidth
-
-                    flatNetworks: d.filteredChains
-                    showTitle: true
-                    multiSelection: true
-                    selectionAllowed: d.connectionStatus === root.notConnectedStatus && d.allChainIdsAggregator.value.length > 1
-                    selection: d.selectedChains
-
-                    onSelectionChanged: {
-                        if (d.selectedChains !== networkFilter.selection) {
-                            d.selectedChains = networkFilter.selection
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    component DAppCard: ColumnLayout {
-        property alias name: appNameText.text
-        property alias url: appUrlText.text
-        property string iconUrl: ""
-
-        Rectangle {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 72
-            Layout.preferredHeight: Layout.preferredWidth
-
-            radius: width / 2
-            color: Theme.palette.primaryColor3
-
-            StatusRoundedImage {
-                id: iconDisplay
-
-                anchors.fill: parent
-
-                visible: !fallbackImage.visible
-
-                image.source: iconUrl
-            }
-
-            StatusIcon {
-                id: fallbackImage
-
-                anchors.centerIn: parent
-
-                width: 40
-                height: 40
-
-                icon: "dapp"
-                color: Theme.palette.primaryColor1
-
-                visible: iconDisplay.image.isLoading || iconDisplay.image.isError || !iconUrl
-            }
-        }
-
-        StatusBaseText {
-            id: appNameText
-
-            Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 4
-
-            font.bold: true
-            font.pixelSize: 17
-        }
-
-        // TODO replace with the proper URL control
-        StatusLinkText {
-            id: appUrlText
-
-            Layout.alignment: Qt.AlignHCenter
-            font.pixelSize: 15
-        }
-
-        Rectangle {
-            Layout.preferredWidth: pairingStatusLayout.implicitWidth + 32
-            Layout.preferredHeight: pairingStatusLayout.implicitHeight + 14
-
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 16
-
-            visible: d.connectionStatus !== root.notConnectedStatus
-
-            color: d.connectionStatus === root.connectionSuccessfulStatus
-                        ? d.afterTwoSecondsFromStatus
-                            ? Theme.palette.successColor2
-                            : Theme.palette.successColor3
-                        : d.afterTwoSecondsFromStatus
-                            ? "transparent"
-                            : Theme.palette.dangerColor3
-            border.color: d.connectionStatus === root.connectionSuccessfulStatus
-                                ? Theme.palette.successColor2
-                                : Theme.palette.dangerColor2
-            border.width: 1
-            radius: height / 2
-
-            RowLayout {
-                id: pairingStatusLayout
-
-                anchors.centerIn: parent
-
-                spacing: 8
-
-                Rectangle {
-                    width: 6
-                    height: 6
-                    radius: width / 2
-
-                    visible: d.connectionStatus === root.connectionSuccessfulStatus
-                    color: Theme.palette.successColor1
-                }
-
-                StatusIcon {
-                    Layout.preferredWidth: 16
-                    Layout.preferredHeight: 16
-
-                    visible: d.connectionStatus !== root.connectionSuccessfulStatus
-
-                    color: Theme.palette.dangerColor1
-                    icon: "warning"
-                }
-
-                StatusBaseText {
-                    text: {
-                        if (d.connectionStatus === root.connectionSuccessfulStatus)
-                            return qsTr("Connected. You can now go back to the dApp.")
-                        else if (d.connectionStatus === root.connectionFailedStatus)
-                            return qsTr("Error connecting to dApp. Close and try again")
-                        return ""
-                    }
-
-                    font.pixelSize: 12
-                    color: d.connectionStatus === root.connectionSuccessfulStatus ? Theme.palette.directColor1 : Theme.palette.dangerColor1
-                }
-            }
-        }
-    }
-
-    component PermissionsCard: ColumnLayout {
-        spacing: 8
-
-        StatusBaseText {
-            text: qsTr("Uniswap Interface will be able to:")
-
-            font.pixelSize: 13
-            color: Theme.palette.baseColor1
-        }
-
-        StatusBaseText {
-            text: qsTr("Check your account balance and activity")
-
-            font.pixelSize: 13
-        }
-
-        StatusBaseText {
-            text: qsTr("Request transactions and message signing")
-
-            font.pixelSize: 13
         }
     }
 

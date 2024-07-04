@@ -9,6 +9,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQ
 
+import shared.popups.walletconnect.panels 1.0
 import utils 1.0
 
 import AppLayouts.Wallet.services.dapps.types 1.0
@@ -59,11 +60,15 @@ StatusDialog {
                 dappName: root.dappName
                 dappIcon: root.dappIcon
                 account: root.account
+
+                userDisplayNaming: d.userDisplayNaming
             }
 
             ContentPanel {
                 Layout.fillWidth: true
                 Layout.maximumHeight: 340
+
+                payloadToDisplay: d.payloadToDisplay
             }
 
             // TODO: externalize as a TargetPanel
@@ -268,11 +273,14 @@ StatusDialog {
 
         leftButtons: ObjectModel {
             MaxFeesDisplay {
+                maxFeesText: root.maxFeesText
+                feesTextColor: root.enoughFunds ? Theme.palette.directColor1 : Theme.palette.dangerColor1
             }
             Item {
                 width: 20
             }
             EstimatedTimeDisplay {
+                estimatedTimeText: root.estimatedTimeText
                 visible: !!root.estimatedTimeText
             }
         }
@@ -295,191 +303,6 @@ StatusDialog {
                 onClicked: {
                     root.sign()
                 }
-            }
-        }
-    }
-
-    component MaxFeesDisplay: ColumnLayout {
-        StatusBaseText {
-            text: qsTr("Max fees:")
-
-            font.pixelSize: 12
-            color: Theme.palette.directColor1
-        }
-        StatusBaseText {
-            id: maxFeesDisplay
-            text: root.maxFeesText
-
-            visible: !!root.maxFeesText
-
-            font.pixelSize: 16
-            color: root.enoughFunds ? Theme.palette.directColor1 : Theme.palette.dangerColor1
-        }
-        StatusBaseText {
-            text: qsTr("No fees")
-
-            visible: !maxFeesDisplay.visible
-
-            font.pixelSize: maxFeesDisplay.font.pixelSize
-            font.weight: maxFeesDisplay.font.weight
-        }
-    }
-
-    component EstimatedTimeDisplay: ColumnLayout {
-        StatusBaseText {
-            text: qsTr("Est. time:")
-            font.pixelSize: 12
-            color: Theme.palette.directColor1
-        }
-        StatusBaseText {
-            text: root.estimatedTimeText
-            font.pixelSize: 16
-        }
-    }
-
-    component IntentionPanel: ColumnLayout {
-        spacing: 8
-
-        required property string dappName
-        required property url dappIcon
-        required property var account
-
-        // Icons
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 8
-
-            StatusRoundedImage {
-                id: dappIconComponent
-
-                width: height
-                height: parent.height
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: -16
-                anchors.verticalCenter: parent.verticalCenter
-
-                image.source: root.dappIcon
-            }
-            StatusRoundIcon {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: 16
-                anchors.verticalCenter: parent.verticalCenter
-
-                asset: StatusAssetSettings {
-                    width: 24
-                    height: 24
-                    color: Theme.palette.primaryColor1
-                    bgWidth: 40
-                    bgHeight: 40
-                    bgColor: Theme.palette.desktopBlue10
-                    bgRadius: bgWidth / 2
-                    bgBorderWidth: 2
-                    bgBorderColor: Theme.palette.statusAppLayout.backgroundColor
-                    source: "assets/sign.svg"
-                }
-            }
-        }
-
-        // Names and intentions
-        StatusBaseText {
-            text: qsTr("%1 wants you to %2 with %3").arg(dappName).arg(d.userDisplayNaming).arg(account.name)
-
-            Layout.preferredWidth: 400
-            Layout.alignment: Qt.AlignHCenter
-
-            font.pixelSize: 15
-            font.weight: Font.DemiBold
-
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        // TODO #14762: externalize as a InfoPill and merge base implementation with
-        // the existing IssuePill reusable component
-        Rectangle {
-            Layout.preferredWidth: operationStatusLayout.implicitWidth + 24
-            Layout.preferredHeight: operationStatusLayout.implicitHeight + 14
-
-            Layout.alignment: Qt.AlignHCenter
-
-            visible: true
-
-            border.color: Theme.palette.successColor2
-            border.width: 1
-            color: "transparent"
-            radius: height / 2
-
-            RowLayout {
-                id: operationStatusLayout
-
-                spacing: 8
-
-                anchors.centerIn: parent
-
-                StatusIcon {
-                    Layout.preferredWidth: 16
-                    Layout.preferredHeight: 16
-
-                    visible: true
-
-                    color: Theme.palette.directColor1
-                    icon: "info"
-                }
-
-                StatusBaseText {
-                    text: qsTr("Only sign if you trust the dApp")
-
-                    font.pixelSize: 12
-                    color: Theme.palette.directColor1
-                }
-            }
-        }
-    }
-
-    component ContentPanel: Rectangle {
-        id: contentPanelRect
-        border.width: 1
-        border.color: Theme.palette.baseColor2
-        color: "transparent"
-        radius: 8
-
-        implicitHeight: contentScrollView.implicitHeight + (2 * contentText.anchors.margins)
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: contentScrollView.enabled || !enabled ? undefined : Qt.PointingHandCursor
-            enabled: contentScrollView.height < contentScrollView.contentHeight
-
-            onClicked: {
-                contentScrollView.enabled = !contentScrollView.enabled
-            }
-            z: contentScrollView.z + 1
-        }
-
-        StatusScrollView {
-            id: contentScrollView
-            anchors.fill: parent
-
-            contentWidth: availableWidth
-            contentHeight: contentText.contentHeight
-
-            padding: 0
-
-            enabled: false
-
-            StatusBaseText {
-                id: contentText
-                anchors.fill: parent
-                anchors.margins: 20
-
-                width: contentScrollView.availableWidth
-
-                text: d.payloadToDisplay
-
-                wrapMode: Text.WrapAnywhere
             }
         }
     }
