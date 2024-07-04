@@ -391,7 +391,7 @@ Rectangle {
                 anchors.top: statusListItemTertiaryTitle.bottom
                 anchors.topMargin: visible ? 2 : 0
                 width: Math.min(statusListItemTagsSlotInline.width, statusListItemTagsSlotInline.availableWidth, parent.width)
-                height: visible ? contentHeight : 0
+                height: visible ? contentHeight + 16 : 0
                 padding: 0
                 ScrollBar.horizontal.policy: root.tagsScrollBarVisible ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
 
