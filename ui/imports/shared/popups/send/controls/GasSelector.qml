@@ -50,11 +50,13 @@ Item {
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
                 title: qsTr("%1 transaction fee").arg(root.getNetworkName(modelData.fromNetwork))
                 subTitle: {
-                    let fee = root.formatCurrencyAmount(totalGasAmountEth, Constants.ethToken)
+                    let primaryFee = root.formatCurrencyAmount(totalGasAmountEth, Constants.ethToken)
                     if (modelData.gasFees.eip1559Enabled && modelData.gasFees.l1GasFee > 0) {
-                        fee += "\n(L1 %1)".arg(root.formatCurrencyAmount(totalGasAmountL1Eth, Constants.ethToken))
+                        return qsTr("L1 fee: %1\nL2 fee: %2")
+                        .arg(root.formatCurrencyAmount(totalGasAmountL1Eth, Constants.ethToken))
+                        .arg(primaryFee)
                     }
-                    return fee
+                    return primaryFee
                 }
                 property double totalGasAmountL1Eth: {
                     const l1FeeInGWei = modelData.gasFees.l1GasFee
