@@ -22,17 +22,19 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704578', 'Status community link preview bubble')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704589', 'Status user profile link preview')
 @pytest.mark.case(704596, 704578, 704578)
-@pytest.mark.parametrize('community_name, domain_link, user_name, user_emoji_hash',
-                         [pytest.param('Status', 'status.app', 'squisher',
-                                       '0x04e972b2a794c315e16411fc0930a65bffffe4f885341683f4532fbbd883a447d849ac0be63d6a4f721affa0d0408160974ff831408433972de2c4556ef06d1ae1')
+@pytest.mark.parametrize('community_name, domain_link, user_name, domain_link_2, user_emoji_hash',
+                         [pytest.param('Status', 'status.app', 'test_user', 'github.com',
+                                       '0x047bc087919ee9875fcca0a01f46261c3c1d8ecbb9cd95f95903316190bd81946909cceb5fcda5d9f1a442fa20f71b5aa0f938cad87e83d45211bf5803352c9010')
                           ])
-def test_link_previews(multiple_instances, community_name, domain_link, user_name, user_emoji_hash):
+def test_link_previews(multiple_instances, community_name, domain_link, user_name, domain_link_2, user_emoji_hash):
     user_one: UserAccount = constants.user_with_random_attributes_1
     user_two: UserAccount = constants.user_with_random_attributes_2
     main_window = MainWindow()
     messages_screen = MessagesScreen()
+    path = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
+    timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
 
-    with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
+    with (multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two):
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()
@@ -71,8 +73,11 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
             messages_screen.group_chat.type_message(message)
 
         with step('Verify text in the link preview bubble'):
-            assert Messaging.SHOW_PREVIEWS_TITLE.value == messages_screen.group_chat.get_show_link_preview_bubble_title()
-            assert Messaging.SHOW_PREVIEWS_TEXT.value == messages_screen.group_chat.get_show_link_preview_bubble_description()
+            assert driver.waitFor(
+                lambda: Messaging.SHOW_PREVIEWS_TITLE.value == messages_screen.group_chat.get_show_link_preview_bubble_title(),
+                timeout), f'Actual title of the link preview is not correct'
+            assert Messaging.SHOW_PREVIEWS_TEXT.value == messages_screen.group_chat.get_show_link_preview_bubble_description(), \
+                f'Actual text of the link preview is not correct'
 
         with step('Click options combobox and verify that there are 3 options'):
             messages_screen.group_chat.click_options().are_all_options_visible()
@@ -82,7 +87,8 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
 
         with step('Verify that message was sent without preview'):
             sent_message = messages_screen.chat.messages(0)
-            assert sent_message[0].link_preview is None
+            assert driver.waitFor(lambda: sent_message[0].link_preview is None,
+                                  timeout), f'Message was wrongly sent with preview'
 
         with step(f'Paste external link again and verify that there are still 3 options'):
             messages_screen.group_chat.type_message(message)
@@ -94,6 +100,30 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
         with step('Change preview settings to always show previews in messaging settings'):
             main_window.left_panel.open_settings().left_panel.open_messaging_settings().click_always_show()
             main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_one.name)
+
+        with step(f'Paste external link again'):
+            messages_screen.group_chat.type_message(message)
+
+        with step('Wait until link preview is ready'):
+            assert driver.waitFor(
+                lambda: domain_link_2 == messages_screen.group_chat.get_link_preview_bubble_description(),
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+        with step(f'Paste image to the same message'):
+            messages_screen.group_chat.choose_image(str(path))
+            messages_screen.group_chat.send_message()
+
+        with step('Verify image and link unfurl are present in the last sent message'):
+            message_object = messages_screen.chat.messages(0)[0]
+            assert driver.waitFor(lambda: message_object.image_message.visible,
+                                  timeout), f"Image is not found in the last message"
+            assert driver.waitFor(lambda: message_object.delegate_button.is_visible,
+                                  timeout), f"Link preview is not found in the last message"
+            assert driver.waitFor(lambda: message_object.banner_image.is_visible,
+                                  timeout), f"Banner image is not found in the last message"
+            assert driver.waitFor(
+                lambda: domain_link_2 == message_object.get_link_domain(),
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
         with step(f'Paste link to status community'):
             message_community = link_to_status_community
@@ -114,12 +144,12 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
             message_user = status_user_profile_link
             messages_screen.group_chat.type_message(message_user)
             assert driver.waitFor(
-                lambda: user_name == messages_screen.group_chat.get_link_preview_bubble_title(), 10000)
+                lambda: user_name == messages_screen.group_chat.get_link_preview_bubble_title(), 12000)
             messages_screen.group_chat.confirm_sending_message()
 
         with step('Verify title and emojihash are correct for link preview of sent message'):
             sent_message = messages_screen.chat.messages(0)
             assert driver.waitFor(lambda: sent_message[0].get_link_preview_title() == user_name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                                  timeout)
             assert driver.waitFor(lambda: sent_message[0].link_preview_emoji_hash == user_emoji_hash,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                                  timeout)

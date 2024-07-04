@@ -132,6 +132,7 @@ class Message:
         self.link_preview_title_object: typing.Optional[QObject] = None
         self.link_preview_emoji_hash: typing.Optional[str] = None
         self.image_message: typing.Optional[QObject] = None
+        self.banner_image: typing.Optional[QObject] = None
         self.community_invitation: dict = {}
         self.init_ui()
 
@@ -165,6 +166,8 @@ class Message:
                         self.link_preview = QObject(real_name=driver.objectMap.realName(child))
                     case 'imageMessage':
                         self.image_message = child
+                    case 'bannerImage':
+                        self.banner_image = QObject(real_name=driver.objectMap.realName(child))
 
     @allure.step('Open community invitation')
     def open_community_invitation(self):
@@ -201,6 +204,10 @@ class Message:
         for child in walk_children(self.link_preview_title_object):
             if getattr(child, 'objectName', '') == 'linkPreviewTitle':
                 return str(child.text)
+
+    @allure.step('Get link domain from message')
+    def get_link_domain(self) -> str:
+        return self.delegate_button.object.linkData.domain
 
     @allure.step('Open context menu for message')
     def open_context_menu_for_message(self):
@@ -416,13 +423,20 @@ class ChatMessagesView(QObject):
     def send_emoji_to_chat(self, emoji: str):
         self._emoji_button.click()
         EmojiPopup().wait_until_appears().select(emoji)
-        for i in range(2):
-            driver.nativeType('<Return>')
+        self.send_message()
 
     @allure.step('Send image to chat')
     def send_image_to_chat(self, path):
+        self.choose_image(path)
+        self.send_message()
+
+    @allure.step('Choose image')
+    def choose_image(self, path):
         fileuri = pathlib.Path(str(path)).as_uri()
         self._chat_input.object.selectImageString(fileuri)
+
+    @allure.step('Confirm sending message')
+    def send_message(self):
         for i in range(2):
             driver.nativeType('<Return>')
 
