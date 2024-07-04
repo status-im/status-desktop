@@ -18,6 +18,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
+    viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
     isAllAccounts: bool
@@ -32,15 +33,17 @@ proc newModule*(
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
+  result.viewVariant = newQVariant(result.view)
   result.controller = newController(result, walletAccountService, currencyService)
   result.moduleLoaded = false
   result.isAllAccounts = false
 
 method delete*(self: Module) =
+  self.viewVariant.delete
   self.view.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionOverview", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSectionOverview", self.viewVariant)
   self.controller.init()
   self.view.load()
 

@@ -16,6 +16,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
+    viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
     walletAccountService: wallet_account_service.Service
@@ -32,10 +33,12 @@ proc newModule*(
   result.events = events
   result.walletAccountService = walletAccountService
   result.view = newView(result)
+  result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, walletAccountService, networkService, currencyService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  self.viewVariant.delete
   self.view.delete
   self.controller.delete
 
@@ -63,7 +66,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
   self.view.setItems(items)
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionAccounts", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSectionAccounts", self.viewVariant)
   self.controller.init()
   self.view.load()
 

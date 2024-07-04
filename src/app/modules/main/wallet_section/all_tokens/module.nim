@@ -20,6 +20,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
+    viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
     addresses: seq[string]
@@ -36,16 +37,18 @@ proc newModule*(
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
+  result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, tokenService, walletAccountService, settingsService, communityTokensService)
   result.moduleLoaded = false
   result.addresses = @[]
 
 method delete*(self: Module) =
+  self.viewVariant.delete
   self.view.delete
   self.controller.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", self.viewVariant)
 
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
     self.controller.rebuildMarketData()

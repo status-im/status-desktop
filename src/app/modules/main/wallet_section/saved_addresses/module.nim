@@ -13,6 +13,7 @@ type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
+    viewVariant: QVariant
     moduleLoaded: bool
     controller: Controller
 
@@ -24,10 +25,12 @@ proc newModule*(
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
+  result.viewVariant = newQVariant(result.view)
   result.controller = newController(result, events, savedAddressService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  self.viewVariant.delete
   self.view.delete
 
 method loadSavedAddresses*(self: Module) =
@@ -45,7 +48,7 @@ method loadSavedAddresses*(self: Module) =
   )
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionSavedAddresses", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSectionSavedAddresses", self.viewVariant)
 
   self.loadSavedAddresses()
   self.controller.init()
