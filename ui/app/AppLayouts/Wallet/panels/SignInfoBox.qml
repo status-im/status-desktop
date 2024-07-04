@@ -18,6 +18,7 @@ ColumnLayout {
     property string badge
     property alias asset: listItem.asset
     property alias components: listItem.components
+    property int listItemHeight: 76
 
     StatusBaseText {
         text: root.caption
@@ -26,7 +27,7 @@ ColumnLayout {
     StatusListItem {
         id: listItem
         Layout.fillWidth: true
-        Layout.preferredHeight: 76
+        Layout.preferredHeight: root.listItemHeight
         title: root.primaryText
         statusListItemTitle.font.pixelSize: Style.current.additionalTextSize
         statusListItemTitle.elide: Text.ElideMiddle
@@ -34,6 +35,8 @@ ColumnLayout {
         statusListItemSubTitle.font.pixelSize: Style.current.additionalTextSize
         asset.name: root.icon
         asset.isImage: true
+        asset.bgWidth: 40
+        asset.bgHeight: 40
         border.width: 1
         border.color: Theme.palette.baseColor2
 

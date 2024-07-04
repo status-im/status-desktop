@@ -10,9 +10,11 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.popups 1.0
 
+import shared.controls 1.0
 import utils 1.0
 
 SignTransactionModalBase {
@@ -22,14 +24,11 @@ SignTransactionModalBase {
     required property string fromTokenAmount
     required property string fromTokenContractAddress
 
-    required property string toTokenSymbol
-    required property string toTokenAmount
-    required property string toTokenContractAddress
-
     required property string accountName
     required property string accountAddress
     required property string accountEmoji
     required property color accountColor
+    required property string accountBalanceAmount
 
     required property string networkShortName // e.g. "oeth"
     required property string networkName // e.g. "Optimism"
@@ -39,58 +38,41 @@ SignTransactionModalBase {
     required property string currentCurrency
     required property string fiatFees
     required property string cryptoFees
-    required property double slippage
+    // need to check how this is done in new router, right now it is Enum type
+    required property int estimatedTime // Constants.TransactionEstimatedTime.XXX enum
 
     property string serviceProviderName: "Paraswap"
-    property string serviceProviderURL: "https://www.paraswap.io/" // TODO https://github.com/status-im/status-desktop/issues/15329
+    property string serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
+    property string serviceProviderContractAddress: "0x1bD435F3C054b6e901B7b108a0ab7617C808677b"
 
-    title: qsTr("Sign Swap")
-    //: e.g. (swap) 100 DAI to 100 USDT
-    subtitle: qsTr("%1 %2 to %3 %4").arg(formatBigNumber(fromTokenAmount, 4)).arg(fromTokenSymbol) // FIXME get the correct number of decimals to display from the "symbol"
-        .arg(formatBigNumber(toTokenAmount, 4)).arg(toTokenSymbol)
+    title: qsTr("Approve spending cap")
+    subtitle: serviceProviderURL
 
     gradientColor: Utils.setColorAlpha(root.accountColor, 0.05) // 5% of wallet color
-    fromImageSource: Constants.tokenIcon(root.fromTokenSymbol)
-    toImageSource: Constants.tokenIcon(root.toTokenSymbol)
+    fromImageSmartIdenticon.asset.name: "filled-account"
+    fromImageSmartIdenticon.asset.emoji: root.accountEmoji
+    fromImageSmartIdenticon.asset.color: root.accountColor
+    fromImageSmartIdenticon.asset.isLetterIdenticon: !!root.accountEmoji
+    toImageSource: Constants.tokenIcon(root.fromTokenSymbol)
 
-    //: e.g. "Swap 100 DAI to 100 USDT in <account name> on <network chain name>"
-    headerMainText: qsTr("Swap %1 %2 to %3 %4 in %5 on %6").arg(formatBigNumber(root.fromTokenAmount)).arg(root.fromTokenSymbol)
-        .arg(formatBigNumber(root.toTokenAmount)).arg(root.toTokenSymbol).arg(root.accountName).arg(root.networkName)
+    //: e.g. "Set 100 DAI spending cap in <account name> for <service> on <network name>"
+    headerMainText: qsTr("Set %1 %2 spending cap in %3 for %4 on %5").arg(formatBigNumber(root.fromTokenAmount)).arg(root.fromTokenSymbol)
+        .arg(root.accountName).arg(root.serviceProviderURL).arg(root.networkName)
     headerSubTextLayout: [
         StatusBaseText {
+            Layout.fillWidth: true
+            horizontalAlignment: Qt.AlignHCenter
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.pixelSize: Style.current.additionalTextSize
-            text: qsTr("Powered by")
-        },
-        StatusLinkText {
-            Layout.topMargin: 1 // compensate for the underline
-            text: root.serviceProviderName
-            normalColor: Theme.palette.directColor1
-            linkColor: Theme.palette.directColor1
-            font.weight: Font.Normal
-            onClicked: root.openLinkWithConfirmation(root.serviceProviderURL)
-        },
-        StatusIcon {
-            Layout.leftMargin: -2
-            width: 16
-            height: 16
-            icon: "external-link"
-            color: Theme.palette.directColor1
+            text: qsTr("The smart contract specified will be able to spend up to %1 %2 of your current or future balance.").arg(formatBigNumber(root.fromTokenAmount)).arg(root.fromTokenSymbol)
         }
     ]
-    infoTagText: qsTr("Review all details before signing")
 
     headerIconComponent: StatusSmartIdenticon {
-        asset.name: "filled-account"
-        asset.emoji: root.accountEmoji
-        asset.color: root.accountColor
-        asset.isLetterIdenticon: !!root.accountEmoji
+        asset.name: Style.png("swap/paraswap") // FIXME svg
+        asset.isImage: true
         asset.bgWidth: 40
         asset.bgHeight: 40
-
-        bridgeBadge.visible: true
-        bridgeBadge.border.width: 2
-        bridgeBadge.color: Style.current.darkBlue
-        bridgeBadge.image.source: Style.svg("sign")
     }
 
     leftFooterContents: ObjectModel {
@@ -113,25 +95,71 @@ SignTransactionModalBase {
             ColumnLayout {
                 spacing: 2
                 StatusBaseText {
-                    text: qsTr("Max slippage:")
+                    text: qsTr("Est. time:")
                     color: Theme.palette.baseColor1
                     font.pixelSize: Style.current.additionalTextSize
                 }
-                StatusBaseText {
-                    objectName: "footerMaxSlippageText"
-                    text: "%1%".arg(LocaleUtils.numberToLocaleString(root.slippage))
+                StatusTextWithLoadingState {
+                    objectName: "footerEstimatedTime"
+                    text: WalletUtils.getLabelForEstimatedTxTime(root.estimatedTime)
+                    loading: root.feesLoading
                 }
             }
         }
     }
 
-    // Pay
+    // spending cap
     SignInfoBox {
         Layout.fillWidth: true
         Layout.bottomMargin: Style.current.bigPadding
-        objectName: "payBox"
-        caption: qsTr("Pay")
-        primaryText: "%1 %2".arg(formatBigNumber(root.fromTokenAmount)).arg(root.fromTokenSymbol)
+        objectName: "spendingCapBox"
+        caption: qsTr("Set spending cap")
+        primaryText: formatBigNumber(root.fromTokenAmount)
+        listItemHeight: 44
+        components: [
+            StatusSmartIdenticon {
+                asset.name: Constants.tokenIcon(root.fromTokenSymbol)
+                asset.isImage: true
+                asset.width: 20
+                asset.height: 20
+            },
+            StatusBaseText {
+                text: root.fromTokenSymbol
+            }
+        ]
+    }
+
+    // Account
+    SignInfoBox {
+        Layout.fillWidth: true
+        Layout.bottomMargin: Style.current.bigPadding
+        objectName: "accountBox"
+        caption: qsTr("Account")
+        primaryText: root.accountName
+        secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.accountAddress)
+        asset.name: "filled-account"
+        asset.emoji: root.accountEmoji
+        asset.color: root.accountColor
+        asset.isLetterIdenticon: !!root.accountEmoji
+        components: [
+            InformationTag {
+                tagPrimaryLabel.text: "%1 %2".arg(formatBigNumber(root.accountBalanceAmount, 2)).arg(root.fromTokenSymbol)
+                rightComponent: StatusRoundedImage {
+                    width: 16
+                    height: 16
+                    image.source: root.networkIconPath
+                }
+            }
+        ]
+    }
+
+    // Token
+    SignInfoBox {
+        Layout.fillWidth: true
+        Layout.bottomMargin: Style.current.bigPadding
+        objectName: "tokenBox"
+        caption: qsTr("Token")
+        primaryText: root.fromTokenSymbol
         secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress)
         icon: Constants.tokenIcon(root.fromTokenSymbol)
         badge: root.networkIconPath
@@ -147,40 +175,25 @@ SignTransactionModalBase {
         ]
     }
 
-    // Receive
+    // Smart contract
     SignInfoBox {
         Layout.fillWidth: true
         Layout.bottomMargin: Style.current.bigPadding
-        objectName: "receiveBox"
-        caption: qsTr("Receive")
-        primaryText: "%1 %2".arg(formatBigNumber(root.toTokenAmount)).arg(root.toTokenSymbol)
-        secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.toTokenContractAddress)
-        icon: Constants.tokenIcon(root.toTokenSymbol)
-        badge: root.networkIconPath
+        objectName: "smartContractBox"
+        caption: qsTr("Via smart contract")
+        primaryText: root.serviceProviderName
+        secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.serviceProviderContractAddress)
+        icon: Style.png("swap/paraswap") // FIXME svg
         components: [
             ContractInfoButtonWithMenu {
-                symbol: root.toTokenSymbol
-                contractAddress: root.toTokenContractAddress
-                networkName: root.networkName
+                symbol: ""
+                contractAddress: root.serviceProviderContractAddress
+                networkName: root.serviceProviderName
                 networkShortName: root.networkShortName
                 networkBlockExplorerUrl: root.networkBlockExplorerUrl
                 onOpenLink: (link) => root.openLinkWithConfirmation(link)
             }
         ]
-    }
-
-    // Account
-    SignInfoBox {
-        Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
-        objectName: "accountBox"
-        caption: qsTr("In account")
-        primaryText: root.accountName
-        secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.accountAddress)
-        asset.name: "filled-account"
-        asset.emoji: root.accountEmoji
-        asset.color: root.accountColor
-        asset.isLetterIdenticon: !!root.accountEmoji
     }
 
     // Network

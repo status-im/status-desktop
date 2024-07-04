@@ -5,4 +5,6 @@ SwapOutputData 1.0 SwapOutputData.qml
 SwapSignApprovePopup 1.0 SwapSignApprovePopup.qml
 SwapSignApproveInputForm 1.0 SwapSignApproveInputForm.qml
 SwapSignApproveAdaptor 1.0 SwapSignApproveAdaptor.qml
+
+SwapApproveCapModal 1.0 SwapApproveCapModal.qml
 SwapSignModal 1.0 SwapSignModal.qml

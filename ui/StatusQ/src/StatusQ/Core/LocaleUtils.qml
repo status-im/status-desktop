@@ -96,7 +96,6 @@ QtObject {
         locale = locale || Qt.locale()
         const numberOfDigits = integralPartLength(num)
         let oneArgStrFormat = "%1"
-        let formattedNumber = num
         let multiplier = 1
         if(numberOfDigits >=4 && numberOfDigits < 7) { // 1K - 999K
             multiplier = 1 / 1000

@@ -7,6 +7,7 @@ import Models 1.0
 
 import StatusQ.Core.Utils 0.1 as SQUtils
 
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.popups.swap 1.0
 
 import utils 1.0
@@ -18,21 +19,18 @@ Item {
 
     Component {
         id: componentUnderTest
-        SwapSignModal {
+        SwapApproveCapModal {
             anchors.centerIn: parent
 
             fromTokenSymbol: "DAI"
             fromTokenAmount: "100.07"
             fromTokenContractAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
 
-            toTokenSymbol: "USDT"
-            toTokenAmount: "142.07"
-            toTokenContractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
-
             accountName: "Hot wallet (generated)"
             accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
             accountEmoji: "🚗"
             accountColor: Utils.getColorForId(Constants.walletAccountColors.primary)
+            accountBalanceAmount: "120.55489"
 
             networkShortName: Constants.networkShortChainNames.mainnet
             networkName: "Mainnet"
@@ -42,7 +40,7 @@ Item {
             currentCurrency: "EUR"
             fiatFees: "1.54"
             cryptoFees: "0.001"
-            slippage: 0.2
+            estimatedTime: Constants.TransactionEstimatedTime.Unknown
 
             loginType: Constants.LoginType.Password
         }
@@ -60,10 +58,10 @@ Item {
         signalName: "rejected"
     }
 
-    property SwapSignModal controlUnderTest: null
+    property SwapApproveCapModal controlUnderTest: null
 
     TestCase {
-        name: "SwapSignModal"
+        name: "SwapApproveCapModal"
         when: windowShown
 
         function init() {
@@ -83,38 +81,34 @@ Item {
             controlUnderTest.fromTokenSymbol = "SNT"
             controlUnderTest.fromTokenAmount = "1000.123456789"
             controlUnderTest.fromTokenContractAddress = "Oxdeadbeef"
-            controlUnderTest.toTokenSymbol = "ETH"
-            controlUnderTest.toTokenAmount = "1.42"
-            controlUnderTest.toTokenContractAddress = "0xdeadcaff"
 
             // title & subtitle
-            compare(controlUnderTest.title, qsTr("Sign Swap"))
-            compare(controlUnderTest.subtitle, qsTr("1000.1235 SNT to 1.42 ETH")) // subtitle rounded amounts
+            compare(controlUnderTest.title, qsTr("Approve spending cap"))
+            compare(controlUnderTest.subtitle, controlUnderTest.serviceProviderURL)
 
             // info box
             const headerText = findChild(controlUnderTest.contentItem, "headerText")
             verify(!!headerText)
-            compare(headerText.text, qsTr("Swap 1000.123456789 SNT to 1.42 ETH in %1 on %2").arg(controlUnderTest.accountName).arg(controlUnderTest.networkName))
-            const fromImage = findChild(controlUnderTest.contentItem, "fromImage")
+            compare(headerText.text, qsTr("Set %1 %2 spending cap in %3 for %4 on %5")
+                    .arg(controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount)).arg(controlUnderTest.fromTokenSymbol)
+                    .arg(controlUnderTest.accountName).arg(controlUnderTest.serviceProviderURL).arg(controlUnderTest.networkName))
+
+            const fromImageHidden = findChild(controlUnderTest.contentItem, "fromImage")
+            compare(fromImageHidden.visible, false)
+
+            const fromImage = findChild(controlUnderTest.contentItem, "fromImageIdenticon")
             verify(!!fromImage)
-            compare(fromImage.image.source, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
+            compare(fromImage.asset.emoji, controlUnderTest.accountEmoji)
+            compare(fromImage.asset.color, controlUnderTest.accountColor)
             const toImage = findChild(controlUnderTest.contentItem, "toImage")
             verify(!!toImage)
-            compare(toImage.image.source, Constants.tokenIcon(controlUnderTest.toTokenSymbol))
+            compare(toImage.image.source, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
 
-            // pay box
-            const payBox = findChild(controlUnderTest.contentItem, "payBox")
-            verify(!!payBox)
-            compare(payBox.caption, qsTr("Pay"))
-            compare(payBox.primaryText, "%1 %2".arg(controlUnderTest.fromTokenAmount).arg(controlUnderTest.fromTokenSymbol))
-            compare(payBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.fromTokenContractAddress))
-
-            // receive box
-            const receiveBox = findChild(controlUnderTest.contentItem, "receiveBox")
-            verify(!!receiveBox)
-            compare(receiveBox.caption, qsTr("Receive"))
-            compare(receiveBox.primaryText, "%1 %2".arg(controlUnderTest.toTokenAmount).arg(controlUnderTest.toTokenSymbol))
-            compare(receiveBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.toTokenContractAddress))
+            // spending cap box
+            const spendingCapBox = findChild(controlUnderTest.contentItem, "spendingCapBox")
+            verify(!!spendingCapBox)
+            compare(spendingCapBox.caption, qsTr("Set spending cap"))
+            compare(spendingCapBox.primaryText, controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount))
         }
 
         function test_accountInfo() {
@@ -124,11 +118,38 @@ Item {
             const accountBox = findChild(controlUnderTest.contentItem, "accountBox")
             verify(!!accountBox)
 
-            compare(accountBox.caption, qsTr("In account"))
+            compare(accountBox.caption, qsTr("Account"))
             compare(accountBox.primaryText, controlUnderTest.accountName)
             compare(accountBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.accountAddress))
             compare(accountBox.asset.emoji, controlUnderTest.accountEmoji)
             compare(accountBox.asset.color, controlUnderTest.accountColor)
+        }
+
+        function test_tokenInfo() {
+            verify(!!controlUnderTest)
+
+            // token box
+            const tokenBox = findChild(controlUnderTest.contentItem, "tokenBox")
+            verify(!!tokenBox)
+
+            compare(tokenBox.caption, qsTr("Token"))
+            compare(tokenBox.primaryText, controlUnderTest.fromTokenSymbol)
+            compare(tokenBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.fromTokenContractAddress))
+            compare(tokenBox.icon, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
+            compare(tokenBox.badge, controlUnderTest.networkIconPath)
+        }
+
+        function test_smartContractInfo() {
+            verify(!!controlUnderTest)
+
+            // smart contract box
+            const smartContractBox = findChild(controlUnderTest.contentItem, "smartContractBox")
+            verify(!!smartContractBox)
+
+            compare(smartContractBox.caption, qsTr("Via smart contract"))
+            compare(smartContractBox.primaryText, controlUnderTest.serviceProviderName)
+            compare(smartContractBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.serviceProviderContractAddress))
+            compare(smartContractBox.icon, Style.png("swap/paraswap"))
         }
 
         function test_networkInfo() {
@@ -196,6 +217,10 @@ Item {
             verify(!!footerFiatFeesText)
             compare(footerFiatFeesText.loading, false)
 
+            const footerEstimatedTime = findChild(controlUnderTest.footer, "footerEstimatedTime")
+            verify(!!footerEstimatedTime)
+            compare(footerEstimatedTime.loading, false)
+
             const fiatFeesText = findChild(controlUnderTest.contentItem, "fiatFeesText")
             verify(!!fiatFeesText)
             compare(fiatFeesText.loading, false)
@@ -208,6 +233,7 @@ Item {
 
             compare(signButton.interactive, false)
             compare(footerFiatFeesText.loading, true)
+            compare(footerEstimatedTime.loading, true)
             compare(fiatFeesText.loading, true)
             compare(cryptoFeesText.loading, true)
         }
@@ -219,9 +245,9 @@ Item {
             verify(!!fiatFeesText)
             compare(fiatFeesText.text, "%1 %2".arg(controlUnderTest.fiatFees).arg(controlUnderTest.currentCurrency))
 
-            const maxSlippageText = findChild(controlUnderTest.footer, "footerMaxSlippageText")
-            verify(!!maxSlippageText)
-            compare(maxSlippageText.text, "%1%".arg(controlUnderTest.slippage))
+            const footerEstimatedTime = findChild(controlUnderTest.footer, "footerEstimatedTime")
+            verify(!!footerEstimatedTime)
+            compare(footerEstimatedTime.text, WalletUtils.getLabelForEstimatedTxTime(controlUnderTest.estimatedTime))
         }
 
         function test_signButton() {

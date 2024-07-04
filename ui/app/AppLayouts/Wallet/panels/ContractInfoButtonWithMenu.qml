@@ -16,7 +16,7 @@ StatusFlatButton {
     required property string symbol
     required property string contractAddress
     required property string networkName
-    required property string explorerName
+    required property string networkShortName
     required property string networkBlockExplorerUrl
 
     signal openLink(string link)
@@ -27,12 +27,23 @@ StatusFlatButton {
     highlighted: moreMenu.opened
     onClicked: moreMenu.popup(-moreMenu.width + width, height + 4)
 
+    function getExplorerName() {
+        if (root.networkShortName === Constants.networkShortChainNames.arbitrum) {
+            return qsTr("Arbiscan")
+        }
+        if (root.networkShortName === Constants.networkShortChainNames.optimism) {
+            return qsTr("Optimistic")
+        }
+        return qsTr("Etherscan")
+    }
+
     StatusMenu {
         id: moreMenu
 
         StatusAction {
-            //: e.g. "View Optimism DAI contract address on Optimistic"
-            text: qsTr("View %1 %2 contract address on %3").arg(root.networkName).arg(root.symbol).arg(root.explorerName)
+            //: e.g. "View Optimism (DAI) contract address on Optimistic"
+            text: !!root.symbol ? qsTr("View %1 %2 contract address on %3").arg(root.networkName).arg(root.symbol).arg(getExplorerName())
+                                : qsTr("View %1 contract address on %2").arg(root.networkName).arg(getExplorerName())
             icon.name: "external-link"
             onTriggered: {
                 var link = "%1/%2/%3".arg(root.networkBlockExplorerUrl).arg(Constants.networkExplorerLinks.addressPath).arg(root.contractAddress)
