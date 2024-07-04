@@ -219,6 +219,7 @@ Item {
         id: tokenDelegate
         TokenBalancePerChainDelegate {
             width: tokenList.width
+            tagsScrollBarVisible: true
 
             balancesModel: LeftJoinModel {
                 leftModel: !!model & !!model.balancesModel ? model.balancesModel : null
