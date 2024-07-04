@@ -15,8 +15,10 @@ SplitView {
         SplitView.fillHeight: true
         DappsComboBox {
             id: connectedDappComboBox
-            anchors.centerIn: parent
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
             model: emptyModelCheckbox.checked ? emptyModel : dappsModel
+            popup.visible: true
         }
 
         ListModel {
@@ -53,6 +55,31 @@ SplitView {
             ListElement {
                 name: "Test dApp 6"
                 url: "https://dapp.test/6"
+                iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+            }
+            ListElement {
+                name: "Test dApp 7"
+                url: "https://dapp.test/7"
+                iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+            }
+            ListElement {
+                name: "Test dApp 8"
+                url: "https://dapp.test/8"
+                iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+            }
+            ListElement {
+                name: "Test dApp 9"
+                url: "https://dapp.test/9"
+                iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+            }
+            ListElement {
+                name: "Test dApp 10"
+                url: "https://dapp.test/10"
+                iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+            }
+            ListElement {
+                name: "Test dApp 11"
+                url: "https://dapp.test/11"
                 iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
             }
         }

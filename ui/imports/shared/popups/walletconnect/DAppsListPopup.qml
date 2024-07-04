@@ -11,6 +11,8 @@ import StatusQ.Components 0.1
 
 import shared.controls 1.0
 
+import utils 1.0
+
 Popup {
     id: root
 
@@ -21,9 +23,9 @@ Popup {
     signal pairWCDapp()
 
     width: 312
+    padding: 0
 
     modal: false
-    padding: 8
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnOutsideClick | Popup.CloseOnPressOutside
 
     background: Rectangle {
@@ -46,9 +48,7 @@ Popup {
 
     contentItem: ColumnLayout {
         id: mainLayout
-
-        spacing: 8
-
+        spacing: 0
         ShapeRectangle {
             id: listPlaceholder
 
@@ -56,14 +56,20 @@ Popup {
 
             Layout.fillWidth: true
             Layout.preferredHeight: implicitHeight
+            Layout.leftMargin: Style.current.halfPadding
+            Layout.rightMargin: Layout.leftMargin
+            Layout.topMargin: Layout.leftMargin
+            Layout.bottomMargin: 4
 
             visible: listView.count === 0
         }
 
         Item {
             Layout.fillWidth: true
-            Layout.preferredHeight: 32
-            Layout.leftMargin: 8
+            Layout.preferredHeight: 36
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Layout.leftMargin
+            Layout.topMargin: Style.current.halfPadding
 
             visible: !listPlaceholder.visible
 
@@ -78,23 +84,49 @@ Popup {
             }
         }
 
-        StatusListView {
-            id: listView
-
+        Item {
+            id: listViewWrapper
             Layout.fillWidth: true
-            Layout.preferredHeight: contentHeight
-            Layout.maximumHeight: 280
-
-            model: root.delegateModel
+            Layout.preferredHeight: listView.contentHeight
+            Layout.maximumHeight: 290
             visible: !listPlaceholder.visible
 
-            ScrollBar.vertical: null
+            Rectangle {
+                id: header
+                width: parent.width
+                height: 4
+                color: Theme.palette.directColor8
+                visible: !listView.atYBeginning
+            }
+            StatusListView {
+                id: listView
+                anchors.fill: parent
+                anchors.leftMargin: Style.current.halfPadding
+                anchors.rightMargin: anchors.leftMargin
+                model: root.delegateModel
+                ScrollBar.vertical: null
+            }
+            Rectangle {
+                id: footer
+                anchors.bottom: parent.bottom
+                width: parent.width
+                height: 4
+                color: Theme.palette.directColor8
+                visible: !listView.atYEnd
+            }
         }
 
         StatusButton {
+            id: connectDappButton
             objectName: "connectDappButton"
             Layout.fillWidth: true
-            Layout.preferredHeight: implicitHeight
+            Layout.preferredHeight: 38
+            Layout.leftMargin: Style.current.halfPadding
+            Layout.rightMargin: Layout.leftMargin
+            Layout.bottomMargin: Layout.leftMargin
+            Layout.topMargin: 4
+
+            size: StatusButton.Size.Small
 
             text: qsTr("Connect a dApp via WalletConnect")
             onClicked: {
