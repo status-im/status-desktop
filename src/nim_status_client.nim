@@ -1,4 +1,4 @@
-import NimQml, chronicles, os, stew/shims/strformat, strutils, times, md5, json
+import NimQml, chronicles, os, stew/shims/strformat, strutils, times, md5, json, re
 
 import status_go
 import keycard_go
@@ -85,6 +85,44 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
   createDir(tmpDir)
   createDir(logDir)
 
+proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, file: cstring, function: cstring, line: cint) {.cdecl, exportc.} =
+  # Initialize Nim GC stack bottom for foreign threads
+  # https://status-im.github.io/nim-style-guide/interop.html#calling-nim-code-from-other-languages
+  when declared(setupForeignThreadGc): 
+    setupForeignThreadGc()
+  when declared(nimGC_setStackBottom):
+    var locals {.volatile, noinit.}: pointer
+    locals = addr(locals)
+    nimGC_setStackBottom(locals)
+
+  var text = $message
+  let fileString = $file
+
+  if fileString != "" and text.startsWith(fileString):
+    text = text[fileString.len..^1]              # Remove filepath
+    text = text.replace(re"[:0-9]+:\s*")  # Remove line, column, colons and space separator
+
+  logScope:
+    chroniclesLineNumbers = false
+    topics = "qt"
+    category = $category
+    file = fileString & ":" & $line
+    text
+
+  case int(messageType):
+    of 0: # QtDebugMsg
+      debug "qt message"
+    of 1: # QtWarningMsg
+      warn "qt warning"
+    of 2: # QtCriticalMsg
+      error "qt error"
+    of 3: # QtFatalMsg
+      fatal "qt fatal error"
+    of 4: # QtInfoMsg
+      info "qt message"
+    else:
+      warn "qt message of unknown type", messageType = int(messageType)
+
 proc mainProc() =
 
   when defined(macosx) and defined(arm64):
@@ -160,6 +198,7 @@ proc mainProc() =
     app.icon(app.applicationDirPath & statusAppIconPath)
 
   prepareLogging()
+  installMessageHandler(logHandlerCallback)
 
   singletonInstance.engine.addImportPath("qrc:/")
   singletonInstance.engine.addImportPath("qrc:/./imports")
@@ -203,9 +242,7 @@ proc mainProc() =
   keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
   setupRemoteSignalsHandling()
 
-  info fmt("Version: {APP_VERSION}")
-  info fmt("Commit: {GIT_COMMIT}")
-  info "Current date:", currentDateTime=now()
+  info "app info", version=APP_VERSION, commit=GIT_COMMIT, currentDateTime=now()
 
   info "starting application controller..."
   appController.start()
