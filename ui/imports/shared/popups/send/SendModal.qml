@@ -222,7 +222,7 @@ StatusDialog {
 
         if(!!popup.preSelectedRecipient) {
             recipientLoader.selectedRecipientType = popup.preSelectedRecipientType
-            if (popup.preSelectedRecipientType == TabAddressSelectorView.Type.Address) {
+            if (popup.preSelectedRecipientType === TabAddressSelectorView.Type.Address) {
                 recipientLoader.selectedRecipient = {address: popup.preSelectedRecipient}
             } else {
                 recipientLoader.selectedRecipient = popup.preSelectedRecipient
@@ -327,7 +327,6 @@ StatusDialog {
                         id: holdingSelector
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        // assetsModel: popup.store.processedAssetsModel
                         assetsModel: assetsAdaptor.model
                         collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                         networksModel: popup.store.flatNetworksModel
