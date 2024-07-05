@@ -175,6 +175,7 @@ QtObject:
     if self.busy:
       return
     let response = keycard_go.keycardCancelFlow()
+    sleep(200)
     self.currentFlow = KCSFlowType.NoFlow
     if self.doLogging:
       debug "keycardCancelFlow", kcServiceCurrFlow=($self.currentFlow), response=response
