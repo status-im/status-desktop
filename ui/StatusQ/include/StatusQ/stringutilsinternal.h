@@ -19,6 +19,8 @@ public:
 
     Q_INVOKABLE QString extractDomainFromLink(const QString& link) const;
 
+    Q_INVOKABLE QString plainText(const QString& htmlFragment) const;
+
 private:
     QQmlEngine* m_engine{nullptr};
 };

@@ -16,4 +16,8 @@ QtObject {
     function extractDomainFromLink(link) {
         return Internal.StringUtils.extractDomainFromLink(link)
     }
+
+    function plainText(htmlFragment) {
+        return Internal.StringUtils.plainText(htmlFragment)
+    }
 }
