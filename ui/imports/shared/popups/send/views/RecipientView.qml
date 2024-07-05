@@ -175,24 +175,14 @@ Loader {
 
     Component {
         id: addressRecipient
-        StatusInput {
-            id: recipientInput
+        SendRecipientInput {
             width: parent.width
             height: visible ? implicitHeight: 0
             visible: !root.isBridgeTx && !!root.selectedAsset
-
-            placeholderText: qsTr("Enter an ENS name or address")
-            input.background.color: Theme.palette.indirectColor1
-            input.background.border.width: 0
-            input.implicitHeight: 56
-            input.clearable: false // custom button below
-            input.edit.readOnly: !root.interactive
-            multiline: false
-            input.edit.textFormat: TextEdit.RichText
             text: root.addressText
 
             function validateInput() {
-                const plainText = store.plainText(recipientInput.text)
+                const plainText = store.plainText(text)
                 root.isLoading()
                 if (Utils.isValidEns(plainText)) {
                     d.isPending = true
@@ -202,38 +192,10 @@ Loader {
                 }
             }
 
-            input.rightComponent: RowLayout {
-                StatusButton {
-                    font.weight: Font.Normal
-                    borderColor: Theme.palette.primaryColor1
-                    size: StatusBaseButton.Size.Tiny
-                    text: qsTr("Paste")
-                    visible: recipientInput.input.edit.length === 0 && recipientInput.input.edit.canPaste
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        recipientInput.input.edit.forceActiveFocus()
-                        recipientInput.input.edit.paste()
-                        recipientInput.input.edit.cursorPosition = recipientInput.input.edit.length
-                        recipientInput.validateInput()
-                    }
-                }
-                StatusIcon {
-                    Layout.preferredWidth: 16
-                    Layout.preferredHeight: 16
-                    icon: "tiny/checkmark"
-                    color: Theme.palette.primaryColor1
-                    visible: root.ready
-                }
-                StatusClearButton {
-                    visible: recipientInput.input.edit.length !== 0 && root.interactive
-                    onClicked: {
-                        recipientInput.input.edit.clear()
-                        d.clearValues()
-                    }
-                }
-            }
-            Keys.onTabPressed: event.accepted = true
-            Keys.onReleased: recipientInput.validateInput()
+            interactive: root.interactive
+            checkMarkVisible: root.ready
+            onClearClicked: d.clearValues()
+            onValidateInputRequested: validateInput()
         }
     }
 

@@ -455,7 +455,7 @@ Item {
             onKeyPressed: {
                 root.keyPressed(event);
             }
-            onEditChanged: {
+            onEditClicked: {
                 root.editClicked();
             }
             onEditingFinished: {
