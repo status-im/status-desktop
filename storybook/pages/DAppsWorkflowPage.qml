@@ -201,12 +201,9 @@ Item {
                         if (d.activeTestCase < d.openPairTestCase)
                             return
 
-                        let items = InspectionUtils.findVisualsByTypeName(dappsWorkflow, "DAppsListPopup")
-                        if (items.length === 1) {
-                            let buttons = InspectionUtils.findVisualsByTypeName(items[0], "StatusButton")
-                            if (buttons.length === 1) {
-                                buttons[0].clicked()
-                            }
+                        let buttons = InspectionUtils.findVisualsByTypeName(dappsWorkflow.popup, "StatusButton")
+                        if (buttons.length === 1) {
+                            buttons[0].clicked()
                         }
                     }
 
@@ -232,7 +229,7 @@ Item {
                         let modals = InspectionUtils.findVisualsByTypeName(dappsWorkflow, "PairWCModal")
                         if (modals.length === 1) {
                             let buttons = InspectionUtils.findVisualsByTypeName(modals[0].footer, "StatusButton")
-                            if (buttons.length === 1 && walletConnectService.wcSDK.sdkReady) {
+                            if (buttons.length === 1 && buttons[0].enabled &&  walletConnectService.wcSDK.sdkReady) {
                                 d.activeTestCase = d.noTestCase
                                 buttons[0].clicked()
                                 return
@@ -473,7 +470,7 @@ Item {
         property bool testNetworks: false
         property bool enableSDK: true
         property bool pending : false
-        property string customAccounts: ""
+        property string customAccounts: "[]"
         property string persistedSessions: "[]"
     }
 

@@ -13,6 +13,8 @@ import utils 1.0
 import shared.controls 1.0
 import shared.popups 1.0
 
+import AppLayouts.Wallet.services.dapps.types 1.0
+
 import "PairWCModal"
 
 StatusDialog {
@@ -25,7 +27,15 @@ StatusDialog {
 
     property bool isPairing: false
 
+    function pairingUriValidated(validationState) {
+        uriInput.errorState = validationState
+        if (validationState === Pairing.uriErrors.ok) {
+            d.doPair()
+        }
+    }
+
     signal pair(string uri)
+    signal pairUriChanged(string uri)
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
@@ -41,7 +51,12 @@ StatusDialog {
         WCUriInput {
             id: uriInput
 
-            onTextChanged: root.isPairing = false
+            pending: uriInput.errorState === Pairing.uriErrors.notChecked
+
+            onTextChanged: {
+                root.isPairing = false
+                root.pairUriChanged(uriInput.text)
+            }
         }
 
         // Spacer
@@ -73,10 +88,24 @@ StatusDialog {
                 height: 44
                 text: qsTr("Done")
 
-                enabled: uriInput.valid && !root.isPairing && uriInput.text.length > 0
+                enabled: uriInput.valid
+                      && !root.isPairing
+                      && uriInput.text.length > 0
+                      && uriInput.errorState === Pairing.uriErrors.ok
 
-                onClicked: root.pair(uriInput.text)
+                onClicked: {
+                    d.doPair()
+                }
             }
+        }
+    }
+
+    QtObject {
+        id: d
+
+        function doPair() {
+            root.isPairing = true
+            root.pair(uriInput.text)
         }
     }
 }

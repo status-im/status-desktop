@@ -9,12 +9,15 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Wallet.services.dapps.types 1.0
+
 ColumnLayout {
     id: root
 
     readonly property bool valid: input.valid && input.text.length > 0
     readonly property alias text: input.text
     property alias pending: input.pending
+    property int errorState: Pairing.uriErrors.notChecked
 
     StatusBaseInput {
         id: input
@@ -29,47 +32,25 @@ ColumnLayout {
         valid: {
             let uri = input.text
 
+            errorText.text = ""
             if(uri.length === 0) {
-                errorText.text = ""
                 return true
             }
 
-            if(containsOnlyEmoji(uri)) {
+            if(root.errorState === Pairing.uriErrors.tooCool) {
                 errorText.text = qsTr("WalletConnect URI too cool")
-                return false
-            } else if(!validURI(uri)) {
+            } else if(root.errorState === Pairing.uriErrors.invalidUri) {
                 errorText.text = qsTr("WalletConnect URI invalid")
-                return false
-            } else if(wcUriAlreadyUsed(uri)) {
+            } else if(root.errorState === Pairing.uriErrors.alreadyUsed) {
                 errorText.text = qsTr("WalletConnect URI already used")
-                return false
-            } else if(wcUriExpired(uri)) {
+            } else if(root.errorState === Pairing.uriErrors.expired) {
                 errorText.text = qsTr("WalletConnect URI has expired")
+            }
+            if (errorText.text.length > 0) {
                 return false
             }
 
-            errorText.text = ""
             return true
-        }
-
-        function validURI(uri) {
-            var regex = /^wc:[0-9a-fA-F-]*@([1-9][0-9]*)(\?([a-zA-Z-]+=[^&]+)(&[a-zA-Z-]+=[^&]+)*)?$/
-            return regex.test(uri)
-        }
-
-        function containsOnlyEmoji(uri) {
-            var emojiRegex = new RegExp("[\\u203C-\\u3299\\u1F000-\\u1F644]");
-            return !emojiRegex.test(uri);
-        }
-
-        function wcUriAlreadyUsed(uri) {
-            // TODO: Check if URI is already used
-            return false
-        }
-
-        function wcUriExpired(uri) {
-            // TODO: Check if URI is expired
-            return false
         }
 
         rightComponent: Item {

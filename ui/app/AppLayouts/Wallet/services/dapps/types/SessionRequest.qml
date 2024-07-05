@@ -8,7 +8,7 @@ QtObject {
     /// Supported methods
     /// userString is used in the context `dapp.url #{userString} <accepted/rejected>`
     /// requestDisplay is used in the context `dApp wants you to ${requestDisplay} with <Account Name Here>`
-    property QtObject methods: QtObject {
+    readonly property QtObject methods: QtObject {
         readonly property QtObject personalSign: QtObject {
             readonly property string name: Constants.personal_sign
             readonly property string userString: qsTr("sign")

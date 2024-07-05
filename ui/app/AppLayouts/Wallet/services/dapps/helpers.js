@@ -67,3 +67,36 @@ function buildSupportedNamespaces(chainIds, addresses, methods) {
     return `{
         "eip155":{"chains": [${eipChainIds.join(',')}],"methods": [${methodsStr}],"events": ["accountsChanged", "chainChanged"],"accounts": [${eipAddresses.join(',')}]}}`
 }
+
+function validURI(uri) {
+    var regex = /^wc:[0-9a-fA-F-]*@([1-9][0-9]*)(\?([a-zA-Z-]+=[^&]+)(&[a-zA-Z-]+=[^&]+)*)?$/
+    return regex.test(uri)
+}
+
+function containsOnlyEmoji(uri) {
+    var emojiRegex = new RegExp("[\\u203C-\\u3299\\u1F000-\\u1F644]");
+    return !emojiRegex.test(uri);
+}
+
+function extractInfoFromPairUri(uri) {
+    var topic = ""
+    var expiry = NaN
+    // Extract topic and expiry from wc:99fdcac5cc081ac8c1181b4c38c5dc49fb5eb212706d5c94c445be549765e7f0@2?expiryTimestamp=1720090818&relay-protocol=irn&symKey=c6b67d94174bd42d16ff288220ce9b8966e5b56a2d3570a30d5b0a760f1953f0
+    const regex = /wc:([0-9a-fA-F]*)/
+    const match = uri.match(regex)
+    if (match) {
+        topic = match[1]
+    }
+
+    var parts = uri.split('?')
+    if (parts.length > 1) {
+        var params = parts[1].split('&')
+        for (let i = 0; i < params.length; i++) {
+            var keyVal = params[i].split('=')
+            if (keyVal[0] === 'expiryTimestamp') {
+                expiry = parseInt(keyVal[1])
+            }
+        }
+    }
+    return { topic, expiry }
+}
