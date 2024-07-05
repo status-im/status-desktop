@@ -555,7 +555,13 @@ QtObject {
     }
 
     // Needed for TX in chat for stickers and via contact
-    readonly property var accounts: walletSectionAccounts.accounts
+    readonly property var accounts: SortFilterProxyModel {
+        sourceModel: walletSectionAccounts.accounts
+        filters: ValueFilter {
+            roleName: "canSend"
+            value: true
+        }
+    }
     property string currentCurrency: walletSection.currentCurrency
     property CurrenciesStore currencyStore: CurrenciesStore {}
     property var savedAddressesModel: walletSectionSavedAddresses.model

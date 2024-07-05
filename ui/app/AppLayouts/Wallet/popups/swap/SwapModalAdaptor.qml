@@ -36,9 +36,8 @@ QObject {
     readonly property var nonWatchAccounts: SortFilterProxyModel {
         sourceModel: root.swapStore.accounts
         filters: ValueFilter {
-            roleName: "walletType"
-            value: Constants.watchWalletType
-            inverted: true
+            roleName: "canSend"
+            value: true
         }
         sorters: [
             RoleSorter { roleName: "currencyBalanceDouble"; sortOrder: Qt.DescendingOrder },
