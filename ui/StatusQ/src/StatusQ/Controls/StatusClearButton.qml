@@ -10,6 +10,6 @@ StatusFlatRoundButton {
     icon.height: 16
     implicitWidth: 24
     implicitHeight: 24
-    icon.color: Theme.palette.baseColor1
+    icon.color: Theme.palette.directColor9
     backgroundHoverColor: "transparent"
 }

@@ -92,3 +92,8 @@ void QClipboardProxy::copyTextToClipboard(const QString &text)
 {
     m_clipboard->setText(text);
 }
+
+void QClipboardProxy::clear()
+{
+    m_clipboard->clear();
+}

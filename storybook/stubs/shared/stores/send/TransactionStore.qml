@@ -71,8 +71,9 @@ QtObject {
         return textAddrss
     }
 
-    function resolveENS(value) {
-        return root.mainModuleInst.resolvedENS("", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc4", "") // return some valid address
+    function resolveENS(value: string) {
+        if (!!value && value.endsWith(".eth"))
+            root.mainModuleInst.resolvedENS("", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc4", "") // return some valid address
     }
 
     function getAsset(assetsList, symbol) {
