@@ -45,6 +45,38 @@ QObject {
     }
     readonly property var flatNetworks: root.walletRootStore.filteredFlatModel
 
+    function validatePairingUri(uri) {
+        if(Helpers.containsOnlyEmoji(uri)) {
+            root.pairingUriValidated(Pairing.uriErrors.tooCool)
+            return
+        } else if(!Helpers.validURI(uri)) {
+            root.pairingUriValidated(Pairing.uriErrors.invalidUri)
+            return
+        }
+
+        let info = Helpers.extractInfoFromPairUri(uri)
+        wcSDK.getActiveSessions((sessions) => {
+            // Check if the URI is already paired
+            var validationState = Pairing.uriErrors.ok
+            for (let key in sessions) {
+                if (sessions[key].pairingTopic == info.topic) {
+                    validationState = Pairing.uriErrors.alreadyUsed
+                    break
+                }
+            }
+
+            // Check if expired
+            if (validationState == Pairing.uriErrors.ok) {
+                const now = (new Date().getTime())/1000
+                if (info.expiry < now) {
+                    validationState = Pairing.uriErrors.expired
+                }
+            }
+
+            root.pairingUriValidated(validationState)
+        });
+    }
+
     function pair(uri) {
         d.acceptedSessionProposal = null
         wcSDK.pair(uri)
@@ -84,6 +116,7 @@ QObject {
     signal approveSessionResult(var session, var error)
     signal sessionRequest(SessionRequestResolved request)
     signal displayToastMessage(string message, bool error)
+    signal pairingUriValidated(int validationState)
 
     readonly property Connections sdkConnections: Connections {
         target: wcSDK

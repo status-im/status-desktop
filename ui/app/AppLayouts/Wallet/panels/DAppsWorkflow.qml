@@ -47,8 +47,12 @@ DappsComboBox {
             onClosed: pairWCLoader.active = false
 
             onPair: (uri) => {
-                root.wcService.pair(uri)
                 this.isPairing = true
+                root.wcService.pair(uri)
+            }
+
+            onPairUriChanged: (uri) => {
+                root.wcService.validatePairingUri(uri)
             }
         }
     }
@@ -151,8 +155,10 @@ DappsComboBox {
                 function onMaxFeesUpdated(maxFees, maxFeesWei, haveEnoughFunds, symbol) {
                     maxFeesText = `${maxFees.toFixed(2)} ${symbol}`
                     var ethStr = "?"
-                    if (globalUtils) {
+                    try {
                         ethStr = globalUtils.wei2Eth(maxFeesWei, 9)
+                    } catch (e) {
+                        // ignore error in case of tests and storybook where we don't have access to globalUtils
                     }
                     maxFeesEthText = `${ethStr} ETH`
                     enoughFunds = haveEnoughFunds
@@ -178,6 +184,12 @@ DappsComboBox {
 
     Connections {
         target: root.wcService
+
+        function onPairingUriValidated(validationState) {
+            if (pairWCLoader.item) {
+                pairWCLoader.item.pairingUriValidated(validationState)
+            }
+        }
 
         function onConnectDApp(dappChains, sessionProposal, availableNamespaces) {
             connectDappLoader.dappChains = dappChains
