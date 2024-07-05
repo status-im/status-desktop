@@ -13,7 +13,7 @@ QObject {
 
     // Controller providing information about visibility and order defined
     // by a user (token management)
-    required property ManageTokensController controller
+    required property /*ManageTokensController*/ var controller
 
     property bool showCommunityAssets: false
 

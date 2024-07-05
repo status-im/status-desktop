@@ -32,7 +32,7 @@ SplitView {
         delegateModel: SortFilterProxyModel {
             sourceModel: submodel
             filters: FastExpressionFilter {
-                expression: txStore.selectedSenderAccount.address === model.account
+                expression: txStore.selectedSenderAccountAddress === model.account
                 expectedRoles: ["account"]
             }
         }
@@ -41,9 +41,9 @@ SplitView {
     TransactionStore {
         id: txStore
         walletAssetStore: root.walletAssetStore
-        showCommunityAssetsInSend: showCommunityAssetsCheckBox.checked
-        balanceThresholdEnabled: balanceThresholdCheckbox.checked
-        balanceThresholdAmount: Number(balanceThresholdValue.text)
+        tokensStore.showCommunityAssetsInSend: showCommunityAssetsCheckBox.checked
+        tokensStore.displayAssetsBelowBalance: balanceThresholdCheckbox.checked
+        tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => Number(balanceThresholdValue.text)
     }
 
     QtObject {
@@ -129,7 +129,7 @@ SplitView {
         Loader {
             id: loader
 
-            property var preSelectedAccount: txStore.selectedSenderAccount
+            property var preSelectedAccount: txStore.accounts.get(0)
             property string preSelectedHoldingID
             property int preSelectedHoldingType: Constants.TokenType.Unknown
             property int preSelectedSendType: Constants.SendType.Unknown
@@ -143,7 +143,7 @@ SplitView {
                 visible: true
                 modal: false
                 closePolicy: Popup.NoAutoClose
-                onlyAssets: false
+                onlyAssets: loader.onlyAssets
                 store: txStore
                 preSelectedAccount: loader.preSelectedAccount
                 preDefinedAmountToSend: loader.preDefinedAmountToSend
@@ -171,7 +171,7 @@ SplitView {
                 width: parent.width
                 StatusBaseText {
                     Layout.maximumWidth: parent.width
-                    text: "This button can be used as respons eot the suggestedROutes API called once a token and its amount is selected along with a valid recipient."
+                    text: "This button can be used as response to the suggestedRoutes API called once a token and its amount is selected along with a valid recipient."
                     color: "orange"
                     wrapMode: Text.WrapAnywhere
                 }
@@ -217,7 +217,13 @@ SplitView {
                 }
                 ComboBox {
                     textRole: "name"
-                    model: txStore.accounts
+                    model: SortFilterProxyModel {
+                        sourceModel: txStore.accounts
+                        filters: ValueFilter {
+                            roleName: "canSend"
+                            value: true
+                        }
+                    }
                     onCurrentIndexChanged: loader.preSelectedAccount = txStore.accounts.get(currentIndex)
                 }
             }

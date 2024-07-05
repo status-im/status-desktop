@@ -56,7 +56,7 @@ QtObject {
         joinRole: "communityId"
     }
 
-    property var assetsController: QtObject {
+    readonly property var assetsController: QtObject {
         property int revision
 
         function filterAcceptsSymbol(symbol) {

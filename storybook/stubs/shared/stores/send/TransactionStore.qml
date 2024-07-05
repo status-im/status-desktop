@@ -13,21 +13,26 @@ QtObject {
     id: root
 
     readonly property CurrenciesStore currencyStore: CurrenciesStore {}
+
+    readonly property TokensStore tokensStore: TokensStore {}
     
     readonly property var accounts: WalletSendAccountsModel {
-        Component.onCompleted: selectedSenderAccount = accounts.get(0)
+        Component.onCompleted: selectedSenderAccountAddress = accounts.get(0).address
     }
 
     property WalletAssetsStore walletAssetStore
 
-    property QtObject tmpActivityController: QtObject {
+    property QtObject tmpActivityController0: QtObject {
+        property ListModel model: ListModel{}
+    }
+    property QtObject tmpActivityController1: QtObject {
         property ListModel model: ListModel{}
     }
 
     property var flatNetworksModel: NetworksModel.flatNetworks
     property var fromNetworksRouteModel: NetworksModel.sendFromNetworks
     property var toNetworksRouteModel: NetworksModel.sendToNetworks
-    property var selectedSenderAccount: accounts.get(0)
+    property string selectedSenderAccountAddress
     readonly property QtObject collectiblesModel: ManageCollectiblesModel {}
     readonly property QtObject nestedCollectiblesModel: WalletNestedCollectiblesModel {}
 
@@ -53,6 +58,12 @@ QtObject {
                            address: "0x2B748A02e06B159C7C3E98F5064577B96E55A7b4",
                            chainShortNames: "eth:arb1"
                        })
+            append({
+                       name: "some saved ENS name ",
+                       ens: ["me@status.eth"],
+                       address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc4",
+                       chainShortNames: "eth:arb1:opt"
+                   })
         }
     }
 
@@ -60,8 +71,8 @@ QtObject {
         return textAddrss
     }
 
-    function resolveENS() {
-        return ""
+    function resolveENS(value) {
+        return root.mainModuleInst.resolvedENS("", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc4", "") // return some valid address
     }
 
     function getAsset(assetsList, symbol) {
@@ -120,8 +131,8 @@ QtObject {
         return "OPT"
     }
 
-    function plainText(text) {
-        return text
+    function plainText(htmlFragment) {
+        return SQUtils.StringUtils.plainText(htmlFragment)
     }
 
     function prepareTransactionsForAddress(address) {
@@ -150,11 +161,11 @@ QtObject {
         }
     }
 
-    function setSenderAccountByAddress(address) {
+    function setSenderAccount(address) {
         for (let i = 0; i < accounts.count; i++) {
             const acc = accounts.get(i)
-            if (acc.address === address && accounts.canSend) {
-                selectedSenderAccount = accounts.get(i)
+            if (acc.address === address && acc.canSend) {
+                selectedSenderAccountAddress = acc.address
                 break
             }
         }
@@ -197,6 +208,9 @@ QtObject {
         root.showUnPreferredChains = !root.showUnPreferredChains
     }
 
+    function setAllNetworksAsRoutePreferredChains() {
+    }
+
     function setRouteEnabledFromChains(chainId) {
     }
 
@@ -230,9 +244,4 @@ QtObject {
     function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
         return currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
     }
-
-    // Property and methods below are used to apply advanced token management settings to the SendModal
-    property bool showCommunityAssetsInSend: true
-    property bool balanceThresholdEnabled: true
-    property real balanceThresholdAmount
 }
