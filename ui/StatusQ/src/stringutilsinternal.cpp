@@ -5,6 +5,7 @@
 #include <QQmlEngine>
 #include <QQmlFileSelector>
 #include <QUrl>
+#include <QTextDocumentFragment>
 
 StringUtilsInternal::StringUtilsInternal(QQmlEngine* engine, QObject* parent)
     : m_engine(engine)
@@ -72,4 +73,9 @@ QString StringUtilsInternal::extractDomainFromLink(const QString& link) const
         return {};
     }
     return url.host();
+}
+
+QString StringUtilsInternal::plainText(const QString &htmlFragment) const
+{
+    return QTextDocumentFragment::fromHtml(htmlFragment).toPlainText();
 }
