@@ -47,7 +47,7 @@ Item {
             isQuote = (formattedMessage.startsWith("<blockquote>") && formattedMessage.endsWith("</blockquote>"));
 
             if (root.isEdited) {
-                const index = formattedMessage.endsWith("code>") ? formattedMessage.length : formattedMessage.length - 4;
+                const index = formattedMessage.endsWith("code>") ? formattedMessage.length : (formattedMessage.endsWith(">") ? formattedMessage.length - 4 : formattedMessage.length);
                 const editedMessage = formattedMessage.slice(0, index)
                                     + ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
                                     + formattedMessage.slice(index);
