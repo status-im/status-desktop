@@ -48,6 +48,12 @@ ColumnLayout {
             }
             if (errorText.text.length > 0) {
                 return false
+            } else if(root.errorState === Pairing.uriErrors.unsupportedNetwork) {
+                errorText.text = qsTr("dApp is requesting to connect on an unsupported network")
+                return false
+            } else if(root.errorState === Pairing.uriErrors.unknownError) {
+                errorText.text = qsTr("Unexpected error occurred, please try again")
+                return false
             }
 
             return true
