@@ -124,7 +124,7 @@ Loader {
     property string deletedByContactIcon: ""
     property string deletedByContactColorHash: ""
 
-    property bool shouldRepeatHeader: d.getShouldRepeatHeader(messageTimestamp, prevMessageTimestamp, messageOutgoingStatus)
+    property bool shouldRepeatHeader: d.shouldRepeatHeader
 
     property bool hasMention: false
 
@@ -142,9 +142,6 @@ Loader {
     property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.contactRequestType || isDiscordMessage || isBridgeMessage
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
-
-    readonly property bool isExpired: d.getIsExpired(messageTimestamp, messageOutgoingStatus)
-    readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
 
     function openProfileContextMenu(sender, mouse, isReply = false) {
         if (isReply && !quotedMessageFrom) {
@@ -274,8 +271,8 @@ Loader {
         readonly property bool canPost: root.chatContentModule.chatDetails.canPost
         readonly property bool canView: canPost || root.chatContentModule.chatDetails.canView
 
-        function nextMessageHasHeader() {
-            if(!root.nextMessageAsJsonObj) {
+        function getNextMessageHasHeader() {
+            if (!root.nextMessageAsJsonObj) {
                 return false
             }
             return root.senderId !== root.nextMessageAsJsonObj.senderId ||
@@ -284,12 +281,27 @@ Loader {
         }
 
         function getShouldRepeatHeader(messageTimeStamp, prevMessageTimeStamp, messageOutgoingStatus) {
-            return ((messageTimeStamp - prevMessageTimeStamp) / 60 / 1000) > Constants.repeatHeaderInterval 
+            return ((messageTimeStamp - prevMessageTimeStamp) / 60 / 1000) > Constants.repeatHeaderInterval
                 || d.getIsExpired(messageTimeStamp, messageOutgoingStatus)
         }
 
         function getIsExpired(messageTimeStamp, messageOutgoingStatus) {
-            return (messageOutgoingStatus === Constants.sending && (Math.floor(messageTimeStamp) + 180000) < Date.now()) || messageOutgoingStatus === Constants.expired
+            return (messageOutgoingStatus === Constants.messageOutgoingStatus.sending && (Math.floor(messageTimeStamp) + 180000) < Date.now())
+                || messageOutgoingStatus === Constants.expired
+        }
+
+        property bool isExpired: false
+        property bool shouldRepeatHeader: false
+        property bool nextMessageHasHeader: false
+
+        Component.onCompleted: {
+            onTimeChanged()
+        }
+
+        function onTimeChanged() {
+            isExpired = getIsExpired(root.messageTimestamp, root.messageOutgoingStatus)
+            shouldRepeatHeader = getShouldRepeatHeader(root.messageTimestamp, root.prevMessageTimestamp, root.messageOutgoingStatus)
+            nextMessageHasHeader = getNextMessageHasHeader()
         }
 
         function convertContentType(value) {
@@ -332,6 +344,17 @@ Loader {
             }
         }
 
+        function convertOutgoingStatus(value) {
+            switch (value) {
+            case Constants.messageOutgoingStatus.sending:
+                return StatusMessage.OutgoingStatus.Sending
+            case Constants.messageOutgoingStatus.sent:
+                return StatusMessage.OutgoingStatus.Sent
+            case Constants.messageOutgoingStatus.delivered:
+                return StatusMessage.OutgoingStatus.Delivered
+            }
+        }
+
         function addReactionClicked(mouseArea, mouse) {
             if (!d.addReactionAllowed)
                 return
@@ -354,6 +377,13 @@ Loader {
 
         function correctBridgeNameCapitalization(bridgeName) {
             return (bridgeName === "discord") ? "Discord" : bridgeName
+        }
+    }
+
+    Connections {
+        target: StatusSharedUpdateTimer
+        onTriggered: {
+            d.onTimeChanged()
         }
     }
 
@@ -646,8 +676,9 @@ Loader {
                     return ProfileUtils.displayName(contact.localNickname, contact.name, contact.displayName, contact.alias)
                 }
                 isInPinnedPopup: root.isInPinnedPopup
-                hasExpired: root.isExpired
-                isSending: root.isSending
+                outgoingStatus: d.isExpired ? StatusMessage.OutgoingStatus.Expired
+                                            : d.convertOutgoingStatus(messageOutgoingStatus)
+
                 resendError: root.resendError
                 reactionsModel: root.reactionsModel
                 linkPreviewModel: root.linkPreviewModel
@@ -663,7 +694,7 @@ Loader {
                             root.senderId !== root.prevMessageSenderId || root.prevMessageDeleted
                 isActiveMessage: d.isMessageActive
                 topPadding: showHeader ? Style.current.halfPadding : 0
-                bottomPadding: showHeader && d.nextMessageHasHeader() ? Style.current.halfPadding : 2
+                bottomPadding: showHeader && d.nextMessageHasHeader ? Style.current.halfPadding : 2
                 disableHover: root.disableHover ||
                               (delegate.hideQuickActions && !d.addReactionAllowed) ||
                               (root.chatLogView && root.chatLogView.moving) ||

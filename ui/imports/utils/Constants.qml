@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick 2.13
 
+import StatusQ.Components 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -1202,11 +1203,13 @@ QtObject {
     }
 
     // Message outgoing status
-    readonly property string sending: "sending"
-    readonly property string sent: "sent"
-    readonly property string delivered: "delivered"
-    readonly property string expired: "expired"
-    readonly property string failedResending: "failedResending"
+    readonly property QtObject messageOutgoingStatus: QtObject {
+        readonly property string sending: "sending"
+        readonly property string sent: "sent"
+        readonly property string delivered: "delivered"
+        readonly property string expired: "expired"
+        readonly property string failedResending: "failedResending"
+    }
 
     readonly property QtObject appTranslatableConstants: QtObject {
         readonly property string loginAccountsListAddNewUser: "LOGIN-ACCOUNTS-LIST-ADD-NEW-USER"

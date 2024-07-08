@@ -29,6 +29,14 @@ Control {
         BridgeMessage = 18
     }
 
+    enum OutgoingStatus {
+        Unknown = 0,
+        Sending,
+        Sent,
+        Delivered,
+        Expired
+    }
+
     property list<Item> quickActions
     property var statusChatInput
     property alias linksComponent: linksLoader.sourceComponent
@@ -51,9 +59,8 @@ Control {
     property bool hasMention: false
     property bool isPinned: false
     property string pinnedBy: ""
-    property bool hasExpired: false
-    property bool isSending: false
     property string resendError: ""
+    property int outgoingStatus: StatusMessage.OutgointStatus.Unknown
     property double timestamp: 0
     property var reactionsModel: []
 
@@ -111,6 +118,7 @@ Control {
     }
 
     hoverEnabled: (!root.isActiveMessage && !root.disableHover)
+    opacity: outgoingStatus === StatusMessage.OutgoingStatus.Sending ? 0.5 : 1.0
     background: Rectangle {
         color: {
             if (root.overrideBackground)
@@ -254,14 +262,14 @@ Control {
                             sender: root.messageDetails.sender
                             amISender: root.messageDetails.amISender
                             messageOriginInfo: root.messageDetails.messageOriginInfo
-                            showResendButton: root.hasExpired && root.messageDetails.amISender && !editMode && !root.isInPinnedPopup
-                            showSendingLoader: root.isSending && root.messageDetails.amISender && !editMode
-                            resendError: root.messageDetails.amISender && !editMode ? root.resendError : ""
+                            resendError: root.messageDetails.amISender ? root.resendError : ""
                             onClicked: root.senderNameClicked(sender, mouse)
                             onResendClicked: root.resendClicked()
                             timestamp: root.timestamp
                             showFullTimestamp: root.isInPinnedPopup
                             displayNameClickable: root.profileClickable
+                            outgoingStatus: root.outgoingStatus
+                            showOutgointStatusLabel: root.hovered && !root.isInPinnedPopup
                         }
                     }
                     Loader {
