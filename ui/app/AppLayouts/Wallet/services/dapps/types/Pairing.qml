@@ -10,5 +10,7 @@ QtObject {
         readonly property int invalidUri: 3
         readonly property int alreadyUsed: 4
         readonly property int expired: 5
+        readonly property int unsupportedNetwork: 6
+        readonly property int unknownError: 7
     }
 }

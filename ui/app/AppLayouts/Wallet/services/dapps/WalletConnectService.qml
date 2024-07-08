@@ -131,7 +131,12 @@ QObject {
 
         function onBuildApprovedNamespacesResult(approvedNamespaces, error) {
             if(error) {
-                // TODO: error reporting
+                // Check that it contains Non conforming namespaces"
+                if (error.includes("Non conforming namespaces")) {
+                    root.pairingUriValidated(Pairing.uriErrors.unsupportedNetwork)
+                } else {
+                    root.pairingUriValidated(Pairing.uriErrors.unknownError)
+                }
                 return
             }
 
