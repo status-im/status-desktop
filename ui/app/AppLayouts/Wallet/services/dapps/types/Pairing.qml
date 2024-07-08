@@ -3,7 +3,7 @@ pragma Singleton
 import QtQml 2.15
 
 QtObject {
-    readonly property QtObject uriErrors: QtObject {
+    readonly property QtObject errors: QtObject {
         readonly property int notChecked: 0
         readonly property int ok: 1
         readonly property int tooCool: 2

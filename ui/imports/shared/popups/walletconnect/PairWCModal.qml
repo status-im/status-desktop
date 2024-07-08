@@ -27,9 +27,9 @@ StatusDialog {
 
     property bool isPairing: false
 
-    function pairingUriValidated(validationState) {
+    function pairingValidated(validationState) {
         uriInput.errorState = validationState
-        if (validationState === Pairing.uriErrors.ok) {
+        if (validationState === Pairing.errors.ok) {
             d.doPair()
         }
     }
@@ -51,7 +51,7 @@ StatusDialog {
         WCUriInput {
             id: uriInput
 
-            pending: uriInput.errorState === Pairing.uriErrors.notChecked
+            pending: uriInput.errorState === Pairing.errors.notChecked
 
             onTextChanged: {
                 root.isPairing = false
@@ -91,7 +91,7 @@ StatusDialog {
                 enabled: uriInput.valid
                       && !root.isPairing
                       && uriInput.text.length > 0
-                      && uriInput.errorState === Pairing.uriErrors.ok
+                      && uriInput.errorState === Pairing.errors.ok
 
                 onClicked: {
                     d.doPair()

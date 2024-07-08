@@ -17,7 +17,7 @@ ColumnLayout {
     readonly property bool valid: input.valid && input.text.length > 0
     readonly property alias text: input.text
     property alias pending: input.pending
-    property int errorState: Pairing.uriErrors.notChecked
+    property int errorState: Pairing.errors.notChecked
 
     StatusBaseInput {
         id: input
@@ -37,22 +37,21 @@ ColumnLayout {
                 return true
             }
 
-            if(root.errorState === Pairing.uriErrors.tooCool) {
+            if(root.errorState === Pairing.errors.tooCool) {
                 errorText.text = qsTr("WalletConnect URI too cool")
-            } else if(root.errorState === Pairing.uriErrors.invalidUri) {
+            } else if(root.errorState === Pairing.errors.invalidUri) {
                 errorText.text = qsTr("WalletConnect URI invalid")
-            } else if(root.errorState === Pairing.uriErrors.alreadyUsed) {
+            } else if(root.errorState === Pairing.errors.alreadyUsed) {
                 errorText.text = qsTr("WalletConnect URI already used")
-            } else if(root.errorState === Pairing.uriErrors.expired) {
+            } else if(root.errorState === Pairing.errors.expired) {
                 errorText.text = qsTr("WalletConnect URI has expired")
-            }
-            if (errorText.text.length > 0) {
-                return false
-            } else if(root.errorState === Pairing.uriErrors.unsupportedNetwork) {
+            } else if(root.errorState === Pairing.errors.unsupportedNetwork) {
                 errorText.text = qsTr("dApp is requesting to connect on an unsupported network")
-                return false
-            } else if(root.errorState === Pairing.uriErrors.unknownError) {
-                errorText.text = qsTr("Unexpected error occurred, please try again")
+            } else if(root.errorState === Pairing.errors.unknownError) {
+                errorText.text = qsTr("Unexpected error occurred. Try again.")
+            }
+
+            if (errorText.text.length > 0) {
                 return false
             }
 
