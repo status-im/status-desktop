@@ -246,16 +246,14 @@ StatusDialog {
         AccountSelectorHeader {
             id: accountSelector
             model: SortFilterProxyModel {
-                sourceModel: SortFilterProxyModel {
-                    sourceModel: popup.store.accounts
-                    filters: [
-                        ValueFilter {
-                            roleName: "canSend"
-                            value: true
-                        }
-                    ]
-                }
+                sourceModel: popup.store.accounts
 
+                filters: [
+                    ValueFilter {
+                        roleName: "canSend"
+                        value: true
+                    }
+                ]
                 sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
                 proxyRoles: [
                     FastExpressionRole {
