@@ -16,8 +16,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import utils 1.0
-
 import "../panels"
 import "../controls"
 import "../views"
@@ -137,11 +135,13 @@ Item {
                     }
                     onClicked: recipientSelected({name: model.name,
                                                      address: model.address,
-                                                     color: model.color,
+                                                     colorId: model.colorId,
                                                      emoji: model.emoji,
                                                      walletType: model.walletType,
                                                      currencyBalance: model.currencyBalance,
-                                                     preferredSharingChainIds: model.preferredSharingChainIds},
+                                                     preferredSharingChainIds: model.preferredSharingChainIds,
+                                                     migratedToKeycard: model.migratedToKeycard
+                                                 },
                                                  TabAddressSelectorView.Type.Account)
                 }
 

@@ -13,7 +13,8 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             walletType: "",
             position: 0,
-            canSend: true
+            canSend: true,
+            migratedToKeycard: false
         },
         {
             name: "Hot wallet (generated)",
@@ -24,7 +25,8 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             walletType: Constants.generatedWalletType,
             position: 3,
-            canSend: true
+            canSend: true,
+            migratedToKeycard: false
         },
         {
             name: "Family (seed)",
@@ -35,7 +37,8 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             walletType: Constants.seedWalletType,
             position: 1,
-            canSend: true
+            canSend: true,
+            migratedToKeycard: false
         },
         {
             name: "Tag Heuer (watch)",
@@ -46,7 +49,8 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             walletType: Constants.watchWalletType,
             position: 2,
-            canSend: false
+            canSend: false,
+            migratedToKeycard: false
         },
         {
             name: "Fab (key)",
@@ -57,7 +61,8 @@ ListModel {
             preferredSharingChainIds: "5:420:421613",
             walletType: Constants.keyWalletType,
             position: 4,
-            canSend: true
+            canSend: true,
+            migratedToKeycard: true
         }
     ]
 
