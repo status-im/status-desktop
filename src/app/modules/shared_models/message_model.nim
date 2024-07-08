@@ -546,6 +546,8 @@ QtObject:
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
+    if self.items[ind].outgoingStatus == PARSED_TEXT_OUTGOING_STATUS_DELIVERED:
+      return
     self.items[ind].outgoingStatus = status
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
