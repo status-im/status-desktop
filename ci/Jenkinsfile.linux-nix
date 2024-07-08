@@ -54,7 +54,7 @@ pipeline {
   }
 
   environment {
-    PLATFORM = "linux/${getArch()}"
+    PLATFORM = "linux-nix/${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Avoid weird bugs caused by stale cache. */
