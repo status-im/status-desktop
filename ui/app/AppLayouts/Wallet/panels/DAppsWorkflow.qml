@@ -185,9 +185,9 @@ DappsComboBox {
     Connections {
         target: root.wcService
 
-        function onPairingUriValidated(validationState) {
+        function onPairingValidated(validationState) {
             if (pairWCLoader.item) {
-                pairWCLoader.item.pairingUriValidated(validationState)
+                pairWCLoader.item.pairingValidated(validationState)
             }
         }
 

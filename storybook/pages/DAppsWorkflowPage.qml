@@ -88,6 +88,7 @@ Item {
                 }
             }
 
+            StatusBaseText { text: "Custom Accounts" }
             StatusTextArea {
                 text: settings.customAccounts
                 onTextChanged: {
@@ -99,7 +100,8 @@ Item {
                     })
                 }
                 Layout.fillWidth: true
-                Layout.preferredHeight: !!text ? 400 : -1
+                Layout.maximumHeight: 300
+                clip: true
             }
 
             Rectangle {

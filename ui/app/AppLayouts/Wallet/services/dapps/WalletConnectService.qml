@@ -17,6 +17,15 @@ import utils 1.0
 
 import "types"
 
+// The WC SDK has an async (function call then signal response)
+// A complete pairing flow to connect a dApp:
+//  - user provides pairing url -> root.validatePairingUri -> signal pairingValidated
+//  - user requests pair -> root.pair(uri) -> pairResponse(ok)
+//    -> if pairResponse ok -> onSessionProposal -> sdk.buildApprovedNamespaces
+//    -> onBuildApprovedNamespace -> signal connectDApp
+//  - user requests root.approvePairSession/root.rejectPairSession
+//    -> if approvePairSession -> sdk.buildApprovedNamespaces
+//    -> onBuildApprovedNamespace -> sdk.approveSession -> onApproveSessionResult
 QObject {
     id: root
 
@@ -47,38 +56,39 @@ QObject {
 
     function validatePairingUri(uri) {
         if(Helpers.containsOnlyEmoji(uri)) {
-            root.pairingUriValidated(Pairing.uriErrors.tooCool)
+            root.pairingValidated(Pairing.errors.tooCool)
             return
         } else if(!Helpers.validURI(uri)) {
-            root.pairingUriValidated(Pairing.uriErrors.invalidUri)
+            root.pairingValidated(Pairing.errors.invalidUri)
             return
         }
 
         let info = Helpers.extractInfoFromPairUri(uri)
         wcSDK.getActiveSessions((sessions) => {
             // Check if the URI is already paired
-            var validationState = Pairing.uriErrors.ok
+            var validationState = Pairing.errors.ok
             for (let key in sessions) {
                 if (sessions[key].pairingTopic == info.topic) {
-                    validationState = Pairing.uriErrors.alreadyUsed
+                    validationState = Pairing.errors.alreadyUsed
                     break
                 }
             }
 
             // Check if expired
-            if (validationState == Pairing.uriErrors.ok) {
+            if (validationState == Pairing.errors.ok) {
                 const now = (new Date().getTime())/1000
                 if (info.expiry < now) {
-                    validationState = Pairing.uriErrors.expired
+                    validationState = Pairing.errors.expired
                 }
             }
 
-            root.pairingUriValidated(validationState)
+            root.pairingValidated(validationState)
         });
     }
 
     function pair(uri) {
         d.acceptedSessionProposal = null
+        timeoutTimer.start()
         wcSDK.pair(uri)
     }
 
@@ -116,10 +126,18 @@ QObject {
     signal approveSessionResult(var session, var error)
     signal sessionRequest(SessionRequestResolved request)
     signal displayToastMessage(string message, bool error)
-    signal pairingUriValidated(int validationState)
+    // Emitted as a response to WalletConnectService.validatePairingUri or other WalletConnectService.pair
+    // and WalletConnectService.approvePair errors
+    signal pairingValidated(int validationState)
 
     readonly property Connections sdkConnections: Connections {
         target: wcSDK
+
+        function onPairResponse(ok) {
+            if (!ok) {
+                d.reportPairErrorState(Pairing.errors.unknownError)
+            } // else waiting for onSessionProposal
+        }
 
         function onSessionProposal(sessionProposal) {
             d.currentSessionProposal = sessionProposal
@@ -133,9 +151,9 @@ QObject {
             if(error) {
                 // Check that it contains Non conforming namespaces"
                 if (error.includes("Non conforming namespaces")) {
-                    root.pairingUriValidated(Pairing.uriErrors.unsupportedNetwork)
+                    d.reportPairErrorState(Pairing.errors.unsupportedNetwork)
                 } else {
-                    root.pairingUriValidated(Pairing.uriErrors.unknownError)
+                    d.reportPairErrorState(Pairing.errors.unknownError)
                 }
                 return
             }
@@ -151,8 +169,7 @@ QObject {
 
         function onApproveSessionResult(session, err) {
             if (err) {
-                // TODO #14676: handle the error
-                console.error("Failed to approve session", err)
+                d.reportPairErrorState(Pairing.errors.unknownError)
                 return
             }
 
@@ -176,6 +193,7 @@ QObject {
             const app_url = d.currentSessionProposal ? d.currentSessionProposal.params.proposer.metadata.url : "-"
             const app_domain = StringUtils.extractDomainFromLink(app_url)
             if(err) {
+                d.reportPairErrorState(Pairing.errors.unknownError)
                 root.displayToastMessage(qsTr("Failed to reject connection request for %1").arg(app_domain), true)
             } else {
                 root.displayToastMessage(qsTr("Connection request for %1 was rejected").arg(app_domain), false)
@@ -202,21 +220,9 @@ QObject {
         property var currentSessionProposal: null
         property var acceptedSessionProposal: null
 
-        // TODO #14676: use it to check if already paired
-        function getPairingTopicFromPairingUrl(url)
-        {
-            if (!url.startsWith("wc:"))
-            {
-                return null;
-            }
-
-            const atIndex = url.indexOf("@");
-            if (atIndex < 0)
-            {
-                return null;
-            }
-
-            return url.slice(3, atIndex);
+        function reportPairErrorState(state) {
+            timeoutTimer.stop()
+            root.pairingValidated(state)
         }
     }
 
@@ -233,6 +239,7 @@ QObject {
         networksModel: root.flatNetworks
 
         onSessionRequest: (request) => {
+            timeoutTimer.stop()
             root.sessionRequest(request)
         }
         onDisplayToastMessage: (message, error) => {
@@ -245,5 +252,18 @@ QObject {
 
         sdk: root.wcSDK
         store: root.store
+    }
+
+    // Timeout for the corner case where the URL was already dismissed and the SDK doesn't respond with an error nor advances with the proposal
+    Timer {
+        id: timeoutTimer
+
+        interval: 10000 // (10 seconds)
+        running: false
+        repeat: false
+
+        onTriggered: {
+            d.reportPairErrorState(Pairing.errors.unknownError)
+        }
     }
 }
