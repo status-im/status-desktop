@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 import allure
 import pytest
+import shortuuid
 from PIL import ImageGrab
 
 import configs
@@ -61,10 +62,13 @@ def pytest_exception_interact(node):
     test_path, test_name, test_params = generate_test_info(node)
     node_dir: SystemPath = configs.testpath.RUN / test_path / test_name / test_params
     node_dir.mkdir(parents=True, exist_ok=True)
-    screenshot = node_dir / f'screenshot_{datetime.today().strftime("%Y-%m-%d %H-%M-%S")}.png'
-    ImageGrab.grab(xdisplay=configs.system.DISPLAY if get_platform() == "Linux" else None).save(screenshot)
-    allure.attach(
-        name='Screenshot on fail',
-        body=screenshot.read_bytes(),
-        attachment_type=allure.attachment_type.PNG
-    )
+    screenshot = node_dir / f'screenshot_{shortuuid.ShortUUID().random(length=10)}.png'
+    try:
+        ImageGrab.grab(xdisplay=configs.system.DISPLAY if get_platform() == "Linux" else None).save(screenshot)
+        allure.attach(
+            name='Screenshot on fail',
+            body=screenshot.read_bytes(),
+            attachment_type=allure.attachment_type.PNG
+        )
+    except FileNotFoundError:
+        print("Screenshot was not generated or saved")
