@@ -219,11 +219,11 @@ Item {
             asynchronous: true
             sourceComponent: StatusButton {
                 Layout.fillHeight: true
-                verticalPadding: 0
+                verticalPadding: 1
                 horizontalPadding: 5
                 size: StatusBaseButton.Tiny
                 type: StatusBaseButton.Warning
-                font.pixelSize: 11
+                font.pixelSize: 9
                 text: qsTr("Resend")
                 onClicked: root.resendClicked()
             }
