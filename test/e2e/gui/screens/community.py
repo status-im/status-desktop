@@ -35,7 +35,7 @@ class CommunityScreen(QObject):
 
     @allure.step('Create channel')
     def create_channel(self, name: str, description: str, emoji: str = None):
-        self.left_panel.open_create_channel_popup().create(name, description, emoji)
+        self.left_panel.open_create_channel_popup().create(name, description, emoji).save()
 
     @allure.step('Edit channel')
     def edit_channel(self, channel, name: str, description: str, emoji: str = None):

@@ -1,3 +1,6 @@
+import random
+import string
+
 import allure
 import pytest
 from allure_commons._allure import step
@@ -5,8 +8,10 @@ from allure_commons._allure import step
 import configs
 import constants
 import driver
+from constants import UserAccount
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
+from gui.screens.messages import MessagesScreen
 from . import marks
 
 pytestmark = marks
@@ -20,7 +25,7 @@ pytestmark = marks
     'channel_name, channel_description, channel_emoji, channel_emoji_image, channel_color, new_channel_name, '
     'new_channel_description, new_channel_emoji',
     [('Channel', 'Description', 'sunglasses', None, '#4360df', 'New-channel', 'New channel description', 'thumbsup')])
-# @pytest.mark.critical TODO: https://github.com/status-im/desktop-qa-automation/issues/658
+ # @pytest.mark.critical TODO: https://github.com/status-im/desktop-qa-automation/issues/658
 def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description, channel_emoji,
                                               channel_emoji_image,
                                               channel_color, new_channel_name, new_channel_description,
@@ -114,3 +119,51 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
         with step('Verify that delete item is not present in context menu'):
             assert more_options.is_delete_channel_option_present() is False, \
                 f'Delete channel option is present when it should not'
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/737079',
+                 'Member not holding permission cannot see channel (view-only permission)')
+@pytest.mark.case(737079)
+@pytest.mark.parametrize('user_data_one, user_data_two, asset, amount, channel_description', [
+    (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic', 'ETH', '10',
+     'description')
+])
+def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, user_data_two, asset, amount,
+                                          channel_description):
+    user_one: UserAccount = constants.user_account_one
+    user_two: UserAccount = constants.user_account_two
+    channel_name = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    main_screen = MainWindow()
+
+    with (multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(
+            user_data=user_data_two) as aut_two):
+        with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
+            for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
+                aut.attach()
+                main_screen.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
+                main_screen.authorize_user(account)
+                main_screen.hide()
+
+        with step(f'User {user_two.name}, select non-restricted channel and can send message'):
+            aut_two.attach()
+            main_screen.prepare()
+            community_screen = main_screen.left_panel.select_community('Community with 2 users')
+
+        with step(f'User {user_two.name}, create hidden channel, verify that it is in the list'):
+            permission_popup = community_screen.left_panel.open_create_channel_popup().create(channel_name,
+                                                                                              channel_description,
+                                                                                              emoji=None)
+            permission_popup.add_permission().set_who_holds_asset_and_amount(asset, amount).set_is_allowed_to(
+                'viewOnly').switch_hide_permission_checkbox(True).create_permission()
+            permission_popup.hide_permission(True)
+            permission_popup.save()
+            channel = community_screen.left_panel.get_channel_parameters(channel_name)
+            assert driver.waitFor(lambda: channel in community_screen.left_panel.channels,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            main_screen.hide()
+
+        with step(f'User {user_one.name}, cannot see hidden channel in the list'):
+            aut_one.attach()
+            main_screen.prepare()
+            assert driver.waitFor(lambda: channel not in community_screen.left_panel.channels,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
