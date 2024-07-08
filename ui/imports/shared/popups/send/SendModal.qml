@@ -49,6 +49,7 @@ StatusDialog {
     property var nestedCollectiblesModel: store.nestedCollectiblesModel
     property var bestRoutes
     property bool isLoading: false
+    property int loginType
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -194,7 +195,6 @@ StatusDialog {
         value: popup.store.selectedSenderAccountAddress
     }
 
-    bottomPadding: 16
     padding: 0
     background: StatusDialogBackground {
         implicitHeight: 846
@@ -279,8 +279,6 @@ StatusDialog {
     }
 
     ColumnLayout {
-        id: group1
-
         anchors.fill: parent
 
         Rectangle {
@@ -440,7 +438,7 @@ StatusDialog {
             Layout.topMargin: Style.current.padding
             Layout.leftMargin: Style.current.xlPadding
             Layout.rightMargin: Style.current.xlPadding
-            Layout.bottomMargin: Style.current.xlPadding
+            Layout.bottomMargin: Style.current.xlPadding + Style.current.padding
             visible: !d.selectedHolding
 
             assets: assetsAdaptor.model
@@ -473,6 +471,7 @@ StatusDialog {
             Layout.topMargin: Style.current.padding
             Layout.leftMargin: Style.current.xlPadding
             Layout.rightMargin: Style.current.xlPadding
+            Layout.bottomMargin: Style.current.padding
             visible: !recipientLoader.ready && !d.isBridgeTx && !!d.selectedHolding
 
             store: popup.store
@@ -487,6 +486,8 @@ StatusDialog {
             id: scrollView
 
             padding: 0
+            bottomPadding: Style.current.padding
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.topMargin: Style.current.bigPadding
@@ -529,9 +530,11 @@ StatusDialog {
         }
     }
 
-    footer: SendModalFooter {
+    footer: TransactionModalFooter {
         width: parent.width
         nextButtonText: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
+        nextButtonIconName: !!popup.selectedAccount && popup.selectedAccount.migratedToKeycard ? Constants.authenticationIconByType[Constants.LoginType.Keycard]
+                                                                                               : Constants.authenticationIconByType[popup.loginType]
         maxFiatFees: popup.isLoading ? "..." : d.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, d.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading

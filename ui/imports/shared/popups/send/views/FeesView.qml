@@ -14,7 +14,7 @@ import "../controls"
 Rectangle {
     id: root
 
-    property var gasFiatAmount
+    property double gasFiatAmount
     property bool isLoading: false
     property var bestRoutes
     property var store
