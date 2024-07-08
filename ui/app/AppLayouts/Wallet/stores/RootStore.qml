@@ -557,4 +557,20 @@ QtObject {
         const prefix = Constants.socialLinkPrefixesByType[Constants.socialLinkType.twitter]
         return prefix + twitterHandle
     }
+
+    function transactionType(transaction) {
+        // Cross chain Send to another recipient is not a bridge, though involves bridging
+        if (transaction.txType == Constants.TransactionType.Bridge && transaction.sender !== transaction.recipient) {
+            if (root.showAllAccounts) {
+                const addresses = root.addressFilters
+                if (addresses.indexOf(transaction.sender) > -1)
+                    return Constants.TransactionType.Send
+
+                return Constants.TransactionType.Receive
+            }
+            return addressesEqual(root.selectedAddress, transaction.sender) ? Constants.TransactionType.Send : Constants.TransactionType.Receive
+        }
+
+        return transaction.txType
+    }
 }
