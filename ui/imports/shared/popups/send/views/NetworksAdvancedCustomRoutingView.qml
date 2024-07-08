@@ -79,7 +79,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
-                text: qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
+                text: qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
                 wrapMode: Text.WordWrap
             }
             Loader {

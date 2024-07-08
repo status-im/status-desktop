@@ -54,7 +54,7 @@ RowLayout {
             font.pixelSize: 15
             color: Theme.palette.baseColor1
             text: isBridgeTx ? qsTr("Choose the network to bridge token to") :
-                              qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
+                              qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
             wrapMode: Text.WordWrap
         }
         ScrollView {

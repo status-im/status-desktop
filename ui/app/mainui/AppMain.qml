@@ -1523,6 +1523,7 @@ Item {
             sourceComponent: SendModal {
                 onlyAssets: sendModal.onlyAssets                
                 store: appMain.transactionStore
+                loginType: appMain.rootStore.loginType
                 onClosed: {
                     sendModal.closed()
                     sendModal.preSelectedSendType = Constants.SendType.Unknown
