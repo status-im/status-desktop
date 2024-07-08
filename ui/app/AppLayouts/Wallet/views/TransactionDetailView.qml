@@ -102,7 +102,7 @@ Item {
         }
         readonly property real feeEthValue: d.details ? RootStore.getFeeEthValue(d.details.totalFees) : 0
         readonly property real feeFiatValue: d.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken) : 0
-        readonly property int transactionType: d.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
+        readonly property int transactionType: d.isTransactionValid ? WalletStores.RootStore.transactionType(transaction) : Constants.TransactionType.Send
         readonly property bool isBridge: d.transactionType === Constants.TransactionType.Bridge
 
         property string decodedInputData: ""

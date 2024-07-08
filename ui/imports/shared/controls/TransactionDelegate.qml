@@ -70,7 +70,7 @@ StatusListItem {
     readonly property string addressNameTo: isModelDataValid ? walletRootStore.getNameForAddress(modelData.recipient) : ""
     readonly property string addressNameFrom: isModelDataValid ? walletRootStore.getNameForAddress(modelData.sender) : ""
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
-    readonly property bool isCommunityAssetViaAirdrop: isModelDataValid && !!communityId && modelData.txType === Constants.TransactionType.Mint
+    readonly property bool isCommunityAssetViaAirdrop: isModelDataValid && !!communityId && d.txType === Constants.TransactionType.Mint
     readonly property string communityId: isModelDataValid && modelData.communityId ? modelData.communityId : ""
     property var community: null
     readonly property bool isCommunityToken: !!community && Object.keys(community).length > 0
@@ -106,7 +106,7 @@ StatusListItem {
     }
 
     readonly property string tokenImage: {
-        if (!isModelDataValid || modelData.txType === Constants.TransactionType.ContractDeployment)
+        if (!isModelDataValid || d.txType === Constants.TransactionType.ContractDeployment)
             return ""
         if (root.isNFT) {
             return modelData.nftImageUrl ? modelData.nftImageUrl : ""
@@ -178,13 +178,18 @@ StatusListItem {
 
         readonly property bool isLightTheme: Style.current.name === Constants.lightThemeName
         property color animatedBgColor
+        property int txType: walletRootStore.transactionType(modelData)
+
+        function addressesEqual(address1, address2) {
+            return address1.toUpperCase() == address2.toUpperCase()
+        }
     }
 
     function getDetailsString(detailsObj) {
         let details = ""
         const endl = "\n"
         const endl2 = endl + endl
-        const type = modelData.txType
+        const type = d.txType
         const feeEthValue = rootStore.getGasEthValue(detailsObj.totalFees.amount, 1)
 
         // TITLE
@@ -224,7 +229,7 @@ StatusListItem {
         }
 
         details += qsTr("Summary") + endl
-        switch(modelData.txType) {
+        switch(type) {
         case Constants.TransactionType.Buy:
         case Constants.TransactionType.Sell:
         case Constants.TransactionType.Destroy:
@@ -235,7 +240,11 @@ StatusListItem {
             details += getSubtitle(true, true) + endl2
             break
         default:
-            details += qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName) + endl2
+            if (networkNameIn != networkNameOut) { // cross chain Send/Receive that involves bridging
+                details += getSubtitle(true, true) + endl2
+            }
+            else
+                details += qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName) + endl2
             break
         }
 
@@ -495,8 +504,15 @@ StatusListItem {
             return qsTr("%1 (community asset) from %2 via %3").arg(root.transactionValue).arg(communityInfo).arg(root.networkName)
         }
 
-        switch(modelData.txType) {
+        switch(d.txType) {
         case Constants.TransactionType.Receive:
+            // Cross chain receive. Use bridge pattern
+            if (root.networkNameIn != root.networkNameOut) {
+                if (allAccounts)
+                    return qsTr("%1 from %2 to %3 via %4 and %5").arg(inTransactionValue).arg(fromAddress).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
+                return qsTr("%1 from %2 via %3 and %4").arg(inTransactionValue).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
+            }
+
             if (allAccounts)
                 return qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)
             return qsTr("%1 from %2 via %3").arg(transactionValue).arg(fromAddress).arg(networkName)
@@ -525,6 +541,13 @@ StatusListItem {
                 return qsTr("%1 via %2 in %3").arg(transactionValue).arg(networkName).arg(toAddress)
             return qsTr("%1 via %2").arg(transactionValue).arg(networkName)
         default:
+            // Cross chain send. Use bridge pattern
+            if (root.networkNameIn != root.networkNameOut) {
+                if (allAccounts)
+                    return qsTr("%1 from %2 to %3 via %4 and %5").arg(inTransactionValue).arg(fromAddress).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
+                return qsTr("%1 to %2 via %3 and %4").arg(inTransactionValue).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
+            }
+
             if (allAccounts)
                 return qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)
             return qsTr("%1 to %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
@@ -552,7 +575,7 @@ StatusListItem {
             if (!root.isModelDataValid)
                 return ""
 
-            switch(modelData.txType) {
+            switch(d.txType) {
             case Constants.TransactionType.Send:
                 return "send"
             case Constants.TransactionType.Receive:
@@ -601,7 +624,7 @@ StatusListItem {
 
         const isPending = root.transactionStatus === Constants.TransactionStatus.Pending
         const failed = root.transactionStatus === Constants.TransactionStatus.Failed
-        switch(modelData.txType) {
+        switch(d.txType) {
         case Constants.TransactionType.Send:
             return failed ? qsTr("Send failed") : (isPending ? qsTr("Sending") : qsTr("Sent"))
         case Constants.TransactionType.Receive:
@@ -644,7 +667,7 @@ StatusListItem {
             }
             StatusRoundIcon {
                 id: secondTokenImage
-                visible: root.isModelDataValid && !root.isNFT && !!root.inTokenImage && modelData.txType === Constants.TransactionType.Swap
+                visible: root.isModelDataValid && !root.isNFT && !!root.inTokenImage && d.txType === Constants.TransactionType.Swap
                 anchors.verticalCenter: parent.verticalCenter
                 asset: StatusAssetSettings {
                     width: root.tokenIconAsset.width
@@ -705,7 +728,7 @@ StatusListItem {
                             return ""
                         }
 
-                        switch(modelData.txType) {
+                        switch(d.txType) {
                         case Constants.TransactionType.Send:
                         case Constants.TransactionType.Sell:
                             return "−" + root.transactionValue
@@ -736,7 +759,7 @@ StatusListItem {
                         if (!root.isModelDataValid)
                             return ""
 
-                        switch(modelData.txType) {
+                        switch(d.txType) {
                         case Constants.TransactionType.Receive:
                         case Constants.TransactionType.Buy:
                         case Constants.TransactionType.Swap:
@@ -758,7 +781,7 @@ StatusListItem {
                             return ""
                         }
 
-                        switch(modelData.txType) {
+                        switch(d.txType) {
                         case Constants.TransactionType.Send:
                         case Constants.TransactionType.Sell:
                         case Constants.TransactionType.Buy:
