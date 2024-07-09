@@ -9,6 +9,16 @@ import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet.stores 1.0
 
+// TODO: This store, as all other stores should be empty QtObject {}.
+// All mocking should be done in place in Storybook pages and unit tests.
+// If it's necessary to share mocks between tests/pages, such mock can be
+// created by deriving from empty stub and putting in mocks dir.
+// Stores itself should be simple, thin layers over functionality exposed from
+// the backend. No additional logic should there. Data transformation logic
+// should be delegated to adaptors, stateles helpers to proper utility singletons.
+//
+// PLEASE DO NOT ADD ANY NEW CONTENT HERE
+
 QtObject {
     id: root
 

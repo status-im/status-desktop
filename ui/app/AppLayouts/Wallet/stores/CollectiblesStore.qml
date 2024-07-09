@@ -31,7 +31,7 @@ QtObject {
     }
 
     readonly property var collectiblesController: ManageTokensController {
-        sourceModel: _jointCollectiblesBySymbolModel
+        sourceModel: root.jointCollectiblesBySymbolModel
         settingsKey: "WalletCollectibles"
         serializeAsCollectibles: true
 
@@ -85,8 +85,8 @@ QtObject {
         ]
     }
 
-    /* PRIVATE: This model joins the "Tokens By Symbol Model" and "Communities Model" by communityId */
-    property LeftJoinModel _jointCollectiblesBySymbolModel: LeftJoinModel {
+    /* TODO: move all transformations to a dedicated adaptors */
+    readonly property LeftJoinModel jointCollectiblesBySymbolModel: LeftJoinModel {
         objectName: "jointCollectiblesBySymbolModel"
 
         leftModel: allCollectiblesModel

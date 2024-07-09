@@ -180,7 +180,7 @@ Loader {
         SendRecipientInput {
             width: parent.width
             height: visible ? implicitHeight: 0
-            visible: !root.isBridgeTx && !!root.selectedAsset
+            visible: !root.isBridgeTx
             text: root.addressText
 
             function validateInput() {

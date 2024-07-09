@@ -53,6 +53,9 @@ QObject {
 
     // output model
     readonly property SortFilterProxyModel outputAssetsModel: SortFilterProxyModel {
+
+        objectName: "TokenSelectorViewAdaptor_outputAssetsModel"
+
         sourceModel: showAllTokens && !!plainTokensBySymbolModel ? concatModel : assetsObjectProxyModel
 
         proxyRoles: [
@@ -135,6 +138,7 @@ QObject {
                 }
                 expression: isPresentOnEnabledNetworks(model.addressPerChain)
                 expectedRoles: ["addressPerChain"]
+                enabled: root.enabledChainIds.length
             }
         ]
 
@@ -202,6 +206,8 @@ QObject {
     ObjectProxyModel {
         id: assetsObjectProxyModel
         sourceModel: root.assetsModel
+
+        objectName: "TokenSelectorViewAdaptor_assetsObjectProxyModel"
 
         delegate: SortFilterProxyModel {
             id: delegateRoot

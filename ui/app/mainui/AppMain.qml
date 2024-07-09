@@ -1522,8 +1522,12 @@ Item {
 
             sourceComponent: SendPopups.SendModal {
                 onlyAssets: sendModal.onlyAssets                
-                store: appMain.transactionStore
+
                 loginType: appMain.rootStore.loginType
+
+                store: appMain.transactionStore
+                collectiblesStore: appMain.walletCollectiblesStore
+
                 onClosed: {
                     sendModal.closed()
                     sendModal.preSelectedSendType = Constants.SendType.Unknown
