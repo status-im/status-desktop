@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.0
 import SortFilterProxyModel 0.2
@@ -20,8 +20,10 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
 
-import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.adaptors 1.0
+import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import shared.popups.send.panels 1.0
 import "./controls"
@@ -48,7 +50,8 @@ StatusDialog {
     property alias modalHeader: modalHeader.text
 
     required property TransactionStore store
-    property var nestedCollectiblesModel: store.nestedCollectiblesModel
+    property WalletStores.CollectiblesStore collectiblesStore
+
     property var bestRoutes
     property bool isLoading: false
     property int loginType
@@ -117,40 +120,6 @@ StatusDialog {
         property var hoveredHoldingType: Constants.TokenType.Unknown
         readonly property bool isHoveredHoldingValidAsset: !!hoveredHolding && hoveredHoldingType === Constants.TokenType.ERC20
 
-        function getHolding(holdingId, holdingType) {
-            if (holdingType === Constants.TokenType.ERC20) {
-                return store.getAsset(assetsAdaptor.model, holdingId)
-            } else if (holdingType === Constants.TokenType.ERC721 || holdingType === Constants.TokenType.ERC1155) {
-                return store.getCollectible(holdingId)
-            } else {
-                return {}
-            }
-        }
-
-        function setSelectedHoldingId(holdingId, holdingType) {
-            let holding = getHolding(holdingId, holdingType)
-            setSelectedHolding(holding, holdingType)
-        }
-
-        function setSelectedHolding(holding, holdingType) {
-            d.selectedHoldingType = holdingType
-            d.selectedHolding = holding
-            let selectorHolding = store.holdingToSelectorHolding(holding, holdingType)
-            holdingSelector.setSelectedItem(selectorHolding, holdingType)
-        }
-
-        function setHoveredHoldingId(holdingId, holdingType) {
-            let holding = getHolding(holdingId, holdingType)
-            setHoveredHolding(holding, holdingType)
-        }
-
-        function setHoveredHolding(holding, holdingType) {
-            d.hoveredHoldingType = holdingType
-            d.hoveredHolding = holding
-            let selectorHolding = store.holdingToSelectorHolding(holding, holdingType)
-            holdingSelector.setHoveredItem(selectorHolding, holdingType)
-        }
-
         onSelectedHoldingChanged: {
             if (d.selectedHoldingType === Constants.TokenType.ERC20) {
                 if(!d.ensOrStickersPurpose && store.sendType !== Constants.SendType.Bridge)
@@ -171,19 +140,6 @@ StatusDialog {
 
             recalculateRoutesAndFees()
         }
-    }
-
-    SendModalAssetsAdaptor {
-        id: assetsAdaptor
-
-        controller: popup.store.walletAssetStore.assetsController
-        showCommunityAssets: popup.store.tokensStore.showCommunityAssetsInSend
-        tokensModel: popup.store.walletAssetStore.groupedAccountAssetsModel
-        account: popup.store.selectedSenderAccountAddress
-        marketValueThreshold:
-            popup.store.tokensStore.displayAssetsBelowBalance
-            ? popup.store.tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
-            : 0
     }
 
     LeftJoinModel {
@@ -219,11 +175,35 @@ StatusDialog {
         if(popup.preSelectedSendType !== Constants.SendType.Unknown) {
             store.setSendType(popup.preSelectedSendType)
         }
-        if ((popup.preSelectedHoldingType > Constants.TokenType.Native) &&
-                (popup.preSelectedHoldingType < Constants.TokenType.Unknown)) {
-            tokenListRect.browsingHoldingType = popup.preSelectedHoldingType
-            if (!!popup.preSelectedHoldingID) {
-                d.setSelectedHoldingId(popup.preSelectedHoldingID, popup.preSelectedHoldingType)
+        if (!!popup.preSelectedHoldingID
+                && popup.preSelectedHoldingType > Constants.TokenType.Native
+                && popup.preSelectedHoldingType < Constants.TokenType.Unknown) {
+
+            if (popup.preSelectedHoldingType === Constants.TokenType.ERC20) {
+                const entry = ModelUtils.getByKey(
+                                assetsAdaptor.outputAssetsModel, "tokensKey",
+                                popup.preSelectedHoldingID)
+                d.selectedHoldingType = Constants.TokenType.ERC20
+                d.selectedHolding = entry
+
+                holdingSelector.setCustom(entry.symbol, entry.iconSource,
+                                          popup.preSelectedHoldingID)
+                holdingSelector.selectedItem = entry
+            } else {
+                const entry = ModelUtils.getByKey(
+                                popup.store.collectiblesModel,
+                                "uid", popup.preSelectedHoldingID)
+
+                d.selectedHoldingType = entry.tokenType
+                d.selectedHolding = entry
+
+                const id = entry.communityId ? entry.collectionUid : entry.uid
+
+                holdingSelector.setCustom(entry.name,
+                                          entry.imageUrl || entry.mediaUrl,
+                                          id)
+                holdingSelector.selectedItem = entry
+                holdingSelector.currentTab = TokenSelectorPanel.Tabs.Collectibles
             }
         }
 
@@ -267,9 +247,13 @@ StatusDialog {
             selectedAddress: !!popup.preSelectedAccount && !!popup.preSelectedAccount.address ? popup.preSelectedAccount.address : ""
             onCurrentAccountAddressChanged: {
                 store.setSenderAccount(currentAccountAddress)
+
                 if (d.isSelectedHoldingValidAsset) {
-                    d.setSelectedHoldingId(d.selectedHolding.symbol, d.selectedHoldingType)
+                    d.selectedHolding = ModelUtils.getByKey(
+                                holdingSelector.assetsModel, "tokensKey",
+                                d.selectedHolding.tokensKey)
                 }
+
                 popup.recalculateRoutesAndFees()
             }
         }
@@ -316,25 +300,69 @@ StatusDialog {
                         text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
                     }
 
-                    HoldingSelector {
+                    TokenSelectorNew {
                         id: holdingSelector
+
+                        property var selectedItem
+                        property bool onlyAssets: false
+
+                        assetsModel: assetsAdaptor.outputAssetsModel
+                        collectiblesModel: collectiblesAdaptorLoader.active
+                                           ? collectiblesAdaptorLoader.item.model : null
+
+                        TokenSelectorViewAdaptor {
+                            id: assetsAdaptor
+
+                            assetsModel: popup.store.walletAssetStore.groupedAccountAssetsModel
+
+                            flatNetworksModel: popup.store.flatNetworksModel
+                            currentCurrency: popup.store.currencyStore.currentCurrency
+                            accountAddress: popup.preSelectedAccount ? popup.preSelectedAccount.address : ""
+                            showCommunityAssets: popup.store.tokensStore.showCommunityAssetsInSend
+                        }
+
+                        Loader {
+                            id: collectiblesAdaptorLoader
+
+                            active: !d.isBridgeTx
+
+                            sourceComponent: CollectiblesSelectionAdaptor {
+                                accountKey: popup.preSelectedAccount ? popup.preSelectedAccount.address : ""
+                                collectiblesModel: collectiblesStore
+                                                   ? collectiblesStore.jointCollectiblesBySymbolModel
+                                                   : null
+                            }
+                        }
+
+                        onAssetSelected: {
+                            const entry = ModelUtils.getByKey(
+                                            assetsModel, "tokensKey", key)
+                            d.selectedHoldingType = Constants.TokenType.ERC20
+                            d.selectedHolding = entry
+                            selectedItem = entry
+                        }
+
+                        onCollectibleSelected: {
+                            const entry = ModelUtils.getByKey(
+                                            popup.store.collectiblesModel,
+                                            "uid", key)
+                            d.selectedHoldingType = entry.tokenType
+                            d.selectedHolding = entry
+                            selectedItem = entry
+                        }
+
+                        onCollectionSelected: {
+                            const entry = ModelUtils.getByKey(
+                                            popup.store.collectiblesModel,
+                                            "collectionUid", key)
+                            d.selectedHoldingType = entry.tokenType
+                            d.selectedHolding = entry
+                            selectedItem = entry
+                        }
+                    }
+
+                    Item {
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        assetsModel: assetsAdaptor.model
-                        collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
-                        networksModel: popup.store.flatNetworksModel
-                        visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.TokenType.Unknown) ||
-                                 (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.TokenType.Unknown)
-                        onItemSelected: {
-                            d.setSelectedHoldingId(holdingId, holdingType)
-                        }
-                        onSearchTextChanged: assetsAdaptor.assetSearchString = assetSearchString
-                        formatCurrentCurrencyAmount: function(balance){
-                            return popup.store.currencyStore.formatCurrencyAmount(balance, popup.store.currencyStore.currentCurrency)
-                        }
-                        formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){
-                            return popup.store.formatCurrencyAmountFromBigInt(balance, symbol, decimals, {noSymbol: true})
-                        }
                     }
 
                     MaxSendButton {
@@ -404,7 +432,7 @@ StatusDialog {
                 ColumnLayout {
                     spacing: 8
                     Layout.fillWidth: true
-                    visible: !d.isBridgeTx && !!d.selectedHolding
+                    visible: !d.isBridgeTx
                     StatusBaseText {
                         id: label
                         elide: Text.ElideRight
@@ -429,39 +457,6 @@ StatusDialog {
             }
         }
 
-        TokenListView {
-            id: tokenListRect
-            Layout.fillHeight: true
-            Layout.fillWidth:  true
-            Layout.topMargin: Style.current.padding
-            Layout.leftMargin: Style.current.xlPadding
-            Layout.rightMargin: Style.current.xlPadding
-            Layout.bottomMargin: Style.current.xlPadding + Style.current.padding
-            visible: !d.selectedHolding
-
-            assets: assetsAdaptor.model
-            collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
-            networksModel: popup.store.flatNetworksModel
-            onlyAssets: holdingSelector.onlyAssets
-            onTokenSelected: function (symbolOrTokenKey, holdingType) {
-                d.setSelectedHoldingId(symbolOrTokenKey, holdingType)
-            }
-            onTokenHovered: {
-                if(hovered) {
-                    d.setHoveredHoldingId(symbol, holdingType)
-                } else {
-                    d.setHoveredHoldingId("", Constants.TokenType.Unknown)
-                }
-            }
-            onAssetSearchStringChanged: assetsAdaptor.assetSearchString = assetSearchString
-            formatCurrentCurrencyAmount: function(balance){
-                return popup.store.currencyStore.formatCurrencyAmount(balance, popup.store.currencyStore.currentCurrency)
-            }
-            formatCurrencyAmountFromBigInt: function(balance, symbol, decimals) {
-                return popup.store.formatCurrencyAmountFromBigInt(balance, symbol, decimals, {noSymbol: true})
-            }
-        }
-
         RecipientSelectorPanel {
             id: recipientsPanel
 
@@ -472,9 +467,7 @@ StatusDialog {
             Layout.rightMargin: Style.current.xlPadding
             Layout.bottomMargin: Style.current.padding
 
-            // TODO: To be removed after all other refactors done (initial tokens selector page removed, bridge modal separated)
-            // This panel must be shown by default if no recipient already selected, otherwise, hidden
-            visible: !recipientInputLoader.ready && !d.isBridgeTx && !!d.selectedHolding
+            visible: !recipientInputLoader.ready && !d.isBridgeTx
 
             savedAddressesModel: popup.store.savedAddressesModel
             myAccountsModel: d.accountsAdaptor.model
@@ -513,7 +506,8 @@ StatusDialog {
 
             contentWidth: availableWidth
 
-            visible: recipientInputLoader.ready && !!d.selectedHolding && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
+            visible: recipientInputLoader.ready &&
+                     (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
 
             objectName: "sendModalScroll"
 

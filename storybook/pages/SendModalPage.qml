@@ -4,9 +4,11 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 
 import Storybook 1.0
+import Models 1.0
 import utils 1.0
 
 import shared.popups.send 1.0
@@ -22,18 +24,68 @@ SplitView {
     orientation: Qt.Horizontal
 
     property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-        assetsWithFilteredBalances: root.assetsWithFilteredBalances
-    }
 
+        // Workaround to satisfy stub which is not empty (but should be)
+        assetsWithFilteredBalances: ListModel {}
 
-    property SubmodelProxyModel assetsWithFilteredBalances: SubmodelProxyModel {
-        sourceModel: root.walletAssetStore.groupedAccountsAssetsModel
-        submodelRoleName: "balances"
-        delegateModel: SortFilterProxyModel {
-            sourceModel: submodel
-            filters: FastExpressionFilter {
-                expression: txStore.selectedSenderAccountAddress === model.account
-                expectedRoles: ["account"]
+        property var groupedAccountAssetsModel: ListModel {
+            Component.onCompleted: {
+                const data = [
+                    {
+                        tokensKey: "key_eth",
+                        name: "Ethereum",
+                        symbol: "ETH",
+                        decimals: 18,
+                        communityId: "",
+                        balances: [
+                            {
+                                chainId: "1",
+                                balance: "122082928968121891",
+                                account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                            },
+                            {
+                              chainId: "420",
+                              balance: "559133758939097000",
+                              account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+                            }
+                        ],
+                        currentCurrencyBalance: 234.234,
+                        marketDetails: {
+                            currencyPrice: {
+                                amount: 12234.23,
+                                displayDecimals: true
+                            }
+                        }
+                    },
+                    {
+                        tokensKey: "key_dai",
+                        name: "DAI",
+                        symbol: "DAI",
+                        decimals: 18,
+                        communityId: "",
+                        balances: [
+                            {
+                                chainId: "420",
+                                balance: "1142155111",
+                                account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+                            },
+                            {
+                                chainId: "1",
+                                balance: "4411211243121551121",
+                                account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+                            }
+                        ],
+                        currentCurrencyBalance: 234.234,
+                        marketDetails: {
+                            currencyPrice: {
+                                amount: 234.23,
+                                displayDecimals: true
+                            }
+                        }
+                    }
+                ]
+
+                append(data)
             }
         }
     }

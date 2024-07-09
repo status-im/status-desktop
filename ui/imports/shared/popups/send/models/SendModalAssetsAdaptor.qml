@@ -83,6 +83,8 @@ QObject {
     ObjectProxyModel {
         id: proxyModel
 
+        objectName: "sendModalAssetsAdaptor_proxyModel"
+
         sourceModel: root.tokensModel ?? null
 
         delegate: QObject {
