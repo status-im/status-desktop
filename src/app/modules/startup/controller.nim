@@ -389,10 +389,11 @@ proc setupKeychain(self: Controller, store: bool) =
   else:
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
 
-proc processCreateAccountResult*(self: Controller, error: string, storeToKeychain: bool) =
+proc processCreateAccountResult*(self: Controller, error: string, displayName: string, storeToKeychain: bool) =
   if error != "":
     self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
   else:
+    singletonInstance.localAccountSettings.setFileName(displayName)
     self.setupKeychain(storeToKeychain)
 
 proc createAccountAndLogin*(self: Controller, storeToKeychain: bool) =
@@ -403,7 +404,7 @@ proc createAccountAndLogin*(self: Controller, storeToKeychain: bool) =
     self.tmpProfileImageDetails.url, 
     self.tmpProfileImageDetails.cropRectangle
   )
-  self.processCreateAccountResult(error, storeToKeychain)
+  self.processCreateAccountResult(error, self.tmpDisplayName, storeToKeychain)
 
 proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
   if recoverAccount:
@@ -421,7 +422,7 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
     self.tmpProfileImageDetails.cropRectangle,
   )
 
-  self.processCreateAccountResult(error, storeToKeychain)
+  self.processCreateAccountResult(error, self.tmpDisplayName, storeToKeychain)
 
 # NOTE: Called during FirstRunNewUserNewKeycardKeys and FirstRunNewUserImportSeedPhraseIntoKeycard
 # WARNING: Reuse `importAccountAndLogin` with custom parameters
@@ -438,7 +439,7 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
     self.tmpProfileImageDetails.cropRectangle,
     keycardInstanceUID = flowEvent.instanceUID,
   )
-  self.processCreateAccountResult(error, storeToKeychain)
+  self.processCreateAccountResult(error, self.tmpDisplayName, storeToKeychain)
 
 # NOTE: Called during FirstRunOldUserKeycardImport
 proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
@@ -461,7 +462,7 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccoun
     self.tmpProfileImageDetails.cropRectangle,
   )
   
-  self.processCreateAccountResult(error, storeToKeychain)
+  self.processCreateAccountResult(error, self.tmpDisplayName, storeToKeychain)
 
 proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
   return self.accountsService.openedAccounts()
