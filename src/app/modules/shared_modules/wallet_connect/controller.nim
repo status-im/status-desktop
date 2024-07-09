@@ -70,3 +70,6 @@ QtObject:
 
   proc sendTransaction*(self: Controller, address: string, chainId: int, password: string, txJson: string): string {.slot.} =
     return self.service.sendTransaction(address, chainId, password, txJson)
+
+  proc getEstimatedTimeMinutesInterval(self: Controller, chainId: int, maxFeePerGas: string): int {.slot.} =
+    return self.service.getEstimatedTimeMinutesInterval(chainId, maxFeePerGas).int

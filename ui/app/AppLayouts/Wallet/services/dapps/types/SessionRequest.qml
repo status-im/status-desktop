@@ -5,6 +5,7 @@ import QtQml 2.15
 import utils 1.0
 
 QtObject {
+
     /// Supported methods
     /// userString is used in the context `dapp.url #{userString} <accepted/rejected>`
     /// requestDisplay is used in the context `dApp wants you to ${requestDisplay} with <Account Name Here>`

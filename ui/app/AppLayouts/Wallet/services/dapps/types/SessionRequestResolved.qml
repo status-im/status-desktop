@@ -31,7 +31,6 @@ QObject {
     readonly property string maxFeesText: ""
     readonly property string maxFeesEthText: ""
     readonly property bool enoughFunds: false
-    readonly property string estimatedTimeText: ""
 
     function resolveDappInfoFromSession(session) {
         let meta = session.peer.metadata

@@ -34,7 +34,8 @@ QObject {
     signal displayToastMessage(string message, bool error)
     signal sessionRequestResult(/*model entry of SessionRequestResolved*/ var request, bool isSuccess)
     signal maxFeesUpdated(real maxFees, int maxFeesWei, bool haveEnoughFunds, string symbol)
-    signal estimatedTimeUpdated(int minMinutes, int maxMinutes)
+    // Reports Constants.TransactionEstimatedTime values
+    signal estimatedTimeUpdated(int estimatedTimeEnum)
 
     Connections {
         target: sdk
@@ -138,7 +139,6 @@ QObject {
                 maxFeesText: "?",
                 maxFeesEthText: "?",
                 enoughFunds: false,
-                estimatedTimeText: "?"
             })
             if (obj === null) {
                 console.error("Error creating SessionRequestResolved for event")
@@ -158,20 +158,21 @@ QObject {
                 }
                 obj.resolveDappInfoFromSession(session)
                 root.sessionRequest(obj)
+
+                let estimatedTimeEnum = getEstimatedTimeInterval(data, method, obj.network.chainId)
+                root.estimatedTimeUpdated(estimatedTimeEnum)
+
                 // TODO #15192: update maxFees
                 if (!event.params.request.params[0].gasLimit || !event.params.request.params[0].gasPrice) {
                     root.maxFeesUpdated(0, 0, true, "")
-                    root.estimatedTimeUpdated(0, 0)
                     return
                 }
-                    
-                    
+
                 let gasLimit = parseFloat(parseInt(event.params.request.params[0].gasLimit, 16));
                 let gasPrice = parseFloat(parseInt(event.params.request.params[0].gasPrice, 16));
                 let maxFees = gasLimit * gasPrice
                 root.maxFeesUpdated(maxFees/1000000000, maxFees, true, "Gwei")
-                // TODO #15192: update estimatedTime
-                root.estimatedTimeUpdated(1, 12)
+
             })
 
             return obj
@@ -319,6 +320,34 @@ QObject {
             } else {
                 console.error("No password or pin provided to sign message")
             }
+        }
+
+        // Returns Constants.TransactionEstimatedTime
+        function getEstimatedTimeInterval(data, method, chainId) {
+            if (method != SessionRequest.methods.signTransaction.name
+                && method != SessionRequest.methods.sendTransaction.name)
+            {
+                return ""
+            }
+
+            var tx = {}
+            if (method === SessionRequest.methods.signTransaction.name) {
+                tx = SessionRequest.methods.signTransaction.getTxObjFromData(data)
+            } else if (method === SessionRequest.methods.sendTransaction.name) {
+                tx = SessionRequest.methods.sendTransaction.getTxObjFromData(data)
+            }
+
+            var maxFeePerGas = ""
+            if (!!tx.maxFeePerGas) {
+                maxFeePerGas = tx.maxFeePerGas
+            } else if (!!tx.gasPrice) {
+                maxFeePerGas = tx.gasPrice
+            }
+            if (!maxFeePerGas) {
+                return ""
+            }
+
+            return root.store.getEstimatedTime(chainId, maxFeePerGas)
         }
     }
 
