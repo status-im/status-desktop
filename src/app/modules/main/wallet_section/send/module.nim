@@ -349,7 +349,7 @@ method getNestedCollectiblesModel*(self: Module): nested_collectibles.Model =
 proc getNetworkColor(self: Module, shortName: string): string =
   let networks = self.controller.getCurrentNetworks()
   for network in networks:
-    if cmpIgnoreCase(network.chainName, shortName) == 0:
+    if cmpIgnoreCase(network.shortName, shortName) == 0:
       return network.chainColor
   return ""
 
@@ -363,7 +363,7 @@ proc getLayer1NetworkChainId*(self: Module): int =
 method getNetworkChainId*(self: Module, shortName: string): int =
   let networks = self.controller.getCurrentNetworks()
   for network in networks:
-    if cmpIgnoreCase(network.chainName, shortName) == 0:
+    if cmpIgnoreCase(network.shortName, shortName) == 0:
       return network.chainId
   return 0
 
