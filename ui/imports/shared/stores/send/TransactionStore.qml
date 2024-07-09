@@ -104,50 +104,6 @@ QtObject {
         return ModelUtils.get(collectiblesModel, idx)
     }
 
-    function getSelectorCollectible(uid) {
-        const idx = ModelUtils.indexOf(nestedCollectiblesModel, "uid", uid)
-        if (idx < 0) {
-            return {}
-        }
-        return ModelUtils.get(nestedCollectiblesModel, idx)
-    }
-
-    function assetToSelectorAsset(asset) {
-        return asset
-    }
-
-    function collectibleToSelectorCollectible(collectible) {
-        var groupId = collectible.collectionUid
-        var groupName = collectible.collectionName
-        var itemType = Constants.CollectiblesNestedItemType.Collectible
-        if (collectible.communityId !== "") {
-            groupId = collectible.communityId
-            groupName = collectible.communityName
-            itemType = Constants.CollectiblesNestedItemType.CommunityCollectible
-        }
-        return {
-            uid: collectible.uid,
-            chainId: collectible.chainId,
-            name: collectible.name,
-            iconUrl: collectible.imageUrl,
-            groupId: groupId,
-            groupName: groupName,
-            tokenType: collectible.tokenType,
-            itemType: itemType,
-            count: 1 // TODO: Properly handle count
-        }
-    }
-
-    function holdingToSelectorHolding(holding, holdingType) {
-        if (holdingType === Constants.TokenType.ERC20) {
-            return assetToSelectorAsset(holding)
-        } else if (holdingType === Constants.TokenType.ERC721 || holdingType === Constants.TokenType.ERC1155) {
-            return collectibleToSelectorCollectible(holding)
-        } else {
-            return {}
-        }
-    }
-
     function setSenderAccount(address) {
         walletSectionSendInst.setSenderAccount(address)
     }
