@@ -63,6 +63,12 @@ QObject {
         if (txObj.value) { tx.value = stripLeadingZeros(txObj.value) }
         return tx
     }
+
+    // Returns ui/imports/utils -> Constants.TransactionEstimatedTime values
+    function getEstimatedTime(chainId, maxFeePerGas) {
+        return controller.getEstimatedTime(chainId, maxFeePerGas)
+    }
+
     // Returns the hex encoded signature of the transaction or empty string if error
     function signTransaction(topic, id, address, chainId, password, txObj) {
         let tx = prepareTxForStatusGo(txObj)

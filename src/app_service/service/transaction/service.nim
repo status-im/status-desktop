@@ -632,7 +632,7 @@ QtObject:
 
   proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
     try:
-      let response = backend.getTransactionEstimatedTime(chainId, maxFeePerGas.parseFloat).result.getInt
+      let response = backend.getTransactionEstimatedTime(chainId, maxFeePerGas).result.getInt
       return EstimatedTime(response)
     except Exception as e:
       error "Error estimating transaction time", message = e.msg

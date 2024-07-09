@@ -20,6 +20,7 @@ import Storybook 1.0
 
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.services.dapps 1.0
+import AppLayouts.Wallet.services.dapps.types 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -331,7 +332,6 @@ Item {
                 return true
             }
 
-
             function getDapps() {
                 let dappsJson = JSON.stringify(d.persistedDapps)
                 this.dappsListReceived(dappsJson)
@@ -372,6 +372,10 @@ Item {
             function sendTransaction(topic, id, address, chainId, password, tx) {
                 console.info(`calling mocked DAppsStore.sendTransaction(${topic}, ${id}, ${address}, ${chainId}, ${password}, ${tx})`)
                 return "0xf8672a8402fb7acf82520894e2d622c817878da5143bbe068"
+            }
+
+            function getEstimatedTime(chainId, maxFeePerGas) {
+                return Constants.TransactionEstimatedTime.LessThanThreeMins
             }
         }
 

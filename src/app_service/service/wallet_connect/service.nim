@@ -1,4 +1,5 @@
 import NimQml, chronicles, times, json
+import strutils
 
 import backend/wallet_connect as status_go
 import backend/wallet
@@ -6,6 +7,7 @@ import backend/wallet
 import app_service/service/settings/service as settings_service
 import app_service/common/wallet_constants
 from app_service/service/transaction/dto import PendingTransactionTypeDto
+import app_service/service/transaction/service as tr
 
 import app/global/global_singleton
 
@@ -30,6 +32,7 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     settingsService: settings_service.Service
+    transactions: tr.Service
 
     authenticationCallback: AuthenticationResponseFn
 
@@ -40,6 +43,7 @@ QtObject:
     events: EventEmitter,
     threadpool: ThreadPool,
     settingsService: settings_service.Service,
+    transactions: tr.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -47,6 +51,7 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.settingsService = settings_service
+    result.transactions = transactions
 
   proc init*(self: Service) =
     self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
@@ -202,3 +207,7 @@ QtObject:
       return ""
 
     return txResponse.getStr
+
+  proc getEstimatedTimeMinutesInterval*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
+    let maxFeePerGasInt = parseHexInt(maxFeePerGas)
+    return self.transactions.getEstimatedTime(chainId, $(maxFeePerGasInt.float))
