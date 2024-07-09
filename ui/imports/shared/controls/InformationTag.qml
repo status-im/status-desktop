@@ -60,6 +60,7 @@ Control {
             asset.height: visible ? 16 : 0
             asset.bgHeight: visible ? 16 : 0
             asset.bgWidth: visible ? 16 : 0
+            asset.color: Theme.palette.directColor1
             visible: !!asset.name
         }
         StatusBaseText {
