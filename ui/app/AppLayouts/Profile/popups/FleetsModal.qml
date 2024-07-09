@@ -49,7 +49,7 @@ ModalPopup {
 
         FleetRadioSelector {
             advancedStore: popup.advancedStore
-            fleetName: Constants.shards_staging
+            fleetName: Constants.status_staging
             buttonGroup: fleetSettings
         }
     }

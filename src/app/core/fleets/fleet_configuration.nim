@@ -2,11 +2,11 @@ import json, typetraits, tables, sequtils, strutils
 
 type
   Fleet* {.pure.} = enum
-    Undefined = "",
+    Undefined = ""
     WakuSandbox = "waku.sandbox"
     WakuTest = "waku.test"
     ShardsTest = "shards.test"
-    ShardsStaging = "shards.staging"
+    StatusStaging = "status.staging"
 
   FleetNodes* {.pure.} = enum
     Bootnodes = "boot"
@@ -56,7 +56,7 @@ proc extractConfig(self: FleetConfiguration, jsonString: string) {.gcsafe.} =
 
 proc getNodes*(self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = FleetNodes.Bootnodes): seq[string] =
   var t = nodeType
-  if fleet == Fleet.ShardsTest or fleet == Fleet.ShardsStaging:
+  if fleet == Fleet.ShardsTest or fleet == Fleet.StatusStaging:
     case nodeType:
       of Bootnodes: t = WakuBoot
       of Mailservers: t = WakuStore
@@ -68,7 +68,7 @@ proc getNodes*(self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = Fl
 
 proc getMailservers*(self: FleetConfiguration, fleet: Fleet): Table[string, string] =
   var fleetKey: string
-  if fleet == Fleet.ShardsTest or fleet == Fleet.ShardsStaging:
+  if fleet == Fleet.ShardsTest or fleet == Fleet.StatusStaging:
     fleetKey = $FleetNodes.WakuStore
   else:
     fleetKey = $FleetNodes.Waku
