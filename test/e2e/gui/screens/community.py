@@ -33,6 +33,11 @@ class CommunityScreen(QObject):
         self.chat = Chat()
         self.right_panel = Members()
 
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self.left_panel.wait_until_appears(timeout_msec)
+        return self
+
     @allure.step('Create channel')
     def create_channel(self, name: str, description: str, emoji: str = None):
         self.left_panel.open_create_channel_popup().create(name, description, emoji)
@@ -317,6 +322,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open join community popup')
     def open_welcome_community_popup(self):
+        self._join_community_button.wait_until_appears(configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         self._join_community_button.click()
         return WelcomeCommunityPopup().wait_until_appears()
 
@@ -383,9 +389,15 @@ class LeftPanel(QObject):
         super(LeftPanel, self).right_click()
 
     @allure.step('Invite people to community')
-    def invite_people_to_community(self, contacts: typing.List[str], message: str):
+    def invite_people_to_community(self, contacts: typing.List[str], message: str, attempts: int = 2):
         self._add_members_button.click()
-        InviteContactsPopup().wait_until_appears().invite(contacts, message)
+        try:
+            InviteContactsPopup().wait_until_appears().invite(contacts, message)
+        except AssertionError as err:
+            if attempts:
+                self.invite_people_to_community(contacts, message, attempts - 1)
+            else:
+                raise err
 
 
 class Chat(QObject):
@@ -441,11 +453,9 @@ class Members(QObject):
         return ProfilePopupFromMembers().wait_until_appears()
 
     @allure.step('Verify member is offline by index')
-    def member_is_offline(self, index: int) -> bool:
-        self._member_item.real_name['index'] = index
-        return self._user_badge_color.object.color.name == ColorCodes.GRAY.value
-
-    @allure.step('Verify member is online by index')
-    def member_is_online(self, index: int) -> bool:
-        self._member_item.real_name['index'] = index
-        return self._user_badge_color.object.color.name == ColorCodes.GREEN.value
+    def member_state(self, member_name: str) -> bool:
+        for member in driver.findAllObjects(self._member_item.real_name):
+            if getattr(member, 'title', '') == member_name:
+                for child in walk_children(member):
+                    if getattr(child, 'id', '') == 'statusBadge':
+                        return child.color.name
