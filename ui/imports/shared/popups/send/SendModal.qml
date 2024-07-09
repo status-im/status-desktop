@@ -57,7 +57,10 @@ StatusDialog {
         standardButtons: StandardButton.Ok
     }
 
-    readonly property var selectedAccount: selectedSenderAccountEntry.item ?? ModelUtils.get(store.accounts, 0)
+    readonly property var selectedAccount: {
+        selectedSenderAccountEntry.value // Item changed is not triggered when the value is changed
+        return selectedSenderAccountEntry.item ?? ModelUtils.get(store.accounts, 0)
+    }
 
     property var sendTransaction: function() {
         d.isPendingTx = true
