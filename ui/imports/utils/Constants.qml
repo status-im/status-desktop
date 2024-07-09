@@ -1333,6 +1333,7 @@ QtObject {
         readonly property string paraswapUrl: "app.paraswap.io"
     }
 
+    // Mirrors src/app_service/service/transaction/service.nim -> EstimatedTime
     enum TransactionEstimatedTime {
         Unknown = 0,
         LessThanOneMin,

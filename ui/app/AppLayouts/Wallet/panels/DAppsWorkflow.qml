@@ -5,11 +5,12 @@ import QtQuick.Layouts 1.15
 import StatusQ 0.1
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.controls 1.0
-
-import shared.popups.walletconnect 1.0
 import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Wallet.services.dapps.types 1.0
+
+import shared.popups.walletconnect 1.0
 
 import utils 1.0
 
@@ -119,6 +120,7 @@ DappsComboBox {
         property SessionRequestResolved request: null
 
         sourceComponent: DAppSignRequestModal {
+            id: dappRequestModal
             objectName: "dappsRequestModal"
             loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
             visible: true
@@ -138,7 +140,7 @@ DappsComboBox {
             currentCurrency: ""
             fiatFees: request.maxFeesText
             cryptoFees: request.maxFeesEthText
-            estimatedTime: request.estimatedTimeText
+            estimatedTime: ""
             feesLoading: !request.maxFeesText || !request.maxFeesEthText
             hasFees: signingTransaction
             enoughFundsForTransaction: request.enoughFunds
@@ -199,14 +201,16 @@ DappsComboBox {
                     } catch (e) {
                         // ignore error in case of tests and storybook where we don't have access to globalUtils
                     }
+
                     cryptoFees = ethStr
                     enoughFundsForTransaction = haveEnoughFunds
                     enoughFundsForFees = haveEnoughFunds
                     feesLoading = false
                     hasFees = !!maxFees
                 }
-                function onEstimatedTimeUpdated(minMinutes, maxMinutes) {
-                    estimatedTime = qsTr("%1-%2mins").arg(minMinutes).arg(maxMinutes)
+
+                function onEstimatedTimeUpdated(estimatedTimeEnum) {
+                    dappRequestModal.estimatedTime = WalletUtils.getLabelForEstimatedTxTime(estimatedTimeEnum)
                 }
             }
         }
