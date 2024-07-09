@@ -395,6 +395,12 @@ QtObject:
         self.notificationsCountChanged()
         return
 
+  proc isThereASectionWithUnreadMessages*(self: SectionModel): bool =
+    for item in self.items:
+      if item.hasNotification == true:
+        return true
+    return false
+
   proc appendCommunityToken*(self: SectionModel, id: string, item: TokenItem) =
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):

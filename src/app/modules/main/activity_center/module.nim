@@ -24,6 +24,7 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
+    unreadCount: int
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -67,6 +68,9 @@ method viewDidLoad*(self: Module) =
 method hasMoreToShow*(self: Module): bool =
   self.controller.hasMoreToShow()
 
+method unreadActivityCenterNotificationsCountFromView*(self: Module): int =
+  self.view.unreadCount()
+
 method unreadActivityCenterNotificationsCount*(self: Module): int =
   self.controller.unreadActivityCenterNotificationsCount()
 
@@ -76,9 +80,7 @@ method hasUnseenActivityCenterNotifications*(self: Module): bool =
 method onNotificationsCountMayHaveChanged*(self: Module) =
   self.view.unreadActivityCenterNotificationsCountChanged()
   self.view.hasUnseenActivityCenterNotificationsChanged()
-
-method hasUnseenActivityCenterNotificationsChanged*(self: Module) =
-  self.view.hasUnseenActivityCenterNotificationsChanged()
+  self.delegate.onActivityNotificationsUpdated()
 
 proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: string, albumMessages: seq[MessageDto]): MessageItem =
   let contactDetails = self.controller.getContactDetails(message.`from`)

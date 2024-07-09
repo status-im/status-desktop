@@ -641,13 +641,6 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
 
-  proc incrementNotificationsForItemByIdAndGetNotificationCount*(self: Model, id: string): int =
-    let index = self.getItemIdxById(id)
-    if index == -1:
-      return 0
-    self.updateNotificationsForItemById(id, hasUnreadMessages = true, self.items[index].notificationsCount + 1)
-    return self.items[index].notificationsCount
-
   proc updateLastMessageTimestampOnItemById*(self: Model, id: string, lastMessageTimestamp: int) =
     let index = self.getItemIdxById(id)
     if index == -1:

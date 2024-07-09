@@ -994,9 +994,18 @@ method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string
 method onChatLeft*[T](self: Module[T], chatId: string) =
   self.appSearchModule.updateSearchLocationIfPointToChatWithId(chatId)
 
+proc checkIfWeHaveNotifications[T](self: Module[T]) =
+  let sectionWithUnread = self.view.model().isThereASectionWithUnreadMessages()
+  let activtyCenterNotifications = self.activityCenterModule.unreadActivityCenterNotificationsCountFromView() > 0
+  self.view.setNotificationAvailable(sectionWithUnread or activtyCenterNotifications)
+
+method onActivityNotificationsUpdated[T](self: Module[T]) =
+  self.checkIfWeHaveNotifications()
+
 method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasUnreadMessages: bool,
     sectionNotificationCount: int) =
   self.view.model().updateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
+  self.checkIfWeHaveNotifications()
 
 method onNetworkConnected[T](self: Module[T]) =
   self.view.setConnected(true)
