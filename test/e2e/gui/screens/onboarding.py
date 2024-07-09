@@ -12,7 +12,6 @@ from constants.onboarding import OnboardingScreensHeaders
 import driver
 from constants import ColorCodes
 from driver.objects_access import walk_children
-from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.onboarding.keys_already_exist_popup import KeysAlreadyExistPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
@@ -21,7 +20,7 @@ from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
-from gui.objects_map import names
+from gui.objects_map import onboarding_names
 from scripts.tools.image import Image
 from scripts.utils.system_path import SystemPath
 
@@ -31,8 +30,8 @@ LOG = logging.getLogger(__name__)
 class AllowNotificationsView(QObject):
 
     def __init__(self):
-        super(AllowNotificationsView, self).__init__(names.mainWindow_AllowNotificationsView)
-        self._start_using_status_button = Button(names.mainWindow_Start_using_Status_StatusButton)
+        super(AllowNotificationsView, self).__init__(onboarding_names.mainWindow_AllowNotificationsView)
+        self._start_using_status_button = Button(onboarding_names.mainWindow_Start_using_Status_StatusButton)
 
     @allure.step("Start using Status")
     def start_using_status(self):
@@ -44,9 +43,9 @@ class AllowNotificationsView(QObject):
 class WelcomeToStatusView(QObject):
 
     def __init__(self):
-        super(WelcomeToStatusView, self).__init__(names.mainWindow_WelcomeView)
-        self._i_am_new_to_status_button = Button(names.mainWindow_I_am_new_to_Status_StatusBaseText)
-        self._i_already_use_status_button = Button(names.mainWindow_I_already_use_Status_StatusFlatButton)
+        super(WelcomeToStatusView, self).__init__(onboarding_names.mainWindow_WelcomeView)
+        self._i_am_new_to_status_button = Button(onboarding_names.mainWindow_I_am_new_to_Status_StatusBaseText)
+        self._i_already_use_status_button = Button(onboarding_names.mainWindow_I_already_use_Status_StatusFlatButton)
 
     @allure.step('Open Keys view')
     def get_keys(self) -> 'KeysView':
@@ -65,7 +64,7 @@ class OnboardingView(QObject):
 
     def __init__(self, object_name):
         super(OnboardingView, self).__init__(object_name)
-        self._back_button = Button(names.mainWindow_onboardingBackButton_StatusRoundButton)
+        self._back_button = Button(onboarding_names.mainWindow_onboardingBackButton_StatusRoundButton)
 
     @abstractmethod
     def back(self):
@@ -75,10 +74,11 @@ class OnboardingView(QObject):
 class KeysView(OnboardingView):
 
     def __init__(self):
-        super(KeysView, self).__init__(names.mainWindow_KeysMainView)
-        self._generate_key_button = Button(names.mainWindow_Generate_new_keys_StatusButton)
-        self._generate_key_for_new_keycard_button = Button(names.mainWindow_Generate_keys_for_new_Keycard_StatusBaseText)
-        self._import_seed_phrase_button = Button(names.mainWindow_Import_seed_phrase)
+        super(KeysView, self).__init__(onboarding_names.mainWindow_KeysMainView)
+        self._generate_key_button = Button(onboarding_names.mainWindow_Generate_new_keys_StatusButton)
+        self._generate_key_for_new_keycard_button = Button(
+            onboarding_names.mainWindow_Generate_keys_for_new_Keycard_StatusBaseText)
+        self._import_seed_phrase_button = Button(onboarding_names.mainWindow_Import_seed_phrase)
 
     @allure.step('Open Profile view')
     def generate_new_keys(self) -> 'YourProfileView':
@@ -109,8 +109,8 @@ class KeysView(OnboardingView):
 class ImportSeedPhraseView(OnboardingView):
 
     def __init__(self):
-        super(ImportSeedPhraseView, self).__init__(names.mainWindow_KeysMainView)
-        self._import_seed_phrase_button = Button(names.keysMainView_PrimaryAction_Button)
+        super(ImportSeedPhraseView, self).__init__(onboarding_names.mainWindow_KeysMainView)
+        self._import_seed_phrase_button = Button(onboarding_names.keysMainView_PrimaryAction_Button)
 
     @allure.step('Open seed phrase input view')
     def open_seed_phrase_input_view(self):
@@ -126,9 +126,10 @@ class ImportSeedPhraseView(OnboardingView):
 class SignBySyncingView(OnboardingView):
 
     def __init__(self):
-        super(SignBySyncingView, self).__init__(names.mainWindow_KeysMainView)
-        self._scan_or_enter_sync_code_button = Button(names.keysMainView_PrimaryAction_Button)
-        self._i_dont_have_other_device_button = Button(names.mainWindow_iDontHaveOtherDeviceButton_StatusBaseText)
+        super(SignBySyncingView, self).__init__(onboarding_names.mainWindow_KeysMainView)
+        self._scan_or_enter_sync_code_button = Button(onboarding_names.keysMainView_PrimaryAction_Button)
+        self._i_dont_have_other_device_button = Button(
+            onboarding_names.mainWindow_iDontHaveOtherDeviceButton_StatusBaseText)
 
     @allure.step('Open sync code view')
     def open_sync_code_view(self):
@@ -144,10 +145,10 @@ class SignBySyncingView(OnboardingView):
 class SyncCodeView(OnboardingView):
 
     def __init__(self):
-        super(SyncCodeView, self).__init__(names.mainWindow_SyncCodeView)
-        self._enter_sync_code_button = Button(names.switchTabBar_Enter_sync_code_StatusSwitchTabButton)
-        self._paste_sync_code_button = Button(names.mainWindow_Paste_StatusButton)
-        self._syncing_enter_code_item = QObject(names.mainWindow_syncingEnterCode_SyncingEnterCode)
+        super(SyncCodeView, self).__init__(onboarding_names.mainWindow_SyncCodeView)
+        self._enter_sync_code_button = Button(onboarding_names.switchTabBar_Enter_sync_code_StatusSwitchTabButton)
+        self._paste_sync_code_button = Button(onboarding_names.mainWindow_Paste_StatusButton)
+        self._syncing_enter_code_item = QObject(onboarding_names.mainWindow_syncingEnterCode_SyncingEnterCode)
 
     @allure.step('Open enter sync code form')
     def open_enter_sync_code_form(self):
@@ -167,8 +168,8 @@ class SyncCodeView(OnboardingView):
 class SyncDeviceFoundView(OnboardingView):
 
     def __init__(self):
-        super(SyncDeviceFoundView, self).__init__(names.mainWindow_SyncingDeviceView_found)
-        self._sync_text_item = QObject(names.sync_text_item)
+        super(SyncDeviceFoundView, self).__init__(onboarding_names.mainWindow_SyncingDeviceView_found)
+        self._sync_text_item = QObject(onboarding_names.sync_text_item)
 
     @property
     @allure.step('Get device_found_notifications')
@@ -182,10 +183,10 @@ class SyncDeviceFoundView(OnboardingView):
 class SyncResultView(OnboardingView):
 
     def __init__(self):
-        super(SyncResultView, self).__init__(names.mainWindow_SyncDeviceResult)
-        self._sync_result = QObject(names.mainWindow_SyncDeviceResult)
-        self._sign_in_button = Button(names.mainWindow_Sign_in_StatusButton)
-        self._synced_text_item = QObject(names.synced_StatusBaseText)
+        super(SyncResultView, self).__init__(onboarding_names.mainWindow_SyncDeviceResult)
+        self._sync_result = QObject(onboarding_names.mainWindow_SyncDeviceResult)
+        self._sign_in_button = Button(onboarding_names.mainWindow_Sign_in_StatusButton)
+        self._synced_text_item = QObject(onboarding_names.synced_StatusBaseText)
 
     @property
     @allure.step('Get device synced notifications')
@@ -213,12 +214,12 @@ class SyncResultView(OnboardingView):
 class SeedPhraseInputView(OnboardingView):
 
     def __init__(self):
-        super(SeedPhraseInputView, self).__init__(names.mainWindow_SeedPhraseInputView)
-        self._12_words_tab_button = Button(names.switchTabBar_12_words_Button)
-        self._18_words_tab_button = Button(names.switchTabBar_18_words_Button)
-        self._24_words_tab_button = Button(names.switchTabBar_24_words_Button)
-        self._seed_phrase_input_text_edit = TextEdit(names.mainWindow_statusSeedPhraseInputField_TextEdit)
-        self._import_button = Button(names.mainWindow_Import_StatusButton)
+        super(SeedPhraseInputView, self).__init__(onboarding_names.mainWindow_SeedPhraseInputView)
+        self._12_words_tab_button = Button(onboarding_names.switchTabBar_12_words_Button)
+        self._18_words_tab_button = Button(onboarding_names.switchTabBar_18_words_Button)
+        self._24_words_tab_button = Button(onboarding_names.switchTabBar_24_words_Button)
+        self._seed_phrase_input_text_edit = TextEdit(onboarding_names.mainWindow_statusSeedPhraseInputField_TextEdit)
+        self._import_button = Button(onboarding_names.mainWindow_Import_StatusButton)
 
     @property
     @allure.step('Get import button enabled state')
@@ -263,8 +264,8 @@ class SeedPhraseInputView(OnboardingView):
 class KeycardInitView(OnboardingView):
 
     def __init__(self):
-        super(KeycardInitView, self).__init__(names.mainWindow_KeycardInitView)
-        self._message = TextLabel(names.mainWindow_Plug_in_Keycard_reader_StatusBaseText)
+        super(KeycardInitView, self).__init__(onboarding_names.mainWindow_KeycardInitView)
+        self._message = TextLabel(onboarding_names.mainWindow_Plug_in_Keycard_reader_StatusBaseText)
 
     @property
     def message(self) -> str:
@@ -278,17 +279,17 @@ class KeycardInitView(OnboardingView):
 class YourProfileView(OnboardingView):
 
     def __init__(self):
-        super(YourProfileView, self).__init__(names.mainWindow_InsertDetailsView)
-        self._upload_picture_button = Button(names.updatePicButton_StatusRoundButton)
-        self._profile_image = QObject(names.mainWindow_statusRoundImage_StatusRoundedImage)
-        self._display_name_text_field = TextEdit(names.mainWindow_statusBaseInput_StatusBaseInput)
-        self._erros_text_label = TextLabel(names.mainWindow_errorMessage_StatusBaseText)
-        self._next_button = Button(names.mainWindow_Next_StatusButton)
-        self._login_input_object = QObject(names.mainWindow_nameInput_StatusInput)
-        self._clear_icon = QObject(names.mainWindow_clear_icon_StatusIcon)
-        self._identicon_ring = QObject(names.mainWindow_IdenticonRing)
-        self._view_header_title = TextLabel(names.mainWindow_Header_Title)
-        self._image_crop_workflow = QObject(names.profileImageCropper)
+        super(YourProfileView, self).__init__(onboarding_names.mainWindow_InsertDetailsView)
+        self._upload_picture_button = Button(onboarding_names.updatePicButton_StatusRoundButton)
+        self._profile_image = QObject(onboarding_names.mainWindow_statusRoundImage_StatusRoundedImage)
+        self._display_name_text_field = TextEdit(onboarding_names.mainWindow_statusBaseInput_StatusBaseInput)
+        self._erros_text_label = TextLabel(onboarding_names.mainWindow_errorMessage_StatusBaseText)
+        self._next_button = Button(onboarding_names.mainWindow_Next_StatusButton)
+        self._login_input_object = QObject(onboarding_names.mainWindow_nameInput_StatusInput)
+        self._clear_icon = QObject(onboarding_names.mainWindow_clear_icon_StatusIcon)
+        self._identicon_ring = QObject(onboarding_names.mainWindow_IdenticonRing)
+        self._view_header_title = TextLabel(onboarding_names.mainWindow_Header_Title)
+        self._image_crop_workflow = QObject(onboarding_names.profileImageCropper)
 
     def verify_profile_view_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._view_header_title.exists, timeout_msec)
@@ -368,13 +369,13 @@ class YourProfileView(OnboardingView):
 class YourEmojihashAndIdenticonRingView(OnboardingView):
 
     def __init__(self):
-        super(YourEmojihashAndIdenticonRingView, self).__init__(names.mainWindow_InsertDetailsView)
-        self._profile_image = QObject(names.mainWindow_welcomeScreenUserProfileImage_StatusSmartIdenticon)
-        self._chat_key_text_label = TextLabel(names.mainWindow_insertDetailsViewChatKeyTxt_StyledText)
-        self._next_button = Button(names.mainWindow_Next_StatusButton)
-        self._emoji_hash = QObject(names.mainWindow_EmojiHash)
-        self._identicon_ring = QObject(names.mainWindow_userImageCopy_StatusSmartIdenticon)
-        self._view_header_title = TextLabel(names.mainWindow_Header_Title)
+        super(YourEmojihashAndIdenticonRingView, self).__init__(onboarding_names.mainWindow_InsertDetailsView)
+        self._profile_image = QObject(onboarding_names.mainWindow_welcomeScreenUserProfileImage_StatusSmartIdenticon)
+        self._chat_key_text_label = TextLabel(onboarding_names.mainWindow_insertDetailsViewChatKeyTxt_StyledText)
+        self._next_button = Button(onboarding_names.mainWindow_Next_StatusButton)
+        self._emoji_hash = QObject(onboarding_names.mainWindow_EmojiHash)
+        self._identicon_ring = QObject(onboarding_names.mainWindow_userImageCopy_StatusSmartIdenticon)
+        self._view_header_title = TextLabel(onboarding_names.mainWindow_Header_Title)
 
     def verify_emojihash_view_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._view_header_title.exists, timeout_msec)
@@ -449,15 +450,16 @@ class YourEmojihashAndIdenticonRingView(OnboardingView):
 class CreatePasswordView(OnboardingView):
 
     def __init__(self):
-        super(CreatePasswordView, self).__init__(names.mainWindow_CreatePasswordView)
-        self._new_password_text_field = TextEdit(names.mainWindow_passwordViewNewPassword)
-        self._confirm_password_text_field = TextEdit(names.mainWindow_passwordViewNewPasswordConfirm)
-        self._create_button = Button(names.mainWindow_Create_password_StatusButton)
-        self._password_view_object = QObject(names.mainWindow_view_PasswordView)
-        self._strength_indicator = QObject(names.mainWindow_strengthInditactor_StatusPasswordStrengthIndicator)
-        self._indicator_panel_object = QObject(names.mainWindow_RowLayout)
-        self._show_icon = QObject(names.mainWindow_show_icon_StatusIcon)
-        self._hide_icon = QObject(names.mainWindow_hide_icon_StatusIcon)
+        super(CreatePasswordView, self).__init__(onboarding_names.mainWindow_CreatePasswordView)
+        self._new_password_text_field = TextEdit(onboarding_names.mainWindow_passwordViewNewPassword)
+        self._confirm_password_text_field = TextEdit(onboarding_names.mainWindow_passwordViewNewPasswordConfirm)
+        self._create_button = Button(onboarding_names.mainWindow_Create_password_StatusButton)
+        self._password_view_object = QObject(onboarding_names.mainWindow_view_PasswordView)
+        self._strength_indicator = QObject(
+            onboarding_names.mainWindow_strengthInditactor_StatusPasswordStrengthIndicator)
+        self._indicator_panel_object = QObject(onboarding_names.mainWindow_RowLayout)
+        self._show_icon = QObject(onboarding_names.mainWindow_show_icon_StatusIcon)
+        self._hide_icon = QObject(onboarding_names.mainWindow_hide_icon_StatusIcon)
 
     @allure.step('Get password content from first field')
     def get_password_from_first_field(self) -> str:
@@ -543,10 +545,11 @@ class CreatePasswordView(OnboardingView):
 class ConfirmPasswordView(OnboardingView):
 
     def __init__(self):
-        super(ConfirmPasswordView, self).__init__(names.mainWindow_ConfirmPasswordView)
-        self._confirm_password_text_field = TextEdit(names.mainWindow_confirmAgainPasswordInput)
-        self._confirm_button = Button(names.mainWindow_Finalise_Status_Password_Creation_StatusButton)
-        self._confirmation_password_view_object = QObject(names.mainWindow_passwordView_PasswordConfirmationView)
+        super(ConfirmPasswordView, self).__init__(onboarding_names.mainWindow_ConfirmPasswordView)
+        self._confirm_password_text_field = TextEdit(onboarding_names.mainWindow_confirmAgainPasswordInput)
+        self._confirm_button = Button(onboarding_names.mainWindow_Finalise_Status_Password_Creation_StatusButton)
+        self._confirmation_password_view_object = QObject(
+            onboarding_names.mainWindow_passwordView_PasswordConfirmationView)
 
     @property
     @allure.step('Get finalise password creation button enabled state')
@@ -587,9 +590,9 @@ class ConfirmPasswordView(OnboardingView):
 class BiometricsView(OnboardingView):
 
     def __init__(self):
-        super(BiometricsView, self).__init__(names.mainWindow_TouchIDAuthView)
-        self._yes_use_touch_id_button = Button(names.mainWindow_touchIdYesUseTouchIDButton)
-        self._prefer_password_button = Button(names.mainWindow_touchIdIPreferToUseMyPasswordText)
+        super(BiometricsView, self).__init__(onboarding_names.mainWindow_TouchIDAuthView)
+        self._yes_use_touch_id_button = Button(onboarding_names.mainWindow_touchIdYesUseTouchIDButton)
+        self._prefer_password_button = Button(onboarding_names.mainWindow_touchIdIPreferToUseMyPasswordText)
 
     @allure.step('Select prefer password')
     def prefer_password(self):
@@ -604,16 +607,16 @@ class BiometricsView(OnboardingView):
 class LoginView(QObject):
 
     def __init__(self):
-        super(LoginView, self).__init__(names.mainWindow_LoginView)
-        self._password_text_edit = TextEdit(names.loginView_passwordInput)
-        self._arrow_right_button = Button(names.loginView_submitBtn)
-        self._current_user_name_label = TextLabel(names.loginView_currentUserNameLabel)
-        self._change_account_button = Button(names.loginView_changeAccountBtn)
-        self._accounts_combobox = QObject(names.accountsView_accountListPanel)
-        self._password_object = QObject(names.mainWindow_txtPassword_Input)
-        self._add_new_user_item = QObject(names.loginView_addNewUserItem_AccountMenuItemPanel)
-        self._add_existing_user_item = QObject(names.o_AccountMenuItemPanel)
-        self._use_password_instead = QObject(names.mainWindowUsePasswordInsteadStatusBaseText)
+        super(LoginView, self).__init__(onboarding_names.mainWindow_LoginView)
+        self._password_text_edit = TextEdit(onboarding_names.loginView_passwordInput)
+        self._arrow_right_button = Button(onboarding_names.loginView_submitBtn)
+        self._current_user_name_label = TextLabel(onboarding_names.loginView_currentUserNameLabel)
+        self._change_account_button = Button(onboarding_names.loginView_changeAccountBtn)
+        self._accounts_combobox = QObject(onboarding_names.accountsView_accountListPanel)
+        self._password_object = QObject(onboarding_names.mainWindow_txtPassword_Input)
+        self._add_new_user_item = QObject(onboarding_names.loginView_addNewUserItem_AccountMenuItemPanel)
+        self._add_existing_user_item = QObject(onboarding_names.o_AccountMenuItemPanel)
+        self._use_password_instead = QObject(onboarding_names.mainWindowUsePasswordInsteadStatusBaseText)
 
     @property
     @allure.step('Get login error message')
@@ -641,13 +644,13 @@ class LoginView(QObject):
 
     @allure.step('Select user')
     def select_user_name(self, user_name, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        names = set()
+        onboarding_names = set()
 
         def _select_user() -> bool:
             for index in range(self._accounts_combobox.object.count):
                 name_object = self._accounts_combobox.object.itemAt(index)
                 name_label = str(name_object.label)
-                names.add(name_label)
+                onboarding_names.add(name_label)
                 if name_label == user_name:
                     try:
                         driver.mouseClick(name_object)
@@ -656,4 +659,5 @@ class LoginView(QObject):
                     return True
             return False
 
-        assert driver.waitFor(lambda: _select_user(), timeout_msec), f'User name: "{user_name}" not found in {names}'
+        assert driver.waitFor(lambda: _select_user(),
+                              timeout_msec), f'User name: "{user_name}" not found in {onboarding_names}'
