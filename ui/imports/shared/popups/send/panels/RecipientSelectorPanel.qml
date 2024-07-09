@@ -17,7 +17,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import "../panels"
 import "../controls"
 import "../views"
 
