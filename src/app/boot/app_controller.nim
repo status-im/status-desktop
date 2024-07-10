@@ -34,6 +34,7 @@ import app_service/service/ens/service as ens_service
 import app_service/service/community_tokens/service as tokens_service
 import app_service/service/network_connection/service as network_connection_service
 import app_service/service/shared_urls/service as shared_urls_service
+import app_service/service/metrics/service as metrics_service
 
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/modules/startup/module as startup_module
@@ -64,6 +65,7 @@ type
     localAccountSensitiveSettingsVariant: QVariant
     userProfileVariant: QVariant
     globalUtilsVariant: QVariant
+    metricsVariant: QVariant
 
     # Services
     generalService: general_service.Service
@@ -101,6 +103,7 @@ type
     tokensService: tokens_service.Service
     networkConnectionService: network_connection_service.Service
     sharedUrlsService: shared_urls_service.Service
+    metricsService: metrics_service.MetricsService
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -152,6 +155,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.settingsService = settings_service.newService(statusFoundation.events)
   result.appSettingsVariant = newQVariant(result.settingsService)
   result.notificationsManager = newNotificationsManager(statusFoundation.events, result.settingsService)
+  result.metricsService = metrics_service.newService()
+  result.metricsVariant = newQVariant(result.metricsService)
 
   # Global
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
@@ -313,6 +318,7 @@ proc delete*(self: AppController) =
   self.localAccountSensitiveSettingsVariant.delete
   self.userProfileVariant.delete
   self.globalUtilsVariant.delete
+  self.metricsVariant.delete
 
   self.accountsService.delete
   self.chatService.delete
@@ -342,6 +348,7 @@ proc delete*(self: AppController) =
   self.tokensService.delete
   self.keycardService.delete
   self.networkConnectionService.delete
+  self.metricsService.delete
 
 proc disconnectKeychain(self: AppController) =
   for id in self.keychainConnectionIds:
@@ -391,6 +398,7 @@ proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
+  singletonInstance.engine.setRootContextProperty("metrics", self.metricsVariant)
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
   # We need to init a language service once qml is loaded

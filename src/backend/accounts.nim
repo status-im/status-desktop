@@ -1,4 +1,4 @@
-import json, json_serialization, chronicles, strutils
+import json, json_serialization, chronicles, strutils, std/os
 import ./core, ../app_service/common/utils
 import ../app_service/service/wallet_account/dto/account_dto
 import ../app_service/service/accounts/dto/login_request
@@ -260,9 +260,11 @@ proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] =
 
 proc openedAccounts*(path: string): RpcResponse[JsonNode] =
   try:
-    let response = status_go.openAccounts(path)
+    let mixPanelAppId = getEnv("MIXPANEL_APP_ID")
+    let mixPanelToken = getEnv("MIXPANEL_TOKEN")
+    let payload = %* {"dataDir": path, "mixpanelAppId": mixPanelAppId, "mixpanelToken": mixPanelToken}
+    let response = status_go.initializeApplication($payload)
     result.result = Json.decode(response, JsonNode)
-
   except RpcException as e:
     error "error doing rpc request", methodName = "openedAccounts", exception=e.msg
     raise newException(RpcException, e.msg)

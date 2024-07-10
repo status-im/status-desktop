@@ -25,6 +25,7 @@ Item {
         if (button1.visible) {
             button1.forceActiveFocus()
         }
+        enableCentricMetrics.checked = root.startupStore.isCentralizedMetricsEnabled()
     }
 
     QtObject {
@@ -301,11 +302,19 @@ Item {
             }
         }
 
+        StatusCheckBox {
+            id: enableCentricMetrics
+            text: qsTr("Enable centric metrics")
+            Layout.alignment: Qt.AlignHCenter
+            onToggled: root.startupStore.toggleCentralizedMetrics(checked)
+        }
+
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
     }
+
 
     states: [
         State {
