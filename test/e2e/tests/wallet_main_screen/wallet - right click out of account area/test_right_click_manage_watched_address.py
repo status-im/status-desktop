@@ -3,6 +3,8 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+
+import driver
 from tests.wallet_main_screen import marks
 
 import constants
@@ -54,3 +56,15 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
             time.sleep(1)
             if time.monotonic() - started_at > 15:
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
+
+    with step('Delete watched account with agreement'):
+        wallet.left_panel.delete_account_from_context_menu(new_name).confirm()
+
+    with step('Verify toast message notification when removing account'):
+        messages = main_screen.wait_for_notification()
+        assert f'"{new_name}" successfully removed' in messages, \
+            f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
+
+    with step('Verify that the account is not displayed in accounts list'):
+        assert driver.waitFor(lambda: name not in [account.name for account in wallet.left_panel.accounts], 10000), \
+            f'Account with {name} is still displayed even it should not be'
