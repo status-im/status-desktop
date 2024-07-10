@@ -163,8 +163,6 @@ QtObject:
       debug "keycardStartFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
 
   proc resumeFlow(self: Service, payload: JsonNode) =
-    if self.busy:
-      return
     self.busy = true
     self.updateLocalPayloadForCurrentFlow(payload)
     let response = keycard_go.keycardResumeFlow($payload)
@@ -172,11 +170,10 @@ QtObject:
       debug "keycardResumeFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
 
   proc cancelCurrentFlow*(self: Service) =
-    if self.busy:
-      return
     let response = keycard_go.keycardCancelFlow()
     sleep(200)
     self.currentFlow = KCSFlowType.NoFlow
+    self.busy = false
     if self.doLogging:
       debug "keycardCancelFlow", kcServiceCurrFlow=($self.currentFlow), response=response
 
