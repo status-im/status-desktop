@@ -61,10 +61,12 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
         let bestRouteJsonNode = event["Best"]
         result.bestRouteRaw = $bestRouteJsonNode
         result.bestRoute = bestRouteJsonNode.toTransactionPathsDtoV2()
-      if event.contains("details"):
-        result.error = event["details"].getStr
-      if event.contains("code"):
-        result.errorCode = event["code"].getStr
+      if event.contains("ErrorResponse"):
+        let errorResponseJsonNode = event["ErrorResponse"]
+        if errorResponseJsonNode.contains("details"):
+          result.error = errorResponseJsonNode["details"].getStr
+        if errorResponseJsonNode.contains("code"):
+          result.errorCode = errorResponseJsonNode["code"].getStr
     except:
       error "Error parsing best route"
     return
