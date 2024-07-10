@@ -208,6 +208,20 @@ QtObject:
 
     return txResponse.getStr
 
-  proc getEstimatedTimeMinutesInterval*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
-    let maxFeePerGasInt = parseHexInt(maxFeePerGas)
-    return self.transactions.getEstimatedTime(chainId, $(maxFeePerGasInt.float))
+  # empty maxFeePerGasHex will fetch the current chain's maxFeePerGas
+  proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGasHex: string): EstimatedTime =
+    var maxFeePerGas: float64
+    if maxFeePerGasHex.isEmptyOrWhitespace:
+      let chainFees = self.transactions.suggestedFees(chainId)
+      if chainFees.isNil:
+        return EstimatedTime.Unknown
+
+      # For non-EIP-1559 chains, we use the high fee
+      if chainFees.eip1559Enabled:
+        maxFeePerGas = chainFees.maxFeePerGasM
+      else:
+        maxFeePerGas = chainFees.maxFeePerGasL
+    else:
+      let maxFeePerGasInt = parseHexInt(maxFeePerGasHex)
+      maxFeePerGas = maxFeePerGasInt.float
+    return self.transactions.getEstimatedTime(chainId, $(maxFeePerGas))

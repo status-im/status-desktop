@@ -64,9 +64,10 @@ QObject {
         return tx
     }
 
+    // Empty maxFeePerGas will fetch the current chain's maxFeePerGas
     // Returns ui/imports/utils -> Constants.TransactionEstimatedTime values
-    function getEstimatedTime(chainId, maxFeePerGas) {
-        return controller.getEstimatedTime(chainId, maxFeePerGas)
+    function getEstimatedTime(chainId, maxFeePerGasHex) {
+        return controller.getEstimatedTime(chainId, maxFeePerGasHex)
     }
 
     // Returns the hex encoded signature of the transaction or empty string if error
