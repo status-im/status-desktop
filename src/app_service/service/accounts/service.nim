@@ -130,7 +130,7 @@ QtObject:
     try:
       let response = status_account.openedAccounts(main_constants.STATUSGODIR)
 
-      self.accounts = map(response.result.getElems(), proc(x: JsonNode): AccountDto = toAccountDto(x))
+      self.accounts = map(response.result{"accounts"}.getElems(), proc(x: JsonNode): AccountDto = toAccountDto(x))
 
       return self.accounts
 
