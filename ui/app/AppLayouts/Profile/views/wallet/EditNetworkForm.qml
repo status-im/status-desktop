@@ -47,9 +47,10 @@ ColumnLayout {
 
         function revertValues() {
             if(!!network) {
-                root.updateNetworkValues(network.chainId, network.originalRpcURL, network.originalFallbackURL, true)
+                mainRpcInput.text = d.mask(network.originalRpcURL)
+                failoverRpcUrlInput.text = d.mask(network.originalFallbackURL)
             }
-        }       
+        }
 
         function getUrlStatusText(status, text) {
             switch(status) {
@@ -105,16 +106,24 @@ ColumnLayout {
         }
 
         function save() {
+            if (d.evaluationStatusMainRpc == EditNetworkForm.UnTouched && d.evaluationStatusFallBackRpc == EditNetworkForm.UnTouched) {
+                return
+            }
+
             let main = mainRpcInput.text
             let fallback = failoverRpcUrlInput.text
+            let isMainOriginal = false
+            let isFallbackOriginal = false
             if (main === d.mask(network.originalRpcURL)) {
                 main = network.originalRpcURL
+                isMainOriginal = true
             }
 
             if (fallback === d.mask(network.originalFallbackURL)) {
                 fallback = network.originalFallbackURL
+                isFallbackOriginal = true
             }
-            root.updateNetworkValues(network.chainId, main, fallback, false)
+            root.updateNetworkValues(network.chainId, main, fallback, isMainOriginal && isFallbackOriginal)
             root.networkRPCChanged[network.chainId] = true
         }
     }
@@ -137,7 +146,7 @@ ColumnLayout {
             if(isMainUrl)
                 d.evaluationStatusMainRpc = status
             else
-                d.evaluationStatusFallBackRpc = status            
+                d.evaluationStatusFallBackRpc = status
         }
     }
 
@@ -314,15 +323,17 @@ ColumnLayout {
             onClicked: {
                 d.revertValues()
                 root.networkRPCChanged[network.chainId] = true
+                Global.openPopup(confirmationDialogComponent)
+                d.evaluationStatusMainRpc = EditNetworkForm.RestartRequired
             }
         }
         StatusButton {
             objectName: "editNetworkSaveButton"
             text: qsTr("Save Changes")
             enabled: (
-                d.evaluationStatusMainRpc === EditNetworkForm.Verified || 
-                d.evaluationStatusFallBackRpc === EditNetworkForm.Verified || 
-                d.evaluationStatusMainRpc === EditNetworkForm.SameAsOther || 
+                d.evaluationStatusMainRpc === EditNetworkForm.Verified ||
+                d.evaluationStatusFallBackRpc === EditNetworkForm.Verified ||
+                d.evaluationStatusMainRpc === EditNetworkForm.SameAsOther ||
                 d.evaluationStatusFallBackRpc === EditNetworkForm.SameAsOther ||
                 d.evaluationStatusMainRpc === EditNetworkForm.Empty ||
                 d.evaluationStatusFallBackRpc === EditNetworkForm.Empty ||
@@ -378,6 +389,7 @@ ColumnLayout {
                     onClicked: {
                         close()
                         d.save()
+                        d.evaluationStatusMainRpc = EditNetworkForm.RestartRequired
                     }
                 },
                 StatusButton {
@@ -396,6 +408,5 @@ ColumnLayout {
                 }
             ]
         }
-
     }
 }
