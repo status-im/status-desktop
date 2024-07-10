@@ -6,7 +6,6 @@ import allure
 import configs
 import constants.user
 import driver
-from driver import objects_access
 from driver.objects_access import walk_children
 from gui.components.base_popup import BasePopup
 from gui.components.context_menu import ContextMenu
@@ -188,33 +187,6 @@ class SavedAddressesView(QObject):
         self._address_list_item.hover()
         self._open_menu_button.click()
         return ContextMenu().wait_until_appears()
-
-
-class ManageTokensView(QObject):
-
-    def __init__(self):
-        super(ManageTokensView, self).__init__(wallet_names.settingsContentBaseScrollView_manageTokensView_ManageTokensView)
-        self._window_item = QObject(wallet_names.statusDesktop_mainWindow)
-        self._token_item = QObject(wallet_names.settingsContentBaseScrollView_manageTokensDelegate_ManageTokensDelegate)
-
-    @property
-    @allure.step('Get tokens')
-    def tokens(self) -> typing.List[constants.token_list_item]:
-        _tokens = []
-        for token_item in driver.findAllObjects(self._token_item.real_name):
-            element = QObject(real_name=driver.objectMap.realName(token_item))
-            name = str(token_item.title)
-            _tokens.append(constants.token_list_item(name, element))
-
-        return sorted(_tokens, key=lambda token: token.object.y)
-
-    @allure.step('Drag token to change the order')
-    def drag_token(self, name: str, index: int):
-        assert driver.waitFor(lambda: len([token for token in self.tokens if token.title == name]) == 1), \
-            'Token not found or found more then one'
-        bounds = [token for token in self.tokens if token.title == name][0].object.bounds
-        d_bounds = self.tokens[index].object.bounds
-        driver.mouse.press_and_move(self._window_item.object, bounds.x, bounds.y, d_bounds.x, d_bounds.y + 1)
 
 
 class WalletAccountView(QObject):

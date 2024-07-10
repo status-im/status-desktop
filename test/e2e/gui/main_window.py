@@ -18,7 +18,6 @@ from gui.components.online_identifier import OnlineIdentifier
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.window import Window
-from gui.mocked_keycard_controller import MockedKeycardController
 from gui.objects_map import names
 from gui.screens.community import CommunityScreen
 from gui.screens.community_portal import CommunitiesPortal
@@ -153,7 +152,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open Wallet section')
     def open_wallet(self, attempts: int = 3) -> WalletScreen:
-        self._wallet_button.click()
+        self._wallet_button.click(timeout=10)
         try:
             return WalletScreen()
         except Exception as ex:
@@ -169,9 +168,7 @@ class MainWindow(Window):
         super(MainWindow, self).__init__(names.statusDesktop_mainWindow)
         self.left_panel = LeftPanel()
 
-    # TODO: we need to handle all the issues with keycard mock var before using keycard  window in tests
     def prepare(self) -> 'Window':
-        #   MockedKeycardController().wait_until_appears().hide()
         return super().prepare()
 
     @allure.step('Sign Up user')

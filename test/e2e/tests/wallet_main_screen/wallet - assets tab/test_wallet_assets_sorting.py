@@ -1,10 +1,14 @@
+import time
+
 import allure
 import pytest
 from allure_commons._allure import step
 
+import configs.system
 import driver
 from gui.components.changes_detected_popup import CustomSortOrderChangesDetectedToastMessage
-from gui.screens.wallet import WalletAccountView, ManageTokensView
+from gui.screens.wallet import WalletAccountView
+from gui.screens.settings_wallet import ManageTokensSettingsView
 from tests.wallet_main_screen import marks
 
 from gui.components.signing_phrase_popup import SigningPhrasePopup
@@ -164,8 +168,8 @@ def test_custom_ordering(main_screen: MainWindow, address, name, dai, wrappedeth
         wallet_account_view = WalletAccountView()
         sorting = wallet_account_view.open_assets_tab().click_filter_button()
         sorting.choose_sort_by_value('Create custom order →')
-        manage_tokens = ManageTokensView()
-        assert manage_tokens.exists
+        manage_tokens = ManageTokensSettingsView()
+        assert manage_tokens.exists, 'Manage tokens view was not opened'
 
     with step('Drag first token to the end of the list and save changes'):
         manage_tokens.drag_token(dai, 3)
@@ -190,7 +194,7 @@ def test_custom_ordering(main_screen: MainWindow, address, name, dai, wrappedeth
 
     with step('Choose Edit custom order in sorting dropdown and verify Manage tokens view appears'):
         sorting.choose_sort_by_value('Edit custom order →')
-        manage_tokens = ManageTokensView()
+        manage_tokens = ManageTokensSettingsView()
         assert manage_tokens.exists
 
     with step('Drag first token to the end of the list and apply changes'):
