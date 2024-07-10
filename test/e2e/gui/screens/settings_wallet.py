@@ -5,6 +5,7 @@ import allure
 from objectmaphelper import RegularExpression
 
 import configs.timeouts
+import constants
 import driver
 from constants import wallet_account_list_item
 from constants.wallet import WalletNetworkSettings, WalletNetworkDefaultValues
@@ -22,7 +23,7 @@ from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
-from gui.objects_map import settings_names
+from gui.objects_map import settings_names, wallet_names
 
 
 class WalletSettingsView(QObject):
@@ -32,6 +33,7 @@ class WalletSettingsView(QObject):
         self._scroll = Scroll(settings_names.settingsContentBase_ScrollView)
         self._wallet_settings_add_new_account_button = Button(settings_names.settings_Wallet_MainView_AddNewAccountButton)
         self._wallet_network_button = Button(settings_names.settings_Wallet_MainView_Networks)
+        self._wallet_manage_tokens_button = Button(settings_names.settings_Wallet_MainView_Manage_Tokens)
         self._account_order_button = Button(settings_names.settingsContentBaseScrollView_accountOrderItem_StatusListItem)
         self._saved_addresses_button = Button(settings_names.settingsContentBaseScrollView_savedAddressesItem_StatusListItem)
         self._status_account_in_keypair = QObject(settings_names.settingsWalletAccountDelegate_Status_account)
@@ -71,6 +73,17 @@ class WalletSettingsView(QObject):
         except Exception as err:
             if attempts:
                 return self.open_networks(attempts - 1)
+            else:
+                raise err
+
+    @allure.step('Open manage tokens in wallet settings')
+    def open_manage_tokens(self, attempts: int = 2) -> 'ManageTokensSettingsView':
+        self._wallet_manage_tokens_button.click()
+        try:
+            return ManageTokensSettingsView().wait_until_appears()
+        except Exception as err:
+            if attempts:
+                return self.open_manage_tokens(attempts - 1)
             else:
                 raise err
 
@@ -559,3 +572,30 @@ class EditAccountOrderSettings(WalletSettingsView):
     @allure.step('Verify that back button is present')
     def is_back_button_present(self) -> bool:
         return self._back_button.is_visible
+
+
+class ManageTokensSettingsView(WalletSettingsView):
+
+    def __init__(self):
+        super(ManageTokensSettingsView, self).__init__()
+        self._window_item = QObject(wallet_names.statusDesktop_mainWindow)
+        self._token_item = QObject(wallet_names.settingsContentBaseScrollView_manageTokensDelegate_ManageTokensDelegate)
+
+    @property
+    @allure.step('Get tokens')
+    def tokens(self) -> typing.List[constants.token_list_item]:
+        _tokens = []
+        for token_item in driver.findAllObjects(self._token_item.real_name):
+            element = QObject(real_name=driver.objectMap.realName(token_item))
+            name = str(token_item.title)
+            _tokens.append(constants.token_list_item(name, element))
+
+        return sorted(_tokens, key=lambda token: token.object.y)
+
+    @allure.step('Drag token to change the order')
+    def drag_token(self, name: str, index: int):
+        assert driver.waitFor(lambda: len([token for token in self.tokens if token.title == name]) == 1), \
+            'Token not found or found more then one'
+        bounds = [token for token in self.tokens if token.title == name][0].object.bounds
+        d_bounds = self.tokens[index].object.bounds
+        driver.mouse.press_and_move(self._window_item.object, bounds.x, bounds.y, d_bounds.x, d_bounds.y + 1)
