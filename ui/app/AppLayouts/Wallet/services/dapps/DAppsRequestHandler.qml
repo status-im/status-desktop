@@ -337,14 +337,12 @@ QObject {
                 tx = SessionRequest.methods.sendTransaction.getTxObjFromData(data)
             }
 
+            // Empty string instructs getEstimatedTime to fetch the blockchain value
             var maxFeePerGas = ""
             if (!!tx.maxFeePerGas) {
                 maxFeePerGas = tx.maxFeePerGas
             } else if (!!tx.gasPrice) {
                 maxFeePerGas = tx.gasPrice
-            }
-            if (!maxFeePerGas) {
-                return ""
             }
 
             return root.store.getEstimatedTime(chainId, maxFeePerGas)
