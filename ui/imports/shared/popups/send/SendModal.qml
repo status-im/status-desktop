@@ -28,7 +28,6 @@ import AppLayouts.Wallet.stores 1.0 as WalletStores
 import shared.popups.send.panels 1.0
 import "./controls"
 import "./views"
-import "./models"
 
 StatusDialog {
     id: popup
