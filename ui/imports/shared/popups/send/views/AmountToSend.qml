@@ -117,6 +117,10 @@ ColumnLayout {
         input.validate()
     }
 
+    onSelectedHoldingChanged: {
+        input.validate()
+    }
+
     StatusBaseText {
         text: root.caption
         font.pixelSize: 13
@@ -145,9 +149,17 @@ ColumnLayout {
                     errorMessage: ""
 
                     validate: (text) => {
-                                  var num = LocaleUtils.numberFromLocaleString(topAmountToSendInput.text,
+                                  const num = LocaleUtils.numberFromLocaleString(topAmountToSendInput.text,
                                                                                topAmountToSendInput.locale)
-                                  return !isNaN(num) && num > 0 && num <= root.maxInputBalance
+                                  if (isNaN(num) || num <= 0 || num > root.maxInputBalance) {
+                                      return false
+                                  }
+                                  if(!root.selectedHolding || !root.selectedHolding.marketDetails || !root.selectedHolding.marketDetails.currencyPrice) {
+                                      return false
+                                  }
+                                  const cryptoValueToSend = root.inputIsFiat ? num / root.selectedHolding.marketDetails.currencyPrice.amount : num
+                                  const cryptoValueToSendRaw = SQUtils.AmountsArithmetic.fromNumber(cryptoValueToSend, root.multiplierIndex).toString()
+                                  return cryptoValueToSendRaw >= 1
                               }
                 }
             ]
