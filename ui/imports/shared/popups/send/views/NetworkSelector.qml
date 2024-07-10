@@ -129,12 +129,8 @@ Item {
                 isBridgeTx: root.isBridgeTx
                 errorType: root.errorType
                 weiToEth: function(wei) {
-                    if(!!selectedAsset && !!selectedAsset.type
-                        && (selectedAsset.type === Constants.TokenType.Native
-                           || selectedAsset.type === Constants.TokenType.ERC20)
-                    ) {
+                    if(!!selectedAsset && (selectedAsset.type === Constants.TokenType.Native || selectedAsset.type === Constants.TokenType.ERC20))
                         return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
-                    }
                     return 0
                 }
             }
