@@ -2042,6 +2042,31 @@ Item {
         }
     }
 
+    Component {
+        id: walletConnectSDK
+        WalletConnectSDK {
+            active: WalletStore.RootStore.walletSectionInst.walletReady
+
+            projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
+        }
+    }
+
+    Component {
+        id: dappsConnector
+
+        DappsConnectorSDK {
+            controller: WalletStore.RootStore.dappsConnectorController
+        }
+    }
+
+    // Temporary solution to use the dapps connector until a proper abstraction is in place
+    Loader {
+        id: sdkLoader
+        sourceComponent: Global.featureFlags.dappsConnectorEnabled
+                            ? dappsConnector
+                            : walletConnectSDK
+    }
+
     Loader {
         id: walletConnectServiceLoader
 
@@ -2050,11 +2075,7 @@ Item {
         sourceComponent: WalletConnectService {
             id: walletConnectService
 
-            wcSDK: WalletConnectSDK {
-                active: WalletStore.RootStore.walletSectionInst.walletReady
-
-                projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
-            }
+            wcSDK: sdkLoader.item
             store: DAppsStore {
                 controller: WalletStore.RootStore.walletConnectController
             }
