@@ -46,7 +46,7 @@ StatusDialog {
         }
 
         function fetchSuggestedRoutes() {
-            if (payPanel.valueValid && root.swapInputParamsForm.isFormFilledCorrectly()) {
+            if (root.swapInputParamsForm.isFormFilledCorrectly()) {
                 root.swapAdaptor.validSwapProposalReceived = false
                 root.swapAdaptor.swapProposalLoading = true
                 root.swapAdaptor.approvalPending = false
@@ -220,7 +220,6 @@ StatusDialog {
                             root.swapInputParamsForm.fromTokenAmount = amount
                         }
                     }
-                    onValueValidChanged: d.fetchSuggestedRoutes()
                 }
 
                 SwapInputPanel {
@@ -295,13 +294,14 @@ StatusDialog {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Style.current.smallPadding
                 text: {
-                    if (payPanel.amountEnteredGreaterThanBalance) {
+                    if (root.swapAdaptor.swapOutputData.hasError) {
+                      return qsTr("An error has occured, please try again")
+                    } else if (payPanel.amountEnteredGreaterThanBalance) {
                         return qsTr("Insufficient funds for swap")
                     }
-                    return qsTr("An error has occured, please try again")
                 }
                 buttonText: qsTr("Buy crypto")
-                buttonVisible: payPanel.amountEnteredGreaterThanBalance
+                buttonVisible: !root.swapAdaptor.swapOutputData.hasError && payPanel.amountEnteredGreaterThanBalance
                 onButtonClicked: Global.openBuyCryptoModalRequested()
             }
         }
