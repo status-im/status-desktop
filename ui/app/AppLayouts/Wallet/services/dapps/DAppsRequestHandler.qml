@@ -159,6 +159,13 @@ QObject {
                 obj.resolveDappInfoFromSession(session)
                 root.sessionRequest(obj)
                 // TODO #15192: update maxFees
+                if (!event.params.request.params[0].gasLimit || !event.params.request.params[0].gasPrice) {
+                    root.maxFeesUpdated(0, 0, true, "")
+                    root.estimatedTimeUpdated(0, 0)
+                    return
+                }
+                    
+                    
                 let gasLimit = parseFloat(parseInt(event.params.request.params[0].gasLimit, 16));
                 let gasPrice = parseFloat(parseInt(event.params.request.params[0].gasPrice, 16));
                 let maxFees = gasLimit * gasPrice

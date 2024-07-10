@@ -605,9 +605,9 @@ Item {
             verify(popup.visible)
 
             compare(popup.dappName, td.session.peer.metadata.name)
-            compare(popup.account.name, td.account.name)
-            compare(popup.account.address, td.account.address)
-            compare(popup.network.chainId, td.network.chainId)
+            compare(popup.accountName, td.account.name)
+            compare(popup.accountAddress, td.account.address)
+            compare(popup.networkName, td.network.chainName)
 
             popup.close()
             waitForRendering(controlUnderTest)

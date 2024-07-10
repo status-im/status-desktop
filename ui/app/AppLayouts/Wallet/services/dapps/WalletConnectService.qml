@@ -36,6 +36,7 @@ QObject {
 
     readonly property alias dappsModel: dappsProvider.dappsModel
     readonly property alias requestHandler: requestHandler
+    readonly property int loginType: root.store.loginType
 
     readonly property var validAccounts: SortFilterProxyModel {
         sourceModel: root.walletRootStore.nonWatchAccounts

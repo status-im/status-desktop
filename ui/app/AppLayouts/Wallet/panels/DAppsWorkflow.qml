@@ -11,7 +11,6 @@ import shared.popups.walletconnect 1.0
 import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Wallet.services.dapps.types 1.0
 
-import shared.stores 1.0
 import utils 1.0
 
 DappsComboBox {
@@ -116,26 +115,62 @@ DappsComboBox {
 
         property SessionRequestResolved request: null
 
-        sourceComponent: DAppRequestModal {
-            account: request.account
-            network: request.network
-
-            dappName: request.dappName
-            dappUrl: request.dappUrl
-            dappIcon: request.dappIcon
-
-            payloadData: request.data
-            method: request.method
-            maxFeesText: request.maxFeesText
-            maxFeesEthText: request.maxFeesEthText
-            enoughFunds: request.enoughFunds
-            estimatedTimeText: request.estimatedTimeText
-
+        sourceComponent: DAppSignRequestModal {
+            objectName: "dappsRequestModal"
+            loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : wcService.loginType
             visible: true
 
-            onClosed: sessionRequestLoader.active = false
+            dappUrl: request.dappUrl
+            dappIcon: request.dappIcon
+            dappName: request.dappName
 
-            onSign: {
+            accountColor: request.account.color
+            accountName: request.account.name
+            accountAddress: request.account.address
+            accountEmoji: request.account.emoji
+
+            networkName: request.network.chainName
+            networkIconPath: Style.svg(request.network.iconUrl)
+
+            currentCurrency: ""
+            fiatFees: request.maxFeesText
+            cryptoFees: request.maxFeesEthText
+            estimatedTime: request.estimatedTimeText
+            feesLoading: !request.maxFeesText || !request.maxFeesEthText
+            hasFees: signingTransaction
+            enoughFundsForTransaction: request.enoughFunds
+            enoughFundsForFees: request.enoughFunds
+
+            signingTransaction: request.method === SessionRequest.methods.signTransaction.name || request.method === SessionRequest.methods.sendTransaction.name
+            requestPayload: {
+                switch(request.method) {
+                    case SessionRequest.methods.personalSign.name:
+                        return SessionRequest.methods.personalSign.getMessageFromData(request.data)
+                    case SessionRequest.methods.sign.name: {
+                        return SessionRequest.methods.sign.getMessageFromData(request.data)
+                    }
+                    case SessionRequest.methods.signTypedData_v4.name: {
+                        const stringPayload = SessionRequest.methods.signTypedData_v4.getMessageFromData(request.data)
+                        return JSON.stringify(JSON.parse(stringPayload), null, 2)
+                    }
+                    case SessionRequest.methods.signTypedData.name: {
+                        const stringPayload = SessionRequest.methods.signTypedData.getMessageFromData(root.payloadData)
+                        return JSON.stringify(JSON.parse(stringPayload), null, 2)
+                    }
+                    case SessionRequest.methods.signTransaction.name: {
+                        const jsonPayload = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
+                        return JSON.stringify(jsonPayload, null, 2)
+                    }
+                    case SessionRequest.methods.sendTransaction.name: {
+                        const jsonPayload = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
+                        return JSON.stringify(jsonPayload, null, 2)
+                    }
+                }
+            }
+
+            onClosed: Qt.callLater( () => sessionRequestLoader.active = false)
+
+            onAccepted: {
                 if (!request) {
                     console.error("Error signing: request is null")
                     return
@@ -143,28 +178,32 @@ DappsComboBox {
                 root.wcService.requestHandler.authenticate(request)
             }
 
-            onReject: {
+            onRejected: {
                 let userRejected = true
                 root.wcService.requestHandler.rejectSessionRequest(request, userRejected)
-                close()
             }
 
             Connections {
                 target: root.wcService.requestHandler
 
                 function onMaxFeesUpdated(maxFees, maxFeesWei, haveEnoughFunds, symbol) {
-                    maxFeesText = `${maxFees.toFixed(2)} ${symbol}`
+                    fiatFees = maxFees
+                    currentCurrency = symbol
+
                     var ethStr = "?"
                     try {
                         ethStr = globalUtils.wei2Eth(maxFeesWei, 9)
                     } catch (e) {
                         // ignore error in case of tests and storybook where we don't have access to globalUtils
                     }
-                    maxFeesEthText = `${ethStr} ETH`
-                    enoughFunds = haveEnoughFunds
+                    cryptoFees = ethStr
+                    enoughFundsForTransaction = haveEnoughFunds
+                    enoughFundsForFees = haveEnoughFunds
+                    feesLoading = false
+                    hasFees = !!maxFees
                 }
                 function onEstimatedTimeUpdated(minMinutes, maxMinutes) {
-                    estimatedTimeText = qsTr("%1-%2mins").arg(minMinutes).arg(maxMinutes)
+                    estimatedTime = qsTr("%1-%2mins").arg(minMinutes).arg(maxMinutes)
                 }
             }
         }

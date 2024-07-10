@@ -39,15 +39,15 @@ Item {
             anchors.fill: mainImage
             active: !mainImage.visible
             sourceComponent: StatusRoundedComponent {
+                id: imageWrapper
                 color: Theme.palette.primaryColor3
                 StatusIcon {
-                    anchors.fill: parent
-                    anchors.margins: Style.current.padding
+                    anchors.fill: imageWrapper
+                    anchors.margins: imageWrapper.width / 4.5
                     color: Theme.palette.primaryColor1
                     icon: "dapp"
                 }
-            }
-        }
+            }        }
 
         layer.enabled: true
         layer.effect: OpacityMask {
@@ -72,7 +72,7 @@ Item {
 
     StatusRoundIcon {
         id: badge
-        width: (root.width / 2) - Style.current.padding
+        width: root.width / 3.6
         height: width
         anchors.bottom: parent.bottom
         anchors.right: parent.right
