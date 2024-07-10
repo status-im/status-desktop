@@ -84,7 +84,7 @@ class TokensView(QObject):
 class TokensOwnerTokenSettingsView(QObject):
     def __init__(self):
         super(TokensOwnerTokenSettingsView, self).__init__(communities_names.mainWindow_ownerTokenPage_SettingsPage)
-        self._scroll = Scroll(communities_names.o_Flickable)
+        self._scroll = Scroll(communities_names.mainWindow_OwnerTokenWelcomeView)
         self._owner_token_section = QObject(communities_names.ownerToken_InfoPanel)
         self._token_master_token_section = QObject(communities_names.tokenMasterToken_InfoPanel)
         self._next_button = Button(communities_names.next_StatusButton)
@@ -95,7 +95,7 @@ class TokensOwnerTokenSettingsView(QObject):
     @allure.step('Get all text from owner token panel')
     def get_text_labels_from_owner_token_panel(self) -> list:
         if not self._owner_token_section.is_visible:
-            self._scroll.vertical_scroll_to(self._owner_token_section)
+            self._scroll.vertical_scroll_down(self._owner_token_section)
         owner_token_text_labels = []
         for item in driver.findAllObjects(self._owner_token_text_object.real_name):
             owner_token_text_labels.append(item)
@@ -129,7 +129,7 @@ class TokensOwnerTokenSettingsView(QObject):
     @allure.step('Get all text from master token panel')
     def get_text_labels_from_master_token_panel(self) -> list:
         if not self._token_master_token_section.is_visible:
-            self._scroll.vertical_scroll_to(self._token_master_token_section)
+            self._scroll.vertical_scroll_down(self._token_master_token_section)
         master_token_text_labels = []
         for item in driver.findAllObjects(self._token_master_text_object.real_name):
             master_token_text_labels.append(item)
@@ -138,7 +138,7 @@ class TokensOwnerTokenSettingsView(QObject):
     @allure.step('Click next button')
     def click_next(self):
         if not self._next_button.is_visible:
-            self._scroll.vertical_down_to(self._next_button)
+            self._scroll.vertical_scroll_down(self._next_button)
         self._next_button.click()
         return EditOwnerTokenView().wait_until_appears()
 
@@ -146,7 +146,7 @@ class TokensOwnerTokenSettingsView(QObject):
 class EditOwnerTokenView(QObject):
     def __init__(self):
         super(EditOwnerTokenView, self).__init__(communities_names.mainWindow_editOwnerTokenView_EditOwnerTokenView)
-        self._scroll = Scroll(communities_names.editOwnerTokenView_Flickable)
+        self._scroll = Scroll(communities_names.mainWindow_editOwnerTokenView_EditOwnerTokenView)
         self._select_account_combobox = QObject(communities_names.editOwnerTokenView_CustomComboItem)
         self._select_network_filter = QObject(communities_names.editOwnerTokenView_netFilter_NetworkFilter)
         self._select_network_combobox = QObject(communities_names.editOwnerTokenView_comboBox_ComboBox)
@@ -258,7 +258,7 @@ class EditOwnerTokenView(QObject):
     @allure.step('Select Mainnet network')
     def select_mainnet_network(self, attempts: int = 2):
         if not self._fees_box.is_visible:
-            self._scroll.vertical_down_to(self._fees_box)
+            self._scroll.vertical_scroll_down(self._fees_box)
         self._select_network_filter.click()
         try:
             self._mainnet_network_item.wait_until_appears()
@@ -273,7 +273,7 @@ class EditOwnerTokenView(QObject):
     @allure.step('Click mint button')
     def click_mint(self):
         if not self._mint_button.is_visible:
-            self._scroll.vertical_down_to(self._mint_button)
+            self._scroll.vertical_scroll_down(self._mint_button)
         self._mint_button.click()
         return SignTransactionPopup().wait_until_appears()
 

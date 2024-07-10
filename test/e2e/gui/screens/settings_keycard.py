@@ -13,7 +13,7 @@ class KeycardSettingsView(QObject):
 
     def __init__(self):
         super(KeycardSettingsView, self).__init__(settings_names.mainWindow_KeycardView)
-        self._scroll = Scroll(settings_names.settingsContentBaseScrollView_Flickable)
+        self._scroll = Scroll(settings_names.settingsContentBase_ScrollView)
         self._setup_keycard_with_existing_account_button = Button(settings_names.setupFromExistingKeycardAccount_StatusListItem)
         self._create_new_keycard_account_button = Button(settings_names.createNewKeycardAccount_StatusListItem)
         self._import_restore_via_seed_phrase_button = Button(settings_names.importRestoreKeycard_StatusListItem)
@@ -55,10 +55,11 @@ class KeycardSettingsView(QObject):
         assert self._setup_keycard_with_existing_account_button.is_visible, f'Setup keycard with existing account not visible'
         assert self._create_new_keycard_account_button.is_visible, f'Create new keycard button not visible'
         assert self._import_restore_via_seed_phrase_button.is_visible, f'Import and restore via seed phrase button not visible'
-        self._scroll.vertical_down_to(self._import_from_keycard_button)
+        self._scroll.vertical_scroll_down(self._import_from_keycard_button)
         assert driver.waitFor(lambda: self._import_from_keycard_button.is_visible,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Import keycard button not visible'
         assert driver.waitFor(lambda: self._check_whats_on_keycard_button.is_visible,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Check whats new keycard button not visible'
+        self._scroll.vertical_scroll_down(self._factory_reset_keycard_button)
         assert driver.waitFor(lambda: self._factory_reset_keycard_button.is_visible,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Factory reset keycard button not visible'

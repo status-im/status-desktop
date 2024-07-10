@@ -12,7 +12,7 @@ class ChangePasswordView(QObject):
 
     def __init__(self):
         super().__init__(settings_names.mainWindow_PasswordView)
-        self._scroll_view = Scroll(settings_names.settingsContentBaseScrollView_Flickable)
+        self._scroll_view = Scroll(settings_names.settingsContentBase_ScrollView)
         self._change_password_button = Button(names.change_password_menu_change_password_button)
         self._current_password_text_field = TextEdit(names.change_password_menu_current_password)
         self._new_password_text_field = TextEdit(names.change_password_menu_new_password)

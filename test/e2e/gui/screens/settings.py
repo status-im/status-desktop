@@ -2,6 +2,7 @@ import time
 
 import allure
 
+import driver
 from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
@@ -23,14 +24,14 @@ class LeftPanel(QObject):
     def __init__(self):
         super().__init__(settings_names.mainWindow_LeftTabView)
         self._settings_section_template = QObject(settings_names.scrollView_MenuItem_StatusNavigationListItem)
-        self._scroll = Scroll(settings_names.scrollView_Flickable)
+        self._scroll = Scroll(settings_names.mainWindow_scrollView_StatusScrollView)
         self._settings_section_back_up_seed_option = QObject(settings_names.settingsBackUpSeedPhraseOption)
         self._settings_section_wallet_option = QObject(settings_names.settingsWalletOption)
 
     def _open_settings(self, object_name: str):
         self._settings_section_template.real_name['objectName'] = object_name
         if not self._settings_section_template.is_visible:
-            self._scroll.vertical_down_to(self._settings_section_template)
+            self._scroll.vertical_scroll_down(self._settings_section_template)
         self._settings_section_template.click()
 
     @allure.step('Check back up seed option menu item presence')

@@ -110,7 +110,7 @@ class EditCommunityView(QObject):
 
     def __init__(self):
         super().__init__(communities_names.mainWindow_communityEditPanelScrollView_EditSettingsPanel)
-        self._scroll = Scroll(communities_names.communityEditPanelScrollView_Flickable)
+        self._scroll = Scroll(communities_names.mainWindow_communityEditPanelScrollView_EditSettingsPanel)
         self._name_text_edit = TextEdit(communities_names.communityEditPanelScrollView_communityNameInput_TextEdit)
         self._description_text_edit = TextEdit(
             communities_names.communityEditPanelScrollView_communityDescriptionInput_TextEdit)
@@ -199,56 +199,56 @@ class EditCommunityView(QObject):
     @color.setter
     @allure.step('Set community color')
     def color(self, value: str):
-        self._scroll.vertical_scroll_to(self._select_color_button)
+        self._scroll.vertical_scroll_down(self._select_color_button)
         self._select_color_button.click()
         ColorSelectPopup().wait_until_appears().select_color(value)
 
     @property
     @allure.step('Get community tags')
     def tags(self):
-        self._scroll.vertical_scroll_to(self._choose_tag_button)
+        self._scroll.vertical_scroll_down(self._choose_tag_button)
         return [str(tag.title) for tag in driver.fiandAllObjects(self._tag_item.real_name)]
 
     @tags.setter
     @allure.step('Set community tags')
     def tags(self, values: typing.List[str]):
-        self._scroll.vertical_scroll_to(self._choose_tag_button)
+        self._scroll.vertical_scroll_down(self._choose_tag_button)
         self._choose_tag_button.click()
         TagsSelectPopup().wait_until_appears().select_tags(values)
 
     @property
     @allure.step('Get community intro')
     def intro(self) -> str:
-        self._scroll.vertical_scroll_to(self._intro_text_edit)
+        self._scroll.vertical_scroll_down(self._intro_text_edit)
         return self._intro_text_edit.text
 
     @intro.setter
     @allure.step('Set community intro')
     def intro(self, value: str):
-        self._scroll.vertical_scroll_to(self._intro_text_edit)
+        self._scroll.vertical_scroll_down(self._intro_text_edit)
         self._intro_text_edit.text = value
 
     @property
     @allure.step('Get community outro')
     def outro(self) -> str:
-        self._scroll.vertical_scroll_to(self._outro_text_edit)
+        self._scroll.vertical_scroll_down(self._outro_text_edit)
         return self._outro_text_edit.text
 
     @outro.setter
     @allure.step('Set community outro')
     def outro(self, value: str):
-        self._scroll.vertical_scroll_to(self._outro_text_edit)
+        self._scroll.vertical_scroll_down(self._outro_text_edit)
         self._outro_text_edit.text = value
 
     @property
     @allure.step('Get pin message checkbox state')
     def pin_message_checkbox_state(self) -> bool:
-        self._scroll.vertical_scroll_to(self._pin_messages_checkbox)
+        self._scroll.vertical_scroll_down(self._pin_messages_checkbox)
         return self._pin_messages_checkbox.object.checked
 
     @allure.step('Edit community')
     def edit(self, name, description, intro, outro, logo, banner):
-        self._scroll.vertical_scroll_to(self._name_text_edit)
+        self._scroll.vertical_scroll_down(self._name_text_edit)
         self.name = name
         self.description = description
         self.set_logo_without_file_upload_dialog(logo)
