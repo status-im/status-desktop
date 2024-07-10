@@ -82,6 +82,13 @@ type
     transactionHash*: string
     chainId*: int
     success*: bool
+    txType*: SendType
+    fromAddress*: string
+    toAddress*: string
+    fromTokenKey*: string
+    fromAmount*: string
+    toTokenKey*: string
+    toAmount*: string
 
 proc `$`*(self: TransactionMinedArgs): string =
   try:
@@ -90,6 +97,13 @@ proc `$`*(self: TransactionMinedArgs): string =
       chainId: {$self.chainId},
       success: {$self.success},
       data: {self.data},
+      txType: {$self.txType},
+      fromAddress: {$self.fromAddress},
+      toAddress: {$self.toAddress},
+      fromTokenKey: {$self.fromTokenKey},
+      fromAmount: {$self.fromAmount},
+      toTokenKey: {$self.toTokenKey},
+      toAmount: {$self.toAmount},
       )"""
   except ValueError:
     raiseAssert "static fmt"
@@ -100,6 +114,13 @@ type
     txHash*: string
     uuid*: string
     error*: string
+    txType*: SendType
+    fromAddress*: string
+    toAddress*: string
+    fromTokenKey*: string
+    fromAmount*: string
+    toTokenKey*: string
+    toAmount*: string
 
 type
   OwnerTokenSentArgs* = ref object of Args
@@ -207,18 +228,31 @@ QtObject:
           transactionHash: hash,
           chainId: chainId,
           success: transactionReceipt{"status"}.getStr == "0x1",
+          txType: SendType(watchTxResult["txType"].getInt),
+          fromAddress: address,
+          toAddress: watchTxResult["toAddress"].getStr,
+          fromTokenKey: watchTxResult["fromTokenKey"].getStr,
+          fromAmount: watchTxResult["fromAmount"].getStr,
+          toTokenKey: watchTxResult["toTokenKey"].getStr,
+          toAmount: watchTxResult["toAmount"].getStr,
         )
         self.events.emit(parseEnum[PendingTransactionTypeDto](watchTxResult["trxType"].getStr).event, ev)
         transactions.checkRecentHistory(@[chainId], @[address])
 
   proc watchTransaction*(
-    self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, data: string, chainId: int, track: bool = true
+    self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, data: string, chainId: int,
+    fromTokenKey: string = "", fromAmount: string = "", toTokenKey: string = "", toAmount: string = "", txType: SendType = SendType.Transfer
   ) =
     let arg = WatchTransactionTaskArg(
       chainId: chainId,
       hash: hash,
       address: fromAddress,
       trxType: trxType,
+      txType: ord(txType),
+      fromTokenKey: fromTokenKey,
+      fromAmount: fromAmount,
+      toTokenKey: toTokenKey,
+      toAmount: toAmount,
       data: data,
       tptr: watchTransactionTask,
       vptr: cast[ByteAddress](self.vptr),
@@ -317,7 +351,8 @@ QtObject:
       path.cbridgeTx = cbridgeTx
     return path
 
-  proc sendTransactionSentSignal(self: Service, fromAddr: string, toAddr: string, uuid: string,
+  proc sendTransactionSentSignal(self: Service, txType: SendType, fromAddr: string, toAddr: string,
+    fromTokenKey: string, fromAmount: string, toTokenKey: string, toAmount: string, uuid: string,
     routes: seq[TransactionPathDto], response: RpcResponse[JsonNode], err: string = "", tokenName = "", isOwnerToken=false) =
     # While preparing the tx in the Send modal user cannot see the address, it's revealed once the tx is sent
     # (there are few places where we display the toast from and link to the etherscan where the address can be seen)
@@ -325,17 +360,22 @@ QtObject:
     self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: @[fromAddr, toAddr]))
 
     if err.len > 0:
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(uuid: uuid, error: err))
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(uuid: uuid, error: err, txType: txType,
+        fromAddress: fromAddr, toAddress: toAddr, fromTokenKey: fromTokenKey, fromAmount: fromAmount,
+        toTokenKey: toTokenKey, toAmount: toAmount))
     elif response.result{"hashes"} != nil:
       for route in routes:
         for hash in response.result["hashes"][$route.fromNetwork.chainID]:
           if isOwnerToken:
-            self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid, tokenName: tokenName, status: ContractTransactionStatus.InProgress))
+            self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr,
+              uuid: uuid, tokenName: tokenName, status: ContractTransactionStatus.InProgress))
           else:
-            self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid , error: ""))
+            self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid ,
+              error: "", txType: txType, fromAddress: fromAddr, toAddress: toAddr, fromTokenKey: fromTokenKey, fromAmount: fromAmount, toTokenKey: toTokenKey, toAmount: toAmount))
 
           let metadata = TokenTransferMetadata(tokenName: tokenName, isOwnerToken: isOwnerToken)
-          self.watchTransaction(hash.getStr, fromAddr, toAddr, $PendingTransactionTypeDto.WalletTransfer, $(%metadata), route.fromNetwork.chainID, track = false)
+          self.watchTransaction(hash.getStr, fromAddr, toAddr, $PendingTransactionTypeDto.WalletTransfer, $(%metadata), route.fromNetwork.chainID,
+                                fromTokenKey, fromAmount, toTokenKey, toAmount, txType)
 
   proc isCollectiblesTransfer(self: Service, sendType: SendType): bool =
     return sendType == ERC721Transfer or sendType == ERC1155Transfer
@@ -364,6 +404,7 @@ QtObject:
     try:
       var paths: seq[TransactionBridgeDto] = @[]
       var totalAmountToSend: UInt256
+      var totalAmountToReceive: UInt256
       let toAddress = parseAddress(to_addr)
 
       for route in routes:
@@ -377,6 +418,7 @@ QtObject:
           paths.add(self.createApprovalPath(route, from_addr, toAddress, gasFees))
 
         totalAmountToSend += route.amountIn
+        totalAmountToReceive += route.amountOut
         txData = ens_utils.buildTransaction(parseAddress(from_addr), route.amountIn,
           $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
         txData.to = parseAddress(to_addr).some
@@ -400,9 +442,11 @@ QtObject:
       )
 
       if password != "":
-        self.sendTransactionSentSignal(from_addr, to_addr, uuid, routes, response)
+        self.sendTransactionSentSignal(sendType, from_addr, to_addr, tokenSymbol, totalAmountToSend.toString(10),
+          toTokenSymbol, totalAmountToReceive.toString(10), uuid, routes, response)
     except Exception as e:
-      self.sendTransactionSentSignal(from_addr, to_addr, uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
+      self.sendTransactionSentSignal(sendType, from_addr, to_addr, tokenSymbol, "",
+        toTokenSymbol, "", uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
 
   proc mustIgnoreApprovalRequests(sendType: SendType): bool =
     # Swap requires approvals to be done in advance in a separate Tx
@@ -430,6 +474,7 @@ QtObject:
       toContractAddress: Address
       paths: seq[TransactionBridgeDto] = @[]
       totalAmountToSend: UInt256
+      totalAmountToReceive: UInt256
       mtCommand = MultiTransactionCommandDto(
         fromAddress: from_addr,
         toAddress: to_addr,
@@ -474,6 +519,7 @@ QtObject:
           paths.add(approvalPath)
 
         totalAmountToSend += route.amountIn
+        totalAmountToReceive += route.amountOut
 
         if sendType == SendType.Approve:
           # We only do the approvals
@@ -505,10 +551,14 @@ QtObject:
       let response = transactions.createMultiTransaction(mtCommand, paths, password)
 
       if password != "":
-        self.sendTransactionSentSignal(mtCommand.fromAddress, mtCommand.toAddress, uuid, routes, response, err="", tokenName, isOwnerToken)
+        self.sendTransactionSentSignal(sendType, mtCommand.fromAddress, mtCommand.toAddress,
+          assetKey, totalAmountToSend.toString(10), toAssetKey, totalAmountToReceive.toString(10),
+          uuid, routes, response, err="", tokenName, isOwnerToken)
 
     except Exception as e:
-      self.sendTransactionSentSignal(mtCommand.fromAddress, mtCommand.toAddress, uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
+      self.sendTransactionSentSignal(sendType, mtCommand.fromAddress, mtCommand.toAddress,
+        assetKey, "", toAssetKey, "",
+        uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
 
   proc transfer*(
     self: Service,
@@ -563,15 +613,24 @@ QtObject:
         sendType, tokenName, isOwnerToken, slippagePercentage)
 
     except Exception as e:
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
+      self.sendTransactionSentSignal(sendType, fromAddr, toAddr, assetKey, "", toAssetKey, "", uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
 
-  proc proceedWithTransactionsSignatures*(self: Service, fromAddr: string, toAddr: string, uuid: string,
-    signatures: TransactionsSignatures, selectedRoutes: seq[TransactionPathDto]) =
+  proc proceedWithTransactionsSignatures*(self: Service, fromAddr: string, toAddr: string,
+    fromTokenKey: string, toTokenKey: string, uuid: string, signatures: TransactionsSignatures,
+    selectedRoutes: seq[TransactionPathDto], sendType: SendType) =
     try:
       let response = transactions.proceedWithTransactionsSignatures(signatures)
-      self.sendTransactionSentSignal(fromAddr, toAddr, uuid, selectedRoutes, response)
+
+      var totalAmountToSend: UInt256
+      var totalAmountToReceive: UInt256
+      for route in selectedRoutes:
+        totalAmountToSend += route.amountIn
+        totalAmountToReceive += route.amountOut
+
+      self.sendTransactionSentSignal(sendType, fromAddr, toAddr, fromTokenKey, totalAmountToSend.toString(10), toTokenKey, totalAmountToReceive.toString(10), uuid, selectedRoutes, response)
     except Exception as e:
-      self.sendTransactionSentSignal(fromAddr, toAddr, uuid, @[], RpcResponse[JsonNode](), fmt"Error proceeding with transactions signatures: {e.msg}")
+      self.sendTransactionSentSignal(sendType, fromAddr, toAddr, fromTokenKey, "", toTokenKey, "",
+      uuid, @[], RpcResponse[JsonNode](), fmt"Error proceeding with transactions signatures: {e.msg}")
 
   proc suggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
     try:

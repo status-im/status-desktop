@@ -252,7 +252,8 @@ proc signOnKeycard(self: Module) =
     break
   if self.tmpTxHashBeingProcessed.len == 0:
     self.controller.proceedWithTransactionsSignatures(self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
-      self.tmpSendTransactionDetails.uuid, self.tmpSendTransactionDetails.resolvedSignatures, self.tmpSendTransactionDetails.paths)
+      self.tmpSendTransactionDetails.assetKey, self.tmpSendTransactionDetails.toAssetKey, self.tmpSendTransactionDetails.uuid,
+      self.tmpSendTransactionDetails.resolvedSignatures, self.tmpSendTransactionDetails.paths, self.tmpSendTransactionDetails.sendType)
 
 method prepareSignaturesForTransactions*(self: Module, txHashes: seq[string]) =
   if txHashes.len == 0:
