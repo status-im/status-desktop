@@ -9,3 +9,4 @@ def get_platform():
 DISPLAY = os.getenv('DISPLAY', ':0')
 
 TEST_MODE = os.getenv('STATUS_RUNTIME_TEST_MODE')
+

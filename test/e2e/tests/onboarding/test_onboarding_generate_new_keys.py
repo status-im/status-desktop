@@ -3,9 +3,9 @@ import random
 import string
 
 import allure
-import psutil
 import pytest
 from allure import step
+
 from . import marks
 
 import configs.timeouts

@@ -1,7 +1,9 @@
 import random
+import time
 
 import configs.timeouts
 from constants.wallet import *
+from gui.screens.settings_keycard import KeycardSettingsView
 from gui.screens.settings_wallet import *
 from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
@@ -155,7 +157,8 @@ class AccountPopup(BasePopup):
         self._origin_combobox.click()
         self.click_new_master_key()
         self._use_keycard_button.click()
-        return self
+        assert KeycardSettingsView().exists, 'Keycard settings view was not opened'
+        return KeycardSettingsView()
 
     @allure.step('Click confirmation (add account / save changes) button')
     def save_changes(self):

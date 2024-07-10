@@ -16,7 +16,7 @@ pytestmark = marks
 def test_back_up_seed_phrase(main_screen: MainWindow):
     with step('Check back up seed phrase option is visible for new account'):
         settings = main_screen.left_panel.open_settings()
-        assert settings.left_panel.check_back_up_seed_option_present(), f"Back up seed option is not present"
+        assert settings.left_panel.settings_section_back_up_seed_option.exists, f"Back up seed option is not present"
         if not configs.system.TEST_MODE:
             assert BackUpSeedPhraseBanner().does_back_up_seed_banner_exist(), "Back up seed banner is not present"
             assert BackUpSeedPhraseBanner().is_back_up_now_button_present(), 'Back up now button is not present'
@@ -26,7 +26,7 @@ def test_back_up_seed_phrase(main_screen: MainWindow):
         back_up.back_up_seed_phrase()
 
     with step('Verify back up seed phrase banner disappeared'):
-        assert not settings.left_panel.check_back_up_seed_option_present(), f"Back up seed option is present"
+        assert not settings.left_panel.settings_section_back_up_seed_option.exists, f"Back up seed option is present"
         if not configs.system.TEST_MODE:
             BackUpSeedPhraseBanner().wait_to_hide_the_banner()
             assert not BackUpSeedPhraseBanner().does_back_up_seed_banner_exist(), "Back up seed banner is present"
