@@ -121,6 +121,7 @@ Item {
                     clickable: root.interactive
                     onClicked: {
                         store.toggleFromDisabledChains(model.chainId)
+                        store.lockCard(model.chainId, 0, false)
                         root.reCalculateSuggestedRoute()
                     }
                     onLockCard: {
