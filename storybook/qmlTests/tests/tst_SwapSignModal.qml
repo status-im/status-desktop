@@ -39,9 +39,8 @@ Item {
             networkIconPath: Style.svg("network/Network=Ethereum")
             networkBlockExplorerUrl: "https://etherscan.io/"
 
-            currentCurrency: "EUR"
-            fiatFees: "1.54"
-            cryptoFees: "0.001"
+            fiatFees: "1.54 EUR"
+            cryptoFees: "0.001 ETH"
             slippage: 0.2
 
             loginType: Constants.LoginType.Password
@@ -78,23 +77,30 @@ Item {
             verify(controlUnderTest.height > 0)
         }
 
-        function test_fromToProps() {
+        function test_fromToProps_data() {
+            return [
+                        {tag: "ETH", toTokenSymbol: "ETH"},
+                        {tag: "DAI", toTokenSymbol: "DAI"},
+                    ]
+        }
+
+        function test_fromToProps(data) {
             verify(!!controlUnderTest)
             controlUnderTest.fromTokenSymbol = "SNT"
             controlUnderTest.fromTokenAmount = "1000.123456789"
             controlUnderTest.fromTokenContractAddress = "Oxdeadbeef"
-            controlUnderTest.toTokenSymbol = "ETH"
+            controlUnderTest.toTokenSymbol = data.toTokenSymbol
             controlUnderTest.toTokenAmount = "1.42"
             controlUnderTest.toTokenContractAddress = "0xdeadcaff"
 
             // title & subtitle
             compare(controlUnderTest.title, qsTr("Sign Swap"))
-            compare(controlUnderTest.subtitle, qsTr("1000.1235 SNT to 1.42 ETH")) // subtitle rounded amounts
+            compare(controlUnderTest.subtitle, qsTr("1000.1235 SNT to 1.42 %2").arg(data.toTokenSymbol)) // subtitle rounded amounts
 
             // info box
             const headerText = findChild(controlUnderTest.contentItem, "headerText")
             verify(!!headerText)
-            compare(headerText.text, qsTr("Swap 1000.123456789 SNT to 1.42 ETH in %1 on %2").arg(controlUnderTest.accountName).arg(controlUnderTest.networkName))
+            compare(headerText.text, qsTr("Swap 1000.123456789 SNT to 1.42 %3 in %1 on %2").arg(controlUnderTest.accountName).arg(controlUnderTest.networkName).arg(data.toTokenSymbol))
             const fromImage = findChild(controlUnderTest.contentItem, "fromImageIdenticon")
             verify(!!fromImage)
             compare(fromImage.asset.name, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
@@ -114,7 +120,9 @@ Item {
             verify(!!receiveBox)
             compare(receiveBox.caption, qsTr("Receive"))
             compare(receiveBox.primaryText, "%1 %2".arg(controlUnderTest.toTokenAmount).arg(controlUnderTest.toTokenSymbol))
-            compare(receiveBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.toTokenContractAddress))
+            compare(receiveBox.secondaryText,
+                    data.toTokenSymbol === "ETH" ? ""
+                                                 : SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.toTokenContractAddress))
         }
 
         function test_accountInfo() {
@@ -155,11 +163,11 @@ Item {
 
             const fiatFeesText = findChild(feesBox, "fiatFeesText")
             verify(!!fiatFeesText)
-            compare(fiatFeesText.text, "%1 %2".arg(controlUnderTest.fiatFees).arg(controlUnderTest.currentCurrency))
+            compare(fiatFeesText.text, controlUnderTest.fiatFees)
 
             const cryptoFeesText = findChild(feesBox, "cryptoFeesText")
             verify(!!cryptoFeesText)
-            compare(cryptoFeesText.text, "%1 ETH".arg(controlUnderTest.cryptoFees))
+            compare(cryptoFeesText.text, controlUnderTest.cryptoFees)
         }
 
         function test_loginType_data() {
@@ -217,7 +225,7 @@ Item {
 
             const fiatFeesText = findChild(controlUnderTest.footer, "footerFiatFeesText")
             verify(!!fiatFeesText)
-            compare(fiatFeesText.text, "%1 %2".arg(controlUnderTest.fiatFees).arg(controlUnderTest.currentCurrency))
+            compare(fiatFeesText.text, controlUnderTest.fiatFees)
 
             const maxSlippageText = findChild(controlUnderTest.footer, "footerMaxSlippageText")
             verify(!!maxSlippageText)

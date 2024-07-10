@@ -27,6 +27,10 @@ QtObject {
         return parseFloat(balance)
     }
 
+    function getCryptoValue(balance, symbol) {
+        return balance
+    }
+
     function getCurrencyAmount(amount, symbol) {
         return ({
                     amount: amount,

@@ -30,6 +30,7 @@ QObject {
     // To expose the selected from and to Token from the SwapModal
     readonly property var fromToken: fromTokenEntry.item
     readonly property var toToken: toTokenEntry.item
+    readonly property var selectedAccount: selectedAccountEntry.item
 
     readonly property string uuid: d.uuid
 
@@ -245,8 +246,7 @@ QObject {
 
             root.swapProposalLoading = true
 
-            let account = selectedAccountEntry.item
-            let accountAddress = account.address
+            let accountAddress = root.swapFormData.selectedAccountAddress
             let disabledChainIds = getDisabledChainIds(root.swapFormData.selectedNetworkChainId)
 
             root.swapStore.fetchSuggestedRoutes(d.uuid, accountAddress, accountAddress,
@@ -260,9 +260,7 @@ QObject {
 
     function sendApproveTx() {
         root.approvalPending = true
-
-        let account = selectedAccountEntry.item
-        let accountAddress = account.address
+        const accountAddress = root.swapFormData.selectedAccountAddress
 
         root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
             root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
@@ -270,8 +268,7 @@ QObject {
     }
 
     function sendSwapTx() {
-        let account = selectedAccountEntry.item
-        let accountAddress = account.address
+        const accountAddress = root.swapFormData.selectedAccountAddress
 
         root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
             root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,

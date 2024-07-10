@@ -30,16 +30,15 @@ Item {
             accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
             accountEmoji: "🚗"
             accountColor: Utils.getColorForId(Constants.walletAccountColors.primary)
-            accountBalanceAmount: "120.55489"
+            accountBalanceFormatted: "120.55489 DAI"
 
             networkShortName: Constants.networkShortChainNames.mainnet
             networkName: "Mainnet"
             networkIconPath: Style.svg("network/Network=Ethereum")
             networkBlockExplorerUrl: "https://etherscan.io/"
 
-            currentCurrency: "EUR"
-            fiatFees: "1.54"
-            cryptoFees: "0.001"
+            fiatFees: "1.54 USD"
+            cryptoFees: "0.001 ETH"
             estimatedTime: Constants.TransactionEstimatedTime.Unknown
 
             loginType: Constants.LoginType.Password
@@ -125,8 +124,16 @@ Item {
             compare(accountBox.asset.color, controlUnderTest.accountColor)
         }
 
-        function test_tokenInfo() {
+        function test_tokenInfo_data() {
+            return [
+                        {tag: "ETH", fromTokenSymbol: "ETH"},
+                        {tag: "DAI", fromTokenSymbol: "DAI"},
+                    ]
+        }
+
+        function test_tokenInfo(data) {
             verify(!!controlUnderTest)
+            controlUnderTest.fromTokenSymbol = data.fromTokenSymbol
 
             // token box
             const tokenBox = findChild(controlUnderTest.contentItem, "tokenBox")
@@ -134,7 +141,9 @@ Item {
 
             compare(tokenBox.caption, qsTr("Token"))
             compare(tokenBox.primaryText, controlUnderTest.fromTokenSymbol)
-            compare(tokenBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.fromTokenContractAddress))
+            compare(tokenBox.secondaryText,
+                    controlUnderTest.fromTokenSymbol === "ETH" ? ""
+                                                               : SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.fromTokenContractAddress))
             compare(tokenBox.icon, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
             compare(tokenBox.badge, controlUnderTest.networkIconPath)
         }
@@ -176,11 +185,11 @@ Item {
 
             const fiatFeesText = findChild(feesBox, "fiatFeesText")
             verify(!!fiatFeesText)
-            compare(fiatFeesText.text, "%1 %2".arg(controlUnderTest.fiatFees).arg(controlUnderTest.currentCurrency))
+            compare(fiatFeesText.text, controlUnderTest.fiatFees)
 
             const cryptoFeesText = findChild(feesBox, "cryptoFeesText")
             verify(!!cryptoFeesText)
-            compare(cryptoFeesText.text, "%1 ETH".arg(controlUnderTest.cryptoFees))
+            compare(cryptoFeesText.text, controlUnderTest.cryptoFees)
         }
 
         function test_loginType_data() {
@@ -243,7 +252,7 @@ Item {
 
             const fiatFeesText = findChild(controlUnderTest.footer, "footerFiatFeesText")
             verify(!!fiatFeesText)
-            compare(fiatFeesText.text, "%1 %2".arg(controlUnderTest.fiatFees).arg(controlUnderTest.currentCurrency))
+            compare(fiatFeesText.text, controlUnderTest.fiatFees)
 
             const footerEstimatedTime = findChild(controlUnderTest.footer, "footerEstimatedTime")
             verify(!!footerEstimatedTime)

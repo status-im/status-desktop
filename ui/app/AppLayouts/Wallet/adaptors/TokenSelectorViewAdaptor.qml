@@ -126,7 +126,7 @@ QObject {
             FastExpressionFilter {
                 function isPresentOnEnabledNetworks(addressPerChain) {
                     if(!addressPerChain)
-                           return true
+                        return true
                     return !!ModelUtils.getFirstModelEntryIf(
                                 addressPerChain,
                                 (addPerChain) => {
@@ -135,6 +135,7 @@ QObject {
                 }
                 expression: isPresentOnEnabledNetworks(model.addressPerChain)
                 expectedRoles: ["addressPerChain"]
+                enabled: root.enabledChainIds.length
             }
         ]
 

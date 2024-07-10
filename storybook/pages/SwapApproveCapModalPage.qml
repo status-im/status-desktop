@@ -83,16 +83,15 @@ SplitView {
                     accountAddress: priv.selectedAccount.address
                     accountEmoji: priv.selectedAccount.emoji
                     accountColor: Utils.getColorForId(priv.selectedAccount.colorId)
-                    accountBalanceAmount: "120.55489"
+                    accountBalanceFormatted: "120.55489 USD"
 
                     networkShortName: priv.selectedNetwork.shortName
                     networkName: priv.selectedNetwork.chainName
                     networkIconPath: Style.svg(priv.selectedNetwork.iconUrl)
-                    networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerUrl
+                    networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
 
-                    currentCurrency: "EUR"
-                    fiatFees: "1.54"
-                    cryptoFees: "0.001"
+                    fiatFees: "1.54 USD"
+                    cryptoFees: "0.001 ETH"
                     estimatedTime: ctrlEstimatedTime.currentValue
 
                     loginType: ctrlLoginType.currentIndex

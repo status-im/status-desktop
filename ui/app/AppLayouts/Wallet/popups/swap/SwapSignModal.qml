@@ -36,7 +36,6 @@ SignTransactionModalBase {
     required property string networkIconPath // e.g. `Style.svg("network/Network=Optimism")`
     required property string networkBlockExplorerUrl
 
-    required property string currentCurrency
     required property string fiatFees
     required property string cryptoFees
     required property double slippage
@@ -106,7 +105,7 @@ SignTransactionModalBase {
                 }
                 StatusTextWithLoadingState {
                     objectName: "footerFiatFeesText"
-                    text: "%1 %2".arg(formatBigNumber(root.fiatFees)).arg(root.currentCurrency)
+                    text: loading ? Constants.dummyText : root.fiatFees
                     loading: root.feesLoading
                 }
             }
@@ -132,11 +131,12 @@ SignTransactionModalBase {
         objectName: "payBox"
         caption: qsTr("Pay")
         primaryText: "%1 %2".arg(formatBigNumber(root.fromTokenAmount)).arg(root.fromTokenSymbol)
-        secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress)
+        secondaryText: root.fromTokenSymbol !== Constants.ethToken ? SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress) : ""
         icon: Constants.tokenIcon(root.fromTokenSymbol)
         badge: root.networkIconPath
         components: [
             ContractInfoButtonWithMenu {
+                visible: root.fromTokenSymbol !== Constants.ethToken
                 symbol: root.fromTokenSymbol
                 contractAddress: root.fromTokenContractAddress
                 networkName: root.networkName
@@ -154,11 +154,12 @@ SignTransactionModalBase {
         objectName: "receiveBox"
         caption: qsTr("Receive")
         primaryText: "%1 %2".arg(formatBigNumber(root.toTokenAmount)).arg(root.toTokenSymbol)
-        secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.toTokenContractAddress)
+        secondaryText: root.toTokenSymbol !== Constants.ethToken ? SQUtils.Utils.elideAndFormatWalletAddress(root.toTokenContractAddress) : ""
         icon: Constants.tokenIcon(root.toTokenSymbol)
         badge: root.networkIconPath
         components: [
             ContractInfoButtonWithMenu {
+                visible: root.toTokenSymbol !== Constants.ethToken
                 symbol: root.toTokenSymbol
                 contractAddress: root.toTokenContractAddress
                 networkName: root.networkName
@@ -200,6 +201,7 @@ SignTransactionModalBase {
         objectName: "feesBox"
         caption: qsTr("Fees")
         primaryText: qsTr("Max. fees on %1").arg(root.networkName)
+        primaryTextCustomColor: Theme.palette.baseColor1
         secondaryText: " "
         components: [
             ColumnLayout {
@@ -207,7 +209,7 @@ SignTransactionModalBase {
                 StatusTextWithLoadingState {
                     objectName: "fiatFeesText"
                     Layout.alignment: Qt.AlignRight
-                    text: "%1 %2".arg(formatBigNumber(root.fiatFees)).arg(root.currentCurrency)
+                    text: loading ? Constants.dummyText : root.fiatFees
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Style.current.additionalTextSize
                     loading: root.feesLoading
@@ -215,7 +217,7 @@ SignTransactionModalBase {
                 StatusTextWithLoadingState {
                     objectName: "cryptoFeesText"
                     Layout.alignment: Qt.AlignRight
-                    text: "%1 ETH".arg(formatBigNumber(root.cryptoFees))
+                    text: loading ? Constants.dummyText : root.cryptoFees
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Style.current.additionalTextSize
                     customColor: Theme.palette.baseColor1

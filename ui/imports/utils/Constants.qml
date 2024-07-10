@@ -900,6 +900,9 @@ QtObject {
         readonly property string mainnet: "eth"
         readonly property string arbitrum: "arb1"
         readonly property string optimism: "oeth"
+
+        readonly property string optimism_goerli: "goOpt"
+        readonly property string arbitrum_goerli: "goArb"
     }
 
     readonly property QtObject networkExplorerLinks: QtObject {

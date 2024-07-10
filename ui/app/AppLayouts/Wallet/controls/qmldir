@@ -18,6 +18,5 @@ StatusDateRangePicker 1.0 StatusDateRangePicker.qml
 StatusNetworkListItemTag 1.0 StatusNetworkListItemTag.qml
 StatusTxProgressBar 1.0 StatusTxProgressBar.qml
 SwapExchangeButton 1.0 SwapExchangeButton.qml
-SwapModalFooterInfoComponent 1.0 SwapModalFooterInfoComponent.qml
 TokenSelector 1.0 TokenSelector.qml
 TokenSelectorNew 1.0 TokenSelectorNew.qml

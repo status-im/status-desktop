@@ -28,7 +28,7 @@ QtObject {
                                                 totalTokenFees:-0.004508663259772343,
                                                 totalTime:2
                                             },
-                                            amountToReceive: 379295138519599728000,
+                                            amountToReceive: "379295138519599728000",
                                             toNetworksModel: root.toModel
                                         })
 
@@ -39,7 +39,7 @@ QtObject {
                                                      totalTokenFees:-0.004508663259772343,
                                                      totalTime:2
                                                  },
-                                                 amountToReceive: 379295138519599728000,
+                                                 amountToReceive: "379295138519599728000",
                                                  toNetworksModel: root.toModel
                                              })
 
@@ -52,10 +52,6 @@ QtObject {
         }
     }
     property ListModel goodRouteNoApprovalNeeded: ListModel {
-        function rowCount() {
-            return count
-        }
-
         Component.onCompleted: append(suggestesRoutes)
 
         property var suggestesRoutes: [
@@ -94,10 +90,6 @@ QtObject {
         ]
     }
     property ListModel goodRouteApprovalNeeded: ListModel {
-        function rowCount() {
-            return count
-        }
-
         Component.onCompleted: append(suggestesRoutes)
 
         property var suggestesRoutes: [
@@ -129,16 +121,12 @@ QtObject {
                     isFirstBridgeTx:true,
                     approvalRequired:true,
                     approvalGasFees:0.100000000000000007,
-                    approvalAmountRequired:"0",
+                    approvalAmountRequired:"100000000000000000000",
                     approvalContractAddress:"0x216b4b4ba9f3e719726886d34a177484278bfcae"
                 }
             }
         ]
     }
 
-    property ListModel noRoutes: ListModel {
-        function rowCount() {
-            return count
-        }
-    }
+    property ListModel noRoutes: ListModel {}
 }

@@ -74,7 +74,7 @@ Item {
     }
 
     property SwapInputParamsForm swapFormData: SwapInputParamsForm {
-        defaultToTokenKey: "STT"
+        defaultToTokenKey: Constants.swap.testStatusTokenKey
     }
 
     Component {
@@ -82,6 +82,7 @@ Item {
         SwapModal {
             swapInputParamsForm: root.swapFormData
             swapAdaptor: root.swapAdaptor
+            loginType: Constants.LoginType.Password
         }
     }
 

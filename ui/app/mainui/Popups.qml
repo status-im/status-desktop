@@ -1253,6 +1253,7 @@ QtObject {
                     swapFormData: swapInputParamsForm
                     swapOutputData: SwapOutputData{}
                 }
+                loginType: root.rootStore.loginType
                 onClosed: destroy()
             }
         },
