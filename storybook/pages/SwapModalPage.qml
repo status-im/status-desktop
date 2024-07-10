@@ -14,6 +14,7 @@ import utils 1.0
 import Storybook 1.0
 import Models 1.0
 
+import mainui 1.0
 import shared.stores 1.0
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.Wallet.popups.swap 1.0
@@ -33,7 +34,7 @@ SplitView {
             swapModal.createObject(root)
         }
 
-        readonly property SwapTransactionRoutes dummySwapTransactionRoutes: SwapTransactionRoutes{}
+        readonly property SwapTransactionRoutes dummySwapTransactionRoutes: SwapTransactionRoutes {}
 
         property string uuid
 
@@ -44,6 +45,12 @@ SplitView {
             fetchSuggestedRoutesSpy.clear()
             authenticateAndTransferSpy.clear()
         }
+    }
+
+    Popups {
+        popupParent: root
+        rootStore: QtObject {}
+        communityTokensStore: QtObject {}
     }
 
     PopupBackground {
@@ -66,7 +73,7 @@ SplitView {
         SwapStore {
             id: dSwapStore
             signal suggestedRoutesReady(var txRoutes)
-            signal transactionSent(var chainId,var txHash, var uuid, var error)
+            signal transactionSent(var chainId, var txHash, var uuid, var error)
             signal transactionSendingComplete(var txHash,  var success)
 
             readonly property var accounts: WalletAccountsModel {}
@@ -79,6 +86,7 @@ SplitView {
                               accountTo, "amount = ", amount, " tokenFrom = ", tokenFrom, " tokenTo = ", tokenTo,
                               " disabledFromChainIDs = ", disabledFromChainIDs, " disabledToChainIDs = ", disabledToChainIDs,
                               " preferredChainIDs = ", preferredChainIDs, " sendType =", sendType, " lockedInAmounts = ", lockedInAmounts)
+                d.uuid = uuid
                 fetchSuggestedRoutesSignal()
             }
             function authenticateAndTransfer(uuid, accountFrom, accountTo, tokenFrom,
@@ -88,9 +96,6 @@ SplitView {
                               " tokenName = ", tokenName, " tokenIsOwnerToken = ", tokenIsOwnerToken, " paths = ", paths)
                 d.uuid = uuid
                 authenticateAndTransferSignal()
-            }
-            function getWei2Eth(wei, decimals) {
-                return wei/(10**decimals)
             }
 
             // only for testing
@@ -127,7 +132,7 @@ SplitView {
             }
             currencyStore: CurrenciesStore {}
             swapFormData: SwapInputParamsForm {
-                defaultToTokenKey: "STT"
+                defaultToTokenKey: Constants.swap.testStatusTokenKey
                 onSelectedAccountAddressChanged: {
                     if (selectedAccountAddress !== accountComboBox.currentValue)
                         accountComboBox.currentIndex = accountComboBox.indexOfValue(selectedAccountAddress)
@@ -146,6 +151,7 @@ SplitView {
                 destroyOnClose: true
                 swapInputParamsForm: adaptor.swapFormData
                 swapAdaptor: adaptor
+                loginType: Constants.LoginType.Password
                 Binding {
                     target: swapInputParamsForm
                     property: "fromTokensKey"
@@ -190,7 +196,7 @@ SplitView {
                 Connections {
                     target: approveTxButton
                     function onClicked() {
-                      modal.swapAdaptor.sendApproveTx()
+                        modal.swapAdaptor.sendApproveTx()
                     }
                 }
             }
@@ -348,7 +354,9 @@ SplitView {
             Button {
                 text: "emit no routes found event"
                 onClicked: {
-                    dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txNoRoutes)
+                    const txRoutes = d.dummySwapTransactionRoutes.txNoRoutes
+                    txRoutes.uuid = d.uuid
+                    dSwapStore.suggestedRoutesReady(txRoutes)
                 }
                 visible: advancedSignalsCheckBox.checked
             }
@@ -356,7 +364,9 @@ SplitView {
             Button {
                 text: "emit no approval needed route"
                 onClicked: {
-                    dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRouteNoApproval)
+                    const txRoutes = d.dummySwapTransactionRoutes.txHasRouteNoApproval
+                    txRoutes.uuid = d.uuid
+                    dSwapStore.suggestedRoutesReady(txRoutes)
                 }
                 visible: advancedSignalsCheckBox.checked
             }
@@ -364,7 +374,9 @@ SplitView {
             Button {
                 text: "emit approval needed route"
                 onClicked: {
-                    dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded)
+                    const txRoutes = d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
+                    txRoutes.uuid = d.uuid
+                    dSwapStore.suggestedRoutesReady(txRoutes)
                 }
                 visible: advancedSignalsCheckBox.checked
             }

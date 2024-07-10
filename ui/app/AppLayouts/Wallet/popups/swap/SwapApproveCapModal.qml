@@ -28,14 +28,13 @@ SignTransactionModalBase {
     required property string accountAddress
     required property string accountEmoji
     required property color accountColor
-    required property string accountBalanceAmount
+    required property string accountBalanceFormatted
 
     required property string networkShortName // e.g. "oeth"
     required property string networkName // e.g. "Optimism"
     required property string networkIconPath // e.g. `Style.svg("network/Network=Optimism")`
     required property string networkBlockExplorerUrl
 
-    required property string currentCurrency
     required property string fiatFees
     required property string cryptoFees
     // need to check how this is done in new router, right now it is Enum type
@@ -44,6 +43,7 @@ SignTransactionModalBase {
     property string serviceProviderName: "Paraswap"
     property string serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
     property string serviceProviderContractAddress: "0x1bD435F3C054b6e901B7b108a0ab7617C808677b"
+    property string serviceProviderIcon: Style.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
 
     title: qsTr("Approve spending cap")
     subtitle: serviceProviderURL
@@ -69,7 +69,7 @@ SignTransactionModalBase {
     ]
 
     headerIconComponent: StatusSmartIdenticon {
-        asset.name: Style.png("swap/paraswap") // FIXME svg
+        asset.name: root.serviceProviderIcon
         asset.isImage: true
         asset.bgWidth: 40
         asset.bgHeight: 40
@@ -88,7 +88,7 @@ SignTransactionModalBase {
                 }
                 StatusTextWithLoadingState {
                     objectName: "footerFiatFeesText"
-                    text: "%1 %2".arg(formatBigNumber(root.fiatFees)).arg(root.currentCurrency)
+                    text: loading ? Constants.dummyText : root.fiatFees
                     loading: root.feesLoading
                 }
             }
@@ -143,7 +143,7 @@ SignTransactionModalBase {
         asset.isLetterIdenticon: !!root.accountEmoji
         components: [
             InformationTag {
-                tagPrimaryLabel.text: "%1 %2".arg(formatBigNumber(root.accountBalanceAmount, 2)).arg(root.fromTokenSymbol)
+                tagPrimaryLabel.text: root.accountBalanceFormatted
                 rightComponent: StatusRoundedImage {
                     width: 16
                     height: 16
@@ -160,11 +160,12 @@ SignTransactionModalBase {
         objectName: "tokenBox"
         caption: qsTr("Token")
         primaryText: root.fromTokenSymbol
-        secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress)
+        secondaryText: root.fromTokenSymbol !== Constants.ethToken ? SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress) : ""
         icon: Constants.tokenIcon(root.fromTokenSymbol)
         badge: root.networkIconPath
         components: [
             ContractInfoButtonWithMenu {
+                visible: root.fromTokenSymbol !== Constants.ethToken
                 symbol: root.fromTokenSymbol
                 contractAddress: root.fromTokenContractAddress
                 networkName: root.networkName
@@ -183,7 +184,7 @@ SignTransactionModalBase {
         caption: qsTr("Via smart contract")
         primaryText: root.serviceProviderName
         secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.serviceProviderContractAddress)
-        icon: Style.png("swap/paraswap") // FIXME svg
+        icon: root.serviceProviderIcon
         components: [
             ContractInfoButtonWithMenu {
                 symbol: ""
@@ -213,6 +214,7 @@ SignTransactionModalBase {
         objectName: "feesBox"
         caption: qsTr("Fees")
         primaryText: qsTr("Max. fees on %1").arg(root.networkName)
+        primaryTextCustomColor: Theme.palette.baseColor1
         secondaryText: " "
         components: [
             ColumnLayout {
@@ -220,7 +222,7 @@ SignTransactionModalBase {
                 StatusTextWithLoadingState {
                     objectName: "fiatFeesText"
                     Layout.alignment: Qt.AlignRight
-                    text: "%1 %2".arg(formatBigNumber(root.fiatFees)).arg(root.currentCurrency)
+                    text: loading ? Constants.dummyText : root.fiatFees
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Style.current.additionalTextSize
                     loading: root.feesLoading
@@ -228,7 +230,7 @@ SignTransactionModalBase {
                 StatusTextWithLoadingState {
                     objectName: "cryptoFeesText"
                     Layout.alignment: Qt.AlignRight
-                    text: "%1 ETH".arg(formatBigNumber(root.cryptoFees))
+                    text: loading ? Constants.dummyText : root.cryptoFees
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Style.current.additionalTextSize
                     customColor: Theme.palette.baseColor1

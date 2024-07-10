@@ -28,10 +28,10 @@ StatusFlatButton {
     onClicked: moreMenu.popup(-moreMenu.width + width, height + 4)
 
     function getExplorerName() {
-        if (root.networkShortName === Constants.networkShortChainNames.arbitrum) {
+        if (root.networkShortName === Constants.networkShortChainNames.arbitrum || root.networkShortName === Constants.networkShortChainNames.arbitrum_goerli) {
             return qsTr("Arbiscan")
         }
-        if (root.networkShortName === Constants.networkShortChainNames.optimism) {
+        if (root.networkShortName === Constants.networkShortChainNames.optimism || root.networkShortName === Constants.networkShortChainNames.optimism_goerli) {
             return qsTr("Optimistic")
         }
         return qsTr("Etherscan")
@@ -54,6 +54,7 @@ StatusFlatButton {
             text: qsTr("Copy contract address")
             successText: qsTr("Copied")
             icon.name: "copy"
+            autoDismissMenu: true
             onTriggered: Utils.copyToClipboard(root.contractAddress)
         }
     }

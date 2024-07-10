@@ -13,6 +13,7 @@ ColumnLayout {
 
     property string caption
     property string primaryText
+    property color primaryTextCustomColor: Theme.palette.directColor1
     property string secondaryText
     property string icon
     property string badge
@@ -31,6 +32,7 @@ ColumnLayout {
         title: root.primaryText
         statusListItemTitle.font.pixelSize: Style.current.additionalTextSize
         statusListItemTitle.elide: Text.ElideMiddle
+        statusListItemTitle.customColor: root.primaryTextCustomColor
         subTitle: root.secondaryText
         statusListItemSubTitle.font.pixelSize: Style.current.additionalTextSize
         asset.name: root.icon

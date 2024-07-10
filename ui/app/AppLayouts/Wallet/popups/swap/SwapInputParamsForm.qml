@@ -56,9 +56,7 @@ QtObject {
         return !!root.selectedAccountAddress &&
                 root.selectedNetworkChainId !== -1 &&
                 !!root.fromTokensKey && !!root.toTokenKey &&
-                (!!root.fromTokenAmount &&
-                 !isNaN(bigIntNumber) &&
-                 SQUtils.AmountsArithmetic.cmp(bigIntNumber, 0) === 1) &&
+                (!!root.fromTokenAmount && !isNaN(bigIntNumber) && bigIntNumber.gt(0)) &&
                 root.selectedSlippage > 0
     }
 }

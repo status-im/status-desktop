@@ -57,7 +57,7 @@ QtObject {
             {
                 chainId: 1,
                 chainName: "Mainnet",
-                blockExplorerUrl: "https://etherscan.io/",
+                blockExplorerURL: "https://etherscan.io/",
                 iconUrl: "network/Network=Ethereum",
                 chainColor: "#627EEA",
                 shortName: "eth",
@@ -71,7 +71,7 @@ QtObject {
             {
                 chainId: 11155111,
                 chainName: "Sepolia Mainnet",
-                blockExplorerUrl: "https://sepolia.etherscan.io/",
+                blockExplorerURL: "https://sepolia.etherscan.io/",
                 iconUrl: "network/Network=Ethereum",
                 chainColor: "#627EEA",
                 shortName: "eth",
@@ -85,7 +85,7 @@ QtObject {
             {
                 chainId: 10,
                 chainName: "Optimism",
-                blockExplorerUrl: "https://optimistic.etherscan.io",
+                blockExplorerURL: "https://optimistic.etherscan.io",
                 iconUrl: "network/Network=Optimism",
                 chainColor: "#E90101",
                 shortName: "oeth",
@@ -99,7 +99,7 @@ QtObject {
             {
                 chainId: 420,
                 chainName: "Optimism Goerli Testnet",
-                blockExplorerUrl: "https://goerli-optimism.etherscan.io/",
+                blockExplorerURL: "https://goerli-optimism.etherscan.io/",
                 iconUrl: "network/Network=Optimism",
                 chainColor: "#939BA1",
                 shortName: "goOpt",
@@ -113,7 +113,7 @@ QtObject {
             {
                 chainId: 42161,
                 chainName: "Arbitrum",
-                blockExplorerUrl: "https://arbiscan.io/",
+                blockExplorerURL: "https://arbiscan.io/",
                 iconUrl: "network/Network=Arbitrum",
                 chainColor: "#51D0F0",
                 shortName: "arb1",
@@ -127,7 +127,7 @@ QtObject {
             {
                 chainId: 421613,
                 chainName: "Arbitrum Goerli",
-                blockExplorerUrl: "https://goerli.arbiscan.io/",
+                blockExplorerURL: "https://goerli.arbiscan.io/",
                 iconUrl: "network/Network=Arbitrum",
                 chainColor: "#939BA1",
                 shortName: "goArb",

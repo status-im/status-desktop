@@ -73,7 +73,7 @@ QtObject {
 
     /*!
       \qmlmethod AmountsArithmetic::fromString(numStr)
-      \brief Construct an amount from a textual representation.
+      \brief Construct an amount from a textual or numeric representation
 
       The constructed amount is of arbitrary precision. Using ordinary js
       numbers, precision might not be sufficient:
@@ -86,12 +86,12 @@ QtObject {
 
       The obtained amount can be multiplied or compared.
 
-      Provided number is assumed to be an amount in basic units, an integer.
+      Provided number is assumed to be an amount in basic units, e.g. an integer or a float number.
 
       returns NaN in case the conversion fails.
      */
     function fromString(numStr) {
-        console.assert(typeof numStr === "string")
+        console.assert(typeof numStr === "string" || typeof numStr === "number")
         try {
             return new Big.Big(numStr)
         } catch(e) {

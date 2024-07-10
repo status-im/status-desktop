@@ -58,6 +58,7 @@ Control {
     readonly property int rawValueMultiplierIndex: amountToSendInput.multiplierIndex
     readonly property bool valueValid: amountToSendInput.inputNumberValid
     readonly property bool amountEnteredGreaterThanBalance: value > maxSendButton.maxSafeValue
+    readonly property string accountBalanceFormatted: root.currencyStore.formatCurrencyAmount(d.maxCryptoBalance, d.selectedHolding.symbol)
 
     // visual properties
     property int swapExchangeButtonWidth: 44
@@ -103,7 +104,7 @@ Control {
 
             showAllTokens: true
             enabledChainIds: root.selectedNetworkChainId !== -1 ? [root.selectedNetworkChainId] : []
-            accountAddress: root.selectedAccountAddress || ""
+            accountAddress: root.selectedAccountAddress
             searchString: holdingSelector.searchString
         }
 

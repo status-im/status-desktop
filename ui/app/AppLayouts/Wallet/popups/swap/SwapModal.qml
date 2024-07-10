@@ -24,6 +24,7 @@ StatusDialog {
     parameters to the modal when being launched from elsewhere */
     required property SwapInputParamsForm swapInputParamsForm
     required property SwapModalAdaptor swapAdaptor
+    required property int loginType
 
     objectName: "swapModal"
 
@@ -377,7 +378,8 @@ StatusDialog {
                     objectName: "signButton"
                     readonly property string fromTokenSymbol: !!root.swapAdaptor.fromToken ? root.swapAdaptor.fromToken.symbol ?? "" : ""
                     loading: root.swapAdaptor.approvalPending
-                    icon.name: "password"
+                    icon.name: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.authenticationIconByType[Constants.LoginType.Keycard]
+                                                                                  : Constants.authenticationIconByType[root.loginType]
                     text: {
                         if(root.swapAdaptor.validSwapProposalReceived) {
                             if (root.swapAdaptor.approvalPending) {
@@ -398,8 +400,10 @@ StatusDialog {
                              !root.swapAdaptor.approvalPending
                     onClicked: {
                         if (root.swapAdaptor.validSwapProposalReceived) {
-                            let txType = root.swapAdaptor.swapOutputData.approvalNeeded ? SwapSignApprovePopup.TxType.Approve : SwapSignApprovePopup.TxType.Swap
-                            Global.openPopup(swapSignApprovePopup, {"txType": txType})
+                            if (root.swapAdaptor.swapOutputData.approvalNeeded)
+                                Global.openPopup(swapApproveModalComponent)
+                            else
+                                Global.openPopup(swapSignModalComponent)
                         }
                     }
                 }
@@ -407,46 +411,96 @@ StatusDialog {
         }
     }
 
-    /* TODO: this is only temporary placeholder and should be replaced completely by
-    https://github.com/status-im/status-desktop/issues/14785 */
     Component {
-        id: swapSignApprovePopup
-        SwapSignApprovePopup {
-            id: approvePopup
+        id: swapApproveModalComponent
+        SwapApproveCapModal {
             destroyOnClose: true
-            loading: root.swapAdaptor.swapProposalLoading
-            swapSignApproveInputForm: SwapSignApproveInputForm {
-                selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
-                selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-                estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
-                swapProviderName: root.swapAdaptor.swapOutputData.txProviderName
-                approvalGasFees: root.swapAdaptor.swapOutputData.approvalGasFees
-                approvalAmountRequired: root.swapAdaptor.swapOutputData.approvalAmountRequired
-                approvalContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
-                fromTokensKey: root.swapInputParamsForm.fromTokensKey
-                fromTokensAmount:  root.swapInputParamsForm.fromTokenAmount
-                toTokensKey: root.swapInputParamsForm.toTokenKey
-                toTokensAmount: root.swapAdaptor.swapOutputData.toTokenAmount
-                swapFees: root.swapAdaptor.swapOutputData.totalFees
-                selectedSlippage: root.swapInputParamsForm.selectedSlippage
+
+            loginType: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            feesLoading: root.swapAdaptor.swapProposalLoading
+
+            fromTokenSymbol: root.swapAdaptor.fromToken.symbol
+            fromTokenAmount: SQUtils.AmountsArithmetic.div(
+                                 SQUtils.AmountsArithmetic.fromString(root.swapAdaptor.swapOutputData.approvalAmountRequired),
+                                 SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.fromToken.decimals ?? 18)).toFixed()
+            fromTokenContractAddress: SQUtils.ModelUtils.getByKey(root.swapAdaptor.fromToken.addressPerChain,
+                                                                  "chainId", root.swapInputParamsForm.selectedNetworkChainId,
+                                                                  "address")
+
+            accountName: root.swapAdaptor.selectedAccount.name
+            accountAddress: root.swapAdaptor.selectedAccount.address
+            accountEmoji: root.swapAdaptor.selectedAccount.emoji
+            accountColor: Utils.getColorForId(root.swapAdaptor.selectedAccount.colorId)
+            accountBalanceFormatted: payPanel.accountBalanceFormatted // FIXME https://github.com/status-im/status-desktop/issues/15554
+
+            networkShortName: networkFilter.singleSelectionItemData.shortName
+            networkName: networkFilter.singleSelectionItemData.chainName
+            networkIconPath: Style.svg(networkFilter.singleSelectionItemData.iconUrl)
+            networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
+
+            fiatFees: {
+                const feesInFloat = root.swapAdaptor.currencyStore.getFiatValue(root.swapAdaptor.swapOutputData.approvalGasFees, Constants.ethToken)
+                return root.swapAdaptor.currencyStore.formatCurrencyAmount(feesInFloat, root.swapAdaptor.currencyStore.currentCurrency)
             }
-            adaptor: SwapSignApproveAdaptor {
-                swapStore: root.swapAdaptor.swapStore
-                walletAssetsStore: root.swapAdaptor.walletAssetsStore
-                currencyStore: root.swapAdaptor.currencyStore
-                inputFormData: approvePopup.swapSignApproveInputForm
+            cryptoFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(root.swapAdaptor.swapOutputData.approvalGasFees, Constants.ethToken)
+            estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
+
+            serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
+            // serviceProviderURL: "" // FIXME get the service provider URL from backend
+            // serviceProviderIcon: "" // FIXME get the service icon from backend
+            serviceProviderContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
+
+            onAccepted: {
+                root.swapAdaptor.sendApproveTx()
             }
-            onSign: {
-                if(txType === SwapSignApprovePopup.TxType.Approve) {
-                    root.swapAdaptor.sendApproveTx()
-                    close()
-                } else {
-                    root.swapAdaptor.sendSwapTx()
-                    close()
-                    root.close()
-                }
+        }
+    }
+
+    Component {
+        id: swapSignModalComponent
+        SwapSignModal {
+            destroyOnClose: true
+
+            loginType: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            feesLoading: root.swapAdaptor.swapProposalLoading
+
+            fromTokenSymbol: root.swapAdaptor.fromToken.symbol
+            fromTokenAmount: root.swapInputParamsForm.fromTokenAmount
+            fromTokenContractAddress: SQUtils.ModelUtils.getByKey(root.swapAdaptor.fromToken.addressPerChain,
+                                                                  "chainId", root.swapInputParamsForm.selectedNetworkChainId,
+                                                                  "address")
+
+            toTokenSymbol: root.swapAdaptor.toToken.symbol
+            toTokenAmount: root.swapAdaptor.swapOutputData.toTokenAmount
+            toTokenContractAddress: SQUtils.ModelUtils.getByKey(root.swapAdaptor.toToken.addressPerChain,
+                                                                "chainId", root.swapInputParamsForm.selectedNetworkChainId,
+                                                                "address")
+
+            accountName: root.swapAdaptor.selectedAccount.name
+            accountAddress: root.swapAdaptor.selectedAccount.address
+            accountEmoji: root.swapAdaptor.selectedAccount.emoji
+            accountColor: Utils.getColorForId(root.swapAdaptor.selectedAccount.colorId)
+
+            networkShortName: networkFilter.singleSelectionItemData.shortName
+            networkName: networkFilter.singleSelectionItemData.chainName
+            networkIconPath: Style.svg(networkFilter.singleSelectionItemData.iconUrl)
+            networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
+
+            fiatFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(root.swapAdaptor.swapOutputData.totalFees,
+                                                                          root.swapAdaptor.currencyStore.currentCurrency)
+            cryptoFees: {
+                const cryptoValue = root.swapAdaptor.currencyStore.getCryptoValue(root.swapAdaptor.swapOutputData.totalFees, Constants.ethToken)
+                return root.swapAdaptor.currencyStore.formatCurrencyAmount(cryptoValue, Constants.ethToken)
             }
-            onReject: close()
+            slippage: root.swapInputParamsForm.selectedSlippage
+
+            serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
+            // serviceProviderURL: "" // FIXME get the service provider URL from backend
+
+            onAccepted: {
+                root.swapAdaptor.sendSwapTx()
+                root.close()
+            }
         }
     }
 }

@@ -90,11 +90,10 @@ SplitView {
                     networkShortName: priv.selectedNetwork.shortName
                     networkName: priv.selectedNetwork.chainName
                     networkIconPath: Style.svg(priv.selectedNetwork.iconUrl)
-                    networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerUrl
+                    networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
 
-                    currentCurrency: "EUR"
-                    fiatFees: "1.54"
-                    cryptoFees: "0.001"
+                    fiatFees: "1.54 EUR"
+                    cryptoFees: "0.001 ETH"
                     slippage: 0.5
 
                     loginType: ctrlLoginType.currentIndex

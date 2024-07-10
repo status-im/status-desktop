@@ -43,6 +43,7 @@ StatusDialog {
                 id: signButton
                 interactive: !root.feesLoading && root.signButtonEnabled
                 icon.name: Constants.authenticationIconByType[root.loginType]
+                disabledColor: Theme.palette.directColor8
                 text: qsTr("Sign")
                 onClicked: root.accept() // close and emit accepted() signal
             }
