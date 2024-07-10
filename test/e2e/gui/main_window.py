@@ -169,9 +169,8 @@ class MainWindow(Window):
         super(MainWindow, self).__init__(names.statusDesktop_mainWindow)
         self.left_panel = LeftPanel()
 
-    # TODO: we need to handle all the issues with keycard mock var before using keycard  window in tests
     def prepare(self) -> 'Window':
-        MockedKeycardController().wait_until_appears().hide()
+        MockedKeycardController.keycard_handler()
         return super().prepare()
 
     @allure.step('Sign Up user')
@@ -192,6 +191,7 @@ class MainWindow(Window):
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
+        MockedKeycardController.keycard_handler()
         return self
 
     @allure.step('Log in user')
@@ -200,6 +200,7 @@ class MainWindow(Window):
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
+        MockedKeycardController.keycard_handler()
         return self
 
     @allure.step('Authorize user')

@@ -23,20 +23,19 @@ from functools import wraps
 
 
 def handle_settings_opening(view_class, menu_item):
-    def decorator(func):
+    def open_settings_decorator(func):
         @wraps(func)
         def wrapper(self, click_attempts=2):
-            if MockedKeycardController().exists:
-                MockedKeycardController().wait_until_appears().hide()
+            MockedKeycardController().keycard_handler()
             self._open_settings(menu_item)
-            if configs.system.TEST_MODE:
-                if click_attempts:
-                    time.sleep(0.5)
-                    return func(self, click_attempts - 1)
+            if click_attempts:
+                if configs.system.TEST_MODE:
+                    time.sleep(1)
+                return func(self, click_attempts - 1)
 
         return wrapper
 
-    return decorator
+    return open_settings_decorator
 
 
 class LeftPanel(QObject):

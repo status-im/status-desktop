@@ -14,6 +14,13 @@ from gui.objects_map import names
 
 class MockedKeycardController(Window):
 
+    @staticmethod
+    def keycard_handler():
+        mocked_keycard = MockedKeycardController()
+        if configs.system.TEST_MODE and configs.system.CLOSE_KEYCARD_CONTROLLER:
+            if mocked_keycard.is_visible:
+                mocked_keycard.hide()
+
     def __init__(self):
         super(MockedKeycardController, self).__init__(names.QQuickApplicationWindow)
         self._plugin_reader_button = Button(names.plugin_Reader_StatusButton)
