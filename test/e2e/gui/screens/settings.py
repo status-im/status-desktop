@@ -25,7 +25,7 @@ class LeftPanel(QObject):
         super().__init__(settings_names.mainWindow_LeftTabView)
         self._settings_section_template = QObject(settings_names.scrollView_MenuItem_StatusNavigationListItem)
         self._scroll = Scroll(settings_names.mainWindow_scrollView_StatusScrollView)
-        self._settings_section_back_up_seed_option = QObject(settings_names.settingsBackUpSeedPhraseOption)
+        self.settings_section_back_up_seed_option = QObject(settings_names.settingsBackUpSeedPhraseOption)
         self._settings_section_wallet_option = QObject(settings_names.settingsWalletOption)
 
     def _open_settings(self, object_name: str):
@@ -33,10 +33,6 @@ class LeftPanel(QObject):
         if not self._settings_section_template.is_visible:
             self._scroll.vertical_scroll_down(self._settings_section_template)
         self._settings_section_template.click()
-
-    @allure.step('Check back up seed option menu item presence')
-    def check_back_up_seed_option_present(self):
-        return self._settings_section_back_up_seed_option.exists
 
     @allure.step('Open messaging settings')
     def open_messaging_settings(self) -> 'MessagingSettingsView':
