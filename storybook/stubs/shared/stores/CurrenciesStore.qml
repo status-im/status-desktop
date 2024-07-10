@@ -24,7 +24,7 @@ QtObject {
     }
 
     function getFiatValue(balance, cryptoSymbol) {
-        return balance
+        return parseFloat(balance)
     }
 
     function getCurrencyAmount(amount, symbol) {

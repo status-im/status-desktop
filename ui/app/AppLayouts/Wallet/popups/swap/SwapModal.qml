@@ -358,16 +358,9 @@ StatusDialog {
                             }
 
                             if(root.swapAdaptor.validSwapProposalReceived) {
-                                if(root.swapAdaptor.swapOutputData.approvalNeeded) {
-                                    let approvalGasFeesFiat = root.swapAdaptor.currencyStore.getFiatValue(root.swapAdaptor.swapOutputData.approvalGasFees, Constants.ethToken)
-                                    return root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                                                approvalGasFeesFiat,
-                                                root.swapAdaptor.currencyStore.currentCurrency)
-                                } else {
-                                    return root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                                                root.swapAdaptor.swapOutputData.totalFees,
-                                                root.swapAdaptor.currencyStore.currentCurrency)
-                                }
+                                return root.swapAdaptor.currencyStore.formatCurrencyAmount(
+                                            root.swapAdaptor.swapOutputData.totalFees,
+                                            root.swapAdaptor.currencyStore.currentCurrency)
                             }
 
                             return "--"
