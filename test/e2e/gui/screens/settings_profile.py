@@ -17,7 +17,7 @@ class ProfileSettingsView(QObject):
 
     def __init__(self):
         super().__init__(settings_names.mainWindow_MyProfileView)
-        self._scroll_view = Scroll(settings_names.settingsContentBaseScrollView_Flickable)
+        self._scroll_view = Scroll(settings_names.settingsContentBase_ScrollView)
         self._display_name_text_field = TextEdit(settings_names.displayName_TextEdit)
         self._save_button = Button(names.mainWindow_Save_changes_StatusButton)
         self._bio_text_field = TextEdit(settings_names.bio_TextEdit)

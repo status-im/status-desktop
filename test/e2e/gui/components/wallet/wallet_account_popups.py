@@ -21,7 +21,7 @@ GENERATED_PAGES_LIMIT = 20
 class AccountPopup(BasePopup):
     def __init__(self):
         super(AccountPopup, self).__init__()
-        self._scroll = Scroll(names.o_Flickable)
+        self._scroll = Scroll(names.generalView_StatusScrollView)
         self._name_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountName)
         self._name_text_input = QObject(names.mainWallet_AddEditAccountPopup_AccountNameComponent)
         self._emoji_button = Button(names.mainWallet_AddEditAccountPopup_AccountEmojiPopupButton)
@@ -144,7 +144,7 @@ class AccountPopup(BasePopup):
             self._address_combobox_button.click()
             GeneratedAddressesList().wait_until_appears().select(index)
             if value != DerivationPath.ETHEREUM.value:
-                self._scroll.vertical_scroll_to(self._non_eth_checkbox)
+                self._scroll.vertical_scroll_down(self._non_eth_checkbox)
                 self._non_eth_checkbox.set(True)
         else:
             self._derivation_path_text_edit.type_text(str(index))

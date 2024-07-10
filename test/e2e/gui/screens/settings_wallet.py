@@ -29,7 +29,7 @@ class WalletSettingsView(QObject):
 
     def __init__(self):
         super().__init__(settings_names.mainWindow_WalletView)
-        self._scroll = Scroll(settings_names.settingsContentBaseScrollView_Flickable)
+        self._scroll = Scroll(settings_names.settingsContentBase_ScrollView)
         self._wallet_settings_add_new_account_button = Button(settings_names.settings_Wallet_MainView_AddNewAccountButton)
         self._wallet_network_button = Button(settings_names.settings_Wallet_MainView_Networks)
         self._account_order_button = Button(settings_names.settingsContentBaseScrollView_accountOrderItem_StatusListItem)
@@ -112,7 +112,7 @@ class WalletSettingsView(QObject):
                 for child in walk_children(item):
                     if getattr(child, 'objectName', '') == 'more-icon':
                         more_button = QObject(real_name=driver.objectMap.realName(child))
-                        self._scroll.vertical_down_to(more_button)
+                        self._scroll.vertical_scroll_down(more_button)
                         more_button.click()
                         break
 
@@ -307,7 +307,7 @@ class EditNetworkSettings(WalletSettingsView):
         self._network_revert_to_default = Button(settings_names.editNetworkRevertButton)
         self._network_save_changes = Button(settings_names.editNetworkSaveButton)
         self._network_edit_view_back_button = Button(settings_names.main_toolBar_back_button)
-        self._network_edit_scroll = Scroll(settings_names.settingsContentBaseScrollView_Flickable)
+        self._network_edit_scroll = Scroll(settings_names.settingsContentBase_ScrollView)
         self._network_edit_main_rpc_url_error_message = QObject(settings_names.mainRpcUrlInputObject)
         self._network_edit_failover_rpc_url_error_message = QObject(settings_names.failoverRpcUrlInputObject)
 
@@ -321,7 +321,7 @@ class EditNetworkSettings(WalletSettingsView):
 
     @allure.step('Click Revert to default button and redirect to Networks screen')
     def click_revert_to_default_and_go_to_networks_main_screen(self, attempts: int = 2):
-        self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
+        self._network_edit_scroll.vertical_scroll_down(self._network_revert_to_default)
         self._network_revert_to_default.click()
         try:
             return NetworkWalletSettings().wait_until_appears()
@@ -347,7 +347,7 @@ class EditNetworkSettings(WalletSettingsView):
                 assert self._network_failover_json_rpc_url.exists, f"Failover JSON RPC URL input field is not present"
                 assert self._network_block_explorer.exists, f"Block explorer input field is not present"
 
-                self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
+                self._network_edit_scroll.vertical_scroll_down(self._network_acknowledgment_checkbox)
                 assert driver.waitFor(lambda: self._network_acknowledgment_checkbox.exists,
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Acknowldegment checkbox is not present"
 
@@ -372,7 +372,7 @@ class EditNetworkSettings(WalletSettingsView):
                 assert self._network_failover_json_rpc_url.exists, f"Failover JSON RPC URL input field is not present"
                 assert self._network_block_explorer.exists, f"Block explorer input field is not present"
 
-                self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
+                self._network_edit_scroll.vertical_scroll_down(self._network_acknowledgment_checkbox)
                 assert driver.waitFor(lambda: self._network_acknowledgment_checkbox.exists,
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Acknowldegment checkbox is not present"
 
@@ -409,11 +409,11 @@ class EditNetworkSettings(WalletSettingsView):
         match network_tab:
             case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
                 self._live_network_tab.click()
-                self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
+                self._network_edit_scroll.vertical_scroll_down(self._network_acknowledgment_checkbox)
                 self._network_acknowledgment_checkbox.set(value)
             case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
                 self._test_network_tab.click()
-                self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
+                self._network_edit_scroll.vertical_scroll_down(self._network_acknowledgment_checkbox)
                 self._network_acknowledgment_checkbox.set(value)
         return self
 
@@ -436,7 +436,7 @@ class EditNetworkSettings(WalletSettingsView):
     def revert_to_default(self, attempts=2):
         current_value_main = self._network_main_json_rpc_url.text
         current_value_failover = self._network_failover_json_rpc_url.text
-        self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
+        self._network_edit_scroll.vertical_scroll_down(self._network_revert_to_default)
         self._network_revert_to_default.click()
         if (current_value_main == self._network_main_json_rpc_url.text
                 and current_value_failover == self._network_failover_json_rpc_url.text):
@@ -446,7 +446,7 @@ class EditNetworkSettings(WalletSettingsView):
 
     @allure.step('Click Revert to default button and redirect to Networks screen')
     def click_revert_to_default_and_go_to_networks_main_screen(self):
-        self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
+        self._network_edit_scroll.vertical_scroll_down(self._network_revert_to_default)
         self._network_revert_to_default.click()
         return NetworkWalletSettings().wait_until_appears()
 

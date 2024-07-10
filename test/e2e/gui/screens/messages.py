@@ -35,7 +35,7 @@ class LeftPanel(QObject):
         super().__init__(messaging_names.mainWindow_contactColumnLoader_Loader)
         self._start_chat_button = Button(messaging_names.mainWindow_startChatButton_StatusIconTabButton)
         self._search_text_edit = TextEdit(messaging_names.mainWindow_search_edit_TextEdit)
-        self._scroll = Scroll(messaging_names.scrollView_Flickable)
+        self._scroll = Scroll(messaging_names.mainWindow_scrollView_StatusScrollView)
         self._chats_list = List(messaging_names.chatList_ListView)
         self._chat_list_item = QObject(messaging_names.scrollView_StatusChatListItem)
         self._chats_scroll = QObject(messaging_names.mainWindow_scrollView_StatusScrollView)

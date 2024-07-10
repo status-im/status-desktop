@@ -78,7 +78,7 @@ class MockedKeycardController(Window):
     @allure.step('Choose custom keycard from initial keycard state dropdown')
     def choose_custom_keycard(self):
         if not self._keycard_state_button.is_visible:
-            self._scroll.vertical_scroll_to(self._keycard_state_button)
+            self._scroll.vertical_scroll_down(self._keycard_state_button)
         self._keycard_state_button.click()
         self._custom_keycard_item.click()
         time.sleep(1)
@@ -87,14 +87,14 @@ class MockedKeycardController(Window):
     @allure.step('Input custom keycard details to custom text field')
     def input_custom_keycard_details(self, details: str, index: int):
         fields = self.get_text_fields
-        self._scroll.vertical_scroll_to(QObject(real_name=driver.objectMap.realName(fields[index])))
+        self._scroll.vertical_scroll_down(QObject(real_name=driver.objectMap.realName(fields[index])))
         driver.type(fields[index], details)
         time.sleep(1)
 
     @allure.step('Choose not Status keycard from initial keycard state dropdown')
     def choose_not_status_keycard(self):
         if not self._keycard_state_button.is_visible:
-            self._scroll.vertical_scroll_to(self._keycard_state_button)
+            self._scroll.vertical_scroll_down(self._keycard_state_button)
         self._keycard_state_button.click()
         self._not_status_keycard_item.click()
         time.sleep(1)
@@ -103,7 +103,7 @@ class MockedKeycardController(Window):
     @allure.step('Choose empty keycard from initial keycard state dropdown')
     def choose_empty_keycard(self):
         if not self._keycard_state_button.is_visible:
-            self._scroll.vertical_scroll_to(self._keycard_state_button)
+            self._scroll.vertical_scroll_down(self._keycard_state_button)
         self._keycard_state_button.click()
         self._empty_keycard_item.click()
         time.sleep(1)
@@ -112,7 +112,7 @@ class MockedKeycardController(Window):
     @allure.step('Choose keycard with MAX pairing slots reached from initial keycard state dropdown')
     def choose_max_slots_reached_keycard(self):
         if not self._keycard_state_button.is_visible:
-            self._scroll.vertical_scroll_to(self._keycard_state_button)
+            self._scroll.vertical_scroll_down(self._keycard_state_button)
         self._keycard_state_button.click()
         self._max_slots_reached_item.click()
         time.sleep(1)
@@ -121,7 +121,7 @@ class MockedKeycardController(Window):
     @allure.step('Choose keycard with mnemonic and metadata from initial keycard state dropdown')
     def choose_mnemonic_metadata_keycard(self):
         if not self._keycard_state_button.is_visible:
-            self._scroll.vertical_scroll_to(self._keycard_state_button)
+            self._scroll.vertical_scroll_down(self._keycard_state_button)
         self._keycard_state_button.click()
         self._mnemonic_metadata_item.click()
         time.sleep(1)

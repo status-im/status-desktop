@@ -37,6 +37,7 @@ secureYourSeedPhraseBanner_ModuleWarning = {"container": statusDesktop_mainWindo
 
 # Scroll
 o_Flickable = {"container": statusDesktop_mainWindow_overlay, "type": "Flickable", "unnamed": 1, "visible": True}
+generalView_StatusScrollView = {"container": statusDesktop_mainWindow_overlay, "id": "generalView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 
 # Context Menu
 o_StatusListView = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListView", "unnamed": 1, "visible": True}

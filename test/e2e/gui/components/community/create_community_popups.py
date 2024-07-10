@@ -37,7 +37,7 @@ class CreateCommunityPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._scroll = Scroll(names.o_Flickable)
+        self._scroll = Scroll(names.generalView_StatusScrollView )
         self._name_text_edit = TextEdit(names.createCommunityNameInput_TextEdit)
         self._description_text_edit = TextEdit(names.createCommunityDescriptionInput_TextEdit)
         self._add_logo_button = Button(names.addButton_StatusRoundButton2)
@@ -61,38 +61,38 @@ class CreateCommunityPopup(BasePopup):
 
     @allure.step('Get archive support checkbox state')
     def is_archive_checkbox_checked(self) -> bool:
-        self._scroll.vertical_scroll_to(self._archive_support_checkbox)
+        self._scroll.vertical_scroll_down(self._archive_support_checkbox)
         return self._archive_support_checkbox.is_checked
 
     @allure.step('Get request to join checkbox state')
     def is_request_to_join_checkbox_checked(self) -> bool:
-        self._scroll.vertical_scroll_to(self._request_to_join_checkbox)
+        self._scroll.vertical_scroll_down(self._request_to_join_checkbox)
         return self._request_to_join_checkbox.is_checked
 
     @allure.step('Get pin messaged checkbox state')
     def is_pin_messages_checkbox_checked(self) -> bool:
-        self._scroll.vertical_scroll_to(self._pin_messages_checkbox)
+        self._scroll.vertical_scroll_down(self._pin_messages_checkbox)
         return self._pin_messages_checkbox.is_checked
 
     @allure.step('Get community name')
     def get_name(self) -> str:
-        self._scroll.vertical_scroll_to(self._name_text_edit)
+        self._scroll.vertical_scroll_down(self._name_text_edit)
         return self._name_text_edit.text
 
     @allure.step('Set community name')
     def set_name(self, value: str):
-        self._scroll.vertical_scroll_to(self._name_text_edit)
+        self._scroll.vertical_scroll_down(self._name_text_edit)
         self._name_text_edit.text = value
 
     @property
     @allure.step('Get community description')
     def description(self) -> str:
-        self._scroll.vertical_scroll_to(self._description_text_edit)
+        self._scroll.vertical_scroll_down(self._description_text_edit)
         return self._description_text_edit.text
 
     @allure.step('Set community name')
     def set_description(self, value: str):
-        self._scroll.vertical_scroll_to(self._description_text_edit)
+        self._scroll.vertical_scroll_down(self._description_text_edit)
         self._description_text_edit.text = value
 
     @property
@@ -131,14 +131,14 @@ class CreateCommunityPopup(BasePopup):
 
     @allure.step('Set community logo without file upload dialog')
     def set_logo_without_file_upload_dialog(self, path):
-        self._scroll.vertical_scroll_to(self._add_logo_button)
+        self._scroll.vertical_scroll_down(self._add_logo_button)
         fileuri = pathlib.Path(str(path)).as_uri()
         self._cropped_image_logo_item.object.cropImage(fileuri)
         return PictureEditPopup()
 
     @allure.step('Set community banner without file upload dialog')
     def set_banner_without_file_upload_dialog(self, path):
-        self._scroll.vertical_scroll_to(self._add_banner_button)
+        self._scroll.vertical_scroll_down(self._add_banner_button)
         fileuri = pathlib.Path(str(path)).as_uri()
         self._cropped_image_banner_item.object.cropImage(fileuri)
         return PictureEditPopup()
@@ -149,8 +149,9 @@ class CreateCommunityPopup(BasePopup):
 
     @allure.step('Set community color')
     def set_color(self, value: str):
-        self._scroll.vertical_scroll_to(self._select_color_button)
+        self._scroll.vertical_scroll_down(self._select_color_button)
         self._select_color_button.click()
+        self._scroll.vertical_scroll_down(self._select_color_button)
         ColorSelectPopup().wait_until_appears().select_color(value)
 
     @allure.step('Get community tags')
@@ -163,7 +164,7 @@ class CreateCommunityPopup(BasePopup):
 
     @allure.step('Set community tags')
     def set_tags(self, values: typing.List[str]):
-        self._scroll.vertical_scroll_to(self._choose_tag_button)
+        self._scroll.vertical_scroll_down(self._choose_tag_button)
         self._choose_tag_button.click()
         TagsSelectPopup().wait_until_appears().select_tags(values)
 

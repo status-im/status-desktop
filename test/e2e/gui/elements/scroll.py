@@ -11,8 +11,26 @@ LOG = logging.getLogger(__name__)
 
 class Scroll(QObject):
 
+    @allure.step('Scroll vertical down to object {1}')
+    def vertical_scroll_down(self, element: QObject, timeout_sec: int = 5, attempts: int = 2):
+        started_at = time.monotonic()
+        while not element.is_visible:
+            self.object.scrollPageDown()
+            time.sleep(0.1)
+            if time.monotonic() - started_at > timeout_sec:
+                raise LookupError(f'Object not found: {element}')
+
+    @allure.step('Scroll vertical up to object {1}')
+    def vertical_scroll_up(self, element: QObject, timeout_sec: int = 5):
+        started_at = time.monotonic()
+        while not element.is_visible:
+            self.object.scrollPageUp()
+            time.sleep(0.1)
+            if time.monotonic() - started_at > timeout_sec:
+                raise LookupError(f'Object not found: {element}')
+
     @allure.step('Scroll vertical to object {1}')
-    def vertical_scroll_to(self, element: QObject, timeout_sec: int = 5):
+    def old_vertical_scroll_to(self, element: QObject, timeout_sec: int = 5):
         started_at = time.monotonic()
         step = 10
         direction = 1
