@@ -132,9 +132,10 @@ proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: s
   self.transactionService.transfer(from_addr, to_addr, assetKey, toAssetKey, uuid, selectedRoutes, password, sendType,
     usePassword, doHashing, tokenName, isOwnerToken, slippagePercentage)
 
-proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAddr: string, uuid: string,
-    signatures: TransactionsSignatures, selectedRoutes: seq[TransactionPathDto]) =
-  self.transactionService.proceedWithTransactionsSignatures(fromAddr, toAddr, uuid, signatures, selectedRoutes)
+proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAddr: string,
+    fromTokenKey: string, toTokenKey: string, uuid: string, signatures: TransactionsSignatures,
+    selectedRoutes: seq[TransactionPathDto], sendType: SendType) =
+  self.transactionService.proceedWithTransactionsSignatures(fromAddr, toAddr, fromTokenKey, toTokenKey, uuid, signatures, selectedRoutes, sendType)
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()

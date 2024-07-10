@@ -462,12 +462,19 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
 
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
     let args = TransactionSentArgs(e)
-    self.view.showToastTransactionSent(args.chainId, args.txHash, args.uuid, args.error)
+    self.view.showToastTransactionSent(args.chainId, args.txHash, args.uuid, args.error,
+      ord(args.txType), args.fromAddress, args.toAddress, args.fromTokenKey, args.fromAmount,
+      args.fromTokenKey, args.toAmount)
 
   self.events.on(MARK_WALLET_ADDRESSES_AS_SHOWN) do(e:Args):
     let args = WalletAddressesArgs(e)
     for address in args.addresses:
       self.addressWasShown(address)
+
+  self.events.on(SIGNAL_TRANSACTION_SENDING_COMPLETE) do(e:Args):
+    let args = TransactionMinedArgs(e)
+    self.view.showToastTransactionSendingComplete(args.chainId, args.transactionHash, args.data, args.success,
+    ord(args.txType), args.fromAddress, args.toAddress, args.fromTokenKey, args.fromAmount, args.toTokenKey, args.toAmount)
 
 method load*[T](
   self: Module[T],

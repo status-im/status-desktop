@@ -341,7 +341,10 @@ QtObject:
   proc showNetworkEndpointUpdated*(self: View, name: string, isTest: bool, revertedToDefault: bool) {.signal.}
   proc showToastKeypairRemoved*(self: View, keypairName: string) {.signal.}
   proc showToastKeypairsImported*(self: View, keypairName: string, keypairsCount: int, error: string) {.signal.}
-  proc showToastTransactionSent*(self: View, chainId: int, txHash: string, uuid: string, error: string) {.signal.}
+  proc showToastTransactionSent*(self: View, chainId: int, txHash: string, uuid: string, error: string,
+    txType: int, fromAddr: string, toAddr: string, fromTokenKey: string, fromAmount: string, toTokenKey: string, toAmount: string) {.signal.}
+  proc showToastTransactionSendingComplete*(self: View, chainId: int, txHash: string, data: string, success: bool,
+    txType: int, fromAddr: string, toAddr: string, fromTokenKey: string, fromAmount: string, toTokenKey: string, toAmount: string) {.signal.}
 
   ## Used in test env only, for testing keycard flows
   proc registerMockedKeycard*(self: View, cardIndex: int, readerState: int, keycardState: int,
