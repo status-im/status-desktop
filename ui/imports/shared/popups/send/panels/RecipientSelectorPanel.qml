@@ -45,6 +45,7 @@ Item {
 
     StatusTabBar {
         id: recipientTypeTabBar
+        objectName: "recipientTypeTabBar"
 
         anchors.top: parent.top
         anchors.left: parent.left
