@@ -32,8 +32,6 @@ QObject {
     required property DAppsStore store
     required property var walletRootStore
 
-    readonly property string selectedAccountAddress: walletRootStore.selectedAddress
-
     readonly property alias dappsModel: dappsProvider.dappsModel
     readonly property alias requestHandler: requestHandler
 

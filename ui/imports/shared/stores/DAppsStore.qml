@@ -6,7 +6,6 @@ QObject {
     id: root
 
     required property var controller
-
     /// \c dappsJson serialized from status-go.wallet.GetDapps
     signal dappsListReceived(string dappsJson)
     signal userAuthenticated(string topic, string id, string password, string pin)

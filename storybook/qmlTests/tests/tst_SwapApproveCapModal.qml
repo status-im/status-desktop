@@ -93,16 +93,16 @@ Item {
                     .arg(controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount)).arg(controlUnderTest.fromTokenSymbol)
                     .arg(controlUnderTest.accountName).arg(controlUnderTest.serviceProviderURL).arg(controlUnderTest.networkName))
 
-            const fromImageHidden = findChild(controlUnderTest.contentItem, "fromImage")
+            const fromImageHidden = findChild(controlUnderTest.contentItem, "fromImageIdenticon")
             compare(fromImageHidden.visible, false)
 
             const fromImage = findChild(controlUnderTest.contentItem, "fromImageIdenticon")
             verify(!!fromImage)
             compare(fromImage.asset.emoji, controlUnderTest.accountEmoji)
             compare(fromImage.asset.color, controlUnderTest.accountColor)
-            const toImage = findChild(controlUnderTest.contentItem, "toImage")
+            const toImage = findChild(controlUnderTest.contentItem, "toImageIdenticon")
             verify(!!toImage)
-            compare(toImage.image.source, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
+            compare(toImage.asset.name, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
 
             // spending cap box
             const spendingCapBox = findChild(controlUnderTest.contentItem, "spendingCapBox")

@@ -95,12 +95,12 @@ Item {
             const headerText = findChild(controlUnderTest.contentItem, "headerText")
             verify(!!headerText)
             compare(headerText.text, qsTr("Swap 1000.123456789 SNT to 1.42 ETH in %1 on %2").arg(controlUnderTest.accountName).arg(controlUnderTest.networkName))
-            const fromImage = findChild(controlUnderTest.contentItem, "fromImage")
+            const fromImage = findChild(controlUnderTest.contentItem, "fromImageIdenticon")
             verify(!!fromImage)
-            compare(fromImage.image.source, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
-            const toImage = findChild(controlUnderTest.contentItem, "toImage")
+            compare(fromImage.asset.name, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
+            const toImage = findChild(controlUnderTest.contentItem, "toImageIdenticon")
             verify(!!toImage)
-            compare(toImage.image.source, Constants.tokenIcon(controlUnderTest.toTokenSymbol))
+            compare(toImage.asset.name, Constants.tokenIcon(controlUnderTest.toTokenSymbol))
 
             // pay box
             const payBox = findChild(controlUnderTest.contentItem, "payBox")

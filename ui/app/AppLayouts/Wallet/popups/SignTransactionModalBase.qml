@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -24,6 +25,7 @@ StatusDialog {
     property Component headerIconComponent
 
     property bool feesLoading
+    property bool signButtonEnabled: true
 
     property ObjectModel leftFooterContents
     property ObjectModel rightFooterContents: ObjectModel {
@@ -39,7 +41,7 @@ StatusDialog {
             StatusButton {
                 objectName: "signButton"
                 id: signButton
-                interactive: !root.feesLoading
+                interactive: !root.feesLoading && root.signButtonEnabled
                 icon.name: Constants.authenticationIconByType[root.loginType]
                 text: qsTr("Sign")
                 onClicked: root.accept() // close and emit accepted() signal
@@ -51,11 +53,14 @@ StatusDialog {
     property url fromImageSource
     property alias fromImageSmartIdenticon: fromImageSmartIdenticon
     property url toImageSource
+    readonly property alias toImageSmartIdenticon: toImageSmartIdenticon
     property alias headerMainText: headerMainText.text
-    property alias headerSubTextLayout: headerSubTextLayout.children
+    readonly property alias headerSubTextLayout: headerSubTextLayout.children
     property string infoTagText
+    readonly property alias infoTag: infoTag
+    property bool showHeaderDivider: true
 
-    default property alias contents: contentsLayout.children
+    default property alias contents: contentsLayout.data
 
     width: 480
     padding: 0
@@ -127,26 +132,48 @@ StatusDialog {
                             id: fromImageSmartIdenticon
                             width: 40
                             height: 40
+                            asset.name: root.fromImageSource
+                            asset.width: 40
+                            asset.height: 40
                             asset.bgWidth: 40
                             asset.bgHeight: 40
+                            asset.color: "transparent"
+                            asset.bgColor: "transparent"
                             visible: !!asset.name
+                            layer.enabled: toImageSmartIdenticon.visible
+                            layer.effect: OpacityMask {
+                                id: mask
+                                invert: true
+
+                                maskSource: Item {
+                                    width: mask.width + 4
+                                    height: mask.height + 4
+
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        anchors.horizontalCenterOffset: toImageSmartIdenticon.width - 10
+
+                                        width: parent.width
+                                        height: width
+                                        radius: width / 2
+                                    }
+                                }
+                            }
                         }
-                        StatusRoundedImage {
-                            objectName: "fromImage"
-                            width: 42
-                            height: 42
-                            border.width: 2
-                            border.color: "transparent"
-                            image.source: root.fromImageSource
-                            visible: root.fromImageSource.toString() !== ""
-                        }
-                        StatusRoundedImage {
-                            objectName: "toImage"
-                            width: 42
-                            height: 42
-                            border.width: 2
-                            border.color: Theme.palette.statusBadge.foregroundColor
-                            image.source: root.toImageSource
+
+                        StatusSmartIdenticon {
+                            objectName: "toImageIdenticon"
+                            id: toImageSmartIdenticon
+                            width: 40
+                            height: 40
+                            asset.bgWidth: 40
+                            asset.bgHeight: 40
+                            visible: !!asset.name || !!asset.source
+                            asset.name: root.toImageSource
+                            asset.width: 40
+                            asset.height: 40
+                            asset.color: "transparent"
+                            asset.bgColor: "transparent"
                         }
                     }
 
@@ -182,6 +209,7 @@ StatusDialog {
             StatusDialogDivider {
                 Layout.fillWidth: true
                 Layout.bottomMargin: Style.current.bigPadding
+                visible: root.showHeaderDivider
             }
 
             ColumnLayout {

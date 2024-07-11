@@ -2,6 +2,6 @@ PairWCModal 1.0 PairWCModal.qml
 DAppsListPopup 1.0 DAppsListPopup.qml
 ConnectDAppModal 1.0 ConnectDAppModal.qml
 ConnectionStatusTag 1.0 ConnectionStatusTag.qml
-DAppRequestModal 1.0 DAppRequestModal.qml
+DAppSignRequestModal 1.0 DAppSignRequestModal.qml
 DAppsUriCopyInstructionsPopup 1.0 DAppsUriCopyInstructionsPopup.qml
 RoundImageWithBadge 1.0 RoundImageWithBadge.qml
