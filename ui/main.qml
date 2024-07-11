@@ -99,7 +99,7 @@ StatusWindow {
 
         property var mockedKeycardControllerWindow
         function runMockedKeycardControllerWindow() {
-            if (localAppSettings.testEnvironment) {
+            if (localAppSettings.displayMockedKeycardWindow()) {
                 if (!!d.mockedKeycardControllerWindow) {
                     d.mockedKeycardControllerWindow.close()
                 }

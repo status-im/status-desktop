@@ -217,6 +217,11 @@ type StatusDesktopConfig = object
     desc: "Determines if the fleet selection UI is enabled"
     name: "ENABLE_FLEET_SELECTION"
     abbr: "enable-fleet-selection" .}: bool
+  displayMockedKeycardWindow* {.
+    defaultValue: false
+    desc: "Determines if the app should use mocked keycard"
+    name: "USE_MOCKED_KEYCARD"
+    abbr: "use-mocked-keycard" .}: bool
 
 
 # On macOS the first time when a user gets the "App downloaded from the

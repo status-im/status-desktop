@@ -138,6 +138,9 @@ QtObject:
   QtProperty[bool] testEnvironment:
     read = getTestEnvironment
 
+  proc displayMockedKeycardWindow*(self: LocalAppSettings): bool {.slot.} =
+    return DISPLAY_MOCKED_KEYCARD_WINDOW
+
   proc fakeLoadingScreenEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getFakeLoadingScreenEnabled*(self: LocalAppSettings): bool {.slot.} =
     self.settings.value(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(DEFAULT_FAKE_LOADING_SCREEN_ENABLED)).boolVal
