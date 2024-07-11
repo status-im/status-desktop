@@ -369,10 +369,13 @@ QtObject:
   proc disableSection*(self: SectionModel, sectionType: SectionType) =
     self.enableDisableSection(sectionType, false)
 
+  proc isAMessengerItem*(item: SectionItem): bool =
+    return item.sectionType == SectionType.Chat or item.sectionType == SectionType.Community
+
   # Count all mentions from all chat&community sections
   proc allMentionsCount*(self: SectionModel): int =
     for item in self.items:
-      if item.sectionType == SectionType.Chat or item.sectionType == SectionType.Community:
+      if item.isAMessengerItem():
         result += item.notificationsCount
 
   proc updateIsPendingOwnershipRequest*(self: SectionModel, id: string, isPending: bool) =
@@ -397,7 +400,7 @@ QtObject:
 
   proc isThereASectionWithUnreadMessages*(self: SectionModel): bool =
     for item in self.items:
-      if item.hasNotification == true:
+      if item.isAMessengerItem() and item.hasNotification == true:
         return true
     return false
 

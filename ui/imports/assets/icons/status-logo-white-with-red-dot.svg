@@ -7,5 +7,5 @@
 <rect width="28" height="28" fill="white" transform="translate(2 2)"/>
 </clipPath>
 </defs>
-<ellipse style="fill: rgb(235,35,35,255); paint-order: stroke;" cx="25" cy="25" rx="4.776" ry="4.776"/>
+<circle  r="4.776" fill="#EB2222" cx="25" cy="25"/>
 </svg>
