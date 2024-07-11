@@ -209,6 +209,7 @@ proc asyncGetMintFeesTask(argEncoded: string) {.gcsafe, nimcall.} =
         arg.walletAddresses, collectibleAndAmount.amount).result
       gasTable[(chainId, collectibleAndAmount.communityToken.address)] = estimations{"gasUnits"}.getInt
       feeTable[chainId] = estimations{"suggestedFees"}.toSuggestedFeesDto()
+      debug "asyncGetMintFeesTask", chainId=chainId, estimations=estimations
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),

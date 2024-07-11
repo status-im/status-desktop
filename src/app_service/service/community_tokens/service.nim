@@ -838,6 +838,8 @@ QtObject:
         if txData.source == parseAddress(ZERO_ADDRESS):
           return
         debug "Airdrop tokens ", chainId=collectibleAndAmount.communityToken.chainId, address=collectibleAndAmount.communityToken.address, amount=collectibleAndAmount.amount
+        debug "Airdrop tx data ", txData
+        debug "Airdrop addr len ", walletAddresses
         let response = tokens_backend.mintTokens(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address, %txData, common_utils.hashPassword(password), walletAddresses, collectibleAndAmount.amount)
         let transactionHash = response.result.getStr()
         debug "Airdrop transaction hash ", transactionHash=transactionHash
