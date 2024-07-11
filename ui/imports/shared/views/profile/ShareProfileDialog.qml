@@ -47,6 +47,7 @@ StatusDialog {
                 color: Theme.palette.white
 
                 Image {
+                    objectName: "profileQRCodeImage"
                     anchors.fill: parent
                     asynchronous: true
                     fillMode: Image.PreserveAspectFit
@@ -89,6 +90,7 @@ StatusDialog {
             }
 
             StatusBaseInput {
+                objectName: "profileLinkInput"
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
                 leftPadding: Style.current.padding
@@ -118,6 +120,7 @@ StatusDialog {
             }
 
             StatusBaseInput {
+                objectName: "emojiHashInput"
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
                 leftPadding: Style.current.padding

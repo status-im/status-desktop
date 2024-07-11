@@ -95,6 +95,7 @@ ProfileContentItem = {"container": statusDesktop_mainWindow_overlay, "objectName
 ProfileHeader_userImage = {"container": ProfileContentItem, "objectName": "ProfileDialog_userImage", "type": "UserImage", "visible": True}
 ProfilePopup_displayName = {"container": ProfileContentItem, "objectName": "ProfileDialog_displayName", "type": "StatusBaseText", "visible": True}
 ProfilePopup_editButton = {"container": ProfileContentItem, "objectName": "editProfileButton", "type": "StatusButton", "visible": True}
+share_Profile_StatusFlatButton = {"checkable": False, "container": ProfileContentItem, "objectName": "shareProfileButton", "type": "StatusFlatButton", "visible": True}
 ProfilePopup_SendContactRequestButton = {"container": ProfileContentItem, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
 profileDialog_userEmojiHash_EmojiHash = {"container": ProfileContentItem, "objectName": "ProfileDialog_userEmojiHash", "type": "EmojiHash", "visible": True}
 edit_TextEdit = {"container": ProfileContentItem, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
@@ -106,6 +107,12 @@ send_contact_request_StatusButton = {"checkable": False, "container": ProfileCon
 review_contact_request_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "profileDialog_reviewContactRequestButton", "type": "StatusButton", "visible": True}
 profileDialogView_ContentItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialogView", "type": "ContentItem", "visible": True}
 menuButton_StatusFlatButton = {"checkable": False, "container": profileDialogView_ContentItem, "id": "menuButton", "type": "StatusFlatButton", "unnamed": 1, "visible": True}
+
+# Share profile popup
+o_Image = {"container": statusDesktop_mainWindow_overlay, "objectName": "profileQRCodeImage", "type": "Image", "visible": True}
+o_copy_icon_CopyButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "copy-icon", "type": "CopyButton", "visible": True}
+o_EmojiHash = {"container": statusDesktop_mainWindow_overlay, "type": "EmojiHash", "unnamed": 1, "visible": True}
+profileLinkInput_StatusBaseInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "profileLinkInput", "type": "StatusBaseInput", "visible": True}
 
 # Welcome Status Popup
 betaConsent_StatusModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "desktopBetaStatusModal", "type": "StatusModal", "visible": True}

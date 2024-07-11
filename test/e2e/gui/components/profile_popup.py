@@ -8,6 +8,7 @@ from gui.components.base_popup import BasePopup
 from gui.components.context_menu import ContextMenu
 from gui.components.settings.review_contact_request_popup import AcceptRequestFromProfile
 from gui.components.settings.send_contact_request_popup import SendContactRequestFromProfile
+from gui.components.share_profile_popup import ShareProfilePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
@@ -23,6 +24,7 @@ class ProfilePopup(BasePopup):
         self._profile_image = QObject(names.ProfileHeader_userImage)
         self._user_name_label = TextLabel(names.ProfilePopup_displayName)
         self._edit_profile_button = Button(names.ProfilePopup_editButton)
+        self._share_profile_button = Button(names.share_Profile_StatusFlatButton)
         self._chat_key_text_label = TextLabel(names.https_status_app_StatusBaseText)
         self._emoji_hash = QObject(names.profileDialog_userEmojiHash_EmojiHash)
         self._chat_key_copy_button = Button(names.copy_icon_CopyButton)
@@ -84,6 +86,11 @@ class ProfilePopup(BasePopup):
     def edit_profile(self):
         self._edit_profile_button.click()
         return ProfileSettingsView()
+
+    @allure.step('Click share profile button')
+    def share_profile(self):
+        self._share_profile_button.click()
+        return ShareProfilePopup()
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
