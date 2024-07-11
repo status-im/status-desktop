@@ -126,6 +126,15 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         assert profile_popup.get_emoji_hash == emoji_hash_public_key, \
             f'Public keys should match when they dont'
 
+    with step('Open share profile popup and check the data'):
+        share_profile_popup = profile_popup.share_profile()
+        profile_link = share_profile_popup.get_profile_link()
+        emoji_hash = share_profile_popup.get_emoji_hash()
+        assert share_profile_popup.is_profile_qr_code_visibile
+        assert chat_key in profile_link, f'Profile link is wrong {profile_link}, it does not contain correct chat key'
+        assert emoji_hash == emoji_hash_public_key, f'Public keys do not match'
+        share_profile_popup. close()
+
     with step('Click left panel and open settings'):
         main_window.left_panel.click()
         settings = main_window.left_panel.open_settings()
