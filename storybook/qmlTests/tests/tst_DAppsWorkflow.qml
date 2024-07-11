@@ -502,6 +502,7 @@ Item {
     Component {
         id: componentUnderTest
         DAppsWorkflow {
+            loginType: Constants.LoginType.Password
         }
     }
 

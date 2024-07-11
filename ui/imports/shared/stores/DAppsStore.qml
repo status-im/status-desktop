@@ -6,9 +6,6 @@ QObject {
     id: root
 
     required property var controller
-
-    readonly property var globalUtilsInst: globalUtils
-
     /// \c dappsJson serialized from status-go.wallet.GetDapps
     signal dappsListReceived(string dappsJson)
     signal userAuthenticated(string topic, string id, string password, string pin)
@@ -81,10 +78,6 @@ QObject {
     /// \c getDapps triggers an async response to \c dappsListReceived
     function getDapps() {
         return controller.getDapps()
-    }
-
-    function getWei2Eth(wei) {
-        return globalUtilsInst.getWei2Eth(wei)
     }
 
     // Handle async response from controller

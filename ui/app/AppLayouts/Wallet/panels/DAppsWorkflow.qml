@@ -18,7 +18,7 @@ DappsComboBox {
 
     required property WalletConnectService wcService
     // Values mapped to Constants.LoginType
-    property int loginType
+    required property int loginType
     property string selectedAccountAddress
 
     signal pairWCReady()
