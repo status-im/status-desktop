@@ -93,7 +93,16 @@ Item {
                     hoverColor: Theme.palette.baseColor2
 
                     icon.name: "refresh"
-                    icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    icon.color: {
+                        if (!interactive) {
+                            return Theme.palette.baseColor1;
+                        }
+                        if (hovered) {
+                            return Theme.palette.directColor1;
+                        }
+
+                        return Theme.palette.baseColor1;
+                    }
                     asset.mirror: true
 
                     loading: RootStore.isAccountTokensReloading
