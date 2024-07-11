@@ -17,7 +17,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Wallet.adaptors 1.0
@@ -64,7 +64,7 @@ StatusDialog {
 
     readonly property var selectedAccount: {
         selectedSenderAccountEntry.value // Item changed is not triggered when the value is changed
-        return selectedSenderAccountEntry.item ?? ModelUtils.get(store.accounts, 0)
+        return selectedSenderAccountEntry.item ?? SQUtils.ModelUtils.get(store.accounts, 0)
     }
 
     property var sendTransaction: function() {
@@ -179,7 +179,7 @@ StatusDialog {
                 && popup.preSelectedHoldingType < Constants.TokenType.Unknown) {
 
             if (popup.preSelectedHoldingType === Constants.TokenType.ERC20) {
-                const entry = ModelUtils.getByKey(
+                const entry = SQUtils.ModelUtils.getByKey(
                                 assetsAdaptor.outputAssetsModel, "tokensKey",
                                 popup.preSelectedHoldingID)
                 d.selectedHoldingType = Constants.TokenType.ERC20
@@ -189,7 +189,7 @@ StatusDialog {
                                           popup.preSelectedHoldingID)
                 holdingSelector.selectedItem = entry
             } else {
-                const entry = ModelUtils.getByKey(
+                const entry = SQUtils.ModelUtils.getByKey(
                                 popup.store.collectiblesModel,
                                 "uid", popup.preSelectedHoldingID)
 
@@ -248,7 +248,7 @@ StatusDialog {
                 store.setSenderAccount(currentAccountAddress)
 
                 if (d.isSelectedHoldingValidAsset) {
-                    d.selectedHolding = ModelUtils.getByKey(
+                    d.selectedHolding = SQUtils.ModelUtils.getByKey(
                                 holdingSelector.assetsModel, "tokensKey",
                                 d.selectedHolding.tokensKey)
                 }
@@ -334,7 +334,7 @@ StatusDialog {
                         }
 
                         onAssetSelected: {
-                            const entry = ModelUtils.getByKey(
+                            const entry = SQUtils.ModelUtils.getByKey(
                                             assetsModel, "tokensKey", key)
                             d.selectedHoldingType = Constants.TokenType.ERC20
                             d.selectedHolding = entry
@@ -342,7 +342,7 @@ StatusDialog {
                         }
 
                         onCollectibleSelected: {
-                            const entry = ModelUtils.getByKey(
+                            const entry = SQUtils.ModelUtils.getByKey(
                                             popup.store.collectiblesModel,
                                             "uid", key)
                             d.selectedHoldingType = entry.tokenType
@@ -351,7 +351,7 @@ StatusDialog {
                         }
 
                         onCollectionSelected: {
-                            const entry = ModelUtils.getByKey(
+                            const entry = SQUtils.ModelUtils.getByKey(
                                             popup.store.collectiblesModel,
                                             "collectionUid", key)
                             d.selectedHoldingType = entry.tokenType
