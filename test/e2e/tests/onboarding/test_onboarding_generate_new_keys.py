@@ -6,6 +6,8 @@ import allure
 import psutil
 import pytest
 from allure import step
+
+from gui.mocked_keycard_controller import MockedKeycardController
 from . import marks
 
 import configs.timeouts
@@ -116,6 +118,7 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         assert str(online_identifier.object.pubkey) == emoji_hash_public_key, f'Public keys should match when they dont'
 
     with step('Open user profile from online identifier and check the data'):
+        MockedKeycardController().keycard_handler()
         profile_popup = online_identifier.open_profile_popup_from_online_identifier()
         profile_popup_user_name = profile_popup.user_name
         profile_popup_chat_key = profile_popup.copy_chat_key

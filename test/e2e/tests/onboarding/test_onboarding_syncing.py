@@ -3,6 +3,7 @@ import pyperclip
 import pytest
 from allure_commons._allure import step
 
+from gui.mocked_keycard_controller import MockedKeycardController
 from gui.screens.settings_syncing import SyncingSettingsView
 from . import marks
 
@@ -93,6 +94,7 @@ def test_sync_device_during_onboarding(multiple_instances):
                 BetaConsentPopup().confirm()
 
         with step('Verify user details are the same with user in first instance'):
+            MockedKeycardController().keycard_handler()
             online_identifier = main_window.left_panel.open_online_identifier()
             assert online_identifier.get_user_name == user.name, \
                 f'Name in online identifier and display name do not match'

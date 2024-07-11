@@ -28,10 +28,16 @@ def handle_settings_opening(view_class, menu_item):
         def wrapper(self, click_attempts=2):
             MockedKeycardController().keycard_handler()
             self._open_settings(menu_item)
-            if click_attempts:
-                if configs.system.TEST_MODE:
-                    time.sleep(1)
-                return func(self, click_attempts - 1)
+            if configs.system.TEST_MODE:
+                time.sleep(2)
+            try:
+                return func(self)
+            except (LookupError, AssertionError) as ex:
+                if click_attempts:
+
+                    return func(self, click_attempts - 1)
+                else:
+                    raise ex
 
         return wrapper
 
@@ -125,3 +131,5 @@ class SettingsScreen(QObject):
     def __init__(self):
         super().__init__(settings_names.mainWindow_ProfileLayout)
         self.left_panel = LeftPanel()
+        if configs.system.TEST_MODE:
+            time.sleep(1)
