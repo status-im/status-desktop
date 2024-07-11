@@ -153,7 +153,7 @@ QtObject {
             root.setSignerStateChanged(communityId, communityName, status, url)
         }
 
-        function onOwnershipLost(communityId, communityName) {
+        function onOwnershipNodeLost(communityId, communityName) {
             root.ownershipLost(communityId, communityName)
         }
 
