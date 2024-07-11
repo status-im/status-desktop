@@ -951,7 +951,7 @@ QtObject {
     readonly property string waku_sandbox: "waku.sandbox"
     readonly property string waku_test: "waku.test"
     readonly property string shards_test: "shards.test"
-    readonly property string shards_staging: "shards.staging"
+    readonly property string status_staging: "status.staging"
 
     readonly property int browserSearchEngineNone: 0
     readonly property int browserSearchEngineGoogle: 1

@@ -400,17 +400,17 @@ QtObject:
     self.settings.currentUserStatus
 
   proc getPinnedMailserverId*(self: Service, fleet: Fleet): string =
-    case fleet:
-      of Fleet.WakuSandbox:
-        return self.settings.pinnedMailserver.wakuSandbox
-      of Fleet.WakuTest:
-        return self.settings.pinnedMailserver.wakuTest
-      of Fleet.ShardsTest:
-        return self.settings.pinnedMailserver.shardsTest
-      of Fleet.ShardsStaging:
-        return self.settings.pinnedMailserver.shardsStaging
-      else:
-        return ""
+    case fleet
+    of Fleet.WakuSandbox:
+      return self.settings.pinnedMailserver.wakuSandbox
+    of Fleet.WakuTest:
+      return self.settings.pinnedMailserver.wakuTest
+    of Fleet.ShardsTest:
+      return self.settings.pinnedMailserver.shardsTest
+    of Fleet.StatusStaging:
+      return self.settings.pinnedMailserver.statusStaging
+    else:
+      return ""
 
   proc setPinnedMailserverId*(self: Service, mailserverID: string, fleet: Fleet): bool =
     if fleet == Fleet.Undefined:
@@ -424,17 +424,17 @@ QtObject:
         error "error saving pinned mailserver: ", errDescription = response.error.message
         return false
 
-      case fleet:
-        of Fleet.WakuSandbox:
-          self.settings.pinnedMailserver.wakuSandbox = mailserverID
-        of Fleet.WakuTest:
-          self.settings.pinnedMailserver.wakuTest = mailserverID
-        of Fleet.ShardsTest:
-          self.settings.pinnedMailserver.shardsTest = mailserverID
-        of Fleet.ShardsStaging:
-          self.settings.pinnedMailserver.shardsStaging = mailserverID
-        else:
-          return false
+      case fleet
+      of Fleet.WakuSandbox:
+        self.settings.pinnedMailserver.wakuSandbox = mailserverID
+      of Fleet.WakuTest:
+        self.settings.pinnedMailserver.wakuTest = mailserverID
+      of Fleet.ShardsTest:
+        self.settings.pinnedMailserver.shardsTest = mailserverID
+      of Fleet.StatusStaging:
+        self.settings.pinnedMailserver.statusStaging = mailserverID
+      else:
+        return false
     except Exception as e:
       let errDesription = e.msg
       error "saving pinned mailserver error: ", errDesription

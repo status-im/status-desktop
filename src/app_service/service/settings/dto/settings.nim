@@ -96,7 +96,7 @@ type PinnedMailserver* = object
   statusTest*: string
   statusProd*: string
   shardsTest*: string
-  shardsStaging*: string
+  statusStaging*: string
 
 type CurrentUserStatus* = object
   statusType*: StatusType
@@ -174,7 +174,7 @@ proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   discard jsonObj.getProp("status.test", result.statusTest)
   discard jsonObj.getProp("status.prod", result.statusProd)
   discard jsonObj.getProp("shards.test", result.shardsTest)
-  discard jsonObj.getProp("shards.staging", result.shardsStaging)
+  discard jsonObj.getProp("status.staging", result.statusStaging)
 
 proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
   var statusTypeInt: int
@@ -249,12 +249,13 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
         result.ensUsernames.add(username.getStr)
 
 proc pinnedMailserverToJsonNode*(mailserver: PinnedMailserver): JsonNode =
-  return %*{
-    "eth.prod": mailserver.ethProd,
-    "waku.sandbox": mailserver.wakuSandbox,
-    "waku.test": mailserver.wakuTest,
-    "status.test": mailserver.statusTest,
-    "status.prod": mailserver.statusProd,
-    "shards.test": mailserver.shardsTest,
-    "sharding.staging": mailserver.shardsStaging,
-  }
+  return
+    %*{
+      "eth.prod": mailserver.ethProd,
+      "waku.sandbox": mailserver.wakuSandbox,
+      "waku.test": mailserver.wakuTest,
+      "status.test": mailserver.statusTest,
+      "status.prod": mailserver.statusProd,
+      "shards.test": mailserver.shardsTest,
+      "status.staging": mailserver.statusStaging,
+    }
