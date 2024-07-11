@@ -11,6 +11,7 @@ ListModel {
             color: "#2A4AF5",
             address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
             walletType: "",
+            canSend: true,
             position: 0,
             assets: [
                 {
@@ -55,6 +56,7 @@ ListModel {
             color: "#216266",
             address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
             walletType: Constants.generatedWalletType,
+            canSend: true,
             position: 3,
             assets: [
                 {
@@ -81,6 +83,7 @@ ListModel {
             color: "#EC266C",
             address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882",
             walletType: Constants.seedWalletType,
+            canSend: true,
             position: 1,
             assets: [
                 {
@@ -116,6 +119,7 @@ ListModel {
             color: "#CB6256",
             address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8883",
             walletType: Constants.watchWalletType,
+            canSend: false,
             position: 2,
             assets: [
             ],
@@ -133,6 +137,7 @@ ListModel {
             color: "#C78F67",
             address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884",
             walletType: Constants.keyWalletType,
+            canSend: true,
             position: 4,
             assets: [
                 {

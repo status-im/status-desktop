@@ -80,9 +80,8 @@ QtObject {
             }
         ]
         filters: ValueFilter {
-            roleName: "walletType"
-            value: Constants.watchWalletType
-            inverted: true
+            roleName: "canSend"
+            value: true
         }
     }
 
