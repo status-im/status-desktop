@@ -184,7 +184,7 @@ QtObject:
   ## Used in test env only, for testing keycard flows
   proc registerMockedKeycard*(self: Service, cardIndex: int, readerState: int, keycardState: int,
   mockedKeycard: string, mockedKeycardHelper: string) =
-    if not singletonInstance.localAppSettings.getTestEnvironment():
+    if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "registerMockedKeycard can be used only in test env"
       return
     let response = keycard_go.mockedLibRegisterKeycard(cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper)
@@ -192,7 +192,7 @@ QtObject:
       debug "mockedLibRegisterKeycard", kcServiceCurrFlow=($self.currentFlow), cardIndex=cardIndex, readerState=readerState, keycardState=keycardState, mockedKeycard=mockedKeycard, mockedKeycardHelper=mockedKeycardHelper, response=response
 
   proc pluginMockedReaderAction*(self: Service) =
-    if not singletonInstance.localAppSettings.getTestEnvironment():
+    if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "pluginMockedReaderAction can be used only in test env"
       return
     let response = keycard_go.mockedLibReaderPluggedIn()
@@ -200,7 +200,7 @@ QtObject:
       debug "mockedLibReaderPluggedIn", kcServiceCurrFlow=($self.currentFlow), response=response
 
   proc unplugMockedReaderAction*(self: Service) =
-    if not singletonInstance.localAppSettings.getTestEnvironment():
+    if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "unplugMockedReaderAction can be used only in test env"
       return
     let response = keycard_go.mockedLibReaderUnplugged()
@@ -208,7 +208,7 @@ QtObject:
       debug "mockedLibReaderUnplugged", kcServiceCurrFlow=($self.currentFlow), response=response
 
   proc insertMockedKeycardAction*(self: Service, cardIndex: int) =
-    if not singletonInstance.localAppSettings.getTestEnvironment():
+    if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "insertMockedKeycardAction can be used only in test env"
       return
     let response = keycard_go.mockedLibKeycardInserted(cardIndex)
@@ -216,7 +216,7 @@ QtObject:
       debug "mockedLibKeycardInserted", kcServiceCurrFlow=($self.currentFlow), cardIndex=cardIndex, response=response
 
   proc removeMockedKeycardAction*(self: Service) =
-    if not singletonInstance.localAppSettings.getTestEnvironment():
+    if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "removeMockedKeycardAction can be used only in test env"
       return
     let response = keycard_go.mockedLibKeycardRemoved()

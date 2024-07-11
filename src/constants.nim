@@ -36,6 +36,7 @@ let
 
   # runtime variables
   TEST_MODE_ENABLED* = desktopConfig.testMode
+  DISPLAY_MOCKED_KEYCARD_WINDOW* = desktopConfig.displayMockedKeycardWindow
   WALLET_ENABLED* = desktopConfig.enableWallet
   TORRENT_CONFIG_PORT* = desktopConfig.defaultTorentConfigPort
   WAKU_V2_PORT* = desktopConfig.defaultWakuV2Port
