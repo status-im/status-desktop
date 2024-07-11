@@ -17,6 +17,9 @@ DappsComboBox {
     id: root
 
     required property WalletConnectService wcService
+    // Values mapped to Constants.LoginType
+    property int loginType
+    property string selectedAccountAddress
 
     signal pairWCReady()
 
@@ -84,7 +87,7 @@ DappsComboBox {
                     }
                 ]
             }
-            selectedAccountAddress: root.wcService.selectedAccountAddress
+            selectedAccountAddress: root.selectedAccountAddress
 
             dAppUrl: proposalMedatada.url
             dAppName: proposalMedatada.name
@@ -117,7 +120,7 @@ DappsComboBox {
 
         sourceComponent: DAppSignRequestModal {
             objectName: "dappsRequestModal"
-            loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : wcService.loginType
+            loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
             visible: true
 
             dappUrl: request.dappUrl

@@ -6,8 +6,6 @@ QObject {
     id: root
 
     required property var controller
-    // Values mapped to Constants.LoginType
-    required property int loginType
 
     readonly property var globalUtilsInst: globalUtils
 

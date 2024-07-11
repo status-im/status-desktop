@@ -128,6 +128,8 @@ Item {
                 enabled: !!Global.walletConnectService
 
                 wcService: Global.walletConnectService
+                loginType: root.store.loginType
+                selectedAccountAddress: root.walletStore.selectedAddress
             }
 
             StatusButton {

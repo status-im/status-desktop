@@ -121,7 +121,6 @@ Item {
         id: walletStoreComponent
 
         QtObject {
-            property string selectedAddress: ""
             readonly property ListModel filteredFlatModel: ListModel {
                 ListElement { chainId: 1 }
                 ListElement {

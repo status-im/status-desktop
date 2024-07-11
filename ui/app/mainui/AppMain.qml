@@ -2057,7 +2057,6 @@ Item {
             }
             store: DAppsStore {
                 controller: WalletStore.RootStore.walletConnectController
-                loginType: appMain.rootStore.loginType
             }
             walletRootStore: WalletStore.RootStore
 

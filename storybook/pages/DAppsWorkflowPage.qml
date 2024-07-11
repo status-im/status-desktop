@@ -61,6 +61,8 @@ Item {
                     spacing: 8
 
                     wcService: walletConnectService
+                    loginType: Constants.LoginType.Biometrics
+                    selectedAccountAddress: ""
                 }
             }
             ColumnLayout {}
@@ -373,7 +375,6 @@ Item {
         }
 
         walletRootStore: QObject {
-            property string selectedAddress: ""
             property var filteredFlatModel: SortFilterProxyModel {
                 sourceModel: NetworksModel.flatNetworks
                 filters: ValueFilter { roleName: "isTest"; value: settings.testNetworks; }
