@@ -122,7 +122,7 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
                     assert chat_message_2 in message_item
 
             with step('Leave group'):
-                messages_screen.left_panel.open_leave_group_popup(group_chat_new_name).confirm_leaving()
+                messages_screen.group_chat.leave_group().confirm_leaving()
 
             with step('Check that group name is not displayed on left panel'):
                 assert driver.waitFor(lambda: group_chat_new_name not in messages_screen.left_panel.get_chats_names,

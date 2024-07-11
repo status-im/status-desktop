@@ -251,6 +251,11 @@ class NetworkWalletSettings(WalletSettingsView):
         self._wallet_network_item_goerli_sensor = QObject(settings_names.networkSettingsNetworks_Mainnet_Goerli_sensor)
         self._wallet_network_item_goerli_testlabel = TextLabel(settings_names.networkSettingsNetowrks_Mainnet_Testlabel)
 
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self):
+        self._testnet_mode_toggle.wait_until_appears(10000)
+        return self
+
     @allure.step('Check networks item title')
     def get_network_item_attribute_by_id_and_attr_name(self, attribute_name, network_id):
         self._wallet_network_item_template.real_name['objectName'] = RegularExpression(
@@ -319,15 +324,20 @@ class EditNetworkSettings(WalletSettingsView):
     def click_test_network_tab(self):
         self._test_network_tab.click()
 
+    @allure.step('Check revert button state')
+    def check_revert_button_state(self):
+        return driver.waitForObjectExists(self._network_revert_to_default, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+
     @allure.step('Click Revert to default button and redirect to Networks screen')
     def click_revert_to_default_and_go_to_networks_main_screen(self, attempts: int = 2):
-        self._network_edit_scroll.vertical_scroll_down(self._network_revert_to_default)
+        if not self._network_revert_to_default.is_visible:
+            self._network_edit_scroll.vertical_scroll_down(self._network_revert_to_default)
         self._network_revert_to_default.click()
         try:
             return NetworkWalletSettings().wait_until_appears()
         except AssertionError:
             if attempts:
-                return self.click_revert_to_default_and_go_to_networks_main_screen(attempts - 1)
+                self.click_revert_to_default_and_go_to_networks_main_screen(attempts - 1)
             else:
                 raise f"Networks screen was not opened"
 

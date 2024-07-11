@@ -9,7 +9,7 @@ from allure import step
 import configs
 import constants
 import driver
-from constants import UserAccount
+from constants import UserAccount, ColorCodes
 from gui.components.changes_detected_popup import ChangesDetectedToastMessage
 from gui.main_window import MainWindow
 from . import marks
@@ -49,7 +49,8 @@ def test_switch_state_to_offline_online_automatic(multiple_instances, user_data_
     user_two: UserAccount = constants.user_account_two
     main_screen = MainWindow()
 
-    with (multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(user_data=user_data_two) as aut_two):
+    with (multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(
+            user_data=user_data_two) as aut_two):
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()
@@ -67,7 +68,10 @@ def test_switch_state_to_offline_online_automatic(multiple_instances, user_data_
             aut_one.attach()
             main_screen.prepare()
             community_screen = main_screen.left_panel.select_community('Community with 2 users')
-            assert community_screen.right_panel.member_is_offline(1)
+            time.sleep(2)
+            assert driver.waitFor(
+                lambda: community_screen.right_panel.member_state(user_two.name) == ColorCodes.GRAY.value,
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Actual state is {community_screen.right_panel.member_state(user_two.name)}'
             main_screen.hide()
 
         with step(f'User {user_two.name}, switch state to online'):
@@ -80,8 +84,9 @@ def test_switch_state_to_offline_online_automatic(multiple_instances, user_data_
             aut_one.attach()
             main_screen.prepare()
             time.sleep(2)
-            assert driver.waitFor(lambda: community_screen.right_panel.member_is_online(1),
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            assert driver.waitFor(
+                lambda: community_screen.right_panel.member_state(user_two.name) == ColorCodes.GREEN.value,
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Actual state is {community_screen.right_panel.member_state(user_two.name)}'
             main_screen.hide()
 
         with step(f'User {user_two.name}, switch state to automatic'):
@@ -97,5 +102,7 @@ def test_switch_state_to_offline_online_automatic(multiple_instances, user_data_
         with step(f'User {user_one.name}, sees {user_two.name} as online'):
             aut_one.attach()
             main_screen.prepare()
-            assert community_screen.right_panel.member_is_online(1)
+            assert driver.waitFor(
+                lambda: community_screen.right_panel.member_state(user_two.name) == ColorCodes.GREEN.value,
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Actual state is {community_screen.right_panel.member_state(user_two.name)}'
             main_screen.hide()
