@@ -113,7 +113,13 @@ Control {
                 return
             }
             let amountToSet = SQUtils.AmountsArithmetic.fromString(tokenAmount).toFixed().replace('.', LocaleUtils.userInputLocale.decimalPoint)
-            if (amountToSendInput.input.text !== amountToSet) {
+            /* When deleting characters after a decimal point
+            eg: 0.000001 being deleted we have 0.00000 and it should not be updated to 0
+            and thats why we compare with toFixed()
+            also when deleting a numbers last digit, we should not update the text to 0
+            instead it should remain empty as entered by the user*/
+            if (SQUtils.AmountsArithmetic.fromString(amountToSendInput.input.text).toFixed() !== amountToSet &&
+                    !(amountToSet === "0" && !amountToSendInput.input.text)) {
                 amountToSendInput.input.text = amountToSet
             }
         }

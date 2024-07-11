@@ -1586,5 +1586,38 @@ Item {
             // check if fetch occurs automatically after 15 seconds
             fetchSuggestedRoutesCalled.wait()
         }
+
+        function test_deleteing_input_characters_data() {
+            return [
+                        {input: "0.001"},
+                        {input: "1.00015"},
+                        /* TODO uncomment after https://discord.com/channels/@me/927512790296563712/1260937239140241408
+                        {input: "100.000000000000151001"},
+                        {input: "1.0200000000000151001"} */
+                    ]
+        }
+
+        function test_deleteing_input_characters(data) {
+            root.swapFormData.fromTokenAmount = data.input
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            root.swapFormData.selectedNetworkChainId = 11155111
+            root.swapFormData.fromTokensKey = "ETH"
+
+            const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
+            verify(!!amountToSendInput)
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            waitForRendering(amountToSendInput)
+
+            //TODO: should not be needed after https://github.com/status-im/status-desktop/issues/15417
+            amountToSendInput.input.input.cursorPosition = data.input.length
+            for(let i =0; i< data.input.length; i++) {
+                keyClick(Qt.Key_Backspace)
+                let expectedAmount = data.input.substring(0, data.input.length - (i+1))
+                compare(amountToSendInput.input.text, expectedAmount)
+            }
+        }
     }
 }
