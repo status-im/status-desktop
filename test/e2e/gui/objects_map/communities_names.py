@@ -161,18 +161,20 @@ add_new_permission_button = {"container": statusDesktop_mainWindow, "objectName"
 
 # Permissions Settings View
 mainWindow_editPermissionView_EditPermissionView = {"container": statusDesktop_mainWindow, "id": "editPermissionView", "type": "EditPermissionView", "unnamed": 1, "visible": True}
-editPermissionView_Who_holds_StatusItemSelector = {"container": mainWindow_editPermissionView_EditPermissionView, "id": "tokensSelector", "type": "StatusItemSelector", "unnamed": 1, "visible": True}
-editPermissionView_Is_allowed_to_StatusFlowSelector = {"container": mainWindow_editPermissionView_EditPermissionView, "id": "permissionsSelector", "type": "StatusFlowSelector", "unnamed": 1, "visible": True}
+editPermissionView_Who_holds_StatusItemSelector = {"container": mainWindow_editPermissionView_EditPermissionView, "objectName": "tokensSelector", "type": "StatusItemSelector", "visible": True}
+editPermissionView_Is_allowed_to_StatusFlowSelector = {"container": mainWindow_editPermissionView_EditPermissionView, "objectName": "permissionsSelector", "type": "StatusFlowSelector", "visible": True}
 editPermissionView_In_StatusItemSelector = {"container": mainWindow_editPermissionView_EditPermissionView, "id": "inSelector", "type": "StatusItemSelector", "unnamed": 1, "visible": True}
 editPermissionView_whoHoldsSwitch_StatusSwitch = {"checkable": True, "container": mainWindow_editPermissionView_EditPermissionView, "id": "whoHoldsSwitch", "type": "StatusSwitch", "unnamed": 1, "visible": True}
 edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "type": "TextEdit", "unnamed": 1, "visible": True}
 inputValue_StyledTextField = {"container": statusDesktop_mainWindow_overlay, "id": "inputValue", "type": "StyledTextField", "unnamed": 1, "visible": True}
 o_TokenItem = {"container": statusDesktop_mainWindow_overlay, "index": 0, "type": "TokenItem", "unnamed": 1, "visible": True}
-add_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+add_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "addButton", "type": "StatusButton", "visible": True}
+add_update_statusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "addOrUpdateButton", "type": "StatusButton", "unnamed": 1, "visible": True}
+add_StatusButton_in = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 customPermissionListItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "becomeAdmin", "type": "CustomPermissionListItem", "visible": True}
 checkBox_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "checkBox", "type": "StatusCheckBox", "unnamed": 1, "visible": True}
 editPermissionView_switchItem_StatusSwitch = {"checkable": True, "container": mainWindow_editPermissionView_EditPermissionView, "objectName": "switchItem", "type": "StatusSwitch", "visible": True}
-editPermissionView_Create_permission_StatusButton = {"checkable": False, "container": mainWindow_editPermissionView_EditPermissionView, "text": "Create permission", "type": "StatusButton", "unnamed": 1, "visible": True}
+editPermissionView_Create_permission_StatusButton = {"checkable": False, "container": mainWindow_editPermissionView_EditPermissionView, "objectName": "createPermissionButton", "type": "StatusButton", "visible": True}
 mainWindow_PermissionsView = {"container": statusDesktop_mainWindow, "type": "PermissionsView", "unnamed": 1, "visible": True}
 o_StatusListItemTag = {"container": mainWindow_PermissionsView, "type": "StatusListItemTag", "visible": True}
 o_IntroPanel = {"container": mainWindow_PermissionsView, "type": "IntroPanel", "unnamed": 1, "visible": True}
@@ -188,6 +190,11 @@ editPermissionView_settingsDirtyToastMessage_SettingsDirtyToastMessage = {"conta
 update_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 isAllowedToEditPermissionView_StatusListItemTag = {"container": mainWindow_editPermissionView_EditPermissionView, "type": "StatusListItemTag", "unnamed": 1, "visible": True}
 editPermissionView_duplicationPanel_WarningPanel = {"container": mainWindow_editPermissionView_EditPermissionView, "objectName": "duplicationPanel", "type": "WarningPanel", "visible": True}
+create_permission_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "createChannelNextBtn", "type": "StatusButton", "visible": True}
+who_holds_StatusItemSelector = {"container": statusDesktop_mainWindow_overlay, "objectName": "tokensSelector", "type": "StatusItemSelector", "visible": True}
+is_allowed_to_StatusFlowSelector = {"container": statusDesktop_mainWindow_overlay, "objectName": "permissionsSelector", "type": "StatusFlowSelector", "visible": True}
+switchItem_StatusSwitch = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "switchItem", "occurrence": 2, "type": "StatusSwitch", "visible": True}
+whoHoldsSwitch_StatusSwitch = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "whoHoldsSwitch", "type": "StatusSwitch", "unnamed": 1, "visible": True}
 
 # Edit Community
 mainWindow_communityEditPanelScrollView_EditSettingsPanel = {"container": statusDesktop_mainWindow, "objectName": "communityEditPanelScrollView", "type": "EditSettingsPanel", "visible": True}

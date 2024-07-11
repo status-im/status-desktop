@@ -149,6 +149,8 @@ createOrEditCommunityChannelNameInput_TextEdit = {"container": statusDesktop_mai
 createOrEditCommunityChannelDescriptionInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelDescriptionInput", "type": "TextEdit", "visible": True}
 createOrEditCommunityChannelBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelBtn", "type": "StatusButton", "visible": True}
 createOrEditCommunityChannel_EmojiButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusChannelPopup_emojiButton", "type": "StatusRoundButton", "visible": True}
+add_permission_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "addPermissionButton", "type": "StatusButton", "visible": True}
+hide_channel_checkbox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "hideChannelCheckbox", "type": "StatusCheckBox", "visible": True}
 
 # Community Category Popup
 createOrEditCommunityCategoryNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityCategoryNameInput", "type": "TextEdit", "visible": True}

@@ -166,6 +166,7 @@ StatusDropdown {
         StatusButton {
             Layout.fillWidth: true
             Layout.topMargin: d.buttonTopMargin
+            objectName: "addButton"
 
             text: root.mode === PermissionsDropdown.Mode.Add ? qsTr("Add") : qsTr("Update")
             enabled: !!group.checkedButton

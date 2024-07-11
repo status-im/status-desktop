@@ -43,7 +43,7 @@ def test_create_edit_remove_community_category(main_screen: MainWindow, category
 
     with step('Create community channel inside category'):
         community_screen.left_panel.open_new_channel_popup_in_category().create(channel_name, channel_description,
-                                                                                channel_emoji)
+                                                                                channel_emoji).save()
 
     with step('Create community channel outside of category'):
         community_screen.create_channel(second_channel_name, second_channel_description, second_channel_emoji)

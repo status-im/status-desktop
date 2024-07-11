@@ -783,6 +783,7 @@ StatusStackModal {
                     visible: viewOnlyCanAddReactionCheckbox.visible
                 }
                 StatusCheckBox {
+                    objectName: "hideChannelCheckbox"
                     id: viewOnlyCanAddReactionCheckbox
                     Layout.fillWidth: true
                     Layout.preferredHeight: 48
@@ -808,6 +809,7 @@ StatusStackModal {
                     }
                     Item { Layout.fillWidth: true }
                     StatusButton {
+                        objectName: "addPermissionButton"
                         text: qsTr("Add permission")
                         enabled: !!nameInput.text
                         property ListModel channelToAddPermission: ListModel { }

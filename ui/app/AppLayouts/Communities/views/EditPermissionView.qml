@@ -186,6 +186,7 @@ StatusScrollView {
 
         StatusItemSelector {
             id: tokensSelector
+            objectName: "tokensSelector"
 
             property int editedIndex: -1
 
@@ -380,6 +381,7 @@ StatusScrollView {
 
         StatusFlowSelector {
             id: permissionsSelector
+            objectName: "permissionsSelector"
 
             Layout.fillWidth: true
 
@@ -627,6 +629,7 @@ StatusScrollView {
             Layout.topMargin: Style.current.bigPadding
 
             visible: !root.isEditState && root.showChannelSelector
+            objectName: "createPermissionButton"
             text: qsTr("Create permission")
             enabled: root.saveEnabled
 

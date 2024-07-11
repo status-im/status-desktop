@@ -1,7 +1,9 @@
 import configs
 from gui.components.base_popup import BasePopup
+from gui.components.community.new_permission_popup import NewPermissionPopup
 from gui.components.emoji_popup import EmojiPopup
 from gui.elements.button import Button
+from gui.elements.check_box import CheckBox
 from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
@@ -14,6 +16,8 @@ class ChannelPopup(BasePopup):
         self._description_text_edit = TextEdit(names.createOrEditCommunityChannelDescriptionInput_TextEdit)
         self._save_create_button = Button(names.createOrEditCommunityChannelBtn_StatusButton)
         self._emoji_button = Button(names.createOrEditCommunityChannel_EmojiButton)
+        self._add_permission_button = Button(names.add_permission_StatusButton)
+        self._hide_channel_checkbox = CheckBox(names.hide_channel_checkbox)
 
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         self._name_text_edit.wait_until_appears(timeout_msec)
@@ -28,6 +32,22 @@ class NewChannelPopup(ChannelPopup):
         if emoji is not None:
             self._emoji_button.click()
             EmojiPopup().wait_until_appears().select(emoji)
+        return self
+
+    def add_permission(self):
+        self._add_permission_button.click()
+        return NewPermissionPopup().wait_until_appears()
+
+    def hide_permission(self, value: bool, attempt: int = 2):
+        try:
+            return self._hide_channel_checkbox.set(value)
+        except AssertionError as err:
+            if attempt:
+                self.hide_permission(True, attempt - 1)
+            else:
+                raise err
+
+    def save(self):
         self._save_create_button.click()
 
 

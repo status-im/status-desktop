@@ -438,6 +438,8 @@ class PermissionsSettingsView(QObject):
         self._hide_permission_checkbox = CheckBox(communities_names.editPermissionView_switchItem_StatusSwitch)
         self._create_permission_button = Button(communities_names.editPermissionView_Create_permission_StatusButton)
         self._add_button = Button(communities_names.add_StatusButton)
+        self._add_button_who_holds = Button(communities_names.add_update_statusButton)
+        self._add_button_in = Button(communities_names.add_StatusButton_in)
         self._who_holds_list_item = QObject(communities_names.editPermissionView_Who_holds_StatusItemSelector)
         self._is_allowed_to_list_item = QObject(communities_names.editPermissionView_Is_allowed_to_StatusFlowSelector)
         self._in_list_item = QObject(communities_names.editPermissionView_In_StatusItemSelector)
@@ -505,30 +507,52 @@ class PermissionsSettingsView(QObject):
             self._asset_item.click()
             self._who_holds_asset_field.wait_until_hidden()
             self._who_holds_amount_field.text = amount
-            self.click_add_button()
+            self.click_add_button_who_holds()
 
     @allure.step('Choose option from Is allowed to context menu')
     def set_is_allowed_to(self, name):
         self.open_is_allowed_to_context_menu()
         self._is_allowed_to_option_button.real_name['objectName'] = name
         self._is_allowed_to_option_button.wait_until_appears().click()
-        self.click_add_button()
+        self.click_add_button_allowed_to()
 
     @allure.step('Choose channel from In context menu')
     def set_in(self, in_general):
         if in_general == '#general':
             self.open_in_context_menu()
             self._in_general_checkbox.wait_until_appears().click()
-            self.click_add_button()
+            self.click_add_button_in()
 
-    @allure.step('Click add button')
-    def click_add_button(self, attempt: int = 2):
+    @allure.step('Click add button for allowed to')
+    def click_add_button_allowed_to(self, attempt: int = 2):
         self._add_button.click()
         try:
             self._add_button.wait_until_hidden()
         except AssertionError as err:
             if attempt:
-                self.click_add_button(attempt - 1)
+                self.click_add_button_allowed_to(attempt - 1)
+            else:
+                raise err
+
+    @allure.step('Click add button for who holds')
+    def click_add_button_who_holds(self, attempt: int = 2):
+        self._add_button_who_holds.click()
+        try:
+            self._add_button.wait_until_hidden()
+        except AssertionError as err:
+            if attempt:
+                self.click_add_button_who_holds(attempt - 1)
+            else:
+                raise err
+
+    @allure.step('Click add button for in')
+    def click_add_button_in(self, attempt: int = 2):
+        self._add_button_in.click()
+        try:
+            self._add_button.wait_until_hidden()
+        except AssertionError as err:
+            if attempt:
+                self.click_add_button_in(attempt - 1)
             else:
                 raise err
 
@@ -585,4 +609,4 @@ class PermissionsSettingsView(QObject):
         self._is_allowed_to_edit_tag.click()
         self._is_allowed_to_option_button.real_name['objectName'] = name
         self._is_allowed_to_option_button.wait_until_appears().click()
-        self.click_add_button()
+        self.click_add_button_allowed_to()
