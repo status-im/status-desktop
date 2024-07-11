@@ -124,7 +124,7 @@ QtObject:
       if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
         raise newException(CatchableError, responseObj{"error"}.getStr)
 
-      let installations = map(responseObj.getElems(), proc(x: JsonNode): InstallationDto = x.toInstallationDto())
+      let installations = map(responseObj["response"].getElems(), proc(x: JsonNode): InstallationDto = x.toInstallationDto())
       self.events.emit(SIGNAL_DEVICES_LOADED, DevicesArg(devices: installations))
     except Exception as e:
       error "Erorr load devices async", msg = e.msg
