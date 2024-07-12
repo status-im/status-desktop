@@ -199,13 +199,13 @@ proc init*(self: Controller) =
       return
     self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
 
-    self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED) do(e: Args):
-      let args = CheckPermissionsToJoinFailedArgs(e)
-      self.delegate.onCommunityCheckPermissionsToJoinFailed(args.communityId, args.error)
+  self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED) do(e: Args):
+    let args = CheckPermissionsToJoinFailedArgs(e)
+    self.delegate.onCommunityCheckPermissionsToJoinFailed(args.communityId, args.error)
 
-    self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
-      let args = CheckChannelsPermissionsErrorArgs(e)
-      self.delegate.onCommunityCheckAllChannelPermissionsFailed(args.communityId, args.error)
+  self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
+    let args = CheckChannelsPermissionsErrorArgs(e)
+    self.delegate.onCommunityCheckAllChannelPermissionsFailed(args.communityId, args.error)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
