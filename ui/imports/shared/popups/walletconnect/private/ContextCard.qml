@@ -16,6 +16,7 @@ Rectangle {
     property var accountsModel
     property var chainsModel
     property alias chainSelection: networkFilter.selection
+    property bool multipleChainSelection: true
 
     readonly property alias selectedAccount: accountsDropdown.currentAccount
 
@@ -79,7 +80,7 @@ Rectangle {
 
                 flatNetworks: root.chainsModel
                 showTitle: true
-                multiSelection: true
+                multiSelection: root.multipleChainSelection
                 showAllSelectedText: false
                 selectionAllowed: !root.connectionAttempted && root.chainsModel.ModelCount.count > 1
             }

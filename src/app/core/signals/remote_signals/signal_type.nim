@@ -66,6 +66,7 @@ type SignalType* {.pure.} = enum
   DBReEncryptionFinished = "db.reEncryption.finished"
   CommunityTokenTransactionStatusChanged = "communityToken.communityTokenTransactionStatusChanged"
   CommunityTokenAction = "communityToken.communityTokenAction"
+  ConnectorSendRequestAccounts = "connector.sendRequestAccounts"
   Unknown
 
 proc event*(self:SignalType):string =
