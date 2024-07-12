@@ -40,7 +40,7 @@ def init_testrail_api(request):
         auth=(configs.testrail.USR, configs.testrail.PSW),
     )
 
-    if response.status_code != 200:
+    if response.status_code in [200, 400]:
         LOG.info('TestRail report skipped because of Testrail server error')
         return
 
