@@ -6,13 +6,19 @@ SystemTrayIcon {
     id: root
 
     property bool isProduction: true
+    property bool showRedDot: false
 
     signal activateApp()
 
     visible: true
-    icon.source: Qt.platform.os === Constants.windows // TODO: Add status-logo-white with stroke for windows
-                    ? Style.png("status-logo%1".arg(root.isProduction ? "" : "-dev-circle")) 
-                    : Style.svg("status-logo-white")
+
+
+    icon.source: {
+        if (Qt.platform.os === Constants.windows) {
+            return root.showRedDot ? Style.svg("status-logo-white-windows-with-red-dot") : Style.svg("status-logo-white-windows")
+        }
+        return root.showRedDot ? Style.svg("status-logo-white-with-red-dot") : Style.svg("status-logo-white")
+    }
     icon.mask: Qt.platform.os !== Constants.windows
 
     onMessageClicked: {

@@ -17,6 +17,7 @@ QtObject:
       modelVariant: QVariant
       sectionsLoaded: bool
       chatsLoadingFailed: bool
+      notificationAvailable: bool
       activeSection: SectionDetails
       activeSectionVariant: QVariant
       chatSearchModel: chat_search_model.Model
@@ -45,6 +46,7 @@ QtObject:
     result.model = section_model.newModel()
     result.sectionsLoaded = false
     result.chatsLoadingFailed = false
+    result.notificationAvailable = false
     result.modelVariant = newQVariant(result.model)
     result.activeSection = newActiveSection()
     result.activeSectionVariant = newQVariant(result.activeSection)
@@ -268,6 +270,21 @@ QtObject:
   QtProperty[bool] isOnline:
     read = isConnected
     notify = onlineStatusChanged
+
+  proc notificationAvailableChanged(self: View) {.signal.}
+
+  proc notificationAvailable*(self: View): bool {.slot.} =
+    result = self.notificationAvailable
+
+  proc setNotificationAvailable*(self: View, value: bool) =
+    if self.notificationAvailable == value:
+      return
+    self.notificationAvailable = value
+    self.notificationAvailableChanged()
+
+  QtProperty[bool] notificationAvailable:
+    read = notificationAvailable
+    notify = notificationAvailableChanged
 
   proc displayUserProfile*(self:View, publicKey: string) {.signal.}
   proc emitDisplayUserProfileSignal*(self: View, publicKey: string) =

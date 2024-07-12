@@ -132,6 +132,9 @@ proc init*(self: Controller) =
   self.events.on(message_service.SIGNAL_MESSAGE_MARKED_AS_UNREAD) do(e:Args):
     let args = message_service.MessageMarkMessageAsUnreadArgs(e)
     let chat = self.chatService.getChatById(args.chatId)
+    if ((self.isCommunitySection and chat.communityId != self.sectionId) or
+        (not self.isCommunitySection and chat.communityId != "")):
+      return
     self.delegate.onMarkMessageAsUnread(chat)
 
   self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):

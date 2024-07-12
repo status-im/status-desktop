@@ -300,6 +300,7 @@ StatusWindow {
         id: systemTray
         objectName: "systemTray"
         isProduction: production
+        showRedDot: typeof mainModule !== "undefined" ? mainModule.notificationAvailable : false
         onActivateApp: {
             applicationWindow.makeStatusAppActive()
         }
