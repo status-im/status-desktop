@@ -2,12 +2,12 @@ import net
 
 # Util function to test if a port is busy
 proc isPortBusy*(port: Port): bool =
-  var sock: Socket
+  result = false
+  let socket = newSocket()
+  defer: socket.close()
+
   try:
-    sock = newSocket()
-    sock.setSockOpt(OptReuseAddr, true)
-    sock.bindAddr(port)
-    sock.close()
-    return false
+    socket.connect("localhost", port)
+    result = true
   except OSError:
-    return true
+    result = false
