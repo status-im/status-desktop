@@ -104,6 +104,7 @@ QtObject {
     readonly property var tmpActivityController1: walletSectionInst.tmpActivityController1
     readonly property var activityDetailsController: walletSectionInst.activityDetailsController
     readonly property var walletConnectController: walletSectionInst.walletConnectController
+    readonly property var dappsConnectorController: walletSectionInst.dappsConnectorController
 
     readonly property bool isAccountTokensReloading: walletSectionInst.isAccountTokensReloading
     readonly property double lastReloadTimestamp: walletSectionInst.lastReloadTimestamp
