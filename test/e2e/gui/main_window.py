@@ -169,9 +169,7 @@ class MainWindow(Window):
         super(MainWindow, self).__init__(names.statusDesktop_mainWindow)
         self.left_panel = LeftPanel()
 
-    # TODO: we need to handle all the issues with keycard mock var before using keycard  window in tests
     def prepare(self) -> 'Window':
-        #   MockedKeycardController().wait_until_appears().hide()
         return super().prepare()
 
     @allure.step('Sign Up user')
