@@ -328,9 +328,14 @@ StatusDialog {
 
                             sourceComponent: CollectiblesSelectionAdaptor {
                                 accountKey: popup.preSelectedAccount ? popup.preSelectedAccount.address : ""
-                                collectiblesModel: collectiblesStore
-                                                   ? collectiblesStore.jointCollectiblesBySymbolModel
-                                                   : null
+
+                                collectiblesModel: SortFilterProxyModel {
+                                    sourceModel: collectiblesStore ? collectiblesStore.jointCollectiblesBySymbolModel : null
+                                    filters: ValueFilter {
+                                        roleName: "soulbound"
+                                        value: false
+                                    }
+                                }
                             }
                         }
 
