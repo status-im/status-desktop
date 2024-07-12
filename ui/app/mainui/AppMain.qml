@@ -2042,19 +2042,56 @@ Item {
         }
     }
 
+    Component {
+        id: walletConnectSDK
+
+        WalletConnectSDK {
+            active: WalletStore.RootStore.walletSectionInst.walletReady
+            projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
+        }
+    }
+
+    Component {
+        id: dappsConnectorSDK
+
+        DappsConnectorSDK {
+            active: WalletStore.RootStore.walletSectionInst.walletReady
+            controller: WalletStore.RootStore.dappsConnectorController
+            wcService: Global.walletConnectService
+            walletStore: WalletStore.RootStore
+        }
+    }
+
+    Loader {
+        id: walletConnectSDKLoader
+        active: Global.featureFlags.dappsEnabled
+        sourceComponent: walletConnectSDK
+    }
+
+    Loader {
+        id: dappsConnectorSDKLoader
+        active: Global.featureFlags.connectorEnabled
+        sourceComponent: dappsConnectorSDK
+    }
+
+    Loader {
+        id: sdkLoader
+
+        onLoaded: {
+            walletConnectSDKLoader.active = Global.featureFlags.dappsEnabled
+            dappsConnectorSDKLoader.active = Global.featureFlags.connectorEnabled
+        }
+    }
+
     Loader {
         id: walletConnectServiceLoader
 
-        active: Global.featureFlags.dappsEnabled
+        active: Global.featureFlags.dappsEnabled || Global.featureFlags.connectorEnabled
 
         sourceComponent: WalletConnectService {
             id: walletConnectService
 
-            wcSDK: WalletConnectSDK {
-                active: WalletStore.RootStore.walletSectionInst.walletReady
-
-                projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
-            }
+            wcSDK: sdkLoader.item
             store: DAppsStore {
                 controller: WalletStore.RootStore.walletConnectController
             }

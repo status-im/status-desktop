@@ -72,6 +72,8 @@ StatusDialog {
     */
     property string selectedAccountAddress: contextCard.selectedAccount.address ?? ""
 
+    property bool multipleChainSelection: true
+
     readonly property alias selectedAccount: contextCard.selectedAccount
     readonly property alias selectedChains: d.selectedChains
 
@@ -118,6 +120,7 @@ StatusDialog {
             Layout.maximumWidth: root.availableWidth
             Layout.fillWidth: true
 
+            multipleChainSelection: root.multipleChainSelection
             selectedAccountAddress: root.selectedAccountAddress
             connectionAttempted: d.connectionAttempted
             accountsModel: d.accountsProxy

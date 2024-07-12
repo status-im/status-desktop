@@ -40,8 +40,8 @@ StatusListView {
     
     onSelectionChanged: {
         if (!root.multiSelection && selection.length > 1) {
-            console.warn("Warning: Multi-selection is disabled, but multiple items are selected. Automatically selecting the last inserted item.")
-            selection = [selection[selection.length - 1]]
+            console.warn("Warning: Multi-selection is disabled, but multiple items are selected. Automatically selecting the first inserted item.")
+            selection = [selection[0]]
         }
     }
 
