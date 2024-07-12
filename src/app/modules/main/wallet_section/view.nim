@@ -6,6 +6,7 @@ import app/modules/shared_modules/collectible_details/controller as collectible_
 import ./io_interface
 import app/modules/shared_models/currency_amount
 import app/modules/shared_modules/wallet_connect/controller as wc_controller
+import app/modules/shared_modules/connector/controller as connector_controller
 
 type
   ActivityControllerArray* = array[2, activityc.Controller]
@@ -26,6 +27,7 @@ QtObject:
       isNonArchivalNode: bool
       keypairOperabilityForObservedAccount: string
       wcController: QVariant
+      dappsConnectorController: QVariant
       walletReady: bool
       addressFilters: string
       currentCurrency: string
@@ -37,6 +39,7 @@ QtObject:
 
   proc delete*(self: View) =
     self.wcController.delete
+    self.dappsConnectorController.delete
 
     self.QObject.delete
 
@@ -45,7 +48,8 @@ QtObject:
     tmpActivityControllers: ActivityControllerArray,
     activityDetailsController: activity_detailsc.Controller,
     collectibleDetailsController: collectible_detailsc.Controller,
-    wcController: wc_controller.Controller): View =
+    wcController: wc_controller.Controller,
+    dappsConnectorController: connector_controller.Controller): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
@@ -53,6 +57,7 @@ QtObject:
     result.activityDetailsController = activityDetailsController
     result.collectibleDetailsController = collectibleDetailsController
     result.wcController = newQVariant(wcController)
+    result.dappsConnectorController = newQVariant(dappsConnectorController)
 
     result.setup()
 
@@ -247,6 +252,14 @@ QtObject:
 
   QtProperty[QVariant] walletConnectController:
     read = getWalletConnectController
+
+  proc getDappsConnectorController(self: View): QVariant {.slot.} =
+    if self.dappsConnectorController == nil:
+      return newQVariant()
+    return self.dappsConnectorController
+
+  QtProperty[QVariant] dappsConnectorController:
+    read = getDappsConnectorController
 
   proc walletReadyChanged*(self: View) {.signal.}
 
