@@ -208,7 +208,7 @@ Item {
             sendModal: root.sendModalPopup
             networkConnectionStore: root.networkConnectionStore
 
-            headerButton.text: RootStore.overview.ens || StatusQUtils.Utils.elideText(RootStore.overview.mixedcaseAddress, 6, 4)
+            headerButton.text: RootStore.overview.ens || StatusQUtils.Utils.elideAndFormatWalletAddress(RootStore.overview.mixedcaseAddress)
             headerButton.visible: !RootStore.overview.isAllAccounts
             onLaunchShareAddressModal: Global.openShowQRPopup({
                                                                   switchingAccounsEnabled: true,
@@ -282,7 +282,6 @@ Item {
             readonly property bool isCommunityCollectible: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityId !== "" : false
             readonly property bool isOwnerCommunityCollectible: isCommunityCollectible ? (walletStore.currentViewedCollectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
 
-            visible: !RootStore.showAllAccounts || Global.featureFlags.swapEnabled
             width: parent.width
             height: visible ? 61: implicitHeight
             walletStore: RootStore
@@ -331,7 +330,7 @@ Item {
             }
             onLaunchBridgeModal: {
                 root.sendModalPopup.preSelectedSendType = Constants.SendType.Bridge
-                root.sendModalPopup.preSelectedRecipient = root.sendModalPopup.preSelectedAccount.address
+                root.sendModalPopup.preSelectedRecipient = root.sendModalPopup.preSelectedAccount
                 root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
                 root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
                 root.sendModalPopup.onlyAssets = true
