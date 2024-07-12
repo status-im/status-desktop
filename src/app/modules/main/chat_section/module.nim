@@ -702,7 +702,6 @@ proc getChatItemFromChatDto(
   var viewersCanPostReactions = true
   var missingEncryptionKey = false
   if self.controller.isCommunity:
-    let communityChat = community.getCommunityChat(chatDto.id)
     # NOTE: workaround for new community chat, which is delivered in chatDto before the community will know about that
     if community.hasCommunityChat(chatDto.id):
       let communityChat = community.getCommunityChat(chatDto.id)
