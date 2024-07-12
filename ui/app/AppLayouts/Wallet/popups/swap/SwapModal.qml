@@ -6,6 +6,7 @@ import utils 1.0
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups.Dialog 0.1

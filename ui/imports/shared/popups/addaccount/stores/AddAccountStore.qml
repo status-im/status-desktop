@@ -1,5 +1,7 @@
-import QtQuick 2.13
+import QtQuick 2.15
 import utils 1.0
+
+import StatusQ.Core.Backpressure 0.1
 
 import "../../common"
 

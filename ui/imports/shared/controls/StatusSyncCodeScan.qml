@@ -2,12 +2,12 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.13
 
+import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
-import StatusQ.Components 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Backpressure 1.0
 
 /*
     NOTE:   I'm doing some crazy workarounds here. Tested on MacOS.

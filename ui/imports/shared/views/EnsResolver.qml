@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import StatusQ.Components 0.1
+import StatusQ.Core.Backpressure 0.1
+
 import utils 1.0
 import shared.stores 1.0
 

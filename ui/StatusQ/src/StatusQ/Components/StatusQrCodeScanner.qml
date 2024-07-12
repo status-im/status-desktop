@@ -7,7 +7,7 @@ import QtGraphicalEffects 1.0
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
-import StatusQ.Core.Backpressure 1.0
+import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
 
 import QZXing 3.3

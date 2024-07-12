@@ -10,13 +10,14 @@ import shared.panels 1.0
 import shared.stores 1.0 as SharedStores
 
 import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Popups 0.1
-import StatusQ.Components 0.1
 
 import SortFilterProxyModel 0.2
 

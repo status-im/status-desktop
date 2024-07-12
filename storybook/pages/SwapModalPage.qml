@@ -5,9 +5,10 @@ import SortFilterProxyModel 0.2
 import QtTest 1.15
 
 import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 import Storybook 1.0

@@ -1,8 +1,9 @@
 import QtQuick 2.15
 import QtQml 2.15
 
-import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Backpressure 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.stores 1.0
