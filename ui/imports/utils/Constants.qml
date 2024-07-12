@@ -1057,6 +1057,7 @@ QtObject {
         Success,
         Infura,
         Balance,
+        Revert,
         Other
     }
 

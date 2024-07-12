@@ -159,5 +159,6 @@ type
     Success,
     Infura,
     Balance,
+    Revert,
     Other
 

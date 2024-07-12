@@ -46,6 +46,9 @@ QtObject {
         if (airdropFeesResponse.errorCode === Constants.ComputeFeeErrorCode.Infura)
             return qsTr("Infura error")
 
+        if (airdropFeesResponse.errorCode === Constants.ComputeFeeErrorCode.Revert)
+            return qsTr("Estimation reverted. Make sure you are using the account that owns the TokenMaster or Owner Token.")
+
         return qsTr("Unknown error")
     }
     readonly property string totalFee: {
