@@ -4,10 +4,11 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0

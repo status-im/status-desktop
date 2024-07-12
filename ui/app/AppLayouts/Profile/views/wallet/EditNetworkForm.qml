@@ -1,10 +1,11 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
-import StatusQ.Core 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
 
 import shared.panels 1.0
 import utils 1.0

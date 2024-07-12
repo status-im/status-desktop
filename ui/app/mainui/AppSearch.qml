@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
 import StatusQ.Popups 0.1
 
 import shared.stores 1.0

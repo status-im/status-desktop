@@ -1,123 +1,112 @@
+// Subset of https://github.com/e-fever/backpressure, refactored to modern JS
+
 pragma Singleton
-import QtQuick 2.0
 
-Item {
+import QtQml 2.15
 
-    id: backpressure
+QtObject {
+    id: root
 
     property var _timers: ({})
     property int _nextId: 0
 
     function setTimeout(owner, timeout, callback) {
-        var tid = ++_nextId;
+        const tid = ++_nextId
 
-        var cleanup = function() {
-            if (tid !== null) {
-                clearTimeout(tid);
-            }
+        const cleanup = () => {
+            if (!!tid)
+                clearTimeout(tid)
         }
 
-        if (!owner) {
-            owner = backpressure;
-        }
+        if (!owner)
+            owner = root
 
-        owner.Component.destruction.connect(cleanup);
+        owner.Component.onDestruction.connect(cleanup)
 
-        var obj = Qt.createQmlObject('import QtQuick 2.0; Timer {running: false; repeat: false; interval: ' + timeout + '}', backpressure, "setTimeout");
-        obj.triggered.connect(function() {
-            callback();
-            obj.destroy();
-            owner.Component.destruction.disconnect(cleanup);
-            delete _timers[tid];
-        });
-        obj.running = true;
-        _timers[tid] = obj;
-        return tid;
+        const obj = Qt.createQmlObject(
+                    'import QtQuick 2.15; Timer { '
+                    + 'running: false; repeat: false; '
+                    + `interval: ${timeout}}`,
+                    root, "setTimeout")
+
+        obj.triggered.connect(() => {
+            callback()
+            obj.destroy()
+            owner.Component.onDestruction.disconnect(cleanup)
+            delete _timers[tid]
+        })
+
+        obj.running = true
+        _timers[tid] = obj
+
+        return tid
     }
 
     function clearTimeout(timerId) {
-        if (!_timers.hasOwnProperty(timerId)) {
-            return;
-        }
-        var timer = _timers[timerId];
-        timer.stop();
-        timer.destroy();
-        delete _timers[timerId];
+        if (!_timers.hasOwnProperty(timerId))
+            return
+
+        const timer = _timers[timerId]
+        timer.stop()
+        timer.destroy()
+        delete _timers[timerId]
     }
 
     function oneInTime(owner, duration, callback) {
-        var pending = false;
-        var timerId = null;
+        let pending = false
+        let timerId = null
 
         return function() {
-            if (pending) {
-                return;
-            }
-            pending = true;
-            var args = arguments;
-            callback.apply(null, args);
-            timerId = setTimeout(owner, duration , function() {
-                pending = false;
-            }, duration);
+            if (pending)
+                return
+
+            pending = true
+            const args = arguments
+            callback.apply(null, args)
+            timerId = setTimeout(owner, duration , () => {
+                pending = false
+            }, duration)
         }
     }
 
-    function promisedOneInTime(owner, callback) {
-        var q = priv.loadPromiseLib();
-        var promise = null;
+    // Same as `oneInTime` while also handling any queued calls
+    function oneInTimeQueued(owner, duration, callback) {
+        let pending = false
+        let queued = false
+        let timerId = null
 
-        return function() {
-            var args = arguments;
-            if (promise !== null) {
-                return q.rejected();
+        const proxy = () => {
+            if (pending) {
+                queued = true
+                return
             }
+            pending = true
+            queued = false
+            const args = arguments
+            callback.apply(null, args)
+            timerId = setTimeout(owner, duration , () => {
+                pending = false
+                if (queued)
+                    proxy(owner, duration, callback)
+            }, duration)
+        }
 
-            promise = q.promise(function(fulfill, reject) {
-                fulfill(callback.apply(null, args));
-            });
-
-            promise.then(function() {
-                promise = null;
-            }, function() {
-                promise = null;
-            });
-            return promise;
-        };
+        return proxy
     }
 
     function debounce(owner, duration, callback) {
-        var timerId = null;
+        let timerId = null
 
         return function() {
-            var args = arguments;
+            const args = arguments
 
-            if (timerId !== null) {
-                clearTimeout(timerId);
-            }
+            if (timerId !== null)
+                clearTimeout(timerId)
 
             timerId = setTimeout(owner, duration, function() {
-                timerId = null;
-                callback.apply(null, args);
-            });
+                timerId = null
+                callback.apply(null, args)
+            })
         }
-    }    
-
-    QtObject {
-        id: priv
-        property var q: null
-
-        function loadPromiseLib() {
-            if (q !== null) {
-                return q.q;
-            }
-
-            q = Qt.createQmlObject('import QtQuick 2.0; import QuickPromise 1.0; Item { property var q: Q;}', backpressure);
-            if (q.hasOwnProperty("qmlErrors")) {
-                console.error("Backpressure: Failed to load QuickPromise. Please check your installation.");
-            }
-            return q.q;
-        }
-
     }
-
 }

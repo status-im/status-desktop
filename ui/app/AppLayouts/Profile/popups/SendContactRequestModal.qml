@@ -4,10 +4,11 @@ import QtQuick.Layouts 1.14
 
 import utils 1.0
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
 StatusModal {

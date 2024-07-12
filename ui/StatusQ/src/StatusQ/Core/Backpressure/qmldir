@@ -1,3 +1,1 @@
-module StatusQ.Core.Backpressure
-
-singleton Backpressure 1.0 Backpressure.qml
+singleton Backpressure 0.1 Backpressure.qml

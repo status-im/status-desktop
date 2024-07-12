@@ -1,6 +1,5 @@
 Audio 1.0 Audio.qml
 Tracer 1.0 Tracer.qml
-singleton Backpressure 1.0 Backpressure/Backpressure.qml
 singleton Constants 1.0 Constants.qml
 singleton Global 1.0 Global.qml
 singleton SelectedMessage 1.0 SelectedMessage.qml

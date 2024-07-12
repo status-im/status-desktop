@@ -7,6 +7,7 @@ import QtTest 1.15
 import QtQml.Models 2.14
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1

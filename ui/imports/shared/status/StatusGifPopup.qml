@@ -3,9 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
-import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
 
 import utils 1.0
 import shared.panels 1.0
