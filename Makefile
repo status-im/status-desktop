@@ -819,6 +819,11 @@ run-linux: nim_status_client
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)" \
 	./bin/nim_status_client $(ARGS)
 
+run-linux-gdb: nim_status_client
+	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)" \
+	gdb -ex=r ./bin/nim_status_client $(ARGS)
+
 run-macos: nim_status_client
 	mkdir -p bin/StatusDev.app/Contents/{MacOS,Resources}
 	cp Info.dev.plist bin/StatusDev.app/Contents/Info.plist
