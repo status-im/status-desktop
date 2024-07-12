@@ -123,7 +123,7 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/737079',
                  'Member not holding permission cannot see channel (view-only permission)')
-@pytest.mark.case(737079)
+# @pytest.mark.case(737079) # FIXME need to migrate all references to new test rail project first
 @pytest.mark.parametrize('user_data_one, user_data_two, asset, amount, channel_description', [
     (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic', 'ETH', '10',
      'description')

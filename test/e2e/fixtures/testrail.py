@@ -10,7 +10,7 @@ import configs
 
 LOG = logging.getLogger(__name__)
 
-testrail_api = None
+global testrail_api
 test_run_id = None
 
 PASS = 1
@@ -40,14 +40,15 @@ def init_testrail_api(request):
         auth=(configs.testrail.USR, configs.testrail.PSW),
     )
 
-    if response.status_code != 200:
-        LOG.info('TestRail report skipped because of Testrail server error')
+    if response.status_code in [400, 403, 429, 500]:
+        LOG.info(f'Could not login to test rail, got the following response {response}')
         return
 
     test_cases = get_test_cases_in_session(request)
     test_run = get_test_run(configs.testrail.RUN_NAME)
     if not test_run:
         test_case_ids = list(set([tc_id.id for tc_id in test_cases]))
+        LOG.debug(f'test_case_ids = {test_case_ids}')
         test_run = create_test_run(configs.testrail.RUN_NAME, test_case_ids)
 
     global test_run_id
@@ -180,6 +181,7 @@ def get_test_run(name: str) -> typing.Optional[dict]:
         project_id=configs.testrail.PROJECT_ID,
         is_completed=False
     )
+
     for test_run in test_runs['runs']:
         if test_run['name'] == name:
             return test_run
