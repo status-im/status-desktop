@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtQuick 2.13
+import QtQuick 2.15
 
 import shared 1.0
 
@@ -280,7 +280,7 @@ QtObject {
         }
     }
 
-      function validatePINs(item, firstPINField, repeatPINField) {
+    function validatePINs(item, firstPINField, repeatPINField) {
         switch (item) {
             case "first":
                 if (firstPINField.pinInput === "") {
