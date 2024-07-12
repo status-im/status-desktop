@@ -1,4 +1,5 @@
 import allure
+import os
 import pytest
 import logging
 import configs
@@ -18,6 +19,10 @@ def options(request):
         return request.param
     return ''
 
+@pytest.fixture
+def keycard_controller(request):
+    if 'settings_keycard' in str(getattr(request, 'fspath')):
+        os.environ['STATUS_RUNTIME_USE_MOCKED_KEYCARD'] = 'True'
 
 @pytest.fixture
 def application_logs():
