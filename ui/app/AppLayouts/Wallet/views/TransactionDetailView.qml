@@ -767,7 +767,7 @@ Item {
                     property alias tx: d.transaction
 
                     visible: {
-                        if (!d.isTransactionValid || root.overview.isWatchOnlyAccount)
+                        if (!d.isTransactionValid || root.overview.isWatchOnlyAccount || root.overview.isAllAccounts)
                             return false
 
                         return WalletStores.RootStore.isTxRepeatable(tx)
@@ -780,7 +780,8 @@ Item {
                                                                       tx.recipient,
                                                                       asset,
                                                                       tx.isNFT,
-                                                                      tx.amount)
+                                                                      tx.amount,
+                                                                      tx.chainId)
 
                         root.sendModal.preSelectedAccountAddress = req.preSelectedAccount.address
                         root.sendModal.preSelectedRecipient = req.preSelectedRecipient
@@ -789,6 +790,7 @@ Item {
                         root.sendModal.preSelectedHoldingType = req.preSelectedHoldingType
                         root.sendModal.preSelectedSendType = req.preSelectedSendType
                         root.sendModal.preDefinedAmountToSend = req.preDefinedAmountToSend
+                        root.sendModal.preSelectedChainId = req.preSelectedChainId
                         root.sendModal.onlyAssets = false
                         root.sendModal.open()
                     }
