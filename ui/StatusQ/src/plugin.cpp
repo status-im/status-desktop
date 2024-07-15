@@ -10,6 +10,7 @@
 #include "StatusQ/fastexpressionsorter.h"
 #include "StatusQ/formatteddoubleproperty.h"
 #include "StatusQ/functionaggregator.h"
+#include "StatusQ/genericvalidator.h"
 #include "StatusQ/groupingmodel.h"
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelcount.h"
@@ -44,6 +45,11 @@ public:
         qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
         qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
         qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
+
+        qmlRegisterUncreatableType<QValidator>(
+                    "StatusQ", 0, 1,
+                    "Validator", "This is abstract type, cannot be created directly.");
+        qmlRegisterType<GenericValidator>("StatusQ", 0, 1, "GenericValidator");
 
         qmlRegisterType<ManageTokensController>("StatusQ.Models", 0, 1, "ManageTokensController");
         qmlRegisterType<ManageTokensModel>("StatusQ.Models", 0, 1, "ManageTokensModel");
