@@ -27,7 +27,7 @@ QObject {
         image               [url]    - token's icon for custom tokens
         decimals            [int]    - number of decimal places, e.g. 18 for ETH
         balances            [model]  - submodel of balances per chain/account
-            chainId         [string] - unique identifier of a chain
+            chainId         [int]    - unique identifier of a chain
             account         [string] - unique identifier of an account
             balance         [string] - balance in basic unit as big integer string
         marketDetails       [object] - object holding market details
@@ -53,7 +53,7 @@ QObject {
     // should return empty string if no error found
     property var chainsError: chains => ""
 
-    // list of chain identifiers used for balance calculation
+    // array[Number]list of chain identifiers used for balance calculation
     property var chains: []
 
     // list of accounts used for balance calculation

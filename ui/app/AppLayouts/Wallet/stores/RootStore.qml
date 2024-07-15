@@ -36,6 +36,7 @@ QtObject {
 
     /* This property holds networks currently selected in the Wallet Main layout  */
     readonly property var networkFilters: networksModule.enabledChainIds
+    readonly property var networkFiltersArray: networkFilters.split(":").filter(Boolean).map(Number)
 
     readonly property string defaultSelectedKeyUid: userProfile.keyUid
     readonly property bool defaultSelectedKeyUidMigratedToKeycard: userProfile.isKeycardUser
