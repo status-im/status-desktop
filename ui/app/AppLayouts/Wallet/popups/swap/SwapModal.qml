@@ -90,6 +90,7 @@ StatusDialog {
         NumberAnimation { duration: 1000; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
     }
 
+    onOpened: payPanel.forceActiveFocus()
     onClosed: root.swapAdaptor.reset()
 
     header: Item {
@@ -107,6 +108,7 @@ StatusDialog {
                     root.swapInputParamsForm.selectedAccountAddress = currentAccountAddress
                 }
             }
+            control.popup.onClosed: payPanel.forceActiveFocus()
         }
     }
 
@@ -176,6 +178,7 @@ StatusDialog {
                                     }
                                 }
                             }
+                            payPanel.forceActiveFocus()
                         }
                     }
                 }
@@ -211,7 +214,11 @@ StatusDialog {
                     swapSide: SwapInputPanel.SwapSide.Pay
                     swapExchangeButtonWidth: swapExchangeButton.width
 
-                    onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
+                    onSelectedHoldingIdChanged: {
+                        if(!!selectedHoldingId) {
+                            root.swapInputParamsForm.fromTokensKey = selectedHoldingId
+                        }
+                    }
                     onRawValueChanged: {
                         if(root.swapInputParamsForm.fromTokensKey === selectedHoldingId) {
                             const amount = !tokenAmount && value === 0 ? "" :
@@ -250,7 +257,11 @@ StatusDialog {
                     mainInputLoading: root.swapAdaptor.swapProposalLoading
                     bottomTextLoading: root.swapAdaptor.swapProposalLoading
 
-                    onSelectedHoldingIdChanged: root.swapInputParamsForm.toTokenKey = selectedHoldingId
+                    onSelectedHoldingIdChanged: {
+                        if(!!selectedHoldingId) {
+                            root.swapInputParamsForm.toTokenKey = selectedHoldingId
+                        }
+                    }
 
                     /* TODO: keep this input as disabled until the work for adding a param to handle to
                     and from tokens inputed is supported by backend under

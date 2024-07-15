@@ -326,8 +326,14 @@ Item {
             // Launch popup
             launchAndVerfyModal()
 
-            for(let i =0; i< swapAdaptor.nonWatchAccounts.count; i++) {
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const amountToSendInput = findChild(payPanel, "amountToSendInput")
+            verify(!!amountToSendInput)
+            verify(amountToSendInput.input.input.edit.activeFocus)
+            verify(amountToSendInput.input.input.edit.cursorVisible)
 
+            for(let i =0; i< swapAdaptor.nonWatchAccounts.count; i++) {
                 // launch account selection dropdown
                 const accountsModalHeader = getAndVerifyAccountsModalHeader()
                 launchAccountSelectionPopup(accountsModalHeader)
@@ -356,6 +362,9 @@ Item {
                 const headerContentItemEmoji = findChild(accountsModalHeader, "assetContent")
                 verify(!!headerContentItemEmoji)
                 compare(headerContentItemEmoji.asset.emoji, swapAdaptor.nonWatchAccounts.get(i).emoji)
+
+                verify(amountToSendInput.input.input.edit.activeFocus)
+                verify(amountToSendInput.input.input.edit.cursorVisible)
             }
             closeAndVerfyModal()
         }
@@ -363,6 +372,13 @@ Item {
         function test_network_default_and_selection() {
             // Launch popup
             launchAndVerfyModal()
+
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+            const amountToSendInput = findChild(payPanel, "amountToSendInput")
+            verify(!!amountToSendInput)
+            verify(amountToSendInput.input.input.edit.activeFocus)
+            verify(amountToSendInput.input.input.edit.cursorVisible)
 
             // get network comboBox
             const networkComboBox = findChild(controlUnderTest, "networkFilter")
@@ -396,6 +412,9 @@ Item {
                     const networkComboIcon = findChild(networkComboBox.control.contentItem, "contentItemIcon")
                     verify(!!networkComboIcon)
                     verify(networkComboIcon.asset.name.includes(root.swapAdaptor.filteredFlatNetworksModel.get(i).iconUrl))
+
+                    verify(amountToSendInput.input.input.edit.activeFocus)
+                    verify(amountToSendInput.input.input.edit.cursorVisible)
                 }
             }
             networkComboBox.control.popup.close()
