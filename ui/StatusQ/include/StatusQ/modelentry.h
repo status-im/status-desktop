@@ -4,6 +4,7 @@
 #include <QPointer>
 #include <QQmlEngine>
 #include <QQmlPropertyMap>
+#include <QStringList>
 
 class ModelEntry : public QObject
 {
@@ -60,6 +61,8 @@ protected:
     void tryItemResetOrUpdate();
     void resetItem();
     void updateItem(const QList<int>& roles = {});
+    QStringList fillItem(const QList<int>& roles = {});
+    void notifyItemChanges(const QStringList& roles);
 
     QModelIndex findIndexInRange(int start, int end, const QList<int>& roles = {}) const;
     bool itemHasCorrectRoles() const;

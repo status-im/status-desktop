@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
+import QtQml.Models 2.15
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
@@ -20,6 +22,32 @@ Control {
         sourceModel: usersModel
         key: "pubKey"
         value: pubKeySelector.currentText
+        
+        onItemChanged: signalsModel.append({        signal: "Item changed",     value: "", row: itemData.row, item: itemData.item, roles: JSON.stringify(itemData.roles), available: itemData.available})
+        onRowChanged: signalsModel.append({         signal: "Row changed",      value: "", row: itemData.row, item: itemData.item, roles: JSON.stringify(itemData.roles), available: itemData.available})
+        onAvailableChanged: signalsModel.append({   signal: "Available changed",value: "", row: itemData.row, item: itemData.item, roles: JSON.stringify(itemData.roles), available: itemData.available})
+        onRolesChanged: signalsModel.append({       signal: "Roles changed",    value: "", row: itemData.row, item: itemData.item, roles: JSON.stringify(itemData.roles), available: itemData.available})
+    }
+
+    Instantiator {
+        model: itemData.roles
+        delegate: QtObject {
+            property var connection: {
+                return Qt.createQmlObject(`
+                    import QtQml 2.15
+                    Connections {
+                        target: itemData.item
+                        function on${modelData.charAt(0).toUpperCase() + modelData.slice(1)}Changed() {
+                            signalsModel.append({ signal: "${modelData} changed", value: itemData.item.${modelData}, row: itemData.row, item: itemData.item, roles: JSON.stringify(itemData.roles), available: itemData.available})
+                        }
+                    }
+                `, this, "dynamicConnectionOn${modelData}")
+            }
+        }
+    }
+
+    ListModel {
+        id: signalsModel
     }
     
     contentItem: ColumnLayout {
@@ -97,9 +125,28 @@ Control {
                 }
             }
         }
+        GenericListView {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: showSignals.checked && !!count
+            model: signalsModel
+            header:  Label {
+                width: parent.width
+                text: "Item Signals"
+                font.bold: true
+                font.pixelSize: 16
+                bottomPadding: 20
+                Button {
+                    anchors.right: parent.right
+                    text: "clear"
+                    onClicked: signalsModel.clear()
+                }
+            }
+        }
         Pane {
             contentItem: RowLayout {
                 ComboBox {
+                    Layout.preferredWidth: 250
                     id: pubKeySelector
                     model: [...ModelUtils.modelToFlatArray(usersModel, "pubKey"), "none"]
                 }
@@ -109,6 +156,10 @@ Control {
                     onCheckedChanged: {
                         itemData.cacheOnRemoval = checked
                     }
+                }
+                CheckBox {
+                    id: showSignals
+                    text: "Show signals"
                 }
             }
         }

@@ -105,7 +105,7 @@ void ModelEntry::setSourceModel(QAbstractItemModel* sourceModel)
                     setRow(-1);
                     return;
                 }
-
+                setAvailable(false);
                 setIndex({});
             });
     connect(m_sourceModel,
@@ -168,8 +168,8 @@ void ModelEntry::setIndex(const QModelIndex& index)
 
     m_index = index;
 
-    tryItemResetOrUpdate();
-    setRow(m_index.row());
+        setRow(m_index.row());
+        tryItemResetOrUpdate();
 }
 
 void ModelEntry::setAvailable(bool available)
@@ -265,7 +265,7 @@ void ModelEntry::resetItem()
 
     m_item.reset(new QQmlPropertyMap());
 
-    updateItem();
+    fillItem();
 
     if(!m_index.isValid())
     {
@@ -283,8 +283,17 @@ void ModelEntry::resetItem()
 
 void ModelEntry::updateItem(const QList<int>& roles /*{}*/)
 {
-    if(!m_index.isValid() || !m_sourceModel) return;
+    const auto updatedRoles = fillItem(roles);
+    notifyItemChanges(updatedRoles);
 
+    setItemRemovedFromModel(false);
+}
+
+QStringList ModelEntry::fillItem(const QList<int>& roles /*{}*/)
+{
+    if(!m_index.isValid() || !m_sourceModel) return {};
+
+    QStringList filledRoles;
     const auto& rolesRef = roles.isEmpty() ? m_sourceModel->roleNames().keys() : roles;
 
     for(auto role : rolesRef)
@@ -294,10 +303,26 @@ void ModelEntry::updateItem(const QList<int>& roles /*{}*/)
 
         if(roleValue == m_item->value(roleName)) continue;
 
+        filledRoles.append(roleName);
         m_item->insert(roleName, roleValue);
-        emit m_item->valueChanged(roleName, roleValue);
     }
-    setItemRemovedFromModel(false);
+
+    return filledRoles;
+}
+
+void ModelEntry::notifyItemChanges(const QStringList& roles)
+{
+    if (roles.contains(m_key))
+    {
+        emit itemChanged();
+        return;
+    }
+
+    for(auto role : roles)
+    {
+        auto value = m_item->value(role);
+        emit m_item->valueChanged(role, value);
+    }
 }
 
 bool ModelEntry::itemHasCorrectRoles() const
