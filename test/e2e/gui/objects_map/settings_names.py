@@ -42,6 +42,7 @@ mainWindow_ContactsView = {"container": statusDesktop_mainWindow, "type": "Conta
 mainWindow_Send_contact_request_to_chat_key_StatusButton = {"checkable": False, "container": mainWindow_ContactsView, "objectName": "ContactsView_ContactRequest_Button", "type": "StatusButton", "visible": True}
 contactsTabBar_Pending_Requests_StatusTabButton = {"checkable": True, "container": mainWindow_ContactsView, "objectName": "ContactsView_PendingRequest_Button", "type": "StatusTabButton", "visible": True}
 settingsContentBaseScrollView_ContactListPanel = {"container": mainWindow_ContactsView, "objectName": "ContactListPanel_ListView", "type": "StatusListView", "visible": True}
+settingsContentBaseScrollView_Item = {"container": mainWindow_ContactsView, "type": "Item", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_sentRequests_ContactsListPanel = {"container": mainWindow_ContactsView, "objectName": "sentRequests_ContactsListPanel", "type": "ContactsListPanel", "visible": True}
 contactsTabBar_Contacts_StatusTabButton = {"checkable": True, "container": mainWindow_ContactsView, "id": "contactsBtn", "type": "StatusTabButton", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_receivedRequests_ContactsListPanel = {"container": mainWindow_ContactsView, "objectName": "receivedRequests_ContactsListPanel", "type": "ContactsListPanel", "visible": True}
@@ -52,6 +53,8 @@ view_Profile_StatusMenuItem = {"checkable": False, "container": statusDesktop_ma
 verify_Identity_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "verifyIdentity_StatusItem", "type": "StatusMenuItem", "visible": True}
 respond_to_ID_Request_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "pendingIdentity_StatusItem", "type": "StatusMenuItem", "visible": True}
 settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton = {"checkable": False, "container": mainWindow_ContactsView, "objectName": "verifyIdentity_StatusItem", "type": "StatusFlatButton", "unnamed": 1, "visible": True}
+contactsTabBar_Blocked_StatusTabButton = {"checkable": True, "container": mainWindow_ContactsView, "objectName": "ContactsView_Blocked_Button", "type": "StatusTabButton", "visible": True}
+unblock_user_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "unblock_StatusItem", "type": "StatusMenuItem", "visible": True}
 
 # Keycard Settings View
 mainWindow_KeycardView = {"container": statusDesktop_mainWindow, "type": "KeycardView", "unnamed": 1, "visible": True}

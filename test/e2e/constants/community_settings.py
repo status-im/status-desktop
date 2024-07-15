@@ -55,7 +55,17 @@ class ToastMessages(Enum):
     UPDATE_PERMISSION_TOAST = 'Community permission updated'
     DELETE_PERMISSION_TOAST = 'Community permission deleted'
     KICKED_USER_TOAST = ' was kicked from '
+    BLOCKED_USER_TOAST = ' blocked'
+    UNBLOCKED_USER_TOAST = ' unblocked'
+    REMOVED_CONTACT_TOAST = 'Contact removed'
 
 
 class LimitWarnings(Enum):
     MEMBER_ROLE_LIMIT_WARNING = 'Max of 5 ‘become member’ permissions for this Community has been reached. You will need to delete an existing ‘become member’ permission before you can add a new one.'
+
+
+class BlockPopupWarnings(Enum):
+    BLOCK_WARNING_PART_1 = 'Blocking a user purges the database of all messages that you’ve previously received from '
+    BLOCK_WARNING_PART_2 = ' in all contexts. This can take a moment.'
+    UNBLOCK_TEXT_1 = 'Unblocking '
+    UNBLOCK_TEXT_2 = ' will allow new messages you receive from athletic to reach you.'

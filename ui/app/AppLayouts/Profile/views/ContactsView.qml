@@ -105,6 +105,7 @@ SettingsContentBase {
             //            }
             StatusTabButton {
                 id: blockedBtn
+                objectName: "ContactsView_Blocked_Button"
                 width: implicitWidth
                 enabled: root.contactsStore.blockedContactsModel.count > 0
                 text: qsTr("Blocked")
