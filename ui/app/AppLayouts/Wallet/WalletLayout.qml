@@ -139,11 +139,6 @@ Item {
 
         property SwapInputParamsForm swapFormData: SwapInputParamsForm {
             selectedAccountAddress: RootStore.selectedAddress
-            selectedNetworkChainId: {
-                // Without this when we switch testnet mode, the correct network is not evaluated
-                RootStore.areTestNetworksEnabled
-                return StatusQUtils.ModelUtils.get(RootStore.filteredFlatModel, 0, "chainId")
-            }
         }
 
         function displayAllAddresses() {
