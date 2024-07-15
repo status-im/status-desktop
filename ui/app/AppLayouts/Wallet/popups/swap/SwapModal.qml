@@ -442,7 +442,7 @@ StatusDialog {
             accountAddress: root.swapAdaptor.selectedAccount.address
             accountEmoji: root.swapAdaptor.selectedAccount.emoji
             accountColor: Utils.getColorForId(root.swapAdaptor.selectedAccount.colorId)
-            accountBalanceFormatted: payPanel.accountBalanceFormatted // FIXME https://github.com/status-im/status-desktop/issues/15554
+            accountBalanceFormatted: root.swapAdaptor.selectedAccount.accountBalance.formattedBalance
 
             networkShortName: networkFilter.singleSelectionItemData.shortName
             networkName: networkFilter.singleSelectionItemData.chainName
