@@ -100,6 +100,7 @@ add_library(StatusQ SHARED
         include/StatusQ/fastexpressionsorter.h
         include/StatusQ/formatteddoubleproperty.h
         include/StatusQ/functionaggregator.h
+        include/StatusQ/genericvalidator.h
         include/StatusQ/groupingmodel.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelcount.h
@@ -129,6 +130,7 @@ add_library(StatusQ SHARED
         src/fastexpressionsorter.cpp
         src/formatteddoubleproperty.cpp
         src/functionaggregator.cpp
+        src/genericvalidator.cpp
         src/groupingmodel.cpp
         src/leftjoinmodel.cpp
         src/modelcount.cpp
