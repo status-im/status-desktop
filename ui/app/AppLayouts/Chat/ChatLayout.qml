@@ -235,6 +235,7 @@ StackLayout {
             id: communitySettingsView
             rootStore: root.rootStore
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+            onEnableNetwork: WalletStore.RootStore.enableNetwork(chainId)
             tokensStore: root.tokensStore
             sendModalPopup: root.sendModalPopup
             transactionStore: root.transactionStore

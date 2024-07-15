@@ -101,6 +101,8 @@ StatusScrollView {
 
     signal navigateToMintTokenSettings(bool isAssetType)
 
+    signal enableNetwork(int chainId)
+
     function selectToken(key, amount, type) {
         if(selectedHoldingsModel)
             selectedHoldingsModel.clear()
@@ -161,6 +163,7 @@ StatusScrollView {
                 key, amount, type,
                 tokenText: amountLocalized + " " + modelItem.name,
                 tokenImage: modelItem.iconSource,
+                networkId: modelItem.chainId,
                 networkText: modelItem.chainName,
                 networkImage: Style.svg(modelItem.chainIcon),
                 remainingSupply: modelItem.remainingSupply,
@@ -296,6 +299,9 @@ StatusScrollView {
                     const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC20)
                     entry.valid = true
 
+                    // Activate wallet network in case it is not
+                    root.enableNetwork(entry.networkId)
+
                     selectedHoldingsModel.append(entry)
                     dropdown.close()
                 }
@@ -303,6 +309,9 @@ StatusScrollView {
                 onAddCollectible: {
                     const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC721)
                     entry.valid = true
+
+                    // Activate wallet network in case it is not
+                    root.enableNetwork(entry.networkId)
 
                     selectedHoldingsModel.append(entry)
                     dropdown.close()

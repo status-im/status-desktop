@@ -51,6 +51,8 @@ StatusSectionLayout {
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
 
+    signal enableNetwork(int chainId)
+
     readonly property string filteredSelectedTags: {
         let tagsArray = []
         if (community && community.tags) {
@@ -372,6 +374,8 @@ StatusSectionLayout {
 
             onStopTokenHoldersManagement: communityTokensStore.stopTokenHoldersManagement()
 
+            onEnableNetwork: root.enableNetwork(chainId)
+
             onMintCollectible:
                 communityTokensStore.deployCollectible(
                     root.community.id, collectibleItem)
@@ -525,6 +529,7 @@ StatusSectionLayout {
             assetsModel: assetsModelLoader.item
             collectiblesModel: collectiblesModelLoader.item
             membersModel: community.members
+            onEnableNetwork: root.enableNetwork(chainId)
 
             accountsModel: root.walletAccountsModel
             onAirdropClicked: communityTokensStore.airdrop(

@@ -83,6 +83,8 @@ StackView {
     signal startTokenHoldersManagement(int chainId, string address)
     signal stopTokenHoldersManagement()
 
+    signal enableNetwork(int chainId)
+
     function navigateBack() {
         pop(StackView.Immediate)
     }
@@ -300,7 +302,10 @@ StackView {
                 chainIcon: newTokenPage.chainIcon
             }
 
-
+            Component.onCompleted: {
+                // Activate wallet network in case it is not
+                root.enableNetwork(newTokenPage.ownerTokenChainId)
+            }
 
             property bool isAssetView: false
             property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
