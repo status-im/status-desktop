@@ -1215,7 +1215,7 @@ private slots:
         QCOMPARE(sourceModelChangedSpy.count(), 1);
         QCOMPARE(keyChangedSpy.count(), 1);
         QCOMPARE(valueChangedSpy.count(), 2);
-        QCOMPARE(itemChangedSpy.count(), 1);
+        QCOMPARE(itemChangedSpy.count(), 2);
         QCOMPARE(availableChangedSpy.count(), 1);
         QCOMPARE(rolesChangedSpy.count(), 1);
         QCOMPARE(testObject->row(), 0);
@@ -1444,6 +1444,10 @@ private slots:
             QCOMPARE(testObject->item()->isEmpty(), false);
             QCOMPARE(testObject->roles().size(), 2);
             QVERIFY(testObject->item()->value("key") != QVariant{});
+            if(testObject->available())
+                QCOMPARE(testObject->row(), 0);
+            else
+                QCOMPARE(testObject->row(), -1);
         });
 
         auto itemChangedConnection = connect(testObject, &ModelEntry::itemChanged, this, [this]() {
@@ -1495,6 +1499,47 @@ private slots:
 
         QCOMPARE(testObject->item()->value("key"), {});
         QCOMPARE(testObject->item()->value("color"), {});
+    }
+
+    void itemSignalsTest()
+    {
+        // Testing the signals of the item object
+        // Expected:
+        // 1. changes in model role values produce valueChanged signals only for the roles that changed
+        // 2. changes in the model role used for filtering should produce itemChanged signals and no valueChanged signals
+
+        QQmlEngine engine;
+        ListModelWrapper sourceModel(
+            engine, QJsonArray{QJsonObject{{"key", 1}, {"color", "red"}, {"size", "small"}}, QJsonObject{{"key", 2}, {"color", "blue"}, {"size", "medium"}}});
+
+        QSignalSpy itemChangedSpy(testObject, &ModelEntry::itemChanged);
+
+        // setting the initial source model
+        QCOMPARE(sourceModelProperty.write(testObject, QVariant::fromValue<QAbstractItemModel*>(sourceModel.model())),
+                 true);
+        // setting the filter
+        QCOMPARE(keyProperty.write(testObject, "key"), true);
+        QCOMPARE(valueProperty.write(testObject, 1), true);
+
+        QCOMPARE(itemChangedSpy.count(), 1);
+
+        QSignalSpy valueChangedSpy(testObject->item(), &QQmlPropertyMap::valueChanged);
+
+        // change the value of the item
+        sourceModel.setProperty(0, "color", "yellow");
+        QCOMPARE(valueChangedSpy.count(), 1);
+        QCOMPARE(valueChangedSpy.at(0).at(0).toString(), "color");
+        QCOMPARE(valueChangedSpy.at(0).at(1).toString(), "yellow");
+
+        sourceModel.setProperty(0, "size", "large");
+        QCOMPARE(valueChangedSpy.count(), 2);
+        QCOMPARE(valueChangedSpy.at(1).at(0).toString(), "size");
+        QCOMPARE(valueChangedSpy.at(1).at(1).toString(), "large");
+
+        // change the filter to the second item
+        QCOMPARE(valueProperty.write(testObject, 2), true);
+        QCOMPARE(itemChangedSpy.count(), 2);
+        QCOMPARE(valueChangedSpy.count(), 2);
     }
 
     void itemObjectCleanupTest()
