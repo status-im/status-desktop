@@ -349,10 +349,11 @@ QtObject {
         readonly property int keycard: 14
         readonly property int about_terms: 15 // a subpage under "About"
         readonly property int about_privacy: 16 // a subpage under "About"
+        readonly property int privacyAndSecurity: 17
 
         // special treatment; these do not participate in the main settings' StackLayout
-        readonly property int signout: 17
-        readonly property int backUpSeed: 18
+        readonly property int signout: 18
+        readonly property int backUpSeed: 19
     }
 
     readonly property QtObject walletSettingsSubsection: QtObject {

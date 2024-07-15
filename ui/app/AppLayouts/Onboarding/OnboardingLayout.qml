@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.popups.keycard 1.0
+import shared.stores 1.0
 
 import "controls"
 import "views"
@@ -18,6 +19,7 @@ OnboardingBasePage {
     id: root
 
     property var startupStore: StartupStore {}
+    property var metricsStore: MetricsStore {}
 
     backButtonVisible: root.startupStore.currentStartupState ? root.startupStore.currentStartupState.displayBackButton
                                                              : false
@@ -233,6 +235,7 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
         id: keysMainViewComponent
         KeysMainView {
             startupStore: root.startupStore
+            metricsStore: root.metricsStore
         }
     }
 

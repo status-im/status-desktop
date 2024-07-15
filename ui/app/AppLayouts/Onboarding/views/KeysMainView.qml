@@ -10,6 +10,9 @@ import StatusQ.Components 0.1
 
 import shared 1.0
 import shared.panels 1.0
+import shared.popups 1.0
+import shared.stores 1.0
+
 import "../popups"
 import "../controls"
 import "../stores"
@@ -20,12 +23,12 @@ Item {
     id: root
 
     property StartupStore startupStore
+    property MetricsStore metricsStore
 
     Component.onCompleted: {
         if (button1.visible) {
             button1.forceActiveFocus()
         }
-        enableCentricMetrics.checked = root.startupStore.isCentralizedMetricsEnabled()
     }
 
     QtObject {
@@ -36,6 +39,16 @@ Item {
         readonly property int infoTextWidth: d.infoWidth - 2 * d.infoMargin
         readonly property int imgKeysWH: 160
         readonly property int imgSeedPhraseWH: 257
+
+
+        function showMetricsAndRunAction(action) {
+            if (root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeNewStatusUser) {
+                metricsEnablePopup.actionOnClose = action
+                metricsEnablePopup.visible = true
+            } else {
+                action()
+            }
+        }
     }
     ColumnLayout {
         anchors.centerIn: parent
@@ -220,12 +233,12 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             visible: text !== ""
             onClicked: {
-                root.startupStore.doPrimaryAction()
+                d.showMetricsAndRunAction(root.startupStore.doPrimaryAction)
             }
             Keys.onPressed: {
                 if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                     event.accepted = true
-                    root.startupStore.doPrimaryAction()
+                    d.showMetricsAndRunAction(root.startupStore.doPrimaryAction)
                 }
             }
         }
@@ -248,7 +261,7 @@ Item {
                     parent.font.underline = false
                 }
                 onClicked: {
-                    root.startupStore.doSecondaryAction()
+                    d.showMetricsAndRunAction(root.startupStore.doSecondaryAction)
                 }
             }
         }
@@ -284,7 +297,7 @@ Item {
                             Qt.openUrlExternally(button3.link)
                             return
                         }
-                        root.startupStore.doTertiaryAction()
+                        d.showMetricsAndRunAction(root.startupStore.doTertiaryAction)
                     }
                 }
             }
@@ -302,19 +315,29 @@ Item {
             }
         }
 
-        StatusCheckBox {
-            id: enableCentricMetrics
-            text: qsTr("Enable centric metrics")
-            Layout.alignment: Qt.AlignHCenter
-            onToggled: root.startupStore.toggleCentralizedMetrics(checked)
-        }
-
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
     }
 
+    component MetricsEnablePopupWithActionOnClose: MetricsEnablePopup {
+        property var actionOnClose
+    }
+
+    MetricsEnablePopupWithActionOnClose {
+        id: metricsEnablePopup
+        isOnboarding: true
+
+        function finalAction(enable) {
+            if (!!actionOnClose)
+                actionOnClose()
+            root.metricsStore.toggleCentralizedMetrics(enable)
+        }
+
+        onAccepted: finalAction(true)
+        onRejected: finalAction(false)
+    }
 
     states: [
         State {

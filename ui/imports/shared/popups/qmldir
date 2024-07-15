@@ -31,5 +31,6 @@ SendContactRequestModal 1.0 SendContactRequestModal.qml
 SettingsDirtyToastMessage 1.0 SettingsDirtyToastMessage.qml
 UnblockContactConfirmationDialog 1.0 UnblockContactConfirmationDialog.qml
 UserAgreementPopup 1.0 UserAgreementPopup.qml
+MetricsEnablePopup 1.0 MetricsEnablePopup.qml
 UserStatusContextMenu 1.0 UserStatusContextMenu.qml
 ImageContextMenu 1.0 ImageContextMenu.qml
