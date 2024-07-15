@@ -79,11 +79,6 @@ Control {
     implicitWidth: 492
     implicitHeight: 131
 
-    Component.onCompleted: {
-        if (root.swapSide === SwapInputPanel.SwapSide.Pay)
-            amountToSendInput.input.forceActiveFocus()
-    }
-
     QtObject {
         id: d
 
