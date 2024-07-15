@@ -6,5 +6,6 @@ ChartStoreBase 1.0 ChartStoreBase.qml
 PermissionsStore 1.0 PermissionsStore.qml
 TokenBalanceHistoryStore 1.0 TokenBalanceHistoryStore.qml
 TokenMarketValuesStore 1.0 TokenMarketValuesStore.qml
+MetricsStore 1.0 MetricsStore.qml
 NetworkConnectionStore 1.0 NetworkConnectionStore.qml
 DAppsStore 1.0 DAppsStore.qml

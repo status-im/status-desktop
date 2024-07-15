@@ -72,6 +72,7 @@ Item {
     property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
     property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
     property CommunitiesStore communitiesStore: CommunitiesStore {}
+    property MetricsStore metricsStore: MetricsStore {}
     readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
     readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
     readonly property WalletStore.CollectiblesStore walletCollectiblesStore: WalletStore.RootStore.collectiblesStore
@@ -1440,6 +1441,7 @@ Item {
                             walletAssetsStore: appMain.walletAssetsStore
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
+                            metricsStore: appMain.metricsStore
                         }
                     }
 

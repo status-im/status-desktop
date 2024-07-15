@@ -201,10 +201,7 @@ StatusModal {
             type: StatusBaseButton.Type.Danger
             text: qsTr("Delete Category")
             onClicked: {
-                Global.openPopup(deleteCategoryConfirmationDialogComponent, {
-                    "headerSettings.title": qsTr("Delete '%1' category").arg(nameInput.text),
-                    confirmationText: qsTr("Are you sure you want to delete '%1' category? Channels inside the category won’t be deleted.").arg(nameInput.text)
-                })
+                Global.openPopup(deleteCategoryConfirmationDialogComponent)
             }
         },
         StatusButton {

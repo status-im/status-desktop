@@ -44,6 +44,7 @@ StatusSectionLayout {
     required property WalletAssetsStore walletAssetsStore
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
+    required property SharedStores.MetricsStore metricsStore
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
@@ -455,6 +456,20 @@ StatusSectionLayout {
                     textFormat: Text.MarkdownText
                     text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/privacy.mdwn")
                 }
+            }
+        }
+
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: PrivacyAndSecurityView {
+                metricsStore: root.metricsStore
+
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
+                contentWidth: d.contentWidth
             }
         }
     }
