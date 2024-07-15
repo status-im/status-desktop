@@ -38,6 +38,7 @@ QObject {
     // Probably this data transformation should live there since they have common base.
     readonly property var nonWatchAccounts: SortFilterProxyModel {
         sourceModel: root.swapStore.accounts
+        delayed: true // Delayed to allow `processAccountBalance` dependencies to be resolved
         filters: ValueFilter {
             roleName: "canSend"
             value: true
@@ -49,7 +50,17 @@ QObject {
         proxyRoles: [
             FastExpressionRole {
                 name: "accountBalance"
-                expression: d.processAccountBalance(model.address)
+                expression: {
+                    // dependencies
+                    root.swapFormData.fromTokensKey
+                    root.fromToken
+                    root.fromToken.symbol
+                    root.fromToken.decimals
+                    root.swapFormData.selectedNetworkChainId
+                    root.swapFormData.fromTokensKey
+
+                    return d.processAccountBalance(model.address)
+                }
                 expectedRoles: ["address"]
             },
             FastExpressionRole {
