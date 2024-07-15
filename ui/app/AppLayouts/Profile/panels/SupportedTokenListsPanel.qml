@@ -89,11 +89,19 @@ StatusListView {
             readonly property TokenListPopup popup: TokenListPopup {
                 parent: root
 
-                sourceName: delegate.name
                 sourceImage: delegate.image
                 sourceUrl: delegate.source
                 sourceVersion: delegate.version
                 tokensCount: delegate.tokensCount
+
+                title: {
+                    // Similar to Constants.getSupportedTokenSourceImage
+                    if (delegate.name === Constants.supportedTokenSources.uniswap ||
+                            delegate.name === Constants.supportedTokenSources.status)
+                        return delegate.name;
+
+                    return qsTr("%1 Token List").arg(delegate.name)
+                }
 
                 tokensListModel: SortFilterProxyModel {
                     sourceModel: root.tokensListModel

@@ -73,7 +73,7 @@ SplitView {
                         modal: false
                         closePolicy: Popup.NoAutoClose
 
-                        sourceName: delegate.name
+                        title: qsTr("%1 Token List").arg(delegate.name)
                         sourceImage: delegate.image
                         sourceUrl: delegate.source
                         sourceVersion: delegate.version

@@ -19,20 +19,20 @@ QtObject {
     readonly property var sourcesOfTokensModel: SortFilterProxyModel {
         sourceModel: !!root._allTokensModule ? root._allTokensModule.sourcesOfTokensModel : null
         proxyRoles: FastExpressionRole {
-            function sourceImage(sourceKey) {
-                return Constants.getSupportedTokenSourceImage(sourceKey)
+            function sourceImage(name) {
+                return Constants.getSupportedTokenSourceImage(name)
             }
             name: "image"
-            expression: sourceImage(model.key)
-            expectedRoles: ["key"]
+            expression: sourceImage(model.name)
+            expectedRoles: ["name"]
         }
         filters: AnyOf {
             ValueFilter {
-                roleName: "key"
+                roleName: "name"
                 value: Constants.supportedTokenSources.uniswap
             }
             ValueFilter {
-                roleName: "key"
+                roleName: "name"
                 value: Constants.supportedTokenSources.status
             }
         }
