@@ -277,8 +277,12 @@ QtObject {
         openPopup(importCommunitiesPopupComponent)
     }
 
-    function openCommunityIntroPopup(communityId, name, introMessage,
-                                     imageSrc, isInvitationPending) {
+    function openCommunityIntroPopup(communityId,
+                                    name,
+                                    introMessage,
+                                    imageSrc,
+                                    isInvitationPending
+                                    ) {
         openPopup(communityJoinDialogPopup,
                   {communityId: communityId,
                    communityName: name,
@@ -712,11 +716,11 @@ QtObject {
                 store: root.communitiesStore
                 onJoinCommunityRequested: {
                     close()
+                    communitiesStore.spectateCommunity(communityId)
                     openCommunityIntroPopup(communityId,
                                             communityDetails.name,
                                             communityDetails.introMessage,
                                             communityDetails.image,
-                                            communityDetails.access,
                                             root.rootStore.isMyCommunityRequestPending(communityId))
                 }
                 onClosed: destroy()
