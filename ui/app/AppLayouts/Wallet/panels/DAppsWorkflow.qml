@@ -151,6 +151,7 @@ DappsComboBox {
         onLoaded: item.open()
 
         property SessionRequestResolved request: null
+        property bool requestHandled: false
 
         sourceComponent: DAppSignRequestModal {
             id: dappRequestModal
@@ -206,17 +207,32 @@ DappsComboBox {
                 }
             }
 
-            onClosed: Qt.callLater( () => sessionRequestLoader.active = false)
+            onClosed: {
+                Qt.callLater( () => {
+                    rejectRequest()
+                    sessionRequestLoader.active = false
+                })
+            }
 
             onAccepted: {
                 if (!request) {
                     console.error("Error signing: request is null")
                     return
                 }
+                requestHandled = true
                 root.wcService.requestHandler.authenticate(request)
             }
 
             onRejected: {
+                rejectRequest()
+            }
+
+            function rejectRequest() {
+                // Allow rejecting only once
+                if (requestHandled) {
+                    return
+                }
+                requestHandled = true
                 let userRejected = true
                 root.wcService.requestHandler.rejectSessionRequest(request, userRejected)
             }
@@ -298,6 +314,7 @@ DappsComboBox {
 
         function onSessionRequest(request) {
             sessionRequestLoader.request = request
+            sessionRequestLoader.requestHandled = false
             sessionRequestLoader.active = true
         }
     }

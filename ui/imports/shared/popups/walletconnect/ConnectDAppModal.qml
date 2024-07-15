@@ -92,7 +92,7 @@ StatusDialog {
 
     width: 480
     implicitHeight: !d.connectionAttempted ? 633 : 681
-    
+
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     title: d.connectionSuccessful ? qsTr("dApp connected") :
@@ -205,7 +205,7 @@ StatusDialog {
             roleName: "chainId"
 
             aggregateFunction: (aggr, value) => [...aggr, value]
-        } 
+        }
 
         property int connectionStatus: root.notConnectedStatus
         readonly property bool connectionSuccessful: d.connectionStatus === root.connectionSuccessfulStatus
