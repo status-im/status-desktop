@@ -6,3 +6,4 @@ CommunitiesView 1.0 CommunitiesView.qml
 LanguageView 1.0 LanguageView.qml
 NotificationsView 1.0 NotificationsView.qml
 SyncingView 1.0 SyncingView.qml
+PrivacyAndSecurityView 1.0 PrivacyAndSecurityView.qml

@@ -115,14 +115,6 @@ QtObject {
         return root.startupModuleInst.getSeedPhrase()
     }
 
-    function toggleCentralizedMetrics(enabled) {
-        metrics.toggleCentralizedMetrics(enabled)
-    }
-
-    function isCentralizedMetricsEnabled() {
-        return metrics.isCentralizedMetricsEnabled()
-    }
-
     function validateLocalPairingConnectionString(connectionString) {
         return root.startupModuleInst.validateLocalPairingConnectionString(connectionString)
     }
