@@ -102,7 +102,7 @@ StatusDialog {
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
-        readonly property bool errorMode: popup.isLoading || !recipientInputLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
+        readonly property bool errorMode: popup.isLoading || !recipientInputLoader.ready ? false : errorType !== Constants.NoError || routerPanel.errorMode || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
@@ -269,7 +269,7 @@ StatusDialog {
 
             color: Theme.palette.baseColor3
 
-            layer.enabled: scrollView.contentY > 0
+            layer.enabled: routerPanel.contentY > 0
             layer.effect: DropShadow {
                 verticalOffset: 0
                 radius: 8
@@ -495,11 +495,10 @@ StatusDialog {
             }
         }
 
-        StatusScrollView {
-            id: scrollView
+        RouterPanel {
+            id: routerPanel
 
-            padding: 0
-            bottomPadding: Style.current.padding
+            objectName: "sendModalScroll"
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -507,40 +506,29 @@ StatusDialog {
             Layout.leftMargin: Style.current.xlPadding
             Layout.rightMargin: Style.current.xlPadding
 
-            contentWidth: availableWidth
+            padding: 0
+            bottomPadding: Style.current.padding
 
             visible: recipientInputLoader.ready &&
                      (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
 
-            objectName: "sendModalScroll"
-
-            Behavior on implicitHeight {
-                NumberAnimation { duration: 700; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
-            }
-
-            NetworkSelector {
-                id: networkSelector
-
-                width: scrollView.availableWidth
-
-                store: popup.store
-                interactive: popup.interactive
-                selectedRecipient: popup.preSelectedRecipient
-                ensAddressOrEmpty: recipientInputLoader.resolvedENSAddress
-                amountToSend: amountToSendInput.cryptoValueToSendFloat
-                minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
-                minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
-                selectedAsset: d.selectedHolding
-                onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
-                errorType: d.errorType
-                isLoading: popup.isLoading
-                isBridgeTx: d.isBridgeTx
-                isCollectiblesTransfer: d.isCollectiblesTransfer
-                bestRoutes: popup.bestRoutes
-                totalFeesInFiat: d.totalFeesInFiat
-                fromNetworksList: fromNetworksRouteModel
-                toNetworksList: toNetworksRouteModel
-            }
+            store: popup.store
+            interactive: popup.interactive
+            selectedRecipient: popup.preSelectedRecipient
+            ensAddressOrEmpty: recipientInputLoader.resolvedENSAddress
+            amountToSend: amountToSendInput.cryptoValueToSendFloat
+            minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
+            minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
+            selectedAsset: d.selectedHolding
+            onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
+            errorType: d.errorType
+            isLoading: popup.isLoading
+            isBridgeTx: d.isBridgeTx
+            isCollectiblesTransfer: d.isCollectiblesTransfer
+            bestRoutes: popup.bestRoutes
+            totalFeesInFiat: d.totalFeesInFiat
+            fromNetworksList: fromNetworksRouteModel
+            toNetworksList: toNetworksRouteModel
         }
     }
 
@@ -574,7 +562,7 @@ StatusDialog {
                 // If collectible
                 d.totalAmountToReceive = txRoutes.amountToReceive
             }
-            networkSelector.suggestedToNetworksList = txRoutes.toNetworksRouteModel
+            routerPanel.suggestedToNetworksList = txRoutes.toNetworksRouteModel
             popup.isLoading = false
         }
     }
