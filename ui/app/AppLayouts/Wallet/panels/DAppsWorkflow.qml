@@ -31,7 +31,40 @@ DappsComboBox {
     }
 
     onDisconnectDapp: (dappUrl) => {
-        root.wcService.disconnectDapp(dappUrl)
+        disconnectdAppDialogLoader.dAppUrl = dappUrl
+        disconnectdAppDialogLoader.active = true
+    }
+
+    Loader {
+        id: disconnectdAppDialogLoader
+
+        property string dAppUrl
+
+        active: false
+
+        onLoaded: {
+            const dApp = wcService.getDApp(dAppUrl);
+            if (dApp) {
+                item.dappName = dApp.name;
+                item.dappIcon = dApp.iconUrl;
+                item.dappUrl = disconnectdAppDialogLoader.dAppUrl;
+            }
+
+            item.open();
+        }
+
+        sourceComponent: DAppConfirmDisconnectPopup {
+
+            visible: true
+
+            onClosed: {
+                disconnectdAppDialogLoader.active = false
+            }
+
+            onAccepted: {
+                root.wcService.disconnectDapp(dappUrl)
+            }
+        }
     }
 
     Loader {
