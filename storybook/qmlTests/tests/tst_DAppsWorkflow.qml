@@ -51,6 +51,11 @@ Item {
                 approveSessionCalls.push({sessionProposalJson, approvedNamespaces})
             }
 
+            property var acceptSessionRequestCalls: []
+            acceptSessionRequest: function(topic, id, signature) {
+                acceptSessionRequestCalls.push({topic, id, signature})
+            }
+
             property var rejectSessionRequestCalls: []
             rejectSessionRequest: function(topic, id, error) {
                 rejectSessionRequestCalls.push({topic, id, error})
@@ -615,28 +620,51 @@ Item {
             verify(!popup.visible)
         }
 
-        function test_RejectDappRequestModal() {
+        function showRequestModal() {
             waitForRendering(controlUnderTest)
 
             let service = controlUnderTest.wcService
             let td = mockSessionRequestEvent(this, service.wcSDK, service.walletRootStore.nonWatchAccounts, service.walletRootStore.filteredFlatModel)
 
             waitForRendering(controlUnderTest)
-            let popup = findChild(controlUnderTest, "dappsRequestModal")
-            verify(popup.opened)
+            td.popup = findChild(controlUnderTest, "dappsRequestModal")
+            verify(td.popup.opened)
+            return td
+        }
 
-            let rejectButton = findChild(popup, "rejectButton")
+        function test_RejectDappRequestModal() {
+            let td = showRequestModal()
+
+            let rejectButton = findChild(td.popup, "rejectButton")
 
             mouseClick(rejectButton)
             compare(td.sdk.rejectSessionRequestCalls.length, 1, "expected a call to service.rejectSessionRequest")
+            compare(td.sdk.acceptSessionRequestCalls.length, 0, "expected no call to service.acceptSessionRequest")
+            let store = controlUnderTest.wcService.store
+            compare(store.authenticateUserCalls.length, 0, "expected no call to store.authenticateUser for rejection")
             let args = td.sdk.rejectSessionRequestCalls[0]
             compare(args.topic, td.topic, "expected topic to be set")
             compare(args.id, td.request.id, "expected id to be set")
             compare(args.error, false, "expected no error; it was user rejected")
 
             waitForRendering(controlUnderTest)
-            verify(!popup.opened)
-            verify(!popup.visible)
+            verify(!td.popup.opened)
+            verify(!td.popup.visible)
+        }
+
+        function test_AcceptDappRequestModal() {
+            let td = showRequestModal()
+
+            let signButton = findChild(td.popup, "signButton")
+
+            mouseClick(signButton)
+            let store = controlUnderTest.wcService.store
+            compare(store.authenticateUserCalls.length, 1, "expected a call to store.authenticateUser")
+            compare(td.sdk.rejectSessionRequestCalls.length, 0, "regression, expected no call to service.rejectSessionRequest")
+
+            waitForRendering(controlUnderTest)
+            verify(!td.popup.opened)
+            verify(!td.popup.visible)
         }
     }
 
