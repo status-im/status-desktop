@@ -170,9 +170,19 @@ StatusDialog {
     onOpened: {
         amountToSendInput.input.input.edit.forceActiveFocus()
 
+        // IMPORTANT: This step must be the first one since it's storing the send type
+        // into the backend at this stage so that, before this assignement, some properties
+        // should not have the correct value, like `d.isBridgeTx`
         if(popup.preSelectedSendType !== Constants.SendType.Unknown) {
             store.setSendType(popup.preSelectedSendType)
         }
+
+        // To be removed once bridge is splitted to a different component:
+        if(d.isBridgeTx && !!popup.preSelectedAccount) {
+            // Default preselected type is `Helpers.RecipientAddressObjectType.Address` coinciding with bridge usecase
+            popup.preSelectedRecipient = popup.preSelectedAccount.address
+        }
+
         if (!!popup.preSelectedHoldingID
                 && popup.preSelectedHoldingType > Constants.TokenType.Native
                 && popup.preSelectedHoldingType < Constants.TokenType.Unknown) {

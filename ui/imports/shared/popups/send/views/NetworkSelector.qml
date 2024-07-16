@@ -89,7 +89,7 @@ Item {
                 errorMode: root.errorMode
                 errorType: root.errorType
                 fromNetworksList: root.fromNetworksList
-                toNetworksList: root.suggestedToNetworksList
+                suggestedToNetworksList: root.suggestedToNetworksList
                 // Collectibles don't have a symbol
                 selectedSymbol: !!root.selectedAsset && !!root.selectedAsset.symbol ? root.selectedAsset.symbol: ""
                 weiToEth: function(wei) {

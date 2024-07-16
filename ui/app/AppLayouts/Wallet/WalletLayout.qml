@@ -331,7 +331,6 @@ Item {
             }
             onLaunchBridgeModal: {
                 root.sendModalPopup.preSelectedSendType = Constants.SendType.Bridge
-                root.sendModalPopup.preSelectedRecipient = root.sendModalPopup.preSelectedAccount.address
                 root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
                 root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
                 root.sendModalPopup.onlyAssets = true

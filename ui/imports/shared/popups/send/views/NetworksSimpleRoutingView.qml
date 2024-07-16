@@ -22,13 +22,14 @@ RowLayout {
     property bool isBridgeTx: false
     property bool isCollectiblesTransfer: false
     property var fromNetworksList
-    property var toNetworksList
+    property var suggestedToNetworksList
     property var weiToEth: function(wei) {}
     property var formatCurrencyAmount: function () {}
     property var reCalculateSuggestedRoute: function() {}
     property bool errorMode: false
     property int errorType: Constants.NoError
     property string selectedSymbol
+
     spacing: 10
 
     StatusRoundIcon {
@@ -57,6 +58,7 @@ RowLayout {
                               qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
             wrapMode: Text.WordWrap
         }
+
         ScrollView {
             Layout.fillWidth: true
             Layout.preferredHeight: visible ? row.height + 10 : 0
@@ -70,18 +72,20 @@ RowLayout {
             Column {
                 id: row
                 spacing: Style.current.padding
+
+                // TODO: This transformation should come from an adaptor outside this component
+                LeftJoinModel {
+                    id: toNetworksListLeftJoinModel
+
+                    leftModel: root.suggestedToNetworksList
+                    rightModel: root.store.flatNetworksModel
+                    joinRole: "chainId"
+                }
+
                 Repeater {
                     id: repeater
                     objectName: "networksList"
-                    model: LeftJoinModel {
-                        leftModel: {
-                            const m = isBridgeTx ? root.fromNetworksList : root.toNetworksList
-                            return !!m ? m : null
-                        }
-                        rightModel: root.store.flatNetworksModel
-                        joinRole: "chainId"
-                    }
-
+                    model: isBridgeTx ? root.fromNetworksList : toNetworksListLeftJoinModel
                     delegate: isBridgeTx ? networkItem : routeItem
                 }
             }
