@@ -311,6 +311,7 @@ SettingsContentBase {
         }
 
         StatusListItem {
+            visible: false
             Layout.preferredWidth: root.contentWidth
             title: qsTr("Identity Verification Requests")
             components: [
