@@ -75,7 +75,7 @@ pipeline {
     PATH = "${VIRTUAL_ENV}/bin:${PATH}"
 
     TESTRAIL_URL = 'https://ethstatus.testrail.net'
-    TESTRAIL_PROJECT_ID = 17
+    TESTRAIL_PROJECT_ID = 18
     /* Override QT xcb plugin with linux to avoid errors like:
      * "Could not load the Qt platform plugin "xcb" in "" even though it was found." */
     QT_QPA_PLATFORM = "linuxfb"
