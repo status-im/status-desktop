@@ -10,39 +10,46 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import "../controls"
+import shared.popups.send.controls 1.0
 
 Item {
     id: root
 
-    property var store
-    readonly property var currencyStore: store.currencyStore
     property string receiverIdentityText
     property var selectedAsset
     property bool customMode: false
     property double amountToSend
-    property int minSendCryptoDecimals: 0
-    property int minReceiveCryptoDecimals: 0
-    property bool errorMode: d.customAmountToSend > root.amountToSend
     property bool interactive: true
-    property var weiToEth: function(wei) {}
-    property var reCalculateSuggestedRoute: function() {}
-    property var fromNetworksList
-    property var toNetworksList
     property int errorType: Constants.NoError
     property bool isLoading
+    property bool showUnPreferredChains
+
+    readonly property bool errorMode: d.customAmountToSend > root.amountToSend
+
+    // Models
+    property var fromNetworksList
+    property var toNetworksList
+
+    // Formatting function for fiat currency values
+    property var formatFiat: function(amount, applyMinDecimals) {}
+
+    // Formatting function wei to eth
+    property var weiToEth: function(wei) {}
+
+    signal recalculateSuggestedRoute()
+    signal toggleToDisabledChains(int chainId)
+    signal toggleFromDisabledChains(int chainId)
+    signal lockCard(int chainId, string amount, bool lock)
 
     QtObject {
         id: d
         property double customAmountToSend: 0
-        // Collectibles don't have a symbol
-        readonly property string selectedSymbol: !!selectedAsset && !!selectedAsset.symbol ? selectedAsset.symbol : ""
 
         function resetAllSetValues() {
             for(var i = 0; i<fromNetworksRepeater.count; i++) {
                 fromNetworksRepeater.itemAt(i).routeOnNetwork = 0
             }
-            for(var i = 0; i<toNetworksRepeater.count; i++) {
+            for(i = 0; i<toNetworksRepeater.count; i++) {
                 toNetworksRepeater.itemAt(i).routeOnNetwork = 0
                 toNetworksRepeater.itemAt(i).bentLine = 0
             }
@@ -72,35 +79,40 @@ Item {
     RowLayout {
         id: networkCardsLayout
         width: parent.width
+
         ColumnLayout {
             id: fromNetworksLayout
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             spacing: 12
+
             StatusBaseText {
                 Layout.maximumWidth: 100
+
                 elide: Text.ElideRight
                 font.pixelSize: 10
                 color: Theme.palette.baseColor1
                 text: qsTr("Your Balances").toUpperCase()
             }
+
             Repeater {
                 id: fromNetworksRepeater
                 model: root.fromNetworksList
+
                 StatusCard {
                     id: fromNetwork
+
                     locale: LocaleUtils.userInputLocale
                     objectName: model.chainId
+
                     property double advancedInputCurrencyAmount: selectedAsset !== undefined && advancedInput.valid ? LocaleUtils.numberFromLocaleString(advancedInput.text, LocaleUtils.userInputLocale) : 0.0
                     property var tokenBalance: model.tokenBalance
-                    onTokenBalanceChanged: maxAdvancedValue = model.tokenBalance.amount
                     property var toNetworks: model.toNetworks
                     property int routeOnNetwork: 0
-                    onToNetworksChanged: d.draw()
 
                     primaryText: model.chainName
                     secondaryText: (model.tokenBalance.amount === 0 && root.amountToSend > 0) ?
-                                    qsTr("No Balance") : !model.hasGas ? qsTr("No Gas") : root.currencyStore.formatCurrencyAmount(advancedInputCurrencyAmount, d.selectedSymbol, {"minDecimals": root.minSendCryptoDecimals})
-                    tertiaryText: root.errorMode && advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: ") + root.currencyStore.formatCurrencyAmount(model.tokenBalance.amount, d.selectedSymbol)
+                                    qsTr("No Balance") : !model.hasGas ? qsTr("No Gas") : root.formatFiat(advancedInputCurrencyAmount, true)
+                    tertiaryText: root.errorMode && advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: ") + root.formatFiat(model.tokenBalance.amount, false)
                     locked: model.locked
                     preCalculatedAdvancedText: {
                         if(locked && model.lockedAmount) {
@@ -119,28 +131,35 @@ Item {
                     advancedMode: root.customMode
                     disabled: !model.isRouteEnabled
                     clickable: root.interactive
+
+                    onTokenBalanceChanged: maxAdvancedValue = model.tokenBalance.amount
+                    onToNetworksChanged: d.draw()
                     onClicked: {
-                        store.toggleFromDisabledChains(model.chainId)
-                        store.lockCard(model.chainId, 0, false)
+                        root.toggleFromDisabledChains(model.chainId)
+                        root.lockCard(model.chainId, 0, false)
                         root.reCalculateSuggestedRoute()
                     }
                     onLockCard: {
                         let amount = lock ? (advancedInputCurrencyAmount * Math.pow(10, root.selectedAsset.decimals)).toString(16) : ""
-                        store.lockCard(model.chainId, amount, lock)
+                        root.lockCard(model.chainId, amount, lock)
                         d.calculateCustomAmounts()
                         root.reCalculateSuggestedRoute()
                     }
                 }
             }
         }
+
         BalanceExceeded {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
+
             errorType: root.errorType
             visible: root.errorType === Constants.NoRoute
         }
+
         ColumnLayout {
             id: toNetworksLayout
+
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
             spacing: 12
 
@@ -151,14 +170,15 @@ Item {
                 StatusBaseText {
                     id: receiverIdentityText
 
-                    text: root.receiverIdentityText
                     Layout.fillWidth: true
 
+                    text: root.receiverIdentityText
                     font.pixelSize: 10
                     color: Theme.palette.baseColor1
                     elide: Text.ElideMiddle
                     horizontalAlignment: Text.AlignRight
                 }
+
                 StatusBaseText {
                     font.pixelSize: receiverIdentityText.font.pixelSize
                     color: receiverIdentityText.color
@@ -169,18 +189,21 @@ Item {
             Repeater {
                 id: toNetworksRepeater
                 model: root.toNetworksList
+
                 StatusCard {
                     id: toCard
                     locale: LocaleUtils.userInputLocale
                     objectName: model.chainId
+
                     property bool preferred: model.isRoutePreferred
                     property int bentLine: 0
                     property int routeOnNetwork: 0
+
                     primaryText: model.chainName
-                    secondaryText: root.currencyStore.formatCurrencyAmount(root.weiToEth(model.amountOut), d.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
+                    secondaryText: root.formatFiat(root.weiToEth(model.amountOut), true)
                     tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
                     state: !preferred ? "unpreferred" : "default"
-                    opacity: preferred || store.showUnPreferredChains ? 1 : 0
+                    opacity: preferred || root.showUnPreferredChains ? 1 : 0
                     cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     disableText:  qsTr("Disable")
@@ -188,8 +211,9 @@ Item {
                     disabled: !model.isRouteEnabled
                     clickable: root.interactive
                     loading: root.isLoading
+
                     onClicked: {
-                        store.toggleToDisabledChains(model.chainId)
+                        root.toggleToDisabledChains(model.chainId)
                         root.reCalculateSuggestedRoute()
                     }
                 }
@@ -199,6 +223,7 @@ Item {
 
     Canvas {
         id: canvas
+
         x: networkCardsLayout.x + fromNetworksLayout.x
         y: networkCardsLayout.y
         width: networkCardsLayout.width

@@ -16,11 +16,11 @@ Item {
 
     property var selectedAsset
     property string currentCurrency
-
     property var bestRoutes
+
+    property var formatFiat: function () {}
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
-    property var formatCurrencyAmount: function () {}
     property var getNetworkName: function () {}
 
     width: parent.width
@@ -28,6 +28,7 @@ Item {
 
     Column {
         id: advancedGasSelector
+
         width: parent.width
         anchors.top: parent.top
         anchors.topMargin: Style.current.halfPadding
@@ -40,8 +41,23 @@ Item {
         // Normal transaction
         Repeater {
             model: root.bestRoutes
+
             StatusListItem {
                 id: listItem
+
+                property double totalGasAmountL1Eth: {
+                    const l1FeeInGWei = modelData.gasFees.l1GasFee
+                    const l1FeeInEth = globalUtils.wei2Eth(l1FeeInGWei, 9)
+                    return l1FeeInEth
+                }
+                property double totalGasAmountEth: {
+                    let maxFees = modelData.gasFees.maxFeePerGasM
+                    let gasPrice = modelData.gasFees.eip1559Enabled ? maxFees : modelData.gasFees.gasPrice
+                    return root.getGasEthValue(gasPrice , modelData.gasAmount)
+                }
+                property double totalGasAmountFiat: root.getFiatValue(totalGasAmountEth, Constants.ethToken) + root.getFiatValue(totalGasAmountL1Eth, Constants.ethToken)
+
+
                 color: Theme.palette.statusListItem.backgroundColor
                 width: parent.width
                 asset.name: "tiny/gas"
@@ -50,35 +66,21 @@ Item {
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
                 title: qsTr("%1 transaction fee").arg(root.getNetworkName(modelData.fromNetwork))
                 subTitle: {
-                    let primaryFee = root.formatCurrencyAmount(totalGasAmountEth, Constants.ethToken)
+                    let primaryFee = root.formatFiat(totalGasAmountEth, Constants.ethToken)
                     if (modelData.gasFees.eip1559Enabled && modelData.gasFees.l1GasFee > 0) {
                         return qsTr("L1 fee: %1\nL2 fee: %2")
-                        .arg(root.formatCurrencyAmount(totalGasAmountL1Eth, Constants.ethToken))
+                        .arg(root.formatFiat(totalGasAmountL1Eth, Constants.ethToken))
                         .arg(primaryFee)
                     }
                     return primaryFee
                 }
-                property double totalGasAmountL1Eth: {
-                    const l1FeeInGWei = modelData.gasFees.l1GasFee
-                    const l1FeeInEth = globalUtils.wei2Eth(l1FeeInGWei, 9)
-                    return l1FeeInEth
-                }
-
-                property double totalGasAmountEth: {
-                    let maxFees = modelData.gasFees.maxFeePerGasM
-                    let gasPrice = modelData.gasFees.eip1559Enabled ? maxFees : modelData.gasFees.gasPrice
-                    return root.getGasEthValue(gasPrice , modelData.gasAmount)
-                }
-
-                property double totalGasAmountFiat: root.getFiatValue(totalGasAmountEth, Constants.ethToken) + root.getFiatValue(totalGasAmountL1Eth, Constants.ethToken)
-
                 statusListItemSubTitle.width: listItem.width/2 - Style.current.smallPadding
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 statusListItemSubTitle.wrapMode: Text.NoWrap
                 components: [
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
-                        text: root.formatCurrencyAmount(totalGasAmountFiat, root.currentCurrency)
+                        text: root.formatFiat(totalGasAmountFiat, root.currentCurrency)
                         font.pixelSize: 15
                         color: Theme.palette.baseColor1
                     }
@@ -89,8 +91,14 @@ Item {
         // Approval transaction
         Repeater {
             model: root.bestRoutes
+
             StatusListItem {
                 id: listItem1
+
+                property double approvalGasFees: modelData.approvalGasFees
+                property string approvalGasFeesSymbol: Constants.ethToken
+                property double approvalGasFeesFiat: root.getFiatValue(approvalGasFees, approvalGasFeesSymbol)
+
                 color: Theme.palette.statusListItem.backgroundColor
                 width: parent.width
                 asset.name: "tiny/checkmark"
@@ -98,10 +106,7 @@ Item {
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
                 title: qsTr("Approve %1 %2 Bridge").arg(root.getNetworkName(modelData.fromNetwork)).arg(root.selectedAsset.symbol)
-                property double approvalGasFees: modelData.approvalGasFees
-                property string approvalGasFeesSymbol: Constants.ethToken
-                property double approvalGasFeesFiat: root.getFiatValue(approvalGasFees, approvalGasFeesSymbol)
-                subTitle: root.formatCurrencyAmount(approvalGasFees, approvalGasFeesSymbol)
+                subTitle: root.formatFiat(approvalGasFees, approvalGasFeesSymbol)
                 statusListItemSubTitle.width: listItem1.width/2 - Style.current.smallPadding
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 statusListItemSubTitle.wrapMode: Text.NoWrap
@@ -109,7 +114,7 @@ Item {
                 components: [
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
-                        text:  root.formatCurrencyAmount(approvalGasFeesFiat, root.currentCurrency)
+                        text:  root.formatFiat(approvalGasFeesFiat, root.currentCurrency)
                         font.pixelSize: 15
                         color: Theme.palette.baseColor1
                     }
@@ -120,9 +125,14 @@ Item {
         // Bridge
         Repeater {
             id: bridgeRepeater
+
             model: root.bestRoutes
             delegate: StatusListItem {
                 id: listItem2
+
+                property double tokenFees: modelData.tokenFees
+                property double tokenFeesFiat: root.getFiatValue(tokenFees, root.selectedAsset.symbol)
+
                 color: Theme.palette.statusListItem.backgroundColor
                 width: parent.width
                 asset.name: "tiny/bridge"
@@ -130,16 +140,14 @@ Item {
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstBridgeTx
                 title: qsTr("%1 -> %2 bridge").arg(root.getNetworkName(modelData.fromNetwork)).arg(root.getNetworkName(modelData.toNetwork))
-                property double tokenFees: modelData.tokenFees
-                property double tokenFeesFiat: root.getFiatValue(tokenFees, root.selectedAsset.symbol)
-                subTitle: root.formatCurrencyAmount(tokenFees, root.selectedAsset.symbol)
+                subTitle: root.formatFiat(tokenFees, root.selectedAsset.symbol)
                 visible: modelData.bridgeName !== "Transfer"
                 statusListItemSubTitle.width: 100
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 components: [
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
-                        text: root.formatCurrencyAmount(tokenFeesFiat, root.currentCurrency)
+                        text: root.formatFiat(tokenFeesFiat, root.currentCurrency)
                         font.pixelSize: 15
                         color: Theme.palette.baseColor1
                     }

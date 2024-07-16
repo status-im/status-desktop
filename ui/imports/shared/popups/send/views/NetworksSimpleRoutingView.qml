@@ -11,24 +11,31 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ 0.1
 
-import "../controls"
+import shared.popups.send.controls 1.0
 
 RowLayout {
     id: root
 
-    property var store
-    property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false
     property bool isCollectiblesTransfer: false
-    property var fromNetworksList
-    property var toNetworksList
-    property var weiToEth: function(wei) {}
-    property var formatCurrencyAmount: function () {}
-    property var reCalculateSuggestedRoute: function() {}
     property bool errorMode: false
     property int errorType: Constants.NoError
-    property string selectedSymbol
+
+    // Models:
+    property var fromNetworksList
+    property var toNetworksList
+    property var flatNetworksModel
+
+    // Formatting function for fiat currency values
+    property var formatFiat: function(amount, applyMinDecimals) {}
+
+    // Formatting function wei to eth
+    property var weiToEth: function(wei) {}
+
+    signal recalculateSuggestedRoute
+    signal setRouteDisabledChains(int chainId, bool disabled)
+
     spacing: 10
 
     StatusRoundIcon {
@@ -37,10 +44,12 @@ RowLayout {
         asset.name: "flash"
         asset.color: Theme.palette.directColor1
     }
+
     ColumnLayout {
         Layout.alignment: Qt.AlignTop
         Layout.preferredWidth: root.width
         spacing: 4
+
         StatusBaseText {
             Layout.maximumWidth: parent.width
             font.pixelSize: 15
@@ -49,6 +58,7 @@ RowLayout {
             text: qsTr("Networks")
             wrapMode: Text.WordWrap
         }
+
         StatusBaseText {
             Layout.maximumWidth: parent.width
             font.pixelSize: 15
@@ -57,6 +67,7 @@ RowLayout {
                               qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
             wrapMode: Text.WordWrap
         }
+
         ScrollView {
             Layout.fillWidth: true
             Layout.preferredHeight: visible ? row.height + 10 : 0
@@ -67,9 +78,11 @@ RowLayout {
             ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             clip: true
             visible: root.isBridgeTx ? true : !root.isLoading ? root.errorType === Constants.NoError : false
+
             Column {
                 id: row
                 spacing: Style.current.padding
+
                 Repeater {
                     id: repeater
                     objectName: "networksList"
@@ -78,7 +91,7 @@ RowLayout {
                             const m = isBridgeTx ? root.fromNetworksList : root.toNetworksList
                             return !!m ? m : null
                         }
-                        rightModel: root.store.flatNetworksModel
+                        rightModel: root.flatNetworksModel
                         joinRole: "chainId"
                     }
 
@@ -86,10 +99,12 @@ RowLayout {
                 }
             }
         }
+
         BalanceExceeded {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.smallPadding
+
             errorType: root.errorType
             isLoading: root.isLoading && !root.isBridgeTx
         }
@@ -101,6 +116,7 @@ RowLayout {
 
     Component {
         id: routeItem
+
         StatusListItem {
             objectName: model.chainName
             leftPadding: 5
@@ -111,7 +127,7 @@ RowLayout {
                 if(root.isCollectiblesTransfer)
                     return ""
                 let amountOut = root.weiToEth(model.amountOut)
-                return root.formatCurrencyAmount(amountOut, root.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
+                return root.formatFiat(amountOut, true)
             }
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32
@@ -124,8 +140,10 @@ RowLayout {
 
     Component {
         id: networkItem
+
         StatusRadioButton {
             id: gasRectangle
+
             width: contentItem.implicitWidth
             contentItem: StatusListItem {
                 id: card
@@ -134,7 +152,7 @@ RowLayout {
                 rightPadding: 5
                 implicitWidth: 410
                 title: chainName
-                subTitle: root.formatCurrencyAmount(tokenBalance.amount, root.selectedSymbol)
+                subTitle: root.formatFiat(tokenBalance.amount, false)
                 statusListItemSubTitle.color: Theme.palette.primaryColor1
                 asset.width: 32
                 asset.height: 32
@@ -150,9 +168,9 @@ RowLayout {
                 onClicked: gasRectangle.toggle()
             }
             onCheckedChanged: {
-                store.setRouteDisabledChains(chainId, !gasRectangle.checked)
+                root.setRouteDisabledChains(chainId, !gasRectangle.checked)
                 if(checked)
-                    root.reCalculateSuggestedRoute()
+                    root.recalculateSuggestedRoute()
             }
             checked: index === 0
             indicator: Item {
@@ -160,9 +178,9 @@ RowLayout {
                 height: card.height
             }
             Component.onCompleted: {
-                store.setRouteDisabledChains(chainId, !gasRectangle.checked)
+                root.setRouteDisabledChains(chainId, !gasRectangle.checked)
                 if(index === (repeater.count -1))
-                    root.reCalculateSuggestedRoute()
+                    root.recalculateSuggestedRoute()
             }
         }
     }

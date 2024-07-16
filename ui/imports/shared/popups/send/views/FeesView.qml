@@ -7,9 +7,7 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
-import shared.stores 1.0
-
-import "../controls"
+import shared.popups.send.controls 1.0
 
 Rectangle {
     id: root
@@ -17,10 +15,14 @@ Rectangle {
     property double gasFiatAmount
     property bool isLoading: false
     property var bestRoutes
-    property var store
-    property var currencyStore: store.currencyStore
     property var selectedAsset
     property int errorType: Constants.NoError
+    property string currentCurrency
+
+    property var formatFiat: function () {}
+    property var getGasEthValue: function () {}
+    property var getFiatValue: function () {}
+    property var getNetworkName: function () {}
 
     radius: 13
     color: Theme.palette.indirectColor1
@@ -28,6 +30,7 @@ Rectangle {
 
     RowLayout {
         id: feesLayout
+
         spacing: 10
         anchors.top: parent.top
         anchors.left: parent.left
@@ -35,21 +38,26 @@ Rectangle {
 
         StatusRoundIcon {
             id: feesIcon
+
             Layout.alignment: Qt.AlignTop
             radius: 8
             asset.name: "fees"
             asset.color: Theme.palette.directColor1
         }
+
         Column {
             id: columnLayout
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.preferredWidth: root.width - feesIcon.width - Style.current.xlPadding
             spacing: isLoading ? 4 : 0
+
             Item {
                 width: parent.width
                 height: childrenRect.height
+
                 StatusBaseText {
                     id: text
+
                     anchors.left: parent.left
                     font.pixelSize: 15
                     font.weight: Font.Medium
@@ -57,30 +65,37 @@ Rectangle {
                     text: qsTr("Fees")
                     wrapMode: Text.WordWrap
                 }
+
                 StatusBaseText {
+                    id: totalFeesAdvanced
+
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.padding
-                    id: totalFeesAdvanced
-                    text: root.isLoading ? "..." : root.currencyStore.formatCurrencyAmount(root.gasFiatAmount, root.currencyStore.currentCurrency)
+
+                    text: root.isLoading ? "..." : root.formatFiat(root.gasFiatAmount, root.currentCurrency)
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                     visible: !!root.bestRoutes && root.bestRoutes !== undefined && root.bestRoutes.count > 0
                 }
             }
+
             GasSelector {
                 id: gasSelector
+
                 width: parent.width
-                getGasEthValue: root.currencyStore.getGasEthValue
-                getFiatValue: root.currencyStore.getFiatValue
-                formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
-                currentCurrency: root.currencyStore.currentCurrency
+                currentCurrency: root.currentCurrency
                 visible: root.errorType === Constants.NoError && !root.isLoading
                 bestRoutes: root.bestRoutes
                 selectedAsset: root.selectedAsset
-                getNetworkName: root.store.getNetworkName
+                getGasEthValue: root.getGasEthValue
+                getFiatValue: root.getFiatValue
+                getNetworkName: root.getNetworkName
+                formatFiat: root.formatFiat
             }
+
             GasValidator {
                 id: gasValidator
+
                 width: parent.width
                 isLoading: root.isLoading
                 errorType: root.errorType

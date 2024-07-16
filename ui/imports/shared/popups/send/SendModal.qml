@@ -500,6 +500,8 @@ StatusDialog {
 
             objectName: "sendModalScroll"
 
+            readonly property string selectedSymbol: !!selectedAsset && !!selectedAsset.symbol ? selectedAsset.symbol : ""
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.topMargin: Style.current.bigPadding
@@ -511,24 +513,55 @@ StatusDialog {
 
             visible: recipientInputLoader.ready &&
                      (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
-
-            store: popup.store
             interactive: popup.interactive
             selectedRecipient: popup.preSelectedRecipient
             ensAddressOrEmpty: recipientInputLoader.resolvedENSAddress
             amountToSend: amountToSendInput.cryptoValueToSendFloat
-            minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
-            minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
             selectedAsset: d.selectedHolding
-            onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
             errorType: d.errorType
             isLoading: popup.isLoading
             isBridgeTx: d.isBridgeTx
             isCollectiblesTransfer: d.isCollectiblesTransfer
             bestRoutes: popup.bestRoutes
             totalFeesInFiat: d.totalFeesInFiat
+            showUnPreferredChains: popup.store.showUnPreferredChains
+            currentCurrency: popup.store.currencyStore.currentCurrency
+
+            // Models
+            flatNetworksModel: popup.store.flatNetworksModel
             fromNetworksList: fromNetworksRouteModel
             toNetworksList: toNetworksRouteModel
+
+
+            weiToEth: function(wei) {
+                if(!!selectedAsset && (selectedAsset.type === Constants.TokenType.Native ||
+                                       selectedAsset.type === Constants.TokenType.ERC20))
+                    return parseFloat(popup.store.getWei2Eth(wei, selectedAsset.decimals))
+                return 0
+            }
+            formatFiat: popup.store.currencyStore.formatCurrencyAmount
+            formatFiatSendMinDecimals: function(amount, applyMinDecimals) {
+                if(applyMinDecimals)
+                    popup.store.currencyStore.formatCurrencyAmount(amount, selectedSymbol, {"minDecimals": amountToSendInput.minSendCryptoDecimals})
+                else
+                    popup.store.currencyStore.formatCurrencyAmount(amount, selectedSymbol)
+            }
+            formatFiatReceiveMinDecimals: function(amount, applyMinDecimals) {
+                if(applyMinDecimals)
+                    popup.store.currencyStore.formatCurrencyAmount(amount, selectedSymbol, {"minDecimals": amountToSendInput.minReceiveCryptoDecimals})
+                else
+                    popup.store.currencyStore.formatCurrencyAmount(amount, selectedSymbol)
+            }
+            getGasEthValue: popup.store.currencyStore.getGasEthValue
+            getFiatValue: popup.store.currencyStore.getFiatValue
+            getNetworkName: popup.store.getNetworkName
+
+            onRecalculateSuggestedRoute: popup.recalculateRoutesAndFees()
+            onToggleShowUnPreferredChains: popup.store.toggleShowUnPreferredChains()
+            onToggleToDisabledChains: popup.store.toggleToDisabledChains(chainId)
+            onToggleFromDisabledChains: popup.store.toggleFromDisabledChains(chainId)
+            onLockCard: popup.store.lockCard(chainId, amount, lock)
+            onSetRouteDisabledChains: popup.store.setRouteDisabledChains(chainId, disabled)
         }
     }
 
