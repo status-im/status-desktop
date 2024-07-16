@@ -107,7 +107,8 @@ QtObject {
                        icon: "keycard"})
             append({subsection: Constants.settingsSubsection.ensUsernames,
                        text: qsTr("ENS usernames"),
-                       icon: "username"})
+                       icon: "username",
+                       isExperimental: true})
             append({subsection: Constants.settingsSubsection.syncingSettings,
                        text: qsTr("Syncing"),
                        icon: "rotate"})

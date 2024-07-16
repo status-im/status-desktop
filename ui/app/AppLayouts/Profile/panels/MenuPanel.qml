@@ -53,6 +53,16 @@ Column {
                 default: return true;
                 }
             }
+
+            Loader {
+                active: model.isExperimental
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+
+                sourceComponent: StatusExperimentalTag {}
+            }
+           
         }
     }
 
