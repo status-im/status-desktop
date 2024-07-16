@@ -121,6 +121,17 @@ Control {
         }
     }
 
+    /* TODO: remove after https://github.com/status-im/status-desktop/issues/15604 is
+    implemented as this is hack to set token values correctly when model is reset */
+    Connections {
+        target: holdingSelector.model
+        function onRowsInserted() {
+            if(!!tokenKey) {
+                root.reevaluateSelectedId()
+            }
+        }
+    }
+
     background: Shape {
         id: shape
 
