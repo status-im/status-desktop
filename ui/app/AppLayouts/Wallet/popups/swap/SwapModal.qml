@@ -47,13 +47,13 @@ StatusDialog {
 
         function fetchSuggestedRoutes() {
             if (root.swapInputParamsForm.isFormFilledCorrectly()) {
-                root.swapAdaptor.validSwapProposalReceived = false
                 root.swapAdaptor.swapProposalLoading = true
-                root.swapAdaptor.approvalPending = false
-                root.swapAdaptor.approvalSuccessful = false
-                root.swapAdaptor.swapOutputData.resetPathInfoAndError()
-                debounceFetchSuggestedRoutes()
             }
+            root.swapAdaptor.validSwapProposalReceived = false
+            root.swapAdaptor.approvalPending = false
+            root.swapAdaptor.approvalSuccessful = false
+            root.swapAdaptor.swapOutputData.resetPathInfoAndError()
+            debounceFetchSuggestedRoutes()
         }
     }
 
