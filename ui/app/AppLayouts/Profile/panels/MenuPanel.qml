@@ -58,7 +58,7 @@ Column {
                 active: model.isExperimental
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: 10
+                anchors.rightMargin: 15
 
                 sourceComponent: StatusExperimentalTag {}
             }
