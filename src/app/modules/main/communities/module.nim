@@ -732,10 +732,12 @@ method onDataSigned*(self: Module, keyUid: string, path: string, r: string, s: s
     # being here is not an error
     return
 
+  let vFixed = toLower(uint8(parseUint(v) + 27).toHex())
+
   for address, details in self.joiningCommunityDetails.addressesToShare.pairs:
     if details.keyUid != keyUid or details.path != path:
       continue
-    self.joiningCommunityDetails.addressesToShare[address].signature = "0x" & r & s & v
+    self.joiningCommunityDetails.addressesToShare[address].signature = "0x" & r & s & vFixed
     break
   self.signSharedAddressesForKeypair(keyUid, pin)
 
