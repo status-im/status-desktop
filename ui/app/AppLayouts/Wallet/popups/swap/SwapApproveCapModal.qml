@@ -40,9 +40,9 @@ SignTransactionModalBase {
     // need to check how this is done in new router, right now it is Enum type
     required property int estimatedTime // Constants.TransactionEstimatedTime.XXX enum
 
-    property string serviceProviderName: "Paraswap"
+    property string serviceProviderName: Constants.swap.paraswapName
     property string serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
-    property string serviceProviderContractAddress: "0x1bD435F3C054b6e901B7b108a0ab7617C808677b"
+    property string serviceProviderContractAddress: Constants.swap.paraswapApproveContractAddress
     property string serviceProviderIcon: Style.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
 
     title: qsTr("Approve spending cap")

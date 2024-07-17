@@ -1124,6 +1124,7 @@ QtObject {
         Bridge,
         ContractDeployment,
         Mint,
+        Approve,
         Sell,
         Destroy // TODO update value when added to backend
     }
@@ -1333,8 +1334,11 @@ QtObject {
         /* TODO: https://github.com/status-im/status-desktop/issues/15329
         This is only added temporarily until we have an api from the backend in order to get
         this list dynamically */
+        readonly property string paraswapName: "Paraswap"
         readonly property string paraswapIcon: "paraswap"
         readonly property string paraswapUrl: "app.paraswap.io"
+        readonly property string paraswapApproveContractAddress: "0x216B4B4Ba9F3e719726886d34a177484278Bfcae"
+        readonly property string paraswapSwapContractAddress: "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57"
         readonly property string termsAndConditionParaswapUrl: "https://files.paraswap.io/tos_v4.pdf"
 
         readonly property QtObject errorCodes: QtObject {

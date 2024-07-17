@@ -456,8 +456,8 @@ StatusDialog {
             estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
 
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
-            // serviceProviderURL: "" // FIXME get the service provider URL from backend
-            // serviceProviderIcon: "" // FIXME get the service icon from backend
+            serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
+            serviceProviderIcon: Style.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
             serviceProviderContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
 
             onAccepted: {

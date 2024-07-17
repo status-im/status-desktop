@@ -20,6 +20,7 @@ type
     fromAsset* {.serializedFieldName("fromAsset").}: string
     toAsset* {.serializedFieldName("toAsset").}: string
     fromAmount* {.serializedFieldName("fromAmount").}: string
+    toAmount* {.serializedFieldName("toAmount").}: string
     multiTxType* {.serializedFieldName("type").}: MultiTransactionType
 
   MultiTransactionDto* = ref object of RootObj
@@ -62,6 +63,7 @@ proc `%`*(self: MultiTransactionCommandDto): JsonNode {.inline.} =
   result["fromAsset"] = %(self.fromAsset)
   result["toAsset"] = %(self.toAsset)
   result["fromAmount"] = %(self.fromAmount)
+  result["toAmount"] = %(self.toAmount)
   result["type"] = %int(self.multiTxType)
 
 proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] =

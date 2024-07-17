@@ -5,6 +5,7 @@ import app/modules/shared_models/currency_amount
 
 import app/global/global_singleton
 
+import app_service/common/wallet_constants
 import app_service/service/currency/service
 
 import app/modules/shared/wallet_utils
@@ -327,6 +328,29 @@ QtObject:
 
   QtProperty[string] communityId:
     read = getCommunityId
+
+  # TODO #15621: This should come from the backend, for now we use a workaround.
+  # All Approvals triggered from the app will be to perform a swap on Paraswap
+  proc getApprovalSpender*(self: ActivityEntry): string {.slot.} =
+    if self.isMultiTransaction() and self.metadata.activityType == backend.ActivityType.Approve:
+      return PARASWAP_V5_APPROVE_CONTRACT_ADDRESS
+    return ""
+
+  QtProperty[string] approvalSpender:
+    read = getApprovalSpender
+  
+  # TODO #15621: This should come from the backend, for now we use a workaround.
+  # This will only be used to determine the swap provider, which will be Paraswap for
+  # all swaps triggered from the app.
+  proc getInteractedContractAddress*(self: ActivityEntry): string {.slot.} =
+    if self.isMultiTransaction() and 
+    self.metadata.activityType == backend.ActivityType.Swap and
+    self.getChainIdIn() == 0:   # Differentiate between Swaps triggered from the app and external detected Swaps
+      return PARASWAP_V5_SWAP_CONTRACT_ADDRESS
+    return ""
+
+  QtProperty[string] interactedContractAddress:
+    read = getInteractedContractAddress
 
   proc highlightChanged*(self: ActivityEntry) {.signal.}
 

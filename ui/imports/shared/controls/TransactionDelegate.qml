@@ -77,6 +77,23 @@ StatusListItem {
     readonly property string communityImage: isCommunityToken ? community.image : ""
     readonly property string communityName: isCommunityToken ? community.name : ""
 
+    readonly property var dAppDetails: {
+        if (!isModelDataValid) {
+            return null
+        }
+        if (modelData.txType === Constants.TransactionType.Approve) {
+            return walletRootStore.getDappDetails(modelData.chainId, modelData.approvalSpender)
+        }
+        if (modelData.txType === Constants.TransactionType.Swap) {
+            return walletRootStore.getDappDetails(modelData.chainId, modelData.interactedContractAddress)
+        }
+        return null
+    }
+
+    readonly property string dAppIcon: dAppDetails ? dAppDetails.icon : ""
+    readonly property string dAppUrl: dAppDetails ? dAppDetails.url : ""
+    readonly property string dAppName: dAppDetails ? dAppDetails.name : ""
+
     readonly property string transactionValue: {
         if (!isModelDataValid) {
             return qsTr("N/A")
@@ -183,6 +200,33 @@ StatusListItem {
         function addressesEqual(address1, address2) {
             return address1.toUpperCase() == address2.toUpperCase()
         }
+
+        readonly property var secondIconAsset: StatusAssetSettings {
+            width: root.tokenIconAsset.width
+            height: root.tokenIconAsset.height
+            bgWidth: width + 2
+            bgHeight: height + 2
+            bgRadius: bgWidth / 2
+            bgColor: Theme.palette.white
+            isImage: root.tokenIconAsset.isImage
+            color: root.tokenIconAsset.color
+            name: d.secondIconSource
+            isLetterIdenticon: root.tokenIconAsset.isLetterIdenticon
+        }
+
+        readonly property string secondIconSource: {
+            if (!root.isModelDataValid || root.isNFT) {
+                return ""
+            }
+
+            if (modelData.txType === Constants.TransactionType.Swap) {
+                return root.inTokenImage
+            } else if (modelData.txType === Constants.TransactionType.Approve) {
+                return root.dAppIcon
+            }
+            return ""
+        }
+        readonly property bool isSecondIconVisible: secondIconSource !== ""
     }
 
     function getDetailsString(detailsObj) {
@@ -224,6 +268,9 @@ StatusListItem {
             else
                 details += qsTr("Mint token details") + endl2
             break
+        case Constants.TransactionType.Approve:
+            details += qsTr("Set spending cap transaction details") + endl2
+            break
         default:
             break
         }
@@ -237,6 +284,7 @@ StatusListItem {
         case Constants.TransactionType.Bridge:
         case Constants.TransactionType.ContractDeployment:
         case Constants.TransactionType.Mint:
+        case Constants.TransactionType.Approve:
             details += getSubtitle(true, true) + endl2
             break
         default:
@@ -526,9 +574,14 @@ StatusListItem {
                 return qsTr("%1 at %2 via %3 in %4").arg(inTransactionValue).arg(toAddress).arg(networkName).arg(toAddress)
             return qsTr("%1 at %2 via %3").arg(inTransactionValue).arg(toAddress).arg(networkName)
         case Constants.TransactionType.Swap:
+            if (root.dAppName !== "") {
+                if (allAccounts)
+                    return qsTr("%1 to %2 using %3 on %4 in %5").arg(outTransactionValue).arg(inTransactionValue).arg(root.dAppName).arg(networkName).arg(fromAddress)
+                return qsTr("%1 to %2 using %3 on %4").arg(outTransactionValue).arg(inTransactionValue).arg(root.dAppName).arg(networkName)
+            }
             if (allAccounts)
-                return qsTr("%1 to %2 via %3 in %4").arg(outTransactionValue).arg(inTransactionValue).arg(networkName).arg(fromAddress)
-            return qsTr("%1 to %2 via %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
+                return qsTr("%1 to %2 on %3 in %4").arg(outTransactionValue).arg(inTransactionValue).arg(networkName).arg(fromAddress)
+            return qsTr("%1 to %2 on %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
         case Constants.TransactionType.Bridge:
             if (allAccounts)
                 return qsTr("%1 from %2 to %3 in %4").arg(inTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
@@ -540,6 +593,15 @@ StatusListItem {
             if (allAccounts)
                 return qsTr("%1 via %2 in %3").arg(transactionValue).arg(networkName).arg(toAddress)
             return qsTr("%1 via %2").arg(transactionValue).arg(networkName)
+        case Constants.TransactionType.Approve:
+            if (root.dAppUrl !== "") {
+                if (allAccounts)
+                    return qsTr("%1 in %2 for %3 on %4").arg(transactionValue).arg(toAddress).arg(dAppUrl).arg(networkName)
+                return qsTr("%1 for %2 on %3").arg(transactionValue).arg(dAppUrl).arg(networkName)
+            }            
+            if (allAccounts)
+                return qsTr("%1 in %2 on %3").arg(transactionValue).arg(toAddress).arg(networkName)
+            return qsTr("%1 on %2").arg(transactionValue).arg(networkName)
         default:
             // Cross chain send. Use bridge pattern
             if (root.networkNameIn != root.networkNameOut) {
@@ -592,6 +654,8 @@ StatusListItem {
                 return "bridge"
             case Constants.TransactionType.ContractDeployment:
                 return "contract_deploy"
+            case Constants.TransactionType.Approve:
+                return "approve"
             default:
                 return ""
             }
@@ -645,6 +709,8 @@ StatusListItem {
             if (isNFT)
                 return failed ? qsTr("Collectible minting failed") : (isPending ? qsTr("Minting collectible") : qsTr("Collectible minted"))
             return failed ? qsTr("Token minting failed") : (isPending ? qsTr("Minting token") : qsTr("Token minted"))
+        case Constants.TransactionType.Approve:
+            return failed ? qsTr("Failed to set spending cap") : (isPending ? qsTr("Setting spending cap") : qsTr("Spending cap set"))
         default:
             return ""
         }
@@ -667,20 +733,9 @@ StatusListItem {
             }
             StatusRoundIcon {
                 id: secondTokenImage
-                visible: root.isModelDataValid && !root.isNFT && !!root.inTokenImage && d.txType === Constants.TransactionType.Swap
+                visible: d.isSecondIconVisible
                 anchors.verticalCenter: parent.verticalCenter
-                asset: StatusAssetSettings {
-                    width: root.tokenIconAsset.width
-                    height: root.tokenIconAsset.height
-                    bgWidth: width + 2
-                    bgHeight: height + 2
-                    bgRadius: bgWidth / 2
-                    bgColor: Theme.palette.white
-                    isImage:root.tokenIconAsset.isImage
-                    color: root.tokenIconAsset.color
-                    name: root.inTokenImage
-                    isLetterIdenticon: root.tokenIconAsset.isLetterIdenticon
-                }
+                asset: d.secondIconAsset
             }
         }
         StatusTextWithLoadingState {
@@ -748,6 +803,7 @@ StatusListItem {
                                           .arg(inValue)
                         case Constants.TransactionType.Bridge:
                             return "−" + root.rootStore.formatCurrencyAmount(feeCryptoValue, modelData.symbol)
+                        case Constants.TransactionType.Approve:
                         default:
                             return ""
                         }
@@ -793,6 +849,7 @@ StatusListItem {
                                               .arg(root.rootStore.formatCurrencyAmount(root.inFiatValue, root.currentCurrency))
                         case Constants.TransactionType.Bridge:
                             return "−" + root.rootStore.formatCurrencyAmount(root.feeFiatValue, root.currentCurrency)
+                        case Constants.TransactionType.Approve:
                         default:
                             return ""
                         }

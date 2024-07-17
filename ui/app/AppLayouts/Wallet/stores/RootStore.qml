@@ -560,4 +560,22 @@ QtObject {
 
         return transaction.txType
     }
+
+    // TODO: https://github.com/status-im/status-desktop/issues/15329
+    // Get DApp data from the backend
+    function getDappDetails(chainId, contractAddress) {
+        console.log("getDappDetails", chainId, contractAddress)
+        switch (contractAddress) {
+            case Constants.swap.paraswapApproveContractAddress:
+            case Constants.swap.paraswapSwapContractAddress:
+                return {
+                    "icon": Style.png("swap/%1".arg(Constants.swap.paraswapIcon)),
+                    "url": Constants.swap.paraswapUrl,
+                    "name": Constants.swap.paraswapName,
+                    "approvalContractAddress": Constants.swap.paraswapContractAddress,
+                    "swapContractAddress": Constants.swap.paraswapContractAddress,
+                }
+        }
+        return undefined
+    }
 }

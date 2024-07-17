@@ -32,7 +32,7 @@ type
 
   # see status-go/services/wallet/activity/filter.go Type
   ActivityType* {.pure.} = enum
-    Send, Receive, Buy, Swap, Bridge, ContractDeployment, Mint
+    Send, Receive, Buy, Swap, Bridge, ContractDeployment, Mint, Approve
 
   # see status-go/services/wallet/activity/filter.go Status
   ActivityStatus* {.pure.} = enum
