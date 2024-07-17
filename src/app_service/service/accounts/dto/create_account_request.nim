@@ -45,6 +45,7 @@ type
     keycardInstanceUID*: string
     keycardPairingDataFile*: string
     apiConfig*: APIConfig
+    statusProxyEnabled*: bool
 
 proc toJson*(self: CreateAccountRequest): JsonNode =
   result = %*{
@@ -64,7 +65,8 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "upstreamConfig": self.upstreamConfig,
     "keycardInstanceUID": self.keycardInstanceUID,
     "keycardPairingDataFile": self.keycardPairingDataFile,
-    "apiConfig": self.apiConfig
+    "apiConfig": self.apiConfig,
+    "statusProxyEnabled": self.statusProxyEnabled
   }
 
   if self.logLevel.isSome():
