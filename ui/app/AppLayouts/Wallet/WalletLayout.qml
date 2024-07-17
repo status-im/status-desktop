@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
@@ -290,14 +291,13 @@ Item {
             networkConnectionStore: root.networkConnectionStore
             isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible
             communityName: {
-                if (!walletStore.currentViewedCollectible)
-                    return ""
-                const name = walletStore.currentViewedCollectible.communityName
-                const id = walletStore.currentViewedCollectible.communityId
-                if (name === id)
-                    return Utils.compactAddress(id, 4)
-                return name
+                if (selectedCommunityForCollectible.available)
+                    return selectedCommunityForCollectible.item.name
+                if (isCommunityCollectible)
+                    return Utils.compactAddress(walletStore.currentViewedCollectible.communityId, 4)
+                return ""
             }
+
             onLaunchShareAddressModal: Global.openShowQRPopup({
                                                                   switchingAccounsEnabled: true,
                                                                   changingPreferredChainsEnabled: true,
@@ -354,6 +354,13 @@ Item {
                 }
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
                 Global.openSwapModalRequested(d.swapFormData)
+            }
+
+            ModelEntry {
+                id: selectedCommunityForCollectible
+                sourceModel: footer.isCommunityCollectible ? root.communitiesStore.communitiesList : null
+                key: "id"
+                value: footer.walletStore.currentViewedCollectible.communityId
             }
         }
     }
