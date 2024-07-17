@@ -96,7 +96,7 @@ QtObject:
     if keyUid.len == 0 or path.len == 0 or r.len == 0 or s.len == 0 or v.len == 0 or pin.len == 0:
       error "invalid data signed"
       return
-    let signature = "0x" & r & s & v // FIXME
+    let signature = "0x" & r & s & v
     if identifier == UNIQUE_WC_SESSION_REQUEST_SIGNING_IDENTIFIER:
       self.finishSessionRequest(signature)
     elif identifier == UNIQUE_WC_AUTH_REQUEST_SIGNING_IDENTIFIER:
