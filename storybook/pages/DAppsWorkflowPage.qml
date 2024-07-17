@@ -377,6 +377,13 @@ Item {
             function getEstimatedTime(chainId, maxFeePerGas) {
                 return Constants.TransactionEstimatedTime.LessThanThreeMins
             }
+
+            function hexToDec(hex) {
+                if (hex.length > "0xfffffffffffff".length) {
+                    console.warn(`Beware of possible loss of precision converting ${hex}`)
+                }
+                return parseInt(hex, 16).toString()
+            }
         }
 
         walletRootStore: QObject {
@@ -390,6 +397,7 @@ Item {
             function getNetworkShortNames(chainIds) {
                 return "eth:oeth:arb"
             }
+            readonly property CurrenciesStore currencyStore: CurrenciesStore {}
         }
 
         onDisplayToastMessage: (message, isErr) => {

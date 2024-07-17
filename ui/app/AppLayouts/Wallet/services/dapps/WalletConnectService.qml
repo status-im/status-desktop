@@ -238,6 +238,7 @@ QObject {
         store: root.store
         accountsModel: root.validAccounts
         networksModel: root.flatNetworks
+        currenciesStore: root.walletRootStore.currencyStore
 
         onSessionRequest: (request) => {
             timeoutTimer.stop()

@@ -3,20 +3,21 @@ import QtQuick 2.15
 import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Wallet.services.dapps.types 1.0
 
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import shared.stores 1.0
 import utils 1.0
 
 import "types"
 
-QObject {
+SQUtils.QObject {
     id: root
 
     required property WalletConnectSDKBase sdk
     required property DAppsStore store
     required property var accountsModel
     required property var networksModel
+    required property CurrenciesStore currenciesStore
 
     property alias requestsModel: requests
 
@@ -26,14 +27,14 @@ QObject {
     }
 
     /// Beware, it will fail if called multiple times before getting an answer
-    function authenticate(request) {
-        return store.authenticateUser(request.topic, request.id, request.account.address)
+    function authenticate(request, payload) {
+        return store.authenticateUser(request.topic, request.id, request.account.address, payload)
     }
 
     signal sessionRequest(SessionRequestResolved request)
     signal displayToastMessage(string message, bool error)
     signal sessionRequestResult(/*model entry of SessionRequestResolved*/ var request, bool isSuccess)
-    signal maxFeesUpdated(real maxFees, int maxFeesWei, bool haveEnoughFunds, string symbol)
+    signal maxFeesUpdated(real fiatMaxFees, var /* Big */ ethMaxFees, bool haveEnoughFunds, bool haveEnoughFees, string symbol, var feesInfo)
     // Reports Constants.TransactionEstimatedTime values
     signal estimatedTimeUpdated(int estimatedTimeEnum)
 
@@ -51,7 +52,7 @@ QObject {
         }
 
         function onSessionRequestUserAnswerResult(topic, id, accept, error) {
-            var request = requests.findRequest(topic, id)
+            let request = requests.findRequest(topic, id)
             if (request === null) {
                 console.error("Error finding event for topic", topic, "id", id)
                 return
@@ -85,17 +86,17 @@ QObject {
     Connections {
         target: root.store
 
-        function onUserAuthenticated(topic, id, password, pin) {
+        function onUserAuthenticated(topic, id, password, pin, payload) {
             var request = requests.findRequest(topic, id)
             if (request === null) {
                 console.error("Error finding event for topic", topic, "id", id)
                 return
             }
-            d.executeSessionRequest(request, password, pin)
+            d.executeSessionRequest(request, password, pin, payload)
         }
 
         function onUserAuthenticationFailed(topic, id) {
-            var request = requests.findRequest(topic, id)
+            let request = requests.findRequest(topic, id)
             let methodStr = SessionRequest.methodToUserString(request.method)
             if (request === null || !methodStr) {
                 return
@@ -108,7 +109,7 @@ QObject {
         }
     }
 
-    QObject {
+    SQUtils.QObject {
         id: d
 
         function resolveAsync(event) {
@@ -128,6 +129,7 @@ QObject {
                 console.error("Error in event data lookup", JSON.stringify(event))
                 return null
             }
+            let enoughFunds = !d.isTransactionMethod(method)
             let obj = sessionRequestComponent.createObject(null, {
                 event,
                 topic: event.topic,
@@ -138,7 +140,7 @@ QObject {
                 data,
                 maxFeesText: "?",
                 maxFeesEthText: "?",
-                enoughFunds: false,
+                enoughFunds: enoughFunds,
             })
             if (obj === null) {
                 console.error("Error creating SessionRequestResolved for event")
@@ -159,20 +161,16 @@ QObject {
                 obj.resolveDappInfoFromSession(session)
                 root.sessionRequest(obj)
 
-                let estimatedTimeEnum = getEstimatedTimeInterval(data, method, obj.network.chainId)
-                root.estimatedTimeUpdated(estimatedTimeEnum)
-
-                // TODO #15192: update maxFees
-                if (!event.params.request.params[0].gasLimit || !event.params.request.params[0].gasPrice) {
-                    root.maxFeesUpdated(0, 0, true, "")
+                if (!d.isTransactionMethod(method)) {
                     return
                 }
 
-                let gasLimit = parseFloat(parseInt(event.params.request.params[0].gasLimit, 16));
-                let gasPrice = parseFloat(parseInt(event.params.request.params[0].gasPrice, 16));
-                let maxFees = gasLimit * gasPrice
-                root.maxFeesUpdated(maxFees/1000000000, maxFees, true, "Gwei")
+                let estimatedTimeEnum = getEstimatedTimeInterval(data, method, obj.network.chainId)
+                root.estimatedTimeUpdated(estimatedTimeEnum)
 
+                let st = getEstimatedFeesStatus(data, method, obj.network.chainId)
+
+                root.maxFeesUpdated(st.fiatMaxFees, st.maxFeesEth, st.haveEnoughFunds, st.haveEnoughFees, st.symbol, st.feesInfo)
             })
 
             return obj
@@ -180,7 +178,7 @@ QObject {
 
         /// Returns null if the account is not found
         function lookupAccountFromEvent(event, method) {
-            var address = ""
+            let address = ""
             if (method === SessionRequest.methods.personalSign.name) {
                 if (event.params.request.params.length < 2) {
                     return null
@@ -198,14 +196,13 @@ QObject {
                     return null
                 }
                 address = event.params.request.params[0]
-            } else if (method === SessionRequest.methods.signTransaction.name
-                    || method === SessionRequest.methods.sendTransaction.name) {
+            } else if (d.isTransactionMethod(method)) {
                 if (event.params.request.params.length == 0) {
                     return null
                 }
                 address = event.params.request.params[0].from
             }
-            return ModelUtils.getFirstModelEntryIf(root.accountsModel, (account) => {
+            return SQUtils.ModelUtils.getFirstModelEntryIf(root.accountsModel, (account) => {
                 return account.address.toLowerCase() === address.toLowerCase();
             })
         }
@@ -216,7 +213,7 @@ QObject {
                 return null
             }
             let chainId = Helpers.chainIdFromEip155(event.params.chainId)
-            return ModelUtils.getByKey(root.networksModel, "chainId", chainId)
+            return SQUtils.ModelUtils.getByKey(root.networksModel, "chainId", chainId)
         }
 
         function extractMethodData(event, method) {
@@ -226,7 +223,7 @@ QObject {
                 if (event.params.request.params.length < 1) {
                     return null
                 }
-                var message = ""
+                let message = ""
                 let messageIndex = (method === SessionRequest.methods.personalSign.name ? 0 : 1)
                 let messageParam = event.params.request.params[messageIndex]
                 // There is no standard on how data is encoded. Therefore we support hex or utf8
@@ -275,14 +272,14 @@ QObject {
             })
         }
 
-        function executeSessionRequest(request, password, pin) {
+        function executeSessionRequest(request, password, pin, payload) {
             if (!SessionRequest.getSupportedMethods().includes(request.method)) {
                 console.error("Unsupported method to execute: ", request.method)
                 return
             }
 
             if (password !== "") {
-                var actionResult = ""
+                let actionResult = ""
                 if (request.method === SessionRequest.methods.sign.name) {
                     actionResult = store.signMessageUnsafe(request.topic, request.id,
                                         request.account.address, password,
@@ -299,15 +296,36 @@ QObject {
                                         request.account.address, password,
                                         SessionRequest.methods.signTypedData.getMessageFromData(request.data),
                                         request.network.chainId, legacy)
-                } else if (request.method === SessionRequest.methods.signTransaction.name) {
-                    let txObj = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
-                    actionResult = store.signTransaction(request.topic, request.id,
-                                        request.account.address, request.network.chainId, password, txObj)
-                } else if (request.method === SessionRequest.methods.sendTransaction.name) {
-                    let txObj = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
-                    actionResult = store.sendTransaction(request.topic, request.id,
-                                        request.account.address, request.network.chainId, password, txObj)
+                } else if (d.isTransactionMethod(request.method)) {
+                    let txObj = d.getTxObject(request.method, request.data)
+                    if (!!payload) {
+                        let feesInfoJson = payload
+                        let hexFeesJson = root.store.convertFeesInfoToHex(feesInfoJson)
+                        if (!!hexFeesJson) {
+                            let feesInfo = JSON.parse(hexFeesJson)
+                            if (feesInfo.maxFeePerGas) {
+                                txObj.maxFeePerGas = feesInfo.maxFeePerGas
+                            }
+                            if (feesInfo.maxPriorityFeePerGas) {
+                                txObj.maxPriorityFeePerGas = feesInfo.maxPriorityFeePerGas
+                            }
+                        }
+                        delete txObj.gasLimit
+                        delete txObj.gasPrice
+                    }
+                    // Remove nonce from txObj to be auto-filled by the wallet
+                    delete txObj.nonce
+
+                    if (request.method === SessionRequest.methods.signTransaction.name) {
+                        actionResult = store.signTransaction(request.topic, request.id,
+                                            request.account.address, request.network.chainId, password, txObj)
+                    } else if (request.method === SessionRequest.methods.sendTransaction.name) {
+                        let txObj = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
+                        actionResult = store.sendTransaction(request.topic, request.id,
+                                            request.account.address, request.network.chainId, password, txObj)
+                    }
                 }
+
                 let isSuccessful = (actionResult != "")
                 if (isSuccessful) {
                     // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
@@ -324,28 +342,110 @@ QObject {
 
         // Returns Constants.TransactionEstimatedTime
         function getEstimatedTimeInterval(data, method, chainId) {
-            if (method != SessionRequest.methods.signTransaction.name
-                && method != SessionRequest.methods.sendTransaction.name)
-            {
-                return ""
+            let tx = {}
+            let maxFeePerGas = ""
+            if (d.isTransactionMethod(method)) {
+                tx = d.getTxObject(method, data)
+                // Empty string instructs getEstimatedTime to fetch the blockchain value
+                if (!!tx.maxFeePerGas) {
+                    maxFeePerGas = tx.maxFeePerGas
+                } else if (!!tx.gasPrice) {
+                    maxFeePerGas = tx.gasPrice
+                }
             }
 
-            var tx = {}
+            return root.store.getEstimatedTime(chainId, maxFeePerGas)
+        }
+
+        // Returns {
+        //      maxFees -> Big number in Gwei
+        //      maxFeePerGas
+        //      maxPriorityFeePerGas
+        //      gasPrice
+        // }
+        function getEstimatedMaxFees(data, method, chainId) {
+            let tx = {}
+            if (d.isTransactionMethod(method)) {
+                tx = d.getTxObject(method, data)
+            }
+
+            let Math = SQUtils.AmountsArithmetic
+            let gasLimit = Math.fromString("21000")
+            let gasPrice, maxFeePerGas, maxPriorityFeePerGas
+            // Beware, the tx values are standard blockchain hex big number values; the fees values are nim's float64 values, hence the complex conversions
+            if (!!tx.maxFeePerGas && !!tx.maxPriorityFeePerGas) {
+                let maxFeePerGasDec = root.store.hexToDec(tx.maxFeePerGas)
+                gasPrice = Math.fromString(maxFeePerGasDec)
+                // Source fees info from the incoming transaction for when we process it
+                maxFeePerGas = maxFeePerGasDec
+                let maxPriorityFeePerGasDec = root.store.hexToDec(tx.maxPriorityFeePerGas)
+                maxPriorityFeePerGas = maxPriorityFeePerGasDec
+            } else {
+                let fees = root.store.getSuggestedFees(chainId)
+                maxPriorityFeePerGas = fees.maxPriorityFeePerGas
+                if (fees.eip1559Enabled) {
+                    if (!!fees.maxFeePerGasM) {
+                        gasPrice = Math.fromString(fees.maxFeePerGasM)
+                        maxFeePerGas = fees.maxFeePerGasM
+                    } else if(!!tx.maxFeePerGas) {
+                        let maxFeePerGasDec = root.store.hexToDec(tx.maxFeePerGas)
+                        gasPrice = Math.fromString(maxFeePerGasDec)
+                        maxFeePerGas = maxFeePerGasDec
+                    } else {
+                        console.error("Error fetching maxFeePerGas from fees or tx objects")
+                        return
+                    }
+                } else {
+                    if (!!fees.gasPrice) {
+                        gasPrice = Math.fromString(fees.gasPrice)
+                    } else {
+                        console.error("Error fetching suggested fees")
+                        return
+                    }
+                }
+                gasPrice = Math.sum(gasPrice, Math.fromString(fees.l1GasFee))
+            }
+
+            let maxFees = Math.times(gasLimit, gasPrice)
+            return {maxFees, maxFeePerGas, maxPriorityFeePerGas, gasPrice}
+        }
+
+        function getEstimatedFeesStatus(data, method, chainId) {
+            let Math = SQUtils.AmountsArithmetic
+
+            let feesInfo = getEstimatedMaxFees(data, method, chainId)
+
+            let maxFeesEth = Math.div(feesInfo.maxFees, Math.fromString("1000000000"))
+
+            // TODO #15192: extract account.balance
+            //let accountFundsEth = account.balance
+            //let haveEnoughFees = Math.cmp(accountFundsEth, maxFeesEth) >= 0
+            let haveEnoughFees = true
+
+            let maxFeesEthStr = maxFeesEth.toString()
+            let fiatMaxFees = root.currenciesStore.getFiatValue(maxFeesEthStr, Constants.ethToken)
+            let symbol = root.currenciesStore.currentCurrency
+
+            // We don't process the transaction so we don't have this information yet
+            let haveEnoughFunds = true
+            return {fiatMaxFees, maxFeesEth, haveEnoughFunds, haveEnoughFees, symbol, feesInfo}
+        }
+
+        function isTransactionMethod(method) {
+            return method === SessionRequest.methods.signTransaction.name
+                || method === SessionRequest.methods.sendTransaction.name
+        }
+
+        function getTxObject(method, data) {
+            let tx
             if (method === SessionRequest.methods.signTransaction.name) {
                 tx = SessionRequest.methods.signTransaction.getTxObjFromData(data)
             } else if (method === SessionRequest.methods.sendTransaction.name) {
                 tx = SessionRequest.methods.sendTransaction.getTxObjFromData(data)
+            } else {
+                console.error("Not a transaction method")
             }
-
-            // Empty string instructs getEstimatedTime to fetch the blockchain value
-            var maxFeePerGas = ""
-            if (!!tx.maxFeePerGas) {
-                maxFeePerGas = tx.maxFeePerGas
-            } else if (!!tx.gasPrice) {
-                maxFeePerGas = tx.gasPrice
-            }
-
-            return root.store.getEstimatedTime(chainId, maxFeePerGas)
+            return tx
         }
     }
 

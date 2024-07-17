@@ -225,3 +225,6 @@ QtObject:
       let maxFeePerGasInt = parseHexInt(maxFeePerGasHex)
       maxFeePerGas = maxFeePerGasInt.float
     return self.transactions.getEstimatedTime(chainId, $(maxFeePerGas))
+
+proc getSuggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
+  return self.transactions.suggestedFees(chainId)
