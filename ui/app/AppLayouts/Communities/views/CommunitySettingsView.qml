@@ -40,6 +40,8 @@ StatusSectionLayout {
     property bool communitySettingsDisabled
     property var sendModalPopup
 
+    required property string enabledChainIds
+
     required property var walletAccountsModel // name, address, emoji, color
 
     readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
@@ -335,6 +337,7 @@ StatusSectionLayout {
             readonly property string sectionName: qsTr("Tokens")
             readonly property string sectionIcon: "token"
             readonly property bool sectionEnabled: true
+            enabledChainIds: root.enabledChainIds
 
             readonly property CommunityTokensStore communityTokensStore:
                 rootStore.communityTokensStore
@@ -529,6 +532,7 @@ StatusSectionLayout {
             assetsModel: assetsModelLoader.item
             collectiblesModel: collectiblesModelLoader.item
             membersModel: community.members
+            enabledChainIds: root.enabledChainIds
             onEnableNetwork: root.enableNetwork(chainId)
 
             accountsModel: root.walletAccountsModel

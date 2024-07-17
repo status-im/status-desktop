@@ -33,6 +33,8 @@ StackView {
     required property var membersModel
     required property var accountsModel
 
+    required property string enabledChainIds
+
     property int viewWidth: 560 // by design
     property string previousPageName: depth > 1 ? qsTr("Airdrops") : ""
 
@@ -121,6 +123,7 @@ StackView {
                 feeErrorText: feesSubscriber.feesError
                 feesPerSelectedContract: feesSubscriber.feesPerContract
                 feesAvailable: !!feesSubscriber.airdropFeesResponse
+                enabledChainIds: root.enabledChainIds
                 onEnableNetwork: root.enableNetwork(chainId)
 
                 onAirdropClicked: {

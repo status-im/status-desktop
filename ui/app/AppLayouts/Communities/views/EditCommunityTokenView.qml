@@ -44,6 +44,9 @@ StatusScrollView {
     property string feeErrorText
     property bool isFeeLoading
 
+    property string networkThatIsNotActive
+    signal enableNetwork
+
     readonly property string feeLabel:
         isAssetView ? qsTr("Mint asset on %1").arg(root.token.chainName)
                     : qsTr("Mint collectible on %1").arg(root.token.chainName)
@@ -249,6 +252,27 @@ StatusScrollView {
                     text: token.chainName
                     color: Theme.palette.baseColor1
                     visible: !!text
+                }
+            }
+        }
+
+        RowLayout {
+            spacing: 6
+            visible: !!root.networkThatIsNotActive
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+
+            WarningPanel {
+                id: wantedNetworkNotActive
+                Layout.fillWidth: true
+                text: qsTr("The owner token is minted on a network that isn't selected. Click here to enable it:")
+            }
+
+            StatusButton {
+                text: qsTr("Enable %1").arg(root.networkThatIsNotActive)
+                Layout.alignment: Qt.AlignVCenter
+                onClicked: {
+                    root.enableNetwork()
                 }
             }
         }

@@ -49,6 +49,9 @@ StackView {
     // It will monitorize if Owner and/or TMaster token items are included in the `tokensModel` despite the deployment state
     property bool ownerOrTMasterTokenItemsExist: false
 
+    property string enabledChainIds
+    property string networkThatIsNotActive
+
     // Models:
     property var tokensModel
     property var membersModel
@@ -290,7 +293,7 @@ StackView {
                 // Minted tokens will use ALWAYS the same chain where the owner token was deployed.
                 chainId: newTokenPage.ownerTokenChainId
                 chainName: newTokenPage.chainName
-                chainIcon: newTokenPage.chainIcon
+                chainIcon: newTokenPage.chainIconownerTokenChainId
             }
 
             property TokenObject collectible: TokenObject {
@@ -303,8 +306,12 @@ StackView {
             }
 
             Component.onCompleted: {
-                // Activate wallet network in case it is not
-                root.enableNetwork(newTokenPage.ownerTokenChainId)
+                 // If the tokens' network is not activated, show a warning to the user
+                if (!root.enabledChainIds.includes(newTokenPage.ownerTokenChainId)) {
+                    root.networkThatIsNotActive = newTokenPage.chainName
+                } else {
+                    root.networkThatIsNotActive = ""
+                }
             }
 
             property bool isAssetView: false
@@ -377,6 +384,12 @@ StackView {
                         feeText: deployFeeSubscriber.feeText
                         feeErrorText: deployFeeSubscriber.feeErrorText
                         isFeeLoading: !deployFeeSubscriber.feesResponse
+
+                        networkThatIsNotActive: root.networkThatIsNotActive
+                        onEnableNetwork: {
+                            root.enableNetwork(newTokenPage.ownerTokenChainId)
+                            root.networkThatIsNotActive = ""
+                        }
 
                         onPreviewClicked: {
                             const properties = {

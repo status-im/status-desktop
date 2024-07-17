@@ -45,6 +45,10 @@ StatusScrollView {
     // Bool property indicating whether the fees are available
     required property bool feesAvailable
 
+    property string enabledChainIds
+    property string networkThatIsNotActive
+    property int networkIdThatIsNotActive
+
     property int viewWidth: 560 // by design
 
     readonly property var selectedHoldingsModel: ListModel {}
@@ -295,26 +299,35 @@ StatusScrollView {
                                 root.selectedHoldingsModel, ["key", "amount"])
                 }
 
+                function checkIfWeShouldShowNetworkWarning(entry) {
+                    // If the tokens' network is not activated, show a warning to the user
+                    if (!root.enabledChainIds.includes(entry.networkId)) {
+                        root.networkThatIsNotActive = entry.networkText
+                        root.networkIdThatIsNotActive = entry.networkId
+                    } else {
+                        root.networkThatIsNotActive = ""
+                        root.networkIdThatIsNotActive = 0
+                    }
+                }
+
                 onAddAsset: {
                     const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC20)
                     entry.valid = true
 
-                    // Activate wallet network in case it is not
-                    root.enableNetwork(entry.networkId)
-
                     selectedHoldingsModel.append(entry)
                     dropdown.close()
+
+                    checkIfWeShouldShowNetworkWarning(entry)
                 }
 
                 onAddCollectible: {
                     const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC721)
                     entry.valid = true
 
-                    // Activate wallet network in case it is not
-                    root.enableNetwork(entry.networkId)
-
                     selectedHoldingsModel.append(entry)
                     dropdown.close()
+
+                    checkIfWeShouldShowNetworkWarning(entry)
                 }
 
                 onUpdateAsset: {
@@ -561,6 +574,30 @@ StatusScrollView {
 
             visible: !recipientsCountInstantiator.infinity &&
                      recipientsCountInstantiator.maximumRecipientsCount < airdropRecipientsSelector.count
+        }
+
+        RowLayout {
+            spacing: 6
+            visible: !!root.networkThatIsNotActive
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+
+            WarningPanel {
+                id: wantedNetworkNotActive
+                Layout.fillWidth: true
+                text: qsTr("The token you selected is on a Network that you haven't selected in the Wallet. Click here to enable it:")
+
+            }
+
+            StatusButton {
+                text: qsTr("Enable %1").arg(root.networkThatIsNotActive)
+                Layout.alignment: Qt.AlignVCenter
+                onClicked: {
+                    root.enableNetwork(root.networkIdThatIsNotActive)
+                    root.networkThatIsNotActive = ""
+                    root.networkIdThatIsNotActive = 0
+                }
+            }
         }
 
         StatusButton {
