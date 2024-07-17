@@ -761,7 +761,6 @@ StackView {
                                                                       root.communityName,
                                                                       root.communityLogo,
                                                                       tokenViewPage.token,
-                                                                      root.accounts,
                                                                       root.sendModalPopup)
 
             // helper properties to pass data through popups

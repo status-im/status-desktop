@@ -64,7 +64,6 @@ QtObject {
                                       string communityName,
                                       string communityLogo,
                                       var token,
-                                      var accounts,
                                       var sendModalPopup)
     signal openFinaliseOwnershipPopup(string communityId)
     signal openDeclineOwnershipPopup(string communityId, string communityName)

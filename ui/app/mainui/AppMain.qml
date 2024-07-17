@@ -1511,7 +1511,7 @@ Item {
                 this.active = false
             }
 
-            property var preSelectedAccount
+            property string preSelectedAccountAddress
             property var preSelectedRecipient
             property int preSelectedRecipientType
             property string preSelectedHoldingID
@@ -1533,14 +1533,14 @@ Item {
                     sendModal.preSelectedSendType = Constants.SendType.Unknown
                     sendModal.preSelectedHoldingID = ""
                     sendModal.preSelectedHoldingType = Constants.TokenType.Unknown
-                    sendModal.preSelectedAccount = undefined
+                    sendModal.preSelectedAccountAddress = ""
                     sendModal.preSelectedRecipient = undefined
                     sendModal.preDefinedAmountToSend = ""
                 }
             }
             onLoaded: {
-                if (!!sendModal.preSelectedAccount) {
-                    item.preSelectedAccount = sendModal.preSelectedAccount
+                if (!!sendModal.preSelectedAccountAddress) {
+                    item.preSelectedAccountAddress = sendModal.preSelectedAccountAddress
                 }
                 if (!!sendModal.preSelectedRecipient) {
                     item.preSelectedRecipient = sendModal.preSelectedRecipient

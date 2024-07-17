@@ -441,7 +441,7 @@ StatusSectionLayout {
                 y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +
                     browserHeader.anchors.topMargin + Style.current.halfPadding)
                 onSendTriggered: {
-                    sendTransactionModal.preSelectedAccount = selectedAccount
+                    sendTransactionModal.preSelectedAccountAddress = selectedAccount.address
                     sendTransactionModal.open()
                 }
                 onReload: {

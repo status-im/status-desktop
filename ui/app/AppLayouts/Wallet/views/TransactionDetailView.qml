@@ -782,7 +782,7 @@ Item {
                                                                       tx.isNFT,
                                                                       tx.amount)
 
-                        root.sendModal.preSelectedAccount = req.preSelectedAccount
+                        root.sendModal.preSelectedAccountAddress = req.preSelectedAccount.address
                         root.sendModal.preSelectedRecipient = req.preSelectedRecipient
                         root.sendModal.preSelectedRecipientType = req.preSelectedRecipientType
                         root.sendModal.preSelectedHoldingID = req.preSelectedHoldingID
