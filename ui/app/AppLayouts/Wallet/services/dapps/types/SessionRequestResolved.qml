@@ -23,6 +23,8 @@ QObject {
     required property var network
 
     required property var data
+    // Data prepared for display in a human readable format
+    required property var preparedData
 
     readonly property alias dappName: d.dappName
     readonly property alias dappUrl: d.dappUrl

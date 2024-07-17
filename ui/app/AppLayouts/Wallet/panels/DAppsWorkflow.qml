@@ -183,33 +183,9 @@ DappsComboBox {
             enoughFundsForTransaction: request.enoughFunds
             enoughFundsForFees: request.enoughFunds
 
-            signingTransaction: !!request.method && (request.method === SessionRequest.methods.signTransaction.name || request.method === SessionRequest.methods.sendTransaction.name)
-            requestPayload: {
-                switch(request.method) {
-                    case SessionRequest.methods.personalSign.name:
-                        return SessionRequest.methods.personalSign.getMessageFromData(request.data)
-                    case SessionRequest.methods.sign.name: {
-                        return SessionRequest.methods.sign.getMessageFromData(request.data)
-                    }
-                    case SessionRequest.methods.signTypedData_v4.name: {
-                        const stringPayload = SessionRequest.methods.signTypedData_v4.getMessageFromData(request.data)
-                        return JSON.stringify(JSON.parse(stringPayload), null, 2)
-                    }
-                    case SessionRequest.methods.signTypedData.name: {
-                        const stringPayload = SessionRequest.methods.signTypedData.getMessageFromData(root.payloadData)
-                        return JSON.stringify(JSON.parse(stringPayload), null, 2)
-                    }
-                    case SessionRequest.methods.signTransaction.name: {
-                        const jsonPayload = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
-                        return JSON.stringify(jsonPayload, null, 2)
-                    }
-                    case SessionRequest.methods.sendTransaction.name: {
-                        const jsonPayload = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
-                        return JSON.stringify(jsonPayload, null, 2)
-                    }
-                }
-            }
-
+            signingTransaction: !!request.method && (request.method === SessionRequest.methods.signTransaction.name
+                                                  || request.method === SessionRequest.methods.sendTransaction.name)
+            requestPayload: request.preparedData
             onClosed: {
                 Qt.callLater( () => {
                     rejectRequest()
