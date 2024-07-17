@@ -1,0 +1,3 @@
+module StatusQ.Validators
+
+AmountValidator 0.1 AmountValidator.qml
