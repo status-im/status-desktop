@@ -54,7 +54,7 @@ RowLayout {
             Layout.maximumWidth: parent.width
             font.pixelSize: 15
             color: Theme.palette.baseColor1
-            text: isBridgeTx ? qsTr("Choose the network to bridge token to") :
+            text: isBridgeTx ? qsTr("Routes will be automatically calculated to give you the lowest cost.") :
                               qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
             wrapMode: Text.WordWrap
         }
@@ -134,8 +134,8 @@ RowLayout {
             contentItem: StatusListItem {
                 id: card
                 objectName: chainName
-                leftPadding: 5
-                rightPadding: 5
+                leftPadding: 16
+                rightPadding: 6
                 implicitWidth: 410
                 title: chainName
                 subTitle: root.formatCurrencyAmount(tokenBalance.amount, root.selectedSymbol)
@@ -144,14 +144,17 @@ RowLayout {
                 asset.height: 32
                 asset.name: Style.svg("tiny/" + iconUrl)
                 asset.isImage: true
-                border.color: gasRectangle.checked ? Theme.palette.primaryColor2 : "transparent"
+                border.color: gasRectangle.checked ? Theme.palette.primaryColor1 : Theme.palette.primaryColor2
                 color: {
-                    if (sensor.containsMouse || highlighted ||  gasRectangle.checked) {
-                        return Theme.palette.statusListItem.backgroundColor
+                    if (sensor.containsMouse) {
+                        return Theme.palette.baseColor2
                     }
-                    return Theme.palette.baseColor2
+                    Theme.palette.statusListItem.backgroundColor
                 }
-                onClicked: gasRectangle.toggle()
+                onClicked: {
+                    if(!gasRectangle.checked)
+                        gasRectangle.toggle()
+                }
             }
             onCheckedChanged: {
                 store.setRouteDisabledChains(chainId, !gasRectangle.checked)
