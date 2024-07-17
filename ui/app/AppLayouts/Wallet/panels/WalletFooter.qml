@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.13
+import QtQml 2.15
 
 import StatusQ 0.1
 import StatusQ.Popups 0.1
@@ -48,6 +49,7 @@ Rectangle {
         Binding on collectibleOwnerAddress {
             when: d.isCollectibleViewed && !!root.walletStore.currentViewedCollectible && !!root.walletStore.currentViewedCollectible.ownership.ModelCount.count
             value: SQUtils.ModelUtils.get(root.walletStore.currentViewedCollectible.ownership, 0).accountAddress
+            restoreMode: Binding.RestoreBindingOrValue
         }
 
         readonly property ModelEntry owningAccount: ModelEntry {
@@ -65,9 +67,12 @@ Rectangle {
     RowLayout {
         anchors.centerIn: parent
         height: parent.height
+        width: Math.min(parent.width, implicitWidth)
         spacing:  Style.current.padding
 
         StatusFlatButton {
+            Layout.fillWidth: true
+            Layout.maximumWidth: implicitWidth
             objectName: "walletFooterSendButton"
             icon.name: "send"
             text: root.isCommunityOwnershipTransfer ? qsTr("Send Owner token to transfer %1 Community ownership").arg(root.communityName) : qsTr("Send")
@@ -113,7 +118,7 @@ Rectangle {
             icon.name: "token"
             text: qsTr("Buy")
             onClicked: Global.openBuyCryptoModalRequested()
-        }        
+        }
 
         StatusFlatButton {
             id: swap
