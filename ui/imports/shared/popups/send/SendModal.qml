@@ -73,9 +73,9 @@ StatusDialog {
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         if(!!popup.preSelectedAccount && !!holdingSelector.selectedItem
-                && recipientInputLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)) {
+                && recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer)) {
             popup.isLoading = true
-            popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSendInput.cryptoValueToSend)
+            popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSend.amount)
         }
     })
 
@@ -94,15 +94,34 @@ StatusDialog {
                                             popup.preSelectedSendType === Constants.SendType.StickersBuy
 
         readonly property var currencyStore: store.currencyStore
-        readonly property int errorType: !amountToSendInput.input.valid && (!isCollectiblesTransfer) ? Constants.SendAmountExceedsBalance :
-                                                                          (popup.bestRoutes && popup.bestRoutes.count === 0 &&
-                                                                           !!amountToSendInput.input.text && recipientInputLoader.ready && !popup.isLoading) ?
-                                                                              Constants.NoRoute : Constants.NoError
+
+        readonly property int errorType: {
+            if (amountToSend.balanceExceeded && !isCollectiblesTransfer)
+                return Constants.SendAmountExceedsBalance
+
+            if (popup.bestRoutes && popup.bestRoutes.count === 0
+                    && !amountToSend.empty && recipientInputLoader.ready
+                    && !popup.isLoading)
+                return Constants.NoRoute
+
+            return Constants.NoError
+        }
+
         readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.currentCurrencyBalance : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
-        readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
-        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
-        readonly property bool errorMode: popup.isLoading || !recipientInputLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
+        readonly property double maxInputBalance: amountToSend.fiatMode ? maxFiatBalance : maxCryptoBalance
+
+        readonly property string tokenSymbol: !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
+        readonly property string inputSymbol: amountToSend.fiatMode ? currencyStore.currentCurrency : tokenSymbol
+        readonly property bool errorMode: {
+            if (popup.isLoading || !recipientInputLoader.ready)
+                return false
+
+             return errorType !== Constants.NoError
+                || networkSelector.errorMode
+                || !(amountToSend.ready || d.isCollectiblesTransfer)
+        }
+
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
@@ -114,9 +133,6 @@ StatusDialog {
         property var selectedHolding: null
         property var selectedHoldingType: Constants.TokenType.Unknown
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.TokenType.ERC20
-        property var hoveredHolding: null
-        property var hoveredHoldingType: Constants.TokenType.Unknown
-        readonly property bool isHoveredHoldingValidAsset: !!hoveredHolding && hoveredHoldingType === Constants.TokenType.ERC20
 
         onSelectedHoldingChanged: {
             if (d.selectedHoldingType === Constants.TokenType.ERC20) {
@@ -128,7 +144,7 @@ StatusDialog {
                        d.selectedHoldingType === Constants.TokenType.ERC1155) {
                 let sendType = d.selectedHoldingType === Constants.TokenType.ERC721 ? Constants.SendType.ERC721Transfer : Constants.SendType.ERC1155Transfer
                 store.setSendType(sendType)
-                amountToSendInput.input.text = 1
+                amountToSend.setValue("1")
                 store.setSelectedAssetKey(selectedHolding.contractAddress+":"+selectedHolding.tokenId)
                 store.setRouteEnabledFromChains(selectedHolding.chainId)
                 store.updateRoutePreferredChains(selectedHolding.chainId)
@@ -168,7 +184,7 @@ StatusDialog {
     }
 
     onOpened: {
-        amountToSendInput.input.input.edit.forceActiveFocus()
+        amountToSend.forceActiveFocus()
 
         // IMPORTANT: This step must be the first one since it's storing the send type
         // into the backend at this stage so that, before this assignement, some properties
@@ -216,7 +232,14 @@ StatusDialog {
         }
 
         if(!!popup.preDefinedAmountToSend) {
-            amountToSendInput.input.text = Number(popup.preDefinedAmountToSend).toLocaleString(Qt.locale(), 'f', -128)
+            // TODO: At this stage the number should not be localized. However
+            // in many places when initializing popup the number is provided
+            // in localized version. It should be refactored to provide raw
+            // number consistently. Only the displaying component should apply
+            // final localized formatting.
+            const delocalized = popup.preDefinedAmountToSend.replace(",", ".")
+
+            amountToSend.setValue(delocalized)
         }
     }
 
@@ -379,45 +402,98 @@ StatusDialog {
                     }
 
                     MaxSendButton {
+                        id: maxButton
+
+                        readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(
+                                                                   d.maxInputBalance, d.inputSymbol)
+
+                        readonly property double maxSafeCryptoValue: WalletUtils.calculateMaxSafeSendAmount(
+                                                                         d.maxCryptoBalance, d.tokenSymbol)
+
+                        formattedValue: d.currencyStore.formatCurrencyAmount(
+                                            maxSafeValue, d.inputSymbol,
+                                            { noSymbol: !amountToSend.fiatMode })
+
+                        markAsInvalid: amountToSend.markAsInvalid
+
                         Layout.maximumWidth: 300
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                        visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset && !d.isCollectiblesTransfer
 
-                        value: d.maxInputBalance
-                        symbol: d.inputSymbol
-                        valid: amountToSendInput.input.valid || !amountToSendInput.input.text
-                        formatCurrencyAmount: (amount, symbol) => d.currencyStore.formatCurrencyAmount(amount, symbol, {noSymbol: !amountToSendInput.inputIsFiat})
+                        visible: d.isSelectedHoldingValidAsset && !d.isCollectiblesTransfer
 
                         onClicked: {
-                            if (maxSafeValue > 0)
-                                amountToSendInput.input.text = maxSafeValueAsString
-                            else
-                                amountToSendInput.input.input.edit.clear()
-                            amountToSendInput.input.forceActiveFocus()
+                            if (maxSafeValue > 0) {
+                                amountToSend.setValue(SQUtils.AmountsArithmetic.fromNumber(maxSafeValue).toString())
+                            }else {
+                                amountToSend.clear()
+                            }
+
+                            amountToSend.forceActiveFocus()
                         }
                     }
                 }
                 RowLayout {
                     visible: d.isSelectedHoldingValidAsset && !d.isCollectiblesTransfer
-                    AmountToSend {
-                        id: amountToSendInput
 
-                        Layout.fillWidth: true
-                        isBridgeTx: d.isBridgeTx
+                    AmountToSendNew {
+                        id: amountToSend
+
+                        caption: d.isBridgeTx ? qsTr("Amount to bridge")
+                                              : qsTr("Amount to send")
                         interactive: popup.interactive
-                        selectedHolding: d.selectedHolding
-                        maxInputBalance: d.maxInputBalance
-                        currentCurrency: d.currencyStore.currentCurrency
+
+                        readonly property bool balanceExceeded:
+                            SQUtils.AmountsArithmetic.cmp(
+                                SQUtils.AmountsArithmetic.fromNumber(maxButton.maxSafeCryptoValue, multiplierIndex),
+                                SQUtils.AmountsArithmetic.fromString(amount)) === -1
+
+                        readonly property bool ready: valid && !empty && !balanceExceeded
+                                                      && amount !== "0"
+
+                        readonly property string selectedSymbol:
+                            !!d.selectedHolding && !!d.selectedHolding.symbol
+                            ? d.selectedHolding.symbol : ""
+
+                        // For backward compatibility. To be removed when
+                        // dependent components (NetworkSelector, AmountToReceive)
+                        // are refactored.
+                        readonly property double asNumber: {
+                            if (!valid)
+                                return 0
+
+                            return parseFloat(text.replace(",", "."))
+                        }
+                        readonly property int minSendCryptoDecimals:
+                            !fiatMode ? LocaleUtils.fractionalPartLength(asNumber) : 0
+                        readonly property int minReceiveCryptoDecimals:
+                            !fiatMode ? minSendCryptoDecimals + 1 : 0
+                        readonly property int minSendFiatDecimals:
+                            fiatMode ? LocaleUtils.fractionalPartLength(asNumber) : 0
+                        readonly property int minReceiveFiatDecimals:
+                            fiatMode ? minSendFiatDecimals + 1 : 0
+                        // End of to-be-removed part
+
+                        decimalPoint: LocaleUtils.userInputLocale.decimalPoint
+                        markAsInvalid: balanceExceeded
 
                         // Collectibles do not have decimals
-                        multiplierIndex: d.isSelectedHoldingValidAsset && !!holdingSelector.selectedItem && !!holdingSelector.selectedItem.decimals
-                                         ? holdingSelector.selectedItem.decimals
-                                         : 0
+                        multiplierIndex:
+                            d.isSelectedHoldingValidAsset
+                            && !!holdingSelector.selectedItem
+                            && !!holdingSelector.selectedItem.decimals
+                            ? holdingSelector.selectedItem.decimals : 0
 
-                        formatCurrencyAmount: d.currencyStore.formatCurrencyAmount
-                        onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
-                        input.input.tabNavItem: recipientInputLoader.item
-                        Keys.onTabPressed: event.accepted = true
+                        price: d.isSelectedHoldingValidAsset
+                               ? (d.selectedHolding ?
+                                      d.selectedHolding.marketDetails.currencyPrice.amount : 1)
+                               : 1
+
+                        formatFiat: amount => d.currencyStore.formatCurrencyAmount(
+                                        amount, d.currencyStore.currentCurrency)
+                        formatBalance: amount => d.currencyStore.formatCurrencyAmount(
+                                           amount, selectedSymbol)
+
+                        onAmountChanged: popup.recalculateRoutesAndFees()
                     }
 
                     // Horizontal spacer
@@ -428,14 +504,14 @@ StatusDialog {
                         Layout.alignment: Qt.AlignRight
                         Layout.fillWidth:true
                         visible: !!popup.bestRoutes && popup.bestRoutes !== undefined &&
-                                 popup.bestRoutes.count > 0 && amountToSendInput.inputNumberValid
+                                 popup.bestRoutes.count > 0 && amountToSend.ready
                         isLoading: popup.isLoading
                         selectedHolding: d.selectedHolding
                         isBridgeTx: d.isBridgeTx
                         cryptoValueToReceive: d.totalAmountToReceive
-                        inputIsFiat: amountToSendInput.inputIsFiat
-                        minCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
-                        minFiatDecimals: amountToSendInput.minReceiveFiatDecimals
+                        inputIsFiat: amountToSend.fiatMode
+                        minCryptoDecimals: amountToSend.minReceiveCryptoDecimals
+                        minFiatDecimals: amountToSend.minReceiveFiatDecimals
                         currentCurrency: d.currencyStore.currentCurrency
                         formatCurrencyAmount: d.currencyStore.formatCurrencyAmount
                     }
@@ -520,7 +596,7 @@ StatusDialog {
             contentWidth: availableWidth
 
             visible: recipientInputLoader.ready &&
-                     (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
+                     (amountToSend.ready || d.isCollectiblesTransfer)
 
             objectName: "sendModalScroll"
 
@@ -537,9 +613,9 @@ StatusDialog {
                 interactive: popup.interactive
                 selectedRecipient: popup.preSelectedRecipient
                 ensAddressOrEmpty: recipientInputLoader.resolvedENSAddress
-                amountToSend: amountToSendInput.cryptoValueToSendFloat
-                minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
-                minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
+                amountToSend: amountToSend.cryptoValueToSendFloat
+                minSendCryptoDecimals: amountToSend.minSendCryptoDecimals
+                minReceiveCryptoDecimals: amountToSend.minReceiveCryptoDecimals
                 selectedAsset: d.selectedHolding
                 onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                 errorType: d.errorType
@@ -562,7 +638,8 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : d.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, d.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: recipientInputLoader.ready && (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer) && !d.errorMode
+        visible: recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer) && !d.errorMode
+
         onNextButtonClicked: popup.sendTransaction()
     }
 
