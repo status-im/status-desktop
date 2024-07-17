@@ -8,6 +8,7 @@ import Models 1.0
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet.popups.swap 1.0
+import shared.stores 1.0
 
 import utils 1.0
 
@@ -16,10 +17,17 @@ Item {
     width: 600
     height: 400
 
+    QtObject {
+        id: d
+        readonly property var currencyStore: CurrenciesStore{}
+    }
+
     Component {
         id: componentUnderTest
         SwapSignModal {
             anchors.centerIn: parent
+
+            currencyStore: d.currencyStore
 
             fromTokenSymbol: "DAI"
             fromTokenAmount: "100.07"
@@ -95,7 +103,8 @@ Item {
 
             // title & subtitle
             compare(controlUnderTest.title, qsTr("Sign Swap"))
-            compare(controlUnderTest.subtitle, qsTr("1000.1235 SNT to 1.42 %2").arg(data.toTokenSymbol)) // subtitle rounded amounts
+            compare(controlUnderTest.subtitle, qsTr("%1 to %2").arg(d.currencyStore.formatCurrencyAmount(controlUnderTest.fromTokenAmount, controlUnderTest.fromTokenSymbol))
+                    .arg(d.currencyStore.formatCurrencyAmount(controlUnderTest.toTokenAmount, controlUnderTest.toTokenSymbol)))
 
             // info box
             const headerText = findChild(controlUnderTest.contentItem, "headerText")

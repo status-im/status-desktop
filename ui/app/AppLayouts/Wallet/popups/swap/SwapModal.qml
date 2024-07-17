@@ -461,6 +461,8 @@ StatusDialog {
         SwapSignModal {
             destroyOnClose: true
 
+            currencyStore: root.swapAdaptor.currencyStore
+
             loginType: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
             feesLoading: root.swapAdaptor.swapProposalLoading
 

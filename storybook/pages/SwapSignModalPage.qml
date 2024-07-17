@@ -8,6 +8,7 @@ import Storybook 1.0
 import Models 1.0
 
 import AppLayouts.Wallet.popups.swap 1.0
+import shared.stores 1.0
 
 import utils 1.0
 
@@ -73,6 +74,8 @@ SplitView {
                     destroyOnClose: true
                     modal: false
                     closePolicy: Popup.NoAutoClose
+
+                    currencyStore: CurrenciesStore{}
 
                     fromTokenSymbol: ctrlFromSymbol.text
                     fromTokenAmount: ctrlFromAmount.text
