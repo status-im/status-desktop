@@ -183,7 +183,7 @@ ColumnLayout {
                 proxyRoles: ExpressionRole {
                     name: "date"
                     expression: {
-                        if (model.activityEntry.timestamp === 0)
+                        if (!model.activityEntry || model.activityEntry.timestamp === 0)
                             return ""
                         const currDate = new Date()
                         const timestampDate = new Date(model.activityEntry.timestamp * 1000)

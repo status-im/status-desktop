@@ -537,6 +537,9 @@ QtObject {
     }
 
     function transactionType(transaction) {
+        if (!transaction)
+            return Constants.TransactionType.Send
+
         // Cross chain Send to another recipient is not a bridge, though involves bridging
         if (transaction.txType == Constants.TransactionType.Bridge && transaction.sender !== transaction.recipient) {
             if (root.showAllAccounts) {
