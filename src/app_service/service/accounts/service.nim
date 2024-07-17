@@ -219,6 +219,10 @@ QtObject:
       alchemyOptimismMainnetToken: ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
       alchemyOptimismGoerliToken: ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
       alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
+      statusProxyMarketUser: STATUS_PROXY_MARKET_USER_RESOLVED,
+      statusProxyMarketPassword: STATUS_PROXY_MARKET_PASSWORD_RESOLVED,
+      statusProxyBlockchainUser: STATUS_PROXY_BLOCKCHAIN_USER_RESOLVED,
+      statusProxyBlockchainPassword: STATUS_PROXY_BLOCKCHAIN_PASSWORD_RESOLVED,
     )
 
   proc buildCreateAccountRequest(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
@@ -240,14 +244,15 @@ QtObject:
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
         keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
         walletSecretsConfig: self.buildWalletSecrets(),
-        apiConfig: defaultApiConfig()
+        apiConfig: defaultApiConfig(),
+        statusProxyEnabled: true,
       )
 
   proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
     try:
       let request = self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
       let response = status_account.createAccountAndLogin(request)
-      
+
       if not response.result.contains("error"):
         error "invalid status-go response", response
         return "invalid response: no error field found"
@@ -256,7 +261,7 @@ QtObject:
       if error == "":
         debug "Account saved succesfully"
         return ""
-      
+
       error "createAccountAndLogin status-go error: ", error
       return "createAccountAndLogin failed: " & error
 
@@ -264,12 +269,12 @@ QtObject:
       error "failed to create account or login", procName="createAccountAndLogin", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc importAccountAndLogin*(self: Service, 
-    mnemonic: string, 
-    password: string, 
-    recoverAccount: bool, 
+  proc importAccountAndLogin*(self: Service,
+    mnemonic: string,
+    password: string,
+    recoverAccount: bool,
     displayName: string,
-    imagePath: string, 
+    imagePath: string,
     imageCropRectangle: ImageCropRectangle,
     keycardInstanceUID: string = "",
   ): string =
@@ -280,14 +285,14 @@ QtObject:
       createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
-      
+
     self.restoreAccountAndLogin(request)
 
-  proc restoreKeycardAccountAndLogin*(self: Service, 
-    keycardData: KeycardEvent, 
+  proc restoreKeycardAccountAndLogin*(self: Service,
+    keycardData: KeycardEvent,
     recoverAccount: bool,
     displayName: string,
-    imagePath: string, 
+    imagePath: string,
     imageCropRectangle: ImageCropRectangle,
     ): string =
 
@@ -312,7 +317,7 @@ QtObject:
     request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
 
     return self.restoreAccountAndLogin(request)
-    
+
   proc restoreAccountAndLogin(self: Service, request: RestoreAccountRequest): string =
     try:
       let response = status_account.restoreAccountAndLogin(request)
@@ -424,7 +429,8 @@ QtObject:
       mnemonic: mnemonic,
       walletSecretsConfig: self.buildWalletSecrets(),
       bandwidthStatsEnabled: true,
-      apiConfig: defaultApiConfig()
+      apiConfig: defaultApiConfig(),
+      statusProxyEnabled: true # TODO: read from settings
     )
 
     if main_constants.runtimeLogLevelSet():
