@@ -2,6 +2,7 @@ import QtQuick 2.15
 
 import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Wallet.services.dapps.types 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import StatusQ.Core.Utils 0.1 as SQUtils
 
@@ -18,6 +19,7 @@ SQUtils.QObject {
     required property var accountsModel
     required property var networksModel
     required property CurrenciesStore currenciesStore
+    required property WalletStore.WalletAssetsStore assetsStore
 
     property alias requestsModel: requests
 
@@ -124,6 +126,7 @@ SQUtils.QObject {
                 console.error("Error finding network for event", JSON.stringify(event))
                 return null
             }
+
             let data = extractMethodData(event, method)
             if(!data) {
                 console.error("Error in event data lookup", JSON.stringify(event))
@@ -168,9 +171,19 @@ SQUtils.QObject {
                 let estimatedTimeEnum = getEstimatedTimeInterval(data, method, obj.network.chainId)
                 root.estimatedTimeUpdated(estimatedTimeEnum)
 
-                let st = getEstimatedFeesStatus(data, method, obj.network.chainId)
+                const mainNet = lookupMainnetNetwork()
+                let mainChainId = obj.network.chainId
+                if (!!mainNet) {
+                    mainChainId = mainNet.chainId
+                } else {
+                    console.error("Error finding mainnet network")
+                }
+                let st = getEstimatedFeesStatus(data, method, obj.network.chainId, mainChainId)
 
-                root.maxFeesUpdated(st.fiatMaxFees, st.maxFeesEth, st.haveEnoughFunds, st.haveEnoughFees, st.symbol, st.feesInfo)
+                let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, account.address, obj.network.chainId, mainNet.chainId)
+
+                root.maxFeesUpdated(st.fiatMaxFees.toNumber(), st.maxFeesEth, fundsStatus.haveEnoughFunds,
+                                    fundsStatus.haveEnoughForFees, st.symbol, st.feesInfo)
             })
 
             return obj
@@ -214,6 +227,11 @@ SQUtils.QObject {
             }
             let chainId = Helpers.chainIdFromEip155(event.params.chainId)
             return SQUtils.ModelUtils.getByKey(root.networksModel, "chainId", chainId)
+        }
+
+        /// Returns null if the network is not found
+        function lookupMainnetNetwork() {
+            return SQUtils.ModelUtils.getByKey(root.networksModel, "layer", 1)
         }
 
         function extractMethodData(event, method) {
@@ -362,7 +380,7 @@ SQUtils.QObject {
         //      maxPriorityFeePerGas
         //      gasPrice
         // }
-        function getEstimatedMaxFees(data, method, chainId) {
+        function getEstimatedMaxFees(data, method, chainId, mainNetChainId) {
             let tx = {}
             if (d.isTransactionMethod(method)) {
                 tx = d.getTxObject(method, data)
@@ -371,6 +389,8 @@ SQUtils.QObject {
             let Math = SQUtils.AmountsArithmetic
             let gasLimit = Math.fromString("21000")
             let gasPrice, maxFeePerGas, maxPriorityFeePerGas
+            let l1GasFee = Math.fromNumber(0)
+
             // Beware, the tx values are standard blockchain hex big number values; the fees values are nim's float64 values, hence the complex conversions
             if (!!tx.maxFeePerGas && !!tx.maxPriorityFeePerGas) {
                 let maxFeePerGasDec = root.store.hexToDec(tx.maxFeePerGas)
@@ -384,7 +404,7 @@ SQUtils.QObject {
                 maxPriorityFeePerGas = fees.maxPriorityFeePerGas
                 if (fees.eip1559Enabled) {
                     if (!!fees.maxFeePerGasM) {
-                        gasPrice = Math.fromString(fees.maxFeePerGasM)
+                        gasPrice = Math.fromNumber(fees.maxFeePerGasM)
                         maxFeePerGas = fees.maxFeePerGasM
                     } else if(!!tx.maxFeePerGas) {
                         let maxFeePerGasDec = root.store.hexToDec(tx.maxFeePerGas)
@@ -396,38 +416,75 @@ SQUtils.QObject {
                     }
                 } else {
                     if (!!fees.gasPrice) {
-                        gasPrice = Math.fromString(fees.gasPrice)
+                        gasPrice = Math.fromNumber(fees.gasPrice)
                     } else {
                         console.error("Error fetching suggested fees")
                         return
                     }
                 }
-                gasPrice = Math.sum(gasPrice, Math.fromString(fees.l1GasFee))
+                l1GasFee = Math.fromNumber(fees.l1GasFee)
             }
 
             let maxFees = Math.times(gasLimit, gasPrice)
-            return {maxFees, maxFeePerGas, maxPriorityFeePerGas, gasPrice}
+            return {maxFees, maxFeePerGas, maxPriorityFeePerGas, gasPrice, l1GasFee}
         }
 
-        function getEstimatedFeesStatus(data, method, chainId) {
+        // Returned values are Big numbers
+        function getEstimatedFeesStatus(data, method, chainId, mainNetChainId) {
             let Math = SQUtils.AmountsArithmetic
 
-            let feesInfo = getEstimatedMaxFees(data, method, chainId)
+            let feesInfo = getEstimatedMaxFees(data, method, chainId, mainNetChainId)
 
-            let maxFeesEth = Math.div(feesInfo.maxFees, Math.fromString("1000000000"))
-
-            // TODO #15192: extract account.balance
-            //let accountFundsEth = account.balance
-            //let haveEnoughFees = Math.cmp(accountFundsEth, maxFeesEth) >= 0
-            let haveEnoughFees = true
+            let totalMaxFees = Math.sum(feesInfo.maxFees, feesInfo.l1GasFee)
+            let maxFeesEth = Math.div(totalMaxFees, Math.fromString("1000000000"))
 
             let maxFeesEthStr = maxFeesEth.toString()
-            let fiatMaxFees = root.currenciesStore.getFiatValue(maxFeesEthStr, Constants.ethToken)
-            let symbol = root.currenciesStore.currentCurrency
+            let fiatMaxFeesStr = root.currenciesStore.getFiatValue(maxFeesEthStr, Constants.ethToken)
+            let fiatMaxFees = Math.fromString(fiatMaxFeesStr)
+            let symbol = root.currenciesStore.currentCurrencySymbol
 
-            // We don't process the transaction so we don't have this information yet
+            return {fiatMaxFees, maxFeesEth, symbol, feesInfo}
+        }
+
+        function checkBalanceForChain(balances, address, chainId, fees) {
+            let Math = SQUtils.AmountsArithmetic
+            let accEth = SQUtils.ModelUtils.getFirstModelEntryIf(balances, (balance) => {
+                return balance.account.toLowerCase() === address.toLowerCase() && balance.chainId === chainId
+            })
+            if (!accEth) {
+                console.error("Error balance lookup for account ", address, " on chain ", chainId)
+                return {haveEnoughForFees, haveEnoughFunds}
+            }
+            let accountFundsWei = Math.fromString(accEth.balance)
+            let accountFundsEth = Math.div(accountFundsWei, Math.fromString("1000000000000000000"))
+
+            let feesEth = Math.div(fees, Math.fromString("1000000000"))
+            return Math.cmp(accountFundsEth, feesEth) >= 0
+        }
+
+        function checkFundsStatus(maxFees, l1GasFee, address, chainId, mainNetChainId) {
+            let Math = SQUtils.AmountsArithmetic
+
+            let haveEnoughForFees = false
+            // TODO #15192: extract funds from transaction and check against it
             let haveEnoughFunds = true
-            return {fiatMaxFees, maxFeesEth, haveEnoughFunds, haveEnoughFees, symbol, feesInfo}
+
+            let token = SQUtils.ModelUtils.getByKey(root.assetsStore.groupedAccountAssetsModel, "tokensKey", Constants.ethToken)
+            if (!token || !token.balances) {
+                console.error("Error token balances lookup for ETH")
+                return {haveEnoughForFees, haveEnoughFunds}
+            }
+
+            if (chainId == mainNetChainId) {
+                const finalFees = Math.sum(maxFees, l1GasFee)
+                haveEnoughForFees = checkBalanceForChain(token.balances, address, chainId, finalFees)
+            } else {
+                const haveEnoughOnChain = checkBalanceForChain(token.balances, address, chainId, maxFees)
+                const haveEnoughOnMain = checkBalanceForChain(token.balances, address, mainNetChainId, l1GasFee)
+                haveEnoughForFees = haveEnoughOnChain && haveEnoughOnMain
+            }
+
+            return {haveEnoughForFees, haveEnoughFunds}
         }
 
         function isTransactionMethod(method) {

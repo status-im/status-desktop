@@ -14,6 +14,7 @@ import AppLayouts.Wallet.services.dapps 1.0
 import AppLayouts.Wallet.services.dapps.types 1.0
 import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import shared.stores 1.0
 
@@ -82,7 +83,6 @@ Item {
     Component {
         id: dappsStoreComponent
 
-
         DAppsStore {
             property string dappsListReceivedJsonStr: '[]'
 
@@ -119,6 +119,24 @@ Item {
             function updateWalletConnectSessions(activeTopicsJson) {
                 updateWalletConnectSessionsCalls.push({activeTopicsJson})
             }
+
+            function getEstimatedTime(chainId, maxFeePerGas) {
+                return Constants.TransactionEstimatedTime.LessThanThreeMins
+            }
+
+            property var mockedSuggestedFees: ({
+                gasPrice: 2.0,
+                baseFee: 5.0,
+                maxPriorityFeePerGas: 2.0,
+                maxFeePerGasL: 1.0,
+                maxFeePerGasM: 1.1,
+                maxFeePerGasH: 1.2,
+                l1GasFee: 0.0,
+                eip1559Enabled: true
+            })
+            function getSuggestedFees() {
+                return mockedSuggestedFees
+            }
         }
     }
 
@@ -127,11 +145,25 @@ Item {
 
         QtObject {
             readonly property ListModel filteredFlatModel: ListModel {
-                ListElement { chainId: 1 }
+                ListElement {
+                    chainId: 1
+                    layer: 1
+                }
                 ListElement {
                     chainId: 2
                     chainName: "Test Chain"
                     iconUrl: "network/Network=Ethereum"
+                    layer: 2
+                }
+                // Used by tst_balanceCheck
+                ListElement {
+                    chainId: 11155111
+                    layer: 1
+                }
+                // Used by tst_balanceCheck
+                ListElement {
+                    chainId: 421613
+                    layer: 2
                 }
             }
 
@@ -144,11 +176,24 @@ Item {
                     color: "#2A4AF5"
                 }
                 ListElement { address: "0x3a" }
+                // Account from GroupedAccountsAssetsModel
+                ListElement { address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240" }
             }
             function getNetworkShortNames(chainIds) {
                  return "eth:oeth:arb"
-             }
+            }
+
+            readonly property var currencyStore: CurrenciesStore {}
+            readonly property var walletAssetsStore: assetsStoreMock
         }
+    }
+
+    WalletStore.WalletAssetsStore {
+        id: assetsStoreMock
+        // Silence warnings
+        assetsWithFilteredBalances: ListModel {}
+
+        readonly property var groupedAccountAssetsModel: groupedAccountsAssetsModel
     }
 
     Component {
@@ -156,12 +201,20 @@ Item {
 
         DAppsRequestHandler {
             currenciesStore: CurrenciesStore {}
+            assetsStore: assetsStoreMock
+
+            property var maxFeesUpdatedCalls: []
+            onMaxFeesUpdated: function(fiatMaxFees, ethMaxFees, haveEnoughFunds, haveEnoughForFees, symbol, feesInfo) {
+                maxFeesUpdatedCalls.push({fiatMaxFees, ethMaxFees, haveEnoughFunds, haveEnoughForFees, symbol, feesInfo})
+            }
         }
     }
 
     TestCase {
         id: requestHandlerTest
         name: "DAppsRequestHandler"
+        // Ensure mocked GroupedAccountsAssetsModel is properly initialized
+        when: windowShown
 
         property DAppsRequestHandler handler: null
 
@@ -207,9 +260,9 @@ Item {
 
             let testAddressUpper = "0x3A"
             let chainId = 2
-            let  method = "personal_sign"
+            let method = "personal_sign"
             let message = "hello world"
-            let params = [Helpers.strToHex(message), testAddressUpper]
+            let params = [`"${Helpers.strToHex(message)}"`, `"${testAddressUpper}"`]
             let topic = "b536a"
             let session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
             // Expect to have calls to getActiveSessions from service initialization
@@ -217,6 +270,89 @@ Item {
             sdk.sessionRequestEvent(session)
 
             compare(sdk.getActiveSessionsCallbacks.length, 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
+        }
+
+        function test_balanceCheck_data() {
+            return [{
+                tag: "have_enough_funds",
+                chainId: 11155111,
+
+                expect: {
+                    haveEnoughForFees: true,
+                }
+            },
+            {
+                tag: "doest_have_enough_funds",
+                chainId: 11155111,
+                // Override the suggestedFees to a higher value
+                maxFeePerGasM: 1000000.0, /*GWEI*/
+
+                expect: {
+                    haveEnoughForFees: false,
+                }
+            },
+            {
+                tag: "check_l2_doesnt_have_enough_funds_on_l1",
+                chainId: 421613,
+                // Override the l1 additional fees
+                l1GasFee: 1000000000.0,
+
+                expect: {
+                    haveEnoughForFees: false,
+                }
+            },
+            {
+                tag: "check_l2_doesnt_have_enough_funds_on_l2",
+                chainId: 421613,
+                // Override the l2 to a higher value
+                maxFeePerGasM: 1000000.0, /*GWEI*/
+                // Override the l1 additional fees
+                l1GasFee: 10.0,
+
+                expect: {
+                    haveEnoughForFees: false,
+                }
+            }]
+        }
+
+        function test_balanceCheck(data) {
+            let sdk = handler.sdk
+
+            // Override the suggestedFees
+            if (!!data.maxFeePerGasM) {
+                handler.store.mockedSuggestedFees.maxFeePerGasM = data.maxFeePerGasM
+            }
+            if (!!data.l1GasFee) {
+                handler.store.mockedSuggestedFees.l1GasFee = data.l1GasFee
+            }
+
+            let testAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            let chainId = data.chainId
+            let method = "eth_sendTransaction"
+            let message = "hello world"
+            let params = [`{
+                    "data": "0x",
+                    "from": "${testAddress}",
+                    "to": "0x2",
+                    "value": "0x12345"
+                }`]
+            let topic = "b536a"
+            let session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            sdk.sessionRequestEvent(session)
+
+            compare(sdk.getActiveSessionsCallbacks.length, 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
+            let callback = sdk.getActiveSessionsCallbacks[0].callback
+            callback({"b536a": JSON.parse(Testing.formatApproveSessionResponse([chainId, 7], [testAddress]))})
+            compare(handler.maxFeesUpdatedCalls.length, 1, "expected a call to handler.onMaxFeesUpdated")
+
+            let args = handler.maxFeesUpdatedCalls[0]
+            verify(args.ethMaxFees > 0, "expected ethMaxFees to be set")
+            // storybook's CurrenciesStore mock up getFiatValue returns the balance
+            compare(args.fiatMaxFees.toString(), args.ethMaxFees.toString(), "expected fiatMaxFees to be set")
+            verify(args.haveEnoughFunds, "expected haveEnoughFunds to be set")
+            compare(args.haveEnoughForFees, data.expect.haveEnoughForFees, "expected haveEnoughForFees to be set")
+            compare(args.symbol, "$", "expected symbol to be set")
+            verify(!!args.feesInfo, "expected feesInfo to be set")
         }
     }
 
@@ -238,8 +374,7 @@ Item {
             }
         }
 
-        SignalSpy {
-            id: sessionRequestSpy
+        readonly property SignalSpy sessionRequestSpy: SignalSpy {
             target: walletConnectServiceTest.service
             signalName: "sessionRequest"
 
@@ -337,7 +472,7 @@ Item {
             let chainId = 2
             let  method = "personal_sign"
             let message = "hello world"
-            let params = [Helpers.strToHex(message), testAddress]
+            let params = [`"${Helpers.strToHex(message)}"`, `"${testAddress}"`]
             let topic = "b536a"
             let session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
             // Expect to have calls to getActiveSessions from service initialization
@@ -674,7 +809,7 @@ Item {
         let network = networksMdodel.get(1)
         let method = "personal_sign"
         let message = "hello world"
-        let params = [Helpers.strToHex(message), account.address]
+        let params = [`"${Helpers.strToHex(message)}"`, `"${account.address}"`]
         let topic = "b536a"
         let requestEvent = JSON.parse(Testing.formatSessionRequest(network.chainId, method, params, topic))
         let request = tc.createTemporaryObject(sessionRequestComponent, root, {

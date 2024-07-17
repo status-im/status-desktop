@@ -155,7 +155,7 @@ function formatApproveSessionResponse(networksArray, accountsArray, custom) {
 }
 
 function formatSessionRequest(chainId, method, params, topic) {
-    let paramsStr = params.map(param => `"${param}"`).join(',')
+    let paramsStr = params.map(param => `${param}`).join(',')
     return `{
     "id": 1717149885151715,
     "params": {
