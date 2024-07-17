@@ -13,6 +13,7 @@ import driver
 from constants import ColorCodes
 from driver.objects_access import walk_children
 from gui.components.onboarding.keys_already_exist_popup import KeysAlreadyExistPopup
+from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.components.splash_screen import SplashScreen
@@ -83,16 +84,19 @@ class KeysView(OnboardingView):
     @allure.step('Open Profile view')
     def generate_new_keys(self) -> 'YourProfileView':
         self._generate_key_button.click()
+        ShareUsageDataPopup().skip()
         return YourProfileView().verify_profile_view_present()
 
     @allure.step('Open Keycard Init view')
     def generate_key_for_new_keycard(self) -> 'KeycardInitView':
         self._generate_key_for_new_keycard_button.click()
+        ShareUsageDataPopup().skip()
         return KeycardInitView().wait_until_appears()
 
     @allure.step('Open Import Seed Phrase view')
     def open_import_seed_phrase_view(self) -> 'ImportSeedPhraseView':
         self._import_seed_phrase_button.click()
+        ShareUsageDataPopup().skip()
         return ImportSeedPhraseView().wait_until_appears()
 
     @allure.step('Open Enter Seed Phrase view')
