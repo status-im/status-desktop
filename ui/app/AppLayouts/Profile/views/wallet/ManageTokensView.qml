@@ -71,6 +71,7 @@ Item {
             StatusTabButton {
                 leftPadding: 0
                 width: implicitWidth
+                objectName: "assetsButton"
                 text: qsTr("Assets")
             }
             StatusTabButton {

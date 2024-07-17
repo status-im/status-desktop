@@ -143,6 +143,7 @@ class LeftPanel(QObject):
         self._settings_button.click()
         time.sleep(0.5)
         try:
+            SettingsScreen().left_panel.wait_until_appears()
             return SettingsScreen()
         except Exception as ex:
             if attempts:

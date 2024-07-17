@@ -54,7 +54,7 @@ class KeycardPopup(BasePopup):
     @property
     @allure.step('Get keycard popup header')
     def keycard_header(self) -> str:
-        return self._keycard_popup_header.text
+        return str(self._keycard_popup_header.text)
 
     @property
     @allure.step('Get keycard instructions')
@@ -102,7 +102,7 @@ class KeycardPopup(BasePopup):
     @property
     @allure.step('Get account name in keypair')
     def keypair_account_name(self) -> str:
-        return self._keypair_tag.object.title
+        return str(self._keypair_tag.object.title)
 
     @property
     @allure.step('Get account color in keypair')
@@ -136,7 +136,8 @@ class KeycardPopup(BasePopup):
 
     @allure.step('Set pin')
     def input_pin_or_puk(self, pin):
-        driver.nativeType(pin)
+        for i in range(7):
+            driver.nativeType(pin)
 
     @allure.step('Click Next button')
     def click_next(self):
@@ -242,7 +243,7 @@ class KeycardPopup(BasePopup):
         else:
             raise RuntimeError("Wrong amount of seed words", len(seed_phrase_words))
         for count, word in enumerate(seed_phrase_words, start=1):
-            self._seed_phrase_word_text_edit.real_name['objectName'] = f'statusSeedPhraseInputField{count}'
+            self._seed_phrase_word_text_edit.real_name['objectName'] = f'enterSeedPhraseInputField{count}'
             self._seed_phrase_word_text_edit.text = word
         self.click_next()
 

@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class Keycard(Enum):
-    KEYCARD_PIN = '111111'
-    KEYCARD_INCORRECT_PIN = '222222'
+    KEYCARD_PIN = '1'
+    KEYCARD_INCORRECT_PIN = '2'
     KEYCARD_CORRECT_PUK = '111111111111'
     KEYCARD_INCORRECT_PUK = '222222222222'
     KEYCARD_NAME = 'Test Keycard'
@@ -29,7 +29,7 @@ class Keycard(Enum):
     KEYCARD_SELECT_WHICH_PAIR = 'Select which key pair you’d like to move to this Keycard'
     KEYCARD_KEYPAIR_INFO = 'Moving this key pair will require you to use your Keycard to login'
     KEYCARD_MIGRATING = 'Migrating key pair to Keycard'
-    KEYCARD_KEYPAIR_MIGRATED = 'Keypair successfully migrated'
+    KEYCARD_KEYPAIR_MIGRATED = 'Key pair successfully migrated'
     KEYCARD_COMPLETE_MIGRATION = 'To complete migration close Status and log in with your new Keycard'
     KEYCARD_EMPTY = 'Keycard is empty'
     KEYCARD_NO_KEYPAIR = 'There is no key pair on this Keycard'

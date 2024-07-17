@@ -157,8 +157,7 @@ class AccountPopup(BasePopup):
         self._origin_combobox.click()
         self.click_new_master_key()
         self._use_keycard_button.click()
-        assert KeycardSettingsView().exists, 'Keycard settings view was not opened'
-        return KeycardSettingsView()
+        return KeycardSettingsView().wait_until_appears(), 'Keycard settings view was not opened'
 
     @allure.step('Click confirmation (add account / save changes) button')
     def save_changes(self):
