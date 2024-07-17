@@ -17,6 +17,8 @@ type
     mnemonic*: string
     walletSecretsConfig*: WalletSecretsConfig
     apiConfig*: APIConfig
+    statusProxyEnabled*: bool
+
 
 proc toJson*(self: LoginAccountRequest): JsonNode =
   result = %* {
@@ -28,7 +30,8 @@ proc toJson*(self: LoginAccountRequest): JsonNode =
     "bandwidthStatsEnabled": self.bandwidthStatsEnabled,
     "keycardWhisperPrivateKey": self.keycardWhisperPrivateKey,
     "mnemonic": self.mnemonic,
-    "apiConfig": self.apiConfig
+    "apiConfig": self.apiConfig,
+    "statusProxyEnabled": self.statusProxyEnabled
   }
   for key, value in self.walletSecretsConfig.toJson().pairs():
     result[key] = value

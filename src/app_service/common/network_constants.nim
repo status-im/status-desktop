@@ -1,10 +1,15 @@
 import json
 import ../../constants as main_constants
+import strformat
+
+let STATUS_PROXY_HOST = "api.status.im"
 
 var NETWORKS* = %* [
   {
     "chainId": 1,
     "chainName": "Mainnet",
+    "defaultRpcUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/grove/ethereum/mainnet/{POKT_TOKEN_RESOLVED}",
+    "defaultFallbackUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/infura/ethereum/mainnet/{INFURA_TOKEN_RESOLVED}",
     "rpcUrl": "https://eth-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://etherscan.io/",
@@ -39,7 +44,9 @@ var NETWORKS* = %* [
   {
     "chainId": 10,
     "chainName": "Optimism",
-    "rpcUrl": "https://optimism-mainnet.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
+    "defaultRpcUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/grove/optimism/mainnet/{POKT_TOKEN_RESOLVED}",
+    "defaultFallbackUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/infura/optimism/mainnet/{INFURA_TOKEN_RESOLVED}",
+    "rpcUrl": "https://optimism-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://optimism-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://optimistic.etherscan.io",
     "iconUrl": "network/Network=Optimism",
@@ -73,6 +80,8 @@ var NETWORKS* = %* [
   {
     "chainId": 42161,
     "chainName": "Arbitrum",
+    "defaultRpcUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/grove/arbitrum/mainnet/{POKT_TOKEN_RESOLVED}",
+    "defaultFallbackUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/infura/arbitrum/mainnet/{INFURA_TOKEN_RESOLVED}",
     "rpcUrl": "https://arbitrum-one.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://arbitrum-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://arbiscan.io/",
@@ -107,6 +116,8 @@ var NETWORKS* = %* [
   {
     "chainId": 11155111,
     "chainName": "Mainnet",
+    "defaultRpcUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/grove/ethereum/sepolia/{POKT_TOKEN_RESOLVED}",
+    "defaultFallbackUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/infura/ethereum/sepolia/{INFURA_TOKEN_RESOLVED}",
     "rpcUrl": "https://sepolia-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://sepolia.etherscan.io/",
@@ -124,6 +135,8 @@ var NETWORKS* = %* [
    {
     "chainId": 11155420,
     "chainName": "Optimism",
+    "defaultRpcUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/grove/optimism/sepolia/{POKT_TOKEN_RESOLVED}",
+    "defaultFallbackUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/infura/optimism/sepolia/{INFURA_TOKEN_RESOLVED}",
     "rpcUrl": "https://optimism-sepolia-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://optimism-sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://sepolia-optimism.etherscan.io/",
@@ -141,6 +154,8 @@ var NETWORKS* = %* [
    {
     "chainId": 421614,
     "chainName": "Arbitrum",
+    "defaultRpcUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/grove/arbitrum/sepolia/{POKT_TOKEN_RESOLVED}",
+    "defaultFallbackUrl": fmt"https://{BUILD_MODE}.{STATUS_PROXY_HOST}/infura/arbitrum/sepolia/{INFURA_TOKEN_RESOLVED}",
     "rpcUrl": "https://arbitrum-sepolia-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://arbitrum-sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://sepolia-explorer.arbitrum.io/",
