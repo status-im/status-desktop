@@ -62,6 +62,8 @@ let
   RARIBLE_MAINNET_API_KEY_RESOLVED* = desktopConfig.raribleMainnetApiKey
   RARIBLE_TESTNET_API_KEY_RESOLVED* = desktopConfig.raribleTestnetApiKey
   TENOR_API_KEY_RESOLVED* = desktopConfig.tenorApiKey
+  STATUS_PROXY_MARKET_USER_RESOLVED* = desktopConfig.statusProxyMarketUser
+  STATUS_PROXY_MARKET_PASSWORD_RESOLVED* = desktopConfig.statusProxyMarketPassword
   WALLET_CONNECT_PROJECT_ID* = BUILD_WALLET_CONNECT_PROJECT_ID
   MIXPANEL_APP_ID* = desktopConfig.mixpanelAppId
   MIXPANEL_TOKEN* = desktopConfig.mixpanelToken
