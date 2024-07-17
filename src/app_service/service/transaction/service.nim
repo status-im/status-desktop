@@ -422,7 +422,9 @@ QtObject:
         txData = ens_utils.buildTransaction(parseAddress(from_addr), route.amountIn,
           $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
         txData.to = parseAddress(to_addr).some
-        txData.slippagePercentage = slippagePercentage
+        if sendType == SendType.Swap:
+          totalAmountToReceive += route.amountOut
+          txData.slippagePercentage = slippagePercentage
 
         paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
 
@@ -434,6 +436,9 @@ QtObject:
         fromAmount:  "0x" & totalAmountToSend.toHex,
         multiTxType: sendTypeToMultiTxType(sendType),
       )
+
+      if sendType == SendType.Swap:
+        mtCommand.toAmount =  "0x" & totalAmountToReceive.toHex
 
       let response = transactions.createMultiTransaction(
         mtCommand,
@@ -541,12 +546,16 @@ QtObject:
           $route.gasFees.maxFeePerGasM
           )
         txData.data = data
-        txData.slippagePercentage = slippagePercentage
+        if sendType == SendType.Swap:
+          totalAmountToReceive += route.amountOut
+          txData.slippagePercentage = slippagePercentage
 
         let path = self.createPath(route, txData, mtCommand.toAsset, mtCommand.toAddress)
         paths.add(path)
 
       mtCommand.fromAmount =  "0x" & totalAmountToSend.toHex
+      if sendType == SendType.Swap:
+        mtCommand.toAmount =  "0x" & totalAmountToReceive.toHex
 
       let response = transactions.createMultiTransaction(mtCommand, paths, password)
 

@@ -150,6 +150,7 @@ SplitView {
                     ListElement { name: "Bridge"; type: Constants.TransactionType.Bridge }
                     ListElement { name: "ContractDeployment"; type: Constants.TransactionType.ContractDeployment }
                     ListElement { name: "Mint"; type: Constants.TransactionType.Mint }
+                    ListElement { name: "Approve"; type: Constants.TransactionType.Approve }
                     ListElement { name: "Sell"; type: Constants.TransactionType.Sell }
                     ListElement { name: "Destroy"; type: Constants.TransactionType.Destroy }
                 }
