@@ -155,6 +155,7 @@ Item {
         id: dappsRequestHandlerComponent
 
         DAppsRequestHandler {
+            currenciesStore: CurrenciesStore {}
         }
     }
 

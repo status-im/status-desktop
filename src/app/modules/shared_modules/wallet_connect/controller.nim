@@ -4,8 +4,11 @@ import chronicles
 import app_service/service/wallet_connect/service as wallet_connect_service
 import app_service/service/wallet_account/service as wallet_account_service
 
+import helpers
+
 logScope:
   topics = "wallet-connect-controller"
+
 
 QtObject:
   type
@@ -44,16 +47,16 @@ QtObject:
       self.dappsListReceived(res)
       return true
 
-  proc userAuthenticationResult*(self: Controller, topic: string, id: string, error: bool, password: string, pin: string) {.signal.}
+  proc userAuthenticationResult*(self: Controller, topic: string, id: string, error: bool, password: string, pin: string, payload: string) {.signal.}
 
   # Beware, it will fail if an authentication is already in progress
-  proc authenticateUser*(self: Controller, topic: string, id: string, address: string): bool {.slot.} =
+  proc authenticateUser*(self: Controller, topic: string, id: string, address: string, payload: string): bool {.slot.} =
     let acc = self.walletAccountService.getAccountByAddress(address)
     if acc.keyUid == "":
       return false
 
     return self.service.authenticateUser(acc.keyUid, proc(password: string, pin: string, success: bool) =
-      self.userAuthenticationResult(topic, id, success, password, pin)
+      self.userAuthenticationResult(topic, id, success, password, pin, payload)
     )
 
   proc signMessageUnsafe*(self: Controller, address: string, password: string, message: string): string {.slot.} =
@@ -73,3 +76,22 @@ QtObject:
 
   proc getEstimatedTime(self: Controller, chainId: int, maxFeePerGasHex: string): int {.slot.} =
     return self.service.getEstimatedTime(chainId, maxFeePerGasHex).int
+
+  proc getSuggestedFeesJson(self: Controller, chainId: int): string {.slot.} =
+    let dto = self.service.getSuggestedFees(chainId)
+    return dto.toJson()
+
+  proc hexToDecBigString*(self: Controller, hex: string): string {.slot.} =
+    try:
+      return hexToDec(hex)
+    except Exception as e:
+      error "Failed to convert hex big int: ", hex=hex, ex=e.msg
+      return ""
+
+  # Convert from float gwei to hex wei
+  proc convertFeesInfoToHex*(self: Controller, feesInfoJson: string): string {.slot.} =
+    try:
+      return convertFeesInfoToHex(feesInfoJson)
+    except Exception as e:
+      error "Failed to convert fees info to hex: ", feesInfoJson=feesInfoJson, ex=e.msg
+      return ""

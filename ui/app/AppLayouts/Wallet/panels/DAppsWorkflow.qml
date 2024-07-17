@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet 1.0
@@ -159,6 +160,8 @@ DappsComboBox {
             loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
             visible: true
 
+            property var feesInfo: null
+
             dappUrl: request.dappUrl
             dappIcon: request.dappIcon
             dappName: request.dappName
@@ -180,7 +183,7 @@ DappsComboBox {
             enoughFundsForTransaction: request.enoughFunds
             enoughFundsForFees: request.enoughFunds
 
-            signingTransaction: request.method === SessionRequest.methods.signTransaction.name || request.method === SessionRequest.methods.sendTransaction.name
+            signingTransaction: !!request.method && (request.method === SessionRequest.methods.signTransaction.name || request.method === SessionRequest.methods.sendTransaction.name)
             requestPayload: {
                 switch(request.method) {
                     case SessionRequest.methods.personalSign.name:
@@ -219,8 +222,9 @@ DappsComboBox {
                     console.error("Error signing: request is null")
                     return
                 }
+
                 requestHandled = true
-                root.wcService.requestHandler.authenticate(request)
+                root.wcService.requestHandler.authenticate(request, JSON.stringify(feesInfo))
             }
 
             onRejected: {
@@ -240,22 +244,18 @@ DappsComboBox {
             Connections {
                 target: root.wcService.requestHandler
 
-                function onMaxFeesUpdated(maxFees, maxFeesWei, haveEnoughFunds, symbol) {
-                    fiatFees = maxFees
-                    currentCurrency = symbol
-
-                    var ethStr = "?"
-                    try {
-                        ethStr = globalUtils.wei2Eth(maxFeesWei, 9)
-                    } catch (e) {
-                        // ignore error in case of tests and storybook where we don't have access to globalUtils
+                function onMaxFeesUpdated(fiatMaxFees, ethMaxFees, haveEnoughFunds, haveEnoughFees, symbol, feesInfo) {
+                    dappRequestModal.hasFees = !!ethMaxFees
+                    dappRequestModal.feesLoading = !dappRequestModal.hasFees
+                    if (!hasFees) {
+                        return
                     }
-
-                    cryptoFees = ethStr
-                    enoughFundsForTransaction = haveEnoughFunds
-                    enoughFundsForFees = haveEnoughFunds
-                    feesLoading = false
-                    hasFees = !!maxFees
+                    dappRequestModal.fiatFees = fiatMaxFees.toString()
+                    dappRequestModal.cryptoFees = ethMaxFees.toString()
+                    dappRequestModal.currentCurrency = symbol
+                    dappRequestModal.enoughFundsForTransaction = haveEnoughFunds
+                    dappRequestModal.enoughFundsForFees = haveEnoughFees
+                    dappRequestModal.feesInfo = feesInfo
                 }
 
                 function onEstimatedTimeUpdated(estimatedTimeEnum) {
@@ -273,6 +273,8 @@ DappsComboBox {
                 sessionRequestLoader.active = false
             } else {
                 // TODO #14762 handle the error case
+                let userRejected = false
+                root.wcService.requestHandler.rejectSessionRequest(request, userRejected)
             }
         }
     }

@@ -28,9 +28,9 @@ QObject {
     readonly property alias dappUrl: d.dappUrl
     readonly property alias dappIcon: d.dappIcon
 
-    readonly property string maxFeesText: ""
-    readonly property string maxFeesEthText: ""
-    readonly property bool enoughFunds: false
+    property string maxFeesText: ""
+    property string maxFeesEthText: ""
+    property bool enoughFunds: false
 
     function resolveDappInfoFromSession(session) {
         let meta = session.peer.metadata

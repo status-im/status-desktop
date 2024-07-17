@@ -8,7 +8,7 @@ QObject {
     required property var controller
     /// \c dappsJson serialized from status-go.wallet.GetDapps
     signal dappsListReceived(string dappsJson)
-    signal userAuthenticated(string topic, string id, string password, string pin)
+    signal userAuthenticated(string topic, string id, string password, string pin, string payload)
     signal userAuthenticationFailed(string topic, string id)
 
     function addWalletConnectSession(sessionJson) {
@@ -23,8 +23,8 @@ QObject {
         return controller.updateSessionsMarkedAsActive(activeTopicsJson)
     }
 
-    function authenticateUser(topic, id, address) {
-        let ok = controller.authenticateUser(topic, id, address)
+    function authenticateUser(topic, id, address, payload) {
+        let ok = controller.authenticateUser(topic, id, address, payload)
         if(!ok) {
             root.userAuthenticationFailed()
         }
@@ -70,6 +70,12 @@ QObject {
         return controller.getEstimatedTime(chainId, maxFeePerGasHex)
     }
 
+    // Returns nim's SuggestedFeesDto; see src/app_service/service/transaction/dto.nim
+    // Returns all value initialized to 0 if error
+    function getSuggestedFees(chainId) {
+        return JSON.parse(controller.getSuggestedFeesJson(chainId))
+    }
+
     // Returns the hex encoded signature of the transaction or empty string if error
     function signTransaction(topic, id, address, chainId, password, txObj) {
         let tx = prepareTxForStatusGo(txObj)
@@ -87,6 +93,15 @@ QObject {
         return controller.getDapps()
     }
 
+    function hexToDec(hex) {
+        return controller.hexToDecBigString(hex)
+    }
+
+    // Return just the modified fields { "maxFeePerGas": "0x<...>", "maxPriorityFeePerGas": "0x<...>" }
+    function convertFeesInfoToHex(feesInfoJson) {
+        return controller.convertFeesInfoToHex(feesInfoJson)
+    }
+
     // Handle async response from controller
     Connections {
         target: controller
@@ -95,9 +110,9 @@ QObject {
             root.dappsListReceived(dappsJson)
         }
 
-        function onUserAuthenticationResult(topic, id, success, password, pin) {
+        function onUserAuthenticationResult(topic, id, success, password, pin, payload) {
             if (success) {
-                root.userAuthenticated(topic, id, password, pin)
+                root.userAuthenticated(topic, id, password, pin, payload)
             } else {
                 root.userAuthenticationFailed(topic, id)
             }
