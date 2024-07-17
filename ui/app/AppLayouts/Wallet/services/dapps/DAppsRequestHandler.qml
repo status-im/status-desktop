@@ -132,6 +132,9 @@ SQUtils.QObject {
                 console.error("Error in event data lookup", JSON.stringify(event))
                 return null
             }
+
+            const interpreted = d.prepareData(method, data)
+
             let enoughFunds = !d.isTransactionMethod(method)
             let obj = sessionRequestComponent.createObject(null, {
                 event,
@@ -141,6 +144,7 @@ SQUtils.QObject {
                 account,
                 network,
                 data,
+                preparedData: interpreted.preparedData,
                 maxFeesText: "?",
                 maxFeesEthText: "?",
                 enoughFunds: enoughFunds,
@@ -180,7 +184,7 @@ SQUtils.QObject {
                 }
                 let st = getEstimatedFeesStatus(data, method, obj.network.chainId, mainChainId)
 
-                let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, account.address, obj.network.chainId, mainNet.chainId)
+                let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, account.address, obj.network.chainId, mainNet.chainId, interpreted.value)
 
                 root.maxFeesUpdated(st.fiatMaxFees.toNumber(), st.maxFeesEth, fundsStatus.haveEnoughFunds,
                                     fundsStatus.haveEnoughForFees, st.symbol, st.feesInfo)
@@ -436,7 +440,7 @@ SQUtils.QObject {
             let feesInfo = getEstimatedMaxFees(data, method, chainId, mainNetChainId)
 
             let totalMaxFees = Math.sum(feesInfo.maxFees, feesInfo.l1GasFee)
-            let maxFeesEth = Math.div(totalMaxFees, Math.fromString("1000000000"))
+            let maxFeesEth = Math.div(totalMaxFees, Math.fromNumber(1, 9))
 
             let maxFeesEthStr = maxFeesEth.toString()
             let fiatMaxFeesStr = root.currenciesStore.getFiatValue(maxFeesEthStr, Constants.ethToken)
@@ -446,27 +450,24 @@ SQUtils.QObject {
             return {fiatMaxFees, maxFeesEth, symbol, feesInfo}
         }
 
-        function checkBalanceForChain(balances, address, chainId, fees) {
-            let Math = SQUtils.AmountsArithmetic
+        function getBalanceInEth(balances, address, chainId) {
+            const Math = SQUtils.AmountsArithmetic
             let accEth = SQUtils.ModelUtils.getFirstModelEntryIf(balances, (balance) => {
                 return balance.account.toLowerCase() === address.toLowerCase() && balance.chainId === chainId
             })
             if (!accEth) {
                 console.error("Error balance lookup for account ", address, " on chain ", chainId)
-                return {haveEnoughForFees, haveEnoughFunds}
+                return null
             }
             let accountFundsWei = Math.fromString(accEth.balance)
-            let accountFundsEth = Math.div(accountFundsWei, Math.fromString("1000000000000000000"))
-
-            let feesEth = Math.div(fees, Math.fromString("1000000000"))
-            return Math.cmp(accountFundsEth, feesEth) >= 0
+            return Math.div(accountFundsWei, Math.fromNumber(1, 18))
         }
 
-        function checkFundsStatus(maxFees, l1GasFee, address, chainId, mainNetChainId) {
+        // Returns {haveEnoughForFees, haveEnoughFunds} and true in case of error not to block request
+        function checkFundsStatus(maxFees, l1GasFee, address, chainId, mainNetChainId, valueEth) {
             let Math = SQUtils.AmountsArithmetic
 
-            let haveEnoughForFees = false
-            // TODO #15192: extract funds from transaction and check against it
+            let haveEnoughForFees = true
             let haveEnoughFunds = true
 
             let token = SQUtils.ModelUtils.getByKey(root.assetsStore.groupedAccountAssetsModel, "tokensKey", Constants.ethToken)
@@ -475,13 +476,35 @@ SQUtils.QObject {
                 return {haveEnoughForFees, haveEnoughFunds}
             }
 
-            if (chainId == mainNetChainId) {
-                const finalFees = Math.sum(maxFees, l1GasFee)
-                haveEnoughForFees = checkBalanceForChain(token.balances, address, chainId, finalFees)
+            let chainBalance = getBalanceInEth(token.balances, address, chainId)
+            if (!chainBalance) {
+                console.error("Error fetching chain balance")
+                return {haveEnoughForFees, haveEnoughFunds}
+            }
+            haveEnoughFunds = Math.cmp(chainBalance, valueEth) >= 0
+            if (haveEnoughFunds) {
+                chainBalance = Math.sub(chainBalance, valueEth)
+
+                if (chainId == mainNetChainId) {
+                    const finalFees = Math.sum(maxFees, l1GasFee)
+                    let feesEth = Math.div(finalFees, Math.fromNumber(1, 9))
+                    haveEnoughForFees = Math.cmp(chainBalance, feesEth) >= 0
+                } else {
+                    const feesChain = Math.div(maxFees, Math.fromNumber(1, 9))
+                    const haveEnoughOnChain = Math.cmp(chainBalance, feesChain) >= 0
+
+                    const mainBalance = getBalanceInEth(token.balances, address, mainNetChainId)
+                    if (!mainBalance) {
+                        console.error("Error fetching mainnet balance")
+                        return {haveEnoughForFees, haveEnoughFunds}
+                    }
+                    const feesMain = Math.div(l1GasFee, Math.fromNumber(1, 9))
+                    const haveEnoughOnMain = Math.cmp(mainBalance, feesMain) >= 0
+
+                    haveEnoughForFees = haveEnoughOnChain && haveEnoughOnMain
+                }
             } else {
-                const haveEnoughOnChain = checkBalanceForChain(token.balances, address, chainId, maxFees)
-                const haveEnoughOnMain = checkBalanceForChain(token.balances, address, mainNetChainId, l1GasFee)
-                haveEnoughForFees = haveEnoughOnChain && haveEnoughOnMain
+                haveEnoughForFees = false
             }
 
             return {haveEnoughForFees, haveEnoughFunds}
@@ -502,6 +525,87 @@ SQUtils.QObject {
                 console.error("Not a transaction method")
             }
             return tx
+        }
+
+        // returns {
+        //   preparedData,
+        //   value // null or ETH Big number
+        // }
+        function prepareData(method, data) {
+            let payload = null
+            switch(method) {
+                case SessionRequest.methods.personalSign.name: {
+                    payload = SessionRequest.methods.personalSign.getMessageFromData(data)
+                    break
+                }
+                case SessionRequest.methods.sign.name: {
+                    payload = SessionRequest.methods.sign.getMessageFromData(data)
+                    break
+                }
+                case SessionRequest.methods.signTypedData_v4.name: {
+                    const stringPayload = SessionRequest.methods.signTypedData_v4.getMessageFromData(data)
+                    payload = JSON.stringify(JSON.parse(stringPayload), null, 2)
+                    break
+                }
+                case SessionRequest.methods.signTypedData.name: {
+                    const stringPayload = SessionRequest.methods.signTypedData.getMessageFromData(data)
+                    payload = JSON.stringify(JSON.parse(stringPayload), null, 2)
+                    break
+                }
+                default:
+                    // For transaction we process the data in a different way
+                    break;
+            }
+
+            let value = SQUtils.AmountsArithmetic.fromNumber(0)
+            if (d.isTransactionMethod(method)) {
+                let txObj = d.getTxObject(method, data)
+                let tx = Object.assign({}, txObj)
+                if (tx.value) {
+                    value = hexToEth(tx.value)
+                    tx.value = value.toString()
+                }
+                if (tx.maxFeePerGas) {
+                    tx.maxFeePerGas = hexToGwei(tx.maxFeePerGas).toString()
+                }
+                if (tx.maxPriorityFeePerGas) {
+                    tx.maxPriorityFeePerGas = hexToGwei(tx.maxPriorityFeePerGas).toString()
+                }
+                if (tx.gasPrice) {
+                    tx.gasPrice = hexToGwei(tx.gasPrice)
+                }
+                if (tx.gasLimit) {
+                    tx.gasLimit = parseInt(root.store.hexToDec(tx.gasLimit))
+                }
+                if (tx.nonce) {
+                    tx.nonce = parseInt(root.store.hexToDec(tx.nonce))
+                }
+
+                payload = JSON.stringify(tx, null, 2)
+            }
+            return {
+                    preparedData: payload,
+                    value: value
+                }
+        }
+
+        function hexToEth(value) {
+            return hexToEthDenomination(value, "eth")
+        }
+        function hexToGwei(value) {
+            return hexToEthDenomination(value, "gwei")
+        }
+        function hexToEthDenomination(value, ethUnit) {
+            let unitMapping = {
+                "gwei": 9,
+                "eth": 18
+            }
+            let Math = SQUtils.AmountsArithmetic
+            let decValue = root.store.hexToDec(value)
+            if (!!decValue) {
+                return Math.div(Math.fromNumber(decValue), Math.fromNumber(1, unitMapping[ethUnit]))
+            }
+            return Math.fromNumber(0)
         }
     }
 

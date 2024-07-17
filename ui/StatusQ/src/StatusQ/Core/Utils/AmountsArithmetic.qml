@@ -141,6 +141,16 @@ QtObject {
     }
 
     /*!
+      \qmlmethod AmountsArithmetic::sub(amount1, amount2)
+      \brief Returns a Big number whose value is the subtraction of amount2 from amount1.
+     */
+    function sub(amount1, amount2) {
+        console.assert(amount1 instanceof Big.Big)
+        console.assert(amount2 instanceof Big.Big || Number.isInteger(amount2))
+        return amount1.minus(amount2)
+    }
+
+    /*!
       \qmlmethod AmountsArithmetic::cmp(amount1, amount2)
       \brief Compares two amounts.
 

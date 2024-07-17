@@ -134,8 +134,16 @@ Item {
                 l1GasFee: 0.0,
                 eip1559Enabled: true
             })
+
             function getSuggestedFees() {
                 return mockedSuggestedFees
+            }
+
+            function hexToDec(hex) {
+                if (hex.length > "0xfffffffffffff".length) {
+                    console.warn(`Beware of possible loss of precision converting ${hex}`)
+                }
+                return parseInt(hex, 16).toString()
             }
         }
     }
@@ -804,9 +812,9 @@ Item {
         }
     }
 
-    function mockSessionRequestEvent(tc, sdk, accountsModel, networksMdodel) {
+    function mockSessionRequestEvent(tc, sdk, accountsModel, networksModel) {
         let account = accountsModel.get(1)
-        let network = networksMdodel.get(1)
+        let network = networksModel.get(1)
         let method = "personal_sign"
         let message = "hello world"
         let params = [`"${Helpers.strToHex(message)}"`, `"${account.address}"`]
@@ -819,7 +827,8 @@ Item {
             method: Constants.personal_sign,
             account,
             network,
-            data: message
+            data: message,
+            preparedData: message
         })
         // Expect to have calls to getActiveSessions from service initialization
         let prevRequests = sdk.getActiveSessionsCallbacks.length

@@ -222,8 +222,13 @@ QtObject:
       else:
         maxFeePerGas = chainFees.maxFeePerGasL
     else:
-      let maxFeePerGasInt = parseHexInt(maxFeePerGasHex)
-      maxFeePerGas = maxFeePerGasInt.float
+      try:
+        let maxFeePerGasInt = parseHexInt(maxFeePerGasHex)
+        maxFeePerGas = maxFeePerGasInt.float
+      except ValueError:
+        error "failed to parse maxFeePerGasHex", maxFeePerGasHex
+        return EstimatedTime.Unknown
+
     return self.transactions.getEstimatedTime(chainId, $(maxFeePerGas))
 
 proc getSuggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
