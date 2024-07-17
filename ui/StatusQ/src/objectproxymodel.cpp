@@ -176,7 +176,7 @@ QObject* ObjectProxyModel::proxyObject(int index)
     auto parentContext = creationContext
             ? creationContext : m_delegate->engine()->rootContext();
 
-    auto context = new QQmlContext(parentContext/*, submodelObj*/);
+    auto context = new QQmlContext(parentContext);
 
     auto rowData = new QQmlPropertyMap(context);
     auto model = sourceModel();

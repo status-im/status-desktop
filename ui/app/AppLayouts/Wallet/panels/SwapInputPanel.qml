@@ -10,6 +10,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.Wallet.adaptors 1.0
@@ -256,14 +257,24 @@ Control {
 
             MaxSendButton {
                 id: maxSendButton
+
                 Layout.alignment: Qt.AlignRight
                 Layout.maximumWidth: parent.width
                 objectName: "maxTagButton"
 
-                value: d.maxInputBalance
-                symbol: d.inputSymbol
-                valid: (amountToSendInput.input.valid || !amountToSendInput.input.text) && value > 0
-                formatCurrencyAmount: (amount, symbol) => root.currencyStore.formatCurrencyAmount(amount, symbol, {noSymbol: !amountToSendInput.inputIsFiat})
+                readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(
+                                                           d.maxInputBalance, d.inputSymbol)
+                readonly property string maxSafeValueAsString: maxSafeValue.toLocaleString(
+                                                                   LocaleUtils.userInputLocale, 'f', -128)
+
+                markAsInvalid: (!amountToSendInput.input.valid && !!amountToSendInput.input.text)
+                               || d.maxInputBalance === 0
+
+                formattedValue:
+                    d.maxInputBalance === 0 ? LocaleUtils.userInputLocale.zeroDigit
+                                            : root.currencyStore.formatCurrencyAmount(
+                                                  maxSafeValue, d.inputSymbol,
+                                                  { noSymbol: !amountToSendInput.inputIsFiat })
 
                 visible: d.isSelectedHoldingValidAsset && root.swapSide === SwapInputPanel.SwapSide.Pay
 
