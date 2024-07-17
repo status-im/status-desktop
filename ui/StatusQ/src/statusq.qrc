@@ -249,5 +249,7 @@
         <file>StatusQ/Popups/statusModal/StatusImageWithTitle.qml</file>
         <file>StatusQ/Popups/statusModal/StatusModalFooter.qml</file>
         <file>StatusQ/Popups/statusModal/StatusModalHeader.qml</file>
+        <file>StatusQ/Validators/qmldir</file>
+        <file>StatusQ/Validators/AmountValidator.qml</file>
     </qresource>
 </RCC>
