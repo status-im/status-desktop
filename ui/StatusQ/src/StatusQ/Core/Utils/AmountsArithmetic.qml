@@ -31,18 +31,11 @@ QtObject {
         console.log(0.07 * 10**18) // 70000000000000010 - incorrect
         console.log(AmountsArithmetic.fromNumber(0.07, 18)) // 70000000000000000 - correct
       \endqml
-
-      The amount is assumed to be an integer, therefore the accuracy after the
-      decimal point cannot be greater than the indicated multiplier. Otherwise,
-      a warning will be printed.
      */
     function fromNumber(number, multiplier = 0) {
         console.assert(!isNaN(number) && Number.isInteger(multiplier)
                        && multiplier >= 0)
-        const amount = new Big.Big(number).times(10 ** multiplier)
-        // TODO: restore assert when permissions handled as bigints
-        // console.assert(amount.eq(amount.round()))
-        return amount
+        return new Big.Big(number).times(fromExponent(multiplier))
     }
 
     /*!
@@ -68,7 +61,7 @@ QtObject {
             amount = fromString(amount)
 
         console.assert(amount instanceof Big.Big)
-        return amount.div(10 ** multiplier).toNumber()
+        return amount.div(fromExponent(multiplier)).toNumber()
     }
 
     /*!
@@ -97,6 +90,17 @@ QtObject {
         } catch(e) {
             return NaN
         }
+    }
+
+    /*!
+      \qmlmethod AmountsArithmetic::fromExponent(exponent)
+      \brief Construct a number 10^exponent in a safe manner.
+     */
+    function fromExponent(exponent) {
+        console.assert(Number.isInteger(exponent))
+        const num = new Big.Big(1)
+        num.e += exponent
+        return num
     }
 
     /*!
