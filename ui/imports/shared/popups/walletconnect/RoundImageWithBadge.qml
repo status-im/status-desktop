@@ -12,7 +12,7 @@ Item {
     id: root
 
     property url imageUrl: ""
-    property string badgeIcon: "walletConnect"
+    property string badgeIcon: "walletconnect"
     property string fallbackIcon: "dapp"
 
     readonly property bool iconLoaded: !mainImage.isError && !mainImage.isLoading && mainImage.image.source !== ""
