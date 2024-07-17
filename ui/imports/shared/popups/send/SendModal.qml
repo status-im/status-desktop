@@ -102,7 +102,7 @@ StatusDialog {
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
-        readonly property bool errorMode: popup.isLoading || !recipientInputLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
+        readonly property bool errorMode: popup.isLoading || !recipientInputLoader.ready ? false : errorType !== Constants.NoError || routerPanel.errorMode || !(amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
@@ -269,7 +269,7 @@ StatusDialog {
 
             color: Theme.palette.baseColor3
 
-            layer.enabled: scrollView.contentY > 0
+            layer.enabled: routerPanel.contentY > 0
             layer.effect: DropShadow {
                 verticalOffset: 0
                 radius: 8
@@ -495,11 +495,12 @@ StatusDialog {
             }
         }
 
-        StatusScrollView {
-            id: scrollView
+        RouterPanel {
+            id: routerPanel
 
-            padding: 0
-            bottomPadding: Style.current.padding
+            objectName: "sendModalScroll"
+
+            readonly property string selectedSymbol: !!selectedAsset && !!selectedAsset.symbol ? selectedAsset.symbol : ""
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -507,40 +508,60 @@ StatusDialog {
             Layout.leftMargin: Style.current.xlPadding
             Layout.rightMargin: Style.current.xlPadding
 
-            contentWidth: availableWidth
+            padding: 0
+            bottomPadding: Style.current.padding
 
             visible: recipientInputLoader.ready &&
                      (amountToSendInput.inputNumberValid || d.isCollectiblesTransfer)
+            interactive: popup.interactive
+            selectedRecipient: popup.preSelectedRecipient
+            ensAddressOrEmpty: recipientInputLoader.resolvedENSAddress
+            amountToSend: amountToSendInput.cryptoValueToSendFloat
+            selectedAsset: d.selectedHolding
+            errorType: d.errorType
+            isLoading: popup.isLoading
+            isBridgeTx: d.isBridgeTx
+            isCollectiblesTransfer: d.isCollectiblesTransfer
+            bestRoutes: popup.bestRoutes
+            totalFeesInFiat: d.totalFeesInFiat
+            showUnPreferredChains: popup.store.showUnPreferredChains
+            currentCurrency: popup.store.currencyStore.currentCurrency
 
-            objectName: "sendModalScroll"
+            // Models
+            flatNetworksModel: popup.store.flatNetworksModel
+            fromNetworksList: fromNetworksRouteModel
+            toNetworksList: toNetworksRouteModel
 
-            Behavior on implicitHeight {
-                NumberAnimation { duration: 700; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
+
+            weiToEth: function(wei) {
+                if(!!selectedAsset && (selectedAsset.type === Constants.TokenType.Native ||
+                                       selectedAsset.type === Constants.TokenType.ERC20))
+                    return parseFloat(popup.store.getWei2Eth(wei, selectedAsset.decimals))
+                return 0
             }
-
-            NetworkSelector {
-                id: networkSelector
-
-                width: scrollView.availableWidth
-
-                store: popup.store
-                interactive: popup.interactive
-                selectedRecipient: popup.preSelectedRecipient
-                ensAddressOrEmpty: recipientInputLoader.resolvedENSAddress
-                amountToSend: amountToSendInput.cryptoValueToSendFloat
-                minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
-                minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
-                selectedAsset: d.selectedHolding
-                onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
-                errorType: d.errorType
-                isLoading: popup.isLoading
-                isBridgeTx: d.isBridgeTx
-                isCollectiblesTransfer: d.isCollectiblesTransfer
-                bestRoutes: popup.bestRoutes
-                totalFeesInFiat: d.totalFeesInFiat
-                fromNetworksList: fromNetworksRouteModel
-                toNetworksList: toNetworksRouteModel
+            formatFiat: popup.store.currencyStore.formatCurrencyAmount
+            formatFiatSendMinDecimals: function(amount, applyMinDecimals) {
+                if(applyMinDecimals)
+                    popup.store.currencyStore.formatCurrencyAmount(amount, selectedSymbol, {"minDecimals": amountToSendInput.minSendCryptoDecimals})
+                else
+                    popup.store.currencyStore.formatCurrencyAmount(amount, selectedSymbol)
             }
+            formatFiatReceiveMinDecimals: function(amount, applyMinDecimals) {
+                if(applyMinDecimals)
+                    popup.store.currencyStore.formatCurrencyAmount(amount, selectedSymbol, {"minDecimals": amountToSendInput.minReceiveCryptoDecimals})
+                else
+                    popup.store.currencyStore.formatCurrencyAmount(amount, selectedSymbol)
+            }
+            getGasEthValue: popup.store.currencyStore.getGasEthValue
+            getFiatValue: popup.store.currencyStore.getFiatValue
+            getNetworkName: popup.store.getNetworkName
+
+            onRecalculateSuggestedRoute: popup.recalculateRoutesAndFees()
+            onToggleShowUnPreferredChains: popup.store.toggleShowUnPreferredChains()
+            onToggleToDisabledChains: popup.store.toggleToDisabledChains(chainId)
+            onToggleFromDisabledChains: popup.store.toggleFromDisabledChains(chainId)
+            onLockCard: popup.store.lockCard(chainId, amount, lock)
+            onSetRouteDisabledChains: popup.store.setRouteDisabledChains(chainId, disabled)
         }
     }
 
@@ -574,7 +595,7 @@ StatusDialog {
                 // If collectible
                 d.totalAmountToReceive = txRoutes.amountToReceive
             }
-            networkSelector.suggestedToNetworksList = txRoutes.toNetworksRouteModel
+            routerPanel.suggestedToNetworksList = txRoutes.toNetworksRouteModel
             popup.isLoading = false
         }
     }

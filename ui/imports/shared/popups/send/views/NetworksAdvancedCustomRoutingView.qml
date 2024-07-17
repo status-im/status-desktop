@@ -10,29 +10,39 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import "../controls"
+import shared.popups.send.controls 1.0
 
 ColumnLayout {
     id: root
 
-    property var store
     property var selectedRecipient
     property string ensAddressOrEmpty: ""
     property double amountToSend
-    property int minSendCryptoDecimals: 0
-    property int minReceiveCryptoDecimals: 0
     property bool customMode: false
     property var selectedAsset
     property bool isLoading: false
-    property bool errorMode: networksLoader.item ? networksLoader.item.errorMode : false
-    property var weiToEth: function(wei) {}
     property bool interactive: true
     property bool isBridgeTx: false
+    property int errorType: Constants.NoError
+    property bool showUnPreferredChains
+
+    readonly property bool errorMode: networksLoader.item ? networksLoader.item.errorMode : false
+
+    // Models:
     property var toNetworksList
     property var fromNetworksList
-    property int errorType: Constants.NoError
 
-    signal reCalculateSuggestedRoute()
+    // Formatting function for fiat currency values
+    property var formatFiat: function(amount, applyMinDecimals) {}
+
+    // Formatting function wei to eth
+    property var weiToEth: function(wei) {}
+
+    signal recalculateSuggestedRoute()
+    signal toggleShowUnPreferredChains()
+    signal toggleToDisabledChains(int chainId)
+    signal toggleFromDisabledChains(int chainId)
+    signal lockCard(int chainId, string amount, bool lock)
 
     RowLayout {
         Layout.fillWidth: true
@@ -40,27 +50,34 @@ ColumnLayout {
 
         StatusRoundIcon {
             Layout.alignment: Qt.AlignTop
+
             radius: 8
             asset.name: "flash"
             asset.color: Theme.palette.directColor1
         }
+
         ColumnLayout {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
+
             RowLayout {
                 Layout.fillWidth: true
+
                 StatusBaseText {
                     Layout.fillWidth: true
+
                     font.pixelSize: 15
                     font.weight: Font.Medium
                     color: Theme.palette.directColor1
                     text: qsTr("Networks")
                     wrapMode: Text.WordWrap
                 }
+
                 StatusButton {
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredHeight: 22
                     verticalPadding: -1
+
                     checkable: true
                     size: StatusBaseButton.Size.Small
                     icon.name: checked ? "show" : "hide"
@@ -68,45 +85,54 @@ ColumnLayout {
                     icon.width: 16
                     text: checked ? qsTr("Hide Unpreferred Networks"): qsTr("Show Unpreferred Networks")
                     visible: !isBridgeTx
-                    checked: root.store.showUnPreferredChains
+                    checked: root.showUnPreferredChains
                     onClicked: {
-                        root.store.toggleShowUnPreferredChains()
-                        root.reCalculateSuggestedRoute()
+                        root.toggleShowUnPreferredChains()
+                        root.recalculateSuggestedRoute()
                     }
                 }
             }
+
             StatusBaseText {
                 Layout.fillWidth: true
+
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
                 text: qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
                 wrapMode: Text.WordWrap
             }
+
             Loader {
                 id: networksLoader
+
                 Layout.fillWidth: true
                 Layout.preferredHeight: item.height
                 Layout.topMargin: Style.current.padding
+
                 visible: active
                 sourceComponent: NetworkCardsComponent {
-                    store: root.store
                     receiverIdentityText: root.ensAddressOrEmpty.length > 0 ?
                                               root.ensAddressOrEmpty : !!root.selectedRecipient ?
                                                   StatusQUtils.Utils.elideText(root.selectedRecipient.address, 6, 4).toUpperCase() :  ""
                     amountToSend: root.amountToSend
-                    minSendCryptoDecimals: root.minSendCryptoDecimals
-                    minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                     customMode: root.customMode
                     selectedAsset: root.selectedAsset
-                    reCalculateSuggestedRoute: function() {
-                        root.reCalculateSuggestedRoute()
-                    }
-                    toNetworksList: root.toNetworksList
-                    fromNetworksList: root.fromNetworksList
-                    weiToEth: root.weiToEth
                     interactive: root.interactive
                     errorType: root.errorType
                     isLoading: root.isLoading
+                    showUnPreferredChains: root.showUnPreferredChains
+
+                    // Models
+                    toNetworksList: root.toNetworksList
+                    fromNetworksList: root.fromNetworksList
+
+                    weiToEth: root.weiToEth
+                    formatFiat: root.formatFiat
+
+                    onRecalculateSuggestedRoute: root.recalculateSuggestedRoute()
+                    onToggleToDisabledChains: root.toggleToDisabledChains(chainId)
+                    onToggleFromDisabledChains: root.toogleFromDisabledChains(chainId)
+                    onLockCard: root.lockCard(chainId,amount, lock)
                 }
             }
         }
