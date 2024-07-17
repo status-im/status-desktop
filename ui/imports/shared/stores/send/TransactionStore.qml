@@ -184,9 +184,9 @@ QtObject {
         return currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
     }
 
-    function updateRecentRecipientsActivity(walletAccount) {
-        if(walletAccount && walletAccount.address) {
-            _tmpActivityController1.setFilterAddressesJson(JSON.stringify([walletAccount.address]),
+    function updateRecentRecipientsActivity(accountAddress) {
+        if(!!accountAddress) {
+            _tmpActivityController1.setFilterAddressesJson(JSON.stringify([accountAddress]),
                                                                       false)
         }
         _tmpActivityController1.updateFilter()

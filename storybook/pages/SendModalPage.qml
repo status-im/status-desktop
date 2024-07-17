@@ -197,7 +197,7 @@ SplitView {
                 closePolicy: Popup.NoAutoClose
                 onlyAssets: loader.onlyAssets
                 store: txStore
-                preSelectedAccount: loader.preSelectedAccount
+                preSelectedAccountAddress: loader.preSelectedAccount.address
                 preDefinedAmountToSend: loader.preDefinedAmountToSend
                 preSelectedRecipient: loader.preSelectedRecipient
                 preSelectedSendType: loader.preSelectedSendType

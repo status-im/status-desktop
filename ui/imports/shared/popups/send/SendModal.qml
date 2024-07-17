@@ -33,7 +33,7 @@ import "./views"
 StatusDialog {
     id: popup
 
-    property var preSelectedAccount: selectedAccount
+    property string preSelectedAccountAddress: store.selectedSenderAccountAddress
 
     // Recipient properties definition
     property alias preSelectedRecipient: recipientInputLoader.selectedRecipient
@@ -64,7 +64,7 @@ StatusDialog {
     }
 
     // In case selected address is incorrect take first account from the list
-    readonly property var selectedAccount: selectedSenderAccountEntry.item ?? SQUtils.ModelUtils.get(store.accounts, 0)
+    readonly property alias selectedAccount: selectedSenderAccountEntry.item
 
     property var sendTransaction: function() {
         d.isPendingTx = true
@@ -72,7 +72,7 @@ StatusDialog {
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!popup.preSelectedAccount && !!holdingSelector.selectedItem
+        if(!!popup.selectedAccount && !!popup.selectedAccount.address && !!holdingSelector.selectedItem
                 && recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer)) {
             popup.isLoading = true
             popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSend.amount)
@@ -215,8 +215,8 @@ StatusDialog {
                 holdingSelector.selectedItem = entry
             } else {
                 const entry = SQUtils.ModelUtils.getByKey(
-                                popup.store.collectiblesModel,
-                                "uid", popup.preSelectedHoldingID)
+                                popup.collectiblesStore.allCollectiblesModel,
+                                "symbol", popup.preSelectedHoldingID)
 
                 d.selectedHoldingType = entry.tokenType
                 d.selectedHolding = entry
@@ -275,7 +275,7 @@ StatusDialog {
                     }
                 ]
             }
-            selectedAddress: !!popup.preSelectedAccount && !!popup.preSelectedAccount.address ? popup.preSelectedAccount.address : ""
+            selectedAddress: popup.preSelectedAccountAddress
             onCurrentAccountAddressChanged: {
                 store.setSenderAccount(currentAccountAddress)
 
@@ -348,7 +348,7 @@ StatusDialog {
 
                             flatNetworksModel: popup.store.flatNetworksModel
                             currentCurrency: popup.store.currencyStore.currentCurrency
-                            accountAddress: popup.preSelectedAccount ? popup.preSelectedAccount.address : ""
+                            accountAddress: popup.selectedAccount.address
                             showCommunityAssets: popup.store.tokensStore.showCommunityAssetsInSend
                         }
 
@@ -358,7 +358,7 @@ StatusDialog {
                             active: !d.isBridgeTx
 
                             sourceComponent: CollectiblesSelectionAdaptor {
-                                accountKey: popup.preSelectedAccount ? popup.preSelectedAccount.address : ""
+                                accountKey: popup.selectedAccount.address
 
                                 collectiblesModel: SortFilterProxyModel {
                                     sourceModel: collectiblesStore ? collectiblesStore.jointCollectiblesBySymbolModel : null
@@ -568,14 +568,14 @@ StatusDialog {
             }
 
             // Only request transactions history update if visually needed:
-            onRecentRecipientsTabSelected: popup.store.updateRecentRecipientsActivity(popup.preSelectedAccount)
+            onRecentRecipientsTabSelected: popup.store.updateRecentRecipientsActivity(popup.selectedAccount.address)
 
             Connections {
                 target: popup
-                function onPreSelectedAccountChanged() {
+                function onSelectedAccountChanged() {
                     // Only request transactions history update if visually needed:
                     if(recipientsPanel.recentRecipientsTabVisible) {
-                        popup.store.updateRecentRecipientsActivity(popup.preSelectedAccount)
+                        popup.store.updateRecentRecipientsActivity(popup.selectedAccount.address)
                     }
                 }
             }

@@ -305,20 +305,21 @@ Item {
                                                               })
             onLaunchSendModal: {
                 if(isCommunityOwnershipTransfer) {
-                    let tokenItem = walletStore.currentViewedCollectible
-                    Global.openTransferOwnershipPopup(walletStore.currentViewedCollectible.communityId,
+                    const tokenItem = walletStore.currentViewedCollectible
+                    const ownership = StatusQUtils.ModelUtils.get(tokenItem.ownership, 0)
+
+                    Global.openTransferOwnershipPopup(tokenItem.communityId,
                                                       tokenItem.communityName,
                                                       tokenItem.communityImage,
                                                       {
-                                                          "key": walletStore.currentViewedHoldingID,
+                                                          "key": tokenItem.tokenId,
                                                           "privilegesLevel": tokenItem.communityPrivilegesLevel,
                                                           "chainId": tokenItem.chainId,
                                                           "name": tokenItem.name,
                                                           "artworkSource": tokenItem.artworkSource,
-                                                          "accountAddress": leftTab.currentAddress,
+                                                          "accountAddress": ownership.accountAddress,
                                                           "tokenAddress": tokenItem.contractAddress
                                                       },
-                                                      walletStore.accounts,
                                                       root.sendModalPopup)
                 } else {
                     // Common send modal popup:

@@ -27,7 +27,6 @@ StatusDialog {
 
     // Transaction related props:
     property var token // Expected roles: accountAddress, key, chainId, name, artworkSource
-    property var accounts
     property var sendModalPopup
 
     signal cancelClicked
@@ -112,7 +111,7 @@ StatusDialog {
                 onClicked: {
                     // Pre-populated dialog with the relevant Owner token info:
                     root.sendModalPopup.preSelectedSendType = Constants.SendType.ERC721Transfer
-                    root.sendModalPopup.preSelectedAccount = ModelUtils.getByKey(root.accounts, "address", token.accountAddress)
+                    root.sendModalPopup.preSelectedAccountAddress = token.accountAddress
                     const store = WalletStores.RootStore.currentActivityFiltersStore
                     const uid = store.collectiblesList.getUidForData(token.key, token.tokenAddress, token.chainId);
                     root.sendModalPopup.preSelectedHoldingID = uid

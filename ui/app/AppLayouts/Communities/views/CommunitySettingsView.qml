@@ -198,7 +198,6 @@ StatusSectionLayout {
 
             sendModalPopup: root.sendModalPopup
             ownerToken: tokensModelChangesTracker.ownerToken
-            accounts: root.walletAccountsModel
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
 

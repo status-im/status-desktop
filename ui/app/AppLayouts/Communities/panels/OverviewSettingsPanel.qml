@@ -47,7 +47,6 @@ StackLayout {
     property bool isControlNode: false
     property int loginType: Constants.LoginType.Password
     property bool communitySettingsDisabled
-    property var accounts // Wallet accounts model. Expected roles: address, name, color, emoji, walletType
     property var ownerToken: null
 
     property string overviewChartData: ""
@@ -137,7 +136,6 @@ StackLayout {
                                                               root.name,
                                                               root.logoImageData,
                                                               root.ownerToken,
-                                                              root.accounts,
                                                               root.sendModalPopup)
                         } else {
                             Global.openPopup(transferOwnershipAlertPopup, { mode: TransferOwnershipAlertPopup.Mode.TransferOwnership })
