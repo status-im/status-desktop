@@ -242,6 +242,11 @@ mainWallet_Remove_Account_Popup_HavePenPaperCheckBox = {"checkable": True, "cont
 mainWallet_Remove_Account_Popup_ConfirmButton = {"container": statusDesktop_mainWindow, "objectName": "RemoveAccountPopup-ConfirmButton", "type": "StatusButton", "visible": True}
 mainWallet_Remove_Account_Popup_CancelButton = {"container": statusDesktop_mainWindow, "objectName": "RemoveAccountPopup-CancelButton", "type": "StatusFlatButton", "visible": True}
 
+# RPC change restart popup
+save_and_restart_later_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "laterButton", "type": "StatusFlatButton", "visible": True}
+save_and_restart_Status_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "saveButton", "type": "StatusButton", "visible": True}
+restart_required_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "mustBeRestartedText","type": "StatusBaseText", "visible": True}
+
 # Add saved address popup
 mainWallet_Saved_Addreses_Popup_Name_Input = {"container": statusDesktop_mainWindow, "objectName": "savedAddressNameInput", "type": "TextEdit"}
 mainWallet_Saved_Addreses_Popup_Address_Input = {"container": statusDesktop_mainWindow, "objectName": "savedAddressAddressInput", "type": "StatusInput"}

@@ -12,6 +12,7 @@ from constants.wallet import WalletNetworkSettings, WalletNetworkDefaultValues
 from driver import objects_access
 from driver.objects_access import walk_children
 from gui.components.settings.rename_keypair_popup import RenameKeypairPopup
+from gui.components.wallet.RPCChangeRestartPopup import RPCChangeRestartPopup
 from gui.components.wallet.add_saved_address_popup import AddressPopup
 from gui.components.wallet.popup_delete_account_from_settings import RemoveAccountConfirmationSettings
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
@@ -329,6 +330,11 @@ class EditNetworkSettings(WalletSettingsView):
         self._network_edit_main_rpc_url_error_message = QObject(settings_names.mainRpcUrlInputObject)
         self._network_edit_failover_rpc_url_error_message = QObject(settings_names.failoverRpcUrlInputObject)
 
+    @allure.step('Click back button')
+    def click_network_back(self):
+        self._network_edit_view_back_button.click()
+        return NetworkWalletSettings().wait_until_appears()
+
     @allure.step('Select Live Network tab')
     def click_live_network_tab(self):
         self._live_network_tab.click()
@@ -347,12 +353,12 @@ class EditNetworkSettings(WalletSettingsView):
             self._network_edit_scroll.vertical_scroll_down(self._network_revert_to_default)
         self._network_revert_to_default.click()
         try:
-            return NetworkWalletSettings().wait_until_appears()
+            return RPCChangeRestartPopup().wait_until_appears()
         except AssertionError:
             if attempts:
                 self.click_revert_to_default_and_go_to_networks_main_screen(attempts - 1)
             else:
-                raise f"Networks screen was not opened"
+                raise f"RPC change requires restart popup did not appear"
 
     @allure.step('Verify elements for the edit network view')
     def check_available_elements_on_edit_view(self, network_tab):
@@ -466,12 +472,6 @@ class EditNetworkSettings(WalletSettingsView):
             assert attempts > 0, "value not reverted"
             time.sleep(1)
             self.revert_to_default(attempts - 1)
-
-    @allure.step('Click Revert to default button and redirect to Networks screen')
-    def click_revert_to_default_and_go_to_networks_main_screen(self):
-        self._network_edit_scroll.vertical_scroll_down(self._network_revert_to_default)
-        self._network_revert_to_default.click()
-        return NetworkWalletSettings().wait_until_appears()
 
     @allure.step('Get value from Main json rpc input')
     def get_edit_network_main_json_rpc_url_value(self):
