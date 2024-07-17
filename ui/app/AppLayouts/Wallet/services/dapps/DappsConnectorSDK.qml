@@ -31,7 +31,7 @@ WalletConnectSDKBase {
     property bool sdkReady: true
     property bool active: true
     required property WalletConnectService wcService
-    property string requestID: ""
+    property string requestId: ""
 
     projectId: ""
 
@@ -70,12 +70,12 @@ WalletConnectSDKBase {
 
             onConnect: {
                 connectDappLoader.active = false
-                approveSession(root.requestID, selectedAccount.address, selectedChains)
+                approveSession(root.requestId, selectedAccount.address, selectedChains)
             }
 
             onDecline: {
                 connectDappLoader.active = false
-                rejectSession(root.requestID)
+                rejectSession(root.requestId)
             }
         }
     }
@@ -120,7 +120,7 @@ WalletConnectSDKBase {
 
             onReject: {
                 sessionRequestLoader.active = false
-                controller.rejectTransactionSigning(root.requestID)
+                controller.rejectTransactionSigning(root.requestId)
             }
 
             Connections {
@@ -152,7 +152,7 @@ WalletConnectSDKBase {
 
             if (isSuccess) {
                 sessionRequestLoader.active = false
-                controller.approveTransactionRequest(requestID, "0xcafeeabcbbcbcabcabfacafeeabcbbcbcabcabfacafeeabcbbcbcabcabfaaefe")
+                controller.approveTransactionRequest(requestId, "0xcafeeabcbbcbcabcabfacafeeabcbbcbcabcabfacafeeabcbbcbcabcabfaaefe")
             } else {
                 // TODO #14762 handle the error case
             }
@@ -170,7 +170,7 @@ WalletConnectSDKBase {
         target: controller
 
         // TODO: Feed the request with the correct data
-        onDappValidatesTransaction: function(requestID, dappInfoString) {
+        onDappValidatesTransaction: function(requestId, dappInfoString) {
             var dappsInfo = JSON.parse(dappInfoString)
 
             let request = sessionRequestComponent.createObject(root, {
@@ -189,10 +189,10 @@ WalletConnectSDKBase {
 
             sessionRequestLoader.active = true
             sessionRequestLoader.request = request
-            root.requestID = requestID
+            root.requestId = requestId
         }
 
-        onDappRequestsToConnect: function(requestID, dappInfoString) {
+        onDappRequestsToConnect: function(requestId, dappInfoString) {
             var dappInfo = JSON.parse(dappInfoString)
 
             let sessionProposal = {
@@ -222,16 +222,16 @@ WalletConnectSDKBase {
 
             connectDappLoader.sessionProposal = sessionProposal
             connectDappLoader.active = true
-            root.requestID = requestID
+            root.requestId = requestId
         }
     }
 
-    approveSession: function(requestID, account, selectedChains) {
-        controller.approveDappConnectRequest(requestID, account, JSON.stringify(selectedChains))
+    approveSession: function(requestId, account, selectedChains) {
+        controller.approveDappConnectRequest(requestId, account, JSON.stringify(selectedChains))
     }
 
-    rejectSession: function(requestID) {
-        controller.rejectDappConnectRequest(requestID)
+    rejectSession: function(requestId) {
+        controller.rejectDappConnectRequest(requestId)
     }
 
     // We don't expect requests for these. They are here only to spot errors

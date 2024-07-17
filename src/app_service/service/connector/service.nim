@@ -48,8 +48,8 @@ QtObject:
 
       var data = ConnectorSendRequestAccountsSignal(e)
 
-      if not data.requestID.len() == 0:
-        echo "ConnectorSendRequestAccountsSignal failed, requestID is empty"
+      if not data.requestId.len() == 0:
+        echo "ConnectorSendRequestAccountsSignal failed, requestId is empty"
         return
 
       self.events.emit(SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS, data)
@@ -60,8 +60,8 @@ QtObject:
 
       var data = ConnectorSendTransactionSignal(e)
 
-      if not data.requestID.len() == 0:
-        echo "ConnectorSendTransactionSignal failed, requestID is empty"
+      if not data.requestId.len() == 0:
+        echo "ConnectorSendTransactionSignal failed, requestId is empty"
         return
 
       self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION, data)
@@ -70,14 +70,14 @@ QtObject:
   proc registerEventsHandler*(self: Service, handler: EventHandlerFn) =
     self.eventHandler = handler
 
-  proc approveDappConnect*(self: Service, requestID: string, account: string, chainID: uint): bool =
-    return status_go.requestAccountsAcceptedFinishedRpc(requestID, account, chainID)
+  proc approveDappConnect*(self: Service, requestId: string, account: string, chainId: uint): bool =
+    return status_go.requestAccountsAcceptedFinishedRpc(requestId, account, chainId)
 
-  proc rejectDappConnect*(self: Service, requestID: string): bool =
-    return status_go.requestAccountsRejectedFinishedRpc(requestID)
+  proc rejectDappConnect*(self: Service, requestId: string): bool =
+    return status_go.requestAccountsRejectedFinishedRpc(requestId)
 
-  proc approveTransactionRequest*(self: Service, requestID: string, hash: string): bool =
-    return status_go.sendTransactionAcceptedFinishedRpc(requestID, hash)
+  proc approveTransactionRequest*(self: Service, requestId: string, hash: string): bool =
+    return status_go.sendTransactionAcceptedFinishedRpc(requestId, hash)
 
-  proc rejectTransactionSigning*(self: Service, requestID: string): bool =
-    return status_go.sendTransactionRejectedFinishedRpc(requestID)
+  proc rejectTransactionSigning*(self: Service, requestId: string): bool =
+    return status_go.sendTransactionRejectedFinishedRpc(requestId)

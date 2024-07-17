@@ -22,8 +22,8 @@ QtObject:
   proc delete*(self: Controller) =
     self.QObject.delete
 
-  proc dappRequestsToConnect*(self: Controller, requestID: string, payload: string) {.signal.}
-  proc dappValidatesTransaction*(self: Controller, requestID: string, payload: string) {.signal.}
+  proc dappRequestsToConnect*(self: Controller, requestId: string, payload: string) {.signal.}
+  proc dappValidatesTransaction*(self: Controller, requestId: string, payload: string) {.signal.}
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -43,10 +43,9 @@ QtObject:
         "icon": params.iconUrl,
         "name": params.name,
         "url": params.url,
-        "chainID": "",
       }
 
-      controller.dappRequestsToConnect(params.requestID, dappInfo.toJson())
+      controller.dappRequestsToConnect(params.requestId, dappInfo.toJson())
 
     result.events.on(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION) do(e: Args):
       let params = ConnectorSendTransactionSignal(e)
@@ -54,17 +53,17 @@ QtObject:
         "icon": params.iconUrl,
         "name": params.name,
         "url": params.url,
-        "chainID": params.chainID,
+        "chainId": params.chainId,
         "txArgs": params.txArgs,
       }
 
-      controller.dappValidatesTransaction(params.requestID, dappInfo.toJson())
+      controller.dappValidatesTransaction(params.requestId, dappInfo.toJson())
 
     result.QObject.setup
 
-  proc parseSingleUInt(chainIDsString: string): uint =
+  proc parseSingleUInt(chainIdsString: string): uint =
     try:
-      let chainIds = parseJson(chainIDsString)
+      let chainIds = parseJson(chainIdsString)
       if chainIds.kind == JArray and chainIds.len == 1 and chainIds[0].kind == JInt:
         return uint(chainIds[0].getInt())
       else:
@@ -72,15 +71,15 @@ QtObject:
     except JsonParsingError:
       raise newException(ValueError, "Failed to parse JSON")
 
-  proc approveDappConnectRequest*(self: Controller, requestID: string, account: string, chainIDString: string): bool {.slot.} =
-    let chainID = parseSingleUInt(chainIDString)
-    return self.service.approveDappConnect(requestID, account, chainID)
+  proc approveDappConnectRequest*(self: Controller, requestId: string, account: string, chainIdString: string): bool {.slot.} =
+    let chainId = parseSingleUInt(chainIdString)
+    return self.service.approveDappConnect(requestId, account, chainId)
 
-  proc rejectDappConnectRequest*(self: Controller, requestID: string): bool {.slot.} =
-    return self.service.rejectDappConnect(requestID)
+  proc rejectDappConnectRequest*(self: Controller, requestId: string): bool {.slot.} =
+    return self.service.rejectDappConnect(requestId)
 
-  proc approveTransactionRequest*(self: Controller, requestID: string, hash: string): bool {.slot.} =
-    return self.service.approveTransactionRequest(requestID, hash)
+  proc approveTransactionRequest*(self: Controller, requestId: string, hash: string): bool {.slot.} =
+    return self.service.approveTransactionRequest(requestId, hash)
 
-  proc rejectTransactionSigning*(self: Controller, requestID: string): bool {.slot.} =
-    return self.service.rejectTransactionSigning(requestID)
+  proc rejectTransactionSigning*(self: Controller, requestId: string): bool {.slot.} =
+    return self.service.rejectTransactionSigning(requestId)

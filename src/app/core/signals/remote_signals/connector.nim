@@ -7,28 +7,28 @@ type ConnectorSendRequestAccountsSignal* = ref object of Signal
   url*: string
   name*: string
   iconUrl*: string
-  requestID*: string
+  requestId*: string
 
 type ConnectorSendTransactionSignal* = ref object of Signal
   url*: string
   name*: string
   iconUrl*: string
-  requestID*: string
-  chainID*: int
+  requestId*: string
+  chainId*: int
   txArgs*: string
 
-proc fromEvent*(T: type ConnectorSendRequestAccountsSignal, event: JsonNode): ConnectorSendRequestAccountsSignal =
+proc fromEvent*(T: type ConnectorSendRequestAccountsSignal, jsonSignal: JsonNode): ConnectorSendRequestAccountsSignal =
   result = ConnectorSendRequestAccountsSignal()
-  result.url = event["event"]{"url"}.getStr()
-  result.name = event["event"]{"name"}.getStr()
-  result.iconUrl = event["event"]{"iconUrl"}.getStr()
-  result.requestID = event["event"]{"requestID"}.getStr()
+  result.url = jsonSignal["event"]{"url"}.getStr()
+  result.name = jsonSignal["event"]{"name"}.getStr()
+  result.iconUrl = jsonSignal["event"]{"iconUrl"}.getStr()
+  result.requestId = jsonSignal["event"]{"requestId"}.getStr()
 
-proc fromEvent*(T: type ConnectorSendTransactionSignal, event: JsonNode): ConnectorSendTransactionSignal =
+proc fromEvent*(T: type ConnectorSendTransactionSignal, jsonSignal: JsonNode): ConnectorSendTransactionSignal =
   result = ConnectorSendTransactionSignal()
-  result.url = event["event"]{"url"}.getStr()
-  result.name = event["event"]{"name"}.getStr()
-  result.iconUrl = event["event"]{"iconUrl"}.getStr()
-  result.requestID = event["event"]{"requestID"}.getStr()
-  result.chainID = event["event"]{"chainID"}.getInt()
-  result.txArgs = event["event"]{"txArgs"}.getStr()
+  result.url = jsonSignal["event"]{"url"}.getStr()
+  result.name = jsonSignal["event"]{"name"}.getStr()
+  result.iconUrl = jsonSignal["event"]{"iconUrl"}.getStr()
+  result.requestId = jsonSignal["event"]{"requestId"}.getStr()
+  result.chainId = jsonSignal["event"]{"chainId"}.getInt()
+  result.txArgs = jsonSignal["event"]{"txArgs"}.getStr()
