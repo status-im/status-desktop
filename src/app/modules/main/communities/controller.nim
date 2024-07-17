@@ -1,4 +1,4 @@
-import std/strutils, uuids
+import std/strutils, uuids, chronicles
 import ./io_interface
 
 import app/core/signals/types
@@ -195,6 +195,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
+    debug "<<< on SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED", uniqueIdentifier = args.uniqueIdentifier
     if args.uniqueIdentifier != UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER:
       return
     self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
@@ -209,6 +210,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
+    debug "<<< on SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED", uniqueIdentifier = args.uniqueIdentifier
     if args.uniqueIdentifier != UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER:
       return
     self.delegate.onDataSigned(args.keyUid, args.path, args.r, args.s, args.v, args.pin)
@@ -398,6 +400,7 @@ proc asyncEditSharedAddresses*(self: Controller, communityId: string, addressesT
   self.communityService.asyncEditSharedAddresses(communityId, addressesToShare, airdropAddress, signatures)
 
 proc authenticate*(self: Controller) =
+  debug "<<< authenticate"
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
@@ -422,6 +425,7 @@ proc generateEditCommunityRequestsForSigning*(self: Controller, memberPubKey: st
   return self.communityService.generateEditCommunityRequestsForSigning(memberPubKey, communityId, addressesToReveal)
 
 proc signCommunityRequests*(self: Controller, communityId: string, signParams: seq[SignParamsDto]): seq[string] =
+  debug "<<< signCommunityRequests", communityId, signParams
   return self.communityService.signCommunityRequests(communityId, signParams)
 
 proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
@@ -461,11 +465,13 @@ proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
 
 proc runSignFlow(self: Controller, pin, path, dataToSign: string) =
+  debug "<<< runSignFlow", pin, path, dataToSign
   self.cancelCurrentFlow()
   self.connectKeycardReponseSignal()
   self.keycardService.startSignFlow(path, dataToSign, pin)
 
 proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataToSign: string, pin: string) =
+  debug "<<< runSigningOnKeycard", keyUid, path, dataToSign, pin
   var finalDataToSign = dataToSign
   if finalDataToSign.startsWith("0x"):
     finalDataToSign = finalDataToSign[2..^1]

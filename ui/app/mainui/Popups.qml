@@ -755,36 +755,43 @@ QtObject {
                 }
 
                 onPrepareForSigning: {
+                    console.log("<<< onPrepareForSigning")
                     root.rootStore.prepareKeypairsForSigning(dialogRoot.communityId, dialogRoot.name, sharedAddresses, airdropAddress, false)
 
                     dialogRoot.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
                 }
 
                 onSignProfileKeypairAndAllNonKeycardKeypairs: {
+                    console.log("<<< onSignProfileKeypairAndAllNonNonKeycardKeypairs")
                     root.rootStore.signProfileKeypairAndAllNonKeycardKeypairs()
                 }
 
                 onSignSharedAddressesForKeypair: {
+                    console.log("<<< onSignSharedAddressesForKeypair")
                     root.rootStore.signSharedAddressesForKeypair(keyUid)
                 }
 
                 onJoinCommunity: {
+                    console.log("<<< onJoinCommunity")
                     root.rootStore.joinCommunityOrEditSharedAddresses()
                 }
 
                 onCancelMembershipRequest: {
+                    console.log("<<< onCancelMembershipRequest")
                     root.rootStore.cancelPendingRequest(dialogRoot.communityId)
                 }
 
                 Connections {
                     target: root.communitiesStore.communitiesModuleInst
                     function onCommunityAccessRequested(communityId: string) {
+                        console.log("<<< onCommunityAccessRequested:", communityId, dialogRoot.communityId)
                         if (communityId !== dialogRoot.communityId)
                             return
                         root.communitiesStore.spectateCommunity(communityId);
                         dialogRoot.close();
                     }
                     function onCommunityAccessFailed(communityId: string, error: string) {
+                        console.log("<<< onCommunityAccessFailed:", communityId, error)
                         if (communityId !== dialogRoot.communityId)
                             return
                         dialogRoot.close();
@@ -792,6 +799,7 @@ QtObject {
                 }
 
                 onSharedAddressesUpdated: {
+                    console.log("<<< onSharedAddressesUpdated")
                     root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
                 }
 
@@ -806,6 +814,8 @@ QtObject {
                     target: root.rootStore.communitiesModuleInst
 
                     function onAllSharedAddressesSigned() {
+                        console.log("<<< onAllSharedAddressesSigned")
+
                         if (dialogRoot.profileProvesOwnershipOfSelectedAddresses) {
                             dialogRoot.joinCommunity()
                             dialogRoot.close()

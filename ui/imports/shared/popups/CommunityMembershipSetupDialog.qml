@@ -208,6 +208,7 @@ StatusStackModal {
         }
 
         function proceedToSigningOrSubmitRequest(uidOfComponentThisFunctionIsCalledFrom) {
+            console.log("<<< proceedToSigningOrSubmitRequest")
             const selected = d.getSelectedAddresses()
             root.prepareForSigning(selected.airdropAddress, selected.addresses)
             if (root.profileProvesOwnershipOfSelectedAddresses) {
@@ -419,14 +420,17 @@ StatusStackModal {
             keypairSigningModel: root.keypairSigningModel
 
             onSignProfileKeypairAndAllNonKeycardKeypairs: {
+                console.log("<<< SharedAddressesSigningPanel.onSignProfileKeypairAndAllNonKeycardKeypairs")
                 root.signProfileKeypairAndAllNonKeycardKeypairs()
             }
 
             onSignSharedAddressesForKeypair: {
+                console.log("<<< SharedAddressesSigningPanel.onSignSharedAddressesForKeypair")
                 root.signSharedAddressesForKeypair(keyUid)
             }
 
             onJoinCommunity: {
+                console.log("<<< SharedAddressesSigningPanel.onJoinCommunity")
                 if (root.isEditMode) {
                     root.editRevealedAddresses()
                 } else {

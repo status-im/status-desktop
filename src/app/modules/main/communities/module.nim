@@ -665,6 +665,7 @@ method shareCommunityChannelUrlWithData*(self: Module, communityId: string, chat
   return self.controller.shareCommunityChannelUrlWithData(communityId, chatId)
 
 proc signRevealedAddressesForNonKeycardKeypairs(self: Module): bool =
+  debug "<<< signRevealedAddressesForNonKeycardKeypairs"
   var signingParams: seq[SignParamsDto]
   for address, details in self.joiningCommunityDetails.addressesToShare.pairs:
     if details.signature.len > 0:
@@ -710,6 +711,8 @@ proc anyProfileKeyPairAddressSelectedToBeRevealed(self: Module): bool =
   return false
 
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
+  debug "<<< onUserAuthenticated", pin, password, keyUid
+
   if password == "" and pin == "":
     info "unsuccesful authentication"
     return
@@ -728,6 +731,7 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
   self.signRevealedAddressesForNonKeycardKeypairsAndEmitSignal()
 
 method onDataSigned*(self: Module, keyUid: string, path: string, r: string, s: string, v: string, pin: string) =
+  debug "<<< onDataSigned", keyUid, path, r, s, v, pin
   if keyUid.len == 0 or path.len == 0 or r.len == 0 or s.len == 0 or v.len == 0 or pin.len == 0:
     # being here is not an error
     return
@@ -746,6 +750,7 @@ method onDataSigned*(self: Module, keyUid: string, path: string, r: string, s: s
 
 method prepareKeypairsForSigning*(self: Module, communityId, ensName: string, addresses: string,
   airdropAddress: string, editMode: bool) =
+  debug "<<< prepareKeypairsForSigning", communityId, ensName, addresses, airdropAddress, editMode
   var addressesToShare: seq[string]
   try:
     addressesToShare = map(parseJson(addresses).getElems(), proc(x:JsonNode):string = x.getStr())
@@ -800,6 +805,7 @@ method signProfileKeypairAndAllNonKeycardKeypairs*(self: Module) =
 
 # if pin is provided we're signing on a keycard silently
 method signSharedAddressesForKeypair*(self: Module, keyUid: string, pin: string) =
+  debug "<<< signSharedAddressesForKeypair", keyUid, pin
   let keypair = self.controller.getKeypairByKeyUid(keyUid)
   if keypair.isNil:
     self.communityAccessFailed(self.joiningCommunityDetails.communityId, "cannot resolve keypair for keyUid " & keyUid)
@@ -843,6 +849,7 @@ method joinCommunityOrEditSharedAddresses*(self: Module) =
     # The user reveals address after sending join coummunity request, before that he sees only the name of the wallet account, not the address.
     self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: addressesToShare))
     return
+
   if self.joiningCommunityDetails.action == Action.EditSharedAddresses:
     self.controller.asyncEditSharedAddresses(self.joiningCommunityDetails.communityId,
       addressesToShare,
@@ -851,7 +858,8 @@ method joinCommunityOrEditSharedAddresses*(self: Module) =
     # The user reveals address after sending edit coummunity request, before that he sees only the name of the wallet account, not the address.
     self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: addressesToShare))
     return
-  self.communityAccessFailed(self.joiningCommunityDetails.communityId, "unexpected action")
+
+  self.communityAccessFailed(self.joiningCommunityDetails.communityId, "unexpected action: " & $self.joiningCommunityDetails.action)
 
 method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: string): string =
   result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
