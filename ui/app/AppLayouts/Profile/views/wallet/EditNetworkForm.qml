@@ -367,6 +367,7 @@ ColumnLayout {
                     }
 
                     StatusBaseText {
+                        objectName: "mustBeRestartedText"
                         text: qsTr("For new JSON RPC URLs to take effect, Status must be restarted. Are you ready to do this now?")
                         font.pixelSize: 15
                         anchors.left: parent.left
@@ -385,6 +386,7 @@ ColumnLayout {
             rightButtons: [
                 StatusFlatButton {
                     id: laterButton
+                    objectName: "laterButton"
                     text: qsTr("Save and restart later")
                     type: StatusBaseButton.Type.Normal
                     onClicked: {
@@ -395,6 +397,7 @@ ColumnLayout {
                 },
                 StatusButton {
                     id: saveButton
+                    objectName: "saveButton"
                     type: StatusBaseButton.Type.Normal
                     text: qsTr("Save and restart Status")
                     focus: true

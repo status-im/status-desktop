@@ -16,10 +16,9 @@ pytestmark = marks
                  'Network:  Network: Editing network -> Restore defaults')
 @pytest.mark.case(703515)
 @pytest.mark.parametrize('network_tab', [
-    pytest.param(WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value)
-    # pytest.param(WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value)
+    pytest.param(WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value),
+    pytest.param(WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value)
 ])
-# TODO: https://github.com/status-im/status-desktop/issues/14228
 def test_settings_networks_edit_restore_defaults(main_screen: MainWindow, network_tab: str):
     networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
 
@@ -60,7 +59,7 @@ def test_settings_networks_edit_restore_defaults(main_screen: MainWindow, networ
             'text') == WalletNetworkSettings.ACKNOWLEDGMENT_CHECKBOX_TEXT.value
 
     with step('Click Revert to default button and go to Networks screen'):
-        edit_network_form.click_revert_to_default_and_go_to_networks_main_screen()
+        edit_network_form.click_revert_to_default_and_go_to_networks_main_screen().save_and_restart_later()
 
     with step('Verify toast message appears for reverting to defaults'):
         if network_tab == WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
@@ -75,6 +74,8 @@ def test_settings_networks_edit_restore_defaults(main_screen: MainWindow, networ
             message = main_screen.wait_for_notification()[0]
             assert message == WalletNetworkSettings.REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE.value, \
                 f"Toast message is incorrect, current message is {message}"
+
+        edit_network_form.click_network_back()
 
     with step('Open Ethereum Mainnet network item to edit'):
         edit_network_form = networks.click_network_item_to_open_edit_view(
