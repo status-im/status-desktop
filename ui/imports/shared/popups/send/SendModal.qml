@@ -230,7 +230,6 @@ StatusDialog {
                 holdingSelector.currentTab = TokenSelectorPanel.Tabs.Collectibles
             }
         }
-
         if(!!popup.preDefinedAmountToSend) {
             // TODO: At this stage the number should not be localized. However
             // in many places when initializing popup the number is provided

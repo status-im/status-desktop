@@ -327,7 +327,7 @@ QtObject {
             return false
 
         let res = SQUtils.ModelUtils.getByKey(root.accounts, "address", tx.sender)
-        if (!res || res.object.walletType === Constants.watchWalletType)
+        if (!res || res.walletType === Constants.watchWalletType)
             return false
 
         if (tx.isNFT) {
