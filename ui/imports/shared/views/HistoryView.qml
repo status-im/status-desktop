@@ -311,7 +311,7 @@ ColumnLayout {
                 if (!overview.isWatchOnlyAccount && !tx)
                     return false
                 return WalletStores.RootStore.isTxRepeatable(tx)
-            }
+        }
 
             onTriggered: {
                 if (!tx)
@@ -326,11 +326,10 @@ ColumnLayout {
                                                               tx.isNFT,
                                                               tx.amount)
 
-                root.sendModal.preSelectedAccount = req.preSelectedAccount
+                root.sendModal.preSelectedAccountAddress = req.preSelectedAccount.address
                 root.sendModal.preSelectedRecipient = req.preSelectedRecipient
                 root.sendModal.preSelectedRecipientType = req.preSelectedRecipientType
-                root.sendModal.preSelectedHolding = req.preSelectedHolding
-                root.sendModal.preSelectedHoldingID = req.preSelectedHoldingID
+                root.sendModal.preSelectedHoldingID = req.preSelectedHoldingID ?? req.preSelectedHolding.uid
                 root.sendModal.preSelectedHoldingType = req.preSelectedHoldingType
                 root.sendModal.preSelectedSendType = req.preSelectedSendType
                 root.sendModal.preDefinedAmountToSend = req.preDefinedAmountToSend
