@@ -13,9 +13,9 @@ LeftTabView_ScrollView = {"container": mainWindow_LeftTabView, "type": "StatusSc
 LeftTabProfileMenu = {"container": LeftTabView_ScrollView, "objectName": "leftTabViewProfileMenu", "type": "MenuPanel", "visible": True}
 mainWindow_Settings_StatusNavigationPanelHeadline = {"container": mainWindow_LeftTabView, "type": "StatusNavigationPanelHeadline", "unnamed": 1, "visible": True}
 mainWindow_scrollView_StatusScrollView = {"container": mainWindow_LeftTabView, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
-scrollView_MenuItem_StatusNavigationListItem = {"container": LeftTabView_ScrollView, "type": "StatusNavigationListItem", "visible": True}
+scrollView_MenuItem_StatusNavigationListItem = {"container": mainWindow_scrollView_StatusScrollView, "type": "StatusNavigationListItem", "visible": True}
 scrollView_Flickable = {"container": mainWindow_scrollView_StatusScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
-settingsBackUpSeedPhraseOption = {"container": LeftTabView_ScrollView, "objectName": "18-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
+settingsBackUpSeedPhraseOption = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "19-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
 settingsWalletOption = {"container": LeftTabView_ScrollView, "objectName": "5-AppMenuItem", "type": "StatusNavigationListItem", "visible": True}
 
 # Communities View
