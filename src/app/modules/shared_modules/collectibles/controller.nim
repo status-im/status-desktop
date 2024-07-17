@@ -138,12 +138,18 @@ QtObject:
       else:
         offset = self.tempItems.len
     self.fetchFromStart = false
-    let response = backend_collectibles.getOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.filter, offset, FETCH_BATCH_COUNT_DEFAULT, self.dataType, self.fetchCriteria)
-    if response.error != nil:
+    try:
+      let response = backend_collectibles.getOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.filter, offset, FETCH_BATCH_COUNT_DEFAULT, self.dataType, self.fetchCriteria)
+      if response.error != nil:
+        self.model.setIsFetching(false)
+        self.model.setIsError(true)
+        self.fetchFromStart = true
+        error "error fetching collectibles entries: ", response.error
+    except Exception as e:
+      error "error fetching collectibles entries: ", e.msg
       self.model.setIsFetching(false)
       self.model.setIsError(true)
       self.fetchFromStart = true
-      error "error fetching collectibles entries: ", response.error
 
   proc onModelLoadMoreItems(self: Controller) {.slot.} =
     if self.loadType.isAutoLoad():
