@@ -112,6 +112,7 @@ SplitView {
                                             qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
                                             false, Constants.ephemeralNotificationType.success, "")
         }
+        ownedAccountsModel: WalletAccountsModel {}
         networkFilters: d.networksChainsCurrentlySelected
         addressFilters: d.addressesSelected
         filterVisible: ctrlFilterVisible.checked
