@@ -1,4 +1,4 @@
-import std/strutils, uuids, json
+import std/strutils, uuids, chronicles, json
 import ./io_interface
 
 import app/core/signals/types
