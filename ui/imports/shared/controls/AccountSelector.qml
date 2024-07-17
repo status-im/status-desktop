@@ -122,6 +122,11 @@ StatusComboBox {
         sourceModel: root.model ?? null
         key: "address"
         value: d.currentAccountSelection
+        onAvailableChanged: {
+            if (!available) {
+                d.resetSelection()
+            }
+        }
     }
 
     QtObject {
@@ -131,6 +136,15 @@ StatusComboBox {
         Binding on currentAccountSelection {
             value: root.selectedAddress || root.currentValue
         }
+
+        function resetSelection() {
+            currentAccountSelection = ""
+        }
+    }
+
+    Component.onCompleted: {
+        if (!selectedEntry.available)
+            d.resetSelection()
     }
 }
 
