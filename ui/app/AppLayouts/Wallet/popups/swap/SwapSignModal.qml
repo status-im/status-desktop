@@ -18,6 +18,8 @@ import utils 1.0
 SignTransactionModalBase {
     id: root
 
+    required property var currencyStore
+
     required property string fromTokenSymbol
     required property string fromTokenAmount
     required property string fromTokenContractAddress
@@ -45,8 +47,9 @@ SignTransactionModalBase {
 
     title: qsTr("Sign Swap")
     //: e.g. (swap) 100 DAI to 100 USDT
-    subtitle: qsTr("%1 %2 to %3 %4").arg(formatBigNumber(fromTokenAmount, 4)).arg(fromTokenSymbol) // FIXME get the correct number of decimals to display from the "symbol"
-        .arg(formatBigNumber(toTokenAmount, 4)).arg(toTokenSymbol)
+    subtitle: qsTr("%1 to %2")
+    .arg(root.currencyStore.formatCurrencyAmount(fromTokenAmount, fromTokenSymbol))
+    .arg(root.currencyStore.formatCurrencyAmount(toTokenAmount, toTokenSymbol))
 
     gradientColor: Utils.setColorAlpha(root.accountColor, 0.05) // 5% of wallet color
     fromImageSource: Constants.tokenIcon(root.fromTokenSymbol)
