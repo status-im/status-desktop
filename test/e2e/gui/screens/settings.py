@@ -85,7 +85,7 @@ class LeftPanel(QObject):
         return ChangePasswordView()
 
     @allure.step('Choose back up seed phrase in settings')
-    @handle_settings_opening(BackUpYourSeedPhrasePopUp, '18-MainMenuItem')
+    @handle_settings_opening(BackUpYourSeedPhrasePopUp, '19-MainMenuItem')
     def open_back_up_seed_phrase(self, click_attempts: int = 2) -> 'BackUpYourSeedPhrasePopUp':
         assert BackUpYourSeedPhrasePopUp().exists, 'Back up your seed phrase modal was not opened'
         return BackUpYourSeedPhrasePopUp()
@@ -97,7 +97,7 @@ class LeftPanel(QObject):
         return SyncingSettingsView()
 
     @allure.step('Choose sign out and quit in settings')
-    @handle_settings_opening(SignOutPopup, '17-ExtraMenuItem')
+    @handle_settings_opening(SignOutPopup, '18-ExtraMenuItem')
     def open_sign_out_and_quit(self, click_attempts: int = 2) -> 'SignOutPopup':
         assert SignOutPopup().exists, 'Sign out modal was not opened'
         return SignOutPopup()
