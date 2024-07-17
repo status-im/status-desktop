@@ -28,6 +28,7 @@ import SortFilterProxyModel 0.2
 ColumnLayout {
     id: root
 
+    required property var ownedAccountsModel
     required property var controller
     required property string addressFilters
     required property string networkFilters
@@ -466,10 +467,17 @@ ColumnLayout {
 
             onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType)
             onRightClicked: {
+                let ownedByUser = false
+                const ownedByAccount = ModelUtils.get(model.ownership, 0)
+                if (!!ownedByAccount && !!ownedByAccount.accountAddress) {
+                    ownedByUser = ModelUtils.contains(root.ownedAccountsModel, "address", ownedByAccount.accountAddress, Qt.CaseInsensitive)
+                }
+
                 Global.openMenu(tokenContextMenu, this,
                                 {symbol: model.symbol, tokenName: model.name, tokenImage: model.imageUrl,
                                     communityId: model.communityId, communityName: model.communityName,
-                                    communityImage: model.communityImage, tokenType: model.tokenType})
+                                    communityImage: model.communityImage, tokenType: model.tokenType,
+                                    soulbound: model.soulbound, ownedByUser: ownedByUser})
             }
             onSwitchToCommunityRequested: (communityId) => root.switchToCommunityRequested(communityId)
         }
@@ -478,6 +486,7 @@ ColumnLayout {
     Component {
         id: tokenContextMenu
         StatusMenu {
+            id: tokenMenu
             onClosed: destroy()
 
             property string symbol
@@ -487,14 +496,24 @@ ColumnLayout {
             property string communityName
             property string communityImage
             property int tokenType
+            property bool ownedByUser
+            property bool soulbound
 
-            StatusAction {
-                enabled: root.sendEnabled
-                visibleOnDisabled: true
-                icon.name: "send"
-                text: qsTr("Send")
-                onTriggered: root.sendRequested(symbol, tokenType)
+            // Show send button for owned collectibles
+            // Disable send button for owned soulbound collectibles
+            Instantiator {
+                model: tokenMenu.ownedByUser ? 1 : 0
+                delegate: StatusAction {
+                    enabled: root.sendEnabled && !tokenMenu.soulbound
+                    visibleOnDisabled: true
+                    icon.name: "send"
+                    text: qsTr("Send")
+                    onTriggered: root.sendRequested(symbol, tokenType)
+                }
+                onObjectAdded: tokenMenu.insertAction(0, object)
+                onObjectRemoved: tokenMenu.removeAction(0)
             }
+
             StatusAction {
                 icon.name: "receive"
                 text: qsTr("Receive")

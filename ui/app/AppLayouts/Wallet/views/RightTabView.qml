@@ -248,6 +248,7 @@ RightTabBaseView {
                 Component {
                     id: collectiblesView
                     CollectiblesView {
+                        ownedAccountsModel: RootStore.nonWatchAccounts
                         controller: RootStore.collectiblesStore.collectiblesController
                         networkFilters: RootStore.networkFilters
                         addressFilters: RootStore.addressFilters
@@ -265,14 +266,38 @@ RightTabBaseView {
                             stack.currentIndex = 1
                         }
                         onSendRequested: (symbol, tokenType) => {
-                                            root.sendModal.preSelectedHoldingID = symbol
-                                            root.sendModal.preSelectedHoldingType = tokenType
-                                            root.sendModal.preSelectedSendType = tokenType === Constants.TokenType.ERC721 ?
-                                                 Constants.SendType.ERC721Transfer:
-                                                 Constants.SendType.ERC1155Transfer
-                                            root.sendModal.onlyAssets = false
-                                            root.sendModal.open()
-                                        }
+                            const collectible = ModelUtils.getByKey(controller.sourceModel, "symbol", symbol)
+                            if (collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) {
+                                const ownerAccountItem = ModelUtils.get(collectible.ownership, 0)
+                                Global.openTransferOwnershipPopup(collectible.communityId,
+                                                                  collectible.communityName,
+                                                                  collectible.communityImage,
+                                                                  {
+                                                                      "key": collectible.tokenId,
+                                                                      "privilegesLevel": collectible.communityPrivilegesLevel,
+                                                                      "chainId": collectible.chainId,
+                                                                      "name": collectible.name,
+                                                                      "artworkSource": collectible.communityImage,
+                                                                      "accountAddress": ownerAccountItem.accountAddress,
+                                                                      "tokenAddress": collectible.contractAddress
+                                                                  },
+                                                                  root.sendModal)
+                                return
+                                                            
+                            }
+
+                            if (!!collectible) {
+                                const ownerAccountItem = ModelUtils.get(collectible.ownership, 0)
+                                root.sendModal.preSelectedAccountAddress = ownerAccountItem.accountAddress
+                            }
+                            root.sendModal.preSelectedHoldingID = symbol
+                            root.sendModal.preSelectedHoldingType = tokenType
+                            root.sendModal.preSelectedSendType = tokenType === Constants.TokenType.ERC721 ?
+                                    Constants.SendType.ERC721Transfer:
+                                    Constants.SendType.ERC1155Transfer
+                            root.sendModal.onlyAssets = false
+                            root.sendModal.open()
+                        }
                         onReceiveRequested: (symbol) => root.launchShareAddressModal()
                         onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
                         onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,

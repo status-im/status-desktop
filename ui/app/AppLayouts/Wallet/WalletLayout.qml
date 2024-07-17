@@ -309,7 +309,7 @@ Item {
                     const ownership = StatusQUtils.ModelUtils.get(tokenItem.ownership, 0)
 
                     Global.openTransferOwnershipPopup(tokenItem.communityId,
-                                                      tokenItem.communityName,
+                                                      footer.communityName,
                                                       tokenItem.communityImage,
                                                       {
                                                           "key": tokenItem.tokenId,
@@ -321,14 +321,20 @@ Item {
                                                           "tokenAddress": tokenItem.contractAddress
                                                       },
                                                       root.sendModalPopup)
-                } else {
-                    // Common send modal popup:
-                    root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
-                    root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
-                    root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
-                    root.sendModalPopup.onlyAssets = false
-                    root.sendModalPopup.open()
+                    return
                 }
+
+                if (isHoldingSelected) {
+                    const tokenItem = walletStore.currentViewedCollectible
+                    const ownership = StatusQUtils.ModelUtils.get(tokenItem.ownership, 0)
+                    root.sendModalPopup.preSelectedAccountAddress = ownership.accountAddress
+                }
+                // Common send modal popup:
+                root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
+                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
+                root.sendModalPopup.onlyAssets = false
+                root.sendModalPopup.open()
             }
             onLaunchBridgeModal: {
                 root.sendModalPopup.preSelectedSendType = Constants.SendType.Bridge
