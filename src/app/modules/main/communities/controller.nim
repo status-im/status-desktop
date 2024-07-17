@@ -1,4 +1,4 @@
-import std/strutils, uuids
+import std/strutils, uuids, json
 import ./io_interface
 
 import app/core/signals/types
@@ -15,6 +15,8 @@ import app_service/service/keycard/service as keycard_service
 import app_service/common/types
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 import app_service/service/network/network_item
+
+import status_go
 
 const UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER* = "CommunitiesModule-Authentication"
 const UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER* = "CommunitiesModule-Signing"
@@ -465,10 +467,20 @@ proc runSignFlow(self: Controller, pin, path, dataToSign: string) =
   self.connectKeycardReponseSignal()
   self.keycardService.startSignFlow(path, dataToSign, pin)
 
+proc hashMessage(self: Controller, message: string): string =
+  try: 
+    let response = status_go.hashMessage(message)
+    let jsonResponse = parseJson(response)
+    return jsonResponse{"result"}.getStr()
+  except Exception as e:
+    error "hashMessage: failed to parse json response", error = e.msg
+    return ""
+
 proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataToSign: string, pin: string) =
-  var finalDataToSign = dataToSign
+  var finalDataToSign = hashMessage(self, dataToSign)
   if finalDataToSign.startsWith("0x"):
     finalDataToSign = finalDataToSign[2..^1]
+  
   if pin.len == 0:
     let data = SharedKeycarModuleSigningArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER,
       keyUid: keyUid,
