@@ -26,6 +26,7 @@ import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Profile.stores 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import mainui 1.0
 import shared.stores 1.0
@@ -378,6 +379,19 @@ Item {
                 return Constants.TransactionEstimatedTime.LessThanThreeMins
             }
 
+            function getSuggestedFees() {
+                return {
+                    gasPrice: 2.0,
+                    baseFee: 5.0,
+                    maxPriorityFeePerGas: 2.0,
+                    maxFeePerGasL: 1.0,
+                    maxFeePerGasM: 1.1,
+                    maxFeePerGasH: 1.2,
+                    l1GasFee: 4.0,
+                    eip1559Enabled: true
+                }
+            }
+
             function hexToDec(hex) {
                 if (hex.length > "0xfffffffffffff".length) {
                     console.warn(`Beware of possible loss of precision converting ${hex}`)
@@ -398,6 +412,12 @@ Item {
                 return "eth:oeth:arb"
             }
             readonly property CurrenciesStore currencyStore: CurrenciesStore {}
+            readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.WalletAssetsStore {
+                // Silence warnings
+                assetsWithFilteredBalances: ListModel {}
+                // Name mismatch between storybook and production
+                readonly property var groupedAccountAssetsModel: groupedAccountsAssetsModel
+            }
         }
 
         onDisplayToastMessage: (message, isErr) => {
