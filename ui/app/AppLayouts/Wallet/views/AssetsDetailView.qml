@@ -30,6 +30,7 @@ Item {
     property var networkConnectionStore
     property var allNetworksModel
     property var networkFilters
+    onNetworkFiltersChanged: d.forceRefreshBalanceStore = true
     /*required*/ property string address: ""
     property TokenBalanceHistoryStore balanceStore: TokenBalanceHistoryStore {}
 
@@ -46,6 +47,8 @@ Item {
             rightModel: root.allNetworksModel
             joinRole: "chainId"
         }
+
+        property bool forceRefreshBalanceStore: false
     }
 
     Connections {
@@ -174,7 +177,7 @@ Item {
                                                 graphDetail.selectedStore = graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? d.marketValueStore : balanceStore
                                             }
 
-                                            chart.animateToNewData()
+                                            chart.refresh()
                                         }
 
                     readonly property var dateToShortLabel: function (value) {
@@ -312,7 +315,7 @@ Item {
                         let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
 
                         let currencySymbol = RootStore.currencyStore.currentCurrency
-                        if(!balanceStore.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)) {
+                        if(!balanceStore.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum) || d.forceRefreshBalanceStore) {
                             RootStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
                         }
                     }
@@ -320,8 +323,9 @@ Item {
                     Connections {
                         target: balanceStore
                         function onNewDataReady(address, tokenSymbol, currencySymbol, timeRange) {
+                            d.forceRefreshBalanceStore = false
                             if (timeRange === balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)) {
-                                chart.updateToNewData()
+                                chart.refresh()
                             }
                         }
                     }

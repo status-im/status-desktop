@@ -66,7 +66,8 @@ proc getFlatNetworks*(self: Service): var seq[NetworkItem] =
 
 # passes networks based on users choice of test/mainnet
 proc getCurrentNetworks*(self: Service): seq[NetworkItem] =
-  self.flatNetworks.filter(n => n.isTest == self.settingsService.areTestNetworksEnabled())
+  let testEnabled = self.settingsService.areTestNetworksEnabled()
+  self.flatNetworks.filter(n => n.isTest == testEnabled)
 
 proc getCurrentNetworksChainIds*(self: Service): seq[int] =
   return self.getCurrentNetworks().map(n => n.chainId)
