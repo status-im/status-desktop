@@ -2062,6 +2062,9 @@ Item {
             active: WalletStore.RootStore.walletSectionInst.walletReady
             controller: WalletStore.RootStore.dappsConnectorController
             wcService: Global.walletConnectService
+            store: DAppsStore {
+                controller: WalletStore.RootStore.walletConnectController
+            }
         }
     }
 

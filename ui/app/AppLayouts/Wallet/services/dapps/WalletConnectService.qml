@@ -242,6 +242,7 @@ QObject {
 
         onSessionRequest: (request) => {
             timeoutTimer.stop()
+            console.log("---> onSessionRequest :")
             root.sessionRequest(request)
         }
         onDisplayToastMessage: (message, error) => {

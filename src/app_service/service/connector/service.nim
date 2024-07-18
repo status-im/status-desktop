@@ -13,6 +13,7 @@ logScope:
   topics = "connector-service"
 
 const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
+const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
 
 # Enum with events
 type Event* = enum
@@ -52,6 +53,18 @@ QtObject:
 
       self.events.emit(SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS, data)
     )
+    self.events.on(SignalType.ConnectorSendTransaction.event, proc(e: Args) =
+      if self.eventHandler == nil:
+        return
+
+      var data = ConnectorSendTransactionSignal(e)
+
+      if not data.requestID.len() == 0:
+        echo "ConnectorSendTransactionSignal failed, requestID is empty"
+        return
+
+      self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION, data)
+    )
 
   proc registerEventsHandler*(self: Service, handler: EventHandlerFn) =
     self.eventHandler = handler
@@ -61,3 +74,9 @@ QtObject:
 
   proc rejectDappConnect*(self: Service, requestID: string): bool =
     return status_go.requestAccountsRejectedFinishedRpc(requestID)
+
+  proc approveTransactionRequest*(self: Service, requestID: string, hash: string): bool =
+    return status_go.sendTransactionAcceptedFinishedRpc(requestID, hash)
+
+  proc rejectTransactionSigning*(self: Service, requestID: string): bool =
+    return status_go.sendTransactionRejectedFinishedRpc(requestID)

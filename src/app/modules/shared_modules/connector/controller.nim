@@ -7,7 +7,10 @@ import app/core/signals/types
 
 import app_service/service/connector/service as connector_service
 
+import app_service/common/utils
+
 const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
+const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
 
 logScope:
   topics = "connector-controller"
@@ -22,6 +25,7 @@ QtObject:
     self.QObject.delete
 
   proc dappRequestsToConnect*(self: Controller, requestID: string, payload: string) {.signal.}
+  proc dappValidatesTransaction*(self: Controller, requestID: string, payload: string) {.signal.}
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -45,6 +49,18 @@ QtObject:
 
       controller.dappRequestsToConnect(params.requestID, dappInfo.toJson())
 
+    result.events.on(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION) do(e: Args):
+      let params = ConnectorSendTransactionSignal(e)
+      let dappInfo = %*{
+        "icon": params.iconUrl,
+        "name": params.name,
+        "url": params.url,
+        "chainID": params.chainID,
+        "txArgs": params.txArgs,
+      }
+
+      controller.dappValidatesTransaction(params.requestID, dappInfo.toJson())
+
     result.QObject.setup
 
   proc parseSingleUInt(chainIDsString: string): uint =
@@ -63,3 +79,14 @@ QtObject:
 
   proc rejectDappConnectRequest*(self: Controller, requestID: string): bool {.slot.} =
     return self.service.rejectDappConnect(requestID)
+
+  proc approveTransactionRequest*(self: Controller, requestID: string, hash: string): bool {.slot.} =
+    return self.service.approveTransactionRequest(requestID, hash)
+
+  proc rejectTransactionSigning*(self: Controller, requestID: string): bool {.slot.} =
+    return self.service.rejectTransactionSigning(requestID)
+
+  proc createHash*(self: Controller, signature: string): string {.slot.} =
+    let signatureHex = if signature.startsWith("0x"): signature[2..^1] else: signature
+
+    return utils.hashPassword(signatureHex, true)

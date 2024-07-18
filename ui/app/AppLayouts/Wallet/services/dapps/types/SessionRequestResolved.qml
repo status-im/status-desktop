@@ -28,9 +28,9 @@ QObject {
     readonly property alias dappUrl: d.dappUrl
     readonly property alias dappIcon: d.dappIcon
 
-    property string maxFeesText: ""
-    property string maxFeesEthText: ""
-    property bool enoughFunds: false
+    property alias maxFeesText: d.maxFeesText
+    property alias maxFeesEthText: d.maxFeesEthText
+    property alias enoughFunds: d.enoughFunds
 
     function resolveDappInfoFromSession(session) {
         let meta = session.peer.metadata
@@ -41,6 +41,13 @@ QObject {
         }
     }
 
+    function resolveFees(fees) {
+        d.maxFeesText = fees.maxFeesText
+        d.maxFeesEthText = fees.maxFeesEthText
+        d.enoughFunds = fees.enoughFunds
+        d.estimatedTimeText = fees.estimatedTimeText
+    }
+
     // dApp info
     QtObject {
         id: d
@@ -48,5 +55,9 @@ QObject {
         property string dappName
         property string dappUrl
         property url dappIcon
+
+        property string maxFeesText: ""
+        property string maxFeesEthText: ""
+        property bool enoughFunds: false
     }
 }

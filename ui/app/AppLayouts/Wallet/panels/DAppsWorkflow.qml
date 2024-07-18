@@ -315,6 +315,7 @@ DappsComboBox {
         }
 
         function onSessionRequest(request) {
+            console.log("---> onSessionRequest")
             sessionRequestLoader.request = request
             sessionRequestLoader.requestHandled = false
             sessionRequestLoader.active = true

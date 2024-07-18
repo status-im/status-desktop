@@ -32,11 +32,314 @@ WalletConnectSDKBase {
     property bool active: true
     required property WalletConnectService wcService
     property string requestID: ""
+    property var dappInfo: null
+    property var txArgs: null
+    property alias requestsModel: requests
+    required property DAppsStore store
 
     projectId: ""
 
     implicitWidth: 1
     implicitHeight: 1
+
+    QtObject {
+        id: d
+
+        function sessionRequestEvent(event) {
+            let obj = d.resolveAsync(event)
+            if (obj === null) {
+                let error = true
+                controller.rejectTransactionSigning(root.requestID)
+                return
+            }
+            sessionRequestLoader.request = obj
+            requests.enqueue(obj)
+        }
+
+        function resolveAsync(event) {
+            let method = event.params.request.method
+            let account = lookupAccountFromEvent(event, method)
+            if(!account) {
+                console.error("Error finding account for event", JSON.stringify(event))
+                return null
+            }
+            let network = lookupNetworkFromEvent(event, method)
+            if(!network) {
+                console.error("Error finding network for event", JSON.stringify(event))
+                return null
+            }
+            let data = extractMethodData(event, method)
+            if(!data) {
+                console.error("Error in event data lookup", JSON.stringify(event))
+                return null
+            }
+            let obj = sessionRequestComponent.createObject(null, {
+                event,
+                topic: event.topic,
+                id: event.id,
+                method,
+                account,
+                network,
+                data,
+                maxFeesText: "?",
+                maxFeesEthText: "?",
+                enoughFunds: false,
+                estimatedTimeText: "?"
+            })
+            if (obj === null) {
+                console.error("Error creating SessionRequestResolved for event")
+                return null
+            }
+
+            // Check later to have a valid request object
+            if (!SessionRequest.getSupportedMethods().includes(method)) {
+                console.error("Unsupported method", method)
+                return null
+            }
+
+            let session = getActiveSessions(root.dappInfo)
+
+            if (session === null) {
+                console.error("DAppsRequestHandler.lookupSession: error finding session for topic", obj.topic)
+                return
+            }
+            obj.resolveDappInfoFromSession(session)
+
+            let gasLimit = parseFloat(parseInt(root.txArgs.gas, 16));
+            let gasPrice = parseFloat(parseInt(root.txArgs.gasPrice, 16));
+            let maxFees = gasLimit * gasPrice
+            let { maxFeesText, maxFeesEthText, haveEnoughFunds } = maxFeesUpdated(maxFees/1000000000, maxFees, true, "Gwei")
+            let estimatedTimeText = estimatedTimeUpdated(1, 12)
+
+            let fees = {
+                "maxFeesText": maxFeesText,
+                "maxFeesEthText": maxFeesEthText,
+                "enoughFunds": haveEnoughFunds,
+                "estimatedTimeText": estimatedTimeText,
+            }
+
+            obj.resolveFees(fees)
+
+            return obj
+        }
+
+        /// Returns null if the account is not found
+        function lookupAccountFromEvent(event, method) {
+            var address = ""
+            if (method === SessionRequest.methods.personalSign.name) {
+                if (event.params.request.params.length < 2) {
+                    return null
+                }
+                address = event.params.request.params[1]
+            } else if (method === SessionRequest.methods.sign.name) {
+                if (event.params.request.params.length === 1) {
+                    return null
+                }
+                address = event.params.request.params[0]
+            } else if(method === SessionRequest.methods.signTypedData_v4.name ||
+                      method === SessionRequest.methods.signTypedData.name)
+            {
+                if (event.params.request.params.length < 2) {
+                    return null
+                }
+                address = event.params.request.params[0]
+            } else if (method === SessionRequest.methods.signTransaction.name
+                    || method === SessionRequest.methods.sendTransaction.name) {
+                if (event.params.request.params.length == 0) {
+                    return null
+                }
+                address = event.params.request.params[0].from
+            }
+            return SQUtils.ModelUtils.getFirstModelEntryIf(root.wcService.validAccounts, (account) => {
+                return account.address.toLowerCase() === address.toLowerCase();
+            })
+        }
+
+        /// Returns null if the network is not found
+        function lookupNetworkFromEvent(event, method) {
+            if (SessionRequest.getSupportedMethods().includes(method) === false) {
+                return null
+            }
+            let chainId = Helpers.chainIdFromEip155(event.params.chainId)
+            return SQUtils.ModelUtils.getByKey(networksModule.flatNetworks, "chainId", chainId)
+        }
+
+        function extractMethodData(event, method) {
+            if (method === SessionRequest.methods.personalSign.name ||
+                method === SessionRequest.methods.sign.name)
+            {
+                if (event.params.request.params.length < 1) {
+                    return null
+                }
+                var message = ""
+                let messageIndex = (method === SessionRequest.methods.personalSign.name ? 0 : 1)
+                let messageParam = event.params.request.tx.data
+
+                // There is no standard on how data is encoded. Therefore we support hex or utf8
+                if (Helpers.isHex(messageParam)) {
+                    message = Helpers.hexToString(messageParam)
+                } else {
+                    message = messageParam
+                }
+                return SessionRequest.methods.personalSign.buildDataObject(message)
+            } else if (method === SessionRequest.methods.signTypedData_v4.name ||
+                       method === SessionRequest.methods.signTypedData.name)
+            {
+                if (event.params.request.params.length < 2) {
+                    return null
+                }
+                let jsonMessage = event.params.request.params[1]
+                let methodObj = method === SessionRequest.methods.signTypedData_v4.name
+                    ? SessionRequest.methods.signTypedData_v4
+                    : SessionRequest.methods.signTypedData
+                return methodObj.buildDataObject(jsonMessage)
+            } else if (method === SessionRequest.methods.signTransaction.name) {
+                if (event.params.request.params.length == 0) {
+                    return null
+                }
+                let tx = event.params.request.params[0]
+                return SessionRequest.methods.signTransaction.buildDataObject(tx)
+            } else if (method === SessionRequest.methods.sendTransaction.name) {
+                if (event.params.request.params.length == 0) {
+                    return null
+                }
+                let tx = event.params.request.params[0]
+                return SessionRequest.methods.sendTransaction.buildDataObject(tx)
+            } else {
+                return null
+            }
+        }
+
+        function executeSessionRequest(request, password, pin) {
+            if (!SessionRequest.getSupportedMethods().includes(request.method)) {
+                console.error("Unsupported method to execute: ", request.method)
+                return
+            }
+
+            if (password !== "") {
+                var actionResult = ""
+                if (request.method === SessionRequest.methods.sign.name) {
+                    actionResult = store.signMessageUnsafe(request.topic, request.id,
+                                        request.account.address, password,
+                                        SessionRequest.methods.personalSign.getMessageFromData(request.data))
+                } else if (request.method === SessionRequest.methods.personalSign.name) {
+                    actionResult = store.signMessage(request.topic, request.id,
+                                        request.account.address, password,
+                                        SessionRequest.methods.personalSign.getMessageFromData(request.data))
+                } else if (request.method === SessionRequest.methods.signTypedData_v4.name ||
+                           request.method === SessionRequest.methods.signTypedData.name)
+                {
+                    let legacy = request.method === SessionRequest.methods.signTypedData.name
+                    actionResult = store.safeSignTypedData(request.topic, request.id,
+                                        request.account.address, password,
+                                        SessionRequest.methods.signTypedData.getMessageFromData(request.data),
+                                        request.network.chainId, legacy)
+                } else if (request.method === SessionRequest.methods.signTransaction.name) {
+                    let txObj = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
+                    actionResult = store.signTransaction(request.topic, request.id,
+                                        request.account.address, request.network.chainId, password, txObj)
+                } else if (request.method === SessionRequest.methods.sendTransaction.name) {
+                    let txObj = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
+                    actionResult = store.sendTransaction(request.topic, request.id,
+                                        request.account.address, request.network.chainId, password, txObj)
+                }
+                let isSuccessful = (actionResult != "")
+                if (isSuccessful) {
+                    // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
+                    acceptSessionRequest(request.topic, request.method, request.id, actionResult)
+                } else {
+                    root.sessionRequestResult(request, isSuccessful)
+                }
+            } else if (pin !== "") {
+                console.debug("TODO #15097 sign message using keycard: ", request.data)
+            } else {
+                console.error("No password or pin provided to sign message")
+            }
+        }
+
+        function acceptSessionRequest(topic, method, id, signature) {
+            console.debug(`WC DappsConnectorSDK.acceptSessionRequest; topic: "${topic}", id: ${root.requestID}, signature: "${signature}"`)
+
+            sessionRequestLoader.active = false
+            const hash = controller.createHash(signature)
+            controller.approveTransactionRequest(requestID, hash)
+
+            root.wcService.displayToastMessage(qsTr("Success to authenticate %1 from %2").arg(method).arg(root.dappInfo.url), false)
+        }
+
+        function getActiveSessions(dappInfos) {
+            let sessionTemplate = (dappUrl, dappName, dappIcon) => {
+                return {
+                    "peer": {
+                        "metadata": {
+                            "description": "-",
+                            "icons": [
+                                dappIcon
+                            ],
+                            "name": dappName,
+                            "url": dappUrl
+                        }
+                    },
+                    "topic": dappUrl
+                };
+            }
+
+            return sessionTemplate(dappInfos.url, dappInfos.name, dappInfos.icon)
+        }
+
+        function maxFeesUpdated(maxFees, maxFeesWei, haveEnoughFunds, symbol) {
+            let maxFeesText = `${maxFees.toFixed(2)} ${symbol}`;
+            let ethStr = "?";
+
+            try {
+                ethStr = globalUtils.wei2Eth(maxFeesWei, 9);
+            } catch (e) {
+                // Ignore error in case of tests and storybook where we don't have access to globalUtils
+            }
+
+            let maxFeesEthText = `${ethStr} ETH`;
+
+            return {
+                maxFeesText: maxFeesText,
+                maxFeesEthText: maxFeesEthText,
+                haveEnoughFunds: haveEnoughFunds
+            }
+        }
+
+        function estimatedTimeUpdated(minMinutes, maxMinutes) {
+            return qsTr("%1-%2mins").arg(minMinutes).arg(maxMinutes)
+        }
+
+        function authenticate(request) {
+            return store.authenticateUser(request.topic, request.id, request.account.address)
+        }
+    }
+
+    Connections {
+        target: root.store
+
+        function onUserAuthenticated(topic, id, password, pin) {
+            var request = requests.findRequest(topic, id)
+            if (request === null) {
+                console.error(">Error finding event for topic", topic, "id", id)
+                return
+            }
+            d.executeSessionRequest(request, password, pin)
+        }
+
+        function onUserAuthenticationFailed(topic, id) {
+            var request = requests.findRequest(topic, id)
+            let methodStr = SessionRequest.methodToUserString(request.method)
+            if (request === null || !methodStr) {
+                return
+            }
+            d.lookupSession(topic, function(session) {
+                if (session === null)
+                    return
+                root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(session.peer.metadata.url), true)
+            })
+        }
+    }
 
     Loader {
         id: connectDappLoader
@@ -80,8 +383,118 @@ WalletConnectSDKBase {
         }
     }
 
+    Loader {
+        id: sessionRequestLoader
+
+        active: false
+
+        onLoaded: item.open()
+
+        property SessionRequestResolved request: null
+
+        property var dappInfo: null
+
+        sourceComponent: DAppSignRequestModal {
+            loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            visible: true
+            signingTransaction: true
+
+            dappUrl: request.dappUrl
+            dappIcon: request.dappIcon
+            dappName: request.dappName
+
+            accountColor: request.account.color
+            accountName: request.account.name
+            accountAddress: request.account.address
+            accountEmoji: request.account.emoji
+
+            networkName: request.network.chainName
+            networkIconPath: Style.svg(request.network.iconUrl)
+
+            currentCurrency: ""
+            fiatFees: request.maxFeesText
+            cryptoFees: request.maxFeesEthText
+            estimatedTime: ""
+            feesLoading: !request.maxFeesText || !request.maxFeesEthText
+            hasFees: signingTransaction
+            enoughFundsForTransaction: request.enoughFunds
+            enoughFundsForFees: request.enoughFunds
+
+
+            //payloadData: request.data
+            // method: request.method
+            // maxFeesText: request.maxFeesText
+            // maxFeesEthText: request.maxFeesEthText
+            // enoughFunds: request.enoughFunds
+            // estimatedTimeText: request.estimatedTimeText
+
+            onClosed: {
+                console.log("------------------------------------> onClosed")
+                sessionRequestLoader.active = false
+                controller.rejectTransactionSigning(root.requestID)
+            }
+
+            onAccepted: {
+                console.log("------------------------------------> onAccepted")
+                if (!request) {
+                    console.error("Error signing: request is null")
+                    return
+                }
+
+                d.authenticate(request)
+            }
+
+            onRejected: {
+                console.log("------------------------------------> onRejected")
+                sessionRequestLoader.active = false
+                controller.rejectTransactionSigning(root.requestID)
+                root.wcService.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(request.method).arg(request.dappUrl), true)
+            }
+        }
+    }
+
+    Component {
+        id: sessionRequestComponent
+
+        SessionRequestResolved {
+        }
+    }
+
+    SessionRequestsModel {
+        id: requests
+    }
+
     Connections {
         target: controller
+
+        onDappValidatesTransaction: function(requestID, dappInfoString) {
+            var dappInfo = JSON.parse(dappInfoString)
+            root.dappInfo = dappInfo
+            var txArgsParams = JSON.parse(dappInfo.txArgs)
+            root.txArgs = txArgsParams
+            let event = {
+                "id": root.requestID,
+                "topic": dappInfo.url,
+                "params": {
+                    "chainId": `eip155:${dappInfo.chainID}`,
+                    "request": {
+                        "method": "personal_sign",
+                        "tx": {
+                            "data": txArgsParams.data,
+                        },
+                        "params": [
+                            txArgsParams.from,
+                            txArgsParams.to,
+                        ],
+                    }
+                }
+            }
+
+            d.sessionRequestEvent(event)
+
+            sessionRequestLoader.active = true
+            root.requestID = requestID
+        }
 
         onDappRequestsToConnect: function(requestID, dappInfoString) {
             var dappInfo = JSON.parse(dappInfoString)
