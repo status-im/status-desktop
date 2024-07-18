@@ -1,4 +1,3 @@
-import logging
 import random
 import string
 
@@ -6,6 +5,7 @@ import allure
 import pytest
 from allure import step
 
+import constants
 from . import marks
 
 import configs.timeouts
@@ -30,8 +30,7 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
 @pytest.mark.case(703421, 703010)
-@pytest.mark.critical
-# reason='https://github.com/status-im/status-desktop/issues/13013'
+@pytest.mark.critical # TODO 'https://github.com/status-im/status-desktop/issues/13013'
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
     pytest.param(
         ''.join((random.choice(
@@ -63,7 +62,6 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
     with step('Click plus button and add user picture'):
         profile_view.set_profile_picture(configs.testpath.TEST_IMAGES / user_image)
         PictureEditPopup().set_zoom_shift_for_picture(zoom=zoom, shift=shift)
-        # TODO: find a way to verify the picture is there (changed to the custom one)
         assert profile_view.get_profile_image is not None, f'Profile picture was not set / applied'
         assert profile_view.is_next_button_enabled is True, \
             f'Next button is not enabled on profile screen'
@@ -105,6 +103,11 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
 
+    with step('Verify that user avatar background color'):
+        avatar_color = str(main_window.left_panel.profile_button.object.identicon.asset.color.name).upper()
+        assert avatar_color in constants.AvatarColors.available_colors(), \
+            f'Avatar color should be one of the allowed colors but is {avatar_color}'
+
     with step('Open online identifier and check the data'):
         online_identifier = main_window.left_panel.open_online_identifier()
         assert online_identifier.get_user_name == user_name, \
@@ -133,7 +136,7 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         assert share_profile_popup.is_profile_qr_code_visibile
         assert chat_key in profile_link, f'Profile link is wrong {profile_link}, it does not contain correct chat key'
         assert emoji_hash == emoji_hash_public_key, f'Public keys do not match'
-        share_profile_popup. close()
+        share_profile_popup.close()
 
     with step('Click left panel and open settings'):
         main_window.left_panel.click()

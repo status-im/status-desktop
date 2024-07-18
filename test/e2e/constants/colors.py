@@ -59,3 +59,23 @@ class ColorCodes(Enum):
 class EmojiCodes(Enum):
     SMILING_FACE_WITH_SUNGLASSES = '1f60e'
     THUMBSUP_SIGN = '1f44d'
+
+
+class AvatarColors:
+    @staticmethod
+    def available_colors():
+        return [
+            "#2946C4",
+            "#887AF9",
+            "#51D0F0",
+            "#D37EF4",
+            "#FA6565",
+            "#FFCA0F",
+            "#7CDA00",
+            "#26A69A",
+            "#8B3131",
+            "#9B832F",
+            "#C0C0C0",
+            "#A9A9A9"
+
+        ]

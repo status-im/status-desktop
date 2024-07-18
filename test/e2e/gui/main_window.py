@@ -35,7 +35,7 @@ class LeftPanel(QObject):
 
     def __init__(self):
         super(LeftPanel, self).__init__(names.mainWindow_StatusAppNavBar)
-        self._profile_button = Button(names.mainWindow_ProfileNavBarButton)
+        self.profile_button = Button(names.mainWindow_ProfileNavBarButton)
         self._messages_button = Button(names.messages_navbar_StatusNavBarTabButton)
         self._communities_portal_button = Button(names.communities_Portal_navbar_StatusNavBarTabButton)
         self._community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
@@ -55,7 +55,7 @@ class LeftPanel(QObject):
     @property
     @allure.step('Get user badge color')
     def user_badge_color(self) -> str:
-        return str(self._profile_button.object.badge.color.name)
+        return str(self.profile_button.object.badge.color.name)
 
     @allure.step('Open messages screen')
     def open_messages_screen(self) -> MessagesScreen:
@@ -65,7 +65,7 @@ class LeftPanel(QObject):
     @allure.step('Open online identifier')
     def open_online_identifier(self, attempts: int = 2) -> OnlineIdentifier:
         time.sleep(0.5)
-        self._profile_button.click()
+        self.profile_button.click()
         try:
             return OnlineIdentifier().wait_until_appears()
         except Exception as ex:
