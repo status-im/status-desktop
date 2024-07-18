@@ -358,7 +358,7 @@ class EditNetworkSettings(WalletSettingsView):
             if attempts:
                 self.click_revert_to_default_and_go_to_networks_main_screen(attempts - 1)
             else:
-                raise f"RPC change requires restart popup did not appear"
+                raise AssertionError(f'RPC change requires restart popup did not appear')
 
     @allure.step('Verify elements for the edit network view')
     def check_available_elements_on_edit_view(self, network_tab):
