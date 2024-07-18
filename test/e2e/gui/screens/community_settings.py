@@ -8,8 +8,8 @@ import configs
 import driver
 from driver.objects_access import walk_children
 from gui.components.community.color_select_popup import ColorSelectPopup
-from gui.components.community.kick_member_popup import KickMemberPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
+from gui.components.kick_member_popup import KickMemberPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.elements.button import Button

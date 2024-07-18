@@ -8,6 +8,7 @@ import driver
 from driver.objects_access import walk_children
 from gui.components.settings.respond_to_id_request_popup import RespondToIDRequestPopup
 from gui.components.settings.send_contact_request_popup import SendContactRequest
+from gui.components.settings.unblock_user_popup import UnblockUserPopup
 from gui.components.settings.verify_identity_popup import VerifyIdentityPopup
 
 from gui.elements.button import Button
@@ -98,8 +99,11 @@ class ContactsSettingsView(QObject):
         self._contact_request_button = Button(settings_names.mainWindow_Send_contact_request_to_chat_key_StatusButton)
         self._pending_request_tab = Button(settings_names.contactsTabBar_Pending_Requests_StatusTabButton)
         self._contacts_tab = Button(settings_names.contactsTabBar_Contacts_StatusTabButton)
+        self._blocked_tab = Button(settings_names.contactsTabBar_Blocked_StatusTabButton)
+        self._contact_item = QObject(settings_names.settingsContentBaseScrollView_Item)
         self._contacts_items_list = List(settings_names.settingsContentBaseScrollView_ContactListPanel)
-        self._pending_request_sent_panel = QObject(settings_names.settingsContentBaseScrollView_sentRequests_ContactsListPanel)
+        self._pending_request_sent_panel = QObject(
+            settings_names.settingsContentBaseScrollView_sentRequests_ContactsListPanel)
         self._pending_request_received_panel = QObject(
             settings_names.settingsContentBaseScrollView_receivedRequests_ContactsListPanel)
         self._contacts_panel = QObject(settings_names.settingsContentBaseScrollView_mutualContacts_ContactsListPanel)
@@ -111,6 +115,7 @@ class ContactsSettingsView(QObject):
         self._view_profile_item = QObject(settings_names.view_Profile_StatusMenuItem)
         self._respond_to_id_request_button = Button(
             settings_names.settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton)
+        self._unblock_item = Button(settings_names.unblock_user_StatusMenuItem)
 
     @property
     @allure.step('Get contact items')
@@ -159,6 +164,11 @@ class ContactsSettingsView(QObject):
         self._contacts_tab.click()
         return self
 
+    @allure.step('Open blocked tab')
+    def open_blocked(self):
+        self._blocked_tab.click()
+        return self
+
     @allure.step('Open contacts request form')
     def open_contact_request_form(self) -> SendContactRequest:
         self._contact_request_button.click()
@@ -202,13 +212,21 @@ class ContactsSettingsView(QObject):
         request.open_more_options_popup()
         return self
 
+    @allure.step('Verify identity')
     def verify_identity(self):
         self._verify_identity_item.click()
         return VerifyIdentityPopup().wait_until_appears()
 
+    @allure.step('Get visibility state of respond to id request item')
     def is_respond_to_id_request_visible(self) -> bool:
         return self._respond_to_id_request_item.is_visible
 
+    @allure.step('Respond to ID request')
     def respond_to_id_request(self):
         self._respond_to_id_request_item.click()
         return RespondToIDRequestPopup().wait_until_appears()
+
+    @allure.step('Unblock user')
+    def unblock_user(self):
+        self._unblock_item.click()
+        return UnblockUserPopup().wait_until_appears()

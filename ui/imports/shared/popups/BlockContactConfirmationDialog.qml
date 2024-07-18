@@ -24,6 +24,7 @@ CommonContactDialog {
     }
 
     StatusBaseText {
+        objectName: "youWillNotSeeText"
         Layout.fillWidth: true
         wrapMode: Text.WordWrap
         lineHeight: 22
@@ -32,6 +33,7 @@ CommonContactDialog {
     }
 
     StatusWarningBox {
+        objectName: "blockWarningBox"
         Layout.fillWidth: true
         Layout.topMargin: Style.current.padding
         icon: "warning"
@@ -45,6 +47,7 @@ CommonContactDialog {
 
     StatusCheckBox {
         Layout.topMargin: Style.current.halfPadding
+        objectName: "removeContactCheckbox"
         id: ctrlRemoveContact
         visible: contactDetails.isContact
         checked: visible
@@ -62,10 +65,12 @@ CommonContactDialog {
 
     rightButtons: ObjectModel {
         StatusFlatButton {
+            objectName: "cancelButton"
             text: qsTr("Cancel")
             onClicked: root.close()
         }
         StatusButton {
+            objectName: "blockButton"
             type: StatusBaseButton.Type.Danger
             text: qsTr("Block")
             onClicked: root.accepted()

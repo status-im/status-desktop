@@ -155,6 +155,7 @@ Pane {
         StatusButton {
             size: StatusButton.Size.Small
             type: StatusBaseButton.Type.Danger
+            objectName: "blockUserButton"
             text: qsTr("Block user")
             onClicked: Global.blockContactRequested(root.publicKey, contactDetails)
         }
@@ -164,6 +165,7 @@ Pane {
         id: btnUnblockUserComponent
         StatusButton {
             size: StatusButton.Size.Small
+            objectName: "unblockUserProfileButton"
             text: qsTr("Unblock user")
             onClicked: Global.unblockContactRequested(root.publicKey, contactDetails)
         }
@@ -375,6 +377,7 @@ Pane {
                         onTriggered: Global.openMarkAsIDVerifiedPopup(root.publicKey, contactDetails, null)
                     }
                     StatusAction {
+                        objectName: "addEditNickNameStatusAction"
                         text: d.userNickName ? qsTr("Edit nickname") : qsTr("Add nickname")
                         icon.name: "edit_pencil"
                         onTriggered: {
@@ -406,6 +409,7 @@ Pane {
                     }
                     StatusAction {
                         text: qsTr("Remove nickname")
+                        objectName: "removeNicknameStatusAction"
                         icon.name: "delete"
                         type: StatusAction.Type.Danger
                         enabled: !d.isCurrentUser && !!contactDetails.localNickname
@@ -447,6 +451,7 @@ Pane {
                     }
                     StatusAction {
                         text: qsTr("Block user")
+                        objectName: "blockUserStatusAction"
                         icon.name: "cancel"
                         type: StatusAction.Type.Danger
                         enabled: !d.isBlocked

@@ -6,8 +6,10 @@ import constants
 import driver
 from gui.components.base_popup import BasePopup
 from gui.components.context_menu import ContextMenu
+from gui.components.settings.block_user_popup import BlockUserPopup
 from gui.components.settings.review_contact_request_popup import AcceptRequestFromProfile
 from gui.components.settings.send_contact_request_popup import SendContactRequestFromProfile
+from gui.components.settings.unblock_user_popup import UnblockUserPopup
 from gui.components.share_profile_popup import ShareProfilePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -105,7 +107,10 @@ class ProfilePopupFromMembers(ProfilePopup):
         self._send_request_button = Button(names.send_contact_request_StatusButton)
         self._review_request_button = Button(names.review_contact_request_StatusButton)
         self._send_message_button = Button(names.send_Message_StatusButton)
+        self._unblock_button = Button(names.unblock_user_StatusButton)
         self._menu_button = Button(names.menuButton_StatusFlatButton)
+        self._block_user_menu_item = Button(names.block_user_StatusMenuItem)
+        self._add_nickname_menu_item = Button(names.add_nickname_StatusMenuItem)
 
     @allure.step('Click send request button')
     def send_request(self):
@@ -134,3 +139,18 @@ class ProfilePopupFromMembers(ProfilePopup):
     def choose_context_menu_option(self, value: str):
         self.click_menu_button()
         ContextMenu().select(value)
+
+    @allure.step('Block user from menu')
+    def block_user(self):
+        self.click_menu_button()
+        self._block_user_menu_item.click()
+        return BlockUserPopup().wait_until_appears()
+
+    @allure.step('Get unblock button visibility state')
+    def is_unblock_button_visible(self):
+        return self._unblock_button.is_visible
+
+    @allure.step('Unblock user from menu')
+    def unblock_user(self):
+        self._unblock_button.click()
+        return UnblockUserPopup().wait_until_appears()

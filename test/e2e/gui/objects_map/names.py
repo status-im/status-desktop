@@ -107,6 +107,9 @@ send_contact_request_StatusButton = {"checkable": False, "container": ProfileCon
 review_contact_request_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "profileDialog_reviewContactRequestButton", "type": "StatusButton", "visible": True}
 profileDialogView_ContentItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialogView", "type": "ContentItem", "visible": True}
 menuButton_StatusFlatButton = {"checkable": False, "container": profileDialogView_ContentItem, "id": "menuButton", "type": "StatusFlatButton", "unnamed": 1, "visible": True}
+block_user_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "blockUserStatusAction", "type": "StatusMenuItem", "visible": True}
+add_nickname_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "addEditNickNameStatusAction", "type": "StatusMenuItem", "visible": True}
+unblock_user_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "unblockUserProfileButton", "type": "StatusButton", "visible": True}
 
 # Share profile popup
 o_Image = {"container": statusDesktop_mainWindow_overlay, "objectName": "profileQRCodeImage", "type": "Image", "visible": True}
@@ -187,9 +190,6 @@ join_StatusButton = { "container": statusDesktop_mainWindow_overlay, "type": "St
 welcome_authenticate_StatusButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 share_your_addresses_to_join_StatusButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 
-# Kick member popup
-confirm_kick_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
-
 # Pinned messages
 unpinButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay, "id": "unpinButton", "type": "StatusFlatRoundButton", "unnamed": 1, "visible": True}
 headerActionsCloseButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerActionsCloseButton", "type": "StatusFlatRoundButton", "visible": True}
@@ -210,6 +210,20 @@ accept_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow
 
 # RemoveContactPopup
 remove_contact_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "removeContactButton", "type": "StatusButton", "visible": True}
+
+# Kick member popup
+confirm_kick_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
+
+# Block user popup
+blockWarningBox_StatusWarningBox = {"container": statusDesktop_mainWindow_overlay, "objectName": "blockWarningBox", "type": "StatusWarningBox", "visible": True}
+youWillNotSeeText_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "youWillNotSeeText", "type": "StatusBaseText", "visible": True}
+block_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "blockButton", "type": "StatusButton", "visible": True}
+cancel_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "cancelButton", "type": "StatusFlatButton", "visible": True}
+
+# Unblock user popup
+unblock_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "unblockUserButton", "type": "StatusButton", "visible": True}
+unblockingText_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "unblockingText", "type": "StatusBaseText", "visible": True}
+cancel_StatusFlatButton_unblock = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "cancelButton", "type": "StatusFlatButton", "visible": True}
 
 """ Common """
 
