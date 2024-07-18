@@ -51,6 +51,7 @@ StatusScrollView {
     property bool isPrivate: false
     property bool holdingsRequired: true
     property bool showChannelSelector: true
+    property bool ensCommunityPermissionsEnabled
 
     // roles: type, key, name, amount, imageSource
     property var selectedHoldingsModel: ListModel {}
@@ -243,6 +244,7 @@ StatusScrollView {
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
                 showTokenAmount: false
+                ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
 
                 function addItem(type, item, amount) {
                     const key = item.key

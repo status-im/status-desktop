@@ -12,6 +12,8 @@ const LSS_KEY_IS_COMMUNITY_TOKENS_ENABLED* = "isExperimentalCommunityTokensEnabl
 const DEFAULT_IS_COMMUNITY_TOKENS_ENABLED = false
 const LSS_KEY_NODE_MANAGEMENT_ENABLED* = "nodeManagementEnabled"
 const DEFAULT_NODE_MANAGEMENT_ENABLED = false
+const LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED* = "ensCommunityPermissionsEnabled"
+const DEFAULT_COMMUNITY_PERMISSIONS_ENABLED = false
 const LSS_KEY_IS_BROWSER_ENABLED* = "isExperimentalBrowserEnabled"
 const DEFAULT_IS_BROWSER_ENABLED = false
 const LSS_KEY_SHOW_ONLINE_USERS* = "showOnlineUsers"
@@ -242,6 +244,18 @@ QtObject:
     read = getIsBrowserEnabled
     write = setIsBrowserEnabled
     notify = isBrowserEnabledChanged
+
+  proc ensCommunityPermissionsEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getEnsCommunityPermissionsEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED, newQVariant(DEFAULT_COMMUNITY_PERMISSIONS_ENABLED))
+  proc setEnsCommunityPermissionsEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED, newQVariant(value)):
+      self.ensCommunityPermissionsEnabledChanged()
+
+  QtProperty[bool] ensCommunityPermissionsEnabled:
+    read = getEnsCommunityPermissionsEnabled
+    write = setEnsCommunityPermissionsEnabled
+    notify = ensCommunityPermissionsEnabledChanged
 
   proc showOnlineUsersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getShowOnlineUsers*(self: LocalAccountSensitiveSettings): bool {.slot.} =
@@ -691,6 +705,7 @@ QtObject:
       of LSS_KEY_WALLET_SPLIT_VIEW: self.walletSplitViewChanged()
       of LSS_KEY_PROFILE_SPLIT_VIEW: self.profileSplitViewChanged()
       of LSS_KEY_NODE_MANAGEMENT_ENABLED: self.nodeManagementEnabledChanged()
+      of LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED: self.ensCommunityPermissionsEnabledChanged()
       of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
       of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()

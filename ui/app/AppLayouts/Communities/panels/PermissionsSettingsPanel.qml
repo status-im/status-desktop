@@ -23,6 +23,7 @@ StackView {
     required property var collectiblesModel
     required property var channelsModel
     property bool showChannelSelector: true
+    property bool ensCommunityPermissionsEnabled
     property alias initialPage: initialItem
 
     // id, name, image, color, owner properties expected
@@ -202,6 +203,7 @@ StackView {
                 communityDetails: root.communityDetails
                 showChannelSelector: root.showChannelSelector
                 isEditState: newPermissionViewPage.isEditState
+                ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
                 holdingsRequired: selectedHoldingsModel
                                   ? selectedHoldingsModel.count > 0 : false
 

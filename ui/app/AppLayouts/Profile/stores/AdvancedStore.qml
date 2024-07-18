@@ -19,6 +19,7 @@ QtObject {
     property int logMaxBackups: advancedModule ? advancedModule.logMaxBackups : 1
     property bool isRuntimeLogLevelSet: advancedModule ? advancedModule.isRuntimeLogLevelSet: false
     readonly property bool archiveProtocolEnabled: advancedModule ? advancedModule.archiveProtocolEnabled : false
+    readonly property bool ensCommunityPermissionsEnabled: localAccountSensitiveSettings.ensCommunityPermissionsEnabled
 
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
 
@@ -162,6 +163,10 @@ QtObject {
         } else {
             advancedModule.enableCommunityHistoryArchiveSupport()
         }
+    }
+
+    function toggleEnsCommunityPermissionsEnabled() {
+        localAccountSensitiveSettings.ensCommunityPermissionsEnabled = !root.ensCommunityPermissionsEnabled
     }
 
     function toggleManageCommunityOnTestnet() {
