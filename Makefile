@@ -148,6 +148,10 @@ endif
 deps: | check-qt-dir deps-common bottles
 
 update: | check-qt-dir update-common
+ifeq ($(detected_OS),Darwin)
+	# Install or update package.json files
+	yarn install --check-files
+endif
 
 QML_DEBUG ?= false
 QML_DEBUG_PORT ?= 49152
@@ -563,8 +567,6 @@ ifeq ($(detected_OS),Darwin)
 		libkeycard.dylib \
 		@rpath/libkeycard.dylib \
 		bin/nim_status_client
-	# Install or update package.json files
-	yarn install --check-files
 endif
 
 nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
