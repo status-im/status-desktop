@@ -311,6 +311,7 @@ SettingsContentBase {
         }
 
         StatusListItem {
+            // Hidden since 2.29 since it's not mature enough
             visible: false
             Layout.preferredWidth: root.contentWidth
             title: qsTr("Identity Verification Requests")

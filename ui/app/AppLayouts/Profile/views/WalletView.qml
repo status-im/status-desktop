@@ -388,7 +388,7 @@ SettingsContentBase {
 
         Component {
             id: experimentalTagComponent
-            StatusExperimentalTag {}
+            StatusBetaTag {}
         }
 
         Component {

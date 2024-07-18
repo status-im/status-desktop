@@ -16,7 +16,7 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        StatusExperimentalTag {
+        StatusBetaTag {
             id: tag
             anchors.centerIn: parent
         }

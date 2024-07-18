@@ -60,9 +60,8 @@ Column {
                 anchors.right: parent.right
                 anchors.rightMargin: 15
 
-                sourceComponent: StatusExperimentalTag {}
+                sourceComponent: StatusBetaTag {}
             }
-           
         }
     }
 

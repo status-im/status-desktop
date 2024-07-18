@@ -115,7 +115,7 @@ RightTabBaseView {
                         width: implicitWidth
                         text: qsTr("Activity")
 
-                        StatusExperimentalTag {
+                        StatusBetaTag {
                             // TODO remove me when Activity is no longer experimental
                             // Keep Activity as the last tab for now as the Experimental tag don't flow 
                             anchors.top: parent.top

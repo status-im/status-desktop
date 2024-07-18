@@ -24,7 +24,7 @@ Item {
         font.pixelSize: 20
         color: Theme.palette.directColor1
 
-        StatusExperimentalTag {
+        StatusBetaTag {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.right
             anchors.leftMargin: 7

@@ -142,7 +142,7 @@ Column {
             }
         ]
 
-        StatusExperimentalTag {
+        StatusBetaTag {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 125
@@ -164,7 +164,7 @@ Column {
             }
         ]
 
-        StatusExperimentalTag {
+        StatusBetaTag {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 135
