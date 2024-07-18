@@ -256,25 +256,13 @@ StatusScrollView {
             }
         }
 
-        RowLayout {
-            spacing: 6
+        NetworkWarningPanel {
             visible: !!root.networkThatIsNotActive
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding
 
-            WarningPanel {
-                id: wantedNetworkNotActive
-                Layout.fillWidth: true
-                text: qsTr("The owner token is minted on a network that isn't selected. Click here to enable it:")
-            }
-
-            StatusButton {
-                text: qsTr("Enable %1").arg(root.networkThatIsNotActive)
-                Layout.alignment: Qt.AlignVCenter
-                onClicked: {
-                    root.enableNetwork()
-                }
-            }
+            networkThatIsNotActive: root.networkThatIsNotActive
+            onEnableNetwork: root.enableNetwork()
         }
 
         CustomSwitchRowComponent {

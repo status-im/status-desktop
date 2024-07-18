@@ -19,6 +19,7 @@ MembersSettingsPanel 1.0 MembersSettingsPanel.qml
 MembersTabPanel 1.0 MembersTabPanel.qml
 MintTokensFooterPanel 1.0 MintTokensFooterPanel.qml
 MintTokensSettingsPanel 1.0 MintTokensSettingsPanel.qml
+NetworkWarningPanel 1.0 NetworkWarningPanel.qml
 OverviewSettingsChart 1.0 OverviewSettingsChart.qml
 OverviewSettingsFooter 1.0 OverviewSettingsFooter.qml
 OverviewSettingsPanel 1.0 OverviewSettingsPanel.qml

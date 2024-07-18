@@ -26,6 +26,7 @@ StatusDialog {
     property int multiplierIndex
     property url tokenSource
     property string chainName
+    property string networkThatIsNotActive
 
     readonly property alias amountToBurn: d.amountToBurn
     readonly property alias selectedAccountAddress: d.accountAddress
@@ -41,6 +42,7 @@ StatusDialog {
 
     signal burnClicked(string burnAmount, string accountAddress)
     signal cancelClicked
+    signal enableNetwork
 
     QtObject {
         id: d
@@ -185,6 +187,14 @@ StatusDialog {
                                                   ? "" : root.feeText
                 readonly property bool error: d.isFeeError
             }
+        }
+
+        NetworkWarningPanel {
+            visible: !!root.networkThatIsNotActive
+            Layout.fillWidth: true
+
+            networkThatIsNotActive: root.networkThatIsNotActive
+            onEnableNetwork: root.enableNetwork()
         }
     }
 

@@ -49,17 +49,18 @@ StackView {
     // It will monitorize if Owner and/or TMaster token items are included in the `tokensModel` despite the deployment state
     property bool ownerOrTMasterTokenItemsExist: false
 
+    // Network related properties:
+    property var flatNetworks
+    readonly property int ownerTokenChainId: SQUtils.ModelUtils.get(root.tokensModel, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner).chainId ?? 0
+    readonly property int chainIndex: NetworkModelHelpers.getChainIndexByChainId(root.flatNetworks, root.ownerTokenChainId)
+    readonly property string chainName: NetworkModelHelpers.getChainName(root.flatNetworks, chainIndex)
     property string enabledChainIds
-    property string networkThatIsNotActive
 
     // Models:
     property var tokensModel
     property var membersModel
     property var accounts // Expected roles: address, name, color, emoji, walletType
     required property var referenceAssetsBySymbolModel
-
-    // Network related properties:
-    property var flatNetworks
 
     signal mintCollectible(var collectibleItem)
     signal mintAsset(var assetItem)
@@ -127,6 +128,8 @@ StackView {
     QtObject {
         id: d
 
+        property string networkThatIsNotActive
+
         // Owner or TMaster token retry navigation
         function retryPrivilegedToken(key, chainId, accountName, accountAddress) {
             var properties = {
@@ -138,6 +141,18 @@ StackView {
 
             root.push(ownerTokenEditViewComponent, properties,
                       StackView.Immediate)
+        }
+    }
+
+    onVisibleChanged: {
+        if (!visible) {
+            return
+        }
+        // If the tokens' network is not activated, show a warning to the user
+        if (!root.enabledChainIds.includes(root.ownerTokenChainId)) {
+            d.networkThatIsNotActive = root.chainName
+        } else {
+            d.networkThatIsNotActive = ""
         }
     }
 
@@ -281,37 +296,25 @@ StackView {
         SettingsPage {
             id: newTokenPage
 
-            readonly property int ownerTokenChainId: SQUtils.ModelUtils.get(root.tokensModel, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner).chainId ?? 0
-            readonly property int chainIndex: NetworkModelHelpers.getChainIndexByChainId(root.flatNetworks, ownerTokenChainId)
-            readonly property string chainName: NetworkModelHelpers.getChainName(root.flatNetworks, chainIndex)
-            readonly property string chainIcon: NetworkModelHelpers.getChainIconUrl(root.flatNetworks, chainIndex)
+            readonly property string chainIcon: NetworkModelHelpers.getChainIconUrl(root.flatNetworks, root.chainIndex)
 
             property TokenObject asset: TokenObject{
                 type: Constants.TokenType.ERC20
                 multiplierIndex: 18
 
                 // Minted tokens will use ALWAYS the same chain where the owner token was deployed.
-                chainId: newTokenPage.ownerTokenChainId
-                chainName: newTokenPage.chainName
-                chainIcon: newTokenPage.chainIconownerTokenChainId
+                chainId: root.ownerTokenChainId
+                chainName: root.chainName
+                chainIcon: newTokenPage.chainIcon
             }
 
             property TokenObject collectible: TokenObject {
                 type: Constants.TokenType.ERC721
 
                 // Minted tokens will use ALWAYS the same chain where the owner token was deployed.
-                chainId: newTokenPage.ownerTokenChainId
-                chainName: newTokenPage.chainName
+                chainId: root.ownerTokenChainId
+                chainName: root.chainName
                 chainIcon: newTokenPage.chainIcon
-            }
-
-            Component.onCompleted: {
-                 // If the tokens' network is not activated, show a warning to the user
-                if (!root.enabledChainIds.includes(newTokenPage.ownerTokenChainId)) {
-                    root.networkThatIsNotActive = newTokenPage.chainName
-                } else {
-                    root.networkThatIsNotActive = ""
-                }
             }
 
             property bool isAssetView: false
@@ -385,10 +388,10 @@ StackView {
                         feeErrorText: deployFeeSubscriber.feeErrorText
                         isFeeLoading: !deployFeeSubscriber.feesResponse
 
-                        networkThatIsNotActive: root.networkThatIsNotActive
+                        networkThatIsNotActive: d.networkThatIsNotActive
                         onEnableNetwork: {
-                            root.enableNetwork(newTokenPage.ownerTokenChainId)
-                            root.networkThatIsNotActive = ""
+                            root.enableNetwork(root.ownerTokenChainId)
+                            d.networkThatIsNotActive = ""
                         }
 
                         onPreviewClicked: {
@@ -799,7 +802,13 @@ StackView {
 
                 feeText: remotelyDestructFeeSubscriber.feeText
                 feeErrorText: remotelyDestructFeeSubscriber.feeErrorText
-                isFeeLoading: !remotelyDestructFeeSubscriber.feesResponse          
+                isFeeLoading: !remotelyDestructFeeSubscriber.feesResponse
+
+                networkThatIsNotActive: d.networkThatIsNotActive
+                onEnableNetwork: {
+                    root.enableNetwork(root.ownerTokenChainId)
+                    d.networkThatIsNotActive = ""
+                }
                 
                 onRemotelyDestructClicked: {
                     remotelyDestructPopup.close()
@@ -830,6 +839,12 @@ StackView {
                 multiplierIndex: footer.token.multiplierIndex
                 tokenSource: footer.token.artworkSource
                 chainName: footer.token.chainName
+
+                networkThatIsNotActive: d.networkThatIsNotActive
+                onEnableNetwork: {
+                    root.enableNetwork(root.ownerTokenChainId)
+                    d.networkThatIsNotActive = ""
+                }
 
                 onAmountToBurnChanged: burnTokensFeeSubscriber.updateAmount()
 

@@ -46,8 +46,6 @@ StatusScrollView {
     required property bool feesAvailable
 
     property string enabledChainIds
-    property string networkThatIsNotActive
-    property int networkIdThatIsNotActive
 
     property int viewWidth: 560 // by design
 
@@ -130,6 +128,9 @@ StatusScrollView {
         readonly property bool showFees: root.selectedHoldingsModel.count > 0
                                          && airdropRecipientsSelector.valid
                                          && airdropRecipientsSelector.count > 0
+
+        property string networkThatIsNotActive
+        property int networkIdThatIsNotActive
 
         readonly property var selectedContractKeysAndAmounts: {
             //Depedencies:
@@ -299,14 +300,14 @@ StatusScrollView {
                                 root.selectedHoldingsModel, ["key", "amount"])
                 }
 
-                function checkIfWeShouldShowNetworkWarning(entry) {
+                function isChainEnabled(entry) {
                     // If the tokens' network is not activated, show a warning to the user
-                    if (!root.enabledChainIds.includes(entry.networkId)) {
-                        root.networkThatIsNotActive = entry.networkText
-                        root.networkIdThatIsNotActive = entry.networkId
+                    if (!!entry && !root.enabledChainIds.includes(entry.networkId)) {
+                        d.networkThatIsNotActive = entry.networkText
+                        d.networkIdThatIsNotActive = entry.networkId
                     } else {
-                        root.networkThatIsNotActive = ""
-                        root.networkIdThatIsNotActive = 0
+                        d.networkThatIsNotActive = ""
+                        d.networkIdThatIsNotActive = 0
                     }
                 }
 
@@ -317,7 +318,7 @@ StatusScrollView {
                     selectedHoldingsModel.append(entry)
                     dropdown.close()
 
-                    checkIfWeShouldShowNetworkWarning(entry)
+                    isChainEnabled(entry)
                 }
 
                 onAddCollectible: {
@@ -327,7 +328,7 @@ StatusScrollView {
                     selectedHoldingsModel.append(entry)
                     dropdown.close()
 
-                    checkIfWeShouldShowNetworkWarning(entry)
+                    isChainEnabled(entry)
                 }
 
                 onUpdateAsset: {
@@ -576,27 +577,15 @@ StatusScrollView {
                      recipientsCountInstantiator.maximumRecipientsCount < airdropRecipientsSelector.count
         }
 
-        RowLayout {
-            spacing: 6
-            visible: !!root.networkThatIsNotActive
+        NetworkWarningPanel {
+            visible: !!d.networkThatIsNotActive
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding
-
-            WarningPanel {
-                id: wantedNetworkNotActive
-                Layout.fillWidth: true
-                text: qsTr("The token you selected is on a Network that you haven't selected in the Wallet. Click here to enable it:")
-
-            }
-
-            StatusButton {
-                text: qsTr("Enable %1").arg(root.networkThatIsNotActive)
-                Layout.alignment: Qt.AlignVCenter
-                onClicked: {
-                    root.enableNetwork(root.networkIdThatIsNotActive)
-                    root.networkThatIsNotActive = ""
-                    root.networkIdThatIsNotActive = 0
-                }
+            networkThatIsNotActive: d.networkThatIsNotActive
+            onEnableNetwork: {
+                root.enableNetwork(d.networkIdThatIsNotActive)
+                d.networkThatIsNotActive = ""
+                d.networkIdThatIsNotActive = 0
             }
         }
 

@@ -19,6 +19,7 @@ StatusDialog {
     property alias model: tokenHoldersPanel.model
     property string collectibleName
     property string chainName
+    property string networkThatIsNotActive
 
     // Fees related properties:
     property bool isFeeLoading
@@ -38,6 +39,7 @@ StatusDialog {
     property var accounts
 
     signal remotelyDestructClicked(var walletsAndAmounts, string accountAddress)
+    signal enableNetwork
 
     QtObject {
         id: d
@@ -103,7 +105,7 @@ StatusDialog {
             id: feesBox
 
             Layout.fillWidth: true
-            Layout.bottomMargin: 16
+            Layout.bottomMargin: networkWarningPanel.visible ? 0 : 16
             Layout.leftMargin: 16
             Layout.rightMargin: 16
 
@@ -128,6 +130,19 @@ StatusDialog {
                                                       "" : root.feeText
                 readonly property bool error: d.isFeeError
             }
+        }
+
+        NetworkWarningPanel {
+            id: networkWarningPanel
+
+            visible: !!root.networkThatIsNotActive
+            Layout.fillWidth: true
+            Layout.bottomMargin: 16
+            Layout.leftMargin: 18
+            Layout.rightMargin: 18
+
+            networkThatIsNotActive: root.chainName
+            onEnableNetwork: root.enableNetwork()
         }
     }
 
