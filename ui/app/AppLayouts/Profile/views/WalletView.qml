@@ -148,6 +148,7 @@ SettingsContentBase {
             root.titleRowComponentLoader.sourceComponent = undefined
             root.titleRowLeftComponentLoader.sourceComponent = undefined
             root.titleRowLeftComponentLoader.visible = false
+            root.stickTitleRowComponentLoader = false
             root.titleLayout.spacing = 5
 
             if (currentIndex == root.mainViewIndex) {
@@ -174,11 +175,15 @@ SettingsContentBase {
             } else if(currentIndex == root.accountOrderViewIndex) {
                 root.rootStore.backButtonName = root.walletSectionTitle
                 root.sectionTitle = qsTr("Edit account order")
+                root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
+                root.stickTitleRowComponentLoader = true
 
             } else if(currentIndex == root.manageTokensViewIndex) {
                 root.rootStore.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Manage tokens")
+                root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
+                root.stickTitleRowComponentLoader = true
             } else if(currentIndex == root.savedAddressesViewIndex) {
                 root.rootStore.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
@@ -379,6 +384,11 @@ SettingsContentBase {
                 text: qsTr("Add new account")
                 onClicked: root.walletStore.runAddAccountPopup()
             }
+        }
+
+        Component {
+            id: experimentalTagComponent
+            StatusBetaTag {}
         }
 
         Component {

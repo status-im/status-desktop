@@ -23,6 +23,8 @@ FocusScope {
     default property alias content: contentWrapper.children
     property alias titleLayout: titleLayout
 
+    property bool stickTitleRowComponentLoader: false
+
     property bool dirty: false
 
     // Used to configure the dirty behaviour of the settings page as a must blocker notification when
@@ -84,7 +86,7 @@ FocusScope {
             }
 
             StatusBaseText {
-                Layout.fillWidth: true
+                Layout.fillWidth: !root.stickTitleRowComponentLoader
                 text: root.sectionTitle
                 font.weight: Font.Bold
                 font.pixelSize: Constants.settingsSection.mainHeaderFontSize
@@ -93,6 +95,7 @@ FocusScope {
 
             Loader {
                 id: loader
+                Layout.leftMargin: root.stickTitleRowComponentLoader ? 8 : 0
             }
         }
         Control {

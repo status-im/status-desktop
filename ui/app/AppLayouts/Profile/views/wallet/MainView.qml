@@ -141,6 +141,12 @@ Column {
                 color: Theme.palette.baseColor1
             }
         ]
+
+        StatusBetaTag {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 125
+        }
     }
 
     Separator {}
@@ -157,6 +163,12 @@ Column {
                 color: Theme.palette.baseColor1
             }
         ]
+
+        StatusBetaTag {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 135
+        }
     }
 
     Separator {}

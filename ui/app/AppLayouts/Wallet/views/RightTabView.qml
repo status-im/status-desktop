@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -113,6 +114,15 @@ RightTabBaseView {
                         rightPadding: 0
                         width: implicitWidth
                         text: qsTr("Activity")
+
+                        StatusBetaTag {
+                            // TODO remove me when Activity is no longer experimental
+                            // Keep Activity as the last tab for now as the Experimental tag don't flow 
+                            anchors.top: parent.top
+                            anchors.topMargin: 6
+                            anchors.left: parent.right
+                            anchors.leftMargin: 5
+                        }
                     }
                     onCurrentIndexChanged: {
                         RootStore.setCurrentViewedHoldingType(walletTabBar.currentIndex === 1 ? Constants.TokenType.ERC721 : Constants.TokenType.ERC20)

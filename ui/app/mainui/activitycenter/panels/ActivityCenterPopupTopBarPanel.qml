@@ -6,6 +6,7 @@ import utils 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
@@ -54,7 +55,8 @@ Item {
                              { text: qsTr("Mentions"), group: ActivityCenterStore.ActivityCenterGroup.Mentions, visible: true, enabled: root.hasMentions },
                              { text: qsTr("Replies"), group: ActivityCenterStore.ActivityCenterGroup.Replies, visible: true, enabled: root.hasReplies },
                              { text: qsTr("Contact requests"), group: ActivityCenterStore.ActivityCenterGroup.ContactRequests, visible: true, enabled: root.hasContactRequests },
-                             { text: qsTr("Identity verification"), group: ActivityCenterStore.ActivityCenterGroup.IdentityVerification, visible: true, enabled: root.hasIdentityVerification },
+                             // Hidden since 2.29 since it's not mature enough
+                             { text: qsTr("Identity verification"), group: ActivityCenterStore.ActivityCenterGroup.IdentityVerification, visible: false, enabled: root.hasIdentityVerification },
                              { text: qsTr("Transactions"), group: ActivityCenterStore.ActivityCenterGroup.Transactions, visible: false, enabled: true },
                              { text: qsTr("Membership"), group: ActivityCenterStore.ActivityCenterGroup.Membership, visible: true, enabled: root.hasMembership },
                              { text: qsTr("System"), group: ActivityCenterStore.ActivityCenterGroup.System, visible: false, enabled: true } ]
@@ -73,6 +75,8 @@ Item {
                 }
             }
         }
+
+        StatusBetaTag {}
 
         StatusFlatRoundButton {
             id: markAllReadBtn
