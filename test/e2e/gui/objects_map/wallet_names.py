@@ -42,6 +42,7 @@ arrow_icon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "objectN
 collectible_item = {"container": mainWindow_RightTabView, "type": "CollectibleView", "unnamed": 1, "visible": True}
 mainWindow_settingsContentBaseScrollView_StatusScrollView_general = {"container":  statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 settingsContentBaseScrollView_manageTokensDelegate_ManageTokensDelegate = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView_general, "objectName": RegularExpression("manageTokensDelegate-*"), "type": "ManageTokensDelegate", "visible": True}
+tabBar_Assets_StatusTabButton = {"checkable": True, "container": mainWindow_settingsContentBaseScrollView_StatusScrollView_general, "objectName": "assetsButton", "type": "StatusTabButton", "unnamed": 1, "visible": True}
 
 mainWindow_Save_and_apply_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "text": "Save and apply", "type": "StatusButton", "visible": True}
 mainWindow_Save_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow, "id": "saveForLaterButton", "text": "Save", "type": "StatusFlatButton", "unnamed": 1, "visible": True}

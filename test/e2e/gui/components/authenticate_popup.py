@@ -13,7 +13,7 @@ class AuthenticatePopup(BasePopup):
     def __init__(self):
         super().__init__()
         self._authenticate_popup_content = QObject(names.keycardSharedPopupContent_KeycardPopupContent)
-        self._password_text_edit = TextEdit(names.sharedPopup_Password_Input)
+        self._password_text_edit = TextEdit(names.password_PlaceholderText)
         self._authenticate_button = Button(names.authenticate_StatusButton)
         self._primary_button = Button(names.sharedPopup_Primary_Button)
         self._close_button = Button(names.headerCloseButton_StatusFlatRoundButton)
@@ -27,7 +27,7 @@ class AuthenticatePopup(BasePopup):
     def authenticate(self, password: str):
         self._password_text_edit.type_text(password)
         # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._authenticate_button.click(timeout=10)
+        self._primary_button.click(timeout=10)
         self._authenticate_button.wait_until_hidden(10000)
 
     @allure.step('Check if authenticate button is present')

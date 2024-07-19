@@ -44,6 +44,11 @@ class WalletSettingsView(QObject):
         self._wallet_settings_total_balance_toggle = CheckBox(settings_names.settingsWalletAccountTotalBalanceToggle)
         self._rename_keypair_menu_item = QObject(settings_names.rename_keypair_StatusMenuItem)
 
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._wallet_settings_add_new_account_button.wait_until_appears(timeout_msec)
+        return self
+
     @allure.step('Open add account pop up in wallet settings')
     def open_add_account_pop_up(self, attempts: int = 2) -> 'AccountPopup':
         self._wallet_settings_add_new_account_button.click()
@@ -89,9 +94,15 @@ class WalletSettingsView(QObject):
                 raise err
 
     @allure.step('Open account order in wallet settings')
-    def open_account_order(self):
+    def open_account_order(self, attempts: int = 2):
         self._account_order_button.click()
-        return EditAccountOrderSettings().wait_until_appears()
+        try:
+            return EditAccountOrderSettings().wait_until_appears()
+        except Exception as err:
+            if attempts:
+                return self.open_account_order(attempts - 1)
+            else:
+                raise err
 
     @allure.step('Get keypair settings_names')
     def get_keypairs_names(self):
@@ -156,6 +167,11 @@ class AccountDetailsView(WalletSettingsView):
         self._wallet_account_derivation_path = QObject(settings_names.walletAccountViewDerivationPath)
         self._wallet_account_stored = TextLabel(settings_names.walletAccountViewStored)
         self._wallet_preferred_networks = QObject(settings_names.walletAccountViewPreferredNetworks)
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._edit_account_button.wait_until_appears(timeout_msec)
+        return self
 
     @allure.step('Click Edit button')
     def click_edit_account_button(self):
@@ -228,6 +244,11 @@ class SavedAddressesWalletSettings(WalletSettingsView):
         super(SavedAddressesWalletSettings, self).__init__()
         self.add_new_address_button = Button(settings_names.settings_Wallet_SavedAddresses_AddAddressButton)
         self.saved_address_item = QObject(settings_names.settings_Wallet_SavedAddress_ItemDelegate)
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self.add_new_address_button.wait_until_appears(timeout_msec)
+        return self
 
     @allure.step('Click add new address button')
     def open_add_saved_address_popup(self, attempt: int = 2) -> 'AddressPopup':
@@ -334,6 +355,11 @@ class EditNetworkSettings(WalletSettingsView):
     def click_network_back(self):
         self._network_edit_view_back_button.click()
         return NetworkWalletSettings().wait_until_appears()
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._live_network_tab.wait_until_appears(timeout_msec)
+        return self
 
     @allure.step('Select Live Network tab')
     def click_live_network_tab(self):
@@ -521,6 +547,11 @@ class EditAccountOrderSettings(WalletSettingsView):
         self._text_item = QObject(settings_names.settingsContentBaseScrollView_StatusBaseText)
         self._back_button = Button(settings_names.main_toolBar_back_button)
 
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._account_item.wait_until_appears(timeout_msec)
+        return self
+
     @property
     @allure.step('Get edit account order recommendations')
     def account_recommendations(self):
@@ -580,6 +611,12 @@ class ManageTokensSettingsView(WalletSettingsView):
         super(ManageTokensSettingsView, self).__init__()
         self._window_item = QObject(wallet_names.statusDesktop_mainWindow)
         self._token_item = QObject(wallet_names.settingsContentBaseScrollView_manageTokensDelegate_ManageTokensDelegate)
+        self._assets_button = Button(wallet_names.tabBar_Assets_StatusTabButton)
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._assets_button.wait_until_appears(timeout_msec)
+        return self
 
     @property
     @allure.step('Get tokens')

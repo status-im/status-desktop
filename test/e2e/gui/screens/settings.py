@@ -3,6 +3,7 @@ import time
 import allure
 
 import configs.system
+import driver
 from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
@@ -48,6 +49,11 @@ class LeftPanel(QObject):
         self.settings_section_back_up_seed_option = QObject(settings_names.settingsBackUpSeedPhraseOption)
         self._settings_section_wallet_option = QObject(settings_names.settingsWalletOption)
 
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._settings_section_template.wait_until_appears(timeout_msec)
+        return self
+
     def _open_settings(self, object_name: str):
         self._settings_section_template.real_name['objectName'] = object_name
         if not self._settings_section_template.is_visible:
@@ -57,7 +63,7 @@ class LeftPanel(QObject):
     @allure.step('Open messaging settings')
     @handle_settings_opening(MessagingSettingsView, '4-AppMenuItem')
     def open_messaging_settings(self, click_attempts: int = 2) -> 'MessagingSettingsView':
-        assert MessagingSettingsView().exists, 'Messaging settings view was not opened'
+        assert MessagingSettingsView().wait_until_appears(), 'Messaging settings view was not opened'
         return MessagingSettingsView()
 
     @allure.step('Open communities settings')
@@ -69,7 +75,7 @@ class LeftPanel(QObject):
     @allure.step('Open wallet settings')
     @handle_settings_opening(WalletSettingsView, '5-AppMenuItem')
     def open_wallet_settings(self, click_attempts: int = 2) -> 'WalletSettingsView':
-        assert WalletSettingsView().exists, 'Wallet settings view was not opened'
+        assert WalletSettingsView().wait_until_appears(), 'Wallet settings view was not opened'
         return WalletSettingsView()
 
     @allure.step('Open profile settings')
@@ -105,7 +111,7 @@ class LeftPanel(QObject):
     @allure.step('Open keycard settings')
     @handle_settings_opening(KeycardSettingsView, '14-MainMenuItem')
     def open_keycard_settings(self, click_attempts: int = 2) -> 'KeycardSettingsView':
-        assert KeycardSettingsView().exists, 'Keycard settings view was not opened'
+        assert KeycardSettingsView().wait_until_appears(), f'Keycard settings view was not opened'
         return KeycardSettingsView()
 
     @allure.step('Open ENS usernames settings')

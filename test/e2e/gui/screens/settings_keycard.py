@@ -21,6 +21,11 @@ class KeycardSettingsView(QObject):
         self._check_whats_on_keycard_button = Button(settings_names.checkWhatsNewKeycard_StatusListItem)
         self._factory_reset_keycard_button = Button(settings_names.factoryResetKeycard_StatusListItem)
 
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._create_new_keycard_account_button.wait_until_appears(timeout_msec)
+        return self
+
     @allure.step('Check that keycard screen displayed')
     def check_keycard_screen_loaded(self):
         assert KeycardSettingsView().is_visible
@@ -32,21 +37,25 @@ class KeycardSettingsView(QObject):
 
     @allure.step('Choose import or restore keycard via seed phrase')
     def click_import_restore_via_seed_phrase(self):
+        self._scroll.vertical_scroll_down(self._import_restore_via_seed_phrase_button)
         self._import_restore_via_seed_phrase_button.click()
         return KeycardPopup().wait_until_appears()
 
     @allure.step('Choose setup keycard with an existing account')
     def click_setup_keycard_with_existing_account(self):
+        self._scroll.vertical_scroll_down(self._setup_keycard_with_existing_account_button)
         self._setup_keycard_with_existing_account_button.click()
         return KeycardPopup().wait_until_appears()
 
     @allure.step('Choose check whats on keycard')
     def click_check_whats_on_keycard(self):
+        self._scroll.vertical_scroll_down(self._check_whats_on_keycard_button)
         self._check_whats_on_keycard_button.click()
         return KeycardPopup().wait_until_appears()
 
     @allure.step('Choose factory reset a keycard')
     def click_factory_reset_keycard(self):
+        self._scroll.vertical_scroll_down(self._factory_reset_keycard_button)
         self._factory_reset_keycard_button.click()
         return KeycardPopup().wait_until_appears()
 
@@ -58,6 +67,7 @@ class KeycardSettingsView(QObject):
         self._scroll.vertical_scroll_down(self._import_from_keycard_button)
         assert driver.waitFor(lambda: self._import_from_keycard_button.is_visible,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Import keycard button not visible'
+        self._scroll.vertical_scroll_down(self._check_whats_on_keycard_button)
         assert driver.waitFor(lambda: self._check_whats_on_keycard_button.is_visible,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Check whats new keycard button not visible'
         self._scroll.vertical_scroll_down(self._factory_reset_keycard_button)

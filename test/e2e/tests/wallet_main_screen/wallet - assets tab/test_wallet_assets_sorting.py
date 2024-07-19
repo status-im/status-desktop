@@ -151,6 +151,7 @@ def test_wallet_sort_assets(main_screen: MainWindow, address, name, dai, wrapped
     pytest.param('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 'AssetsCollectibles', 'Dai Stablecoin', 'Wrapped Ether',
                  'Status Test Token', 'Ether')
 ])
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/15655")
 def test_custom_ordering(main_screen: MainWindow, address, name, dai, wrappedeth, stt, eth):
     with step('Turn on Testnet mode'):
         networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
@@ -163,13 +164,13 @@ def test_custom_ordering(main_screen: MainWindow, address, name, dai, wrappedeth
         account_popup.set_name(name).set_origin_watched_address(address).save_changes()
         account_popup.wait_until_hidden()
 
-    with step(
-            'Choose Create custom order in sorting dropdown and verify Manage tokens view appears'):
+    with (step(
+            'Choose Create custom order in sorting dropdown and verify Manage tokens view appears')):
         wallet_account_view = WalletAccountView()
         sorting = wallet_account_view.open_assets_tab().click_filter_button()
         sorting.choose_sort_by_value('Create custom order →')
         manage_tokens = ManageTokensSettingsView()
-        assert manage_tokens.exists, 'Manage tokens view was not opened'
+        ManageTokensSettingsView().wait_until_appears(), 'Manage tokens view was not opened'
 
     with step('Drag first token to the end of the list and save changes'):
         manage_tokens.drag_token(dai, 3)

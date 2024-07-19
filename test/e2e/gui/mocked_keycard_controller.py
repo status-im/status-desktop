@@ -33,13 +33,14 @@ class MockedKeycardController(Window):
         self._max_slots_reached_item = QObject(names.max_Pairing_Slots_Reached_StatusMenuItem)
         self._mnemonic_metadata_item = QObject(names.keycard_With_Mnemonic_Metadata_StatusMenuItem)
         self._field_object = QObject(names.keycard_edit_TextEdit)
-        self._scroll = Scroll(names.keycardFlickable)
+        self._scroll = Scroll(names.keycardSettingsTab)
+        self._scroll_flick = Scroll(names.keycardFlickable)
+
 
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._plugin_reader_button.exists, timeout_msec)
         return self
 
-    @property
     @allure.step('Get text fields')
     def get_text_fields(self) -> typing.List[str]:
         return driver.findAllObjects(self._field_object.real_name)
@@ -54,8 +55,7 @@ class MockedKeycardController(Window):
     @allure.step('Click Register keycard')
     def register_keycard(self):
         time.sleep(1)
-        if not self._register_keycard_button.is_visible:
-            self._scroll.vertical_down_to(self._register_keycard_button)
+        self._scroll_flick.vertical_down_to(self._register_keycard_button)
         self._register_keycard_button.click()
         time.sleep(1)
         return self
@@ -64,7 +64,7 @@ class MockedKeycardController(Window):
     def remove_keycard(self):
         time.sleep(1)
         if not self._remove_keycard_button.is_visible:
-            self._scroll.vertical_down_to(self._remove_keycard_button)
+            self._scroll.vertical_scroll_down(self._remove_keycard_button)
         self._remove_keycard_button.click()
         time.sleep(1)
         return self
@@ -86,10 +86,12 @@ class MockedKeycardController(Window):
 
     @allure.step('Input custom keycard details to custom text field')
     def input_custom_keycard_details(self, details: str, index: int):
-        fields = self.get_text_fields
+        fields = self.get_text_fields()
         self._scroll.vertical_scroll_down(QObject(real_name=driver.objectMap.realName(fields[index])))
         driver.type(fields[index], details)
+        driver.waitFor(lambda: fields[index].text != '', configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         time.sleep(1)
+        return self
 
     @allure.step('Choose not Status keycard from initial keycard state dropdown')
     def choose_not_status_keycard(self):
