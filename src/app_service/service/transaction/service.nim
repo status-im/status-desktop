@@ -113,6 +113,8 @@ type
   SuggestedRoutesArgs* = ref object of Args
     uuid*: string
     suggestedRoutes*: SuggestedRoutesDto
+    errCode*: string
+    errDescription*: string
 
 type
   CryptoServicesArgs* = ref object of Args
@@ -131,7 +133,7 @@ QtObject:
     tokenService: token_service.Service
 
   ## Forward declarations
-  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, error: string, errCode: string)
+  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -162,7 +164,7 @@ QtObject:
 
     self.events.on(SignalType.WalletSuggestedRoutes.event) do(e:Args):
       var data = WalletSignal(e)
-      self.suggestedRoutesV2Ready(data.uuid, data.bestRoute, data.bestRouteRaw, data.error, data.errorCode)
+      self.suggestedRoutesV2Ready(data.uuid, data.bestRoute, data.bestRouteRaw, data.errorCode, data.error)
 
     self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
       try:
@@ -578,7 +580,7 @@ QtObject:
     except Exception as e:
       error "Error getting suggested fees", msg = e.msg
 
-  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, error: string, errCode: string) =
+  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string) =
     # TODO: refactor sending modal part of the app, but for now since we're integrating the router v2 just map params to the old dto
 
     var oldRoute = convertToOldRoute(route)
@@ -590,7 +592,12 @@ QtObject:
       amountToReceive: getTotalAmountToReceive(oldRoute),
       toNetworks: getToNetworksList(oldRoute),
     )
-    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(uuid: uuid, suggestedRoutes: suggestedDto))
+    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(
+      uuid: uuid, 
+      suggestedRoutes: suggestedDto,
+      errCode: errCode,
+      errDescription: errDescription
+    ))
 
   proc suggestedRoutes*(self: Service,
     uuid: string,

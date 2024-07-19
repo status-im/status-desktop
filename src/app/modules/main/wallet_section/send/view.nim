@@ -18,6 +18,8 @@ QtObject:
       fromNetworksRouteModel: NetworkRouteModel
       toNetworksRouteModel: NetworkRouteModel
       transactionRoutes: TransactionRoutes
+      errCode: string
+      errDescription: string
       selectedAssetKey: string
       selectedToAssetKey: string
       showUnPreferredChains: bool
@@ -194,10 +196,12 @@ QtObject:
     self.delegate.authenticateAndTransfer(self.selectedSenderAccountAddress, self.selectedRecipient, self.selectedAssetKey,
       self.selectedToAssetKey, uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
 
-  proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant) {.signal.}
-  proc setTransactionRoute*(self: View, routes: TransactionRoutes) =
+  proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant, errCode: string, errDescription: string) {.signal.}
+  proc setTransactionRoute*(self: View, routes: TransactionRoutes, errCode: string, errDescription: string) =
     self.transactionRoutes = routes
-    self.suggestedRoutesReady(newQVariant(self.transactionRoutes))
+    self.errCode = errCode
+    self.errDescription = errDescription
+    self.suggestedRoutesReady(newQVariant(self.transactionRoutes), errCode, errDescription)
 
   proc suggestedRoutes*(self: View, amountIn: string, amountOut: string, extraParamsJson: string) {.slot.} =
     var extraParamsTable: Table[string, string]

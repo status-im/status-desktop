@@ -12,6 +12,8 @@ QtObject {
     // TODO: this should be string but backend gas_estimate_item.nim passes this as float
     property real totalFees: 0
     property bool hasError
+    property string errCode
+    property string errDescription
     property var rawPaths: []
     // need to check how this is done in new router v2, right now it is Enum type
     property int estimatedTime
@@ -23,6 +25,8 @@ QtObject {
 
     function resetPathInfoAndError() {
         root.hasError = false
+        root.errCode = ""
+        root.errDescription = ""
         root.rawPaths = []
     }
 

@@ -241,9 +241,11 @@ SplitView {
                             amountToReceive: txStore.amountToSend - (txStore.amountToSend*5/100),
                             toNetworksRouteModel: dummyEventData.toModel
                         }
+                        let errCode = ""
+                        let errDescription = ""
                         txStore.fromNetworksRouteModel.updateFromNetworks(dummyEventData.suggestesRoutes)
                         txStore.toNetworksRouteModel.updateToNetworks(dummyEventData.suggestesRoutes)
-                        txStore.walletSectionSendInst.suggestedRoutesReady(txRoutes)
+                        txStore.walletSectionSendInst.suggestedRoutesReady(txRoutes, errCode, errDescription)
                         txStore.suggestedRoutesCalled = false
                     }
                 }

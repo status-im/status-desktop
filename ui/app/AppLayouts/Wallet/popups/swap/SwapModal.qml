@@ -55,6 +55,8 @@ StatusDialog {
             root.swapAdaptor.swapOutputData.resetPathInfoAndError()
             debounceFetchSuggestedRoutes()
         }
+
+        readonly property bool isError: root.swapAdaptor.errorMessage !== ""
     }
 
     Connections {
@@ -227,6 +229,9 @@ StatusDialog {
                             root.swapInputParamsForm.fromTokenAmount = amount
                         }
                     }
+                    onAmountEnteredGreaterThanBalanceChanged: {
+                        root.swapAdaptor.amountEnteredGreaterThanBalance = payPanel.amountEnteredGreaterThanBalance
+                    }
                 }
 
                 SwapInputPanel {
@@ -301,18 +306,12 @@ StatusDialog {
 
             ErrorTag {
                 objectName: "errorTag"
-                visible: root.swapAdaptor.swapOutputData.hasError || payPanel.amountEnteredGreaterThanBalance
+                visible: d.isError
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Style.current.smallPadding
-                text: {
-                    if (root.swapAdaptor.swapOutputData.hasError) {
-                      return qsTr("An error has occured, please try again")
-                    } else if (payPanel.amountEnteredGreaterThanBalance) {
-                        return qsTr("Insufficient funds for swap")
-                    }
-                }
-                buttonText: qsTr("Buy crypto")
-                buttonVisible: !root.swapAdaptor.swapOutputData.hasError && payPanel.amountEnteredGreaterThanBalance
+                text: root.swapAdaptor.errorMessage
+                buttonText: root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Buy crypto") : qsTr("Buy ETH")
+                buttonVisible: visible && (root.swapAdaptor.isTokenBalanceInsufficient || root.swapAdaptor.isEthBalanceInsufficient)
                 onButtonClicked: Global.openBuyCryptoModalRequested()
             }
         }
@@ -407,7 +406,7 @@ StatusDialog {
                     disabledColor: Theme.palette.directColor8
                     enabled: root.swapAdaptor.validSwapProposalReceived &&
                              editSlippagePanel.valid &&
-                             !payPanel.amountEnteredGreaterThanBalance &&
+                             !d.isError &&
                              !root.swapAdaptor.approvalPending
                     onClicked: {
                         if (root.swapAdaptor.validSwapProposalReceived) {

@@ -27,6 +27,9 @@ QObject {
     property bool approvalPending: false
     property bool approvalSuccessful: false
 
+    // the below property holds internal checks done by the SwapModal
+    property bool amountEnteredGreaterThanBalance: false
+
     // To expose the selected from and to Token from the SwapModal
     readonly property var fromToken: fromTokenEntry.item
     readonly property var toToken: toTokenEntry.item
@@ -77,6 +80,10 @@ QObject {
         sourceModel: root.swapStore.flatNetworks
         filters: ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled }
     }
+
+    readonly property string errorMessage: d.errorMessage
+    readonly property bool isEthBalanceInsufficient: d.isEthBalanceInsufficient
+    readonly property bool isTokenBalanceInsufficient: d.isTokenBalanceInsufficient
 
     signal suggestedRoutesReady()
 
@@ -130,6 +137,45 @@ QObject {
                 formattedBalance: "0 %1".arg(root.fromToken.symbol)
             }
         }
+
+        // Properties to handle error states
+        readonly property bool isRouteEthBalanceInsufficient: root.validSwapProposalReceived && root.swapOutputData.errCode === Constants.swap.errorCodes.errNotEnoughNativeBalance
+
+        readonly property bool isRouteTokenBalanceInsufficient: root.validSwapProposalReceived && root.swapOutputData.errCode === Constants.swap.errorCodes.errNotEnoughTokenBalance
+
+        readonly property bool isTokenBalanceInsufficient: {
+            return (root.amountEnteredGreaterThanBalance || isRouteTokenBalanceInsufficient) &&
+               root.fromToken.symbol !== Constants.ethToken
+        }
+
+        readonly property bool isEthBalanceInsufficient: {
+            return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === Constants.ethToken) ||
+             isRouteEthBalanceInsufficient                
+        }
+
+        readonly property bool isBalanceInsufficientForSwap: {
+            return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === Constants.ethToken) ||
+            (isTokenBalanceInsufficient && root.fromToken.symbol !== Constants.ethToken)
+        }
+
+        readonly property bool isBalanceInsufficientForFees: !isBalanceInsufficientForSwap && isEthBalanceInsufficient
+
+        property string errorMessage: {
+            if (isBalanceInsufficientForSwap) {
+                return qsTr("Insufficient funds for swap")
+            } else if (isBalanceInsufficientForFees) {
+                return qsTr("Insufficient funds to pay gas fees")
+            } else if (root.swapOutputData.hasError) {
+                switch (root.swapOutputData.errCode) {
+                    case Constants.swap.errorCodes.errPriceTimeout:
+                        return qsTr("Fetching the price took longer than expected. Please, try again later.")
+                    case Constants.swap.errorCodes.errNotEnoughLiquidity:
+                        return qsTr("Not enough liquidity. Lower token amount or try again later.")
+                }
+                return qsTr("Something went wrong. Change amount, token or try again later.")
+            }
+            return ""
+        }
     }
 
     ModelEntry {
@@ -155,7 +201,7 @@ QObject {
 
     Connections {
         target: root.swapStore
-        function onSuggestedRoutesReady(txRoutes) {
+        function onSuggestedRoutesReady(txRoutes, errCode, errDescription) {
             if (txRoutes.uuid !== d.uuid) {
                 // Suggested routes for a different fetch, ignore
                 return
@@ -164,8 +210,10 @@ QObject {
             root.validSwapProposalReceived = false
             root.swapProposalLoading = false
             root.swapOutputData.rawPaths = txRoutes.rawPaths
+            root.swapOutputData.errCode = errCode
+            root.swapOutputData.errDescription = errDescription
             // if valid route was found
-            if(txRoutes.suggestedRoutes.count === 1) {
+            if(txRoutes.suggestedRoutes.count > 0) {
                 root.validSwapProposalReceived = true
                 root.swapOutputData.toTokenAmount = AmountsArithmetic.div(AmountsArithmetic.fromString(txRoutes.amountToReceive), AmountsArithmetic.fromNumber(1, root.toToken.decimals)).toString()
 
@@ -179,12 +227,12 @@ QObject {
                 root.swapOutputData.approvalGasFees = !!bestPath ? bestPath.approvalGasFees.toString() : ""
                 root.swapOutputData.approvalAmountRequired = !!bestPath ? bestPath.approvalAmountRequired: ""
                 root.swapOutputData.approvalContractAddress = !!bestPath ? bestPath.approvalContractAddress: ""
-                 root.swapOutputData.estimatedTime = !!bestPath ? bestPath.estimatedTime: Constants.TransactionEstimatedTime.Unknown
+                root.swapOutputData.estimatedTime = !!bestPath ? bestPath.estimatedTime: Constants.TransactionEstimatedTime.Unknown
                 root.swapOutputData.txProviderName = !!bestPath ? bestPath.bridgeName: ""
-            }
-            else {
+            } else {
                 root.swapOutputData.hasError = true
             }
+            root.swapOutputData.hasError = root.swapOutputData.hasError || root.swapOutputData.errCode !== ""
             root.suggestedRoutesReady()
         }
 

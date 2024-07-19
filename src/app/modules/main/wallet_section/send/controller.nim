@@ -70,7 +70,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
     let args = SuggestedRoutesArgs(e)
-    self.delegate.suggestedRoutesReady(args.uuid, args.suggestedRoutes)
+    self.delegate.suggestedRoutesReady(args.uuid, args.suggestedRoutes, args.errCode, args.errDescription)
 
   self.events.on(SignalType.WalletSignTransactions.event) do(e:Args):
     var data = WalletSignal(e)
