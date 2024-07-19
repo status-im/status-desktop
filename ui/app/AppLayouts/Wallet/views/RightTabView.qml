@@ -265,31 +265,26 @@ RightTabBaseView {
 
                             stack.currentIndex = 1
                         }
-                        onSendRequested: (symbol, tokenType) => {
+                        onSendRequested: (symbol, tokenType, fromAddress) => {
                             const collectible = ModelUtils.getByKey(controller.sourceModel, "symbol", symbol)
-                            if (collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) {
-                                const ownerAccountItem = ModelUtils.get(collectible.ownership, 0)
+                            if (!!collectible && collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) {
                                 Global.openTransferOwnershipPopup(collectible.communityId,
                                                                   collectible.communityName,
                                                                   collectible.communityImage,
                                                                   {
-                                                                      "key": collectible.tokenId,
-                                                                      "privilegesLevel": collectible.communityPrivilegesLevel,
-                                                                      "chainId": collectible.chainId,
-                                                                      "name": collectible.name,
-                                                                      "artworkSource": collectible.communityImage,
-                                                                      "accountAddress": ownerAccountItem.accountAddress,
-                                                                      "tokenAddress": collectible.contractAddress
+                                                                      key: collectible.tokenId,
+                                                                      privilegesLevel: collectible.communityPrivilegesLevel,
+                                                                      chainId: collectible.chainId,
+                                                                      name: collectible.name,
+                                                                      artworkSource: collectible.communityImage,
+                                                                      accountAddress: fromAddress,
+                                                                      tokenAddress: collectible.contractAddress
                                                                   },
                                                                   root.sendModal)
                                 return
-                                                            
                             }
-
-                            if (!!collectible) {
-                                const ownerAccountItem = ModelUtils.get(collectible.ownership, 0)
-                                root.sendModal.preSelectedAccountAddress = ownerAccountItem.accountAddress
-                            }
+                        
+                            root.sendModal.preSelectedAccountAddress = fromAddress
                             root.sendModal.preSelectedHoldingID = symbol
                             root.sendModal.preSelectedHoldingType = tokenType
                             root.sendModal.preSelectedSendType = tokenType === Constants.TokenType.ERC721 ?

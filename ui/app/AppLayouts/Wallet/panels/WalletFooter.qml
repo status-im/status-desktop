@@ -19,6 +19,8 @@ import "../popups"
 Rectangle {
     id: root
 
+    readonly property alias anyActionAvailable: d.anyActionAvailable
+
     property var walletStore
     property var networkConnectionStore
     required property TransactionStore transactionStore
@@ -28,7 +30,7 @@ Rectangle {
     property string communityName: ""
 
     signal launchShareAddressModal()
-    signal launchSendModal()
+    signal launchSendModal(string fromAddress)
     signal launchBridgeModal()
     signal launchSwapModal()
 
@@ -41,21 +43,45 @@ Rectangle {
                                                     walletStore.currentViewedHoldingType === Constants.TokenType.ERC1155)
         readonly property bool isCollectibleSoulbound: isCollectibleViewed && !!walletStore.currentViewedCollectible && walletStore.currentViewedCollectible.soulbound
 
-        readonly property bool isCollectibleOwned: d.owningAccount.available
+        readonly property var collectibleOwnership: isCollectibleViewed && walletStore.currentViewedCollectible ?
+                                                        walletStore.currentViewedCollectible.ownership : null
 
-        readonly property bool hideCollectibleTransferActions: isCollectibleViewed && !isCollectibleOwned
+        readonly property string userOwnedAddressForCollectible: !!walletStore.currentViewedHoldingID ? getFirstUserOwnedAddress(collectibleOwnership, root.walletStore.nonWatchAccounts) : ""
 
-        property string collectibleOwnerAddress
-        Binding on collectibleOwnerAddress {
-            when: d.isCollectibleViewed && !!root.walletStore.currentViewedCollectible && !!root.walletStore.currentViewedCollectible.ownership.ModelCount.count
-            value: SQUtils.ModelUtils.get(root.walletStore.currentViewedCollectible.ownership, 0).accountAddress
-            restoreMode: Binding.RestoreBindingOrValue
-        }
+        readonly property bool hideCollectibleTransferActions: isCollectibleViewed && !userOwnedAddressForCollectible
 
-        readonly property ModelEntry owningAccount: ModelEntry {
-            sourceModel: d.isCollectibleViewed ? root.walletStore.nonWatchAccounts : null
-            key: "address"
-            value: d.collectibleOwnerAddress ?? ""
+        /// Actions available
+        readonly property bool anyActionAvailable: sendActionAvailable
+                                                    || receiveActionAvailable
+                                                    || bridgeActionAvailable
+                                                    || buyActionAvailable
+                                                    || swapActionAvailable
+
+        readonly property bool sendActionAvailable: !walletStore.overview.isWatchOnlyAccount
+                                                    && walletStore.overview.canSend
+                                                    && !d.hideCollectibleTransferActions
+        
+        readonly property bool receiveActionAvailable: !walletStore.showAllAccounts
+
+        readonly property bool bridgeActionAvailable: !walletStore.overview.isWatchOnlyAccount
+                                                        && !root.isCommunityOwnershipTransfer
+                                                        && walletStore.overview.canSend
+                                                        && !root.walletStore.showAllAccounts
+                                                        && !d.hideCollectibleTransferActions
+
+        readonly property bool buyActionAvailable: !root.isCommunityOwnershipTransfer && !root.walletStore.showAllAccounts
+
+        readonly property bool swapActionAvailable: Global.featureFlags.swapEnabled && !walletStore.overview.isWatchOnlyAccount && !d.hideCollectibleTransferActions
+
+        function getFirstUserOwnedAddress(ownershipModel, accountsModel) {
+            if (!ownershipModel) return ""
+            
+            for (let i = 0; i < ownershipModel.rowCount(); i++) {
+                const accountAddress = SQUtils.ModelUtils.get(ownershipModel, i, "accountAddress")
+                if (SQUtils.ModelUtils.contains(accountsModel, "address", accountAddress, Qt.CaseInsensitive))
+                    return accountAddress
+            }
+            return ""
         }
     }
 
@@ -65,12 +91,14 @@ Rectangle {
     }
 
     RowLayout {
+        id: layout
         anchors.centerIn: parent
         height: parent.height
-        width: Math.min(parent.width, implicitWidth)
+        width: Math.min(root.width, implicitWidth)
         spacing:  Style.current.padding
 
         StatusFlatButton {
+            id: sendButton
             Layout.fillWidth: true
             Layout.maximumWidth: implicitWidth
             objectName: "walletFooterSendButton"
@@ -78,20 +106,17 @@ Rectangle {
             text: root.isCommunityOwnershipTransfer ? qsTr("Send Owner token to transfer %1 Community ownership").arg(root.communityName) : qsTr("Send")
             interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
             onClicked: {
-                if (!!root.walletStore.selectedAddress)
-                    root.transactionStore.setSenderAccount(root.walletStore.selectedAddress)
-                root.launchSendModal()
+                root.transactionStore.setSenderAccount(root.walletStore.selectedAddress)
+                root.launchSendModal(d.userOwnedAddressForCollectible)
             }
             tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be sent to another wallet") : networkConnectionStore.sendBuyBridgeToolTipText
-            visible: !walletStore.overview.isWatchOnlyAccount
-                        && walletStore.overview.canSend
-                        && !d.hideCollectibleTransferActions
+            visible: d.sendActionAvailable
         }
 
         StatusFlatButton {
             icon.name: "receive"
             text: qsTr("Receive")
-            visible: !root.walletStore.showAllAccounts
+            visible: d.receiveActionAvailable
             onClicked: function () {
                 root.transactionStore.setReceiverAccount(root.walletStore.selectedAddress)
                 launchShareAddressModal()
@@ -104,17 +129,13 @@ Rectangle {
             interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchBridgeModal()
             tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be bridged to another wallet") :  networkConnectionStore.sendBuyBridgeToolTipText
-            visible: !walletStore.overview.isWatchOnlyAccount
-                        && !root.isCommunityOwnershipTransfer
-                        && walletStore.overview.canSend
-                        && !root.walletStore.showAllAccounts 
-                        && !d.hideCollectibleTransferActions
+            visible: d.bridgeActionAvailable
         }
 
         StatusFlatButton {
             id: buySellBtn
 
-            visible: !root.isCommunityOwnershipTransfer && !root.walletStore.showAllAccounts
+            visible: d.buyActionAvailable
             icon.name: "token"
             text: qsTr("Buy")
             onClicked: Global.openBuyCryptoModalRequested()
@@ -124,7 +145,7 @@ Rectangle {
             id: swap
 
             interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
-            visible: Global.featureFlags.swapEnabled && !walletStore.overview.isWatchOnlyAccount && !d.hideCollectibleTransferActions
+            visible: d.swapActionAvailable
             tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be swapped") :  networkConnectionStore.sendBuyBridgeToolTipText
             icon.name: "swap"
             text: qsTr("Swap")

@@ -39,7 +39,7 @@ ColumnLayout {
     property bool isError: false // Indicates an error occurred while updating/fetching the collectibles list
 
     signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid, int tokenType)
-    signal sendRequested(string symbol, int tokenType)
+    signal sendRequested(string symbol, int tokenType, string fromAddress)
     signal receiveRequested(string symbol)
     signal switchToCommunityRequested(string communityId)
     signal manageTokensRequested()
@@ -195,6 +195,17 @@ ColumnLayout {
                 }
             }
             return AmountsArithmetic.toNumber(balance)
+        }
+
+        function getFirstUserOwnedAddress(ownershipModel) {
+            if (!ownershipModel) return ""
+            
+            for (let i = 0; i < ownershipModel.rowCount(); i++) {
+                const accountAddress = ModelUtils.get(ownershipModel, i, "accountAddress")
+                if (ModelUtils.contains(root.ownedAccountsModel, "address", accountAddress, Qt.CaseInsensitive))
+                    return accountAddress
+            }
+            return ""
         }
 
         property FunctionAggregator hasAllTimestampsAggregator: FunctionAggregator {
@@ -467,17 +478,12 @@ ColumnLayout {
 
             onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType)
             onRightClicked: {
-                let ownedByUser = false
-                const ownedByAccount = ModelUtils.get(model.ownership, 0)
-                if (!!ownedByAccount && !!ownedByAccount.accountAddress) {
-                    ownedByUser = ModelUtils.contains(root.ownedAccountsModel, "address", ownedByAccount.accountAddress, Qt.CaseInsensitive)
-                }
-
+                const userOwnedAddress = d.getFirstUserOwnedAddress(model.ownership)
                 Global.openMenu(tokenContextMenu, this,
                                 {symbol: model.symbol, tokenName: model.name, tokenImage: model.imageUrl,
                                     communityId: model.communityId, communityName: model.communityName,
                                     communityImage: model.communityImage, tokenType: model.tokenType,
-                                    soulbound: model.soulbound, ownedByUser: ownedByUser})
+                                    soulbound: model.soulbound, userOwnedAddress: userOwnedAddress})
             }
             onSwitchToCommunityRequested: (communityId) => root.switchToCommunityRequested(communityId)
         }
@@ -495,8 +501,9 @@ ColumnLayout {
             property string communityId
             property string communityName
             property string communityImage
+            property string userOwnedAddress
             property int tokenType
-            property bool ownedByUser
+            property bool ownedByUser: !!userOwnedAddress
             property bool soulbound
 
             // Show send button for owned collectibles
@@ -508,7 +515,7 @@ ColumnLayout {
                     visibleOnDisabled: true
                     icon.name: "send"
                     text: qsTr("Send")
-                    onTriggered: root.sendRequested(symbol, tokenType)
+                    onTriggered: root.sendRequested(tokenMenu.symbol, tokenMenu.tokenType, tokenMenu.userOwnedAddress)
                 }
                 onObjectAdded: tokenMenu.insertAction(0, object)
                 onObjectRemoved: tokenMenu.removeAction(0)

@@ -278,7 +278,7 @@ Item {
             readonly property bool isCommunityCollectible: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityId !== "" : false
             readonly property bool isOwnerCommunityCollectible: isCommunityCollectible ? (walletStore.currentViewedCollectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
 
-            visible: !RootStore.showAllAccounts || Global.featureFlags.swapEnabled
+            visible: anyActionAvailable
             width: parent.width
             height: visible ? 61: implicitHeight
             walletStore: RootStore
@@ -298,7 +298,7 @@ Item {
                                                                   changingPreferredChainsEnabled: true,
                                                                   hasFloatingButtons: true
                                                               })
-            onLaunchSendModal: {
+            onLaunchSendModal: (fromAddress) => {
                 if(isCommunityOwnershipTransfer) {
                     const tokenItem = walletStore.currentViewedCollectible
                     const ownership = StatusQUtils.ModelUtils.get(tokenItem.ownership, 0)
@@ -307,24 +307,19 @@ Item {
                                                       footer.communityName,
                                                       tokenItem.communityImage,
                                                       {
-                                                          "key": tokenItem.tokenId,
-                                                          "privilegesLevel": tokenItem.communityPrivilegesLevel,
-                                                          "chainId": tokenItem.chainId,
-                                                          "name": tokenItem.name,
-                                                          "artworkSource": tokenItem.artworkSource,
-                                                          "accountAddress": ownership.accountAddress,
-                                                          "tokenAddress": tokenItem.contractAddress
+                                                          key: tokenItem.tokenId,
+                                                          privilegesLevel: tokenItem.communityPrivilegesLevel,
+                                                          chainId: tokenItem.chainId,
+                                                          name: tokenItem.name,
+                                                          artworkSource: tokenItem.artworkSource,
+                                                          accountAddress: fromAddress,
+                                                          tokenAddress: tokenItem.contractAddress
                                                       },
                                                       root.sendModalPopup)
                     return
                 }
-
-                if (isHoldingSelected) {
-                    const tokenItem = walletStore.currentViewedCollectible
-                    const ownership = StatusQUtils.ModelUtils.get(tokenItem.ownership, 0)
-                    root.sendModalPopup.preSelectedAccountAddress = ownership.accountAddress
-                }
                 // Common send modal popup:
+                root.sendModalPopup.preSelectedAccountAddress = fromAddress
                 root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
                 root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
                 root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
@@ -353,7 +348,7 @@ Item {
 
             ModelEntry {
                 id: selectedCommunityForCollectible
-                sourceModel: footer.isCommunityCollectible ? root.communitiesStore.communitiesList : null
+                sourceModel: !!footer.walletStore.currentViewedCollectible && footer.isCommunityCollectible ? root.communitiesStore.communitiesList : null
                 key: "id"
                 value: footer.walletStore.currentViewedCollectible.communityId
             }
