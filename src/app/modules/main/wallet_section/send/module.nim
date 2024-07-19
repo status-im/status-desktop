@@ -276,7 +276,7 @@ method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: stri
     return
   self.view.sendTransactionSentSignal(chainId, txHash, uuid, error)
 
-method suggestedRoutesReady*(self: Module, uuid: string, suggestedRoutes: SuggestedRoutesDto) =
+method suggestedRoutesReady*(self: Module, uuid: string, suggestedRoutes: SuggestedRoutesDto, errCode: string, errDescription: string) =
   self.tmpSendTransactionDetails.paths = suggestedRoutes.best
   self.tmpSendTransactionDetails.slippagePercentage = none(float)
   let paths = suggestedRoutes.best.map(x => self.convertTransactionPathDtoToSuggestedRouteItem(x))
@@ -294,7 +294,7 @@ method suggestedRoutesReady*(self: Module, uuid: string, suggestedRoutes: Sugges
     amountToReceive = suggestedRoutes.amountToReceive,
     toNetworksRouteModel = toNetworksRouteModel,
     rawPaths = suggestedRoutes.rawBest)
-  self.view.setTransactionRoute(transactionRoutes)
+  self.view.setTransactionRoute(transactionRoutes, errCode, errDescription)
 
 method suggestedRoutes*(self: Module,
   uuid: string,

@@ -27,7 +27,7 @@ Item {
     readonly property var dummySwapTransactionRoutes: SwapTransactionRoutes {}
 
     readonly property var swapStore: SwapStore {
-        signal suggestedRoutesReady(var txRoutes)
+        signal suggestedRoutesReady(var txRoutes, string errCode, string errDescription)
         signal transactionSent(var chainId,var txHash, var uuid, var error)
         signal transactionSendingComplete(var txHash,  var success)
 
@@ -596,8 +596,8 @@ Item {
             // verify loading state was set and no errors currently
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
-            // emit event that no routes were found
-            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes)
+            // emit event that no routes were found with unknown error
+            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, "NO_ROUTES", "No routes found")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
@@ -633,9 +633,155 @@ Item {
             // verify loading state was set and no errors currently
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
+            // emit event that no routes were found due to not enough token balance
+            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, Constants.swap.errorCodes.errNotEnoughTokenBalance, "errNotEnoughTokenBalance")
+
+            // verify loading state was removed and that error was displayed
+            verify(!root.swapAdaptor.validSwapProposalReceived)
+            verify(!root.swapAdaptor.swapProposalLoading)
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.totalFees, 0)
+            compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
+            compare(root.swapAdaptor.swapOutputData.hasError, true)
+            verify(errorTag.visible)
+            verify(errorTag.text, qsTr("Insufficient funds for swap"))
+            verify(!signButton.enabled)
+            compare(signButton.text, qsTr("Swap"))
+
+            // verfy input and output panels
+            verify(!payPanel.mainInputLoading)
+            verify(!payPanel.bottomTextLoading)
+            verify(!receivePanel.mainInputLoading)
+            verify(!receivePanel.bottomTextLoading)
+            verify(!receivePanel.interactive)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.value, 0)
+            compare(receivePanel.rawValue, "0")
+
+            // edit some params to retry swap
+            root.swapFormData.fromTokenAmount = "0.00012"
+            waitForRendering(receivePanel)
+            formValuesChanged.wait()
+
+            // wait for fetchSuggestedRoutes function to be called
+            fetchSuggestedRoutesCalled.wait()
+
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
+
+            // emit event that no routes were found due to not enough eth balance
+            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, Constants.swap.errorCodes.errNotEnoughNativeBalance, "errNotEnoughNativeBalance")
+
+            // verify loading state was removed and that error was displayed
+            verify(!root.swapAdaptor.validSwapProposalReceived)
+            verify(!root.swapAdaptor.swapProposalLoading)
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.totalFees, 0)
+            compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
+            compare(root.swapAdaptor.swapOutputData.hasError, true)
+            verify(errorTag.visible)
+            verify(errorTag.text, qsTr("Insufficient funds to pay gas fees"))
+            verify(!signButton.enabled)
+            compare(signButton.text, qsTr("Swap"))
+
+            // verfy input and output panels
+            verify(!payPanel.mainInputLoading)
+            verify(!payPanel.bottomTextLoading)
+            verify(!receivePanel.mainInputLoading)
+            verify(!receivePanel.bottomTextLoading)
+            verify(!receivePanel.interactive)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.value, 0)
+            compare(receivePanel.rawValue, "0")
+
+            // edit some params to retry swap
+            root.swapFormData.fromTokenAmount = "0.00013"
+            waitForRendering(receivePanel)
+            formValuesChanged.wait()
+            // wait for fetchSuggestedRoutes function to be called
+            fetchSuggestedRoutesCalled.wait()
+
+            // wait for fetchSuggestedRoutes function to be called
+            fetchSuggestedRoutesCalled.wait()
+
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
+
+            // emit event that no routes were found due to price timeout
+            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, Constants.swap.errorCodes.errPriceTimeout, "errPriceTimeout")
+
+            // verify loading state was removed and that error was displayed
+            verify(!root.swapAdaptor.validSwapProposalReceived)
+            verify(!root.swapAdaptor.swapProposalLoading)
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.totalFees, 0)
+            compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
+            compare(root.swapAdaptor.swapOutputData.hasError, true)
+            verify(errorTag.visible)
+            verify(errorTag.text, qsTr("Fetching the price took longer than expected. Please, try again later."))
+            verify(!signButton.enabled)
+            compare(signButton.text, qsTr("Swap"))
+
+            // verfy input and output panels
+            verify(!payPanel.mainInputLoading)
+            verify(!payPanel.bottomTextLoading)
+            verify(!receivePanel.mainInputLoading)
+            verify(!receivePanel.bottomTextLoading)
+            verify(!receivePanel.interactive)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.value, 0)
+            compare(receivePanel.rawValue, "0")
+
+            // edit some params to retry swap
+            root.swapFormData.fromTokenAmount = "0.00013"
+            waitForRendering(receivePanel)
+            formValuesChanged.wait()
+
+            // wait for fetchSuggestedRoutes function to be called
+            fetchSuggestedRoutesCalled.wait()
+
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
+
+            // emit event that no routes were found due to not enough liquidity
+            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, Constants.swap.errorCodes.errNotEnoughLiquidity, "errNotEnoughLiquidity")
+
+            // verify loading state was removed and that error was displayed
+            verify(!root.swapAdaptor.validSwapProposalReceived)
+            verify(!root.swapAdaptor.swapProposalLoading)
+            compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.toTokenAmount, "")
+            compare(root.swapAdaptor.swapOutputData.totalFees, 0)
+            compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
+            compare(root.swapAdaptor.swapOutputData.hasError, true)
+            verify(errorTag.visible)
+            verify(errorTag.text, qsTr("Not enough liquidity. Lower token amount or try again later."))
+            verify(!signButton.enabled)
+            compare(signButton.text, qsTr("Swap"))
+
+            // verfy input and output panels
+            verify(!payPanel.mainInputLoading)
+            verify(!payPanel.bottomTextLoading)
+            verify(!receivePanel.mainInputLoading)
+            verify(!receivePanel.bottomTextLoading)
+            verify(!receivePanel.interactive)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.value, 0)
+            compare(receivePanel.rawValue, "0")
+
+            // edit some params to retry swap
+            root.swapFormData.fromTokenAmount = "0.00014"
+            waitForRendering(receivePanel)
+            formValuesChanged.wait()
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
+
             // emit event with route that needs no approval
             let txRoutes = root.dummySwapTransactionRoutes.txHasRouteNoApproval
-            root.swapStore.suggestedRoutesReady(txRoutes)
+            root.swapStore.suggestedRoutesReady(txRoutes, "", "")
 
             // verify loading state removed and data is displayed as expected on the Modal
             verify(root.swapAdaptor.validSwapProposalReceived)
@@ -684,7 +830,7 @@ Item {
 
             // emit event with route that needs no approval
             let txRoutes2 = root.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
-            root.swapStore.suggestedRoutesReady(txRoutes2)
+            root.swapStore.suggestedRoutesReady(txRoutes2, "", "")
 
             // verify loading state removed and data ius displayed as expected on the Modal
             verify(root.swapAdaptor.validSwapProposalReceived)
@@ -1330,7 +1476,7 @@ Item {
             // emit event with route that needs no approval
             let txRoutes = root.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
             txRoutes.uuid = root.swapAdaptor.uuid
-            root.swapStore.suggestedRoutesReady(txRoutes)
+            root.swapStore.suggestedRoutesReady(txRoutes, "", "")
 
             // calculation needed for total fees
             let gasTimeEstimate = txRoutes.gasTimeEstimate
@@ -1426,7 +1572,7 @@ Item {
 
             let txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
             txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
-            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval)
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
 
             verify(!root.swapAdaptor.approvalPending)
             verify(!root.swapAdaptor.approvalSuccessful)
@@ -1601,7 +1747,7 @@ Item {
             // emit routes ready
             let txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
             txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
-            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval)
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
 
             // check if fetch occurs automatically after 15 seconds
             fetchSuggestedRoutesCalled.wait()

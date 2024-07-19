@@ -16,14 +16,14 @@ QtObject {
        Remove these and use the new TransactorStore in SwapModalAdaptor when that happens. */
     readonly property var walletSectionSendInst: walletSectionSend
 
-    signal suggestedRoutesReady(var txRoutes)
+    signal suggestedRoutesReady(var txRoutes, string errCode, string errDescription)
     signal transactionSent(var chainId, var txHash, var uuid, var error)
     signal transactionSendingComplete(var txHash,  var success)
 
     readonly property Connections walletSectionSendConnections: Connections {
         target: root.walletSectionSendInst
-        function onSuggestedRoutesReady(txRoutes) {
-            root.suggestedRoutesReady(txRoutes)
+        function onSuggestedRoutesReady(txRoutes, errCode, errDescription) {
+            root.suggestedRoutesReady(txRoutes, errCode, errDescription)
         }
         function onTransactionSent(chainId, txHash, uuid, error) {
             root.transactionSent(chainId, txHash, uuid, error)

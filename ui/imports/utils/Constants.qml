@@ -1335,6 +1335,13 @@ QtObject {
         this list dynamically */
         readonly property string paraswapIcon: "paraswap"
         readonly property string paraswapUrl: "app.paraswap.io"
+
+        readonly property QtObject errorCodes: QtObject {
+            readonly property string errNotEnoughTokenBalance: "WR-016"
+            readonly property string errNotEnoughNativeBalance: "WR-017"
+            readonly property string errPriceTimeout: "WPP-037"
+            readonly property string errNotEnoughLiquidity: "WPP-038"
+        }
     }
 
     // Mirrors src/app_service/service/transaction/service.nim -> EstimatedTime

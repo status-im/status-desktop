@@ -644,7 +644,7 @@ StatusDialog {
 
     Connections {
         target: popup.store.walletSectionSendInst
-        function onSuggestedRoutesReady(txRoutes) {
+        function onSuggestedRoutesReady(txRoutes, errCode, errDescription) {
             popup.bestRoutes =  txRoutes.suggestedRoutes
             let gasTimeEstimate = txRoutes.gasTimeEstimate
             d.totalTimeEstimate = WalletUtils.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)

@@ -48,7 +48,7 @@ QtObject {
 
     readonly property QtObject walletSectionSendInst: QtObject {
         signal transactionSent(var chainId, var txHash, var uuid, var error)
-        signal suggestedRoutesReady(var txRoutes)
+        signal suggestedRoutesReady(var txRoutes, string errCode, string errDescription)
     }
     readonly property QtObject mainModuleInst: QtObject {
         signal resolvedENS(var resolvedPubKey, var resolvedAddress, var uuid)

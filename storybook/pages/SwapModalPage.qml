@@ -72,7 +72,7 @@ SplitView {
 
         SwapStore {
             id: dSwapStore
-            signal suggestedRoutesReady(var txRoutes)
+            signal suggestedRoutesReady(var txRoutes, string errCode, string errDescription)
             signal transactionSent(var chainId, var txHash, var uuid, var error)
             signal transactionSendingComplete(var txHash,  var success)
 
@@ -278,7 +278,7 @@ SplitView {
                     swapInput.text = "0.2"
                     fetchSuggestedRoutesSpy.wait()
                     Backpressure.debounce(this, 250, () => {
-                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRouteNoApproval)
+                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRouteNoApproval, "", "")
                                           })()
                 }
             }
@@ -292,7 +292,7 @@ SplitView {
                     swapInput.text = "0.1"
                     fetchSuggestedRoutesSpy.wait()
                     Backpressure.debounce(this, 1000, () => {
-                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded)
+                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded, "", "")
                                           })()
                     Backpressure.debounce(this, 1500, () => {approveTxButton.clicked()})()
                     authenticateAndTransferSpy.wait()
@@ -304,7 +304,7 @@ SplitView {
                                           })()
                     fetchSuggestedRoutesSpy.wait()
                     Backpressure.debounce(this, 1000, () => {
-                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRouteNoApproval)
+                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRouteNoApproval, "", "")
                                           })()
                 }
             }
@@ -317,7 +317,7 @@ SplitView {
                     swapInput.text = "0.2"
                     fetchSuggestedRoutesSpy.wait()
                     Backpressure.debounce(this, 250, () => {
-                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txNoRoutes)
+                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txNoRoutes, "ERR-123", "Fetching proposal error")
 
                     })()
                 }
@@ -332,7 +332,7 @@ SplitView {
                     swapInput.text = "0.1"
                     fetchSuggestedRoutesSpy.wait()
                     Backpressure.debounce(this, 1000, () => {
-                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded)
+                                              dSwapStore.suggestedRoutesReady(d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded, "", "")
                                           })()
                     Backpressure.debounce(this, 1500, () => {approveTxButton.clicked()})()
                     authenticateAndTransferSpy.wait()
@@ -351,12 +351,26 @@ SplitView {
                 checked: false
             }
 
+            ComboBox {
+                id: routerErrorComboBox
+                model: [
+                    {name: "errNotEnoughTokenBalance", value: Constants.swap.errorCodes.errNotEnoughTokenBalance}, 
+                    {name: "errNotEnoughNativeBalance", value: Constants.swap.errorCodes.errNotEnoughNativeBalance}, 
+                    {name: "errPriceTimeout", value: Constants.swap.errorCodes.errPriceTimeout}, 
+                    {name: "errNotEnoughLiquidity", value: Constants.swap.errorCodes.errNotEnoughLiquidity}
+                ]
+                textRole: "name"
+                valueRole: "value"
+                currentIndex: 0
+                visible: advancedSignalsCheckBox.checked
+            }
+
             Button {
-                text: "emit no routes found event"
+                text: "emit no routes found event with error"
                 onClicked: {
                     const txRoutes = d.dummySwapTransactionRoutes.txNoRoutes
                     txRoutes.uuid = d.uuid
-                    dSwapStore.suggestedRoutesReady(txRoutes)
+                    dSwapStore.suggestedRoutesReady(txRoutes, routerErrorComboBox.currentValue, "")
                 }
                 visible: advancedSignalsCheckBox.checked
             }
@@ -366,7 +380,7 @@ SplitView {
                 onClicked: {
                     const txRoutes = d.dummySwapTransactionRoutes.txHasRouteNoApproval
                     txRoutes.uuid = d.uuid
-                    dSwapStore.suggestedRoutesReady(txRoutes)
+                    dSwapStore.suggestedRoutesReady(txRoutes, "", "")
                 }
                 visible: advancedSignalsCheckBox.checked
             }
@@ -376,7 +390,7 @@ SplitView {
                 onClicked: {
                     const txRoutes = d.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
                     txRoutes.uuid = d.uuid
-                    dSwapStore.suggestedRoutesReady(txRoutes)
+                    dSwapStore.suggestedRoutesReady(txRoutes, "", "")
                 }
                 visible: advancedSignalsCheckBox.checked
             }
