@@ -1,0 +1,279 @@
+From 3c08d08ae2bbd449cc0579a1b3cb499383c7a60c Mon Sep 17 00:00:00 2001
+From: Volker Hilsheimer <volker.hilsheimer@qt.io>
+Date: Tue, 18 Apr 2023 22:05:36 +0200
+Subject: [PATCH] Accessibility: respect value in attached Accessible in
+ controls
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf8
+Content-Transfer-Encoding: 8bit
+
+QQuickItemPrivate::accessibleRole is virtual and called by the framework
+to determine the role of an item. The default implementation checks and
+respects a possible Accessible attached object. However, subclasses that
+override the virtual don't, so the attached properties are ignored, and
+the class-specific implementation wins. This makes it impossible to
+change the role of e.g. a checkable button.
+
+To fix that, move the code respecting the attached object into a non-
+virtual function that the framework calls instead, and only call the
+virtual member if there is no attached object, or if that object is not
+initialized with a role. Replace calls to the virtual from the
+framework with calls to the non-virtual wrapper.
+
+Do this for both QQuickItem and for QQuickPopup, and adjust the logic
+in QQuickControl types that create an attached object and initialize
+it's role when accessibility becomes active. Use the non-overridable
+effective role value for that as well.
+
+Add a test case, and to avoid any new framework calls to the virtual,
+make it private.
+
+Fixes: QTBUG-110114
+Pick-to: 6.5 6.2
+Change-Id: Ia709cecbd181b6d8ee3297a4af60c1e7db9a2c51
+Reviewed-by: Qt CI Bot <qt_ci_bot@qt-project.org>
+Reviewed-by: Jan Arve SÃ¦ther <jan-arve.saether@qt.io>
+---
+ src/quick/accessible/qaccessiblequickitem.cpp      |  2 +-
+ src/quick/items/qquickitem.cpp                     | 17 +++++++++-----
+ src/quick/items/qquickitem_p.h                     |  3 +++
+ src/quicktemplates/qquickcontrol.cpp               |  3 ++-
+ src/quicktemplates/qquicklabel.cpp                 |  2 +-
+ src/quicktemplates/qquickpopup.cpp                 | 14 ++++++++++++
+ src/quicktemplates/qquickpopup_p.h                 |  3 +++
+ src/quicktemplates/qquickpopupitem.cpp             |  2 +-
+ src/quicktemplates/qquicktextarea.cpp              |  2 +-
+ src/quicktemplates/qquicktextfield.cpp             |  2 +-
+ .../qquickaccessible/tst_qquickaccessible.cpp      | 26 ++++++++++++++++++++++
+ 11 files changed, 65 insertions(+), 11 deletions(-)
+
+diff --git a/src/quick/accessible/qaccessiblequickitem.cpp b/src/quick/accessible/qaccessiblequickitem.cpp
+index 4a446e468d5..6f8df29538e 100644
+--- a/src/quick/accessible/qaccessiblequickitem.cpp
++++ b/src/quick/accessible/qaccessiblequickitem.cpp
+@@ -456,7 +456,7 @@ QAccessible::Role QAccessibleQuickItem::role() const
+
+     QAccessible::Role role = QAccessible::NoRole;
+     if (item())
+-        role = QQuickItemPrivate::get(item())->accessibleRole();
++        role = QQuickItemPrivate::get(item())->effectiveAccessibleRole();
+     if (role == QAccessible::NoRole) {
+         if (qobject_cast<QQuickText*>(const_cast<QQuickItem *>(item())))
+             role = QAccessible::StaticText;
+diff --git a/src/quick/items/qquickitem.cpp b/src/quick/items/qquickitem.cpp
+index d53a190b5f1..2e645a918de 100644
+--- a/src/quick/items/qquickitem.cpp
++++ b/src/quick/items/qquickitem.cpp
+@@ -2376,7 +2376,7 @@ bool QQuickItemPrivate::canAcceptTabFocus(QQuickItem *item)
+         return true;
+
+ #if QT_CONFIG(accessibility)
+-    QAccessible::Role role = QQuickItemPrivate::get(item)->accessibleRole();
++    QAccessible::Role role = QQuickItemPrivate::get(item)->effectiveAccessibleRole();
+     if (role == QAccessible::EditableText || role == QAccessible::Table || role == QAccessible::List) {
+         return true;
+     } else if (role == QAccessible::ComboBox || role == QAccessible::SpinBox) {
+@@ -9731,13 +9731,20 @@ QQuickItemPrivate::ExtraData::ExtraData()
+
+
+ #if QT_CONFIG(accessibility)
+-QAccessible::Role QQuickItemPrivate::accessibleRole() const
++QAccessible::Role QQuickItemPrivate::effectiveAccessibleRole() const
+ {
+     Q_Q(const QQuickItem);
+-    QQuickAccessibleAttached *accessibleAttached = qobject_cast<QQuickAccessibleAttached *>(qmlAttachedPropertiesObject<QQuickAccessibleAttached>(q, false));
+-    if (accessibleAttached)
+-        return accessibleAttached->role();
++    auto *attached = qmlAttachedPropertiesObject<QQuickAccessibleAttached>(q, false);
++    auto role = QAccessible::NoRole;
++    if (auto *accessibleAttached = qobject_cast<QQuickAccessibleAttached *>(attached))
++        role = accessibleAttached->role();
++    if (role == QAccessible::NoRole)
++        role = accessibleRole();
++    return role;
++}
+
++QAccessible::Role QQuickItemPrivate::accessibleRole() const
++{
+     return QAccessible::NoRole;
+ }
+ #endif
+diff --git a/src/quick/items/qquickitem_p.h b/src/quick/items/qquickitem_p.h
+index e1e909d1a26..df6ec900ce8 100644
+--- a/src/quick/items/qquickitem_p.h
++++ b/src/quick/items/qquickitem_p.h
+@@ -601,7 +601,10 @@ public:
+     virtual void implicitHeightChanged();
+
+ #if QT_CONFIG(accessibility)
++    QAccessible::Role effectiveAccessibleRole() const;
++private:
+     virtual QAccessible::Role accessibleRole() const;
++public:
+ #endif
+
+     void setImplicitAntialiasing(bool antialiasing);
+diff --git a/src/quicktemplates/qquickcontrol.cpp b/src/quicktemplates/qquickcontrol.cpp
+index ace34c9d638..7af4b295230 100644
+--- a/src/quicktemplates/qquickcontrol.cpp
++++ b/src/quicktemplates/qquickcontrol.cpp
+@@ -2185,12 +2185,13 @@ QAccessible::Role QQuickControl::accessibleRole() const
+
+ void QQuickControl::accessibilityActiveChanged(bool active)
+ {
++    Q_D(QQuickControl);
+     if (!active)
+         return;
+
+     QQuickAccessibleAttached *accessibleAttached = qobject_cast<QQuickAccessibleAttached *>(qmlAttachedPropertiesObject<QQuickAccessibleAttached>(this, true));
+     Q_ASSERT(accessibleAttached);
+-    accessibleAttached->setRole(accessibleRole());
++    accessibleAttached->setRole(d->effectiveAccessibleRole());
+ }
+ #endif
+
+diff --git a/src/quicktemplates/qquicklabel.cpp b/src/quicktemplates/qquicklabel.cpp
+index 39ad6b88c31..ee8723d755b 100644
+--- a/src/quicktemplates/qquicklabel.cpp
++++ b/src/quicktemplates/qquicklabel.cpp
+@@ -190,7 +190,7 @@ void QQuickLabelPrivate::accessibilityActiveChanged(bool active)
+     Q_Q(QQuickLabel);
+     QQuickAccessibleAttached *accessibleAttached = qobject_cast<QQuickAccessibleAttached *>(qmlAttachedPropertiesObject<QQuickAccessibleAttached>(q, true));
+     Q_ASSERT(accessibleAttached);
+-    accessibleAttached->setRole(accessibleRole());
++    accessibleAttached->setRole(effectiveAccessibleRole());
+     maybeSetAccessibleName(text);
+ }
+
+diff --git a/src/quicktemplates/qquickpopup.cpp b/src/quicktemplates/qquickpopup.cpp
+index 5b267899517..63999c23a55 100644
+--- a/src/quicktemplates/qquickpopup.cpp
++++ b/src/quicktemplates/qquickpopup.cpp
+@@ -14,6 +14,7 @@
+ #include <QtCore/qloggingcategory.h>
+ #include <QtQml/qqmlinfo.h>
+ #include <QtQuick/qquickitem.h>
++#include <QtQuick/private/qquickaccessibleattached_p.h>
+ #include <QtQuick/private/qquicktransition_p.h>
+ #include <QtQuick/private/qquickitem_p.h>
+
+@@ -2769,6 +2770,19 @@ QFont QQuickPopup::defaultFont() const
+ }
+
+ #if QT_CONFIG(accessibility)
++QAccessible::Role QQuickPopup::effectiveAccessibleRole() const
++{
++    auto *attached = qmlAttachedPropertiesObject<QQuickAccessibleAttached>(this, false);
++
++    auto role = QAccessible::NoRole;
++    if (auto *accessibleAttached = qobject_cast<QQuickAccessibleAttached *>(attached))
++        role = accessibleAttached->role();
++    if (role == QAccessible::NoRole)
++        role = accessibleRole();
++
++    return role;
++}
++
+ QAccessible::Role QQuickPopup::accessibleRole() const
+ {
+     return QAccessible::Dialog;
+diff --git a/src/quicktemplates/qquickpopup_p.h b/src/quicktemplates/qquickpopup_p.h
+index ee9003d6272..7552b549bdd 100644
+--- a/src/quicktemplates/qquickpopup_p.h
++++ b/src/quicktemplates/qquickpopup_p.h
+@@ -419,7 +419,10 @@ protected:
+     virtual QFont defaultFont() const;
+
+ #if QT_CONFIG(accessibility)
++    QAccessible::Role effectiveAccessibleRole() const;
++private:
+     virtual QAccessible::Role accessibleRole() const;
++protected:
+     virtual void accessibilityActiveChanged(bool active);
+ #endif
+
+diff --git a/src/quicktemplates/qquickpopupitem.cpp b/src/quicktemplates/qquickpopupitem.cpp
+index 43fc1bdc507..6a494626d4f 100644
+--- a/src/quicktemplates/qquickpopupitem.cpp
++++ b/src/quicktemplates/qquickpopupitem.cpp
+@@ -308,7 +308,7 @@ QFont QQuickPopupItem::defaultFont() const
+ QAccessible::Role QQuickPopupItem::accessibleRole() const
+ {
+     Q_D(const QQuickPopupItem);
+-    return d->popup->accessibleRole();
++    return d->popup->effectiveAccessibleRole();
+ }
+
+ void QQuickPopupItem::accessibilityActiveChanged(bool active)
+diff --git a/src/quicktemplates/qquicktextarea.cpp b/src/quicktemplates/qquicktextarea.cpp
+index f16b88c07f5..dd4a908f5ad 100644
+--- a/src/quicktemplates/qquicktextarea.cpp
++++ b/src/quicktemplates/qquicktextarea.cpp
+@@ -438,7 +438,7 @@ void QQuickTextAreaPrivate::accessibilityActiveChanged(bool active)
+     Q_Q(QQuickTextArea);
+     QQuickAccessibleAttached *accessibleAttached = qobject_cast<QQuickAccessibleAttached *>(qmlAttachedPropertiesObject<QQuickAccessibleAttached>(q, true));
+     Q_ASSERT(accessibleAttached);
+-    accessibleAttached->setRole(accessibleRole());
++    accessibleAttached->setRole(effectiveAccessibleRole());
+     accessibleAttached->set_readOnly(q->isReadOnly());
+     accessibleAttached->setDescription(placeholder);
+ }
+diff --git a/src/quicktemplates/qquicktextfield.cpp b/src/quicktemplates/qquicktextfield.cpp
+index 15a6276465a..b7c2e032658 100644
+--- a/src/quicktemplates/qquicktextfield.cpp
++++ b/src/quicktemplates/qquicktextfield.cpp
+@@ -288,7 +288,7 @@ void QQuickTextFieldPrivate::accessibilityActiveChanged(bool active)
+     Q_Q(QQuickTextField);
+     QQuickAccessibleAttached *accessibleAttached = qobject_cast<QQuickAccessibleAttached *>(qmlAttachedPropertiesObject<QQuickAccessibleAttached>(q, true));
+     Q_ASSERT(accessibleAttached);
+-    accessibleAttached->setRole(accessibleRole());
++    accessibleAttached->setRole(effectiveAccessibleRole());
+     accessibleAttached->set_readOnly(m_readOnly);
+     accessibleAttached->set_passwordEdit((m_echoMode == QQuickTextField::Password || m_echoMode == QQuickTextField::PasswordEchoOnEdit) ? true : false);
+     accessibleAttached->setDescription(placeholder);
+diff --git a/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp b/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+index e7da38a5ceb..f51e7e87106 100644
+--- a/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
++++ b/tests/auto/quick/qquickaccessible/tst_qquickaccessible.cpp
+@@ -56,6 +56,7 @@ private slots:
+     void commonTests();
+
+     void quickAttachedProperties();
++    void attachedWins();
+     void basicPropertiesTest();
+     void hitTest();
+     void checkableTest();
+@@ -322,6 +323,31 @@ void tst_QQuickAccessible::quickAttachedProperties()
+     QTestAccessibility::clearEvents();
+ }
+
++// Verify that a role can be explicitly set, and that the values from the
++// attached object are used even if the item has a default role - QTBUG-110114
++void tst_QQuickAccessible::attachedWins()
++{
++    QQmlEngine engine;
++    QQmlComponent component(&engine);
++    component.setData(R"(
++        import QtQuick
++        import QtQuick.Controls
++        Button {
++            text: "Button"
++            objectName: "button"
++            Accessible.role: Accessible.RadioButton
++            Accessible.description: "Radio Button"
++        })", QUrl());
++    auto button = std::unique_ptr<QObject>(component.create());
++    QVERIFY(button);
++
++    QAccessibleInterface *iface = QAccessible::queryAccessibleInterface(button.get());
++    QVERIFY(iface);
++
++    QCOMPARE(iface->role(), QAccessible::RadioButton);
++    QTestAccessibility::clearEvents();
++}
++
+
+ void tst_QQuickAccessible::basicPropertiesTest()
+ {
+--
+2.16.3
