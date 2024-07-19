@@ -107,7 +107,7 @@ StatusDialog {
             return Constants.NoError
         }
 
-        readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.currentCurrencyBalance : 0
+        readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.currencyBalance : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSend.fiatMode ? maxFiatBalance : maxCryptoBalance
 
@@ -194,9 +194,9 @@ StatusDialog {
         }
 
         // To be removed once bridge is splitted to a different component:
-        if(d.isBridgeTx && !!popup.preSelectedAccount) {
+        if(d.isBridgeTx && !!popup.preSelectedAccountAddress) {
             // Default preselected type is `Helpers.RecipientAddressObjectType.Address` coinciding with bridge usecase
-            popup.preSelectedRecipient = popup.preSelectedAccount.address
+            popup.preSelectedRecipient = popup.preSelectedAccountAddress
         }
 
         if (!!popup.preSelectedHoldingID

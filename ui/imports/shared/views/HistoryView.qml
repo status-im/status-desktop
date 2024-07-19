@@ -311,7 +311,7 @@ ColumnLayout {
                 if (!overview.isWatchOnlyAccount && !tx)
                     return false
                 return WalletStores.RootStore.isTxRepeatable(tx)
-        }
+            }
 
             onTriggered: {
                 if (!tx)
