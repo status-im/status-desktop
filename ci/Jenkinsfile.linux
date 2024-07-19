@@ -3,6 +3,7 @@ library 'status-jenkins-lib@v1.8.18'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
+def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
   agent {
@@ -39,7 +40,7 @@ pipeline {
     booleanParam(
       name: 'USE_MOCKED_KEYCARD_LIB',
       description: 'Decides whether the mocked status-keycard-go library is built.',
-      defaultValue: false
+      defaultValue: isNightlyBuild
     )
   }
 
