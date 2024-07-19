@@ -85,3 +85,12 @@ proc backupData*(): RpcResponse[JsonNode] =
 
 proc parseSharedUrl*(url: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("parseSharedURL".prefix, %*[url])
+
+proc hashMessageForSigning*(message: string): string =
+  try: 
+    let response = status_go.hashMessage(message)
+    let jsonResponse = parseJson(response)
+    return jsonResponse{"result"}.getStr()
+  except Exception as e:
+    error "hashMessage: failed to parse json response", error = e.msg
+    return ""

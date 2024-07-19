@@ -15,6 +15,7 @@ import app_service/service/keycard/service as keycard_service
 import app_service/common/types
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 import app_service/service/network/network_item
+import ../../../../backend/general as status_general
 
 const UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER* = "CommunitiesModule-Authentication"
 const UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER* = "CommunitiesModule-Signing"
@@ -466,9 +467,10 @@ proc runSignFlow(self: Controller, pin, path, dataToSign: string) =
   self.keycardService.startSignFlow(path, dataToSign, pin)
 
 proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataToSign: string, pin: string) =
-  var finalDataToSign = dataToSign
+  var finalDataToSign = status_general.hashMessageForSigning(dataToSign)
   if finalDataToSign.startsWith("0x"):
     finalDataToSign = finalDataToSign[2..^1]
+  
   if pin.len == 0:
     let data = SharedKeycarModuleSigningArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER,
       keyUid: keyUid,
