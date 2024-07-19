@@ -167,3 +167,60 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
             main_screen.prepare()
             assert driver.waitFor(lambda: channel not in community_screen.left_panel.channels,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/737070',
+                 'Owner can view and post in a non restricted channel')
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/737074',
+                 'Member can view and post in a non restricted channel')
+@pytest.mark.case(737070, 737074)
+@pytest.mark.parametrize('user_data_one, user_data_two, channel_name, channel_description', [
+    (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic', 'Channel_',
+     'Description')
+])
+def test_view_and_post_in_non_restricted_channel(multiple_instances, user_data_one, user_data_two, channel_name,
+                                                 channel_description):
+    user_one: UserAccount = constants.user_account_one
+    user_two: UserAccount = constants.user_account_two
+    channel_name = channel_name + ''.join(random.choices(string.ascii_letters + string.digits, k=5))
+    main_screen = MainWindow()
+
+    with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(user_data=user_data_two) as aut_two:
+        with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
+            for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
+                aut.attach()
+                main_screen.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
+                main_screen.authorize_user(account)
+                main_screen.hide()
+
+        with step(f'User {user_two.name}, select non-restricted channel and can send message'):
+            aut_two.attach()
+            main_screen.prepare()
+            community_screen = main_screen.left_panel.select_community('Community with 2 users')
+            community_screen.create_channel(channel_name, channel_description, emoji=None)
+            community_screen.left_panel.select_channel(channel_name)
+            messages_screen = MessagesScreen()
+            message_text = "Hi"
+            messages_screen.group_chat.send_message_to_group_chat(message_text)
+            main_screen.hide()
+
+        with step(
+                f'User {user_one.name}, select non-restricted channel, verify that can view other messages and also can send message'):
+            aut_one.attach()
+            main_screen.prepare()
+            community_screen = main_screen.left_panel.select_community('Community with 2 users')
+            community_screen.left_panel.select_channel(channel_name)
+            messages_screen = MessagesScreen()
+            message_object = messages_screen.chat.messages(0)[0]
+            assert 'Hi' in message_object.text, f"Message text is not found in last message"
+            message_text = "Hi hi"
+            messages_screen.group_chat.send_message_to_group_chat(message_text)
+            main_screen.hide()
+
+        with step(f'User {user_two.name}, verify that can see sent by member message'):
+            aut_two.attach()
+            main_screen.prepare()
+            message_object = messages_screen.chat.messages(0)[0]
+            assert driver.waitFor(lambda: 'Hi hi' in message_object.text,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Message text is not found in last message"
+
+            community_screen.delete_channel(channel_name)
