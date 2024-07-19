@@ -19,6 +19,7 @@ import ./activity/details_controller as activity_detailsc
 
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import app/modules/shared_modules/wallet_connect/controller as wc_controller
+import app/modules/shared_modules/connector/controller as connector_controller
 
 import app/global/global_singleton
 import app/core/eventemitter
@@ -39,6 +40,7 @@ import app_service/service/network_connection/service as network_connection_serv
 import app_service/service/devices/service as devices_service
 import app_service/service/community_tokens/service as community_tokens_service
 import app_service/service/wallet_connect/service as wc_service
+import app_service/service/connector/service as connector_service
 
 import backend/collectibles as backend_collectibles
 
@@ -81,6 +83,8 @@ type
     devicesService: devices_service.Service
     walletConnectService: wc_service.Service
     walletConnectController: wc_controller.Controller
+    dappsConnectorService: connector_service.Service
+    dappsConnectorController: connector_controller.Controller
 
     activityController: activityc.Controller
     collectibleDetailsController: collectible_detailsc.Controller
@@ -171,7 +175,9 @@ proc newModule*(
   result.walletConnectService = wc_service.newService(result.events, result.threadpool, settingsService, transactionService)
   result.walletConnectController = wc_controller.newController(result.walletConnectService, walletAccountService)
 
-  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.walletConnectController)
+  result.dappsConnectorService = connector_service.newService(result.events)
+  result.dappsConnectorController = connector_controller.newController(result.dappsConnectorService, result.events)
+  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.walletConnectController, result.dappsConnectorController)
   result.viewVariant = newQVariant(result.view)
 
 method delete*(self: Module) =
@@ -348,6 +354,7 @@ method load*(self: Module) =
   self.sendModule.load()
   self.networksModule.load()
   self.walletConnectService.init()
+  self.dappsConnectorService.init()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
