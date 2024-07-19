@@ -541,6 +541,7 @@ Item {
             communitiesStore: root.communitiesStore
             assetsModel: root.store.assetsModel
             collectiblesModel: root.store.collectiblesModel
+            ensCommunityPermissionsEnabled: root.store.ensCommunityPermissionsEnabled
             permissionsModel: {
                 root.store.prepareTokenModelForCommunity(communityData.id)
                 return root.store.permissionsModel

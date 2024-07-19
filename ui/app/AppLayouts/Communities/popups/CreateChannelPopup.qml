@@ -33,6 +33,7 @@ StatusStackModal {
     property bool isDeleteable: false
     property bool viewOnlyCanAddReaction
     property bool hideIfPermissionsNotMet: false
+    property bool ensCommunityPermissionsEnabled: false
 
     property string communityId: ""
     property string chatId: "_newChannel"
@@ -928,6 +929,7 @@ StatusStackModal {
             channelsModel: d.channelEditModel.liveChannelsModel
             communityDetails: d.communityDetails
             showChannelSelector: false
+            ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
 
             readonly property string nextButtonText: !!currentItem.permissionKeyToEdit ?
                                                          qsTr("Update permission") : qsTr("Create permission")

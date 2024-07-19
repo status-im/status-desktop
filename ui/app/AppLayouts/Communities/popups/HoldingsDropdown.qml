@@ -19,6 +19,7 @@ StatusDropdown {
     property var assetsModel
     property var collectiblesModel
     property bool isENSTab: true
+    property bool ensCommunityPermissionsEnabled
     property string noDataText: {
         if(d.currentHoldingType  ===  Constants.TokenType.ERC20)
             return noDataTextForAssets
@@ -90,10 +91,22 @@ StatusDropdown {
         id: d
 
         // Internal management properties and signals:
-        readonly property var holdingTypes: [
-            Constants.TokenType.ERC20, Constants.TokenType.ERC721, Constants.TokenType.ENS
-        ]
-        readonly property var tabsModel: [qsTr("Assets"), qsTr("Collectibles"), qsTr("ENS")]
+        readonly property var holdingTypes: {
+            let types = [
+                Constants.TokenType.ERC20, Constants.TokenType.ERC721
+            ]
+            if (root.ensCommunityPermissionsEnabled) {
+                types.push(Constants.TokenType.ENS)
+            }
+            return types
+        }
+        readonly property var tabsModel: {
+            let tabs = [qsTr("Assets"), qsTr("Collectibles")]
+            if (root.ensCommunityPermissionsEnabled) {
+                tabs.push(qsTr("ENS"))
+            }
+            return tabs
+        }
         readonly property var tabsModelNoEns: [qsTr("Assets"), qsTr("Collectibles")]
 
         readonly property bool assetsReady: root.assetAmount !== "0" && root.assetKey

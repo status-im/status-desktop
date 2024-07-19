@@ -306,6 +306,8 @@ StatusSectionLayout {
             collectiblesModel: rootStore.collectiblesModel
             channelsModel: rootStore.chatCommunitySectionModule.model
 
+            ensCommunityPermissionsEnabled: rootStore.ensCommunityPermissionsEnabled
+
             communityDetails: d.communityDetails
 
             onCreatePermissionRequested:

@@ -171,8 +171,6 @@ SettingsContentBase {
                 }
             }
 
-            /////////////////////////////////////////////////////
-            // WalletConnect POC - to remove
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
@@ -188,6 +186,30 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
+                text: qsTr("Archive Protocol Enabled")
+                isSwitch: true
+                switchChecked: root.advancedStore.archiveProtocolEnabled
+                onClicked: {
+                    root.advancedStore.toggleArchiveProtocolEnabled()
+                }
+            }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("ENS Community Permissions Enabled")
+                isSwitch: true
+                switchChecked: root.advancedStore.ensCommunityPermissionsEnabled
+                onClicked: {
+                    root.advancedStore.toggleEnsCommunityPermissionsEnabled()
+                }
+            }
+
+            /////////////////////////////////////////////////////
+            // WalletConnect POC - to remove
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("POC Wallet Connect")
                 visible: root.advancedStore.isDebugEnabled
 
@@ -196,17 +218,6 @@ SettingsContentBase {
                 }
             }
             /////////////////////////////////////////////////////
-
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Archive Protocol Enabled")
-                isSwitch: true
-                switchChecked: root.advancedStore.archiveProtocolEnabled
-                onClicked: {
-                    root.advancedStore.toggleArchiveProtocolEnabled()
-                }
-            }
 
             Separator {
                 width: parent.width

@@ -169,6 +169,8 @@ QtObject {
 
     readonly property bool permissionsCheckOngoing: chatCommunitySectionModule.permissionsCheckOngoing
 
+    readonly property bool ensCommunityPermissionsEnabled: localAccountSensitiveSettings.ensCommunityPermissionsEnabled
+
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
     signal communityAdded(string communityId)
