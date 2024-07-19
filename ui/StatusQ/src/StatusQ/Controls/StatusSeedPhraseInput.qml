@@ -147,7 +147,7 @@ Item {
             if (textToCheck === "") {
                 return;
             }
-            
+
             for (var i = 0; i < inputList.count; i++) {
                 if (inputList.get(i).seedWord.startsWith(textToCheck)) {
                     filteredList.insert(filteredList.count, {"seedWord": inputList.get(i).seedWord});
@@ -191,7 +191,7 @@ Item {
                     break;
                 }
             }
-            
+
             root.keyPressed(event);
         }
         onEditClicked: {
@@ -206,11 +206,14 @@ Item {
     Popup {
         id: suggListContainer
         contentWidth: seedSuggestionsList.width
-        contentHeight: ((seedSuggestionsList.count <= 5) ? seedSuggestionsList.count : 5) *34 + 16
+        contentHeight: ((seedSuggestionsList.count <= 5) ? seedSuggestionsList.count : 5) *34
         x: 16
         y: seedWordInput.height + 4
         topPadding: 8
         bottomPadding: 8
+        leftPadding: 0
+        rightPadding: 0
+
         visible: ((filteredList.count > 0) && seedWordInput.input.edit.activeFocus)
         background: Rectangle {
             id: statusMenuBackgroundContent
@@ -242,6 +245,7 @@ Item {
             clip: true
             ScrollBar.vertical: ScrollBar { }
             model: root.filteredList
+
             delegate: Item {
                 id: txtDelegate
                 width: suggWord.contentWidth
