@@ -57,8 +57,11 @@ QObject {
         if (txObj.data) { tx.data = txObj.data }
         if (txObj.from) { tx.from = txObj.from }
         if (txObj.gasLimit) { tx.gasLimit = stripLeadingZeros(txObj.gasLimit) }
+        if (txObj.gas) { tx.gas = stripLeadingZeros(txObj.gas) }
         if (txObj.gasPrice) { tx.gasPrice = stripLeadingZeros(txObj.gasPrice) }
         if (txObj.nonce) { tx.nonce = stripLeadingZeros(txObj.nonce) }
+        if (txObj.maxFeePerGas) { tx.maxFeePerGas = stripLeadingZeros(txObj.maxFeePerGas) }
+        if (txObj.maxPriorityFeePerGas) { tx.maxPriorityFeePerGas = stripLeadingZeros(txObj.maxPriorityFeePerGas) }
         if (txObj.to) { tx.to = txObj.to }
         if (txObj.value) { tx.value = stripLeadingZeros(txObj.value) }
         return tx

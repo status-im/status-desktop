@@ -320,7 +320,6 @@ SQUtils.QObject {
                         actionResult = store.signTransaction(request.topic, request.id,
                                             request.account.address, request.network.chainId, password, txObj)
                     } else if (request.method === SessionRequest.methods.sendTransaction.name) {
-                        let txObj = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
                         actionResult = store.sendTransaction(request.topic, request.id,
                                             request.account.address, request.network.chainId, password, txObj)
                     }
