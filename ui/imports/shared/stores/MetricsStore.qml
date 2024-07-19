@@ -7,7 +7,5 @@ QtObject {
         metrics.toggleCentralizedMetrics(enabled)
     }
 
-    function isCentralizedMetricsEnabled() {
-        return metrics.isCentralizedMetricsEnabled()
-    }
+    readonly property bool isCentralizedMetricsEnabled : metrics.isCentralizedMetricsEnabled
 }

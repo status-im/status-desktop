@@ -19,28 +19,6 @@ QtObject:
     new(result, delete)
     result.QObject.setup
 
-  proc toggleCentralizedMetrics*(self: MetricsService, enabled: bool) {.slot.} =
-    try:
-      let payload = %* {"enabled": enabled}
-      let response = status_go.toggleCentralizedMetrics($payload)
-      let jsonObj = response.parseJson
-      if jsonObj.hasKey("error"):
-        error "toggleCentralizedMetrics", errorMsg=jsonObj["error"].getStr
-    except Exception:
-      discard
-
-  proc isCentralizedMetricsEnabled*(self: MetricsService): bool {.slot.} =
-    try:
-      let response = status_go.centralizedMetricsInfo()
-      let jsonObj = response.parseJson
-      if jsonObj.hasKey("error"):
-        error "isCentralizedMetricsEnabled", errorMsg=jsonObj["error"].getStr
-        return false
-      let metricsInfo = toCentralizedMetricsInfoDto(jsonObj)
-      return metricsInfo.enabled
-    except Exception:
-      return false
-
   # for testing, needs to be discussed
   proc addCentralizedMetric*(self: MetricsService) =
     try:
@@ -59,3 +37,35 @@ QtObject:
         error "addCentralizedMetric", errorMsg=jsonObj["error"].getStr
     except Exception:
       discard
+
+  proc centralizedMetricsEnabledChaned*(self: MetricsService) {.signal.}
+  proc isCentralizedMetricsEnabled*(self: MetricsService): bool {.slot.} =
+    try:
+      let response = status_go.centralizedMetricsInfo()
+      let jsonObj = response.parseJson
+      if jsonObj.hasKey("error"):
+        error "isCentralizedMetricsEnabled", errorMsg=jsonObj["error"].getStr
+        return false
+      let metricsInfo = toCentralizedMetricsInfoDto(jsonObj)
+      return metricsInfo.enabled
+    except Exception:
+      return false
+
+  QtProperty[bool] isCentralizedMetricsEnabled:
+    read = isCentralizedMetricsEnabled
+    notify = centralizedMetricsEnabledChaned
+
+  proc toggleCentralizedMetrics*(self: MetricsService, enabled: bool) {.slot.} =
+    try:
+      let isEnabled = self.isCentralizedMetricsEnabled()
+      if enabled == isEnabled:
+        return
+      let payload = %* {"enabled": enabled}
+      let response = status_go.toggleCentralizedMetrics($payload)
+      let jsonObj = response.parseJson
+      if jsonObj{"error"}.getStr.len > 0:
+        error "toggleCentralizedMetrics", errorMsg=jsonObj["error"].getStr
+      else:
+        self.centralizedMetricsEnabledChaned()
+    except Exception as e:
+      error "toggleCentralizedMetrics", exceptionMsg = e.msg

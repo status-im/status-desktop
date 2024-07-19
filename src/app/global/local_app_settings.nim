@@ -25,6 +25,8 @@ const LAS_KEY_TRANSLATIONS_ENABLED = "global/translations_enabled"
 const DEFAULT_LAS_KEY_TRANSLATIONS_ENABLED = false
 const DEFAULT_LAS_KEY_CREATE_COMMUNITIES_ENABLED = false
 const LAS_KEY_REFRESH_TOKEN_ENABLED = "global/refresh_token_enabled"
+const LAS_KEY_METRICS_POPUP_SEEN = "global/metrics_popup_seen"
+const DEFAULT_LAS_KEY_METRICS_POPUP_SEEN = false
 
 QtObject:
   type LocalAppSettings* = ref object of QObject
@@ -229,3 +231,16 @@ QtObject:
 
   QtProperty[string] walletConnectProjectID:
     read = getWalletConnectProjectID
+
+
+  proc refreshMetricsPopupSeen*(self: LocalAppSettings) {.signal.}
+  proc getMetricsPopupSeen*(self: LocalAppSettings): bool {.slot.} =
+    self.settings.value(LAS_KEY_METRICS_POPUP_SEEN, newQVariant(DEFAULT_LAS_KEY_METRICS_POPUP_SEEN)).boolVal
+  proc setMetricsPopupSeen*(self: LocalAppSettings, enabled: bool) {.slot.} =
+    self.settings.setValue(LAS_KEY_METRICS_POPUP_SEEN, newQVariant(enabled))
+    self.refreshMetricsPopupSeen()
+
+  QtProperty[bool] metricsPopupSeen:
+    read = getMetricsPopupSeen
+    write = setMetricsPopupSeen
+    notify = refreshMetricsPopupSeen

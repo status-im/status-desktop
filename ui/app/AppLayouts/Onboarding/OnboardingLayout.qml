@@ -19,7 +19,6 @@ OnboardingBasePage {
     id: root
 
     property var startupStore: StartupStore {}
-    property var metricsStore: MetricsStore {}
 
     backButtonVisible: root.startupStore.currentStartupState ? root.startupStore.currentStartupState.displayBackButton
                                                              : false
@@ -235,7 +234,6 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
         id: keysMainViewComponent
         KeysMainView {
             startupStore: root.startupStore
-            metricsStore: root.metricsStore
         }
     }
 
