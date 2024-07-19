@@ -59,6 +59,7 @@ SettingsContentBase {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Fleet")
+                objectName: "fleetButton"
                 currentValue: root.advancedStore.fleet
                 onClicked: fleetModal.open()
                 visible: root.isFleetSelectionEnabled

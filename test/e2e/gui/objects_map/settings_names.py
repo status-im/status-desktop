@@ -179,3 +179,4 @@ manageCommunitiesOnTestnetButton_StatusSettingsLineButton = {"container": mainWi
 enableCreateCommunityButton_StatusSettingsLineButton = {"container": settingsContentBase_ScrollView, "objectName": "enableCreateCommunityButton", "type": "StatusSettingsLineButton", "visible": True}
 settingsContentBaseScrollViewLightWakuModeBloomSelectorButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "lightWakuModeButton", "type": "BloomSelectorButton", "visible": True}
 settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "relayWakuModeButton", "type": "BloomSelectorButton", "visible": True}
+settingsContentBaseScrollView_fleetButton_StatusSettingsLineButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "fleetButton", "type": "StatusSettingsLineButton", "visible": True}

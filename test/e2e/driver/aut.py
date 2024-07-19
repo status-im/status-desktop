@@ -102,6 +102,7 @@ class AUT:
             f'--port={self.port}',
             str(self.path),
             f'--datadir={self.app_data}',
+            '--enable-fleet-selection',
             f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
         ]
         try:

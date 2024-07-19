@@ -42,12 +42,14 @@ ModalPopup {
         }
 
         FleetRadioSelector {
+            objectName: "shardsTestOption"
             advancedStore: popup.advancedStore
             fleetName: Constants.shards_test
             buttonGroup: fleetSettings
         }
 
         FleetRadioSelector {
+            objectName: "statusStagingOption"
             advancedStore: popup.advancedStore
             fleetName: Constants.status_staging
             buttonGroup: fleetSettings

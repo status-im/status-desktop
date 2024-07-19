@@ -1,6 +1,7 @@
 import allure
 
 from gui.components.settings.confirm_switch_waku_mode_popup import SwitchWakuModePopup
+from gui.components.settings.fleet_popup import FleetPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
@@ -17,6 +18,7 @@ class AdvancedSettingsView(QObject):
         self._enable_creation_community_button = Button(settings_names.enableCreateCommunityButton_StatusSettingsLineButton)
         self._light_mode_button = Button(settings_names.settingsContentBaseScrollViewLightWakuModeBloomSelectorButton)
         self._relay_mode_button = Button(settings_names.settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton)
+        self._fleet_button = Button(settings_names.settingsContentBaseScrollView_fleetButton_StatusSettingsLineButton)
 
     @allure.step('Switch manage community on testnet option')
     def switch_manage_on_community(self):
@@ -46,3 +48,8 @@ class AdvancedSettingsView(QObject):
             return self._light_mode_button.is_checked
         elif mode == 'relay':
             return self._relay_mode_button.is_checked
+
+    @allure.step('Switch fleet')
+    def switch_fleet(self):
+        self._fleet_button.click()
+        return FleetPopup().wait_until_appears()

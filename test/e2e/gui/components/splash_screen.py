@@ -1,6 +1,7 @@
 import allure
 
 import configs
+from driver.toplevel_window import set_focus
 from gui.elements.object import QObject
 from gui.objects_map import names
 
@@ -17,4 +18,5 @@ class SplashScreen(QObject):
 
     @allure.step('Wait until hidden {0}')
     def wait_until_hidden(self, timeout_msec: int = configs.timeouts.APP_LOAD_TIMEOUT_MSEC):
+        self.click()
         super().wait_until_hidden(timeout_msec)

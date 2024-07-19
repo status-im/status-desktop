@@ -7,7 +7,7 @@ mainWindow_StatusWindow = {"name": "mainWindow", "type": "StatusWindow", "visibl
 statusDesktop_mainWindow_overlay = {"container": statusDesktop_mainWindow, "type": "Overlay", "unnamed": 1, "visible": True}
 statusDesktop_mainWindow_overlay_popup2 = {"container": statusDesktop_mainWindow_overlay, "occurrence": 2, "type": "PopupItem", "unnamed": 1, "visible": True}
 scrollView_StatusScrollView = {"container": statusDesktop_mainWindow_overlay, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
-splashScreen = {"container": statusDesktop_mainWindow, "objectName": "splashScreen", "type": "DidYouKnowSplashScreen"}
+splashScreen = {"container": statusDesktop_mainWindow, "objectName": "splashScreen", "type": "DidYouKnowSplashScreen", "visible": True}
 mainWindow_LoadingAnimation = {"container": statusDesktop_mainWindow, "objectName": "loadingAnimation", "type": "LoadingAnimation", "visible": True}
 
 # Common names
@@ -437,6 +437,12 @@ mainWindow_settingsDirtyToastMessage_SettingsDirtyToastMessage = {"container": "
 
 # Confirm switch waku mode popup
 iUnderstandStatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "confirmButton", "type": "StatusButton", "unnamed": 1, "visible": True}
+
+# Fleet popup
+fleet_option_template = {"container": statusDesktop_mainWindow_overlay, "objectName": "shardsTestOption", "type": "FleetRadioSelector", "visible": True}
+shardsTestOption_FleetRadioSelector = {"container": statusDesktop_mainWindow_overlay, "objectName": "shardsTestOption", "type": "FleetRadioSelector", "visible": True}
+statusStagingOption_FleetRadioSelector = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusStagingOption", "type": "FleetRadioSelector", "visible": True}
+confirm_change_fleet_statusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "confirmButton", "type": "StatusButton", "unnamed": 1, "visible": True}
 
 # Back up seed phrase banner
 mainWindow_secureYourSeedPhraseBanner_ModuleWarning = {"container": statusDesktop_mainWindow, "objectName": "secureYourSeedPhraseBanner", "type": "ModuleWarning", "visible": True}
