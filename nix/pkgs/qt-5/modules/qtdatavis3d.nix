@@ -1,7 +1,7 @@
 { lib, stdenv, qtModule, qtbase, qtdeclarative }:
 
 qtModule {
-  pname = "qt3d";
+  pname = "qtdatavis3d";
   propagatedBuildInputs = [ qtbase qtdeclarative ];
   outputs = [ "out" "dev" "bin" ];
   # error: use of undeclared identifier 'stat64'

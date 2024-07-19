@@ -1,9 +1,11 @@
 { qtModule
 , qtbase
 , qtdeclarative
+, openssl
 }:
 
 qtModule {
-  pname = "qtlottie";
+  pname = "qtquick3d";
   propagatedBuildInputs = [ qtbase qtdeclarative ];
+  buildInputs = [ openssl ];
 }
