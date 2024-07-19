@@ -11,6 +11,7 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 
 import mainui 1.0
 import AppLayouts.Onboarding 1.0
@@ -19,11 +20,14 @@ import StatusQ 0.1 // Force import StatusQ plugin to load all StatusQ resources
 import StatusQ.Core.Theme 0.1
 
 StatusWindow {
+    id: applicationWindow
+
     property bool appIsReady: false
+
+    property MetricsStore metricsStore: MetricsStore {}
 
     Universal.theme: Universal.System
 
-    id: applicationWindow
     objectName: "mainWindow"
     minimumWidth: 1200
     minimumHeight: 680
@@ -285,6 +289,8 @@ StatusWindow {
         Style.changeTheme(Universal.System, systemPalette.isCurrentSystemThemeDark());
 
         restoreAppState();
+
+        Global.openMetricsEnablePopupRequested.connect(openMetricsEnablePopup)
     }
 
     signal navigateTo(string path)
@@ -294,6 +300,17 @@ StatusWindow {
         applicationWindow.visible = true
         applicationWindow.raise()
         applicationWindow.requestActivate()
+    }
+
+    function openMetricsEnablePopup(isOnboarding, cb = null) {
+        metricsPopupLoader.active = true
+        metricsPopupLoader.item.visible = true
+        metricsPopupLoader.item.isOnboarding = isOnboarding
+        if (cb)
+            cb(metricsPopupLoader.item)
+        if(!localAppSettings.metricsPopupSeen) {
+            localAppSettings.metricsPopupSeen = true
+        }
     }
 
     StatusTrayIcon {
@@ -320,6 +337,7 @@ StatusWindow {
         AppMain {
             sysPalette: systemPalette
             visible: !appLoadingAnimation.active
+            isCentralizedMetricsEnabled: metricsStore.isCentralizedMetricsEnabled
         }
     }
 
@@ -339,12 +357,31 @@ StatusWindow {
                 }
             }
         }
+        onActiveChanged: {
+            if (!active) {
+                // animation is finished, app main will be shown
+                // open metrics popup only if it has not been seen
+                if(!localAppSettings.metricsPopupSeen) {
+                    openMetricsEnablePopup(true, null)
+                }
+            }
+        }
     }
 
     OnboardingLayout {
         id: startupOnboarding
         objectName: "startupOnboardingLayout"
         anchors.fill: parent
+    }
+
+    Loader {
+        id: metricsPopupLoader
+        active: false
+        sourceComponent: MetricsEnablePopup {
+            visible: true
+            onClosed: metricsPopupLoader.active = false
+            onToggleMetrics: applicationWindow.metricsStore.toggleCentralizedMetrics(enabled)
+        }
     }
 
     MacTrafficLights { // FIXME should be a direct part of StatusAppNavBar

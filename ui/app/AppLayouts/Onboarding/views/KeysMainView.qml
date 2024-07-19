@@ -23,7 +23,6 @@ Item {
     id: root
 
     property StartupStore startupStore
-    property MetricsStore metricsStore
 
     Component.onCompleted: {
         if (button1.visible) {
@@ -39,17 +38,8 @@ Item {
         readonly property int infoTextWidth: d.infoWidth - 2 * d.infoMargin
         readonly property int imgKeysWH: 160
         readonly property int imgSeedPhraseWH: 257
-
-
-        function showMetricsAndRunAction(action) {
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeNewStatusUser) {
-                metricsEnablePopup.actionOnClose = action
-                metricsEnablePopup.visible = true
-            } else {
-                action()
-            }
-        }
     }
+
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.onboarding.loginHeight
@@ -233,12 +223,12 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             visible: text !== ""
             onClicked: {
-                d.showMetricsAndRunAction(root.startupStore.doPrimaryAction)
+                root.startupStore.doPrimaryAction()
             }
             Keys.onPressed: {
                 if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                     event.accepted = true
-                    d.showMetricsAndRunAction(root.startupStore.doPrimaryAction)
+                    root.startupStore.doPrimaryAction()
                 }
             }
         }
@@ -261,7 +251,7 @@ Item {
                     parent.font.underline = false
                 }
                 onClicked: {
-                    d.showMetricsAndRunAction(root.startupStore.doSecondaryAction)
+                    root.startupStore.doSecondaryAction()
                 }
             }
         }
@@ -297,7 +287,7 @@ Item {
                             Qt.openUrlExternally(button3.link)
                             return
                         }
-                        d.showMetricsAndRunAction(root.startupStore.doTertiaryAction)
+                        root.startupStore.doTertiaryAction()
                     }
                 }
             }
@@ -319,24 +309,6 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
-    }
-
-    component MetricsEnablePopupWithActionOnClose: MetricsEnablePopup {
-        property var actionOnClose
-    }
-
-    MetricsEnablePopupWithActionOnClose {
-        id: metricsEnablePopup
-        isOnboarding: true
-
-        function finalAction(enable) {
-            if (!!actionOnClose)
-                actionOnClose()
-            root.metricsStore.toggleCentralizedMetrics(enable)
-        }
-
-        onAccepted: finalAction(true)
-        onRejected: finalAction(false)
     }
 
     states: [

@@ -24,6 +24,14 @@ Item {
         btnNewUser.forceActiveFocus()
     }
 
+    QtObject {
+        id: d
+
+        function showMetricsAndRunAction(action) {
+            Global.openMetricsEnablePopupRequested(true, popup => popup.closed.connect(() => action()))
+        }
+    }
+
     BeforeGetStartedModal {
         id: beforeGetStartedModal
         onClosed: {
@@ -81,12 +89,12 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("I am new to Status")
             onClicked: {
-                root.startupStore.doPrimaryAction()
+                d.showMetricsAndRunAction(root.startupStore.doPrimaryAction)
             }
             Keys.onPressed: {
                 if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                     event.accepted = true
-                    root.startupStore.doPrimaryAction()
+                    d.showMetricsAndRunAction(root.startupStore.doPrimaryAction)
                 }
             }
         }
@@ -98,7 +106,7 @@ Item {
             anchors.topMargin: Style.current.bigPadding
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
-                root.startupStore.doSecondaryAction()
+                d.showMetricsAndRunAction(root.startupStore.doSecondaryAction)
             }
         }
     }

@@ -44,7 +44,7 @@ StatusSectionLayout {
     required property WalletAssetsStore walletAssetsStore
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
-    required property SharedStores.MetricsStore metricsStore
+    required property bool isCentralizedMetricsEnabled
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
@@ -463,8 +463,7 @@ StatusSectionLayout {
             active: false
             asynchronous: true
             sourceComponent: PrivacyAndSecurityView {
-                metricsStore: root.metricsStore
-
+                isCentralizedMetricsEnabled: root.isCentralizedMetricsEnabled
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 

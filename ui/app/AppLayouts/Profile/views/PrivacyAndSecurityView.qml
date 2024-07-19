@@ -23,39 +23,28 @@ import SortFilterProxyModel 0.2
 SettingsContentBase {
     id: root
 
-    required property MetricsStore metricsStore
+    required property bool isCentralizedMetricsEnabled
 
-    Component.onCompleted: {
-        enableMetricsSwitch.checked = metricsStore.isCentralizedMetricsEnabled()
-    }
-
-    function enableMetrics(enable) {
-        enableMetricsSwitch.checked = enable
-        metricsStore.toggleCentralizedMetrics(enable)
+    function refreshSwitch() {
+        enableMetricsSwitch.checked = Qt.binding(function() { return root.isCentralizedMetricsEnabled })
     }
 
     ColumnLayout {
         StatusListItem {
             Layout.preferredWidth: root.contentWidth
             title: qsTr("Share usage data with Status")
+            subTitle: qsTr("From all profiles on device")
             components: [
                 StatusSwitch {
                     id: enableMetricsSwitch
+                    checked: root.isCentralizedMetricsEnabled
                     onClicked: {
-                        Global.openPopup(metricsEnabledPopupComponent)
+                        Global.openMetricsEnablePopupRequested(false, popup => popup.toggleMetrics.connect(refreshSwitch))
                     }
                 }
             ]
             onClicked: {
-                Global.openPopup(metricsEnabledPopupComponent)
-            }
-        }
-
-        Component {
-            id: metricsEnabledPopupComponent
-            MetricsEnablePopup {
-                onAccepted: root.enableMetrics(true)
-                onRejected: root.enableMetrics(false)
+                Global.openMetricsEnablePopupRequested(false, popup => popup.toggleMetrics.connect(refreshSwitch))
             }
         }
     }

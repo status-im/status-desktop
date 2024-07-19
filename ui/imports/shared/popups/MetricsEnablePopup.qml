@@ -16,6 +16,8 @@ StatusModal {
 
     property bool isOnboarding: false
 
+    signal toggleMetrics(bool enabled)
+
     width: 640
     title: qsTr("Help us improve Status")
     hasCloseButton: true
@@ -90,7 +92,8 @@ StatusModal {
         StatusButton {
             text: qsTr("Share usage data")
             onClicked: {
-                root.accept()
+                root.toggleMetrics(true)
+                close()
             }
             objectName: "shareMetricsButton"
         }
@@ -100,7 +103,8 @@ StatusModal {
         StatusButton {
             text: qsTr("Not now")
             onClicked: {
-                root.reject()
+                root.toggleMetrics(false)
+                close()
             }
             objectName: "notShareMetricsButton"
             normalColor: "transparent"

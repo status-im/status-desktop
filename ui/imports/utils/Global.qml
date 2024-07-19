@@ -109,6 +109,9 @@ QtObject {
     // BuyCrypto
     signal openBuyCryptoModalRequested()
 
+    // Metrics
+    signal openMetricsEnablePopupRequested(bool isOnboarding, var cb)
+
     /////////////////////////////////////////////////////
     // WalletConnect POC - to remove
     signal popupWalletConnect()
