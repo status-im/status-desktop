@@ -16,7 +16,6 @@ import shared.panels 1.0
 StatusDialog {
     id: root
 
-    required property string sourceName
     required property string sourceImage
     required property string sourceUrl
     required property string sourceVersion
@@ -65,7 +64,7 @@ StatusDialog {
     }
 
     header: StatusDialogHeader {
-        headline.title: qsTr("%1 Token List").arg(root.sourceName)
+        headline.title: root.title
         headline.subtitle: qsTr("%n token(s)", "", root.tokensCount)
         actions.closeButton.onClicked: root.close()
         leftComponent: StatusSmartIdenticon {

@@ -1194,11 +1194,11 @@ QtObject {
         return url.indexOf("DEFAULT-TOKEN") !== -1
     }
 
-    function getSupportedTokenSourceImage(key, useDefault=true) {
-        if (key === supportedTokenSources.uniswap)
+    function getSupportedTokenSourceImage(name, useDefault=true) {
+        if (name === supportedTokenSources.uniswap)
             return Style.png("tokens/UNI")
 
-        if (key === supportedTokenSources.status)
+        if (name === supportedTokenSources.status)
             return Style.png("tokens/SNT")
 
         if (useDefault)
