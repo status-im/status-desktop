@@ -174,7 +174,6 @@ RightTabBaseView {
                             }
 
                             tokensModel: RootStore.walletAssetsStore.groupedAccountAssetsModel
-                            controller: RootStore.walletAssetsStore.assetsController
 
                             formatBalance: (balance, symbol) => {
                                 return LocaleUtils.currencyAmountToLocaleString(

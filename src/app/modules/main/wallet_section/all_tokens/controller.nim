@@ -1,5 +1,3 @@
-import json
-
 import ./io_interface
 
 import app/core/eventemitter
@@ -111,11 +109,11 @@ proc getCommunityTokenDescription*(self: Controller, chainId: int, address: stri
 proc updateTokenPreferences*(self: Controller, tokenPreferencesJson: string) =
   self.tokenService.updateTokenPreferences(tokenPreferencesJson)
 
+proc getTokenPreferences*(self: Controller, symbol: string): TokenPreferencesItem =
+  return self.tokenService.getTokenPreferences(symbol)
+
 proc getTokenPreferencesJson*(self: Controller): string =
-  let data = self.tokenService.getTokenPreferences()
-  if data.isNil:
-    return "[]"
-  return $data
+  return self.tokenService.getTokenPreferencesJson()
 
 proc getTokenGroupByCommunity*(self: Controller): bool =
   return self.settingsService.tokenGroupByCommunity()
