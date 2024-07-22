@@ -3,7 +3,7 @@ import os
 
 const DEFAULT_FLAG_DAPPS_ENABLED = false
 const DEFAULT_FLAG_SWAP_ENABLED = false
-const DEFAULT_FLAG_CONNECTOR_ENABLED = false
+const DEFAULT_FLAG_CONNECTOR_ENABLED = true
 
 proc boolToEnv(defaultValue: bool): string =
   return if defaultValue: "1" else: "0"
