@@ -49,6 +49,7 @@ proc disconnectSession*(topic: string): bool =
     error "wallet_disconnectWalletConnectSession failed: ", "msg", e.msg
     return false
 
+# returns nil if error
 proc getActiveSessions*(validAtTimestamp: int): JsonNode =
   try:
     let rpcRes = getWalletConnectActiveSessions(validAtTimestamp)
@@ -57,7 +58,8 @@ proc getActiveSessions*(validAtTimestamp: int): JsonNode =
 
     let jsonResultStr = rpcRes.result.getStr()
     if jsonResultStr == "null":
-      return nil
+      # nil means error
+      return newJArray()
 
     if rpcRes.result.kind != JArray:
       error "Unexpected result kind: ", rpcRes.result.kind

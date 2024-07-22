@@ -390,15 +390,15 @@ SQUtils.QObject {
                 tx = d.getTxObject(method, data)
             }
 
-            let Math = SQUtils.AmountsArithmetic
-            let gasLimit = Math.fromString("21000")
+            let BigOps = SQUtils.AmountsArithmetic
+            let gasLimit = BigOps.fromString("21000")
             let gasPrice, maxFeePerGas, maxPriorityFeePerGas
-            let l1GasFee = Math.fromNumber(0)
+            let l1GasFee = BigOps.fromNumber(0)
 
             // Beware, the tx values are standard blockchain hex big number values; the fees values are nim's float64 values, hence the complex conversions
             if (!!tx.maxFeePerGas && !!tx.maxPriorityFeePerGas) {
                 let maxFeePerGasDec = root.store.hexToDec(tx.maxFeePerGas)
-                gasPrice = Math.fromString(maxFeePerGasDec)
+                gasPrice = BigOps.fromString(maxFeePerGasDec)
                 // Source fees info from the incoming transaction for when we process it
                 maxFeePerGas = maxFeePerGasDec
                 let maxPriorityFeePerGasDec = root.store.hexToDec(tx.maxPriorityFeePerGas)
@@ -408,11 +408,11 @@ SQUtils.QObject {
                 maxPriorityFeePerGas = fees.maxPriorityFeePerGas
                 if (fees.eip1559Enabled) {
                     if (!!fees.maxFeePerGasM) {
-                        gasPrice = Math.fromNumber(fees.maxFeePerGasM)
+                        gasPrice = BigOps.fromNumber(fees.maxFeePerGasM)
                         maxFeePerGas = fees.maxFeePerGasM
                     } else if(!!tx.maxFeePerGas) {
                         let maxFeePerGasDec = root.store.hexToDec(tx.maxFeePerGas)
-                        gasPrice = Math.fromString(maxFeePerGasDec)
+                        gasPrice = BigOps.fromString(maxFeePerGasDec)
                         maxFeePerGas = maxFeePerGasDec
                     } else {
                         console.error("Error fetching maxFeePerGas from fees or tx objects")
@@ -420,38 +420,38 @@ SQUtils.QObject {
                     }
                 } else {
                     if (!!fees.gasPrice) {
-                        gasPrice = Math.fromNumber(fees.gasPrice)
+                        gasPrice = BigOps.fromNumber(fees.gasPrice)
                     } else {
                         console.error("Error fetching suggested fees")
                         return
                     }
                 }
-                l1GasFee = Math.fromNumber(fees.l1GasFee)
+                l1GasFee = BigOps.fromNumber(fees.l1GasFee)
             }
 
-            let maxFees = Math.times(gasLimit, gasPrice)
+            let maxFees = BigOps.times(gasLimit, gasPrice)
             return {maxFees, maxFeePerGas, maxPriorityFeePerGas, gasPrice, l1GasFee}
         }
 
         // Returned values are Big numbers
         function getEstimatedFeesStatus(data, method, chainId, mainNetChainId) {
-            let Math = SQUtils.AmountsArithmetic
+            let BigOps = SQUtils.AmountsArithmetic
 
             let feesInfo = getEstimatedMaxFees(data, method, chainId, mainNetChainId)
 
-            let totalMaxFees = Math.sum(feesInfo.maxFees, feesInfo.l1GasFee)
-            let maxFeesEth = Math.div(totalMaxFees, Math.fromNumber(1, 9))
+            let totalMaxFees = BigOps.sum(feesInfo.maxFees, feesInfo.l1GasFee)
+            let maxFeesEth = BigOps.div(totalMaxFees, BigOps.fromNumber(1, 9))
 
             let maxFeesEthStr = maxFeesEth.toString()
             let fiatMaxFeesStr = root.currenciesStore.getFiatValue(maxFeesEthStr, Constants.ethToken)
-            let fiatMaxFees = Math.fromString(fiatMaxFeesStr)
+            let fiatMaxFees = BigOps.fromString(fiatMaxFeesStr)
             let symbol = root.currenciesStore.currentCurrencySymbol
 
             return {fiatMaxFees, maxFeesEth, symbol, feesInfo}
         }
 
         function getBalanceInEth(balances, address, chainId) {
-            const Math = SQUtils.AmountsArithmetic
+            const BigOps = SQUtils.AmountsArithmetic
             let accEth = SQUtils.ModelUtils.getFirstModelEntryIf(balances, (balance) => {
                 return balance.account.toLowerCase() === address.toLowerCase() && balance.chainId === chainId
             })
@@ -459,13 +459,13 @@ SQUtils.QObject {
                 console.error("Error balance lookup for account ", address, " on chain ", chainId)
                 return null
             }
-            let accountFundsWei = Math.fromString(accEth.balance)
-            return Math.div(accountFundsWei, Math.fromNumber(1, 18))
+            let accountFundsWei = BigOps.fromString(accEth.balance)
+            return BigOps.div(accountFundsWei, BigOps.fromNumber(1, 18))
         }
 
         // Returns {haveEnoughForFees, haveEnoughFunds} and true in case of error not to block request
         function checkFundsStatus(maxFees, l1GasFee, address, chainId, mainNetChainId, valueEth) {
-            let Math = SQUtils.AmountsArithmetic
+            let BigOps = SQUtils.AmountsArithmetic
 
             let haveEnoughForFees = true
             let haveEnoughFunds = true
@@ -481,25 +481,25 @@ SQUtils.QObject {
                 console.error("Error fetching chain balance")
                 return {haveEnoughForFees, haveEnoughFunds}
             }
-            haveEnoughFunds = Math.cmp(chainBalance, valueEth) >= 0
+            haveEnoughFunds = BigOps.cmp(chainBalance, valueEth) >= 0
             if (haveEnoughFunds) {
-                chainBalance = Math.sub(chainBalance, valueEth)
+                chainBalance = BigOps.sub(chainBalance, valueEth)
 
                 if (chainId == mainNetChainId) {
-                    const finalFees = Math.sum(maxFees, l1GasFee)
-                    let feesEth = Math.div(finalFees, Math.fromNumber(1, 9))
-                    haveEnoughForFees = Math.cmp(chainBalance, feesEth) >= 0
+                    const finalFees = BigOps.sum(maxFees, l1GasFee)
+                    let feesEth = BigOps.div(finalFees, BigOps.fromNumber(1, 9))
+                    haveEnoughForFees = BigOps.cmp(chainBalance, feesEth) >= 0
                 } else {
-                    const feesChain = Math.div(maxFees, Math.fromNumber(1, 9))
-                    const haveEnoughOnChain = Math.cmp(chainBalance, feesChain) >= 0
+                    const feesChain = BigOps.div(maxFees, BigOps.fromNumber(1, 9))
+                    const haveEnoughOnChain = BigOps.cmp(chainBalance, feesChain) >= 0
 
                     const mainBalance = getBalanceInEth(token.balances, address, mainNetChainId)
                     if (!mainBalance) {
                         console.error("Error fetching mainnet balance")
                         return {haveEnoughForFees, haveEnoughFunds}
                     }
-                    const feesMain = Math.div(l1GasFee, Math.fromNumber(1, 9))
-                    const haveEnoughOnMain = Math.cmp(mainBalance, feesMain) >= 0
+                    const feesMain = BigOps.div(l1GasFee, BigOps.fromNumber(1, 9))
+                    const haveEnoughOnMain = BigOps.cmp(mainBalance, feesMain) >= 0
 
                     haveEnoughForFees = haveEnoughOnChain && haveEnoughOnMain
                 }
@@ -552,9 +552,13 @@ SQUtils.QObject {
                     payload = JSON.stringify(JSON.parse(stringPayload), null, 2)
                     break
                 }
+                case SessionRequest.methods.signTransaction.name:
+                case SessionRequest.methods.sendTransaction.name:
+                    // For transactions we process the data in a different way as follows
+                    break
                 default:
-                    // For transaction we process the data in a different way
-                    break;
+                    console.error("Unhandled method", method)
+                    break
             }
 
             let value = SQUtils.AmountsArithmetic.fromNumber(0)
@@ -600,12 +604,12 @@ SQUtils.QObject {
                 "gwei": 9,
                 "eth": 18
             }
-            let Math = SQUtils.AmountsArithmetic
+            let BigOps = SQUtils.AmountsArithmetic
             let decValue = root.store.hexToDec(value)
             if (!!decValue) {
-                return Math.div(Math.fromNumber(decValue), Math.fromNumber(1, unitMapping[ethUnit]))
+                return BigOps.div(BigOps.fromNumber(decValue), BigOps.fromNumber(1, unitMapping[ethUnit]))
             }
-            return Math.fromNumber(0)
+            return BigOps.fromNumber(0)
         }
     }
 
