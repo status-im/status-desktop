@@ -6,13 +6,13 @@ import pytest
 from allure_commons._allure import step
 
 import driver
+from gui.main_window import switch_to_status_staging, MainWindow
 from . import marks
 
 import configs.testpath
 import constants
 from constants import UserAccount
 from constants.messaging import Messaging
-from gui.main_screen import MainWindow, switch_to_status_staging
 from gui.screens.messages import MessagesScreen
 
 pytestmark = marks

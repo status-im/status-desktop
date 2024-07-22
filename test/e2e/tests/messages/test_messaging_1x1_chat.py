@@ -9,12 +9,12 @@ from allure_commons._allure import step
 import driver
 from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, \
     LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
+from gui.main_window import MainWindow, switch_to_status_staging
 from gui.screens.messages import MessagesScreen, ToolBar
 
 import configs.testpath
 import constants
 from constants import UserAccount
-from gui.main_screen import MainWindow, switch_to_status_staging
 
 from . import marks
 

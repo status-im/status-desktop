@@ -29,7 +29,7 @@ pytestmark = marks
 def test_link_previews(multiple_instances, community_name, domain_link, user_name, domain_link_2, user_emoji_hash):
     user_one: UserAccount = constants.user_with_random_attributes_1
     user_two: UserAccount = constants.user_with_random_attributes_2
-    main_window = MainWindow()
+    main_screen = MainWindow()
     messages_screen = MessagesScreen()
     path = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
@@ -38,24 +38,24 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()
-                main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
-                main_window.authorize_user(account)
-                main_window.hide()
+                main_screen.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
+                main_screen.authorize_user(account)
+                main_screen.hide()
 
         with step(f'User {user_two.name}, get chat key'):
             aut_two.attach()
-            main_window.prepare()
+            main_screen.prepare()
             switch_to_status_staging(aut_two, main_screen, user_two)
-            profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
+            profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.copy_chat_key
             profile_popup.close()
-            main_window.hide()
+            main_screen.hide()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
             aut_one.attach()
-            main_window.prepare()
+            main_screen.prepare()
             switch_to_status_staging(aut_one, main_screen, user_one)
-            settings = main_window.left_panel.open_settings()
+            settings = main_screen.left_panel.open_settings()
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
             contact_request_popup = contacts_settings.open_contact_request_form()
@@ -63,7 +63,7 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name} via activity center'):
             aut_two.attach()
-            main_window.prepare()
+            main_screen.prepare()
             activity_center = ToolBar().open_activity_center()
             request = activity_center.find_contact_request_in_list(user_one.name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             activity_center.click_activity_center_button(
@@ -100,8 +100,8 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
             messages_screen.group_chat.close_link_preview_popup().confirm_sending_message()
 
         with step('Change preview settings to always show previews in messaging settings'):
-            main_window.left_panel.open_settings().left_panel.open_messaging_settings().click_always_show()
-            main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_one.name)
+            main_screen.left_panel.open_settings().left_panel.open_messaging_settings().click_always_show()
+            main_screen.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_one.name)
 
         with step(f'Paste external link again'):
             messages_screen.group_chat.type_message(message)

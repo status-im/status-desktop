@@ -2,13 +2,13 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+from gui.main_window import switch_to_status_staging, MainWindow
 from . import marks
 
 import configs.testpath
 import constants
 from constants import UserAccount
 from constants.messaging import Messaging
-from gui.main_screen import MainWindow, switch_to_status_staging
 
 pytestmark = marks
 

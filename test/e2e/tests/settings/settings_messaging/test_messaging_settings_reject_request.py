@@ -5,9 +5,9 @@ import constants
 import pytest
 from allure_commons._allure import step
 from constants import UserAccount
+from gui.main_window import MainWindow, switch_to_status_staging
 from . import marks
 from constants.messaging import Messaging
-from gui.main_screen import MainWindow, switch_to_status_staging
 
 pytestmark = marks
 
