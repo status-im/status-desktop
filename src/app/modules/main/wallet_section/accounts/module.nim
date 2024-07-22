@@ -70,6 +70,10 @@ method load*(self: Module) =
   self.controller.init()
   self.view.load()
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED) do(e: Args):
+    let args = AccountArgs(e)
+    self.view.onPreferredSharingChainsUpdated(args.account.keyUid, args.account.address, args.account.prodPreferredChainIds, args.account.testPreferredChainIds)
+
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 

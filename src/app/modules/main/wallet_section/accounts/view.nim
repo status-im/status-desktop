@@ -69,3 +69,6 @@ QtObject:
 
   proc getWalletAccountAsJson*(self: View, address: string): string {.slot.} =
     return $self.delegate.getWalletAccountAsJson(address)
+
+  proc onPreferredSharingChainsUpdated*(self: View, keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
+    self.accounts.onPreferredSharingChainsUpdated(address, prodPreferredChainIds, testPreferredChainIds)
