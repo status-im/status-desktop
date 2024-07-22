@@ -83,7 +83,11 @@ class AUT:
             SquishServer().add_attachable_aut(self.aut_id, self.port)
             if self.ctx is None:
                 self.ctx = context.get_context(self.aut_id)
-            squish.setApplicationContext(self.ctx)
+            try:
+                squish.setApplicationContext(self.ctx, timeout_sec)
+            except TypeError:
+                raise TypeError(f'Current list is {squish.applicationContextList()}')
+
             assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
         except Exception as err:
             LOG.error('Failed to attach AUT: %s', err)
