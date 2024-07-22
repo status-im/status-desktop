@@ -95,6 +95,9 @@ SplitView {
                     networkIconPath: Style.svg(priv.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
 
+                    serviceProviderName: "Paraswap"
+                    serviceProviderURL: Constants.swap.termsAndConditionParaswapUrl
+
                     fiatFees: "1.54 EUR"
                     cryptoFees: "0.001 ETH"
                     slippage: 0.5

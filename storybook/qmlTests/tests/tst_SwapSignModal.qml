@@ -47,6 +47,9 @@ Item {
             networkIconPath: Style.svg("network/Network=Ethereum")
             networkBlockExplorerUrl: "https://etherscan.io/"
 
+            serviceProviderName: "Paraswap"
+            serviceProviderURL: Constants.swap.termsAndConditionParaswapUrl
+
             fiatFees: "1.54 EUR"
             cryptoFees: "0.001 ETH"
             slippage: 0.2

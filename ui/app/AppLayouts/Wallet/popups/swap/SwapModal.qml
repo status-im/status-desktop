@@ -507,7 +507,7 @@ StatusDialog {
             slippage: root.swapInputParamsForm.selectedSlippage
 
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
-            // serviceProviderURL: "" // FIXME get the service provider URL from backend
+            serviceProviderURL: Constants.swap.termsAndConditionParaswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
 
             onAccepted: {
                 root.swapAdaptor.sendSwapTx()

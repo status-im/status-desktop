@@ -1335,6 +1335,7 @@ QtObject {
         this list dynamically */
         readonly property string paraswapIcon: "paraswap"
         readonly property string paraswapUrl: "app.paraswap.io"
+        readonly property string termsAndConditionParaswapUrl: "https://files.paraswap.io/tos_v4.pdf"
 
         readonly property QtObject errorCodes: QtObject {
             readonly property string errNotEnoughTokenBalance: "WR-016"

@@ -42,8 +42,8 @@ SignTransactionModalBase {
     required property string cryptoFees
     required property double slippage
 
-    property string serviceProviderName: "Paraswap"
-    property string serviceProviderURL: "https://www.paraswap.io/" // TODO https://github.com/status-im/status-desktop/issues/15329
+    required property string serviceProviderName
+    required property string serviceProviderURL
 
     title: qsTr("Sign Swap")
     //: e.g. (swap) 100 DAI to 100 USDT
