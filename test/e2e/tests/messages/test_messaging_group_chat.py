@@ -7,6 +7,7 @@ import pytest
 from allure_commons._allure import step
 
 import driver
+from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from . import marks
 
 import configs.testpath
@@ -33,6 +34,7 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
     members = [user_two.name, user_three.name]
     main_window = MainWindow()
     messages_screen = MessagesScreen()
+    share_updates_popup = ShareUsageDataPopup()
 
     with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(
             user_data=user_data_two) as aut_two, multiple_instances(
@@ -47,6 +49,8 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
         with step(f'User {user_one.name}, start chat and add {members}'):
             aut_one.attach()
             main_window.prepare()
+            if share_updates_popup.exists:
+                share_updates_popup.skip()
             main_window.left_panel.open_messages_screen()
             messages_screen.left_panel.start_chat().create_chat(members)
 
@@ -99,6 +103,8 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
         with step(f'Check group members and message for {user_two.name}'):
             aut_two.attach()
             main_window.prepare()
+            if share_updates_popup.exists:
+                share_updates_popup.skip()
             assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
                                   10000), f'{group_chat_new_name} is not present in chats list for {aut_two}'
             messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
@@ -132,6 +138,8 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
         with step(f'Check group members and message for {user_three.name}'):
             aut_three.attach()
             main_window.prepare()
+            if share_updates_popup.exists:
+                share_updates_popup.skip()
 
             with step(f'Check that {user_three.name} is not a member of a group'):
                 assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,

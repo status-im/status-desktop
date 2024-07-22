@@ -3,6 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 import driver
+from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.components.remove_contact_popup import RemoveContactPopup
 from gui.main_window import MainWindow
@@ -28,6 +29,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
     user_three: UserAccount = constants.user_account_three
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     main_screen = MainWindow()
+    share_updates_popup = ShareUsageDataPopup()
 
     with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(
             user_data=user_data_two) as aut_two, multiple_instances(user_data=user_data_three) as aut_three:
@@ -41,6 +43,8 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
         with step(f'User {user_one.name}, send contact request to {user_three.name} from user profile'):
             aut_one.attach()
             main_screen.prepare()
+            if share_updates_popup.exists:
+                share_updates_popup.skip()
             community_screen = main_screen.left_panel.select_community('Community with 2 users')
             profile_popup = community_screen.right_panel.click_member(user_three.name)
             profile_popup.send_request().send(f'Hello {user_three.name}')
@@ -50,6 +54,8 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
         with step(f'User {user_three.name}, accept contact request from {user_one.name} from user profile'):
             aut_three.attach()
             main_screen.prepare()
+            if share_updates_popup.exists:
+                share_updates_popup.skip()
             community_screen = main_screen.left_panel.select_community('Community with 2 users')
             profile_popup = community_screen.right_panel.click_member(user_one.name)
             profile_popup.review_contact_request().accept()

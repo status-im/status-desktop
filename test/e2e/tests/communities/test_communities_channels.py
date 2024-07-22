@@ -10,8 +10,8 @@ import constants
 import driver
 from constants import UserAccount
 from gui.components.context_menu import ContextMenu
+from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from gui.main_window import MainWindow
-from gui.screens.messages import MessagesScreen
 from . import marks
 
 pytestmark = marks
@@ -89,6 +89,9 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
 def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow):
     with step('Choose community user is not owner of'):
+        share_updates_popup = ShareUsageDataPopup()
+        if share_updates_popup.exists:
+            share_updates_popup.skip()
         community_screen = main_screen.left_panel.select_community('Community with 2 users')
     with step('Verify that member cannot add new channel'):
         with step('Verify that create channel or category button is not present'):
@@ -147,6 +150,9 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
         with step(f'User {user_two.name}, select non-restricted channel and can send message'):
             aut_two.attach()
             main_screen.prepare()
+            share_updates_popup = ShareUsageDataPopup()
+            if share_updates_popup.exists:
+                share_updates_popup.skip()
             community_screen = main_screen.left_panel.select_community('Community with 2 users')
 
         with step(f'User {user_two.name}, create hidden channel, verify that it is in the list'):
@@ -165,5 +171,8 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
         with step(f'User {user_one.name}, cannot see hidden channel in the list'):
             aut_one.attach()
             main_screen.prepare()
+            share_updates_popup = ShareUsageDataPopup()
+            if share_updates_popup.exists:
+                share_updates_popup.skip()
             assert driver.waitFor(lambda: channel not in community_screen.left_panel.channels,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
