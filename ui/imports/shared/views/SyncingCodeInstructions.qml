@@ -42,16 +42,13 @@ ColumnLayout {
     }
 
     StackLayout {
-        Layout.fillWidth: false
         Layout.alignment: Qt.AlignHCenter
-        implicitWidth: Math.max(mobileSync.implicitWidth, desktopSync.implicitWidth)
-        implicitHeight: Math.max(mobileSync.implicitHeight, desktopSync.implicitHeight)
+        Layout.fillWidth: true
+        Layout.preferredHeight: Math.max(mobileSync.implicitHeight, desktopSync.implicitHeight)
         currentIndex: switchTabBar.currentIndex
 
         GetSyncCodeMobileInstructions {
             id: mobileSync
-            Layout.fillHeight: true
-            Layout.fillWidth: false
             Layout.alignment: Qt.AlignHCenter
 
             purpose: root.purpose
@@ -60,8 +57,6 @@ ColumnLayout {
 
         GetSyncCodeDesktopInstructions {
             id: desktopSync
-            Layout.fillHeight: true
-            Layout.fillWidth: false
             Layout.alignment: Qt.AlignHCenter
 
             purpose: root.purpose
