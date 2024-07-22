@@ -8,7 +8,7 @@ import driver
 from constants import UserAccount
 from constants.links import external_link, link_to_status_community, status_user_profile_link
 from constants.messaging import Messaging
-from gui.main_window import MainWindow
+from gui.main_window import MainWindow, switch_to_status_staging
 from gui.screens.messages import MessagesScreen, ToolBar
 
 import configs.testpath
@@ -45,6 +45,7 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
         with step(f'User {user_two.name}, get chat key'):
             aut_two.attach()
             main_window.prepare()
+            switch_to_status_staging(aut_two, main_screen, user_two)
             profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.copy_chat_key
             profile_popup.close()
@@ -53,6 +54,7 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
             aut_one.attach()
             main_window.prepare()
+            switch_to_status_staging(aut_one, main_screen, user_one)
             settings = main_window.left_panel.open_settings()
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()

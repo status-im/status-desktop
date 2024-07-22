@@ -10,8 +10,7 @@ import constants
 import driver
 from constants import UserAccount
 from gui.components.context_menu import ContextMenu
-from gui.main_window import MainWindow
-from gui.screens.messages import MessagesScreen
+from gui.main_window import MainWindow, switch_to_status_staging
 from . import marks
 
 pytestmark = marks
@@ -147,6 +146,7 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
         with step(f'User {user_two.name}, select non-restricted channel and can send message'):
             aut_two.attach()
             main_screen.prepare()
+            switch_to_status_staging(aut_two, main_screen, user_two)
             community_screen = main_screen.left_panel.select_community('Community with 2 users')
 
         with step(f'User {user_two.name}, create hidden channel, verify that it is in the list'):
@@ -165,5 +165,6 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
         with step(f'User {user_one.name}, cannot see hidden channel in the list'):
             aut_one.attach()
             main_screen.prepare()
+            switch_to_status_staging(aut_one, main_screen, user_one)
             assert driver.waitFor(lambda: channel not in community_screen.left_panel.channels,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)

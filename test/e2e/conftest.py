@@ -1,7 +1,4 @@
 import logging
-import time
-from datetime import datetime
-
 import os
 import allure
 import pytest
@@ -11,10 +8,6 @@ from PIL import ImageGrab
 import configs
 from configs.system import get_platform
 from fixtures.path import generate_test_info
-from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
-from gui.components.splash_screen import SplashScreen
-from gui.main_window import MainWindow
-from gui.screens.onboarding import LoginView
 from scripts.utils.system_path import SystemPath
 
 # Send logs to pytest.log as well
@@ -50,8 +43,7 @@ def setup_function_scope(
         generate_test_data,
         check_result,
         application_logs,
-        keycard_controller,
-        switch_to_status_staging
+        keycard_controller
 ):
     # FIXME: broken due to KeyError: <_pytest.stash.StashKey object at 0x7fd1ba6d78c0>
     # caplog.set_level(configs.LOG_LEVEL)
@@ -79,17 +71,3 @@ def pytest_exception_interact(node):
         )
     except FileNotFoundError:
         print("Screenshot was not generated or saved")
-
-
-@pytest.fixture
-def switch_to_status_staging(aut, main_screen, user_account, request):
-    if request.module.marks.mark.name in ['communities', 'settings_messaging',
-                                          'messaging'] and 'tests-e2e-new' in str(configs.AUT_PATH):
-        LOG.info(f"Path is {str(request.path)}")
-        settings = main_screen.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().switch_fleet().choose_fleet('statusStagingOption').confirm()
-        aut.restart()
-        LoginView().log_in(user_account)
-        SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE:
-            BetaConsentPopup().confirm()

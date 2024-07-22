@@ -5,7 +5,7 @@ from allure_commons._allure import step
 import driver
 from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.components.remove_contact_popup import RemoveContactPopup
-from gui.main_window import MainWindow
+from gui.main_window import MainWindow, switch_to_status_staging
 from . import marks
 import configs
 import constants
@@ -41,6 +41,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
         with step(f'User {user_one.name}, send contact request to {user_three.name} from user profile'):
             aut_one.attach()
             main_screen.prepare()
+            switch_to_status_staging(aut_one, main_screen, user_one)
             community_screen = main_screen.left_panel.select_community('Community with 2 users')
             profile_popup = community_screen.right_panel.click_member(user_three.name)
             profile_popup.send_request().send(f'Hello {user_three.name}')
@@ -50,6 +51,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
         with step(f'User {user_three.name}, accept contact request from {user_one.name} from user profile'):
             aut_three.attach()
             main_screen.prepare()
+            switch_to_status_staging(aut_three, main_screen, user_three)
             community_screen = main_screen.left_panel.select_community('Community with 2 users')
             profile_popup = community_screen.right_panel.click_member(user_one.name)
             profile_popup.review_contact_request().accept()

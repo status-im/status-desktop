@@ -7,6 +7,7 @@ from allure_commons._allure import step
 import configs
 import constants
 import driver
+from gui.main_window import switch_to_status_staging
 from . import marks
 from constants.community_settings import MintOwnerTokensElements
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
@@ -30,7 +31,7 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.case(727245)
 @pytest.mark.parametrize('user_account', [constants.user.user_with_funds])
 @pytest.mark.transaction
-def test_mint_owner_token(keys_screen, main_window, user_account):
+def test_mint_owner_token(keys_screen, main_screen, user_account, aut):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         input_view.input_seed_phrase(user_account.seed_phrase, True)
@@ -51,12 +52,14 @@ def test_mint_owner_token(keys_screen, main_window, user_account):
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
 
+        switch_to_status_staging(aut, main_screen, user_account)
+
     with step('Enable creation of community option'):
-        settings = main_window.left_panel.open_settings()
+        settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
 
     with step('Set testnet mode'):
-        settings = main_window.left_panel.open_settings()
+        settings = main_screen.left_panel.open_settings()
         wallet_settings = settings.left_panel.open_wallet_settings()
         wallet_settings.open_networks().switch_testnet_mode_toggle().turn_on_testnet_mode_in_testnet_modal()
 
@@ -65,10 +68,10 @@ def test_mint_owner_token(keys_screen, main_window, user_account):
 
     with step('Create simple community'):
         community_params = constants.community_params
-        main_window.create_community(community_params['name'], community_params['description'],
+        main_screen.create_community(community_params['name'], community_params['description'],
                                      community_params['intro'], community_params['outro'],
                                      community_params['logo']['fp'], community_params['banner']['fp'])
-        community_screen = main_window.left_panel.select_community(community_params['name'])
+        community_screen = main_screen.left_panel.select_community(community_params['name'])
 
     with step('Open mint owner token view'):
         community_setting = community_screen.left_panel.open_community_settings()
@@ -141,7 +144,7 @@ def test_mint_owner_token(keys_screen, main_window, user_account):
         assert minted_tokens_view.get_master_token_status == 'Minting...'
 
     with step('Verify toast messages about started minting process appears'):
-        toast_messages = main_window.wait_for_notification()
+        toast_messages = main_screen.wait_for_notification()
         assert driver.waitFor(lambda: (MintOwnerTokensElements.TOAST_AIRDROPPING_TOKEN_1.value + community_params[
             'name'] + MintOwnerTokensElements.TOAST_AIRDROPPING_TOKEN_2.value) in toast_messages,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)

@@ -31,6 +31,16 @@ from scripts.tools.image import Image
 LOG = logging.getLogger(__name__)
 
 
+def switch_to_status_staging(aut, main_screen, user_account):
+    # if 'tests-e2e-new' in str(testpath.ROOT):
+    settings = main_screen.left_panel.open_settings()
+    settings.left_panel.open_advanced_settings().switch_fleet().choose_fleet('statusStagingOption').confirm()
+    aut.restart()
+    LoginView().log_in(user_account)
+    SplashScreen().wait_until_appears().wait_until_hidden()
+    if not configs.system.TEST_MODE:
+        BetaConsentPopup().confirm()
+
 class LeftPanel(QObject):
 
     def __init__(self):

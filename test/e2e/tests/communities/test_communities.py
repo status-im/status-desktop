@@ -13,7 +13,7 @@ from . import marks
 
 import configs.testpath
 import constants
-from gui.main_window import MainWindow
+from gui.main_window import MainWindow, switch_to_status_staging
 
 pytestmark = marks
 
@@ -148,6 +148,7 @@ def test_community_admin_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_two.name}, get chat key'):
             aut_two.attach()
             main_screen.prepare()
+            switch_to_status_staging(aut_two, main_screen, user_two)
             profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.copy_chat_key
             profile_popup.close()
@@ -156,6 +157,7 @@ def test_community_admin_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
             aut_one.attach()
             main_screen.prepare()
+            switch_to_status_staging(aut_one, main_screen, user_one)
             settings = main_screen.left_panel.open_settings()
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()

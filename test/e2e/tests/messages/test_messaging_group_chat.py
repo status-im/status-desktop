@@ -1,6 +1,5 @@
 import random
 import string
-import time
 
 import allure
 import pytest
@@ -13,7 +12,7 @@ import configs.testpath
 import constants
 from constants import UserAccount
 from constants.messaging import Messaging
-from gui.main_window import MainWindow
+from gui.main_screen import MainWindow, switch_to_status_staging
 from gui.screens.messages import MessagesScreen
 
 pytestmark = marks
@@ -31,7 +30,7 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
     user_two: UserAccount = constants.group_chat_user_2
     user_three: UserAccount = constants.group_chat_user_3
     members = [user_two.name, user_three.name]
-    main_window = MainWindow()
+    main_screen = MainWindow()
     messages_screen = MessagesScreen()
 
     with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(
@@ -40,14 +39,15 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
         with step(f'Launch multiple instances with authorized users {user_one.name}, {user_two.name}, {user_three}'):
             for aut, account in zip([aut_one, aut_two, aut_three], [user_one, user_two, user_three]):
                 aut.attach()
-                main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
-                main_window.authorize_user(account)
-                main_window.hide()
+                main_screen.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
+                main_screen.authorize_user(account)
+                main_screen.hide()
 
         with step(f'User {user_one.name}, start chat and add {members}'):
             aut_one.attach()
-            main_window.prepare()
-            main_window.left_panel.open_messages_screen()
+            main_screen.prepare()
+            switch_to_status_staging(aut_one, main_screen, user_one)
+            main_screen.left_panel.open_messages_screen()
             messages_screen.left_panel.start_chat().create_chat(members)
 
             with step('Verify group chat info'):
@@ -94,11 +94,12 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
                 assert driver.waitFor(lambda: user_three.name not in messages_screen.right_panel.members,
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 assert len(messages_screen.right_panel.members) == 2
-                main_window.hide()
+                main_screen.hide()
 
         with step(f'Check group members and message for {user_two.name}'):
             aut_two.attach()
-            main_window.prepare()
+            main_screen.prepare()
+            switch_to_status_staging(aut_two, main_screen, user_two)
             assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
                                   10000), f'{group_chat_new_name} is not present in chats list for {aut_two}'
             messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
@@ -127,11 +128,12 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
             with step('Check that group name is not displayed on left panel'):
                 assert driver.waitFor(lambda: group_chat_new_name not in messages_screen.left_panel.get_chats_names,
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            main_window.hide()
+            main_screen.hide()
 
         with step(f'Check group members and message for {user_three.name}'):
             aut_three.attach()
-            main_window.prepare()
+            main_screen.prepare()
+            switch_to_status_staging(aut_three, main_screen, user_three)
 
             with step(f'Check that {user_three.name} is not a member of a group'):
                 assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
@@ -154,11 +156,11 @@ def test_group_chat(multiple_instances, user_data_one, user_data_two, user_data_
 
             with step('Check that group name is not displayed on left panel'):
                 assert group_chat_new_name not in messages_screen.left_panel.get_chats_names
-            main_window.hide()
+            main_screen.hide()
 
         with step(f'Get back to {aut_one} and check members list'):
             aut_one.attach()
-            main_window.prepare()
+            main_screen.prepare()
             assert group_chat_new_name in messages_screen.left_panel.get_chats_names, \
                 f'{group_chat_new_name} is not present in chats list for {aut_one}'
             messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
