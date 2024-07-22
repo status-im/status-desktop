@@ -3,6 +3,7 @@ include env_cli_vars
 ## Added a constant here cause it's easier to check the app how it behaves
 ## on other platform if we just change the value here
 const IS_MACOS* = defined(macosx)
+const IS_INTEL* = defined(amd64)
 # For future supporting fingerprints on other platforms
 const SUPPORTS_FINGERPRINT* = IS_MACOS
 # This is changed during compilation by reading the VERSION file
