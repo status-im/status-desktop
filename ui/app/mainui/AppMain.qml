@@ -2047,15 +2047,6 @@ Item {
     }
 
     Component {
-        id: walletConnectSDK
-
-        WalletConnectSDK {
-            active: WalletStore.RootStore.walletSectionInst.walletReady
-            projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
-        }
-    }
-
-    Component {
         id: dappsConnectorSDK
 
         DappsConnectorSDK {
@@ -2067,35 +2058,25 @@ Item {
     }
 
     Loader {
-        id: walletConnectSDKLoader
-        active: Global.featureFlags.dappsEnabled
-        sourceComponent: walletConnectSDK
-    }
-
-    Loader {
         id: dappsConnectorSDKLoader
         active: Global.featureFlags.connectorEnabled
         sourceComponent: dappsConnectorSDK
     }
 
     Loader {
-        id: sdkLoader
-
-        onLoaded: {
-            walletConnectSDKLoader.active = Global.featureFlags.dappsEnabled
-            dappsConnectorSDKLoader.active = Global.featureFlags.connectorEnabled
-        }
-    }
-
-    Loader {
         id: walletConnectServiceLoader
 
+        // It seems some of the functionality of the dapp connector depends on the WalletConnectService
         active: Global.featureFlags.dappsEnabled || Global.featureFlags.connectorEnabled
 
         sourceComponent: WalletConnectService {
             id: walletConnectService
 
-            wcSDK: sdkLoader.item
+            wcSDK: WalletConnectSDK {
+                active: WalletStore.RootStore.walletSectionInst.walletReady
+
+                projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
+            }
             store: DAppsStore {
                 controller: WalletStore.RootStore.walletConnectController
             }
