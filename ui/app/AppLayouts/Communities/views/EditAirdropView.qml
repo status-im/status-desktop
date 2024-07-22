@@ -45,6 +45,8 @@ StatusScrollView {
     // Bool property indicating whether the fees are available
     required property bool feesAvailable
 
+    property string enabledChainIds
+
     property int viewWidth: 560 // by design
 
     readonly property var selectedHoldingsModel: ListModel {}
@@ -101,6 +103,8 @@ StatusScrollView {
 
     signal navigateToMintTokenSettings(bool isAssetType)
 
+    signal enableNetwork(int chainId)
+
     function selectToken(key, amount, type) {
         if(selectedHoldingsModel)
             selectedHoldingsModel.clear()
@@ -124,6 +128,9 @@ StatusScrollView {
         readonly property bool showFees: root.selectedHoldingsModel.count > 0
                                          && airdropRecipientsSelector.valid
                                          && airdropRecipientsSelector.count > 0
+
+        property string networkThatIsNotActive
+        property int networkIdThatIsNotActive
 
         readonly property var selectedContractKeysAndAmounts: {
             //Depedencies:
@@ -161,6 +168,7 @@ StatusScrollView {
                 key, amount, type,
                 tokenText: amountLocalized + " " + modelItem.name,
                 tokenImage: modelItem.iconSource,
+                networkId: modelItem.chainId,
                 networkText: modelItem.chainName,
                 networkImage: Style.svg(modelItem.chainIcon),
                 remainingSupply: modelItem.remainingSupply,
@@ -292,12 +300,25 @@ StatusScrollView {
                                 root.selectedHoldingsModel, ["key", "amount"])
                 }
 
+                function isChainEnabled(entry) {
+                    // If the tokens' network is not activated, show a warning to the user
+                    if (!!entry && !root.enabledChainIds.includes(entry.networkId)) {
+                        d.networkThatIsNotActive = entry.networkText
+                        d.networkIdThatIsNotActive = entry.networkId
+                    } else {
+                        d.networkThatIsNotActive = ""
+                        d.networkIdThatIsNotActive = 0
+                    }
+                }
+
                 onAddAsset: {
                     const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC20)
                     entry.valid = true
 
                     selectedHoldingsModel.append(entry)
                     dropdown.close()
+
+                    isChainEnabled(entry)
                 }
 
                 onAddCollectible: {
@@ -306,6 +327,8 @@ StatusScrollView {
 
                     selectedHoldingsModel.append(entry)
                     dropdown.close()
+
+                    isChainEnabled(entry)
                 }
 
                 onUpdateAsset: {
@@ -552,6 +575,18 @@ StatusScrollView {
 
             visible: !recipientsCountInstantiator.infinity &&
                      recipientsCountInstantiator.maximumRecipientsCount < airdropRecipientsSelector.count
+        }
+
+        NetworkWarningPanel {
+            visible: !!d.networkThatIsNotActive
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+            networkThatIsNotActive: d.networkThatIsNotActive
+            onEnableNetwork: {
+                root.enableNetwork(d.networkIdThatIsNotActive)
+                d.networkThatIsNotActive = ""
+                d.networkIdThatIsNotActive = 0
+            }
         }
 
         StatusButton {

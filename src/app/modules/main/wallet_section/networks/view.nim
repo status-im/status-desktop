@@ -91,6 +91,9 @@ QtObject:
     let (chainIds, enable) = self.flatNetworks.networksToChangeStateOnUserActionFor(chainId, self.areTestNetworksEnabled)
     self.delegate.setNetworksState(chainIds, enable)
 
+  proc enableNetwork*(self: View, chainId: int) {.slot.} =
+    self.delegate.setNetworksState(@[chainId], enable = true)
+
   proc getNetworkShortNames*(self: View, preferredNetworks: string): string {.slot.} =
     return self.flatNetworks.getNetworkShortNames(preferredNetworks, self.areTestNetworksEnabled)
   

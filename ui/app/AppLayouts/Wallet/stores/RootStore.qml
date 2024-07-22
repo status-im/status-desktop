@@ -375,6 +375,10 @@ QtObject {
         networksModule.toggleNetwork(chainId)
     }
 
+    function enableNetwork(chainId) {
+        networksModule.enableNetwork(chainId)
+    }
+
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
     }

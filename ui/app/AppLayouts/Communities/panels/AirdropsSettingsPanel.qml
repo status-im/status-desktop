@@ -33,12 +33,15 @@ StackView {
     required property var membersModel
     required property var accountsModel
 
+    required property string enabledChainIds
+
     property int viewWidth: 560 // by design
     property string previousPageName: depth > 1 ? qsTr("Airdrops") : ""
 
     signal airdropClicked(var airdropTokens, var addresses, string feeAccountAddress)
     signal navigateToMintTokenSettings(bool isAssetType)
     signal registerAirdropFeeSubscriber(var feeSubscriber)
+    signal enableNetwork(int chainId)
 
     function navigateBack() {
         pop(StackView.Immediate)
@@ -120,6 +123,8 @@ StackView {
                 feeErrorText: feesSubscriber.feesError
                 feesPerSelectedContract: feesSubscriber.feesPerContract
                 feesAvailable: !!feesSubscriber.airdropFeesResponse
+                enabledChainIds: root.enabledChainIds
+                onEnableNetwork: root.enableNetwork(chainId)
 
                 onAirdropClicked: {
                     root.airdropClicked(airdropTokens, addresses, feeAccountAddress)

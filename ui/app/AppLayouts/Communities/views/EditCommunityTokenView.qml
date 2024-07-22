@@ -44,6 +44,9 @@ StatusScrollView {
     property string feeErrorText
     property bool isFeeLoading
 
+    property string networkThatIsNotActive
+    signal enableNetwork
+
     readonly property string feeLabel:
         isAssetView ? qsTr("Mint asset on %1").arg(root.token.chainName)
                     : qsTr("Mint collectible on %1").arg(root.token.chainName)
@@ -251,6 +254,15 @@ StatusScrollView {
                     visible: !!text
                 }
             }
+        }
+
+        NetworkWarningPanel {
+            visible: !!root.networkThatIsNotActive
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+
+            networkThatIsNotActive: root.networkThatIsNotActive
+            onEnableNetwork: root.enableNetwork()
         }
 
         CustomSwitchRowComponent {
