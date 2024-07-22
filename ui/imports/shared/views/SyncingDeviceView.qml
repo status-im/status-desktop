@@ -15,7 +15,7 @@ import SortFilterProxyModel 0.2
 Item {
     id: root
 
-    property alias devicesModel: sfpModel.sourceModel
+    property var devicesModel
     property string userDisplayName
     property string userColorId
     property string userColorHash
@@ -177,7 +177,7 @@ Item {
             clip: true
 
             model: SortFilterProxyModel {
-                id: sfpModel
+                sourceModel: root.devicesModel
                 filters: [
                     ValueFilter {
                         enabled: true
