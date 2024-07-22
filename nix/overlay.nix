@@ -6,7 +6,13 @@
 # - https://nixos.org/nixos/nix-pills/callpackage-design-pattern.html
 
 final: prev: let
-  inherit (prev) config stdenv callPackage recurseIntoAttrs makeOverridable fetchurl lib writeShellScriptBin __splicedPackages;
+  inherit (prev) config stdenv callPackage recurseIntoAttrs makeOverridable fetchurl lib writeShellScriptBin;
+#  makeScopeWithSplicing' generateSplicesForMkScope
+#  writeShellScriptBin __splicedPackages
+#  makeSetupHook fetchgit fetchpatch fetchFromGitHub makeWrapper
+#  bison cups harfbuzz libGL perl python3
+#  gstreamer gst-plugins-base gtk3 dconf
+#  llvmPackages_15 darwin;
 in rec {
   linuxdeployqt = callPackage ./pkgs/linuxdeployqt/default.nix { };
 
@@ -42,23 +48,25 @@ in rec {
     "${final.bash}/bin/sh" "${final.glibc.bin}/bin/ldd" "$@"
   '';
 
-  # Qt 5.15.8 copy from 76973ae3b30a88ea415f27ff53809ab8f452e2ec
-  # Edited:
-  # - temporary break Darwin support
-  # - remove unsupported testers, env., config.allowAliases
-  # - mkDerivation without finalAttrs
-  # - change fetch* parameter from hash to sha256, rmove fetchLFS
-  # - fix makeSetupHook
-  # - switch from makeScopeWithSplicing back to makeScope
-  # See diff for a full list of changes
-  qt515_8 = recurseIntoAttrs (makeOverridable
-  (import ./pkgs/qt-5/5.15) {
-    inherit (__splicedPackages)
-      newScope generateSplicesForMkScope lib fetchurl fetchpatch fetchgit fetchFromGitHub makeSetupHook makeWrapper
-      bison cups dconf harfbuzz libGL perl gtk3 python3
-      darwin buildPackages;
-    inherit (__splicedPackages.gst_all_1) gstreamer gst-plugins-base;
-    inherit config stdenv;
-  });
+
+  qt515_14 = callPackage ./pkgs/qt-5/5.15/default.nix {
+#    inherit lib stdenv fetchurl fetchgit fetchpatch fetchFromGitHub makeSetupHook makeWrapper makeScopeWithSplicing';
+#    inherit bison cups harfbuzz libGL perl python3;
+#    inherit gstreamer gst-plugins-base gtk3 dconf;
+#    inherit llvmPackages_15;
+#    inherit darwin;
+#    inherit generateSplicesForMkScope;
+#
+#    overrideSDK = prev.darwin.overrideSDK or (x: x);
+#    overrideLibcxx = prev.darwin.overrideLibcxx or (x: x);
+#
+#    # Options
+#    developerBuild = false;
+#    decryptSslTraffic = false;
+#    debug = false;
+#    inherit config;
+};
+
+
   alsa-lib = prev.alsaLib;
 }

@@ -3,7 +3,7 @@
 }:
 
 let
-  qtCustom = (with pkgs.qt515_8;
+  qtCustom = (with pkgs.qt515_14;
     # TODO:check the required modules
     env "qt-custom-${qtbase.version}" ([
       qtbase
@@ -46,7 +46,7 @@ in pkgs.mkShell {
   QTDIR = qtCustom;
   # TODO: still needed?
   # https://github.com/NixOS/nixpkgs/pull/109649
-  QT_INSTALL_PLUGINS = "${qtCustom}/${pkgs.qt515_8.qtbase.qtPluginPrefix}";
+  QT_INSTALL_PLUGINS = "${qtCustom}/${pkgs.qt515_14.qtbase.qtPluginPrefix}";
 
   shellHook = ''
     export MAKEFLAGS="-j$NIX_BUILD_CORES"
@@ -54,7 +54,7 @@ in pkgs.mkShell {
   '';
 
   LIBKRB5_PATH = pkgs.libkrb5;
-  QTWEBENGINE_PATH = pkgs.qt515_8.qtwebengine.out;
+  QTWEBENGINE_PATH = pkgs.qt515_14.qtwebengine.out;
   GSTREAMER_PATH = pkgs.gst_all_1.gstreamer;
   NSS_PATH = pkgs.nss;
 
