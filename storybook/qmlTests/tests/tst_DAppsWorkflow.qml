@@ -644,7 +644,7 @@ Item {
             verify(eip155.hasOwnProperty("methods"))
             verify(eip155.methods.length > 0)
             verify(eip155.hasOwnProperty("events"))
-            verify(eip155.events.length > 0)
+            compare(eip155.events.length, 2)
         }
     }
 
