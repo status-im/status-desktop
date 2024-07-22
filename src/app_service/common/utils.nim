@@ -91,3 +91,8 @@ proc stringToUint256*(value: string): Uint256 =
   except Exception as e:
     discard
   return parsedValue
+
+proc createHash*(signature: string): string =
+  let signatureHex = if signature.startsWith("0x"): signature[2..^1] else: signature
+
+  return hashPassword(signatureHex, true)

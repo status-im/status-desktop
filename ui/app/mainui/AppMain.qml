@@ -2054,6 +2054,10 @@ Item {
             controller: WalletStore.RootStore.dappsConnectorController
             wcService: Global.walletConnectService
             walletStore: WalletStore.RootStore
+            store: DAppsStore {
+                controller: WalletStore.RootStore.walletConnectController
+            }
+            loginType: appMain.rootStore.loginType
         }
     }
 

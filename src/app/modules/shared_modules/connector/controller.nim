@@ -7,7 +7,10 @@ import app/core/signals/types
 
 import app_service/service/connector/service as connector_service
 
+import app_service/common/utils
+
 const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
+const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
 
 logScope:
   topics = "connector-controller"
@@ -22,6 +25,7 @@ QtObject:
     self.QObject.delete
 
   proc dappRequestsToConnect*(self: Controller, requestId: string, payload: string) {.signal.}
+  proc dappValidatesTransaction*(self: Controller, requestId: string, payload: string) {.signal.}
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -45,6 +49,18 @@ QtObject:
 
       controller.dappRequestsToConnect(params.requestId, dappInfo.toJson())
 
+    result.events.on(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION) do(e: Args):
+      let params = ConnectorSendTransactionSignal(e)
+      let dappInfo = %*{
+        "icon": params.iconUrl,
+        "name": params.name,
+        "url": params.url,
+        "chainId": params.chainId,
+        "txArgs": params.txArgs,
+      }
+
+      controller.dappValidatesTransaction(params.requestId, dappInfo.toJson())
+
     result.QObject.setup
 
   proc parseSingleUInt(chainIDsString: string): uint =
@@ -63,3 +79,11 @@ QtObject:
 
   proc rejectDappConnectRequest*(self: Controller, requestId: string): bool {.slot.} =
     return self.service.rejectDappConnect(requestId)
+
+  proc approveTransactionRequest*(self: Controller, requestId: string, signature: string): bool {.slot.} =
+    let hash = utils.createHash(signature)
+
+    return self.service.approveTransactionRequest(requestId, hash)
+
+  proc rejectTransactionSigning*(self: Controller, requestId: string): bool {.slot.} =
+    return self.service.rejectTransactionSigning(requestId)
