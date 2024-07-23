@@ -307,6 +307,7 @@ StatusDialog {
             ErrorTag {
                 objectName: "errorTag"
                 visible: d.isError
+                Layout.maximumWidth: parent.width
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Style.current.smallPadding
                 text: root.swapAdaptor.errorMessage
