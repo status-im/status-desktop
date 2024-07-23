@@ -15,7 +15,7 @@ import shared.popups.send 1.0
 import shared.stores.send 1.0
 
 //TODO remove this dependency!
-import "../../../app/AppLayouts/Chat/stores"
+import AppLayouts.Chat.stores 1.0
 import AppLayouts.Wallet.stores 1.0
 
 // TODO: replace with StatusModal
@@ -37,7 +37,9 @@ ModalPopup {
     property var stickers;
     signal buyClicked(string packId)
 
-    Component.onCompleted: {
+    onAboutToShow: {
+        stickersModule.getInstalledStickerPacks()
+
         const idx = stickersModule.stickerPacks.findIndexById(packId, false);
         if(idx === -1) close();
         const item = SQUtils.ModelUtils.get(stickersModule.stickerPacks, idx)
@@ -45,7 +47,7 @@ ModalPopup {
         author = item.author
         thumbnail = item.thumbnail
         price = item.price
-        stickers = stickersModule.stickerPacks.getStickers()
+        stickers = item.stickers
         installed = item.installed
         bought = item.bought
         pending = item.pending
@@ -80,7 +82,7 @@ ModalPopup {
                 preSelectedRecipient: stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
                 preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
                 preSelectedHoldingID: {
-                    let token = ModelUtils.getByKey(root.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", stickerPackDetailsPopup.store.stickersStore.getStatusTokenKey())
+                    let token = SQUtils.ModelUtils.getByKey(stickerPackDetailsPopup.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", stickerPackDetailsPopup.store.stickersStore.getStatusTokenKey())
                     return !!token && !!token.symbol ? token.symbol : ""
                 }
                 preSelectedHoldingType: Constants.TokenType.ERC20

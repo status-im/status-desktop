@@ -25,7 +25,6 @@ QtObject:
     StickerPackList* = ref object of QAbstractListModel
       delegate: io_interface.AccessInterface
       packs*: seq[StickerPackView]
-      packIdToRetrieve*: int
       foundStickers*: QVariant
 
   proc setup(self: StickerPackList) = self.QAbstractListModel.setup
@@ -127,10 +126,6 @@ QtObject:
         it.pending = pending)
     self.dataChanged(index, index, @[StickerPackRoles.Installed.int, StickerPackRoles.Bought.int,
       StickerPackRoles.Pending.int])
-
-  proc getStickers*(self: StickerPackList): QVariant {.slot.} =
-    let packInfo = self.packs[self.packIdToRetrieve]
-    result = newQVariant(packInfo.stickers)
 
   # We cannot return QVariant from the proc which has arguments.
   # First findStickersById has to be called, then getFoundStickers

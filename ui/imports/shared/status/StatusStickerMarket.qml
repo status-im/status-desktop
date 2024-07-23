@@ -263,7 +263,10 @@ Item {
             anchors.leftMargin: Style.current.padding / 2
             width: 24
             height: 24
-            type: StatusRoundButton.Type.Secondary
+            icon.width: 16
+            icon.height: 16
+            horizontalPadding: 0
+            verticalPadding: 0
             onClicked: {
                 root.backClicked()
             }
