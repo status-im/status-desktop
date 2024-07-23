@@ -44,13 +44,20 @@ SQUtils.QObject {
         target: sdk
 
         function onSessionRequestEvent(event) {
-            let obj = d.resolveAsync(event)
-            if (obj === null) {
+            const res = d.resolveAsync(event)
+            if (res.code == d.resolveAsyncResult.error) {
                 let error = true
                 sdk.rejectSessionRequest(event.topic, event.id, error)
                 return
             }
-            requests.enqueue(obj)
+            if (res.code == d.resolveAsyncResult.ignored) {
+                return
+            }
+            if (!res.obj) {
+                console.error("Unexpected res.obj value!")
+                return
+            }
+            requests.enqueue(res.obj)
         }
 
         function onSessionRequestUserAnswerResult(topic, id, accept, error) {
@@ -114,23 +121,39 @@ SQUtils.QObject {
     SQUtils.QObject {
         id: d
 
+        readonly property QtObject resolveAsyncResult: QtObject {
+            readonly property int error: 0
+            readonly property int ok: 1
+            readonly property int ignored: 2
+        }
+
+        // returns {
+        //   obj: obj or nil
+        //   code: resolveAsyncResult codes
+        // }
         function resolveAsync(event) {
-            let method = event.params.request.method
-            let account = lookupAccountFromEvent(event, method)
-            if(!account) {
-                console.error("Error finding account for event", JSON.stringify(event))
-                return null
+            const method = event.params.request.method
+            const res = lookupAccountFromEvent(event, method)
+            if(!res.success) {
+                console.info("Error finding account for event", JSON.stringify(event))
+                return { obj: null, code: resolveAsyncResult.error }
             }
+            if (!res.account) {
+                console.info("Ignoring request for an account not in the current profile.")
+                return { obj: null, code: resolveAsyncResult.ignored }
+            }
+            const account = res.account
+
             let network = lookupNetworkFromEvent(event, method)
             if(!network) {
                 console.error("Error finding network for event", JSON.stringify(event))
-                return null
+                return { obj: null, code: resolveAsyncResult.error }
             }
 
             let data = extractMethodData(event, method)
             if(!data) {
                 console.error("Error in event data lookup", JSON.stringify(event))
-                return null
+                return { obj: null, code: resolveAsyncResult.error }
             }
 
             const interpreted = d.prepareData(method, data)
@@ -151,13 +174,13 @@ SQUtils.QObject {
             })
             if (obj === null) {
                 console.error("Error creating SessionRequestResolved for event")
-                return null
+                return { obj: null, code: resolveAsyncResult.error }
             }
 
             // Check later to have a valid request object
             if (!SessionRequest.getSupportedMethods().includes(method)) {
                 console.error("Unsupported method", method)
-                return null
+                return { obj: null, code: resolveAsyncResult.error }
             }
 
             d.lookupSession(obj.topic, function(session) {
@@ -190,38 +213,49 @@ SQUtils.QObject {
                                     fundsStatus.haveEnoughForFees, st.symbol, st.feesInfo)
             })
 
-            return obj
+            return {
+                obj: obj,
+                code: resolveAsyncResult.ok
+            }
         }
 
-        /// Returns null if the account is not found
+        /// returns {
+        ///   account
+        ///   success
+        /// }
+        /// if account is null and success is true it means that the account was not found
         function lookupAccountFromEvent(event, method) {
             let address = ""
             if (method === SessionRequest.methods.personalSign.name) {
                 if (event.params.request.params.length < 2) {
-                    return null
+                    return { account: null, success: false }
                 }
                 address = event.params.request.params[1]
             } else if (method === SessionRequest.methods.sign.name) {
                 if (event.params.request.params.length === 1) {
-                    return null
+                    return { account: null, success: false }
                 }
                 address = event.params.request.params[0]
             } else if(method === SessionRequest.methods.signTypedData_v4.name ||
                       method === SessionRequest.methods.signTypedData.name)
             {
                 if (event.params.request.params.length < 2) {
-                    return null
+                    return { account: null, success: false }
                 }
                 address = event.params.request.params[0]
             } else if (d.isTransactionMethod(method)) {
                 if (event.params.request.params.length == 0) {
-                    return null
+                    return { account: null, success: false }
                 }
                 address = event.params.request.params[0].from
+            } else {
+                console.error("Unsupported method to lookup account: ", method)
+                return { account: null, success: false }
             }
-            return SQUtils.ModelUtils.getFirstModelEntryIf(root.accountsModel, (account) => {
+            const account = SQUtils.ModelUtils.getFirstModelEntryIf(root.accountsModel, (account) => {
                 return account.address.toLowerCase() === address.toLowerCase();
             })
+            return { account, success: true }
         }
 
         /// Returns null if the network is not found
@@ -558,7 +592,7 @@ SQUtils.QObject {
                     break
                 default:
                     console.error("Unhandled method", method)
-                    break
+                    break;
             }
 
             let value = SQUtils.AmountsArithmetic.fromNumber(0)
