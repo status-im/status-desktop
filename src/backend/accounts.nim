@@ -261,9 +261,7 @@ proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] =
 
 proc openedAccounts*(path: string): RpcResponse[JsonNode] =
   try:
-    let mixPanelAppId = getEnv("MIXPANEL_APP_ID")
-    let mixPanelToken = getEnv("MIXPANEL_TOKEN")
-    let payload = %* {"dataDir": path, "mixpanelAppId": mixPanelAppId, "mixpanelToken": mixPanelToken}
+    let payload = %* {"dataDir": path, "mixpanelAppId": MIXPANEL_APP_ID, "mixpanelToken": MIXPANEL_TOKEN}
     # Do not remove the sleep 700
     # This sleep prevents a crash on intel MacOS
     # with errors like bad flushGen 12 in prepareForSweep; sweepgen 0
