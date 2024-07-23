@@ -464,7 +464,7 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
     let args = TransactionSentArgs(e)
     self.view.showToastTransactionSent(args.chainId, args.txHash, args.uuid, args.error,
       ord(args.txType), args.fromAddress, args.toAddress, args.fromTokenKey, args.fromAmount,
-      args.fromTokenKey, args.toAmount)
+      args.toTokenKey, args.toAmount)
 
   self.events.on(MARK_WALLET_ADDRESSES_AS_SHOWN) do(e:Args):
     let args = WalletAddressesArgs(e)
