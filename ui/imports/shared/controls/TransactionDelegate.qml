@@ -555,7 +555,7 @@ StatusListItem {
         switch(d.txType) {
         case Constants.TransactionType.Receive:
             // Cross chain receive. Use bridge pattern
-            if (root.networkNameIn != root.networkNameOut) {
+            if (root.networkNameIn != root.networkNameOut && root.networkNameIn && root.networkNameOut) {
                 if (allAccounts)
                     return qsTr("%1 from %2 to %3 via %4 and %5").arg(inTransactionValue).arg(fromAddress).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
                 return qsTr("%1 from %2 via %3 and %4").arg(inTransactionValue).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
@@ -604,7 +604,7 @@ StatusListItem {
             return qsTr("%1 on %2").arg(transactionValue).arg(networkName)
         default:
             // Cross chain send. Use bridge pattern
-            if (root.networkNameIn != root.networkNameOut) {
+            if (root.networkNameIn != root.networkNameOut && root.networkNameIn && root.networkNameOut) {
                 if (allAccounts)
                     return qsTr("%1 from %2 to %3 via %4 and %5").arg(inTransactionValue).arg(fromAddress).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
                 return qsTr("%1 to %2 via %3 and %4").arg(inTransactionValue).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
