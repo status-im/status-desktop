@@ -20,6 +20,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703627', 'Check whats on a Keycard')
 @pytest.mark.case(703627)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_check_whats_on_keycard(main_screen: MainWindow, user_account):
     main_screen.prepare()
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC

@@ -21,6 +21,7 @@ pytestmark = marks
                  'Import or restore a Keycard via a seed phrase')
 @pytest.mark.case(703625)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow, user_account):
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     pin = Keycard.KEYCARD_PIN.value
