@@ -216,6 +216,8 @@ StatusDialog {
                     swapSide: SwapInputPanel.SwapSide.Pay
                     swapExchangeButtonWidth: swapExchangeButton.width
 
+                    bottomTextLoading: root.swapAdaptor.swapProposalLoading
+
                     onSelectedHoldingIdChanged: {
                         if(!!selectedHoldingId) {
                             root.swapInputParamsForm.fromTokensKey = selectedHoldingId
