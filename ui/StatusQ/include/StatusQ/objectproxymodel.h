@@ -40,8 +40,7 @@ public:
     void setExposedRoles(const QStringList& exposedRoles);
     const QStringList& exposedRoles() const;
 
-    Q_INVOKABLE QObject* proxyObject(int index);
-    const QObject* proxyObject(int index) const;
+    Q_INVOKABLE QObject* proxyObject(int index) const;
 
 signals:
     void delegateChanged();

@@ -162,7 +162,7 @@ const QStringList& ObjectProxyModel::exposedRoles() const
     return m_exposedRoles;
 }
 
-QObject* ObjectProxyModel::proxyObject(int index)
+QObject* ObjectProxyModel::proxyObject(int index) const
 {
     if (index >= m_container.size())
         return nullptr;
@@ -177,7 +177,6 @@ QObject* ObjectProxyModel::proxyObject(int index)
             ? creationContext : m_delegate->engine()->rootContext();
 
     auto context = new QQmlContext(parentContext);
-
     auto rowData = new QQmlPropertyMap(context);
     auto model = sourceModel();
 
@@ -205,11 +204,6 @@ QObject* ObjectProxyModel::proxyObject(int index)
     entry.rowData = rowData;
 
     return instance;
-}
-
-const QObject* ObjectProxyModel::proxyObject(int index) const
-{
-    return const_cast<ObjectProxyModel*>(this)->proxyObject(index);
 }
 
 void ObjectProxyModel::resetInternalData()
