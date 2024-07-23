@@ -280,6 +280,25 @@ Item {
             compare(sdk.getActiveSessionsCallbacks.length, 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
         }
 
+        // Tests that the request is ignored if not in the current profile (don't have the PK for the address)
+        function test_onSessionRequestEventMissingAddress() {
+            let sdk = handler.sdk
+
+            let testAddressUpper = "0xY"
+            let chainId = 2
+            let method = "personal_sign"
+            let message = "hello world"
+            let params = [`"${Helpers.strToHex(message)}"`, `"${testAddressUpper}"`]
+            let topic = "b536a"
+            let session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            // Expect to have calls to getActiveSessions from service initialization
+            let prevRequests = sdk.getActiveSessionsCallbacks.length
+            sdk.sessionRequestEvent(session)
+
+            compare(sdk.getActiveSessionsCallbacks.length, 0, "expected DAppsRequestHandler don't call sdk.getActiveSessions")
+            compare(sdk.rejectSessionRequestCalls.length, 0, "expected no call to service.rejectSessionRequest")
+        }
+
         function test_balanceCheck_data() {
             return [{
                 tag: "have_enough_funds",
