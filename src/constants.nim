@@ -63,6 +63,8 @@ let
   RARIBLE_TESTNET_API_KEY_RESOLVED* = desktopConfig.raribleTestnetApiKey
   TENOR_API_KEY_RESOLVED* = desktopConfig.tenorApiKey
   WALLET_CONNECT_PROJECT_ID* = BUILD_WALLET_CONNECT_PROJECT_ID
+  MIXPANEL_APP_ID* = desktopConfig.mixpanelAppId
+  MIXPANEL_TOKEN* = desktopConfig.mixpanelToken
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:
