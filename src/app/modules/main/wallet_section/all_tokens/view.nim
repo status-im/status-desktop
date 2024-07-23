@@ -141,7 +141,9 @@ QtObject:
     self.flatTokensModel.currencyFormatsUpdated()
     self.tokensBySymbolModel.currencyFormatsUpdated()
 
-  proc tokenPreferencesUpdated*(self: View, result: bool) {.signal.}
+  proc tokenPreferencesUpdated*(self: View) =
+    self.flatTokensModel.tokenPreferencesUpdated()
+    self.tokensBySymbolModel.tokenPreferencesUpdated()
 
   proc updateTokenPreferences*(self: View, tokenPreferencesJson: string) {.slot.} =
     self.delegate.updateTokenPreferences(tokenPreferencesJson)

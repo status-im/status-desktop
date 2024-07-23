@@ -70,8 +70,7 @@ method load*(self: Module) =
   self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
     self.view.tokensMarketValuesUpdated()
   self.events.on(SIGNAL_TOKEN_PREFERENCES_UPDATED) do(e: Args):
-    let args = ResultArgs(e)
-    self.view.tokenPreferencesUpdated(args.success)
+    self.view.tokenPreferencesUpdated()
   self.events.on(SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED) do(e: Args):
     self.view.tokensDetailsUpdated()
 
@@ -116,6 +115,7 @@ method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
   return (
     getFlatTokensList: proc(): var seq[TokenItem] = self.controller.getFlatTokensList(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
+    getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
     getCommunityTokenDescription: proc(chainId: int, address: string): string = self.controller.getCommunityTokenDescription(chainId, address),
     getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
     getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
@@ -125,6 +125,7 @@ method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSou
   return (
     getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
+    getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
     getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string = self.controller.getCommunityTokenDescription(addressPerChain),
     getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
     getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()

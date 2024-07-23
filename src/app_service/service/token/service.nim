@@ -60,6 +60,8 @@ QtObject:
     tokenDetailsTable: Table[string, TokenDetailsItem]
     tokenMarketValuesTable: Table[string, TokenMarketValuesItem]
     tokenPriceTable: Table[string, float64]
+    tokenPreferencesTable: Table[string, TokenPreferencesItem]
+    tokenPreferencesJson: string
     tokensDetailsLoading: bool
     tokensPricesLoading: bool
     tokensMarketDetailsLoading: bool
@@ -69,6 +71,7 @@ QtObject:
 
   proc getCurrency*(self: Service): string
   proc rebuildMarketData*(self: Service)
+  proc fetchTokenPreferences(self: Service)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -92,6 +95,7 @@ QtObject:
     result.tokenDetailsTable = initTable[string, TokenDetailsItem]()
     result.tokenMarketValuesTable = initTable[string, TokenMarketValuesItem]()
     result.tokenPriceTable = initTable[string, float64]()
+    result.tokenPreferencesTable = initTable[string, TokenPreferencesItem]()
     result.tokensDetailsLoading = true
     result.tokensPricesLoading = true
     result.tokensMarketDetailsLoading = true
@@ -261,7 +265,9 @@ QtObject:
   # Callback to process the response of getSupportedTokensList call
   proc supportedTokensListRetrieved(self: Service, response: string) {.slot.} =
     # this is emited so that the models can know that the seq it depends on has been updated
-    defer: self.events.emit(SIGNAL_TOKENS_LIST_UPDATED, Args())
+    defer: 
+      self.fetchTokenPreferences()
+      self.events.emit(SIGNAL_TOKENS_LIST_UPDATED, Args())
     try:
       let parsedJson = response.parseJson
       var errorString: string
@@ -506,30 +512,57 @@ QtObject:
     self.threadpool.start(arg)
 
   # Token Management
-  proc getTokenPreferences*(self: Service): JsonNode =
+  proc fetchTokenPreferences(self: Service) =
+    # this is emited so that the models can notify about token preferences being available
+    defer: self.events.emit(SIGNAL_TOKEN_PREFERENCES_UPDATED, Args())
+    self.tokenPreferencesJson = "[]"
     try:
       let response = backend.getTokenPreferences()
       if not response.error.isNil:
-        error "status-go error", procName="getTokenPreferences", errCode=response.error.code, errDesription=response.error.message
+        error "status-go error", procName="fetchTokenPreferences", errCode=response.error.code, errDesription=response.error.message
         return
-      return response.result
+
+      if response.result.isNil or response.result.kind != JArray:
+        return
+
+      self.tokenPreferencesJson = $response.result
+      for preferences in response.result:
+        let dto = Json.decode($preferences, TokenPreferencesDto, allowUnknownFields = true)
+        self.tokenPreferencesTable[dto.key] = TokenPreferencesItem(
+          key: dto.key,
+          position: dto.position,
+          groupPosition: dto.groupPosition,
+          visible: dto.visible,
+          communityId: dto.communityId)
     except Exception as e:
-      error "error: ", procName="getTokenPreferences", errName=e.name, errDesription=e.msg
+      error "error: ", procName="fetchTokenPreferences", errName=e.name, errDesription=e.msg
+
+  proc getTokenPreferences*(self: Service, symbol: string): TokenPreferencesItem =
+    if not self.tokenPreferencesTable.hasKey(symbol):
+      return TokenPreferencesItem(
+        key: symbol,
+        position: high(int),
+        groupPosition: high(int),
+        visible: true,
+        communityId: ""
+      )
+    return self.tokenPreferencesTable[symbol]
+
+  proc getTokenPreferencesJson*(self: Service): string =
+    if len(self.tokenPreferencesJson) == 0:
+      self.fetchTokenPreferences()
+    return self.tokenPreferencesJson
 
   proc updateTokenPreferences*(self: Service, tokenPreferencesJson: string) =
-    var updated = false
     try:
       let preferencesJson = parseJson(tokenPreferencesJson)
-      var tokenPreferences: seq[TokenPreferences]
+      var tokenPreferences: seq[TokenPreferencesDto]
       if preferencesJson.kind == JArray:
         for preferences in preferencesJson:
-          add(tokenPreferences, fromJson(preferences, TokenPreferences))
-
+          add(tokenPreferences, Json.decode($preferences, TokenPreferencesDto, allowUnknownFields = false))
       let response = backend.updateTokenPreferences(tokenPreferences)
       if not response.error.isNil:
         raise newException(CatchableError, response.error.message)
-      updated = true
+      self.fetchTokenPreferences()
     except Exception as e:
       error "error: ", procName="updateTokenPreferences", errName=e.name, errDesription=e.msg
-
-    self.events.emit(SIGNAL_TOKEN_PREFERENCES_UPDATED, ResultArgs(success: updated))

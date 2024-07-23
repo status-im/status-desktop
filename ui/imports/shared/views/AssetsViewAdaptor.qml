@@ -12,10 +12,6 @@ import SortFilterProxyModel 0.2
 QObject {
     id: root
 
-    // Controller providing information about visibility and order defined
-    // by a user (token management)
-    required property ManageTokensController controller
-
     /**
       Expected model structure:
 
@@ -35,6 +31,8 @@ QObject {
             currencyPrice   [object] - object holding fiat price details
                 amount      [double] - fiat prace of 1 logical unit of cryptocurrency
         detailsLoading      [bool]   - indicatator if market details are ready to use
+        position            [int]    - custom order position
+        visible             [bool]   - token management visiblity flag
 
         Community related part (relevant for community minted assets, empty otherwise):
 
@@ -115,15 +113,8 @@ QObject {
             readonly property real marketPrice: marketDetails.currencyPrice.amount ?? 0
             readonly property real marketChangePct24hour: marketDetails.changePct24hour ?? 0
 
-            readonly property int position: {
-                controller.revision
-                return controller.order(model.symbol)
-            }
-
             readonly property bool visible: {
-                root.controller.revision
-
-                if (!root.controller.filterAcceptsSymbol(model.symbol))
+                if (!model.visible)
                     return false
 
                 if (hasCommunityId)
@@ -184,9 +175,10 @@ QObject {
 
         expectedRoles:
             ["tokensKey", "symbol", "image", "balances", "decimals",
-             "detailsLoading", "marketDetails", "communityId", "communityImage"]
+             "detailsLoading", "marketDetails", "communityId", "communityImage",
+             "position", "visible"]
         exposedRoles:
-            ["key", "error", "balance", "balanceText", "position", "icon",
+            ["key", "error", "balance", "balanceText", "icon",
              "visible", "canBeHidden", "marketDetailsAvailable", "marketDetailsLoading",
              "marketPrice", "marketChangePct24hour", "communityIcon"]
     }

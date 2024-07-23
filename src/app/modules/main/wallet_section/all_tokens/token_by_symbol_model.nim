@@ -30,6 +30,8 @@ type
     MarketDetails
     DetailsLoading
     MarketDetailsLoading
+    Visible
+    Position
 
 QtObject:
   type TokensBySymbolModel* = ref object of QAbstractListModel
@@ -84,6 +86,8 @@ QtObject:
       ModelRole.MarketDetails.int:"marketDetails",
       ModelRole.DetailsLoading.int:"detailsLoading",
       ModelRole.MarketDetailsLoading.int:"marketDetailsLoading",
+      ModelRole.Visible.int:"visible",
+      ModelRole.Position.int:"position"
     }.toTable
 
   method data(self: TokensBySymbolModel, index: QModelIndex, role: int): QVariant =
@@ -130,6 +134,10 @@ QtObject:
         result = newQVariant(self.delegate.getTokensDetailsLoading())
       of ModelRole.MarketDetailsLoading:
         result = newQVariant(self.delegate.getTokensMarketValuesLoading())
+      of ModelRole.Visible:
+        result = newQVariant(self.delegate.getTokenPreferences(item.symbol).visible)
+      of ModelRole.Position:
+        result = newQVariant(self.delegate.getTokenPreferences(item.symbol).position)
 
   proc modelsUpdated*(self: TokensBySymbolModel) =
     self.beginResetModel()
@@ -179,3 +187,11 @@ QtObject:
   proc currencyFormatsUpdated*(self: TokensBySymbolModel) =
     for marketDetails in self.tokenMarketDetails:
       marketDetails.updateCurrencyFormat()
+
+  proc tokenPreferencesUpdated*(self: TokensBySymbolModel) =
+    if self.delegate.getTokenBySymbolList().len > 0:
+      let index = self.createIndex(0, 0, nil)
+      let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
+      defer: index.delete
+      defer: lastindex.delete
+      self.dataChanged(index, lastindex, @[ModelRole.Visible.int, ModelRole.Position.int])

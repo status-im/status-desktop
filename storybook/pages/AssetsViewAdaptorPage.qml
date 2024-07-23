@@ -53,7 +53,9 @@ Item {
                     }
                 },
                 detailsLoading: false,
-                image: Qt.resolvedUrl("")
+                image: Qt.resolvedUrl(""),
+                position: 1,
+                visible: true
             },
             {
                 tokensKey: "key_SNT",
@@ -92,7 +94,9 @@ Item {
                     }
                 },
                 detailsLoading: false,
-                image: Qt.resolvedUrl("")
+                image: Qt.resolvedUrl(""),
+                position: 2,
+                visible: true
             },
             {
                 tokensKey: "key_MYASST",
@@ -121,7 +125,9 @@ Item {
                     }
                 },
                 detailsLoading: false,
-                image: Constants.tokenIcon("ZRX", false)
+                image: Constants.tokenIcon("ZRX", false),
+                position: 5,
+                visible: true
             }
         ]
 
@@ -141,41 +147,8 @@ Item {
         }
     }
 
-    ManageTokensController {
-        id: manageTokensController
-
-        sourceModel: listModel
-        serializeAsCollectibles: false
-
-        onRequestLoadSettings: {
-            loadingStarted()
-
-            const jsonData = [
-                {
-                    "key": "ETH",
-                    "position": 1,
-                    "visible": true
-                },
-                {
-                    "key": "SNT",
-                    "position": 2,
-                    "visible": true
-                },
-                {
-                    "key": "MYASST",
-                    "position": 5,
-                    "visible": true
-                }
-            ]
-
-            loadingFinished(JSON.stringify(jsonData))
-        }
-    }
-
     AssetsViewAdaptor {
         id: adaptor
-
-        controller: manageTokensController
 
         chains: chainsSelector.selection
         accounts: accountsSelector.selection

@@ -56,20 +56,12 @@ type
     activityTypes* {.serializedFieldName("activityTypes").}: seq[int]
     readType* {.serializedFieldName("readType").}: int
 
-  TokenPreferences* = ref object of RootObj
+  TokenPreferencesDto* = ref object of RootObj
     key* {.serializedFieldName("key").}: string
     position* {.serializedFieldName("position").}: int
     groupPosition* {.serializedFieldName("groupPosition").}: int
     visible* {.serializedFieldName("visible").}: bool
     communityId* {.serializedFieldName("communityId").}: string
-
-proc fromJson*(t: JsonNode, T: typedesc[TokenPreferences]): TokenPreferences {.inline.} =
-  result = TokenPreferences()
-  discard t.getProp("key", result.key)
-  discard t.getProp("position", result.position)
-  discard t.getProp("groupPosition", result.groupPosition)
-  discard t.getProp("visible", result.visible)
-  discard t.getProp("communityId", result.communityId)
 
 rpc(clientVersion, "web3"):
   discard
@@ -285,7 +277,7 @@ rpc(moveWalletAccount, "accounts"):
   toPosition: int
 
 rpc(updateTokenPreferences, "accounts"):
-  preferences: seq[TokenPreferences]
+  preferences: seq[TokenPreferencesDto]
 
 rpc(getTokenPreferences, "accounts"):
   discard

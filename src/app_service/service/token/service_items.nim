@@ -90,6 +90,23 @@ proc `$`*(self: TokenDetailsItem): string =
     ]"""
 
 type
+  TokenPreferencesItem* = ref object of RootObj
+    key*: string
+    position*: int
+    groupPosition*: int
+    visible*: bool
+    communityId*: string
+
+proc `$`*(self: TokenPreferencesItem): string =
+  result = fmt"""TokenPreferencesItem[
+    key: {self.key},
+    position: {self.position},
+    groupPosition: {self.groupPosition},
+    visible: {self.visible},
+    communityId: {self.communityId}
+    ]"""
+
+type
   TokenMarketValuesItem* = object
     marketCap*: float64
     highDay*: float64
