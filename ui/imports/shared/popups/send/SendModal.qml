@@ -447,7 +447,6 @@ StatusDialog {
                                 SQUtils.AmountsArithmetic.fromString(amount)) === -1
 
                         readonly property bool ready: valid && !empty && !balanceExceeded
-                                                      && amount !== "0"
 
                         readonly property string selectedSymbol:
                             !!d.selectedHolding && !!d.selectedHolding.symbol
