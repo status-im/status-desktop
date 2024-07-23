@@ -552,7 +552,9 @@ Item {
                 dappsListReceivedJsonStr: dappsListReceivedJsonStr
             })
             verify(!!store)
-            provider = createTemporaryObject(dappsListProviderComponent, root, {sdk: sdk, store: store})
+            const walletStore = createTemporaryObject(walletStoreComponent, root)
+            verify(!!walletStore)
+            provider = createTemporaryObject(dappsListProviderComponent, root, {sdk: sdk, store: store, supportedAccountsModel: walletStore.nonWatchAccounts})
             verify(!!provider)
         }
 
@@ -576,7 +578,8 @@ Item {
             sdk.sdkReady = true
             compare(sdk.getActiveSessionsCallbacks.length, 1, "expected a call to sdk.getActiveSessions when SDK becomes ready")
             let callback = sdk.getActiveSessionsCallbacks[0].callback
-            let session = JSON.parse(Testing.formatApproveSessionResponse([1, 2], ["0x1"], {dappMetadataJsonString: Testing.noIconsDappMetadataJsonString}))
+            const address = ModelUtils.get(provider.supportedAccountsModel, 0, "address")
+            let session = JSON.parse(Testing.formatApproveSessionResponse([1, 2], [address], {dappMetadataJsonString: Testing.noIconsDappMetadataJsonString}))
             callback({"b536a": session, "b537b": session})
             compare(provider.dappsModel.count, 1, "expected dappsModel have the SDK's reported dapps")
             compare(provider.dappsModel.get(0).iconUrl, "", "expected iconUrl to be missing")
@@ -664,6 +667,28 @@ Item {
             verify(eip155.methods.length > 0)
             verify(eip155.hasOwnProperty("events"))
             compare(eip155.events.length, 2)
+        }
+
+        function test_filterActiveSessionsForKnownAccounts() {
+            const account1 = accountsModel.get(0)
+            const account2 = accountsModel.get(1)
+            const chainIds = [chainsModel.get(0).chainId, chainsModel.get(1).chainId]
+            const knownSession = JSON.parse(Testing.formatApproveSessionResponse(chainIds, [account2.address]))
+            // Allow the unlikely unknown accounts to cover for the deleted accounts case
+            const unknownSessionWithKnownAccount = JSON.parse(Testing.formatApproveSessionResponse(chainIds, ['0x03acc', account1.address]))
+            const unknownSession1 = JSON.parse(Testing.formatApproveSessionResponse(chainIds, ['0x83acc']))
+            const unknownSession2 = JSON.parse(Testing.formatApproveSessionResponse(chainIds, ['0x12acc']))
+            let testSessions = {
+                "b536a": knownSession,
+                "b537b": unknownSession1,
+                "b538c": unknownSession2,
+                "b539d": unknownSessionWithKnownAccount
+            }
+            let res = Helpers.filterActiveSessionsForKnownAccounts(testSessions, accountsModel)
+            compare(Object.keys(res).length, 2, "expected two sessions to be returned")
+            // Also test that order is stable
+            compare(res["b536a"], knownSession, "expected the known session to be returned")
+            compare(res["b539d"], unknownSessionWithKnownAccount, "expected the known session to be returned")
         }
     }
 

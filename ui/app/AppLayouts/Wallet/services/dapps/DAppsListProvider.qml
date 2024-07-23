@@ -2,6 +2,8 @@ import QtQuick 2.15
 
 import StatusQ.Core.Utils 0.1
 
+import AppLayouts.Wallet.services.dapps 1.0
+
 import shared.stores 1.0
 
 import utils 1.0
@@ -11,6 +13,7 @@ QObject {
 
     required property WalletConnectSDKBase sdk
     required property DAppsStore store
+    required property var supportedAccountsModel
 
     readonly property alias dappsModel: d.dappsModel
 
@@ -46,11 +49,12 @@ QObject {
             }
 
             getActiveSessionsFn = () => {
-                sdk.getActiveSessions((sessions) => {
+                sdk.getActiveSessions((allSessions) => {
                     root.store.dappsListReceived.disconnect(dappsListReceivedFn);
 
                     let tmpMap = {}
                     var topics = []
+                    const sessions = Helpers.filterActiveSessionsForKnownAccounts(allSessions, root.supportedAccountsModel)
                     for (let key in sessions) {
                         let dapp = sessions[key].peer.metadata
                         if (!!dapp.icons && dapp.icons.length > 0) {
@@ -61,7 +65,7 @@ QObject {
                         tmpMap[dapp.url] = dapp;
                         topics.push(key)
                     }
-                    // TODO #14755: on SDK dApps refresh update the model that has data source from persistence instead of using reset
+                    // TODO #15075: on SDK dApps refresh update the model that has data source from persistence instead of using reset
                     dapps.clear();
                     // Iterate tmpMap and fill dapps
                     for (let key in tmpMap) {

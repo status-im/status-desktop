@@ -100,3 +100,23 @@ function extractInfoFromPairUri(uri) {
     }
     return { topic, expiry }
 }
+
+function filterActiveSessionsForKnownAccounts(sessions, accountsModel) {
+    let knownSessions = ({})
+    Object.keys(sessions).forEach((topic) => {
+        const session = sessions[topic]
+        const eip155Addresses = session.namespaces.eip155.accounts
+        const accountSet = new Set(
+            eip155Addresses.map(eip155Address => eip155Address.split(':').pop().trim())
+        );
+        const uniqueAddresses = Array.from(accountSet);
+        const firstAccount = SQUtils.ModelUtils.getFirstModelEntryIf(accountsModel, (account) => {
+            return uniqueAddresses.includes(account.address)
+        })
+        if (!firstAccount) {
+            return
+        }
+        knownSessions[topic] = session
+    })
+    return knownSessions
+}

@@ -36,7 +36,7 @@ QObject {
     readonly property alias requestHandler: requestHandler
 
     readonly property var validAccounts: SortFilterProxyModel {
-        sourceModel: root.walletRootStore.nonWatchAccounts
+        sourceModel: d.supportedAccountsModel
         proxyRoles: [
             FastExpressionRole {
                 name: "colorizedChainPrefixes"
@@ -108,10 +108,11 @@ QObject {
     }
 
     function disconnectDapp(url) {
-        wcSDK.getActiveSessions((sessions) => {
-            for (let key in sessions) {
-                let dapp = sessions[key].peer.metadata
-                let topic = sessions[key].topic
+        wcSDK.getActiveSessions((allSessions) => {
+            const sessions = Helpers.filterActiveSessionsForKnownAccounts(allSessions, d.supportedAccountsModel)
+            for (let session in sessions) {
+                let dapp = session.peer.metadata
+                let topic = session.topic
                 if (dapp.url == url) {
                     wcSDK.disconnectSession(topic)
                 }
@@ -218,6 +219,8 @@ QObject {
     QObject {
         id: d
 
+        readonly property var supportedAccountsModel: root.walletRootStore.nonWatchAccounts
+
         property var currentSessionProposal: null
         property var acceptedSessionProposal: null
 
@@ -255,6 +258,7 @@ QObject {
 
         sdk: root.wcSDK
         store: root.store
+        supportedAccountsModel: d.supportedAccountsModel
     }
 
     // Timeout for the corner case where the URL was already dismissed and the SDK doesn't respond with an error nor advances with the proposal
