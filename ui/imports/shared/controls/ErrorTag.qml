@@ -54,7 +54,6 @@ InformationTag {
         objectName: "rightComponentButton"
         horizontalPadding: 8
 
-        width: visible || root.loading ? implicitWidth : 0
         visible: root.buttonVisible
 
         size: StatusBaseButton.Size.Tiny
