@@ -423,7 +423,6 @@ QtObject:
           $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
         txData.to = parseAddress(to_addr).some
         if sendType == SendType.Swap:
-          totalAmountToReceive += route.amountOut
           txData.slippagePercentage = slippagePercentage
 
         paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
@@ -547,7 +546,6 @@ QtObject:
           )
         txData.data = data
         if sendType == SendType.Swap:
-          totalAmountToReceive += route.amountOut
           txData.slippagePercentage = slippagePercentage
 
         let path = self.createPath(route, txData, mtCommand.toAsset, mtCommand.toAddress)
