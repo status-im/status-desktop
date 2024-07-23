@@ -54,6 +54,7 @@ in rec {
   qt515_8 = recurseIntoAttrs (makeOverridable
   (import ./pkgs/qt-5/5.15) {
     inherit (__splicedPackages)
+      makeScopeWithSplicing' llvmPackages_15 overrideSDK overrideLibcxx
       newScope generateSplicesForMkScope lib fetchurl fetchpatch fetchgit fetchFromGitHub makeSetupHook makeWrapper
       bison cups dconf harfbuzz libGL perl gtk3 python3
       darwin buildPackages;
