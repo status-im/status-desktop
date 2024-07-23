@@ -2177,7 +2177,7 @@ Item {
         id: walletConnectServiceLoader
 
         // It seems some of the functionality of the dapp connector depends on the WalletConnectService
-        active: Global.featureFlags.dappsEnabled || Global.featureFlags.connectorEnabled
+        active: (Global.featureFlags.dappsEnabled || Global.featureFlags.connectorEnabled) && appMain.visible
 
         sourceComponent: WalletConnectService {
             id: walletConnectService
