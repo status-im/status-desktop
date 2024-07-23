@@ -78,7 +78,6 @@ QObject {
         marketPrice            [double] - specifies market price in currently used currency
         marketChangePct24hour  [double] - percentage price change in last 24 hours, e.g. 0.5 for 0.5% of price change
 
-        position    [int]  - if custom order available, display position fetched from ManageTokensController
         canBeHidden [bool] - specifies if given token can be hidden (e.g. ETH should be always visible)
 
         communityIcon [url] - renamed from communityImage
@@ -115,6 +114,9 @@ QObject {
 
             readonly property bool visible: {
                 if (!model.visible)
+                    return false
+
+                if (filteredBalances.ModelCount.count === 0)
                     return false
 
                 if (hasCommunityId)
@@ -176,7 +178,7 @@ QObject {
         expectedRoles:
             ["tokensKey", "symbol", "image", "balances", "decimals",
              "detailsLoading", "marketDetails", "communityId", "communityImage",
-             "position", "visible"]
+             "visible"]
         exposedRoles:
             ["key", "error", "balance", "balanceText", "icon",
              "visible", "canBeHidden", "marketDetailsAvailable", "marketDetailsLoading",
