@@ -52,12 +52,14 @@ class WelcomeToStatusView(QObject):
     def get_keys(self) -> 'KeysView':
         self._i_am_new_to_status_button.click()
         time.sleep(1)
+        ShareUsageDataPopup().skip()
         return KeysView().wait_until_appears()
 
     @allure.step('Open Sign by syncing form')
     def sync_existing_user(self) -> 'SignBySyncingView':
         self._i_already_use_status_button.click()
         time.sleep(1)
+        ShareUsageDataPopup().skip()
         return SignBySyncingView().wait_until_appears()
 
 
@@ -84,19 +86,16 @@ class KeysView(OnboardingView):
     @allure.step('Open Profile view')
     def generate_new_keys(self) -> 'YourProfileView':
         self._generate_key_button.click()
-        ShareUsageDataPopup().skip()
         return YourProfileView().verify_profile_view_present()
 
     @allure.step('Open Keycard Init view')
     def generate_key_for_new_keycard(self) -> 'KeycardInitView':
         self._generate_key_for_new_keycard_button.click()
-        ShareUsageDataPopup().skip()
         return KeycardInitView().wait_until_appears()
 
     @allure.step('Open Import Seed Phrase view')
     def open_import_seed_phrase_view(self) -> 'ImportSeedPhraseView':
         self._import_seed_phrase_button.click()
-        ShareUsageDataPopup().skip()
         return ImportSeedPhraseView().wait_until_appears()
 
     @allure.step('Open Enter Seed Phrase view')
