@@ -612,7 +612,7 @@ StatusDialog {
                 interactive: popup.interactive
                 selectedRecipient: popup.preSelectedRecipient
                 ensAddressOrEmpty: recipientInputLoader.resolvedENSAddress
-                amountToSend: amountToSend.cryptoValueToSendFloat
+                amountToSend: amountToSend.asNumber
                 minSendCryptoDecimals: amountToSend.minSendCryptoDecimals
                 minReceiveCryptoDecimals: amountToSend.minReceiveCryptoDecimals
                 selectedAsset: d.selectedHolding
