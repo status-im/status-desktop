@@ -32,7 +32,7 @@ QObject {
     /**
       Expected model structure:
 
-        tokenId             [string] - unique identifier of a collectible
+        symbol              [string] - unique identifier of a collectible
         collectionUid       [string] - unique identifier of a collection
         contractAddress     [string] - collectible's contract address
         name                [string] - collectible's name e.g. "Magicat"
@@ -75,7 +75,7 @@ QObject {
                                                         ? model.communityId
                                                         : model.collectionUid
 
-                readonly property string key: model.tokenId
+                readonly property string key: model.symbol
 
                 readonly property url icon:
                     model.imageUrl || model.mediaUrl || Qt.resolvedUrl("")
@@ -101,7 +101,7 @@ QObject {
 
             expectedRoles: [
                 "ownership", "communityId", "collectionUid", "imageUrl",
-                "mediaUrl", "tokenId"
+                "mediaUrl", "symbol"
             ]
             exposedRoles: ["balance", "groupingValue", "icon", "key"]
         }
