@@ -152,3 +152,15 @@ QtObject:
       if cmpIgnoreCase(item.address(), address) == 0 and item.walletType != "watch":
         return true
     return false
+
+  proc onPreferredSharingChainsUpdated*(self: Model, address, prodPreferredChainIds, testPreferredChainIds: string) =
+    var i = 0
+    for item in self.items.mitems:
+      if address == item.address:
+        item.prodPreferredChainIds = prodPreferredChainIds
+        item.testPreferredChainIds = testPreferredChainIds
+        let index = self.createIndex(i, 0, nil)
+        defer: index.delete
+        self.dataChanged(index, index, @[ModelRole.PreferredSharingChainIds.int])
+        break
+      i.inc
