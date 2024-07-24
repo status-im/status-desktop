@@ -34,6 +34,7 @@ def setup_session_scope(
         init_testrail_api,
         prepare_test_directory,
         start_squish_server,
+        close_apps_before_start
 ):
     LOG.info('Session startup...')
     yield
