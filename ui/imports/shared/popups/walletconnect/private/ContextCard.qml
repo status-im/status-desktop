@@ -82,7 +82,7 @@ Rectangle {
                 showTitle: true
                 multiSelection: root.multipleChainSelection
                 showAllSelectedText: false
-                selectionAllowed: !root.connectionAttempted && root.chainsModel.ModelCount.count > 1
+                selectionAllowed: false
             }
         }
     }
