@@ -568,16 +568,23 @@ QtObject {
     // TODO: https://github.com/status-im/status-desktop/issues/15329
     // Get DApp data from the backend
     function getDappDetails(chainId, contractAddress) {
-        console.log("getDappDetails", chainId, contractAddress)
         switch (contractAddress) {
-            case Constants.swap.paraswapApproveContractAddress:
-            case Constants.swap.paraswapSwapContractAddress:
+            case Constants.swap.paraswapV5ApproveContractAddress:
+            case Constants.swap.paraswapV5SwapContractAddress:
                 return {
                     "icon": Style.png("swap/%1".arg(Constants.swap.paraswapIcon)),
                     "url": Constants.swap.paraswapHostname,
                     "name": Constants.swap.paraswapName,
-                    "approvalContractAddress": Constants.swap.paraswapContractAddress,
-                    "swapContractAddress": Constants.swap.paraswapContractAddress,
+                    "approvalContractAddress": Constants.swap.paraswapV5ApproveContractAddress,
+                    "swapContractAddress": Constants.swap.paraswapV5SwapContractAddress,
+                }
+            case Constants.swap.paraswapV6_2ContractAddress:
+                return {
+                    "icon": Style.png("swap/%1".arg(Constants.swap.paraswapIcon)),
+                    "url": Constants.swap.paraswapUrl,
+                    "name": Constants.swap.paraswapName,
+                    "approvalContractAddress": Constants.swap.paraswapV6_2ContractAddress,
+                    "swapContractAddress": Constants.swap.paraswapV6_2ContractAddress,
                 }
         }
         return undefined

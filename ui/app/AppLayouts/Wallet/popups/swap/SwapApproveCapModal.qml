@@ -45,7 +45,7 @@ SignTransactionModalBase {
     property string serviceProviderHostname: Constants.swap.paraswapHostname
     property string serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl
     property string serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
-    property string serviceProviderContractAddress: Constants.swap.paraswapApproveContractAddress
+    property string serviceProviderContractAddress: Constants.swap.paraswapV6_2ContractAddress
     property string serviceProviderIcon: Style.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
 
     title: qsTr("Approve spending cap")
