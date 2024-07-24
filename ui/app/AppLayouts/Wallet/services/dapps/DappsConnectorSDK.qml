@@ -89,7 +89,8 @@ WalletConnectSDKBase {
                 maxFeesText: "?",
                 maxFeesEthText: "?",
                 enoughFunds: enoughFunds,
-                estimatedTimeText: "?"
+                estimatedTimeText: "?",
+                preparedData: event.params.request.tx.data,
             })
             if (obj === null) {
                 console.error("Error creating SessionRequestResolved for event")
