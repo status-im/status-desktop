@@ -86,6 +86,13 @@ StatusDialog {
             if(!root.swapAdaptor.swapProposalLoading)
                 d.autoRefreshTimer.restart()
         }
+    }    
+
+    // needed as the first time the value not loaded correctly without this Binding
+    Binding {
+        target: root.swapAdaptor
+        property: "amountEnteredGreaterThanBalance"
+        value: payPanel.amountEnteredGreaterThanBalance
     }
 
     Behavior on implicitHeight {
@@ -225,9 +232,6 @@ StatusDialog {
                                                                                                        SQUtils.AmountsArithmetic.fromNumber(1, rawValueMultiplierIndex)).toString()
                             root.swapInputParamsForm.fromTokenAmount = amount
                         }
-                    }
-                    onAmountEnteredGreaterThanBalanceChanged: {
-                        root.swapAdaptor.amountEnteredGreaterThanBalance = payPanel.amountEnteredGreaterThanBalance
                     }
                 }
 
