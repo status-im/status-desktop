@@ -98,7 +98,12 @@ StatusListItem {
         if (!isModelDataValid) {
             return qsTr("N/A")
         } else if (root.isNFT) {
-            return modelData.nftName ? modelData.nftName : "#" + modelData.tokenID
+            let value = ""
+            if (d.txType === Constants.TransactionType.Mint) {
+                value += modelData.amount + " "
+            }
+            value += (modelData.nftName ? modelData.nftName : "#" + modelData.tokenID)
+            return value
         } else if (!modelData.symbol && !!modelData.tokenAddress) {
             return "%1 (%2)".arg(root.rootStore.formatCurrencyAmount(cryptoValue, "")).arg(Utils.compactAddress(modelData.tokenAddress, 4))
         }
