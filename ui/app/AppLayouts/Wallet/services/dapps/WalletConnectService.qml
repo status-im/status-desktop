@@ -63,7 +63,7 @@ QObject {
         let info = Helpers.extractInfoFromPairUri(uri)
         wcSDK.getActiveSessions((sessions) => {
             // Check if the URI is already paired
-            var validationState = Pairing.errors.ok
+            var validationState = Pairing.errors.uriOk
             for (let key in sessions) {
                 if (sessions[key].pairingTopic == info.topic) {
                     validationState = Pairing.errors.alreadyUsed
@@ -72,7 +72,7 @@ QObject {
             }
 
             // Check if expired
-            if (validationState == Pairing.errors.ok) {
+            if (validationState == Pairing.errors.uriOk) {
                 const now = (new Date().getTime())/1000
                 if (info.expiry < now) {
                     validationState = Pairing.errors.expired
@@ -159,9 +159,8 @@ QObject {
                 }
                 return
             }
-            if (!(approvedNamespaces.eip155.accounts) || approvedNamespaces.eip155.accounts.length === 0
-                || (!(approvedNamespaces.eip155.chains) || approvedNamespaces.eip155.chains.length === 0)
-            ) {
+            const an = approvedNamespaces.eip155
+            if (!(an.accounts) || an.accounts.length === 0 || (!(an.chains) || an.chains.length === 0)) {
                 d.reportPairErrorState(Pairing.errors.unsupportedNetwork)
                 return
             }

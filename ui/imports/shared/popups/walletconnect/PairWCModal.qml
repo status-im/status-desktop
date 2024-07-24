@@ -29,7 +29,7 @@ StatusDialog {
 
     function pairingValidated(validationState) {
         uriInput.errorState = validationState
-        if (validationState === Pairing.errors.ok) {
+        if (validationState === Pairing.errors.uriOk) {
             d.doPair()
         }
     }
@@ -52,6 +52,7 @@ StatusDialog {
             id: uriInput
 
             pending: uriInput.errorState === Pairing.errors.notChecked
+                  || uriInput.errorState === Pairing.errors.uriOk
 
             onTextChanged: {
                 root.isPairing = false
@@ -91,7 +92,7 @@ StatusDialog {
                 enabled: uriInput.valid
                       && !root.isPairing
                       && uriInput.text.length > 0
-                      && uriInput.errorState === Pairing.errors.ok
+                      && uriInput.errorState === Pairing.errors.uriOk
 
                 onClicked: {
                     d.doPair()
