@@ -233,6 +233,8 @@ QtObject:
         emoji: self.defaultWalletEmoji,
         logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
         wakuV2LightClient: false,
+        wakuV2EnableMissingMessageVerification: true,
+        wakuV2EnableStoreConfirmationForMessagesSent: true,
         previewPrivacy: true,
         torrentConfigEnabled: some(false),
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
