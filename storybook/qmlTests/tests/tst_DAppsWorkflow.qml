@@ -77,6 +77,11 @@ Item {
             onDisplayToastMessage: function(message, error) {
                 onDisplayToastMessageTriggers.push({message, error})
             }
+
+            property var onPairingValidatedTriggers: []
+            onPairingValidated: function(validationState) {
+                onPairingValidatedTriggers.push({validationState})
+            }
         }
     }
 
@@ -99,6 +104,7 @@ Item {
             property var addWalletConnectSessionCalls: []
             function addWalletConnectSession(sessionJson) {
                 addWalletConnectSessionCalls.push({sessionJson})
+                return true
             }
 
             property var authenticateUserCalls: []
@@ -426,8 +432,7 @@ Item {
             sessionRequestSpy.clear()
         }
 
-        function test_TestPairing() {
-            // All calls to SDK are expected as events to be made by the wallet connect SDK
+        function testSetupPair(sessionProposalPayload) {
             let sdk = service.wcSDK
             let walletStore = service.walletRootStore
             let store = service.store
@@ -435,10 +440,12 @@ Item {
             service.pair("wc:12ab@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=12ab")
             compare(sdk.pairCalled, 1, "expected a call to sdk.pair")
 
-            sdk.sessionProposal(JSON.parse(Testing.formatSessionProposal()))
+            sdk.sessionProposal(JSON.parse(sessionProposalPayload))
             compare(sdk.buildApprovedNamespacesCalls.length, 1, "expected a call to sdk.buildApprovedNamespaces")
             var args = sdk.buildApprovedNamespacesCalls[0]
             verify(!!args.supportedNamespaces, "expected supportedNamespaces to be set")
+
+            // All calls to SDK are expected as events to be made by the wallet connect SDK
             let chainsForApproval = args.supportedNamespaces.eip155.chains
             let networksArray = ModelUtils.modelToArray(walletStore.filteredFlatModel).map(entry => entry.chainId)
             verify(networksArray.every(chainId => chainsForApproval.some(eip155Chain => eip155Chain === `eip155:${chainId}`)),
@@ -449,6 +456,12 @@ Item {
             verify(accountsArray.every(address => allAccountsForApproval.some(eip155Address => eip155Address === `eip155:${networksArray[0]}:${address}`)),
                 "expect at least all accounts for the first chain to be present"
             )
+
+            return {sdk, walletStore, store, networksArray, accountsArray}
+        }
+
+        function test_TestPairing() {
+            const {sdk, walletStore, store, networksArray, accountsArray} = testSetupPair(Testing.formatSessionProposal())
 
             let allApprovedNamespaces = JSON.parse(Testing.formatBuildApprovedNamespacesResult(networksArray, accountsArray))
             sdk.buildApprovedNamespacesResult(allApprovedNamespaces, "")
@@ -461,10 +474,10 @@ Item {
             let selectedAccount = walletStore.nonWatchAccounts.get(1)
             service.approvePairSession(connectArgs[connectDAppSpy.argPos.sessionProposalJson], connectArgs[connectDAppSpy.argPos.dappChains], selectedAccount)
             compare(sdk.buildApprovedNamespacesCalls.length, 2, "expected a call to sdk.buildApprovedNamespaces")
-            args = sdk.buildApprovedNamespacesCalls[1]
-            verify(!!args.supportedNamespaces, "expected supportedNamespaces to be set")
+            const approvedArgs = sdk.buildApprovedNamespacesCalls[1]
+            verify(!!approvedArgs.supportedNamespaces, "expected supportedNamespaces to be set")
             // We test here that only one account for all chains is provided
-            let accountsForApproval = args.supportedNamespaces.eip155.accounts
+            let accountsForApproval = approvedArgs.supportedNamespaces.eip155.accounts
             compare(accountsForApproval.length, networksArray.length, "expect only one account per chain")
             compare(accountsForApproval[0], `eip155:${networksArray[0]}:${selectedAccount.address}`)
             compare(accountsForApproval[1], `eip155:${networksArray[1]}:${selectedAccount.address}`)
@@ -487,6 +500,16 @@ Item {
             compare(service.onDisplayToastMessageTriggers.length, 1, "expected a success message to be displayed")
             verify(!service.onDisplayToastMessageTriggers[0].error, "expected no error")
             verify(service.onDisplayToastMessageTriggers[0].message, "expected message to be set")
+        }
+
+        function test_TestPairingUnsupportedNetworks() {
+            const {sdk, walletStore, store} = testSetupPair(Testing.formatSessionProposal())
+
+            let allApprovedNamespaces = JSON.parse(Testing.formatBuildApprovedNamespacesResult([], []))
+            sdk.buildApprovedNamespacesResult(allApprovedNamespaces, "")
+            compare(connectDAppSpy.count, 0, "expected not to have calls to service.connectDApp")
+            compare(service.onPairingValidatedTriggers.length, 1, "expected a call to service.onPairingValidated")
+            compare(service.onPairingValidatedTriggers[0].validationState, Pairing.errors.unsupportedNetwork, "expected unsupportedNetwork state error")
         }
 
         function test_SessionRequestMainFlow() {
@@ -525,6 +548,8 @@ Item {
             verify(!!request.data, "expected data to be set")
             compare(request.data.message, message, "expected message to be set")
         }
+
+
 
         // TODO #14757: add tests with multiple session requests coming in; validate that authentication is serialized and in order
         // function tst_SessionRequestQueueMultiple() {

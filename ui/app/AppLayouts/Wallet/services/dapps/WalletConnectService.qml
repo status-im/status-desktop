@@ -150,13 +150,19 @@ QObject {
         }
 
         function onBuildApprovedNamespacesResult(approvedNamespaces, error) {
-            if(error) {
+            if(error || !approvedNamespaces) {
                 // Check that it contains Non conforming namespaces"
                 if (error.includes("Non conforming namespaces")) {
                     d.reportPairErrorState(Pairing.errors.unsupportedNetwork)
                 } else {
                     d.reportPairErrorState(Pairing.errors.unknownError)
                 }
+                return
+            }
+            if (!(approvedNamespaces.eip155.accounts) || approvedNamespaces.eip155.accounts.length === 0
+                || (!(approvedNamespaces.eip155.chains) || approvedNamespaces.eip155.chains.length === 0)
+            ) {
+                d.reportPairErrorState(Pairing.errors.unsupportedNetwork)
                 return
             }
 
