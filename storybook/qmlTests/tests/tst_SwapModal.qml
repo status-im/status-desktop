@@ -1178,6 +1178,8 @@ Item {
 
             // check states for the pay input selector
             verify(maxTagButton.visible)
+	    // FIXME: maxTagButton should be enabled after #15709 is resolved
+            verify(!maxTagButton.enabled);
             let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
             let truncmaxPossibleValue = Math.trunc(maxPossibleValue*100)/100
             compare(maxTagButton.text, qsTr("Max. %1").arg(truncmaxPossibleValue === 0 ? Qt.locale().zeroDigit
@@ -1189,15 +1191,16 @@ Item {
             compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
             tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToExchange * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
 
-            // click on max button
-            mouseClick(maxTagButton)
-            waitForItemPolished(payPanel)
+            if (maxTagButton.enabled) {
+                // click on max button
+                mouseClick(maxTagButton)
+                waitForItemPolished(payPanel)
 
-            verify(amountToSendInput.interactive)
-            verify(amountToSendInput.input.input.edit.cursorVisible)
-            tryCompare(amountToSendInput.input, "text", maxPossibleValue === 0 ? "" : maxPossibleValue.toLocaleString(Qt.locale(), 'f', -128))
-            tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
-
+                verify(amountToSendInput.interactive)
+                verify(amountToSendInput.input.input.edit.cursorVisible)
+                tryCompare(amountToSendInput.input, "text", maxPossibleValue === 0 ? "" : maxPossibleValue.toLocaleString(Qt.locale(), 'f', -128))
+                tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
+            }
             closeAndVerfyModal()
         }
 

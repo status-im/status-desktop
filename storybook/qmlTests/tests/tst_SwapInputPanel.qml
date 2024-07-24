@@ -274,7 +274,9 @@ Item {
             verify(!maxTagButton.text.endsWith("ETH"))
         }
 
+        // FIXME: This should be enabled after #15709 is resolved
         function test_clickingMaxButton() {
+            skip("maxTabButton is diabled")
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "ETH"})
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
@@ -355,21 +357,24 @@ Item {
 
                 waitForRendering(controlUnderTest)
                 verify(maxTagButton.visible)
+		 // FIXME: maxTagButton should be enabled after #15709 is resolved
+                verify(!maxTagButton.enabled)
                 verify(!maxTagButton.text.endsWith(modelItemToTest.symbol))
                 tryCompare(maxTagButton, "type", modelItemToTest.currentBalance === 0 ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal)
 
                 // check input value and state
-                mouseClick(maxTagButton)
-                waitForRendering(amountToSendInput)
+                if (maxTagButton.enabled) {
+                    mouseClick(maxTagButton)
+                    waitForRendering(amountToSendInput)
 
-                tryCompare(amountToSendInput.input, "text", modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValueAsString)
-                compare(controlUnderTest.value, maxTagButton.maxSafeValue)
-                verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
-                const marketPrice = !!amountToSendInput.selectedHolding ? amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount : 0
-                compare(bottomItemText.text, d.adaptor.formatCurrencyAmount(
-                            maxTagButton.maxSafeValue * marketPrice,
-                            d.adaptor.currencyStore.currentCurrency))
-
+                    tryCompare(amountToSendInput.input, "text", modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValueAsString)
+                    compare(controlUnderTest.value, maxTagButton.maxSafeValue)
+                    verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
+                    const marketPrice = !!amountToSendInput.selectedHolding ? amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount : 0
+                    compare(bottomItemText.text, d.adaptor.formatCurrencyAmount(
+                                maxTagButton.maxSafeValue * marketPrice,
+                                d.adaptor.currencyStore.currentCurrency))
+                }
                 amountToSendInput.input.input.edit.clear()
             }
         }
