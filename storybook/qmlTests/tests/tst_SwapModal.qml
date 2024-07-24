@@ -47,7 +47,7 @@ Item {
         signal fetchSuggestedRoutesCalled()
     }
 
-    readonly property var swapAdaptor: SwapModalAdaptor {
+    readonly property SwapModalAdaptor swapAdaptor: SwapModalAdaptor {
         currencyStore: CurrenciesStore {}
         walletAssetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
@@ -1305,6 +1305,32 @@ Item {
 
                 closeAndVerfyModal()
             }
+        }
+
+        function test_modal_exchange_button_enabled_state_data() {
+            return [
+                        {fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
+                        {fromToken: "", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
+                        {fromToken: "ETH", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
+                        {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
+                        {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: ""},
+                        {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: "50"},
+                        {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: "50"},
+                        {fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: "50"},
+                        {fromToken: "", fromTokenAmount: "100", toToken: "", toTokenAmount: ""}
+                    ]
+        }
+
+        function test_modal_exchange_button_enabled_state(data) {
+            const swapExchangeButton = findChild(controlUnderTest, "swapExchangeButton")
+            verify(!!swapExchangeButton)
+
+            root.swapFormData.fromTokensKey = data.fromToken
+            root.swapFormData.fromTokenAmount = data.fromTokenAmount
+            root.swapFormData.toTokenKey = data.toToken
+            root.swapFormData.toTokenAmount = data.toTokenAmount
+
+            tryCompare(swapExchangeButton, "enabled", !!data.fromToken || !!data.toToken)
         }
 
         function test_modal_exchange_button_default_state_data() {

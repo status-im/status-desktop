@@ -15,6 +15,8 @@ StatusButton {
     isRoundIcon: true
     radius: height/2
     normalColor: Theme.palette.indirectColor3
+    disabledColor: normalColor
+    opacity: enabled ? 1 : 0.4
     hoverColor: Theme.palette.directColor8
     borderWidth: 1
     borderColor: hovered ? Theme.palette.directColor7 : Theme.palette.directColor8
