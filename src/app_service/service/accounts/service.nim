@@ -147,8 +147,8 @@ QtObject:
 
   # TODO: Remove after https://github.com/status-im/status-desktop/issues/11435
   proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
-    let fleet = Fleet.ShardsTest
-    let dnsDiscoveryURL = "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.test.shards.nodes.status.im"
+    let fleet = Fleet.StatusProd
+    let dnsDiscoveryURL = "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.prod.status.nodes.status.im"
 
     result = NODE_CONFIG.copy()
     result["ClusterConfig"]["Fleet"] = newJString($fleet)

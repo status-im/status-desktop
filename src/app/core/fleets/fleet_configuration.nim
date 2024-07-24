@@ -5,7 +5,7 @@ type
     Undefined = ""
     WakuSandbox = "waku.sandbox"
     WakuTest = "waku.test"
-    ShardsTest = "shards.test"
+    StatusProd = "status.prod"
     StatusStaging = "status.staging"
 
   FleetNodes* {.pure.} = enum
@@ -56,7 +56,7 @@ proc extractConfig(self: FleetConfiguration, jsonString: string) {.gcsafe.} =
 
 proc getNodes*(self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = FleetNodes.Bootnodes): seq[string] =
   var t = nodeType
-  if fleet == Fleet.ShardsTest or fleet == Fleet.StatusStaging:
+  if fleet == Fleet.StatusProd or fleet == Fleet.StatusStaging:
     case nodeType:
       of Bootnodes: t = WakuBoot
       of Mailservers: t = WakuStore
@@ -68,7 +68,7 @@ proc getNodes*(self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = Fl
 
 proc getMailservers*(self: FleetConfiguration, fleet: Fleet): Table[string, string] =
   var fleetKey: string
-  if fleet == Fleet.ShardsTest or fleet == Fleet.StatusStaging:
+  if fleet == Fleet.StatusProd or fleet == Fleet.StatusStaging:
     fleetKey = $FleetNodes.WakuStore
   else:
     fleetKey = $FleetNodes.Waku
