@@ -277,6 +277,8 @@ Control {
                                                   { noSymbol: !amountToSendInput.inputIsFiat })
 
                 visible: d.isSelectedHoldingValidAsset && root.swapSide === SwapInputPanel.SwapSide.Pay
+                // FIXME: This should be enabled after #15709 is resolved
+                enabled: false
 
                 onClicked: {
                     if (maxSafeValue)

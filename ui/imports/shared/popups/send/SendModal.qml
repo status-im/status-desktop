@@ -419,6 +419,8 @@ StatusDialog {
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
 
                         visible: d.isSelectedHoldingValidAsset && !d.isCollectiblesTransfer
+                        // FIXME: This should be enabled after #15709 is resolved
+                        enabled: false
 
                         onClicked: {
                             if (maxSafeValue > 0) {
