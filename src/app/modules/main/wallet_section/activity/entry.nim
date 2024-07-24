@@ -333,7 +333,7 @@ QtObject:
   # All Approvals triggered from the app will be to perform a swap on Paraswap
   proc getApprovalSpender*(self: ActivityEntry): string {.slot.} =
     if self.isMultiTransaction() and self.metadata.activityType == backend.ActivityType.Approve:
-      return PARASWAP_V5_APPROVE_CONTRACT_ADDRESS
+      return PARASWAP_V6_2_CONTRACT_ADDRESS
     return ""
 
   QtProperty[string] approvalSpender:
@@ -346,7 +346,7 @@ QtObject:
     if self.isMultiTransaction() and 
     self.metadata.activityType == backend.ActivityType.Swap and
     self.getChainIdIn() == 0:   # Differentiate between Swaps triggered from the app and external detected Swaps
-      return PARASWAP_V5_SWAP_CONTRACT_ADDRESS
+      return PARASWAP_V6_2_CONTRACT_ADDRESS
     return ""
 
   QtProperty[string] interactedContractAddress:
