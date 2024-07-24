@@ -52,7 +52,8 @@ QObject {
     readonly property var flatNetworks: root.walletRootStore.filteredFlatModel
 
     function validatePairingUri(uri) {
-        if(Helpers.containsOnlyEmoji(uri)) {
+        // Check if emoji inside the URI
+        if(Constants.regularExpressions.emoji.test(uri)) {
             root.pairingValidated(Pairing.errors.tooCool)
             return
         } else if(!Helpers.validURI(uri)) {
