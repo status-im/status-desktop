@@ -546,7 +546,6 @@ Item {
         }
 
         function test_modal_swap_proposal_setup() {
-            skip("Flaky test relying on wait()")
             root.swapAdaptor.reset()
 
             // Launch popup
@@ -587,7 +586,7 @@ Item {
             formValuesChanged.wait()
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             formValuesChanged.wait()
-            root.swapFormData.selectedAccountAddress = root.swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             formValuesChanged.wait()
 
             // wait for fetchSuggestedRoutes function to be called
@@ -597,7 +596,9 @@ Item {
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
             // emit event that no routes were found with unknown error
-            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, "NO_ROUTES", "No routes found")
+            const txRoutes = root.dummySwapTransactionRoutes.txNoRoutes
+            txRoutes.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txRoutes, "NO_ROUTES", "No routes found")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
@@ -634,7 +635,8 @@ Item {
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
             // emit event that no routes were found due to not enough token balance
-            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, Constants.swap.errorCodes.errNotEnoughTokenBalance, "errNotEnoughTokenBalance")
+            txRoutes.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txRoutes, Constants.swap.errorCodes.errNotEnoughTokenBalance, "errNotEnoughTokenBalance")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
@@ -671,7 +673,8 @@ Item {
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
             // emit event that no routes were found due to not enough eth balance
-            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, Constants.swap.errorCodes.errNotEnoughNativeBalance, "errNotEnoughNativeBalance")
+            txRoutes.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txRoutes, Constants.swap.errorCodes.errNotEnoughNativeBalance, "errNotEnoughNativeBalance")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
@@ -700,8 +703,6 @@ Item {
             root.swapFormData.fromTokenAmount = "0.00013"
             waitForRendering(receivePanel)
             formValuesChanged.wait()
-            // wait for fetchSuggestedRoutes function to be called
-            fetchSuggestedRoutesCalled.wait()
 
             // wait for fetchSuggestedRoutes function to be called
             fetchSuggestedRoutesCalled.wait()
@@ -710,7 +711,8 @@ Item {
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
             // emit event that no routes were found due to price timeout
-            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, Constants.swap.errorCodes.errPriceTimeout, "errPriceTimeout")
+            txRoutes.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txRoutes, Constants.swap.errorCodes.errPriceTimeout, "errPriceTimeout")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
@@ -736,7 +738,7 @@ Item {
             compare(receivePanel.rawValue, "0")
 
             // edit some params to retry swap
-            root.swapFormData.fromTokenAmount = "0.00013"
+            root.swapFormData.fromTokenAmount = "0.00014"
             waitForRendering(receivePanel)
             formValuesChanged.wait()
 
@@ -747,7 +749,8 @@ Item {
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
             // emit event that no routes were found due to not enough liquidity
-            root.swapStore.suggestedRoutesReady(root.dummySwapTransactionRoutes.txNoRoutes, Constants.swap.errorCodes.errNotEnoughLiquidity, "errNotEnoughLiquidity")
+            txRoutes.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txRoutes, Constants.swap.errorCodes.errNotEnoughLiquidity, "errNotEnoughLiquidity")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
@@ -773,15 +776,16 @@ Item {
             compare(receivePanel.rawValue, "0")
 
             // edit some params to retry swap
-            root.swapFormData.fromTokenAmount = "0.00014"
+            root.swapFormData.fromTokenAmount = "0.00015"
             waitForRendering(receivePanel)
             formValuesChanged.wait()
             // verify loading state was set and no errors currently
             verifyLoadingAndNoErrorsState(payPanel, receivePanel)
 
             // emit event with route that needs no approval
-            let txRoutes = root.dummySwapTransactionRoutes.txHasRouteNoApproval
-            root.swapStore.suggestedRoutesReady(txRoutes, "", "")
+            const txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
 
             // verify loading state removed and data is displayed as expected on the Modal
             verify(root.swapAdaptor.validSwapProposalReceived)
@@ -789,12 +793,12 @@ Item {
             compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
             compare(root.swapAdaptor.swapOutputData.toTokenAmount,
                     SQUtils.AmountsArithmetic.div(
-                        SQUtils.AmountsArithmetic.fromString(txRoutes.amountToReceive),
+                        SQUtils.AmountsArithmetic.fromString(txHasRouteNoApproval.amountToReceive),
                         SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.toToken.decimals)
                         ).toString())
 
             // calculation needed for total fees
-            let gasTimeEstimate = txRoutes.gasTimeEstimate
+            let gasTimeEstimate = txHasRouteNoApproval.gasTimeEstimate
             let totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
             let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
 
@@ -812,7 +816,7 @@ Item {
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
-            compare(receivePanel.value, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
+            compare(receivePanel.value, root.swapStore.getWei2Eth(txHasRouteNoApproval.amountToReceive, root.swapAdaptor.toToken.decimals))
             compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(
                         LocaleUtils.numberFromLocaleString(root.swapAdaptor.swapOutputData.toTokenAmount, Qt.locale()),
                         root.swapAdaptor.toToken.decimals).toString())
@@ -830,6 +834,7 @@ Item {
 
             // emit event with route that needs no approval
             let txRoutes2 = root.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
+            txRoutes2.uuid = root.swapAdaptor.uuid
             root.swapStore.suggestedRoutesReady(txRoutes2, "", "")
 
             // verify loading state removed and data ius displayed as expected on the Modal
@@ -837,7 +842,7 @@ Item {
             verify(!root.swapAdaptor.swapProposalLoading)
             compare(root.swapAdaptor.swapOutputData.fromTokenAmount, "")
             compare(root.swapAdaptor.swapOutputData.toTokenAmount, SQUtils.AmountsArithmetic.div(
-                        SQUtils.AmountsArithmetic.fromString(txRoutes.amountToReceive),
+                        SQUtils.AmountsArithmetic.fromString(txRoutes2.amountToReceive),
                         SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.toToken.decimals)).toString())
 
             // calculation needed for total fees
@@ -859,7 +864,7 @@ Item {
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
-            compare(receivePanel.value, root.swapStore.getWei2Eth(txRoutes.amountToReceive, root.swapAdaptor.toToken.decimals))
+            compare(receivePanel.value, root.swapStore.getWei2Eth(txRoutes2.amountToReceive, root.swapAdaptor.toToken.decimals))
             compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(
                         LocaleUtils.numberFromLocaleString(root.swapAdaptor.swapOutputData.toTokenAmount, Qt.locale()),
                         root.swapAdaptor.toToken.decimals).toString())
@@ -1250,7 +1255,6 @@ Item {
         }
 
         function test_modal_pay_input_switching_accounts() {
-            skip("flaky test")
             // test with pay value being set and not set
             let payValuesToTestWith = ["", "0.2"]
 
@@ -1298,8 +1302,8 @@ Item {
                     let amountEnteredGreaterThanMaxBalance = valueToExchange > maxPossibleValue
                     let errortext = amountEnteredGreaterThanMaxBalance ? qsTr("Insufficient funds for swap"): qsTr("An error has occured, please try again")
                     compare(errorTag.visible, amountEnteredGreaterThanMaxBalance)
-                    compare(errorTag.text, errortext)
-                    compare(errorTag.buttonText, qsTr("Buy crypto"))
+                    compare(errorTag.text, root.swapAdaptor.errorMessage)
+                    compare(errorTag.buttonText, root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Buy crypto") : qsTr("Buy ETH"))
                     compare(errorTag.buttonVisible, amountEnteredGreaterThanMaxBalance)
                 }
 

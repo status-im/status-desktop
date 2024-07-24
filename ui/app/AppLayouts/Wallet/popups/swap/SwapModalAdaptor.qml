@@ -155,18 +155,27 @@ QObject {
         readonly property bool isRouteTokenBalanceInsufficient: root.validSwapProposalReceived && root.swapOutputData.errCode === Constants.swap.errorCodes.errNotEnoughTokenBalance
 
         readonly property bool isTokenBalanceInsufficient: {
-            return (root.amountEnteredGreaterThanBalance || isRouteTokenBalanceInsufficient) &&
-               root.fromToken.symbol !== Constants.ethToken
+            if (!!root.fromToken && !!root.fromToken.symbol) {
+                return (root.amountEnteredGreaterThanBalance || isRouteTokenBalanceInsufficient) &&
+                        root.fromToken.symbol !== Constants.ethToken
+            }
+            return false
         }
 
         readonly property bool isEthBalanceInsufficient: {
-            return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === Constants.ethToken) ||
-             isRouteEthBalanceInsufficient                
+            if (!!root.fromToken && !!root.fromToken.symbol) {
+                return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === Constants.ethToken) ||
+                        isRouteEthBalanceInsufficient
+            }
+            return false
         }
 
         readonly property bool isBalanceInsufficientForSwap: {
-            return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === Constants.ethToken) ||
-            (isTokenBalanceInsufficient && root.fromToken.symbol !== Constants.ethToken)
+            if (!!root.fromToken && !!root.fromToken.symbol) {
+                return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === Constants.ethToken) ||
+                        (isTokenBalanceInsufficient && root.fromToken.symbol !== Constants.ethToken)
+            }
+            return false
         }
 
         readonly property bool isBalanceInsufficientForFees: !isBalanceInsufficientForSwap && isEthBalanceInsufficient
