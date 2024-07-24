@@ -125,16 +125,17 @@ Item {
             compare(chainSelector.selection.length, NetworksModel.flatNetworks.count)
             compare(dappModal.selectedChains.length, NetworksModel.flatNetworks.count)
 
-            // User should be able to deselect a chain
-            mouseClick(chainSelector)
-            waitForItemPolished(chainSelector)
-            const networkSelectorList = findChild(chainSelector, "networkSelectorList")
-            verify(networkSelectorList, "Network selector list should be present")
-            mouseClick(networkSelectorList.itemAtIndex(0))
-            compare(chainSelector.selection.length, NetworksModel.flatNetworks.count - 1)
-            compare(chainSelector.selection[0], NetworksModel.flatNetworks.get(1).chainId)
-            compare(dappModal.selectedChains.length, NetworksModel.flatNetworks.count - 1)
-            compare(dappModal.selectedChains[0], NetworksModel.flatNetworks.get(1).chainId)
+            // TODO uncomment after we enable chain selection (maybe v2.31)
+            // // User should be able to deselect a chain
+            // mouseClick(chainSelector)
+            // waitForItemPolished(chainSelector)
+            // const networkSelectorList = findChild(chainSelector, "networkSelectorList")
+            // verify(networkSelectorList, "Network selector list should be present")
+            // mouseClick(networkSelectorList.itemAtIndex(0))
+            // compare(chainSelector.selection.length, NetworksModel.flatNetworks.count - 1)
+            // compare(chainSelector.selection[0], NetworksModel.flatNetworks.get(1).chainId)
+            // compare(dappModal.selectedChains.length, NetworksModel.flatNetworks.count - 1)
+            // compare(dappModal.selectedChains[0], NetworksModel.flatNetworks.get(1).chainId)
         }
 
         function test_connectedState() {
@@ -269,7 +270,7 @@ Item {
             mouseClick(accountsList.itemAtIndex(1))
             compare(dappModal.selectedAccountAddress, accountSelector.currentAccountAddress)
             compare(dappModal.selectedAccountAddress, selectAddress)
-    
+
             const preselectedAddress = accountSelector.currentAccountAddress
 
             mouseClick(accountSelector)
@@ -296,24 +297,25 @@ Item {
             compare(chainSelector.selection[0], NetworksModel.flatNetworks.get(0).chainId)
             compare(chainSelector.selection[1],  NetworksModel.flatNetworks.get(1).chainId)
 
-            // User should be able to deselect a chain
-            mouseClick(chainSelector)
-            waitForItemPolished(chainSelector)
-            const networkSelectorList = findChild(chainSelector, "networkSelectorList")
-            verify(networkSelectorList, "Network selector list should be present")
-            mouseClick(networkSelectorList.itemAtIndex(0))
-            compare(dappModal.selectedChains.length, NetworksModel.flatNetworks.count - 1)
-            compare(dappModal.selectedChains[0], NetworksModel.flatNetworks.get(1).chainId)
+            // TODO uncomment after we enable chain selection (maybe v2.31)
+            // // User should be able to deselect a chain
+            // mouseClick(chainSelector)
+            // waitForItemPolished(chainSelector)
+            // const networkSelectorList = findChild(chainSelector, "networkSelectorList")
+            // verify(networkSelectorList, "Network selector list should be present")
+            // mouseClick(networkSelectorList.itemAtIndex(0))
+            // compare(dappModal.selectedChains.length, NetworksModel.flatNetworks.count - 1)
+            // compare(dappModal.selectedChains[0], NetworksModel.flatNetworks.get(1).chainId)
 
-            waitForItemPolished(networkSelectorList)
-            mouseClick(networkSelectorList.itemAtIndex(1))
-            compare(dappModal.selectedChains.length, NetworksModel.flatNetworks.count - 2)
-            compare(dappModal.selectedChains[0], NetworksModel.flatNetworks.get(2).chainId)
-            
-            const connectButton = findChild(dappModal, "primaryActionButton")
-            verify(!!connectButton, "Connect button should be present")
-            compare(connectButton.visible, true)
-            compare(connectButton.enabled, true)
+            // waitForItemPolished(networkSelectorList)
+            // mouseClick(networkSelectorList.itemAtIndex(1))
+            // compare(dappModal.selectedChains.length, NetworksModel.flatNetworks.count - 2)
+            // compare(dappModal.selectedChains[0], NetworksModel.flatNetworks.get(2).chainId)
+
+            // const connectButton = findChild(dappModal, "primaryActionButton")
+            // verify(!!connectButton, "Connect button should be present")
+            // compare(connectButton.visible, true)
+            // compare(connectButton.enabled, true)
         }
     }
 }
