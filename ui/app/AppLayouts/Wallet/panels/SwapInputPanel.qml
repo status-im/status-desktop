@@ -59,7 +59,6 @@ Control {
     readonly property int rawValueMultiplierIndex: amountToSendInput.multiplierIndex
     readonly property bool valueValid: amountToSendInput.inputNumberValid
     readonly property bool amountEnteredGreaterThanBalance: value > maxSendButton.maxSafeValue
-    readonly property string accountBalanceFormatted: root.currencyStore.formatCurrencyAmount(d.maxCryptoBalance, d.selectedHolding.symbol)
 
     // visual properties
     property int swapExchangeButtonWidth: 44
@@ -250,7 +249,7 @@ Control {
                 Layout.alignment: Qt.AlignRight
                 model: d.adaptor.outputAssetsModel
                 nonInteractiveDelegateKey: root.nonInteractiveTokensKey
-                onActivated: amountToSendInput.input.forceActiveFocus()
+                onActivated: if (root.interactive) amountToSendInput.input.forceActiveFocus()
             }
 
             Item { Layout.fillHeight: !maxSendButton.visible }
