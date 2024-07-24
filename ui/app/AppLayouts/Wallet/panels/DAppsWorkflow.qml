@@ -271,10 +271,12 @@ DappsComboBox {
             connectDappLoader.sessionTopic = null
 
             if (pairWCLoader.item) {
-                pairWCLoader.item.close()
+                // Allow user to get the uri valid confirmation
+                pairWCLoader.item.pairingValidated(Pairing.errors.dappReadyForApproval)
+                connectDappTimer.start()
+            } else {
+                connectDappLoader.active = true
             }
-
-            connectDappLoader.active = true
         }
 
         function onApproveSessionResult(session, err) {
@@ -294,6 +296,20 @@ DappsComboBox {
             sessionRequestLoader.request = request
             sessionRequestLoader.requestHandled = false
             sessionRequestLoader.active = true
+        }
+    }
+
+    // Used between transitioning from PairWCModal to ConnectDAppModal
+    Timer {
+        id: connectDappTimer
+
+        interval: 500
+        running: false
+        repeat: false
+
+        onTriggered: {
+            pairWCLoader.item.close()
+            connectDappLoader.active = true
         }
     }
 }
