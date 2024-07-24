@@ -316,11 +316,12 @@ QtObject:
       path.transferTx = txData
     elif(route.bridgeName == HOP_TX_BRIDGE_NAME):
       hopTx = txData
-      hopTx.chainID =  route.toNetwork.chainId.some
+      hopTx.chainID =  route.fromNetwork.chainId.some
+      hopTx.chainIDTo = route.toNetwork.chainId.some
       hopTx.symbol = tokenSymbol.some
       hopTx.recipient = parseAddress(to_addr).some
       hopTx.amount = route.amountIn.some
-      hopTx.bonderFee = route.bonderFees.some
+      hopTx.bonderFee = route.txBonderFees.some
       path.hopTx = hopTx
     elif(route.bridgeName == ERC721_TRANSFER_NAME):
       eRC721TransferTx = txData
