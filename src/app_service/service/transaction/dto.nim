@@ -248,6 +248,7 @@ type
     gasFees*: SuggestedFeesDto
     tokenFees*: float
     bonderFees*: string
+    txBonderFees*: UInt256 # Unchanged value from Path V2
     cost*: float
     estimatedTime*: int
     amountInLocked*: bool

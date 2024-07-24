@@ -47,6 +47,7 @@ proc convertToOldRoute*(route: seq[TransactionPathDtoV2]): seq[TransactionPathDt
       trPath.tokenFees = parseFloat(value)
       value = conversion.wei2Eth(input = p.txBonderFees, decimals = p.fromToken.decimals)
       trPath.bonderFees = value
+      trPath.txBonderFees = p.txBonderFees
       trPath.tokenFees += parseFloat(value) # we add bonder fees to the token fees cause in the UI, atm, we show only token fees
       trPath.maxAmountIn = stint.fromHex(UInt256, "0x0")
       trPath.amountIn = p.amountIn

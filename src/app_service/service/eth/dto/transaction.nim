@@ -22,7 +22,7 @@ type
     recipient*: Option[Address]  # (optional) recipient in case of a bridge hop transaction
     amount*: Option[UInt256]         # (optional) amount in case of a bridge hop transaction
     amountOutMin*: Option[UInt256]   # (optional) amountOutMin in case of a bridge hop transaction
-    bonderFee*: Option[string]      # (optional) bonderFee in case of a bridge hop transaction
+    bonderFee*: Option[UInt256]      # (optional) bonderFee in case of a bridge hop transaction
 
     tokenID*: Option[UInt256]     # (optional) chainID in case of a ERC721 transaction
 
