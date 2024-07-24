@@ -3,7 +3,6 @@ import os
 import signal
 import subprocess
 import typing
-import platform
 
 import allure
 import psutil
@@ -46,7 +45,6 @@ def kill_process(pid):
     except Exception as e:
         print(f"Failed to terminate process {pid}: {e}")
 
-
 @allure.step('System execute command')
 def execute(
         command: list,
@@ -76,3 +74,14 @@ def run(
         timeout=timeout_sec,
         check=True
     )
+
+@allure.step('Get pid by process name')
+def get_pid_by_process_name(name):
+    pid_list = []
+    for proc in psutil.process_iter():
+        try:
+            if proc.name() == name and proc.status() != 'zombie':
+                pid_list.append(proc.pid)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    return pid_list if len(pid_list) > 0 else None

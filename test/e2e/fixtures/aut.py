@@ -1,13 +1,16 @@
 import allure
 import os
+
 import pytest
 import logging
 import configs
 import constants
+from configs import get_platform
 from constants import UserAccount
 from driver.aut import AUT
 from gui.main_window import MainWindow
 from scripts.utils import system_path
+from scripts.utils.local_system import get_pid_by_process_name, kill_process
 from scripts.utils.system_path import SystemPath
 
 LOG = logging.getLogger(__name__)
@@ -87,3 +90,14 @@ def user_account(request) -> UserAccount:
 def main_screen(user_account: UserAccount, main_window: MainWindow) -> MainWindow:
     main_window.authorize_user(user_account)
     return main_window
+
+@pytest.fixture(scope="session")
+def close_apps_before_start():
+    if get_platform() == "Windows":
+        name = 'Status.exe'
+    else:
+        name = 'nim_status_client'
+    running_pids = get_pid_by_process_name(name)
+    if running_pids is not None:
+        for pid in running_pids:
+            kill_process(pid)
