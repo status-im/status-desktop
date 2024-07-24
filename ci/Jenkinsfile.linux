@@ -40,7 +40,7 @@ pipeline {
     booleanParam(
       name: 'USE_MOCKED_KEYCARD_LIB',
       description: 'Decides whether the mocked status-keycard-go library is built.',
-      defaultValue: isNightlyBuild
+      defaultValue: false
     )
   }
 
