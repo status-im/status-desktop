@@ -42,7 +42,11 @@ StatusDialog {
             interval: root.swapInputParamsForm.autoRefreshTime
             running: false
             repeat: false
-            onTriggered: d.fetchSuggestedRoutes()
+            onTriggered: {
+                if(!root.swapAdaptor.swapProposalLoading && !root.swapAdaptor.approvalPending) {
+                    d.fetchSuggestedRoutes()
+                }
+            }
         }
 
         function fetchSuggestedRoutes() {
@@ -83,8 +87,7 @@ StatusDialog {
             }
         }
         function onSuggestedRoutesReady() {
-            if(!root.swapAdaptor.swapProposalLoading)
-                d.autoRefreshTimer.restart()
+            d.autoRefreshTimer.restart()
         }
     }    
 
