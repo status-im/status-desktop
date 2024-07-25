@@ -391,9 +391,6 @@ proc checkForStoringPasswordToKeychain(self: AppController) =
   else:
     self.keychainService.storeData(account.keyUid, self.startupModule.getPin())
 
-proc chekForWalletConnectPairings(self: AppController) =
-  self.statusFoundation.events.emit(WALLET_CONNECT_CHECK_PAIRINGS, Args())
-
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
@@ -410,7 +407,6 @@ proc mainDidLoad*(self: AppController) =
   self.applyNecessaryActionsAfterLoggingIn()
   self.startupModule.moveToAppState()
   self.checkForStoringPasswordToKeychain()
-  self.chekForWalletConnectPairings()
 
 proc start*(self: AppController) =
   self.keycardService.init()

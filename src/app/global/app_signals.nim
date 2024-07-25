@@ -48,6 +48,3 @@ type
     addresses*: seq[string]
 
 const MARK_WALLET_ADDRESSES_AS_SHOWN* = "markWalletAddressesAsShown"
-
-
-const WALLET_CONNECT_CHECK_PAIRINGS* = "walletConnectCheckPairings"
