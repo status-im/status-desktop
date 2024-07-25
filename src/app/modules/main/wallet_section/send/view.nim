@@ -7,6 +7,10 @@ import app/modules/shared_models/collectibles_nested_model as nested_collectible
 import app_service/service/network/service as network_service
 import app_service/service/transaction/dto as transaction_dto
 
+import app_service/common/utils as common_utils
+import app_service/service/eth/utils as eth_utils
+from backend/eth import ExtraKeyPackId
+
 QtObject:
   type
     View* = ref object of QObject
@@ -208,7 +212,12 @@ QtObject:
     try:
       if extraParamsJson.len > 0:
         for key, value in parseJson(extraParamsJson):
-          extraParamsTable[key] = value.getStr()
+          if key == ExtraKeyPackId:
+            let bigPackId = common_utils.stringToUint256(value.getStr())
+            let packIdHex = "0x" & eth_utils.stripLeadingZeros(bigPackId.toHex)
+            extraParamsTable[key] = packIdHex
+          else:
+            extraParamsTable[key] = value.getStr()
     except Exception as e:
       error "Error parsing extraParamsJson: ", msg=e.msg
 

@@ -1022,6 +1022,12 @@ QtObject {
 
     readonly property int minPasswordLength: 10
 
+    readonly property QtObject suggestedRoutesExtraParamsProperties: QtObject {
+        readonly property string packId: "packID"
+        readonly property string username: "username"
+        readonly property string publicKey: "publicKey"
+    }
+
     enum SendType {
         Transfer,
         ENSRegister,
