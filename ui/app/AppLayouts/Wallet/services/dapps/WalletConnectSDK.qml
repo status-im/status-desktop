@@ -68,22 +68,6 @@ WalletConnectSDKBase {
         wcCalls.rejectSessionRequest(topic, id, error)
     }
 
-    function auth(authLink) {
-        wcCalls.auth(authLink)
-    }
-
-    function formatAuthMessage(cacaoPayload, address) {
-        wcCalls.formatAuthMessage(cacaoPayload, address)
-    }
-
-    function authApprove(authRequest, address, signature) {
-        wcCalls.authApprove(authRequest, address, signature)
-    }
-
-    function authReject(id, address) {
-        wcCalls.authReject(id, address)
-    }
-
     QtObject {
         id: d
 
@@ -268,61 +252,6 @@ WalletConnectSDKBase {
                                    `
             )
         }
-
-        function auth(authLink) {
-            console.debug(`WC WalletConnectSDK.wcCall.auth; authLink: ${authLink}`)
-
-            d.engine.runJavaScript(`
-                                    wc.auth("${authLink}")
-                                    .then((value) => {
-                                        wc.statusObject.onAuthResponse("")
-                                    })
-                                    .catch((e) => {
-                                        wc.statusObject.onAuthResponse(e.message)
-                                    })
-                                   `
-            )
-        }
-
-        function formatAuthMessage(cacaoPayload, address) {
-            console.debug(`WC WalletConnectSDK.wcCall.auth; cacaoPayload: ${JSON.stringify(cacaoPayload)}, address: ${address}`)
-
-            d.engine.runJavaScript(`wc.formatAuthMessage(${JSON.stringify(cacaoPayload)}, "${address}")`, function(result) {
-                console.debug(`WC WalletConnectSDK.wcCall.formatAuthMessage; response: ${JSON.stringify(result)}`)
-
-                root.authMessageFormated(result, address)
-            })
-        }
-
-        function authApprove(authRequest, address, signature) {
-            console.debug(`WC WalletConnectSDK.wcCall.authApprove; authRequest: ${JSON.stringify(authRequest)}, address: ${address}, signature: ${signature}`)
-
-            d.engine.runJavaScript(`
-                                    wc.approveAuth(${JSON.stringify(authRequest)}, "${address}", "${signature}")
-                                    .then((value) => {
-                                        wc.statusObject.onApproveAuthResponse("")
-                                    })
-                                    .catch((e) => {
-                                        wc.statusObject.onApproveAuthResponse(e.message)
-                                    })
-                                   `
-            )
-        }
-
-        function authReject(id, address) {
-            console.debug(`WC WalletConnectSDK.wcCall.authReject; id: ${id}, address: ${address}`)
-
-            d.engine.runJavaScript(`
-                                    wc.rejectAuth(${id}, "${address}")
-                                    .then((value) => {
-                                        wc.statusObject.onRejectAuthResponse("")
-                                    })
-                                    .catch((e) => {
-                                        wc.statusObject.onRejectAuthResponse(e.message)
-                                    })
-                                   `
-            )
-        }
     }
 
     QtObject {
@@ -435,25 +364,6 @@ WalletConnectSDKBase {
         function onProposalExpire(details) {
             console.debug(`WC WalletConnectSDK.onProposalExpire; details: ${JSON.stringify(details)}`)
             root.sessionProposalExpired()
-        }
-
-        function onAuthRequest(details) {
-            console.debug(`WC WalletConnectSDK.onAuthRequest; details: ${JSON.stringify(details)}`)
-            root.authRequest(details)
-        }
-
-        function onAuthResponse(error) {
-            console.debug(`WC WalletConnectSDK.onAuthResponse; error: ${error}`)
-        }
-
-        function onApproveAuthResponse(error) {
-            console.debug(`WC WalletConnectSDK.onApproveAuthResponse; error: ${error}`)
-            root.authRequestUserAnswerResult(true, error)
-        }
-
-        function onRejectAuthResponse(error) {
-            console.debug(`WC WalletConnectSDK.onRejectAuthResponse; error: ${error}`)
-            root.authRequestUserAnswerResult(false, error)
         }
     }
 
