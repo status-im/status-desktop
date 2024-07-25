@@ -54,9 +54,9 @@ QObject {
 
                     let tmpMap = {}
                     var topics = []
-                    const sessions = Helpers.filterActiveSessionsForKnownAccounts(allSessions, root.supportedAccountsModel)
-                    for (let key in sessions) {
-                        let dapp = sessions[key].peer.metadata
+                    const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(allSessions, root.supportedAccountsModel)
+                    for (const key in sessions) {
+                        const dapp = sessions[key].peer.metadata
                         if (!!dapp.icons && dapp.icons.length > 0) {
                             dapp.iconUrl = dapp.icons[0]
                         } else {
@@ -68,7 +68,7 @@ QObject {
                     // TODO #15075: on SDK dApps refresh update the model that has data source from persistence instead of using reset
                     dapps.clear();
                     // Iterate tmpMap and fill dapps
-                    for (let key in tmpMap) {
+                    for (const key in tmpMap) {
                         dapps.append(tmpMap[key]);
                     }
 
