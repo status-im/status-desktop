@@ -39,12 +39,12 @@ SettingsContentBase {
                     id: enableMetricsSwitch
                     checked: root.isCentralizedMetricsEnabled
                     onClicked: {
-                        Global.openMetricsEnablePopupRequested(false, popup => popup.toggleMetrics.connect(refreshSwitch))
+                        Global.openMetricsEnablePopupRequested(Constants.metricsEnablePlacement.privacyAndSecurity, popup => popup.toggleMetrics.connect(refreshSwitch))
                     }
                 }
             ]
             onClicked: {
-                Global.openMetricsEnablePopupRequested(false, popup => popup.toggleMetrics.connect(refreshSwitch))
+                Global.openMetricsEnablePopupRequested(Constants.metricsEnablePlacement.privacyAndSecurity, popup => popup.toggleMetrics.connect(refreshSwitch))
             }
         }
     }

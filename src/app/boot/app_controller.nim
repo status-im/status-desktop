@@ -155,7 +155,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.settingsService = settings_service.newService(statusFoundation.events)
   result.appSettingsVariant = newQVariant(result.settingsService)
   result.notificationsManager = newNotificationsManager(statusFoundation.events, result.settingsService)
-  result.metricsService = metrics_service.newService()
+  result.metricsService = metrics_service.newService(statusFoundation.threadpool)
   result.metricsVariant = newQVariant(result.metricsService)
 
   # Global

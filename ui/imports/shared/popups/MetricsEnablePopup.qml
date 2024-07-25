@@ -14,7 +14,7 @@ import utils 1.0
 StatusModal {
     id: root
 
-    property bool isOnboarding: false
+    property string placement: Constants.metricsEnablePlacement.unknown
 
     signal toggleMetrics(bool enabled)
 
@@ -83,7 +83,7 @@ StatusModal {
             Paragraph {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                text: qsTr("Usage data will be shared from all profiles added to device. %1").arg(root.isOnboarding ? "Sharing usage data can be turned off anytime in Settings / Privacy and Security." : "")
+                text: qsTr("Usage data will be shared from all profiles added to device. %1").arg(root.placement !== Constants.metricsEnablePlacement.privacyAndSecurity ? "Sharing usage data can be turned off anytime in Settings / Privacy and Security." : "")
             }
         }
     }

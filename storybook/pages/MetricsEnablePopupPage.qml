@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import shared.popups 1.0
+import utils 1.0
 
 import Storybook 1.0
 
@@ -30,7 +31,7 @@ SplitView {
         anchors.centerIn: parent
         modal: false
         visible: true
-        isOnboarding: true
+        placement: Constants.metricsEnablePlacement.unknown
     }
 }
 

@@ -291,6 +291,7 @@ StatusWindow {
         restoreAppState();
 
         Global.openMetricsEnablePopupRequested.connect(openMetricsEnablePopup)
+        Global.addCentralizedMetric.connect(metricsStore.addCentralizedMetric)
     }
 
     signal navigateTo(string path)
@@ -302,10 +303,10 @@ StatusWindow {
         applicationWindow.requestActivate()
     }
 
-    function openMetricsEnablePopup(isOnboarding, cb = null) {
+    function openMetricsEnablePopup(placement, cb = null) {
         metricsPopupLoader.active = true
         metricsPopupLoader.item.visible = true
-        metricsPopupLoader.item.isOnboarding = isOnboarding
+        metricsPopupLoader.item.placement = placement
         if (cb)
             cb(metricsPopupLoader.item)
         if(!localAppSettings.metricsPopupSeen) {
@@ -362,7 +363,7 @@ StatusWindow {
                 // animation is finished, app main will be shown
                 // open metrics popup only if it has not been seen
                 if(!localAppSettings.metricsPopupSeen) {
-                    openMetricsEnablePopup(true, null)
+                    openMetricsEnablePopup(Constants.metricsEnablePlacement.startApp, null)
                 }
             }
         }
@@ -380,7 +381,12 @@ StatusWindow {
         sourceComponent: MetricsEnablePopup {
             visible: true
             onClosed: metricsPopupLoader.active = false
-            onToggleMetrics: applicationWindow.metricsStore.toggleCentralizedMetrics(enabled)
+            onToggleMetrics: {
+                applicationWindow.metricsStore.toggleCentralizedMetrics(enabled)
+                if(enabled) {
+                    Global.addCentralizedMetric("usage_data_shared", {placement: metricsPopupLoader.item.placement})
+                }
+            }
         }
     }
 
