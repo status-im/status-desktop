@@ -35,3 +35,15 @@ proc enableInstallation*(installationId: string): RpcResponse[JsonNode] =
 proc disableInstallation*(installationId: string): RpcResponse[JsonNode] =
   let payload = %* [installationId]
   result = callPrivateRPC("disableInstallation".prefix, payload)
+
+proc finishPairingThroughSeedPhraseProcess*(installationId: string): RpcResponse[JsonNode] =
+  let payload = %* [{
+    "installationId": installationId,
+  }]
+  result = callPrivateRPC("finishPairingThroughSeedPhraseProcess".prefix, payload)
+
+proc enableAndSyncInstallation*(installationId: string): RpcResponse[JsonNode] =
+  let payload = %* [{
+    "installationId": installationId,
+  }]
+  result = callPrivateRPC("enableAndSyncInstallation".prefix, payload)

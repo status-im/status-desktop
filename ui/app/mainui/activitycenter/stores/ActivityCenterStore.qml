@@ -40,7 +40,9 @@ QtObject {
         CommunityTokenReceived = 19,
         FirstCommunityTokenReceived = 20,
         CommunityBanned = 21,
-        CommunityUnbanned = 22
+        CommunityUnbanned = 22,
+        NewInstallationReceived = 23,
+        NewInstallationCreated = 24
     }
 
     enum ActivityCenterReadType {
@@ -117,5 +119,9 @@ QtObject {
 
     function dismissActivityCenterNotification(notification) {
         root.activityCenterModuleInst.dismissActivityCenterNotification(notification.id)
+    }
+
+    function enableAndSyncInstallation(installationId) {
+        root.activityCenterModuleInst.enableAndSyncInstallation(installationId)
     }
 }
