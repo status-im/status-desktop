@@ -86,6 +86,8 @@ Control {
         }
         Loader {
             id: rightComponent
+            Layout.preferredWidth: active ? implicitWidth : 0
+            active: !!sourceComponent
         }
     }
 }

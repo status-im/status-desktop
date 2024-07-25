@@ -42,7 +42,21 @@ Item {
         function test_noDefaultButton() {
             verify(!!controlUnderTest)
             const button = findChild(controlUnderTest, "rightComponentButton")
-            tryCompare(button, "visible", false)
+            compare(button, null)
+        }
+
+        function test_correctWidthWithButtonOrWithout() {
+            verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
+            const origWidth = controlUnderTest.width
+            controlUnderTest.buttonText = "Buy crypto"
+            controlUnderTest.buttonVisible = true
+            waitForRendering(controlUnderTest)
+            const widthWithButton = controlUnderTest.width
+            verify(widthWithButton > origWidth)
+            controlUnderTest.buttonVisible = false
+            waitForRendering(controlUnderTest)
+            verify(controlUnderTest.width < widthWithButton)
         }
 
         function test_buttonClick() {
@@ -60,9 +74,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.loading = true
             const button = findChild(controlUnderTest, "rightComponentButton")
-            verify(!!button)
-            tryCompare(button, "visible", false)
-            mouseClick(button)
+            compare(button, null)
             tryCompare(signalSpy, "count", 0)
         }
     }

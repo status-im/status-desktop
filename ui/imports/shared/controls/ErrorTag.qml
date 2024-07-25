@@ -19,7 +19,7 @@ InformationTag {
 
     implicitHeight: 33
     leftPadding: 10
-    rightPadding: 4
+    rightPadding: buttonVisible ? 4 : 8
     verticalPadding: 4
     spacing: 6
 
@@ -50,20 +50,22 @@ InformationTag {
         value: true
     }
 
-    rightComponent: StatusButton {
-        objectName: "rightComponentButton"
-        horizontalPadding: 8
+    rightComponent: buttonVisible ? rightButtonComponent : undefined
 
-        visible: root.buttonVisible
-
-        size: StatusBaseButton.Size.Tiny
-        font.pixelSize: priv.fontPixelSize
-        type: StatusBaseButton.Type.Danger
-        normalColor: priv.foregroundColor
-        hoverColor: Theme.palette.hoverColor(normalColor)
-        textColor: Theme.palette.white
-        radius: root.bgRadius
-        text: root.buttonText
-        onClicked: root.buttonClicked()
+    Component {
+        id: rightButtonComponent
+        StatusButton {
+            objectName: "rightComponentButton"
+            horizontalPadding: 8
+            size: StatusBaseButton.Size.Tiny
+            font.pixelSize: priv.fontPixelSize
+            type: StatusBaseButton.Type.Danger
+            normalColor: priv.foregroundColor
+            hoverColor: Theme.palette.hoverColor(normalColor)
+            textColor: Theme.palette.white
+            radius: root.bgRadius
+            text: root.buttonText
+            onClicked: root.buttonClicked()
+        }
     }
 }
