@@ -28,19 +28,19 @@ SplitView {
         ListModel {
             id: dappsModel
             ListElement {
-                name: "Test dApp 1"
+                name: ""
                 url: "https://dapp.test/1"
                 iconUrl: "https://se-sdk-dapp.vercel.app/assets/eip155:1.png"
             }
             ListElement {
                 name: "Test dApp 2"
                 url: "https://dapp.test/2"
-                iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                iconUrl: ""
             }
             ListElement {
-                name: "Test dApp 3"
+                name: ""
                 url: "https://dapp.test/3"
-                iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                iconUrl: ""
             }
             ListElement {
                 name: "Test dApp 4 - very long name !!!!!!!!!!!!!!!!"

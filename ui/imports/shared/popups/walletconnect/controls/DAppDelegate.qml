@@ -6,6 +6,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 MouseArea {
     id: root
@@ -36,13 +37,16 @@ MouseArea {
                 visible: !fallbackImage.visible
             }
 
-            StatusIcon {
+            StatusSmartIdenticon {
                 id: fallbackImage
 
                 anchors.fill: parent
 
-                icon: "dapp"
-                color: Theme.palette.baseColor1
+                name: dAppCaption.text ?? "dapp"
+                asset.charactersLen: 2
+                asset.color: Theme.palette.primaryColor1
+                asset.letterIdenticonBgWithAlpha: true
+                asset.useAcronymForLetterIdenticon: false
 
                 visible: iconImage.isLoading || iconImage.isError || !root.iconUrl
             }
@@ -63,7 +67,9 @@ MouseArea {
             Layout.rightMargin: 12
 
             StatusBaseText {
-                text: root.name
+                id: dAppCaption
+
+                text: root.name ? root.name : SQUtils.StringUtils.extractDomainFromLink(root.url)
 
                 Layout.fillWidth: true
 
