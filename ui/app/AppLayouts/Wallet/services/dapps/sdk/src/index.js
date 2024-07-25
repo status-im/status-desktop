@@ -1,8 +1,6 @@
 import { Core } from "@walletconnect/core";
 import { Web3Wallet } from "@walletconnect/web3wallet";
 
-import AuthClient from '@walletconnect/auth-client'
-
 // import the builder util
 import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
 import { formatJsonRpcResult, formatJsonRpcError } from "@walletconnect/jsonrpc-utils";
@@ -10,13 +8,12 @@ import { formatJsonRpcResult, formatJsonRpcError } from "@walletconnect/jsonrpc-
 window.wc = {
     core: null,
     web3wallet: null,
-    authClient: null,
     statusObject: null,
 
     init: function (projectId) {
         return new Promise(async (resolve, reject) => {
             if (!window.statusq) {
-                const errMsg = 'missing window.statusq! Forgot to execute "ui/StatusQ/src/StatusQ/Components/private/qwebchannel/helpers.js" first?'
+                const errMsg = 'missing window.statusq! Forgot to execute "ui/app/AppLayouts/Wallet/services/dapps/helpers.js" first?'
                 console.error(errMsg);
                 reject(errMsg);
             }
@@ -34,72 +31,82 @@ window.wc = {
                 reject(errMsg);
             }
 
-            window.wc.core = new Core({
-                projectId: projectId,
-            });
+            try {
+                const coreInst = new Core({
+                    projectId: projectId,
+                });
+                window.wc.web3wallet = await Web3Wallet.init({
+                    core: coreInst, // <- pass the shared `core` instance
+                    metadata: {
+                        name: "Status",
+                        description: "Status Wallet",
+                        url: "http://localhost",
+                        icons: ['https://avatars.githubusercontent.com/u/11767950'],
+                    },
+                });
+                window.wc.core = coreInst
 
-            window.wc.web3wallet = await Web3Wallet.init({
-                core: window.wc.core, // <- pass the shared `core` instance
-                metadata: {
-                    name: "Status",
-                    description: "Status Wallet",
-                    url: "http://localhost",
-                    icons: ['https://status.im/img/status-footer-logo.svg'],
-                },
-            });
+                // connect session responses https://specs.walletconnect.com/2.0/specs/clients/sign/session-events#events
+                window.wc.web3wallet.on("session_proposal", (details) => {
+                    wc.statusObject.onSessionProposal(details)
+                });
 
-            window.wc.authClient = await AuthClient.init({
-                projectId: projectId,
-                metadata: window.wc.web3wallet.metadata,
-            });
+                window.wc.web3wallet.on("session_update", (details) => {
+                    wc.statusObject.onSessionUpdate(details)
+                });
 
-            // connect session responses https://specs.walletconnect.com/2.0/specs/clients/sign/session-events#events
-            window.wc.web3wallet.on("session_proposal", (details) => {
-                wc.statusObject.onSessionProposal(details)
-            });
+                window.wc.web3wallet.on("session_extend", (details) => {
+                    wc.statusObject.onSessionExtend(details)
+                });
 
-            window.wc.web3wallet.on("session_update", (details) => {
-                wc.statusObject.onSessionUpdate(details)
-            });
+                window.wc.web3wallet.on("session_ping", (details) => {
+                    wc.statusObject.onSessionPing(details)
+                });
 
-            window.wc.web3wallet.on("session_extend", (details) => {
-                wc.statusObject.onSessionExtend(details)
-            });
+                window.wc.web3wallet.on("session_delete", (details) => {
+                    wc.statusObject.onSessionDelete(details)
+                });
 
-            window.wc.web3wallet.on("session_ping", (details) => {
-                wc.statusObject.onSessionPing(details)
-            });
+                window.wc.web3wallet.on("session_expire", (details) => {
+                    wc.statusObject.onSessionExpire(details)
+                });
 
-            window.wc.web3wallet.on("session_delete", (details) => {
-                wc.statusObject.onSessionDelete(details)
-            });
+                window.wc.web3wallet.on("session_request", (details) => {
+                    wc.statusObject.onSessionRequest(details)
+                });
 
-            window.wc.web3wallet.on("session_expire", (details) => {
-                wc.statusObject.onSessionExpire(details)
-            });
+                window.wc.web3wallet.on("session_request_sent", (details) => {
+                    wc.statusObject.onSessionRequestSent(details)
+                });
 
-            window.wc.web3wallet.on("session_request", (details) => {
-                wc.statusObject.onSessionRequest(details)
-            });
+                window.wc.web3wallet.on("session_event", (details) => {
+                    wc.statusObject.onSessionEvent(details)
+                });
 
-            window.wc.web3wallet.on("session_request_sent", (details) => {
-                wc.statusObject.onSessionRequestSent(details)
-            });
+                window.wc.web3wallet.on("proposal_expire", (details) => {
+                    wc.statusObject.onProposalExpire(details)
+                });
 
-            window.wc.web3wallet.on("session_event", (details) => {
-                wc.statusObject.onSessionEvent(details)
-            });
+                // Debug event handlers
+                window.wc.web3wallet.on("pairing_expire", (event) => {
+                    wc.statusObject.echo("debug", `WC unhandled event: "pairing_expire" ${JSON.stringify(event)}`);
+                    // const { topic } = event;
+                });
+                window.wc.web3wallet.on("session_request_expire", (event) => {
+                    wc.statusObject.echo("debug", `WC unhandled event: "session_request_expire" ${JSON.stringify(event)}`);
+                    // const { id } = event
+                });
+                window.wc.core.relayer.on("relayer_connect", () => {
+                    wc.statusObject.echo("debug", `WC unhandled event: "relayer_connect" connection to the relay server is established`);
+                })
+                window.wc.core.relayer.on("relayer_disconnect", () => {
+                    wc.statusObject.echo("debug", `WC unhandled event: "relayer_disconnect" connection to the relay server is lost`);
+                })
 
-            window.wc.web3wallet.on("proposal_expire", (details) => {
-                wc.statusObject.onProposalExpire(details)
-            });
-
-            window.wc.authClient.on("auth_request", (details) => {
-                wc.statusObject.onAuthRequest(details)
-            });
-
-            wc.statusObject.sdkInitialized("");
-            resolve("");
+                resolve("");
+            } catch(error) {
+                reject(error)
+            }
         });
     },
 
@@ -156,47 +163,6 @@ window.wc = {
                 id,
                 reason: getSdkError("USER_REJECTED"), // TODO USER_REJECTED_METHODS, USER_REJECTED_CHAINS, USER_REJECTED_EVENTS
             }
-        );
-    },
-
-    auth: async function (uri) {
-        await window.wc.authClient.core.pairing.pair({ uri });
-    },
-
-    formatAuthMessage: function (cacaoPayload, address) {
-        const iss = `did:pkh:eip155:1:${address}`;
-        return window.wc.authClient.formatMessage(cacaoPayload, iss);
-    },
-
-    approveAuth: async function (authRequest, address, signature) {
-        const { id } = authRequest;
-
-        const iss = `did:pkh:eip155:1:${address}`;
-
-        await window.wc.authClient.respond(
-            {
-                id: id,
-                signature: {
-                    s: signature,
-                    t: "eip191",
-                },
-            },
-            iss
-        );
-    },
-
-    rejectAuth: async function (id, address) {
-        const iss = `did:pkh:eip155:1:${address}`;
-
-        await window.wc.authClient.respond(
-            {
-                id: id,
-                error: {
-                    code: 4001,
-                    message: 'Auth request has been rejected'
-                },
-            },
-            iss
         );
     },
 
