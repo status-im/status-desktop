@@ -188,9 +188,11 @@ StatusModal {
             currentIndex: 1
 
             StatusSwitchTabButton {
+                objectName: "legacyButton"
                 text: qsTr("Legacy")
             }
             StatusSwitchTabButton {
+                objectName: "multichainButton"
                 text: qsTr("Multichain")
             }
         }
@@ -232,6 +234,7 @@ StatusModal {
 
             Image {
                 id: qrCodeImage
+                objectName: "qrCodeImage"
                 anchors.centerIn: parent
                 height: parent.height
                 width: parent.width
