@@ -22,6 +22,7 @@ Item {
     QtObject {
         id: d
         readonly property bool finished: startupStore.localPairingState === Constants.LocalPairingState.Finished
+        readonly property bool pairingFailed: startupStore.localPairingState === Constants.LocalPairingState.Error
     }
 
     ColumnLayout {
@@ -53,6 +54,13 @@ Item {
             installationId: startupStore.localPairingInstallationId
             installationName: startupStore.localPairingInstallationName
             installationDeviceType: startupStore.localPairingInstallationDeviceType
+        }
+
+        StatusButton {
+            visible: d.pairingFailed
+            Layout.alignment: Qt.AlignHCenter
+            text: qsTr("Use recovery phrase")
+            onClicked: root.startupStore.doSecondaryAction()
         }
 
         StatusButton {

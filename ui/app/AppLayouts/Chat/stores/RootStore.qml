@@ -302,6 +302,8 @@ QtObject {
 
     readonly property int loginType: getLoginType()
 
+    property string name: userProfileInst.name
+
     property var stickersStore: StickersStore {
         stickersModule: stickersModuleInst
     }

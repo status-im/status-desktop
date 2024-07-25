@@ -55,6 +55,8 @@ proc update*(self: LocalPairingStatus, data: LocalPairingEventArgs) =
     self.chatKey = data.accountData.chatKey
   of EventReceivedInstallation:
     self.installation = data.installation
+  of EventCompletedAndNodeReady:
+    self.installation = data.installation
   of EventReceivedKeystoreFiles:
     self.transferredKeypairs = data.transferredKeypairs
   of EventConnectionError:

@@ -646,3 +646,6 @@ proc notificationsNeedsEnable*(self: Controller): bool =
 
 proc proceedToApp*(self: Controller) =
   self.delegate.finishAppLoading()
+
+proc finishPairingThroughSeedPhraseProcess*(self: Controller, installationId: string) =
+  self.devicesService.finishPairingThroughSeedPhraseProcess(installationId)
