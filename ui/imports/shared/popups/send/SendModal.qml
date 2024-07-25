@@ -40,6 +40,8 @@ StatusDialog {
     property alias preSelectedRecipientType: recipientInputLoader.selectedRecipientType
 
     property string preDefinedAmountToSend
+    property string stickersPackId
+
     // token symbol
     property string preSelectedHoldingID
     property int preSelectedHoldingType: Constants.TokenType.Unknown
@@ -75,12 +77,14 @@ StatusDialog {
         if(!!popup.selectedAccount && !!popup.selectedAccount.address && !!holdingSelector.selectedItem
                 && recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer)) {
             popup.isLoading = true
-            popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSend.amount)
+            popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSend.amount, "0", d.extraParamsJson)
         }
     })
 
     QtObject {
         id: d
+
+        property string extraParamsJson: ""
 
         readonly property WalletAccountsAdaptor accountsAdaptor: WalletAccountsAdaptor {
             accountsModel: popup.store.accounts
@@ -239,6 +243,10 @@ StatusDialog {
             const delocalized = popup.preDefinedAmountToSend.replace(",", ".")
 
             amountToSend.setValue(delocalized)
+        }
+
+        if (!!popup.stickersPackId) {
+            d.extraParamsJson = "{\"%1\":\"%2\"}".arg(Constants.suggestedRoutesExtraParamsProperties.packId).arg(popup.stickersPackId)
         }
     }
 

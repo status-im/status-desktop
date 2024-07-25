@@ -209,6 +209,7 @@ Item {
             preSelectedSendType: Constants.SendType.StickersBuy
             preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
+            stickersPackId: packId
             preSelectedHoldingID: {
                 let token = ModelUtils.getByKey(root.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", root.store.stickersStore.getStatusTokenKey())
                 return !!token && !!token.symbol ? token.symbol : ""
