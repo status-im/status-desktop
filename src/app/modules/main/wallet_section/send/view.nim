@@ -239,14 +239,13 @@ QtObject:
   proc updateRoutePreferredChains*(self: View, chainIds: string) {.slot.} =
     self.toNetworksRouteModel.updateRoutePreferredChains(chainIds)
 
-  proc updatedNetworksWithRoutes*(self: View, paths: seq[SuggestedRouteItem], totalFeesInEth: float) =
+  proc updatedNetworksWithRoutes*(self: View, paths: seq[SuggestedRouteItem], chainsWithNoGas: Table[int, string]) =
     self.fromNetworksRouteModel.resetPathData()
     self.toNetworksRouteModel.resetPathData()
     for path in paths:
       let fromChainId = path.getfromNetwork()
       let networkItem = self.delegate.getNetworkItem(fromChainId)
-      let hasGas = self.delegate.hasGas(self.selectedSenderAccountAddress, fromChainId, networkItem.nativeCurrencySymbol, totalFeesInEth)
-      self.fromNetworksRouteModel.updateFromNetworks(path, hasGas)
+      self.fromNetworksRouteModel.updateFromNetworks(path, not chainsWithNoGas.hasKey(fromChainId))
       self.toNetworksRouteModel.updateToNetworks(path)
 
   proc resetStoredProperties*(self: View) {.slot.} =

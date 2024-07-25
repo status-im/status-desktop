@@ -171,5 +171,5 @@ proc runSignFlow*(self: Controller, pin, bip44Path, txHash: string) =
   self.connectKeycardReponseSignal()
   self.keycardService.startSignFlow(bip44Path, txHash, pin)
 
-proc hasGas*(self: Controller, accountAddress: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool =
-  return self.walletAccountService.hasGas(accountAddress, chainId, nativeGasSymbol, requiredGas)
+proc getChainsWithNoGasFromError*(self: Controller, errCode: string, errDescription: string): Table[int, string] =
+  return self.walletAccountService.getChainsWithNoGasFromError(errCode, errDescription)

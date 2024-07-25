@@ -1,3 +1,5 @@
+const noGasErrorCode = "WR-017"
+
 # This method will group the account assets by symbol (in case of communiy, the token address)
 proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   var accountAddresses: seq[string] = @[]
@@ -115,14 +117,19 @@ proc getTokensMarketValuesLoading*(self: Service): bool =
 proc getHasBalanceCache*(self: Service): bool =
   return self.hasBalanceCache
 
-proc hasGas*(self: Service, accountAddress: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool =
-  for token in self.groupedAccountsTokensList:
-    if token.symbol == nativeGasSymbol:
-      for balance in token.balancesPerAccount:
-        if balance.account == accountAddress and balance.chainId == chainId:
-          if(self.currencyService.parseCurrencyValue(nativeGasSymbol, balance.balance) >= requiredGas):
-            return true
-  return false
+proc getChainsWithNoGasFromError*(self: Service, errCode: string, errDescription: string): Table[int, string] =
+  ## Extracts the chainId and token from the error description for chains with no gas.
+  ## If the error code is not "WR-017", an empty table is returned.
+  result = initTable[int, string]()
+
+  if errCode == noGasErrorCode:
+    try:
+      let jsonData = parseJson(errDescription)
+      let token: string = jsonData["token"].getStr()
+      let chainId: int = jsonData["chainId"].getInt()
+      result[chainId] = token
+    except Exception as e:
+      error "error: ", procName="getChainsWithNoGasFromError", errName=e.name, errDesription=e.msg
 
 proc getCurrency*(self: Service): string =
   return self.settingsService.getCurrency()
