@@ -287,7 +287,7 @@ method suggestedRoutesReady*(self: Module, uuid: string, suggestedRoutes: Sugges
   let networks = suggestedRoutes.toNetworks.map(x => self.convertSendToNetworkToNetworkItem(x))
   let toNetworksRouteModel = newNetworkRouteModel()
   toNetworksRouteModel.setItems(networks)
-  self.view.updatedNetworksWithRoutes(paths, gasTimeEstimate.getTotalFeesInEth())
+  self.view.updatedNetworksWithRoutes(paths, self.controller.getChainsWithNoGasFromError(errCode, errDescription))
   let transactionRoutes = newTransactionRoutes(
     uuid = uuid,
     suggestedRoutes = suggestedRouteModel,
@@ -391,9 +391,6 @@ method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: 
 
   editedText = "<a><p>" & editedText & "</a></p>"
   return editedText
-
-method hasGas*(self: Module, accountAddress: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool =
-  return self.controller.hasGas(accountAddress, chainId, nativeGasSymbol, requiredGas)
 
 method transactionSendingComplete*(self: Module, txHash: string, success: bool) =
   self.view.sendtransactionSendingCompleteSignal(txHash, success)
