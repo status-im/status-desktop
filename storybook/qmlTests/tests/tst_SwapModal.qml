@@ -1765,8 +1765,8 @@ Item {
             root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             root.swapFormData.selectedNetworkChainId = 11155111
             root.swapFormData.fromTokensKey = "ETH"
-            // for testing making it 1.5 seconds so as to not make tests running too long
-            root.swapFormData.autoRefreshTime = 1500
+            // for testing making it 1.2 seconds so as to not make tests running too long
+            root.swapFormData.autoRefreshTime = 1200
 
             // Launch popup
             launchAndVerfyModal()
@@ -1814,6 +1814,50 @@ Item {
                 let expectedAmount = data.input.substring(0, data.input.length - (i+1))
                 compare(amountToSendInput.input.text, expectedAmount)
             }
+        }
+
+        function test_no_auto_refresh_when_proposalLoading_or_approvalPending() {
+            fetchSuggestedRoutesCalled.clear()
+            root.swapFormData.fromTokenAmount = "0.0001"
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            root.swapFormData.selectedNetworkChainId = 11155111
+            root.swapFormData.fromTokensKey = "ETH"
+            // for testing making it 1.2 seconds so as to not make tests running too long
+            root.swapFormData.autoRefreshTime = 1200
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            // check if fetchSuggestedRoutes called
+            tryCompare(fetchSuggestedRoutesCalled, "count", 1)
+
+            // no new calls to fetch new proposal should be made as the proposal is still loading
+            wait(root.swapFormData.autoRefreshTime*2)
+            compare(fetchSuggestedRoutesCalled.count, 1)
+
+            // emit routes ready
+            let txHasRouteApproval = root.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
+            txHasRouteApproval.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txHasRouteApproval, "", "")
+
+            // now refresh can occur as no propsal or signing is pending
+            tryCompare(fetchSuggestedRoutesCalled, "count", 2)
+
+            // emit routes ready
+            txHasRouteApproval.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txHasRouteApproval, "", "")
+
+            verify(root.swapAdaptor.swapOutputData.approvalNeeded)
+            verify(!root.swapAdaptor.approvalPending)
+
+            // sign approval and check that auto refresh doesnt occur
+            root.swapAdaptor.sendApproveTx()
+
+            // no new calls to fetch new proposal should be made as the approval is pending
+            verify(root.swapAdaptor.swapOutputData.approvalNeeded)
+            verify(root.swapAdaptor.approvalPending)
+            wait(root.swapFormData.autoRefreshTime*2)
+            compare(fetchSuggestedRoutesCalled.count, 2)
         }
     }
 }
