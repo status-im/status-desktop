@@ -25,6 +25,7 @@ type Item* = ref object
   repliedMessageItem: MessageItem
   chatType: ChatType
   tokenDataItem: TokenDataItem
+  installationId: string
 
 proc initItem*(
   id: string,
@@ -43,7 +44,8 @@ proc initItem*(
   messageItem: MessageItem,
   repliedMessageItem: MessageItem,
   chatType: ChatType,
-  tokenDataItem: TokenDataItem
+  tokenDataItem: TokenDataItem,
+  installationId: string
 ): Item =
   result = Item()
   result.id = id
@@ -63,6 +65,7 @@ proc initItem*(
   result.repliedMessageItem = repliedMessageItem
   result.chatType = chatType
   result.tokenDataItem = tokenDataItem
+  result.installationId = installationId
 
 proc `$`*(self: Item): string =
   result = fmt"""activity_center/Item(
@@ -74,6 +77,7 @@ proc `$`*(self: Item): string =
     verificationStatus: {$self.verificationStatus.int},
     sectionId: {$self.sectionId},
     author: {$self.author},
+    installationId: {$self.installationId},
     notificationType: {$self.notificationType.int},
     timestamp: {$self.timestamp},
     read: {$self.read},
@@ -92,6 +96,9 @@ proc name*(self: Item): string =
 
 proc author*(self: Item): string =
   return self.author
+
+proc installationId*(self: Item): string =
+  return self.installationId
 
 proc chatId*(self: Item): string =
   return self.chatId

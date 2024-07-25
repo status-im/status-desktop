@@ -325,6 +325,8 @@ method finishAppLoading*[T](self: Module[T]) =
 
 method checkFetchingStatusAndProceed*[T](self: Module[T]) =
   if self.view.fetchingDataModel().isEntityLoaded(FetchingFromWakuProfile):
+    if self.view.getLocalPairingInstallationId() != "":
+      self.controller.finishPairingThroughSeedPhraseProcess(self.view.getLocalPairingInstallationId())
     self.finishAppLoading()
     return
   let currStateObj = self.view.currentStartupStateObj()

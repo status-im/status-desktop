@@ -14,6 +14,7 @@ import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/service/devices/service as devices_service
 
 export io_interface
 
@@ -33,7 +34,8 @@ proc newModule*(
     contactsService: contacts_service.Service,
     messageService: message_service.Service,
     chatService: chat_service.Service,
-    communityService: community_service.Service
+    communityService: community_service.Service,
+    devicesService: devices_service.Service,
     ): Module =
   result = Module()
   result.delegate = delegate
@@ -46,7 +48,8 @@ proc newModule*(
     contactsService,
     messageService,
     chatService,
-    communityService
+    communityService,
+    devicesService,
   )
   result.moduleLoaded = false
 
@@ -216,7 +219,8 @@ method convertToItems*(
         messageItem,
         repliedMessageItem,
         chatDetails.chatType,
-        tokenDataItem
+        tokenDataItem,
+        notification.installationId,
       )
     )
 
@@ -323,3 +327,6 @@ method getActivityCenterReadType*(self: Module): int =
 
 method setActivityGroupCounters*(self: Module, counters: Table[ActivityCenterGroup, int]) =
   self.view.setActivityGroupCounters(counters)
+
+method enableAndSyncInstallation*(self: Module, installationId: string) =
+  self.controller.enableAndSyncInstallation(installationId)

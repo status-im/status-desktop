@@ -9,6 +9,7 @@ import ./dto/local_pairing_status
 import app_service/service/settings/service as settings_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
+import ../../common/activity_center
 
 import app/global/global_singleton
 import app/core/[main]
@@ -177,7 +178,10 @@ QtObject:
     let response = responseJson.parseJson
     let errorDescription = response["error"].getStr
     if len(errorDescription) == 0:
+      var installation = InstallationDto()
+      installation.id = response["installationId"].getStr # Set the installation with the ID (only info we have for now)
       let data = LocalPairingEventArgs(
+        installation: installation, 
         eventType: EventCompletedAndNodeReady,
         action: ActionPairingInstallation,
         accountData: LocalPairingAccountData(),
@@ -360,3 +364,23 @@ QtObject:
       configJSON: $configJSON
     )
     self.threadpool.start(arg)
+
+  proc finishPairingThroughSeedPhraseProcess*(self: Service, installationId: string) =
+    try:
+      let response = status_installations.finishPairingThroughSeedPhraseProcess(installationId)
+      if response.error != nil:
+        let e = Json.decode($response.error, RpcError)
+        raise newException(CatchableError, e.message)
+    except Exception as e:
+      error "error: ", desription = e.msg
+
+  proc enableAndSyncInstallation*(self: Service, installationId: string) =
+    try:
+      let response = status_installations.enableAndSyncInstallation(installationId)
+      if response.error != nil:
+        let e = Json.decode($response.error, RpcError)
+        raise newException(CatchableError, e.message)
+      # Parse AC notif
+      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
+    except Exception as e:
+      error "error: ", desription = e.msg

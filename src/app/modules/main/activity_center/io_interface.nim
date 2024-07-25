@@ -110,3 +110,6 @@ method getActivityCenterReadType*(self: AccessInterface): int {.base.} =
 
 method setActivityGroupCounters*(self: AccessInterface, counters: Table[ActivityCenterGroup, int]) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method enableAndSyncInstallation*(self: AccessInterface, installationId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

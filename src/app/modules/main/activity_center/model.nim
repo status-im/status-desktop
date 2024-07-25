@@ -21,6 +21,7 @@ type
     RepliedMessage
     ChatType
     TokenData
+    InstallationId
 
 QtObject:
   type
@@ -89,6 +90,7 @@ QtObject:
       of NotifRoles.RepliedMessage: result = newQVariant(activityNotificationItem.repliedMessageItem)
       of NotifRoles.ChatType: result = newQVariant(activityNotificationItem.chatType.int)
       of NotifRoles.TokenData: result = newQVariant(activityNotificationItem.tokenDataItem)
+      of NotifRoles.InstallationId: result = newQVariant(activityNotificationItem.installationId)
 
   method roleNames(self: Model): Table[int, string] =
     {
@@ -109,7 +111,8 @@ QtObject:
       NotifRoles.Accepted.int: "accepted",
       NotifRoles.RepliedMessage.int: "repliedMessage",
       NotifRoles.ChatType.int: "chatType",
-      NotifRoles.TokenData.int: "tokenData"
+      NotifRoles.TokenData.int: "tokenData",
+      NotifRoles.InstallationId.int: "installationId",
     }.toTable
 
   proc findNotificationIndex(self: Model, notificationId: string): int =
