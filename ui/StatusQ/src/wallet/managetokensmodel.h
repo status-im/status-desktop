@@ -7,7 +7,6 @@
 #include <QLoggingCategory>
 
 #include <optional>
-#include <tuple>
 
 Q_DECLARE_LOGGING_CATEGORY(manageTokens)
 

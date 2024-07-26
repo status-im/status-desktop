@@ -75,6 +75,21 @@ RightTabBaseView {
             readonly property var detailedCollectibleActivityController: RootStore.tmpActivityController0
         }
 
+        Component {
+            id: confirmHideCommunityAssetsPopup
+
+            ConfirmHideCommunityAssetsPopup {
+                destroyOnClose: true
+
+                required property string communityId
+
+                onConfirmButtonClicked: {
+                    RootStore.walletAssetsStore.assetsController.showHideGroup(communityId, false /*hide*/)
+                    close();
+                }
+            }
+        }
+
         // StackLayout.currentIndex === 0
         ColumnLayout {
             spacing: 0
@@ -227,11 +242,25 @@ RightTabBaseView {
                         onSwapRequested: root.launchSwapModal(key)
                         onReceiveRequested: root.launchShareAddressModal()
                         onCommunityClicked: Global.switchToCommunity(communityKey)
+
+                        onHideRequested: (key) => {
+                                             const token = ModelUtils.getByKey(model, "key", key)
+                                             Global.openConfirmHideAssetPopup(token.symbol, token.name, token.icon, !!token.communityId)
+                                         }
+                        onHideCommunityAssetsRequested:
+                            (communityKey) => {
+                                const community = ModelUtils.getByKey(model, "communityId", communityKey)
+                                confirmHideCommunityAssetsPopup.createObject(root, {
+                                                                                 name: community.communityName,
+                                                                                 icon: community.communityIcon,
+                                                                                 communityId: communityKey }
+                                                                             ).open()
+                            }
                         onManageTokensRequested: Global.changeAppSectionBySectionType(
                                                      Constants.appSection.profile,
                                                      Constants.settingsSubsection.wallet,
                                                      Constants.walletSettingsSubsection.manageAssets)
-                        onAssetClicked: {
+                        onAssetClicked: (key) => {
                             const token = ModelUtils.getByKey(model, "key", key)
 
                             SharedStores.RootStore.getHistoricalDataForToken(

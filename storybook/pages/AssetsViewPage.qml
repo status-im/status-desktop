@@ -190,7 +190,7 @@ SplitView {
                 onAssetClicked: logs.logEvent(`asset clicked: ${key}`)
 
                 onHideRequested: logs.logEvent(`hide requested: ${key}`)
-                onHideCommunityAssets: logs.logEvent(`hide community assets requested: ${communityKey}`)
+                onHideCommunityAssetsRequested: logs.logEvent(`hide community assets requested: ${communityKey}`)
                 onManageTokensRequested: logs.logEvent(`manage tokens requested`)
             }
         }

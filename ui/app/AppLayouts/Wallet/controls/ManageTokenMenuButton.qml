@@ -7,6 +7,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
+import utils 1.0
+
 StatusFlatButton {
     id: root
 
@@ -20,7 +22,7 @@ StatusFlatButton {
     property bool isCommunityToken
     property bool isCollectible
 
-    readonly property bool hideEnabled: model.symbol !== "ETH"
+    readonly property bool hideEnabled: model.symbol !== Constants.ethToken
     readonly property bool menuVisible: menuLoader.active
 
     signal moveRequested(int from, int to)
