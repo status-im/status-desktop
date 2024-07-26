@@ -375,8 +375,7 @@ class EditNetworkSettings(WalletSettingsView):
 
     @allure.step('Click Revert to default button and redirect to Networks screen')
     def click_revert_to_default_and_go_to_networks_main_screen(self, attempts: int = 2):
-        if not self._network_revert_to_default.is_visible:
-            self._network_edit_scroll.vertical_scroll_down(self._network_revert_to_default)
+        self._network_edit_scroll.vertical_scroll_down(self._network_revert_to_default)
         self._network_revert_to_default.click()
         try:
             return RPCChangeRestartPopup().wait_until_appears()
