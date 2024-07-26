@@ -24,6 +24,7 @@ import AppLayouts.Chat.stores 1.0 as ChatStore
 import shared.popups 1.0
 import shared.status 1.0
 import shared.stores 1.0
+import shared.views 1.0
 
 import utils 1.0
 
@@ -376,7 +377,7 @@ QtObject {
     }
 
     function openConfirmHideAssetPopup(assetSymbol, assetName, assetImage, isCommunityToken) {
-        openPopup(confirmHideAssetPopup, { assetSymbol, assetName, assetImage, isCommunityToken })
+        openPopup(confirmHideAssetPopup, { symbol: assetSymbol, name: assetName, icon: assetImage, isCommunityToken })
     }
 
     function openConfirmHideCollectiblePopup(collectibleSymbol, collectibleName, collectibleImage, isCommunityToken) {
@@ -1168,35 +1169,24 @@ QtObject {
                 destroyOnClose: true
                 communitiesStore: root.communitiesStore
 
-                onHideClicked: (tokenSymbol, tokenName, tokenImage, isAsset) => isAsset ? root.openConfirmHideAssetPopup(tokenSymbol, tokenName, tokenImage)
-                                                                                        : root.openConfirmHideCollectiblePopup(tokenSymbol, tokenName, tokenImage)
+                onHideClicked: (tokenSymbol, tokenName, tokenImage, isAsset) => isAsset ? root.openConfirmHideAssetPopup(tokenSymbol, tokenName, tokenImage, true)
+                                                                                        : root.openConfirmHideCollectiblePopup(tokenSymbol, tokenName, tokenImage, true)
             }
         },
         Component {
             id: confirmHideAssetPopup
-            ConfirmationDialog {
-
-                property string assetSymbol
-                property string assetName
-                property string assetImage
-                property bool isCommunityToken
-
-                width: 520
+            ConfirmHideAssetPopup {
                 destroyOnClose: true
-                confirmButtonLabel: qsTr("Hide asset")
-                cancelBtnType: ""
-                showCancelButton: true
-                headerSettings.title: qsTr("Hide %1 (%2)").arg(assetName).arg(assetSymbol)
-                headerSettings.asset.name: assetImage
-                confirmationText: qsTr("Are you sure you want to hide %1 (%2)? You will no longer see or be able to interact with this asset anywhere inside Status.").arg(assetName).arg(assetSymbol)
-                onCancelButtonClicked: close()
+
+                required property bool isCommunityToken
+
                 onConfirmButtonClicked: {
                     if (isCommunityToken)
-                        root.walletAssetsStore.assetsController.showHideCommunityToken(assetSymbol, false)
+                        root.walletAssetsStore.assetsController.showHideCommunityToken(symbol, false)
                     else
-                        root.walletAssetsStore.assetsController.showHideRegularToken(assetSymbol, false)
+                        root.walletAssetsStore.assetsController.showHideRegularToken(symbol, false)
                     close()
-                    Global.displayToastMessage(qsTr("%1 (%2) successfully hidden. You can toggle asset visibility via %3.").arg(assetName).arg(assetSymbol)
+                    Global.displayToastMessage(qsTr("%1 (%2) successfully hidden. You can toggle asset visibility via %3.").arg(name).arg(symbol)
                                                .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}/${Constants.walletSettingsSubsection.manageHidden}">` + qsTr("Settings", "Go to Settings") + "</a>"),
                                                "",
                                                "checkmark-circle",
