@@ -88,7 +88,15 @@ Popup {
             id: listViewWrapper
             Layout.fillWidth: true
             Layout.preferredHeight: listView.contentHeight
-            Layout.maximumHeight: 290
+
+            // TODO: uncomment maximumHeight: 290 and remove fillHeight: true
+            // after status app upgrades to
+            // a Qt version that has ListView scrolling with mouse wheel and
+            // touchpad fixed.
+            // https://github.com/status-im/status-desktop/issues/15595
+            // Layout.maximumHeight: 290
+            Layout.fillHeight: true
+
             visible: !listPlaceholder.visible
 
             Rectangle {
