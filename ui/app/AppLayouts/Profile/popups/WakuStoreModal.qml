@@ -116,6 +116,7 @@ StatusModal {
             }
 
             StatusBaseText {
+                visible: false // FIXME: hide for now (https://github.com/status-im/status-go/issues/5597)
                 text: qsTr("Add a new node")
                 color: Theme.palette.primaryColor1
                 width: parent.width
