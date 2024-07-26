@@ -32,6 +32,8 @@ Item {
     property int errorType: Constants.NoError
     property bool isLoading
 
+    signal changeSelectedChain(int chainId)
+
     QtObject {
         id: d
         property double customAmountToSend: 0
@@ -114,15 +116,20 @@ Item {
                            (root.errorMode || !advancedInput.valid) && advancedInputCurrencyAmount > 0 ? "error" : "default"
                     cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
-                    disableText: qsTr("Disable")
-                    enableText: qsTr("Enable")
+                    disableText: Global.featureFlags.multiTxEnabled? qsTr("Disable") : ""
+                    enableText: Global.featureFlags.multiTxEnabled? qsTr("Enable") : qsTr("Select")
                     advancedMode: root.customMode
                     disabled: !model.isRouteEnabled
-                    clickable: root.interactive
+                    clickable: Global.featureFlags.multiTxEnabled && root.interactive ||
+                               !Global.featureFlags.multiTxEnabled && disabled
                     onClicked: {
-                        store.toggleFromDisabledChains(model.chainId)
-                        store.lockCard(model.chainId, 0, false)
-                        root.reCalculateSuggestedRoute()
+                        if (!Global.featureFlags.multiTxEnabled) {
+                            root.changeSelectedChain(model.chainId)
+                        } else {
+                            store.toggleFromDisabledChains(model.chainId)
+                            store.lockCard(model.chainId, 0, false)
+                            root.reCalculateSuggestedRoute()
+                        }
                     }
                     onLockCard: {
                         let amount = lock ? (advancedInputCurrencyAmount * Math.pow(10, root.selectedAsset.decimals)).toString(16) : ""
@@ -183,14 +190,19 @@ Item {
                     opacity: preferred || store.showUnPreferredChains ? 1 : 0
                     cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
-                    disableText:  qsTr("Disable")
-                    enableText: qsTr("Enable")
+                    disableText: Global.featureFlags.multiTxEnabled? qsTr("Disable") : ""
+                    enableText: Global.featureFlags.multiTxEnabled? qsTr("Enable") : qsTr("Select")
                     disabled: !model.isRouteEnabled
-                    clickable: root.interactive
+                    clickable: Global.featureFlags.multiTxEnabled && root.interactive ||
+                               !Global.featureFlags.multiTxEnabled && disabled
                     loading: root.isLoading
                     onClicked: {
-                        store.toggleToDisabledChains(model.chainId)
-                        root.reCalculateSuggestedRoute()
+                        if (!Global.featureFlags.multiTxEnabled) {
+                            root.changeSelectedChain(model.chainId)
+                        } else {
+                            store.toggleToDisabledChains(model.chainId)
+                            root.reCalculateSuggestedRoute()
+                        }
                     }
                 }
             }

@@ -158,6 +158,26 @@ StatusDialog {
 
             recalculateRoutesAndFees()
         }
+
+        // This function is used in single selected chain mode, not for multitx sending.
+        // Providing correct chainId will make that chain selected, otherwise the mainnet chain will be selecte as default one.
+        function changeSelectedChain(chainId) {
+            if (Global.featureFlags.multiTxEnabled) {
+                return
+            }
+            for( var i = 0; i < fromNetworksRouteModel.rowCount(); i++ ) {
+                const item = SQUtils.ModelUtils.get(fromNetworksRouteModel, i)
+                if (item.chainId === chainId) {
+                    store.setRouteDisabledFromChains(item.chainId, false)
+                    store.setRouteDisabledToChains(item.chainId, false)
+                    continue
+                }
+                store.setRouteDisabledFromChains(item.chainId, true)
+                store.setRouteDisabledToChains(item.chainId, true)
+            }
+
+            popup.recalculateRoutesAndFees()
+        }
     }
 
     LeftJoinModel {
@@ -549,6 +569,12 @@ StatusDialog {
                         onIsLoading: popup.isLoading = true
                         onRecalculateRoutesAndFees: popup.recalculateRoutesAndFees()
                         onAddressTextChanged: store.setSelectedRecipient(addressText)
+
+                        fromNetworksList: fromNetworksRouteModel
+
+                        onChangeSelectedChain: {
+                            d.changeSelectedChain(chainId)
+                        }
                     }
                 }
             }
@@ -634,6 +660,10 @@ StatusDialog {
                 totalFeesInFiat: d.totalFeesInFiat
                 fromNetworksList: fromNetworksRouteModel
                 toNetworksList: toNetworksRouteModel
+
+                onChangeSelectedChain:{
+                    d.changeSelectedChain(chainId)
+                }
             }
         }
     }

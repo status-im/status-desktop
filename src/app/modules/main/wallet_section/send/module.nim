@@ -21,6 +21,8 @@ import app/modules/shared_models/collectibles_model as collectibles
 import app/modules/shared_models/collectibles_nested_model as nested_collectibles
 import backend/collectibles as backend_collectibles
 
+import constants as main_constants
+
 export io_interface
 
 logScope:
@@ -109,7 +111,7 @@ proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): Ne
 
 proc convertNetworkDtoToNetworkRouteItem(self: Module, network: network_service_item.NetworkItem): NetworkRouteItem =
   result = initNetworkRouteItem(
-      network.chainId, 
+      network.chainId,
       network.layer,
       true,
       false,
@@ -220,7 +222,7 @@ method authenticateAndTransferWithPaths*(self: Module, fromAddr: string, toAddr:
   # Temporary until transaction service rework is completed
   let pathsV2 = rawPaths.toTransactionPathsDtoV2()
   let pathsV1 = pathsV2.convertToOldRoute().addFirstSimpleBridgeTxFlag()
-  
+
   self.tmpSendTransactionDetails.paths = pathsV1
   self.tmpSendTransactionDetails.slippagePercentage = slippagePercentage
   self.authenticateAndTransfer(fromAddr, toAddr, assetKey, toAssetKey, uuid, sendType, selectedTokenName, selectedTokenIsOwnerToken)
@@ -310,6 +312,29 @@ method suggestedRoutes*(self: Module,
   disabledToChainIDs: seq[int] = @[],
   lockedInAmounts: Table[string, string] = initTable[string, string](),
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
+
+  var
+    finalLockedInAmounts = lockedInAmounts
+    finalDisbaledFromChains = disabledFromChainIDs
+    finalDisbaledToChains = disabledToChainIDs
+
+  if not singletonInstance.featureFlags.getMultiTxEnabled():
+    finalLockedInAmounts.clear()
+
+    const maxDisabledChains = 2 # at any given time, only 2 chains can be disabled
+
+    if finalDisbaledFromChains.len != maxDisabledChains:
+      if self.controller.areTestNetworksEnabled():
+        finalDisbaledFromChains = @[main_constants.SEPOLIA_OPTIMISM_CHAIN_ID, main_constants.SEPOLIA_ARBITRUM_CHAIN_ID]
+      else:
+        finalDisbaledFromChains = @[main_constants.OPTIMISM_CHAIN_ID, main_constants.ARBITRUM_CHAIN_ID]
+
+    if finalDisbaledToChains.len != maxDisabledChains:
+      if self.controller.areTestNetworksEnabled():
+        finalDisbaledToChains = @[main_constants.SEPOLIA_OPTIMISM_CHAIN_ID, main_constants.SEPOLIA_ARBITRUM_CHAIN_ID]
+      else:
+        finalDisbaledToChains = @[main_constants.OPTIMISM_CHAIN_ID, main_constants.ARBITRUM_CHAIN_ID]
+
   self.controller.suggestedRoutes(
     uuid,
     sendType,
@@ -319,9 +344,9 @@ method suggestedRoutes*(self: Module,
     amountIn,
     toToken,
     amountOut,
-    disabledFromChainIDs,
-    disabledToChainIDs,
-    lockedInAmounts,
+    finalDisbaledFromChains,
+    finalDisbaledToChains,
+    finalLockedInAmounts,
     extraParamsTable
   )
 

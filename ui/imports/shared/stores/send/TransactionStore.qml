@@ -124,8 +124,12 @@ QtObject {
         walletSectionSendInst.toNetworksRouteModel.toggleRouteDisabledChains(chainId)
     }
 
-    function setRouteDisabledChains(chainId, disabled) {
+    function setRouteDisabledToChains(chainId, disabled) {
         walletSectionSendInst.toNetworksRouteModel.setRouteDisabledChains(chainId, disabled)
+    }
+
+    function setRouteDisabledFromChains(chainId, disabled) {
+        walletSectionSendInst.fromNetworksRouteModel.setRouteDisabledChains(chainId, disabled)
     }
 
     function setSelectedTokenName(tokenName) {

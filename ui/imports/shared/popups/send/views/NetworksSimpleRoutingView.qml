@@ -157,7 +157,7 @@ RowLayout {
                 }
             }
             onCheckedChanged: {
-                store.setRouteDisabledChains(chainId, !gasRectangle.checked)
+                store.setRouteDisabledToChains(chainId, !gasRectangle.checked)
                 if(checked)
                     root.reCalculateSuggestedRoute()
             }
@@ -167,7 +167,7 @@ RowLayout {
                 height: card.height
             }
             Component.onCompleted: {
-                store.setRouteDisabledChains(chainId, !gasRectangle.checked)
+                store.setRouteDisabledToChains(chainId, !gasRectangle.checked)
                 if(index === (repeater.count -1))
                     root.reCalculateSuggestedRoute()
             }

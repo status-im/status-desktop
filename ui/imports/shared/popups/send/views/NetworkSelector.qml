@@ -37,6 +37,7 @@ Item {
     property double totalFeesInFiat
 
     signal reCalculateSuggestedRoute()
+    signal changeSelectedChain(int chainId)
 
     implicitHeight: childrenRect.height
 
@@ -59,6 +60,7 @@ Item {
         }
         StatusSwitchTabButton {
             text: qsTr("Custom")
+            enabled: Global.featureFlags.multiTxEnabled
         }
     }
 
@@ -132,6 +134,10 @@ Item {
                     if(!!selectedAsset && (selectedAsset.type === Constants.TokenType.Native || selectedAsset.type === Constants.TokenType.ERC20))
                         return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
                     return 0
+                }
+
+                onChangeSelectedChain: {
+                    root.changeSelectedChain(chainId)
                 }
             }
         }

@@ -29,12 +29,15 @@ Loader {
     property var selectedRecipient: null
     property int selectedRecipientType: Helpers.RecipientAddressObjectType.Address
 
+    property var fromNetworksList // needed just for simple view
+
     readonly property bool ready: (d.isAddressValid || !!resolvedENSAddress) && !d.isPending
     property string addressText
     property string resolvedENSAddress
 
     signal recalculateRoutesAndFees()
     signal isLoading()
+    signal changeSelectedChain(int chainId)
 
     onAddressTextChanged: d.isPending = false
 
@@ -74,10 +77,24 @@ Loader {
 
             // set preferred chains
             if(!isCollectiblesTransfer) {
-                if(root.isBridgeTx)
+                if (Global.featureFlags.multiTxEnabled) {
+                    if(root.isBridgeTx)
+                        root.store.setAllNetworksAsRoutePreferredChains()
+                    else
+                        root.store.updateRoutePreferredChains(preferredChainIds)
+                } else {
+                    // for simple sending we always set all chains as preferred chains, but we select the first one from the prefferd chains
+                    // as selected chain (just to obey address prefixes)
+                    let chainIds = preferredChainIds.split(":").filter(Boolean).map(Number)
                     root.store.setAllNetworksAsRoutePreferredChains()
-                else
-                    root.store.updateRoutePreferredChains(preferredChainIds)
+                    if (chainIds.length > 0) {
+                        root.changeSelectedChain(chainIds[0])
+                    } else {
+                        root.changeSelectedChain(-1)
+                    }
+
+                    return
+                }
             }
 
             recalculateRoutesAndFees()

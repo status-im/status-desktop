@@ -76,3 +76,10 @@ proc runtimeLogLevelSet*(): bool =
   return existsEnv(RUN_TIME_PREFIX & "_LOG_LEVEL") or hasLogLevelOption()
 
 const MAIN_STATUS_SHARD_CLUSTER_ID* = 16
+
+const MAINNET_CHAIN_ID* = 1
+const SEPOLIA_CHAIN_ID* = 11155111
+const OPTIMISM_CHAIN_ID* = 10
+const SEPOLIA_OPTIMISM_CHAIN_ID* = 11155420
+const ARBITRUM_CHAIN_ID* = 42161
+const SEPOLIA_ARBITRUM_CHAIN_ID* = 421614

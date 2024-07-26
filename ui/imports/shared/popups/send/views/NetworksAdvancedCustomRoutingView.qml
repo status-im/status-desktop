@@ -33,6 +33,7 @@ ColumnLayout {
     property int errorType: Constants.NoError
 
     signal reCalculateSuggestedRoute()
+    signal changeSelectedChain(int chainId)
 
     RowLayout {
         Layout.fillWidth: true
@@ -67,7 +68,7 @@ ColumnLayout {
                     icon.height: 16
                     icon.width: 16
                     text: checked ? qsTr("Hide Unpreferred Networks"): qsTr("Show Unpreferred Networks")
-                    visible: !isBridgeTx
+                    visible: Global.featureFlags.multiTxEnabled && !isBridgeTx
                     checked: root.store.showUnPreferredChains
                     onClicked: {
                         root.store.toggleShowUnPreferredChains()
@@ -79,8 +80,13 @@ ColumnLayout {
                 Layout.fillWidth: true
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
-                text: isBridgeTx ? qsTr("Routes will be automatically calculated to give you the lowest cost.") :
-                                  qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
+                text: {
+                    if (Global.featureFlags.multiTxEnabled) {
+                        return isBridgeTx ? qsTr("Routes will be automatically calculated to give you the lowest cost.") :
+                                     qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
+                    }
+                    return qsTr("Select the network to make a transaction on")
+                }
                 wrapMode: Text.WordWrap
             }
             Loader {
@@ -108,6 +114,10 @@ ColumnLayout {
                     interactive: root.interactive
                     errorType: root.errorType
                     isLoading: root.isLoading
+
+                    onChangeSelectedChain: {
+                        root.changeSelectedChain(chainId)
+                    }
                 }
             }
         }
