@@ -75,7 +75,7 @@ Control {
     signal assetClicked(string key)
     signal communityClicked(string communityKey)
     signal hideRequested(string key)
-    signal hideCommunityAssets(string communityKey)
+    signal hideCommunityAssetsRequested(string communityKey)
     signal manageTokensRequested
 
     QtObject {
@@ -279,10 +279,8 @@ Control {
             onReceiveRequested: root.receiveRequested(key)
             onSwapRequested: root.swapRequested(key)
 
-            onHideRequested:
-                confirmHideAssetPopup.createObject(parent, { model }).open()
-            onCommunityHideRequested:
-                confirmHideCommunityAssetsPopup.createObject(parent, { model }).open()
+            onHideRequested: root.hideRequested(key)
+            onCommunityHideRequested: root.hideCommunityAssetsRequested(communityKey)
 
             onManageTokensRequested: root.manageTokensRequested()
         }
@@ -293,41 +291,6 @@ Control {
 
         CommunityAssetsInfoPopup {
             destroyOnClose: true
-        }
-    }
-
-    Component {
-        id: confirmHideAssetPopup
-
-        ConfirmHideAssetPopup {
-            destroyOnClose: true
-
-            required property var model
-
-            symbol: model.symbol
-            name: model.name
-            icon: model.icon
-
-            onConfirmButtonClicked: {
-                root.hideRequested(model.key)
-                close()
-            }
-        }
-    }
-
-    Component {
-        id: confirmHideCommunityAssetsPopup
-
-        ConfirmHideCommunityAssetsPopup {
-            required property var model
-
-            name: model.communityName
-            icon: model.communityIcon
-
-            onConfirmButtonClicked: {
-                root.hideCommunityAssets(model.communityId)
-                close();
-            }
         }
     }
 }
