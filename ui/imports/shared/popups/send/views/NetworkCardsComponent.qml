@@ -95,6 +95,7 @@ Item {
                     onTokenBalanceChanged: maxAdvancedValue = model.tokenBalance.amount
                     property var toNetworks: model.toNetworks
                     property int routeOnNetwork: 0
+                    readonly property bool hasGas: model.hasGas
                     onToNetworksChanged: d.draw()
 
                     primaryText: model.chainName
@@ -236,7 +237,7 @@ Item {
                             fromN.routeOnNetwork += 1
                             toN.routeOnNetwork += 1
                             toN.bentLine = toN.objectName !== fromN.objectName
-                            let routeColor = root.errorMode ? Theme.palette.dangerColor1 : toN.preferred ? '#627EEA' : Theme.palette.pinColor1
+                            let routeColor = root.errorMode || !fromN.hasGas ? Theme.palette.dangerColor1 : toN.preferred ? '#627EEA' : Theme.palette.pinColor1
                             StatusQUtils.Utils.drawArrow(ctx, fromN.x + fromN.width,
                                                          fromN.y + fromN.cardIconPosition + yOffsetFrom,
                                                          toNetworksLayout.x + toN.x,
