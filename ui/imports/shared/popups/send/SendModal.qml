@@ -660,7 +660,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : d.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, d.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer) && !d.errorMode
+        visible: recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer) && !d.errorMode && !d.routerError
 
         onNextButtonClicked: popup.sendTransaction()
     }
