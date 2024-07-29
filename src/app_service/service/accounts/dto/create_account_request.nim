@@ -21,6 +21,8 @@ type
 
     wakuV2Nameserver*: Option[string]
     wakuV2LightClient*: bool
+    wakuV2EnableStoreConfirmationForMessagesSent*: bool
+    wakuV2EnableMissingMessageVerification*: bool
 
     logLevel*: Option[string]
     logFilePath*: string
