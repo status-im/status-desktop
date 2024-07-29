@@ -77,6 +77,8 @@ StatusDialog {
         if(!!popup.selectedAccount && !!popup.selectedAccount.address && !!holdingSelector.selectedItem
                 && recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer)) {
             popup.isLoading = true
+            d.routerError = ""
+            d.routerErrorDetails = ""
             popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSend.amount, "0", d.extraParamsJson)
         }
     })
@@ -125,6 +127,11 @@ StatusDialog {
                 || networkSelector.errorMode
                 || !(amountToSend.ready || d.isCollectiblesTransfer)
         }
+
+        // This way of displaying errors is just first aid, we have to build better way of handilg errors on the UI side
+        // and remove `d.errorType`
+        property string routerError: ""
+        property string routerErrorDetails: ""
 
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
@@ -634,6 +641,9 @@ StatusDialog {
                 totalFeesInFiat: d.totalFeesInFiat
                 fromNetworksList: fromNetworksRouteModel
                 toNetworksList: toNetworksRouteModel
+
+                routerError: d.routerError
+                routerErrorDetails: d.routerErrorDetails
             }
         }
     }
@@ -655,6 +665,12 @@ StatusDialog {
         target: popup.store.walletSectionSendInst
         function onSuggestedRoutesReady(txRoutes, errCode, errDescription) {
             popup.bestRoutes =  txRoutes.suggestedRoutes
+
+            if (errCode !== "") {
+                d.routerError = WalletUtils.getRouterErrorBasedOnCode(errCode)
+                d.routerErrorDetails = "%1 - %2".arg(errCode).arg(WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
+            }
+
             let gasTimeEstimate = txRoutes.gasTimeEstimate
             d.totalTimeEstimate = WalletUtils.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
             let totalTokenFeesInFiat = 0
