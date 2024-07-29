@@ -3,12 +3,14 @@ import QtQuick.Controls 2.14
 import QtGraphicalEffects 1.13
 
 import StatusQ.Core 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
 TabButton {
-    id: statusSwitchTabButton
+    id: root
 
     property int fontPixelSize: 15
+    property bool showBetaTag: false
 
     contentItem: Item {
         height: 36
@@ -21,16 +23,23 @@ TabButton {
             onPressed: mouse.accepted = false
             onReleased: mouse.accepted = false
 
-            StatusBaseText {
-                id: label
-                text: statusSwitchTabButton.text
-                color: statusSwitchTabButton.checked ?
-                    Theme.palette.statusSwitchTab.selectedTextColor :
-                    Theme.palette.statusSwitchTab.textColor
-                font.weight: Font.Medium
-                font.pixelSize: statusSwitchTabButton.fontPixelSize
-                horizontalAlignment: Text.AlignHCenter
+            Row {
                 anchors.centerIn: parent
+                spacing: 8
+
+                StatusBaseText {
+                    id: label
+                    text: root.text
+                    color: root.checked ?
+                               Theme.palette.statusSwitchTab.selectedTextColor :
+                               Theme.palette.statusSwitchTab.textColor
+                    font.weight: Font.Medium
+                    font.pixelSize: root.fontPixelSize
+                }
+
+                StatusBetaTag {
+                    visible: root.showBetaTag
+                }
             }
         }
     }
@@ -39,7 +48,7 @@ TabButton {
         id: controlBackground
         implicitHeight: 36
         implicitWidth: 148
-        color: statusSwitchTabButton.checked ?
+        color: root.checked ?
             Theme.palette.statusSwitchTab.buttonBackgroundColor :
             "transparent"
         radius: 8
