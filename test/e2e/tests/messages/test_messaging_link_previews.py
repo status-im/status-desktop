@@ -23,8 +23,8 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704589', 'Status user profile link preview')
 @pytest.mark.case(704596, 704578, 704578)
 @pytest.mark.parametrize('community_name, domain_link, user_name, domain_link_2, user_emoji_hash',
-                         [pytest.param('Status', 'status.app', 'qweertty', 'github.com',
-                                       '0x04c369e2e5d20c8e35cc2c7802cd7a58af3d4d54d537a3c05fd72e012dd9535b881b2c852b7cc11b211126eeeae6364b5fc024ee6ffa5a462905e6e8604729aec6')
+                         [pytest.param('Status', 'status.app', 'Test1', 'github.com',
+                                       '0x04c1671d3659b92671cdac657a901e133ca1cfadddbb640db7dec342ee70c4142533cc03e89eff2bd09dd75aea71d45ab2b605bc7e1996c4a6a82d037f4070d13c')
                           ])
 def test_link_previews(multiple_instances, community_name, domain_link, user_name, domain_link_2, user_emoji_hash):
     user_one: UserAccount = constants.user_with_random_attributes_1
