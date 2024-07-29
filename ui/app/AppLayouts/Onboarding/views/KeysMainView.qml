@@ -231,6 +231,14 @@ Item {
                     root.startupStore.doPrimaryAction()
                 }
             }
+
+            StatusBetaTag {
+                id: betaTagButton1
+                visible: true
+                anchors.left: button1.right
+                anchors.leftMargin: 8
+                anchors.verticalCenter: button1.verticalCenter
+            }
         }
 
         StatusBaseText {
@@ -335,6 +343,10 @@ Item {
                 text: qsTr("Scan or enter a sync code")
             }
             PropertyChanges {
+                target: betaTagButton1
+                visible: true
+            }
+            PropertyChanges {
                 target: button2
                 text: qsTr("I don’t have other device")
             }
@@ -364,6 +376,10 @@ Item {
             PropertyChanges {
                 target: button1
                 text: ""
+            }
+            PropertyChanges {
+                target: betaTagButton1
+                visible: false
             }
             PropertyChanges {
                 target: button2
@@ -397,6 +413,10 @@ Item {
                 text: qsTr("Generate new keys")
             }
             PropertyChanges {
+                target: betaTagButton1
+                visible: false
+            }
+            PropertyChanges {
                 target: button2
                 text: qsTr("Generate keys for a new Keycard")
             }
@@ -426,6 +446,10 @@ Item {
             PropertyChanges {
                 target: button1
                 text: qsTr("Import a seed phrase")
+            }
+            PropertyChanges {
+                target: betaTagButton1
+                visible: false
             }
             PropertyChanges {
                 target: button2
@@ -459,6 +483,10 @@ Item {
                 text: qsTr("Try to fetch profile again")
             }
             PropertyChanges {
+                target: betaTagButton1
+                visible: false
+            }
+            PropertyChanges {
                 target: button2
                 text: qsTr("Create new profile with the same chatkey")
             }
@@ -486,6 +514,10 @@ Item {
             PropertyChanges {
                 target: button1
                 text: qsTr("Continue")
+            }
+            PropertyChanges {
+                target: betaTagButton1
+                visible: false
             }
             PropertyChanges {
                 target: button2
@@ -517,6 +549,10 @@ Item {
             PropertyChanges {
                 target: button1
                 text: qsTr("Create replacement Keycard with seed phrase")
+            }
+            PropertyChanges {
+                target: betaTagButton1
+                visible: false
             }
             PropertyChanges {
                 target: button2
