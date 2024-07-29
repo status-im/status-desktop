@@ -427,6 +427,8 @@ Item {
                 // Name mismatch between storybook and production
                 readonly property var groupedAccountAssetsModel: groupedAccountsAssetsModel
             }
+
+            readonly property string selectedAddress: ""
         }
 
         onDisplayToastMessage: (message, isErr) => {

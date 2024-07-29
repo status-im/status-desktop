@@ -35,6 +35,8 @@ QObject {
     readonly property alias dappsModel: dappsProvider.dappsModel
     readonly property alias requestHandler: requestHandler
 
+    readonly property bool isServiceAvailableForAddressSelection: dappsProvider.supportedAccountsModel.ModelCount.count
+
     readonly property var validAccounts: SortFilterProxyModel {
         sourceModel: d.supportedAccountsModel
         proxyRoles: [
@@ -109,14 +111,19 @@ QObject {
     }
 
     function disconnectDapp(url) {
-        wcSDK.getActiveSessions((allSessions) => {
-            const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(allSessions, d.supportedAccountsModel)
+        wcSDK.getActiveSessions((allSessionsAllProfiles) => {
+            const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(allSessionsAllProfiles, validAccounts)
             for (const sessionID in sessions) {
                 const session = sessions[sessionID]
+                const accountsInSession = DAppsHelpers.getAccountsInSession(session)
                 const dapp = session.peer.metadata
                 const topic = session.topic
                 if (dapp.url === url) {
-                    wcSDK.disconnectSession(topic)
+                    if (!dappsProvider.selectedAddress ||
+                        (accountsInSession.includes(dappsProvider.selectedAddress)))
+                    {
+                        wcSDK.disconnectSession(topic)
+                    }
                 }
             }
         });
@@ -226,7 +233,13 @@ QObject {
     QObject {
         id: d
 
-        readonly property var supportedAccountsModel: root.walletRootStore.nonWatchAccounts
+        readonly property var supportedAccountsModel: SortFilterProxyModel {
+            sourceModel: root.walletRootStore.nonWatchAccounts
+            filters: ValueFilter {
+                roleName: "keycardAccount"
+                value: false
+            }
+        }
 
         property var currentSessionProposal: null
         property var acceptedSessionProposal: null
@@ -265,7 +278,19 @@ QObject {
 
         sdk: root.wcSDK
         store: root.store
-        supportedAccountsModel: d.supportedAccountsModel
+        supportedAccountsModel: SortFilterProxyModel {
+            objectName: "SelectedAddressModelForDAppsListProvider"
+            sourceModel: d.supportedAccountsModel
+            filters: FastExpressionFilter {
+                enabled: !root.walletRootStore.showAllAccounts
+
+                expression: root.walletRootStore.selectedAddress.toLowerCase() === model.address.toLowerCase()
+
+                expectedRoles: ["address"]
+            }
+        }
+
+        selectedAddress: root.walletRootStore.selectedAddress
     }
 
     // Timeout for the corner case where the URL was already dismissed and the SDK doesn't respond with an error nor advances with the proposal
