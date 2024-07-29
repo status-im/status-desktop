@@ -270,17 +270,17 @@ Item {
         }
 
         function test_onSessionRequestEventDifferentCaseForAddress() {
-            let sdk = handler.sdk
+            const sdk = handler.sdk
 
-            let testAddressUpper = "0x3A"
-            let chainId = 2
-            let method = "personal_sign"
-            let message = "hello world"
-            let params = [`"${Helpers.strToHex(message)}"`, `"${testAddressUpper}"`]
-            let topic = "b536a"
-            let session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            const testAddressUpper = "0x3A"
+            const chainId = 2
+            const method = "personal_sign"
+            const message = "hello world"
+            const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddressUpper}"`]
+            const topic = "b536a"
+            const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
             // Expect to have calls to getActiveSessions from service initialization
-            let prevRequests = sdk.getActiveSessionsCallbacks.length
+            const prevRequests = sdk.getActiveSessionsCallbacks.length
             sdk.sessionRequestEvent(session)
 
             compare(sdk.getActiveSessionsCallbacks.length, 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
@@ -288,17 +288,17 @@ Item {
 
         // Tests that the request is ignored if not in the current profile (don't have the PK for the address)
         function test_onSessionRequestEventMissingAddress() {
-            let sdk = handler.sdk
+            const sdk = handler.sdk
 
-            let testAddressUpper = "0xY"
-            let chainId = 2
-            let method = "personal_sign"
-            let message = "hello world"
-            let params = [`"${Helpers.strToHex(message)}"`, `"${testAddressUpper}"`]
-            let topic = "b536a"
-            let session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            const testAddressUpper = "0xY"
+            const chainId = 2
+            const method = "personal_sign"
+            const message = "hello world"
+            const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddressUpper}"`]
+            const topic = "b536a"
+            const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
             // Expect to have calls to getActiveSessions from service initialization
-            let prevRequests = sdk.getActiveSessionsCallbacks.length
+            const prevRequests = sdk.getActiveSessionsCallbacks.length
             sdk.sessionRequestEvent(session)
 
             compare(sdk.getActiveSessionsCallbacks.length, 0, "expected DAppsRequestHandler don't call sdk.getActiveSessions")
@@ -514,27 +514,27 @@ Item {
 
         function test_SessionRequestMainFlow() {
             // All calls to SDK are expected as events to be made by the wallet connect SDK
-            let sdk = service.wcSDK
-            let walletStore = service.walletRootStore
-            let store = service.store
+            const sdk = service.wcSDK
+            const walletStore = service.walletRootStore
+            const store = service.store
 
-            let testAddress = "0x3a"
-            let chainId = 2
-            let  method = "personal_sign"
-            let message = "hello world"
-            let params = [`"${Helpers.strToHex(message)}"`, `"${testAddress}"`]
-            let topic = "b536a"
-            let session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            const testAddress = "0x3a"
+            const chainId = 2
+            const  method = "personal_sign"
+            const message = "hello world"
+            const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddress}"`]
+            const topic = "b536a"
+            const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
             // Expect to have calls to getActiveSessions from service initialization
-            let prevRequests = sdk.getActiveSessionsCallbacks.length
+            const prevRequests = sdk.getActiveSessionsCallbacks.length
             sdk.sessionRequestEvent(session)
 
             compare(sdk.getActiveSessionsCallbacks.length, prevRequests + 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
-            let callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
+            const callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
             callback({"b536a": JSON.parse(Testing.formatApproveSessionResponse([chainId, 7], [testAddress]))})
 
             compare(sessionRequestSpy.count, 1, "expected service.sessionRequest trigger")
-            let request = sessionRequestSpy.signalArguments[0][sessionRequestSpy.argPos.request]
+            const request = sessionRequestSpy.signalArguments[0][sessionRequestSpy.argPos.request]
             compare(request.topic, topic, "expected topic to be set")
             compare(request.method, method, "expected method to be set")
             compare(request.event, session, "expected event to be the one sent by the sdk")
@@ -619,7 +619,7 @@ Item {
         name: "ServiceHelpers"
 
         function test_extractChainsAndAccountsFromApprovedNamespaces() {
-            let res = Helpers.extractChainsAndAccountsFromApprovedNamespaces(JSON.parse(`{
+            const res = DAppsHelpers.extractChainsAndAccountsFromApprovedNamespaces(JSON.parse(`{
                 "eip155": {
                     "accounts": [
                         "eip155:1:0x1",
@@ -660,25 +660,25 @@ Item {
         }
 
         function test_buildSupportedNamespacesFromModels() {
-            let methods = ["eth_sendTransaction", "personal_sign"]
-            let resStr = Helpers.buildSupportedNamespacesFromModels(chainsModel, accountsModel, methods)
-            let jsonObj = JSON.parse(resStr)
+            const methods = ["eth_sendTransaction", "personal_sign"]
+            const resStr = DAppsHelpers.buildSupportedNamespacesFromModels(chainsModel, accountsModel, methods)
+            const jsonObj = JSON.parse(resStr)
             verify(jsonObj.hasOwnProperty("eip155"))
-            let eip155 = jsonObj.eip155
+            const eip155 = jsonObj.eip155
 
             verify(eip155.hasOwnProperty("chains"))
-            let chains = eip155.chains
+            const chains = eip155.chains
             verify(chains.length === 2)
             verify(chains[0] === "eip155:1")
             verify(chains[1] === "eip155:2")
 
             verify(eip155.hasOwnProperty("accounts"))
-            let accounts = eip155.accounts
+            const accounts = eip155.accounts
             verify(accounts.length === 4)
             for (let chainI = 0; chainI < chainsModel.count; chainI++) {
                 for (let accountI = 0; accountI < chainsModel.count; accountI++) {
                     var found = false
-                    for (let entry of accounts) {
+                    for (const entry of accounts) {
                         if(entry === `eip155:${chainsModel.get(chainI).chainId}:${accountsModel.get(accountI).address}`) {
                             found = true
                             break
@@ -709,7 +709,7 @@ Item {
                 "b538c": unknownSession2,
                 "b539d": unknownSessionWithKnownAccount
             }
-            let res = Helpers.filterActiveSessionsForKnownAccounts(testSessions, accountsModel)
+            const res = DAppsHelpers.filterActiveSessionsForKnownAccounts(testSessions, accountsModel)
             compare(Object.keys(res).length, 2, "expected two sessions to be returned")
             // Also test that order is stable
             compare(res["b536a"], knownSession, "expected the known session to be returned")
@@ -882,29 +882,29 @@ Item {
     }
 
     function mockSessionRequestEvent(tc, sdk, accountsModel, networksModel) {
-        let account = accountsModel.get(1)
-        let network = networksModel.get(1)
-        let method = "personal_sign"
-        let message = "hello world"
-        let params = [`"${Helpers.strToHex(message)}"`, `"${account.address}"`]
-        let topic = "b536a"
-        let requestEvent = JSON.parse(Testing.formatSessionRequest(network.chainId, method, params, topic))
-        let request = tc.createTemporaryObject(sessionRequestComponent, root, {
-            event: requestEvent,
-            topic,
-            id: requestEvent.id,
-            method: Constants.personal_sign,
-            account,
-            network,
-            data: message,
-            preparedData: message
+        const account = accountsModel.get(1)
+        const network = networksModel.get(1)
+        const method = "personal_sign"
+        const message = "hello world"
+        const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${account.address}"`]
+        const topic = "b536a"
+        const requestEvent = JSON.parse(Testing.formatSessionRequest(network.chainId, method, params, topic))
+        const request = tc.createTemporaryObject(sessionRequestComponent, root, {
+              event: requestEvent,
+              topic,
+              id: requestEvent.id,
+              method: Constants.personal_sign,
+              account,
+              network,
+              data: message,
+              preparedData: message
         })
         // Expect to have calls to getActiveSessions from service initialization
-        let prevRequests = sdk.getActiveSessionsCallbacks.length
+        const prevRequests = sdk.getActiveSessionsCallbacks.length
         sdk.sessionRequestEvent(requestEvent)
         // Service might trigger a sessionRequest event following the getActiveSessions call
-        let callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
-        let session = JSON.parse(Testing.formatApproveSessionResponse([network.chainId, 7], [account.address]))
+        const callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
+        const session = JSON.parse(Testing.formatApproveSessionResponse([network.chainId, 7], [account.address]))
         callback({"b536a": session})
 
         return {sdk, session, account, network, topic, request}

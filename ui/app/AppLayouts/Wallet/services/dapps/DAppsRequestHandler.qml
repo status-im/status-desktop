@@ -263,7 +263,7 @@ SQUtils.QObject {
             if (SessionRequest.getSupportedMethods().includes(method) === false) {
                 return null
             }
-            let chainId = Helpers.chainIdFromEip155(event.params.chainId)
+            const chainId = DAppsHelpers.chainIdFromEip155(event.params.chainId)
             return SQUtils.ModelUtils.getByKey(root.networksModel, "chainId", chainId)
         }
 
@@ -280,11 +280,11 @@ SQUtils.QObject {
                     return null
                 }
                 let message = ""
-                let messageIndex = (method === SessionRequest.methods.personalSign.name ? 0 : 1)
-                let messageParam = event.params.request.params[messageIndex]
+                const messageIndex = (method === SessionRequest.methods.personalSign.name ? 0 : 1)
+                const messageParam = event.params.request.params[messageIndex]
                 // There is no standard on how data is encoded. Therefore we support hex or utf8
-                if (Helpers.isHex(messageParam)) {
-                    message = Helpers.hexToString(messageParam)
+                if (DAppsHelpers.isHex(messageParam)) {
+                    message = DAppsHelpers.hexToString(messageParam)
                 } else {
                     message = messageParam
                 }
@@ -295,22 +295,22 @@ SQUtils.QObject {
                 if (event.params.request.params.length < 2) {
                     return null
                 }
-                let jsonMessage = event.params.request.params[1]
-                let methodObj = method === SessionRequest.methods.signTypedData_v4.name
-                    ? SessionRequest.methods.signTypedData_v4
-                    : SessionRequest.methods.signTypedData
+                const jsonMessage = event.params.request.params[1]
+                const methodObj = method === SessionRequest.methods.signTypedData_v4.name
+                      ? SessionRequest.methods.signTypedData_v4
+                      : SessionRequest.methods.signTypedData
                 return methodObj.buildDataObject(jsonMessage)
             } else if (method === SessionRequest.methods.signTransaction.name) {
                 if (event.params.request.params.length == 0) {
                     return null
                 }
-                let tx = event.params.request.params[0]
+                const tx = event.params.request.params[0]
                 return SessionRequest.methods.signTransaction.buildDataObject(tx)
             } else if (method === SessionRequest.methods.sendTransaction.name) {
                 if (event.params.request.params.length == 0) {
                     return null
                 }
-                let tx = event.params.request.params[0]
+                const tx = event.params.request.params[0]
                 return SessionRequest.methods.sendTransaction.buildDataObject(tx)
             } else {
                 return null
