@@ -11,6 +11,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import shared.popups.send.controls 1.0
+import shared.controls 1.0
 
 Item {
     id: root
@@ -36,6 +37,9 @@ Item {
     property var bestRoutes
     property double totalFeesInFiat
 
+    property string routerError: ""
+    property string routerErrorDetails: ""
+
     signal reCalculateSuggestedRoute()
 
     implicitHeight: childrenRect.height
@@ -56,9 +60,11 @@ Item {
         }
         StatusSwitchTabButton {
             text: qsTr("Advanced")
+            showBetaTag: true
         }
         StatusSwitchTabButton {
             text: qsTr("Custom")
+            enabled: false
         }
     }
 
@@ -100,6 +106,8 @@ Item {
                 reCalculateSuggestedRoute: function() {
                     root.reCalculateSuggestedRoute()
                 }
+
+                showBetaTag: root.bestRoutes.count > 1
             }
         }
 
@@ -150,5 +158,42 @@ Item {
         store: root.store
         gasFiatAmount: root.totalFeesInFiat
         errorType: root.errorType
+    }
+
+    ErrorTag {
+        id: errorTag
+
+        property bool showDetails: false
+
+        anchors.top: fees.visible? fees.bottom : stackLayout.bottom
+        anchors.topMargin: Style.current.bigPadding
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: root.routerError !== ""
+        text: root.routerError
+        buttonText: showDetails? qsTr("hide details") : qsTr("show details")
+        buttonVisible: root.routerErrorDetails !== ""
+        onButtonClicked: {
+            showDetails = !showDetails
+        }
+    }
+
+    Rectangle {
+        width: parent.width
+        implicitHeight: childrenRect.height + 2*Style.current.padding
+        anchors.top: errorTag.bottom
+        anchors.topMargin: Style.current.padding
+        visible: errorTag.visible && errorTag.showDetails
+        color: Theme.palette.dangerColor3
+        radius: 8
+        border.width: 1
+        border.color: Theme.palette.dangerColor2
+
+        StatusBaseText {
+            anchors.centerIn: parent
+            width: parent.width - 2*Style.current.bigPadding
+            text: root.routerErrorDetails
+            font.pixelSize: Style.current.tertiaryTextFontSize
+            elide: Text.ElideRight
+        }
     }
 }
