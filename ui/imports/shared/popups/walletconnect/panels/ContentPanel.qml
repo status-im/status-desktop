@@ -18,8 +18,8 @@ Rectangle {
     color: "transparent"
     radius: 8
 
-    implicitHeight: d.expanded ? contentText.implicitHeight + (2 * contentText.anchors.margins) : 
-                                    Math.min(contentText.implicitHeight + (2 * contentText.anchors.margins), 200)
+    implicitHeight: d.expanded ? contentText.implicitHeight + (2 * contentText.anchors.margins)
+                               : Math.min(contentText.implicitHeight + (2 * contentText.anchors.margins), d.maxContentHeight)
 
     HoverHandler {
         id: hoverHandler
@@ -38,20 +38,7 @@ Rectangle {
         lineHeightMode: Text.FixedHeight
         lineHeight: 18
 
-        wrapMode: Text.WrapAnywhere
-
-        StatusFlatButton {
-            objectName: "expandButton"
-            anchors.top: parent.top
-            anchors.right: parent.right
-            icon.name: d.expanded ? "collapse" : "expand"
-            icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
-            hoverColor: "transparent"
-            visible: d.canExpand && hoverHandler.hovered
-            onClicked: {
-                d.expanded = !d.expanded
-            }
-        }
+        wrapMode: Text.Wrap
 
         layer.enabled: !d.expanded && d.canExpand
         layer.effect: OpacityMask {
@@ -68,10 +55,25 @@ Rectangle {
         }
     }
 
+    StatusFlatButton {
+        objectName: "expandButton"
+        anchors.top: parent.top
+        anchors.topMargin: 4
+        anchors.right: parent.right
+        anchors.rightMargin: 4
+        icon.name: d.expanded ? "collapse" : "expand"
+        icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
+        hoverColor: "transparent"
+        visible: d.canExpand && hoverHandler.hovered
+        onClicked: {
+            d.expanded = !d.expanded
+        }
+    }
+
     QtObject {
         id: d
         readonly property int maxContentHeight: 350
         property bool expanded: false
-        property bool canExpand: contentText.implicitHeight > maxContentHeight
+        readonly property bool canExpand: contentText.paintedHeight + (2 * contentText.anchors.margins) > maxContentHeight
     }
 }
