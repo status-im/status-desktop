@@ -30,6 +30,8 @@ RowLayout {
     property int errorType: Constants.NoError
     property string selectedSymbol
 
+    property bool showBetaTag: false
+
     spacing: 10
 
     StatusRoundIcon {
@@ -42,13 +44,21 @@ RowLayout {
         Layout.alignment: Qt.AlignTop
         Layout.preferredWidth: root.width
         spacing: 4
-        StatusBaseText {
+        Row {
             Layout.maximumWidth: parent.width
-            font.pixelSize: 15
-            font.weight: Font.Medium
-            color: Theme.palette.directColor1
-            text: qsTr("Networks")
-            wrapMode: Text.WordWrap
+            spacing: 8
+
+            StatusBaseText {
+                font.pixelSize: 15
+                font.weight: Font.Medium
+                color: Theme.palette.directColor1
+                text: qsTr("Networks")
+                wrapMode: Text.WordWrap
+            }
+
+            StatusBetaTag {
+                visible: root.showBetaTag
+            }
         }
         StatusBaseText {
             Layout.maximumWidth: parent.width

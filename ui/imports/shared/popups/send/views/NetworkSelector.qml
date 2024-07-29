@@ -60,9 +60,11 @@ Item {
         }
         StatusSwitchTabButton {
             text: qsTr("Advanced")
+            showBetaTag: true
         }
         StatusSwitchTabButton {
             text: qsTr("Custom")
+            enabled: false
         }
     }
 
@@ -104,6 +106,8 @@ Item {
                 reCalculateSuggestedRoute: function() {
                     root.reCalculateSuggestedRoute()
                 }
+
+                showBetaTag: root.bestRoutes.count > 1
             }
         }
 
