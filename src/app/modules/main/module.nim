@@ -129,6 +129,8 @@ type
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string)
+proc checkIfWeHaveNotifications[T](self: Module[T])
+
 
 proc newModule*[T](
   delegate: T,
@@ -745,6 +747,8 @@ method onChatsLoaded*[T](
   self.view.sectionsLoaded()
   if self.statusDeepLinkToActivate != "":
     self.activateStatusDeepLink(self.statusDeepLinkToActivate)
+
+  self.checkIfWeHaveNotifications()
 
 method onCommunityDataLoaded*[T](
   self: Module[T],
