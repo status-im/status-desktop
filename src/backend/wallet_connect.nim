@@ -57,8 +57,7 @@ proc getActiveSessions*(validAtTimestamp: int): JsonNode =
       return nil
 
     let jsonResultStr = rpcRes.result.getStr()
-    if jsonResultStr == "null":
-      # nil means error
+    if jsonResultStr == "null" or jsonResultStr == "":
       return newJArray()
 
     if rpcRes.result.kind != JArray:

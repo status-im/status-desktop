@@ -38,6 +38,8 @@ TestCase {
         sourceComponent: WebEngineLoader {
             url: "./WebEngineLoader/test.html"
             webChannelObjects: [testObject]
+
+            waitForInternet: false
         }
     }
     SignalSpy { id: loadedSpy; target: loader; signalName: "loaded" }
@@ -67,13 +69,13 @@ TestCase {
         compare(webEngine.instance, null, "By default the engine is not loaded")
         webEngine.active = true
 
-        webEngineLoadedSpy.wait(1000);
+        webEngineLoadedSpy.wait(1000)
         verify(webEngine.instance !== null , "The WebEngineView should be available")
 
         if (Qt.platform.os === "linux") {
             skip("fails to load page on linux")
         }
-        pageLoadedSpy.wait(1000);
+        pageLoadedSpy.wait(1000)
         webEngine.active = false
         engineUnloadedSpy.wait(1000);
 

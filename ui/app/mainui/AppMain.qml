@@ -2185,7 +2185,7 @@ Item {
             id: walletConnectService
 
             wcSDK: WalletConnectSDK {
-                active: WalletStore.RootStore.walletSectionInst.walletReady
+                enableSdk: WalletStore.RootStore.walletSectionInst.walletReady
 
                 projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
             }
