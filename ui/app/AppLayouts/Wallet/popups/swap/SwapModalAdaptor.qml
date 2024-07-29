@@ -191,6 +191,8 @@ QObject {
                         return qsTr("Fetching the price took longer than expected. Please, try again later.")
                     case Constants.swap.errorCodes.errNotEnoughLiquidity:
                         return qsTr("Not enough liquidity. Lower token amount or try again later.")
+                    case Constants.swap.errorCodes.errPriceImpactTooHigh:
+                        return qsTr("Price impact too high. Lower token amount or try again later.")
                 }
                 return qsTr("Something went wrong. Change amount, token or try again later.")
             }
