@@ -86,6 +86,11 @@ SplitView {
                 }
                 }
             }',
+            "
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce nibh. Etiam quis quam. In dapibus augue non sapien. Praesent id justo in neque elementum ultrices. Morbi scelerisque luctus velit. Vivamus ac leo pretium faucibus. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Nullam eget nisl. Aliquam erat volutpat.
+
+            Proin pede metus, vulputate nec, fermentum fringilla, vehicula vitae, justo.  Fusce nibh. Etiam quis quam. In dapibus augue non sapien. Praesent id justo in neque elementum ultrices.  Fusce nibh. Etiam quis quam. In dapibus augue non sapien. Praesent id justo in neque elementum ultrices.  Fusce nibh. Etiam quis quam. In dapibus augue non sapien. Praesent id justo in neque elementum ultrices.   Fusce nibh. Etiam quis quam. In dapibus augue non sapien. Praesent id justo in neque elementum ultrices.
+            ",
             '"tx":{"data":"0x","from":"0xE2d622C817878dA5143bBE06866ca8E35273Ba8a","gasLimit":"0x5208","gasPrice":"0x048ddbc5","nonce":"0x2a","to":"0xE2d622C817878dA5143bBE06866ca8E35273Ba8a","value":"0x00"}',
             ""
         ]
@@ -104,7 +109,7 @@ SplitView {
             }
             ComboBox {
                 id: contentToSignComboBox
-                model: ["Long content to sign", "Short content to sign", "Empty content to sign"]
+                model: ["Long content to sign", "Middle content to sign", "Short content to sign", "Empty content to sign"]
                 currentIndex: 0
             }
             CheckBox {
