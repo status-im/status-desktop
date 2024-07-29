@@ -56,24 +56,24 @@ QObject {
         if(Constants.regularExpressions.emoji.test(uri)) {
             root.pairingValidated(Pairing.errors.tooCool)
             return
-        } else if(!Helpers.validURI(uri)) {
+        } else if(!DAppsHelpers.validURI(uri)) {
             root.pairingValidated(Pairing.errors.invalidUri)
             return
         }
 
-        let info = Helpers.extractInfoFromPairUri(uri)
+        const info = DAppsHelpers.extractInfoFromPairUri(uri)
         wcSDK.getActiveSessions((sessions) => {
             // Check if the URI is already paired
-            var validationState = Pairing.errors.uriOk
-            for (let key in sessions) {
-                if (sessions[key].pairingTopic == info.topic) {
+            let validationState = Pairing.errors.uriOk
+            for (const key in sessions) {
+                if (sessions[key].pairingTopic === info.topic) {
                     validationState = Pairing.errors.alreadyUsed
                     break
                 }
             }
 
             // Check if expired
-            if (validationState == Pairing.errors.uriOk) {
+            if (validationState === Pairing.errors.uriOk) {
                 const now = (new Date().getTime())/1000
                 if (info.expiry < now) {
                     validationState = Pairing.errors.expired
@@ -92,8 +92,8 @@ QObject {
 
     function approvePairSession(sessionProposal, approvedChainIds, approvedAccount) {
         d.acceptedSessionProposal = sessionProposal
-        let approvedNamespaces = JSON.parse(
-            Helpers.buildSupportedNamespaces(approvedChainIds,
+        const approvedNamespaces = JSON.parse(
+            DAppsHelpers.buildSupportedNamespaces(approvedChainIds,
                                              [approvedAccount.address],
                                              SessionRequest.getSupportedMethods())
         )
@@ -110,11 +110,12 @@ QObject {
 
     function disconnectDapp(url) {
         wcSDK.getActiveSessions((allSessions) => {
-            const sessions = Helpers.filterActiveSessionsForKnownAccounts(allSessions, d.supportedAccountsModel)
-            for (let session in sessions) {
-                let dapp = session.peer.metadata
-                let topic = session.topic
-                if (dapp.url == url) {
+            const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(allSessions, d.supportedAccountsModel)
+            for (const sessionID in sessions) {
+                const session = sessions[sessionID]
+                const dapp = session.peer.metadata
+                const topic = session.topic
+                if (dapp.url === url) {
                     wcSDK.disconnectSession(topic)
                 }
             }
@@ -145,8 +146,8 @@ QObject {
         function onSessionProposal(sessionProposal) {
             d.currentSessionProposal = sessionProposal
 
-            let supportedNamespacesStr = Helpers.buildSupportedNamespacesFromModels(
-                root.flatNetworks, root.validAccounts, SessionRequest.getSupportedMethods())
+            const supportedNamespacesStr = DAppsHelpers.buildSupportedNamespacesFromModels(
+                  root.flatNetworks, root.validAccounts, SessionRequest.getSupportedMethods())
             wcSDK.buildApprovedNamespaces(sessionProposal.params, JSON.parse(supportedNamespacesStr))
         }
 
@@ -169,7 +170,7 @@ QObject {
             if (d.acceptedSessionProposal) {
                 wcSDK.approveSession(d.acceptedSessionProposal, approvedNamespaces)
             } else {
-                let res = Helpers.extractChainsAndAccountsFromApprovedNamespaces(approvedNamespaces)
+                const res = DAppsHelpers.extractChainsAndAccountsFromApprovedNamespaces(approvedNamespaces)
 
                 root.connectDApp(res.chains, d.currentSessionProposal, approvedNamespaces)
             }

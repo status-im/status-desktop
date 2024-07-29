@@ -156,7 +156,7 @@ WalletConnectSDKBase {
             if (SessionRequest.getSupportedMethods().includes(method) === false) {
                 return null
             }
-            let chainId = Helpers.chainIdFromEip155(event.params.chainId)
+            const chainId = DAppsHelpers.chainIdFromEip155(event.params.chainId)
             return SQUtils.ModelUtils.getByKey(networksModule.flatNetworks, "chainId", chainId)
         }
 
@@ -167,13 +167,13 @@ WalletConnectSDKBase {
                 if (event.params.request.params.length < 1) {
                     return null
                 }
-                var message = ""
-                let messageIndex = (method === SessionRequest.methods.personalSign.name ? 0 : 1)
-                let messageParam = event.params.request.tx.data
+                let message = ""
+                const messageIndex = (method === SessionRequest.methods.personalSign.name ? 0 : 1)
+                const messageParam = event.params.request.tx.data
 
                 // There is no standard on how data is encoded. Therefore we support hex or utf8
-                if (Helpers.isHex(messageParam)) {
-                    message = Helpers.hexToString(messageParam)
+                if (DAppsHelpers.isHex(messageParam)) {
+                    message = DAppsHelpers.hexToString(messageParam)
                 } else {
                     message = messageParam
                 }
