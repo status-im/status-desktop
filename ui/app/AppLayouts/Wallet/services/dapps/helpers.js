@@ -121,3 +121,12 @@ function filterActiveSessionsForKnownAccounts(sessions, accountsModel) {
     })
     return knownSessions
 }
+
+function getAccountsInSession(session) {
+    const eip155Addresses = session.namespaces.eip155.accounts
+    const accountSet = new Set(
+        eip155Addresses.map(eip155Address => eip155Address.split(':').pop().trim())
+    );
+    const uniqueAddresses = Array.from(accountSet);
+    return uniqueAddresses
+}
