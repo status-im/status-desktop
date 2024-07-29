@@ -1,10 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQml.Models 2.14
+import QtQml.Models 2.15
 import SortFilterProxyModel 0.2
-
-import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -93,56 +91,64 @@ StatusDialog {
     signal disconnect()
 
     width: 480
-    implicitHeight: !d.connectionAttempted ? 633 : 681
-
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     title: d.connectionSuccessful ? qsTr("dApp connected") :
                                     qsTr("Connection request")
 
-    padding: 20
+    padding: 0
 
-    contentItem: ColumnLayout {
-        spacing: 20
-        clip: true
+    StatusScrollView {
+        id: scrollView
+        anchors.fill: parent
+        contentWidth: availableWidth
+        topPadding: 0
+        bottomPadding: 0
 
-        DAppCard {
-            id: dappCard
-            Layout.maximumWidth: root.availableWidth - Layout.leftMargin * 2
-            Layout.leftMargin: 12
-            Layout.rightMargin: Layout.leftMargin
-            Layout.topMargin: 14
-            Layout.bottomMargin: Layout.topMargin
-        }
+        ColumnLayout {
+            spacing: 20
+            anchors.left: parent.left
+            anchors.leftMargin: 4
+            anchors.right: parent.right
+            anchors.rightMargin: 4
 
-        ContextCard {
-            id: contextCard
-            Layout.maximumWidth: root.availableWidth
-            Layout.fillWidth: true
+            DAppCard {
+                id: dappCard
+                Layout.maximumWidth: root.availableWidth - Layout.leftMargin * 2
+                Layout.leftMargin: 12
+                Layout.rightMargin: Layout.leftMargin
+                Layout.topMargin: 14
+                Layout.bottomMargin: Layout.topMargin
+            }
 
-            multipleChainSelection: root.multipleChainSelection
-            selectedAccountAddress: root.selectedAccountAddress
-            connectionAttempted: d.connectionAttempted
-            accountsModel: d.accountsProxy
-            chainsModel: root.flatNetworks
-            chainSelection: d.selectedChains
+            ContextCard {
+                id: contextCard
+                Layout.maximumWidth: root.availableWidth
+                Layout.fillWidth: true
 
-            onChainSelectionChanged: {
-                if (d.selectedChains !== chainSelection) {
-                    d.selectedChains = chainSelection
+                multipleChainSelection: root.multipleChainSelection
+                selectedAccountAddress: root.selectedAccountAddress
+                connectionAttempted: d.connectionAttempted
+                accountsModel: d.accountsProxy
+                chainsModel: root.flatNetworks
+                chainSelection: d.selectedChains
+
+                onChainSelectionChanged: {
+                    if (d.selectedChains !== chainSelection) {
+                        d.selectedChains = chainSelection
+                    }
                 }
             }
-        }
 
-        PermissionsCard {
-            Layout.maximumWidth: root.availableWidth
-            Layout.fillWidth: true
+            PermissionsCard {
+                Layout.maximumWidth: root.availableWidth
+                Layout.fillWidth: true
 
-            Layout.leftMargin: 16
-            Layout.rightMargin: Layout.leftMargin
-            Layout.topMargin: 12
-            Layout.bottomMargin: Layout.topMargin
-            dappName: dappCard.name
+                Layout.leftMargin: 16
+                Layout.rightMargin: Layout.leftMargin
+                Layout.topMargin: 12
+                Layout.bottomMargin: Layout.topMargin
+                dappName: dappCard.name
+            }
         }
     }
 
@@ -172,9 +178,7 @@ StatusDialog {
             StatusButton {
                 objectName: "primaryActionButton"
                 height: 44
-                text: d.connectionAttempted
-                            ? qsTr("Close")
-                            : qsTr("Connect")
+                text: d.connectionAttempted ? qsTr("Close") : qsTr("Connect")
                 enabled: {
                     if (!d.connectionAttempted)
                         return root.selectedChains.length > 0
