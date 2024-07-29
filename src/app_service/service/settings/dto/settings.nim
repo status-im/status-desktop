@@ -95,7 +95,6 @@ type PinnedMailserver* = object
   goWakuTest*: string
   statusTest*: string
   statusProd*: string
-  shardsTest*: string
   statusStaging*: string
 
 type CurrentUserStatus* = object
@@ -173,7 +172,6 @@ proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   discard jsonObj.getProp("waku.test", result.wakuTest)
   discard jsonObj.getProp("status.test", result.statusTest)
   discard jsonObj.getProp("status.prod", result.statusProd)
-  discard jsonObj.getProp("shards.test", result.shardsTest)
   discard jsonObj.getProp("status.staging", result.statusStaging)
 
 proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
@@ -256,6 +254,5 @@ proc pinnedMailserverToJsonNode*(mailserver: PinnedMailserver): JsonNode =
       "waku.test": mailserver.wakuTest,
       "status.test": mailserver.statusTest,
       "status.prod": mailserver.statusProd,
-      "shards.test": mailserver.shardsTest,
       "status.staging": mailserver.statusStaging,
     }

@@ -17,7 +17,7 @@ export stickers_dto
 # Default values:
 const DEFAULT_CURRENCY* = "USD"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
-const DEFAULT_FLEET* = Fleet.ShardsTest
+const DEFAULT_FLEET* = Fleet.StatusProd
 
 # Signals:
 const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
@@ -386,8 +386,10 @@ QtObject:
       return false
 
   proc saveFleet*(self: Service, value: string): bool =
-    self.settings.fleet = value
-    return true
+    if(self.saveSetting(KEY_FLEET, value)):
+      self.settings.fleet = value
+      return true
+    return false
 
   proc getFleetAsString*(self: Service): string =
     result = self.settings.fleet
@@ -405,8 +407,8 @@ QtObject:
       return self.settings.pinnedMailserver.wakuSandbox
     of Fleet.WakuTest:
       return self.settings.pinnedMailserver.wakuTest
-    of Fleet.ShardsTest:
-      return self.settings.pinnedMailserver.shardsTest
+    of Fleet.StatusProd:
+      return self.settings.pinnedMailserver.statusProd
     of Fleet.StatusStaging:
       return self.settings.pinnedMailserver.statusStaging
     else:
@@ -429,8 +431,8 @@ QtObject:
         self.settings.pinnedMailserver.wakuSandbox = mailserverID
       of Fleet.WakuTest:
         self.settings.pinnedMailserver.wakuTest = mailserverID
-      of Fleet.ShardsTest:
-        self.settings.pinnedMailserver.shardsTest = mailserverID
+      of Fleet.StatusProd:
+        self.settings.pinnedMailserver.statusProd = mailserverID
       of Fleet.StatusStaging:
         self.settings.pinnedMailserver.statusStaging = mailserverID
       else:

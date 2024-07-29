@@ -83,7 +83,7 @@ proc getWakuVersion*(self: Service): int =
 proc isShardFleet(config: NodeConfigDto): bool =
   return
     case config.ClusterConfig.Fleet
-    of $Fleet.ShardsTest: true
+    of $Fleet.StatusProd: true
     of $Fleet.StatusStaging: true
     else: false
 
@@ -175,9 +175,9 @@ proc setFleet*(self: Service, fleet: string): bool =
     dnsDiscoveryURL.add(
       "enrtree://AOGYWMBYOUIMOENHXCHILPKY3ZRFEULMFI4DOM442QSZ73TT2A7VI@test.waku.nodes.status.im"
     )
-  of Fleet.ShardsTest:
+  of Fleet.StatusProd:
     dnsDiscoveryURL.add(
-      "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.test.shards.nodes.status.im"
+      "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.prod.status.nodes.status.im"
     )
   of Fleet.StatusStaging:
     dnsDiscoveryURL.add(
