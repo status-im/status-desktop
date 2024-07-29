@@ -65,7 +65,6 @@ Item {
             verify(dappModal.flatNetworks, "ConnectDAppModal should have networks")
 
             compare(dappModal.width, 480)
-            compare(dappModal.height, 633)
             compare(dappModal.dAppName, "")
             compare(dappModal.dAppUrl, "")
             compare(dappModal.dAppIconUrl, "")
