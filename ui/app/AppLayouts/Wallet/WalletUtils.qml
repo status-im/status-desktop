@@ -167,6 +167,7 @@ QtObject {
         case Constants.routerErrorCodes.processor.errContextDeadlineExceeded:
         case Constants.routerErrorCodes.processor.errPriceTimeout:
         case Constants.routerErrorCodes.processor.errNotEnoughLiquidity:
+        case Constants.routerErrorCodes.processor.errPriceImpactTooHigh:
             return qsTr("processor internal error")
         case Constants.routerErrorCodes.processor.errTransferCustomError:
         case Constants.routerErrorCodes.processor.errERC721TransferCustomError:
@@ -276,6 +277,8 @@ QtObject {
             return qsTr("fetching price timeout")
         case Constants.routerErrorCodes.processor.errNotEnoughLiquidity:
             return qsTr("not enough liquidity")
+        case Constants.routerErrorCodes.processor.errPriceImpactTooHigh:
+            return qsTr("price impact too high")
 
         case Constants.routerErrorCodes.processor.errTransferCustomError:
         case Constants.routerErrorCodes.processor.errERC721TransferCustomError:

@@ -1084,6 +1084,7 @@ QtObject {
             readonly property string errContextDeadlineExceeded        : "WPP-036"
             readonly property string errPriceTimeout                   : "WPP-037"
             readonly property string errNotEnoughLiquidity             : "WPP-038"
+            readonly property string errPriceImpactTooHigh             : "WPP-039"
         }
 
         readonly property QtObject router: QtObject {
@@ -1416,11 +1417,13 @@ QtObject {
         readonly property string paraswapSwapContractAddress: "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57"
         readonly property string termsAndConditionParaswapUrl: "https://files.paraswap.io/tos_v4.pdf"
 
+        // TOOD #15874: Unify with WalletUtils router error code handling
         readonly property QtObject errorCodes: QtObject {
             readonly property string errNotEnoughTokenBalance: "WR-016"
             readonly property string errNotEnoughNativeBalance: "WR-017"
             readonly property string errPriceTimeout: "WPP-037"
             readonly property string errNotEnoughLiquidity: "WPP-038"
+            readonly property string errPriceImpactTooHigh: "WPP-039"
         }
     }
 
