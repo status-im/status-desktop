@@ -17,6 +17,7 @@
 #include "StatusQ/modelentry.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/movablemodel.h"
+#include "StatusQ/networkchecker.h"
 #include "StatusQ/objectproxymodel.h"
 #include "StatusQ/permissionutilsinternal.h"
 #include "StatusQ/rolesrenamingmodel.h"
@@ -58,6 +59,7 @@ public:
         qmlRegisterType<SourceModel>("StatusQ", 0, 1, "SourceModel");
         qmlRegisterType<ConcatModel>("StatusQ", 0, 1, "ConcatModel");
         qmlRegisterType<MovableModel>("StatusQ", 0, 1, "MovableModel");
+        qmlRegisterType<NetworkChecker>("StatusQ", 0, 1, "NetworkChecker");
 
         qmlRegisterType<FastExpressionFilter>("StatusQ", 0, 1, "FastExpressionFilter");
         qmlRegisterType<FastExpressionRole>("StatusQ", 0, 1, "FastExpressionRole");

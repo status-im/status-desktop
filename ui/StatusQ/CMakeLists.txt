@@ -108,6 +108,7 @@ add_library(StatusQ SHARED
         include/StatusQ/modelsyncedcontainer.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/movablemodel.h
+        include/StatusQ/networkchecker.h
         include/StatusQ/objectproxymodel.h
         include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rolesrenamingmodel.h
@@ -137,6 +138,7 @@ add_library(StatusQ SHARED
         src/modelentry.cpp
         src/modelutilsinternal.cpp
         src/movablemodel.cpp
+        src/networkchecker.cpp
         src/objectproxymodel.cpp
         src/permissionutilsinternal.cpp
         src/plugin.cpp
