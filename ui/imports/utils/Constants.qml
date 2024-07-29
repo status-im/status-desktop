@@ -15,6 +15,15 @@ QtObject {
         readonly property int appEncryptionProcess: 3
     }
 
+    readonly property QtObject chains: QtObject {
+        readonly property int mainnetChainId: 1
+        readonly property int sepoliaChainId: 11155111
+        readonly property int optimismChainId: 10
+        readonly property int optimismSepoliaChainId: 11155420
+        readonly property int arbitrumChainId: 42161
+        readonly property int arbitrumSepoliaChainId: 421614
+    }
+
     readonly property QtObject startupFlow: QtObject {
         readonly property string general: "General"
         readonly property string firstRunNewUserNewKeys: "FirstRunNewUserNewKeys"
@@ -1046,6 +1055,77 @@ QtObject {
         SendAmountExceedsBalance,
         NoRoute,
         NoError
+    }
+
+    readonly property QtObject routerErrorCodes: QtObject {
+        readonly property QtObject processor: QtObject {
+            readonly property string errFailedToParseBaseFee           : "WPP-001"
+            readonly property string errFailedToParsePercentageFee     : "WPP-002"
+            readonly property string errContractNotFound               : "WPP-003"
+            readonly property string errNetworkNotFound                : "WPP-004"
+            readonly property string errTokenNotFound                  : "WPP-005"
+            readonly property string errNoEstimationFound              : "WPP-006"
+            readonly property string errNotAvailableForContractType    : "WPP-007"
+            readonly property string errNoBonderFeeFound               : "WPP-008"
+            readonly property string errContractTypeNotSupported       : "WPP-009"
+            readonly property string errFromChainNotSupported          : "WPP-010"
+            readonly property string errToChainNotSupported            : "WPP-011"
+            readonly property string errTxForChainNotSupported         : "WPP-012"
+            readonly property string errENSResolverNotFound            : "WPP-013"
+            readonly property string errENSRegistrarNotFound           : "WPP-014"
+            readonly property string errToAndFromTokensMustBeSet       : "WPP-015"
+            readonly property string errCannotResolveTokens            : "WPP-016"
+            readonly property string errPriceRouteNotFound             : "WPP-017"
+            readonly property string errConvertingAmountToBigInt       : "WPP-018"
+            readonly property string errNoChainSet                     : "WPP-019"
+            readonly property string errNoTokenSet                     : "WPP-020"
+            readonly property string errToTokenShouldNotBeSet          : "WPP-021"
+            readonly property string errFromAndToChainsMustBeDifferent : "WPP-022"
+            readonly property string errFromAndToChainsMustBeSame      : "WPP-023"
+            readonly property string errFromAndToTokensMustBeDifferent : "WPP-024"
+            readonly property string errTransferCustomError            : "WPP-025"
+            readonly property string errERC721TransferCustomError      : "WPP-026"
+            readonly property string errERC1155TransferCustomError     : "WPP-027"
+            readonly property string errBridgeHopCustomError           : "WPP-028"
+            readonly property string errBridgeCellerCustomError        : "WPP-029"
+            readonly property string errSwapParaswapCustomError        : "WPP-030"
+            readonly property string errENSRegisterCustomError         : "WPP-031"
+            readonly property string errENSReleaseCustomError          : "WPP-032"
+            readonly property string errENSPublicKeyCustomError        : "WPP-033"
+            readonly property string errStickersBuyCustomError         : "WPP-034"
+            readonly property string errContextCancelled               : "WPP-035"
+            readonly property string errContextDeadlineExceeded        : "WPP-036"
+            readonly property string errPriceTimeout                   : "WPP-037"
+            readonly property string errNotEnoughLiquidity             : "WPP-038"
+        }
+
+        readonly property QtObject router: QtObject {
+            readonly property string errENSRegisterRequiresUsernameAndPubKey      : "WR-001"
+            readonly property string errENSRegisterTestnetSTTOnly                 : "WR-002"
+            readonly property string errENSRegisterMainnetSNTOnly                 : "WR-003"
+            readonly property string errENSReleaseRequiresUsername                : "WR-004"
+            readonly property string errENSSetPubKeyRequiresUsernameAndPubKey     : "WR-005"
+            readonly property string errStickersBuyRequiresPackID                 : "WR-006"
+            readonly property string errSwapRequiresToTokenID                     : "WR-007"
+            readonly property string errSwapTokenIDMustBeDifferent                : "WR-008"
+            readonly property string errSwapAmountInAmountOutMustBeExclusive      : "WR-009"
+            readonly property string errSwapAmountInMustBePositive                : "WR-010"
+            readonly property string errSwapAmountOutMustBePositive               : "WR-011"
+            readonly property string errLockedAmountNotSupportedForNetwork        : "WR-012"
+            readonly property string errLockedAmountNotNegative                   : "WR-013"
+            readonly property string errLockedAmountExceedsTotalSendAmount        : "WR-014"
+            readonly property string errLockedAmountLessThanSendAmountAllNetworks : "WR-015"
+            readonly property string errNotEnoughTokenBalance                     : "WR-016"
+            readonly property string errNotEnoughNativeBalance                    : "WR-017"
+            readonly property string errNativeTokenNotFound                       : "WR-018"
+            readonly property string errDisabledChainFoundAmongLockedNetworks     : "WR-019"
+            readonly property string errENSSetPubKeyInvalidUsername               : "WR-020"
+            readonly property string errLockedAmountExcludesAllSupported          : "WR-021"
+            readonly property string errTokenNotFound                             : "WR-022"
+            readonly property string errNoBestRouteFound                          : "WR-023"
+            readonly property string errCannotCheckReceiverBalance                : "WR-024"
+            readonly property string errCannotCheckLockedAmounts                  : "WR-025"
+        }
     }
 
     enum LoginType {
