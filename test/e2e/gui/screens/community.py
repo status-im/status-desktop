@@ -438,11 +438,21 @@ class Members(QObject):
         super().__init__(communities_names.mainWindow_userListPanel_StatusListView)
         self._member_item = QObject(communities_names.userListPanel_StatusMemberListItem)
         self._user_badge_color = QObject(communities_names.statusBadge_StatusBadge)
+        self._banned_tab_button = Button(communities_names.membersTabBar_Banned_StatusTabButton)
+        self._all_members_tab_button = Button(communities_names.membersTabBar_All_Members_StatusTabButton)
 
     @property
     @allure.step('Get all members')
     def members(self) -> typing.List[str]:
         return [str(member.statusListItemTitle.text) for member in driver.findAllObjects(self._member_item.real_name)]
+
+    @allure.step('Open banned tab')
+    def click_banned_button(self):
+        self._banned_tab_button.click()
+
+    @allure.step('Open all members tab')
+    def click_all_members_button(self):
+        self._all_members_tab_button.click()
 
     @allure.step('Click member by name')
     def click_member(self, member_name: str):

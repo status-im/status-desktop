@@ -68,12 +68,14 @@ SettingsPage {
 
             StatusTabButton {
                 id: allMembersBtn
+                objectName: "allMembersButton"
                 width: implicitWidth
                 text: qsTr("All Members")
             }
 
             StatusTabButton {
                 id: pendingRequestsBtn
+                objectName: "pendingRequestsButton"
                 width: implicitWidth
                 text: qsTr("Pending Requests")
                 enabled: pendingMemberRequestsModel.count > 0
@@ -81,6 +83,7 @@ SettingsPage {
 
             StatusTabButton {
                 id: declinedRequestsBtn
+                objectName: "declinedRequestsButton"
                 width: implicitWidth
                 text: qsTr("Rejected")
                 enabled: declinedMemberRequestsModel.count > 0
@@ -88,6 +91,7 @@ SettingsPage {
 
             StatusTabButton {
                 id: bannedBtn
+                objectName: "bannedButton"
                 width: implicitWidth
                 enabled: bannedMembersModel.count > 0
                 text: qsTr("Banned")

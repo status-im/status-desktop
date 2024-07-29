@@ -231,6 +231,7 @@ class ChatView(QObject):
         super().__init__(messaging_names.mainWindow_ChatColumnView)
         self._message_list_item = QObject(messaging_names.chatLogView_chatMessageViewDelegate_MessageView)
         self._deleted_message = QObject(messaging_names.chatMessageViewDelegate_deletedMessage_RowLayout)
+        self._recent_messages_button = QObject(messaging_names.layout_recentMessagesButton_AnchorButton)
 
     @allure.step('Get messages')
     def messages(self, index: int) -> typing.List[Message]:
@@ -239,6 +240,8 @@ class ChatView(QObject):
         # message_list_item has different indexes if we run multiple instances, so we pass index
         if index is not None:
             self._message_list_item.real_name['index'] = index
+        if self._recent_messages_button.is_visible:
+            self._recent_messages_button.click()
         for item in driver.findAllObjects(self._message_list_item.real_name):
             if getattr(item, 'isMessage', False):
                 _messages.append(Message(item))

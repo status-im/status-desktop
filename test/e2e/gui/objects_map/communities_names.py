@@ -77,6 +77,8 @@ mainWindow_MembersSettingsPanel = {"container": mainWindow_communityLoader_Loade
 membersListViews_ListView = {"container": mainWindow_MembersSettingsPanel, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
 memberItem_StatusMemberListItem = {"container": membersListViews_ListView, "id": "memberItem", "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
 communitySettings_MembersTab_Member_Kick_Button = {"container": membersListViews_ListView, "objectName": "MemberListItem_KickButton", "type": "StatusButton", "visible": True}
+memberItem_Ban_StatusButton = {"checkable": False, "container": membersListViews_ListView, "objectName": "MemberListItem_BanButton", "type": "StatusButton", "visible": True}
+memberItem_Unban_StatusButton = {"checkable": False, "container": membersListViews_ListView, "objectName": "MemberListItem_UnbanButton", "type": "StatusButton", "visible": True}
 
 # Tokens View
 mainWindow_mintPanel_MintTokensSettingsPanel = {"container": mainWindow_StatusWindow, "id": "mintPanel", "type": "MintTokensSettingsPanel", "unnamed": 1, "visible": True}
@@ -225,3 +227,6 @@ croppedImageEditBanner = {"container": mainWindow_communityEditPanelScrollView_E
 mainWindow_userListPanel_StatusListView = {"container": statusDesktop_mainWindow, "objectName": "userListPanel", "type": "StatusListView", "visible": True}
 userListPanel_StatusMemberListItem = {"container": mainWindow_userListPanel_StatusListView, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
 statusBadge_StatusBadge = {"container": userListPanel_StatusMemberListItem, "id": "statusBadge", "type": "StatusBadge", "unnamed": 1, "visible": True}
+mainWindow_membersTabBar_StatusTabBar = {"container": statusDesktop_mainWindow, "id": "membersTabBar", "type": "StatusTabBar", "unnamed": 1, "visible": True}
+membersTabBar_Banned_StatusTabButton = {"checkable": True, "container": mainWindow_membersTabBar_StatusTabBar, "objectName": "bannedButton", "type": "StatusTabButton", "visible": True}
+membersTabBar_All_Members_StatusTabButton = {"checkable": True, "container": mainWindow_membersTabBar_StatusTabBar, "objectName": "allMembersButton", "type": "StatusTabButton", "visible": True}
