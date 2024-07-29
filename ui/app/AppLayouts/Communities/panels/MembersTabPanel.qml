@@ -243,6 +243,7 @@ Item {
 
                     StatusButton {
                         id: banButton
+                        objectName: "MemberListItem_BanButton"
                         anchors.verticalCenter: parent.verticalCenter
                         visible: banButtonVisible
                         text: qsTr("Ban")
@@ -252,6 +253,7 @@ Item {
                     },
 
                     StatusButton {
+                        objectName: "MemberListItem_UnbanButton"
                         anchors.verticalCenter: parent.verticalCenter
                         visible: unbanButtonVisible
                         text: qsTr("Unban")

@@ -58,6 +58,8 @@ class ToastMessages(Enum):
     BLOCKED_USER_TOAST = ' blocked'
     UNBLOCKED_USER_TOAST = ' unblocked'
     REMOVED_CONTACT_TOAST = 'Contact removed'
+    BANNED_USER_TOAST = ' was banned from '
+    UNBANNED_USER_TOAST = ' unbanned from '
 
 
 class LimitWarnings(Enum):
