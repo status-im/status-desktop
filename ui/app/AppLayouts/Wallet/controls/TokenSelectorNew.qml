@@ -22,6 +22,8 @@ Control {
     /** Expected model structure: see TokenSelectorPanel::collectiblesModel **/
     property alias collectiblesModel: tokenSelectorPanel.collectiblesModel
 
+    readonly property bool isTokenSelected: d.isTokenSelected
+
     signal assetSelected(string key)
     signal collectionSelected(string key)
     signal collectibleSelected(string key)
@@ -90,8 +92,10 @@ Control {
 
         RowLayout {
             spacing: Style.current.halfPadding
+            width: parent.width
 
             StatusRoundedImage {
+                id: tokenSelectorIcon
                 objectName: "tokenSelectorIcon"
                 Layout.preferredWidth: 20
                 Layout.preferredHeight: 20
@@ -102,12 +106,24 @@ Control {
                 objectName: "tokenSelectorContentItemText"
                 font.pixelSize: 28
                 color: root.hovered ? Theme.palette.blue : Theme.palette.darkBlue
+                Layout.maximumWidth: parent.width - (tokenSelectorIcon.width + comboboxIndicator.width + parent.spacing * 2)
+                elide: Text.ElideRight
+                Layout.alignment: Qt.AlignLeft
 
                 text: d.currentName
             }
 
-            StatusComboboxIndicator {
-                color: Theme.palette.primaryColor1
+            Item {
+                // Encapsulated into the item to not resize the icon
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                StatusComboboxIndicator {
+                    id: comboboxIndicator
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    color: Theme.palette.primaryColor1
+                }
             }
         }
     }
