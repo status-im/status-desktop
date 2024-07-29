@@ -59,7 +59,7 @@ QtObject {
             function buildDataObject(tx) { return {tx}}
             function getTxObjFromData(data) { return data.tx }
         }
-        readonly property var all: [personalSign, sign, signTypedData_v4, signTypedData, signTransaction, sendTransaction]
+        readonly property var all: [personalSign, sign, signTypedData_v4, signTypedData, sendTransaction]
     }
 
     function getSupportedMethods() {
