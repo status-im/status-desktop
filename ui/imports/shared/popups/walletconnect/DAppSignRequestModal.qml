@@ -127,6 +127,7 @@ SignTransactionModalBase {
     ContentPanel {
         Layout.fillWidth: true
         Layout.fillHeight: true
+        Layout.bottomMargin: Style.current.bigPadding
         payloadToDisplay: root.requestPayload
         visible: !!root.requestPayload
     }
