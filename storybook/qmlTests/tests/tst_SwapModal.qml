@@ -1788,8 +1788,10 @@ Item {
 
         function test_deleteing_input_characters_data() {
             return [
-                        {input: "0.001"},
-                        {input: "1.00015"},
+                        {input: "0.001", locale: Qt.locale("en_US")},
+                        {input: "1.00015", locale: Qt.locale("en_US")},
+                        {input: "0.001", locale: Qt.locale("pl_PL")},
+                        {input: "1.90015", locale: Qt.locale("pl_PL")},
                         /* TODO uncomment after https://discord.com/channels/@me/927512790296563712/1260937239140241408
                         {input: "100.000000000000151001"},
                         {input: "1.0200000000000151001"} */
@@ -1804,6 +1806,7 @@ Item {
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
+            amountToSendInput.input.locale = data.locale
 
             // Launch popup
             launchAndVerfyModal()
@@ -1812,9 +1815,10 @@ Item {
 
             //TODO: should not be needed after https://github.com/status-im/status-desktop/issues/15417
             amountToSendInput.input.input.cursorPosition = data.input.length
+            let amountToTestInLocale = data.input.replace('.', amountToSendInput.input.locale.decimalPoint)
             for(let i =0; i< data.input.length; i++) {
                 keyClick(Qt.Key_Backspace)
-                let expectedAmount = data.input.substring(0, data.input.length - (i+1))
+                let expectedAmount = amountToTestInLocale.substring(0, data.input.length - (i+1))
                 compare(amountToSendInput.input.text, expectedAmount)
             }
         }
