@@ -101,7 +101,7 @@ StatusModal {
         property bool chainShortNamesDirty: false
         property var networkSelection: []
 
-        onNetworkSelectionChanged: { 
+        onNetworkSelectionChanged: {
             if (d.networkSelection !== networkSelectPopup.selection) {
                 networkSelectPopup.selection = d.networkSelection
             }
@@ -117,6 +117,8 @@ StatusModal {
         readonly property bool dirty: nameInput.input.dirty && (!d.editMode || d.storedName !== d.name)
                                       || chainShortNamesDirty && (!d.editMode || d.storedChainShortNames !== d.chainShortNames)
                                       || d.colorId.toUpperCase() !== d.storedColorId.toUpperCase()
+
+        property bool incorrectChecksum: false
 
 
         readonly property var chainPrefixRegexPattern: /[^:]+\:?|:/g
@@ -230,6 +232,13 @@ StatusModal {
             addressInput.errorMessageCmp.visible = true
         }
 
+        function checkIfAddressChecksumIsValid() {
+            d.incorrectChecksum = false
+            if (d.addressInputIsAddress) {
+                d.incorrectChecksum = !root.store.isChecksumValidForAddress(d.address)
+            }
+        }
+
         function checkForAddressInputErrorsWarnings() {
             addressInput.errorMessageCmp.visible = false
             addressInput.errorMessageCmp.color = Theme.palette.dangerColor1
@@ -260,6 +269,7 @@ StatusModal {
             networkSelector.state = ""
             if (d.addressInputIsAddress) {
                 d.checkForAddressInputOwningErrorsWarnings()
+                d.checkIfAddressChecksumIsValid()
                 return
             }
 
@@ -419,7 +429,7 @@ StatusModal {
                 enabled: !(d.editMode || d.addAddress)
                 input.edit.textFormat: TextEdit.RichText
                 input.rightComponent: (d.resolvingEnsNameInProgress || d.checkingContactsAddressInProgress) ?
-                    loadingIndicator : null
+                    loadingIndicator : d.incorrectChecksum? incorrectChecksumComponent : null
                 input.asset.name: d.addressInputValid && !d.editMode ? "checkbox" : ""
                 input.asset.color: enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
                 input.asset.width: 17
@@ -436,6 +446,18 @@ StatusModal {
                     id: loadingIndicator
 
                     StatusLoadingIndicator {}
+                }
+
+                Component {
+                    id: incorrectChecksumComponent
+
+                    StatusIconWithTooltip {
+                        icon: "warning"
+                        width: 20
+                        height: 20
+                        color: Theme.palette.warningColor1
+                        tooltipText: qsTr("Checksum of the entered address is incorrect")
+                    }
                 }
 
                 onTextChanged: {
@@ -469,7 +491,7 @@ StatusModal {
                                 d.ens = ""
                                 d.address = prefixAndAddress.address
                                 d.chainShortNames = prefixAndAddress.prefix
-                                
+
                                 Qt.callLater(()=> {
                                     // Sync chain short names with model. This could result in removing networks from this text
                                     // Call it later to avoid binding loop warnings

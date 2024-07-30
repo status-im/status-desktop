@@ -71,3 +71,6 @@ proc hasPairedDevices*(self: Controller): bool =
 
 proc reloadAccountTokens*(self: Controller) =
   self.walletAccountService.reloadAccountTokens()
+
+proc isChecksumValidForAddress*(self: Controller, address: string): bool =
+  return self.walletAccountService.isChecksumValidForAddress(address)
