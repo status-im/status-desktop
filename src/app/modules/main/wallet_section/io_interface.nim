@@ -123,3 +123,6 @@ method canProfileProveOwnershipOfProvidedAddresses*(self: AccessInterface, addre
 
 method reloadAccountTokens*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isChecksumValidForAddress*(self: AccessInterface, address: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

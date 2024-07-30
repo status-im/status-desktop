@@ -304,6 +304,10 @@ QtObject {
         }
     }
 
+    function isChecksumValidForAddress(address) {
+        return root.walletSectionInst.isChecksumValidForAddress(address)
+    }
+
     function getNameForAddress(address) {
         var name = getNameForWalletAddress(address)
         if (name.length === 0) {

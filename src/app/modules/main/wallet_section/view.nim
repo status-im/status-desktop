@@ -300,7 +300,7 @@ QtObject:
   QtProperty[QVariant] lastReloadTimestamp:
     read = getLastReloadTimestamp
     notify = lastReloadTimestampChanged
-  
+
   proc isAccountTokensReloadingChanged*(self: View) {.signal.}
 
   proc setIsAccountTokensReloading*(self: View, isAccountTokensReloading: bool) =
@@ -316,3 +316,5 @@ QtObject:
     read = getIsAccountTokensReloading
     notify = isAccountTokensReloadingChanged
 
+  proc isChecksumValidForAddress*(self: View, address: string): bool {.slot.} =
+    return self.delegate.isChecksumValidForAddress(address)
