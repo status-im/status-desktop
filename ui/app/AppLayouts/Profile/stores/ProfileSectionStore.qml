@@ -111,7 +111,8 @@ QtObject {
                        isExperimental: true})
             append({subsection: Constants.settingsSubsection.syncingSettings,
                        text: qsTr("Syncing"),
-                       icon: "rotate"})
+                       icon: "rotate",
+                       isExperimental: true})
         }
     }
 
