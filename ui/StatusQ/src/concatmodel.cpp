@@ -216,6 +216,27 @@ const QStringList& ConcatModel::expectedRoles() const
     return m_expectedRoles;
 }
 
+void ConcatModel::setPropagateResets(bool propagateResets)
+{
+    if (m_propagateResets == propagateResets)
+        return;
+
+    m_propagateResets = propagateResets;
+    emit propagateResetsChanged();
+}
+
+/*!
+    \qmlproperty list<string> StatusQ::ConcatModel::propagateResets
+
+    When set to true, model resets on source models result with model reset of
+    the ConcatModel. Otherwise model resets of sources are handled as removals
+    and insertions. Default is false.
+*/
+bool ConcatModel::propagateResets() const
+{
+    return m_propagateResets;
+}
+
 /*!
     \qmlmethod int StatusQ::ConcatModel::sourceModelRow(row)
 
@@ -674,12 +695,18 @@ void ConcatModel::connectModelSlots(int index, QAbstractItemModel *model)
         if (!m_initialized)
             return;
 
+        if (m_propagateResets) {
+            this->beginResetModel();
+            return;
+        }
+
         auto currentCount = m_rowCounts[index];
 
-        if (currentCount) {
-            auto prefix = this->countPrefix(index);
-            this->beginRemoveRows({}, prefix, prefix + currentCount - 1);
-        }
+        if (currentCount == 0)
+            return;
+
+        auto prefix = this->countPrefix(index);
+        this->beginRemoveRows({}, prefix, prefix + currentCount - 1);
     });
 
     connect(model, &QAbstractItemModel::modelReset, this, [this, model, index]
@@ -687,8 +714,11 @@ void ConcatModel::connectModelSlots(int index, QAbstractItemModel *model)
         auto count = model->rowCount();
 
         if (!m_initialized) {
-            if (count) {
-                this->beginInsertRows({}, 0, count - 1);
+            if (count != 0) {
+                if (m_propagateResets)
+                    this->beginResetModel();
+                else
+                    this->beginInsertRows({}, 0, count - 1);
 
                 initRoles();
                 initRolesMapping();
@@ -696,25 +726,34 @@ void ConcatModel::connectModelSlots(int index, QAbstractItemModel *model)
 
                 m_rowCounts[index] = count;
 
-                this->endInsertRows();
+                if (m_propagateResets)
+                    this->endResetModel();
+                else
+                    this->endInsertRows();
             }
         } else {
-            auto previousCount = m_rowCounts[index];
-
-            if (previousCount) {
-                m_rowCounts[index] = 0;
-                this->endRemoveRows();
-            }
-
-            initRolesMapping(index, model);
-
-            if (count) {
-                auto prefix = this->countPrefix(index);
-                this->beginInsertRows({}, prefix, prefix + count - 1);
-
+            if (m_propagateResets) {
+                initRolesMapping(index, model);
                 m_rowCounts[index] = count;
+                this->endResetModel();
+            } else {
+                auto previousCount = m_rowCounts[index];
 
-                this->endInsertRows();
+                if (previousCount != 0) {
+                    m_rowCounts[index] = 0;
+                    this->endRemoveRows();
+                }
+
+                initRolesMapping(index, model);
+
+                if (count != 0) {
+                    auto prefix = this->countPrefix(index);
+                    this->beginInsertRows({}, prefix, prefix + count - 1);
+
+                    m_rowCounts[index] = count;
+
+                    this->endInsertRows();
+                }
             }
         }
     });
