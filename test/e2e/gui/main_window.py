@@ -141,7 +141,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open settings')
     def open_settings(self, attempts: int = 2) -> SettingsScreen:
-        self._settings_button.click()
+        self._settings_button.click(timeout=5)
         time.sleep(0.5)
         try:
             SettingsScreen().left_panel.wait_until_appears()
