@@ -333,6 +333,7 @@ StatusDialog {
 
                     HeaderTitleText {
                         id: modalHeader
+                        objectName: "modalHeader"
                         Layout.maximumWidth: contentWidth
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                         text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
@@ -340,6 +341,7 @@ StatusDialog {
 
                     TokenSelectorNew {
                         id: holdingSelector
+                        objectName: "holdingSelector"
 
                         property var selectedItem
                         property bool onlyAssets: false

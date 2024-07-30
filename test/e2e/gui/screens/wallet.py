@@ -10,7 +10,10 @@ from driver.objects_access import walk_children
 from gui.components.base_popup import BasePopup
 from gui.components.context_menu import ContextMenu
 from gui.components.wallet.add_saved_address_popup import AddressPopup, EditSavedAddressPopup
+from gui.components.wallet.asset_context_menu_popup import AssetContextMenuPopup
+from gui.components.wallet.bridge_popup import BridgePopup
 from gui.components.wallet.confirmation_popup import ConfirmationPopup
+from gui.components.wallet.receive_popup import ReceivePopup
 from gui.components.wallet.remove_wallet_account_popup import RemoveWalletAccountPopup
 from gui.components.wallet.send_popup import SendPopup
 from gui.components.wallet.wallet_account_popups import AccountPopup
@@ -196,6 +199,8 @@ class WalletAccountView(QObject):
         self._account_name_text_label = TextLabel(wallet_names.mainWallet_Account_Name)
         self._addresses_panel = QObject(names.mainWallet_Address_Panel)
         self._send_button = Button(wallet_names.mainWindow_Send_Button)
+        self._receive_button = Button(wallet_names.mainWindow_Receive_Button)
+        self._bridge_button = Button(wallet_names.mainWindow_Bridge_Button)
         self._filter_button = Button(wallet_names.filterButton_StatusFlatButton)
         self._assets_combobox = List(wallet_names.cmbTokenOrder_SortOrderComboBox)
         self._assets_tab_button = Button(wallet_names.rightSideWalletTabBar_Assets_StatusTabButton)
@@ -223,6 +228,16 @@ class WalletAccountView(QObject):
     def open_send_popup(self) -> SendPopup:
         self._send_button.click()
         return SendPopup().wait_until_appears()
+
+    @allure.step('Open bridge popup')
+    def open_bridge_popup(self) -> BridgePopup:
+        self._bridge_button.click()
+        return BridgePopup().wait_until_appears()
+
+    @allure.step('Open receive popup')
+    def open_receive_popup(self) -> ReceivePopup:
+        self._receive_button.click()
+        return ReceivePopup().wait_until_appears()
 
     @allure.step('Open assets tab')
     def open_assets_tab(self):
@@ -270,6 +285,11 @@ class WalletAccountView(QObject):
             token_list_items.append(item)
         sorted(token_list_items, key=lambda item: item.y)
         return token_list_items
+
+    @allure.step('Open asset context menu')
+    def open_asset_context_menu(self, index: int):
+        QObject(real_name=driver.objectMap.realName(self.get_list_of_assets()[index])).right_click()
+        return AssetContextMenuPopup().wait_until_appears()
 
     @allure.step('Get list of collectibles')
     def get_list_of_collectibles(self) -> typing.List:
