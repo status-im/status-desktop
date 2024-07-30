@@ -113,16 +113,18 @@ StatusDialog {
 
             DAppCard {
                 id: dappCard
-                Layout.maximumWidth: root.availableWidth - Layout.leftMargin * 2
+                Layout.maximumWidth: scrollView.availableWidth - Layout.leftMargin * 2
                 Layout.leftMargin: 12
                 Layout.rightMargin: Layout.leftMargin
                 Layout.topMargin: 14
                 Layout.bottomMargin: Layout.topMargin
+                connectionSuccessful: d.connectionSuccessful
+                connectionAttempted: d.connectionAttempted
             }
 
             ContextCard {
                 id: contextCard
-                Layout.maximumWidth: root.availableWidth
+                Layout.maximumWidth: scrollView.availableWidth
                 Layout.fillWidth: true
 
                 multipleChainSelection: root.multipleChainSelection
@@ -140,7 +142,7 @@ StatusDialog {
             }
 
             PermissionsCard {
-                Layout.maximumWidth: root.availableWidth
+                Layout.maximumWidth: scrollView.availableWidth
                 Layout.fillWidth: true
 
                 Layout.leftMargin: 16

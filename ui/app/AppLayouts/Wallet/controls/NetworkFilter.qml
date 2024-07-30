@@ -61,7 +61,7 @@ StatusComboBox {
     control.indicator: SQP.StatusComboboxIndicator {
         x: root.control.mirrored ? root.control.horizontalPadding : root.width - width - root.control.horizontalPadding
         y: root.control.topPadding + (root.control.availableHeight - height) / 2
-        visible: !d.selectionUnavailable
+        visible: !d.selectionUnavailable && root.selectionAllowed
     }
 
     control.contentItem: RowLayout {
