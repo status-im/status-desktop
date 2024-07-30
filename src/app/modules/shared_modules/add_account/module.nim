@@ -736,4 +736,7 @@ method buildNewSeedPhraseKeypairAndAddItToOrigin*[T](self: Module[T]) =
     derivedFrom = genAcc.address)
   self.setItemForSelectedOrigin(item)
 
+method isChecksumValidForAddress*[T](self: Module[T], address: string): bool =
+  return self.controller.isChecksumValidForAddress(address)
+
 {.pop.}

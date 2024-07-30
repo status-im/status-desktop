@@ -155,6 +155,10 @@ BasePopupStore {
         root.addAccountModule.startScanningForActivity()
     }
 
+    function isChecksumValidForAddress(address) {
+        return root.addAccountModule.isChecksumValidForAddress(address)
+    }
+
     validSeedPhrase: function(seedPhrase) {
         return root.addAccountModule.validSeedPhrase(seedPhrase)
     }
