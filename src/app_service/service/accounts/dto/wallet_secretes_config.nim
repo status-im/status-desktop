@@ -17,6 +17,8 @@ type
     alchemyOptimismMainnetToken*: string
     alchemyOptimismGoerliToken*: string
     alchemyOptimismSepoliaToken*: string
+    statusProxyMarketUser*: string
+    statusProxyMarketPassword*: string
 
 proc toJson*(self: WalletSecretsConfig): JsonNode =
   return %* {
@@ -34,5 +36,7 @@ proc toJson*(self: WalletSecretsConfig): JsonNode =
     "alchemyArbitrumSepoliaToken": self.alchemyArbitrumSepoliaToken,
     "alchemyOptimismMainnetToken": self.alchemyOptimismMainnetToken,
     "alchemyOptimismGoerliToken": self.alchemyOptimismGoerliToken,
-    "alchemyOptimismSepoliaToken": self.alchemyOptimismSepoliaToken
+    "alchemyOptimismSepoliaToken": self.alchemyOptimismSepoliaToken,
+    "statusProxyMarketUser": self.statusProxyMarketUser,
+    "statusProxyMarketPassword": self.statusProxyMarketPassword
   }

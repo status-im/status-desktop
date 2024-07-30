@@ -219,6 +219,8 @@ QtObject:
       alchemyOptimismMainnetToken: ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
       alchemyOptimismGoerliToken: ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
       alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
+      statusProxyMarketUser: STATUS_PROXY_MARKET_USER_RESOLVED,
+      statusProxyMarketPassword: STATUS_PROXY_MARKET_PASSWORD_RESOLVED,
     )
 
   proc buildCreateAccountRequest(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
