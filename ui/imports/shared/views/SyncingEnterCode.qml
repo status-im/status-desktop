@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
@@ -42,6 +43,12 @@ ColumnLayout {
         StatusSwitchTabButton {
             text: root.secondTabName
         }
+    }
+
+    StatusBetaTag {
+        anchors.left: switchTabBar.right
+        anchors.leftMargin: 8
+        anchors.verticalCenter: switchTabBar.verticalCenter
     }
 
     StackLayout {

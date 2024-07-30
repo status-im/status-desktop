@@ -169,17 +169,27 @@ SettingsContentBase {
 
                 spacing: 17
 
-                StatusBaseText {
-                    
-                    objectName: "syncNewDeviceTextLabel"
-
-                    Layout.fillWidth: true
+                Item {
+                    Layout.alignment: Qt.AlignHCenter
+                    height: syncNewDeviceText.height
+                    width: syncNewDeviceText.width
                     Layout.topMargin: -8
-                    horizontalAlignment: Text.AlignHCenter
-                    color: Theme.palette.primaryColor1
-                    font.pixelSize: 17
-                    font.weight: Font.Bold
-                    text: qsTr("Sync a New Device")
+
+                    StatusBaseText {
+                        id: syncNewDeviceText
+                        objectName: "syncNewDeviceTextLabel"
+
+                        color: Theme.palette.primaryColor1
+                        font.pixelSize: 17
+                        font.weight: Font.Bold
+                        text: qsTr("Sync a New Device")
+
+                        StatusBetaTag {
+                            anchors.left: parent.right
+                            anchors.leftMargin: 8
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
                 }
 
                 StatusBaseText {
