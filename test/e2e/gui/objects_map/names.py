@@ -519,6 +519,30 @@ send_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWind
 o_SearchBoxWithRightIcon = {"container": statusDesktop_mainWindow_overlay, "type": "SearchBoxWithRightIcon", "unnamed": 1, "visible": True}
 search_TextEdit = {"container": o_SearchBoxWithRightIcon, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 
+# Assets Context Menu popup
+send_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "sendMenuItem", "type": "StatusMenuItem", "visible": True}
+receive_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "receiveMenuItem", "type": "StatusMenuItem", "visible": True}
+
+# Receive popup
+networkTagRectangle_eth_Rectangle = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_eth", "type": "Rectangle", "visible": True}
+networkTagRectangle_oeth_Rectangle = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_oeth", "type": "Rectangle", "visible": True}
+networkTagRectangle_arb1_Rectangle = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_arb1", "type": "Rectangle", "visible": True}
+tabBar_StatusSwitchTabBar = {"container": statusDesktop_mainWindow_overlay, "id": "tabBar", "type": "StatusSwitchTabBar", "unnamed": 1, "visible": True}
+tabBar_Multichain_StatusSwitchTabButton = {"checkable": True, "container": tabBar_StatusSwitchTabBar, "objectName": "multichainButton", "type": "StatusSwitchTabButton", "visible": True}
+tabBar_Legacy_StatusSwitchTabButton = {"checkable": True, "container": tabBar_StatusSwitchTabBar, "objectName": "legacyButton", "type": "StatusSwitchTabButton", "visible": True}
+accountSelector_AccountSelectorHeader = {"container": statusDesktop_mainWindow_overlay, "objectName": "accountSelector", "type": "AccountSelectorHeader", "visible": True}
+textContent_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "textContent", "type": "StatusBaseText", "visible": True}
+edit_pencil_icon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "objectName": "edit_pencil-icon", "type": "StatusIcon", "visible": True}
+greenCircleAroundIcon_Rectangle = {"container": statusDesktop_mainWindow_overlay, "id": "greenCircleAroundIcon", "type": "Rectangle", "unnamed": 1, "visible": True}
+qrCodeImage_Image = {"container": statusDesktop_mainWindow_overlay, "objectName": "qrCodeImage", "type": "Image", "visible": True}
+networkSelectorDelegate_Mainnet_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 0, "objectName": "networkSelectorDelegate_Mainnet", "type": "NetworkSelectItemDelegate", "visible": True}
+networkSelectorDelegate_Optimism_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 1, "objectName": "networkSelectorDelegate_Optimism", "type": "NetworkSelectItemDelegate", "visible": True}
+networkSelectorDelegate_Arbitrum_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_overlay, "index": 2, "objectName": "networkSelectorDelegate_Arbitrum", "type": "NetworkSelectItemDelegate", "visible": True}
+
+# Bridge popup
+holdingSelector_TokenSelectorNew = {"container": statusDesktop_mainWindow_overlay, "objectName": "holdingSelector", "type": "TokenSelectorNew", "visible": True}
+modalHeader_HeaderTitleText = {"container": statusDesktop_mainWindow_overlay, "objectName": "modalHeader", "type": "HeaderTitleText", "visible": True}
+
 # Verify identity popup
 profileSendContactRequestModal_sayWhoYouAreInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sayWhoYouAreInput", "type": "TextEdit", "visible": True}
 send_verification_request_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sendContactRequestButton", "type": "StatusButton", "visible": True}

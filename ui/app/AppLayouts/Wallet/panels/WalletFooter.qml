@@ -122,6 +122,7 @@ Rectangle {
         }
 
         StatusFlatButton {
+            objectName: "walletFooterReceiveButton"
             icon.name: "receive"
             text: qsTr("Receive")
             visible: d.receiveActionAvailable
@@ -132,6 +133,7 @@ Rectangle {
         }
 
         StatusFlatButton {
+            objectName: "walletFooterBridgeButton"
             icon.name: "bridge"
             text: qsTr("Bridge")
             interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
@@ -142,6 +144,7 @@ Rectangle {
 
         StatusFlatButton {
             id: buySellBtn
+            objectName: "walletFooterBuyButton"
 
             visible: d.buyActionAvailable
             icon.name: "token"
@@ -151,6 +154,7 @@ Rectangle {
 
         StatusFlatButton {
             id: swap
+            objectName: "walletFooterSwapButton"
 
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             visible: d.swapActionAvailable

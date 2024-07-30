@@ -20,6 +20,7 @@ StatusMenu {
     signal manageTokensRequested
 
     StatusAction {
+        objectName: "sendMenuItem"
         enabled: root.sendEnabled
         visibleOnDisabled: true
         icon.name: "send"
@@ -27,6 +28,7 @@ StatusMenu {
         onTriggered: root.sendRequested()
     }
     StatusAction {
+        objectName: "receiveMenuItem"
         icon.name: "receive"
         text: qsTr("Receive")
         onTriggered: root.receiveRequested()

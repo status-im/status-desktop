@@ -32,6 +32,16 @@ class SendPopup(BasePopup):
         self._mainnet_network = QObject(names.mainnet_StatusListItem)
         self._fiat_fees_label = TextLabel(names.fiatFees_StatusBaseText)
         self._send_button = Button(names.send_StatusFlatButton)
+        self._account_selector = QObject(names.accountSelector_AccountSelectorHeader)
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._ens_address_text_edit.wait_until_appears(timeout_msec)
+        return self
+
+    @allure.step('Get current text in account selector')
+    def get_text_from_account_selector(self) -> str:
+        return str(self._account_selector.object.currentText)
 
     @allure.step('Select asset or collectible by name')
     def _select_asset_or_collectible(self, name: str, tab: str, attempts: int = 2):
