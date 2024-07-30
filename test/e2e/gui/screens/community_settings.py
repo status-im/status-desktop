@@ -7,6 +7,7 @@ import allure
 import configs
 import driver
 from driver.objects_access import walk_children
+from gui.components.community.ban_member_popup import BanMemberPopup
 from gui.components.community.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
 from gui.components.kick_member_popup import KickMemberPopup
@@ -267,6 +268,8 @@ class MembersView(QObject):
         super().__init__(communities_names.mainWindow_MembersSettingsPanel)
         self._member_list_item = QObject(communities_names.memberItem_StatusMemberListItem)
         self._kick_member_button = Button(communities_names.communitySettings_MembersTab_Member_Kick_Button)
+        self._ban_member_button = Button(communities_names.memberItem_Ban_StatusButton)
+        self._unban_member_button = Button(communities_names.memberItem_Unban_StatusButton)
 
     @property
     @allure.step('Get community members')
@@ -301,6 +304,25 @@ class MembersView(QObject):
         kick_member_popup = KickMemberPopup()
         assert kick_member_popup.exists
         kick_member_popup.confirm_kicking()
+
+    @allure.step('Ban community member')
+    def ban_member(self, member_name: str):
+        member = self.get_member_object(member_name)
+        QObject(real_name=driver.objectMap.realName(member)).hover()
+        self._ban_member_button.click()
+        return BanMemberPopup().wait_until_appears()
+
+    @allure.step('Unban community member')
+    def unban_member(self, member_name: str, attempt: int = 2):
+        member = self.get_member_object(member_name)
+        QObject(real_name=driver.objectMap.realName(member)).hover()
+        try:
+            self._unban_member_button.wait_until_appears().click()
+        except AssertionError as er:
+            if attempt:
+                self.unban_member(member_name, attempt-1)
+            else:
+                raise er
 
 
 class AirdropsView(QObject):
