@@ -12,6 +12,8 @@ from gui.components.signing_phrase_popup import SigningPhrasePopup
 @pytest.mark.parametrize('default_name, address, name, color, emoji', [
     pytest.param('Account 1', '0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'AccWatch1', '#2a4af5', 'sunglasses')
 ])
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14862")
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14509")
 @pytest.mark.local_run
 @pytest.mark.skipif('jenkins' in str(testpath.ROOT),
                     reason="https://github.com/status-im/status-desktop/issues/14862, https://github.com/status-im/status-desktop/issues/14509")
