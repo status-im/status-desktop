@@ -180,14 +180,14 @@ Item {
             verify(chainSelector, "Chain selector should be present")
             compare(chainSelector.selection.length, NetworksModel.flatNetworks.count)
 
-            // User should not be able to deselect a chain
+            // User should not be able to open the popup
             mouseClick(chainSelector)
             waitForItemPolished(chainSelector)
             const networkSelectorList = findChild(chainSelector, "networkSelectorList")
             verify(networkSelectorList, "Network selector list should be present")
-            mouseClick(networkSelectorList.itemAtIndex(0))
             compare(chainSelector.selection.length, NetworksModel.flatNetworks.count)
             compare(dappModal.selectedChains.length, NetworksModel.flatNetworks.count)
+            verify(!chainSelector.control.popup.opened)
 
             const connectionTag = findChild(dappModal, "connectionStatusTag")
             compare(connectionTag.visible, true)
@@ -236,14 +236,14 @@ Item {
             verify(chainSelector, "Chain selector should be present")
             compare(chainSelector.selection.length, NetworksModel.flatNetworks.count)
 
-            // User should not be able to deselect a chain
+            // User should not be able to open the popup
             mouseClick(chainSelector)
             waitForItemPolished(chainSelector)
             const networkSelectorList = findChild(chainSelector, "networkSelectorList")
             verify(networkSelectorList, "Network selector list should be present")
-            mouseClick(networkSelectorList.itemAtIndex(0))
             compare(chainSelector.selection.length, NetworksModel.flatNetworks.count)
             compare(dappModal.selectedChains.length, NetworksModel.flatNetworks.count)
+            verify(!chainSelector.control.popup.opened)
 
             const connectionTag = findChild(dappModal, "connectionStatusTag")
             compare(connectionTag.visible, true)

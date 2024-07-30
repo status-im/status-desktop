@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
@@ -15,6 +16,8 @@ ColumnLayout {
     property alias name: appNameText.text
     property url dAppUrl: ""
     property url iconUrl: ""
+    property bool connectionSuccessful
+    property bool connectionAttempted
 
     spacing: Style.current.padding
 
@@ -67,8 +70,8 @@ ColumnLayout {
             Layout.alignment: Qt.AlignHCenter
             Layout.maximumWidth: root.width
             objectName: "connectionStatusTag"
-            success: d.connectionSuccessful
-            visible: d.connectionAttempted
+            success: root.connectionSuccessful
+            visible: root.connectionAttempted
         }
     }
 }

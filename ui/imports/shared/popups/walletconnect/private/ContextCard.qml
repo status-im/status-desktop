@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
@@ -83,6 +84,13 @@ Rectangle {
                 multiSelection: root.multipleChainSelection
                 showAllSelectedText: false
                 selectionAllowed: false
+
+                // disable interactions w/o looking disabled
+                control.hoverEnabled: false
+                MouseArea {
+                    anchors.fill: parent
+                    onPressed: mouse.accepted = true
+                }
             }
         }
     }
