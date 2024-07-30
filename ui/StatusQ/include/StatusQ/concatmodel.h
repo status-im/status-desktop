@@ -49,6 +49,8 @@ class ConcatModel : public QAbstractListModel, public QQmlParserStatus
     Q_PROPERTY(QStringList expectedRoles READ expectedRoles
                WRITE setExpectedRoles NOTIFY expectedRolesChanged)
 
+    Q_PROPERTY(bool propagateResets READ propagateResets
+               WRITE setPropagateResets NOTIFY propagateResetsChanged)
 public:
     explicit ConcatModel(QObject *parent = nullptr);
 
@@ -59,6 +61,9 @@ public:
 
     void setExpectedRoles(const QStringList& expectedRoles);
     const QStringList& expectedRoles() const;
+
+    void setPropagateResets(bool propagateResets);
+    bool propagateResets() const;
 
     Q_INVOKABLE int sourceModelRow(int row) const;
     Q_INVOKABLE QAbstractItemModel* sourceModel(int row) const;
@@ -77,6 +82,7 @@ public:
 signals:
     void markerRoleNameChanged();
     void expectedRolesChanged();
+    void propagateResetsChanged();
 
 private:
     static constexpr auto s_defaultMarkerRoleName = "whichModel";
@@ -101,6 +107,7 @@ private:
 
     QList<SourceModel*> m_sources;
     QStringList m_expectedRoles;
+    bool m_propagateResets = false;
 
     QString m_markerRoleName = s_defaultMarkerRoleName;
     int m_markerRole = 0;
