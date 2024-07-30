@@ -92,6 +92,17 @@ QtObject:
     result.networkService = networkService
     result.currencyService = currencyService
 
+  proc isChecksumValidForAddress*(self: Service, address: string): bool =
+    var updated = false
+    try:
+      let response = backend.isChecksumValidForAddress(address)
+      if not response.error.isNil:
+        error "status-go error", procName="isChecksumValidForAddress", errCode=response.error.code, errDesription=response.error.message
+      return response.result.getBool
+    except Exception as e:
+      error "error: ", procName="isChecksumValidForAddress", errName=e.name, errDesription=e.msg
+
+
   include service_account
   include service_token
   include service_keycard
