@@ -113,36 +113,6 @@ QtObject {
         root.profileModule.setIsFirstShowcaseInteraction()
     }
 
-    // Social links related: All to be removed: Deprecated --> Issue #13688
-    function containsSocialLink(text, url) {
-        return root.profileModule.containsSocialLink(text, url)
-    }
-
-    function createLink(text, url, linkType, icon) {
-        root.profileModule.createLink(text, url, linkType, icon)
-    }
-
-    function removeLink(uuid) {
-        root.profileModule.removeLink(uuid)
-    }
-
-    function updateLink(uuid, text, url) {
-        root.profileModule.updateLink(uuid, text, url)
-    }
-
-    function moveLink(fromRow, toRow, count) {
-        root.profileModule.moveLink(fromRow, toRow)
-    }
-
-    function resetSocialLinks() {
-        root.profileModule.resetSocialLinks()
-    }
-
-    function saveSocialLinks(silent = false) {
-        root.profileModule.saveSocialLinks(silent)
-    }
-    // End of social links to be removed
-
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
             localAccountSensitiveSettings.userDeclinedBackupBanner = userDeclinedBackupBanner
