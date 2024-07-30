@@ -358,7 +358,9 @@ StatusDialog {
                         TokenSelectorViewAdaptor {
                             id: assetsAdaptor
 
-                            assetsModel: popup.store.walletAssetStore.groupedAccountAssetsModel
+                            assetsModel: d.isBridgeTx ?
+                                             popup.store.walletAssetStore.bridgeableGroupedAccountAssetsModel :
+                                             popup.store.walletAssetStore.groupedAccountAssetsModel
 
                             flatNetworksModel: popup.store.flatNetworksModel
                             currentCurrency: popup.store.currencyStore.currentCurrency
