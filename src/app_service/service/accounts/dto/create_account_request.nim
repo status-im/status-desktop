@@ -64,7 +64,9 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "upstreamConfig": self.upstreamConfig,
     "keycardInstanceUID": self.keycardInstanceUID,
     "keycardPairingDataFile": self.keycardPairingDataFile,
-    "apiConfig": self.apiConfig
+    "apiConfig": self.apiConfig,
+    "wakuV2EnableStoreConfirmationForMessagesSent": self.wakuV2EnableStoreConfirmationForMessagesSent,
+    "wakuV2EnableMissingMessageVerification": self.wakuV2EnableMissingMessageVerification
   }
 
   if self.logLevel.isSome():
