@@ -107,6 +107,9 @@ method removingSavedAddressConfirmed*(self: AccessInterface, address: string) {.
 method savedAddressDeleted*(self: AccessInterface, address: string, errorMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method isChecksumValidForAddress*(self: AccessInterface, address: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method remainingAccountCapacity*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 

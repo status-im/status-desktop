@@ -252,6 +252,9 @@ proc getNumOfAddressesToGenerateForKeypair*(self: Controller, keyUid: string): i
 proc resolveSuggestedPathForKeypair*(self: Controller, keyUid: string): string =
   return self.walletAccountService.resolveSuggestedPathForKeypair(keyUid)
 
+proc isChecksumValidForAddress*(self: Controller, address: string): bool =
+  return self.walletAccountService.isChecksumValidForAddress(address)
+
 proc remainingAccountCapacity*(self: Controller): int =
   return self.walletAccountService.remainingAccountCapacity()
 
