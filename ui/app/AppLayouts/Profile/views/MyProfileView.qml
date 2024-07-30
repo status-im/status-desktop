@@ -199,7 +199,6 @@ SettingsContentBase {
         function reset() {
             descriptionPanel.displayName.text = Qt.binding(() => { return profileStore.displayName })
             descriptionPanel.bio.text = Qt.binding(() => { return profileStore.bio })
-            profileStore.resetSocialLinks()
             profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
 
             priv.showcaseModels.revert()

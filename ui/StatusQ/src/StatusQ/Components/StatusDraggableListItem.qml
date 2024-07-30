@@ -44,12 +44,12 @@ import StatusQ.Core.Theme 0.1
                     const to = draggableDelegate.visualIndex
                     if (to === from)
                         return
-                    root.profileStore.moveLink(from, to, 1)
+                    functionToMoveTo(from, to, 1)
                     drag.accept()
                 }
 
                 onDropped: function(drop) {
-                    root.profileStore.saveSocialLinks(true)
+                    functionToSave(true)
                 }
 
                 StatusDraggableListItem {
