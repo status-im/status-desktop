@@ -108,15 +108,16 @@ Control {
                 amountToSendInput.input.input.edit.clear()
                 return
             }
-            let amountToSet = SQUtils.AmountsArithmetic.fromString(tokenAmount).toFixed().replace('.', LocaleUtils.userInputLocale.decimalPoint)
+            let amountToSet = SQUtils.AmountsArithmetic.fromString(tokenAmount).toFixed()
             /* When deleting characters after a decimal point
             eg: 0.000001 being deleted we have 0.00000 and it should not be updated to 0
             and thats why we compare with toFixed()
             also when deleting a numbers last digit, we should not update the text to 0
-            instead it should remain empty as entered by the user*/
-            if (SQUtils.AmountsArithmetic.fromString(amountToSendInput.input.text).toFixed() !== amountToSet &&
+            instead it should remain empty as entered by the user */
+            let currentInputTextAmount = SQUtils.AmountsArithmetic.fromString(amountToSendInput.input.text.replace(amountToSendInput.input.locale.decimalPoint,'.')).toFixed()
+            if (currentInputTextAmount !== amountToSet &&
                     !(amountToSet === "0" && !amountToSendInput.input.text)) {
-                amountToSendInput.input.text = amountToSet
+                amountToSendInput.input.text = amountToSet.replace('.', amountToSendInput.input.locale.decimalPoint)
             }
         }
     }
@@ -264,13 +265,13 @@ Control {
                 readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(
                                                            d.maxInputBalance, d.inputSymbol)
                 readonly property string maxSafeValueAsString: maxSafeValue.toLocaleString(
-                                                                   LocaleUtils.userInputLocale, 'f', -128)
+                                                                   amountToSendInput.input.locale, 'f', -128)
 
                 markAsInvalid: (!amountToSendInput.input.valid && !!amountToSendInput.input.text)
                                || d.maxInputBalance === 0
 
                 formattedValue:
-                    d.maxInputBalance === 0 ? LocaleUtils.userInputLocale.zeroDigit
+                    d.maxInputBalance === 0 ? amountToSendInput.input.locale.zeroDigit
                                             : root.currencyStore.formatCurrencyAmount(
                                                   maxSafeValue, d.inputSymbol,
                                                   { noSymbol: !amountToSendInput.inputIsFiat })
