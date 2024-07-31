@@ -202,7 +202,7 @@ QtObject:
       if not accountData.isNil:
         accountData["keycard-pairing"] = kcDataObj{"key"}
 
-  proc buildWalletSecrets(self: Service): WalletSecretsConfig =
+  proc buildWalletSecrets(): WalletSecretsConfig =
     return WalletSecretsConfig(
       poktToken: POKT_TOKEN_RESOLVED,
       infuraToken: INFURA_TOKEN_RESOLVED,
@@ -225,16 +225,12 @@ QtObject:
       statusProxyBlockchainPassword: STATUS_PROXY_BLOCKCHAIN_PASSWORD_RESOLVED,
     )
 
-  proc buildCreateAccountRequest(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
+  proc defaultCreateAccountRequest*(): CreateAccountRequest =
     return CreateAccountRequest(
         rootDataDir: main_constants.STATUSGODIR,
         kdfIterations: KDF_ITERATIONS,
-        password: hashPassword(password),
-        displayName: displayName,
-        imagePath: imagePath,
-        imageCropRectangle: imageCropRectangle,
         customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
-        emoji: self.defaultWalletEmoji,
+        emoji: "", # self.defaultWalletEmoji,
         logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
         wakuV2LightClient: false,
         wakuV2EnableMissingMessageVerification: true,
@@ -243,14 +239,22 @@ QtObject:
         torrentConfigEnabled: some(false),
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
         keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
-        walletSecretsConfig: self.buildWalletSecrets(),
+        walletSecretsConfig: buildWalletSecrets(),
         apiConfig: defaultApiConfig(),
         statusProxyEnabled: true,
       )
 
+  proc buildCreateAccountRequest(password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
+    var request = defaultCreateAccountRequest()
+    request.password = hashPassword(password)
+    request.displayName = displayName
+    request.imagePath = imagePath
+    request.imageCropRectangle = imageCropRectangle
+    return request
+
   proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
     try:
-      let request = self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
+      let request = buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
       let response = status_account.createAccountAndLogin(request)
 
       if not response.result.contains("error"):
@@ -282,7 +286,7 @@ QtObject:
     var request = RestoreAccountRequest(
       mnemonic: mnemonic,
       fetchBackup: recoverAccount,
-      createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
+      createAccountRequest: buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
 
@@ -312,7 +316,7 @@ QtObject:
     var request = RestoreAccountRequest(
       keycard: keycard,
       fetchBackup: recoverAccount,
-      createAccountRequest: self.buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
+      createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
 
@@ -427,7 +431,7 @@ QtObject:
       passwordHash: passwordHash,
       keycardWhisperPrivateKey: chatPrivateKey,
       mnemonic: mnemonic,
-      walletSecretsConfig: self.buildWalletSecrets(),
+      walletSecretsConfig: buildWalletSecrets(),
       bandwidthStatsEnabled: true,
       apiConfig: defaultApiConfig(),
       statusProxyEnabled: true # TODO: read from settings

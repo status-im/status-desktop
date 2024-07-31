@@ -18,6 +18,7 @@ import app/core/tasks/[qt, threadpool]
 import backend/installations as status_installations
 import app_service/common/utils as utils
 import constants as main_constants
+import app_service/service/accounts/dto/image_crop_rectangle
 
 import status_go
 
@@ -222,15 +223,12 @@ QtObject:
     return status_go.getConnectionStringForBootstrappingAnotherDevice($configJSON)
 
   proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string): string =
-    let installationId = $genUUID()
-    let nodeConfigJson = self.accountsService.getDefaultNodeConfig(installationId, recoverAccount = false)
     let configJSON = %* {
       "receiverConfig": %* {
-        "keystorePath": main_constants.ROOTKEYSTOREDIR,
-        "deviceType" : hostOs,
-        "nodeConfig": nodeConfigJson,
-        "kdfIterations": self.accountsService.getKdfIterations(),
-        "settingCurrentNetwork": "mainnet_rpc"
+        "keystorePath": main_constants.ROOTKEYSTOREDIR, # TODO: remove
+        "createAccount": %*accounts_service.defaultCreateAccountRequest(),
+        "kdfIterations": self.accountsService.getKdfIterations(), # TODO: remove
+        "settingCurrentNetwork": "mainnet_rpc", # TODO: remove
       },
       "clientConfig": %* {}
     }
