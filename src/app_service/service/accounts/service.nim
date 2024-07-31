@@ -16,7 +16,7 @@ import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/fleets/fleet_configuration
-import ../../common/[account_constants, network_constants, utils]
+import ../../common/[account_constants, utils]
 import ../../../constants as main_constants
 
 export dto_accounts
@@ -144,47 +144,6 @@ QtObject:
     if logLevel == "TRACE":
       return "DEBUG"
     return logLevel
-
-  # TODO: Remove after https://github.com/status-im/status-desktop/issues/11435
-  proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
-    let fleet = Fleet.StatusProd
-    let dnsDiscoveryURL = "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.prod.status.nodes.status.im"
-
-    result = NODE_CONFIG.copy()
-    result["ClusterConfig"]["Fleet"] = newJString($fleet)
-    result["NetworkId"] = NETWORKS[0]{"chainId"}
-    result["DataDir"] = "ethereum".newJString()
-    result["UpstreamConfig"]["Enabled"] = true.newJBool()
-    result["UpstreamConfig"]["URL"] = NETWORKS[0]{"rpcUrl"}
-    result["ShhextConfig"]["InstallationID"] = newJString(installationId)
-
-
-    result["ClusterConfig"]["WakuNodes"] = %* @[dnsDiscoveryURL]
-
-    var discV5Bootnodes = self.fleetConfiguration.getNodes(fleet, FleetNodes.WakuENR)
-    discV5Bootnodes.add(dnsDiscoveryURL)
-
-    result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* discV5Bootnodes
-
-    if TEST_PEER_ENR != "":
-      let testPeerENRArr = %* @[TEST_PEER_ENR]
-      result["ClusterConfig"]["WakuNodes"] = %* testPeerENRArr
-      result["ClusterConfig"]["BootNodes"] = %* testPeerENRArr
-      result["ClusterConfig"]["TrustedMailServers"] = %* testPeerENRArr
-      result["ClusterConfig"]["StaticNodes"] = %* testPeerENRArr
-      result["ClusterConfig"]["RendezvousNodes"] = %* (@[])
-      result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[])
-      result["Rendezvous"] = newJBool(false)
-
-    result["LogLevel"] = newJString(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL))
-
-    if STATUS_PORT != 0:
-      result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
-
-    result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
-    result["RootDataDir"] = newJString(main_constants.STATUSGODIR)
-    result["KeycardPairingDataFile"] = newJString(main_constants.KEYCARDPAIRINGDATAFILE)
-    result["ProcessBackedupMessages"] = newJBool(recoverAccount)
 
   # FIXME: remove this method, settings should be processed in status-go
   # https://github.com/status-im/status-go/issues/5359
