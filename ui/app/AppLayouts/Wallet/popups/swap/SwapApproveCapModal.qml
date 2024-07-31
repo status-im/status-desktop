@@ -56,7 +56,7 @@ SignTransactionModalBase {
     toImageSource: Constants.tokenIcon(root.fromTokenSymbol)
 
     //: e.g. "Set 100 DAI spending cap in <account name> for <service> on <network name>"
-    headerMainText: qsTr("Set %1 %2 spending cap in %3 for %4 on %5").arg(formatBigNumber(root.fromTokenAmount)).arg(root.fromTokenSymbol)
+    headerMainText: qsTr("Set %1 spending cap in %2 for %3 on %4").arg(formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol))
         .arg(root.accountName).arg(root.serviceProviderURL).arg(root.networkName)
     headerSubTextLayout: [
         StatusBaseText {
@@ -64,7 +64,7 @@ SignTransactionModalBase {
             horizontalAlignment: Qt.AlignHCenter
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.pixelSize: Style.current.additionalTextSize
-            text: qsTr("The smart contract specified will be able to spend up to %1 %2 of your current or future balance.").arg(formatBigNumber(root.fromTokenAmount)).arg(root.fromTokenSymbol)
+            text: qsTr("The smart contract specified will be able to spend up to %1 of your current or future balance.").arg(formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol))
         }
     ]
 
@@ -114,7 +114,7 @@ SignTransactionModalBase {
         Layout.bottomMargin: Style.current.bigPadding
         objectName: "spendingCapBox"
         caption: qsTr("Set spending cap")
-        primaryText: formatBigNumber(root.fromTokenAmount)
+        primaryText: formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol, true)
         listItemHeight: 44
         components: [
             StatusSmartIdenticon {
