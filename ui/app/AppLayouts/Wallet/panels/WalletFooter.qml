@@ -71,7 +71,7 @@ Rectangle {
 
         readonly property bool buyActionAvailable: !root.isCommunityOwnershipTransfer && !root.walletStore.showAllAccounts
 
-        readonly property bool swapActionAvailable: Global.featureFlags.swapEnabled && !walletStore.overview.isWatchOnlyAccount && !d.hideCollectibleTransferActions
+        readonly property bool swapActionAvailable: Global.featureFlags.swapEnabled && !walletStore.overview.isWatchOnlyAccount && walletStore.overview.canSend && !d.hideCollectibleTransferActions
 
         function getFirstUserOwnedAddress(ownershipModel, accountsModel) {
             if (!ownershipModel) return ""
