@@ -117,7 +117,7 @@ class LeftPanel(QObject):
     @allure.step('Open ENS usernames settings')
     @handle_settings_opening(ENSSettingsView, '3-MainMenuItem')
     def open_ens_usernames_settings(self, click_attempts: int = 2) -> 'ENSSettingsView':
-        assert ENSSettingsView().exists, 'ENS settings view was not opened'
+        assert ENSSettingsView().wait_until_appears(), 'ENS settings view was not opened'
         return ENSSettingsView()
 
     @allure.step('Open advanced settings')
