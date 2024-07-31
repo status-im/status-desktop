@@ -252,7 +252,7 @@ StatusDialog {
             // in localized version. It should be refactored to provide raw
             // number consistently. Only the displaying component should apply
             // final localized formatting.
-            const delocalized = popup.preDefinedAmountToSend.replace(",", ".")
+            const delocalized = popup.preDefinedAmountToSend.replace(LocaleUtils.userInputLocale.decimalPoint, ".")
 
             amountToSend.setValue(delocalized)
         }
@@ -490,7 +490,7 @@ StatusDialog {
                             if (!valid)
                                 return 0
 
-                            return parseFloat(text.replace(",", "."))
+                            return parseFloat(text.replace(LocaleUtils.userInputLocale.decimalPoint, "."))
                         }
                         readonly property int minSendCryptoDecimals:
                             !fiatMode ? LocaleUtils.fractionalPartLength(asNumber) : 0

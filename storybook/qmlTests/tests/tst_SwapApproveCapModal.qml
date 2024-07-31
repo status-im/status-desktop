@@ -21,6 +21,7 @@ Item {
         id: componentUnderTest
         SwapApproveCapModal {
             anchors.centerIn: parent
+            formatBigNumber: (number, symbol, noSymbolOption) => parseFloat(number).toLocaleString(Qt.locale(), 'f', 2) + (noSymbolOption ? "" : " " + symbol)
 
             fromTokenSymbol: "DAI"
             fromTokenAmount: "100.07"
@@ -88,8 +89,8 @@ Item {
             // info box
             const headerText = findChild(controlUnderTest.contentItem, "headerText")
             verify(!!headerText)
-            compare(headerText.text, qsTr("Set %1 %2 spending cap in %3 for %4 on %5")
-                    .arg(controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount)).arg(controlUnderTest.fromTokenSymbol)
+            compare(headerText.text, qsTr("Set %1 spending cap in %2 for %3 on %4")
+                    .arg(controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount, controlUnderTest.fromTokenSymbol))
                     .arg(controlUnderTest.accountName).arg(controlUnderTest.serviceProviderURL).arg(controlUnderTest.networkName))
 
             const fromImageHidden = findChild(controlUnderTest.contentItem, "fromImageIdenticon")
@@ -107,7 +108,7 @@ Item {
             const spendingCapBox = findChild(controlUnderTest.contentItem, "spendingCapBox")
             verify(!!spendingCapBox)
             compare(spendingCapBox.caption, qsTr("Set spending cap"))
-            compare(spendingCapBox.primaryText, controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount))
+            compare(spendingCapBox.primaryText, controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount, root.fromTokenSymbol, {noSymbol: true}))
         }
 
         function test_accountInfo() {
