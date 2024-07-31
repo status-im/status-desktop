@@ -54,8 +54,8 @@ function buildSupportedNamespacesFromModels(chainsModel, accountsModel, methods)
 }
 
 function buildSupportedNamespaces(chainIds, addresses, methods) {
-    var eipChainIds = []
-    var eipAddresses = []
+    let eipChainIds = []
+    let eipAddresses = []
     for (let i = 0; i < chainIds.length; i++) {
         let chainId = chainIds[i]
         eipChainIds.push(`"eip155:${chainId}"`)
@@ -65,7 +65,13 @@ function buildSupportedNamespaces(chainIds, addresses, methods) {
     }
     let methodsStr = methods.map(method => `"${method}"`).join(',')
     return `{
-        "eip155":{"chains": [${eipChainIds.join(',')}],"methods": [${methodsStr}],"events": ["accountsChanged", "chainChanged"],"accounts": [${eipAddresses.join(',')}]}}`
+        "eip155":{
+            "chains": [${eipChainIds.join(',')}],
+            "methods": [${methodsStr}],
+            "events": ["accountsChanged", "chainChanged"],
+            "accounts": [${eipAddresses.join(',')}]
+        }
+    }`
 }
 
 function validURI(uri) {

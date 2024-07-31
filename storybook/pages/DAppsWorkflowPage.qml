@@ -83,6 +83,15 @@ Item {
                     font.bold: true
                 }
             }
+            RowLayout {
+                StatusBaseText { text: "SDK status:" }
+                Rectangle {
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: Layout.preferredWidth
+                    radius: Layout.preferredWidth / 2
+                    color: walletConnectService.wcSDK.sdkReady ? "green" : "red"
+                }
+            }
 
             CheckBox {
                 text: "Testnet Mode"
@@ -289,7 +298,7 @@ Item {
         id: walletConnectService
 
         wcSDK: WalletConnectSDK {
-            active: settings.enableSDK
+            enableSdk: settings.enableSDK
 
             projectId: projectIdText.projectId
         }

@@ -112,11 +112,6 @@ QtObject {
     // Metrics
     signal openMetricsEnablePopupRequested(bool isOnboarding, var cb)
 
-    /////////////////////////////////////////////////////
-    // WalletConnect POC - to remove
-    signal popupWalletConnect()
-    /////////////////////////////////////////////////////
-
     signal openAddEditSavedAddressesPopup(var params)
     signal openDeleteSavedAddressesPopup(var params)
     signal openShowQRPopup(var params)

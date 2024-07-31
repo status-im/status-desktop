@@ -14,10 +14,10 @@ WalletConnectSDKBase {
     id: root
 
     readonly property alias sdkReady: d.sdkReady
-    readonly property alias webEngineLoader: loader
 
-    property alias active: loader.active
-    property alias url: loader.url
+    // Enable the WalletConnect SDK
+    property alias enableSdk: loader.active
+    readonly property alias url: loader.url
 
     implicitWidth: 1
     implicitHeight: 1
@@ -97,15 +97,15 @@ WalletConnectSDKBase {
         function init() {
             console.debug(`WC WalletConnectSDK.wcCall.init; root.projectId: ${root.projectId}`)
 
-            d.engine.runJavaScript(`wc.init("${root.projectId}").catch((error) => {wc.statusObject.sdkInitialized("SDK init error: "+error);})`, function(result) {
-
-                console.debug(`WC WalletConnectSDK.wcCall.init; response: ${JSON.stringify(result)}`)
-
-                if (result && !!result.error)
-                {
-                    console.error("init: ", result.error)
-                }
-            })
+            d.engine.runJavaScript(`
+                wc.init("${root.projectId}")
+                .then(()=> {
+                    wc.statusObject.sdkInitialized("");
+                })
+                .catch((error) => {
+                    wc.statusObject.sdkInitialized("SDK init error: "+error)
+                })
+            `)
         }
 
         function getPairings(callback) {
@@ -330,7 +330,7 @@ WalletConnectSDKBase {
 
         WebChannel.id: "statusObject"
 
-        function bubbleConsoleMessage(type, message) {
+        function echo(type, message) {
             if (type === "warn") {
                 console.warn(message)
             } else if (type === "debug") {
@@ -343,7 +343,7 @@ WalletConnectSDKBase {
         }
 
         function sdkInitialized(error) {
-            console.debug(`WC WalletConnectSDK.sdkInitialized; error: ${error}`)
+            console.debug(`WC WalletConnectSDK.sdkInitialized: ${!!error ?  "error: " + error : "success"}`)
             d.sdkReady = !error
             root.sdkInit(d.sdkReady, error)
         }
