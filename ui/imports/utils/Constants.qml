@@ -1125,6 +1125,7 @@ QtObject {
             readonly property string errNoBestRouteFound                          : "WR-023"
             readonly property string errCannotCheckReceiverBalance                : "WR-024"
             readonly property string errCannotCheckLockedAmounts                  : "WR-025"
+            readonly property string errLowAmountInForHopBridge                   : "WR-026"
         }
     }
 

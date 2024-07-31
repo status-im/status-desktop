@@ -670,10 +670,8 @@ StatusDialog {
         function onSuggestedRoutesReady(txRoutes, errCode, errDescription) {
             popup.bestRoutes =  txRoutes.suggestedRoutes
 
-            if (errCode !== "") {
-                d.routerError = WalletUtils.getRouterErrorBasedOnCode(errCode)
-                d.routerErrorDetails = "%1 - %2".arg(errCode).arg(WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
-            }
+            d.routerError = WalletUtils.getRouterErrorBasedOnCode(errCode)
+            d.routerErrorDetails = "%1 - %2".arg(errCode).arg(WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
 
             let gasTimeEstimate = txRoutes.gasTimeEstimate
             d.totalTimeEstimate = WalletUtils.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
