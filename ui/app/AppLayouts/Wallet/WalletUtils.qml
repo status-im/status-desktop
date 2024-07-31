@@ -134,6 +134,10 @@ QtObject {
 
 
     function getRouterErrorBasedOnCode(code) {
+        if (code === "") {
+            return ""
+        }
+
         switch(code) {
         case Constants.routerErrorCodes.processor.errFailedToParseBaseFee:
         case Constants.routerErrorCodes.processor.errFailedToParsePercentageFee:
@@ -203,12 +207,18 @@ QtObject {
             return qsTr("not enough token balance")
         case Constants.routerErrorCodes.router.errNotEnoughNativeBalance:
             return qsTr("not enough ETH")
+        case Constants.routerErrorCodes.router.errLowAmountInForHopBridge:
+            return qsTr("amount in too low")
         default:
             return qsTr("unknown processor error")
         }
     }
 
     function getRouterErrorDetailsOnCode(code, details) {
+        if (code === "") {
+            return ""
+        }
+
         switch(code) {
         case Constants.routerErrorCodes.processor.errFailedToParseBaseFee:
             return qsTr("failed to parse base fee")
@@ -346,7 +356,8 @@ QtObject {
             catch (e) {
                 return ""
             }
-
+        case Constants.routerErrorCodes.router.errLowAmountInForHopBridge:
+            return qsTr("bonder fee greater than estimated received, a higher amount is needed to cover fees")
         default:
             return ""
         }
