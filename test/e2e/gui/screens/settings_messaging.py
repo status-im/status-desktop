@@ -120,7 +120,10 @@ class ContactsSettingsView(QObject):
         self._view_profile_item = QObject(settings_names.view_Profile_StatusMenuItem)
         self._respond_to_id_request_button = Button(
             settings_names.settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton)
-        self._unblock_item = Button(settings_names.unblock_user_StatusMenuItem)
+        self._unblock_item = QObject(settings_names.unblock_user_StatusMenuItem)
+        self._add_nickname_item = QObject(settings_names.add_nickname_more_options_StatusMenuItem)
+        self._edit_nickname_item = QObject(settings_names.edit_nickname_StatusMenuItem)
+        self._remove_nickname_item = QObject(settings_names.remove_nickname_StatusMenuItem)
 
     @property
     @allure.step('Get contact items')

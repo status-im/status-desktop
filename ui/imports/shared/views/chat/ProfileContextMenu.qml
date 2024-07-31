@@ -219,6 +219,7 @@ StatusMenu {
     }
 
     StatusAction {
+        objectName: "removeNickname_StatusItem"
         text: qsTr("Remove nickname")
         icon.name: "delete"
         type: StatusAction.Type.Danger

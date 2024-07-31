@@ -34,6 +34,7 @@ CommonContactDialog {
     StatusInput {
         Layout.fillWidth: true
         id: nicknameInput
+        objectName: "nicknameInput"
         label: qsTr("Nickname")
         input.clearable: true
         text: root.nickname
@@ -73,6 +74,7 @@ CommonContactDialog {
     }
 
     StatusBaseText {
+        objectName: "nicknameHelpText"
         Layout.fillWidth: true
         text: qsTr("Nicknames help you identify others and are only visible to you")
         wrapMode: Text.WordWrap
@@ -82,11 +84,13 @@ CommonContactDialog {
 
     rightButtons: ObjectModel {
         StatusFlatButton {
+            objectName: "cancelButton"
             visible: !d.editMode
             text: qsTr("Cancel")
             onClicked: root.close()
         }
         StatusFlatButton {
+            objectName: "removeNicknameButton"
             visible: d.editMode
             borderColor: "transparent"
             type: StatusBaseButton.Type.Danger
@@ -94,6 +98,7 @@ CommonContactDialog {
             onClicked: root.removeNicknameRequested()
         }
         StatusButton {
+            objectName: "addChangeNicknameButton"
             enabled: root.nickname !== nicknameInput.text && nicknameInput.valid
             text: d.editMode ? qsTr("Change nickname") : qsTr("Add nickname")
             onClicked: root.editDone(nicknameInput.text)

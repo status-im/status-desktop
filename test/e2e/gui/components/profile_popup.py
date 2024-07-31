@@ -6,6 +6,7 @@ import constants
 import driver
 from gui.components.base_popup import BasePopup
 from gui.components.context_menu import ContextMenu
+from gui.components.settings.nickname_popup import NicknamePopup
 from gui.components.settings.block_user_popup import BlockUserPopup
 from gui.components.settings.review_contact_request_popup import AcceptRequestFromProfile
 from gui.components.settings.send_contact_request_popup import SendContactRequestFromProfile
@@ -111,6 +112,7 @@ class ProfilePopupFromMembers(ProfilePopup):
         self._menu_button = Button(names.menuButton_StatusFlatButton)
         self._block_user_menu_item = Button(names.block_user_StatusMenuItem)
         self._add_nickname_menu_item = Button(names.add_nickname_StatusMenuItem)
+        self._display_name = TextLabel(names.profileDialog_displayName_StatusBaseText)
 
     @allure.step('Click send request button')
     def send_request(self):
@@ -154,3 +156,18 @@ class ProfilePopupFromMembers(ProfilePopup):
     def unblock_user(self):
         self._unblock_button.click()
         return UnblockUserPopup().wait_until_appears()
+
+    @allure.step('Open add nickname popup from menu')
+    def add_nickname_from_menu(self):
+        self.click_menu_button()
+        self._add_nickname_menu_item.click()
+        return NicknamePopup().wait_until_appears()
+
+    @allure.step('Remove nickname from menu')
+    def remove_nickname_from_menu(self):
+        self.click_menu_button()
+        self._add_nickname_menu_item.click()
+
+    @allure.step('Get display name')
+    def get_display_name(self) -> str:
+        return self._display_name.text

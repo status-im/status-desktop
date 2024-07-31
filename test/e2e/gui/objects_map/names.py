@@ -110,6 +110,7 @@ menuButton_StatusFlatButton = {"checkable": False, "container": profileDialogVie
 block_user_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "blockUserStatusAction", "type": "StatusMenuItem", "visible": True}
 add_nickname_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "addEditNickNameStatusAction", "type": "StatusMenuItem", "visible": True}
 unblock_user_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "unblockUserProfileButton", "type": "StatusButton", "visible": True}
+profileDialog_displayName_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialog_displayName", "type": "StatusBaseText", "visible": True}
 
 # Share profile popup
 o_Image = {"container": statusDesktop_mainWindow_overlay, "objectName": "profileQRCodeImage", "type": "Image", "visible": True}
@@ -234,6 +235,14 @@ cancel_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWi
 unblock_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "unblockUserButton", "type": "StatusButton", "visible": True}
 unblockingText_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "unblockingText", "type": "StatusBaseText", "visible": True}
 cancel_StatusFlatButton_unblock = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "cancelButton", "type": "StatusFlatButton", "visible": True}
+
+# Nickname popup
+nicknameInput_StatusInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "nicknameInput", "type": "StatusInput", "visible": True}
+nickname_edit_TextEdit = {"container": nicknameInput_StatusInput, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
+add_nickname_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "addChangeNicknameButton", "type": "StatusButton", "visible": True}
+cancel_nickname_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "cancelButton", "type": "StatusFlatButton", "visible": True}
+remove_nickname_StatusFlatButton = {"checkable": False, "container": o_Overlay, "objectName": "removeNicknameButton", "text": "Remove nickname", "type": "StatusFlatButton", "visible": True}
+change_nickname_StatusButton = {"checkable": False, "container": o_Overlay, "objectName": "addChangeNicknameButton", "text": "Change nickname", "type": "StatusButton", "visible": True}
 
 """ Common """
 

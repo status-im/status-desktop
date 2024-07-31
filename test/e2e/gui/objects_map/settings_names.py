@@ -55,6 +55,9 @@ respond_to_ID_Request_StatusMenuItem = {"checkable": False, "container": statusD
 settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton = {"checkable": False, "container": mainWindow_ContactsView, "objectName": "verifyIdentity_StatusItem", "type": "StatusFlatButton", "unnamed": 1, "visible": True}
 contactsTabBar_Blocked_StatusTabButton = {"checkable": True, "container": mainWindow_ContactsView, "objectName": "ContactsView_Blocked_Button", "type": "StatusTabButton", "visible": True}
 unblock_user_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "unblock_StatusItem", "type": "StatusMenuItem", "visible": True}
+edit_nickname_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "rename_StatusItem", "type": "StatusMenuItem", "visible": True}
+remove_nickname_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "removeNickname_StatusItem", "type": "StatusMenuItem", "visible": True}
+add_nickname_more_options_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "rename_StatusItem", "type": "StatusMenuItem", "visible": True}
 
 # Keycard Settings View
 mainWindow_KeycardView = {"container": statusDesktop_mainWindow, "type": "KeycardView", "unnamed": 1, "visible": True}
