@@ -306,15 +306,20 @@ proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, e
     if notify:
       self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, Args())
 
-proc updatePreferredSharingChainsAndNotify(self: Service, address, prodPreferredChains, testPreferredChains: string) =
+proc updateTestPreferredSharingChainsAndNotify(self: Service, address, testPreferredChains: string) =
   var account = self.getAccountByAddress(address)
   if account.isNil:
-    error "account's address is not among known addresses: ", address=address, procName="updatePreferredSharingChainsAndNotify"
+    error "account's address is not among known addresses: ", address=address, procName="updateTestPreferredSharingChainsAndNotify"
     return
-  if testPreferredChains.len > 0 and testPreferredChains != account.testPreferredChainIds:
-    account.testPreferredChainIds = testPreferredChains
-  if prodPreferredChains.len > 0 and prodPreferredChains != account.prodPreferredChainIds:
-    account.prodPreferredChainIds = prodPreferredChains
+  account.testPreferredChainIds = testPreferredChains
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED, AccountArgs(account: account))
+
+proc updateProdPreferredSharingChainsAndNotify(self: Service, address, prodPreferredChains: string) =
+  var account = self.getAccountByAddress(address)
+  if account.isNil:
+    error "account's address is not among known addresses: ", address=address, procName="updateProdPreferredSharingChainsAndNotify"
+    return
+  account.prodPreferredChainIds = prodPreferredChains
   self.events.emit(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED, AccountArgs(account: account))
 
 ## if password is not provided local keystore file won't be created
@@ -565,7 +570,7 @@ proc updateWalletAccountProdPreferredChains*(self: Service, address, preferredCh
     if not response.error.isNil:
       error "status-go error", procName="updateWalletAccountProdPreferredChains", errCode=response.error.code, errDesription=response.error.message
       return false
-    self.updatePreferredSharingChainsAndNotify(address, prodPreferredChains = preferredChainIds, testPreferredChains = "")
+    self.updateProdPreferredSharingChainsAndNotify(address, preferredChainIds)
     return true
   except Exception as e:
     error "error: ", procName="updateWalletAccountProdPreferredChains", errName=e.name, errDesription=e.msg
@@ -582,7 +587,7 @@ proc updateWalletAccountTestPreferredChains*(self: Service, address, preferredCh
     if not response.error.isNil:
       error "status-go error", procName="updateWalletAccountTestPreferredChains", errCode=response.error.code, errDesription=response.error.message
       return false
-    self.updatePreferredSharingChainsAndNotify(address, prodPreferredChains = "", testPreferredChains = preferredChainIds)
+    self.updateTestPreferredSharingChainsAndNotify(address, preferredChainIds)
     return true
   except Exception as e:
     error "error: ", procName="updateWalletAccountTestPreferredChains", errName=e.name, errDesription=e.msg
