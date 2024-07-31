@@ -8,7 +8,6 @@ import Storybook 1.0
 import Models 1.0
 
 import AppLayouts.Wallet.popups.swap 1.0
-import shared.stores 1.0
 
 import utils 1.0
 
@@ -75,7 +74,8 @@ SplitView {
                     modal: false
                     closePolicy: Popup.NoAutoClose
 
-                    currencyStore: CurrenciesStore{}
+                    formatBigNumber: (number, symbol, noSymbolOption) => parseFloat(number).toLocaleString(Qt.locale(), 'f', 2)
+                                     + (noSymbolOption ? "" : " " + (symbol || Qt.locale().currencySymbol(Locale.CurrencyIsoCode)))
 
                     fromTokenSymbol: ctrlFromSymbol.text
                     fromTokenAmount: ctrlFromAmount.text
@@ -98,8 +98,8 @@ SplitView {
                     serviceProviderName: Constants.swap.paraswapName
                     serviceProviderURL: Constants.swap.termsAndConditionParaswapUrl
 
-                    fiatFees: "1.54 EUR"
-                    cryptoFees: "0.001 ETH"
+                    fiatFees: formatBigNumber(42.542567, "EUR")
+                    cryptoFees: formatBigNumber(0.06, "ETH")
                     slippage: 0.5
 
                     loginType: ctrlLoginType.currentIndex

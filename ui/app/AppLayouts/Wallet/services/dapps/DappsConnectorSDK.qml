@@ -368,6 +368,8 @@ WalletConnectSDKBase {
             id: dappRequestModal
             objectName: "connectorDappsRequestModal"
             loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            formatBigNumber: (number, symbol, noSymbolOption) => root.wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
+
             visible: true
 
             dappName: request.dappName
@@ -382,7 +384,6 @@ WalletConnectSDKBase {
             networkName: request.network.chainName
             networkIconPath: Style.svg(request.network.iconUrl)
 
-            currentCurrency: ""
             fiatFees: request.maxFeesText
             cryptoFees: request.maxFeesEthText
             estimatedTime: ""

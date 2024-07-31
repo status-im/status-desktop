@@ -104,7 +104,6 @@ Popup {
                 anchors.leftMargin: Style.current.halfPadding
                 anchors.rightMargin: anchors.leftMargin
                 model: root.delegateModel
-                ScrollBar.vertical: null
             }
             Rectangle {
                 id: footer

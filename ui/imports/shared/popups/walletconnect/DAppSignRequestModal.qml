@@ -33,7 +33,6 @@ SignTransactionModalBase {
     required property string networkName
     required property string networkIconPath
     // Fees
-    required property string currentCurrency
     required property string fiatFees
     required property string cryptoFees
     required property string estimatedTime
@@ -96,7 +95,7 @@ SignTransactionModalBase {
                 StatusTextWithLoadingState {
                     Layout.fillWidth: true
                     objectName: "footerFiatFeesText"
-                    text: "%1 %2".arg(formatBigNumber(root.fiatFees)).arg(root.currentCurrency)
+                    text: formatBigNumber(root.fiatFees, root.currentCurrency)
                     loading: root.feesLoading
                     customColor: root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
                     elide: Qt.ElideMiddle
@@ -172,7 +171,7 @@ SignTransactionModalBase {
                 StatusTextWithLoadingState {
                     objectName: "fiatFeesText"
                     Layout.alignment: Qt.AlignRight
-                    text: "%1 %2".arg(formatBigNumber(root.fiatFees)).arg(root.currentCurrency)
+                    text: formatBigNumber(root.fiatFees, root.currentCurrency)
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Style.current.additionalTextSize
                     loading: root.feesLoading
@@ -181,7 +180,7 @@ SignTransactionModalBase {
                 StatusTextWithLoadingState {
                     objectName: "cryptoFeesText"
                     Layout.alignment: Qt.AlignRight
-                    text: "%1 ETH".arg(formatBigNumber(root.cryptoFees))
+                    text: formatBigNumber(root.cryptoFees, Constants.ethToken)
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Style.current.additionalTextSize
                     customColor: root.enoughFundsForFees ? Theme.palette.baseColor1 : Theme.palette.dangerColor1

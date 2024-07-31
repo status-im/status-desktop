@@ -8,7 +8,6 @@ import Models 1.0
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet.popups.swap 1.0
-import shared.stores 1.0
 
 import utils 1.0
 
@@ -17,17 +16,12 @@ Item {
     width: 600
     height: 400
 
-    QtObject {
-        id: d
-        readonly property var currencyStore: CurrenciesStore{}
-    }
-
     Component {
         id: componentUnderTest
         SwapSignModal {
             anchors.centerIn: parent
 
-            currencyStore: d.currencyStore
+            formatBigNumber: (number, symbol, noSymbolOption) => parseFloat(number).toLocaleString(Qt.locale(), 'f', 2) + (noSymbolOption ? "" : " " + symbol)
 
             fromTokenSymbol: "DAI"
             fromTokenAmount: "100.07"
@@ -106,13 +100,13 @@ Item {
 
             // title & subtitle
             compare(controlUnderTest.title, qsTr("Sign Swap"))
-            compare(controlUnderTest.subtitle, qsTr("%1 to %2").arg(d.currencyStore.formatCurrencyAmount(controlUnderTest.fromTokenAmount, controlUnderTest.fromTokenSymbol))
-                    .arg(d.currencyStore.formatCurrencyAmount(controlUnderTest.toTokenAmount, controlUnderTest.toTokenSymbol)))
+            compare(controlUnderTest.subtitle, qsTr("%1 to %2").arg(controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount, controlUnderTest.fromTokenSymbol))
+                    .arg(controlUnderTest.formatBigNumber(controlUnderTest.toTokenAmount, controlUnderTest.toTokenSymbol)))
 
             // info box
             const headerText = findChild(controlUnderTest.contentItem, "headerText")
             verify(!!headerText)
-            compare(headerText.text, qsTr("Swap 1000.123456789 SNT to 1.42 %3 in %1 on %2").arg(controlUnderTest.accountName).arg(controlUnderTest.networkName).arg(data.toTokenSymbol))
+            compare(headerText.text, qsTr("Swap 1,000.12 SNT to 1.42 %3 in %1 on %2").arg(controlUnderTest.accountName).arg(controlUnderTest.networkName).arg(data.toTokenSymbol))
             const fromImage = findChild(controlUnderTest.contentItem, "fromImageIdenticon")
             verify(!!fromImage)
             compare(fromImage.asset.name, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
@@ -124,7 +118,7 @@ Item {
             const payBox = findChild(controlUnderTest.contentItem, "payBox")
             verify(!!payBox)
             compare(payBox.caption, qsTr("Pay"))
-            compare(payBox.primaryText, "%1 %2".arg(controlUnderTest.fromTokenAmount).arg(controlUnderTest.fromTokenSymbol))
+            compare(payBox.primaryText, "1,000.12 SNT")
             compare(payBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.fromTokenContractAddress))
 
             // receive box

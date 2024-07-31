@@ -18,8 +18,6 @@ import utils 1.0
 SignTransactionModalBase {
     id: root
 
-    required property var currencyStore
-
     required property string fromTokenSymbol
     required property string fromTokenAmount
     required property string fromTokenContractAddress
@@ -47,17 +45,15 @@ SignTransactionModalBase {
 
     title: qsTr("Sign Swap")
     //: e.g. (swap) 100 DAI to 100 USDT
-    subtitle: qsTr("%1 to %2")
-    .arg(root.currencyStore.formatCurrencyAmount(fromTokenAmount, fromTokenSymbol))
-    .arg(root.currencyStore.formatCurrencyAmount(toTokenAmount, toTokenSymbol))
+    subtitle: qsTr("%1 to %2").arg(formatBigNumber(fromTokenAmount, fromTokenSymbol)).arg(formatBigNumber(toTokenAmount, toTokenSymbol))
 
     gradientColor: Utils.setColorAlpha(root.accountColor, 0.05) // 5% of wallet color
     fromImageSource: Constants.tokenIcon(root.fromTokenSymbol)
     toImageSource: Constants.tokenIcon(root.toTokenSymbol)
 
     //: e.g. "Swap 100 DAI to 100 USDT in <account name> on <network chain name>"
-    headerMainText: qsTr("Swap %1 %2 to %3 %4 in %5 on %6").arg(formatBigNumber(root.fromTokenAmount)).arg(root.fromTokenSymbol)
-        .arg(formatBigNumber(root.toTokenAmount)).arg(root.toTokenSymbol).arg(root.accountName).arg(root.networkName)
+    headerMainText: qsTr("Swap %1 to %2 in %3 on %4").arg(formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol))
+        .arg(formatBigNumber(root.toTokenAmount, root.toTokenSymbol)).arg(root.accountName).arg(root.networkName)
     headerSubTextLayout: [
         StatusBaseText {
             font.pixelSize: Style.current.additionalTextSize
@@ -133,7 +129,7 @@ SignTransactionModalBase {
         Layout.bottomMargin: Style.current.bigPadding
         objectName: "payBox"
         caption: qsTr("Pay")
-        primaryText: "%1 %2".arg(formatBigNumber(root.fromTokenAmount)).arg(root.fromTokenSymbol)
+        primaryText: formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol)
         secondaryText: root.fromTokenSymbol !== Constants.ethToken ? SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress) : ""
         icon: Constants.tokenIcon(root.fromTokenSymbol)
         badge: root.networkIconPath
@@ -156,7 +152,7 @@ SignTransactionModalBase {
         Layout.bottomMargin: Style.current.bigPadding
         objectName: "receiveBox"
         caption: qsTr("Receive")
-        primaryText: "%1 %2".arg(formatBigNumber(root.toTokenAmount)).arg(root.toTokenSymbol)
+        primaryText: formatBigNumber(root.toTokenAmount, root.toTokenSymbol)
         secondaryText: root.toTokenSymbol !== Constants.ethToken ? SQUtils.Utils.elideAndFormatWalletAddress(root.toTokenContractAddress) : ""
         icon: Constants.tokenIcon(root.toTokenSymbol)
         badge: root.networkIconPath

@@ -11,7 +11,7 @@ import StatusQ 0.1
   - marks empty input and consisting only of decimal point as Intermediate
   - limits allowed char set - digits and (only when maxDecimalDigits is not 0)
     two decimal point characters are available (".", ",")
-  - replaces entered decimal point to the one provied via decimalPoint property
+  - replaces entered decimal point to the one provided via decimalPoint property
   - blocks attemps of entering more then one decimal point char
   - limits number of integral part specified by maxIntegralDigits
   - trims number of decimal part specified by maxDecimalDigits

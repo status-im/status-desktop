@@ -384,7 +384,6 @@ Item {
             compare(args.fiatMaxFees.toString(), args.ethMaxFees.toString(), "expected fiatMaxFees to be set")
             verify(args.haveEnoughFunds, "expected haveEnoughFunds to be set")
             compare(args.haveEnoughForFees, data.expect.haveEnoughForFees, "expected haveEnoughForFees to be set")
-            compare(args.symbol, "$", "expected symbol to be set")
             verify(!!args.feesInfo, "expected feesInfo to be set")
         }
     }
