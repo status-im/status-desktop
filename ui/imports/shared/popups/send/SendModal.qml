@@ -337,6 +337,7 @@ StatusDialog {
                 RowLayout {
                     spacing: 8
                     Layout.preferredHeight: 44
+                    Layout.maximumWidth: parent.width
 
                     HeaderTitleText {
                         id: modalHeader
@@ -354,6 +355,7 @@ StatusDialog {
                         assetsModel: assetsAdaptor.outputAssetsModel
                         collectiblesModel: collectiblesAdaptorLoader.active
                                            ? collectiblesAdaptorLoader.item.model : null
+                        Layout.fillWidth: isTokenSelected
 
                         TokenSelectorViewAdaptor {
                             id: assetsAdaptor
