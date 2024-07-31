@@ -152,6 +152,7 @@ QtObject:
     networkService: network_service.Service
     settingsService: settings_service.Service
     tokenService: token_service.Service
+    uuidOfTheLastRequestForSuggestedRoutes: string
 
   ## Forward declarations
   proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string)
@@ -508,7 +509,7 @@ QtObject:
         if not asset.isNil:
           var foundAddress = false
           for addressPerChain in asset.addressPerChainId:
-            if addressPerChain.chainId == route.toNetwork.chainId:
+            if addressPerChain.chainId == route.fromNetwork.chainId:
               toContractAddress = parseAddress(addressPerChain.address)
               foundAddress = true
               break
@@ -648,8 +649,10 @@ QtObject:
       error "Error getting suggested fees", msg = e.msg
 
   proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string) =
-    # TODO: refactor sending modal part of the app, but for now since we're integrating the router v2 just map params to the old dto
+    if self.uuidOfTheLastRequestForSuggestedRoutes != uuid:
+      return
 
+    # TODO: refactor sending modal part of the app, but for now since we're integrating the router v2 just map params to the old dto
     var oldRoute = convertToOldRoute(route)
 
     let suggestedDto = SuggestedRoutesDto(
@@ -679,6 +682,8 @@ QtObject:
     disabledToChainIDs: seq[int] = @[],
     lockedInAmounts: Table[string, string] = initTable[string, string](),
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
+
+    self.uuidOfTheLastRequestForSuggestedRoutes = uuid
 
     let
       bigAmountIn = common_utils.stringToUint256(amountIn)
