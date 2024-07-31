@@ -188,6 +188,7 @@ QObject {
 
     ConcatModel {
         id: concatModel
+        propagateResets: true
         sources: [
             SourceModel {
                 model: renamedTokensBySymbolModel
