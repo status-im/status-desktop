@@ -1626,6 +1626,7 @@ Item {
             property int preSelectedHoldingType: Constants.TokenType.Unknown
             property int preSelectedSendType: Constants.SendType.Unknown
             property string preDefinedAmountToSend
+            property int preSelectedChainId: 0
             property bool onlyAssets: false
 
             sourceComponent: SendPopups.SendModal {
@@ -1644,6 +1645,7 @@ Item {
                     sendModal.preSelectedAccountAddress = ""
                     sendModal.preSelectedRecipient = undefined
                     sendModal.preDefinedAmountToSend = ""
+                    sendModal.preSelectedChainId = 0
                 }
             }
             onLoaded: {
@@ -1651,8 +1653,9 @@ Item {
                     item.preSelectedAccountAddress = sendModal.preSelectedAccountAddress
                 }
                 if (!!sendModal.preSelectedRecipient) {
-                    item.preSelectedRecipient = sendModal.preSelectedRecipient
+                    // NOTE Should be assigned in that order: type then recipient
                     item.preSelectedRecipientType = sendModal.preSelectedRecipientType
+                    item.preSelectedRecipient = sendModal.preSelectedRecipient
                 }
                 if(sendModal.preSelectedSendType !== Constants.SendType.Unknown) {
                     item.preSelectedSendType = sendModal.preSelectedSendType
@@ -1663,6 +1666,9 @@ Item {
                 }
                 if(preDefinedAmountToSend != "") {
                     item.preDefinedAmountToSend = preDefinedAmountToSend
+                }
+                if(!!sendModal.preSelectedChainId) {
+                    item.preSelectedChainId = sendModal.preSelectedChainId
                 }
             }
         }

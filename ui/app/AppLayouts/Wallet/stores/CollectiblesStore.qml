@@ -6,6 +6,7 @@ import StatusQ.Models 0.1
 import utils 1.0
 
 import SortFilterProxyModel 0.2
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 QtObject {
     id: root
@@ -106,5 +107,27 @@ QtObject {
 
     function getDetailedCollectible(chainId, contractAddress, tokenId) {
         walletSection.collectibleDetailsController.getDetailedCollectible(chainId, contractAddress, tokenId)
+    }
+
+    function hasNFT(ownerAddress, chainId, tokenId, tokenAddress) {
+        const uid = getUidForData(tokenId, tokenAddress, chainId)
+        ownerAddress = ownerAddress.toLowerCase()
+        const ownership = SQUtils.ModelUtils.getByKey(_allCollectiblesModel, "uid", uid, "ownership")
+        if (!ownership)
+            return false
+
+        for (let i = 0; i < ownership.count; i++) {
+            const accountAddress = SQUtils.ModelUtils.get(ownership, i, "accountAddress").toLowerCase()
+            if (accountAddress !== ownerAddress)
+                continue
+            const tokenBalanceStr = SQUtils.ModelUtils.get(ownership, i, "balance").toLowerCase()
+            if (tokenBalanceStr !== "")
+                return true
+        }
+        return false
+    }
+
+    function getUidForData(tokenId, tokenAddress, chainId) {
+        return _allCollectiblesModel.getUidForData(tokenId, tokenAddress, chainId)
     }
 }

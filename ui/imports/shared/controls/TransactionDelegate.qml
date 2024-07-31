@@ -200,7 +200,7 @@ StatusListItem {
 
         readonly property bool isLightTheme: Style.current.name === Constants.lightThemeName
         property color animatedBgColor
-        property int txType: walletRootStore.transactionType(modelData)
+        property int txType: walletRootStore.transactionType(root.modelData)
 
         function addressesEqual(address1, address2) {
             return address1.toUpperCase() == address2.toUpperCase()

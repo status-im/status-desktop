@@ -315,17 +315,9 @@ QtObject {
 
     function getAssetForSendTx(tx) {
         if (tx.isNFT) {
-            return {
-                uid: tx.tokenID,
-                chainId: tx.chainId,
-                name: tx.nftName,
-                imageUrl: tx.nftImageUrl,
-                collectionUid: "",
-                collectionName: ""
-            }
-        } else {
-            return tx.symbol
+            return collectiblesStore.getUidForData(tx.tokenID, tx.tokenAddress, tx.chainId)
         }
+        return tx.symbol
     }
 
     function isTxRepeatable(tx) {
@@ -336,12 +328,14 @@ QtObject {
         if (!res || res.walletType === Constants.watchWalletType)
             return false
 
-        if (tx.isNFT) {
-            // TODO #12275: check if account owns enough NFT
-        } else {
-            // TODO #12275: Check if account owns enough tokens
+        if (!tx.amount) {
+            // Ignore incorrect transactions
+            return false
         }
 
+        if (tx.isNFT && !root.collectiblesStore.hasNFT(tx.sender, tx.chainId, tx.tokenID, tx.tokenAddress)) {
+            return false
+        }
         return true
     }
 

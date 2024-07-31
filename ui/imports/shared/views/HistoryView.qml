@@ -324,15 +324,17 @@ ColumnLayout {
                                                               tx.recipient,
                                                               asset,
                                                               tx.isNFT,
-                                                              tx.amount)
+                                                              tx.amount,
+                                                              tx.chainId)
 
                 root.sendModal.preSelectedAccountAddress = req.preSelectedAccount.address
                 root.sendModal.preSelectedRecipient = req.preSelectedRecipient
                 root.sendModal.preSelectedRecipientType = req.preSelectedRecipientType
-                root.sendModal.preSelectedHoldingID = req.preSelectedHoldingID ?? req.preSelectedHolding.uid
+                root.sendModal.preSelectedHoldingID = req.preSelectedHoldingID
                 root.sendModal.preSelectedHoldingType = req.preSelectedHoldingType
                 root.sendModal.preSelectedSendType = req.preSelectedSendType
                 root.sendModal.preDefinedAmountToSend = req.preDefinedAmountToSend
+                root.sendModal.preSelectedChainId = req.preSelectedChainId
                 root.sendModal.onlyAssets = false
                 root.sendModal.open()
             }

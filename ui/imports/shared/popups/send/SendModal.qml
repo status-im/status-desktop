@@ -40,6 +40,7 @@ StatusDialog {
     property alias preSelectedRecipientType: recipientInputLoader.selectedRecipientType
 
     property string preDefinedAmountToSend
+    property int preSelectedChainId: 0
     property string stickersPackId
 
     // token symbol
@@ -146,6 +147,10 @@ StatusDialog {
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.TokenType.ERC20
 
         onSelectedHoldingChanged: {
+            if (!selectedHolding) {
+                return
+            }
+
             if (d.selectedHoldingType === Constants.TokenType.ERC20) {
                 if(!d.ensOrStickersPurpose && store.sendType !== Constants.SendType.Bridge)
                     store.setSendType(Constants.SendType.Transfer)
@@ -250,6 +255,11 @@ StatusDialog {
             const delocalized = popup.preDefinedAmountToSend.replace(",", ".")
 
             amountToSend.setValue(delocalized)
+        }
+        
+        if (!!popup.preSelectedChainId) {
+            popup.preDefinedAmountToSend = popup.preDefinedAmountToSend.replace(Qt.locale().decimalPoint, '.')
+            store.updateRoutePreferredChains(popup.preSelectedChainId)
         }
 
         if (!!popup.stickersPackId) {

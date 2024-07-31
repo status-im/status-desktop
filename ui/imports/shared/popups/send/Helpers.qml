@@ -29,9 +29,9 @@ QtObject {
             preSelectedRecipientType: Helpers.RecipientAddressObjectType.Address,
             preSelectedRecipient: null,
             preSelectedHoldingType: Constants.TokenType.Unknown,
-            preSelectedHolding: null,
             preSelectedHoldingID: "",
             preDefinedAmountToSend: "",
+            preSelectedChainId: 0,
             preSelectedSendType: Constants.SendType.Transfer
         }
     }
@@ -43,7 +43,8 @@ QtObject {
                                          recipientAddress,
                                          token,
                                          isCollectible,
-                                         amount) {
+                                         amount,
+                                         chainId) {
         let req = createSendModalRequirements()
 
         req.preSelectedSendType = Constants.SendType.Transfer
@@ -70,14 +71,9 @@ QtObject {
             req.preSelectedRecipient = recipientAddress
         }
 
-        // Holdings related properties:
-        if (isCollectible) {
-            req.preSelectedHoldingType = Constants.TokenType.ERC721
-            req.preSelectedHolding = token
-        } else {
-            req.preSelectedHoldingType = Constants.TokenType.ERC20
-            req.preSelectedHoldingID = token
-        }
+        req.preSelectedHoldingType = isCollectible ? Constants.TokenType.ERC721 : Constants.TokenType.ERC20
+        req.preSelectedHoldingID = token
+        req.preSelectedChainId = chainId
 
         req.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(amount)
 
