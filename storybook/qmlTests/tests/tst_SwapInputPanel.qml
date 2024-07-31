@@ -479,5 +479,40 @@ Item {
             compare(controlUnderTest.selectedHoldingId, tokenKeyToTest)
             compare(controlUnderTest.amountEnteredGreaterThanBalance, false)
         }
+
+        function test_if_values_not_reset_on_modelReset() {
+            const tokenKeyToTest = "ETH"
+            let numberTestedString = "1.0001"
+            let modelItemToTest = ModelUtils.getByKey(d.tokenSelectorAdaptor.outputAssetsModel, "tokensKey", tokenKeyToTest)
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, {
+                                                         swapSide: SwapInputPanel.SwapSide.Pay,
+                                                         tokenKey: tokenKeyToTest,
+                                                         tokenAmount: numberTestedString
+                                                     })
+            verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
+
+
+            const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
+            verify(!!amountToSendInput)
+
+            let numberTested = LocaleUtils.numberFromLocaleString(numberTestedString, amountToSendInput.input.locale)
+
+            compare(amountToSendInput.input.text, numberTestedString)
+            compare(controlUnderTest.value, numberTested)
+            compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
+            compare(controlUnderTest.valueValid, true)
+            compare(controlUnderTest.selectedHoldingId, tokenKeyToTest)
+            compare(controlUnderTest.amountEnteredGreaterThanBalance, false)
+
+            d.tokenSelectorAdaptor.assetsModel.modelReset()
+
+            compare(amountToSendInput.input.text, numberTestedString)
+            compare(controlUnderTest.value, numberTested)
+            compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
+            compare(controlUnderTest.valueValid, true)
+            compare(controlUnderTest.selectedHoldingId, tokenKeyToTest)
+            compare(controlUnderTest.amountEnteredGreaterThanBalance, false)
+        }
     }
 }

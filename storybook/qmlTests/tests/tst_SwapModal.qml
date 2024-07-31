@@ -1064,6 +1064,7 @@ Item {
 
             const receivePanel = findChild(controlUnderTest, "receivePanel")
             verify(!!receivePanel)
+            waitForRendering(receivePanel)
             const amountToSendInput = findChild(receivePanel, "amountToSendInput")
             verify(!!amountToSendInput)
             const bottomItemText = findChild(receivePanel, "bottomItemText")
