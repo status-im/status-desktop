@@ -178,6 +178,9 @@ Item {
 
                 spacing: 8
                 StatusListItem {
+                    // Temporarily disabled, refer to https://github.com/status-im/status-desktop/issues/15955 for details.
+                    visible: false
+
                     Layout.fillWidth: true
                     title: qsTr("Show community assets when sending tokens")
 
@@ -199,6 +202,7 @@ Item {
                     }
                 }
                 StatusDialogDivider {
+                    visible: false
                     Layout.fillWidth: true
                 }
                 StatusListItem {

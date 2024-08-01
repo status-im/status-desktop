@@ -318,10 +318,11 @@ Item {
                                                       root.sendModalPopup)
                     return
                 }
+
                 // Common send modal popup:
                 root.sendModalPopup.preSelectedAccountAddress = fromAddress
                 root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
-                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingTokensKey
                 root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
                 root.sendModalPopup.onlyAssets = false
                 root.sendModalPopup.open()

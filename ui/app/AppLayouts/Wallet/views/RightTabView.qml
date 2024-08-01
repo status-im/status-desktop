@@ -229,11 +229,10 @@ RightTabBaseView {
                         swapVisible: Global.featureFlags.swapEnabled
 
                         onSendRequested: {
-                            const symbol = ModelUtils.getByKey(model, "key", key, "symbol")
                             const modal = root.sendModal
 
                             modal.preSelectedSendType = Constants.SendType.Transfer
-                            modal.preSelectedHoldingID = symbol
+                            modal.preSelectedHoldingID = key
                             modal.preSelectedHoldingType = Constants.TokenType.ERC20
                             modal.onlyAssets = true
                             modal.open()
