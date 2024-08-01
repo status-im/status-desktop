@@ -8,7 +8,7 @@ type
     StatusProd = "status.prod"
     StatusStaging = "status.staging"
 
-  FleetNodes* {.pure.} = enum # FIXME: Maybe remove
+  FleetNodes* {.pure.} = enum
     Bootnodes = "boot"
     Mailservers = "mail"
     Rendezvous = "rendezvous"
