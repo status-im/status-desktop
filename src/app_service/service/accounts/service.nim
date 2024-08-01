@@ -16,7 +16,7 @@ import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/fleets/fleet_configuration
-import ../../common/[account_constants, network_constants, utils]
+import ../../common/[account_constants, utils]
 import ../../../constants as main_constants
 
 export dto_accounts
@@ -145,47 +145,6 @@ QtObject:
       return "DEBUG"
     return logLevel
 
-  # TODO: Remove after https://github.com/status-im/status-desktop/issues/11435
-  proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
-    let fleet = Fleet.StatusProd
-    let dnsDiscoveryURL = "enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.prod.status.nodes.status.im"
-
-    result = NODE_CONFIG.copy()
-    result["ClusterConfig"]["Fleet"] = newJString($fleet)
-    result["NetworkId"] = NETWORKS[0]{"chainId"}
-    result["DataDir"] = "ethereum".newJString()
-    result["UpstreamConfig"]["Enabled"] = true.newJBool()
-    result["UpstreamConfig"]["URL"] = NETWORKS[0]{"rpcUrl"}
-    result["ShhextConfig"]["InstallationID"] = newJString(installationId)
-
-
-    result["ClusterConfig"]["WakuNodes"] = %* @[dnsDiscoveryURL]
-
-    var discV5Bootnodes = self.fleetConfiguration.getNodes(fleet, FleetNodes.WakuENR)
-    discV5Bootnodes.add(dnsDiscoveryURL)
-
-    result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* discV5Bootnodes
-
-    if TEST_PEER_ENR != "":
-      let testPeerENRArr = %* @[TEST_PEER_ENR]
-      result["ClusterConfig"]["WakuNodes"] = %* testPeerENRArr
-      result["ClusterConfig"]["BootNodes"] = %* testPeerENRArr
-      result["ClusterConfig"]["TrustedMailServers"] = %* testPeerENRArr
-      result["ClusterConfig"]["StaticNodes"] = %* testPeerENRArr
-      result["ClusterConfig"]["RendezvousNodes"] = %* (@[])
-      result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[])
-      result["Rendezvous"] = newJBool(false)
-
-    result["LogLevel"] = newJString(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL))
-
-    if STATUS_PORT != 0:
-      result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
-
-    result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
-    result["RootDataDir"] = newJString(main_constants.STATUSGODIR)
-    result["KeycardPairingDataFile"] = newJString(main_constants.KEYCARDPAIRINGDATAFILE)
-    result["ProcessBackedupMessages"] = newJBool(recoverAccount)
-
   # FIXME: remove this method, settings should be processed in status-go
   # https://github.com/status-im/status-go/issues/5359
   proc addKeycardDetails(self: Service, kcInstance: string, settingsJson: var JsonNode, accountData: var JsonNode) =
@@ -202,7 +161,7 @@ QtObject:
       if not accountData.isNil:
         accountData["keycard-pairing"] = kcDataObj{"key"}
 
-  proc buildWalletSecrets(self: Service): WalletSecretsConfig =
+  proc buildWalletSecrets(): WalletSecretsConfig =
     return WalletSecretsConfig(
       poktToken: POKT_TOKEN_RESOLVED,
       infuraToken: INFURA_TOKEN_RESOLVED,
@@ -225,16 +184,12 @@ QtObject:
       statusProxyBlockchainPassword: STATUS_PROXY_BLOCKCHAIN_PASSWORD_RESOLVED,
     )
 
-  proc buildCreateAccountRequest(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
+  proc defaultCreateAccountRequest*(): CreateAccountRequest =
     return CreateAccountRequest(
         rootDataDir: main_constants.STATUSGODIR,
         kdfIterations: KDF_ITERATIONS,
-        password: hashPassword(password),
-        displayName: displayName,
-        imagePath: imagePath,
-        imageCropRectangle: imageCropRectangle,
         customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
-        emoji: self.defaultWalletEmoji,
+        emoji: "", # self.defaultWalletEmoji,
         logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
         wakuV2LightClient: false,
         wakuV2EnableMissingMessageVerification: true,
@@ -243,14 +198,22 @@ QtObject:
         torrentConfigEnabled: some(false),
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
         keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
-        walletSecretsConfig: self.buildWalletSecrets(),
+        walletSecretsConfig: buildWalletSecrets(),
         apiConfig: defaultApiConfig(),
         statusProxyEnabled: true,
       )
 
+  proc buildCreateAccountRequest(password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
+    var request = defaultCreateAccountRequest()
+    request.password = hashPassword(password)
+    request.displayName = displayName
+    request.imagePath = imagePath
+    request.imageCropRectangle = imageCropRectangle
+    return request
+
   proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
     try:
-      let request = self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
+      let request = buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
       let response = status_account.createAccountAndLogin(request)
 
       if not response.result.contains("error"):
@@ -282,7 +245,7 @@ QtObject:
     var request = RestoreAccountRequest(
       mnemonic: mnemonic,
       fetchBackup: recoverAccount,
-      createAccountRequest: self.buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
+      createAccountRequest: buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
 
@@ -312,7 +275,7 @@ QtObject:
     var request = RestoreAccountRequest(
       keycard: keycard,
       fetchBackup: recoverAccount,
-      createAccountRequest: self.buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
+      createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
 
@@ -427,7 +390,7 @@ QtObject:
       passwordHash: passwordHash,
       keycardWhisperPrivateKey: chatPrivateKey,
       mnemonic: mnemonic,
-      walletSecretsConfig: self.buildWalletSecrets(),
+      walletSecretsConfig: buildWalletSecrets(),
       bandwidthStatsEnabled: true,
       apiConfig: defaultApiConfig(),
       statusProxyEnabled: true # TODO: read from settings

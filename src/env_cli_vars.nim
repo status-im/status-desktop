@@ -244,16 +244,6 @@ type StatusDesktopConfig = object
     desc: "Sets default torrent config port"
     name: "DEFAULT_TORRENT_CONFIG_PORT"
     abbr: "default-torrent-config-port" .}: int
-  defaultWakuV2Port* {.
-    defaultValue: 0
-    desc: "Sets default waku v2 port"
-    name: "DEFAULT_WAKU_V2_PORT"
-    abbr: "default-waku-v2-port" .}: int
-  statusPort* {.
-    defaultValue: 0
-    desc: "Sets Waku V1 config port"
-    name: "PORT"
-    abbr: "status-port" .}: int
   logLevel* {.
     defaultValue: DEFAULT_LOG_LEVEL
     desc: "Sets log level"

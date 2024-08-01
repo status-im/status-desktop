@@ -222,15 +222,9 @@ QtObject:
     return status_go.getConnectionStringForBootstrappingAnotherDevice($configJSON)
 
   proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string): string =
-    let installationId = $genUUID()
-    let nodeConfigJson = self.accountsService.getDefaultNodeConfig(installationId, recoverAccount = false)
     let configJSON = %* {
       "receiverConfig": %* {
-        "keystorePath": main_constants.ROOTKEYSTOREDIR,
-        "deviceType" : hostOs,
-        "nodeConfig": nodeConfigJson,
-        "kdfIterations": self.accountsService.getKdfIterations(),
-        "settingCurrentNetwork": "mainnet_rpc"
+        "createAccount": %*accounts_service.defaultCreateAccountRequest(),
       },
       "clientConfig": %* {}
     }

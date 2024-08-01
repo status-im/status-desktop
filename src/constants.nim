@@ -32,16 +32,12 @@ let
   TMPDIR* = joinPath(baseDir, "tmp") & sep
   LOGDIR* = joinPath(baseDir, "logs") & sep
   KEYCARDPAIRINGDATAFILE* = joinPath(baseDir, "data", "keycard", "pairings.json")
-  DEFAULT_TORRENT_CONFIG_DATADIR* = joinPath(baseDir, "data", "archivedata")
-  DEFAULT_TORRENT_CONFIG_TORRENTDIR* = joinPath(baseDir, "data", "torrents")
 
   # runtime variables
   TEST_MODE_ENABLED* = desktopConfig.testMode
   DISPLAY_MOCKED_KEYCARD_WINDOW* = desktopConfig.displayMockedKeycardWindow
   WALLET_ENABLED* = desktopConfig.enableWallet
   TORRENT_CONFIG_PORT* = desktopConfig.defaultTorentConfigPort
-  WAKU_V2_PORT* = desktopConfig.defaultWakuV2Port
-  STATUS_PORT* = desktopConfig.statusPort
   LOG_LEVEL* = desktopConfig.logLevel
   FLEET_SELECTION_ENABLED* = desktopConfig.enableFleetSelection
 
@@ -69,7 +65,6 @@ let
   WALLET_CONNECT_PROJECT_ID* = BUILD_WALLET_CONNECT_PROJECT_ID
   MIXPANEL_APP_ID* = desktopConfig.mixpanelAppId
   MIXPANEL_TOKEN* = desktopConfig.mixpanelToken
-  BUILD_MODE* = if defined(production): "prod" else: "test"
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:
