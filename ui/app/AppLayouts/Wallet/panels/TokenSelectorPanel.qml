@@ -267,8 +267,6 @@ Control {
 
                         section.property: "type"
                         section.delegate: StatusBaseText {
-                            id: sectionTitle
-
                             color: Theme.palette.baseColor1
                             topPadding: Style.current.padding
 
