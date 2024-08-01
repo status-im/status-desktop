@@ -162,8 +162,7 @@ Control {
                 const entry = ModelUtils.getByKey(assetsModel, "tokensKey", key)
                 highlightedKey = key
 
-                setCurrentAndClose(entry.symbol,
-                                   Constants.tokenIcon(entry.symbol))
+                setCurrentAndClose(entry.symbol, entry.iconSource)
                 root.assetSelected(key)
             }
 
