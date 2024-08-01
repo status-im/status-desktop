@@ -103,10 +103,10 @@ WalletConnectSDKBase {
                 return null
             }
 
-            let session = getActiveSessions(root.dappInfo)
+            let session = getActiveSession(root.dappInfo)
 
             if (session === null) {
-                console.error("DAppsRequestHandler.lookupSession: error finding session for topic", obj.topic)
+                console.error("Connector.lookupSession: error finding session for requestId ", obj.requestId)
                 return
             }
             obj.resolveDappInfoFromSession(session)
@@ -254,7 +254,7 @@ WalletConnectSDKBase {
         }
 
         function acceptSessionRequest(topic, method, id, signature) {
-            console.debug(`WC DappsConnectorSDK.acceptSessionRequest; topic: "${topic}", id: ${root.requestId}, signature: "${signature}"`)
+            console.debug(`Connector DappsConnectorSDK.acceptSessionRequest; requestId: ${root.requestId}, signature: "${signature}"`)
 
             sessionRequestLoader.active = false
             controller.approveTransactionRequest(requestId, signature)
@@ -262,7 +262,7 @@ WalletConnectSDKBase {
             root.wcService.displayToastMessage(qsTr("Successfully signed transaction from %1").arg(root.dappInfo.url), false)
         }
 
-        function getActiveSessions(dappInfos) {
+        function getActiveSession(dappInfos) {
             let sessionTemplate = (dappUrl, dappName, dappIcon) => {
                 return {
                     "peer": {
@@ -279,7 +279,16 @@ WalletConnectSDKBase {
                 };
             }
 
-            return sessionTemplate(dappInfos.url, dappInfos.name, dappInfos.icon)
+            let sessionString = root.wcService.connectorDAppsProvider.getActiveSession(dappInfos.url)
+            if (sessionString === null) {
+                console.error("Connector.lookupSession: error finding session for requestId ", root.requestId)
+
+                return
+            }
+
+            let session = JSON.parse(sessionString);
+
+            return sessionTemplate(session.url, session.name, session.icon)
         }
 
         function authenticate(request) {
@@ -349,6 +358,11 @@ WalletConnectSDKBase {
             onDecline: {
                 connectDappLoader.active = false
                 rejectSession(root.requestId)
+            }
+
+            onDisconnect: {
+                connectDappLoader.active = false;
+                controller.recallDAppPermission(root.dappInfo.url)
             }
         }
     }
@@ -455,6 +469,21 @@ WalletConnectSDKBase {
     }
 
     Connections {
+        target: root.wcService
+
+        function onRevokeSession(dAppUrl) {
+            if (dAppUrl) {
+                controller.recallDAppPermission(dAppUrl)
+                const session = { url: dAppUrl, name: "", icon: "" }
+                root.wcService.connectorDAppsProvider.revokeSession(JSON.stringify(session))
+                root.wcService.displayToastMessage(qsTr("Disconnected from %1").arg(dAppUrl), false);
+            } else {
+                console.warn("Invalid dappInfo: URL is missing")
+            }
+        }
+    }
+
+    Connections {
         target: controller
 
         onDappValidatesTransaction: function(requestId, dappInfoString) {
@@ -518,11 +547,40 @@ WalletConnectSDKBase {
             connectDappLoader.active = true
             root.requestId = requestId
         }
+
+        onDappGrantDAppPermission: function(dappInfoString) {
+            let dappItem = JSON.parse(dappInfoString)
+            const { url, name, icon: iconUrl } = dappItem
+
+            if (url) {
+                const session = { url, name, iconUrl };
+                root.wcService.connectorDAppsProvider.addSession(JSON.stringify(session));
+            } else {
+                console.warn("Invalid dappInfo: URL is missing")
+            }
+        }
+
+        onDappRevokeDAppPermission: function(dappInfoString) {
+            let dappItem = JSON.parse(dappInfoString)
+            let session = {
+                "url": dappItem.url,
+                "name": dappItem.name,
+                "iconUrl": dappItem.icon
+            }
+
+            if (session.url) {
+                root.wcService.connectorDAppsProvider.revokeSession(JSON.stringify(session))
+                root.wcService.displayToastMessage(qsTr("Disconnected from %1").arg(dappItem.url), false);
+            } else {
+                console.warn("Invalid dappInfo: URL is missing")
+            }
+        }
     }
 
     approveSession: function(requestId, account, selectedChains) {
         controller.approveDappConnectRequest(requestId, account, JSON.stringify(selectedChains))
-        root.wcService.displayToastMessage(qsTr("Successfully authenticated %1").arg(root.dappInfo.url), false)
+        const { url, name, icon: iconUrl } = root.dappInfo;
+        root.wcService.displayToastMessage(qsTr("Successfully authenticated %1").arg(url), false);
     }
 
     rejectSession: function(requestId) {

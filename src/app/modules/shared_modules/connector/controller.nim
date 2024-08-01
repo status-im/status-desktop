@@ -11,6 +11,8 @@ import app_service/common/utils
 
 const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
+const SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION* = "ConnectorGrantDAppPermission"
+const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
 
 logScope:
   topics = "connector-controller"
@@ -26,6 +28,8 @@ QtObject:
 
   proc dappRequestsToConnect*(self: Controller, requestId: string, payload: string) {.signal.}
   proc dappValidatesTransaction*(self: Controller, requestId: string, payload: string) {.signal.}
+  proc dappGrantDAppPermission*(self: Controller, payload: string) {.signal.}
+  proc dappRevokeDAppPermission*(self: Controller, payload: string) {.signal.}
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -61,6 +65,26 @@ QtObject:
 
       controller.dappValidatesTransaction(params.requestId, dappInfo.toJson())
 
+    result.events.on(SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION) do(e: Args):
+      let params = ConnectorGrantDAppPermissionSignal(e)
+      let dappInfo = %*{
+        "icon": params.iconUrl,
+        "name": params.name,
+        "url": params.url,
+      }
+
+      controller.dappGrantDAppPermission(dappInfo.toJson())
+
+    result.events.on(SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION) do(e: Args):
+      let params = ConnectorRevokeDAppPermissionSignal(e)
+      let dappInfo = %*{
+        "icon": params.iconUrl,
+        "name": params.name,
+        "url": params.url,
+      }
+
+      controller.dappRevokeDAppPermission(dappInfo.toJson())
+
     result.QObject.setup
 
   proc parseSingleUInt(chainIDsString: string): uint =
@@ -87,3 +111,6 @@ QtObject:
 
   proc rejectTransactionSigning*(self: Controller, requestId: string): bool {.slot.} =
     return self.service.rejectTransactionSigning(requestId)
+
+  proc recallDAppPermission*(self: Controller, dAppUrl: string): bool {.slot.} =
+    return self.service.recallDAppPermission(dAppUrl)

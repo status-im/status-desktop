@@ -32,10 +32,25 @@ QObject {
     required property DAppsStore store
     required property var walletRootStore
 
-    readonly property alias dappsModel: dappsProvider.dappsModel
+    readonly property var dappsModel: ConcatModel {
+        markerRoleName: "source"
+
+        sources: [
+            SourceModel {
+                model: dappsProvider.dappsModel
+                markerRoleValue: "walletConnect"
+            },
+            SourceModel {
+                model: connectorDAppsProvider.dappsModel
+                markerRoleValue: "connector"
+            }
+        ]
+    }
     readonly property alias requestHandler: requestHandler
 
     readonly property bool isServiceAvailableForAddressSelection: dappsProvider.supportedAccountsModel.ModelCount.count
+
+    readonly property alias connectorDAppsProvider: connectorDAppsProvider
 
     readonly property var validAccounts: SortFilterProxyModel {
         sourceModel: d.supportedAccountsModel
@@ -127,6 +142,8 @@ QObject {
                 }
             }
         });
+
+        root.revokeSession(url)
     }
 
     function getDApp(dAppUrl) {
@@ -140,6 +157,8 @@ QObject {
     // Emitted as a response to WalletConnectService.validatePairingUri or other WalletConnectService.pair
     // and WalletConnectService.approvePair errors
     signal pairingValidated(int validationState)
+
+    signal revokeSession(string dAppUrl)
 
     readonly property Connections sdkConnections: Connections {
         target: wcSDK
@@ -291,6 +310,10 @@ QObject {
         }
 
         selectedAddress: root.walletRootStore.selectedAddress
+    }
+
+    ConnectorDAppsListProvider {
+        id: connectorDAppsProvider
     }
 
     // Timeout for the corner case where the URL was already dismissed and the SDK doesn't respond with an error nor advances with the proposal

@@ -17,6 +17,16 @@ type ConnectorSendTransactionSignal* = ref object of Signal
   chainId*: int
   txArgs*: string
 
+type ConnectorGrantDAppPermissionSignal* = ref object of Signal
+  url*: string
+  name*: string
+  iconUrl*: string
+
+type ConnectorRevokeDAppPermissionSignal* = ref object of Signal
+  url*: string
+  name*: string
+  iconUrl*: string
+
 proc fromEvent*(T: type ConnectorSendRequestAccountsSignal, event: JsonNode): ConnectorSendRequestAccountsSignal =
   result = ConnectorSendRequestAccountsSignal()
   result.url = event["event"]{"url"}.getStr()
@@ -32,3 +42,15 @@ proc fromEvent*(T: type ConnectorSendTransactionSignal, event: JsonNode): Connec
   result.requestId = event["event"]{"requestId"}.getStr()
   result.chainId = event["event"]{"chainId"}.getInt()
   result.txArgs = event["event"]{"txArgs"}.getStr()
+
+proc fromEvent*(T: type ConnectorGrantDAppPermissionSignal, event: JsonNode): ConnectorGrantDAppPermissionSignal =
+  result = ConnectorGrantDAppPermissionSignal()
+  result.url = event["event"]{"url"}.getStr()
+  result.name = event["event"]{"name"}.getStr()
+  result.iconUrl = event["event"]{"iconUrl"}.getStr()
+
+proc fromEvent*(T: type ConnectorRevokeDAppPermissionSignal, event: JsonNode): ConnectorRevokeDAppPermissionSignal =
+  result = ConnectorRevokeDAppPermissionSignal()
+  result.url = event["event"]{"url"}.getStr()
+  result.name = event["event"]{"name"}.getStr()
+  result.iconUrl = event["event"]{"iconUrl"}.getStr()
