@@ -65,7 +65,6 @@ let
   WALLET_CONNECT_PROJECT_ID* = BUILD_WALLET_CONNECT_PROJECT_ID
   MIXPANEL_APP_ID* = desktopConfig.mixpanelAppId
   MIXPANEL_TOKEN* = desktopConfig.mixpanelToken
-  BUILD_MODE* = if defined(production): "prod" else: "test"
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:
