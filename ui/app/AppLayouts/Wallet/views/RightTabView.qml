@@ -225,6 +225,7 @@ RightTabBaseView {
 
                         sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled &&
                                      !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
+                        communitySendEnabled: RootStore.tokensStore.showCommunityAssetsInSend
                         swapEnabled: !RootStore.overview.isWatchOnlyAccount
                         swapVisible: Global.featureFlags.swapEnabled
 
@@ -266,7 +267,8 @@ RightTabBaseView {
                                         token.symbol, RootStore.currencyStore.currentCurrency)
 
                             assetDetailView.token = token
-                            RootStore.setCurrentViewedHolding(token.symbol, token.key, Constants.TokenType.ERC20)
+                            RootStore.setCurrentViewedHolding(
+                                                token.symbol, token.key, Constants.TokenType.ERC20, token.communityId ?? "")
                             stack.currentIndex = 2
                         }
                     }
@@ -283,7 +285,7 @@ RightTabBaseView {
                         filterVisible: filterButton.checked
                         onCollectibleClicked: {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
-                            RootStore.setCurrentViewedHolding(uid, uid, tokenType)
+                            RootStore.setCurrentViewedHolding(uid, uid, tokenType, communityId)
                             d.detailedCollectibleActivityController.resetFilter()
                             d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")))
                             d.detailedCollectibleActivityController.setFilterChainsJson(JSON.stringify([chainId]), false)
