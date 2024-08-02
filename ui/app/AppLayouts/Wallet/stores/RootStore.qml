@@ -177,19 +177,22 @@ QtObject {
     function resetCurrentViewedHolding(type) {
         currentViewedHoldingTokensKey = ""
         currentViewedHoldingID = ""
+        currentViewedHoldingCommunityId = ""
         currentViewedHoldingType = type
     }
 
     function setCurrentViewedHoldingType(type) {
         currentViewedHoldingTokensKey = ""
         currentViewedHoldingID = ""
+        currentViewedHoldingCommunityId = ""
         currentViewedHoldingType = type
     }
 
-    function setCurrentViewedHolding(id, tokensKey, type) {
+    function setCurrentViewedHolding(id, tokensKey, type, communityId) {
         currentViewedHoldingTokensKey = tokensKey
         currentViewedHoldingID = id
         currentViewedHoldingType = type
+        currentViewedHoldingCommunityId = communityId
     }
 
     property string currentViewedHoldingTokensKey: ""
@@ -197,6 +200,7 @@ QtObject {
     everywhere. Adding a new one currentViewedHoldingTokensKey aboce to not impact send/bridge flows */
     property string currentViewedHoldingID: ""
     property int currentViewedHoldingType
+    property string currentViewedHoldingCommunityId: ""
     readonly property var currentViewedCollectible: collectiblesStore.detailedCollectible
 
     function canProfileProveOwnershipOfProvidedAddresses(addresses) {
