@@ -18,7 +18,7 @@ rpc(disconnectWalletConnectSession, "wallet"):
   topic: string
 
 rpc(getWalletConnectActiveSessions, "wallet"):
-  validAtTimestamp: int
+  validAtTimestamp: int64
 
 rpc(hashMessageEIP191, "wallet"):
   message: string
@@ -50,13 +50,14 @@ proc disconnectSession*(topic: string): bool =
     return false
 
 # returns nil if error
-proc getActiveSessions*(validAtTimestamp: int): JsonNode =
+proc getActiveSessions*(validAtTimestamp: int64): JsonNode =
   try:
     let rpcRes = getWalletConnectActiveSessions(validAtTimestamp)
+    
     if(not isSuccessResponse(rpcRes)):
       return nil
 
-    let jsonResultStr = rpcRes.result.getStr()
+    let jsonResultStr = $rpcRes.result
     if jsonResultStr == "null" or jsonResultStr == "":
       return newJArray()
 

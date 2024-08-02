@@ -8,6 +8,7 @@ QObject {
     required property var controller
     /// \c dappsJson serialized from status-go.wallet.GetDapps
     signal dappsListReceived(string dappsJson)
+    signal activeSessionsReceived(var activeSessionsJsonObj, bool success)
     signal userAuthenticated(string topic, string id, string password, string pin, string payload)
     signal userAuthenticationFailed(string topic, string id)
 
@@ -106,6 +107,12 @@ QObject {
     function getDapps() {
         return controller.getDapps()
     }
+    
+    /// \c getActiveSessions triggers an async response to \c activeSessionsReceived
+    /// \returns true if the request was sent successfully
+    function getActiveSessions() {
+        return controller.getActiveSessions()
+    }
 
     function hexToDec(hex) {
         return controller.hexToDecBigString(hex)
@@ -122,6 +129,17 @@ QObject {
 
         function onDappsListReceived(dappsJson) {
             root.dappsListReceived(dappsJson)
+        }
+
+        function onActiveSessionsReceived(activeSessionsJson) {
+            try {
+                const jsonObj = JSON.parse(activeSessionsJson)
+                root.activeSessionsReceived(jsonObj, true)
+            } catch (e) {
+                console.error("Failed to parse activeSessionsJson", e)
+                root.activeSessionsReceived({}, false)
+                return
+            }
         }
 
         function onUserAuthenticationResult(topic, id, success, password, pin, payload) {

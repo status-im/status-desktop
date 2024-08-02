@@ -217,16 +217,7 @@ QObject {
         }
 
         function onSessionDelete(topic, err) {
-            store.deactivateWalletConnectSession(topic)
-            dappsProvider.updateDapps()
-
-            const app_url = d.currentSessionProposal ? d.currentSessionProposal.params.proposer.metadata.url : "-"
-            const app_domain = StringUtils.extractDomainFromLink(app_url)
-            if(err) {
-                root.displayToastMessage(qsTr("Failed to disconnect from %1").arg(app_domain), true)
-            } else {
-                root.displayToastMessage(qsTr("Disconnected from %1").arg(app_domain), false)
-            }
+            d.disconnectSessionRequested(topic, err)
         }
     }
 
@@ -247,6 +238,54 @@ QObject {
         function reportPairErrorState(state) {
             timeoutTimer.stop()
             root.pairingValidated(state)
+        }
+
+        function disconnectSessionRequested(topic, err) {
+            // Get all sessions and filter the active ones for known accounts
+            // Act on the first matching session with the same topic
+            const activeSessionsCallback = (allSessions, success) => {
+                store.activeSessionsReceived.disconnect(activeSessionsCallback)
+                
+                if (!success) {
+                    // TODO #14754: implement custom dApp notification
+                    d.notifyDappDisconnect("-", true)
+                    return
+                }
+                
+                // Convert to original format
+                const webSdkSessions = allSessions.map((session) => {
+                    return JSON.parse(session.sessionJson)
+                })
+
+                const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(webSdkSessions, root.validAccounts)
+                
+                for (const sessionID in sessions) {
+                    const session = sessions[sessionID]
+                    if (session.topic === topic) {
+                        store.deactivateWalletConnectSession(topic)
+                        dappsProvider.updateDapps()
+                        
+                        const dappUrl = session.peer.metadata.url ?? "-"
+                        d.notifyDappDisconnect(dappUrl, err)
+                        break
+                    }
+                }
+            }
+
+            store.activeSessionsReceived.connect(activeSessionsCallback)
+            if (!store.getActiveSessions()) {
+                store.activeSessionsReceived.disconnect(activeSessionsCallback)
+                // TODO #14754: implement custom dApp notification
+            }
+        }
+        
+        function notifyDappDisconnect(dappUrl, err) {
+            const appDomain = StringUtils.extractDomainFromLink(dappUrl)
+            if(err) {
+                root.displayToastMessage(qsTr("Failed to disconnect from %1").arg(appDomain), true)
+            } else {
+                root.displayToastMessage(qsTr("Disconnected from %1").arg(appDomain), false)
+            }
         }
     }
 
