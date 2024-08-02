@@ -1,5 +1,5 @@
 import NimQml
-import chronicles
+import chronicles, times, json
 
 import app_service/service/wallet_connect/service as wallet_connect_service
 import app_service/service/wallet_account/service as wallet_account_service
@@ -45,6 +45,20 @@ QtObject:
       return false
     else:
       self.dappsListReceived(res)
+      return true
+
+  proc activeSessionsReceived(self: Controller, activeSessionsJson: string) {.signal.}
+
+  # Emits signal activeSessionsReceived with the list of active sessions
+  # TODO: make it async
+  proc getActiveSessions(self: Controller): bool {.slot.} =
+    let validAtTimestamp = now().toTime().toUnix()
+    let res = self.service.getActiveSessions(validAtTimestamp)
+    if res.isNil:
+      return false
+    else:
+      let resultStr = $res
+      self.activeSessionsReceived(resultStr)
       return true
 
   proc userAuthenticationResult*(self: Controller, topic: string, id: string, error: bool, password: string, pin: string, payload: string) {.signal.}
