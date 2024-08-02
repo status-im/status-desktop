@@ -39,6 +39,8 @@ WalletConnectSDKBase {
     property string requestId: ""
     property alias requestsModel: requests
 
+    readonly property string invalidDAppUrlError: "Invalid dappInfo: URL is missing"
+
     projectId: ""
 
     implicitWidth: 1
@@ -472,14 +474,15 @@ WalletConnectSDKBase {
         target: root.wcService
 
         function onRevokeSession(dAppUrl) {
-            if (dAppUrl) {
-                controller.recallDAppPermission(dAppUrl)
-                const session = { url: dAppUrl, name: "", icon: "" }
-                root.wcService.connectorDAppsProvider.revokeSession(JSON.stringify(session))
-                root.wcService.displayToastMessage(qsTr("Disconnected from %1").arg(dAppUrl), false);
-            } else {
-                console.warn("Invalid dappInfo: URL is missing")
+            if (!dAppUrl) {
+                console.warn(invalidDAppUrlError)
+                return
             }
+
+            controller.recallDAppPermission(dAppUrl)
+            const session = { url: dAppUrl, name: "", icon: "" }
+            root.wcService.connectorDAppsProvider.revokeSession(JSON.stringify(session))
+            root.wcService.displayToastMessage(qsTr("Disconnected from %1").arg(dAppUrl), false)
         }
     }
 
@@ -552,12 +555,12 @@ WalletConnectSDKBase {
             let dappItem = JSON.parse(dappInfoString)
             const { url, name, icon: iconUrl } = dappItem
 
-            if (url) {
-                const session = { url, name, iconUrl };
-                root.wcService.connectorDAppsProvider.addSession(JSON.stringify(session));
-            } else {
-                console.warn("Invalid dappInfo: URL is missing")
+            if (!url) {
+                console.warn(invalidDAppUrlError)
+                return
             }
+            const session = { url, name, iconUrl }
+            root.wcService.connectorDAppsProvider.addSession(JSON.stringify(session))
         }
 
         onDappRevokeDAppPermission: function(dappInfoString) {
@@ -568,12 +571,12 @@ WalletConnectSDKBase {
                 "iconUrl": dappItem.icon
             }
 
-            if (session.url) {
-                root.wcService.connectorDAppsProvider.revokeSession(JSON.stringify(session))
-                root.wcService.displayToastMessage(qsTr("Disconnected from %1").arg(dappItem.url), false);
-            } else {
-                console.warn("Invalid dappInfo: URL is missing")
+            if (!session.url) {
+                console.warn(invalidDAppUrlError)
+                return
             }
+            root.wcService.connectorDAppsProvider.revokeSession(JSON.stringify(session))
+            root.wcService.displayToastMessage(qsTr("Disconnected from %1").arg(dappItem.url), false)
         }
     }
 
