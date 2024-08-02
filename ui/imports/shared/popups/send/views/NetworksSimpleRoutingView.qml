@@ -65,41 +65,34 @@ RowLayout {
             font.pixelSize: 15
             color: Theme.palette.baseColor1
             text: isBridgeTx ? qsTr("Routes will be automatically calculated to give you the lowest cost.") :
-                              qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
+                               qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
             wrapMode: Text.WordWrap
         }
 
-        ScrollView {
+        Column {
             Layout.fillWidth: true
-            Layout.preferredHeight: visible ? row.height + 10 : 0
             Layout.topMargin: Style.current.smallPadding
-            contentWidth: row.width
-            contentHeight: row.height + 10
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-            ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-            clip: true
+            Layout.bottomMargin: Style.current.smallPadding
+            spacing: Style.current.halfPadding
             visible: root.isBridgeTx ? true : !root.isLoading ? root.errorType === Constants.NoError : false
-            Column {
-                id: row
-                spacing: Style.current.padding
 
-                // TODO: This transformation should come from an adaptor outside this component
-                LeftJoinModel {
-                    id: toNetworksListLeftJoinModel
+            // TODO: This transformation should come from an adaptor outside this component
+            LeftJoinModel {
+                id: toNetworksListLeftJoinModel
 
-                    leftModel: root.suggestedToNetworksList
-                    rightModel: root.store.flatNetworksModel
-                    joinRole: "chainId"
-                }
+                leftModel: root.suggestedToNetworksList
+                rightModel: root.store.flatNetworksModel
+                joinRole: "chainId"
+            }
 
-                Repeater {
-                    id: repeater
-                    objectName: "networksList"
-                    model: isBridgeTx ? root.fromNetworksList : toNetworksListLeftJoinModel
-                    delegate: isBridgeTx ? networkItem : routeItem
-                }
+            Repeater {
+                id: repeater
+                objectName: "networksList"
+                model: isBridgeTx ? root.fromNetworksList : toNetworksListLeftJoinModel
+                delegate: isBridgeTx ? networkItem : routeItem
             }
         }
+
         BalanceExceeded {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter

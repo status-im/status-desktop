@@ -166,15 +166,6 @@ QtObject {
         Component.onCompleted: append([
                    {
                        chainId: 1,
-                       chainName: "Ethereum Mainnet",
-                       iconUrl: ModelsData.networks.ethereum,
-                       chainColor: "blue",
-                       shortName: "ETH",
-                       layer: 1,
-                       nativeCurrencyDecimals: 18,
-                       nativeCurrencyName: "Ether",
-                       nativeCurrencySymbol: "ETH",
-                       isRouteEnabled: true,
                        isRoutePreferred: true,
                        hasGas: true,
                        tokenBalance: ({
@@ -190,15 +181,6 @@ QtObject {
                     },
                    {
                         chainId: 10,
-                        chainName: "Optimism",
-                        iconUrl: ModelsData.networks.optimism,
-                        chainColor: "red",
-                        shortName: "OPT",
-                        layer: 2,
-                        nativeCurrencyDecimals: 18,
-                        nativeCurrencyName: "Ether",
-                        nativeCurrencySymbol: "ETH",
-                        isRouteEnabled: true,
                         isRoutePreferred: true,
                         hasGas: true,
                         tokenBalance: ({
@@ -214,16 +196,6 @@ QtObject {
                    },
                    {
                         chainId: 42161,
-                        chainName: "Arbitrum",
-                        iconUrl: ModelsData.networks.arbitrum,
-                        isActive: false,
-                        shortName: "ARB",
-                        chainColor: "purple",
-                        layer: 2,
-                        nativeCurrencyDecimals: 18,
-                        nativeCurrencyName: "Ether",
-                        nativeCurrencySymbol: "ETH",
-                        isRouteEnabled: true,
                         isRoutePreferred: true,
                         hasGas: true,
                         tokenBalance: ({
@@ -285,15 +257,6 @@ QtObject {
         Component.onCompleted: append([
                    {
                        chainId: 1,
-                       chainName: "Ethereum Mainnet",
-                       iconUrl: ModelsData.networks.ethereum,
-                       chainColor: "blue",
-                       shortName: "ETH",
-                       layer: 1,
-                       nativeCurrencyDecimals: 18,
-                       nativeCurrencyName: "Ether",
-                       nativeCurrencySymbol: "ETH",
-                       isRouteEnabled: true,
                        isRoutePreferred: true,
                        hasGas: true,
                        tokenBalance: ({
@@ -309,16 +272,6 @@ QtObject {
                     },
                    {
                         chainId: 10,
-                        chainName: "Optimism",
-                        iconUrl: ModelsData.networks.optimism,
-                        chainColor: "red",
-                        shortName: "OPT",
-                        layer: 2,
-                        nativeCurrencyDecimals: 18,
-                        nativeCurrencyName: "Ether",
-                        nativeCurrencySymbol: "ETH",
-                        isRouteEnabled: true,
-                        isRoutePreferred: true,
                         hasGas: true,
                         tokenBalance: ({
                             displayDecimals: true,
@@ -333,17 +286,6 @@ QtObject {
                    },
                    {
                         chainId: 42161,
-                        chainName: "Arbitrum",
-                        iconUrl: ModelsData.networks.arbitrum,
-                        isActive: false,
-                        isEnabled: true,
-                        shortName: "ARB",
-                        chainColor: "purple",
-                        layer: 2,
-                        nativeCurrencyDecimals: 18,
-                        nativeCurrencyName: "Ether",
-                        nativeCurrencySymbol: "ETH",
-                        isRouteEnabled: true,
                         isRoutePreferred: true,
                         hasGas: true,
                         tokenBalance: ({
