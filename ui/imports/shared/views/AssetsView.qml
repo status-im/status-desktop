@@ -58,8 +58,10 @@ Control {
 
     // switches configuring right click menu
     property bool sendEnabled: true
+    property bool communitySendEnabled: false
     property bool swapEnabled: true
     property bool swapVisible: true
+    property bool communitySwapVisible: false
 
     property string balanceError
 
@@ -267,13 +269,16 @@ Control {
             readonly property string key: model.key
             readonly property string communityKey: model.communityId
 
+            readonly property bool isCommunity: !!model.isCommunity
+
             onClosed: destroy()
 
             sendEnabled: root.sendEnabled
+                         && (!isCommunity || root.communitySendEnabled)
             swapEnabled: root.swapEnabled
-            swapVisible: root.swapVisible
+            swapVisible: root.swapVisible && (!isCommunity || root.communitySwapVisible)
             hideVisible: model.canBeHidden
-            communityHideVisible: !!model.isCommunity
+            communityHideVisible: isCommunity
 
             onSendRequested: root.sendRequested(key)
             onReceiveRequested: root.receiveRequested(key)

@@ -41,6 +41,9 @@ Rectangle {
         readonly property bool isCollectibleViewed: !!walletStore.currentViewedHoldingID &&
                                                     (walletStore.currentViewedHoldingType === Constants.TokenType.ERC721 ||
                                                     walletStore.currentViewedHoldingType === Constants.TokenType.ERC1155)
+
+        readonly property bool isCommunityAsset: !d.isCollectibleViewed && walletStore.currentViewedHoldingCommunityId !== ""
+
         readonly property bool isCollectibleSoulbound: isCollectibleViewed && !!walletStore.currentViewedCollectible && walletStore.currentViewedCollectible.soulbound
 
         readonly property var collectibleOwnership: isCollectibleViewed && walletStore.currentViewedCollectible ?
@@ -67,11 +70,16 @@ Rectangle {
                                                         && !root.isCommunityOwnershipTransfer
                                                         && walletStore.overview.canSend
                                                         && !root.walletStore.showAllAccounts
-                                                        && !d.hideCollectibleTransferActions
+                                                        && !d.isCollectibleViewed
+                                                        && !d.isCommunityAsset
 
         readonly property bool buyActionAvailable: !root.isCommunityOwnershipTransfer && !root.walletStore.showAllAccounts
 
-        readonly property bool swapActionAvailable: Global.featureFlags.swapEnabled && !walletStore.overview.isWatchOnlyAccount && walletStore.overview.canSend && !d.hideCollectibleTransferActions
+        readonly property bool swapActionAvailable: Global.featureFlags.swapEnabled
+                                                    && !walletStore.overview.isWatchOnlyAccount
+                                                    && walletStore.overview.canSend
+                                                    && !d.isCollectibleViewed
+                                                    && !d.isCommunityAsset
 
         function getFirstUserOwnedAddress(ownershipModel, accountsModel) {
             if (!ownershipModel) return ""
@@ -144,9 +152,9 @@ Rectangle {
         StatusFlatButton {
             id: swap
 
-            interactive: !d.isCollectibleViewed && networkConnectionStore.sendBuyBridgeEnabled
+            interactive: networkConnectionStore.sendBuyBridgeEnabled
             visible: d.swapActionAvailable
-            tooltip.text: d.isCollectibleViewed ? qsTr("Collectibles cannot be swapped") : networkConnectionStore.sendBuyBridgeToolTipText
+            tooltip.text: networkConnectionStore.sendBuyBridgeToolTipText
             icon.name: "swap"
             text: qsTr("Swap")
             onClicked: root.launchSwapModal()

@@ -175,6 +175,7 @@ SplitView {
                 sendEnabled: sendEnabledCheckBox.checked
                 swapEnabled: swapEnabledCheckBox.checked
                 swapVisible: swapVisibleCheckBox.checked
+                communitySwapVisible: communitySwapVisibleCheckBox.checked
 
                 balanceError: balanceErrorCheckBox.checked
                               ? "Balance error!" : ""
@@ -242,6 +243,11 @@ SplitView {
                 id: swapVisibleCheckBox
 
                 text: "swap visible"
+            }
+            CheckBox {
+                id: communitySwapVisibleCheckBox
+
+                text: "community swap visible"
             }
             CheckBox {
                 id: balanceErrorCheckBox
