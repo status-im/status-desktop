@@ -38,7 +38,7 @@ ColumnLayout {
     property bool isUpdating: false // Indicates if the collectibles list is being updated
     property bool isError: false // Indicates an error occurred while updating/fetching the collectibles list
 
-    signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid, int tokenType)
+    signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid, int tokenType, string communityId)
     signal sendRequested(string symbol, int tokenType, string fromAddress)
     signal receiveRequested(string symbol)
     signal switchToCommunityRequested(string communityId)
@@ -476,7 +476,7 @@ ColumnLayout {
             communityImage: model.communityImage ?? ""
             balance: model.balance ?? 1
 
-            onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType)
+            onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType, model.communityId ?? "")
             onRightClicked: {
                 const userOwnedAddress = d.getFirstUserOwnedAddress(model.ownership)
                 Global.openMenu(tokenContextMenu, this,
