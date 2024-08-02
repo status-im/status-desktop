@@ -92,6 +92,11 @@ SplitView {
 
     TransactionStore {
         id: txStore
+
+        property bool areTestNetworksEnabled: true
+
+        function setRouteDisabledChains(chainId, disabled) {}
+
         walletAssetStore: root.walletAssetStore
         tokensStore.showCommunityAssetsInSend: showCommunityAssetsCheckBox.checked
         tokensStore.displayAssetsBelowBalance: balanceThresholdCheckbox.checked
@@ -104,9 +109,11 @@ SplitView {
         property ListModel toModel: ListModel {
             ListElement {
                 chainId: 420
-                chainName: "Optimism"
-                iconUrl: "network/Network=Optimism"
                 amountOut: "3003845308235848343"
+            }
+            ListElement {
+                chainId: 1
+                amountOut: "30038453082358483445"
             }
         }
         property var suggestesRoutes: [{
