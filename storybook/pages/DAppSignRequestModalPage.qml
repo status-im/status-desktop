@@ -3,8 +3,11 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+
 import shared.popups.walletconnect 1.0
+
 import utils 1.0
+
 import Storybook 1.0
 
 SplitView {
@@ -23,6 +26,9 @@ SplitView {
             id: dappSignRequestModal
 
             loginType: loginType.currentValue
+            formatBigNumber: (number, symbol, noSymbolOption) => parseFloat(number).toLocaleString(Qt.locale(), 'f', 2)
+                             + (noSymbolOption ? "" : " " + (symbol || Qt.locale().currencySymbol(Locale.CurrencyIsoCode)))
+
             visible: true
             modal: false
             closePolicy: Popup.NoAutoClose
@@ -35,7 +41,6 @@ SplitView {
             networkName: "Ethereum"
             networkIconPath: "https://picsum.photos/200/200"
 
-            currentCurrency: "EUR"
             fiatFees: fiatFees.text
             cryptoFees: "0.001"
             estimatedTime: "3-5 minutes"

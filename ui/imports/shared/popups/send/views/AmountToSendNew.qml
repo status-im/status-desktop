@@ -32,7 +32,7 @@ Control {
     // detail of that component.
     readonly property alias text: textField.text
 
-    /* Decimal point character to be dispalyed. Both "." and "," will be
+    /* Decimal point character to be displayed. Both "." and "," will be
      * replaced by the provided decimal point on the fly */
     property alias decimalPoint: validator.decimalPoint
 
@@ -98,7 +98,7 @@ Control {
 
         readonly property string inputDelocalized:
             root.valid && textField.length !== 0
-                ? textField.text.replace(",", ".") : "0"
+                ? textField.text.replace(root.decimalPoint, ".") : "0"
 
         function removeDecimalTrailingZeros(num) {
             if (!num.includes("."))

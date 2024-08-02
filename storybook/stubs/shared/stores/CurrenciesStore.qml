@@ -41,11 +41,6 @@ QtObject {
     }
 
     function getCurrentCurrencyAmount(amount) {
-        return ({
-                    amount: amount,
-                    symbol: root.currentCurrency,
-                    displayDecimals: 2,
-                    stripTrailingZeroes: false
-                })
+        return getCurrencyAmount(amount, root.currentCurrency)
     }
 }

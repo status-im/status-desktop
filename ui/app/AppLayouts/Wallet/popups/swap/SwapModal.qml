@@ -428,6 +428,8 @@ StatusDialog {
         SwapApproveCapModal {
             destroyOnClose: true
 
+            formatBigNumber: (number, symbol, noSymbolOption) => root.swapAdaptor.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
+
             loginType: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
             feesLoading: root.swapAdaptor.swapProposalLoading
 
@@ -454,7 +456,7 @@ StatusDialog {
                 const feesInFloat = root.swapAdaptor.currencyStore.getFiatValue(root.swapAdaptor.swapOutputData.approvalGasFees, Constants.ethToken)
                 return root.swapAdaptor.currencyStore.formatCurrencyAmount(feesInFloat, root.swapAdaptor.currencyStore.currentCurrency)
             }
-            cryptoFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(root.swapAdaptor.swapOutputData.approvalGasFees, Constants.ethToken)
+            cryptoFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(parseFloat(root.swapAdaptor.swapOutputData.approvalGasFees), Constants.ethToken)
             estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
 
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
@@ -473,7 +475,7 @@ StatusDialog {
         SwapSignModal {
             destroyOnClose: true
 
-            currencyStore: root.swapAdaptor.currencyStore
+            formatBigNumber: (number, symbol, noSymbolOption) => root.swapAdaptor.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
             loginType: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
             feesLoading: root.swapAdaptor.swapProposalLoading

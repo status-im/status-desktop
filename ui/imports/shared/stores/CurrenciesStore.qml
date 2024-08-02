@@ -987,6 +987,17 @@ QtObject {
         return formatCurrencyAmount(decimalBalance, symbol, options)
     }
 
+    function formatBigNumber(number: string, symbol: string, noSymbolOption: bool) {
+        if (!number)
+            return "N/A"
+        if (!symbol)
+            symbol = root.currentCurrency
+        let options = {}
+        if (!!noSymbolOption)
+            options = {noSymbol: true}
+        return formatCurrencyAmount(parseFloat(number), symbol, options)
+    }
+
     function getFiatValue(cryptoAmount, cryptoSymbol) {
         var amount = _profileSectionModuleInst.ensUsernamesModule.getFiatValue(cryptoAmount, cryptoSymbol)
         return parseFloat(amount)

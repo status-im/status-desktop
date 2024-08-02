@@ -158,6 +158,7 @@ DappsComboBox {
             id: dappRequestModal
             objectName: "dappsRequestModal"
             loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            formatBigNumber: (number, symbol, noSymbolOption) => root.wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
             visible: true
 
             property var feesInfo: null
@@ -174,7 +175,6 @@ DappsComboBox {
             networkName: request.network.chainName
             networkIconPath: Style.svg(request.network.iconUrl)
 
-            currentCurrency: ""
             fiatFees: request.maxFeesText
             cryptoFees: request.maxFeesEthText
             estimatedTime: ""
@@ -223,12 +223,11 @@ DappsComboBox {
                 function onMaxFeesUpdated(fiatMaxFees, ethMaxFees, haveEnoughFunds, haveEnoughFees, symbol, feesInfo) {
                     dappRequestModal.hasFees = !!ethMaxFees
                     dappRequestModal.feesLoading = !dappRequestModal.hasFees
-                    if (!hasFees) {
+                    if (!dappRequestModal.hasFees) {
                         return
                     }
-                    dappRequestModal.fiatFees = fiatMaxFees.toString()
-                    dappRequestModal.cryptoFees = ethMaxFees.toString()
-                    dappRequestModal.currentCurrency = symbol
+                    dappRequestModal.fiatFees = fiatMaxFees.toFixed()
+                    dappRequestModal.cryptoFees = ethMaxFees.toFixed()
                     dappRequestModal.enoughFundsForTransaction = haveEnoughFunds
                     dappRequestModal.enoughFundsForFees = haveEnoughFees
                     dappRequestModal.feesInfo = feesInfo

@@ -14,6 +14,7 @@ import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import shared.controls 1.0
+import shared.stores 1.0
 
 import utils 1.0
 
@@ -21,6 +22,16 @@ StatusDialog {
     id: root
 
     required property int loginType // RootStore.loginType -> Constants.LoginType enum
+
+    /**
+      Format a currency amount, represented as a float `number` as a string, e.g. "1.234",
+
+      @param `symbol` string (optional): e.g. "EUR" or "SNT"; defaults to the current currency short name (locale dependent)
+      @param `noSymbolOption` boolean (optional): omits the symbol in the final output
+
+      @return a formatted version of the amount, eg. "1,23 SNT" (decimal separator locale dependent, amount of decimals currency dependent)
+    */
+    required property var formatBigNumber// => (number:string, symbol?:string, noSymbolOption?:bool) {}
 
     property Component headerIconComponent
 
@@ -65,14 +76,6 @@ StatusDialog {
 
     width: 480
     padding: 0
-
-    function formatBigNumber(number: string, decimals = -1) {
-        if (!number)
-            return ""
-        const big = SQUtils.AmountsArithmetic.fromString(number)
-        const resultNum = decimals === -1 ? big.toFixed() : big.round(decimals).toFixed()
-        return resultNum.replace('.', Qt.locale().decimalPoint)
-    }
 
     function openLinkWithConfirmation(linkUrl) {
         Global.openLinkWithConfirmation(linkUrl, SQUtils.StringUtils.extractDomainFromLink(linkUrl))

@@ -75,6 +75,9 @@ SplitView {
                     modal: false
                     closePolicy: Popup.NoAutoClose
 
+                    formatBigNumber: (number, symbol, noSymbolOption) => parseFloat(number).toLocaleString(Qt.locale(), 'f', 2)
+                                     + (noSymbolOption ? "" : " " + (symbol || Qt.locale().currencySymbol(Locale.CurrencyIsoCode)))
+
                     fromTokenSymbol: ctrlFromSymbol.text
                     fromTokenAmount: ctrlFromAmount.text
                     fromTokenContractAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
@@ -83,15 +86,15 @@ SplitView {
                     accountAddress: priv.selectedAccount.address
                     accountEmoji: priv.selectedAccount.emoji
                     accountColor: Utils.getColorForId(priv.selectedAccount.colorId)
-                    accountBalanceFormatted: "120.55489 USD"
+                    accountBalanceFormatted: formatBigNumber(120.55489)
 
                     networkShortName: priv.selectedNetwork.shortName
                     networkName: priv.selectedNetwork.chainName
                     networkIconPath: Style.svg(priv.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
 
-                    fiatFees: "1.54 USD"
-                    cryptoFees: "0.001 ETH"
+                    fiatFees: formatBigNumber("1.542567673454567457567678678678989234")
+                    cryptoFees: formatBigNumber("0.001", "ETH")
                     estimatedTime: ctrlEstimatedTime.currentValue
 
                     loginType: ctrlLoginType.currentIndex

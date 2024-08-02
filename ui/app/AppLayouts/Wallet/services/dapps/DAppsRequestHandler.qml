@@ -36,7 +36,7 @@ SQUtils.QObject {
     signal sessionRequest(SessionRequestResolved request)
     signal displayToastMessage(string message, bool error)
     signal sessionRequestResult(/*model entry of SessionRequestResolved*/ var request, bool isSuccess)
-    signal maxFeesUpdated(real fiatMaxFees, var /* Big */ ethMaxFees, bool haveEnoughFunds, bool haveEnoughFees, string symbol, var feesInfo)
+    signal maxFeesUpdated(var /* Big */ fiatMaxFees, var /* Big */ ethMaxFees, bool haveEnoughFunds, bool haveEnoughFees, string symbol, var feesInfo)
     // Reports Constants.TransactionEstimatedTime values
     signal estimatedTimeUpdated(int estimatedTimeEnum)
 
@@ -209,7 +209,7 @@ SQUtils.QObject {
 
                 let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, account.address, obj.network.chainId, mainNet.chainId, interpreted.value)
 
-                root.maxFeesUpdated(st.fiatMaxFees.toNumber(), st.maxFeesEth, fundsStatus.haveEnoughFunds,
+                root.maxFeesUpdated(st.fiatMaxFees, st.maxFeesEth, fundsStatus.haveEnoughFunds,
                                     fundsStatus.haveEnoughForFees, st.symbol, st.feesInfo)
             })
 
@@ -479,7 +479,7 @@ SQUtils.QObject {
             let maxFeesEthStr = maxFeesEth.toString()
             let fiatMaxFeesStr = root.currenciesStore.getFiatValue(maxFeesEthStr, Constants.ethToken)
             let fiatMaxFees = BigOps.fromString(fiatMaxFeesStr)
-            let symbol = root.currenciesStore.currentCurrencySymbol
+            let symbol = root.currenciesStore.currentCurrency
 
             return {fiatMaxFees, maxFeesEth, symbol, feesInfo}
         }
