@@ -114,6 +114,11 @@ QtObject:
     let testChains = self.settingsService.areTestNetworksEnabled()
     # TODO #14588: call it async
     return status_go.getDapps(validAtEpoch, testChains)
+  
+  proc getActiveSessions*(self: Service, validAtTimestamp: int64): JsonNode =
+    # TODO #14588: call it async
+    return status_go.getActiveSessions(validAtTimestamp)
+    
 
   # Will fail if another authentication is in progress
   proc authenticateUser*(self: Service, keyUid: string, callback: AuthenticationResponseFn): bool =
