@@ -143,7 +143,7 @@ StatusDialog {
         readonly property bool isCollectiblesTransfer: store.sendType === Constants.SendType.ERC721Transfer ||
                                                        store.sendType === Constants.SendType.ERC1155Transfer
         property var selectedHolding: null
-        property var selectedHoldingType: Constants.TokenType.Unknown
+        property int selectedHoldingType: Constants.TokenType.Unknown
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.TokenType.ERC20
 
         onSelectedHoldingChanged: {
