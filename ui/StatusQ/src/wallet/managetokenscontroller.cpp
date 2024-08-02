@@ -3,7 +3,6 @@
 #include "tokendata.h"
 
 #include <QElapsedTimer>
-#include <QMutableHashIterator>
 
 ManageTokensController::ManageTokensController(QObject* parent)
     : QObject(parent)
@@ -69,7 +68,7 @@ void ManageTokensController::showHideRegularToken(const QString& symbol, bool fl
             emit tokenHidden(shownItem->symbol, shownItem->name);
         }
     }
-    requestSaveSettings(serializeSettingsAsJson());
+    emit requestSaveSettings(serializeSettingsAsJson());
 }
 
 void ManageTokensController::showHideCommunityToken(const QString& symbol, bool flag)
@@ -90,7 +89,7 @@ void ManageTokensController::showHideCommunityToken(const QString& symbol, bool 
     m_communityTokensModel->saveCustomSortOrder();
     rebuildCommunityTokenGroupsModel();
     rebuildHiddenCommunityTokenGroupsModel();
-    requestSaveSettings(serializeSettingsAsJson());
+    emit requestSaveSettings(serializeSettingsAsJson());
 }
 
 void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
@@ -122,7 +121,7 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
     rebuildCommunityTokenGroupsModel();
     m_communityTokenGroupsModel->applySort();
     rebuildHiddenCommunityTokenGroupsModel();
-    requestSaveSettings(serializeSettingsAsJson());
+    emit requestSaveSettings(serializeSettingsAsJson());
 }
 
 void ManageTokensController::showHideCollectionGroup(const QString& groupId, bool flag)
@@ -154,7 +153,7 @@ void ManageTokensController::showHideCollectionGroup(const QString& groupId, boo
     rebuildCollectionGroupsModel();
     m_collectionGroupsModel->applySort();
     rebuildHiddenCollectionGroupsModel();
-    requestSaveSettings(serializeSettingsAsJson());
+    emit requestSaveSettings(serializeSettingsAsJson());
 }
 
 // Used in testing
@@ -196,7 +195,10 @@ QStringList ManageTokensController::hiddenCollectionGroups() const
     return {m_hiddenCollectionGroups.constBegin(), m_hiddenCollectionGroups.constEnd()};
 }
 
-void ManageTokensController::revert() { requestLoadSettings(); }
+void ManageTokensController::revert()
+{
+    emit requestLoadSettings();
+}
 
 void ManageTokensController::savingStarted()
 {
@@ -219,7 +221,7 @@ void ManageTokensController::savingFinished()
     incRevision();
 
     setSettingsDirty(false);
-    requestLoadSettings();
+    emit requestLoadSettings();
 }
 
 void ManageTokensController::loadingStarted()
@@ -310,7 +312,10 @@ void ManageTokensController::classBegin()
     // empty on purpose
 }
 
-void ManageTokensController::componentComplete() { requestLoadSettings(); }
+void ManageTokensController::componentComplete()
+{
+    emit requestLoadSettings();
+}
 
 void ManageTokensController::setSourceModel(QAbstractItemModel* newSourceModel)
 {
@@ -341,7 +346,7 @@ void ManageTokensController::setSourceModel(QAbstractItemModel* newSourceModel)
         connect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, &ManageTokensController::parseSourceModel);
         return;
     } else {
-        requestLoadSettings();
+        emit requestLoadSettings();
     }
 }
 
