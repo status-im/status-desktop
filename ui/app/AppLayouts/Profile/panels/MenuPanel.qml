@@ -28,6 +28,7 @@ Column {
     Repeater {
         id: mainMenuItems
         delegate: StatusNavigationListItem {
+            id: navigationItem
             objectName: itemId + "-MainMenuItem"
             width: root.width
             itemId: model.subsection
@@ -41,7 +42,7 @@ Column {
                         return !root.privacyStore.mnemonicBackedUp
                     case Constants.settingsSubsection.syncingSettings:
                         return root.devicesStore.devicesModel.count - root.devicesStore.devicesModel.pairedCount
-                    default: return "";
+                    default: return 0
                 }
             }
             visible: {
@@ -55,17 +56,21 @@ Column {
             }
 
             Loader {
+                id: betaTagLoader
+                readonly property string experimentalTooltip: model.experimentalTooltip
                 active: model.isExperimental
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: 15
+                anchors.rightMargin: Style.current.padding + (navigationItem.badge.visible ? navigationItem.badge.width + Style.current.halfPadding : 0)
 
-                sourceComponent: StatusBetaTag {}
+                sourceComponent: StatusBetaTag {
+                    tooltipText: betaTagLoader.experimentalTooltip
+                }
             }
         }
     }
 
-    StatusListSectionHeadline { 
+    StatusListSectionHeadline {
         text: qsTr("Apps")
         width: root.width
     }

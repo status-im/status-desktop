@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
@@ -102,6 +103,39 @@ ColumnLayout {
 
             root.launchTransactionDetail(txID)
             return true
+        }
+    }
+
+    InformationTag {
+        id: betaTag
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignTop
+        Layout.topMargin: root.firstItemOffset
+        Layout.preferredHeight: 56
+        visible: root.firstItemOffset === 0 // visible only in the main wallet view
+        spacing: Style.current.halfPadding
+        backgroundColor: Theme.palette.primaryColor3
+        bgRadius: Style.current.radius
+        bgBorderColor: Theme.palette.primaryColor2
+        tagPrimaryLabel.textFormat: Text.RichText
+        tagPrimaryLabel.font.pixelSize: Style.current.additionalTextSize
+        tagPrimaryLabel.text: qsTr("Activity is in beta. If transactions are missing, check %1, %2, or %3.")
+            .arg(Utils.getStyledLink("Etherscan", "https://etherscan.io/", tagPrimaryLabel.hoveredLink))
+            .arg(Utils.getStyledLink("OP Explorer", "https://optimistic.etherscan.io/", tagPrimaryLabel.hoveredLink))
+            .arg(Utils.getStyledLink("Arbiscan", "https://arbiscan.io/", tagPrimaryLabel.hoveredLink))
+        tagPrimaryLabel.onLinkActivated: (link) => {
+            const explorerUrl = WalletStores.RootStore.showAllAccounts ? link
+                                                                       : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(WalletStores.RootStore.selectedAddress)
+            Global.openLinkWithConfirmation(explorerUrl, SQUtils.StringUtils.extractDomainFromLink(explorerUrl))
+        }
+        asset {
+            name: "warning"
+            width: 20
+            height: 20
+            color: Theme.palette.primaryColor1
+        }
+        HoverHandler {
+            cursorShape: hovered && !!parent.tagPrimaryLabel.hoveredLink ? Qt.PointingHandCursor : undefined
         }
     }
 

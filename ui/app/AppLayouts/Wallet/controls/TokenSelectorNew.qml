@@ -188,6 +188,7 @@ Control {
     }
 
     MouseArea {
+        cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
         anchors.fill: parent
         onClicked: dropdown.opened ? dropdown.close() : dropdown.open()
     }

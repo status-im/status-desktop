@@ -144,9 +144,9 @@ Rectangle {
         StatusFlatButton {
             id: swap
 
-            interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
+            interactive: !d.isCollectibleViewed && networkConnectionStore.sendBuyBridgeEnabled
             visible: d.swapActionAvailable
-            tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be swapped") :  networkConnectionStore.sendBuyBridgeToolTipText
+            tooltip.text: d.isCollectibleViewed ? qsTr("Collectibles cannot be swapped") : networkConnectionStore.sendBuyBridgeToolTipText
             icon.name: "swap"
             text: qsTr("Swap")
             onClicked: root.launchSwapModal()
