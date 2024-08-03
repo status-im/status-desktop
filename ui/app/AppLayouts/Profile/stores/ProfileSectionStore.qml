@@ -108,11 +108,15 @@ QtObject {
             append({subsection: Constants.settingsSubsection.ensUsernames,
                        text: qsTr("ENS usernames"),
                        icon: "username",
-                       isExperimental: true})
+                       isExperimental: true,
+                       experimentalTooltip: qsTr("This section is going through a redesign.")
+                   })
             append({subsection: Constants.settingsSubsection.syncingSettings,
                        text: qsTr("Syncing"),
                        icon: "rotate",
-                       isExperimental: true})
+                       isExperimental: true,
+                       experimentalTooltip: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Seed Phrase feature instead.")
+                   })
         }
     }
 
