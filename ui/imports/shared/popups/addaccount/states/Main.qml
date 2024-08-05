@@ -59,6 +59,7 @@ Item {
             readonly property string addWatchOnlyAccKeyUid: Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc
             filters: [
                 FastExpressionFilter {
+                    enabled: production
                     expression: model.keyPair.keyUid !== originModelWithoutWatchOnlyAcc.addWatchOnlyAccKeyUid
                     expectedRoles: ["keyPair"]
                 }
