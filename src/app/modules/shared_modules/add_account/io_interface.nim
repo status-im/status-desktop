@@ -110,6 +110,15 @@ method savedAddressDeleted*(self: AccessInterface, address: string, errorMsg: st
 method isChecksumValidForAddress*(self: AccessInterface, address: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method remainingAccountCapacity*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method remainingKeypairCapacity*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method remainingWatchOnlyAccountCapacity*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   DelegateInterface* = concept c
     c.onAddAccountModuleLoaded()

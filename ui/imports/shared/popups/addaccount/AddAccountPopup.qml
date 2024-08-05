@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared.popups 1.0
@@ -18,6 +19,12 @@ StatusModal {
 
     property AddAccountStore store: AddAccountStore { }
 
+    enum LimitWarning {
+        Accounts,
+        Keypairs,
+        WatchOnlyAccounts
+    }
+
     width: Constants.addAccountPopup.popupWidth
 
     closePolicy: root.store.disablePopup? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -27,6 +34,8 @@ StatusModal {
 
     onOpened: {
         root.store.resetStoreValues()
+
+        root.store.showLimitPopup.connect(limitPopup.showPopup)
     }
 
     onClosed: {
@@ -54,6 +63,59 @@ StatusModal {
             implicitWidth: loader.implicitWidth
             implicitHeight: loader.implicitHeight
             width: scrollView.availableWidth
+
+            Loader {
+                id: limitPopup
+                active: false
+                asynchronous: true
+
+                property string title
+                property string content
+
+                function showPopup(warningType) {
+                    if (warningType === AddAccountPopup.LimitWarning.Accounts) {
+                        limitPopup.title = Constants.walletConstants.maxNumberOfAccountsTitle
+                        limitPopup.content = Constants.walletConstants.maxNumberOfAccountsContent
+                    } else if (warningType === AddAccountPopup.LimitWarning.Keypairs) {
+                        limitPopup.title = Constants.walletConstants.maxNumberOfKeypairsTitle
+                        limitPopup.content = Constants.walletConstants.maxNumberOfKeypairsContent
+                    } else if (warningType === AddAccountPopup.LimitWarning.WatchOnlyAccounts) {
+                        limitPopup.title = Constants.walletConstants.maxNumberOfWatchOnlyAccountsTitle
+                        limitPopup.content = Constants.walletConstants.maxNumberOfSavedAddressesContent
+                    } else {
+                        console.error("unsupported warning type")
+                        return
+                    }
+
+                    limitPopup.active = true
+                }
+
+                sourceComponent: StatusDialog {
+                    width: root.width - 2*Style.current.padding
+
+                    property string contentText
+
+                    title: Constants.walletConstants.maxNumberOfAccountsTitle
+
+                    StatusBaseText {
+                        anchors.fill: parent
+                        text: contentText
+                        wrapMode: Text.WordWrap
+                    }
+
+                    standardButtons: Dialog.Ok
+
+                    onClosed: {
+                        limitPopup.active = false
+                    }
+                }
+
+                onLoaded: {
+                    limitPopup.item.title = limitPopup.title
+                    limitPopup.item.contentText = limitPopup.content
+                    limitPopup.item.open()
+                }
+            }
 
             Loader {
                 id: loader
@@ -93,6 +155,13 @@ StatusModal {
                 id: mainComponent
                 Main {
                     store: root.store
+
+                    onWatchOnlyAccountsLimitReached: {
+                        limitPopup.showPopup(AddAccountPopup.LimitWarning.WatchOnlyAccounts)
+                    }
+                    onKeypairLimitReached: {
+                        limitPopup.showPopup(AddAccountPopup.LimitWarning.Keypairs)
+                    }
                 }
             }
 

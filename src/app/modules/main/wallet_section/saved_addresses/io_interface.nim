@@ -39,6 +39,9 @@ method savedAddressNameExists*(self: AccessInterface, name: string): bool {.base
 method getSavedAddressAsJson*(self: AccessInterface, address: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method remainingCapacityForSavedAddresses*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.
