@@ -736,4 +736,13 @@ method buildNewSeedPhraseKeypairAndAddItToOrigin*[T](self: Module[T]) =
     derivedFrom = genAcc.address)
   self.setItemForSelectedOrigin(item)
 
+method remainingAccountCapacity*[T](self: Module[T]): int =
+  return self.controller.remainingAccountCapacity()
+
+method remainingKeypairCapacity*[T](self: Module[T]): int =
+  return self.controller.remainingKeypairCapacity()
+
+method remainingWatchOnlyAccountCapacity*[T](self: Module[T]): int =
+  return self.controller.remainingWatchOnlyAccountCapacity()
+
 {.pop.}

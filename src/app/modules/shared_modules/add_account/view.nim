@@ -363,3 +363,12 @@ QtObject:
 
   proc removingSavedAddressRejected*(self: View) {.slot.} =
     self.setDisablePopup(false)
+
+  proc remainingAccountCapacity*(self: View): int {.slot.} =
+    return self.delegate.remainingAccountCapacity()
+
+  proc remainingKeypairCapacity*(self: View): int {.slot.} =
+    return self.delegate.remainingKeypairCapacity()
+
+  proc remainingWatchOnlyAccountCapacity*(self: View): int {.slot.} =
+    return self.delegate.remainingWatchOnlyAccountCapacity()

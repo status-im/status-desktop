@@ -107,6 +107,15 @@ method removingSavedAddressConfirmed*(self: AccessInterface, address: string) {.
 method savedAddressDeleted*(self: AccessInterface, address: string, errorMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method remainingAccountCapacity*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method remainingKeypairCapacity*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method remainingWatchOnlyAccountCapacity*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   DelegateInterface* = concept c
     c.onAddAccountModuleLoaded()
