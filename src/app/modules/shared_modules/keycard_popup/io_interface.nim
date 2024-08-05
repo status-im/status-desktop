@@ -239,5 +239,8 @@ method getPin*(self: AccessInterface): string {.base.} =
 method onTokensRebuilt*(self: AccessInterface, accountAddresses: seq[string], accountTokens: seq[GroupedTokenItem]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method remainingAccountCapacity*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   DelegateInterface* = concept c

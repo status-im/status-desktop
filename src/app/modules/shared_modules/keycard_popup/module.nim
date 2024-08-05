@@ -799,4 +799,7 @@ method keychainObtainedDataSuccess*[T](self: Module[T], data: string) =
     else:
       self.view.setCurrentState(newBiometricsPinInvalidState(self.runningFlow, nil))
 
+method remainingAccountCapacity*[T](self: Module[T]): int =
+  return self.controller.remainingAccountCapacity()
+
 {.pop.}
