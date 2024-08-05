@@ -20,7 +20,6 @@ Column {
     property alias extraMenuItems: extraMenuItems.model
     property alias appsMenuItems: appsMenuItems.model
 
-    property bool browserMenuItemEnabled: false
     property bool walletMenuItemEnabled: false
 
     signal menuItemClicked(var menu_item)
@@ -87,8 +86,7 @@ Column {
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             visible: {
-                (model.subsection !== Constants.settingsSubsection.browserSettings && model.subsection !== Constants.settingsSubsection.wallet) ||
-                (model.subsection === Constants.settingsSubsection.browserSettings && root.browserMenuItemEnabled) ||        
+                (model.subsection !== Constants.settingsSubsection.wallet) ||
                 (model.subsection === Constants.settingsSubsection.communitiesSettings) ||
                 (model.subsection === Constants.settingsSubsection.wallet && root.walletMenuItemEnabled)
             }
@@ -118,7 +116,6 @@ Column {
             asset.name: model.icon
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
-            visible: model.subsection !== Constants.settingsSubsection.browserSettings || root.browserMenuItemEnabled
         }
     }
 
@@ -136,7 +133,6 @@ Column {
             title: model.text
             asset.name: model.icon
             selected: Global.settingsSubsection === model.subsection
-            visible: model.subsection !== Constants.settingsSubsection.browserSettings || root.browserMenuItemEnabled
             onClicked: root.menuItemClicked(model)
         }
     }

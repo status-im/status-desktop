@@ -1,5 +1,0 @@
-singleton RootStore 1.0 RootStore.qml
-singleton Web3ProviderStore 1.0 Web3ProviderStore.qml
-singleton BookmarksStore 1.0 BookmarksStore.qml
-singleton DownloadsStore 1.0 DownloadsStore.qml
-singleton WalletStore 1.0 WalletStore.qml

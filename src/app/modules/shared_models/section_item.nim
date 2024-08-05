@@ -15,7 +15,6 @@ type
     Chat = 0
     Community,
     Wallet,
-    Browser,
     ProfileSettings,
     NodeManagement,
     CommunitiesPortal

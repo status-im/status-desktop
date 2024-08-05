@@ -15,18 +15,6 @@ type
     decimals* {.serializedFieldName("decimals").}: int
     color* {.serializedFieldName("color").}: string
 
-  Bookmark* = ref object of RootObj
-    name* {.serializedFieldName("name").}: string
-    url* {.serializedFieldName("url").}: string
-    imageUrl* {.serializedFieldName("imageUrl").}: string
-    removed* {.serializedFieldName("removed").}: bool
-    deletedAt* {.serializedFieldName("deletedAt").}: int
-
-  Permission* = ref object of RootObj
-    dapp* {.serializedFieldName("dapp").}: string
-    address* {.serializedFieldName("address").}: string
-    permissions* {.serializedFieldName("permissions").}: seq[string]
-
   Network* = ref object of RootObj
     chainId* {.serializedFieldName("chainId").}: int
     nativeCurrencyDecimals* {.serializedFieldName("nativeCurrencyDecimals").}: int
@@ -187,19 +175,6 @@ rpc(hasUnseenActivityCenterNotifications, "wakuext"):
 rpc(markAsSeenActivityCenterNotifications, "wakuext"):
   discard
 
-rpc(getBookmarks, "browsers"):
-  discard
-
-rpc(storeBookmark, "browsers"):
-  bookmark: Bookmark
-
-rpc(updateBookmark, "browsers"):
-  originalUrl: string
-  bookmark: Bookmark
-
-rpc(deleteBookmark, "browsers"):
-  url: string
-
 rpc(setTenorAPIKey, "gif"):
   key: string
 
@@ -217,16 +192,6 @@ rpc(getRecentGifs, "gif"):
 
 rpc(getFavoriteGifs, "gif"):
   discard
-
-rpc(getDappPermissions, "permissions"):
-  discard
-
-rpc(addDappPermissions, "permissions"):
-  permission: Permission
-
-rpc(deleteDappPermissionsByNameAndAddress, "permissions"):
-  dapp: string
-  address: string
 
 rpc(fetchMarketValues, "wallet"):
   symbols: seq[string]

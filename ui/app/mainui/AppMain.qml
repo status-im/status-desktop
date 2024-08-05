@@ -9,7 +9,6 @@ import QtQml 2.15
 
 import AppLayouts.Wallet 1.0
 import AppLayouts.Node 1.0
-import AppLayouts.Browser 1.0
 import AppLayouts.Chat 1.0
 import AppLayouts.Chat.views 1.0
 import AppLayouts.Profile 1.0
@@ -39,7 +38,6 @@ import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
-import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
@@ -413,11 +411,6 @@ Item {
         id: globalConns
         target: Global
 
-        function onOpenLinkInBrowser(link: string) {
-            changeAppSectionBySectionId(Constants.appSection.browser)
-            Qt.callLater(() => browserLayoutContainer.item.openUrlInNewTab(link));
-        }
-
         function onOpenCreateChatView() {
             createChatView.opened = true
         }
@@ -433,17 +426,7 @@ Item {
         function onOpenLink(link: string) {
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
             link = appMain.rootStore.plainText(link)
-
-            if (appMain.rootStore.showBrowserSelector) {
-                popups.openChooseBrowserPopup(link)
-            } else {
-                if (appMain.rootStore.openLinksInStatus) {
-                    globalConns.onAppSectionBySectionTypeChanged(Constants.appSection.browser)
-                    globalConns.onOpenLinkInBrowser(link)
-                } else {
-                    Qt.openUrlExternally(link)
-                }
-            }
+            Qt.openUrlExternally(link)
         }
 
         function onOpenLinkWithConfirmation(link: string, domain: string) {
@@ -1264,8 +1247,6 @@ Item {
                             return Constants.appViewStackIndex.communitiesPortal
                         if (activeSectionType === Constants.appSection.wallet)
                             return Constants.appViewStackIndex.wallet
-                        if (activeSectionType === Constants.appSection.browser)
-                            return Constants.appViewStackIndex.browser
                         if (activeSectionType === Constants.appSection.profile)
                             return Constants.appViewStackIndex.profile
                         if (activeSectionType === Constants.appSection.node)
@@ -1402,29 +1383,6 @@ Item {
                         onLoaded: {
                             item.resetView()
                         }
-                    }
-
-                    Loader {
-                        id: browserLayoutContainer
-                        active: appView.currentIndex === Constants.appViewStackIndex.browser
-                        asynchronous: true
-                        sourceComponent: BrowserLayout {
-                            globalStore: appMain.rootStore
-                            sendTransactionModal: sendModal
-                            transactionStore: appMain.transactionStore
-                            assetsStore: appMain.walletAssetsStore
-                            currencyStore: appMain.currencyStore
-                            tokensStore: appMain.tokensStore
-                        }
-                        // Loaders do not have access to the context, so props need to be set
-                        // Adding a "_" to avoid a binding loop
-                        // Not Refactored Yet
-                        //                property var _chatsModel: chatsModel.messageView
-                        // Not Refactored Yet
-                        //                property var _walletModel: walletModel
-                        // Not Refactored Yet
-                        //                property var _utilsModel: utilsModel
-                        //  property var _web3Provider: BrowserStores.Web3ProviderStore.web3ProviderInst
                     }
 
                     Loader {

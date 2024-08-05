@@ -131,9 +131,6 @@ method disableCommunityHistoryArchiveSupport*(self: Module) =
 method toggleWalletSection*(self: Module) =
   self.controller.toggleWalletSection()
 
-method toggleBrowserSection*(self: Module) =
-  self.controller.toggleBrowserSection()
-
 method toggleCommunitySection*(self: Module) =
   self.controller.toggleCommunitySection()
 

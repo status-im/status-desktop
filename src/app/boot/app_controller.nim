@@ -14,8 +14,6 @@ import app_service/service/collectible/service as collectible_service
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/bookmarks/service as bookmark_service
-import app_service/service/dapp_permissions/service as dapp_permissions_service
 import app_service/service/privacy/service as privacy_service
 import app_service/service/provider/service as provider_service
 import app_service/service/node/service as node_service
@@ -81,8 +79,6 @@ type
     currencyService: currency_service.Service
     transactionService: transaction_service.Service
     walletAccountService: wallet_account_service.Service
-    bookmarkService: bookmark_service.Service
-    dappPermissionsService: dapp_permissions_service.Service
     providerService: provider_service.Service
     profileService: profile_service.Service
     settingsService: settings_service.Service
@@ -204,7 +200,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.communityService = community_service.newService(statusFoundation.events,
     statusFoundation.threadpool, result.chatService, result.activityCenterService, result.messageService)
   result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, result.tokenService)
-  result.bookmarkService = bookmark_service.newService(statusFoundation.events)
   result.profileService = profile_service.newService(statusFoundation.events, statusFoundation.threadpool, result.settingsService)
   result.stickersService = stickers_service.newService(
     statusFoundation.events,
@@ -217,7 +212,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.tokenService
   )
   result.aboutService = about_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.dappPermissionsService = dapp_permissions_service.newService()
   result.languageService = language_service.newService(statusFoundation.events)
   # result.mnemonicService = mnemonic_service.newService()
   result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService,
@@ -265,12 +259,10 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.currencyService,
     result.transactionService,
     result.walletAccountService,
-    result.bookmarkService,
     result.profileService,
     result.settingsService,
     result.contactsService,
     result.aboutService,
-    result.dappPermissionsService,
     result.languageService,
     # result.mnemonicService,
     result.privacyService,
@@ -304,7 +296,6 @@ proc delete*(self: AppController) =
   self.notificationsManager.delete
   self.keychainService.delete
   self.contactsService.delete
-  self.bookmarkService.delete
   self.gifService.delete
   if not self.startupModule.isNil:
     self.startupModule.delete
@@ -331,7 +322,6 @@ proc delete*(self: AppController) =
   self.aboutService.delete
   self.networkService.delete
   self.activityCenterService.delete
-  self.dappPermissionsService.delete
   self.providerService.delete
   self.nodeConfigurationService.delete
   self.nodeService.delete
@@ -431,8 +421,6 @@ proc load(self: AppController) =
   self.chatService.init()
   self.messageService.init()
   self.communityService.init()
-  self.bookmarkService.init()
-  self.dappPermissionsService.init()
   self.providerService.init()
   self.transactionService.init()
   self.stickersService.init()

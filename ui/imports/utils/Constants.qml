@@ -324,10 +324,9 @@ QtObject {
         readonly property int chat: 0
         readonly property int community: 1
         readonly property int wallet: 2
-        readonly property int browser: 3
-        readonly property int profile: 4
-        readonly property int node: 5
-        readonly property int communitiesPortal: 6
+        readonly property int profile: 3
+        readonly property int node: 4
+        readonly property int communitiesPortal: 5
     }
 
     readonly property QtObject appViewStackIndex: QtObject {
@@ -335,9 +334,8 @@ QtObject {
         readonly property int community: 7 // any stack layout children with the index 7 or higher is community
         readonly property int communitiesPortal: 1
         readonly property int wallet: 2
-        readonly property int browser: 3
-        readonly property int profile: 4
-        readonly property int node: 5
+        readonly property int profile: 3
+        readonly property int node: 4
     }
 
     readonly property QtObject settingsSubsection: QtObject {
@@ -351,18 +349,17 @@ QtObject {
         readonly property int language: 7
         readonly property int notifications: 8
         readonly property int syncingSettings: 9
-        readonly property int browserSettings: 10
-        readonly property int advanced: 11
-        readonly property int about: 12
-        readonly property int communitiesSettings: 13
-        readonly property int keycard: 14
-        readonly property int about_terms: 15 // a subpage under "About"
-        readonly property int about_privacy: 16 // a subpage under "About"
-        readonly property int privacyAndSecurity: 17
+        readonly property int advanced: 10
+        readonly property int about: 11
+        readonly property int communitiesSettings: 12
+        readonly property int keycard: 13
+        readonly property int about_terms: 14 // a subpage under "About"
+        readonly property int about_privacy: 15 // a subpage under "About"
+        readonly property int privacyAndSecurity: 16
 
         // special treatment; these do not participate in the main settings' StackLayout
-        readonly property int signout: 18
-        readonly property int backUpSeed: 19
+        readonly property int signout: 17
+        readonly property int backUpSeed: 18
     }
 
     readonly property QtObject walletSettingsSubsection: QtObject {
@@ -965,16 +962,6 @@ QtObject {
     readonly property string waku_test: "waku.test"
     readonly property string status_prod: "status.prod"
     readonly property string status_staging: "status.staging"
-
-    readonly property int browserSearchEngineNone: 0
-    readonly property int browserSearchEngineGoogle: 1
-    readonly property int browserSearchEngineYahoo: 2
-    readonly property int browserSearchEngineDuckDuckGo: 3
-
-    readonly property int browserEthereumExplorerNone: 0
-    readonly property int browserEthereumExplorerEtherscan: 1
-    readonly property int browserEthereumExplorerEthplorer: 2
-    readonly property int browserEthereumExplorerBlockchair: 3
 
     readonly property int repeatHeaderInterval: 2
 

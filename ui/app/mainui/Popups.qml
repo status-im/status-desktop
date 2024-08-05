@@ -58,7 +58,6 @@ QtObject {
         Global.openInviteFriendsToCommunityByIdPopup.connect(openInviteFriendsToCommunityByIdPopup)
         Global.openContactRequestPopup.connect(openContactRequestPopup)
         Global.openReviewContactRequestPopup.connect(openReviewContactRequestPopup)
-        Global.openChooseBrowserPopup.connect(openChooseBrowserPopup)
         Global.openDownloadModalRequested.connect(openDownloadModal)
         Global.openImagePopup.connect(openImagePopup)
         Global.openVideoPopup.connect(openVideoPopup)
@@ -120,10 +119,6 @@ QtObject {
     function closePopup() {
         if (!!root.currentPopup)
             root.currentPopup.close();
-    }
-
-    function openChooseBrowserPopup(link: string) {
-        openPopup(chooseBrowserPopupComponent, {link: link})
     }
 
     function openDownloadModal(available: bool, version: string, url: string) {
@@ -621,13 +616,6 @@ QtObject {
                                                   (cropRect.y + cropRect.height).toFixed());
                 }
                 onDone: destroy()
-            }
-        },
-
-        Component {
-            id: chooseBrowserPopupComponent
-            ChooseBrowserPopup {
-                onClosed: destroy()
             }
         },
 

@@ -67,7 +67,7 @@ class LeftPanel(QObject):
         return MessagingSettingsView()
 
     @allure.step('Open communities settings')
-    @handle_settings_opening(CommunitiesSettingsView, '13-AppMenuItem')
+    @handle_settings_opening(CommunitiesSettingsView, '12-AppMenuItem')
     def open_communities_settings(self, attempts: int = 2) -> 'CommunitiesSettingsView':
         assert CommunitiesSettingsView().exists, 'Community settings view was not opened'
         return CommunitiesSettingsView()
@@ -91,7 +91,7 @@ class LeftPanel(QObject):
         return ChangePasswordView()
 
     @allure.step('Choose back up seed phrase in settings')
-    @handle_settings_opening(BackUpYourSeedPhrasePopUp, '19-MainMenuItem')
+    @handle_settings_opening(BackUpYourSeedPhrasePopUp, '18-MainMenuItem')
     def open_back_up_seed_phrase(self, click_attempts: int = 2) -> 'BackUpYourSeedPhrasePopUp':
         assert BackUpYourSeedPhrasePopUp().exists, 'Back up your seed phrase modal was not opened'
         return BackUpYourSeedPhrasePopUp()
@@ -103,13 +103,13 @@ class LeftPanel(QObject):
         return SyncingSettingsView()
 
     @allure.step('Choose sign out and quit in settings')
-    @handle_settings_opening(SignOutPopup, '18-ExtraMenuItem')
+    @handle_settings_opening(SignOutPopup, '17-ExtraMenuItem')
     def open_sign_out_and_quit(self, click_attempts: int = 2) -> 'SignOutPopup':
         assert SignOutPopup().exists, 'Sign out modal was not opened'
         return SignOutPopup()
 
     @allure.step('Open keycard settings')
-    @handle_settings_opening(KeycardSettingsView, '14-MainMenuItem')
+    @handle_settings_opening(KeycardSettingsView, '13-MainMenuItem')
     def open_keycard_settings(self, click_attempts: int = 2) -> 'KeycardSettingsView':
         assert KeycardSettingsView().wait_until_appears(), f'Keycard settings view was not opened'
         return KeycardSettingsView()
@@ -121,7 +121,7 @@ class LeftPanel(QObject):
         return ENSSettingsView()
 
     @allure.step('Open advanced settings')
-    @handle_settings_opening(AdvancedSettingsView, '11-SettingsMenuItem')
+    @handle_settings_opening(AdvancedSettingsView, '10-SettingsMenuItem')
     def open_advanced_settings(self, click_attempts: int = 2) -> 'AdvancedSettingsView':
         assert AdvancedSettingsView().exists, 'Advanced settings view was not opened'
         return AdvancedSettingsView()

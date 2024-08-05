@@ -77,7 +77,6 @@ QtObject {
         stickersModule: stickersModuleInst
     }
 
-    property bool browserMenuItemEnabled: Global.appIsReady? localAccountSensitiveSettings.isBrowserEnabled : false
     property bool walletMenuItemEnabled: profileStore.isWalletEnabled
 
     property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
@@ -128,9 +127,6 @@ QtObject {
             append({subsection: Constants.settingsSubsection.wallet,
                        text: qsTr("Wallet"),
                        icon: "wallet"})
-            append({subsection: Constants.settingsSubsection.browserSettings,
-                       text: qsTr("Browser"),
-                       icon: "browser"})
             append({subsection: Constants.settingsSubsection.communitiesSettings,
                        text: qsTr("Communities"),
                        icon: "communities"})

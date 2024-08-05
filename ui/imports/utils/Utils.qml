@@ -631,8 +631,6 @@ QtObject {
             return qsTr("Messages")
         case Constants.appSection.wallet:
             return qsTr("Wallet")
-        case Constants.appSection.browser:
-            return qsTr("Browser")
         case Constants.appSection.profile:
             return qsTr("Settings")
         case Constants.appSection.node:

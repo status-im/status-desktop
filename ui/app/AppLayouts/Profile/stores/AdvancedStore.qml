@@ -27,7 +27,6 @@ QtObject {
     readonly property bool createCommunityEnabled: localAppSettings.createCommunityEnabled ?? false
     property bool isManageCommunityOnTestModeEnabled: false
     readonly property QtObject experimentalFeatures: QtObject {
-        readonly property string browser: "browser"
         readonly property string communities: "communities"
         readonly property string activityCenter: "activityCenter"
         readonly property string nodeManagement: "nodeManagement"
@@ -120,10 +119,7 @@ QtObject {
         if(!root.advancedModule)
             return
 
-        if (feature === experimentalFeatures.browser) {
-            advancedModule.toggleBrowserSection()
-        }
-        else if (feature === experimentalFeatures.communities) {
+        if (feature === experimentalFeatures.communities) {
             advancedModule.toggleCommunitySection()
         }
         else if (feature === experimentalFeatures.communitiesPortal) {

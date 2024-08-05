@@ -319,20 +319,6 @@ StatusSectionLayout {
         Loader {
             active: false
             asynchronous: true
-            sourceComponent: BrowserView {
-                implicitWidth: parent.width
-                implicitHeight: parent.height
-
-                store: root.store
-                accountSettings: localAccountSensitiveSettings
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.browserSettings)
-                contentWidth: d.contentWidth
-            }
-        }
-
-        Loader {
-            active: false
-            asynchronous: true
             sourceComponent: AdvancedView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
