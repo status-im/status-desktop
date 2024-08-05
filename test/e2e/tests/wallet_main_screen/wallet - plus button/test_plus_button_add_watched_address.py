@@ -15,6 +15,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703026', 'Manage a watch-only account')
 @pytest.mark.case(703026)
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/15933")
 @pytest.mark.parametrize('address, name, color, emoji, emoji_unicode', [
     pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'AccWatch1', '#2a4af5',
                  'sunglasses', '1f60e')
