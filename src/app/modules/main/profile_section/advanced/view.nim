@@ -119,9 +119,6 @@ QtObject:
   proc toggleWalletSection*(self: View) {.slot.} =
     self.delegate.toggleWalletSection()
 
-  proc toggleBrowserSection*(self: View) {.slot.} =
-    self.delegate.toggleBrowserSection()
-
   proc toggleCommunitySection*(self: View) {.slot.} =
     self.delegate.toggleCommunitySection()
 

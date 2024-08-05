@@ -16,7 +16,6 @@ import chat_section/model as chat_model
 import chat_section/item as chat_item
 import chat_section/module as chat_section_module
 import wallet_section/module as wallet_section_module
-import browser_section/module as browser_section_module
 import profile_section/module as profile_section_module
 import app_search/module as app_search_module
 import stickers/module as stickers_module
@@ -41,8 +40,6 @@ import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/currency/service as currency_service
 import ../../../app_service/service/transaction/service as transaction_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../app_service/service/bookmarks/service as bookmark_service
-import ../../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../../app_service/service/provider/service as provider_service
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/accounts/service as accounts_service
@@ -104,7 +101,6 @@ type
     keychainService: keychain_service.Service
     networkConnectionService: network_connection_service.Service
     walletSectionModule: wallet_section_module.AccessInterface
-    browserSectionModule: browser_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
     stickersModule: stickers_module.AccessInterface
     gifsModule: gifs_module.AccessInterface
@@ -146,12 +142,10 @@ proc newModule*[T](
   currencyService: currency_service.Service,
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.Service,
-  bookmarkService: bookmark_service.Service,
   profileService: profile_service.Service,
   settingsService: settings_service.Service,
   contactsService: contacts_service.Service,
   aboutService: about_service.Service,
-  dappPermissionsService: dapp_permissions_service.Service,
   languageService: language_service.Service,
   privacyService: privacy_service.Service,
   providerService: provider_service.Service,
@@ -219,11 +213,6 @@ proc newModule*[T](
     keycardService, nodeService, networkConnectionService, devicesService,
     communityTokensService, threadpool
   )
-  result.browserSectionModule = browser_section_module.newModule(
-    result, events, bookmarkService, settingsService, networkService,
-    dappPermissionsService, providerService, walletAccountService,
-    tokenService, currencyService
-  )
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
@@ -254,7 +243,6 @@ method delete*[T](self: Module[T]) =
     cModule.delete
   self.chatSectionModules.clear
   self.walletSectionModule.delete
-  self.browserSectionModule.delete
   self.appSearchModule.delete
   self.nodeSectionModule.delete
   if not self.keycardSharedModuleForAuthenticationOrSigning.isNil:
@@ -539,27 +527,6 @@ method load*[T](
   if(activeSectionId == walletSectionItem.id):
     activeSection = walletSectionItem
 
-  # Browser Section
-  let browserSectionItem = initItem(
-    conf.BROWSER_SECTION_ID,
-    SectionType.Browser,
-    conf.BROWSER_SECTION_NAME,
-    memberRole = MemberRole.Owner,
-    description = "",
-    introMessage = "",
-    outroMessage = "",
-    image = "",
-    icon = conf.BROWSER_SECTION_ICON,
-    color = "",
-    hasNotification = false,
-    notificationsCount = 0,
-    active = false,
-    enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled(),
-  )
-  self.view.model().addItem(browserSectionItem)
-  if(activeSectionId == browserSectionItem.id):
-    activeSection = browserSectionItem
-
   # Node Management Section
   let nodeManagementSectionItem = initItem(
     conf.NODEMANAGEMENT_SECTION_ID,
@@ -602,7 +569,6 @@ method load*[T](
   if(activeSectionId == profileSettingsSectionItem.id):
     activeSection = profileSettingsSectionItem
 
-  self.browserSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
   self.gifsModule.load()
@@ -803,9 +769,6 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if (not self.walletSectionModule.isLoaded()):
     return
 
-  if(not self.browserSectionModule.isLoaded()):
-    return
-
   if(not self.nodeSectionModule.isLoaded()):
     return
 
@@ -858,9 +821,6 @@ method communitiesModuleDidLoad*[T](self: Module[T]) =
 #  self.checkIfModuleDidLoad()
 
 method walletSectionDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-method browserSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method profileSectionDidLoad*[T](self: Module[T]) =
@@ -921,8 +881,6 @@ method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSett
   case sectionId:
     of conf.COMMUNITIESPORTAL_SECTION_ID:
       self.communitiesModule.onActivated()
-    of conf.BROWSER_SECTION_ID:
-      self.browserSectionModule.onActivated()
 
   self.view.model().setActiveSection(sectionId)
   self.view.activeSectionSet(item)
@@ -939,11 +897,7 @@ proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, availa
     self.view.model().disableSection(sectionType)
 
 method toggleSection*[T](self: Module[T], sectionType: SectionType) =
-  if (sectionType == SectionType.Browser):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()
-    self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setIsBrowserEnabled(not enabled)
-  elif (sectionType == SectionType.NodeManagement):
+  if (sectionType == SectionType.NodeManagement):
     let enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled()
     self.setSectionAvailability(sectionType, not enabled)
     singletonInstance.localAccountSensitiveSettings.setNodeManagementEnabled(not enabled)
@@ -1517,12 +1471,6 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
 
     else:
       return
-
-  # enable after MVP
-  #else(action == StatusUrlAction.OpenLinkInBrowser and singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()):
-  #  let item = self.view.model().getItemById(conf.BROWSER_SECTION_ICON)
-  #  self.setActiveSection(item)
-  #  self.browserSectionModule.openUrl(url)
 
 ################################################################################
 ## keycard shared module - authentication/sign purpose

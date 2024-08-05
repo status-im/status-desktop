@@ -47,7 +47,6 @@ Item {
             settingsMenuItems: store.settingsMenuItems
             extraMenuItems: store.extraMenuItems
             appsMenuItems: store.appsMenuItems
-            browserMenuItemEnabled: store.browserMenuItemEnabled
             walletMenuItemEnabled: store.walletMenuItemEnabled
 
             objectName: "leftTabViewProfileMenu"

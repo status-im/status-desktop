@@ -1,5 +1,4 @@
 import json
-import ../dapp_permissions/service as dapp_permissions_service
 
 const HTTPS_SCHEME* = "https"
 const IPFS_GATEWAY* =  ".infura.status.im"

@@ -71,7 +71,7 @@ Item {
         StyledText {
             id: txtDesc1
             color: Style.current.secondaryText
-            text: qsTr("Your fully decentralized gateway to Ethereum and Web3. Crypto wallet, privacy first group chat, and dApp browser.")
+            text: qsTr("Your fully decentralized gateway to Ethereum and Web3. Crypto wallet, privacy first group chat, and communities.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             anchors.right: parent.right
