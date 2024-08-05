@@ -74,13 +74,19 @@ StatusMenu {
         }
     }
 
-    StatusAction {
-        objectName: "AccountMenu-AddWatchOnlyAccountAction-%1".arg(root.uniqueIdentifier)
-        text: qsTr("Add watched address")
-        enabled: !root.account
-        icon.name: "show"
-        onTriggered: {
-            root.addWatchOnlyAccountClicked()
+    Loader {
+        active: !production
+        sourceComponent: StatusAction {
+            objectName: "AccountMenu-AddWatchOnlyAccountAction-%1".arg(root.uniqueIdentifier)
+            text: qsTr("Add watched address")
+            enabled: !root.account
+            icon.name: "show"
+            onTriggered: {
+                root.addWatchOnlyAccountClicked()
+            }
+        }
+        onLoaded: {
+            root.addAction(item)
         }
     }
 }
