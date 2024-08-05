@@ -52,3 +52,6 @@ proc createOrUpdateSavedAddress*(self: Controller, name: string, address: string
 
 proc deleteSavedAddress*(self: Controller, address: string) =
   self.savedAddressService.deleteSavedAddress(address)
+
+proc remainingCapacityForSavedAddresses*(self: Controller): int =
+  return self.savedAddressService.remainingCapacityForSavedAddresses()

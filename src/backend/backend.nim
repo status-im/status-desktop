@@ -76,6 +76,12 @@ rpc(deleteSavedAddress, "wakuext"):
 rpc(getSavedAddresses, "wakuext"):
   discard
 
+rpc(getSavedAddressesPerMode, "wakuext"):
+  isTest: bool
+
+rpc(remainingCapacityForSavedAddresses, "wakuext"):
+  isTest: bool
+
 rpc(checkConnected, "wallet"):
   discard
 

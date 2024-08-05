@@ -366,3 +366,12 @@ QtObject:
 
   proc isChecksumValidForAddress*(self: View, address: string): bool {.slot.} =
     return self.delegate.isChecksumValidForAddress(address)
+
+  proc remainingAccountCapacity*(self: View): int {.slot.} =
+    return self.delegate.remainingAccountCapacity()
+
+  proc remainingKeypairCapacity*(self: View): int {.slot.} =
+    return self.delegate.remainingKeypairCapacity()
+
+  proc remainingWatchOnlyAccountCapacity*(self: View): int {.slot.} =
+    return self.delegate.remainingWatchOnlyAccountCapacity()

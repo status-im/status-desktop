@@ -739,4 +739,13 @@ method buildNewSeedPhraseKeypairAndAddItToOrigin*[T](self: Module[T]) =
 method isChecksumValidForAddress*[T](self: Module[T], address: string): bool =
   return self.controller.isChecksumValidForAddress(address)
 
+method remainingAccountCapacity*[T](self: Module[T]): int =
+  return self.controller.remainingAccountCapacity()
+
+method remainingKeypairCapacity*[T](self: Module[T]): int =
+  return self.controller.remainingKeypairCapacity()
+
+method remainingWatchOnlyAccountCapacity*[T](self: Module[T]): int =
+  return self.controller.remainingWatchOnlyAccountCapacity()
+
 {.pop.}

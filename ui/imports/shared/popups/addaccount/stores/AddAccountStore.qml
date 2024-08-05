@@ -54,6 +54,8 @@ BasePopupStore {
         Constants.addAccountPopup.predefinedPaths.ethereumLedgerLive
     ]
 
+    signal showLimitPopup(int warningType)
+
     function resetStoreValues() {
         root.enteredSeedPhraseIsValid = false
         root.enteredPrivateKeyIsValid = false
@@ -91,10 +93,20 @@ BasePopupStore {
         }
 
         if(!event) {
+            if (!root.editMode && root.remainingAccountCapacity() === 0) {
+                root.showLimitPopup(0)
+                return
+            }
+
             root.currentState.doPrimaryAction()
         }
         else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
             event.accepted = true
+            if (!root.editMode && root.remainingAccountCapacity() === 0) {
+                root.showLimitPopup(0)
+                return
+            }
+
             root.currentState.doPrimaryAction()
         }
     }
@@ -157,6 +169,18 @@ BasePopupStore {
 
     function isChecksumValidForAddress(address) {
         return root.addAccountModule.isChecksumValidForAddress(address)
+    }
+
+    function remainingAccountCapacity() {
+        return root.addAccountModule.remainingAccountCapacity()
+    }
+
+    function remainingKeypairCapacity() {
+        return root.addAccountModule.remainingKeypairCapacity()
+    }
+
+    function remainingWatchOnlyAccountCapacity() {
+        return root.addAccountModule.remainingWatchOnlyAccountCapacity()
     }
 
     validSeedPhrase: function(seedPhrase) {

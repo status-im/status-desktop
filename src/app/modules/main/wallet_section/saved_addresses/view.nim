@@ -59,3 +59,6 @@ QtObject:
 
   proc getSavedAddressAsJson*(self: View, address: string): string {.slot.} =
     return self.delegate.getSavedAddressAsJson(address)
+
+  proc remainingCapacityForSavedAddresses*(self: View): int {.slot.} =
+    return self.delegate.remainingCapacityForSavedAddresses()

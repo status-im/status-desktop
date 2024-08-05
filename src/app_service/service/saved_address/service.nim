@@ -172,3 +172,12 @@ QtObject:
       error "onDeleteSavedAddress", msg = e.msg
       arg.errorMsg = e.msg
     self.updateAddresses(SIGNAL_SAVED_ADDRESS_DELETED, arg)
+
+  proc remainingCapacityForSavedAddresses*(self: Service): int =
+    try:
+      let response = backend.remainingCapacityForSavedAddresses(self.areTestNetworksEnabled())
+      if not response.error.isNil:
+        raise newException(CatchableError, response.error.message)
+      return response.result.getInt
+    except Exception as e:
+      error "error: ", procName="remainingCapacityForSavedAddresses", errName=e.name, errDesription=e.msg

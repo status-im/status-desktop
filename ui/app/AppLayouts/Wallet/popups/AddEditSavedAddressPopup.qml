@@ -18,6 +18,7 @@ import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -283,6 +284,11 @@ StatusModal {
                     || event !== undefined && event.key !== Qt.Key_Return && event.key !== Qt.Key_Enter)
                 return
 
+            if (!d.editMode && root.store.remainingCapacityForSavedAddresses() === 0) {
+                limitPopup.active = true
+                return
+            }
+
             root.store.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.chainShortNames)
             root.close()
         }
@@ -364,6 +370,34 @@ StatusModal {
             bottomPadding: 28
 
             spacing: Style.current.xlPadding
+
+            Loader {
+                id: limitPopup
+                active: false
+                asynchronous: true
+
+                sourceComponent: StatusDialog {
+                    width: root.width - 2*Style.current.padding
+
+                    title: Constants.walletConstants.maxNumberOfSavedAddressesTitle
+
+                    StatusBaseText {
+                        anchors.fill: parent
+                        text: Constants.walletConstants.maxNumberOfSavedAddressesContent
+                        wrapMode: Text.WordWrap
+                    }
+
+                    standardButtons: Dialog.Ok
+
+                    onClosed: {
+                        limitPopup.active = false
+                    }
+                }
+
+                onLoaded: {
+                    limitPopup.item.open()
+                }
+            }
 
             StatusInput {
                 id: nameInput

@@ -873,6 +873,20 @@ QtObject {
         readonly property string market: "market"
     }
 
+    readonly property QtObject walletConstants: QtObject {
+        readonly property string maxNumberOfAccountsTitle: qsTr("Limit of 20 accounts reached")
+        readonly property string maxNumberOfAccountsContent: qsTr("Remove any account to add a new one.")
+
+        readonly property string maxNumberOfKeypairsTitle: qsTr("Limit of 5 key pairs reached")
+        readonly property string maxNumberOfKeypairsContent: qsTr("Remove key pair to add a new one.")
+
+        readonly property string maxNumberOfWatchOnlyAccountsTitle: qsTr("Limit of 3 watched addresses reached")
+        readonly property string maxNumberOfWatchOnlyAccountsContent: qsTr("Remove a watched address to add a new one.")
+
+        readonly property string maxNumberOfSavedAddressesTitle: qsTr("Limit of 20 saved addresses reached")
+        readonly property string maxNumberOfSavedAddressesContent: qsTr("Remove a saved address to add a new one.")
+    }
+
     enum ConnectionStatus {
         Success = 0,
         Failure = 1,

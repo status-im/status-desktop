@@ -254,3 +254,12 @@ proc resolveSuggestedPathForKeypair*(self: Controller, keyUid: string): string =
 
 proc isChecksumValidForAddress*(self: Controller, address: string): bool =
   return self.walletAccountService.isChecksumValidForAddress(address)
+
+proc remainingAccountCapacity*(self: Controller): int =
+  return self.walletAccountService.remainingAccountCapacity()
+
+proc remainingKeypairCapacity*(self: Controller): int =
+  return self.walletAccountService.remainingKeypairCapacity()
+
+proc remainingWatchOnlyAccountCapacity*(self: Controller): int =
+  return self.walletAccountService.remainingWatchOnlyAccountCapacity()

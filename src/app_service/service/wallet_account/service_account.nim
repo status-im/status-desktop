@@ -811,3 +811,30 @@ proc resolveSuggestedPathForKeypair*(self: Service, keyUid: string): string =
     return response.result.getStr
   except Exception as e:
     error "error: ", procName="resolveSuggestedPathForKeypair", errName=e.name, errDesription=e.msg
+
+proc remainingAccountCapacity*(self: Service): int =
+  try:
+    let response = status_go_accounts.remainingAccountCapacity()
+    if not response.error.isNil:
+      raise newException(CatchableError, response.error.message)
+    return response.result.getInt
+  except Exception as e:
+    error "error: ", procName="remainingAccountCapacity", errName=e.name, errDesription=e.msg
+
+proc remainingKeypairCapacity*(self: Service): int =
+  try:
+    let response = status_go_accounts.remainingKeypairCapacity()
+    if not response.error.isNil:
+      raise newException(CatchableError, response.error.message)
+    return response.result.getInt
+  except Exception as e:
+    error "error: ", procName="remainingKeypairCapacity", errName=e.name, errDesription=e.msg
+
+proc remainingWatchOnlyAccountCapacity*(self: Service): int =
+  try:
+    let response = status_go_accounts.remainingWatchOnlyAccountCapacity()
+    if not response.error.isNil:
+      raise newException(CatchableError, response.error.message)
+    return response.result.getInt
+  except Exception as e:
+    error "error: ", procName="remainingWatchOnlyAccountCapacity", errName=e.name, errDesription=e.msg

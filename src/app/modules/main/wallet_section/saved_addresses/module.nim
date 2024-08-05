@@ -104,3 +104,6 @@ method getSavedAddressAsJson*(self: Module, address: string): string =
     "isTest": saDto.isTest,
   }
   return $jsonObj
+
+method remainingCapacityForSavedAddresses*(self: Module): int =
+  return self.controller.remainingCapacityForSavedAddresses()
