@@ -76,7 +76,9 @@ Item {
             }
         }
 
-        StatusBetaTag {}
+        StatusBetaTag {
+            tooltipText: qsTr("Under construction.<br>More notification types to be coming soon.")
+        }
 
         StatusFlatRoundButton {
             id: markAllReadBtn

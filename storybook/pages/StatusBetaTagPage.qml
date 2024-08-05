@@ -17,8 +17,8 @@ SplitView {
         SplitView.fillHeight: true
 
         StatusBetaTag {
-            id: tag
             anchors.centerIn: parent
+            tooltipText: ctrlTooltip.text
         }
     }
 
@@ -27,6 +27,16 @@ SplitView {
         SplitView.preferredWidth: 400
 
         SplitView.fillHeight: true
+
+        RowLayout {
+            Label {
+                text: "Tooltip:"
+            }
+            TextField {
+                id: ctrlTooltip
+                text: "Hic sunt leones!!!"
+            }
+        }
     }
 }
 

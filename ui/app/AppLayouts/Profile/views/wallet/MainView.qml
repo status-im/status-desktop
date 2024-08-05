@@ -146,6 +146,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 125
+            tooltipText: qsTr("Under construction, you might experience some minor issues")
         }
     }
 
@@ -168,6 +169,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 135
+            tooltipText: qsTr("Under construction, you might experience some minor issues")
         }
     }
 

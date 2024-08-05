@@ -388,7 +388,9 @@ SettingsContentBase {
 
         Component {
             id: experimentalTagComponent
-            StatusBetaTag {}
+            StatusBetaTag {
+                tooltipText: qsTr("Under construction, you might experience some minor issues")
+            }
         }
 
         Component {

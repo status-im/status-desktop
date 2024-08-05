@@ -137,11 +137,22 @@ QtObject {
                 `<a href="${link}">${link}</a>`
     }
 
+    function getStyledLink(linkText, linkUrl, hoveredLink, textColor = Theme.palette.directColor1, linkColor = Theme.palette.primaryColor1) {
+        return `<style type="text/css">` +
+                `a {` +
+                `color: ${textColor};` +
+                `text-decoration: underline;` +
+                `}` +
+                (hoveredLink === linkUrl ? `a[href="${linkUrl}"] { text-decoration: underline; color: ${linkColor} }` : "") +
+                `</style>` +
+                `<a href="${linkUrl}">${linkText}</a>`
+    }
+
     function isMnemonic(value) {
         if(!value.match(/^([a-z\s]+)$/)){
             return false;
         }
-        return  Utils.seedPhraseValidWordCount(value);
+        return seedPhraseValidWordCount(value);
     }
 
     function compactAddress(addr, numberOfChars) {

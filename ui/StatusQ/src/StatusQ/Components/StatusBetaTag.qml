@@ -1,9 +1,13 @@
-import QtQuick 2.13
+import QtQuick 2.15
+
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
 Rectangle {
     id: root
+
+    property alias tooltipText: tip.text
 
     implicitHeight: 20
     implicitWidth: 36
@@ -19,5 +23,14 @@ Rectangle {
         color: Theme.palette.baseColor1
         anchors.centerIn: parent
         text: "Beta"
+    }
+
+    StatusToolTip {
+        id: tip
+        visible: hoverHandler.hovered && !!text
+    }
+
+    HoverHandler {
+        id: hoverHandler
     }
 }
