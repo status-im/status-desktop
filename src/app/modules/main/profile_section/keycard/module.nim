@@ -415,3 +415,9 @@ method prepareKeycardDetailsModel*(self: Module, keyUid: string) =
       continue
     items.add(item)
   self.view.createModelAndSetKeycardDetailsItems(items)
+
+method remainingKeypairCapacity*(self: Module): int =
+  return self.controller.remainingKeypairCapacity()
+
+method remainingAccountCapacity*(self: Module): int =
+  return self.controller.remainingAccountCapacity()

@@ -14,6 +14,7 @@ QtObject {
     property bool primaryButtonEnabled: false
 
     signal cancelBtnClicked()
+    signal accountLimitWarning()
 
     // disables action buttons (back, cancel, primary, secondary) and close button (upper right "X" button) as well
     readonly property bool disableActionPopupButtons: {
@@ -620,6 +621,17 @@ QtObject {
             }
 
             onClicked: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
+
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.manageKeycardAccounts &&
+                            !!root.sharedKeycardModule.keyPairForProcessing &&
+                            root.sharedKeycardModule.remainingAccountCapacity() === root.sharedKeycardModule.keyPairForProcessing.accounts.count) {
+                        root.accountLimitWarning()
+                        return
+                    }
+                }
+
                 root.sharedKeycardModule.currentState.doSecondaryAction()
             }
         },
@@ -1259,6 +1271,9 @@ QtObject {
                 case Constants.keycardSharedFlow.importFromKeycard:
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
+                    case Constants.keycardSharedState.keycardMetadataDisplay:
+                        return root.sharedKeycardModule.keyPairHelper.accounts.count <= root.sharedKeycardModule.remainingAccountCapacity()
+
                     case Constants.keycardSharedState.manageKeycardAccounts:
                         return root.primaryButtonEnabled
                     }
@@ -1423,6 +1438,16 @@ QtObject {
             }
 
             onClicked: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
+
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.manageKeycardAccounts &&
+                            !!root.sharedKeycardModule.keyPairForProcessing &&
+                            root.sharedKeycardModule.remainingAccountCapacity() - root.sharedKeycardModule.keyPairForProcessing.accounts.count < 0) {
+                        root.accountLimitWarning()
+                        return
+                    }
+                }
                 root.sharedKeycardModule.currentState.doPrimaryAction()
             }
         }

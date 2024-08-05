@@ -124,3 +124,9 @@ proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
 
 proc getKeypairByKeyUid*(self: Controller, keyUid: string): wallet_account_service.KeypairDto =
   return self.walletAccountService.getKeypairByKeyUid(keyUid)
+
+proc remainingKeypairCapacity*(self: Controller): int =
+  return self.walletAccountService.remainingKeypairCapacity()
+
+proc remainingAccountCapacity*(self: Controller): int =
+  return self.walletAccountService.remainingAccountCapacity()
