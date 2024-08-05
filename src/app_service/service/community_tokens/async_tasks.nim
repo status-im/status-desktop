@@ -378,16 +378,19 @@ proc getCommunityTokensDetailsTaskArg(argEncoded: string) {.gcsafe, nimcall.} =
         var destructedAmount = "0"
 
         if tokenDto.deployState == DeployState.Deployed:
-          remainingSupply =
-            if tokenDto.infiniteSupply:
-              "0"
-            else:
-              getRemainingSupply(tokenDto.chainId, tokenDto.address)
+          try:
+            remainingSupply =
+              if tokenDto.infiniteSupply:
+                "0"
+              else:
+                getRemainingSupply(tokenDto.chainId, tokenDto.address)
 
-          burnState = getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
-          remoteDestructedAddresses = getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
+            burnState = getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
+            remoteDestructedAddresses = getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
 
-          destructedAmount = getRemoteDestructedAmount(communityTokens, tokenDto.chainId, tokenDto.address)
+            destructedAmount = getRemoteDestructedAmount(communityTokens, tokenDto.chainId, tokenDto.address)
+          except Exception as e:
+            error "Remote token state retrieval error", message = getCurrentExceptionMsg()
 
         return %* {
           "address": tokenDto.address,
