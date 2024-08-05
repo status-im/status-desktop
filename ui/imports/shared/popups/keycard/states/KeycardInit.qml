@@ -177,382 +177,379 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
-    }
 
-    Loader {
-        id: loader
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
+        Loader {
+            id: loader
+            Layout.preferredWidth: parent.width - 2*Style.current.xlPadding
+            Layout.alignment: Qt.AlignHCenter
 
-        active: {
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
-                if((root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader && !d.hideKeyPair) ||
-                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard && !d.hideKeyPair) ||
-                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted && !d.hideKeyPair) ||
-                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard && !d.hideKeyPair) ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                    return true
+            active: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
+                    if((root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader && !d.hideKeyPair) ||
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard && !d.hideKeyPair) ||
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted && !d.hideKeyPair) ||
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard && !d.hideKeyPair) ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        return true
+                    }
                 }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure) {
-                    return true
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure) {
+                        return true
+                    }
                 }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
-                    return true
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
+                        return true
+                    }
                 }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycardSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycardFailure ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
-                    return true
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycardSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycardFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
+                        return true
+                    }
                 }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                    return true
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        return true
+                    }
+                    if(!!root.sharedKeycardModule.keyPairForProcessing &&
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard))
+                        return true
                 }
-                if(!!root.sharedKeycardModule.keyPairForProcessing &&
-                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard))
-                    return true
-            }
-            if (d.authenticationOrSigning &&
-                    !!root.sharedKeycardModule.keyPairForProcessing &&
-                    root.sharedKeycardModule.keyPairForProcessing.name !== "") {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard) {
-                    return true
+                if (d.authenticationOrSigning &&
+                        !!root.sharedKeycardModule.keyPairForProcessing &&
+                        root.sharedKeycardModule.keyPairForProcessing.name !== "") {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard) {
+                        return true
+                    }
                 }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                    return true
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        return true
+                    }
                 }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard && !d.hideKeyPair) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure)
-                    return true
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin && !d.hideKeyPair) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
-                    return true
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPuk && !d.hideKeyPair) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
-                    return true
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changePairingCode && !d.hideKeyPair) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
-                    return true
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard && !d.hideKeyPair) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.removeKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyToKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardFailure ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardSuccess)
-                    return true
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromKeycardToApp) {
-                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
-                    return true
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard && !d.hideKeyPair) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure)
+                        return true
                 }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
-                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
-                    return true
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin && !d.hideKeyPair) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
+                        return true
                 }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPuk && !d.hideKeyPair) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
+                        return true
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changePairingCode && !d.hideKeyPair) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
+                        return true
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard && !d.hideKeyPair) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.removeKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyToKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardSuccess)
+                        return true
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromKeycardToApp) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
+                        return true
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
+                        return true
+                    }
+                }
+
+                return false
             }
 
-            return false
-        }
-
-        sourceComponent: {
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
-                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                    if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+            sourceComponent: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return keyPairForProcessingComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+                    if ((root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader && !d.hideKeyPair) ||
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard && !d.hideKeyPair) ||
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted && !d.hideKeyPair) ||
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard && !d.hideKeyPair) ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
                         return keyPairForProcessingComponent
                     }
-                    return unknownKeyPairCompontnt
                 }
-                if ((root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader && !d.hideKeyPair) ||
-                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard && !d.hideKeyPair) ||
-                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted && !d.hideKeyPair) ||
-                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard && !d.hideKeyPair) ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
-                    return keyPairForProcessingComponent
-                }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                    if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return keyPairForProcessingComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure) {
                         return keyPairForProcessingComponent
                     }
-                    return unknownKeyPairCompontnt
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return keyPairForProcessingComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
+                        return keyPairForProcessingComponent
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return keyPairForProcessingComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycardSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycardFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
+                        return keyPairForProcessingComponent
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return keyPairForProcessingComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+                    if(!!root.sharedKeycardModule.keyPairForProcessing &&
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard))
+                        return keyPairForProcessingComponent
+                }
+                if (d.authenticationOrSigning) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard) {
+                        return keyPairForProcessingComponent
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return keyPairForProcessingComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure) {
+                        return keyPairForProcessingComponent
+                    }
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
+                        return keyPairForProcessingComponent
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
+                        return keyPairForProcessingComponent
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPuk) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
+                        return keyPairForProcessingComponent
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changePairingCode) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
+                        return keyPairForProcessingComponent
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.removeKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyToKeycard) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return keyPairForProcessingComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardSuccess)
+                        return keyPairForProcessingComponent
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromKeycardToApp) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
+                        return keyPairForProcessingComponent
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
+                        return keyPairForProcessingComponent
+                    }
                 }
 
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure) {
-                    return keyPairForProcessingComponent
-                }
+                return undefined
             }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                    if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
-                        return keyPairForProcessingComponent
-                    }
-                    return unknownKeyPairCompontnt
-                }
-
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
-                    return keyPairForProcessingComponent
-                }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                    if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
-                        return keyPairForProcessingComponent
-                    }
-                    return unknownKeyPairCompontnt
-                }
-
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycardSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycardFailure ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
-                    return keyPairForProcessingComponent
-                }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                    if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
-                        return keyPairForProcessingComponent
-                    }
-                    return unknownKeyPairCompontnt
-                }
-                if(!!root.sharedKeycardModule.keyPairForProcessing &&
-                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard))
-                    return keyPairForProcessingComponent
-            }
-            if (d.authenticationOrSigning) {
-                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard) {
-                    return keyPairForProcessingComponent
-                }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                    if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
-                        return keyPairForProcessingComponent
-                    }
-                    return unknownKeyPairCompontnt
-                }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure) {
-                    return keyPairForProcessingComponent
-                }
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
-                    return keyPairForProcessingComponent
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
-                    return keyPairForProcessingComponent
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPuk) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
-                    return keyPairForProcessingComponent
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changePairingCode) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
-                    return keyPairForProcessingComponent
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard) {
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.removeKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyToKeycard) {
-                    if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
-                        return keyPairForProcessingComponent
-                    }
-                    return unknownKeyPairCompontnt
-                }
-                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardFailure ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardSuccess)
-                    return keyPairForProcessingComponent
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromKeycardToApp) {
-                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
-                    return keyPairForProcessingComponent
-                }
-            }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
-                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
-                    return keyPairForProcessingComponent
-                }
-            }
-
-            return undefined
         }
     }
 
@@ -1232,7 +1229,12 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: ""
+                text: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard &&
+                        root.sharedKeycardModule.keyPairHelper.accounts.count > root.sharedKeycardModule.remainingAccountCapacity()?
+                          qsTr("Adding these accounts will exceed the limit of 20.\nRemove some already added accounts to be able to import a new ones.")
+                        : ""
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.dangerColor1
             }
         },
         State {

@@ -100,6 +100,12 @@ method onKeycardUidUpdated*(self: AccessInterface, keycardUid: string, keycardNe
 method prepareKeycardDetailsModel*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method remainingKeypairCapacity*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method remainingAccountCapacity*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi

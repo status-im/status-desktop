@@ -248,3 +248,6 @@ QtObject:
 
   proc getSigningPhrase*(self: View): string {.slot.} =
     return self.delegate.getSigningPhrase()
+
+  proc remainingAccountCapacity*(self: View): int {.slot.} =
+    return self.delegate.remainingAccountCapacity()
