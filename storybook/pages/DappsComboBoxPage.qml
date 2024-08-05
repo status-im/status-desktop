@@ -17,12 +17,21 @@ SplitView {
             id: connectedDappComboBox
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            model: emptyModelCheckbox.checked ? emptyModel : dappsModel
+            model: emptyModelCheckbox.checked ? emptyModel : smallModelCheckbox.checked ? smallModel: dappsModel
             popup.visible: true
         }
 
         ListModel {
             id: emptyModel
+        }
+
+        ListModel {
+            id: smallModel
+            ListElement {
+                name: "SMALL Model"
+                url: "https://dapp.test/1"
+                iconUrl: "https://se-sdk-dapp.vercel.app/assets/eip155:1.png"
+            }
         }
 
         ListModel {
@@ -94,6 +103,12 @@ SplitView {
             CheckBox {
                 id: emptyModelCheckbox
                 text: "Empty model"
+                checked: false
+            }
+
+            CheckBox {
+                id: smallModelCheckbox
+                text: "Small model"
                 checked: false
             }
         }

@@ -133,8 +133,11 @@ Item {
 
                 spacing: 8
 
-                visible: !root.walletStore.showSavedAddresses && Global.featureFlags.dappsEnabled
+                visible: !root.walletStore.showSavedAddresses
+                         && Global.featureFlags.dappsEnabled
+                         && Global.walletConnectService.isServiceAvailableForAddressSelection
                 enabled: !!Global.walletConnectService
+
 
                 wcService: Global.walletConnectService
                 loginType: root.store.loginType

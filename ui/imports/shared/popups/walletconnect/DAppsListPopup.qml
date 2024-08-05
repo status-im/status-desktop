@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQml 2.15
 import QtQuick.Controls 2.15
 import QtQml.Models 2.15
 import QtQuick.Layouts 1.15
@@ -46,9 +47,25 @@ Popup {
         }
     }
 
+    // workaround for https://bugreports.qt.io/browse/QTBUG-87804
+    Binding on margins {
+        id: workaroundBinding
+
+        when: false
+        restoreMode: Binding.RestoreBindingOrValue
+    }
+
+    onImplicitContentHeightChanged: {
+        workaroundBinding.value = root.margins + 1
+        workaroundBinding.when = true
+        workaroundBinding.when = false
+    }
+
     contentItem: ColumnLayout {
         id: mainLayout
+
         spacing: 0
+
         ShapeRectangle {
             id: listPlaceholder
 
