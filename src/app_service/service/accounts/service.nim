@@ -60,7 +60,6 @@ QtObject:
     accounts: seq[AccountDto]
     loggedInAccount: AccountDto
     keyStoreDir: string
-    defaultWalletEmoji: string
     tmpAccount: AccountDto
     tmpHashedPassword: string
 
@@ -76,7 +75,6 @@ QtObject:
     result.threadpool = threadpool
     result.fleetConfiguration = fleetConfiguration
     result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
-    result.defaultWalletEmoji = ""
 
   proc scheduleReencrpytion(self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000)
 
@@ -102,9 +100,6 @@ QtObject:
 
   proc getKeyStoreDir*(self: Service): string =
     return self.keyStoreDir
-
-  proc setDefaultWalletEmoji*(self: Service, emoji: string) =
-    self.defaultWalletEmoji = emoji
 
   proc connectToFetchingFromWakuEvents*(self: Service) =
     self.events.on(SignalType.WakuBackedUpProfile.event) do(e: Args):
@@ -189,7 +184,6 @@ QtObject:
         rootDataDir: main_constants.STATUSGODIR,
         kdfIterations: KDF_ITERATIONS,
         customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
-        emoji: "", # self.defaultWalletEmoji,
         logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
         wakuV2LightClient: false,
         wakuV2EnableMissingMessageVerification: true,
