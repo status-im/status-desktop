@@ -45,7 +45,7 @@ Item {
 
             if (d.observedAccount.colorId.length === 0) {
                 let color = Theme.palette.customisationColorsArray[Math.floor(Math.random() * Theme.palette.customisationColorsArray.length)]
-                let emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
+                let emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall) // TODO: Reuse status-go RandomWalletEmoji
                 d.observedAccount.colorId = Utils.getIdForColor(color)
                 d.observedAccount.emoji = emoji
             }

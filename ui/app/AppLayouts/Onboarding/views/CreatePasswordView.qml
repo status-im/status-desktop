@@ -27,7 +27,6 @@ Item {
         readonly property int zFront: 100
 
         function submit() {
-            root.startupStore.setDefaultWalletEmoji(StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall))
             root.startupStore.setPassword(view.newPswText)
             root.startupStore.doPrimaryAction()
         }

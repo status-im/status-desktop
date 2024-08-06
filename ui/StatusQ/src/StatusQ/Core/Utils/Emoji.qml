@@ -135,6 +135,8 @@ QtObject {
     readonly property int flagsCount: lastFlagIndex - firstFlagIndex + 1
 
     // Returns a random emoji excluding flags emojis
+    // WARNING: use status-go RandomWalletEmoji instead.
+    // More details here: https://github.com/status-im/status-go/issues/5663
     function getRandomEmoji(size) {
         let whitelistedIndex = Math.floor(Math.random() * (EmojiJSON.emoji_json.length - flagsCount))
         // Compensating for the missing flags emojis index
