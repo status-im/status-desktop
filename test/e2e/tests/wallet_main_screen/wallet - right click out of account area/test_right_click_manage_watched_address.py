@@ -24,6 +24,7 @@ pytestmark = marks
                              pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'AccWatch1', '#2a4af5',
                                           'sunglasses', '1f60e', 'AccWatch1edited', '#216266', 'thumbsup', '1f44d')
                          ])
+@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15995')
 def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWindow, address: str, color: str, emoji: str,
                                                             emoji_unicode: str,
                                                             name: str, new_name: str, new_color: str, new_emoji: str,
