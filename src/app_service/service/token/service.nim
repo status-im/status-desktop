@@ -11,7 +11,7 @@ import app/core/tasks/[qt, threadpool]
 import app/core/signals/types
 import app_service/common/cache
 import app_service/common/wallet_constants
-import ./dto, ./service_items
+import ./dto, ./service_items, ./utils
 
 export dto, service_items
 
@@ -228,7 +228,7 @@ QtObject:
     let tokenType = TokenType.ERC20
 
     var updated = false
-    let unique_key = $token.chainID & token.address
+    let unique_key = token.flatModelKey()
     if not any(self.flatTokenList, proc (x: TokenItem): bool = x.key == unique_key):
       self.flatTokenList.add(TokenItem(
         key: unique_key,
@@ -244,7 +244,7 @@ QtObject:
       self.flatTokenList.sort(cmpTokenItem)
       updated = true
 
-    let token_by_symbol_key = token.address
+    let token_by_symbol_key = token.bySymbolModelKey()
     if not any(self.tokenBySymbolList, proc (x: TokenBySymbolItem): bool = x.key == token_by_symbol_key):
       self.tokenBySymbolList.add(TokenBySymbolItem(
           key: token_by_symbol_key,
@@ -298,7 +298,7 @@ QtObject:
           # Remove tokens that are not on list of supported status networks
           if supportedNetworkChains.contains(token.chainID):
             # logic for building flat tokens list
-            let unique_key = $token.chainID & token.address
+            let unique_key = token.flatModelKey()
             if flatTokensList.hasKey(unique_key):
               flatTokensList[unique_key].sources.add(s.name)
             else:
@@ -321,8 +321,7 @@ QtObject:
             # In case this is a community token the only param reliably unique is its address
             # as there is always a rare case that a user can create two or more community token
             # with same symbol and cannot be avoided
-            let token_by_symbol_key = if token.communityData.id.isEmptyOrWhitespace: token.symbol
-                                      else: token.address
+            let token_by_symbol_key = token.bySymbolModelKey()
             if tokenBySymbolList.hasKey(token_by_symbol_key):
               if not tokenBySymbolList[token_by_symbol_key].sources.contains(s.name):
                 tokenBySymbolList[token_by_symbol_key].sources.add(s.name)
