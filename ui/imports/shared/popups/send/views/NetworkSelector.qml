@@ -212,7 +212,7 @@ Item {
             width: parent.width - 2*Style.current.bigPadding
             text: root.routerErrorDetails
             font.pixelSize: Style.current.tertiaryTextFontSize
-            elide: Text.ElideRight
+            wrapMode: Text.WrapAnywhere
         }
     }
 }

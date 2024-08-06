@@ -1059,6 +1059,9 @@ QtObject {
     }
 
     readonly property QtObject routerErrorCodes: QtObject {
+
+        readonly property string errGeneric: "0"
+
         readonly property QtObject processor: QtObject {
             readonly property string errFailedToParseBaseFee           : "WPP-001"
             readonly property string errFailedToParsePercentageFee     : "WPP-002"
