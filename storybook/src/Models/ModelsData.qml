@@ -87,5 +87,6 @@ QtObject {
         readonly property string latamex: Style.png("onRampProviders/latamex")
         readonly property string moonPay: Style.png("onRampProviders/moonPay")
         readonly property string ramp: Style.png("onRampProviders/ramp")
+        readonly property string mercuryo: Style.png("onRampProviders/mercuryo")
     }
 }

@@ -3,31 +3,56 @@ import QtQuick 2.15
 ListModel {
     readonly property var data: [
         {
+            id: "1",
             name:              "Ramp",
             description:       "Global crypto to fiat flow",
             fees:              "0.49% - 2.9%",
             logoUrl:           ModelsData.onRampProviderImages.ramp,
-            siteUrl:           "https://ramp.network/buy?hostApiKey=zrtf9u2uqebeyzcs37fu5857tktr3eg9w5tffove&swapAsset=DAI,ETH,USDC,USDT",
             hostname:          "ramp.network",
-            recurrentSiteUrl:  ""
+            supportsSinglePurchase: true,
+            supportsRecurrentPurchase: false,
+            supportedAssets:[],
+            urlsNeedParameters: false
         },
         {
+            id: "2",
             name:              "MoonPay",
             description:       "The new standard for fiat to crypto",
             fees:              "1% - 4.5%",
             logoUrl:           ModelsData.onRampProviderImages.moonPay,
-            siteUrl:           "https://buy.moonpay.com/?apiKey=pk_live_YQC6CQPA5qqDu0unEwHJyAYQyeIqFGR",
             hostname:          "moonpay.com",
-            recurrentSiteUrl:  "https://buy.moonpay.com/?apiKey=pk_live_ABCCQPA5qqDu0unEwHJyAYQyeIqFGR",
+            supportsSinglePurchase: true,
+            supportsRecurrentPurchase: false,
+            supportedAssets:[],
+            urlsNeedParameters: false
         },
         {
+            id: "3",
             name:              "Latamex",
             description:       "Easily buy crypto in Argentina, Mexico, and Brazil",
             fees:              "1% - 1.7%",
             logoUrl:           ModelsData.onRampProviderImages.latamex,
-            siteUrl:           "https://latamex.com/",
             hostname:          "latamex.com",
-            recurrentSiteUrl:  "",
+            supportsSinglePurchase: true,
+            supportsRecurrentPurchase: false,
+            supportedAssets:[],
+            urlsNeedParameters: false
+        },
+        {
+            id: "4",
+            name:              "Mercuryo",
+            description:       "Mercuryo buy crypto in Argentina, Mexico, and Brazil",
+            fees:              "1% - 1.7%",
+            logoUrl:           ModelsData.onRampProviderImages.mercuryo,
+            hostname:          "mercuryo.com",
+            supportsSinglePurchase: true,
+            supportsRecurrentPurchase: true,
+            supportedAssets:[
+                { key: "111551110x0000000000000000000000000000000000000000",  chainId: 11155111, address: "0x0000000000000000000000000000000000000000"},
+                { key: "4200x0000000000000000000000000000000000000000", chainId: 420, address: "0x0000000000000000000000000000000000000000"},
+                { key: "4200xf2edf1c091f683e3fb452497d9a98a49cba84669", chainId: 420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84669"},
+            ],
+            urlsNeedParameters: true
         }
     ]
 
