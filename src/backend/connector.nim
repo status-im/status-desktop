@@ -20,6 +20,9 @@ type SendTransactionAcceptedArgs* = ref object of RootObj
 type RejectedArgs* = ref object of RootObj
   requestId* {.serializedFieldName("requestId").}: string
 
+type RecallDAppPermissionArgs* = ref object of RootObj
+  dAppUrl* {.serializedFieldName("dAppUrl").}: string
+
 rpc(requestAccountsAccepted, "connector"):
   args: RequestAccountsAcceptedArgs
 
@@ -31,6 +34,9 @@ rpc(sendTransactionRejected, "connector"):
 
 rpc(requestAccountsRejected, "connector"):
   args: RejectedArgs
+
+rpc(recallDAppPermission, "connector"):
+  dAppUrl: string
 
 proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   return rpcResponse.error.isNil
@@ -46,3 +52,6 @@ proc sendTransactionAcceptedFinishedRpc*(args: SendTransactionAcceptedArgs): boo
 
 proc sendTransactionRejectedFinishedRpc*(args: RejectedArgs): bool =
   return isSuccessResponse(sendTransactionRejected(args))
+
+proc recallDAppPermissionFinishedRpc*(dAppUrl: string): bool =
+  return isSuccessResponse(recallDAppPermission(dAppUrl))
