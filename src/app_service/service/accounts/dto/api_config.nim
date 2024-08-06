@@ -22,12 +22,12 @@ proc defaultAPIConfig*(): APIConfig =
 
   result.httpEnabled = true
   checkAndSetPort(Port(8545), result.httpEnabled)
-  result.httpHost = "0.0.0.0"
+  result.httpHost = "127.0.0.1"
   result.httpPort = 8545
 
   result.wsEnabled = true
   checkAndSetPort(Port(8586), result.wsEnabled)
-  result.wsHost = "0.0.0.0"
+  result.wsHost = "127.0.0.1"
   result.wsPort = 8586
 
 proc toJson*(self: APIConfig): JsonNode =
