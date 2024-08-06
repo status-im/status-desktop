@@ -68,28 +68,6 @@ proc watchTransactionTask*(argEncoded: string) {.gcsafe, nimcall.} =
     }
 
 type
-  GetCryptoServicesTaskArg* = ref object of QObjectTaskArg
-    discard
-
-proc getCryptoServicesTask*(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[GetCryptoServicesTaskArg](argEncoded)
-
-  try:
-    let response = transactions.fetchCryptoServices()
-
-    if not response.error.isNil:
-      raise newException(ValueError, "Error fetching crypto services" & response.error.message)
-
-    arg.finish(%* {
-      "result": response.result,
-    })
-  except Exception as e:
-    error "Error fetching crypto services", message = e.msg
-    arg.finish(%* {
-      "result": @[],
-    })
-
-type
   FetchDecodedTxDataTaskArg* = ref object of QObjectTaskArg
     txHash: string
     data: string
