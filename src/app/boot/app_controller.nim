@@ -12,6 +12,7 @@ import app_service/service/message/service as message_service
 import app_service/service/token/service as token_service
 import app_service/service/collectible/service as collectible_service
 import app_service/service/currency/service as currency_service
+import app_service/service/ramp/service as ramp_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/bookmarks/service as bookmark_service
@@ -79,6 +80,7 @@ type
     tokenService: token_service.Service
     collectibleService: collectible_service.Service
     currencyService: currency_service.Service
+    rampService: ramp_service.Service
     transactionService: transaction_service.Service
     walletAccountService: wallet_account_service.Service
     bookmarkService: bookmark_service.Service
@@ -203,6 +205,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   )
   result.communityService = community_service.newService(statusFoundation.events,
     statusFoundation.threadpool, result.chatService, result.activityCenterService, result.messageService)
+  result.rampService = ramp_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, result.tokenService)
   result.bookmarkService = bookmark_service.newService(statusFoundation.events)
   result.profileService = profile_service.newService(statusFoundation.events, statusFoundation.threadpool, result.settingsService)
@@ -263,6 +266,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.tokenService,
     result.collectibleService,
     result.currencyService,
+    result.rampService,
     result.transactionService,
     result.walletAccountService,
     result.bookmarkService,
@@ -326,6 +330,7 @@ proc delete*(self: AppController) =
   self.currencyService.delete
   self.collectibleService.delete
   self.tokenService.delete
+  self.rampService.delete
   self.transactionService.delete
   self.walletAccountService.delete
   self.aboutService.delete
@@ -434,6 +439,7 @@ proc load(self: AppController) =
   self.bookmarkService.init()
   self.dappPermissionsService.init()
   self.providerService.init()
+  self.rampService.init()
   self.transactionService.init()
   self.stickersService.init()
   self.activityCenterService.init()
