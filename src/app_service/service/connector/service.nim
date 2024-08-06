@@ -14,6 +14,8 @@ logScope:
 
 const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
+const SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION* = "ConnectorGrantDAppPermission"
+const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
 
 # Enum with events
 type Event* = enum
@@ -65,6 +67,22 @@ QtObject:
 
       self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION, data)
     )
+    self.events.on(SignalType.ConnectorGrantDAppPermission.event, proc(e: Args) =
+      if self.eventHandler == nil:
+        return
+
+      var data = ConnectorGrantDAppPermissionSignal(e)
+
+      self.events.emit(SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION, data)
+    )
+    self.events.on(SignalType.ConnectorRevokeDAppPermission.event, proc(e: Args) =
+      if self.eventHandler == nil:
+        return
+
+      var data = ConnectorRevokeDAppPermissionSignal(e)
+
+      self.events.emit(SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION, data)
+    )
 
   proc registerEventsHandler*(self: Service, handler: EventHandlerFn) =
     self.eventHandler = handler
@@ -112,3 +130,11 @@ QtObject:
 
   proc rejectDappConnect*(self: Service, requestId: string): bool =
     rejectRequest(self, requestId, status_go.requestAccountsRejectedFinishedRpc, "requestAccountsRejectedFinishedRpc failed: ")
+
+  proc recallDAppPermission*(self: Service, dAppUrl: string): bool =
+    try:
+      return status_go.recallDAppPermissionFinishedRpc(dAppUrl)
+
+    except Exception as e:
+      error "recallDAppPermissionFinishedRpc failed: ", err=e.msg
+      return false

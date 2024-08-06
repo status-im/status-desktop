@@ -68,6 +68,8 @@ type SignalType* {.pure.} = enum
   CommunityTokenAction = "communityToken.communityTokenAction"
   ConnectorSendRequestAccounts = "connector.sendRequestAccounts"
   ConnectorSendTransaction = "connector.sendTransaction"
+  ConnectorGrantDAppPermission = "connector.dAppPermissionGranted"
+  ConnectorRevokeDAppPermission = "connector.dAppPermissionRevoked"
   Unknown
 
 proc event*(self:SignalType):string =
