@@ -82,7 +82,7 @@ ListModel {
                 { chainId: 42161, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
                 { chainId: 5, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
                 { chainId: 11155111, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
-                { chainId: 420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
+                { chainId: 420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84669"},
                 { chainId: 421613, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
             ],
             decimals: 18,

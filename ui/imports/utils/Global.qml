@@ -107,7 +107,7 @@ QtObject {
     signal openSwapModalRequested(var formDataParams)
 
     // BuyCrypto
-    signal openBuyCryptoModalRequested()
+    signal openBuyCryptoModalRequested(var formDataParams)
 
     // Metrics
     signal openMetricsEnablePopupRequested(string placement, var cb)
