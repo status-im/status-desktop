@@ -29,6 +29,7 @@ import app_service/service/keycard/service as keycard_service
 import app_service/service/token/service as token_service
 import app_service/service/collectible/service as collectible_service
 import app_service/service/currency/service as currency_service
+import app_service/service/ramp/service as ramp_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/settings/service as settings_service
@@ -75,6 +76,7 @@ type
     overviewModule: overview_module.AccessInterface
     networksModule: networks_module.AccessInterface
     networksService: network_service.Service
+    rampService: ramp_service.Service
     transactionService: transaction_service.Service
     keycardService: keycard_service.Service
     accountsService: accounts_service.Service
@@ -107,6 +109,7 @@ proc newModule*(
   tokenService: token_service.Service,
   collectibleService: collectible_service.Service,
   currencyService: currency_service.Service,
+  rampService: ramp_service.Service,
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.Service,
   settingsService: settings_service.Service,
@@ -141,7 +144,7 @@ proc newModule*(
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService,
   transactionService, keycardService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
-  result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
+  result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, rampService)
   result.overviewModule = overview_module.newModule(result, events, walletAccountService, currencyService)
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
   result.networksService = networkService

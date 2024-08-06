@@ -82,9 +82,6 @@ proc getTransfersByAddress*(chainId: int, address: string, toBlock: Uint256, lim
 proc getTransactionReceipt*(chainId: int, transactionHash: string): RpcResponse[JsonNode] =
   core.callPrivateRPCWithChainId("eth_getTransactionReceipt", chainId, %* [transactionHash])
 
-proc fetchCryptoServices*(): RpcResponse[JsonNode] =
-  result = core.callPrivateRPC("wallet_getCryptoOnRamps", %* [])
-
 proc createMultiTransaction*(multiTransactionCommand: MultiTransactionCommandDto, data: seq[TransactionBridgeDto], password: string): RpcResponse[JsonNode] =
   let payload = %* [multiTransactionCommand, data, password]
   result = core.callPrivateRPC("wallet_createMultiTransaction", payload)
