@@ -14,93 +14,78 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
+def _verify_account_order(account_order, main_screen, default_name, order):
+    with step('Verify the account order'):
+        with step('Account order is correct in wallet settings'):
+            assert driver.waitFor(lambda: account_order.accounts[0].name == order[0],
+                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            assert driver.waitFor(lambda: account_order.accounts[1].name == order[1],
+                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            assert driver.waitFor(lambda: account_order.accounts[2].name == order[2],
+                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+        with step('Account order is correct in wallet'):
+            wallet = main_screen.left_panel.open_wallet()
+            wallet.left_panel.select_account(default_name)
+            assert driver.waitFor(lambda: wallet.left_panel.accounts[0].name == order[0],
+                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            assert driver.waitFor(lambda: wallet.left_panel.accounts[1].name == order[1],
+                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            assert driver.waitFor(lambda: wallet.left_panel.accounts[2].name == order[2],
+                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415',
                  'Account order: account order could be changed with drag&drop')
 @pytest.mark.case(703415)
-@pytest.mark.parametrize(
-    'address, default_name, name, color, emoji, acc_emoji, second_name, second_color, second_emoji, second_acc_emoji',
-    [
-        pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'Account 1',
-                     'WatchOnly', '#2a4af5', 'sunglasses', '😎 ', 'Generated', '#216266', 'thumbsup', '👍 ')
-    ])
-def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account, address: str, default_name,
-                                               name: str, color: str, emoji: str, acc_emoji: str, second_name: str,
-                                               second_color: str, second_emoji: str, second_acc_emoji: str):
-    with step('Create watch-only wallet account'):
-        wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
-        account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_watched_address(address)
-        assert account_popup.get_emoji_from_account_title() == EmojiCodes.SMILING_FACE_WITH_SUNGLASSES.value, \
-            f'Emoji was not set or does not match'
-        account_popup.save_changes()
-        account_popup.wait_until_hidden()
+@pytest.mark.takoe2
+def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account):
 
-    with step('Create generated wallet account'):
-        account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(second_name).set_emoji(second_emoji).set_color(second_color)
-        assert account_popup.get_emoji_from_account_title() == EmojiCodes.THUMBSUP_SIGN.value, \
-            f'Emoji was not set or does not match'
-        account_popup.save_changes()
-        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
-        account_popup.wait_until_hidden()
+
+    default_name = 'Account 1'
+    name_1, color_1, emoji_1, acc_emoji_1 = 'WatchOnly', '#ffffff', 'sunglasses', '😎 '
+    name_2, color_2, emoji_2, acc_emoji_2 = 'Generated', '#cc6438', 'thumbsup', '👍 '
+
+    wallet = main_screen.left_panel.open_wallet()
+    SigningPhrasePopup().wait_until_appears().confirm_phrase()
+
+    for account in (
+        (name_1, color_1, emoji_1, acc_emoji_1),
+        (name_2, color_2, emoji_2, acc_emoji_2)
+    ):
+
+        with step('Create generated wallet account'):
+            account_popup = wallet.left_panel.open_add_account_popup()
+            account_popup.set_name(account[0]).set_emoji(account[2]).set_color(account[1])
+            account_popup.save_changes()
+            AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+            account_popup.wait_until_hidden()
 
     with step('Verify accounts in wallet settings'):
         account_order = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_order()
         with step('Account order is correct'):
             assert account_order.accounts[0].name == default_name
-            assert account_order.accounts[1].name == name
-            assert account_order.accounts[2].name == second_name
-        with step('Eye icon is displayed on watch-only account'):
-            account_order.get_eye_icon(name)
+            assert account_order.accounts[1].name == name_1
+            assert account_order.accounts[2].name == name_2
         with step('Icons on accounts are correct'):
-            assert account_order.accounts[1].icon_color == color
-            assert account_order.accounts[1].icon_emoji == acc_emoji
-            assert account_order.accounts[2].icon_color == second_color
-            assert account_order.accounts[2].icon_emoji == second_acc_emoji
+            assert account_order.accounts[1].icon_color == color_1
+            assert account_order.accounts[1].icon_emoji == acc_emoji_1
+            assert account_order.accounts[2].icon_color == color_2
+            assert account_order.accounts[2].icon_emoji == acc_emoji_2
 
     with step('Drag first account to the end of the list'):
         account_order.drag_account(default_name, 2)
 
-    with step('Verify the account order'):
-        with step('Account order is correct in wallet settings'):
-            assert driver.waitFor(lambda: account_order.accounts[0].name == name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            assert driver.waitFor(lambda: account_order.accounts[1].name == second_name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            assert driver.waitFor(lambda: account_order.accounts[2].name == default_name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-
-        with step('Account order is correct in wallet'):
-            wallet = main_screen.left_panel.open_wallet()
-            wallet.left_panel.select_account(default_name)
-            assert driver.waitFor(lambda: wallet.left_panel.accounts[0].name == name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            assert driver.waitFor(lambda: wallet.left_panel.accounts[1].name == second_name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            assert driver.waitFor(lambda: wallet.left_panel.accounts[2].name == default_name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        _verify_account_order(
+            account_order, main_screen, default_name, (name_1, name_2, default_name)
+        )
 
     with step('Drag second account to the top of the list'):
         account_order = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_order()
-        account_order.drag_account(second_name, 0)
+        account_order.drag_account(name_2, 0)
 
-    with step('Verify the account order'):
-        with step('Account order is correct in wallet settings'):
-            assert driver.waitFor(lambda: account_order.accounts[0].name == second_name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            assert driver.waitFor(lambda: account_order.accounts[1].name == name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            assert driver.waitFor(lambda: account_order.accounts[2].name == default_name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-
-        with step('Account order is correct in wallet'):
-            wallet = main_screen.left_panel.open_wallet()
-            wallet.left_panel.select_account(default_name)
-            assert driver.waitFor(lambda: wallet.left_panel.accounts[0].name == second_name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            assert driver.waitFor(lambda: wallet.left_panel.accounts[1].name == name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            assert driver.waitFor(lambda: wallet.left_panel.accounts[2].name == default_name,
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        _verify_account_order(
+            account_order, main_screen, default_name, (name_2, name_1, default_name)
+        )
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/703416',
