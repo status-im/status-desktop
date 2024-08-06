@@ -16,6 +16,7 @@ import shared.controls 1.0
 
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.popups.buy 1.0
 
 StatusDialog {
     id: root
@@ -61,6 +62,12 @@ StatusDialog {
         }
 
         readonly property bool isError: root.swapAdaptor.errorMessage !== ""
+
+        readonly property BuyCryptoParamsForm buyFormData: BuyCryptoParamsForm {
+            selectedWalletAddress: root.swapInputParamsForm.selectedAccountAddress
+            selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+            selectedTokenKey: root.swapInputParamsForm.fromTokensKey
+        }
     }
 
     Connections {
@@ -314,7 +321,13 @@ StatusDialog {
                 text: root.swapAdaptor.errorMessage
                 buttonText: root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Buy crypto") : qsTr("Buy ETH")
                 buttonVisible: visible && (root.swapAdaptor.isTokenBalanceInsufficient || root.swapAdaptor.isEthBalanceInsufficient)
-                onButtonClicked: Global.openBuyCryptoModalRequested()
+                onButtonClicked: {
+                    // value dont update correctly if not done from here
+                    d.buyFormData.selectedWalletAddress = root.swapInputParamsForm.selectedAccountAddress
+                    d.buyFormData.selectedNetworkChainId = root.swapInputParamsForm.selectedNetworkChainId
+                    d.buyFormData.selectedTokenKey =root.swapInputParamsForm.fromTokensKey
+                    Global.openBuyCryptoModalRequested(d.buyFormData)
+                }
             }
         }
     }

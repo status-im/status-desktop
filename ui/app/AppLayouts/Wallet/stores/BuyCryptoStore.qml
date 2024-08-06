@@ -1,0 +1,38 @@
+import QtQuick 2.15
+
+QtObject {
+    id: root
+
+    readonly property var providersModel: walletSectionBuySellCrypto.model
+    readonly property bool areProvidersLoading: walletSectionBuySellCrypto.isFetching
+
+    signal providerUrlReady(string uuid , string url)
+
+    function fetchProviders() {
+        walletSectionBuySellCrypto.fetchProviders()
+    }
+
+    function fetchProviderUrl(
+        uuid,
+        providerID,
+        isRecurrent,
+        selectedWalletAddress = "",
+        chainID = 0,
+        symbol = "") {
+        walletSectionBuySellCrypto.fetchProviderUrl(
+                    uuid,
+                    providerID,
+                    isRecurrent,
+                    selectedWalletAddress,
+                    chainID,
+                    symbol
+                    )
+    }
+
+    readonly property Connections walletSectionSendConnections: Connections {
+        target: walletSectionBuySellCrypto
+        function onProviderUrlReady(uuid, url) {
+            root.providerUrlReady(uuid, url)
+        }
+    }
+}

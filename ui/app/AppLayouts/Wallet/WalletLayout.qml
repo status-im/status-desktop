@@ -17,6 +17,7 @@ import "views"
 import "stores"
 import "controls"
 import "popups/swap"
+import "popups/buy"
 
 Item {
     id: root
@@ -142,6 +143,10 @@ Item {
             selectedAccountAddress: RootStore.selectedAddress
         }
 
+        property BuyCryptoParamsForm buyFormData: BuyCryptoParamsForm {
+            selectedWalletAddress: RootStore.selectedAddress
+        }
+
         function displayAllAddresses() {
             RootStore.showSavedAddresses = false
             RootStore.selectedAddress = ""
@@ -164,6 +169,12 @@ Item {
             if (rightPanelStackView.currentItem && !!rightPanelStackView.currentItem.resetView) {
                 rightPanelStackView.currentItem.resetView()
             }
+        }
+
+        function getSelectedOrFirstNonWatchedAddress() {
+            return !!RootStore.selectedAddress ?
+                    RootStore.selectedAddress :
+                    StatusQUtils.ModelUtils.get(RootStore.nonWatchAccounts, 0, "address")
         }
     }
 
@@ -212,9 +223,7 @@ Item {
                                                                   hasFloatingButtons: true
                                                               })
             onLaunchSwapModal: {
-                d.swapFormData.selectedAccountAddress = !!RootStore.selectedAddress ?
-                            RootStore.selectedAddress :
-                            StatusQUtils.ModelUtils.get(RootStore.nonWatchAccounts,0, "address")
+                d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 d.swapFormData.fromTokensKey = tokensKey
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
@@ -335,15 +344,22 @@ Item {
             }
             onLaunchSwapModal: {
                 d.swapFormData.fromTokensKey =  ""
-                d.swapFormData.selectedAccountAddress = !!RootStore.selectedAddress ?
-                            RootStore.selectedAddress :
-                            StatusQUtils.ModelUtils.get(RootStore.nonWatchAccounts,0, "address")
+                d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
                 }
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
                 Global.openSwapModalRequested(d.swapFormData)
+            }
+            onLaunchBuyCryptoModal: {
+                d.buyFormData.selectedWalletAddress = d.getSelectedOrFirstNonWatchedAddress()
+                d.buyFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
+                d.buyFormData.selectedTokenKey = Constants.ethToken
+                if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
+                    d.buyFormData.selectedTokenKey =  walletStore.currentViewedHoldingTokensKey
+                }
+                Global.openBuyCryptoModalRequested(d.buyFormData)
             }
 
             ModelEntry {
