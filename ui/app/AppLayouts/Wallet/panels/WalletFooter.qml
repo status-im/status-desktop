@@ -33,6 +33,7 @@ Rectangle {
     signal launchSendModal(string fromAddress)
     signal launchBridgeModal()
     signal launchSwapModal()
+    signal launchBuyCryptoModal()
 
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
@@ -149,7 +150,7 @@ Rectangle {
             visible: d.buyActionAvailable
             icon.name: "token"
             text: qsTr("Buy")
-            onClicked: Global.openBuyCryptoModalRequested()
+            onClicked: root.launchBuyCryptoModal()
         }
 
         StatusFlatButton {
