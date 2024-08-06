@@ -10,3 +10,5 @@ TokenSelectorPanel 1.0 TokenSelectorPanel.qml
 WalletHeader 1.0 WalletHeader.qml
 WalletNftPreview 1.0 WalletNftPreview.qml
 WalletTxProgressBlock 1.0 WalletTxProgressBlock.qml
+BuyCryptoProvidersListPanel 1.0 BuyCryptoProvidersListPanel.qml
+SelectParamsForBuyCryptoPanel 1.0 SelectParamsForBuyCryptoPanel.qml

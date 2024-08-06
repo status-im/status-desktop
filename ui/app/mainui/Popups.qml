@@ -16,6 +16,7 @@ import AppLayouts.Profile.popups 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Wallet.popups.swap 1.0
+import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.popups 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStore
@@ -392,8 +393,10 @@ QtObject {
         openPopup(swapModal, {swapInputParamsForm: parameters})
     }
 
-    function openBuyCryptoModal() {
-        openPopup(buyCryptoModal)
+    function openBuyCryptoModal(parameters) {
+        openPopup(buyCryptoModal, {
+            buyCryptoInputParamsForm: parameters
+        })
     }
 
     readonly property list<Component> _components: [
@@ -1242,7 +1245,16 @@ QtObject {
         Component {
             id: buyCryptoModal
             BuyCryptoModal {
-                onRampProvidersModel: WalletStore.RootStore.cryptoRampServicesModel
+                buyCryptoAdaptor: BuyCryptoModalAdaptor {
+                    buyCryptoStore: WalletStore.BuyCryptoStore {}
+                    buyCryptoFormData: buyCryptoInputParamsForm
+                    walletAccountsModel: root.rootStore.accounts
+                    networksModel: root.rootStore.profileSectionStore.walletStore.flatNetworks
+                    areTestNetworksEnabled: root.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
+                    groupedAccountAssetsModel: root.walletAssetsStore.groupedAccountAssetsModel
+                    plainTokensBySymbolModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+                    currentCurrency: root.currencyStore.currentCurrency
+                }
                 onClosed: destroy()
             }
         }

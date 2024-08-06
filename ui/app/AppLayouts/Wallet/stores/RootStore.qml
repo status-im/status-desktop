@@ -172,8 +172,6 @@ QtObject {
         d.initChainColors(flatNetworks)
     }
 
-    property var cryptoRampServicesModel: walletSectionBuySellCrypto.model
-
     function resetCurrentViewedHolding(type) {
         currentViewedHoldingTokensKey = ""
         currentViewedHoldingID = ""
