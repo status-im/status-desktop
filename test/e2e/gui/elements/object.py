@@ -100,7 +100,7 @@ class QObject:
             x: int = None,
             y: int = None,
             button=None,
-            timeout=5
+            timeout=1
     ):
         driver.mouseClick(
             self.object,
