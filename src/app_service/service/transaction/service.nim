@@ -24,7 +24,6 @@ import app_service/service/eth/dto/[coder, method_dto]
 import ./dto as transaction_dto
 import ./dtoV2
 import ./dto_conversion
-import ./cryptoRampDto
 import app_service/service/eth/utils as eth_utils
 
 
@@ -42,7 +41,6 @@ const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 const SIGNAL_SUGGESTED_ROUTES_READY* = "suggestedRoutesReady"
 const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
 const SIGNAL_HISTORY_ERROR* = "historyError"
-const SIGNAL_CRYPTO_SERVICES_READY* = "cryptoServicesReady"
 const SIGNAL_TRANSACTION_DECODED* = "transactionDecoded"
 const SIGNAL_OWNER_TOKEN_SENT* = "ownerTokenSent"
 const SIGNAL_TRANSACTION_SENDING_COMPLETE* = "transactionSendingComplete"
@@ -137,9 +135,6 @@ type
     errCode*: string
     errDescription*: string
 
-type
-  CryptoServicesArgs* = ref object of Args
-    data*: seq[CryptoRampDto]
 type
   TransactionDecodedArgs* = ref object of Args
     dataDecoded*: string
@@ -696,18 +691,6 @@ QtObject:
         toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
     except CatchableError as e:
       error "suggestedRoutes", exception=e.msg
-
-  proc onFetchCryptoServices*(self: Service, response: string) {.slot.} =
-    let cryptoServices = parseJson(response){"result"}.getElems().map(x => x.toCryptoRampDto())
-    self.events.emit(SIGNAL_CRYPTO_SERVICES_READY, CryptoServicesArgs(data: cryptoServices))
-
-  proc fetchCryptoServices*(self: Service) =
-    let arg = GetCryptoServicesTaskArg(
-      tptr: getCryptoServicesTask,
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onFetchCryptoServices",
-    )
-    self.threadpool.start(arg)
 
   proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
     try:

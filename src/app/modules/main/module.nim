@@ -38,6 +38,7 @@ import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/currency/service as currency_service
+import ../../../app_service/service/ramp/service as ramp_service
 import ../../../app_service/service/transaction/service as transaction_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../app_service/service/provider/service as provider_service
@@ -140,6 +141,7 @@ proc newModule*[T](
   tokenService: token_service.Service,
   collectibleService: collectible_service.Service,
   currencyService: currency_service.Service,
+  rampService: ramp_service.Service,
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.Service,
   profileService: profile_service.Service,
@@ -208,7 +210,7 @@ proc newModule*[T](
   result.chatSectionModules = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule(
     result, events, tokenService, collectibleService, currencyService,
-    transactionService, walletAccountService,
+    rampService, transactionService, walletAccountService,
     settingsService, savedAddressService, networkService, accountsService,
     keycardService, nodeService, networkConnectionService, devicesService,
     communityTokensService, threadpool

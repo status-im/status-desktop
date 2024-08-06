@@ -4,13 +4,16 @@ import item
 
 type
   ModelRole {.pure.} = enum
-    Name = UserRole + 1
+    Id = UserRole + 1
+    Name
     Description
     Fees
     LogoUrl
-    SiteUrl
     Hostname
-    RecurrentSiteUrl
+    SupportsSinglePurchase
+    SupportsRecurrentPurchase
+    SupportedAssets
+    UrlsNeedParameters
 
 QtObject:
   type
@@ -32,13 +35,16 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
+      ModelRole.Id.int:"id",
       ModelRole.Name.int:"name",
       ModelRole.Description.int:"description",
       ModelRole.Fees.int:"fees",
       ModelRole.LogoUrl.int:"logoUrl",
-      ModelRole.SiteUrl.int:"siteUrl",
       ModelRole.Hostname.int:"hostname",
-      ModelRole.RecurrentSiteUrl.int:"recurrentSiteUrl"
+      ModelRole.SupportsSinglePurchase.int:"supportsSinglePurchase",
+      ModelRole.SupportsRecurrentPurchase.int:"supportsRecurrentPurchase",
+      ModelRole.SupportedAssets.int:"supportedAssets",
+      ModelRole.UrlsNeedParameters.int:"urlsNeedParameters"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -52,6 +58,8 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
+    of ModelRole.Id:
+      result = newQVariant(item.getId)
     of ModelRole.Name:
       result = newQVariant(item.getName)
     of ModelRole.Description:
@@ -60,14 +68,20 @@ QtObject:
       result = newQVariant(item.getFees)
     of ModelRole.LogoUrl:
       result = newQVariant(item.getLogoUrl)
-    of ModelRole.SiteUrl:
-      result = newQVariant(item.getSiteUrl)
     of ModelRole.Hostname:
       result = newQVariant(item.getHostname)
-    of ModelRole.RecurrentSiteUrl:
-      result = newQVariant(item.getRecurrentSiteUrl)
+    of ModelRole.SupportsSinglePurchase:
+      result = newQVariant(item.getSupportsSinglePurchase)
+    of ModelRole.SupportsRecurrentPurchase:
+      result = newQVariant(item.getSupportsRecurrentPurchase)
+    of ModelRole.SupportedAssets:
+      result = newQVariant(item.getSupportedAssets)
+    of ModelRole.UrlsNeedParameters:
+      result = newQVariant(item.getUrlsNeedParameters)
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.list = items
     self.endResetModel()
+    for item in items:
+      echo item
