@@ -963,7 +963,7 @@ method onChatLeft*[T](self: Module[T], chatId: string) =
 
 proc checkIfWeHaveNotifications[T](self: Module[T]) =
   let sectionWithUnread = self.view.model().isThereASectionWithUnreadMessages()
-  let activtyCenterNotifications = self.activityCenterModule.unreadActivityCenterNotificationsCountFromView() > 0
+  let activtyCenterNotifications = self.activityCenterModule.unreadActivityCenterNotificationsCount() > 0
   self.view.setNotificationAvailable(sectionWithUnread or activtyCenterNotifications)
 
 method onActivityNotificationsUpdated[T](self: Module[T]) =
