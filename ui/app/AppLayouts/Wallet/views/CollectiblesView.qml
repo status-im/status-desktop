@@ -72,7 +72,7 @@ ColumnLayout {
 
         Component.onCompleted: {
             settings.sync()
-            if (settings.currentSortValue === SortOrderComboBox.TokenOrderDateAdded && !d.hasAllTimestampsAggregator.value) {
+            if (settings.currentSortValue === SortOrderComboBox.TokenOrderDateAdded && !d.hasAllTimestamps) {
                 cmbTokenOrder.currentIndex = cmbTokenOrder.indexOfValue(SortOrderComboBox.TokenOrderAlpha) // Change to a different default option
             } else {
                 cmbTokenOrder.currentIndex = cmbTokenOrder.indexOfValue(settings.currentSortValue) // Change to a different default option
@@ -213,12 +213,19 @@ ColumnLayout {
             initialValue: true
             roleName: "lastTxTimestamp"
 
-            aggregateFunction: (aggr, value) => aggr && !!value
+            aggregateFunction: (aggr, value) => aggr && value > 0
 
             onValueChanged: {
-                d.setSortByDateIsDisabled(value)
+                Qt.callLater(() => {
+                    d.hasAllTimestamps = value
+                    d.setSortByDateIsDisabled(value)
+                })
             }
+
+            Component.onCompleted: d.hasAllTimestamps = value
         }
+
+        property bool hasAllTimestamps
     }
 
     component CustomSFPM: SortFilterProxyModel {
@@ -353,7 +360,7 @@ ColumnLayout {
                 id: cmbTokenOrder
                 hasCustomOrderDefined: root.controller.hasSettings
                 model: [
-                    { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "", sortRoleName: "lastTxTimestamp", isDisabled: !d.hasAllTimestampsAggregator.value }, // Custom SFPM role
+                    { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "", sortRoleName: "lastTxTimestamp", isDisabled: !d.hasAllTimestamps }, // Custom SFPM role
                     { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Collectible name"), icon: "", sortRoleName: "name" },
                     { value: SortOrderComboBox.TokenOrderGroupName, text: qsTr("Collection/community name"), icon: "", sortRoleName: "groupName" }, // Custom SFPM role communityName || collectionName
                     { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "", sortRoleName: "" },
