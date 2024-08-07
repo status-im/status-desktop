@@ -30,7 +30,7 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
 @pytest.mark.case(703421, 703010)
-@pytest.mark.critical # TODO 'https://github.com/status-im/status-desktop/issues/13013'
+@pytest.mark.critical  # TODO 'https://github.com/status-im/status-desktop/issues/13013'
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
     pytest.param(
         ''.join((random.choice(
@@ -100,7 +100,7 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         if configs.system.get_platform() == "Darwin":
             next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             BetaConsentPopup().confirm()
 
     with step('Verify that user avatar background color'):

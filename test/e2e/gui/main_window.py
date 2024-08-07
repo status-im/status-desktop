@@ -190,7 +190,7 @@ class MainWindow(Window):
         if configs.system.get_platform() == "Darwin":
             AllowNotificationsView().start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             BetaConsentPopup().confirm()
         if share_updates_popup.exists:
             share_updates_popup.skip()
@@ -201,7 +201,7 @@ class MainWindow(Window):
         share_updates_popup = ShareUsageDataPopup()
         LoginView().log_in(user_account)
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             BetaConsentPopup().confirm()
         if share_updates_popup.exists:
             share_updates_popup.skip()

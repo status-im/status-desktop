@@ -208,7 +208,6 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params):
 
 
 @pytest.mark.parametrize('params', [constants.community_params])
-@pytest.mark.critical
 def test_add_5_member_role_permissions(main_screen: MainWindow, params):
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()

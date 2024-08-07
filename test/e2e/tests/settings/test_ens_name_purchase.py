@@ -53,7 +53,7 @@ def test_ens_name_purchase(keys_screen, main_window, user_account, ens_name):
         if configs.system.get_platform() == "Darwin":
             next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             BetaConsentPopup().confirm()
 
     with step('Set testnet mode'):
