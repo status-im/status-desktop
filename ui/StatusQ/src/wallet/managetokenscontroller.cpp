@@ -218,10 +218,10 @@ void ManageTokensController::savingFinished()
     for (auto model : m_allModels)
         model->setDirty(false);
 
-    incRevision();
-
     setSettingsDirty(false);
     emit requestLoadSettings();
+
+    incRevision();
 }
 
 void ManageTokensController::loadingStarted()
