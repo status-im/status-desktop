@@ -139,6 +139,8 @@ QtObject {
         }
 
         switch(code) {
+        case Constants.routerErrorCodes.errGeneric:
+            return qsTr("generic error")
         case Constants.routerErrorCodes.processor.errFailedToParseBaseFee:
         case Constants.routerErrorCodes.processor.errFailedToParsePercentageFee:
         case Constants.routerErrorCodes.processor.errContractNotFound:
@@ -220,6 +222,8 @@ QtObject {
         }
 
         switch(code) {
+        case Constants.routerErrorCodes.errGeneric:
+            return details
         case Constants.routerErrorCodes.processor.errFailedToParseBaseFee:
             return qsTr("failed to parse base fee")
         case Constants.routerErrorCodes.processor.errFailedToParsePercentageFee:
