@@ -5,5 +5,6 @@ DappsConnectorSDK 1.0 DappsConnectorSDK.qml
 
 DAppsListProvider 1.0 DAppsListProvider.qml
 DAppsRequestHandler 1.0 DAppsRequestHandler.qml
+ConnectorDAppsListProvider 1.0 ConnectorDAppsListProvider.qml
 
 DAppsHelpers 1.0 helpers.js

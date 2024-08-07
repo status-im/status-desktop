@@ -137,6 +137,8 @@ QtObject:
       of SignalType.CommunityTokenAction: CommunityTokenActionSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorSendRequestAccounts: ConnectorSendRequestAccountsSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorSendTransaction: ConnectorSendTransactionSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorGrantDAppPermission: ConnectorGrantDAppPermissionSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorRevokeDAppPermission: ConnectorRevokeDAppPermissionSignal.fromEvent(jsonSignal)
       else: Signal()
 
     result.signalType = signalType
