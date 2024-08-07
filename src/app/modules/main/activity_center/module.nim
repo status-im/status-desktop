@@ -68,9 +68,6 @@ method viewDidLoad*(self: Module) =
 method hasMoreToShow*(self: Module): bool =
   self.controller.hasMoreToShow()
 
-method unreadActivityCenterNotificationsCountFromView*(self: Module): int =
-  self.view.unreadCount()
-
 method unreadActivityCenterNotificationsCount*(self: Module): int =
   self.controller.unreadActivityCenterNotificationsCount()
 
