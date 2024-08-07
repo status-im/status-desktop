@@ -78,7 +78,7 @@ def test_create_community(user_account, main_screen: MainWindow, params):
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703057', 'Edit community')
 @pytest.mark.case(703057)
-# @pytest.mark.critical TODO: fix creation of community https://github.com/status-im/desktop-qa-automation/issues/658
+@pytest.mark.critical
 @pytest.mark.parametrize('params', [
     {
         'name': 'Updated Name',
@@ -244,7 +244,6 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances, 
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   10000), 'Join community button not hidden'
             main_screen.hide()
-
 
         with step(f'User {user_two.name}, kick {user_one.name} from the community'):
             aut_two.attach()

@@ -35,7 +35,7 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         message = main_screen.wait_for_notification()[0]
         assert message == WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value, \
             f"Toast message is incorrect, current message is {message}"
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             TestnetModeBanner().wait_until_appears()
         assert networks.is_testnet_mode_toggle_checked(), f"Testnet toggle if off when it should not"
 
@@ -56,7 +56,7 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         message = main_screen.wait_for_notification()[1]
         assert message == WalletNetworkSettings.TESTNET_DISABLED_TOAST_MESSAGE.value, \
             f"Toast message is incorrect, current message is {message}"
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             TestnetModeBanner().wait_until_hidden()
         assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is on when it should not"
 
@@ -83,7 +83,7 @@ def test_toggle_testnet_toggle_on_and_close_the_confirmation(main_screen: MainWi
 
     with step('Verify that Testnet mode is not turned off'):
         assert not ToastMessage().is_visible
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             assert not TestnetModeBanner().is_visible, f"Testnet banner is present when it should not"
         assert not networks.is_testnet_mode_toggle_checked(), \
             f"Testnet toggle is turned on when it should not"
@@ -110,7 +110,7 @@ def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: Ma
         message = main_screen.wait_for_notification()[0]
         assert message == WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value, \
             f"Toast message is incorrect, current message is {message}"
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             assert TestnetModeBanner().wait_until_appears(), f"Testnet banner is not present when it should"
 
         assert networks.is_testnet_mode_toggle_checked(), f"testnet toggle is off"
@@ -123,5 +123,5 @@ def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: Ma
         assert networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is turned OFF when it should not"
 
     with step('Verify that Testnet mode is not turned off'):
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             assert TestnetModeBanner().wait_until_appears(), f"Testnet banner is not present when it should"

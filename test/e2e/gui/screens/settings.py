@@ -1,9 +1,6 @@
-import time
-
 import allure
 
 import configs.system
-import driver
 from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
@@ -18,26 +15,8 @@ from gui.screens.settings_syncing import SyncingSettingsView
 from gui.screens.settings_wallet import WalletSettingsView
 from gui.screens.settings_password import ChangePasswordView
 from gui.components.settings.sign_out_popup import SignOutPopup
-from functools import wraps
 
-
-def handle_settings_opening(view_class, menu_item):
-    def open_settings_decorator(func):
-        @wraps(func)
-        def wrapper(self, click_attempts=2):
-            self._open_settings(menu_item)
-            try:
-                return func(self)
-            except (LookupError, AssertionError) as ex:
-                if click_attempts:
-
-                    return func(self, click_attempts - 1)
-                else:
-                    raise ex
-
-        return wrapper
-
-    return open_settings_decorator
+from scripts.utils.decorators import handle_settings_opening
 
 
 class LeftPanel(QObject):
