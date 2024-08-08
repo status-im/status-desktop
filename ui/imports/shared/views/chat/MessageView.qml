@@ -45,7 +45,7 @@ Loader {
     property string senderOptionalName: ""
     property bool senderIsEnsVerified: false
     property string senderIcon: ""
-    //TODO: provide the sender color hash from nim model in case of ContactVerificationRequest, OngoingContactVerificationRequest or PinnedMessagesPopupremove
+    //TODO: provide the sender color hash from nim model in case of ContactVerificationRequest, OngoingContactVerificationRequest or PinnedMessagesPopup
     property var senderColorHash:  senderId != "" ? Utils.getColorHashAsJson(senderId, senderIsEnsVerified) : ""
     property bool amISender: false
     property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin
@@ -93,7 +93,7 @@ Loader {
     property int albumCount: 0
 
     property var quotedMessageAlbumMessageImages: []
-    property var quotedMessageAlbumImagesCount: 0
+    property int quotedMessageAlbumImagesCount: 0
 
     // External behavior changers
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
@@ -348,10 +348,15 @@ Loader {
             switch (value) {
             case Constants.messageOutgoingStatus.sending:
                 return StatusMessage.OutgoingStatus.Sending
-            case Constants.messageOutgoingStatus.sent:
-                return StatusMessage.OutgoingStatus.Sent
             case Constants.messageOutgoingStatus.delivered:
                 return StatusMessage.OutgoingStatus.Delivered
+            case Constants.messageOutgoingStatus.expired:
+                return StatusMessage.OutgoingStatus.Expired
+            case Constants.messageOutgoingStatus.failedResending:
+                return StatusMessage.OutgoingStatus.FailedResending
+            case Constants.messageOutgoingStatus.sent:
+            default:
+                return StatusMessage.OutgoingStatus.Sent
             }
         }
 
@@ -382,7 +387,7 @@ Loader {
 
     Connections {
         target: StatusSharedUpdateTimer
-        onTriggered: {
+        function onTriggered() {
             d.onTimeChanged()
         }
     }
@@ -643,6 +648,8 @@ Loader {
 
                     if (message.length <= 0)
                         return;
+
+                    root.unparsedText = message
 
                     const interpretedMessage = root.messageStore.interpretMessage(message)
                     root.messageStore.setEditModeOff(root.messageId)
