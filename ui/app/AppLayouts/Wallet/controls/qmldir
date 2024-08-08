@@ -20,3 +20,4 @@ StatusTxProgressBar 1.0 StatusTxProgressBar.qml
 SwapExchangeButton 1.0 SwapExchangeButton.qml
 TokenSelector 1.0 TokenSelector.qml
 TokenSelectorNew 1.0 TokenSelectorNew.qml
+SwapProvidersTermsAndConditionsText 1.0 SwapProvidersTermsAndConditionsText.qml
