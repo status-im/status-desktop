@@ -23,6 +23,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703087', '1-1 Chat')
 @pytest.mark.case(703087)
+@pytest.mark.critical
 def test_1x1_chat(multiple_instances):
     user_one: UserAccount = constants.user_with_random_attributes_1
     user_two: UserAccount = constants.user_with_random_attributes_2

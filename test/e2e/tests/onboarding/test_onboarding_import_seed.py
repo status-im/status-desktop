@@ -52,7 +52,7 @@ def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account, de
         if configs.system.get_platform() == "Darwin":
             next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE:
+        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             BetaConsentPopup().confirm()
 
     with (step('Verify that restored account reveals correct status wallet address')):
