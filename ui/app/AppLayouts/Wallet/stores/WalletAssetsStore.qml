@@ -104,7 +104,7 @@ QtObject {
 
     // This is hard coded for now, and should be updated whenever Hop add new tokens for support
     // This should be dynamically fetched somehow in the future
-    readonly property var tokensSupportedByHopBridge: ["USDC", "USDC.e", "USDT", "DAI", "HOP", "SNX", "sUSD", "rETH", "MAGIC"]
+    readonly property var tokensSupportedByHopBridge: ["USDC", "USDC.e", "USDT", "DAI", "HOP", "SNX", "sUSD", "rETH", "MAGIC", "ETH"]
 
     readonly property SortFilterProxyModel bridgeableGroupedAccountAssetsModel: SortFilterProxyModel {
         objectName: "bridgeableGroupedAccountAssetsModel"
