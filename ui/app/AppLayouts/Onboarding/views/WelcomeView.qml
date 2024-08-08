@@ -28,7 +28,7 @@ Item {
         id: d
 
         function showMetricsAndRunAction(action) {
-            Global.openMetricsEnablePopupRequested(true, popup => popup.closed.connect(() => action()))
+            Global.openMetricsEnablePopupRequested(Constants.metricsEnablePlacement.welcome, popup => popup.closed.connect(() => action()))
         }
     }
 

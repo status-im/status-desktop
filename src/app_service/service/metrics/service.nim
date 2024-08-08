@@ -1,42 +1,55 @@
 import NimQml, json, chronicles, times
 include ../../common/json_utils
+import ../../../app/core/tasks/[qt, threadpool]
+import ../../../app/global/global_singleton
 
 import backend/response_type
 import status_go
 import constants
 import ./dto
 
+include async_tasks
+
 logScope:
   topics = "metrics"
 
 QtObject:
   type MetricsService* = ref object of QObject
+    threadpool: ThreadPool
 
   proc delete*(self: MetricsService) =
     self.QObject.delete
 
-  proc newService*(): MetricsService =
+  proc newService*(threadpool: ThreadPool): MetricsService =
     new(result, delete)
     result.QObject.setup
+    result.threadpool = threadpool
 
-  # for testing, needs to be discussed
-  proc addCentralizedMetric*(self: MetricsService) =
+    signalConnect(singletonInstance.globalEvents, "addCentralizedMetric(QString, QString)",
+      result, "addCentralizedMetric(QString, QString)", 2)
+
+  # eventValueJson is a json string
+  proc addCentralizedMetric*(self: MetricsService, eventName: string, eventValueJson: string) {.slot.} =
+    let arg = AsyncAddCentralizedMetricTaskArg(
+      tptr: asyncAddCentralizedMetricTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onCentralizedMetricAdded",
+      eventName: eventName,
+      eventValueJson: eventValueJson,
+    )
+    self.threadpool.start(arg)
+
+  proc onCentralizedMetricAdded*(self: MetricsService, response: string) {.slot.} =
     try:
-      var metric = CentralizedMetricDto()
-      metric.userId = "123456"
-      metric.eventName = "desktop-event"
-      metric.eventValue = parseJson("""{"action": "section-changed"}""")
-      metric.timestamp = now().toTime().toUnix()
-      metric.platform = hostOS
-      metric.appVersion = APP_VERSION
+      let responseObj = response.parseJson
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        error "onCentralizedMetricAdded", error=errorString
+        return
 
-      let payload = %* {"metric": metric.toJsonNode}
-      let response = status_go.addCentralizedMetric($payload)
-      let jsonObj = response.parseJson
-      if jsonObj.hasKey("error"):
-        error "addCentralizedMetric", errorMsg=jsonObj["error"].getStr
-    except Exception:
-      discard
+      debug "onCentralizedMetricAdded", metricId=responseObj{"metricId"}.getStr()
+    except Exception as e:
+      error "onCentralizedMetricAdded", exceptionMsg = e.msg
 
   proc centralizedMetricsEnabledChaned*(self: MetricsService) {.signal.}
   proc isCentralizedMetricsEnabled*(self: MetricsService): bool {.slot.} =
