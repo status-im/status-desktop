@@ -83,6 +83,15 @@ class AccountPopup(BasePopup):
         self._color_radiobutton.click()
         return self
 
+    def set_random_color(self: str):
+        if 'radioButtonColor' in self._color_radiobutton.real_name.keys():
+            del self._color_radiobutton.real_name['radioButtonColor']
+        colors = [str(item.radioButtonColor) for item in driver.findAllObjects(self._color_radiobutton.real_name)]
+        random_color = random.choice(colors)
+        self._color_radiobutton.real_name['radioButtonColor'] = random_color
+        self._color_radiobutton.click()
+        return random_color
+
     @allure.step('Set emoji for account')
     def set_emoji(self, value: str):
         self._emoji_button.click()
