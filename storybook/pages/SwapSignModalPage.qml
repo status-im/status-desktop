@@ -96,7 +96,8 @@ SplitView {
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
 
                     serviceProviderName: Constants.swap.paraswapName
-                    serviceProviderURL: Constants.swap.termsAndConditionParaswapUrl
+                    serviceProviderURL: Constants.swap.paraswapUrl
+                    serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl
 
                     fiatFees: formatBigNumber(42.542567, "EUR")
                     cryptoFees: formatBigNumber(0.06, "ETH")
