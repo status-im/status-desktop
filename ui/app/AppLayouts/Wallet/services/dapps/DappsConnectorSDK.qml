@@ -503,7 +503,6 @@ WalletConnectSDKBase {
             controller.recallDAppPermission(dAppUrl)
             const session = { url: dAppUrl, name: "", icon: "" }
             root.wcService.connectorDAppsProvider.revokeSession(JSON.stringify(session))
-            root.wcService.displayToastMessage(qsTr("Disconnected from %1").arg(dAppUrl), false)
         }
     }
 
