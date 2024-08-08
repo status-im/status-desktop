@@ -108,7 +108,8 @@ QtObject {
     signal openBuyCryptoModalRequested()
 
     // Metrics
-    signal openMetricsEnablePopupRequested(bool isOnboarding, var cb)
+    signal openMetricsEnablePopupRequested(string placement, var cb)
+    signal addCentralizedMetric(string eventName, var eventValue)
 
     signal openAddEditSavedAddressesPopup(var params)
     signal openDeleteSavedAddressesPopup(var params)
