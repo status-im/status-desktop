@@ -84,14 +84,14 @@ Item {
 
             // title & subtitle
             compare(controlUnderTest.title, qsTr("Approve spending cap"))
-            compare(controlUnderTest.subtitle, controlUnderTest.serviceProviderURL)
+            compare(controlUnderTest.subtitle, controlUnderTest.serviceProviderHostname)
 
             // info box
             const headerText = findChild(controlUnderTest.contentItem, "headerText")
             verify(!!headerText)
             compare(headerText.text, qsTr("Set %1 spending cap in %2 for %3 on %4")
                     .arg(controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount, controlUnderTest.fromTokenSymbol))
-                    .arg(controlUnderTest.accountName).arg(controlUnderTest.serviceProviderURL).arg(controlUnderTest.networkName))
+                    .arg(controlUnderTest.accountName).arg(controlUnderTest.serviceProviderHostname).arg(controlUnderTest.networkName))
 
             const fromImageHidden = findChild(controlUnderTest.contentItem, "fromImageIdenticon")
             compare(fromImageHidden.visible, false)

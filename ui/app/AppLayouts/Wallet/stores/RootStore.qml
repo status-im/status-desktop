@@ -578,7 +578,7 @@ QtObject {
             case Constants.swap.paraswapSwapContractAddress:
                 return {
                     "icon": Style.png("swap/%1".arg(Constants.swap.paraswapIcon)),
-                    "url": Constants.swap.paraswapUrl,
+                    "url": Constants.swap.paraswapHostname,
                     "name": Constants.swap.paraswapName,
                     "approvalContractAddress": Constants.swap.paraswapContractAddress,
                     "swapContractAddress": Constants.swap.paraswapContractAddress,

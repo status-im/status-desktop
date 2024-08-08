@@ -461,8 +461,10 @@ StatusDialog {
 
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
             serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
+            serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
             serviceProviderIcon: Style.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
             serviceProviderContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
+            serviceProviderHostname: Constants.swap.paraswapHostname
 
             onAccepted: {
                 root.swapAdaptor.sendApproveTx()
@@ -511,7 +513,8 @@ StatusDialog {
             slippage: root.swapInputParamsForm.selectedSlippage
 
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
-            serviceProviderURL: Constants.swap.termsAndConditionParaswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
+            serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
+            serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
 
             onAccepted: {
                 root.swapAdaptor.sendSwapTx()

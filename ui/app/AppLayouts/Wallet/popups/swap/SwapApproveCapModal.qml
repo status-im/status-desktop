@@ -13,6 +13,7 @@ import StatusQ.Components 0.1
 import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.controls 1.0
 
 import shared.controls 1.0
 import utils 1.0
@@ -41,12 +42,14 @@ SignTransactionModalBase {
     required property int estimatedTime // Constants.TransactionEstimatedTime.XXX enum
 
     property string serviceProviderName: Constants.swap.paraswapName
+    property string serviceProviderHostname: Constants.swap.paraswapHostname
+    property string serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl
     property string serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
     property string serviceProviderContractAddress: Constants.swap.paraswapApproveContractAddress
     property string serviceProviderIcon: Style.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
 
     title: qsTr("Approve spending cap")
-    subtitle: serviceProviderURL
+    subtitle: root.serviceProviderHostname
 
     gradientColor: Utils.setColorAlpha(root.accountColor, 0.05) // 5% of wallet color
     fromImageSmartIdenticon.asset.name: "filled-account"
@@ -57,16 +60,26 @@ SignTransactionModalBase {
 
     //: e.g. "Set 100 DAI spending cap in <account name> for <service> on <network name>"
     headerMainText: qsTr("Set %1 spending cap in %2 for %3 on %4").arg(formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol))
-        .arg(root.accountName).arg(root.serviceProviderURL).arg(root.networkName)
+        .arg(root.accountName).arg(root.serviceProviderHostname).arg(root.networkName)
     headerSubTextLayout: [
-        StatusBaseText {
-            Layout.fillWidth: true
-            horizontalAlignment: Qt.AlignHCenter
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            font.pixelSize: Style.current.additionalTextSize
-            text: qsTr("The smart contract specified will be able to spend up to %1 of your current or future balance.").arg(formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol))
+        ColumnLayout {
+            spacing: 12
+            StatusBaseText {
+                Layout.fillWidth: true
+                horizontalAlignment: Qt.AlignHCenter
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                font.pixelSize: Style.current.additionalTextSize
+                text: qsTr("The smart contract specified will be able to spend up to %1 of your current or future balance.").arg(formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol))
+            }
+            SwapProvidersTermsAndConditionsText {
+                serviceProviderName: root.serviceProviderName
+                onLinkClicked: root.openLinkWithConfirmation(root.serviceProviderURL)
+                onTermsAndConditionClicked: root.openLinkWithConfirmation(root.serviceProviderTandCUrl)
+            }
         }
     ]
+
+    infoTagText: qsTr("Review all details before signing")
 
     headerIconComponent: StatusSmartIdenticon {
         asset.name: root.serviceProviderIcon

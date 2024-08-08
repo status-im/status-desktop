@@ -42,7 +42,8 @@ Item {
             networkBlockExplorerUrl: "https://etherscan.io/"
 
             serviceProviderName: Constants.swap.paraswapName
-            serviceProviderURL: Constants.swap.termsAndConditionParaswapUrl
+            serviceProviderURL: Constants.swap.paraswapUrl
+            serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl
 
             fiatFees: "1.54 EUR"
             cryptoFees: "0.001 ETH"
