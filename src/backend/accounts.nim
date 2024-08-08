@@ -420,3 +420,15 @@ proc getNumOfAddressesToGenerateForKeypair*(keyUID: string): RpcResponse[JsonNod
 proc resolveSuggestedPathForKeypair*(keyUID: string): RpcResponse[JsonNode] =
   let payload = %* [keyUID]
   result = core.callPrivateRPC("accounts_resolveSuggestedPathForKeypair", payload)
+
+proc remainingAccountCapacity*(): RpcResponse[JsonNode] =
+  let payload = %* []
+  return core.callPrivateRPC("accounts_remainingAccountCapacity", payload)
+
+proc remainingKeypairCapacity*(): RpcResponse[JsonNode] =
+  let payload = %* []
+  return core.callPrivateRPC("accounts_remainingKeypairCapacity", payload)
+
+proc remainingWatchOnlyAccountCapacity*(): RpcResponse[JsonNode] =
+  let payload = %* []
+  return core.callPrivateRPC("accounts_remainingWatchOnlyAccountCapacity", payload)

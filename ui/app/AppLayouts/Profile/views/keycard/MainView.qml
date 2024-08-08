@@ -7,6 +7,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared.panels 1.0
@@ -128,6 +129,14 @@ ColumnLayout {
             }
         ]
         onClicked: {
+            if (root.keycardStore.remainingKeypairCapacity() === 0) {
+                Global.openPopup(limitWarningComponent)
+                return
+            }
+            if (root.keycardStore.remainingAccountCapacity() === 0) {
+                Global.openPopup(limitWarningComponent, {accountsWarning: true})
+                return
+            }
             root.keycardStore.runCreateNewKeycardWithNewSeedPhrasePopup()
         }
     }
@@ -143,6 +152,14 @@ ColumnLayout {
             }
         ]
         onClicked: {
+            if (root.keycardStore.remainingKeypairCapacity() === 0) {
+                Global.openPopup(limitWarningComponent)
+                return
+            }
+            if (root.keycardStore.remainingAccountCapacity() === 0) {
+                Global.openPopup(limitWarningComponent, {accountsWarning: true})
+                return
+            }
             root.keycardStore.runImportOrRestoreViaSeedPhrasePopup()
         }
     }
@@ -158,6 +175,14 @@ ColumnLayout {
             }
         ]
         onClicked: {
+            if (root.keycardStore.remainingKeypairCapacity() === 0) {
+                Global.openPopup(limitWarningComponent)
+                return
+            }
+            if (root.keycardStore.remainingAccountCapacity() === 0) {
+                Global.openPopup(limitWarningComponent, {accountsWarning: true})
+                return
+            }
             root.keycardStore.runImportFromKeycardToAppPopup()
         }
     }
@@ -196,6 +221,27 @@ ColumnLayout {
         ]
         onClicked: {
             root.keycardStore.runFactoryResetPopup()
+        }
+    }
+
+    Component {
+        id: limitWarningComponent
+
+        StatusDialog {
+            id: dialog
+
+            property bool accountsWarning: false
+
+            title: dialog.accountsWarning? Constants.walletConstants.maxNumberOfAccountsTitle : Constants.walletConstants.maxNumberOfKeypairsTitle
+
+            StatusBaseText {
+                anchors.fill: parent
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.directColor1
+                text: dialog.accountsWarning? Constants.walletConstants.maxNumberOfAccountsContent : Constants.walletConstants.maxNumberOfKeypairsContent
+            }
+
+            standardButtons: Dialog.Ok
         }
     }
 }

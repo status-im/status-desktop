@@ -61,4 +61,12 @@ QtObject {
     function prepareKeycardDetailsModel(keyUid) {
         root.keycardModule.prepareKeycardDetailsModel(keyUid)
     }
+
+    function remainingKeypairCapacity() {
+        return root.keycardModule.remainingKeypairCapacity()
+    }
+
+    function remainingAccountCapacity() {
+        return root.keycardModule.remainingAccountCapacity()
+    }
 }

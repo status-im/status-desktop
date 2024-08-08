@@ -375,6 +375,10 @@ QtObject {
         return walletSectionSavedAddresses.savedAddressNameExists(name)
     }
 
+    function remainingCapacityForSavedAddresses() {
+        return walletSectionSavedAddresses.remainingCapacityForSavedAddresses()
+    }
+
     function toggleNetwork(chainId) {
         networksModule.toggleNetwork(chainId)
     }

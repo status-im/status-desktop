@@ -21,6 +21,9 @@ Item {
 
     property AddAccountStore store
 
+    signal watchOnlyAccountsLimitReached()
+    signal keypairLimitReached()
+
     implicitHeight: layout.implicitHeight
 
     Component.onCompleted: {
@@ -194,7 +197,17 @@ Item {
                 enabled: !root.store.editMode
 
                 onOriginSelected: {
+                    if (keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc) {
+                        if (root.store.remainingWatchOnlyAccountCapacity() === 0) {
+                            root.watchOnlyAccountsLimitReached()
+                            return
+                        }
+                    }
                     if (keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddNewMasterKey) {
+                        if (root.store.remainingKeypairCapacity() === 0) {
+                            root.keypairLimitReached()
+                            return
+                        }
                         root.store.currentState.doSecondaryAction()
                         return
                     }

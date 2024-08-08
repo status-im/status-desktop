@@ -131,3 +131,9 @@ QtObject:
 
   proc prepareKeycardDetailsModel*(self: View, keyUid: string) {.slot.} =
     self.delegate.prepareKeycardDetailsModel(keyUid)
+
+  proc remainingKeypairCapacity*(self: View): int {.slot.} =
+    return self.delegate.remainingKeypairCapacity()
+
+  proc remainingAccountCapacity*(self: View): int {.slot.} =
+    return self.delegate.remainingAccountCapacity()
