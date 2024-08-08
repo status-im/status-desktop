@@ -1426,10 +1426,11 @@ QtObject {
         this list dynamically */
         readonly property string paraswapName: "Paraswap"
         readonly property string paraswapIcon: "paraswap"
-        readonly property string paraswapUrl: "app.paraswap.io"
+        readonly property string paraswapHostname: "app.paraswap.io"
+        readonly property string paraswapUrl: "https://www.paraswap.io/"
         readonly property string paraswapApproveContractAddress: "0x216B4B4Ba9F3e719726886d34a177484278Bfcae"
         readonly property string paraswapSwapContractAddress: "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57"
-        readonly property string termsAndConditionParaswapUrl: "https://files.paraswap.io/tos_v4.pdf"
+        readonly property string paraswapTermsAndConditionUrl: "https://files.paraswap.io/tos_v4.pdf"
 
         // TOOD #15874: Unify with WalletUtils router error code handling
         readonly property QtObject errorCodes: QtObject {

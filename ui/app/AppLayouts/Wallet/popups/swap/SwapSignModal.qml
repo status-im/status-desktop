@@ -12,6 +12,7 @@ import StatusQ.Components 0.1
 
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.controls 1.0
 
 import utils 1.0
 
@@ -42,6 +43,7 @@ SignTransactionModalBase {
 
     required property string serviceProviderName
     required property string serviceProviderURL
+    required property string serviceProviderTandCUrl
 
     title: qsTr("Sign Swap")
     //: e.g. (swap) 100 DAI to 100 USDT
@@ -55,24 +57,10 @@ SignTransactionModalBase {
     headerMainText: qsTr("Swap %1 to %2 in %3 on %4").arg(formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol))
         .arg(formatBigNumber(root.toTokenAmount, root.toTokenSymbol)).arg(root.accountName).arg(root.networkName)
     headerSubTextLayout: [
-        StatusBaseText {
-            font.pixelSize: Style.current.additionalTextSize
-            text: qsTr("Powered by")
-        },
-        StatusLinkText {
-            Layout.topMargin: 1 // compensate for the underline
-            text: root.serviceProviderName
-            normalColor: Theme.palette.directColor1
-            linkColor: Theme.palette.directColor1
-            font.weight: Font.Normal
-            onClicked: root.openLinkWithConfirmation(root.serviceProviderURL)
-        },
-        StatusIcon {
-            Layout.leftMargin: -2
-            width: 16
-            height: 16
-            icon: "external-link"
-            color: Theme.palette.directColor1
+        SwapProvidersTermsAndConditionsText {
+            serviceProviderName: root.serviceProviderName
+            onLinkClicked: root.openLinkWithConfirmation(root.serviceProviderURL)
+            onTermsAndConditionClicked: root.openLinkWithConfirmation(root.serviceProviderTandCUrl)
         }
     ]
     infoTagText: qsTr("Review all details before signing")

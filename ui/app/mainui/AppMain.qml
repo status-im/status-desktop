@@ -227,13 +227,13 @@ Item {
                 const networkName = SQUtils.ModelUtils.getByKey(WalletStore.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
                 if(!!fromToken && !!fromAccountName && !!networkName) {
                     const approvalAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
-                    let toastTitle = qsTr("Setting spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapUrl).arg(networkName)
+                    let toastTitle = qsTr("Setting spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                     let toastSubtitle = qsTr("View on %1").arg(networkName)
                     let urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash)
                     let toastType = Constants.ephemeralNotificationType.normal
                     let icon = ""
                     if(error) {
-                        toastTitle = qsTr("Failed to set spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapUrl).arg(networkName)
+                        toastTitle = qsTr("Failed to set spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                         toastSubtitle = ""
                         urlLink = ""
                         toastType = Constants.ephemeralNotificationType.danger
@@ -251,13 +251,13 @@ Item {
                 if(!!fromToken && !!toToken && !!fromAccountName && !!networkName) {
                     const fromSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
                     const toSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
-                    let toastTitle = qsTr("Swapping %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapUrl).arg(networkName)
+                    let toastTitle = qsTr("Swapping %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                     let toastSubtitle = qsTr("View on %1").arg(networkName)
                     let urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash)
                     let toastType = Constants.ephemeralNotificationType.normal
                     let icon = ""
                     if(error) {
-                        toastTitle = qsTr("Failed to swap %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapUrl).arg(networkName)
+                        toastTitle = qsTr("Failed to swap %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                         toastSubtitle = ""
                         urlLink = ""
                         toastType = Constants.ephemeralNotificationType.danger
@@ -294,13 +294,13 @@ Item {
                 const networkName = SQUtils.ModelUtils.getByKey(WalletStore.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
                 if(!!fromToken && !!fromAccountName && !!networkName) {
                     const approvalAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
-                    let toastTitle = qsTr("Spending cap set: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapUrl).arg(networkName)
+                    let toastTitle = qsTr("Spending cap set: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                     const toastSubtitle =  qsTr("View on %1").arg(networkName)
                     const urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash)
                     let toastType = Constants.ephemeralNotificationType.success
                     let icon = "checkmark-circle"
                     if(!success) {
-                        toastTitle = qsTr("Failed to set spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapUrl).arg(networkName)
+                        toastTitle = qsTr("Failed to set spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                         toastType = Constants.ephemeralNotificationType.danger
                         icon = "warning"
                     }
@@ -316,13 +316,13 @@ Item {
                 if(!!fromToken && !!toToken && !!fromAccountName && !!networkName) {
                     const fromSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
                     const toSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
-                    let toastTitle = qsTr("Swapped %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapUrl).arg(networkName)
+                    let toastTitle = qsTr("Swapped %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                     const toastSubtitle = qsTr("View on %1").arg(networkName)
                     const urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash)
                     let toastType = Constants.ephemeralNotificationType.success
                     let icon = "checkmark-circle"
                     if(!success) {
-                        toastTitle = qsTr("Failed to swap %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapUrl).arg(networkName)
+                        toastTitle = qsTr("Failed to swap %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                         toastType = Constants.ephemeralNotificationType.danger
                         icon = "warning"
                     }
