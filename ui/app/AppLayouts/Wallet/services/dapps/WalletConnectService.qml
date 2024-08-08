@@ -128,6 +128,7 @@ QObject {
     function disconnectDapp(url) {
         wcSDK.getActiveSessions((allSessionsAllProfiles) => {
             const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(allSessionsAllProfiles, validAccounts)
+            let dappFoundInWcSessions = false
             for (const sessionID in sessions) {
                 const session = sessions[sessionID]
                 const accountsInSession = DAppsHelpers.getAccountsInSession(session)
@@ -137,13 +138,19 @@ QObject {
                     if (!dappsProvider.selectedAddress ||
                         (accountsInSession.includes(dappsProvider.selectedAddress)))
                     {
+                        dappFoundInWcSessions = true
                         wcSDK.disconnectSession(topic)
                     }
                 }
             }
-        });
 
-        root.revokeSession(url)
+            // TODO: #16044 - Refactor Wallet connect service to handle multiple SDKs
+            if (!dappFoundInWcSessions) {
+                // Revoke browser plugin session
+                root.revokeSession(url)
+                d.notifyDappDisconnect(url, false)
+            }
+        });
     }
 
     function getDApp(dAppUrl) {
@@ -332,18 +339,7 @@ QObject {
 
         sdk: root.wcSDK
         store: root.store
-        supportedAccountsModel: SortFilterProxyModel {
-            objectName: "SelectedAddressModelForDAppsListProvider"
-            sourceModel: d.supportedAccountsModel
-            filters: FastExpressionFilter {
-                enabled: !root.walletRootStore.showAllAccounts
-
-                expression: root.walletRootStore.selectedAddress.toLowerCase() === model.address.toLowerCase()
-
-                expectedRoles: ["address"]
-            }
-        }
-
+        supportedAccountsModel: d.supportedAccountsModel
         selectedAddress: root.walletRootStore.selectedAddress
     }
 

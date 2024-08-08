@@ -60,19 +60,15 @@ QObject {
                 let dappsList = JSON.parse(dappsJson);
                 for (let i = 0; i < dappsList.length; i++) {
                     const cachedEntry = dappsList[i];
-                    let accountAddresses = cachedEntry.accountAddresses
-                    if (!accountAddresses) {
-                        accountAddresses = [{address: ''}];
-                    }
-
+                    // TODO #15075: on SDK dApps refresh update the model that has data source from persistence instead of using reset
                     const dappEntryWithRequiredRoles = {
-                        description: cachedEntry.description,
+                        description: "",
                         url: cachedEntry.url,
                         name: cachedEntry.name,
-                        iconUrl: cachedEntry.url,
-                        accountAddresses: cachedEntry.accountAddresses
+                        iconUrl: cachedEntry.iconUrl,
+                        accountAddresses: [{address: ''}]
                     }
-                    dapps.append(dappsList[i]);
+                    dapps.append(dappEntryWithRequiredRoles);
                 }
             }
             root.store.dappsListReceived.connect(dappsListReceivedFn);
@@ -103,7 +99,7 @@ QObject {
                         if (existingDApp) {
                             // In Qt5.15.2 this is the way to make a "union" of two arrays
                             // more modern syntax (ES-6) is not available yet
-                            const combinedAddresses = new Set(existingDApp.accountAddresses.concat(dapp.accountAddresses));
+                            const combinedAddresses = new Set(existingDApp.accountAddresses.concat(accounts));
                             existingDApp.accountAddresses = Array.from(combinedAddresses);
                         } else {
                             dapp.accountAddresses = accounts
