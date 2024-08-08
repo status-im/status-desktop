@@ -42,20 +42,23 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
 
 
     default_name = 'Account 1'
-    name_1, color_1, emoji_1, acc_emoji_1 = 'WatchOnly', '#ffffff', 'sunglasses', '😎 '
-    name_2, color_2, emoji_2, acc_emoji_2 = 'Generated', '#cc6438', 'thumbsup', '👍 '
+    name_1, emoji_1, acc_emoji_1 = 'WatchOnly', 'sunglasses', '😎 '
+    name_2, emoji_2, acc_emoji_2 = 'Generated', 'thumbsup', '👍 '
 
     wallet = main_screen.left_panel.open_wallet()
     SigningPhrasePopup().wait_until_appears().confirm_phrase()
 
+    colors = []
+
     for account in (
-        (name_1, color_1, emoji_1, acc_emoji_1),
-        (name_2, color_2, emoji_2, acc_emoji_2)
+        (name_1, emoji_1, acc_emoji_1),
+        (name_2, emoji_2, acc_emoji_2)
     ):
 
         with step('Create generated wallet account'):
             account_popup = wallet.left_panel.open_add_account_popup()
-            account_popup.set_name(account[0]).set_emoji(account[2]).set_color(account[1])
+            account_popup.set_name(account[0]).set_emoji(account[1])
+            colors.append(account_popup.set_random_color())
             account_popup.save_changes()
             AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
             account_popup.wait_until_hidden()
@@ -67,9 +70,9 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
             assert account_order.accounts[1].name == name_1
             assert account_order.accounts[2].name == name_2
         with step('Icons on accounts are correct'):
-            assert account_order.accounts[1].icon_color == color_1
+            assert account_order.accounts[1].icon_color == colors[0]
             assert account_order.accounts[1].icon_emoji == acc_emoji_1
-            assert account_order.accounts[2].icon_color == color_2
+            assert account_order.accounts[2].icon_color == colors[1]
             assert account_order.accounts[2].icon_emoji == acc_emoji_2
 
     with step('Drag first account to the end of the list'):
