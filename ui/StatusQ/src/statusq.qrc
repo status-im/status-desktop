@@ -176,6 +176,7 @@
         <file>StatusQ/Core/StatusFontSettings.qml</file>
         <file>StatusQ/Core/StatusGridView.qml</file>
         <file>StatusQ/Core/StatusIcon.qml</file>
+        <file>StatusQ/Core/StatusIconWithTooltip.qml</file>
         <file>StatusQ/Core/StatusIdenticonRingSettings.qml</file>
         <file>StatusQ/Core/StatusListView.qml</file>
         <file>StatusQ/Core/StatusModalHeaderSettings.qml</file>
