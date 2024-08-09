@@ -28,11 +28,6 @@ pipeline {
       description: 'Trigger publishing of build results to GitHub.',
       defaultValue: getPublishDefault(params.PUBLISH),
     )
-    string(
-      name: 'E2E_GIT_REF',
-      description: 'GIT_REF for E2E repo.',
-      defaultValue: params.E2E_GIT_REF ?: 'master',
-    )
   }
 
   stages {
@@ -73,7 +68,7 @@ pipeline {
             BUILD_SOURCE:       linux_x86_64.fullProjectName,
             TESTRAIL_RUN_NAME:  utils.pkgFilename(),
             TEST_SCOPE_FLAG:    utils.isReleaseBuild() ? '-m=critical' : '',
-            GIT_REF:            params.E2E_GIT_REF,
+            GIT_REF:            env.BRANCH_NAME,
           ]),
         )
       } }
