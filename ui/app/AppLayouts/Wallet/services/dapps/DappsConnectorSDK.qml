@@ -148,9 +148,22 @@ WalletConnectSDKBase {
                 }
                 address = event.params.request.params[0]
             }
-            return SQUtils.ModelUtils.getFirstModelEntryIf(root.wcService.validAccounts, (account) => {
+            const account = SQUtils.ModelUtils.getFirstModelEntryIf(root.wcService.validAccounts, (account) => {
                 return account.address.toLowerCase() === address.toLowerCase();
             })
+
+            if (!account) {
+                return null
+            }
+
+            // deep copy to avoid operations on the original object
+            try {
+                return JSON.parse(JSON.stringify(account))
+            }
+            catch (e) {
+                console.error("Error parsing account", e.message)
+                return null
+            }
         }
 
         /// Returns null if the network is not found
@@ -159,7 +172,20 @@ WalletConnectSDKBase {
                 return null
             }
             const chainId = DAppsHelpers.chainIdFromEip155(event.params.chainId)
-            return SQUtils.ModelUtils.getByKey(networksModule.flatNetworks, "chainId", chainId)
+            const network = SQUtils.ModelUtils.getByKey(networksModule.flatNetworks, "chainId", chainId)
+
+            if (!network) {
+                return null
+            }
+
+            // deep copy to avoid operations on the original object
+            try {
+                return JSON.parse(JSON.stringify(network))
+            }
+            catch (e) {
+                console.error("Error parsing network", e)
+                return null
+            }
         }
 
         function extractMethodData(event, method) {
