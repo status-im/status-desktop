@@ -175,8 +175,7 @@ QObject {
         readonly property string favoritesSectionId: "section_zzz"
     }
 
-    RolesRenamingModel {
-        id: renamedTokensBySymbolModel
+    readonly property RolesRenamingModel renamedTokensBySymbolModel: RolesRenamingModel {
         sourceModel: root.plainTokensBySymbolModel || null
         mapping: [
             RoleRename {
@@ -191,7 +190,7 @@ QObject {
         propagateResets: true
         sources: [
             SourceModel {
-                model: renamedTokensBySymbolModel
+                model: root.renamedTokensBySymbolModel
                 markerRoleValue: "plain_tokens_model"
             },
             SourceModel {

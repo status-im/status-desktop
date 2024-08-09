@@ -1,4 +1,4 @@
-import ../../../../../app_service/service/transaction/cryptoRampDto
+import app_service/service/ramp/dto
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -13,7 +13,16 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateCryptoServices*(self: AccessInterface, cryptoServices: seq[CryptoRampDto]) {.base.} =
+method fetchProviders*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method fetchProviderUrl*(self: AccessInterface, uuid: string, providerID: string, parameters: CryptoRampParametersDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateRampProviders*(self: AccessInterface, cryptoServices: seq[CryptoRampDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onRampProviderUrlReady*(self: AccessInterface, uuid: string, url: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
