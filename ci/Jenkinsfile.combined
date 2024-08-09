@@ -33,11 +33,34 @@ pipeline {
   stages {
     stage('Build') {
       parallel {
-        stage('Linux/x86_64') { steps { script {
-          linux_x86_64 = getArtifacts(
-            'Linux', jenkins.Build('status-desktop/systems/linux/x86_64/package')
-          )
-        } } }
+        stage('Linux/x86_64 and E2E') {
+          stages {
+            stage('Linux/x86_64') {
+              steps {
+                script {
+                  linux_x86_64 = getArtifacts(
+                    'Linux', jenkins.Build('status-desktop/systems/linux/x86_64/package')
+                  )
+                }
+              }
+            }
+            stage('E2E') {
+              steps {
+                script {
+                  linux_e2e = build(
+                    job: 'status-desktop/systems/linux/x86_64/tests-e2e-new',
+                    parameters: jenkins.mapToParams([
+                      BUILD_SOURCE:       linux_x86_64.fullProjectName,
+                      TESTRAIL_RUN_NAME:  utils.pkgFilename(),
+                      TEST_SCOPE_FLAG:    utils.isReleaseBuild() ? '-m=critical' : '',
+                      GIT_REF:            env.BRANCH_NAME,
+                    ]),
+                  )
+                }
+              }
+            }
+          }
+        }
         stage('Linux/x86_64/Nix') { steps { script {
           linux_x86_64_nix = getArtifacts(
             'Linux', jenkins.Build('status-desktop/systems/linux/x86_64/package-nix')
@@ -59,19 +82,6 @@ pipeline {
           )
         } } }
       }
-    }
-    stage('E2E') {
-      steps { script {
-        linux_e2e = build(
-          job: 'status-desktop/systems/linux/x86_64/tests-e2e-new',
-          parameters: jenkins.mapToParams([
-            BUILD_SOURCE:       linux_x86_64.fullProjectName,
-            TESTRAIL_RUN_NAME:  utils.pkgFilename(),
-            TEST_SCOPE_FLAG:    utils.isReleaseBuild() ? '-m=critical' : '',
-            GIT_REF:            env.BRANCH_NAME,
-          ]),
-        )
-      } }
     }
     stage('Publish') {
       when { expression { params.PUBLISH } }
