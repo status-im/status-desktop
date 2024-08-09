@@ -15,7 +15,8 @@ user_account_three = UserAccount('nervous', '0000000000', [], '')
 
 # users for group chat test
 group_chat_user_1 = UserAccount('group_chat_user_1', '77_80Y+2Eh', [
-    'trophy', 'math', 'robust', 'lake', 'extend', 'cabbage', 'bicycle', 'begin', 'either', 'car', 'race', 'cousin'], '0xcd488381c1664c9585b7940f1c4b20f884b8b4a9')
+    'trophy', 'math', 'robust', 'lake', 'extend', 'cabbage', 'bicycle', 'begin', 'either', 'car', 'race', 'cousin'],
+                                '0xcd488381c1664c9585b7940f1c4b20f884b8b4a9')
 group_chat_user_2 = UserAccount('group_chat_user_2', '521/97Qv\:', [
     'opera', 'great', 'open', 'sight', 'still', 'quantum', 'flight', 'torch', 'mule', 'cage', 'noise', 'horn'
 
@@ -33,25 +34,36 @@ community_user_2 = UserAccount('community_user_2', 'vSq5T702_p', [
 ], '0x935034600f2ba486324cee6ae3f96ad8c8915ac6')
 
 user_with_random_attributes_1 = UserAccount(
-''.join((random.choice(
-            string.ascii_letters + string.digits + random.choice('_- '))
-                for i in range(5, 25))
-        ).strip(' '),
-        ''.join((random.choice(
-            string.ascii_letters + string.digits + string.punctuation)
-                for _ in range(10, 28))
-        ), [], ''
+    ''.join((random.choice(
+        string.ascii_letters + string.digits + random.choice('_- '))
+        for _ in range(5, 25))
+    ).strip(' '),
+    ''.join((random.choice(
+        string.ascii_letters + string.digits + string.punctuation)
+        for _ in range(10, 28))
+    ), [], ''
 )
 
 user_with_random_attributes_2 = UserAccount(
-''.join((random.choice(
-            string.ascii_letters + string.digits + random.choice('_- '))
-                for i in range(5, 25))
-        ).strip(' '),
-        ''.join((random.choice(
-            string.ascii_letters + string.digits + string.punctuation)
-                for _ in range(10, 28))
-        ), [], ''
+    ''.join((random.choice(
+        string.ascii_letters + string.digits + random.choice('_- '))
+        for _ in range(5, 25))
+    ).strip(' '),
+    ''.join((random.choice(
+        string.ascii_letters + string.digits + string.punctuation)
+        for _ in range(10, 28))
+    ), [], ''
+)
+
+user_with_random_attributes_3 = UserAccount(
+    ''.join((random.choice(
+        string.ascii_letters + string.digits + random.choice('_- '))
+        for _ in range(5, 25))
+    ).strip(' '),
+    ''.join((random.choice(
+        string.ascii_letters + string.digits + string.punctuation)
+        for _ in range(10, 28))
+    ), [], ''
 )
 
 user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345', [], '')
@@ -66,7 +78,7 @@ community_params = {
     'name': ''.join(random.choices(string.ascii_letters +
                                    string.digits, k=30)),
     'description': ''.join(random.choices(string.ascii_letters +
-                                    string.digits, k=140)),
+                                          string.digits, k=140)),
     'logo': {'fp': configs.testpath.TEST_IMAGES / 'comm_logo.jpeg', 'zoom': None, 'shift': None},
     'banner': {'fp': configs.testpath.TEST_IMAGES / 'comm_banner.jpeg', 'zoom': None, 'shift': None},
     'intro': ''.join(random.choices(string.ascii_letters +
@@ -93,4 +105,9 @@ token_list_item = namedtuple('TokenListItem', ['title', 'object'])
 ens_user_name = ''.join(
     random.choices(string.digits + string.ascii_lowercase, k=8))
 
-community_tags = ['Activism', 'Art', 'Blockchain', 'Books & blogs', 'Career', 'Collaboration', 'Commerce', 'Culture', 'DAO', 'DIY', 'DeFi', 'Design', 'Education', 'Entertainment', 'Environment', 'Ethereum', 'Event', 'Fantasy', 'Fashion', 'Food', 'Gaming', 'Global', 'Health', 'Hobby', 'Innovation', 'Language', 'Lifestyle', 'Local', 'Love', 'Markets', 'Movies & TV', 'Music', 'NFT', 'NSFW', 'News', 'Non-profit', 'Org', 'Pets', 'Play', 'Podcast', 'Politics', 'Privacy', 'Product', 'Psyche', 'Security', 'Social', 'Software dev', 'Sports', 'Tech', 'Travel', 'Vehicles', 'Web3']
+community_tags = ['Activism', 'Art', 'Blockchain', 'Books & blogs', 'Career', 'Collaboration', 'Commerce', 'Culture',
+                  'DAO', 'DIY', 'DeFi', 'Design', 'Education', 'Entertainment', 'Environment', 'Ethereum', 'Event',
+                  'Fantasy', 'Fashion', 'Food', 'Gaming', 'Global', 'Health', 'Hobby', 'Innovation', 'Language',
+                  'Lifestyle', 'Local', 'Love', 'Markets', 'Movies & TV', 'Music', 'NFT', 'NSFW', 'News', 'Non-profit',
+                  'Org', 'Pets', 'Play', 'Podcast', 'Politics', 'Privacy', 'Product', 'Psyche', 'Security', 'Social',
+                  'Software dev', 'Sports', 'Tech', 'Travel', 'Vehicles', 'Web3']
