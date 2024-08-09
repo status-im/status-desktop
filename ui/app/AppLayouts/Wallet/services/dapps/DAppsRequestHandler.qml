@@ -271,7 +271,20 @@ SQUtils.QObject {
             const account = SQUtils.ModelUtils.getFirstModelEntryIf(root.accountsModel, (account) => {
                 return account.address.toLowerCase() === address.toLowerCase();
             })
-            return { account, success: true }
+
+            if (!account) {
+                return { account: null, success: true }
+            }
+
+            // deep copy to avoid operations on the original object
+            try {
+                const accountCopy = JSON.parse(JSON.stringify(account))
+                return { account: accountCopy, success: true }
+            }
+            catch (e) {
+                console.error("Error parsing account", e)
+                return { account: null, success: false }
+            }
         }
 
         /// Returns null if the network is not found
@@ -280,7 +293,19 @@ SQUtils.QObject {
                 return null
             }
             const chainId = DAppsHelpers.chainIdFromEip155(event.params.chainId)
-            return SQUtils.ModelUtils.getByKey(root.networksModel, "chainId", chainId)
+            const network = SQUtils.ModelUtils.getByKey(root.networksModel, "chainId", chainId)
+
+            if (!network) {
+                return null
+            }
+
+            // deep copy to avoid operations on the original object
+            try {
+                return JSON.parse(JSON.stringify(network))
+            } catch (e) {
+                console.error("Error parsing network", network)
+                return null
+            }
         }
 
         /// Returns null if the network is not found
