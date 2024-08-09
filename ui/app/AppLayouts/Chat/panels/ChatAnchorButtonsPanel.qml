@@ -1,9 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
@@ -33,13 +35,20 @@ Item {
     component AnchorButton: StatusButton {
         Layout.preferredHeight: 38
         radius: 100
-        spacing: 4
+        spacing: 2
 
         icon.width: Style.current.primaryTextFontSize + 5
         icon.height: Style.current.primaryTextFontSize + 5
         verticalPadding: Style.current.halfPadding
         horizontalPadding: Style.current.smallPadding
         font.pixelSize: Style.current.primaryTextFontSize
+
+        layer.enabled: true
+        layer.effect: DropShadow {
+            samples: 16
+            cached: true
+            color: Theme.palette.alphaColor(Theme.palette.directColor1, 0.16)
+        }
     }
 
     RowLayout {
@@ -50,9 +59,10 @@ Item {
         spacing: Style.current.smallPadding
 
         AnchorButton {
-            visible: mentionsCount > 0
-            text: d.limitNumberTo99(mentionsCount)
+            visible: root.mentionsCount > 0
+            text: d.limitNumberTo99(root.mentionsCount)
             type: StatusBaseButton.Type.Primary
+            textColor: Theme.palette.white
             icon.name: "username"
 
             onClicked: root.mentionsButtonClicked()
@@ -61,9 +71,10 @@ Item {
         AnchorButton {
             id: recentMessagesButton
 
-            text: recentMessagesCount <= 0 ? "" : d.limitNumberTo99(recentMessagesCount)
-            normalColor: Style.current.buttonSecondaryColor
-            type: StatusRoundButton.Type.Tertiary
+            text: root.recentMessagesCount <= 0 ? "" : d.limitNumberTo99(root.recentMessagesCount)
+            normalColor: Theme.palette.baseColor1
+            hoverColor: Theme.palette.hoverColor(normalColor)
+            textColor: Theme.palette.white
             textPosition: StatusBaseButton.TextPosition.Left
             icon.name: "arrow-down"
 
