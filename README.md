@@ -2,6 +2,8 @@
 
 [Status](https://status.app/) Desktop client built with [Nim](https://nim-lang.org/) and [Qt](https://www.qt.io/). 
 
+#### [Contributing](CONTRIBUTING.md)
+
 #### [Our Website](https://status.app/)
 
 #### [Need Help?](https://status.app/help)

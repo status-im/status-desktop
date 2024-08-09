@@ -6,14 +6,10 @@
 
 <!-- List the affected areas (e.g wallet, browser, etc..) -->
 
-### StatusQ checklist
+### Architecture compliance
 
-- [ ] add documentation if necessary (new component, new feature)
-- [ ] update sandbox app
-  - in case of new component, add new component page
-  - in case of new features, add variation to existing component page
-  - nice to have: add it to the demo application as well
-- [ ] test changes in both light and dark theme?
+- [ ] I am familiar with the application architecture and agreed good practices.
+My PR is consistent with this document: [Architecture guidelines](../architecture-guide.md)
 
 ### Screenshot of functionality (including design for comparison)
 
@@ -41,7 +37,3 @@ Tick **one**:
 - [ ] High risk: QA team MUST perform additional testing in the specified affected areas **before** merging.
 
 -->
-
-### Cool Spaceship Picture
-
-<!-- optional but cool -->

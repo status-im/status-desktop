@@ -16,6 +16,9 @@ import StatusQ.Core.Theme 0.1
 
    The \c StatusScrollView can be used just like a plain ScrollView but without ability to decarate existing Flickable.
 
+   A presenation on using StatusScrollView can be found here:
+   https://docs.google.com/presentation/d/1ZZeg9j2fZMV-iHreu_Wsl1u6D9POH7SlUO78ZXNj-AI
+
    Simple example of how to use it:
 
    \qml
