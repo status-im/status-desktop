@@ -274,7 +274,7 @@ Item {
             compare(handler.store.authenticateUserCalls.length, 1, "expected a call to store.authenticateUser")
 
             let store = handler.store
-            store.userAuthenticated(td.topic, td.request.id, "password", "")
+            store.userAuthenticated(td.topic, td.request.id, "hello world", "")
             compare(store.signMessageCalls.length, 1, "expected a call to store.signMessage")
             compare(store.signMessageCalls[0].message, td.request.data)
         }

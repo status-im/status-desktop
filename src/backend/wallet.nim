@@ -1,6 +1,8 @@
-import json, logging
+import json, json_serialization, logging
 import core, response_type
 from ./gen import rpc
+
+import status_go
 
 rpc(signMessage, "wallet"):
   message: string
@@ -88,6 +90,24 @@ proc sendTransactionWithSignature*(resultOut: var JsonNode, chainId: int, txType
   signature: string): string =
   try:
     let response = sendTransactionWithSignature(chainId, txType, sendTxArgsJson, signature)
+    return prepareResponse(resultOut, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg
+
+proc hashTypedData*(resultOut: var JsonNode, data: string): string =
+  try:
+    let rawResponse = status_go.hashTypedData(data)
+    var response = Json.decode(rawResponse, RpcResponse[JsonNode])
+    return prepareResponse(resultOut, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg
+
+proc hashTypedDataV4*(resultOut: var JsonNode, data: string): string =
+  try:
+    let rawResponse = status_go.hashTypedDataV4(data)
+    var response = Json.decode(rawResponse, RpcResponse[JsonNode])
     return prepareResponse(resultOut, response)
   except Exception as e:
     warn e.msg

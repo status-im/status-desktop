@@ -1,6 +1,8 @@
 import NimQml
 import chronicles, times, json
 
+import app/global/global_singleton
+import app_service/common/utils
 import app_service/service/wallet_connect/service as wallet_connect_service
 import app_service/service/wallet_account/service as wallet_account_service
 
@@ -9,6 +11,8 @@ import helpers
 logScope:
   topics = "wallet-connect-controller"
 
+type
+  SigningCallbackFn* = proc(topic: string, id: string, keyUid: string, address: string, signature: string)
 
 QtObject:
   type
@@ -27,6 +31,10 @@ QtObject:
 
     result.QObject.setup
 
+  ## signals emitted by this controller
+  proc userAuthenticationResult*(self: Controller, topic: string, id: string, error: bool, password: string, pin: string, payload: string) {.signal.}
+  proc signingResultReceived*(self: Controller, topic: string, id: string, data: string) {.signal.}
+
   proc addWalletConnectSession*(self: Controller, session_json: string): bool {.slot.} =
     return self.service.addSession(session_json)
 
@@ -41,7 +49,7 @@ QtObject:
   # Emits signal dappsListReceived with the list of dApps
   proc getDapps*(self: Controller): bool {.slot.} =
     let res = self.service.getDapps()
-    if res == "":
+    if res.len == 0:
       return false
     else:
       self.dappsListReceived(res)
@@ -61,32 +69,128 @@ QtObject:
       self.activeSessionsReceived(resultStr)
       return true
 
-  proc userAuthenticationResult*(self: Controller, topic: string, id: string, error: bool, password: string, pin: string, payload: string) {.signal.}
-
   # Beware, it will fail if an authentication is already in progress
   proc authenticateUser*(self: Controller, topic: string, id: string, address: string, payload: string): bool {.slot.} =
-    let acc = self.walletAccountService.getAccountByAddress(address)
-    if acc.keyUid == "":
+    let keypair = self.walletAccountService.getKeypairByAccountAddress(address)
+    if keypair.isNil:
       return false
-
-    return self.service.authenticateUser(acc.keyUid, proc(password: string, pin: string, success: bool) =
-      self.userAuthenticationResult(topic, id, success, password, pin, payload)
+    var keyUid = singletonInstance.userProfile.getKeyUid()
+    if keypair.migratedToKeycard():
+      keyUid = keypair.keyUid
+    return self.service.authenticateUser(keyUid, proc(receivedKeyUid: string, password: string, pin: string) =
+      if receivedKeyUid.len == 0 or receivedKeyUid != keyUid or password.len == 0:
+        self.userAuthenticationResult(topic, id, false, "", "", "")
+        return
+      self.userAuthenticationResult(topic, id, true, password, pin, payload)
     )
 
-  proc signMessageUnsafe*(self: Controller, address: string, password: string, message: string): string {.slot.} =
-    return self.service.signMessageUnsafe(address, password, message)
+  proc signOnKeycard(self: Controller, address: string): bool =
+    let keypair = self.walletAccountService.getKeypairByAccountAddress(address)
+    if keypair.isNil:
+      raise newException(CatchableError, "cannot resolve keypair for address: " & address)
+    return keypair.migratedToKeycard()
 
-  proc signMessage*(self: Controller, address: string, password: string, message: string): string {.slot.} =
-    return self.service.signMessage(address, password, message)
+  proc preparePassword(self: Controller, password: string): string =
+    if singletonInstance.userProfile.getIsKeycardUser():
+      return password
+    return hashPassword(password)
 
-  proc safeSignTypedData*(self: Controller, address: string, password: string, typedDataJson: string, chainId: int, legacy: bool): string {.slot.} =
-    return self.service.safeSignTypedData(address, password, typedDataJson, chainId, legacy)
+  proc signMessageWithCallback(self: Controller, topic: string, id: string, address: string, message: string, password: string,
+    pin: string, callback: SigningCallbackFn) =
+    var res = ""
+    try:
+      if message.len == 0:
+        raise newException(CatchableError, "message is empty")
+      if self.signOnKeycard(address):
+        let acc = self.walletAccountService.getAccountByAddress(address)
+        if acc.isNil:
+          raise newException(CatchableError, "cannot resolve account for address: " & address)
+        if not self.service.runSigningOnKeycard(
+          acc.keyUid,
+          acc.path,
+          singletonInstance.utils.removeHexPrefix(message),
+          pin,
+          proc(keyUid: string, signature: string) =
+            if keyUid.len == 0 or keyUid != acc.keyUid or signature.len == 0:
+              raise newException(CatchableError, "keycard signing failed")
+            callback(topic, id, keyUid, address, signature)
+          ):
+            raise newException(CatchableError, "runSigningOnKeycard failed")
+        debug "signMessageWithCallback: signing on keycard started successfully"
+        return
+      let finalPassword = self.preparePassword(password)
+      res = self.service.signMessage(address, finalPassword, message)
+    except Exception as e:
+      error "signMessageWithCallback failed: ", msg=e.msg
+    callback(topic, id, "", address, res)
 
-  proc signTransaction*(self: Controller, address: string, chainId: int, password: string, txJson: string): string {.slot.} =
-    return self.service.signTransaction(address, chainId, password, txJson)
+  proc signMessage*(self: Controller, topic: string, id: string, address: string, message: string, password: string, pin: string) {.slot.} =
+    var res = ""
+    try:
+      if message.len == 0:
+        raise newException(CatchableError, "message is empty")
+      let hashedMessage = self.service.hashMessageEIP191(message)
+      if hashedMessage.len == 0:
+        raise newException(CatchableError, "hashMessageEIP191 failed")
+      self.signMessageWithCallback(topic, id, address, hashedMessage, password, pin,
+        proc (topic: string, id: string, keyUid: string, address: string, signature: string) =
+          self.signingResultReceived(topic, id, signature)
+      )
+    except Exception as e:
+      error "signMessage failed: ", msg=e.msg
+      self.signingResultReceived(topic, id, res)
 
-  proc sendTransaction*(self: Controller, address: string, chainId: int, password: string, txJson: string): string {.slot.} =
-    return self.service.sendTransaction(address, chainId, password, txJson)
+  proc signMessageUnsafe*(self: Controller, topic: string, id: string, address: string, message: string, password: string, pin: string) {.slot.} =
+    self.signMessage(topic, id, address, message, password, pin)
+
+  proc safeSignTypedData*(self: Controller, topic: string, id: string, address: string, typedDataJson: string, chainId: int, legacy: bool,
+    password: string, pin: string): string {.slot.} =
+    var res = ""
+    try:
+      var dataToSign = ""
+      if legacy:
+        dataToSign = self.service.hashTypedData(typedDataJson)
+      else:
+        dataToSign = self.service.hashTypedDataV4(typedDataJson)
+      if dataToSign.len == 0:
+        raise newException(CatchableError, "hashTypedData failed")
+      self.signMessageWithCallback(topic, id, address, dataToSign, password, pin,
+        proc (topic: string, id: string, keyUid: string, address: string, signature: string) =
+          self.signingResultReceived(topic, id, signature)
+      )
+    except Exception as e:
+      error "safeSignTypedData failed: ", msg=e.msg
+      self.signingResultReceived(topic, id, res)
+
+  proc signTransaction*(self: Controller, topic: string, id: string, address: string, chainId: int, txJson: string, password: string, pin: string) {.slot.} =
+    var res = ""
+    try:
+      let (txHash, txData) = self.service.buildTransaction(chainId, txJson)
+      if txHash.len == 0 or txData.isNil:
+        raise newException(CatchableError, "building transaction failed")
+      self.signMessageWithCallback(topic, id, address, txHash, password, pin,
+        proc (topic: string, id: string, keyUid: string, address: string, signature: string) =
+          let rawTx = self.service.buildRawTransaction(chainId, $txData, signature)
+          self.signingResultReceived(topic, id, rawTx)
+      )
+    except Exception as e:
+      error "signTransaction failed: ", msg=e.msg
+      self.signingResultReceived(topic, id, res)
+
+  proc sendTransaction*(self: Controller, topic: string, id: string, address: string, chainId: int, txJson: string, password: string, pin: string) {.slot.} =
+    var res = ""
+    try:
+      let (txHash, txData) = self.service.buildTransaction(chainId, txJson)
+      if txHash.len == 0 or txData.isNil:
+        raise newException(CatchableError, "building transaction failed")
+      self.signMessageWithCallback(topic, id, address, txHash, password, pin,
+        proc (topic: string, id: string, keyUid: string, address: string, signature: string) =
+          let signedTxHash = self.service.sendTransactionWithSignature(chainId, $txData, signature)
+          self.signingResultReceived(topic, id, signedTxHash)
+      )
+    except Exception as e:
+      error "sendTransaction failed: ", msg=e.msg
+      self.signingResultReceived(topic, id, res)
 
   proc getEstimatedTime(self: Controller, chainId: int, maxFeePerGasHex: string): int {.slot.} =
     return self.service.getEstimatedTime(chainId, maxFeePerGasHex).int
