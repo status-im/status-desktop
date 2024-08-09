@@ -348,6 +348,14 @@ QtObject:
     read = getTwitterHandle
     notify = twitterHandleChanged
 
+  proc isMetadataValidChanged*(self: CollectiblesEntry) {.signal.}
+  proc getIsMetaDataValid*(self: CollectiblesEntry): bool {.slot.} =
+    return self.hasCollectibleData()
+
+  QtProperty[bool] isMetadataValid:
+    read = getIsMetaDataValid
+    notify = isMetadataValidChanged
+
   proc updateDataIfSameID*(self: CollectiblesEntry, update: backend.Collectible): bool =
     if self.id != update.id:
       return false

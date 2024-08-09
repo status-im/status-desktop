@@ -64,7 +64,8 @@ ListModel {
             ],
             tokenId: "403",
             twitterHandle: "@punxNotDead",
-            website: "www.punxnotdead.com"
+            website: "www.punxnotdead.com",
+            isMetadataValid: true
         },
         {
             uid: "pp23",
@@ -109,7 +110,8 @@ ListModel {
              ],
             tokenId: "123",
             twitterHandle: "@pepepunks",
-            website: "www.pepepunks.com"
+            website: "www.pepepunks.com",
+            isMetadataValid: true
         },
         {
             uid: "34545656768",
@@ -154,7 +156,8 @@ ListModel {
             ],
             tokenId: "7123",
             twitterHandle: "@kitties",
-            website: "www.kitties.com"
+            website: "www.kitties.com",
+            isMetadataValid: true
         },
         {
             uid: "123456",
@@ -202,7 +205,8 @@ ListModel {
             ],
             tokenId: "403123",
             twitterHandle: "",
-            website: "www.kitties.com"
+            website: "www.kitties.com",
+            isMetadataValid: true
         },
         {
             uid: "12345645459537432",
@@ -252,7 +256,8 @@ ListModel {
             ],
             tokenId: "1",
             twitterHandle: "@kitties",
-            website: ""
+            website: "",
+            isMetadataValid: true
         },
         {
             uid: "pp21",
@@ -289,7 +294,8 @@ ListModel {
             ],
             tokenId: "12568",
             twitterHandle: "@pepepunks",
-            website: "www.pepepunks.com"
+            website: "www.pepepunks.com",
+            isMetadataValid: true
         },
         {
             uid: "lp#666a",
@@ -326,8 +332,42 @@ ListModel {
             ],
             tokenId: "1445",
             twitterHandle: "@lonelyPanda",
-            website: "www.lonelyPanda.com"
+            website: "www.lonelyPanda.com",
+            isMetadataValid: true
         },
+        {
+            uid: "invalid#123",
+            chainId: 421613,
+            userHas: 0,
+            name: "",
+            collectionUid: "",
+            collectionName: "",
+            collectionImageUrl: "",
+            communityId: "",
+            communityName: "",
+            communityImage: "",
+            imageUrl: "",
+            isLoading: false,
+            backgroundColor: "",
+            permalink:"",
+            domain:"",
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: "1",
+                    txTimestamp: 19
+                },
+            ],
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism,
+            description: "",
+            traits: [],
+            tokenId: "2121",
+            twitterHandle: "",
+            website: "",
+            isMetadataValid: false
+        }
     ]
 
     readonly property var communityData: [
@@ -356,7 +396,8 @@ ListModel {
             networkIconUrl: ModelsData.networks.optimism,
             description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
             traits: [],
-            tokenId: "4"
+            tokenId: "4",
+            isMetadataValid: true
         },
         {
             uid: "691",
@@ -383,7 +424,8 @@ ListModel {
             networkIconUrl: ModelsData.networks.optimism,
             description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy :)",
             traits: [],
-            tokenId: "3"
+            tokenId: "3",
+            isMetadataValid: true
         },
         {
             uid: "8876",
@@ -410,7 +452,8 @@ ListModel {
             networkIconUrl: ModelsData.networks.ethereum,
             description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy :)",
             traits: [],
-            tokenId: "341"
+            tokenId: "341",
+            isMetadataValid: true
         },
         {
             uid: "fp#3195",
@@ -437,7 +480,8 @@ ListModel {
             networkIconUrl: ModelsData.networks.ethereum,
             description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
             traits: [],
-            tokenId: "765"
+            tokenId: "765",
+            isMetadataValid: true
         },
         {
             uid: "fp#4297",
@@ -464,7 +508,8 @@ ListModel {
             networkIconUrl: ModelsData.networks.ethereum,
             description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
             traits: [],
-            tokenId: "166"
+            tokenId: "166",
+            isMetadataValid: true
         },
         {
             uid: "fp#909",
@@ -491,7 +536,8 @@ ListModel {
             networkIconUrl: ModelsData.networks.optimism,
             description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
             traits: [],
-            tokenId: "1111"
+            tokenId: "1111",
+            isMetadataValid: true
         },
         {
             uid: "lb#666",
@@ -523,7 +569,8 @@ ListModel {
             networkIconUrl: ModelsData.networks.optimism,
             description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy",
             traits: [],
-            tokenId: "6"
+            tokenId: "6",
+            isMetadataValid: true
         },
         {
             uid: "lb#777",
@@ -550,7 +597,8 @@ ListModel {
             networkIconUrl: ModelsData.networks.optimism,
             description: "Lonely Turtle is a community for all of us to talk and communicate! Welcome onboard and enjoy",
             traits: [],
-            tokenId: "7"
+            tokenId: "7",
+            isMetadataValid: true
         },
         {
             uid: "ID-Custom",
@@ -575,7 +623,8 @@ ListModel {
             communityId: "",
             networkShortName: "ARB",
             networkColor: "blue",
-            networkIconUrl: ModelsData.networks.arbitrum
+            networkIconUrl: ModelsData.networks.arbitrum,
+            isMetadataValid: true
         },
         {
             uid: "ID-MissingMetadata",
@@ -600,7 +649,8 @@ ListModel {
             communityId: "",
             networkShortName: "OPT",
             networkColor: "red",
-            networkIconUrl: ModelsData.networks.optimism
+            networkIconUrl: ModelsData.networks.optimism,
+            isMetadataValid: true
         },
         {
             uid: "ID-Community1",
@@ -625,7 +675,8 @@ ListModel {
             communityId: "community-id-1",
             networkShortName: "OPT",
             networkColor: "red",
-            networkIconUrl: ModelsData.networks.optimism
+            networkIconUrl: ModelsData.networks.optimism,
+            isMetadataValid: true
         },
         {
             uid: "ID-Community-Unknown",
@@ -650,7 +701,8 @@ ListModel {
             communityId: "community-id-unknown",
             networkShortName: "OPT",
             networkColor: "red",
-            networkIconUrl: ModelsData.networks.optimism
+            networkIconUrl: ModelsData.networks.optimism,
+            isMetadataValid: true
         }
     ]
 

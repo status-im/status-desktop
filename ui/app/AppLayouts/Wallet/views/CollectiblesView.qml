@@ -92,7 +92,7 @@ ColumnLayout {
                 clear()
                 if (d.isLoading) {
                     for (let i = 0; i < 10; i++) {
-                        append({ isLoading: true })
+                        append({ isLoading: true, name: qsTr("Loading collectible...") })
                     }
                 }
             }
@@ -497,13 +497,14 @@ ColumnLayout {
         CollectibleView {
             width: d.cellWidth
             height: isCommunityCollectible ? d.communityCellHeight : d.cellHeight
-            title: model.name ? model.name : "..."
+            title: model.name ?? ""
             subTitle: model.collectionName ? model.collectionName : model.collectionUid ? model.collectionUid : ""
             mediaUrl: model.mediaUrl ?? ""
             mediaType: model.mediaType ?? ""
             fallbackImageUrl: model.imageUrl ?? ""
             backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
             isLoading: !!model.isLoading
+            isMetadataValid: !!model.isMetadataValid
             privilegesLevel: model.communityPrivilegesLevel ?? Constants.TokenPrivilegesLevel.Community
             ornamentColor: model.communityColor ?? "transparent"
             communityId: model.communityId ?? ""

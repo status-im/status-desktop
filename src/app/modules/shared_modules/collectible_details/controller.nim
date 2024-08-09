@@ -39,8 +39,8 @@ QtObject:
     read = getDetailedEntry
     notify = detailedEntryChanged
 
-  proc getIsDetailedEntryLoading*(self: Controller): QVariant {.slot.} =
-    return newQVariant(self.detailedEntry)
+  proc getIsDetailedEntryLoading*(self: Controller): bool {.slot.} =
+    return self.isDetailedEntryLoading
 
   proc isDetailedEntryLoadingChanged(self: Controller) {.signal.}
 

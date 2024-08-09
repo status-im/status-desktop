@@ -16,6 +16,7 @@ Control {
     id: root
 
     property string title: ""
+    property string unknownTitle: "..."
     property string subTitle: ""
     property alias subTitleColor: subTitleItem.customColor
     property string backgroundColor: "transparent"
@@ -24,6 +25,7 @@ Control {
     property url fallbackImageUrl : ""
     property bool isLoading: false
     property bool navigationIconVisible: false
+    property bool isMetadataValid: false
     property string communityId: ""
     property string communityName
     property string communityImage
@@ -77,7 +79,7 @@ Control {
     contentItem: ColumnLayout {
         spacing: 0
 
-        StatusRoundedMedia {
+        CollectibleMedia {
             id: image
 
             Layout.alignment: Qt.AlignHCenter
@@ -85,20 +87,15 @@ Control {
             Layout.fillWidth: true
             Layout.preferredHeight: width
 
+            backgroundColor: root.isLoading ? "transparent" : root.backgroundColor
             visible: !specialCollectible.visible
-            radius: Style.current.radius
+            isMetadataValid: root.isMetadataValid
             mediaUrl: root.mediaUrl
             mediaType: root.mediaType
             fallbackImageUrl: root.fallbackImageUrl
             showLoadingIndicator: true
-            color: root.isLoading ? "transparent" : root.backgroundColor
+            isCollectibleLoading: root.isLoading
             fillMode: Image.PreserveAspectCrop
-
-            Loader {
-                anchors.fill: parent
-                active: root.isLoading
-                sourceComponent: LoadingComponent {radius: image.radius}
-            }
 
             Loader {
                 anchors.top: parent.top
@@ -150,7 +147,7 @@ Control {
                 customColor: Theme.palette.directColor1
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
-                text: root.isLoading ? Constants.dummyText : root.title
+                text: root.isLoading ? Constants.dummyText : root.title || root.unknownTitle
                 loading: root.isLoading
             }
 
