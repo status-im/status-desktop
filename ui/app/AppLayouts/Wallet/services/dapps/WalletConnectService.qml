@@ -252,10 +252,6 @@ QObject {
 
         readonly property var supportedAccountsModel: SortFilterProxyModel {
             sourceModel: root.walletRootStore.nonWatchAccounts
-            filters: ValueFilter {
-                roleName: "keycardAccount"
-                value: false
-            }
         }
 
         property var currentSessionProposal: null
