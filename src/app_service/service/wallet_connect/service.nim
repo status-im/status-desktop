@@ -1,4 +1,4 @@
-import NimQml, chronicles, times, json
+import NimQml, chronicles, times, json, uuids
 import strutils
 
 import backend/wallet_connect as status_go
@@ -8,6 +8,7 @@ import app_service/service/settings/service as settings_service
 import app_service/common/wallet_constants
 from app_service/service/transaction/dto import PendingTransactionTypeDto
 import app_service/service/transaction/service as tr
+import app_service/service/keycard/service as keycard_service
 
 import app/global/global_singleton
 
@@ -25,7 +26,8 @@ logScope:
 const UNIQUE_WALLET_CONNECT_MODULE_IDENTIFIER* = "WalletSection-WCModule"
 
 type
-  AuthenticationResponseFn* = proc(password: string, pin: string, success: bool)
+  AuthenticationResponseFn* = proc(keyUid: string, password: string, pin: string)
+  SignResponseFn* = proc(keyUid: string, signature: string)
 
 QtObject:
   type Service* = ref object of QObject
@@ -33,8 +35,11 @@ QtObject:
     threadpool: ThreadPool
     settingsService: settings_service.Service
     transactions: tr.Service
+    keycardService: keycard_service.Service
 
+    connectionKeycardResponse: UUID
     authenticationCallback: AuthenticationResponseFn
+    signCallback: SignResponseFn
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -44,6 +49,7 @@ QtObject:
     threadpool: ThreadPool,
     settingsService: settings_service.Service,
     transactions: tr.Service,
+    keycardService: keycard_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -52,25 +58,19 @@ QtObject:
     result.threadpool = threadpool
     result.settingsService = settings_service
     result.transactions = transactions
+    result.keycardService = keycardService
 
   proc init*(self: Service) =
     self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
       let args = SharedKeycarModuleArgs(e)
       if args.uniqueIdentifier != UNIQUE_WALLET_CONNECT_MODULE_IDENTIFIER:
         return
-
       if self.authenticationCallback == nil:
         error "unexpected user authenticated event; no callback set"
         return
       defer:
         self.authenticationCallback = nil
-
-      if args.password == "" and args.pin == "":
-        info "fail to authenticate user"
-        self.authenticationCallback("", "", false)
-        return
-
-      self.authenticationCallback(args.password, args.pin, true)
+      self.authenticationCallback(args.keyUid, args.password, args.pin)
 
   proc addSession*(self: Service, session_json: string): bool =
     # TODO #14588: call it async
@@ -114,104 +114,103 @@ QtObject:
     let testChains = self.settingsService.areTestNetworksEnabled()
     # TODO #14588: call it async
     return status_go.getDapps(validAtEpoch, testChains)
-  
+
   proc getActiveSessions*(self: Service, validAtTimestamp: int64): JsonNode =
     # TODO #14588: call it async
     return status_go.getActiveSessions(validAtTimestamp)
-    
+
 
   # Will fail if another authentication is in progress
   proc authenticateUser*(self: Service, keyUid: string, callback: AuthenticationResponseFn): bool =
     if self.authenticationCallback != nil:
       return false
     self.authenticationCallback = callback
-
     let data = SharedKeycarModuleAuthenticationArgs(
       uniqueIdentifier: UNIQUE_WALLET_CONNECT_MODULE_IDENTIFIER,
       keyUid: keyUid)
-
     self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
     return true
 
-  proc signMessageUnsafe*(self: Service, address: string, password: string, message: string): string =
-    return status_go.signMessageUnsafe(address, password, message)
+  proc hashMessageEIP191*(self: Service, message: string): string =
+    let hashRes = hashMessageEIP191("0x" & toHex(message))
+    if not hashRes.error.isNil:
+      error "hashMessageEIP191 failed: ", msg=hashRes.error.message
+      return ""
+    return hashRes.result.getStr()
 
-  proc signMessage*(self: Service, address: string, password: string, message: string): string =
-    return status_go.signMessage(address, password, message)
+  proc signMessage*(self: Service, address: string, hashedPassword: string, hashedMessage: string): string =
+    var signMsgRes: JsonNode
+    let err = wallet.signMessage(signMsgRes,
+      hashedMessage,
+      address,
+      hashedPassword)
+    if err.len > 0:
+      error "status-go - wallet_signMessage failed", err=err
+    return signMsgRes.getStr
 
-  proc safeSignTypedData*(self: Service, address: string, password: string, typedDataJson: string, chainId: int, legacy: bool): string =
-    return status_go.safeSignTypedData(address, password, typedDataJson, chainId, legacy)
-
-  proc signTransaction*(self: Service, address: string, chainId: int, password: string, txJson: string): string =
+  proc buildTransaction*(self: Service, chainId: int, txJson: string): tuple[txToSign: string, txData: JsonNode] =
     var buildTxResponse: JsonNode
     var err = wallet.buildTransaction(buildTxResponse, chainId, txJson)
     if err.len > 0:
       error "status-go - wallet_buildTransaction failed", err=err
-      return ""
+      return
     if buildTxResponse.isNil or buildTxResponse.kind != JsonNodeKind.JObject or
       not buildTxResponse.hasKey("txArgs") or not buildTxResponse.hasKey("messageToSign"):
         error "unexpected wallet_buildTransaction response"
-        return ""
-    var txToBeSigned = buildTxResponse["messageToSign"].getStr
-    if txToBeSigned.len != wallet_constants.TX_HASH_LEN_WITH_PREFIX:
+        return
+    result.txToSign = buildTxResponse["messageToSign"].getStr
+    if result.txToSign.len != wallet_constants.TX_HASH_LEN_WITH_PREFIX:
       error "unexpected tx hash length"
-      return ""
+      return
+    result.txData = buildTxResponse["txArgs"]
 
-    var signMsgRes: JsonNode
-    err = wallet.signMessage(signMsgRes,
-          txToBeSigned,
-          address,
-          hashPassword(password))
-    if err.len > 0:
-      error "status-go - wallet_signMessage failed", err=err
-    let signature = singletonInstance.utils.removeHexPrefix(signMsgRes.getStr)
-
+  proc buildRawTransaction*(self: Service, chainId: int, txData: string, signature: string): string =
     var txResponse: JsonNode
-    err = wallet.buildRawTransaction(txResponse, chainId, $buildTxResponse["txArgs"], signature)
+    var err = wallet.buildRawTransaction(txResponse, chainId, txData, signature)
     if err.len > 0:
       error "status-go - wallet_buildRawTransaction failed", err=err
-      return ""
+      return
     if txResponse.isNil or txResponse.kind != JsonNodeKind.JObject or not txResponse.hasKey("rawTx"):
-      error "unexpected buildRawTransaction response"
-      return ""
-
+      error "unexpected wallet_buildRawTransaction response"
+      return
     return txResponse["rawTx"].getStr
 
-  proc sendTransaction*(self: Service, address: string, chainId: int, password: string, txJson: string): string =
-    var buildTxResponse: JsonNode
-    var err = wallet.buildTransaction(buildTxResponse, chainId, txJson)
-    if err.len > 0:
-      error "status-go - wallet_buildTransaction failed", err=err
-      return ""
-    if buildTxResponse.isNil or buildTxResponse.kind != JsonNodeKind.JObject or
-      not buildTxResponse.hasKey("txArgs") or not buildTxResponse.hasKey("messageToSign"):
-        error "unexpected wallet_buildTransaction response"
-        return ""
-    var txToBeSigned = buildTxResponse["messageToSign"].getStr
-    if txToBeSigned.len != wallet_constants.TX_HASH_LEN_WITH_PREFIX:
-      error "unexpected tx hash length"
-      return ""
-
-    var signMsgRes: JsonNode
-    err = wallet.signMessage(signMsgRes,
-          txToBeSigned,
-          address,
-          hashPassword(password))
-    if err.len > 0:
-      error "status-go - wallet_signMessage failed", err=err
-    let signature = singletonInstance.utils.removeHexPrefix(signMsgRes.getStr)
-
+  proc sendTransactionWithSignature*(self: Service, chainId: int, txData: string, signature: string): string =
     var txResponse: JsonNode
-    err = wallet.sendTransactionWithSignature(txResponse, chainId,
-            $PendingTransactionTypeDto.WalletConnectTransfer, $buildTxResponse["txArgs"], signature)
+    let err = wallet.sendTransactionWithSignature(txResponse,
+      chainId,
+      $PendingTransactionTypeDto.WalletConnectTransfer,
+      txData,
+      singletonInstance.utils.removeHexPrefix(signature))
     if err.len > 0:
       error "status-go - sendTransactionWithSignature failed", err=err
       return ""
     if txResponse.isNil or txResponse.kind != JsonNodeKind.JString:
       error "unexpected sendTransactionWithSignature response"
       return ""
-
     return txResponse.getStr
+
+  proc hashTypedData*(self: Service, data: string): string =
+    var response: JsonNode
+    let err = wallet.hashTypedData(response, data)
+    if err.len > 0:
+      error "status-go - hashTypedData failed", err=err
+      return ""
+    if response.isNil or response.kind != JsonNodeKind.JString:
+      error "unexpected hashTypedData response"
+      return ""
+    return response.getStr
+
+  proc hashTypedDataV4*(self: Service, data: string): string =
+    var response: JsonNode
+    let err = wallet.hashTypedDataV4(response, data)
+    if err.len > 0:
+      error "status-go - hashTypedDataV4 failed", err=err
+      return ""
+    if response.isNil or response.kind != JsonNodeKind.JString:
+      error "unexpected hashTypedDataV4 response"
+      return ""
+    return response.getStr
 
   # empty maxFeePerGasHex will fetch the current chain's maxFeePerGas
   proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGasHex: string): EstimatedTime =
@@ -238,3 +237,40 @@ QtObject:
 
 proc getSuggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
   return self.transactions.suggestedFees(chainId)
+
+proc disconnectKeycardReponseSignal(self: Service) =
+  self.events.disconnect(self.connectionKeycardResponse)
+
+proc connectKeycardReponseSignal(self: Service) =
+  self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
+    let args = KeycardLibArgs(e)
+    self.disconnectKeycardReponseSignal()
+    if self.signCallback == nil:
+      error "unexpected user authenticated event; no callback set"
+      return
+    defer:
+      self.signCallback = nil
+    let currentFlow = self.keycardService.getCurrentFlow()
+    if currentFlow != KCSFlowType.Sign:
+      error "unexpected keycard flow type: ", currentFlow
+      self.signCallback("", "")
+      return
+    let signature = "0x" &
+      singletonInstance.utils.removeHexPrefix(args.flowEvent.txSignature.r) &
+      singletonInstance.utils.removeHexPrefix(args.flowEvent.txSignature.s) &
+      singletonInstance.utils.removeHexPrefix(args.flowEvent.txSignature.v)
+    self.signCallback(args.flowEvent.keyUid, signature)
+
+proc cancelCurrentFlow*(self: Service) =
+    self.keycardService.cancelCurrentFlow()
+
+proc runSigningOnKeycard*(self: Service, keyUid: string, path: string, hashedMessageToSign: string, pin: string, callback: SignResponseFn): bool =
+  if pin.len == 0:
+    return false
+  if self.signCallback != nil:
+    return false
+  self.signCallback = callback
+  self.cancelCurrentFlow()
+  self.connectKeycardReponseSignal()
+  self.keycardService.startSignFlow(path, hashedMessageToSign, pin)
+  return true

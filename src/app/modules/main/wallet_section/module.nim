@@ -175,7 +175,7 @@ proc newModule*(
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 
-  result.walletConnectService = wc_service.newService(result.events, result.threadpool, settingsService, transactionService)
+  result.walletConnectService = wc_service.newService(result.events, result.threadpool, settingsService, transactionService, keycardService)
   result.walletConnectController = wc_controller.newController(result.walletConnectService, walletAccountService)
 
   result.dappsConnectorService = connector_service.newService(result.events)

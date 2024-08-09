@@ -116,6 +116,22 @@ SQUtils.QObject {
                 root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(session.peer.metadata.url), true)
             })
         }
+
+        function onSigningResult(topic, id, data) {
+            let isSuccessful = (data != "")
+            if (isSuccessful) {
+                // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
+                sdk.acceptSessionRequest(topic, id, data)
+            } else {
+                console.error("signing error")
+                var request = requests.findRequest(topic, id)
+                if (request === null) {
+                    console.error("Error finding event for topic", topic, "id", id)
+                    return
+                }
+                root.sessionRequestResult(request, isSuccessful)
+            }
+        }
     }
 
     SQUtils.QObject {
@@ -334,64 +350,75 @@ SQUtils.QObject {
                 return
             }
 
-            if (password !== "") {
-                let actionResult = ""
-                if (request.method === SessionRequest.methods.sign.name) {
-                    actionResult = store.signMessageUnsafe(request.topic, request.id,
-                                        request.account.address, password,
-                                        SessionRequest.methods.personalSign.getMessageFromData(request.data))
-                } else if (request.method === SessionRequest.methods.personalSign.name) {
-                    actionResult = store.signMessage(request.topic, request.id,
-                                        request.account.address, password,
-                                        SessionRequest.methods.personalSign.getMessageFromData(request.data))
-                } else if (request.method === SessionRequest.methods.signTypedData_v4.name ||
-                           request.method === SessionRequest.methods.signTypedData.name)
-                {
-                    let legacy = request.method === SessionRequest.methods.signTypedData.name
-                    actionResult = store.safeSignTypedData(request.topic, request.id,
-                                        request.account.address, password,
+            if (password === "") {
+                console.error("No password provided to sign message")
+                return
+            }
+
+            if (request.method === SessionRequest.methods.sign.name) {
+                store.signMessageUnsafe(request.topic,
+                                        request.id,
+                                        request.account.address,
+                                        SessionRequest.methods.personalSign.getMessageFromData(request.data),
+                                        password,
+                                        pin)
+            } else if (request.method === SessionRequest.methods.personalSign.name) {
+                store.signMessage(request.topic,
+                                  request.id,
+                                  request.account.address,
+                                  SessionRequest.methods.personalSign.getMessageFromData(request.data),
+                                  password,
+                                  pin)
+            } else if (request.method === SessionRequest.methods.signTypedData_v4.name ||
+                       request.method === SessionRequest.methods.signTypedData.name)
+            {
+                let legacy = request.method === SessionRequest.methods.signTypedData.name
+                store.safeSignTypedData(request.topic,
+                                        request.id,
+                                        request.account.address,
                                         SessionRequest.methods.signTypedData.getMessageFromData(request.data),
-                                        request.network.chainId, legacy)
-                } else if (d.isTransactionMethod(request.method)) {
-                    let txObj = d.getTxObject(request.method, request.data)
-                    if (!!payload) {
-                        let feesInfoJson = payload
-                        let hexFeesJson = root.store.convertFeesInfoToHex(feesInfoJson)
-                        if (!!hexFeesJson) {
-                            let feesInfo = JSON.parse(hexFeesJson)
-                            if (feesInfo.maxFeePerGas) {
-                                txObj.maxFeePerGas = feesInfo.maxFeePerGas
-                            }
-                            if (feesInfo.maxPriorityFeePerGas) {
-                                txObj.maxPriorityFeePerGas = feesInfo.maxPriorityFeePerGas
-                            }
+                                        request.network.chainId,
+                                        legacy,
+                                        password,
+                                        pin)
+            } else if (d.isTransactionMethod(request.method)) {
+                let txObj = d.getTxObject(request.method, request.data)
+                if (!!payload) {
+                    let feesInfoJson = payload
+                    let hexFeesJson = root.store.convertFeesInfoToHex(feesInfoJson)
+                    if (!!hexFeesJson) {
+                        let feesInfo = JSON.parse(hexFeesJson)
+                        if (feesInfo.maxFeePerGas) {
+                            txObj.maxFeePerGas = feesInfo.maxFeePerGas
                         }
-                        delete txObj.gasLimit
-                        delete txObj.gasPrice
+                        if (feesInfo.maxPriorityFeePerGas) {
+                            txObj.maxPriorityFeePerGas = feesInfo.maxPriorityFeePerGas
+                        }
                     }
-                    // Remove nonce from txObj to be auto-filled by the wallet
-                    delete txObj.nonce
-
-                    if (request.method === SessionRequest.methods.signTransaction.name) {
-                        actionResult = store.signTransaction(request.topic, request.id,
-                                            request.account.address, request.network.chainId, password, txObj)
-                    } else if (request.method === SessionRequest.methods.sendTransaction.name) {
-                        actionResult = store.sendTransaction(request.topic, request.id,
-                                            request.account.address, request.network.chainId, password, txObj)
-                    }
+                    delete txObj.gasLimit
+                    delete txObj.gasPrice
                 }
+                // Remove nonce from txObj to be auto-filled by the wallet
+                delete txObj.nonce
 
-                let isSuccessful = (actionResult != "")
-                if (isSuccessful) {
-                    // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
-                    sdk.acceptSessionRequest(request.topic, request.id, actionResult)
-                } else {
-                    root.sessionRequestResult(request, isSuccessful)
+                if (request.method === SessionRequest.methods.signTransaction.name) {
+                    store.signTransaction(request.topic,
+                                          request.id,
+                                          request.account.address,
+                                          request.network.chainId,
+                                          txObj,
+                                          password,
+                                          pin)
+                } else if (request.method === SessionRequest.methods.sendTransaction.name) {
+                    store.sendTransaction(
+                                request.topic,
+                                request.id,
+                                request.account.address,
+                                request.network.chainId,
+                                txObj,
+                                password,
+                                pin)
                 }
-            } else if (pin !== "") {
-                console.debug("TODO #15097 sign message using keycard: ", request.data)
-            } else {
-                console.error("No password or pin provided to sign message")
             }
         }
 
