@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 QtObject {
     id: theme
@@ -100,8 +100,8 @@ QtObject {
         }
     }
 
-    property color black: getColor('black')
-    property color white: getColor('white')
+    property color black: Qt.rgba(0, 0, 0)
+    property color white: Qt.rgba(1, 1, 1)
     property color transparent: "#00000000"
 
     property color green: getColor('green')
@@ -114,7 +114,7 @@ QtObject {
     property color backdropColor: getColor('black', 0.4)
 
     function hoverColor(normalColor) {
-        return theme.name === "light" ? Qt.darker(normalColor, 1.1) : Qt.lighter(normalColor, 1.1)
+        return theme.name === "light" ? Qt.darker(normalColor, 1.2) : Qt.lighter(normalColor, 1.2)
     }
 
     property color baseColor1
