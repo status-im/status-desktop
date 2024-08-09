@@ -45,14 +45,6 @@ RightTabBaseView {
         id: stack
         anchors.fill: parent
 
-        Connections {
-            target: walletSection
-
-            function onFilterChanged() {
-                root.resetView()
-            }
-        }
-
         onCurrentIndexChanged: {
             RootStore.backButtonName = d.getBackButtonText(currentIndex)
         }
