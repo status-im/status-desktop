@@ -357,7 +357,8 @@ SplitView {
                     {name: "errNotEnoughTokenBalance", value: Constants.swap.errorCodes.errNotEnoughTokenBalance}, 
                     {name: "errNotEnoughNativeBalance", value: Constants.swap.errorCodes.errNotEnoughNativeBalance}, 
                     {name: "errPriceTimeout", value: Constants.swap.errorCodes.errPriceTimeout}, 
-                    {name: "errNotEnoughLiquidity", value: Constants.swap.errorCodes.errNotEnoughLiquidity}
+                    {name: "errNotEnoughLiquidity", value: Constants.swap.errorCodes.errNotEnoughLiquidity},
+                    {name: "errPriceImpactTooHigh", value: Constants.swap.errorCodes.errPriceImpactTooHigh}
                 ]
                 textRole: "name"
                 valueRole: "value"
