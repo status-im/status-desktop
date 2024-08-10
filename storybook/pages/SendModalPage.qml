@@ -210,6 +210,7 @@ SplitView {
                 preSelectedSendType: loader.preSelectedSendType
                 preSelectedHoldingID: loader.preSelectedHoldingID
                 preSelectedHoldingType: loader.preSelectedHoldingType
+                showCustomRoutingMode: ctrlShowCustomMode.checked
             }
             Component.onCompleted: loader.active = true
         }
@@ -222,7 +223,7 @@ SplitView {
 
         ColumnLayout {
             width: parent.width
-            spacing: 20
+            spacing: 10
 
             ColumnLayout {
                 spacing: 0
@@ -344,6 +345,12 @@ SplitView {
                     loader.item.close()
                     loader.item.open()
                 }
+            }
+
+            CheckBox {
+                id: ctrlShowCustomMode
+                text: "Show custom network routing panel"
+                checked: true
             }
 
             CheckBox {

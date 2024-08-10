@@ -58,6 +58,7 @@ StatusDialog {
     property var bestRoutes
     property bool isLoading: false
     property int loginType
+    property bool showCustomRoutingMode
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -657,6 +658,7 @@ StatusDialog {
                 totalFeesInFiat: d.totalFeesInFiat
                 fromNetworksList: fromNetworksRouteModel
                 toNetworksList: toNetworksRouteModel
+                showCustomRoutingMode: popup.showCustomRoutingMode
 
                 routerError: d.routerError
                 routerErrorDetails: d.routerErrorDetails
