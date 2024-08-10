@@ -238,7 +238,7 @@ StatusDropdown {
 
                 StatusSwitchTabButton {
                     text: modelData
-                    fontPixelSize: d.tabBarTextSize
+                    font.pixelSize: d.tabBarTextSize
                 }
             }
         }
