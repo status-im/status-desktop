@@ -85,13 +85,30 @@ SettingsContentBase {
                 font.bold: true
                 normalColor: Theme.palette.directColor1
                 text: root.store.getStatusGoVersion()
-                onClicked: root.store.openLink("https://github.com/status-im/status-go/tree/v%1".arg(root.store.getStatusGoVersion()))
+                onClicked: root.store.openLink("https://github.com/status-im/status-go/tree/%1".arg(root.store.getStatusGoVersion()))
             }
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: Style.current.additionalTextSize
                 text: qsTr("Status Go Version")
+            }
+
+            Item { width: 1; height: 17}
+
+            StatusLinkText {
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: 17
+                font.bold: true
+                normalColor: Theme.palette.directColor1
+                text: root.store.qtRuntimeVersion()
+                onClicked: root.store.openLink("https://github.com/qt/qtreleasenotes/blob/dev/qt/%1/release-note.md".arg(text))
+            }
+
+            StatusBaseText {
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: Style.current.additionalTextSize
+                text: qsTr("Qt Version")
             }
 
             Item { width: 1; height: 17}

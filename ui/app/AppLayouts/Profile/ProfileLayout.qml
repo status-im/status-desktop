@@ -356,6 +356,10 @@ StatusSectionLayout {
                         return root.store.getStatusGoVersion()
                     }
 
+                    function qtRuntimeVersion() {
+                        return SystemUtils.qtRuntimeVersion()
+                    }
+
                     function getReleaseNotes() {
                         const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1" :
                                                     "https://github.com/status-im/status-desktop/commit/%1"

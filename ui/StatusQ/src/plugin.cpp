@@ -29,6 +29,7 @@
 #include "StatusQ/submodelproxymodel.h"
 #include "StatusQ/sumaggregator.h"
 #include "StatusQ/undefinedfilter.h"
+#include "StatusQ/systemutilsinternal.h"
 #include "StatusQ/writableproxymodel.h"
 
 #include "wallet/managetokenscontroller.h"
@@ -92,6 +93,11 @@ public:
         qmlRegisterSingletonType<StringUtilsInternal>(
             "StatusQ.Internal", 0, 1, "StringUtils", [](QQmlEngine* engine, QJSEngine*) {
                 return new StringUtilsInternal(engine);
+            });
+
+        qmlRegisterSingletonType<SystemUtilsInternal>(
+            "StatusQ.Core", 0, 1, "SystemUtils", [](QQmlEngine*, QJSEngine*) {
+                return new SystemUtilsInternal;
             });
 
         qmlRegisterSingletonType<PermissionUtilsInternal>(

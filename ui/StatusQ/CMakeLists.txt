@@ -122,6 +122,7 @@ add_library(StatusQ SHARED
         include/StatusQ/submodelproxymodel.h
         include/StatusQ/sumaggregator.h
         include/StatusQ/undefinedfilter.h
+        include/StatusQ/systemutilsinternal.h
         include/StatusQ/writableproxymodel.h
         src/QClipboardProxy.cpp
         src/aggregator.cpp
@@ -152,6 +153,7 @@ add_library(StatusQ SHARED
         src/stringutilsinternal.cpp
         src/submodelproxymodel.cpp
         src/sumaggregator.cpp
+        src/systemutilsinternal.cpp
         src/undefinedfilter.cpp
         src/writableproxymodel.cpp
 
