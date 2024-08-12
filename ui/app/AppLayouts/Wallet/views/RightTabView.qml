@@ -219,7 +219,7 @@ RightTabBaseView {
                                      !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
                         communitySendEnabled: RootStore.tokensStore.showCommunityAssetsInSend
                         swapEnabled: !RootStore.overview.isWatchOnlyAccount
-                        swapVisible: Global.featureFlags.swapEnabled
+                        swapVisible: root.swapEnabled
 
                         onSendRequested: {
                             const modal = root.sendModal
