@@ -240,48 +240,59 @@ WalletConnectSDKBase {
                 return
             }
 
-            if (password !== "") {
-                var actionResult = ""
-                if (request.method === SessionRequest.methods.sign.name) {
-                    actionResult = store.signMessageUnsafe(request.topic, request.id,
-                                        request.account.address, password,
-                                        SessionRequest.methods.personalSign.getMessageFromData(request.data))
-                } else if (request.method === SessionRequest.methods.personalSign.name) {
-                    actionResult = store.signMessage(request.topic, request.id,
-                                        request.account.address, password,
-                                        SessionRequest.methods.personalSign.getMessageFromData(request.data))
-                } else if (request.method === SessionRequest.methods.signTypedData_v4.name ||
-                           request.method === SessionRequest.methods.signTypedData.name)
-                {
-                    let legacy = request.method === SessionRequest.methods.signTypedData.name
-                    actionResult = store.safeSignTypedData(request.topic, request.id,
-                                        request.account.address, password,
+            if (password === "") {
+                console.error("No password provided to sign message")
+                return
+            }
+
+            if (request.method === SessionRequest.methods.sign.name) {
+                store.signMessageUnsafe(request.topic,
+                                        request.id,
+                                        request.account.address,
+                                        SessionRequest.methods.personalSign.getMessageFromData(request.data),
+                                        password,
+                                        pin)
+            } else if (request.method === SessionRequest.methods.personalSign.name) {
+                store.signMessage(request.topic,
+                                  request.id,
+                                  request.account.address,
+                                  SessionRequest.methods.personalSign.getMessageFromData(request.data),
+                                  password,
+                                  pin)
+            } else if (request.method === SessionRequest.methods.signTypedData_v4.name ||
+                       request.method === SessionRequest.methods.signTypedData.name)
+            {
+                let legacy = request.method === SessionRequest.methods.signTypedData.name
+                store.safeSignTypedData(request.topic,
+                                        request.id,
+                                        request.account.address,
                                         SessionRequest.methods.signTypedData.getMessageFromData(request.data),
-                                        request.network.chainId, legacy)
-                } else if (request.method === SessionRequest.methods.signTransaction.name) {
-                    let txObj = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
-                    actionResult = store.signTransaction(request.topic, request.id,
-                                        request.account.address, request.network.chainId, password, txObj)
-                } else if (request.method === SessionRequest.methods.sendTransaction.name) {
-                    let txObj = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
-                    actionResult = store.sendTransaction(request.topic, request.id,
-                                        request.account.address, request.network.chainId, password, txObj)
-                }
-                let isSuccessful = (actionResult != "")
-                if (isSuccessful) {
-                    // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
-                    acceptSessionRequest(request.topic, request.method, request.id, actionResult)
-                } else {
-                    root.sessionRequestResult(request, isSuccessful)
-                }
-            } else if (pin !== "") {
-                console.debug("TODO #15097 sign message using keycard: ", request.data)
-            } else {
-                console.error("No password or pin provided to sign message")
+                                        request.network.chainId,
+                                        legacy,
+                                        password,
+                                        pin)
+            } else if (request.method === SessionRequest.methods.signTransaction.name) {
+                let txObj = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
+                store.signTransaction(request.topic,
+                                      request.id,
+                                      request.account.address,
+                                      request.network.chainId,
+                                      txObj,
+                                      password,
+                                      pin)
+            } else if (request.method === SessionRequest.methods.sendTransaction.name) {
+                let txObj = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
+                store.sendTransaction(request.topic,
+                                      request.id,
+                                      request.account.address,
+                                      request.network.chainId,
+                                      txObj,
+                                      password,
+                                      pin)
             }
         }
 
-        function acceptSessionRequest(topic, method, id, signature) {
+        function acceptSessionRequest(topic, id, signature) {
             console.debug(`Connector DappsConnectorSDK.acceptSessionRequest; requestId: ${root.requestId}, signature: "${signature}"`)
 
             sessionRequestLoader.active = false
@@ -347,6 +358,16 @@ WalletConnectSDKBase {
                     return
                 root.displayToastMessage(qsTr("Failed to authenticate %1").arg(session.peer.metadata.url), true)
             })
+        }
+
+        function onSigningResult(topic, id, data) {
+            let isSuccessful = (data != "")
+            if (isSuccessful) {
+                // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
+                d.acceptSessionRequest(topic, id, data)
+            } else {
+                console.error("signing error")
+            }
         }
     }
 

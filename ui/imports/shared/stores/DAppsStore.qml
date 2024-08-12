@@ -12,6 +12,8 @@ QObject {
     signal userAuthenticated(string topic, string id, string password, string pin, string payload)
     signal userAuthenticationFailed(string topic, string id)
 
+    signal signingResult(string topic, string id, string data)
+
     function addWalletConnectSession(sessionJson) {
         return controller.addWalletConnectSession(sessionJson)
     }
@@ -31,19 +33,16 @@ QObject {
         }
     }
 
-    // Returns the hex encoded signature of the message or empty string if error
-    function signMessageUnsafe(topic, id, address, password, message) {
-        return controller.signMessageUnsafe(address, password, message)
+    function signMessageUnsafe(topic, id, address, message, password, pin = "") {
+        controller.signMessageUnsafe(topic, id, address, message, password, pin)
     }
 
-    // Returns the hex encoded signature of the message or empty string if error
-    function signMessage(topic, id, address, password, message) {
-        return controller.signMessage(address, password, message)
+    function signMessage(topic, id, address, message, password, pin = "") {
+        controller.signMessage(topic, id, address, message, password, pin)
     }
 
-    // Returns the hex encoded signature of the typedDataJson or empty string if error
-    function safeSignTypedData(topic, id, address, password, typedDataJson, chainId, legacy) {
-        return controller.safeSignTypedData(address, password, typedDataJson, chainId, legacy)
+    function safeSignTypedData(topic, id, address, typedDataJson, chainId, legacy, password, pin = "") {
+        controller.safeSignTypedData(topic, id, address, typedDataJson, chainId, legacy, password, pin)
     }
 
     // Remove leading zeros from hex number as expected by status-go
@@ -91,16 +90,14 @@ QObject {
         return JSON.parse(controller.getSuggestedFeesJson(chainId))
     }
 
-    // Returns the hex encoded signature of the transaction or empty string if error
     function signTransaction(topic, id, address, chainId, password, txObj) {
         let tx = prepareTxForStatusGo(txObj)
-        return controller.signTransaction(address, chainId, password, JSON.stringify(tx))
+        controller.signTransaction(topic, id, address, chainId, JSON.stringify(tx), password, pin)
     }
 
-    // Returns the hash of the transaction or empty string if error
-    function sendTransaction(topic, id, address, chainId, password, txObj) {
+    function sendTransaction(topic, id, address, chainId, txObj, password, pin = "") {
         let tx = prepareTxForStatusGo(txObj)
-        return controller.sendTransaction(address, chainId, password, JSON.stringify(tx))
+        controller.sendTransaction(topic, id, address, chainId, JSON.stringify(tx), password, pin)
     }
 
     /// \c getDapps triggers an async response to \c dappsListReceived
@@ -148,6 +145,10 @@ QObject {
             } else {
                 root.userAuthenticationFailed(topic, id)
             }
+        }
+
+        function onSigningResultReceived(topic, id, data) {
+            root.signingResult(topic, id, data)
         }
     }
 }
