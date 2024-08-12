@@ -31,6 +31,9 @@ Item {
     property var networkConnectionStore
     property bool appMainVisible
 
+    property bool dappsEnabled
+    property bool swapEnabled
+
     onAppMainVisibleChanged: {
         resetView()
     }
@@ -204,6 +207,9 @@ Item {
             sendModal: root.sendModalPopup
             networkConnectionStore: root.networkConnectionStore
 
+            dappsEnabled: root.dappsEnabled
+            swapEnabled: root.swapEnabled
+
             headerButton.text: RootStore.overview.ens || StatusQUtils.Utils.elideAndFormatWalletAddress(RootStore.overview.mixedcaseAddress)
             headerButton.visible: !RootStore.overview.isAllAccounts
             onLaunchShareAddressModal: Global.openShowQRPopup({
@@ -283,6 +289,7 @@ Item {
             height: visible ? 61: implicitHeight
             walletStore: RootStore
             transactionStore: root.transactionStore
+            swapEnabled: root.swapEnabled
             networkConnectionStore: root.networkConnectionStore
             isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible
             communityName: {

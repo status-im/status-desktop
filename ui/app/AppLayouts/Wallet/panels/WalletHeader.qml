@@ -1,5 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQml 2.15
 
 import StatusQ 0.1
@@ -24,6 +25,8 @@ Item {
     property var overview
     property var store
     property var walletStore
+
+    property bool dappsEnabled
 
     property alias headerButton: headerButton
     property alias networkFilter: networkFilter
@@ -134,7 +137,7 @@ Item {
                 spacing: 8
 
                 visible: !root.walletStore.showSavedAddresses
-                         && Global.featureFlags.dappsEnabled
+                         && root.dappsEnabled
                          && Global.walletConnectService.isServiceAvailableForAddressSelection
                 enabled: !!Global.walletConnectService
 

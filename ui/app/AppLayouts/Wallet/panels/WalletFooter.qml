@@ -25,6 +25,8 @@ Rectangle {
     property var networkConnectionStore
     required property TransactionStore transactionStore
 
+    property bool swapEnabled
+
     // Community-token related properties:
     required property bool isCommunityOwnershipTransfer
     property string communityName: ""
@@ -75,7 +77,7 @@ Rectangle {
 
         readonly property bool buyActionAvailable: !isCollectibleViewed
 
-        readonly property bool swapActionAvailable: Global.featureFlags.swapEnabled
+        readonly property bool swapActionAvailable: root.swapEnabled
                                                     && !walletStore.overview.isWatchOnlyAccount
                                                     && walletStore.overview.canSend
                                                     && !d.isCollectibleViewed

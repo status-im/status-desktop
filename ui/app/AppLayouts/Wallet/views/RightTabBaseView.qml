@@ -14,6 +14,9 @@ FocusScope {
     property var communitiesStore
     property var networkConnectionStore
 
+    property bool dappsEnabled
+    property bool swapEnabled
+
     property var sendModal
 
     property alias header: header
@@ -33,6 +36,7 @@ FocusScope {
             store: root.store
             walletStore: RootStore
             networkConnectionStore: root.networkConnectionStore
+            dappsEnabled: root.dappsEnabled
         }
 
         Item {

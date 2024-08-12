@@ -79,6 +79,14 @@ Item {
         tokensStore: appMain.tokensStore
         currencyStore: appMain.currencyStore
     }
+    readonly property FeatureFlagsStore featureFlagsStore: FeatureFlagsStore {
+        readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
+
+        connectorEnabled: featureFlags ? featureFlags.connectorEnabled : false
+        dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
+        swapEnabled: featureFlags ? featureFlags.swapEnabled : false
+    }
+
     required property bool isCentralizedMetricsEnabled
 
     // set from main.qml
@@ -1379,6 +1387,8 @@ Item {
                             sendModalPopup: sendModal
                             networkConnectionStore: appMain.networkConnectionStore
                             appMainVisible: appMain.visible
+                            dappsEnabled: featureFlagsStore.dappsEnabled
+                            swapEnabled: featureFlagsStore.swapEnabled
                         }
                         onLoaded: {
                             item.resetView()
@@ -2137,7 +2147,7 @@ Item {
 
     Loader {
         id: dappsConnectorSDKLoader
-        active: Global.featureFlags.connectorEnabled
+        active: featureFlagsStore.connectorEnabled
         sourceComponent: dappsConnectorSDK
     }
 
@@ -2145,7 +2155,7 @@ Item {
         id: walletConnectServiceLoader
 
         // It seems some of the functionality of the dapp connector depends on the WalletConnectService
-        active: (Global.featureFlags.dappsEnabled || Global.featureFlags.connectorEnabled) && appMain.visible
+        active: (featureFlagsStore.dappsEnabled || featureFlagsStore.connectorEnabled) && appMain.visible
 
         sourceComponent: WalletConnectService {
             id: walletConnectService
