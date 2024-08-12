@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import StatusQ.Core 0.1
 import AppLayouts.Profile.views 1.0
 
 import Storybook 1.0
@@ -35,6 +36,10 @@ SplitView {
                 function getStatusGoVersion() {
                     logs.logEvent("store::getStatusGoVersion")
                     return "0.162.9"
+                }
+
+                function qtRuntimeVersion() {
+                    return SystemUtils.qtRuntimeVersion()
                 }
 
                 function getReleaseNotes() {
