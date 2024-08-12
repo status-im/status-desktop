@@ -36,6 +36,7 @@ Item {
     property int errorType: Constants.NoError
     property var bestRoutes
     property double totalFeesInFiat
+    property bool showCustomRoutingMode
 
     property string routerError: ""
     property string routerErrorDetails: ""
@@ -46,6 +47,9 @@ Item {
 
     QtObject {
         id: d
+
+        property var customButton
+
         readonly property int backgroundRectRadius: 13
         readonly property color backgroundRectColor: Theme.palette.indirectColor1
     }
@@ -62,9 +66,24 @@ Item {
             text: qsTr("Advanced")
             showBetaTag: true
         }
+    }
+
+    // not visible in `production` for now, see https://github.com/status-im/status-desktop/issues/16052
+    Component {
+        id: customButtonComponent
         StatusSwitchTabButton {
             text: qsTr("Custom")
-            enabled: false
+        }
+    }
+
+    onShowCustomRoutingModeChanged: {
+        if (root.showCustomRoutingMode) {
+            if (!!d.customButton)
+                d.customButton.destroy()
+            d.customButton = customButtonComponent.createObject(tabBar)
+            tabBar.addItem(d.customButton)
+        } else if (!!d.customButton) {
+            d.customButton.destroy()
         }
     }
 

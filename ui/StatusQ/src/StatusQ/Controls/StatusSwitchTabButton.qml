@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -9,48 +9,39 @@ import StatusQ.Core.Theme 0.1
 TabButton {
     id: root
 
-    property int fontPixelSize: 15
     property bool showBetaTag: false
 
+    implicitHeight: 36
+    implicitWidth: 148
+
+    font.pixelSize: 15
+
     contentItem: Item {
-        height: 36
-        MouseArea {
-            id: sensor
-            hoverEnabled: true
-            anchors.fill: parent
+        Row {
+            anchors.centerIn: parent
+            spacing: 8
 
-            cursorShape: Qt.PointingHandCursor
-            onPressed: mouse.accepted = false
-            onReleased: mouse.accepted = false
+            StatusBaseText {
+                id: label
+                text: root.text
+                color: root.checked ?
+                           Theme.palette.statusSwitchTab.selectedTextColor :
+                           Theme.palette.statusSwitchTab.textColor
+                font.weight: Font.Medium
+                font.pixelSize: root.font.pixelSize
+            }
 
-            Row {
-                anchors.centerIn: parent
-                spacing: 8
-
-                StatusBaseText {
-                    id: label
-                    text: root.text
-                    color: root.checked ?
-                               Theme.palette.statusSwitchTab.selectedTextColor :
-                               Theme.palette.statusSwitchTab.textColor
-                    font.weight: Font.Medium
-                    font.pixelSize: root.fontPixelSize
-                }
-
-                StatusBetaTag {
-                    visible: root.showBetaTag
-                }
+            StatusBetaTag {
+                visible: root.showBetaTag
+                fgColor: root.checked ? Theme.palette.statusSwitchTab.selectedTextColor
+                                      : Theme.palette.baseColor1
             }
         }
     }
 
     background: Rectangle {
-        id: controlBackground
-        implicitHeight: 36
-        implicitWidth: 148
-        color: root.checked ?
-            Theme.palette.statusSwitchTab.buttonBackgroundColor :
-            "transparent"
+        color: root.checked ? Theme.palette.statusSwitchTab.buttonBackgroundColor
+                            : "transparent"
         radius: 8
         layer.enabled: true
         layer.effect: DropShadow {
@@ -60,6 +51,10 @@ TabButton {
             samples: 25
             spread: 0
             color: Theme.palette.dropShadow
+        }
+
+        HoverHandler {
+            cursorShape: hovered ? Qt.PointingHandCursor : undefined
         }
     }
 }

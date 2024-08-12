@@ -1,10 +1,10 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtMultimedia 5.13
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtMultimedia 5.15
 import Qt.labs.platform 1.1
 import Qt.labs.settings 1.1
-import QtQml.Models 2.14
+import QtQml.Models 2.15
 import QtQml 2.15
 
 import AppLayouts.Wallet 1.0
@@ -1635,6 +1635,8 @@ Item {
 
                 store: appMain.transactionStore
                 collectiblesStore: appMain.walletCollectiblesStore
+
+                showCustomRoutingMode: !production
 
                 onClosed: {
                     sendModal.closed()
