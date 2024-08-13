@@ -1,13 +1,13 @@
 import logging
-
+import configs
 import os
 import allure
 import pytest
-import shortuuid
-from PIL import ImageGrab
 
-import configs
-from configs.system import get_platform
+from tests import test_data
+from PIL import ImageGrab
+from datetime import datetime
+from configs.system import IS_LIN
 from fixtures.path import generate_test_info
 from scripts.utils.system_path import SystemPath
 
@@ -52,11 +52,30 @@ def setup_function_scope(
     yield
 
 
+def pytest_runtest_setup(item):
+    test_data.test_name = item.name
+
+    test_data.error = []
+    test_data.steps = []
+
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
     rep = outcome.get_result()
     setattr(item, 'rep_' + rep.when, rep)
+
+    if rep.when == 'call':
+        if rep.failed:
+            test_data.error = rep.longreprtext
+        elif rep.outcome == 'passed':
+            if test_data.error:
+                rep.outcome = 'failed'
+                error_text = str()
+                for line in test_data.error:
+                    error_text += f"{line}; \n ---- soft assert ---- \n\n"
+                rep.longrepr = error_text
+    elif rep.failed:
+        test_data.error = rep.longreprtext
 
 
 def pytest_exception_interact(node):

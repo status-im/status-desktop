@@ -287,10 +287,6 @@ class LeftPanel(QObject):
     def is_add_channels_button_visible(self) -> bool:
         return self._add_channels_button.is_visible
 
-    @allure.step('Get visibility state of add category button')
-    def is_add_category_button_visible(self) -> bool:
-        return self._create_category_button.is_visible
-
     @allure.step('Select channel')
     def select_channel(self, name: str):
         for obj in driver.findAllObjects(self._channel_list_item.real_name):

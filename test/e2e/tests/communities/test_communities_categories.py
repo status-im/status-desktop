@@ -1,9 +1,10 @@
 import allure
 import pytest
-from allure_commons._allure import step
-
 import configs
 import constants
+
+from allure_commons._allure import step
+from tests import test_data
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
 from . import marks
@@ -25,10 +26,10 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow)
         community_screen = main_screen.left_panel.select_community('Community with 2 users')
 
     with step('Verify that member cannot add category'):
-        with step('Verify that create channel or category button is not present'):
-            assert not community_screen.left_panel.does_create_channel_or_category_button_exist()
-        with step('Verify that add category button is not present'):
-            assert not community_screen.left_panel.is_add_category_button_visible()
+        if community_screen.left_panel._channel_or_category_button.exists:
+            test_data.error.append("Create channel or category button is present")
+        if community_screen.left_panel._create_category_button.is_visible:
+            test_data.error.append("Create category button is visible")
 
     with step('Verify that member cannot edit category'):
         with step('Right-click on category in the left navigation bar'):
