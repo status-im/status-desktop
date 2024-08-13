@@ -12,7 +12,7 @@ Item {
     id: root
 
     property url imageUrl: ""
-    property string badgeIcon: "walletconnect"
+    property string badgeIcon: ""
     property string fallbackIcon: "dapp"
 
     readonly property bool iconLoaded: !mainImage.isError && !mainImage.isLoading && mainImage.image.source !== ""
@@ -76,7 +76,7 @@ Item {
         height: width
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        asset.name: root.badgeIcon
+        asset.name: root.badgeIcon || "walletconnect"
         asset.color: "transparent"
         asset.width: width
         asset.height: height

@@ -22,6 +22,8 @@ SignTransactionModalBase {
     required property url dappUrl
     required property url dappIcon
     required property string dappName
+    // Making a non breaking change for the dappBadge, default is walletconnect
+    property string badgeIcon
     // Payload to sign
     required property string requestPayload
     // Account
@@ -46,6 +48,7 @@ SignTransactionModalBase {
     subtitle: SQUtils.StringUtils.extractDomainFromLink(root.dappUrl)
     headerIconComponent: RoundImageWithBadge {
         imageUrl: root.dappIcon
+        badgeIcon: root.badgeIcon
         width: 40
         height: 40
     }
