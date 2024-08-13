@@ -114,6 +114,7 @@ SQUtils.QObject {
                 if (session === null)
                     return
                 root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(session.peer.metadata.url), true)
+                root.sessionRequestResult(request, false /*isSuccessful*/)
             })
         }
 
