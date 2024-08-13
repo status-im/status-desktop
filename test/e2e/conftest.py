@@ -3,6 +3,7 @@ import configs
 import os
 import allure
 import pytest
+import shortuuid
 
 from tests import test_data
 from PIL import ImageGrab
