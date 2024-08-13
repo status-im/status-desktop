@@ -35,13 +35,13 @@ StatusListItem {
             loading: root.loading
         },
         StatusIcon {
-            objectName: "externalLinkIcon"
             icon: root.urlsNeedParameters ? "chevron-down": "tiny/external"
             rotation: root.urlsNeedParameters ? 270: 0
             color: sensor.containsMouse ? Theme.palette.directColor1: Theme.palette.baseColor1
             visible: !root.loading && !root.isUrlLoading
         },
         StatusLoadingIndicator {
+            objectName: "loadingIndicator"
             visible: root.isUrlLoading
         }
     ]

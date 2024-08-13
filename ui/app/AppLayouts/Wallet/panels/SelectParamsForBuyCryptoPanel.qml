@@ -16,7 +16,7 @@ ColumnLayout {
     id: root
 
     // required properties
-    required property var adaptor
+    required property var assetsModel
     required property var selectedProvider
     required property string selectedTokenKey
     required property int selectedNetworkChainId
@@ -27,9 +27,24 @@ ColumnLayout {
     signal networkSelected(int chainId)
     signal tokenSelected(string tokensKey)
 
+    QtObject {
+        id: d
+        function updateTokenSelector() {
+            Qt.callLater(()=> {
+                             if(!!holdingSelector.model && !!root.selectedTokenKey && root.selectedNetworkChainId !== -1) {
+                                 holdingSelector.selectToken(root.selectedTokenKey)
+                             }
+                         })
+        }
+    }
+
+    onSelectedTokenKeyChanged: d.updateTokenSelector()
+    onSelectedNetworkChainIdChanged: d.updateTokenSelector()
+
     spacing: 20
 
     StatusListItem {
+        objectName: "selectParamsForBuyCryptoPanelHeader"
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft
         leftPadding: 0
@@ -81,8 +96,9 @@ ColumnLayout {
         }
         TokenSelector {
             id: holdingSelector
+            objectName: "tokenSelector"
             Layout.fillWidth: true
-            model: root.adaptor.outputAssetsModel
+            model: root.assetsModel
             popup.width: parent.width
             contentItem:  Loader {
                 height: 40 // by design
@@ -93,7 +109,6 @@ ColumnLayout {
                 color: Theme.palette.transparent
             }
             onTokenSelected: root.tokenSelected(tokensKey)
-            Component.onCompleted: holdingSelector.selectToken(root.selectedTokenKey)
         }
     }
 
@@ -111,6 +126,7 @@ ColumnLayout {
     Component {
         id: selectedTokenCmp
         RowLayout {
+            objectName: "selectedTokenItem"
             spacing: Style.current.halfPadding
             StatusRoundedImage {
                 objectName: "tokenSelectorIcon"
@@ -119,14 +135,14 @@ ColumnLayout {
                 image.source: ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey, "iconSource")
             }
             StatusBaseText {
-                objectName: "tokenSelectorContentItemText"
+                objectName: "tokenSelectorContentItemName"
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
                 text: ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey, "name")
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                objectName: "tokenSelectorContentItemText"
+                objectName: "tokenSelectorContentItemSymbol"
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
                 text: ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey, "symbol")

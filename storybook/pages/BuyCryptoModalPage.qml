@@ -5,10 +5,12 @@ import QtQuick.Layouts 1.15
 import Storybook 1.0
 import Models 1.0
 
+import StatusQ 0.1
 import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.stores 1.0
+import AppLayouts.Wallet.adaptors 1.0
 
 import shared.stores 1.0
 
@@ -47,6 +49,22 @@ SplitView {
                 d.debounceFetchProviderUrl()
             }
         }
+
+        readonly property var currencyStore: CurrenciesStore {}
+        readonly property var assetsStore: WalletAssetsStore {
+            id: thisWalletAssetStore
+            walletTokensStore: TokensStore {
+                plainTokensBySymbolModel: TokensBySymbolModel {}
+            }
+            readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
+            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+        }
+        readonly property BuyCryptoParamsForm buyCryptoInputParamsForm: BuyCryptoParamsForm{
+            selectedWalletAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            selectedNetworkChainId: 11155111
+            selectedTokenKey: "ETH"
+        }
+
     }
 
     PopupBackground {
@@ -61,7 +79,12 @@ SplitView {
             text: "Reopen"
             enabled: !buySellModal.visible
 
-            onClicked: buySellModal.open()
+            onClicked: {
+                buySellModal.buyCryptoInputParamsForm.selectedWalletAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+                buySellModal.buyCryptoInputParamsForm.selectedNetworkChainId = 11155111
+                buySellModal.buyCryptoInputParamsForm.selectedTokenKey = "ETH"
+                buySellModal.open()
+            }
         }
 
         BuyCryptoModal {
@@ -70,29 +93,19 @@ SplitView {
             visible: true
             modal: false
             closePolicy: Popup.CloseOnEscape
-            buyCryptoAdaptor: BuyCryptoModalAdaptor {
-                buyCryptoStore: d.buyCryptoStore
-                readonly property var currencyStore: CurrenciesStore {}
-                readonly property var assetsStore: WalletAssetsStore {
-                    id: thisWalletAssetStore
-                    walletTokensStore: TokensStore {
-                        plainTokensBySymbolModel: TokensBySymbolModel {}
-                    }
-                    readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                    assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
-                }
-                buyCryptoFormData: buySellModal.buyCryptoInputParamsForm
-                walletAccountsModel: WalletAccountsModel{}
-                networksModel: NetworksModel.flatNetworks
-                areTestNetworksEnabled: true
-                groupedAccountAssetsModel: assetsStore.groupedAccountAssetsModel
-                plainTokensBySymbolModel: assetsStore.walletTokensStore.plainTokensBySymbolModel
-                currentCurrency: currencyStore.currentCurrency
-            }
-            buyCryptoInputParamsForm: BuyCryptoParamsForm{
-                selectedWalletAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
-                selectedNetworkChainId: 11155111
-                selectedTokenKey: "ETH"
+            buyProvidersModel: d.buyCryptoStore.providersModel
+            isBuyProvidersModelLoading: d.buyCryptoStore.areProvidersLoading
+            walletAccountsModel: WalletAccountsModel{}
+            networksModel: NetworksModel.flatNetworks
+            areTestNetworksEnabled: true
+            currentCurrency: d.currencyStore.currentCurrency
+            plainTokensBySymbolModel: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
+            groupedAccountAssetsModel: d.assetsStore.groupedAccountAssetsModel
+            buyCryptoInputParamsForm: d.buyCryptoInputParamsForm
+            Component.onCompleted: {
+                fetchProviders.connect(d.buyCryptoStore.fetchProviders)
+                fetchProviderUrl.connect(d.buyCryptoStore.fetchProviderUrl)
+                d.buyCryptoStore.providerUrlReady.connect(providerUrlReady)
             }
         }
     }

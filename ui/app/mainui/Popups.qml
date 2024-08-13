@@ -45,6 +45,7 @@ QtObject {
     property WalletStore.WalletAssetsStore walletAssetsStore
     property WalletStore.CollectiblesStore walletCollectiblesStore
     property NetworkConnectionStore networkConnectionStore
+    property WalletStore.BuyCryptoStore buyCryptoStore
     property bool isDevBuild
 
     signal openExternalLink(string link)
@@ -1249,15 +1250,18 @@ QtObject {
         Component {
             id: buyCryptoModal
             BuyCryptoModal {
-                buyCryptoAdaptor: BuyCryptoModalAdaptor {
-                    buyCryptoStore: WalletStore.BuyCryptoStore {}
-                    buyCryptoFormData: buyCryptoInputParamsForm
-                    walletAccountsModel: root.rootStore.accounts
-                    networksModel: root.rootStore.profileSectionStore.walletStore.flatNetworks
-                    areTestNetworksEnabled: root.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
-                    groupedAccountAssetsModel: root.walletAssetsStore.groupedAccountAssetsModel
-                    plainTokensBySymbolModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
-                    currentCurrency: root.currencyStore.currentCurrency
+                buyProvidersModel: root.buyCryptoStore.providersModel
+                isBuyProvidersModelLoading: root.buyCryptoStore.areProvidersLoading
+                currentCurrency: root.currencyStore.currentCurrency
+                walletAccountsModel: root.rootStore.accounts
+                plainTokensBySymbolModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+                groupedAccountAssetsModel: root.walletAssetsStore.groupedAccountAssetsModel
+                networksModel: root.rootStore.profileSectionStore.walletStore.flatNetworks
+                areTestNetworksEnabled: root.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
+                Component.onCompleted: {
+                    fetchProviders.connect(root.buyCryptoStore.fetchProviders)
+                    fetchProviderUrl.connect(root.buyCryptoStore.fetchProviderUrl)
+                    root.buyCryptoStore.providerUrlReady.connect(providerUrlReady)
                 }
                 onClosed: destroy()
             }
