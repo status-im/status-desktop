@@ -6,8 +6,7 @@ import pytest
 
 from tests import test_data
 from PIL import ImageGrab
-from datetime import datetime
-from configs.system import IS_LIN
+from configs.system import get_platform
 from fixtures.path import generate_test_info
 from scripts.utils.system_path import SystemPath
 
