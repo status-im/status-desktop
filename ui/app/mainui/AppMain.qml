@@ -2162,7 +2162,7 @@ Item {
 
             wcSDK: WalletConnectSDK {
                 enableSdk: WalletStore.RootStore.walletSectionInst.walletReady
-
+                userUID: appMain.rootStore.profileSectionStore.profileStore.pubkey
                 projectId: WalletStore.RootStore.appSettings.walletConnectProjectID
             }
             store: DAppsStore {
