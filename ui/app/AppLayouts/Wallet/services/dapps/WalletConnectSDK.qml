@@ -17,6 +17,7 @@ WalletConnectSDKBase {
 
     // Enable the WalletConnect SDK
     property alias enableSdk: loader.active
+    property alias userUID: loader.profileName
     readonly property alias url: loader.url
 
     implicitWidth: 1

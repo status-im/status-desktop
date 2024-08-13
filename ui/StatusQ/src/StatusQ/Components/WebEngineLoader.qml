@@ -23,6 +23,7 @@ Item {
 
     required property url url
     required property var webChannelObjects
+    property string profileName: "Default"
 
     // Used to control the loading of the web engine
     property bool active: false
@@ -48,6 +49,7 @@ Item {
 
             url: root.url
             webChannel: statusChannel
+            profile.storageName: root.profileName
 
             onLoadingChanged: function(loadRequest) {
                 switch(loadRequest.status) {
