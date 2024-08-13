@@ -257,3 +257,29 @@ proc getTokenBalanceHistoryDataTask*(argEncoded: string) {.gcsafe, nimcall.} =
       "error": e.msg,
     }
     arg.finish(output)
+
+#################################################
+# Async get ENS names for account
+#################################################
+
+type
+  GetENSNamesForAccountsTaskArg = ref object of QObjectTaskArg
+    chainId: int
+    addresses: seq[string]
+
+proc getENSNamesForAccountsTask*(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetENSNamesForAccountsTaskArg](argEncoded)
+  try:
+    var result = newJobject()
+    for address in arg.addresses:
+      let name = getEnsName(address, arg.chainId)
+      result[address] = %name
+
+    arg.finish(%* {
+        "result": result,
+        "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })

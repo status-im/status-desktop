@@ -1,8 +1,18 @@
-  proc storeWatchOnlyAccount(self: Service, account: WalletAccountDto) =
-    if self.watchOnlyAccounts.hasKey(account.address):
-      error "trying to store an already existing watch only account"
-      return
-    self.watchOnlyAccounts[account.address] = account
+# Forward declarations
+proc getENSNamesForAccountsAsync(self: Service, addresses: seq[string], chainId: int)
+
+proc storeWatchOnlyAccount(self: Service, account: WalletAccountDto) =
+  if self.watchOnlyAccounts.hasKey(account.address):
+    error "trying to store an already existing watch only account"
+    return
+  self.watchOnlyAccounts[account.address] = account
+
+proc updateENSNameOnWatchOnlyAccount(self: Service, address, name: string) =
+  if not self.watchOnlyAccounts.hasKey(address):
+    return
+  var account = self.watchOnlyAccounts[address]
+  account.name = name
+  self.watchOnlyAccounts[address] = account
 
 proc storeKeypair(self: Service, keypair: KeypairDto) =
   if keypair.keyUid.len == 0:
@@ -39,6 +49,15 @@ proc replaceKeypair(self: Service, keypair: KeypairDto) =
       locAcc.prodPreferredChainIds = acc.prodPreferredChainIds
       locAcc.testPreferredChainIds = acc.testPreferredChainIds
       break
+
+# replaces only keypair/accounts fields that could be changed
+proc updateENSNameOnKeypairAccounts(self: Service, address, name: string) =
+ for keyUid, keypair in self.keypairs.pairs:
+  for locAcc in keypair.accounts:
+    if cmpIgnoreCase(locAcc.address, address) != 0:
+      continue
+    locAcc.name = name
+    break
 
 proc storeAccountToKeypair(self: Service, account: WalletAccountDto) =
   if account.keyUid.len == 0:
@@ -136,16 +155,21 @@ proc startWallet(self: Service) =
 
 proc init*(self: Service) =
   try:
+    var addressesToGetENSName: seq[string] = @[]
+
     let chainId = self.networkService.getAppNetwork().chainId
     let woAccounts = getWatchOnlyAccountsFromDb()
     for acc in woAccounts:
-      acc.ens = getEnsName(acc.address, chainId)
+      addressesToGetENSName.add(acc.address)
       self.storeWatchOnlyAccount(acc)
+
     let keypairs = getKeypairsFromDb()
     for kp in keypairs:
       for acc in kp.accounts:
-        acc.ens = getEnsName(acc.address, chainId)
+        addressesToGetENSName.add(acc.address)
       self.storeKeypair(kp)
+
+    self.getENSNamesForAccountsAsync(addressesToGetENSName, chainId)
 
     let addresses = self.getWalletAddresses()
     self.checkRecentHistory(addresses)
@@ -464,7 +488,7 @@ proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {
     else:
       kp.keycards = @[]
   except Exception as e:
-    error "error handilng migrated keycard response", errDesription=e.msg
+    error "error handling migrated keycard response", errDesription=e.msg
   self.events.emit(SIGNAL_ALL_KEYCARDS_DELETED, data)
 
 proc migrateNonProfileKeycardKeypairToAppAsync*(self: Service, keyUid, seedPhrase, password: string, doPasswordHashing: bool) =
@@ -478,6 +502,38 @@ proc migrateNonProfileKeycardKeypairToAppAsync*(self: Service, keyUid, seedPhras
     keyUid: keyUid,
     seedPhrase: seedPhrase,
     password: finalPassword
+  )
+  self.threadpool.start(arg)
+
+proc onGetENSNamesForAccountsDone*(self: Service, response: string) {.slot.} =
+  try:
+    let responseObj = response.parseJson
+    if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
+      raise newException(CatchableError, responseObj["error"].getStr)
+
+    var doesHaveENS = false
+    for address, name in responseObj["result"].pairs:
+      if name.getStr == "":
+        continue
+      doesHaveENS = true
+      if self.watchOnlyAccounts.hasKey(address):
+        self.updateENSNameOnWatchOnlyAccount(address, name.getStr)
+      else:
+        self.updateENSNameOnKeypairAccounts(address, name.getStr)
+    
+      if doesHaveENS:
+        echo "EMIT"
+        # TODO send an event
+  except Exception as e:
+    error "error getting ENS names for accounts", errDesription=e.msg
+
+proc getENSNamesForAccountsAsync(self: Service, addresses: seq[string], chainId: int) =
+  let arg = GetENSNamesForAccountsTaskArg(
+    tptr: getENSNamesForAccountsTask,
+    vptr: cast[ByteAddress](self.vptr),
+    slot: "onGetENSNamesForAccountsDone",
+    addresses: addresses,
+    chainId: chainId
   )
   self.threadpool.start(arg)
 
