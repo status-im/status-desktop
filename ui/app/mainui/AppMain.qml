@@ -79,6 +79,8 @@ Item {
         tokensStore: appMain.tokensStore
         currencyStore: appMain.currencyStore
     }
+    readonly property WalletStores.BuyCryptoStore buyCryptoStore: WalletStores.BuyCryptoStore {}
+
     readonly property FeatureFlagsStore featureFlagsStore: FeatureFlagsStore {
         readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
 
@@ -402,6 +404,7 @@ Item {
         currencyStore: appMain.currencyStore
         walletAssetsStore: appMain.walletAssetsStore
         walletCollectiblesStore: appMain.walletCollectiblesStore
+        buyCryptoStore: appMain.buyCryptoStore
         networkConnectionStore: appMain.networkConnectionStore
         isDevBuild: !production
 
