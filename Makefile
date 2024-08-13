@@ -15,6 +15,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 
 .PHONY: \
 	all \
+	nix-shell \
 	bottles \
 	check-qt-dir \
 	check-pkg-target-linux \
@@ -64,6 +65,10 @@ else # "variables.mk" was included. Business as usual until the end of this file
 
 all: nim_status_client
 
+nix-shell: export NIX_USER_CONF_FILES := $(PWD)/nix/nix.conf
+nix-shell: 
+	nix-shell
+
 # must be included after the default target
 -include $(BUILD_SYSTEM_DIR)/makefiles/targets.mk
 
@@ -98,7 +103,6 @@ else
  PKG_TARGET := pkg-linux
  RUN_TARGET := run-linux
 endif
-
 
 check-qt-dir:
 ifeq ($(shell qmake -v 2>/dev/null),)
