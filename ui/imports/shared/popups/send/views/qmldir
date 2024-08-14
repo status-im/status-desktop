@@ -1,6 +1,5 @@
 AmountToReceive 1.0 AmountToReceive.qml
 AmountToSend 1.0 AmountToSend.qml
-AmountToSendNew 1.0 AmountToSendNew.qml
 FeesView 1.0 FeesView.qml
 NetworkCardsComponent 1.0 NetworkCardsComponent.qml
 NetworkSelector 1.0 NetworkSelector.qml

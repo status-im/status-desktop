@@ -468,7 +468,7 @@ StatusDialog {
                 RowLayout {
                     visible: d.isSelectedHoldingValidAsset && !d.isCollectiblesTransfer
 
-                    AmountToSendNew {
+                    AmountToSend {
                         id: amountToSend
 
                         caption: d.isBridgeTx ? qsTr("Amount to bridge")
