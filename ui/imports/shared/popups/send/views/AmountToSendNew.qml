@@ -140,9 +140,9 @@ Control {
                 return SQUtils.AmountsArithmetic.times(
                             SQUtils.AmountsArithmetic.fromString(inputDelocalized),
                             SQUtils.AmountsArithmetic.fromNumber(
-                                price * (10 ** root.fiatDecimalPlaces))).round().toFixed()
+                                price * (10 ** root.fiatDecimalPlaces))).toFixed()
 
-            if (!price)
+            if (!price) // prevent div by zero below
                 return 0
 
             const multiplier = SQUtils.AmountsArithmetic.fromExponent(
@@ -152,7 +152,7 @@ Control {
                         SQUtils.AmountsArithmetic.times(
                             SQUtils.AmountsArithmetic.fromString(inputDelocalized),
                             multiplier),
-                        SQUtils.AmountsArithmetic.fromNumber(price)).round().toFixed()
+                        SQUtils.AmountsArithmetic.fromNumber(price)).toFixed()
         }
     }
 

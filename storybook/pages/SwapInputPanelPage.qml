@@ -69,6 +69,9 @@ SplitView {
                 readonly property var accounts: WalletAccountsModel {}
                 readonly property var flatNetworks: NetworksModel.flatNetworks
                 readonly property bool areTestNetworksEnabled: true
+                signal suggestedRoutesReady(var txRoutes, string errCode, string errDescription)
+                signal transactionSent(var chainId, var txHash, var uuid, var error)
+                signal transactionSendingComplete(var txHash,  var success)
             }
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore

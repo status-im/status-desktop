@@ -488,9 +488,7 @@ StatusDialog {
                         interactive: popup.interactive
 
                         readonly property bool balanceExceeded:
-                            SQUtils.AmountsArithmetic.cmp(
-                                SQUtils.AmountsArithmetic.fromNumber(maxButton.maxSafeCryptoValue, multiplierIndex),
-                                SQUtils.AmountsArithmetic.fromString(amount)) === -1
+                            SQUtils.AmountsArithmetic.fromNumber(maxButton.maxSafeCryptoValue, multiplierIndex).cmp(amount) === -1
 
                         readonly property bool ready: valid && !empty && !balanceExceeded
 
@@ -517,7 +515,6 @@ StatusDialog {
                             fiatMode ? minSendFiatDecimals + 1 : 0
                         // End of to-be-removed part
 
-                        decimalPoint: LocaleUtils.userInputLocale.decimalPoint
                         markAsInvalid: balanceExceeded
 
                         // Collectibles do not have decimals

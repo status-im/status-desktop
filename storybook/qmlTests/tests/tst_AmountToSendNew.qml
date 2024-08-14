@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 
 import QtTest 1.15
 
+import StatusQ 0.1
+
 import shared.popups.send.views 1.0
 
 Item {
@@ -16,6 +18,12 @@ Item {
 
     property AmountToSendNew amountToSend
 
+    SignalSpy {
+        id: amountChangedSpy
+        target: amountToSend
+        signalName: "amountChanged"
+    }
+
     TestCase {
         name: "AmountToSendNew"
         when: windowShown
@@ -28,6 +36,10 @@ Item {
 
         function init() {
             amountToSend = createTemporaryObject(componentUnderTest, root)
+        }
+
+        function cleanup() {
+            amountChangedSpy.clear()
         }
 
         function test_empty() {
@@ -179,9 +191,29 @@ Item {
             verify(!!textField)
 
             amountToSend.setValue("2.5")
-            tryCompare(amountToSend, "text", "2,5")
             tryCompare(textField, "text", "2,5")
             verify(amountToSend.valid)
+        }
+
+        function test_pasteChangesAmount() {
+            compare(amountToSend.valid, false)
+            compare(amountToSend.empty, true)
+            compare(amountToSend.amount, "0")
+
+            QClipboardProxy.copyTextToClipboard("1.0005")
+            const textField = findChild(amountToSend, "amountToSend_textField")
+            verify(!!textField)
+
+            verify(textField.canPaste)
+            mouseClick(textField)
+            keySequence(StandardKey.Paste)
+            compare(textField.text, "1.0005")
+
+            compare(amountToSend.valid, true)
+            compare(amountToSend.empty, false)
+            compare(amountToSend.amount, "1000500000000000000")
+
+            compare(amountChangedSpy.count, 1)
         }
     }
 }
