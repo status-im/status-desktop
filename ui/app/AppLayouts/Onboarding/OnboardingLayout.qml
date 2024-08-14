@@ -35,6 +35,10 @@ OnboardingBasePage {
         id: loader
         anchors.fill: parent
         sourceComponent: {
+            // If metrics is enabled, we send a metric to the screen visited
+            // TODO check if enabled
+            Global.addCentralizedMetricIfEnabled(Constants.navigationMetric, {viewId: root.startupStore.currentStartupState.stateType})
+
             switch (root.startupStore.currentStartupState.stateType) {
             case Constants.startupState.allowNotifications:
                 return allowNotificationsViewComponent
