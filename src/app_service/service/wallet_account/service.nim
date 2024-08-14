@@ -56,6 +56,8 @@ QtObject:
   proc handleKeypair(self: Service, keypair: KeypairDto)
   proc updateAccountsPositions(self: Service)
   proc importPartiallyOperableAccounts(self: Service, keyUid: string, password: string)
+  proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64
+  proc fetchENSNamesForAddressesAsync(self: Service, addresses: seq[string], chainId: int)
   # All slots defined in included files have to be forward declared
   proc onAllTokensBuilt*(self: Service, response: string) {.slot.}
   proc onDerivedAddressesFetched*(self: Service, jsonString: string) {.slot.}
@@ -66,7 +68,7 @@ QtObject:
   proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.}
   proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {.slot.}
   proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.}
-  proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64
+  proc onENSNamesFetched*(self: Service, response: string) {.slot.}
 
   proc delete*(self: Service) =
     self.closingApp = true
