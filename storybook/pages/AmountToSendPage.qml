@@ -2,99 +2,157 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import StatusQ.Core 0.1
+import Qt.labs.settings 1.1
+
 import shared.popups.send.views 1.0
 
-import Storybook 1.0
-import Models 1.0
-
 SplitView {
-    id: root
+    orientation: Qt.Vertical
+    SplitView.fillWidth: true
 
-    readonly property var tokensBySymbolModel: TokensBySymbolModel {}
-
-    readonly property double maxCryptoBalance: parseFloat(maxCryptoBalanceText.text)
-    readonly property int decimals: parseInt(decimalsText.text)
-
-    Logs { id: logs }
-
-    Component.onCompleted: amountToSendInput.input.forceActiveFocus()
-
-    SplitView {
-        orientation: Qt.Vertical
+    Item {
         SplitView.fillWidth: true
+        SplitView.fillHeight: true
 
-        Item {
-            SplitView.fillWidth: true
-            SplitView.fillHeight: true
+        AmountToSend {
+            id: amountToSend
 
-            AmountToSend {
-                id: amountToSendInput
-                isBridgeTx: false
-                interactive: true
-                selectedHolding: tokensBySymbolModel.data[0]
+            anchors.centerIn: parent
 
-                inputIsFiat: fiatInput.checked
+            interactive: interactiveCheckBox.checked
+            fiatInputInteractive: fiatInteractiveCheckBox.checked
+            markAsInvalid: markAsInvalidCheckBox.checked
 
-                maxInputBalance: inputIsFiat ? root.maxCryptoBalance*amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount
-                                             : root.maxCryptoBalance
-                currentCurrency: "USD"
-                formatCurrencyAmount: function(amount, symbol, options, locale) {
-                    const currencyAmount = {
-                        amount: amount,
-                        symbol: symbol,
-                        displayDecimals: root.decimals,
-                        stripTrailingZeroes: true
-                    }
-                    return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
+            mainInputLoading: ctrlMainInputLoading.checked
+            bottomTextLoading: ctrlBottomTextLoading.checked
+
+            caption: "Amount to send"
+
+            decimalPoint: decimalPointRadioButton.checked ? "." : ","
+            price: parseFloat(priceTextField.text)
+
+            multiplierIndex: multiplierIndexSpinBox.value
+
+            formatFiat: balance => `${balance.toLocaleString(Qt.locale())} USD`
+            formatBalance: balance => `${balance.toLocaleString(Qt.locale())} ETH`
+        }
+    }
+
+    Pane {
+        id: logsAndControlsPanel
+
+        SplitView.minimumHeight: 350
+
+        ColumnLayout {
+            spacing: 15
+
+            RowLayout {
+                Label {
+                    text: "Price"
                 }
-                onReCalculateSuggestedRoute: function() {
-                    logs.logEvent("onReCalculateSuggestedRoute")
+
+                TextField {
+                    id: priceTextField
+
+                    text: "812.323"
                 }
             }
-        }
 
-        LogsAndControlsPanel {
-            id: logsAndControlsPanel
-
-            SplitView.minimumHeight: 250
-
-            logsView.logText: logs.logText
-
-            ColumnLayout {
+            RowLayout {
                 Label {
-                    Layout.topMargin: 10
-                    Layout.fillWidth: true
-                    text: "Max Crypto Balance"
+                    text: "Decimal point"
                 }
 
-                TextField {
-                    id: maxCryptoBalanceText
-                    background: Rectangle { border.color: 'lightgrey' }
-                    Layout.preferredWidth: 200
-                    text: "1000000"
+                RadioButton {
+                    id: decimalPointRadioButton
+
+                    text: "."
                 }
 
+                RadioButton {
+                    text: ","
+                    checked: true
+                }
+            }
+
+            RowLayout {
                 Label {
-                    Layout.topMargin: 10
-                    Layout.fillWidth: true
-                    text: "Decimals"
+                    text: "Multiplier index"
                 }
 
-                TextField {
-                    id: decimalsText
-                    background: Rectangle { border.color: 'lightgrey' }
-                    Layout.preferredWidth: 200
-                    text: "6"
+                SpinBox {
+                    id: multiplierIndexSpinBox
+
+                    editable: true
+                    value: 18
+                    to: 30
+                }
+            }
+
+            RowLayout {
+                CheckBox {
+                    id: interactiveCheckBox
+
+                    text: "Interactive"
+                    checked: true
                 }
 
                 CheckBox {
-                    id: fiatInput
+                    id: fiatInteractiveCheckBox
 
-                    text: "Fiat input value"
+                    text: "Fiat mode interactive"
+                    checked: true
+                }
+
+                CheckBox {
+                    id: markAsInvalidCheckBox
+
+                    text: "Mark as invalid"
+                }
+
+                CheckBox {
+                    id: ctrlMainInputLoading
+                    text: "Input loading"
+                }
+
+                CheckBox {
+                    id: ctrlBottomTextLoading
+                    text: "Bottom text loading"
+                }
+            }
+
+            Label {
+                font.bold: true
+                text: `fiat mode: ${amountToSend.fiatMode}, ` +
+                      `valid: ${amountToSend.valid}, ` +
+                      `empty: ${amountToSend.empty}, ` +
+                      `amount: ${amountToSend.amount}`
+            }
+
+            RowLayout {
+                Label {
+                    text: `Set value`
+                }
+
+                TextField {
+                    id: amountTextField
+
+                    text: "0.0012"
+                }
+
+                Button {
+                    text: "SET"
+
+                    onClicked: {
+                        amountToSend.setValue(amountTextField.text)
+                    }
                 }
             }
         }
+    }
+
+    Settings {
+        property alias multiplier: multiplierIndexSpinBox.value
     }
 }
 

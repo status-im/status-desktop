@@ -13,10 +13,10 @@ Item {
     Component {
         id: componentUnderTest
 
-        AmountToSendNew {}
+        AmountToSend {}
     }
 
-    property AmountToSendNew amountToSend
+    property AmountToSend amountToSend
 
     SignalSpy {
         id: amountChangedSpy
@@ -25,7 +25,7 @@ Item {
     }
 
     TestCase {
-        name: "AmountToSendNew"
+        name: "AmountToSend"
         when: windowShown
 
         function type(key, times = 1) {

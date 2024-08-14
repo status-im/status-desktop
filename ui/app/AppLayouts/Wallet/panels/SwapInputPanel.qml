@@ -213,7 +213,7 @@ Control {
             Layout.preferredWidth: parent.width*.66
             Layout.fillHeight: true
 
-            AmountToSendNew {
+            AmountToSend {
                 readonly property bool balanceExceeded:
                     SQUtils.AmountsArithmetic.fromNumber(maxSendButton.maxSafeCryptoValue, multiplierIndex).cmp(amount) === -1
 
