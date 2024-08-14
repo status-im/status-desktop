@@ -20,6 +20,8 @@ class GenericValidator : public QValidator
                READ validateScriptString WRITE setValidateScriptString
                NOTIFY validateScriptStringChanged)
 
+    Q_PROPERTY(QString locale READ localeName WRITE setLocaleName NOTIFY localeChanged FINAL) ///< locale name, defaults to user's own
+
 public:
     enum State {
         Invalid = QValidator::Invalid,
@@ -43,8 +45,13 @@ signals:
     void fixupScriptStringChanged();
     void validateScriptStringChanged();
 
+    void localeChanged();
+
 private:
     bool isValidState(int state) const;
+
+    QString localeName() const;
+    void setLocaleName(const QString& newLocaleName);
 
     QQmlScriptString m_fixupScriptString;
     QQmlScriptString m_validateScriptString;

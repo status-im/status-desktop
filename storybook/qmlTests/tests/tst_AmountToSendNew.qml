@@ -11,9 +11,7 @@ Item {
     Component {
         id: componentUnderTest
 
-        AmountToSendNew {
-            decimalPoint: "."
-        }
+        AmountToSendNew {}
     }
 
     property AmountToSendNew amountToSend
@@ -24,8 +22,7 @@ Item {
 
         function type(key, times = 1) {
             for (let i = 0; i < times; i++) {
-                keyPress(key)
-                keyRelease(key)
+                keyClick(key)
             }
         }
 
@@ -168,6 +165,23 @@ Item {
 
             compare(amountToSend.amount, "0")
             compare(textField.text, "")
+        }
+
+        function test_localeAndDecimalPoint() {
+            verify(!!amountToSend)
+
+            // set a different locale, thus a different decimal separator
+            amountToSend.locale = Qt.locale("cs_CZ")
+            tryCompare(amountToSend.locale, "name", "cs_CZ")
+            tryCompare(amountToSend, "decimalPoint", ",") // "," is the default decimal separator for cs_CZ locale
+
+            const textField = findChild(amountToSend, "amountToSend_textField")
+            verify(!!textField)
+
+            amountToSend.setValue("2.5")
+            tryCompare(amountToSend, "text", "2,5")
+            tryCompare(textField, "text", "2,5")
+            verify(amountToSend.valid)
         }
     }
 }

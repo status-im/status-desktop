@@ -21,7 +21,7 @@ import StatusQ 0.1
 GenericValidator {
     id: root
 
-    property string decimalPoint: "."
+    property string decimalPoint: Qt.locale(locale).decimalPoint
     property int maxIntegralDigits: 10
     property int maxDecimalDigits: 10
 
