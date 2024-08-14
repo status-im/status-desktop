@@ -198,8 +198,8 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
         break
     if found:
       continue
-    woAccDb.ens = getEnsName(woAccDb.address, chainId)
     self.storeWatchOnlyAccount(woAccDb)
+    self.fetchENSNamesForAddressesAsync(@[woAccDb.address], chainId)
     self.buildAllTokens(@[woAccDb.address], store = true)
     if notify:
       self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: woAccDb))
@@ -210,9 +210,9 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
     if localKp.isNil:
       self.storeKeypair(kpDb)
       let addresses = kpDb.accounts.map(a => a.address)
+      self.fetchENSNamesForAddressesAsync(addresses, chainId)
       self.buildAllTokens(addresses, store = true)
       for acc in kpDb.accounts:
-        acc.ens = getEnsName(acc.address, chainId)
         if acc.isChat:
           continue
         if notify:
@@ -226,8 +226,8 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
             break
         if found:
           continue
-        accDb.ens = getEnsName(accDb.address, chainId)
         self.storeAccountToKeypair(accDb)
+        self.fetchENSNamesForAddressesAsync(@[accDb.address], chainId)
         if accDb.isChat:
           continue
         self.buildAllTokens(@[accDb.address], store = true)
