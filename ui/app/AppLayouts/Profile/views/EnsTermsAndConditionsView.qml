@@ -76,6 +76,8 @@ Item {
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
             preSelectedHoldingID: !!d.sntToken && !!d.sntToken.symbol ? d.sntToken.symbol: ""
             preSelectedHoldingType: Constants.TokenType.ERC20
+            publicKey: root.contactsStore.myPublicKey
+            ensName: root.username
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {
                     let path = bestRoutes.firstItem()

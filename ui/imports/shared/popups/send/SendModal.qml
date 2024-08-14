@@ -43,6 +43,10 @@ StatusDialog {
     property int preSelectedChainId: 0
     property string stickersPackId
 
+    // needed for registering ENS
+    property string publicKey
+    property string ensName
+
     // token symbol
     property string preSelectedHoldingID
     property int preSelectedHoldingType: Constants.TokenType.Unknown
@@ -265,6 +269,14 @@ StatusDialog {
 
         if (!!popup.stickersPackId) {
             d.extraParamsJson = "{\"%1\":\"%2\"}".arg(Constants.suggestedRoutesExtraParamsProperties.packId).arg(popup.stickersPackId)
+        }
+
+        if (!!popup.ensName && !!popup.publicKey) {
+            d.extraParamsJson = "{\"%1\":\"%2\",\"%3\":\"%4\"}"
+            .arg(Constants.suggestedRoutesExtraParamsProperties.username)
+            .arg(popup.ensName)
+            .arg(Constants.suggestedRoutesExtraParamsProperties.publicKey)
+            .arg(popup.publicKey)
         }
     }
 
