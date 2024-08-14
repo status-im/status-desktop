@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
-
+import StatusQ.Components 0.1
 import StatusQ.Validators 0.1
 
 import utils 1.0
@@ -21,6 +21,9 @@ Control {
     /* In fiat mode the input value is meant to be a fiat value, conversely,
      * crypto value otherwise. */
     readonly property alias fiatMode: d.fiatMode
+
+    /* Indicates whether toggling the fiatMode is enabled for the user */
+    property bool fiatInputInteractive: interactive
 
     /* Indicates if input represent valid number. E.g. empty input or containing
      * only decimal point is not valid. */
@@ -41,7 +44,7 @@ Control {
     property int fiatDecimalPlaces: 2
 
     /* Specifies how divisible given cryptocurrency is, e.g. 18 for ETH. Used
-     * for limiting allowed decimal places and computing final amout as an
+     * for limiting allowed decimal places and computing final amount as an
      * integer value */
     property int multiplierIndex: 18
 
@@ -50,6 +53,13 @@ Control {
 
     property alias caption: captionText.text
     property bool interactive: true
+
+    readonly property bool cursorVisible: textField.cursorVisible
+    readonly property alias placeholderText: textField.placeholderText
+
+    /* Loading states for the input and text below */
+    property bool mainInputLoading
+    property bool bottomTextLoading
 
     /* Allows mark input as invalid when it's valid number but doesn't satisfy
      * arbitrary external criteria, e.g. is higher than maximum expected value. */
@@ -132,6 +142,9 @@ Control {
                             SQUtils.AmountsArithmetic.fromNumber(
                                 price * (10 ** root.fiatDecimalPlaces))).round().toFixed()
 
+            if (!price)
+                return 0
+
             const multiplier = SQUtils.AmountsArithmetic.fromExponent(
                                  root.multiplierIndex)
 
@@ -191,7 +204,15 @@ Control {
 
                     maxDecimalDigits: d.fiatMode ? root.fiatDecimalPlaces
                                                  : root.multiplierIndex
+                    locale: root.locale.name
                 }
+                visible: !root.mainInputLoading
+            }
+            LoadingComponent {
+                objectName: "topAmountToSendInputLoadingComponent"
+                Layout.preferredWidth: textField.width
+                Layout.preferredHeight: textField.height
+                visible: root.mainInputLoading
             }
         }
 
@@ -224,7 +245,7 @@ Control {
 
                 anchors.fill: parent
                 cursorShape: enabled ? Qt.PointingHandCursor : undefined
-                enabled: root.interactive
+                enabled: root.fiatInputInteractive
 
                 onClicked: {
                     const secondaryValue = d.secondaryValue
@@ -250,6 +271,14 @@ Control {
                     textField.text = d.localize(trimmed)
                 }
             }
+            visible: !root.bottomTextLoading
+        }
+
+        LoadingComponent {
+            objectName: "bottomItemTextLoadingComponent"
+            Layout.preferredWidth: bottomItem.width
+            Layout.preferredHeight: bottomItem.height
+            visible: root.bottomTextLoading
         }
     }
 }

@@ -20,7 +20,11 @@ SplitView {
             anchors.centerIn: parent
 
             interactive: interactiveCheckBox.checked
+            fiatInputInteractive: fiatInteractiveCheckBox.checked
             markAsInvalid: markAsInvalidCheckBox.checked
+
+            mainInputLoading: ctrlMainInputLoading.checked
+            bottomTextLoading: ctrlBottomTextLoading.checked
 
             caption: "Amount to send"
 
@@ -94,9 +98,26 @@ SplitView {
                 }
 
                 CheckBox {
+                    id: fiatInteractiveCheckBox
+
+                    text: "Fiat mode interactive"
+                    checked: true
+                }
+
+                CheckBox {
                     id: markAsInvalidCheckBox
 
                     text: "Mark as invalid"
+                }
+
+                CheckBox {
+                    id: ctrlMainInputLoading
+                    text: "Input loading"
+                }
+
+                CheckBox {
+                    id: ctrlBottomTextLoading
+                    text: "Bottom text loading"
                 }
             }
 
