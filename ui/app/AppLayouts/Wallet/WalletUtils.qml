@@ -228,57 +228,57 @@ QtObject {
         case Constants.routerErrorCodes.processor.errFailedToParseBaseFee:
             return qsTr("failed to parse base fee")
         case Constants.routerErrorCodes.processor.errFailedToParsePercentageFee:
-            return sTr("failed to parse percentage fee")
+            return qsTr("failed to parse percentage fee")
         case Constants.routerErrorCodes.processor.errContractNotFound:
-            return sTr("contract not found")
+            return qsTr("contract not found")
         case Constants.routerErrorCodes.processor.errNetworkNotFound:
-            return sTr("network not found")
+            return qsTr("network not found")
         case Constants.routerErrorCodes.processor.errTokenNotFound:
-            return sTr("token not found")
+            return qsTr("token not found")
         case Constants.routerErrorCodes.processor.errNoEstimationFound:
-            return sTr("no estimation found")
+            return qsTr("no estimation found")
         case Constants.routerErrorCodes.processor.errNotAvailableForContractType:
-            return sTr("not available for contract type")
+            return qsTr("not available for contract type")
         case Constants.routerErrorCodes.processor.errNoBonderFeeFound:
-            return sTr("no bonder fee found")
+            return qsTr("no bonder fee found")
         case Constants.routerErrorCodes.processor.errContractTypeNotSupported:
-            return sTr("contract type not supported")
+            return qsTr("contract type not supported")
         case Constants.routerErrorCodes.processor.errFromChainNotSupported:
-            return sTr("from chain not supported")
+            return qsTr("from chain not supported")
         case Constants.routerErrorCodes.processor.errToChainNotSupported:
-            return sTr("to chain not supported")
+            return qsTr("to chain not supported")
         case Constants.routerErrorCodes.processor.errTxForChainNotSupported:
-            return sTr("tx for chain not supported")
+            return qsTr("tx for chain not supported")
         case Constants.routerErrorCodes.processor.errENSResolverNotFound:
-            return sTr("ens resolver not found")
+            return qsTr("ens resolver not found")
         case Constants.routerErrorCodes.processor.errENSRegistrarNotFound:
-            return sTr("ens registrar not found")
+            return qsTr("ens registrar not found")
         case Constants.routerErrorCodes.processor.errToAndFromTokensMustBeSet:
-            return sTr("to and from tokens must be set")
+            return qsTr("to and from tokens must be set")
         case Constants.routerErrorCodes.processor.errCannotResolveTokens:
-            return sTr("cannot resolve tokens")
+            return qsTr("cannot resolve tokens")
         case Constants.routerErrorCodes.processor.errPriceRouteNotFound:
-            return sTr("price route not found")
+            return qsTr("price route not found")
         case Constants.routerErrorCodes.processor.errConvertingAmountToBigInt:
-            return sTr("converting amount issue")
+            return qsTr("converting amount issue")
         case Constants.routerErrorCodes.processor.errNoChainSet:
-            return sTr("no chain set")
+            return qsTr("no chain set")
         case Constants.routerErrorCodes.processor.errNoTokenSet:
-            return sTr("no token set")
+            return qsTr("no token set")
         case Constants.routerErrorCodes.processor.errToTokenShouldNotBeSet:
-            return sTr("to token should not be set")
+            return qsTr("to token should not be set")
         case Constants.routerErrorCodes.processor.errFromAndToChainsMustBeDifferent:
-            return sTr("from and to chains must be different")
+            return qsTr("from and to chains must be different")
         case Constants.routerErrorCodes.processor.errFromAndToChainsMustBeSame:
-            return sTr("from and to chains must be same")
+            return qsTr("from and to chains must be same")
         case Constants.routerErrorCodes.processor.errFromAndToTokensMustBeDifferent:
-            return sTr("from and to tokens must be different")
+            return qsTr("from and to tokens must be different")
         case Constants.routerErrorCodes.processor.errContextCancelled:
-            return sTr("context cancelled")
+            return qsTr("context cancelled")
         case Constants.routerErrorCodes.processor.errContextDeadlineExceeded:
-            return sTr("context deadline exceeded")
+            return qsTr("context deadline exceeded")
         case Constants.routerErrorCodes.processor.errPriceTimeout:
-            return sTr("fetching price timeout")
+            return qsTr("fetching price timeout")
         case Constants.routerErrorCodes.processor.errNotEnoughLiquidity:
             return qsTr("not enough liquidity")
         case Constants.routerErrorCodes.processor.errPriceImpactTooHigh:
@@ -296,49 +296,49 @@ QtObject {
         case Constants.routerErrorCodes.processor.errStickersBuyCustomError:
             return details
         case Constants.routerErrorCodes.router.errENSRegisterRequiresUsernameAndPubKey:
-            return sTr("username and public key are required for registering ens name")
+            return qsTr("username and public key are required for registering ens name")
         case Constants.routerErrorCodes.router.errENSRegisterTestnetSTTOnly:
-            return sTr("only STT is supported for registering ens name on testnet")
+            return qsTr("only STT is supported for registering ens name on testnet")
         case Constants.routerErrorCodes.router.errENSRegisterMainnetSNTOnly:
-            return sTr("only SNT is supported for registering ens name on mainnet")
+            return qsTr("only SNT is supported for registering ens name on mainnet")
         case Constants.routerErrorCodes.router.errENSReleaseRequiresUsername:
-            return sTr("username is required for releasing ens name")
+            return qsTr("username is required for releasing ens name")
         case Constants.routerErrorCodes.router.errENSSetPubKeyRequiresUsernameAndPubKey:
-            return sTr("username and public key are required for setting public key")
+            return qsTr("username and public key are required for setting public key")
         case Constants.routerErrorCodes.router.errStickersBuyRequiresPackID:
-            return sTr("stickers pack id is required for buying stickers")
+            return qsTr("stickers pack id is required for buying stickers")
         case Constants.routerErrorCodes.router.errSwapRequiresToTokenID:
-            return sTr("to token is required for Swap")
+            return qsTr("to token is required for Swap")
         case Constants.routerErrorCodes.router.errSwapTokenIDMustBeDifferent:
-            return sTr("from and to token must be different")
+            return qsTr("from and to token must be different")
         case Constants.routerErrorCodes.router.errSwapAmountInAmountOutMustBeExclusive:
-            return sTr("only one of amount to send or receiving amount can be set")
+            return qsTr("only one of amount to send or receiving amount can be set")
         case Constants.routerErrorCodes.router.errSwapAmountInMustBePositive:
-            return sTr("amount to send must be positive")
+            return qsTr("amount to send must be positive")
         case Constants.routerErrorCodes.router.errSwapAmountOutMustBePositive:
-            return sTr("receiving amount must be positive")
+            return qsTr("receiving amount must be positive")
         case Constants.routerErrorCodes.router.errLockedAmountNotSupportedForNetwork:
-            return sTr("locked amount is not supported for the selected network")
+            return qsTr("locked amount is not supported for the selected network")
         case Constants.routerErrorCodes.router.errLockedAmountNotNegative:
-            return sTr("locked amount must not be negative")
+            return qsTr("locked amount must not be negative")
         case Constants.routerErrorCodes.router.errLockedAmountExceedsTotalSendAmount:
-            return sTr("locked amount exceeds the total amount to send")
+            return qsTr("locked amount exceeds the total amount to send")
         case Constants.routerErrorCodes.router.errLockedAmountLessThanSendAmountAllNetworks:
-            return sTr("locked amount is less than the total amount to send, but all networks are locked")
+            return qsTr("locked amount is less than the total amount to send, but all networks are locked")
         case Constants.routerErrorCodes.router.errNativeTokenNotFound:
-            return sTr("native token not found")
+            return qsTr("native token not found")
         case Constants.routerErrorCodes.router.errDisabledChainFoundAmongLockedNetworks:
-            return sTr("disabled chain found among locked networks")
+            return qsTr("disabled chain found among locked networks")
         case Constants.routerErrorCodes.router.errENSSetPubKeyInvalidUsername:
-            return sTr("a valid username, ending in '.eth', is required for setting public key")
+            return qsTr("a valid username, ending in '.eth', is required for setting public key")
         case Constants.routerErrorCodes.router.errLockedAmountExcludesAllSupported:
-            return sTr("all supported chains are excluded, routing impossible")
+            return qsTr("all supported chains are excluded, routing impossible")
         case Constants.routerErrorCodes.router.errTokenNotFound:
-            return sTr("token not found")
+            return qsTr("token not found")
         case Constants.routerErrorCodes.router.errNoBestRouteFound:
-            return sTr("no best route found")
+            return qsTr("no best route found")
         case Constants.routerErrorCodes.router.errCannotCheckReceiverBalance:
-            return sTr("cannot check balance")
+            return qsTr("cannot check balance")
         case Constants.routerErrorCodes.router.errCannotCheckLockedAmounts:
             return qsTr("cannot check locked amounts")
         case Constants.routerErrorCodes.router.errNotEnoughTokenBalance:
