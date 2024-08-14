@@ -270,7 +270,16 @@ type StatusDesktopConfig = object
     desc: "Determines if the app should use mocked keycard"
     name: "USE_MOCKED_KEYCARD"
     abbr: "use-mocked-keycard" .}: bool
-
+  httpApiEnabled* {.
+    defaultValue: true
+    desc: "Enable HTTP RPC API"
+    name: "HTTP_API"
+    abbr: "http-api" .}: bool
+  wsApiEnabled* {.
+    defaultValue: true
+    desc: "Enable WebSocket RPC API"
+    name: "WS_API"
+    abbr: "ws-api" .}: bool
 
 # On macOS the first time when a user gets the "App downloaded from the
 # internet" warning, and clicks the Open button, the OS passes a unique process
