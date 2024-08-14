@@ -173,10 +173,11 @@ QtObject:
       alchemyOptimismMainnetToken: ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
       alchemyOptimismGoerliToken: ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
       alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
-      statusProxyMarketUser: STATUS_PROXY_MARKET_USER_RESOLVED,
-      statusProxyMarketPassword: STATUS_PROXY_MARKET_PASSWORD_RESOLVED,
-      statusProxyBlockchainUser: STATUS_PROXY_BLOCKCHAIN_USER_RESOLVED,
-      statusProxyBlockchainPassword: STATUS_PROXY_BLOCKCHAIN_PASSWORD_RESOLVED,
+      statusProxyStageName: STATUS_PROXY_STAGE_NAME_RESOLVED,
+      statusProxyMarketUser: STATUS_PROXY_USER_RESOLVED,
+      statusProxyMarketPassword: STATUS_PROXY_PASSWORD_RESOLVED,
+      statusProxyBlockchainUser: STATUS_PROXY_USER_RESOLVED,
+      statusProxyBlockchainPassword: STATUS_PROXY_PASSWORD_RESOLVED,
     )
 
   proc defaultCreateAccountRequest*(): CreateAccountRequest =
