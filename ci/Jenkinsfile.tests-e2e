@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.6'
+library 'status-jenkins-lib@v1.9.5'
 
 pipeline {
 
@@ -85,7 +85,7 @@ pipeline {
 
     /* Logging rules let you enable or disable logging for categories */
     QT_LOGGING_RULES = '*.warning=true'
-    
+
     /* Set to a non-zero value to make Qt print out diagnostic information about the each (C++) plugin it tries to load. */
     QT_DEBUG_PLUGINS = 0
   }
