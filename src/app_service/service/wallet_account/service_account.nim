@@ -136,16 +136,19 @@ proc startWallet(self: Service) =
 
 proc init*(self: Service) =
   try:
+    var addressesToGetENSName: seq[string] = @[]
     let chainId = self.networkService.getAppNetwork().chainId
     let woAccounts = getWatchOnlyAccountsFromDb()
     for acc in woAccounts:
-      acc.ens = getEnsName(acc.address, chainId)
+      addressesToGetENSName.add(acc.address)
       self.storeWatchOnlyAccount(acc)
     let keypairs = getKeypairsFromDb()
     for kp in keypairs:
       for acc in kp.accounts:
-        acc.ens = getEnsName(acc.address, chainId)
+        addressesToGetENSName.add(acc.address)
       self.storeKeypair(kp)
+
+    self.fetchENSNamesForAddressesAsync(addressesToGetENSName, chainId)
 
     let addresses = self.getWalletAddresses()
     self.checkRecentHistory(addresses)
@@ -195,8 +198,8 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
         break
     if found:
       continue
-    woAccDb.ens = getEnsName(woAccDb.address, chainId)
     self.storeWatchOnlyAccount(woAccDb)
+    self.fetchENSNamesForAddressesAsync(@[woAccDb.address], chainId)
     self.buildAllTokens(@[woAccDb.address], store = true)
     if notify:
       self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: woAccDb))
@@ -207,9 +210,9 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
     if localKp.isNil:
       self.storeKeypair(kpDb)
       let addresses = kpDb.accounts.map(a => a.address)
+      self.fetchENSNamesForAddressesAsync(addresses, chainId)
       self.buildAllTokens(addresses, store = true)
       for acc in kpDb.accounts:
-        acc.ens = getEnsName(acc.address, chainId)
         if acc.isChat:
           continue
         if notify:
@@ -223,8 +226,8 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
             break
         if found:
           continue
-        accDb.ens = getEnsName(accDb.address, chainId)
         self.storeAccountToKeypair(accDb)
+        self.fetchENSNamesForAddressesAsync(@[accDb.address], chainId)
         if accDb.isChat:
           continue
         self.buildAllTokens(@[accDb.address], store = true)
@@ -279,19 +282,21 @@ proc updateAccountsPositions(self: Service) =
       continue
     localAcc.position = dbAcc.position
 
-proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string, operable: string = "",
-  positionUpdated: Option[bool] = none(bool), notify: bool = true) =
+proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string, ensName: string = "",
+  operable: string = "", positionUpdated: Option[bool] = none(bool), notify: bool = true) =
   if address.len > 0:
     var account = self.getAccountByAddress(address)
     if account.isNil:
       return
-    if name.len > 0 or colorId.len > 0 or emoji.len > 0 or operable.len > 0:
+    if name.len > 0 or colorId.len > 0 or emoji.len > 0 or operable.len > 0 or ensName.len > 0:
       if name.len > 0 and name != account.name:
         account.name = name
       if colorId.len > 0 and colorId != account.colorId:
         account.colorId = colorId
       if emoji.len > 0 and emoji != account.emoji:
         account.emoji = emoji
+      if ensName.len > 0 and ensName != account.ens:
+        account.ens = ensName
       if operable.len > 0 and operable != account.operable and
         (operable == AccountNonOperable or operable == AccountPartiallyOperable or operable == AccountFullyOperable):
           account.operable = operable
@@ -445,7 +450,7 @@ proc makePartiallyOperableAccoutsFullyOperable(self: Service, password: string, 
       return
     let affectedAccounts = map(response.result.getElems(), x => x.getStr())
     for acc in affectedAccounts:
-      self.updateAccountInLocalStoreAndNotify(acc, name = "", colorId = "", emoji = "", operable = AccountFullyOperable)
+      self.updateAccountInLocalStoreAndNotify(acc, name = "", colorId = "", emoji = "", ensName = "", operable = AccountFullyOperable)
   except Exception as e:
     error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg
 
@@ -464,7 +469,7 @@ proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {
     else:
       kp.keycards = @[]
   except Exception as e:
-    error "error handilng migrated keycard response", errDesription=e.msg
+    error "error handling migrated keycard response", errDesription=e.msg
   self.events.emit(SIGNAL_ALL_KEYCARDS_DELETED, data)
 
 proc migrateNonProfileKeycardKeypairToAppAsync*(self: Service, keyUid, seedPhrase, password: string, doPasswordHashing: bool) =
@@ -478,6 +483,29 @@ proc migrateNonProfileKeycardKeypairToAppAsync*(self: Service, keyUid, seedPhras
     keyUid: keyUid,
     seedPhrase: seedPhrase,
     password: finalPassword
+  )
+  self.threadpool.start(arg)
+
+proc onENSNamesFetched*(self: Service, response: string) {.slot.} =
+  try:
+    let responseObj = response.parseJson
+    if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
+      raise newException(CatchableError, responseObj["error"].getStr)
+    for address, name in responseObj["result"].pairs:
+      let ensName = name.getStr
+      if ensName.len == 0:
+        continue
+      self.updateAccountInLocalStoreAndNotify(address, name = "", colorId = "", emoji = "", ensName)
+  except Exception as e:
+    error "error getting ENS names for accounts", errDesription=e.msg
+
+proc fetchENSNamesForAddressesAsync(self: Service, addresses: seq[string], chainId: int) =
+  let arg = FetchENSNamesForAddressesTaskArg(
+    tptr: fetchENSNamesForAddressesTask,
+    vptr: cast[ByteAddress](self.vptr),
+    slot: "onENSNamesFetched",
+    addresses: addresses,
+    chainId: chainId
   )
   self.threadpool.start(arg)
 
@@ -621,7 +649,7 @@ proc moveAccountFinally*(self: Service, fromPosition: int, toPosition: int) =
     updated = true
   except Exception as e:
     error "error: ", procName="moveAccountFinally", errName=e.name, errDesription=e.msg
-  self.updateAccountInLocalStoreAndNotify(address = "", name = "", colorId = "", emoji = "", operable = "", some(updated))
+  self.updateAccountInLocalStoreAndNotify(address = "", name = "", colorId = "", emoji = "", ensName = "", operable = "", some(updated))
 
 proc updateKeypairName*(self: Service, keyUid: string, name: string) =
   try:
@@ -719,7 +747,7 @@ proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool 
     var localAcc = self.getAccountByAddress(account.address)
     if not localAcc.isNil:
       self.updateAccountInLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji,
-        account.operable, none(bool), notify)
+        account.ens, account.operable, none(bool), notify)
     else:
       self.addNewKeypairsAccountsToLocalStoreAndNotify(notify)
 
