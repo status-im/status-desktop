@@ -17,6 +17,7 @@ type
     alchemyOptimismMainnetToken*: string
     alchemyOptimismGoerliToken*: string
     alchemyOptimismSepoliaToken*: string
+    statusProxyStageName*: string
     statusProxyMarketUser*: string
     statusProxyMarketPassword*: string
     statusProxyBlockchainUser*: string
@@ -39,6 +40,7 @@ proc toJson*(self: WalletSecretsConfig): JsonNode =
     "alchemyOptimismMainnetToken": self.alchemyOptimismMainnetToken,
     "alchemyOptimismGoerliToken": self.alchemyOptimismGoerliToken,
     "alchemyOptimismSepoliaToken": self.alchemyOptimismSepoliaToken,
+    "statusProxyStageName": self.statusProxyStageName,
     "statusProxyMarketUser": self.statusProxyMarketUser,
     "statusProxyMarketPassword": self.statusProxyMarketPassword,
     "statusProxyBlockchainUser": self.statusProxyBlockchainUser,
