@@ -39,7 +39,7 @@ Control {
     onTokenKeyChanged: Qt.callLater(reevaluateSelectedId)
 
     property string tokenAmount
-    onTokenAmountChanged: Qt.callLater(d.updateInputText)
+    onTokenAmountChanged: Qt.callLater(d.updateInputText) // FIXME remove the callLater(), shouldn't be needed now
 
     property int swapSide: SwapInputPanel.SwapSide.Pay
     property bool fiatInputInteractive
@@ -47,6 +47,7 @@ Control {
     property bool bottomTextLoading
     property bool interactive: true
 
+    // FIXME drop after using ModelEntry, shouldn't be needed
     function reevaluateSelectedId() {
         holdingSelector.selectToken(tokenKey)
         d.selectedHolding = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey)
@@ -54,18 +55,24 @@ Control {
 
     // output API
     readonly property string selectedHoldingId: holdingSelector.currentTokensKey
-    readonly property double value: amountToSendInput.cryptoValueToSendFloat
-    readonly property string rawValue: amountToSendInput.cryptoValueToSend
+    readonly property double value: amountToSendInput.asNumber
+    readonly property string rawValue: {
+        if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.marketDetails || !d.selectedHolding.marketDetails.currencyPrice) {
+            return "0"
+        }
+        return amountToSendInput.amount
+    }
     readonly property int rawValueMultiplierIndex: amountToSendInput.multiplierIndex
-    readonly property bool valueValid: amountToSendInput.inputNumberValid
-    readonly property bool amountEnteredGreaterThanBalance: value > maxSendButton.maxSafeValue
+    readonly property bool valueValid: value > 0 && amountToSendInput.valid &&
+                                       (swapSide === SwapInputPanel.SwapSide.Pay ? !amountEnteredGreaterThanBalance : true)
+    readonly property bool amountEnteredGreaterThanBalance: amountToSendInput.balanceExceeded
 
     // visual properties
     property int swapExchangeButtonWidth: 44
     property string caption: swapSide === SwapInputPanel.SwapSide.Pay ? qsTr("Pay") : qsTr("Receive")
 
     function forceActiveFocus() {
-        amountToSendInput.input.forceActiveFocus()
+        amountToSendInput.forceActiveFocus()
     }
 
     enum SwapSide {
@@ -82,14 +89,15 @@ Control {
     QtObject {
         id: d
 
+        // FIXME use ModelEntry
         property var selectedHolding: SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey)
 
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding
         readonly property double maxFiatBalance: isSelectedHoldingValidAsset && !!selectedHolding.currencyBalance ? selectedHolding.currencyBalance : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset && !!selectedHolding.currentBalance ? selectedHolding.currentBalance : 0
-        readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
-        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? root.currencyStore.currentCurrency
-                                                                            : (!!selectedHolding ? selectedHolding.symbol : "")
+        readonly property double maxInputBalance: amountToSendInput.fiatMode ? maxFiatBalance : maxCryptoBalance
+        readonly property string inputSymbol: amountToSendInput.fiatMode ? root.currencyStore.currentCurrency
+                                                                         : (!!selectedHolding ? selectedHolding.symbol : "")
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.processedAssetsModel
@@ -105,7 +113,7 @@ Control {
 
         function updateInputText() {
             if (!tokenAmount) {
-                amountToSendInput.input.input.edit.clear()
+                amountToSendInput.clear()
                 return
             }
             let amountToSet = SQUtils.AmountsArithmetic.fromString(tokenAmount).toFixed()
@@ -114,10 +122,10 @@ Control {
             and thats why we compare with toFixed()
             also when deleting a numbers last digit, we should not update the text to 0
             instead it should remain empty as entered by the user */
-            let currentInputTextAmount = SQUtils.AmountsArithmetic.fromString(amountToSendInput.input.text.replace(amountToSendInput.input.locale.decimalPoint,'.')).toFixed()
+            let currentInputTextAmount = SQUtils.AmountsArithmetic.fromString(amountToSendInput.text.replace(amountToSendInput.locale.decimalPoint,'.')).toFixed()
             if (currentInputTextAmount !== amountToSet &&
-                    !(amountToSet === "0" && !amountToSendInput.input.text)) {
-                amountToSendInput.input.text = amountToSet.replace('.', amountToSendInput.input.locale.decimalPoint)
+                    !(amountToSet === "0" && !amountToSendInput.text)) {
+                amountToSendInput.setValue(tokenAmount)
             }
         }
     }
@@ -138,7 +146,7 @@ Control {
         ShapePath {
             id: path
             fillColor: Theme.palette.indirectColor3
-            strokeColor: amountToSendInput.input.input.edit.activeFocus ? Theme.palette.directColor7 : Theme.palette.directColor8
+            strokeColor: amountToSendInput.cursorVisible ? Theme.palette.directColor7 : Theme.palette.directColor8
             strokeWidth: 1
             capStyle: ShapePath.RoundCap
 
@@ -205,24 +213,30 @@ Control {
             Layout.preferredWidth: parent.width*.66
             Layout.fillHeight: true
 
-            AmountToSend {
+            AmountToSendNew {
+                readonly property bool balanceExceeded:
+                    SQUtils.AmountsArithmetic.fromNumber(maxSendButton.maxSafeCryptoValue, multiplierIndex).cmp(amount) === -1
+
+                readonly property double asNumber: {
+                    if (!valid)
+                        return 0
+
+                    return parseFloat(text.replace(LocaleUtils.userInputLocale.decimalPoint, "."))
+                }
+
                 Layout.fillWidth: true
                 id: amountToSendInput
                 objectName: "amountToSendInput"
                 caption: root.caption
                 interactive: root.interactive
-                selectedHolding: d.selectedHolding // FIXME shouldn't be necesary to pass the whole object
-
+                markAsInvalid: (root.swapSide === SwapInputPanel.SwapSide.Pay && (balanceExceeded || d.maxInputBalance === 0)) || (!!text && !valid)
                 fiatInputInteractive: root.fiatInputInteractive
-                input.input.edit.color: !input.valid ? Theme.palette.dangerColor1 : maxSendButton.hovered ? Theme.palette.baseColor1
-                                                                                                          : Theme.palette.directColor1
+                multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding && !!d.selectedHolding.decimals ? d.selectedHolding.decimals : 18
+                price: d.isSelectedHoldingValidAsset ? (!!d.selectedHolding && !!d.selectedHolding.marketDetails ? d.selectedHolding.marketDetails.currencyPrice.amount : 1)
+                                                     : 1
+                formatFiat: amount => root.currencyStore.formatCurrencyAmount(amount, root.currencyStore.currentCurrency)
+                formatBalance: amount => root.currencyStore.formatCurrencyAmount(amount, d.inputSymbol)
 
-                multiplierIndex: d.selectedHolding && d.selectedHolding.decimals ? d.selectedHolding.decimals : 0
-
-                maxInputBalance: (root.swapSide === SwapInputPanel.SwapSide.Receive || !d.isSelectedHoldingValidAsset) ? Number.POSITIVE_INFINITY
-                                                                                                                       : maxSendButton.maxSafeValue
-                currentCurrency: root.currencyStore.currentCurrency
-                formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 mainInputLoading: root.mainInputLoading
                 bottomTextLoading: root.bottomTextLoading
             }
@@ -239,7 +253,7 @@ Control {
                 Layout.alignment: Qt.AlignRight
                 model: d.adaptor.outputAssetsModel
                 nonInteractiveDelegateKey: root.nonInteractiveTokensKey
-                onActivated: if (root.interactive) amountToSendInput.input.forceActiveFocus()
+                onActivated: if (root.interactive) root.forceActiveFocus()
             }
 
             Item { Layout.fillHeight: !maxSendButton.visible }
@@ -251,19 +265,15 @@ Control {
                 Layout.maximumWidth: parent.width
                 objectName: "maxTagButton"
 
-                readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(
-                                                           d.maxInputBalance, d.inputSymbol)
-                readonly property string maxSafeValueAsString: maxSafeValue.toLocaleString(
-                                                                   amountToSendInput.input.locale, 'f', -128)
+                readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(d.maxInputBalance, d.inputSymbol)
+                readonly property double maxSafeCryptoValue: WalletUtils.calculateMaxSafeSendAmount(d.maxCryptoBalance, d.inputSymbol)
 
-                markAsInvalid: (!amountToSendInput.input.valid && !!amountToSendInput.input.text)
-                               || d.maxInputBalance === 0
+                markAsInvalid: amountToSendInput.markAsInvalid
 
-                formattedValue:
-                    d.maxInputBalance === 0 ? amountToSendInput.input.locale.zeroDigit
-                                            : root.currencyStore.formatCurrencyAmount(
-                                                  maxSafeValue, d.inputSymbol,
-                                                  { noSymbol: !amountToSendInput.inputIsFiat })
+                formattedValue: d.maxInputBalance === 0 ? LocaleUtils.userInputLocale.zeroDigit
+                                                        : root.currencyStore.formatCurrencyAmount(
+                                                              maxSafeValue, d.inputSymbol,
+                                                              { noSymbol: !amountToSendInput.fiatMode })
 
                 visible: d.isSelectedHoldingValidAsset && root.swapSide === SwapInputPanel.SwapSide.Pay
                 // FIXME: This should be enabled after #15709 is resolved
@@ -271,10 +281,10 @@ Control {
 
                 onClicked: {
                     if (maxSafeValue)
-                        amountToSendInput.input.text = maxSafeValueAsString
+                        amountToSendInput.setValue(SQUtils.AmountsArithmetic.fromNumber(maxSafeValue).toString())
                     else
-                        amountToSendInput.input.input.edit.clear()
-                    amountToSendInput.input.forceActiveFocus()
+                        amountToSendInput.clear()
+                    root.forceActiveFocus()
                 }
             }
         }

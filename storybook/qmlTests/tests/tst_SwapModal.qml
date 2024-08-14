@@ -330,8 +330,7 @@ Item {
             verify(!!payPanel)
             const amountToSendInput = findChild(payPanel, "amountToSendInput")
             verify(!!amountToSendInput)
-            verify(amountToSendInput.input.input.edit.activeFocus)
-            verify(amountToSendInput.input.input.edit.cursorVisible)
+            verify(amountToSendInput.cursorVisible)
 
             for(let i =0; i< swapAdaptor.nonWatchAccounts.count; i++) {
                 // launch account selection dropdown
@@ -363,8 +362,7 @@ Item {
                 verify(!!headerContentItemEmoji)
                 compare(headerContentItemEmoji.asset.emoji, swapAdaptor.nonWatchAccounts.get(i).emoji)
 
-                verify(amountToSendInput.input.input.edit.activeFocus)
-                verify(amountToSendInput.input.input.edit.cursorVisible)
+                verify(amountToSendInput.cursorVisible)
             }
             closeAndVerfyModal()
         }
@@ -377,8 +375,7 @@ Item {
             verify(!!payPanel)
             const amountToSendInput = findChild(payPanel, "amountToSendInput")
             verify(!!amountToSendInput)
-            verify(amountToSendInput.input.input.edit.activeFocus)
-            verify(amountToSendInput.input.input.edit.cursorVisible)
+            verify(amountToSendInput.cursorVisible)
 
             // get network comboBox
             const networkComboBox = findChild(controlUnderTest, "networkFilter")
@@ -413,8 +410,7 @@ Item {
                     verify(!!networkComboIcon)
                     verify(networkComboIcon.asset.name.includes(root.swapAdaptor.filteredFlatNetworksModel.get(i).iconUrl))
 
-                    verify(amountToSendInput.input.input.edit.activeFocus)
-                    verify(amountToSendInput.input.input.edit.cursorVisible)
+                    verify(amountToSendInput.cursorVisible)
                 }
             }
             networkComboBox.control.popup.close()
@@ -817,9 +813,11 @@ Item {
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
             compare(receivePanel.value, root.swapStore.getWei2Eth(txHasRouteNoApproval.amountToReceive, root.swapAdaptor.toToken.decimals))
-            compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(
-                        LocaleUtils.numberFromLocaleString(root.swapAdaptor.swapOutputData.toTokenAmount, Qt.locale()),
-                        root.swapAdaptor.toToken.decimals).toString())
+            compare(receivePanel.rawValue,
+                    SQUtils.AmountsArithmetic.times(
+                        SQUtils.AmountsArithmetic.fromString(root.swapAdaptor.swapOutputData.toTokenAmount),
+                        SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.toToken.decimals)
+                        ).toFixed())
 
             // edit some params to retry swap
             root.swapFormData.fromTokenAmount = "0.012"
@@ -865,9 +863,11 @@ Item {
             verify(!receivePanel.interactive)
             compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
             compare(receivePanel.value, root.swapStore.getWei2Eth(txRoutes2.amountToReceive, root.swapAdaptor.toToken.decimals))
-            compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(
-                        LocaleUtils.numberFromLocaleString(root.swapAdaptor.swapOutputData.toTokenAmount, Qt.locale()),
-                        root.swapAdaptor.toToken.decimals).toString())
+            compare(receivePanel.rawValue,
+                    SQUtils.AmountsArithmetic.times(
+                        SQUtils.AmountsArithmetic.fromString(root.swapAdaptor.swapOutputData.toTokenAmount),
+                        SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.toToken.decimals)
+                        ).toFixed())
         }
 
         function test_modal_pay_input_default() {
@@ -887,14 +887,14 @@ Item {
             const tokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
             verify(!!tokenSelectorContentItemText)
 
-            waitForRendering(payPanel)
+            waitForRendering(controlUnderTest.contentItem)
 
             // check default states for the from input selector
             compare(amountToSendInput.caption, qsTr("Pay"))
             verify(amountToSendInput.interactive)
-            compare(amountToSendInput.input.text, "")
-            verify(amountToSendInput.input.input.edit.cursorVisible)
-            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            compare(amountToSendInput.text, "")
+            verify(amountToSendInput.cursorVisible)
+            compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
             compare(holdingSelector.currentTokensKey, "")
             compare(tokenSelectorContentItemText.text, qsTr("Select asset"))
@@ -941,9 +941,9 @@ Item {
 
             compare(amountToSendInput.caption, qsTr("Pay"))
             verify(amountToSendInput.interactive)
-            tryCompare(amountToSendInput.input.input, "text", valueToExchangeString)
-            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
-            tryCompare(amountToSendInput.input.input.edit, "cursorVisible", true)
+            tryCompare(amountToSendInput, "text", valueToExchangeString)
+            compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
+            tryCompare(amountToSendInput, "cursorVisible", true)
             tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToExchange * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
             compare(holdingSelector.currentTokensKey, expectedToken.tokensKey)
             tryCompare(tokenSelectorContentItemText, "text", expectedToken.symbol)
@@ -990,8 +990,8 @@ Item {
 
                 compare(amountToSendInput.caption, qsTr("Pay"))
                 verify(amountToSendInput.interactive)
-                compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
-                verify(amountToSendInput.input.input.edit.cursorVisible)
+                compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
+                verify(amountToSendInput.cursorVisible)
                 compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
                 compare(holdingSelector.currentTokensKey, "")
                 compare(tokenSelectorContentItemText.text, "Select asset")
@@ -1039,9 +1039,9 @@ Item {
 
             compare(amountToSendInput.caption, qsTr("Pay"))
             verify(amountToSendInput.interactive)
-            compare(amountToSendInput.input.text, valueToExchangeString)
-            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
-            tryCompare(amountToSendInput.input.input.edit, "cursorVisible", true)
+            compare(amountToSendInput.text, valueToExchangeString)
+            compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
+            tryCompare(amountToSendInput, "cursorVisible", true)
             tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToExchange * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
             compare(holdingSelector.currentTokensKey, expectedToken.tokensKey)
             compare(tokenSelectorContentItemText.text, expectedToken.symbol)
@@ -1078,11 +1078,11 @@ Item {
 
             // check default states for the from input selector
             compare(amountToSendInput.caption, qsTr("Receive"))
-            compare(amountToSendInput.input.text, "")
+            compare(amountToSendInput.text, "")
             // TODO: this should be come interactive under https://github.com/status-im/status-desktop/issues/15095
             verify(!amountToSendInput.interactive)
-            verify(!amountToSendInput.input.input.edit.cursorVisible)
-            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            verify(!amountToSendInput.cursorVisible)
+            compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
             compare(holdingSelector.currentTokensKey, "STT")
             compare(tokenSelectorContentItemText.text, "STT")
@@ -1130,9 +1130,9 @@ Item {
             compare(amountToSendInput.caption, qsTr("Receive"))
             // TODO: this should be come interactive under https://github.com/status-im/status-desktop/issues/15095
             verify(!amountToSendInput.interactive)
-            verify(!amountToSendInput.input.input.edit.cursorVisible)
-            compare(amountToSendInput.input.text, valueToReceive.toLocaleString(Qt.locale(), 'f', -128))
-            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            verify(!amountToSendInput.cursorVisible)
+            compare(amountToSendInput.text, valueToReceive.toLocaleString(Qt.locale(), 'f', -128))
+            compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToReceive * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
             compare(holdingSelector.currentTokensKey, expectedToken.tokensKey)
             compare(tokenSelectorContentItemText.text, expectedToken.symbol)
@@ -1179,7 +1179,7 @@ Item {
 
             // check states for the pay input selector
             verify(maxTagButton.visible)
-	    // FIXME: maxTagButton should be enabled after #15709 is resolved
+            // FIXME: maxTagButton should be enabled after #15709 is resolved
             verify(!maxTagButton.enabled);
             let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
             let truncmaxPossibleValue = Math.trunc(maxPossibleValue*100)/100
@@ -1187,9 +1187,9 @@ Item {
                                                                                        : root.swapAdaptor.currencyStore.formatCurrencyAmount(truncmaxPossibleValue, expectedToken.symbol, {noSymbol: true})))
             waitForItemPolished(amountToSendInput)
             verify(amountToSendInput.interactive)
-            tryCompare(amountToSendInput.input.input.edit, "cursorVisible", true)
-            tryCompare(amountToSendInput.input, "text", valueToExchange.toLocaleString(Qt.locale(), 'f', -128))
-            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            tryCompare(amountToSendInput, "cursorVisible", true)
+            tryCompare(amountToSendInput, "text", valueToExchange.toLocaleString(Qt.locale(), 'f', -128))
+            compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToExchange * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
 
             if (maxTagButton.enabled) {
@@ -1198,8 +1198,8 @@ Item {
                 waitForItemPolished(payPanel)
 
                 verify(amountToSendInput.interactive)
-                verify(amountToSendInput.input.input.edit.cursorVisible)
-                tryCompare(amountToSendInput.input, "text", maxPossibleValue === 0 ? "" : maxPossibleValue.toLocaleString(Qt.locale(), 'f', -128))
+                verify(amountToSendInput.cursorVisible)
+                tryCompare(amountToSendInput, "text", maxPossibleValue === 0 ? "" : maxPossibleValue.toLocaleString(Qt.locale(), 'f', -128))
                 tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
             }
             closeAndVerfyModal()
@@ -1239,9 +1239,9 @@ Item {
             compare(maxTagButton.text, qsTr("Max. %1").arg(maxPossibleValue === 0 ? "0"
                                                                                   : root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true})))
             verify(amountToSendInput.interactive)
-            verify(amountToSendInput.input.input.edit.cursorVisible)
-            compare(amountToSendInput.input.text, "")
-            compare(amountToSendInput.input.placeholderText, LocaleUtils.numberToLocaleString(0))
+            verify(amountToSendInput.cursorVisible)
+            compare(amountToSendInput.text, "")
+            compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
 
             // click on max button
@@ -1251,8 +1251,8 @@ Item {
             formValuesChanged.wait()
 
             verify(amountToSendInput.interactive)
-            verify(amountToSendInput.input.input.edit.cursorVisible)
-            compare(amountToSendInput.input.text, maxPossibleValue > 0 ? maxPossibleValue.toLocaleString(Qt.locale(), 'f', -128) : "")
+            verify(amountToSendInput.cursorVisible)
+            compare(amountToSendInput.text, maxPossibleValue > 0 ? maxPossibleValue.toLocaleString(Qt.locale(), 'f', -128) : "")
             tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
 
             closeAndVerfyModal()
@@ -1407,7 +1407,7 @@ Item {
             // verify pay values
             compare(payPanel.tokenKey, data.fromToken)
             compare(payPanel.tokenAmount, data.fromTokenAmount)
-            verify(payAmountToSendInput.input.input.edit.cursorVisible)
+            verify(payAmountToSendInput.cursorVisible)
             compare(paytokenSelectorContentItemText.text, !!root.swapFormData.fromTokensKey ? root.swapFormData.fromTokensKey : qsTr("Select asset"))
             compare(!!data.fromToken , !!paytokenSelectorIcon)
             if(!!paytokenSelectorIcon) {
@@ -1418,7 +1418,7 @@ Item {
             // verify receive values
             compare(receivePanel.tokenKey, data.toToken)
             compare(receivePanel.tokenAmount, data.toTokenAmount)
-            verify(!receiveAmountToSendInput.input.input.edit.cursorVisible)
+            verify(!receiveAmountToSendInput.cursorVisible)
             compare(receivetokenSelectorContentItemText.text, !!root.swapFormData.toTokenKey ? root.swapFormData.toTokenKey : qsTr("Select asset"))
             if(!!receivetokenSelectorIcon) {
                 compare(receivetokenSelectorIcon.image.source, expectedToTokenIcon)
@@ -1447,19 +1447,19 @@ Item {
             // verify pay values
             compare(payPanel.tokenKey, data.toToken)
             compare(payPanel.tokenAmount, data.toTokenAmount)
-            verify(payAmountToSendInput.input.input.edit.cursorVisible)
+            verify(payAmountToSendInput.cursorVisible)
             compare(paytokenSelectorContentItemText.text, !!data.toToken ? data.toToken : qsTr("Select asset"))
             if(!!paytokenSelectorIcon) {
                 compare(paytokenSelectorIcon.image.source, expectedToTokenIcon)
             }
             verify(!!data.toToken ? maxTagButton.visible: !maxTagButton.visible)
             compare(maxTagButton.text, qsTr("Max. %1").arg(Qt.locale().zeroDigit))
-            compare(maxTagButton.type, (payAmountToSendInput.input.valid || !payAmountToSendInput.input.text) && maxTagButton.value > 0 ? StatusBaseButton.Type.Normal : StatusBaseButton.Type.Danger)
+            compare(maxTagButton.type, (payAmountToSendInput.valid || !payAmountToSendInput.text) && maxTagButton.value > 0 ? StatusBaseButton.Type.Normal : StatusBaseButton.Type.Danger)
 
             // verify receive values
             compare(receivePanel.tokenKey, data.fromToken)
             compare(receivePanel.tokenAmount, data.fromTokenAmount)
-            verify(!receiveAmountToSendInput.input.input.edit.cursorVisible)
+            verify(!receiveAmountToSendInput.cursorVisible)
             compare(receivetokenSelectorContentItemText.text, !!data.fromToken ? data.fromToken : qsTr("Select asset"))
             if(!!receivetokenSelectorIcon) {
                 compare(receivetokenSelectorIcon.image.source, expectedFromTokenIcon)
@@ -1672,8 +1672,7 @@ Item {
                     verify(!maxTagButton.visible)
                     compare(payPanel.selectedHoldingId, "")
                     verify(!payPanel.valueValid)
-                    compare(payPanel.value, 0)
-                    compare(payPanel.rawValue, "0")
+                    tryCompare(payPanel, "rawValue", "0")
                     verify(!errorTag.visible)
                     compare(tokenSelectorContentItemText.text, qsTr("Select asset"))
                 } else {
@@ -1694,8 +1693,7 @@ Item {
                                                          root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true})))
                     compare(payPanel.selectedHoldingId.toLowerCase(), expectedToken.symbol.toLowerCase())
                     compare(payPanel.valueValid, valueToExchange <= maxPossibleValue)
-                    compare(payPanel.value, valueToExchange)
-                    compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
+                    tryCompare(payPanel, "rawValue", SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
                     compare(errorTag.visible, valueToExchange > maxPossibleValue)
                     if(errorTag.visible)
                         compare(errorTag.text, qsTr("Insufficient funds for swap"))
@@ -1793,9 +1791,8 @@ Item {
                         {input: "1.00015", locale: Qt.locale("en_US")},
                         {input: "0.001", locale: Qt.locale("pl_PL")},
                         {input: "1.90015", locale: Qt.locale("pl_PL")},
-                        /* TODO uncomment after https://discord.com/channels/@me/927512790296563712/1260937239140241408
-                        {input: "100.000000000000151001"},
-                        {input: "1.0200000000000151001"} */
+                        {input: "100.000000000000151001", locale: Qt.locale("en_US")},
+                        {input: "1.020000000000015101", locale: Qt.locale("en_US")}
                     ]
         }
 
@@ -1807,20 +1804,18 @@ Item {
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
-            amountToSendInput.input.locale = data.locale
+            amountToSendInput.locale = data.locale
 
             // Launch popup
             launchAndVerfyModal()
-
+            mouseClick(amountToSendInput)
             waitForRendering(amountToSendInput)
 
-            //TODO: should not be needed after https://github.com/status-im/status-desktop/issues/15417
-            amountToSendInput.input.input.cursorPosition = data.input.length
-            let amountToTestInLocale = data.input.replace('.', amountToSendInput.input.locale.decimalPoint)
+            let amountToTestInLocale = data.input.replace('.', amountToSendInput.locale.decimalPoint)
             for(let i =0; i< data.input.length; i++) {
                 keyClick(Qt.Key_Backspace)
                 let expectedAmount = amountToTestInLocale.substring(0, data.input.length - (i+1))
-                compare(amountToSendInput.input.text, expectedAmount)
+                tryCompare(amountToSendInput, "text", expectedAmount)
             }
         }
 

@@ -75,6 +75,8 @@ StatusDialog {
         function onFormValuesChanged() {
             d.fetchSuggestedRoutes()
         }
+
+        // FIXME drop after SwapInputPanel uses ModelEntry to track the currently selected token
         // refresh the selected asset in payPanel when account/network changes
         function onSelectedAccountAddressChanged() {
             payPanel.reevaluateSelectedId()

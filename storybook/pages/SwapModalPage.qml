@@ -130,7 +130,18 @@ SplitView {
                 readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
                 assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
-            currencyStore: CurrenciesStore {}
+            currencyStore: CurrenciesStore {
+                function formatBigNumber(number: string, symbol: string, noSymbolOption: bool) {
+                    if (!number)
+                        return "N/A"
+                    if (!symbol)
+                        symbol = root.currentCurrency
+                    let options = {}
+                    if (!!noSymbolOption)
+                        options = {noSymbol: true}
+                    return formatCurrencyAmount(parseFloat(number), symbol, options)
+                }
+            }
             swapFormData: SwapInputParamsForm {
                 defaultToTokenKey: Constants.swap.testStatusTokenKey
                 onSelectedAccountAddressChanged: {

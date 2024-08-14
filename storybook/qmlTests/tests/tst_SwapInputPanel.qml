@@ -165,7 +165,7 @@ Item {
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
-            tryCompare(amountToSendInput.input, "text", AmountsArithmetic.fromString(tokenAmount).toLocaleString(Qt.locale(), 'f', -128))
+            tryCompare(amountToSendInput, "text", AmountsArithmetic.fromString(tokenAmount).toLocaleString(Qt.locale(), 'f', -128))
         }
 
         function test_enterTokenAmountLocalizedNumber() {
@@ -178,10 +178,10 @@ Item {
             verify(!!amountToSendInput)
             mouseClick(amountToSendInput)
             waitForRendering(amountToSendInput)
-            verify(amountToSendInput.input.input.edit.activeFocus)
+            verify(amountToSendInput.cursorVisible)
 
-            amountToSendInput.input.locale = Qt.locale("cs_CZ")
-            compare(amountToSendInput.input.locale.name, "cs_CZ")
+            amountToSendInput.locale = Qt.locale("cs_CZ")
+            compare(amountToSendInput.locale.name, "cs_CZ")
 
             // manually entering "1000000,00000042" meaning "1000000,00000042"; `,` being the decimal separator
             keyClick(Qt.Key_1)
@@ -193,7 +193,7 @@ Item {
             keyClick(Qt.Key_4)
             keyClick(Qt.Key_2)
 
-            tryCompare(amountToSendInput.input, "text", "1000000,00000042")
+            tryCompare(amountToSendInput, "text", "1000000,00000042")
             tryCompare(controlUnderTest, "value", 1000000.00000042)
             verify(controlUnderTest.valueValid)
         }
@@ -221,7 +221,7 @@ Item {
             verify(!!amountToSendInput)
             mouseClick(amountToSendInput)
             waitForRendering(amountToSendInput)
-            verify(amountToSendInput.input.input.edit.activeFocus)
+            verify(amountToSendInput.cursorVisible)
 
             keyClick(Qt.Key_1)
             keyClick(Qt.Key_Period)
@@ -276,7 +276,7 @@ Item {
 
         // FIXME: This should be enabled after #15709 is resolved
         function test_clickingMaxButton() {
-            skip("maxTabButton is diabled")
+            skip("maxTabButton is disabled")
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "ETH"})
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
@@ -292,9 +292,9 @@ Item {
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
             waitForRendering(amountToSendInput)
-            const maxValue = amountToSendInput.maxInputBalance
+            const maxValue = maxTagButton.maxSafeValue
 
-            tryCompare(amountToSendInput.input, "text", maxValue.toLocaleString(Qt.locale(), 'f', -128))
+            tryCompare(amountToSendInput, "text", maxValue.toLocaleString(Qt.locale(), 'f', -128))
             tryCompare(controlUnderTest, "value", maxValue)
             verify(controlUnderTest.valueValid)
         }
@@ -309,7 +309,7 @@ Item {
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
 
-            const amountInput = findChild(amountToSendInput, "amountInput")
+            const amountInput = findChild(amountToSendInput, "amountToSend_textField")
             verify(!!amountInput)
             verify(!amountInput.visible)
 
@@ -357,7 +357,7 @@ Item {
 
                 waitForRendering(controlUnderTest)
                 verify(maxTagButton.visible)
-		 // FIXME: maxTagButton should be enabled after #15709 is resolved
+                // FIXME: maxTagButton should be enabled after #15709 is resolved
                 verify(!maxTagButton.enabled)
                 verify(!maxTagButton.text.endsWith(modelItemToTest.symbol))
                 tryCompare(maxTagButton, "type", modelItemToTest.currentBalance === 0 ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal)
@@ -367,24 +367,21 @@ Item {
                     mouseClick(maxTagButton)
                     waitForRendering(amountToSendInput)
 
-                    tryCompare(amountToSendInput.input, "text", modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValueAsString)
-                    compare(controlUnderTest.value, maxTagButton.maxSafeValue)
+                    tryCompare(amountToSendInput, "text", modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValue.toString())
+                    tryCompare(controlUnderTest, "value", maxTagButton.maxSafeValue)
                     verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
-                    const marketPrice = !!amountToSendInput.selectedHolding ? amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount : 0
+                    const marketPrice = amountToSendInput.price
                     compare(bottomItemText.text, d.adaptor.formatCurrencyAmount(
                                 maxTagButton.maxSafeValue * marketPrice,
                                 d.adaptor.currencyStore.currentCurrency))
                 }
-                amountToSendInput.input.input.edit.clear()
+                amountToSendInput.clear()
             }
         }
 
         function test_input_greater_than_max_balance() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
             verify(!!controlUnderTest)
-
-            controlUnderTest.mainInputLoading = true
-            controlUnderTest.bottomTextLoading = true
 
             const maxTagButton = findChild(controlUnderTest, "maxTagButton")
             verify(!!maxTagButton)
@@ -402,15 +399,15 @@ Item {
             const bottomItemText = findChild(amountToSendInput, "bottomItemText")
             verify(!!bottomItemText)
 
+            mouseClick(amountToSendInput)
             // enter 5.42 as entered amount
             keyClick(Qt.Key_5)
             keyClick(Qt.Key_Period)
             keyClick(Qt.Key_4)
             keyClick(Qt.Key_2)
 
-            let numberTested = LocaleUtils.numberFromLocaleString("5.42", amountToSendInput.input.locale)
-
-            compare(amountToSendInput.input.text, "5.42")
+            let numberTested = 5.42
+            tryCompare(amountToSendInput, "text", "5.42")
 
             for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
                 let modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
@@ -425,13 +422,13 @@ Item {
                     // check input value and state
                     waitForItemPolished(controlUnderTest)
 
-                    compare(amountToSendInput.input.text, "5.42")
-                    const marketPrice = !!amountToSendInput.selectedHolding ? amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount : 0
+                    compare(amountToSendInput.text, "5.42")
+                    const marketPrice = amountToSendInput.price
                     tryCompare(bottomItemText, "text", d.adaptor.formatCurrencyAmount(
-                                   numberTested * marketPrice,
-                                   d.adaptor.currencyStore.currentCurrency))
+                                    numberTested * marketPrice,
+                                    d.adaptor.currencyStore.currentCurrency))
                     compare(controlUnderTest.value, numberTested)
-                    compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
+                    compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.text, modelItemToTest.decimals).toString())
                     compare(controlUnderTest.valueValid, numberTested <= maxTagButton.maxSafeValue)
                     compare(controlUnderTest.selectedHoldingId, modelItemToTest.tokensKey)
                     compare(controlUnderTest.amountEnteredGreaterThanBalance, numberTested > maxTagButton.maxSafeValue)
@@ -458,11 +455,11 @@ Item {
             const bottomItemText = findChild(amountToSendInput, "bottomItemText")
             verify(!!bottomItemText)
 
-            let numberTested = LocaleUtils.numberFromLocaleString(numberTestedString, amountToSendInput.input.locale)
+            let numberTested = LocaleUtils.numberFromLocaleString(numberTestedString, amountToSendInput.locale)
 
-            compare(amountToSendInput.input.text, numberTestedString)
+            compare(amountToSendInput.text, numberTestedString)
             compare(controlUnderTest.value, numberTested)
-            compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
+            compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.text, modelItemToTest.decimals).toString())
             compare(controlUnderTest.valueValid, true)
             compare(controlUnderTest.selectedHoldingId, tokenKeyToTest)
             compare(controlUnderTest.amountEnteredGreaterThanBalance, false)
@@ -472,7 +469,7 @@ Item {
             controlUnderTest.tokenAmount = numberTestedString
             waitForItemPolished(controlUnderTest)
 
-            tryCompare(amountToSendInput.input, "text", numberTestedString)
+            tryCompare(amountToSendInput, "text", numberTestedString)
             tryCompare(controlUnderTest, "value", numberTested)
             compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(numberTested, modelItemToTest.decimals).toString())
             compare(controlUnderTest.valueValid, false)
@@ -496,20 +493,20 @@ Item {
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
 
-            let numberTested = LocaleUtils.numberFromLocaleString(numberTestedString, amountToSendInput.input.locale)
+            let numberTested = LocaleUtils.numberFromLocaleString(numberTestedString, amountToSendInput.locale)
 
-            compare(amountToSendInput.input.text, numberTestedString)
+            compare(amountToSendInput.text, numberTestedString)
             compare(controlUnderTest.value, numberTested)
-            compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
+            compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.text, modelItemToTest.decimals).toString())
             compare(controlUnderTest.valueValid, true)
             compare(controlUnderTest.selectedHoldingId, tokenKeyToTest)
             compare(controlUnderTest.amountEnteredGreaterThanBalance, false)
 
             d.tokenSelectorAdaptor.assetsModel.modelReset()
 
-            compare(amountToSendInput.input.text, numberTestedString)
+            compare(amountToSendInput.text, numberTestedString)
             compare(controlUnderTest.value, numberTested)
-            compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.input.text, modelItemToTest.decimals).toString())
+            compare(controlUnderTest.rawValue, AmountsArithmetic.fromNumber(amountToSendInput.text, modelItemToTest.decimals).toString())
             compare(controlUnderTest.valueValid, true)
             compare(controlUnderTest.selectedHoldingId, tokenKeyToTest)
             compare(controlUnderTest.amountEnteredGreaterThanBalance, false)
