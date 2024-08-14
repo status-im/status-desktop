@@ -187,3 +187,16 @@ bool GenericValidator::isValidState(int state) const
             || stateCasted == QValidator::Intermediate
             || stateCasted == QValidator::Acceptable;
 }
+
+QString GenericValidator::localeName() const {
+    return locale().name();
+}
+
+void GenericValidator::setLocaleName(const QString &newLocaleName) {
+    if (newLocaleName == localeName())
+        return;
+
+    setLocale(newLocaleName);
+    emit localeChanged();
+    emit changed();
+}
