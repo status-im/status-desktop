@@ -933,7 +933,7 @@ method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSett
   elif sectionId.startsWith("0x"):
     # This is a community
     sectionIdToSend = "community"
-  singletonInstance.globalEvents.addCentralizedMetricIfEnabled("navigation", sectionIdToSend)
+  singletonInstance.globalEvents.addCentralizedMetricIfEnabled("navigation", $(%*{"viewId": sectionIdToSend}))
 
   self.view.model().setActiveSection(sectionId)
   self.view.activeSectionSet(item)
