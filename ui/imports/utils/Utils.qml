@@ -983,4 +983,49 @@ QtObject {
         // #15331
         return true
     }
+
+    function toBase64(buffer) {
+        const base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        const bufferView = new Uint8Array(buffer);
+        let result = "";
+        let i;
+
+        for (i = 0; i < bufferView.length - 2; i += 3) {
+            const chunk = (bufferView[i] << 16) | (bufferView[i + 1] << 8) | bufferView[i + 2];
+            result += base64Chars[(chunk >> 18) & 0x3F] +
+                      base64Chars[(chunk >> 12) & 0x3F] +
+                      base64Chars[(chunk >> 6) & 0x3F] +
+                      base64Chars[chunk & 0x3F];
+        }
+
+        if (bufferView.length % 3 === 1) {
+            const chunk = bufferView[i] << 16;
+            result += base64Chars[(chunk >> 18) & 0x3F] +
+                      base64Chars[(chunk >> 12) & 0x3F] +
+                      "==";
+        } else if (bufferView.length % 3 === 2) {
+            const chunk = (bufferView[i] << 16) | (bufferView[i + 1] << 8);
+            result += base64Chars[(chunk >> 18) & 0x3F] +
+                      base64Chars[(chunk >> 12) & 0x3F] +
+                      base64Chars[(chunk >> 6) & 0x3F] +
+                      "=";
+        }
+        return result;
+    }
+
+    function fetchImageBase64(url, callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.responseType = "arraybuffer";
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const base64Image = toBase64(xhr.response);
+                const mimeType = xhr.getResponseHeader("Content-Type") || "image/png";
+                callback(`data:${mimeType};base64,${base64Image}`);
+            } else {
+                callback("");
+            }
+        }
+        xhr.send();
+    }
 }
