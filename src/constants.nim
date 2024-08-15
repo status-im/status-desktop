@@ -65,6 +65,8 @@ let
   WALLET_CONNECT_PROJECT_ID* = BUILD_WALLET_CONNECT_PROJECT_ID
   MIXPANEL_APP_ID* = desktopConfig.mixpanelAppId
   MIXPANEL_TOKEN* = desktopConfig.mixpanelToken
+  HTTP_API_ENABLED* = desktopConfig.httpApiEnabled
+  WS_API_ENABLED* = desktopConfig.wsApiEnabled
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:
