@@ -5,7 +5,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from . import marks
+from tests.settings.settings_wallet import marks
 
 import configs
 import driver
@@ -39,6 +39,7 @@ def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str
         assert driver.waitFor(
             lambda: name in settings_saved_addresses.get_saved_address_names_list(),
             configs.timeouts.APP_LOAD_TIMEOUT_MSEC), f'Address: {name} not found'
+        # TODO change timeout after https://github.com/status-im/status-desktop/issues/16121
 
     with step('Verify toast message when adding saved address'):
         messages = main_screen.wait_for_notification()
