@@ -7,15 +7,15 @@ import driver
 from constants import UserAccount
 from constants.community_settings import BlockPopupWarnings, ToastMessages
 from gui.main_window import MainWindow
-from . import marks
 import configs
+from tests.communities import marks
 
 pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/738772',
                  "Block or unblock someone in Status")
-# @pytest.mark.case(738772)
+@pytest.mark.case(738772)
 @pytest.mark.parametrize('user_data_one, user_data_two, user_data_three', [
     (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic',
      configs.testpath.TEST_USER_DATA / 'nervous')

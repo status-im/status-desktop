@@ -16,7 +16,7 @@ import constants
 from constants import UserAccount
 from gui.main_window import MainWindow
 
-from . import marks
+from tests.messages import marks
 
 pytestmark = marks
 

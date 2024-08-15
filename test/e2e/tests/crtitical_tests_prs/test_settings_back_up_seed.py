@@ -3,7 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 import driver
-from . import marks
+from tests.settings import marks
 
 import configs
 from gui.components.back_up_your_seed_phrase_banner import BackUpSeedPhraseBanner

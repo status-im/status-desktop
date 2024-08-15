@@ -6,7 +6,7 @@ import pytest
 from allure import step
 
 import constants
-from . import marks
+from tests.onboarding import marks
 
 import configs.timeouts
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp

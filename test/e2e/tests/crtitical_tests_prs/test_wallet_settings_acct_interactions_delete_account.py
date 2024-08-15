@@ -4,7 +4,7 @@ import string
 import allure
 import pytest
 from allure_commons._allure import step
-from . import marks
+from tests.settings.settings_wallet import marks
 
 import constants
 import driver

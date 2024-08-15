@@ -11,8 +11,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/738783','Share your address')
 @pytest.mark.case(738783)
-@pytest.mark.transaction
-def test_share_wallet_address(main_screen: MainWindow, default_name):
+def test_share_wallet_address(main_screen: MainWindow):
     with step('Open wallet and choose default account'):
         default_name = 'Account 1'
         wallet = main_screen.left_panel.open_wallet()
