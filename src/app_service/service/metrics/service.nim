@@ -43,7 +43,6 @@ QtObject:
 
   # eventValueJson is a json string
   proc addCentralizedMetricIfEnabled*(self: MetricsService, eventName: string, eventValueJson: string) {.slot.} =
-    debug "Add metric if enabled for ", eventName, eventValueJson
     let arg = AsyncAddCentralizedMetricIfEnabledTaskArg(
       tptr: asyncAddCentralizedMetricIfEnabledTask,
       vptr: cast[ByteAddress](self.vptr),
@@ -62,7 +61,6 @@ QtObject:
         return
       
       if responseObj{"metricsDisabled"}.getBool:
-        debug "metrics collection is turned off"
         return
 
       debug "onCentralizedMetricAddedIdEnabled", metricId=responseObj{"metricId"}.getStr()

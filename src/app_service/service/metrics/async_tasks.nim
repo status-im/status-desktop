@@ -18,6 +18,7 @@ proc asyncAddCentralizedMetricIfEnabledTask(argEncoded: string) {.gcsafe, nimcal
       })
       return
 
+    debug "Add metric for ", eventName =  arg.eventName, eventValueJson = arg.eventValueJson
     var metric = CentralizedMetricDto()
     metric.eventName = arg.eventName
     metric.eventValue = if arg.eventValueJson.len > 0: parseJson(arg.eventValueJson) else: JsonNode()
