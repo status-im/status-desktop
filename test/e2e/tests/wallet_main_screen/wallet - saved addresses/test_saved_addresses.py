@@ -65,6 +65,6 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
             f"Toast message about deleting saved address is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify that saved address with new name is not in the list of saved addresses'):
-        assert not driver.waitFor(
-            lambda: new_name in wallet.left_panel.open_saved_addresses().get_saved_addresses_list(),
-            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Address: {new_name} is still present'
+       assert not driver.waitFor(
+           lambda: new_name in wallet.left_panel.open_saved_addresses().get_saved_addresses_list(),
+           configs.timeouts.APP_LOAD_TIMEOUT_MSEC), f'Address: {new_name} is still present'
