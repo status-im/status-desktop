@@ -70,6 +70,8 @@ let
   MIXPANEL_APP_ID* = desktopConfig.mixpanelAppId
   MIXPANEL_TOKEN* = desktopConfig.mixpanelToken
   BUILD_MODE* = if defined(production): "prod" else: "test"
+  HTTP_API_ENABLED* = desktopConfig.httpApiEnabled
+  WS_API_ENABLED* = desktopConfig.wsApiEnabled
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:

@@ -1,6 +1,7 @@
-import json
+import json, net
 
-include ../../../common/net_utils
+import ../../../common/net_utils
+import ../../../../constants as main_constants
 
 type APIConfig* = object
   apiModules*: string
@@ -12,21 +13,15 @@ type APIConfig* = object
   wsHost*: string
   wsPort*: int
 
-proc checkAndSetPort(port: Port, isEnabled: var bool) =
-  if isPortBusy(port):
-    isEnabled = false
-
 proc defaultAPIConfig*(): APIConfig =
   result.apiModules = "connector"
   result.connectorEnabled = true
 
-  result.httpEnabled = true
-  checkAndSetPort(Port(8545), result.httpEnabled)
+  result.httpEnabled = main_constants.HTTP_API_ENABLED and not isPortBusy(Port(8545))
   result.httpHost = "127.0.0.1"
   result.httpPort = 8545
 
-  result.wsEnabled = true
-  checkAndSetPort(Port(8586), result.wsEnabled)
+  result.wsEnabled = main_constants.WS_API_ENABLED and not isPortBusy(Port(8586))
   result.wsHost = "127.0.0.1"
   result.wsPort = 8586
 
