@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Components.private 0.1 as SQP
@@ -19,6 +20,7 @@ import SortFilterProxyModel 0.2
 ComboBox {
     id: root
 
+    required property var sourceModel // filtered source model
     required property var regularTokensModel // "uncategorized" collectibles (not grouped)
     required property var collectionGroupsModel // collection groups
     required property var communityTokenGroupsModel // community groups
@@ -51,6 +53,10 @@ ComboBox {
 
         readonly property string searchTextLowerCase: searchBox.input.text.toLowerCase()
 
+        readonly property SQUtils.ModelChangeTracker sourceModelTracker: SQUtils.ModelChangeTracker {
+            model: root.sourceModel
+        }
+
         readonly property var combinedModel: ConcatModel {
             sources: [
                 SourceModel {
@@ -68,18 +74,34 @@ ComboBox {
         }
 
         readonly property var combinedProxyModel: SortFilterProxyModel {
+            id: combinedProxyModel
             sourceModel: d.combinedModel
+            readonly property var containsCollectible: (groupId) => SQUtils.ModelUtils.indexOf(root.sourceModel, "communityId", groupId) >= 0
+                                                                    || SQUtils.ModelUtils.indexOf(root.sourceModel, "collectionUid", groupId) >= 0
             proxyRoles: [
-                JoinRole {
+                FastExpressionRole {
                     name: "groupName"
-                    roleNames: ["collectionName", "communityName"]
-                    separator: ""
+                    expression: {
+                        if (!!model.communityId) {
+                            if (model.communityName === model.communityId && !!model.collectionName)
+                                return model.collectionName
+                            return model.communityName
+                        }
+                        return model.collectionName
+                    }
+                    expectedRoles: ["communityId", "collectionName", "communityName"]
+                },
+                FastExpressionRole {
+                    name: "groupKey"
+                    expression: !!model.communityId ? model.communityName : model.collectionName
+                    expectedRoles: ["communityId", "collectionName", "communityName"]
                 },
                 JoinRole {
                     name: "groupId"
                     roleNames: ["collectionUid", "communityId"]
                     separator: ""
                 }
+
             ]
             filters: [
                 FastExpressionFilter {
@@ -87,8 +109,9 @@ ComboBox {
                     expression: {
                         d.searchTextLowerCase // ensure expression is reevaluated when searchString changes
                         return model.groupName.toLowerCase().includes(d.searchTextLowerCase) || model.groupId.toLowerCase().includes(d.searchTextLowerCase)
+                               || model.groupKey.toLowerCase().includes(d.searchTextLowerCase)
                     }
-                    expectedRoles: ["groupName", "groupId"]
+                    expectedRoles: ["groupName", "groupId", "groupKey"]
                 },
                 FastExpressionFilter {
                     expression: {
@@ -97,6 +120,13 @@ ComboBox {
                         return true
                     }
                     expectedRoles: ["sourceGroup", "isSelfCollection"]
+                },
+                FastExpressionFilter {
+                    expression: {
+                        d.sourceModelTracker.revision
+                        return combinedProxyModel.containsCollectible(model.groupId)
+                    }
+                    expectedRoles: ["groupId"]
                 }
             ]
         }
