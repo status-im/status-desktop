@@ -45,8 +45,7 @@ QtObject {
                                   string walletAddress)
 
     // Minting tokens:
-    function deployCollectible(communityId, collectibleItem)
-    {
+    function deployCollectible(communityId, collectibleItem) {
         if (collectibleItem.key !== "")
             deleteToken(communityId, collectibleItem.key)
 
@@ -57,8 +56,7 @@ QtObject {
                                                     collectibleItem.chainId, jsonArtworkFile)
     }
 
-    function deployAsset(communityId, assetItem)
-    {
+    function deployAsset(communityId, assetItem) {
         if (assetItem.key !== "")
             deleteToken(communityId, assetItem.key)
 
@@ -68,11 +66,23 @@ QtObject {
                                                assetItem.infiniteSupply, assetItem.decimals, assetItem.chainId, jsonArtworkFile)
     }
 
-    function deployOwnerToken(communityId, ownerToken, tMasterToken)
-    {
-        const jsonArtworkFile = Utils.getImageAndCropInfoJson(ownerToken.artworkSource, ownerToken.artworkCropRect)
-        communityTokensModuleInst.deployOwnerToken(communityId, ownerToken.accountAddress, ownerToken.name, ownerToken.symbol, ownerToken.description,
-                                                   tMasterToken.name, tMasterToken.symbol, tMasterToken.description, ownerToken.chainId, jsonArtworkFile)
+
+    function deployOwnerToken(communityId, ownerToken, tMasterToken) {
+        function deployOwnerTokenWithArtwork (communityId, artworkSource, ownerToken, tMasterToken) {
+            const jsonArtworkFile = Utils.getImageAndCropInfoJson(artworkSource, ownerToken.artworkCropRect)
+            communityTokensModuleInst.deployOwnerToken(communityId, ownerToken.accountAddress, ownerToken.name, ownerToken.symbol, ownerToken.description,
+                                                       tMasterToken.name, tMasterToken.symbol, tMasterToken.description, ownerToken.chainId, jsonArtworkFile)
+        }
+
+        if (String(ownerToken.artworkSource).startsWith("https://localhost:")) {
+            const ownerTokenCopy = Object.assign({}, ownerToken)
+            const tMasterTokenCopy = Object.assign({}, tMasterToken)
+            Utils.fetchImageBase64(ownerToken.artworkSource, (dataUrl) => {
+                deployOwnerTokenWithArtwork(communityId, dataUrl, ownerTokenCopy, tMasterTokenCopy)
+            })
+        } else {
+            deployOwnerTokenWithArtwork(communityId, ownerToken.artworkSource, ownerToken, tMasterToken);
+        }
     }
 
     function deleteToken(communityId, contractUniqueKey) {
@@ -90,9 +100,9 @@ QtObject {
     }
 
     function ownershipDeclined(communityId, communityName) {
-            communityTokensModuleInst.declineOwnership(communityId)
-            root.communityOwnershipDeclined(communityName)
-        }
+        communityTokensModuleInst.declineOwnership(communityId)
+        root.communityOwnershipDeclined(communityName)
+    }
 
     readonly property Connections connections: Connections {
         target: communityTokensModuleInst
