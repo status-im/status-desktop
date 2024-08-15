@@ -41,6 +41,11 @@ pipeline {
       description: 'Select app entitlements. Squish requires extra entitlements.',
       choices: ['resources/Entitlements.plist', 'resources/Entitlements_squish.plist']
     )
+    string(
+      name: 'STATUS_BUILD_PROXY_STAGE_NAME',
+      description: 'Defines the stage used to choose the correct Proxy API URL',
+      defaultValue: utils.isReleaseBuild() ? 'prod' : 'test'
+    )
   }
 
   options {
