@@ -76,7 +76,7 @@ QtObject:
 
   proc setCurrentStartupState*(self: View, state: State) =
     # If metrics is enabled, we send a metric of the screen visited
-    singletonInstance.globalEvents.addCentralizedMetricIfEnabled("navigation", $(%*{"viewId": state.stateType}))
+    singletonInstance.globalEvents.addCentralizedMetricIfEnabled("navigation", $(%*{"viewId": state.stateType, "flowType": state.flowType}))
 
     self.currentStartupState.setStateObj(state)
   proc getCurrentStartupState(self: View): QVariant {.slot.} =
