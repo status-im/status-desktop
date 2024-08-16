@@ -12,8 +12,8 @@ class BeforeStartedPopUp(BasePopup):
     def __init__(self):
         super(BeforeStartedPopUp, self).__init__()
         self._acknowledge_checkbox = CheckBox(names.acknowledge_checkbox)
-        self._acknowledgeIndicator = QObject(names.acknowledgeIndicator)
         self._terms_of_use_checkBox = CheckBox(names.termsOfUseCheckBox_StatusCheckBox)
+        self._acknowledgeIndicator = QObject(names.acknowledgeIndicator)
         self._termsOfUseIndicator = QObject(names.termsOfUseIndicator)
         self._get_started_button = Button(names.getStartedStatusButton_StatusButton)
         self._terms_of_use_link = QObject(names.termsOfUseLink_StatusBaseText)
@@ -27,7 +27,9 @@ class BeforeStartedPopUp(BasePopup):
     @allure.step('Allow all and get started')
     def get_started(self):
         self._acknowledgeIndicator.click()
+        assert self._acknowledge_checkbox.checkState != 0, f"Acknowledge checkbox is not checked"
         self._termsOfUseIndicator.click()
+        assert self._terms_of_use_checkBox.checkState != 0, f"ToU checkbox is not checked"
         assert self._terms_of_use_link.is_visible, f"Terms of use link is missing"
         assert self._privacy_policy_link.is_visible, f"Privacy Policy link is missing"
         self._get_started_button.click()
