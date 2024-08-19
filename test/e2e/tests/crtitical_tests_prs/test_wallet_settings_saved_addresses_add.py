@@ -38,8 +38,7 @@ def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str
     with step('Verify recently added saved address is present in the list'):
         assert driver.waitFor(
             lambda: name in settings_saved_addresses.get_saved_address_names_list(),
-            configs.timeouts.APP_LOAD_TIMEOUT_MSEC), f'Address: {name} not found'
-        # TODO change timeout after https://github.com/status-im/status-desktop/issues/16121
+            configs.timeouts.LOADING_LIST_TIMEOUT_MSEC), f'Address: {name} not found'
 
     with step('Verify toast message when adding saved address'):
         messages = main_screen.wait_for_notification()
