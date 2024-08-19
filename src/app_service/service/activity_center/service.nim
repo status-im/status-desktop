@@ -32,9 +32,13 @@ type
   ActivityCenterNotificationIdArgs* = ref object of Args
     notificationId*: string
 
+  ActivityCenterNotificationHasUnseen* = ref object of Args
+    hasUnseen*: bool
+
 # Signals which may be emitted by this service:
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED* = "activityCenterNotificationsLoaded"
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED* = "activityCenterNotificationsCountMayChanged"
+const SIGNAL_ACTIVITY_CENTER_UNSEEN_UPDATED* = "activityCenterNotificationsHasUnseenUpdated"
 const SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_READ* = "activityCenterMarkNotificationsAsRead"
 const SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_UNREAD* = "activityCenterMarkNotificationsAsUnread"
 const SIGNAL_ACTIVITY_CENTER_MARK_ALL_NOTIFICATIONS_AS_READ* = "activityCenterMarkAllNotificationsAsRead"
@@ -137,6 +141,12 @@ QtObject:
   proc hasMoreToShow*(self: Service): bool =
     return self.cursor != ""
 
+  proc parseActivityCenterState*(self: Service, response: RpcResponse) =
+    var activityCenterState: JsonNode = newJObject()
+    if response.result.getProp("activityCenterState", activityCenterState):
+      let hasSeen = activityCenterState["hasSeen"].getBool
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_UNSEEN_UPDATED, ActivityCenterNotificationHasUnseen(hasUnseen: not hasSeen))
+
   proc asyncActivityNotificationLoad*(self: Service) =
     let arg = AsyncActivityNotificationLoadTaskArg(
       tptr: asyncActivityNotificationLoadTask,
@@ -234,7 +244,9 @@ QtObject:
             messagesWithMentionsCount: seenAndUnseenMessages.countWithMentions)
           self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
 
+      self.parseActivityCenterState(response)
       self.events.emit(SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_READ, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error marking as read", msg = e.msg
 
@@ -245,7 +257,9 @@ QtObject:
       if response.error != nil:
         raise newException(RpcException, response.error.message)
 
+      self.parseActivityCenterState(response)
       self.events.emit(SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_UNREAD, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error marking as unread", msg = e.msg
 
@@ -263,7 +277,9 @@ QtObject:
           let data = MessagesMarkedAsReadArgs(chatId: seenAndUnseenMessages.chatId, allMessagesMarked: true)
           self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
 
+      self.parseActivityCenterState(response)
       self.events.emit(SIGNAL_ACTIVITY_CENTER_MARK_ALL_NOTIFICATIONS_AS_READ, Args())
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error marking all as read", msg = e.msg
 
@@ -296,6 +312,7 @@ QtObject:
       if response.error != nil:
         raise newException(RpcException, response.error.message)
 
+      self.parseActivityCenterState(response)
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
@@ -322,6 +339,7 @@ QtObject:
             self.chatService.updateOrAddChat(chat)
             self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: @[chat]))
 
+      self.parseActivityCenterState(response)
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_ACCEPTED, ActivityCenterNotificationIdArgs(notificationId: notificationId))
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
@@ -334,6 +352,7 @@ QtObject:
       if response.error != nil:
         raise newException(RpcException, response.error.message)
 
+      self.parseActivityCenterState(response)
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_DISMISSED, ActivityCenterNotificationIdArgs(notificationId: notificationId))
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:

@@ -71,6 +71,10 @@ proc init*(self: Controller) =
     self.delegate.onNotificationsCountMayHaveChanged()
     self.updateActivityGroupCounters()
 
+  self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_UNSEEN_UPDATED) do(e: Args):
+    var evArgs = ActivityCenterNotificationHasUnseen(e)
+    self.delegate.onUnseenChanged(evArgs.hasUnseen)
+
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED) do(e: Args):
     var evArgs = ActivityCenterNotificationIdsArgs(e)
     if (evArgs.notificationIds.len > 0):
