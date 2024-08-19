@@ -3,9 +3,9 @@ import os
 
 const DEFAULT_FLAG_DAPPS_ENABLED = false
 const DEFAULT_FLAG_SWAP_ENABLED = true
-const DEFAULT_FLAG_CONNECTOR_ENABLED = true
+const DEFAULT_FLAG_CONNECTOR_ENABLED* = false
 
-proc boolToEnv(defaultValue: bool): string =
+proc boolToEnv*(defaultValue: bool): string =
   return if defaultValue: "1" else: "0"
 
 QtObject:
