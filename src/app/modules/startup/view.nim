@@ -1,5 +1,6 @@
-import NimQml, chronicles
+import NimQml, chronicles, json
 import io_interface
+import ../../global/global_singleton
 import selected_login_account
 import internal/[state, state_wrapper]
 import models/login_account_model as login_acc_model
@@ -74,6 +75,9 @@ QtObject:
     return self.currentStartupState.getStateObj()
 
   proc setCurrentStartupState*(self: View, state: State) =
+    # If metrics is enabled, we send a metric of the screen visited
+    singletonInstance.globalEvents.addCentralizedMetricIfEnabled("navigation", $(%*{"viewId": state.stateType, "flowType": state.flowType}))
+
     self.currentStartupState.setStateObj(state)
   proc getCurrentStartupState(self: View): QVariant {.slot.} =
     return self.currentStartupStateVariant

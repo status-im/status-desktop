@@ -7,9 +7,9 @@ QtObject {
         metrics.toggleCentralizedMetrics(enabled)
     }
 
-    function addCentralizedMetric(eventName, eventValue = null) {
+    function addCentralizedMetricIfEnabled(eventName, eventValue = null) {
         let eventValueJsonStr = !!eventValue ? JSON.stringify(eventValue) : ""
-        metrics.addCentralizedMetric(eventName, eventValueJsonStr)
+        metrics.addCentralizedMetricIfEnabled(eventName, eventValueJsonStr)
     }
 
     readonly property bool isCentralizedMetricsEnabled : metrics.isCentralizedMetricsEnabled
