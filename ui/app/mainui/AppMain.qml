@@ -438,7 +438,7 @@ Item {
         }
 
         function onOpenLinkWithConfirmation(link: string, domain: string) {
-            if (appMainLocalSettings.whitelistedUnfurledDomains.includes(domain))
+            if (appMainLocalSettings.whitelistedUnfurledDomains.includes(domain) || link.startsWith("mailto:"))
                 globalConns.onOpenLink(link)
             else
                 popups.openConfirmExternalLinkPopup(link, domain)
@@ -1781,7 +1781,7 @@ Item {
         clip: false
 
         delegate: StatusToastMessage {
-            property bool isSquare : isSquareShape(model.actionData)
+            readonly property bool isSquare : isSquareShape(model.actionData)
 
             // Specific method to calculate image radius depending on if the toast represents some info about a collectible or an asset
             function isSquareShape(data) {
