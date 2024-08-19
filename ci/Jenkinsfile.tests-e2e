@@ -171,7 +171,7 @@ pipeline {
           ]) {
             /* Keep the --reruns flag first, or it won't work */
             sh """
-              python3 -m pytest --reruns=1 --timeout=180 ${flags.join(" ")} \
+              python3 -m pytest -v --reruns=1 --timeout=180 ${flags.join(" ")} \
                 --disable-warnings \
                 --alluredir=./allure-results \
                 -o timeout_func_only=true
