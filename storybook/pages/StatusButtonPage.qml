@@ -55,6 +55,7 @@ SplitView {
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
+                        loadingWithText: ctrlLoadingWithText.checked
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
@@ -73,6 +74,7 @@ SplitView {
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
+                        loadingWithText: ctrlLoadingWithText.checked
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
@@ -92,6 +94,7 @@ SplitView {
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
+                        loadingWithText: ctrlLoadingWithText.checked
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
@@ -111,10 +114,10 @@ SplitView {
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
+                        loadingWithText: ctrlLoadingWithText.checked
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         isRoundIcon: true
-                        radius: height/2
                         textFillWidth: ctrlFillWidth.checked
                     }
                 }
@@ -137,6 +140,7 @@ SplitView {
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
+                        loadingWithText: ctrlLoadingWithText.checked
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
@@ -155,6 +159,7 @@ SplitView {
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
+                        loadingWithText: ctrlLoadingWithText.checked
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
@@ -174,6 +179,7 @@ SplitView {
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
+                        loadingWithText: ctrlLoadingWithText.checked
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
@@ -193,6 +199,7 @@ SplitView {
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
+                        loadingWithText: ctrlLoadingWithText.checked
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         isRoundIcon: true
@@ -283,6 +290,10 @@ SplitView {
                 Switch {
                     id: ctrlLoading
                     text: "Loading"
+                }
+                Switch {
+                    id: ctrlLoadingWithText
+                    text: "Loading with text"
                 }
                 Switch {
                     id: ctrlInteractive

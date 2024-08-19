@@ -86,7 +86,6 @@ Item {
                 StatusButton {
                     id: reloadButton
                     size: StatusBaseButton.Size.Tiny
-                    loadingIndicatorSize: size
                     height: parent.height
                     width: height
                     borderColor: Theme.palette.directColor7

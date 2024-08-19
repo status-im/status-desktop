@@ -570,7 +570,7 @@ Item {
             // Check max fees values and sign button state when nothing is set
             compare(maxFeesText.text, qsTr("Max fees:"))
             compare(maxFeesValue.text, "--")
-            verify(!signButton.enabled)
+            verify(!signButton.interactive)
             verify(!errorTag.visible)
 
             // set input values in the form correctly
@@ -606,7 +606,7 @@ Item {
             compare(root.swapAdaptor.swapOutputData.hasError, true)
             verify(errorTag.visible)
             verify(errorTag.text, qsTr("An error has occured, please try again"))
-            verify(!signButton.enabled)
+            verify(!signButton.interactive)
             compare(signButton.text, qsTr("Swap"))
 
             // verfy input and output panels
@@ -644,7 +644,7 @@ Item {
             compare(root.swapAdaptor.swapOutputData.hasError, true)
             verify(errorTag.visible)
             verify(errorTag.text, qsTr("Insufficient funds for swap"))
-            verify(!signButton.enabled)
+            verify(!signButton.interactive)
             compare(signButton.text, qsTr("Swap"))
 
             // verfy input and output panels
@@ -682,7 +682,7 @@ Item {
             compare(root.swapAdaptor.swapOutputData.hasError, true)
             verify(errorTag.visible)
             verify(errorTag.text, qsTr("Insufficient funds to pay gas fees"))
-            verify(!signButton.enabled)
+            verify(!signButton.interactive)
             compare(signButton.text, qsTr("Swap"))
 
             // verfy input and output panels
@@ -720,7 +720,7 @@ Item {
             compare(root.swapAdaptor.swapOutputData.hasError, true)
             verify(errorTag.visible)
             verify(errorTag.text, qsTr("Fetching the price took longer than expected. Please, try again later."))
-            verify(!signButton.enabled)
+            verify(!signButton.interactive)
             compare(signButton.text, qsTr("Swap"))
 
             // verfy input and output panels
@@ -758,7 +758,7 @@ Item {
             compare(root.swapAdaptor.swapOutputData.hasError, true)
             verify(errorTag.visible)
             verify(errorTag.text, qsTr("Not enough liquidity. Lower token amount or try again later."))
-            verify(!signButton.enabled)
+            verify(!signButton.interactive)
             compare(signButton.text, qsTr("Swap"))
 
             // verfy input and output panels
@@ -1487,7 +1487,7 @@ Item {
 
             // Check max fees values and sign button state when nothing is set
             compare(maxFeesValue.text, "--")
-            verify(!signButton.enabled)
+            verify(!signButton.interactive)
             verify(!errorTag.visible)
 
             // set input values in the form correctly
@@ -1536,7 +1536,7 @@ Item {
 
             verify(!errorTag.visible)
             verify(signButton.enabled)
-            verify(!signButton.loading)
+            verify(!signButton.loadingWithText)
             compare(signButton.text, qsTr("Approve %1").arg(root.swapAdaptor.fromToken.symbol))
             // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
@@ -1549,8 +1549,8 @@ Item {
             verify(root.swapAdaptor.approvalPending)
             verify(!root.swapAdaptor.approvalSuccessful)
             verify(!errorTag.visible)
-            verify(!signButton.enabled)
-            verify(signButton.loading)
+            verify(!signButton.interactive)
+            verify(signButton.loadingWithText)
             compare(signButton.text, qsTr("Approving %1").arg(root.swapAdaptor.fromToken.symbol))
             // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
@@ -1564,7 +1564,7 @@ Item {
             verify(!root.swapAdaptor.approvalSuccessful)
             verify(!errorTag.visible)
             verify(signButton.enabled)
-            verify(!signButton.loading)
+            verify(!signButton.loadingWithText)
             compare(signButton.text, qsTr("Approve %1").arg(root.swapAdaptor.fromToken.symbol))
             // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
@@ -1578,8 +1578,8 @@ Item {
             verify(root.swapAdaptor.approvalPending)
             verify(!root.swapAdaptor.approvalSuccessful)
             verify(!errorTag.visible)
-            verify(!signButton.enabled)
-            verify(signButton.loading)
+            verify(!signButton.interactive)
+            verify(signButton.loadingWithText)
             compare(signButton.text, qsTr("Approving %1").arg(root.swapAdaptor.fromToken.symbol))
             // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
@@ -1599,8 +1599,8 @@ Item {
             verify(!root.swapAdaptor.approvalPending)
             verify(!root.swapAdaptor.approvalSuccessful)
             verify(!errorTag.visible)
-            verify(!signButton.enabled)
-            verify(!signButton.loading)
+            verify(!signButton.interactive)
+            verify(!signButton.loadingWithText)
             compare(signButton.text, qsTr("Swap"))
             compare(maxFeesValue.text,  Constants.dummyText)
 
@@ -1612,7 +1612,7 @@ Item {
             verify(!root.swapAdaptor.approvalSuccessful)
             verify(!errorTag.visible)
             verify(signButton.enabled)
-            verify(!signButton.loading)
+            verify(!signButton.loadingWithText)
             compare(signButton.text, qsTr("Swap"))
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
                         root.swapAdaptor.swapOutputData.totalFees,
