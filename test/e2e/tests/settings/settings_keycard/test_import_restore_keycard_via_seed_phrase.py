@@ -8,7 +8,7 @@ from . import marks
 import configs
 import constants
 import driver
-from constants import ColorCodes
+from constants import ColorCodes, RandomUser
 from constants.images_paths import PLUG_IN_KEYCARD_IMAGE_PATH, INSERT_KEYCARD_IMAGE_PATH, KEYCARD_SUCCESS_IMAGE_PATH
 from constants.keycard import Keycard
 from gui.main_window import MainWindow
@@ -20,7 +20,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703625',
                  'Import or restore a Keycard via a seed phrase')
 @pytest.mark.case(703625)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow, user_account):
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC

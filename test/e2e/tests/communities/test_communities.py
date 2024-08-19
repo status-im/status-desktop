@@ -7,7 +7,7 @@ import pytest
 from allure_commons._allure import step
 
 import driver
-from constants import ColorCodes, UserAccount
+from constants import ColorCodes, UserAccount, RandomUser
 from constants.community_settings import ToastMessages
 from gui.screens.community import Members
 from gui.screens.messages import MessagesScreen
@@ -80,18 +80,16 @@ def test_create_community(user_account, main_screen: MainWindow, params):
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703254', 'Edit chat - Delete any message')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736991', 'Owner can ban member')
 @pytest.mark.case(703252, 703252, 736991)
-@pytest.mark.parametrize('user_data_one, user_data_two', [
-    (configs.testpath.TEST_USER_DATA / 'group_chat_user_2', configs.testpath.TEST_USER_DATA / 'group_chat_user_1')
-])
-def test_community_admin_ban_kick_member_and_delete_message(multiple_instances, user_data_one, user_data_two):
-    user_one: UserAccount = constants.group_chat_user_2
-    user_two: UserAccount = constants.group_chat_user_1
+@pytest.mark.skip(reason='Not possible to get floating buttons on hover for list item')
+def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
+    user_one: UserAccount = RandomUser()
+    user_two: UserAccount = RandomUser()
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     community_params = deepcopy(constants.community_params)
     community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
     main_screen = MainWindow()
 
-    with multiple_instances(user_data=user_data_one) as aut_one, multiple_instances(user_data=user_data_two) as aut_two:
+    with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()
@@ -99,9 +97,33 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances, 
                 main_screen.authorize_user(account)
                 main_screen.hide()
 
-        with step(f'User {user_two.name}, create community and invite {user_one.name}'):
+        with step(f'User {user_two.name}, get chat key'):
             aut_two.attach()
             main_screen.prepare()
+            profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
+            chat_key = profile_popup.copy_chat_key
+            profile_popup.close()
+            main_screen.hide()
+
+        with step(f'User {user_one.name}, send contact request to {user_two.name}'):
+            aut_one.attach()
+            main_screen.prepare()
+            settings = main_screen.left_panel.open_settings()
+            messaging_settings = settings.left_panel.open_messaging_settings()
+            contacts_settings = messaging_settings.open_contacts_settings()
+            contact_request_popup = contacts_settings.open_contact_request_form()
+            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
+            main_screen.hide()
+
+        with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
+            aut_two.attach()
+            main_screen.prepare()
+            settings = main_screen.left_panel.open_settings()
+            messaging_settings = settings.left_panel.open_messaging_settings()
+            contacts_settings = messaging_settings.open_contacts_settings()
+            contacts_settings.accept_contact_request(user_one.name)
+
+        with step(f'User {user_two.name}, create community and invite {user_one.name}'):
             settings = main_screen.left_panel.open_settings()
             settings.left_panel.open_advanced_settings().enable_creation_of_communities()
 

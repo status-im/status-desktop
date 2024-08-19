@@ -3,6 +3,9 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+
+from constants import UserAccount, RandomUser
+from scripts.utils.generators import random_password_string
 from tests.wallet_main_screen import marks
 
 import constants
@@ -16,7 +19,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703033', 'Manage a generated account')
 @pytest.mark.case(703033)
-@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
                          'new_name, new_color, new_emoji, new_emoji_unicode', [
                              pytest.param('GenAcc1', '#2a4af5', 'sunglasses', '1f60e',

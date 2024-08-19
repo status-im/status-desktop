@@ -3,9 +3,8 @@ import pytest
 from allure_commons._allure import step
 
 import configs.testpath
-import constants
 import driver
-from constants import UserAccount
+from constants import UserAccount, RandomUser
 from constants.links import external_link, link_to_status_community, status_user_profile_link
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
@@ -27,8 +26,8 @@ pytestmark = marks
                                        '0x04c1671d3659b92671cdac657a901e133ca1cfadddbb640db7dec342ee70c4142533cc03e89eff2bd09dd75aea71d45ab2b605bc7e1996c4a6a82d037f4070d13c')
                           ])
 def test_link_previews(multiple_instances, community_name, domain_link, user_name, domain_link_2, user_emoji_hash):
-    user_one: UserAccount = constants.user_with_random_attributes_1
-    user_two: UserAccount = constants.user_with_random_attributes_2
+    user_one: UserAccount = RandomUser()
+    user_two: UserAccount = RandomUser()
     main_window = MainWindow()
     messages_screen = MessagesScreen()
     path = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'

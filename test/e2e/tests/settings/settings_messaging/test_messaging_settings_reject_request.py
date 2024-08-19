@@ -1,10 +1,9 @@
 import allure
 import configs.testpath
 import configs.timeouts
-import constants
 import pytest
 from allure_commons._allure import step
-from constants import UserAccount
+from constants import UserAccount, RandomUser
 from . import marks
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
@@ -16,8 +15,8 @@ pytestmark = marks
                  'Reject a contact request with a chat key')
 @pytest.mark.case(704610)
 def test_messaging_settings_rejecting_request(multiple_instances):
-    user_one: UserAccount = constants.user_with_random_attributes_1
-    user_two: UserAccount = constants.user_with_random_attributes_2
+    user_one: UserAccount = RandomUser()
+    user_two: UserAccount = RandomUser()
     main_window = MainWindow()
 
     with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:

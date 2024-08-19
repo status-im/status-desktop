@@ -1,5 +1,4 @@
 import logging
-import time
 
 import allure
 import squish

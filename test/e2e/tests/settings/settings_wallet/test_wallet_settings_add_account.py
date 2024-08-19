@@ -6,6 +6,8 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+from constants import UserAccount, RandomUser
+from scripts.utils.generators import random_name_string, random_password_string
 from constants.wallet import WalletAccountPopup
 from . import marks
 
@@ -20,7 +22,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/703598',
                  'Add new account from wallet settings screen')
 @pytest.mark.case(703598)
-@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
                          [
                              pytest.param(''.join(random.choices(string.ascii_letters +

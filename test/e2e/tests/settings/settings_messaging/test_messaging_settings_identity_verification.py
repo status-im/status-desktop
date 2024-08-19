@@ -7,7 +7,8 @@ from . import marks
 
 import configs.testpath
 import constants
-from constants import UserAccount
+from constants import UserAccount, RandomUser
+from scripts.utils.generators import random_name_string, random_password_string
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
 
@@ -18,8 +19,8 @@ pytestmark = marks
 @pytest.mark.case(704611)
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14954")
 def test_messaging_settings_identity_verification(multiple_instances):
-    user_one: UserAccount = constants.user_with_random_attributes_1
-    user_two: UserAccount = constants.user_with_random_attributes_2
+    user_one: RandomUser()
+    user_two: RandomUser()
     main_window = MainWindow()
 
     with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:

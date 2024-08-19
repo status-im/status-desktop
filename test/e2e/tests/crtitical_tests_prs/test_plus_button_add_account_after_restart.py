@@ -3,6 +3,8 @@ import time
 import allure
 import pytest
 from allure import step
+
+from constants import RandomUser
 from tests.wallet_main_screen import marks
 
 import constants
@@ -17,7 +19,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704459',
                  'User can add  one more account after restarting the app')
 @pytest.mark.case(704459)
-@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode,',
                          [
                              pytest.param('GenAcc1', '#2a4af5', 'sunglasses', '1f60e')

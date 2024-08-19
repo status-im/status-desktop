@@ -9,7 +9,7 @@ from . import marks
 import configs
 import constants
 import driver
-from constants import ColorCodes
+from constants import ColorCodes, RandomUser
 from constants.images_paths import PLUG_IN_KEYCARD_IMAGE_PATH, CHOOSE_KEYCARD_PIN_IMAGE_PATH, \
     KEYCARD_SUCCESS_IMAGE_PATH
 from constants.keycard import Keycard
@@ -23,7 +23,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703623',
                  'Setup a keycard with an existing account')
 @pytest.mark.case(703623)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('account_name', [pytest.param('Account 1')])
 @pytest.mark.timeout(timeout=210)
 @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')

@@ -1,11 +1,11 @@
 import random
 import string
-import time
 
 import allure
 import pytest
 from allure_commons._allure import step
 
+from constants import RandomUser
 from constants.wallet import WalletRenameKeypair, WalletAccountPopup
 from gui.components.authenticate_popup import AuthenticatePopup
 from tests.wallet_main_screen import marks
@@ -20,7 +20,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703420',
                  'Wallet -> Settings -> Keypair interactions: Rename keypair')
 @pytest.mark.case(703420)
-@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize(
     'name, color, emoji, acc_emoji, second_name, third_name, new_name, new_name_1, seed_phrase',
     [pytest.param('Acc01', '#2a4af5', 'sunglasses', '😎 ',

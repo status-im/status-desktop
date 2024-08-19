@@ -7,7 +7,7 @@ import allure
 import configs
 import constants
 import driver
-from constants import UserAccount
+from constants import UserAccount, RandomUser
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
@@ -174,7 +174,7 @@ class MainWindow(Window):
         return super().prepare()
 
     @allure.step('Sign Up user')
-    def sign_up(self, user_account: UserAccount = constants.user.user_account_one):
+    def sign_up(self, user_account: UserAccount = RandomUser()):
         share_updates_popup = ShareUsageDataPopup()
         BeforeStartedPopUp().get_started()
         welcome_screen = WelcomeToStatusView().wait_until_appears()

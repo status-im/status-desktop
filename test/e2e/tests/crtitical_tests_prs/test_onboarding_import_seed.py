@@ -2,12 +2,12 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+from constants import ReturningUser, ReturningUsersData
 from constants.onboarding import KeysExistText
 from driver.aut import AUT
 from tests.onboarding import marks
 
 import configs.system
-import constants
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
@@ -29,7 +29,9 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736372', 'Re-importing seed-phrase')
 @pytest.mark.case(703040, 736372)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [ReturningUser(
+    seed_phrase=ReturningUsersData.RETURNING_USER_ONE.value[0],
+    status_address=ReturningUsersData.RETURNING_USER_ONE.value[1])])
 @pytest.mark.parametrize('autocomplete, default_name', [
     pytest.param(True, 'Account 1', marks=pytest.mark.critical)
 ])

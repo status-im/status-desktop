@@ -87,6 +87,7 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703271', 'Member role cannot delete channels')
 @pytest.mark.case(703269, 703270, 703271)
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
+@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
 def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow):
     with step('Choose community user is not owner of'):
         community_screen = main_screen.left_panel.select_community('Community with 2 users')
@@ -123,7 +124,7 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/737079',
                  'Member not holding permission cannot see channel (view-only permission)')
-# @pytest.mark.case(737079) # FIXME need to migrate all references to new test rail project first
+@pytest.mark.case(737079)
 @pytest.mark.parametrize('user_data_one, user_data_two, asset, amount, channel_description', [
     (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic', 'ETH', '10',
      'description')

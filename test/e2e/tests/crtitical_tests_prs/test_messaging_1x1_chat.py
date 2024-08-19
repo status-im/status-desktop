@@ -12,8 +12,7 @@ from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_
 from gui.screens.messages import MessagesScreen, ToolBar
 
 import configs.testpath
-import constants
-from constants import UserAccount
+from constants import RandomUser, UserAccount
 from gui.main_window import MainWindow
 
 from tests.messages import marks
@@ -25,8 +24,8 @@ pytestmark = marks
 @pytest.mark.case(703087)
 @pytest.mark.critical
 def test_1x1_chat(multiple_instances):
-    user_one: UserAccount = constants.user_with_random_attributes_1
-    user_two: UserAccount = constants.user_with_random_attributes_2
+    user_one: UserAccount = RandomUser()
+    user_two: UserAccount = RandomUser()
     main_window = MainWindow()
     messages_screen = MessagesScreen()
     emoji = 'sunglasses'
