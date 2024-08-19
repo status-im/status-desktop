@@ -289,7 +289,7 @@ StatusWindow {
         restoreAppState();
 
         Global.openMetricsEnablePopupRequested.connect(openMetricsEnablePopup)
-        Global.addCentralizedMetric.connect(metricsStore.addCentralizedMetric)
+        Global.addCentralizedMetricIfEnabled.connect(metricsStore.addCentralizedMetricIfEnabled)
     }
 
     signal navigateTo(string path)
@@ -381,8 +381,8 @@ StatusWindow {
             onClosed: metricsPopupLoader.active = false
             onToggleMetrics: {
                 applicationWindow.metricsStore.toggleCentralizedMetrics(enabled)
-                if(enabled) {
-                    Global.addCentralizedMetric("usage_data_shared", {placement: metricsPopupLoader.item.placement})
+                if (enabled) {
+                    Global.addCentralizedMetricIfEnabled("usage_data_shared", {placement: metricsPopupLoader.item.placement})
                 }
             }
         }

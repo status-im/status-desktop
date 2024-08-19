@@ -1460,4 +1460,6 @@ QtObject {
         LessThanFiveMins,
         MoreThanFiveMins
     }
+
+    readonly property string navigationMetric: "navigation"
 }
