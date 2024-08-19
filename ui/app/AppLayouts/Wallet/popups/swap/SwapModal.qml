@@ -399,12 +399,10 @@ StatusDialog {
                         loading: root.swapAdaptor.swapProposalLoading
                     }
                 }
-                /* TODO: https://github.com/status-im/status-desktop/issues/15313
-                will introduce having loading button and showing text on the side*/
                 StatusButton {
                     objectName: "signButton"
                     readonly property string fromTokenSymbol: !!root.swapAdaptor.fromToken ? root.swapAdaptor.fromToken.symbol ?? "" : ""
-                    loading: root.swapAdaptor.approvalPending
+                    loadingWithText: root.swapAdaptor.approvalPending
                     icon.name: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.authenticationIconByType[Constants.LoginType.Keycard]
                                                                                   : Constants.authenticationIconByType[root.loginType]
                     text: {
@@ -421,10 +419,10 @@ StatusDialog {
                                   root.swapAdaptor.swapOutputData.approvalNeeded ?
                                       qsTr("Approve %1 spending cap to Swap").arg(fromTokenSymbol) : ""
                     disabledColor: Theme.palette.directColor8
-                    enabled: root.swapAdaptor.validSwapProposalReceived &&
-                             editSlippagePanel.valid &&
-                             !d.isError &&
-                             !root.swapAdaptor.approvalPending
+                    interactive: root.swapAdaptor.validSwapProposalReceived &&
+                                 editSlippagePanel.valid &&
+                                 !d.isError &&
+                                 !root.swapAdaptor.approvalPending
                     onClicked: {
                         if (root.swapAdaptor.validSwapProposalReceived) {
                             if (root.swapAdaptor.swapOutputData.approvalNeeded)

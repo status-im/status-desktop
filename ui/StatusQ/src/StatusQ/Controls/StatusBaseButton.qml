@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -36,6 +36,7 @@ Button {
     property alias tooltip: tooltip
 
     property bool loading
+    property bool loadingWithText // loading indicator instead of icon, mutually exclusive with `loading`
     property bool interactive: true
 
     property color normalColor
@@ -49,14 +50,11 @@ Button {
     property int borderWidth: 0
     property bool textFillWidth: false
 
-    property int radius: size === StatusBaseButton.Size.Tiny ? 6 : 8
+    property int radius: isRoundIcon ? height/2 : size === StatusBaseButton.Size.Tiny ? 6 : 8
 
     property int size: StatusBaseButton.Size.Large
     property int type: StatusBaseButton.Type.Normal
     property int textPosition: StatusBaseButton.TextPosition.Right
-
-    // use Size.Small as default value to not change old behavior which had default size of 20x20
-    property int  loadingIndicatorSize: StatusBaseButton.Size.Small
 
     property bool isRoundIcon: false
 
@@ -72,10 +70,8 @@ Button {
         }
 
         readonly property bool iconOnly: root.display === AbstractButton.IconOnly || root.text === ""
-        readonly property int iconSize: mapIconSize(root.size)
-
-        function mapIconSize(buttonSize) {
-            switch(buttonSize) {
+        readonly property int iconSize: {
+            switch(root.size) {
             case StatusBaseButton.Size.Tiny:
                 return 16
             case StatusBaseButton.Size.Small:
@@ -136,86 +132,64 @@ Button {
         color: {
             if (!root.enabled || !root.interactive)
                 return disabledColor
-            return !root.loading && (root.hovered || root.highlighted) ? hoverColor : normalColor
+            return !root.loading && !root.loadingWithText && (root.hovered || root.highlighted) ? hoverColor : normalColor
         }
     }
 
     contentItem: Item {
         implicitWidth: layout.implicitWidth
         implicitHeight: layout.implicitHeight
+        opacity: !root.loading
 
         RowLayout {
             id: layout
             anchors.centerIn: parent
-            width: root.textFillWidth ? root.availableWidth : Math.min(root.availableWidth, implicitWidth)
+            width: root.textFillWidth && !d.iconOnly ? root.availableWidth : Math.min(root.availableWidth, implicitWidth)
             height: Math.min(root.availableHeight, implicitHeight)
             spacing: root.spacing
 
-            Component {
-                id: baseIcon
-
-                StatusIcon {
-                    icon: root.icon.name
-                    rotation: root.asset.rotation
-                    mirror: root.asset.mirror
-                    opacity: !root.loading && root.icon.name !== "" && root.display !== AbstractButton.TextOnly
-                    color: root.icon.color
-                }
-            }
-
-            Component {
-                id: roundIcon
-
-                StatusRoundIcon {
-                    opacity: !root.loading && root.icon.name !== "" && root.display !== AbstractButton.TextOnly
-                    asset.name: root.icon.name
-                    asset.width: d.iconSize
-                    asset.height: d.iconSize
-                    asset.color: root.icon.color
-                    asset.bgColor: root.asset.bgColor
-                }
-            }
-
-            Component {
-                id: text
-
-                StatusBaseText {
-                    opacity: !root.loading
-                    font: root.font
-                    text: root.text
-                    color: d.textColor
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
-                }
-            }
-
+            // text left
             Loader {
+                objectName: "leftTextLoader"
                 Layout.fillWidth: true
                 active: root.textPosition === StatusBaseButton.TextPosition.Left && !d.iconOnly
                 visible: active
                 sourceComponent: text
             }
 
+            // loading with text indicator
             Loader {
-                id: iconLoader
+                objectName: "loadingWithTextIndicator"
+                active: root.loadingWithText
+                visible: active
+                sourceComponent: loadingComponent
+            }
 
-                Layout.preferredWidth: active ? root.icon.width : 0
-                Layout.preferredHeight: active ? root.icon.height : 0
+            // decoration
+            Loader {
+                objectName: "buttonIcon"
+                Layout.preferredWidth: root.icon.width
+                Layout.preferredHeight: root.icon.height
                 Layout.alignment: Qt.AlignCenter
-                active: root.icon.name !== ""
+                active: root.icon.name !== "" && root.display !== AbstractButton.TextOnly && !root.loadingWithText
+                visible: active
                 sourceComponent: root.isRoundIcon ? roundIcon : baseIcon
             }
 
+            // emoji
             StatusEmoji {
-                Layout.preferredWidth: visible ? root.icon.width : 0
-                Layout.preferredHeight: visible ? root.icon.height : 0
+                objectName: "buttonEmoji"
+                Layout.preferredWidth: root.icon.width
+                Layout.preferredHeight: root.icon.height
                 Layout.alignment: Qt.AlignCenter
-                opacity: !root.loading && root.display !== AbstractButton.TextOnly
-                visible: root.asset.emoji
+                visible: root.asset.emoji && root.display !== AbstractButton.TextOnly && !root.loadingWithText
                 emojiId: Emoji.iconId(root.asset.emoji, root.asset.emojiSize) || ""
+                opacity: !root.enabled || !root.interactive ? 0.4 : 1
             }
 
+            // text right
             Loader {
+                objectName: "rightTextLoader"
                 Layout.fillWidth: true
                 active: root.textPosition === StatusBaseButton.TextPosition.Right && !d.iconOnly
                 visible: active
@@ -225,13 +199,11 @@ Button {
     }
 
     Loader {
+        objectName: "loadingIndicator"
         anchors.centerIn: parent
         active: root.loading
-        width: d.mapIconSize(root.loadingIndicatorSize)
-        height: width
-        sourceComponent: StatusLoadingIndicator {
-            color: d.textColor
-        }
+        visible: active
+        sourceComponent: loadingComponent
     }
 
     // stop the mouse clicks in the "loading" or non-interactive state w/o disabling the whole button
@@ -240,15 +212,62 @@ Button {
         id: mouseArea
         anchors.fill: parent
         acceptedButtons: Qt.AllButtons
-        enabled: root.loading || !root.interactive
+        enabled: root.loading || root.loadingWithText || !root.interactive
         onPressed: mouse.accepted = true
         onWheel: wheel.accepted = true
-        cursorShape: root.interactive && !root.loading ? Qt.PointingHandCursor: undefined // always works; 'undefined' resets to default cursor
+        cursorShape: root.interactive && !root.loading && !root.loadingWithText ? Qt.PointingHandCursor: undefined // always works; 'undefined' resets to default cursor
     }
 
     StatusToolTip {
         id: tooltip
+        objectName: "buttonTooltip"
         visible: tooltip.text !== "" && root.hovered
         offset: -(tooltip.x + tooltip.width/2 - root.width/2)
+    }
+
+    Component {
+        id: baseIcon
+
+        StatusIcon {
+            icon: root.icon.name
+            rotation: root.asset.rotation
+            mirror: root.asset.mirror
+            color: root.icon.color
+        }
+    }
+
+    Component {
+        id: roundIcon
+
+        StatusRoundIcon {
+            asset.name: root.icon.name
+            asset.width: root.icon.width
+            asset.height: root.icon.height
+            asset.color: root.icon.color
+            asset.bgColor: root.asset.bgColor
+        }
+    }
+
+    Component {
+        id: text
+
+        StatusBaseText {
+            objectName: "buttonText"
+            font: root.font
+            text: root.text
+            color: d.textColor
+            elide: Text.ElideRight
+            maximumLineCount: 1
+            horizontalAlignment: root.textFillWidth ? Text.AlignLeft : Text.AlignHCenter
+        }
+    }
+
+    Component {
+        id: loadingComponent
+        StatusLoadingIndicator {
+            width: root.icon.width
+            height: root.icon.height
+            color: d.textColor
+        }
     }
 }
