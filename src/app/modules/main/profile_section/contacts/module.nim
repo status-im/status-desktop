@@ -71,7 +71,6 @@ method delete*(self: Module) =
 
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contactDetails = self.controller.getContactDetails(publicKey)
-  let requestStatus = self.controller.getVerificationRequestFrom(publicKey).status
 
   return initUserItem(
     pubKey = contactDetails.dto.id,
@@ -90,8 +89,6 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     isBlocked = contactDetails.dto.isBlocked(),
     isCurrentUser = contactDetails.isCurrentUser,
     contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
-    incomingVerificationStatus = toVerificationRequestStatus(requestStatus),
-    outgoingVerificationStatus = toVerificationRequestStatus(contactDetails.dto.verificationStatus),
     defaultDisplayName = contactDetails.defaultDisplayName,
     optionalName = contactDetails.optionalName,
     lastUpdated = contactDetails.dto.lastUpdated,

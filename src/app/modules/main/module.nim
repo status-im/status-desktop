@@ -852,7 +852,7 @@ method getActiveSectionId*[T](self: Module[T]): string =
 
 method setActiveSection*[T](self: Module[T], item: SectionItem, skipSavingInSettings: bool = false) =
   if(item.isEmpty()):
-    echo "section is empty and cannot be made as active one"
+    warn "section is empty and cannot be made as active one"
     return
   self.controller.setActiveSectionId(item.id)
   self.activeSectionSet(item.id, skipSavingInSettings)
@@ -877,7 +877,7 @@ method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSett
 
   if(item.isEmpty()):
     # should never be here
-    echo "main-module, incorrect section id: ", sectionId
+    warn "main-module, incorrect section id", sectionId
     return
 
   case sectionId:
@@ -924,7 +924,7 @@ method getChatSectionModuleAsVariant*[T](self: Module[T]): QVariant =
 
 method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVariant =
   if(not self.chatSectionModules.contains(communityId)):
-    echo "main-module, unexisting community key: ", communityId
+    warn "main-module, unexisting community key", communityId
     return
 
   return self.chatSectionModules[communityId].getModuleAsVariant()
@@ -1065,7 +1065,7 @@ method communityJoined*[T](
 
 method communityLeft*[T](self: Module[T], communityId: string) =
   if(not self.chatSectionModules.contains(communityId)):
-    echo "main-module, unexisting community key to leave: ", communityId
+    warn "main-module, unexisting community key to leave", communityId
     return
 
   self.view.model().removeItem(communityId)
@@ -1115,9 +1115,6 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
   else:
     contactDetails.dto = self.controller.getContact(publicKey)
 
-  var requestStatus = 0
-  if getVerificationRequest:
-    requestStatus = self.getVerificationRequestFrom(publicKey).status.int
   var onlineStatus = OnlineStatus.Inactive
   if getOnlineStatus:
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType)
@@ -1151,7 +1148,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     # TODO rename verificationStatus to outgoingVerificationStatus
     "contactRequestState": contactDetails.dto.contactRequestState.int,
     "verificationStatus": contactDetails.dto.verificationStatus.int,
-    "incomingVerificationStatus": requestStatus,
+    "incomingVerificationStatus": 0,
     "bio": contactDetails.dto.bio,
     "onlineStatus": onlineStatus.int
   }
@@ -1182,7 +1179,7 @@ method communityDataImported*[T](self: Module[T], community: CommunityDto) =
 
 method resolveENS*[T](self: Module[T], ensName: string, uuid: string, reason: string = "") =
   if ensName.len == 0:
-    echo "error: cannot do a lookup for empty ens name"
+    error "error: cannot do a lookup for empty ens name"
     return
   self.controller.resolveENS(ensName, uuid, reason)
 
@@ -1332,7 +1329,7 @@ method osNotificationClicked*[T](self: Module[T], details: NotificationDetails) 
   elif(details.notificationType == NotificationType.MyRequestToJoinCommunityAccepted):
     self.controller.switchTo(details.sectionId, "", "")
   elif(details.notificationType == NotificationType.MyRequestToJoinCommunityRejected):
-    echo "There is no particular action clicking on a notification informing you about rejection to join community"
+    warn "There is no particular action clicking on a notification informing you about rejection to join community"
 
 method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequest: CommunityMembershipRequestDto) =
   let (contactName, _, _) = self.controller.getContactNameAndImage(membershipRequest.publicKey)
