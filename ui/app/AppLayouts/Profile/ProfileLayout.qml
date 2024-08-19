@@ -417,7 +417,7 @@ StatusSectionLayout {
             sourceComponent: SettingsContentBase {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                sectionTitle: "Status Software Terms of Use"
+                sectionTitle: "Status Software - Terms of Use"
                 contentWidth: d.contentWidth
 
                 StatusBaseText {
@@ -425,6 +425,7 @@ StatusSectionLayout {
                     wrapMode: Text.Wrap
                     textFormat: Text.MarkdownText
                     text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/terms-of-use.mdwn")
+                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
                 }
             }
         }
@@ -437,7 +438,7 @@ StatusSectionLayout {
             sourceComponent: SettingsContentBase {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                sectionTitle: "Status Software Privacy Statement"
+                sectionTitle: "Status Software - Privacy Policy"
                 contentWidth: d.contentWidth
 
                 StatusBaseText {
@@ -445,6 +446,7 @@ StatusSectionLayout {
                     wrapMode: Text.Wrap
                     textFormat: Text.MarkdownText
                     text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/privacy.mdwn")
+                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
                 }
             }
         }

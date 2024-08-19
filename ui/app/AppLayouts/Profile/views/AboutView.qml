@@ -184,7 +184,7 @@ SettingsContentBase {
             }
 
             DocumentItem {
-                title: qsTr("Privacy Statement")
+                title: qsTr("Privacy Policy")
                 onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
                                                                 Constants.settingsSubsection.about_privacy)
             }
