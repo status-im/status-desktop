@@ -111,7 +111,7 @@ QtObject {
 
     // Metrics
     signal openMetricsEnablePopupRequested(string placement, var cb)
-    signal addCentralizedMetric(string eventName, var eventValue)
+    signal addCentralizedMetricIfEnabled(string eventName, var eventValue)
 
     signal openAddEditSavedAddressesPopup(var params)
     signal openDeleteSavedAddressesPopup(var params)

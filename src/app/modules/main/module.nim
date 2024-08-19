@@ -1,4 +1,4 @@
-import NimQml, tables, json, sugar, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, browsers
+import NimQml, tables, json, sugar, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, browsers, strutils
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
@@ -925,6 +925,15 @@ method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSett
       self.communitiesModule.onActivated()
     of conf.BROWSER_SECTION_ID:
       self.browserSectionModule.onActivated()
+
+  # If metrics are enabled, send a navigation event
+  var sectionIdToSend = sectionId
+  if sectionId == singletonInstance.userProfile.getPubKey():
+    sectionIdToSend = conf.CHAT_SECTION_NAME
+  elif sectionId.startsWith("0x"):
+    # This is a community
+    sectionIdToSend = "community"
+  singletonInstance.globalEvents.addCentralizedMetricIfEnabled("navigation", $(%*{"viewId": sectionIdToSend}))
 
   self.view.model().setActiveSection(sectionId)
   self.view.activeSectionSet(item)
