@@ -3,10 +3,9 @@ import os
 
 import pytest
 import logging
-import configs
 import constants
 from configs import get_platform
-from constants import UserAccount
+from constants.user import *
 from driver.aut import AUT
 from gui.main_window import MainWindow
 from scripts.utils import system_path
@@ -22,10 +21,12 @@ def options(request):
         return request.param
     return ''
 
+
 @pytest.fixture
 def keycard_controller(request):
     if 'settings_keycard' in str(getattr(request, 'fspath')):
         os.environ['STATUS_RUNTIME_USE_MOCKED_KEYCARD'] = 'True'
+
 
 @pytest.fixture
 def application_logs():
@@ -82,7 +83,7 @@ def user_account(request) -> UserAccount:
         user_account = request.param
         assert isinstance(user_account, UserAccount)
     else:
-        user_account = constants.user.user_account_one
+        user_account = constants.user.RandomUser()
     yield user_account
 
 
@@ -90,6 +91,7 @@ def user_account(request) -> UserAccount:
 def main_screen(user_account: UserAccount, main_window: MainWindow) -> MainWindow:
     main_window.authorize_user(user_account)
     return main_window
+
 
 @pytest.fixture(scope="session")
 def close_apps_before_start():

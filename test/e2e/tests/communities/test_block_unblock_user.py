@@ -37,7 +37,8 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances, us
                 main_screen.hide()
 
         with step(
-                f'User {user_one.name}, block contact {user_two.name} from user profile and verify button Unblock appeared'):
+                f'User {user_one.name}, block contact {user_two.name} from user profile and verify button Unblock '
+                f'appeared'):
             aut_one.attach()
             main_screen.prepare()
             community_screen = main_screen.left_panel.select_community('Community with 2 users')

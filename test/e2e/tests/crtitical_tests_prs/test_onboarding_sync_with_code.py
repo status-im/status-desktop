@@ -8,7 +8,7 @@ from . import marks
 import configs.testpath
 import constants
 import driver
-from constants import UserAccount
+from constants import UserAccount, RandomUser
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
@@ -23,7 +23,7 @@ pytestmark = marks
 @pytest.mark.case(703592)
 @pytest.mark.critical
 def test_sync_device_during_onboarding(multiple_instances):
-    user: UserAccount = constants.user_with_random_attributes_1
+    user: UserAccount = RandomUser()
     main_window = MainWindow()
 
     with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:

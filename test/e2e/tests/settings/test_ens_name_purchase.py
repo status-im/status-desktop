@@ -6,6 +6,8 @@ import configs
 import constants
 import driver
 from configs.timeouts import UI_LOAD_TIMEOUT_SEC
+from constants import ReturningUser, ReturningUsersData
+from scripts.utils.generators import random_ens_string
 from constants.wallet import WalletTransactions
 from . import marks
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
@@ -31,8 +33,11 @@ def keys_screen(main_window) -> KeysView:
                  'Settings -> ENS usernames: buy ENS name on testnet')
 @pytest.mark.case(704597)
 @pytest.mark.transaction
-@pytest.mark.parametrize('user_account', [constants.user.user_with_funds])
-@pytest.mark.parametrize('ens_name', [pytest.param(constants.user.ens_user_name)])
+@pytest.mark.parametrize('user_account', [[ReturningUser(
+    seed_phrase=ReturningUsersData.WALLET_USER.value[0],
+    status_address=ReturningUsersData.WALLET_USER.value[1]
+)]])
+@pytest.mark.parametrize('ens_name', [pytest.param(random_ens_string())])
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14862")
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14509")
 def test_ens_name_purchase(keys_screen, main_window, user_account, ens_name):

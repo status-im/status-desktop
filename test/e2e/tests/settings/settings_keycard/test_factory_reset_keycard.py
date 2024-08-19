@@ -1,6 +1,8 @@
 import allure
 import pytest
 from allure_commons._allure import step
+
+from constants import RandomUser
 from . import marks
 
 import configs
@@ -16,7 +18,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703628', 'Factory reset a Keycard')
 @pytest.mark.case(703628)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_factory_reset_keycard(main_screen: MainWindow, user_account):
     main_screen.prepare()
@@ -70,7 +72,7 @@ def test_factory_reset_keycard(main_screen: MainWindow, user_account):
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704606',
                  'Factory reset a Keycard: incorrect PIN')
 @pytest.mark.case(704606)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_factory_reset_keycard_incorrect_pin(main_screen: MainWindow, user_account):
     main_screen.prepare()

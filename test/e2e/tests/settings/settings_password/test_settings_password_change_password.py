@@ -3,6 +3,8 @@ import psutil
 import pytest
 from allure_commons._allure import step
 
+from constants import UserAccount, RandomUser
+from scripts.utils.generators import random_name_string, random_password_string
 from gui.components.change_password_popup import ChangePasswordPopup
 from tests.settings.settings_profile import marks
 
@@ -17,13 +19,11 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703005',
                  'Change the password and login with new password')
 @pytest.mark.case(703005)
-@pytest.mark.parametrize('user_account, user_account_changed_password',
-                         [pytest.param(constants.user.user_account_one,
-                                       constants.user.user_account_one_changed_password)])
+@pytest.mark.parametrize('user_account',[RandomUser()])
 @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15178')
 # @pytest.mark.critical
 # TODO: follow up on https://github.com/status-im/status-desktop/issues/13013
-def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account, user_account_changed_password):
+def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account):
     with step('Open profile settings'):
         settings_scr = main_screen.left_panel.open_settings()
 
@@ -31,7 +31,8 @@ def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_accou
         password_view = settings_scr.left_panel.open_password_settings()
 
     with step('Fill in the change password form and submit'):
-        password_view.change_password(user_account.password, user_account_changed_password.password)
+        new_password = random_password_string()
+        password_view.change_password(user_account.password, new_password)
 
     with step('Click re-encrypt data button and then restart'):
         ChangePasswordPopup().click_re_encrypt_data_restart_button()
@@ -40,7 +41,8 @@ def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_accou
         aut.restart()
 
     with step('Login with new password'):
-        main_screen.authorize_user(user_account_changed_password)
+        main_screen.authorize_user(user_account=UserAccount(name=user_account.name,
+                                                            password=new_password))
 
     with step('Verify that the user logged in correctly'):
         online_identifier = main_screen.left_panel.open_online_identifier()

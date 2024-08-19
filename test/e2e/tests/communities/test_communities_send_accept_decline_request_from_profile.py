@@ -12,7 +12,7 @@ from gui.main_window import MainWindow
 from . import marks
 import configs
 import constants
-from constants import UserAccount
+from constants import UserAccount, RandomUser
 
 pytestmark = marks
 
@@ -20,15 +20,10 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736170',
                  "Add a contact from community's member list")
 @pytest.mark.case(736170)
-@pytest.mark.parametrize('user_data_one, user_data_two, user_data_three', [
-    (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic',
-     configs.testpath.TEST_USER_DATA / 'nervous')
-])
-def test_communities_send_accept_decline_request_remove_contact_from_profile(multiple_instances, user_data_one,
-                                                                             user_data_two, user_data_three):
-    user_one: UserAccount = constants.user_account_one
-    user_two: UserAccount = constants.user_account_two
-    user_three: UserAccount = constants.user_account_three
+def test_communities_send_accept_decline_request_remove_contact_from_profile(multiple_instances):
+    user_one: UserAccount = RandomUser()
+    user_two: UserAccount = RandomUser()
+    user_three: UserAccount = RandomUser()
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     main_screen = MainWindow()
     community_params = deepcopy(constants.community_params)

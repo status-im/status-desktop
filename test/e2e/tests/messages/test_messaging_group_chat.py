@@ -10,7 +10,8 @@ from . import marks
 
 import configs.testpath
 import constants
-from constants import UserAccount
+from constants import UserAccount, RandomUser
+from scripts.utils.generators import random_name_string, random_password_string
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen, ToolBar
@@ -22,9 +23,9 @@ pytestmark = marks
 @pytest.mark.case(703014)
 @pytest.mark.timeout(timeout=315)
 def test_group_chat(multiple_instances):
-    user_one: UserAccount = constants.user_with_random_attributes_1
-    user_two: UserAccount = constants.user_with_random_attributes_2
-    user_three: UserAccount = constants.user_with_random_attributes_3
+    user_one: UserAccount = RandomUser()
+    user_two: UserAccount = RandomUser()
+    user_three: UserAccount = RandomUser()
     members = [user_two.name, user_three.name]
     main_window = MainWindow()
     messages_screen = MessagesScreen()

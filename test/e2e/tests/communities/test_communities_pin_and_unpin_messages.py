@@ -12,7 +12,7 @@ from gui.main_window import MainWindow
 from . import marks
 import configs
 import constants
-from constants import ColorCodes, UserAccount
+from constants import ColorCodes, UserAccount, RandomUser
 from gui.screens.community_settings import CommunitySettingsScreen
 from gui.screens.messages import MessagesScreen
 
@@ -26,8 +26,8 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
 @pytest.mark.case(703255, 703256, 703510)
 def test_join_community_and_pin_unpin_message(multiple_instances):
-    user_one: UserAccount = constants.user_with_random_attributes_1
-    user_two: UserAccount = constants.user_with_random_attributes_2
+    user_one: UserAccount = RandomUser()
+    user_two: UserAccount = RandomUser()
     community_params = deepcopy(constants.community_params)
     community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
     main_screen = MainWindow()

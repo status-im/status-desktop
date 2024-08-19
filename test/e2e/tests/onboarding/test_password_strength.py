@@ -2,6 +2,8 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+from constants import UserAccount, RandomUser
+from scripts.utils.generators import random_name_string, random_password_string
 from . import marks
 
 import constants
@@ -24,7 +26,7 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702989',
                  'Strength of the password')
 @pytest.mark.case(702989)
-@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 def test_check_password_strength_and_login(keys_screen, main_window, user_account):
     values = [('abcdefghij', very_weak_lower_elements),
               ('ABCDEFGHIJ', very_weak_upper_elements),
@@ -59,15 +61,11 @@ def test_check_password_strength_and_login(keys_screen, main_window, user_accoun
         assert create_password_view.get_password_from_first_field() == expected_password
 
         create_password_view.click_hide_icon(0)
-        # we decided to comment it because this verification is not stable (always different format of dots)
-        # assert create_password_view.get_password_from_first_field() == '●●●●●●●●●●'
 
         create_password_view.click_show_icon(1)
         assert create_password_view.get_password_from_confirmation_field() == expected_password
 
         create_password_view.click_hide_icon(0)
-        # we decided to comment it because this verification is not stable (always different format of dots)
-        # assert create_password_view.get_password_from_confirmation_field() == '●●●●●●●●●●'
 
     with step('Confirm creation of password and set password in confirmation again field'):
         confirm_password_view = create_password_view.click_create_password()
@@ -82,5 +80,4 @@ def test_check_password_strength_and_login(keys_screen, main_window, user_accoun
 
     with step('Click show icon to hide password and check that there are dots instead'):
         create_password_view.click_hide_icon(0)
-        # we decided to comment it because this verification is not stable (always different format of dots)
-        # assert confirm_password_view.get_password_from_confirmation_again_field() == '●●●●●●●●●●'
+

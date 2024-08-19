@@ -4,6 +4,8 @@ import string
 import allure
 import pytest
 from allure_commons._allure import step
+
+from constants import RandomUser
 from tests.settings.settings_wallet import marks
 
 import constants
@@ -21,7 +23,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704454',
                  'Account view interactions: Delete generated account')
 @pytest.mark.case(704454)
-@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
                          [
                              pytest.param(''.join(random.choices(string.ascii_letters +

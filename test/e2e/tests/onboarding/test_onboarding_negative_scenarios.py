@@ -9,7 +9,8 @@ from . import marks
 
 import configs.system
 import constants
-from constants import UserAccount
+from constants import UserAccount, RandomUser
+from scripts.utils.generators import random_name_string, random_password_string
 from constants.onboarding import OnboardingMessages
 from driver.aut import AUT
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
@@ -34,8 +35,7 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.parametrize('error', [OnboardingMessages.PASSWORD_INCORRECT.value
                                    ])
 def test_login_with_wrong_password(aut: AUT, keys_screen, main_window, error: str):
-    user_one: UserAccount = constants.user_account_one
-    user_one_wrong_password: UserAccount = constants.user_account_one_changed_password
+    user_one: UserAccount = RandomUser()
 
     with step('Open generate keys view and set user name'):
         profile_view = keys_screen.generate_new_keys()
@@ -63,7 +63,10 @@ def test_login_with_wrong_password(aut: AUT, keys_screen, main_window, error: st
     with step('Restart application and input wrong password'):
         aut.restart()
         login_view = LoginView()
-        login_view.log_in(user_one_wrong_password)
+        login_view.log_in(UserAccount(
+            name=user_one.name,
+            password=random_password_string()
+        ))
         time.sleep(2)
 
     with step('Verify that user cannot log in and the error appears'):
@@ -94,21 +97,22 @@ def test_sign_up_with_wrong_name(keys_screen, user_name: str, error: str):
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702993',
-                 'Sign up with wrong password format in both new password and confirmation input')
+                 'Sign up with password shorter than 10 chars')
 @pytest.mark.case(702993)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.parametrize('password, error', [
-    pytest.param('badP', OnboardingMessages.WRONG_PASSWORD.value),
+@pytest.mark.parametrize('user_account', [
+    RandomUser()])
+@pytest.mark.parametrize('error', [
+    pytest.param(OnboardingMessages.WRONG_PASSWORD.value),
 ])
-def test_sign_up_with_wrong_password_in_both_fields(keys_screen, user_account, password: str, error: str):
+def test_sign_up_with_wrong_password_length(keys_screen, user_account, error: str):
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
         profile_view.set_display_name(user_account.name)
 
     with step('Input wrong password in both first and confirmation fields'):
         create_password_view = profile_view.next()
-        create_password_view.set_password_in_first_field(password)
-        create_password_view.set_password_in_confirmation_field(password)
+        create_password_view.set_password_in_first_field(user_account.password[:8])
+        create_password_view.set_password_in_confirmation_field(user_account.password[:8])
 
     with step('Verify that button Create password is disabled and correct error appears'):
         assert create_password_view.is_create_password_button_enabled is False
@@ -118,20 +122,17 @@ def test_sign_up_with_wrong_password_in_both_fields(keys_screen, user_account, p
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702994',
                  'Sign up with right password format in new password input but incorrect in confirmation password input')
 @pytest.mark.case(702994)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.parametrize('first_password, confirmation_password', [
-    pytest.param('TesTEr16843/!@01', 'bad2!s'),
-])
-def test_sign_up_with_wrong_password_in_confirmation_field(keys_screen, user_account, first_password: str,
-                                                           confirmation_password: str):
+@pytest.mark.parametrize('user_account', [
+    RandomUser()])
+def test_sign_up_with_wrong_password_in_confirmation_field(keys_screen, user_account):
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
         profile_view.set_display_name(user_account.name)
 
     with step('Input correct password in first field and wrong password in confirmation field'):
         create_password_view = profile_view.next()
-        create_password_view.set_password_in_first_field(first_password)
-        create_password_view.set_password_in_confirmation_field(confirmation_password)
+        create_password_view.set_password_in_first_field(user_account.password)
+        create_password_view.set_password_in_confirmation_field(random_password_string())
 
     with step('Verify that button Create password is disabled'):
         assert create_password_view.is_create_password_button_enabled is False
@@ -140,22 +141,22 @@ def test_sign_up_with_wrong_password_in_confirmation_field(keys_screen, user_acc
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702995',
                  'Sign up with incorrect confirmation-again password')
 @pytest.mark.case(702995)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.parametrize('password, confirmation_again_password, error', [
-    pytest.param('TesTEr16843/!@01', 'TesTEr16843/!@)', OnboardingMessages.PASSWORDS_DONT_MATCH.value),
+@pytest.mark.parametrize('user_account', [RandomUser()])
+@pytest.mark.parametrize('error', [
+    pytest.param(OnboardingMessages.PASSWORDS_DONT_MATCH.value),
 ])
-def test_sign_up_with_wrong_password_in_confirmation_again_field(keys_screen, user_account, password: str,
-                                                                 confirmation_again_password: str, error: str):
+def test_sign_up_with_wrong_password_in_confirmation_again_field(keys_screen, user_account,
+                                                                 error: str):
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
         profile_view.set_display_name(user_account.name)
 
     with step('Input correct password in both first and confirmation fields'):
         create_password_view = profile_view.next()
-        confirm_password_view = create_password_view.create_password(password)
+        confirm_password_view = create_password_view.create_password(user_account.password)
 
     with step('Input wrong password in confirmation again field'):
-        confirm_password_view.set_password(confirmation_again_password)
+        confirm_password_view.set_password(random_password_string())
 
     with step('Verify that button Finalise Status Password Creation is disabled and correct error appears'):
         assert confirm_password_view.is_confirm_password_button_enabled is False

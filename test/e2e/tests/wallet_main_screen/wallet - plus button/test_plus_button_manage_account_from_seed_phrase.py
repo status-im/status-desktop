@@ -4,6 +4,8 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+from constants import UserAccount, RandomUser
+from scripts.utils.generators import random_name_string, random_password_string
 from constants.wallet import WalletSeedPhrase
 from tests.wallet_main_screen import marks
 
@@ -18,7 +20,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703030', 'Manage a seed phrase imported account')
 @pytest.mark.case(703030)
-@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
                          'new_name, new_color, new_emoji, new_emoji_unicode, seed_phrase', [
                              pytest.param('SPAcc24', '#2a4af5', 'sunglasses', '1f60e',
@@ -90,7 +92,7 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736371',
                  "Can't import the same seed phrase when adding account")
 @pytest.mark.case(736371)
-@pytest.mark.parametrize('user_account', [constants.user.user_with_random_attributes_1])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
                          'new_name, new_color, new_emoji, new_emoji_unicode, seed_phrase', [
                              pytest.param('SPAcc24', '#2a4af5', 'sunglasses', '1f60e',
