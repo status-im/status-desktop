@@ -26,7 +26,6 @@ pytestmark = marks
                                  '0x8397bc3c5a60a1883174f722403d63a8833312b7',
                                  ''.join(random.choices(string.ascii_letters, k=24)))
                          ])
-# TODO: https://github.com/status-im/desktop-qa-automation/issues/452
 def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, new_name: str):
     with step('Add new saved address'):
         wallet = main_screen.left_panel.open_wallet()
@@ -36,7 +35,7 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
     with step('Verify that saved address is in the list of saved addresses'):
         assert driver.waitFor(
             lambda: name in wallet.left_panel.open_saved_addresses().address_names,
-            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Address: {name} not found'
+            configs.timeouts.LOADING_LIST_TIMEOUT_MSEC), f'Address: {name} not found'
 
     with step('Verify toast message when adding saved address'):
         messages = main_screen.wait_for_notification()
@@ -49,7 +48,7 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
     with step('Verify that saved address with new name is in the list of saved addresses'):
         assert driver.waitFor(
             lambda: new_name in SavedAddressesView().address_names,
-            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Address: {new_name} not found'
+            configs.timeouts.LOADING_LIST_TIMEOUT_MSEC), f'Address: {new_name} not found'
 
     with step('Verify toast message when editing saved address'):
         messages = main_screen.wait_for_notification()
@@ -65,6 +64,6 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
             f"Toast message about deleting saved address is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify that saved address with new name is not in the list of saved addresses'):
-       assert not driver.waitFor(
-           lambda: new_name in wallet.left_panel.open_saved_addresses().get_saved_addresses_list(),
-           configs.timeouts.APP_LOAD_TIMEOUT_MSEC), f'Address: {new_name} is still present'
+        assert not driver.waitFor(
+            lambda: new_name in wallet.left_panel.open_saved_addresses().get_saved_addresses_list(),
+            configs.timeouts.LOADING_LIST_TIMEOUT_MSEC), f'Address: {new_name} is still present'
