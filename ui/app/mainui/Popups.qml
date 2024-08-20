@@ -8,6 +8,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
@@ -95,6 +96,7 @@ QtObject {
         Global.openCommunityMemberMessagesPopupRequested.connect(openCommunityMemberMessagesPopup)
         Global.openSwapModalRequested.connect(openSwapModal)
         Global.openBuyCryptoModalRequested.connect(openBuyCryptoModal)
+        Global.privacyPolicyRequested.connect(() => openPopup(privacyPolicyPopupComponent))
     }
 
     property var currentPopup
@@ -1268,6 +1270,28 @@ QtObject {
                     currentCurrency: root.currencyStore.currentCurrency
                 }
                 onClosed: destroy()
+            }
+        },
+        Component {
+            id: privacyPolicyPopupComponent
+            StatusDialog {
+                width: 600
+                padding: 0
+                title: qsTr("Status Software Privacy Policy")
+                StatusScrollView {
+                    id: privacyDialogScrollView
+                    anchors.fill: parent
+                    contentWidth: availableWidth
+                    StatusBaseText {
+                        width: privacyDialogScrollView.availableWidth
+                        wrapMode: Text.Wrap
+                        textFormat: Text.MarkdownText
+                        text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/privacy.mdwn")
+                        onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+                    }
+                }
+                standardButtons: Dialog.Ok
+                destroyOnClose: true
             }
         }
     ]

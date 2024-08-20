@@ -103,6 +103,8 @@ QtObject {
 
     signal openTestnetPopup()
 
+    signal privacyPolicyRequested()
+
     // Swap
     signal openSwapModalRequested(var formDataParams)
 

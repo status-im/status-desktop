@@ -128,7 +128,7 @@ headline_StatusTitleSubtitle = {"container": statusDesktop_mainWindow_overlay, "
 keys_exist_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
 # Share Usage Data Popup
-not_now_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "notShareMetricsButton", "type": "StatusButton", "visible": True}
+not_now_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "notShareMetricsButton", "type": "StatusFlatButton", "visible": True}
 share_usage_data_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "shareMetricsButton", "type": "StatusButton", "visible": True}
 
 """ Communities """
