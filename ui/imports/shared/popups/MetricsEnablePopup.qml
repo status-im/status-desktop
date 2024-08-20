@@ -16,7 +16,7 @@ StatusModal {
 
     property string placement: Constants.metricsEnablePlacement.unknown
 
-    signal toggleMetrics(bool enabled)
+    signal setMetricsEnabledRequested(bool enabled)
 
     width: 640
     title: qsTr("Help us improve Status")
@@ -83,31 +83,38 @@ StatusModal {
             Paragraph {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                text: qsTr("Usage data will be shared from all profiles added to device. %1").arg(root.placement !== Constants.metricsEnablePlacement.privacyAndSecurity ? "Sharing usage data can be turned off anytime in Settings / Privacy and Security." : "")
+                textFormat: Text.RichText
+                text: qsTr("Usage data will be shared from all profiles added to device. %1 %2")
+                      .arg(root.placement !== Constants.metricsEnablePlacement.privacyAndSecurity ? qsTr("Sharing usage data can be turned off anytime in Settings / Privacy and Security.") : "")
+                      .arg(root.placement === Constants.metricsEnablePlacement.privacyAndSecurity ? qsTr("For more details refer to our %1.").arg(Utils.getStyledLink("Privacy Policy", "#", hoveredLink)) : "")
+                onLinkActivated: {
+                    root.close()
+                    Global.privacyPolicyRequested()
+                }
+                HoverHandler {
+                    cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : undefined
+                }
             }
         }
     }
 
     rightButtons: [
-        StatusButton {
-            text: qsTr("Share usage data")
+        StatusFlatButton {
+            text: qsTr("Do not share")
             onClicked: {
-                root.toggleMetrics(true)
-                close()
-            }
-            objectName: "shareMetricsButton"
-        }
-    ]
-
-    leftButtons: [
-        StatusButton {
-            text: qsTr("Not now")
-            onClicked: {
-                root.toggleMetrics(false)
+                root.setMetricsEnabledRequested(false)
                 close()
             }
             objectName: "notShareMetricsButton"
             normalColor: "transparent"
+        },
+        StatusButton {
+            text: qsTr("Share usage data")
+            onClicked: {
+                root.setMetricsEnabledRequested(true)
+                close()
+            }
+            objectName: "shareMetricsButton"
         }
     ]
 }

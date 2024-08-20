@@ -379,7 +379,7 @@ StatusWindow {
         sourceComponent: MetricsEnablePopup {
             visible: true
             onClosed: metricsPopupLoader.active = false
-            onToggleMetrics: {
+            onSetMetricsEnabledRequested: {
                 applicationWindow.metricsStore.toggleCentralizedMetrics(enabled)
                 if (enabled) {
                     Global.addCentralizedMetricIfEnabled("usage_data_shared", {placement: metricsPopupLoader.item.placement})
