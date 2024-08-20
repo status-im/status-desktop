@@ -50,7 +50,7 @@ Button {
     property int borderWidth: 0
     property bool textFillWidth: false
 
-    property int radius: isRoundIcon ? height/2 : size === StatusBaseButton.Size.Tiny ? 6 : 8
+    property int radius: isRoundIcon && d.iconOnly ? height/2 : size === StatusBaseButton.Size.Tiny ? 6 : 8
 
     property int size: StatusBaseButton.Size.Large
     property int type: StatusBaseButton.Type.Normal
@@ -241,8 +241,8 @@ Button {
 
         StatusRoundIcon {
             asset.name: root.icon.name
-            asset.width: root.icon.width
-            asset.height: root.icon.height
+            asset.width: d.iconSize
+            asset.height: d.iconSize
             asset.color: root.icon.color
             asset.bgColor: root.asset.bgColor
         }
