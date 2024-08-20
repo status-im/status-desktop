@@ -345,7 +345,6 @@ StatusMenu {
     StatusAction {
         id: sendToAddressAction
         enabled: false
-        visibleOnDisabled: true
         text: {
             switch(d.addressType) {
             case TransactionAddressMenu.AddressType.Sender:

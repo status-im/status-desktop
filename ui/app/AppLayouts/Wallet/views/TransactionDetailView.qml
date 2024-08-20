@@ -101,7 +101,7 @@ Item {
             return outSymbol || !transaction.tokenOutAddress ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenOutAddress, 4))
         }
         readonly property real feeEthValue: d.details ? RootStore.getFeeEthValue(d.details.totalFees) : 0
-        readonly property real feeFiatValue: d.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken) : 0
+        readonly property real feeFiatValue: RootStore.getFiatValue(d.feeEthValue, Constants.ethToken)
         readonly property int transactionType: d.isTransactionValid ? WalletStores.RootStore.transactionType(transaction) : Constants.TransactionType.Send
         readonly property bool isBridge: d.transactionType === Constants.TransactionType.Bridge
 
@@ -289,7 +289,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.inSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return Style.svg(RootStore.Icon(d.transaction.chainIdIn)) ?? Style.svg("network/Network=Custom")
+                                    return Style.svg(ModelUtils.getByKey(RootStore.flatNetworks, "chainId", d.transaction.chainIdIn, "iconUrl")) ?? Style.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }
