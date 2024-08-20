@@ -24,9 +24,30 @@ Column {
         id: d
 
         property bool incorrectChecksum: false
+        property string uuid
+        property string resolvedEnsAddress
 
         function checkIfAddressChecksumIsValid(address) {
             d.incorrectChecksum = !root.store.isChecksumValidForAddress(address)
+        }
+
+        function validateEnsAsync(value) {
+            var name = value.startsWith("@") ? value.substring(1) : value
+            d.uuid = Utils.uuid()
+            root.store.validateEnsAsync(name, d.uuid)
+        }
+    }
+
+    Connections {
+        target: root.store
+        function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
+            if (uuid !== d.uuid) {
+                return
+            }
+
+            d.resolvedEnsAddress = resolvedAddress
+            addressInput.validate()
+            root.store.changeWatchOnlyAccountAddressPostponed(resolvedAddress)
         }
     }
 
@@ -63,19 +84,30 @@ Column {
             }
         }
         validators: [
-            StatusAddressOrEnsValidator {
+            StatusValidator {
+                name: "address-or-ens"
+                validate: (value) => {
+                              return Utils.isValidAddress(value) ||
+                              Utils.isValidEns(value) &&
+                              !!d.resolvedEnsAddress
+                          }
                 errorMessage: qsTr("Please enter a valid Ethereum address or ENS name")
             }
         ]
 
         onTextChanged: {
             d.incorrectChecksum = false
-            if (addressInput.valid) {
-                const trimmedText = text.trim()
+            const trimmedText = text.trim()
+            if (Utils.isValidEns(trimmedText)) {
+                d.resolvedEnsAddress = ""
+                d.validateEnsAsync(trimmedText)
+                return
+            } else if (Utils.isValidAddress(trimmedText)) {
                 root.store.changeWatchOnlyAccountAddressPostponed(trimmedText)
                 d.checkIfAddressChecksumIsValid(trimmedText)
                 return
             }
+
             root.store.cleanWatchOnlyAccountAddress()
         }
 
