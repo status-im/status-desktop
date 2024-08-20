@@ -55,6 +55,11 @@ BasePopupStore {
     ]
 
     signal showLimitPopup(int warningType)
+    signal resolvedENS(string resolvedPubKey, string resolvedAddress, string uuid)
+
+    Component.onCompleted: {
+        mainModule.resolvedENS.connect(root.resolvedENS)
+    }
 
     function resetStoreValues() {
         root.enteredSeedPhraseIsValid = false
@@ -118,6 +123,10 @@ BasePopupStore {
     function changeSelectedOrigin(keyUid) {
         root.addAccountModule.changeSelectedOrigin(keyUid)
     }
+
+    readonly property var validateEnsAsync: Backpressure.debounce(root, 500, function (name, uuid) {
+        mainModule.resolveENS(name, uuid)
+    });
 
     readonly property var changeDerivationPathPostponed: Backpressure.debounce(root, 400, function (path) {
         root.changeDerivationPath(path)
