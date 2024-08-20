@@ -379,6 +379,14 @@ proc getAddressDetails*(chainId: int, address: string): RpcResponse[JsonNode] =
   let payload = %* [chainId, address]
   result = core.callPrivateRPC("wallet_getAddressDetails", payload)
 
+proc getAddressDetails*(address: string, chainIds: seq[uint64] = @[], timeoutInMilliseconds: int): RpcResponse[JsonNode] =
+  let payload = %* [{
+    "address": address,
+    "chainIds": chainIds,
+    "timeoutInMilliseconds": timeoutInMilliseconds,
+  }]
+  result = core.callPrivateRPC("wallet_addressDetails", payload)
+
 proc addressExists*(address: string): RpcResponse[JsonNode] =
   let payload = %* [address]
   result = core.callPrivateRPC("wallet_addressExists", payload)

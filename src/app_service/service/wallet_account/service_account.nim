@@ -718,7 +718,6 @@ proc fetchDetailsForAddresses*(self: Service, uniqueId: string, addresses: seq[s
   let network = self.networkService.getAppNetwork()
   let arg = FetchDetailsForAddressesTaskArg(
     uniqueId: uniqueId,
-    chainId: network.chainId,
     addresses: addresses,
     tptr: fetchDetailsForAddressesTask,
     vptr: cast[ByteAddress](self.vptr),

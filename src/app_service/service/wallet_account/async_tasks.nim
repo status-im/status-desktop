@@ -43,7 +43,6 @@ proc fetchDerivedAddressesForMnemonicTask*(argEncoded: string) {.gcsafe, nimcall
 type
   FetchDetailsForAddressesTaskArg* = ref object of QObjectTaskArg
     uniqueId: string
-    chainId: int
     addresses: seq[string]
 
 proc fetchDetailsForAddressesTask*(argEncoded: string) {.gcsafe, nimcall.} =
@@ -65,7 +64,7 @@ proc fetchDetailsForAddressesTask*(argEncoded: string) {.gcsafe, nimcall.} =
       if response.result.getBool:
         jsonReponse["alreadyCreated"] = %*true
       else:
-        response = status_go_accounts.getAddressDetails(arg.chainId, address)
+        response = status_go_accounts.getAddressDetails(address, chainIds = @[], timeoutInMilliseconds = 3000)
         jsonReponse = response.result
       sleep(250)
       data["details"] = jsonReponse
