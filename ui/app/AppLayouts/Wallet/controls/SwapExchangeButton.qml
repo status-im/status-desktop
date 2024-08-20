@@ -13,7 +13,6 @@ StatusButton {
 
     focusPolicy: Qt.NoFocus
     isRoundIcon: true
-    radius: height/2
     normalColor: Theme.palette.indirectColor3
     disabledColor: normalColor
     opacity: enabled ? 1 : 0.4

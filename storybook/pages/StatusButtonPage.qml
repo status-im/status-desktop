@@ -203,7 +203,6 @@ SplitView {
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         isRoundIcon: true
-                        radius: height/2
                         textFillWidth: ctrlFillWidth.checked
                     }
                 }
