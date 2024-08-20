@@ -8,6 +8,10 @@ QtObject {
 
     property var exemptionsModel: notificationsModule.exemptionsModel
 
+    function loadExemptions() {
+        root.notificationsModule.loadExemptions()
+    }
+
     function sendTestNotification(title, message) {
         root.notificationsModule.sendTestNotification(title, message)
     }

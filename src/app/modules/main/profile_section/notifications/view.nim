@@ -5,6 +5,7 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      exemptionsLoaded: bool
       exemptionsModel: Model
       exemptionsModelVariant: QVariant
       
@@ -17,11 +18,18 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
+    result.exemptionsLoaded = false
     result.exemptionsModel = newModel()
     result.exemptionsModelVariant = newQVariant(result.exemptionsModel)
     
   proc load*(self: View) =
     self.delegate.viewDidLoad()
+    
+  proc loadExemptions*(self: View) {.slot.} =
+    if self.exemptionsLoaded:
+      return
+    self.delegate.initModel()
+    self.exemptionsLoaded = true
 
   proc sendTestNotification*(self: View, title: string, message: string) {.slot.} =
     self.delegate.sendTestNotification(title, message)
