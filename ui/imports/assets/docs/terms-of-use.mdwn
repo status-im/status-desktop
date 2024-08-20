@@ -81,7 +81,7 @@ Status Software also includes a Web 3 browser through which you may access and i
 
 ### 3. Privacy
 
-Status uses an open source, peer-to-peer protocol with end-to-end encryption and metadata suppression, which by design, means that Status (and any third party) is unable to and does not collect, store, own, control or have any visibility or means of access to your identity, Wallet, browsing information, any user private keys, Digital Assets, messages, content, history of interactions, transactions, user accounts or any other user information.
+Status uses an open source, peer-to-peer protocol with end-to-end encryption and metadata suppression, which by design, means that Status (and any third party) is unable to and does not collect, store, own, control or have any visibility or means of access to your identity, Wallet, browsing information, any user private keys, Digital Assets, messages, content, history of interactions, user accounts or any other user information.
 
 Therefore, Status does not (and cannot) monetise any users’ data or content, such as messages or browser information and Status does not have any interest in doing so.
 
