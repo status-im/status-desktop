@@ -589,8 +589,8 @@ StatusListItem {
             return qsTr("%1 to %2 on %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
         case Constants.TransactionType.Bridge:
             if (allAccounts)
-                return qsTr("%1 from %2 to %3 in %4").arg(inTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
-            return qsTr("%1 from %2 to %3").arg(inTransactionValue).arg(networkNameOut).arg(networkNameIn)
+                return qsTr("%1 from %2 to %3 in %4").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
+            return qsTr("%1 from %2 to %3").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn)
         case Constants.TransactionType.ContractDeployment:
             const name = addressNameTo || addressNameFrom
             return qsTr("Via %1 on %2").arg(name).arg(networkName)

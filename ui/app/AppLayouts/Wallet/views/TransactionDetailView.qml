@@ -289,7 +289,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.inSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return Style.svg(RootStore.Icon(d.transaction.chainIdIn)) ?? Style.svg("network/Network=Custom")
+                                    return Style.svg(ModelUtils.getByKey(RootStore.flatNetworks, "chainId", d.transaction.chainIdIn, "iconUrl")) ?? Style.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }
