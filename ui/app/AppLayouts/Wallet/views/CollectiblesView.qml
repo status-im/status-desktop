@@ -234,9 +234,10 @@ ColumnLayout {
 
         sourceModel: d.sourceModel
         proxyRoles: [
-            JoinRole {
+            FastExpressionRole {
                 name: "groupName"
-                roleNames: ["collectionName", "communityName"]
+                expression: !!model.communityId ? model.communityName : model.collectionName
+                expectedRoles: ["communityId", "collectionName", "communityName"]
             },
             FastExpressionRole {
                 name: "balance"
@@ -306,7 +307,7 @@ ColumnLayout {
 
     Settings {
         id: settings
-        category: "CollectiblesViewSortSettings"
+        category: "CollectiblesViewSortSettings-" + root.addressFilters
         property int currentSortValue: SortOrderComboBox.TokenOrderDateAdded
         property alias currentSortOrder: cmbTokenOrder.currentSortOrder
         property alias selectedFilterGroupIds: cmbFilter.selectedFilterGroupIds
@@ -336,6 +337,33 @@ ColumnLayout {
 
             FilterComboBox {
                 id: cmbFilter
+                sourceModel: SortFilterProxyModel {
+                    sourceModel: d.sourceModel
+                    proxyRoles: [
+                        FastExpressionRole {
+                            name: "balance"
+                            expression: {
+                                d.addrFilters
+                                return d.getBalance(model.ownership, d.addrFilters)
+                            }
+                            expectedRoles: ["ownership"]
+                        }
+                    ]
+                    filters: [
+                        FastExpressionFilter {
+                            expression: {
+                                return d.nwFilters.includes(model.chainId+"")
+                            }
+                            expectedRoles: ["chainId"]
+                        },
+                        ValueFilter {
+                            roleName: "balance"
+                            value: 0
+                            inverted: true
+                        }
+                    ]
+                }
+
                 regularTokensModel: root.controller.regularTokensModel
                 collectionGroupsModel: root.controller.collectionGroupsModel
                 communityTokenGroupsModel: root.controller.communityTokenGroupsModel

@@ -494,9 +494,13 @@ void ManageTokensController::rebuildCommunityTokenGroupsModel()
         if (!communityIds.contains(communityId)) { // insert into groups
             communityIds.append(communityId);
 
+            const auto collectionName =
+                !communityToken.collectionName.isEmpty() ? communityToken.collectionName : communityToken.name;
+
             TokenData tokenGroup;
             tokenGroup.symbol = communityId;
             tokenGroup.communityId = communityId;
+            tokenGroup.collectionName = collectionName;
             tokenGroup.communityName = communityToken.communityName;
             tokenGroup.communityImage = communityToken.communityImage;
             tokenGroup.backgroundColor = communityToken.backgroundColor;
@@ -551,9 +555,13 @@ void ManageTokensController::rebuildHiddenCommunityTokenGroupsModel()
             m_hiddenCommunityGroups.contains(communityId)) { // insert into groups
             communityIds.append(communityId);
 
+            const auto collectionName =
+                !communityToken.collectionName.isEmpty() ? communityToken.collectionName : communityToken.name;
+
             TokenData tokenGroup;
             tokenGroup.symbol = communityId;
             tokenGroup.communityId = communityId;
+            tokenGroup.collectionName = collectionName;
             tokenGroup.communityName = communityToken.communityName;
             tokenGroup.communityImage = communityToken.communityImage;
             tokenGroup.backgroundColor = communityToken.backgroundColor;
