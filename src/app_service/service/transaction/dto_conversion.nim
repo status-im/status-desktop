@@ -11,6 +11,7 @@ proc sortAsc[T](t1, t2: T): int =
 
 proc convertToOldRoute*(route: seq[TransactionPathDtoV2]): seq[TransactionPathDto] =
   const
+    defaultDecimals = 1
     gweiDecimals = 9
     ethDecimals = 18
   for p in route:
@@ -43,9 +44,12 @@ proc convertToOldRoute*(route: seq[TransactionPathDtoV2]): seq[TransactionPathDt
       trPath.toToken = p.toToken
       trPath.gasFees = fees
       # trPath.cost = not in use for old approach in the desktop app
-      value = conversion.wei2Eth(input = p.txTokenFees, decimals = p.fromToken.decimals)
+      var decimals = defaultDecimals
+      if(p.fromToken.decimals != 0):
+        decimals = p.fromToken.decimals
+      value = conversion.wei2Eth(input = p.txTokenFees, decimals = decimals)
       trPath.tokenFees = parseFloat(value)
-      value = conversion.wei2Eth(input = p.txBonderFees, decimals = p.fromToken.decimals)
+      value = conversion.wei2Eth(input = p.txBonderFees, decimals = decimals)
       trPath.bonderFees = value
       trPath.txBonderFees = p.txBonderFees
       trPath.tokenFees += parseFloat(value) # we add bonder fees to the token fees cause in the UI, atm, we show only token fees
