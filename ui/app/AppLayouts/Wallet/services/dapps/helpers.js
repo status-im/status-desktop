@@ -68,7 +68,7 @@ function buildSupportedNamespaces(chainIds, addresses, methods) {
         "eip155":{
             "chains": [${eipChainIds.join(',')}],
             "methods": [${methodsStr}],
-            "events": ["accountsChanged", "chainChanged"],
+            "events": ["chainChanged","accountsChanged","message","disconnect","connect"],
             "accounts": [${eipAddresses.join(',')}]
         }
     }`

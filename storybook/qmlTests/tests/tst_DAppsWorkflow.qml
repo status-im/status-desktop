@@ -700,7 +700,7 @@ Item {
             verify(eip155.hasOwnProperty("methods"))
             verify(eip155.methods.length > 0)
             verify(eip155.hasOwnProperty("events"))
-            compare(eip155.events.length, 2)
+            compare(eip155.events.length, 5)
         }
 
         function test_getAccountsInSession() {
