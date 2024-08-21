@@ -261,7 +261,7 @@ STATUSQ_BUILD_PATH := ui/StatusQ/build
 STATUSQ_INSTALL_PATH := $(shell pwd)/bin
 STATUSQ_CMAKE_CACHE := $(STATUSQ_BUILD_PATH)/CMakeCache.txt
 
-$(STATUSQ_CMAKE_CACHE): | deps
+$(STATUSQ_CMAKE_CACHE): | check-qt-dir
 	echo -e "\033[92mConfiguring:\033[39m StatusQ"
 	cmake \
 		-DCMAKE_INSTALL_PREFIX=$(STATUSQ_INSTALL_PATH) \
@@ -342,7 +342,7 @@ STORYBOOK_SOURCE_PATH := storybook
 STORYBOOK_BUILD_PATH := $(STORYBOOK_SOURCE_PATH)/build
 STORYBOOK_CMAKE_CACHE := $(STORYBOOK_BUILD_PATH)/CMakeCache.txt
 
-$(STORYBOOK_CMAKE_CACHE): | deps
+$(STORYBOOK_CMAKE_CACHE): | check-qt-dir
 	echo -e "\033[92mConfiguring:\033[39m Storybook"
 	cmake \
 		-DCMAKE_INSTALL_PREFIX=$(STORYBOOK_INSTALL_PATH) \
