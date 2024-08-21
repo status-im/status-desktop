@@ -61,8 +61,6 @@ StatusListItem {
     readonly property double inFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(inCryptoValue, modelData.inSymbol): 0.0
     readonly property double outCryptoValue: isModelDataValid ? modelData.outAmount : 0.0
     readonly property double outFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(outCryptoValue, modelData.outSymbol): 0.0
-    readonly property double feeCryptoValue: 0.0 // TODO fill when bridge data is implemented
-    readonly property double feeFiatValue: 0.0 // TODO fill when bridge data is implemented
     readonly property string networkColor: isModelDataValid ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainId, "chainColor") : ""
     readonly property string networkName: isModelDataValid ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainId, "chainName") : ""
     readonly property string networkNameIn: isMultiTransaction ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainIdIn, "chainName") : ""
@@ -589,8 +587,8 @@ StatusListItem {
             return qsTr("%1 to %2 on %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
         case Constants.TransactionType.Bridge:
             if (allAccounts)
-                return qsTr("%1 from %2 to %3 in %4").arg(inTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
-            return qsTr("%1 from %2 to %3").arg(inTransactionValue).arg(networkNameOut).arg(networkNameIn)
+                return qsTr("%1 from %2 to %3 in %4").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
+            return qsTr("%1 from %2 to %3").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn)
         case Constants.TransactionType.ContractDeployment:
             const name = addressNameTo || addressNameFrom
             return qsTr("Via %1 on %2").arg(name).arg(networkName)
@@ -807,7 +805,6 @@ StatusListItem {
                                           .arg(Theme.palette.successColor1)
                                           .arg(inValue)
                         case Constants.TransactionType.Bridge:
-                            return "−" + root.rootStore.formatCurrencyAmount(feeCryptoValue, modelData.symbol)
                         case Constants.TransactionType.Approve:
                         default:
                             return ""
@@ -853,7 +850,6 @@ StatusListItem {
                             return "-%1 / +%2".arg(root.rootStore.formatCurrencyAmount(root.outFiatValue, root.currentCurrency))
                                               .arg(root.rootStore.formatCurrencyAmount(root.inFiatValue, root.currentCurrency))
                         case Constants.TransactionType.Bridge:
-                            return "−" + root.rootStore.formatCurrencyAmount(root.feeFiatValue, root.currentCurrency)
                         case Constants.TransactionType.Approve:
                         default:
                             return ""

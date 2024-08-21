@@ -383,6 +383,8 @@ QtObject:
       return transactions.MultiTransactionType.MultiTransactionSwap
     of SendType.Approve:
       return transactions.MultiTransactionType.MultiTransactionApprove
+    of SendType.Bridge:
+      return transactions.MultiTransactionType.MultiTransactionBridge
     else:
       return transactions.MultiTransactionType.MultiTransactionSend
 
