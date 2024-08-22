@@ -210,7 +210,12 @@ StackView {
                 communityColor: root.communityColor
                 communityName: root.communityName
 
-                onNextClicked: root.push(ownerTokenEditViewComponent, StackView.Immediate)
+                onNextClicked: {
+                    const chainId = !!root.flatNetworks? SQUtils.ModelUtils.getByKey(root.flatNetworks, "layer", 2).chainId : 0
+                    const accountName = !!root.accounts && root.accounts.count > 0? SQUtils.ModelUtils.get(root.accounts, 0).name : ""
+                    const accountAddress = !!root.accounts && root.accounts.count > 0? SQUtils.ModelUtils.get(root.accounts, 0).address : ""
+                    d.retryPrivilegedToken("", chainId, accountName, accountAddress)
+                }
             }
         }
     }
