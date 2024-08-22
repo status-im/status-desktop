@@ -13,6 +13,7 @@ class ContextMenu(QObject):
         self._context_add_watched_address_option = QObject(names.contextMenuItem_AddWatchOnly)
         self._context_delete_account_option = QObject(names.contextMenuItem_Delete)
         self._context_edit_account_option = QObject(names.contextMenuItem_Edit)
+        self._context_copy_address_option = QObject(names.contextMenuItem_Copy_Address)
         self._context_hide_include_in_total_balance = QObject(names.contextMenuItem_HideInclude)
         self._context_edit_saved_address_option = QObject(names.contextSavedAddressEdit)
         self._context_delete_saved_address_option = QObject(names.contextSavedAddressDelete)
@@ -57,6 +58,10 @@ class ContextMenu(QObject):
     @allure.step('Select edit account option from context menu')
     def select_edit_account_from_context_menu(self):
         self._context_edit_account_option.click()
+
+    @allure.step('Select copy address from context menu')
+    def select_copy_address_from_context_menu(self):
+        self._context_copy_address_option.click()
 
     @allure.step('Check delete option visibility in context menu')
     def is_delete_account_option_present(self):

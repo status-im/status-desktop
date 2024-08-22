@@ -18,14 +18,21 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703028', 'Manage a custom generated account')
 @pytest.mark.case(703028)
 @pytest.mark.parametrize('user_account', [RandomUser()])
-@pytest.mark.parametrize('derivation_path, generated_address_index, name, color, emoji, emoji_unicode, new_name, new_color, new_emoji, new_emoji_unicode',
-                         [
-                            pytest.param('Ethereum', '5', 'Ethereum', '#216266', 'sunglasses', '1f60e', 'EthEdited', '#216266', 'thumbsup', '1f44d'),
-                            pytest.param('Ethereum Testnet (Ropsten)', '10', 'Ethereum Testnet ', '#7140fd', 'sunglasses', '1f60e', 'RopstenEdited', '#216266', 'thumbsup', '1f44d'),
-                            pytest.param('Ethereum (Ledger)', '15', 'Ethereum Ledger', '#2a799b', 'sunglasses', '1f60e', 'LedgerEdited', '#216266', 'thumbsup', '1f44d'),
-                            pytest.param('Ethereum (Ledger Live/KeepKey)', '20', 'Ethereum Ledger Live', '#7140fd', 'sunglasses', '1f60e', 'LiveEdited', '#216266', 'thumbsup', '1f44d'),
-                            pytest.param('N/A', '95', 'Custom path', '#216266', 'sunglasses', '1f60e', 'CustomEdited', '#216266', 'thumbsup', '1f44d')
-])
+@pytest.mark.parametrize(
+    'derivation_path, generated_address_index, name, color, emoji, emoji_unicode, new_name, new_color, new_emoji, '
+    'new_emoji_unicode',
+    [
+        pytest.param('Ethereum', '5', 'Ethereum', '#216266', 'sunglasses', '1f60e', 'EthEdited', '#216266', 'thumbsup',
+                     '1f44d'),
+        pytest.param('Ethereum Testnet (Ropsten)', '10', 'Ethereum Testnet ', '#7140fd', 'sunglasses', '1f60e',
+                     'RopstenEdited', '#216266', 'thumbsup', '1f44d'),
+        pytest.param('Ethereum (Ledger)', '15', 'Ethereum Ledger', '#2a799b', 'sunglasses', '1f60e', 'LedgerEdited',
+                     '#216266', 'thumbsup', '1f44d'),
+        pytest.param('Ethereum (Ledger Live/KeepKey)', '20', 'Ethereum Ledger Live', '#7140fd', 'sunglasses', '1f60e',
+                     'LiveEdited', '#216266', 'thumbsup', '1f44d'),
+        pytest.param('N/A', '95', 'Custom path', '#216266', 'sunglasses', '1f60e', 'CustomEdited', '#216266',
+                     'thumbsup', '1f44d')
+    ])
 def test_plus_button_manage_generated_account_custom_derivation_path(main_screen: MainWindow, user_account,
                                                                      derivation_path: str, generated_address_index: int,
                                                                      name: str, color: str, emoji: str,
@@ -39,7 +46,6 @@ def test_plus_button_manage_generated_account_custom_derivation_path(main_screen
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_derivation_path(derivation_path,
                                                                                            generated_address_index,
                                                                                            user_account.password).save_changes()
-
 
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
