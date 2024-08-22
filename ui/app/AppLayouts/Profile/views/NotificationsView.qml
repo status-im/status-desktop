@@ -22,6 +22,8 @@ SettingsContentBase {
 
     property NotificationsStore notificationsStore
 
+    Component.onCompleted: root.notificationsStore.loadExemptions()
+
     content: ColumnLayout {
         id: contentColumn
 

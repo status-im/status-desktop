@@ -42,16 +42,6 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_ACTIVE_CHATS_LOADED) do(e:Args):
-    self.chatsLoaded = true
-    if self.communitiesLoaded:
-      self.delegate.initModel()
-
-  self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
-    self.communitiesLoaded = true
-    if self.chatsLoaded:
-      self.delegate.initModel()
-
   self.events.on(SIGNAL_COMMUNITY_JOINED) do(e:Args):
     let args = CommunityArgs(e)
     if(args.error.len > 0):
