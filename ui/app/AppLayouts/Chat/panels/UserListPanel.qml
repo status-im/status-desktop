@@ -86,7 +86,6 @@ Item {
             active: messageStore.loading
             visible: active
             sourceComponent: MessagesLoadingView {
-                // anchors.margins: 16
                 isUserList: true
                 anchors.fill: parent
             }
