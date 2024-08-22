@@ -161,21 +161,20 @@ StatusSectionLayout {
         }
 
         let chatContentModule = root.rootStore.currentChatContentModule()
-        if (!chatContentModule) {
+        if (!root.chatContentModule) {
             return false
         }
         // Check if user list is available as an option for particular chat content module
-        return chatContentModule.chatDetails.isUsersListAvailable
+        return root.chatContentModule.chatDetails.isUsersListAvailable
     }
 
     rightPanel: Component {
-        id: userListComponent
         UserListPanel {
             anchors.fill: parent
             store: root.rootStore
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
-            usersModel: root.chatContentModule && root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
+            chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
         }
     }
 

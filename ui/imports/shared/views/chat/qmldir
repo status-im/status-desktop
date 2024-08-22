@@ -13,3 +13,4 @@ NewMessagesMarker 1.0 NewMessagesMarker.qml
 SimplifiedMessageView 1.0 SimplifiedMessageView.qml
 ProfileContextMenu 1.0 ProfileContextMenu.qml
 MessageAddReactionContextMenu 1.0 MessageAddReactionContextMenu.qml
+MessagesLoadingView 1.0 MessagesLoadingView.qml

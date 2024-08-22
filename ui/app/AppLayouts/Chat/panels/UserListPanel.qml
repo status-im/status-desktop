@@ -21,7 +21,8 @@ Item {
     id: root
 
     property ChatStores.RootStore store
-    property var usersModel
+    property var chatCommunitySectionModule
+    property string activeChatId: chatCommunitySectionModule && chatCommunitySectionModule.activeItem.id
     property string label
     property int communityMemberReevaluationStatus: Constants.CommunityMemberReevaluationStatus.None
 
@@ -77,66 +78,128 @@ Item {
 
         clip: true
 
-        StatusListView {
-            id: userListView
-            objectName: "userListPanel"
-
-            clip: false
+        Loader {
+            id: loadingUsersView
 
             anchors.fill: parent
-            anchors.bottomMargin: Style.current.bigPadding
-            displayMarginEnd: anchors.bottomMargin
 
-            model: SortFilterProxyModel {
-                sourceModel: root.usersModel
+            active: messageStore.loading
+            visible: active
+            sourceComponent: MessagesLoadingView {
+                // anchors.margins: 16
+                isUserList: true
+                anchors.fill: parent
+            }
+        }
 
-                proxyRoles: FastExpressionRole {
-                    function displayNameProxy(nickname, ensName, displayName, aliasName) {
-                        return ProfileUtils.displayName(nickname, ensName, displayName, aliasName)
+
+        Repeater {
+            id: chatRepeater
+            model: chatCommunitySectionModule && chatCommunitySectionModule.model
+
+            Loader {
+                id: listLoader
+
+                property bool makeActive: model.type !== Constants.chatType.category && model.type !== Constants.chatType.unknown && model.loaderActive
+                property string chatId: model.itemId
+
+                anchors.fill: parent
+                active: false
+                asynchronous: true
+
+                onMakeActiveChanged: {
+                    if (!listLoader.active && listLoader.makeActive) {
+                        loadingUsersView.active = true
+                        userListDelay.start()
+                    } else if (!listLoader.makeActive) {
+                        listLoader.active = false
                     }
-                    name: "preferredDisplayName"
-                    expectedRoles: ["localNickname", "ensName", "displayName", "alias"]
-                    expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
                 }
 
-                sorters: [
-                    RoleSorter {
-                        roleName: "onlineStatus"
-                        sortOrder: Qt.DescendingOrder
-                    },
-                    StringSorter {
-                        roleName: "preferredDisplayName"
-                        caseSensitivity: Qt.CaseInsensitive
+                Timer {
+                    id: userListDelay
+                    repeat: false
+                    running: false
+                    interval: 500
+                    onTriggered: {
+                        listLoader.active = true
+                        loadingUsersView.active = false
                     }
-                ]
-            }
-            section.property: "onlineStatus"
-            section.delegate: (root.width > 58) ? sectionDelegateComponent : null
-            delegate: StatusMemberListItem {
-                width: ListView.view.width
-                nickName: model.localNickname
-                userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-                pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
-                isContact: model.isContact
-                isVerified: model.isVerified
-                isUntrustworthy: model.isUntrustworthy
-                isAdmin: model.memberRole === Constants.memberRole.owner
-                asset.name: model.icon
-                asset.isImage: (asset.name !== "")
-                asset.isLetterIdenticon: (asset.name === "")
-                asset.color: Utils.colorForColorId(model.colorId)
-                status: model.onlineStatus
-                ringSettings.ringSpecModel: model.colorHash
-                onClicked: {
-                    if (mouse.button === Qt.RightButton) {
-                        Global.openMenu(profileContextMenuComponent, this, {
-                                            myPublicKey: userProfile.pubKey,
-                                            selectedUserPublicKey: model.pubKey,
-                                            selectedUserDisplayName: nickName || userName,
-                                            selectedUserIcon: model.icon,
-                                        })
-                    } else if (mouse.button === Qt.LeftButton) {
-                        Global.openProfilePopup(model.pubKey);
+                }
+
+                sourceComponent: StatusListView {
+                    id: userListView
+                    objectName: "userListPanel"
+
+                    clip: false
+
+                    visible: listLoader.chatId === root.activeChatId
+
+                    anchors.fill: parent
+                    anchors.bottomMargin: Style.current.bigPadding
+                    displayMarginEnd: anchors.bottomMargin
+
+                    model: SortFilterProxyModel {
+                        sourceModel: {
+                            root.chatCommunitySectionModule.prepareChatContentModuleForChatId(listLoader.chatId)
+                            const chatContentModule = root.chatCommunitySectionModule.getChatContentModule()
+                            if (!chatContentModule || !chatContentModule.usersModule) {
+                                return null
+                            }
+                            return chatContentModule.usersModule.model
+                        }
+                        
+                        // sourceModel: root.usersModel
+
+                        proxyRoles: FastExpressionRole {
+                            function displayNameProxy(nickname, ensName, displayName, aliasName) {
+                                return ProfileUtils.displayName(nickname, ensName, displayName, aliasName)
+                            }
+                            name: "preferredDisplayName"
+                            expectedRoles: ["localNickname", "ensName", "displayName", "alias"]
+                            expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
+                        }
+
+                        sorters: [
+                            RoleSorter {
+                                roleName: "onlineStatus"
+                                sortOrder: Qt.DescendingOrder
+                            },
+                            StringSorter {
+                                roleName: "preferredDisplayName"
+                                caseSensitivity: Qt.CaseInsensitive
+                            }
+                        ]
+                    }
+                    section.property: "onlineStatus"
+                    section.delegate: (root.width > 58) ? sectionDelegateComponent : null
+                    delegate: StatusMemberListItem {
+                        width: ListView.view.width
+                        nickName: model.localNickname
+                        userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
+                        pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
+                        isContact: model.isContact
+                        isVerified: model.isVerified
+                        isUntrustworthy: model.isUntrustworthy
+                        isAdmin: model.memberRole === Constants.memberRole.owner
+                        asset.name: model.icon
+                        asset.isImage: (asset.name !== "")
+                        asset.isLetterIdenticon: (asset.name === "")
+                        asset.color: Utils.colorForColorId(model.colorId)
+                        status: model.onlineStatus
+                        ringSettings.ringSpecModel: model.colorHash
+                        onClicked: {
+                            if (mouse.button === Qt.RightButton) {
+                                Global.openMenu(profileContextMenuComponent, this, {
+                                                    myPublicKey: userProfile.pubKey,
+                                                    selectedUserPublicKey: model.pubKey,
+                                                    selectedUserDisplayName: nickName || userName,
+                                                    selectedUserIcon: model.icon,
+                                                })
+                            } else if (mouse.button === Qt.LeftButton) {
+                                Global.openProfilePopup(model.pubKey);
+                            }
+                        }
                     }
                 }
             }
