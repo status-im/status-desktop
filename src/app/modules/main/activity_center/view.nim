@@ -12,6 +12,7 @@ QtObject:
       modelVariant: QVariant
       groupCounters: Table[ActivityCenterGroup, int]
       unreadCount: int
+      hasUnseen: bool
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -24,6 +25,7 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.groupCounters = initTable[ActivityCenterGroup, int]()
     result.unreadCount = 0
+    result.hasUnseen = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -52,21 +54,32 @@ QtObject:
   proc unreadActivityCenterNotificationsCountChanged*(self: View) {.signal.}
 
   proc unreadActivityCenterNotificationsCount*(self: View): int {.slot.} =
-    self.unreadCount = self.delegate.unreadActivityCenterNotificationsCount()
     return self.unreadCount
 
   QtProperty[int] unreadActivityCenterNotificationsCount:
     read = unreadActivityCenterNotificationsCount
     notify = unreadActivityCenterNotificationsCountChanged
 
+  proc setUnreadCount*(self: View, count: int) =
+    if self.unreadCount == count:
+      return
+    self.unreadCount = count
+    self.unreadActivityCenterNotificationsCountChanged()
+
   proc hasUnseenActivityCenterNotificationsChanged*(self: View) {.signal.}
 
   proc hasUnseenActivityCenterNotifications*(self: View): bool {.slot.} =
-    self.delegate.hasUnseenActivityCenterNotifications()
+    return self.hasUnseen
 
   QtProperty[bool] hasUnseenActivityCenterNotifications:
     read = hasUnseenActivityCenterNotifications
     notify = hasUnseenActivityCenterNotificationsChanged
+
+  proc setHasUnseen*(self: View, hasUnseen: bool) =
+    if self.hasUnseen == hasUnseen:
+      return
+    self.hasUnseen = hasUnseen
+    self.hasUnseenActivityCenterNotificationsChanged()
 
   proc fetchActivityCenterNotifications(self: View) {.slot.} =
     self.delegate.fetchActivityCenterNotifications()

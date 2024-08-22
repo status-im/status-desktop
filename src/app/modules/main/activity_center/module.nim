@@ -61,23 +61,30 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-method viewDidLoad*(self: Module) =
-  self.moduleLoaded = true
-  self.delegate.activityCenterDidLoad()
-
-method hasMoreToShow*(self: Module): bool =
-  self.controller.hasMoreToShow()
-
 method unreadActivityCenterNotificationsCount*(self: Module): int =
   self.controller.unreadActivityCenterNotificationsCount()
+
+method unreadActivityCenterNotificationsCountFromView*(self: Module): int =
+  self.view.unreadCount()
 
 method hasUnseenActivityCenterNotifications*(self: Module): bool =
   self.controller.hasUnseenActivityCenterNotifications()
 
+method viewDidLoad*(self: Module) =
+  self.moduleLoaded = true
+  self.delegate.activityCenterDidLoad()
+  self.view.setUnreadCount(self.unreadActivityCenterNotificationsCount())
+  self.view.setHasUnseen(self.hasUnseenActivityCenterNotifications())
+
+method hasMoreToShow*(self: Module): bool =
+  self.controller.hasMoreToShow()
+
 method onNotificationsCountMayHaveChanged*(self: Module) =
-  self.view.unreadActivityCenterNotificationsCountChanged()
-  self.view.hasUnseenActivityCenterNotificationsChanged()
+  self.view.setUnreadCount(self.unreadActivityCenterNotificationsCount())
   self.delegate.onActivityNotificationsUpdated()
+
+method onUnseenChanged*(self: Module, hasUnseen: bool) =
+  self.view.setHasUnseen(hasUnseen)
 
 proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: string, albumMessages: seq[MessageDto]): MessageItem =
   let contactDetails = self.controller.getContactDetails(message.`from`)
@@ -221,7 +228,6 @@ method markAllActivityCenterNotificationsRead*(self: Module): string =
 
 method markAllActivityCenterNotificationsReadDone*(self: Module) =
   self.view.markAllActivityCenterNotificationsReadDone()
-  self.view.unreadActivityCenterNotificationsCountChanged()
 
 method markActivityCenterNotificationRead*(self: Module, notificationId: string) =
   self.controller.markActivityCenterNotificationRead(notificationId)
@@ -229,7 +235,6 @@ method markActivityCenterNotificationRead*(self: Module, notificationId: string)
 method markActivityCenterNotificationReadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationReadDone(notificationId)
-  self.view.unreadActivityCenterNotificationsCountChanged()
 
 method markAsSeenActivityCenterNotifications*(self: Module) =
   self.controller.markAsSeenActivityCenterNotifications()
@@ -259,7 +264,6 @@ method dismissActivityCenterNotificationDone*(self: Module, notificationId: stri
 method markActivityCenterNotificationUnreadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationUnreadDone(notificationId)
-  self.view.unreadActivityCenterNotificationsCountChanged()
 
 method removeActivityCenterNotifications*(self: Module, notificationIds: seq[string]) =
   self.view.removeActivityCenterNotifications(notificationIds)
