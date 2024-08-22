@@ -2,6 +2,7 @@ import time
 import typing
 
 import allure
+import pyperclip
 
 import configs
 import constants.user
@@ -133,6 +134,11 @@ class LeftPanel(QObject):
                 return self.delete_account_from_context_menu(account_name, attempt - 1)
             else:
                 raise ex
+
+    @allure.step('Copy address for the account in the context menu')
+    def copy_account_address_in_context_menu(self, account_name: str):
+        self._open_context_menu_for_account(account_name).select_copy_address_from_context_menu()
+        return str(pyperclip.paste())
 
 
 class SavedAddressesView(QObject):

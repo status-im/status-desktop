@@ -1,3 +1,4 @@
+import random
 from enum import Enum
 
 
@@ -81,3 +82,13 @@ class WalletAccountPopup(Enum):
     WALLET_ACCOUNT_NAME_MIN = 'Account name must be at least 5 characters'
     WALLET_KEYPAIR_NAME_MIN = 'Key pair name must be at least 5 character(s)'
     WALLET_KEYPAIR_MIN = 'Key pair must be at least 5 character(s)'
+
+
+class SeedPhrases(Enum):
+    TWELVE_WORDS_SEED = 'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial'
+    EIGHTEEN_WORDS_SEED = 'kitten tiny cup admit cactus shrug shuffle accident century faith roof plastic beach police barely vacant sign blossom'
+    TWENTY_FOUR_WORDS_SEED = 'elite dinosaur flavor canoe garbage palace antique dolphin virtual mixed sand impact solution inmate hair pipe affair cage vote estate gloom lamp robust like'
+
+    @classmethod
+    def select_random_seed(cls):
+        return random.choice(list(SeedPhrases))

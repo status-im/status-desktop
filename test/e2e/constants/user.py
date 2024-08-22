@@ -32,15 +32,15 @@ class ReturningUser(UserAccount):
 
 
 class ReturningUsersData(Enum):
-
     RETURNING_USER_ONE = (
         [
             'rail', 'witness', 'era', 'asthma', 'empty', 'cheap', 'shed', 'pond', 'skate', 'amount', 'invite', 'year'
         ], '0x3286c371ef648fe6232324b27ee0515f4ded24d9')
     RETURNING_USER_TWO = (
         [
-    'measure', 'cube', 'cousin', 'debris', 'slam', 'ignore', 'seven', 'hat', 'satisfy', 'frown', 'casino', 'inflict'
-], '0x99C096bB5F12bDe37DE9dbee8257Ebe2a5667C46')
+            'measure', 'cube', 'cousin', 'debris', 'slam', 'ignore', 'seven', 'hat', 'satisfy', 'frown', 'casino',
+            'inflict'
+        ], '0x99C096bB5F12bDe37DE9dbee8257Ebe2a5667C46')
     WALLET_USER = (
         [
             'vocal', 'fruit', 'ordinary', 'meadow', 'south', 'athlete', 'inherit', 'since', 'version', 'pitch',
