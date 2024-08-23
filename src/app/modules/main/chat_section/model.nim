@@ -210,7 +210,7 @@ QtObject:
     of ModelRole.LoaderActive:
       result = newQVariant(item.loaderActive)
     of ModelRole.Locked:
-      result = newQVariant(item.isLocked)
+      result = newQVariant(item.locked)
     of ModelRole.RequiresPermissions:
       result = newQVariant(item.requiresPermissions)
     of ModelRole.CanPost:
@@ -366,7 +366,7 @@ QtObject:
     if index == -1:
       return
 
-    if (self.items[index].isLocked == locked):
+    if (self.items[index].locked == locked):
       return
 
     self.items[index].locked = locked

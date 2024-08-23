@@ -80,7 +80,8 @@ method addOrUpdateChat*(self: AccessInterface,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
-    insertIntoModel: bool = true
+    insertIntoModel: bool = true,
+    isSectionBuild: bool = false,
   ): Item {.base.} =
   raise newException(ValueError, "No implementation available")
 

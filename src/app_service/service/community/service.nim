@@ -2247,22 +2247,6 @@ QtObject:
     else:
       return community.declinedRequestsToJoin[indexDeclined].publicKey
 
-  proc checkChatIsLocked*(self: Service, communityId: string, chatId: string): bool =
-    if not self.communities.hasKey(communityId):
-      return false
-
-    let community = self.getCommunityById(communityId)
-    return community.channelPermissions.channels.hasKey(chatId) and not community.channelPermissions.channels[chatId].viewAndPostPermissions.satisfied
-
-  proc checkChatHasPermissions*(self: Service, communityId: string, chatId: string): bool =
-    let community = self.getCommunityById(communityId)
-    for id, tokenPermission in community.tokenPermissions:
-      if TokenPermissionType(tokenPermission.`type`) == TokenPermissionType.View or TokenPermissionType(tokenPermission.`type`) == TokenPermissionType.ViewAndPost:
-        for id in tokenPermission.chatIds:
-          if id == chatId:
-            return true
-    return false
-
   proc shareCommunityUrlWithChatKey*(self: Service, communityId: string): string =
     try:
       let response = status_go.shareCommunityUrlWithChatKey(communityId)

@@ -323,7 +323,7 @@ proc `loaderActive=`*(self: var Item, value: bool) =
 proc isCategory*(self: Item): bool =
   self.`type` == CATEGORY_TYPE
 
-proc isLocked*(self: Item): bool =
+proc locked*(self: Item): bool =
   self.locked
 
 proc `locked=`*(self: Item, value: bool) =
