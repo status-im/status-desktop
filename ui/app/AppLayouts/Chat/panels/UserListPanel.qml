@@ -147,8 +147,6 @@ Item {
                             }
                             return chatContentModule.usersModule.model
                         }
-                        
-                        // sourceModel: root.usersModel
 
                         proxyRoles: FastExpressionRole {
                             function displayNameProxy(nickname, ensName, displayName, aliasName) {
