@@ -1131,6 +1131,7 @@ QtObject {
             readonly property string errCannotCheckReceiverBalance                : "WR-024"
             readonly property string errCannotCheckLockedAmounts                  : "WR-025"
             readonly property string errLowAmountInForHopBridge                   : "WR-026"
+            readonly property string errNoPositiveBalance                         : "WR-027"
         }
     }
 

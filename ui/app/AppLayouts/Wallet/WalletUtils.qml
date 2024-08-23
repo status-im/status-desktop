@@ -212,6 +212,8 @@ QtObject {
             return qsTr("not enough ETH")
         case Constants.routerErrorCodes.router.errLowAmountInForHopBridge:
             return qsTr("amount in too low")
+        case Constants.routerErrorCodes.router.errNoPositiveBalance:
+            return qsTr("no positive balance")
         default:
             return qsTr("unknown processor error")
         }
@@ -365,6 +367,8 @@ QtObject {
             }
         case Constants.routerErrorCodes.router.errLowAmountInForHopBridge:
             return qsTr("bonder fee greater than estimated received, a higher amount is needed to cover fees")
+        case Constants.routerErrorCodes.router.errNoPositiveBalance:
+            return qsTr("no positive balance for your account across chains")
         default:
             return ""
         }
