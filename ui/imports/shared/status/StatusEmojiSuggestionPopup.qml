@@ -1,6 +1,6 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
-import shared 1.0
+import shared.status 1.0
 
 import StatusQ.Core.Utils 0.1
 

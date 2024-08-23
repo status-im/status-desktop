@@ -87,7 +87,6 @@ QtObject {
         return value.match(emojiRegexp, "$1");
     }
     function getEmojiUnicode(shortname) {
-
         const _emoji = EmojiJSON.emoji_json.find(function(emoji) {
             return (emoji.shortname === shortname)
         })
@@ -130,8 +129,8 @@ QtObject {
 
     // Used to exclude flags emojis from the random emoji picker
     // Based on the knowledge that flags emojis are contiguous in the emoji list
-    readonly property int firstFlagIndex: 1003
-    readonly property int lastFlagIndex: 1259
+    readonly property int firstFlagIndex: 3504
+    readonly property int lastFlagIndex: 3772
     readonly property int flagsCount: lastFlagIndex - firstFlagIndex + 1
 
     // Returns a random emoji excluding flags emojis

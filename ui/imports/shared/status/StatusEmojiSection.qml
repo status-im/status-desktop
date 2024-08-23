@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -11,7 +11,7 @@ import shared.panels 1.0
 Item {
     id: emojiSection
     property string searchString: ""
-    property string searchStringLowercase: searchString.toLowerCase()
+    readonly property string searchStringLowercase: searchString.toLowerCase()
     property int imageWidth: 26
     property int imageMargin: 4
     property var emojis: []
@@ -53,7 +53,9 @@ Item {
             }
             return emoji.name.includes(emojiSection.searchStringLowercase) ||
                     emoji.shortname.includes(emojiSection.searchStringLowercase) ||
-                    emoji.aliases.some(a => a.includes(emojiSection.searchStringLowercase))
+                    emoji.aliases.some(a => a.includes(emojiSection.searchStringLowercase)) ||
+                    emoji.keywords.some(a => a.includes(emojiSection.searchStringLowercase)) ||
+                    emoji.aliases_ascii.some(a => a.includes(emojiSection.searchString))
         })
     }
 
@@ -106,8 +108,3 @@ Item {
         }
     }
 }
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:440;width:360}
-}
-##^##*/
