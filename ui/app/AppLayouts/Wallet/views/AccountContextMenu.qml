@@ -21,7 +21,7 @@ StatusMenu {
 
     StatusSuccessAction {
         id: copyAddressAction
-        objectName: "AccountMenu-CopyAddressAction-%1".arg(root.uniqueIdentifier)
+        objectName: "AccountMenu-CopyAddressAction_" + root.account.name
         successText: qsTr("Address copied")
         text: qsTr("Copy address")
         icon.name: "copy"
@@ -35,7 +35,7 @@ StatusMenu {
     }
 
     StatusAction {
-        objectName: "AccountMenu-EditAction-%1".arg(root.uniqueIdentifier)
+        objectName: "AccountMenu-EditAction_" + root.account.name
         enabled: !!root.account
         text: qsTr("Edit")
         icon.name: "pencil-outline"
@@ -45,7 +45,7 @@ StatusMenu {
     }   
 
     StatusAction {
-        objectName: "AccountMenu-HideFromTotalBalance-%1".arg(root.uniqueIdentifier)
+        objectName: "AccountMenu-HideFromTotalBalance_" + root.account.name
         enabled: !!root.account && root.account.walletType === Constants.watchWalletType
         text: !!root.account ? root.account.hideFromTotalBalance ? qsTr("Include in balances and activity")
                                                                  : qsTr("Exclude from balances and activity") : ""
@@ -54,7 +54,7 @@ StatusMenu {
     }
 
     StatusAction {
-        objectName: "AccountMenu-DeleteAction-%1".arg(root.uniqueIdentifier)
+        objectName: "AccountMenu-DeleteAction_" + root.account.name
         enabled: !!root.account && !root.account.isWallet
         text: qsTr("Delete")
         icon.name: "info"
@@ -65,7 +65,7 @@ StatusMenu {
     }
 
     StatusAction {
-        objectName: "AccountMenu-AddNewAccountAction-%1".arg(root.uniqueIdentifier)
+        objectName: "AccountMenu-AddNewAccountAction_" + root.account.name
         text: qsTr("Add new account")
         enabled: !root.account
         icon.name: "add"
@@ -77,7 +77,7 @@ StatusMenu {
     Loader {
         active: !production
         sourceComponent: StatusAction {
-            objectName: "AccountMenu-AddWatchOnlyAccountAction-%1".arg(root.uniqueIdentifier)
+            objectName: "AccountMenu-AddWatchOnlyAccountAction_" + root.account.name
             text: qsTr("Add watched address")
             enabled: !root.account
             icon.name: "show"
