@@ -89,4 +89,4 @@ proc fromEvent*(T: type MailserverChangedSignal, jsonSignal: JsonNode): Mailserv
 
 proc fromEvent*(T: type MailserverNotWorkingSignal, jsonSignal: JsonNode): MailserverNotWorkingSignal =
   result = MailserverNotWorkingSignal()
-  result.signalType = SignalType.MailseverNotWorking
+  result.signalType = SignalType.MailserverNotWorking
