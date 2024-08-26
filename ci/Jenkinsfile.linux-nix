@@ -61,8 +61,8 @@ pipeline {
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
-    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch())}"
-    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch())}"
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'nix.AppImage', arch: getArch())}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'nix.tar.gz', arch: getArch())}"
     STATUS_BUILD_PROXY_STAGE_NAME = "${utils.isReleaseBuild() ? 'prod' : 'test'}"
   }
 
