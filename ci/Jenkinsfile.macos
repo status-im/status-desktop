@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.6'
+library 'status-jenkins-lib@v1.9.7'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -75,7 +75,6 @@ pipeline {
     STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg', arch: getArch())}"
     /* Apple Team ID for Notarization */
     MACOS_NOTARIZE_TEAM_ID = "8B5X2M6H2Y"
-    STATUS_BUILD_PROXY_STAGE_NAME = "${utils.isReleaseBuild() ? 'prod' : 'test'}"
   }
 
   stages {

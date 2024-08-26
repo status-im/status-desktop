@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.6'
+library 'status-jenkins-lib@v1.9.7'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -74,7 +74,6 @@ pipeline {
     /* Control output the filename */
     STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch())}"
     STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch())}"
-    STATUS_BUILD_PROXY_STAGE_NAME = "${utils.isReleaseBuild() ? 'prod' : 'test'}"
   }
 
   stages {
