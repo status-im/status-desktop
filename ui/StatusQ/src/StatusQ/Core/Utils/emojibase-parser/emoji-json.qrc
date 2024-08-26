@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/json/data.raw.json</file>
+        <file>resources/json/joypixels.raw.json</file>
+        <file>resources/json/messages.raw.json</file>
+    </qresource>
+</RCC>

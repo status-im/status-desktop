@@ -616,6 +616,7 @@ Item {
         sourceComponent: StatusEmojiPopup {
             height: 440
             settings: localAccountSensitiveSettings
+            emojiModel: SQUtils.Emoji.emojiModel
         }
     }
 

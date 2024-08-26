@@ -1,10 +1,6 @@
-import QtQuick 2.13
-import StatusQ.Core 0.1
-
+import QtQuick 2.15
 
 Image {
-    id: root
-
     property string emojiId: ""
 
     width: 14

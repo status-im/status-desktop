@@ -50,10 +50,10 @@ SplitView {
             modal: false
             anchors.centerIn: parent
             settings: settings
+            emojiModel: StatusQUtils.Emoji.emojiModel
             onEmojiSelected: d.lastSelectedEmoji = emoji
         }
     }
-
 
     LogsAndControlsPanel {
         SplitView.minimumHeight: 200
@@ -73,8 +73,8 @@ SplitView {
                 }
             }
 
-            Text {
-                text: "Last selected: %1".arg(d.lastSelectedEmoji)
+            Label {
+                text: "Last selected: %1 ('%2')".arg(d.lastSelectedEmoji).arg(settings.recentEmojis[0])
             }
 
             Button {
@@ -88,3 +88,5 @@ SplitView {
 }
 
 // category: Popups
+
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/%F0%9F%92%AC-Chat%E2%8E%9CDesktop?node-id=1006-0&t=VC6BL8H0Il3VbDxX-0

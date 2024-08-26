@@ -1,6 +1,8 @@
 pragma Singleton
 
-import QtQuick 2.13
+import QtQuick 2.15
+
+import StatusQ 0.1
 
 import "../../../assets/twemoji/twemoji.js" as Twemoji
 import "./emojiList.js" as EmojiJSON
@@ -19,6 +21,10 @@ QtObject {
     }
     readonly property string base: Qt.resolvedUrl("../../../assets/twemoji/")
     property var emojiJSON: EmojiJSON
+
+    readonly property StatusEmojiModel emojiModel: StatusEmojiModel {
+        emojiJson: EmojiJSON.emoji_json
+    }
 
     function parse(text, renderSize = size.small, renderFormat = format.svg) {
         const renderSizes = renderSize.split("x");
@@ -87,13 +93,9 @@ QtObject {
         return value.match(emojiRegexp, "$1");
     }
     function getEmojiUnicode(shortname) {
-        const _emoji = EmojiJSON.emoji_json.find(function(emoji) {
-            return (emoji.shortname === shortname)
-        })
-
-        if (_emoji !== undefined)
-            return _emoji.unicode;
-        return undefined;
+        const _emoji = emojiModel.getEmojiUnicodeFromShortname(shortname);
+        if (!!_emoji)
+            return _emoji;
     }
 
     function getEmojiCodepoint(iconCodePoint) {
@@ -119,10 +121,10 @@ QtObject {
     }
 
     function getEmojiFromId(emojiId) {
-        let shortcode = Emoji.getShortcodeFromId(emojiId)
-        let emojiUnicode = Emoji.getEmojiUnicode(shortcode)
+        let shortcode = getShortcodeFromId(emojiId)
+        let emojiUnicode = getEmojiUnicode(shortcode)
         if (emojiUnicode) {
-            return Emoji.fromCodePoint(emojiUnicode)
+            return fromCodePoint(emojiUnicode)
         }
         return undefined
     }
@@ -153,6 +155,6 @@ QtObject {
         const encodedIcon = getEmojiCodepoint(iconCodePoint)
 
         // Adding a space because otherwise, some emojis would fuse since emoji is just a string
-        return Emoji.parse(encodedIcon, size || undefined) + ' '
+        return parse(encodedIcon, size || undefined) + ' '
     }
 }

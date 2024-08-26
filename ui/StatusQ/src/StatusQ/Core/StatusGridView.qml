@@ -1,7 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-
-import StatusQ.Controls 0.1
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 /*!
    \qmltype StatusGridView

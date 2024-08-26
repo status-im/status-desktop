@@ -12,8 +12,7 @@ StatusInputListPopup {
         if(listView.currentIndex < 0 || listView.currentIndex >= emojiSuggestions.modelList.count)
             return ""
 
-        return emojiSuggestions.modelList[listView.currentIndex].unicode_alternates ||
-                emojiSuggestions.modelList[listView.currentIndex].unicode
+        return emojiSuggestions.modelList[listView.currentIndex].unicode
     }
 
     getImageSource: function (modelData) {

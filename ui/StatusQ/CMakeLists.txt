@@ -116,6 +116,7 @@ add_library(StatusQ SHARED
         include/StatusQ/singleroleaggregator.h
         include/StatusQ/snapshotmodel.h
         include/StatusQ/snapshotobject.h
+        include/StatusQ/statusemojimodel.h
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
         include/StatusQ/stringutilsinternal.h
@@ -149,6 +150,7 @@ add_library(StatusQ SHARED
         src/singleroleaggregator.cpp
         src/snapshotmodel.cpp
         src/snapshotobject.cpp
+        src/statusemojimodel.cpp
         src/statussyntaxhighlighter.cpp
         src/statuswindow.cpp
         src/stringutilsinternal.cpp
