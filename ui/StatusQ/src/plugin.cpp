@@ -23,6 +23,7 @@
 #include "StatusQ/rolesrenamingmodel.h"
 #include "StatusQ/rxvalidator.h"
 #include "StatusQ/snapshotobject.h"
+#include "StatusQ/statusemojimodel.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
 #include "StatusQ/stringutilsinternal.h"
@@ -71,6 +72,7 @@ public:
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
         qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
         qmlRegisterType<RolesRenamingModel>("StatusQ", 0, 1, "RolesRenamingModel");
+        qmlRegisterType<StatusEmojiModel>("StatusQ", 0, 1, "StatusEmojiModel");
         qmlRegisterType<SumAggregator>("StatusQ", 0, 1, "SumAggregator");
         qmlRegisterType<FunctionAggregator>("StatusQ", 0, 1, "FunctionAggregator");
         qmlRegisterType<WritableProxyModel>("StatusQ", 0, 1, "WritableProxyModel");

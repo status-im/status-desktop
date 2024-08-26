@@ -126,6 +126,10 @@ Rectangle {
         textInput.append(text)
     }
 
+    function clear() {
+        textInput.clear()
+    }
+
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
 
@@ -775,7 +779,8 @@ Rectangle {
                     const emojis = StatusQUtils.Emoji.emojiJSON.emoji_json.filter(function (emoji) {
                         return emoji.name.includes(emojiPart) ||
                                 emoji.shortname.includes(emojiPart) ||
-                                emoji.aliases.some(a => a.includes(emojiPart))
+                                emoji.aliases.some(a => a.includes(emojiPart)) ||
+                                emoji.keywords.some(k => k.includes(emojiPart))
                     })
 
                     emojiSuggestions.openPopup(emojis, emojiPart)
@@ -976,7 +981,7 @@ Rectangle {
                 index = emojiSuggestions.listView.currentIndex
             }
 
-            const unicode = emojiSuggestions.modelList[index].unicode_alternates || emojiSuggestions.modelList[index].unicode
+            const unicode = emojiSuggestions.modelList[index].unicode
             replaceWithEmoji(extrapolateCursorPosition(), emojiSuggestions.shortname, unicode);
         }
     }

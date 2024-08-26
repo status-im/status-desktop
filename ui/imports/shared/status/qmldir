@@ -10,7 +10,6 @@ StatusChatInputImageArea 1.0 StatusChatInputImageArea.qml
 StatusChatInputReplyArea 1.0 StatusChatInputReplyArea.qml
 StatusChatInputTextFormationAction 1.0 StatusChatInputTextFormationAction.qml
 StatusEmojiPopup 1.0 StatusEmojiPopup.qml
-StatusEmojiSection 1.0 StatusEmojiSection.qml
 StatusEmojiSuggestionPopup 1.0 StatusEmojiSuggestionPopup.qml
 StatusGifPopup 1.0 StatusGifPopup.qml
 StatusImageModal 1.0 StatusImageModal.qml
