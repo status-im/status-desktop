@@ -143,7 +143,7 @@ Rectangle {
 
         property int leftOfMentionIndex: -1
         property int rightOfMentionIndex: -1
-        readonly property int nbEmojisInClipboard: StatusQUtils.Emoji.nbEmojis(QClipboardProxy.html)
+        readonly property int nbEmojisInClipboard: StatusQUtils.Emoji.nbEmojis(ClipboardUtils.html)
 
         property bool emojiPopupOpened: false
         property bool stickersPopupOpened: false
@@ -449,12 +449,12 @@ Rectangle {
         }
 
         if (event.matches(StandardKey.Paste)) {
-            if (QClipboardProxy.hasImage) {
-                const clipboardImage = QClipboardProxy.imageBase64
+            if (ClipboardUtils.hasImage) {
+                const clipboardImage = ClipboardUtils.imageBase64
                 validateImagesAndShowImageArea([clipboardImage])
                 event.accepted = true
-            } else if (QClipboardProxy.hasText) {
-                const clipboardText = Utils.plainText(QClipboardProxy.text)
+            } else if (ClipboardUtils.hasText) {
+                const clipboardText = Utils.plainText(ClipboardUtils.text)
                 // prevent repetitive & huge clipboard paste, where huge is total char count > than messageLimitHard
                 const selectionLength = messageInputField.selectionEnd - messageInputField.selectionStart;
                 if ((messageLength + clipboardText.length - selectionLength) > control.messageLimitHard)
@@ -500,8 +500,8 @@ Rectangle {
                     d.copiedTextFormatted = ""
                     d.copiedMentionsPos = []
                     messageInputField.insert(d.copyTextStart, ((d.nbEmojisInClipboard === 0) ?
-                    ("<div style='white-space: pre-wrap'>" + StatusQUtils.StringUtils.escapeHtml(QClipboardProxy.text) + "</div>")
-                    : StatusQUtils.Emoji.deparse(QClipboardProxy.html)));
+                    ("<div style='white-space: pre-wrap'>" + StatusQUtils.StringUtils.escapeHtml(ClipboardUtils.text) + "</div>")
+                    : StatusQUtils.Emoji.deparse(ClipboardUtils.html)));
                 }
                 event.accepted = true
             }
@@ -676,7 +676,7 @@ Rectangle {
 
         if (messageInputField.readOnly) {
             messageInputField.readOnly = false;
-            messageInputField.cursorPosition = (d.copyTextStart + QClipboardProxy.text.length + d.nbEmojisInClipboard);
+            messageInputField.cursorPosition = (d.copyTextStart + ClipboardUtils.text.length + d.nbEmojisInClipboard);
         }
 
 

@@ -78,7 +78,7 @@ public:
         qmlRegisterType<WritableProxyModel>("StatusQ", 0, 1, "WritableProxyModel");
         qmlRegisterType<FormattedDoubleProperty>("StatusQ", 0, 1, "FormattedDoubleProperty");
 
-        qmlRegisterSingletonType<ClipboardUtils>("StatusQ", 0, 1, "QClipboardProxy", &ClipboardUtils::qmlInstance);
+        qmlRegisterSingletonType<ClipboardUtils>("StatusQ", 0, 1, "ClipboardUtils", &ClipboardUtils::qmlInstance);
         qmlRegisterSingletonType<UrlUtils>("StatusQ", 0, 1, "UrlUtils", &UrlUtils::qmlInstance);
 
         qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");

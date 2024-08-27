@@ -41,7 +41,7 @@ Item {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
             signalSpyClearClicked.clear()
             signalSpyValidateInputRequested.clear()
-            QClipboardProxy.clear()
+            ClipboardUtils.clear()
         }
 
         function test_basicGeometry() {

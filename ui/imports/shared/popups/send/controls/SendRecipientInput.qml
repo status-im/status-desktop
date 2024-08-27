@@ -38,7 +38,7 @@ StatusInput {
             focusPolicy: Qt.NoFocus
             onClicked: {
                 root.input.edit.forceActiveFocus()
-                root.text = QClipboardProxy.text // paste plain text
+                root.text = ClipboardUtils.text // paste plain text
                 root.input.edit.cursorPosition = root.input.edit.length
                 root.validateInputRequested()
             }
@@ -66,7 +66,7 @@ StatusInput {
         function onKeyPressed(event) {
             if (event.matches(StandardKey.Paste)) {
                 event.accepted = true
-                root.text = QClipboardProxy.text // paste plain text
+                root.text = ClipboardUtils.text // paste plain text
             }
         }
     }

@@ -72,7 +72,7 @@ QList<QUrl> ClipboardUtils::urls() const
     return m_clipboard->mimeData()->urls();
 }
 
-void ClipboardUtils::copyTextToClipboard(const QString &text)
+void ClipboardUtils::setText(const QString &text)
 {
     m_clipboard->setText(text);
 }

@@ -37,7 +37,7 @@ SplitView {
                     padding: 0
                     text: "📋"
                     font.pixelSize: 10
-                    onClicked: QClipboardProxy.copyTextToClipboard(textLabel.text)
+                    onClicked: ClipboardUtils.setText(textLabel.text)
                     ToolTip.text: "Copy color name"
                     ToolTip.visible: hovered
                 }
@@ -58,7 +58,7 @@ SplitView {
                     padding: 0
                     text: "📋"
                     font.pixelSize: 10
-                    onClicked: QClipboardProxy.copyTextToClipboard(colorLabel.text)
+                    onClicked: ClipboardUtils.setText(colorLabel.text)
                     ToolTip.text: "Copy color value"
                     ToolTip.visible: hovered
                 }

@@ -200,7 +200,7 @@ Item {
             compare(amountToSend.empty, true)
             compare(amountToSend.amount, "0")
 
-            QClipboardProxy.copyTextToClipboard("1.0005")
+            ClipboardUtils.setText("1.0005")
             const textField = findChild(amountToSend, "amountToSend_textField")
             verify(!!textField)
 
