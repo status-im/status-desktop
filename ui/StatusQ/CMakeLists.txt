@@ -92,8 +92,8 @@ endif()
 
 add_library(StatusQ SHARED
         ${STATUSQ_QRC_COMPILED}
-        include/StatusQ/QClipboardProxy.h
         include/StatusQ/aggregator.h
+        include/StatusQ/clipboardutils.h
         include/StatusQ/concatmodel.h
         include/StatusQ/fastexpressionfilter.h
         include/StatusQ/fastexpressionrole.h
@@ -121,11 +121,11 @@ add_library(StatusQ SHARED
         include/StatusQ/stringutilsinternal.h
         include/StatusQ/submodelproxymodel.h
         include/StatusQ/sumaggregator.h
-        include/StatusQ/undefinedfilter.h
         include/StatusQ/systemutilsinternal.h
+        include/StatusQ/undefinedfilter.h
         include/StatusQ/writableproxymodel.h
-        src/QClipboardProxy.cpp
         src/aggregator.cpp
+        src/clipboardutils.cpp
         src/concatmodel.cpp
         src/fastexpressionfilter.cpp
         src/fastexpressionrole.cpp

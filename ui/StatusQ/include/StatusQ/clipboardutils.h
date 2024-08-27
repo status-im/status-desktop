@@ -7,11 +7,11 @@ class QClipboard;
 class QJSEngine;
 class QQmlEngine;
 
-class QClipboardProxy : public QObject
+class ClipboardUtils : public QObject
 {
     Q_OBJECT
 
-    Q_DISABLE_COPY(QClipboardProxy)
+    Q_DISABLE_COPY(ClipboardUtils)
 
     Q_PROPERTY(bool hasText READ hasText NOTIFY contentChanged)
     Q_PROPERTY(QString text READ text NOTIFY contentChanged)
@@ -26,7 +26,7 @@ class QClipboardProxy : public QObject
     Q_PROPERTY(bool hasUrls READ hasUrls NOTIFY contentChanged)
     Q_PROPERTY(QList<QUrl> urls READ urls NOTIFY contentChanged)
 
-    QClipboardProxy();
+    ClipboardUtils();
 
     bool hasText() const;
     QString text() const;
@@ -49,7 +49,7 @@ public:
         Q_UNUSED(engine);
         Q_UNUSED(scriptEngine);
 
-        return new QClipboardProxy;
+        return new ClipboardUtils;
     }
 
     Q_INVOKABLE bool isValidImageUrl(const QUrl &url, const QStringList &acceptedExtensions) const;
