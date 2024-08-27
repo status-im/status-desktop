@@ -33,6 +33,17 @@ pipeline {
       description: 'Decides whether the mocked status-keycard-go library is built.',
       defaultValue: false
     )
+    choice(
+      name: 'WINDOWS_CODESIGN_TIMESTAMP_URL',
+      description: 'Time Stamp Authority (TSA) server for signing binaries.',
+      choices: [
+        'http://timestamp.digicert.com',
+        'http://timestamp.sectigo.com',
+        'http://timestamp.apple.com/ts01',
+        'http://time.certum.pl',
+        'https://freetsa.org',
+      ]
+    )
   }
 
   options {
@@ -66,9 +77,9 @@ pipeline {
     STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch())}"
     /* 7zip archive filename */
     STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch())}"
-    /* RFC 3161 timestamping URL for DigiCert */
-    WINDOWS_CODESIGN_TIMESTAMP_URL = 'http://timestamp.digicert.com'
     STATUS_BUILD_PROXY_STAGE_NAME = "${utils.isReleaseBuild() ? 'prod' : 'test'}"
+    /* Hack-fix for params not being set in env on first job run. */
+    WINDOWS_CODESIGN_TIMESTAMP_URL = "${params.WINDOWS_CODESIGN_TIMESTAMP_URL}"
   }
 
   stages {
