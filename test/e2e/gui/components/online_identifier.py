@@ -1,6 +1,7 @@
 import time
 
 import allure
+import pyperclip
 
 import configs
 import constants
@@ -20,6 +21,7 @@ class OnlineIdentifier(QObject):
         self._inactive_button = Button(names.userContextmenu_InActiveButton)
         self._automatic_button = Button(names.userContextmenu_AutomaticButton)
         self._view_my_profile_button = Button(names.userContextMenu_ViewMyProfileAction)
+        self._copy_link_to_profile = QObject(names.userContextMenu_CopyLinkToProfile)
         self._user_name_text_label = TextLabel(names.userLabel_StyledText)
         self._identicon_ring = QObject(names.o_StatusIdenticonRing)
 
@@ -27,11 +29,6 @@ class OnlineIdentifier(QObject):
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._view_my_profile_button.is_visible, timeout_msec)
         return self
-
-    @property
-    @allure.step('Check identicon ring visibility')
-    def is_identicon_ring_visible(self):
-        return self._identicon_ring.is_visible
 
     @property
     @allure.step('Get user name')
@@ -57,3 +54,9 @@ class OnlineIdentifier(QObject):
     def open_profile_popup_from_online_identifier(self) -> ProfilePopup:
         self._view_my_profile_button.click()
         return ProfilePopup().wait_until_appears()
+
+    @allure.step('Copy link to profile from online identifier')
+    def copy_link_to_profile(self) -> str:
+        self._copy_link_to_profile.click()
+        link = str(pyperclip.paste())
+        return link

@@ -5,7 +5,7 @@ from allure_commons._allure import step
 import configs.testpath
 import driver
 from constants import UserAccount, RandomUser
-from constants.links import external_link, link_to_status_community, status_user_profile_link
+from constants.links import external_link, link_to_status_community
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen, ToolBar
@@ -21,11 +21,10 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704578', 'Status community link preview bubble')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704589', 'Status user profile link preview')
 @pytest.mark.case(704596, 704578, 704578)
-@pytest.mark.parametrize('community_name, domain_link, user_name, domain_link_2, user_emoji_hash',
-                         [pytest.param('Status', 'status.app', 'Test1', 'github.com',
-                                       '0x04c1671d3659b92671cdac657a901e133ca1cfadddbb640db7dec342ee70c4142533cc03e89eff2bd09dd75aea71d45ab2b605bc7e1996c4a6a82d037f4070d13c')
+@pytest.mark.parametrize('community_name, domain_link, domain_link_2',
+                         [pytest.param('Status', 'status.app', 'github.com')
                           ])
-def test_link_previews(multiple_instances, community_name, domain_link, user_name, domain_link_2, user_emoji_hash):
+def test_link_previews(multiple_instances, community_name, domain_link, domain_link_2):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
     main_window = MainWindow()
@@ -65,6 +64,11 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
             request = activity_center.find_contact_request_in_list(user_one.name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             activity_center.click_activity_center_button(
                 'Contact requests').accept_contact_request(request)
+            activity_center.click()
+
+        with step(f'User {user_two.name}, get own profile link and emoji hash in online identifier'):
+            profile_link = main_window.left_panel.open_online_identifier().copy_link_to_profile()
+            public_key_from_emoji_hash = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier().get_emoji_hash
 
         with step(f'User {user_two.name} opens 1x1 chat with {user_one.name} and paste external link'):
             messages_screen.left_panel.click_chat_by_name(user_one.name)
@@ -140,15 +144,15 @@ def test_link_previews(multiple_instances, community_name, domain_link, user_nam
             messages_screen.group_chat.confirm_sending_message()
 
         with step(f'Paste link to user profile link and send message'):
-            message_user = status_user_profile_link
+            message_user = profile_link
             messages_screen.group_chat.type_message(message_user)
             assert driver.waitFor(
-                lambda: user_name == messages_screen.group_chat.get_link_preview_bubble_title(), 12000)
+                lambda: user_two.name == messages_screen.group_chat.get_link_preview_bubble_title(), 12000)
             messages_screen.group_chat.confirm_sending_message()
 
         with step('Verify title and emojihash are correct for link preview of sent message'):
             sent_message = messages_screen.chat.messages(0)
-            assert driver.waitFor(lambda: sent_message[0].get_link_preview_title() == user_name,
+            assert driver.waitFor(lambda: sent_message[0].get_link_preview_title() == user_two.name,
                                   timeout)
-            assert driver.waitFor(lambda: sent_message[0].link_preview_emoji_hash == user_emoji_hash,
+            assert driver.waitFor(lambda: sent_message[0].link_preview_emoji_hash == public_key_from_emoji_hash,
                                   timeout)

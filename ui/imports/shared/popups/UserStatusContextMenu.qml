@@ -40,6 +40,7 @@ StatusMenu {
     }
 
     StatusAction {
+        objectName: "userStatusCopyLinkAction"
         text: qsTr("Copy link to profile")
         icon.name: "copy"
         onTriggered: {

@@ -93,7 +93,7 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         emoji_hash_identicon_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present()
         chat_key = emoji_hash_identicon_view.get_chat_key
         emoji_hash_public_key = emoji_hash_identicon_view.get_emoji_hash
-        assert emoji_hash_identicon_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
+        assert emoji_hash_identicon_view._identicon_ring.is_visible, f'Identicon ring is not present when it should'
 
     with step('Click Start using Status'):
         next_view = emoji_hash_identicon_view.next()
@@ -112,7 +112,7 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         online_identifier = main_window.left_panel.open_online_identifier()
         assert online_identifier.get_user_name == user_name, \
             f'Display name in online identifier is wrong, current: {online_identifier.get_user_name}, expected: {user_name}'
-        assert online_identifier.is_identicon_ring_visible, \
+        assert online_identifier._identicon_ring.is_visible, \
             f'Identicon ring is not present when it should'
         assert str(online_identifier.object.pubkey) is not None, \
             f'Public key is not present'
