@@ -30,6 +30,7 @@
 #include "StatusQ/sumaggregator.h"
 #include "StatusQ/systemutilsinternal.h"
 #include "StatusQ/undefinedfilter.h"
+#include "StatusQ/urlutils.h"
 #include "StatusQ/writableproxymodel.h"
 
 #include "wallet/managetokenscontroller.h"
@@ -78,6 +79,8 @@ public:
         qmlRegisterType<FormattedDoubleProperty>("StatusQ", 0, 1, "FormattedDoubleProperty");
 
         qmlRegisterSingletonType<ClipboardUtils>("StatusQ", 0, 1, "QClipboardProxy", &ClipboardUtils::qmlInstance);
+        qmlRegisterSingletonType<UrlUtils>("StatusQ", 0, 1, "UrlUtils", &UrlUtils::qmlInstance);
+
         qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");
         qmlRegisterType<SnapshotObject>("StatusQ", 0, 1, "SnapshotObject");
 
