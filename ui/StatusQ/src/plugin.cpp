@@ -3,7 +3,7 @@
 #include <QZXing.h>
 #include <qqmlsortfilterproxymodeltypes.h>
 
-#include "StatusQ/QClipboardProxy.h"
+#include "StatusQ/clipboardutils.h"
 #include "StatusQ/concatmodel.h"
 #include "StatusQ/fastexpressionfilter.h"
 #include "StatusQ/fastexpressionrole.h"
@@ -28,8 +28,8 @@
 #include "StatusQ/stringutilsinternal.h"
 #include "StatusQ/submodelproxymodel.h"
 #include "StatusQ/sumaggregator.h"
-#include "StatusQ/undefinedfilter.h"
 #include "StatusQ/systemutilsinternal.h"
+#include "StatusQ/undefinedfilter.h"
 #include "StatusQ/writableproxymodel.h"
 
 #include "wallet/managetokenscontroller.h"
@@ -77,7 +77,7 @@ public:
         qmlRegisterType<WritableProxyModel>("StatusQ", 0, 1, "WritableProxyModel");
         qmlRegisterType<FormattedDoubleProperty>("StatusQ", 0, 1, "FormattedDoubleProperty");
 
-        qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0, 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
+        qmlRegisterSingletonType<ClipboardUtils>("StatusQ", 0, 1, "QClipboardProxy", &ClipboardUtils::qmlInstance);
         qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");
         qmlRegisterType<SnapshotObject>("StatusQ", 0, 1, "SnapshotObject");
 

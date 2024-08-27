@@ -1,4 +1,4 @@
-#include "StatusQ/QClipboardProxy.h"
+#include "StatusQ/clipboardutils.h"
 
 #include <QBuffer>
 #include <QClipboard>
@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-QClipboardProxy::QClipboardProxy()
+ClipboardUtils::ClipboardUtils()
     : m_clipboard(QGuiApplication::clipboard())
 {
     connect(m_clipboard, &QClipboard::changed, this, [this](QClipboard::Mode mode) {
@@ -19,38 +19,38 @@ QClipboardProxy::QClipboardProxy()
     });
 }
 
-bool QClipboardProxy::hasText() const
+bool ClipboardUtils::hasText() const
 {
     return m_clipboard->mimeData()->hasText();
 }
 
-QString QClipboardProxy::text() const
+QString ClipboardUtils::text() const
 {
     return m_clipboard->text();
 }
 
-bool QClipboardProxy::hasHtml() const
+bool ClipboardUtils::hasHtml() const
 {
     return m_clipboard->mimeData()->hasHtml();
 }
 
-QString QClipboardProxy::html() const
+QString ClipboardUtils::html() const
 {
     auto mimeData = m_clipboard->mimeData();
     return mimeData ? mimeData->html() : QString{};
 }
 
-bool QClipboardProxy::hasImage() const
+bool ClipboardUtils::hasImage() const
 {
     return m_clipboard->mimeData()->hasImage();
 }
 
-QImage QClipboardProxy::image() const
+QImage ClipboardUtils::image() const
 {
     return m_clipboard->image();
 }
 
-QString QClipboardProxy::imageBase64() const
+QString ClipboardUtils::imageBase64() const
 {
     if (!hasImage())
         return {};
@@ -62,17 +62,17 @@ QString QClipboardProxy::imageBase64() const
     return QByteArrayLiteral("data:image/jpeg;base64,") + byteArray.toBase64();
 }
 
-bool QClipboardProxy::hasUrls() const
+bool ClipboardUtils::hasUrls() const
 {
     return m_clipboard->mimeData()->hasUrls();
 }
 
-QList<QUrl> QClipboardProxy::urls() const
+QList<QUrl> ClipboardUtils::urls() const
 {
     return m_clipboard->mimeData()->urls();
 }
 
-bool QClipboardProxy::isValidImageUrl(const QUrl& url, const QStringList& acceptedExtensions) const
+bool ClipboardUtils::isValidImageUrl(const QUrl& url, const QStringList& acceptedExtensions) const
 {
     const auto strippedUrl = url.url(QUrl::RemoveAuthority | QUrl::RemoveFragment | QUrl::RemoveQuery);
     return std::any_of(acceptedExtensions.constBegin(), acceptedExtensions.constEnd(), [strippedUrl](const auto & ext) {
@@ -80,7 +80,7 @@ bool QClipboardProxy::isValidImageUrl(const QUrl& url, const QStringList& accept
     });
 }
 
-qint64 QClipboardProxy::getFileSize(const QUrl& url) const
+qint64 ClipboardUtils::getFileSize(const QUrl& url) const
 {
     if (url.isLocalFile()) {
         return QFile(url.toLocalFile()).size();
@@ -88,12 +88,12 @@ qint64 QClipboardProxy::getFileSize(const QUrl& url) const
     return 0;
 }
 
-void QClipboardProxy::copyTextToClipboard(const QString &text)
+void ClipboardUtils::copyTextToClipboard(const QString &text)
 {
     m_clipboard->setText(text);
 }
 
-void QClipboardProxy::clear()
+void ClipboardUtils::clear()
 {
     m_clipboard->clear();
 }
