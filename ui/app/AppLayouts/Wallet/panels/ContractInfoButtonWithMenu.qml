@@ -55,7 +55,7 @@ StatusFlatButton {
             successText: qsTr("Copied")
             icon.name: "copy"
             autoDismissMenu: true
-            onTriggered: Utils.copyToClipboard(root.contractAddress)
+            onTriggered: ClipboardUtils.setText(root.contractAddress)
         }
     }
 }

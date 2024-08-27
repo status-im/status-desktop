@@ -69,10 +69,6 @@ QtObject {
         localAccountSensitiveSettings.gifUnfurlingEnabled = value
     }
 
-    function copyToClipboard(text) {
-        globalUtils.copyToClipboard(text)
-    }
-
     property var gifsModuleInst: typeof gifsModule !== "undefined" ? gifsModule : null
     property var gifColumnA: gifsModuleInst ? gifsModuleInst.gifColumnA
                                                                  : null

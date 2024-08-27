@@ -47,9 +47,6 @@ SplitView {
                                        {colorId: 19, segmentLength: 2}])
             }
 
-            function copyToClipboard(text) {
-            }
-
             Component.onCompleted: {
                 Utils.globalUtilsInst = this
                 globalUtilsReady = true

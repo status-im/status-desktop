@@ -72,10 +72,6 @@ QtObject {
         return ensUsernamesModule.getSigningPhrase()
     }
 
-    function copyToClipboard(value) {
-        globalUtils.copyToClipboard(value)
-    }
-
     function authenticateAndReleaseEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled) {
         if(!root.ensUsernamesModule)
             return ""

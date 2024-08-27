@@ -1,14 +1,15 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Qt.labs.platform 1.1
 
-import utils 1.0
+import StatusQ 0.1
 import StatusQ.Popups 0.1
 
-import shared.popups 1.0
-import shared.controls.chat.menuItems 1.0
 import AppLayouts.Communities.popups 1.0
+import shared.controls.chat.menuItems 1.0
+import shared.popups 1.0
+import utils 1.0
 
 StatusMenu {
     id: root
@@ -66,7 +67,7 @@ StatusMenu {
         enabled: root.isCommunityChat
         onTriggered: {
             const link = Utils.getCommunityChannelShareLinkWithChatId(root.chatId)
-            Utils.copyToClipboard(link)
+            ClipboardUtils.setText(link)
         }
     }
 
@@ -133,9 +134,7 @@ StatusMenu {
         StatusAction {
             text: root.isCommunityChat ? qsTr("Copy channel ID") : qsTr("Copy chat ID")
             icon.name: "copy"
-            onTriggered: {
-                Utils.copyToClipboard(root.chatId)
-            }
+            onTriggered: ClipboardUtils.setText(root.chatId)
         }
 
         StatusAction {

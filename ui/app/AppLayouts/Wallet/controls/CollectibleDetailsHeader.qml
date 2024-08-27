@@ -3,10 +3,11 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import shared.controls 1.0
 
@@ -156,7 +157,7 @@ ColumnLayout {
                     if (collectionTag.isUnkownCommunity) {
                         collectionTag.copySuccess = true
                         debounceTimer.restart()
-                        Utils.copyToClipboard(root.communityId)
+                        ClipboardUtils.setText(root.communityId)
                         return
                     }
                     root.collectionTagClicked()

@@ -1,6 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Core.Theme 0.1
@@ -227,7 +228,7 @@ StatusModal {
                         anchors.top: addressText.top
                         icon.name: "copy"
                         type: StatusRoundButton.Type.Tertiary
-                        onClicked: WalletStore.RootStore.copyToClipboard(d.visibleAddress)
+                        onClicked: ClipboardUtils.setText(d.visibleAddress)
                     }
                 }
 

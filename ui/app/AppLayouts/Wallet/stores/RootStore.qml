@@ -383,10 +383,6 @@ QtObject {
         networksModule.enableNetwork(chainId)
     }
 
-    function copyToClipboard(text) {
-        globalUtils.copyToClipboard(text)
-    }
-
     function runAddAccountPopup() {
         walletSection.runAddAccountPopup(false)
     }

@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.4
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -93,7 +94,7 @@ ColumnLayout {
         asset.name: "copy"
         iconButton.onClicked: {
             let link = Utils.getCommunityShareLink(root.community.id)
-            Utils.copyToClipboard(link)
+            ClipboardUtils.setText(link)
             tooltip.visible = !tooltip.visible
         }
     }

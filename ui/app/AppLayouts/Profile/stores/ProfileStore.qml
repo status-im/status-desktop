@@ -79,10 +79,6 @@ QtObject {
         return globalUtils.qrCode(text)
     }
 
-    function copyToClipboard(value) {
-        globalUtils.copyToClipboard(value)
-    }
-
     function saveProfileIdentityChanges(displayName, bio, imageInfo) {
         const changes = Object.assign({},
                                       displayName !== undefined && { displayName },

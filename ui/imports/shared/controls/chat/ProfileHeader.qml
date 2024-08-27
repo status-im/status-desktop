@@ -1,10 +1,11 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.panels 1.0
 import shared.controls 1.0
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
@@ -268,7 +269,7 @@ Item {
                 Layout.preferredHeight: 20
                 color: Style.current.transparent
                 textToCopy: pubkey
-                onCopyClicked: root.store.copyToClipboard(textToCopy)
+                onCopyClicked: ClipboardUtils.setText(textToCopy)
             }
         }
 

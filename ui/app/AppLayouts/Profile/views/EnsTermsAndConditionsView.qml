@@ -307,7 +307,7 @@ Item {
                 tooltip.text: qsTr("Copied to clipboard!")
                 asset.name: "copy"
                 iconButton.onClicked: {
-                    root.ensUsernamesStore.copyToClipboard(subTitle)
+                    ClipboardUtils.setText(subTitle)
                     tooltip.visible = !tooltip.visible
                 }
                 anchors.top: ensUsername.bottom
@@ -324,7 +324,7 @@ Item {
                 tooltip.text: qsTr("Copied to clipboard!")
                 asset.name: "copy"
                 iconButton.onClicked: {
-                    root.ensUsernamesStore.copyToClipboard(root.ensUsernamesStore.pubkey)
+                    ClipboardUtils.setText(subTitle)
                     tooltip.visible = !tooltip.visible
                 }
                 anchors.top: walletAddressLbl.bottom

@@ -8,6 +8,7 @@ import shared.controls.chat 1.0
 import shared.panels 1.0
 import shared.controls.chat.menuItems 1.0
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
@@ -43,7 +44,7 @@ StatusMenu {
         text: qsTr("Copy link to profile")
         icon.name: "copy"
         onTriggered: {
-            Utils.copyToClipboard(root.store.contactStore.getLinkToProfile(root.store.userProfileInst.pubKey))
+            ClipboardUtils.setText(root.store.contactStore.getLinkToProfile(root.store.userProfileInst.pubKey))
             root.close()
         }
     }

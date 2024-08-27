@@ -201,10 +201,6 @@ QtObject {
         communitiesModuleInst.cancelRequestToJoinCommunity(id)
     }
 
-    function copyToClipboard(text) {
-        globalUtils.copyToClipboard(text)
-    }
-
     function plainText(text) {
         return globalUtils.plainText(text);
     }

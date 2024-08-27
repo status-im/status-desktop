@@ -23,10 +23,6 @@ QtObject {
     property var getGasEthValue
     property var flatNetworks
 
-    function copyToClipboard(text) {
-        console.warn("STUB: copyToClipboard:", text)
-    }
-
     function setNeverAskAboutUnfurlingAgain(value) {
         console.log("STUB: setNeverAskAboutUnfurlingAgain:", value)
         neverAskAboutUnfurlingAgain = value

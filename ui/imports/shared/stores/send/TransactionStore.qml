@@ -60,10 +60,6 @@ QtObject {
         return networksModule.getBlockExplorerURL(chainID)
     }
 
-    function copyToClipboard(text) {
-        globalUtils.copyToClipboard(text)
-    }
-
     function authenticateAndTransfer(uuid) {
         walletSectionSendInst.authenticateAndTransfer(uuid)
     }

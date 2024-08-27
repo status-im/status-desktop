@@ -176,10 +176,6 @@ QtObject {
         return networksModuleInst.getNetworkShortNames(chainIds)
     }
 
-    function copyToClipboard(textToCopy) {
-        globalUtils.copyToClipboard(textToCopy)
-    }
-
     function getNetworkData(combinedNetwork) {
         return {
             prod: {chainId: combinedNetwork.prod.chainId,

@@ -156,10 +156,6 @@ QtObject {
         return chatCommunitySectionModule.getChatContentModule()
     }
 
-    function copyToClipboard(text) {
-        globalUtils.copyToClipboard(text)
-    }
-
     // Contact requests related part
     property var contactRequestsModel: chatCommunitySectionModule.contactRequestsModel
 

@@ -39,7 +39,7 @@ import StatusQ.Controls 0.1
             autHideCopyIcon: true
             expanded: false
 
-            onDoCopy: (address) => root.store.copyToClipboard(address)
+            onDoCopy: (address) => ClipboardUtils.setText(address)
         }
     \endqml
     For a list of components available see StatusQ.
