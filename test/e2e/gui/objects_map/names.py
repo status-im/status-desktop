@@ -87,6 +87,7 @@ userContextmenu_AlwaysActiveButton= {"container": o_StatusListView, "objectName"
 userContextmenu_InActiveButton= {"container": o_StatusListView, "objectName": "userStatusMenuInactiveAction", "type": "StatusMenuItem", "visible": True}
 userContextmenu_AutomaticButton= {"container": o_StatusListView, "objectName": "userStatusMenuAutomaticAction", "type": "StatusMenuItem", "visible": True}
 userContextMenu_ViewMyProfileAction = {"container": o_StatusListView, "objectName": "userStatusViewMyProfileAction", "type": "StatusMenuItem", "visible": True}
+userContextMenu_CopyLinkToProfile = {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusCopyLinkAction", "type": "StatusMenuItem", "visible": True}
 userLabel_StyledText = {"container": o_StatusListView, "type": "StyledText", "unnamed": 1, "visible": True}
 o_StatusIdenticonRing = {"container": o_StatusListView, "type": "StatusIdenticonRing", "unnamed": 1, "visible": True}
 

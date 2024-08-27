@@ -313,11 +313,6 @@ class YourProfileView(OnboardingView):
         return self._profile_image.image
 
     @property
-    @allure.step('Check identicon ring visibility')
-    def is_identicon_ring_visible(self):
-        return self._identicon_ring.is_visible
-
-    @property
     @allure.step('Get error messages')
     def get_error_message(self) -> str:
         return self._erros_text_label.text if self._erros_text_label.is_visible else ''
@@ -414,11 +409,6 @@ class YourEmojihashAndIdenticonRingView(OnboardingView):
     @allure.step('Get emoji hash image')
     def get_emoji_hash(self) -> str:
         return str(getattr(self._emoji_hash.object, 'publicKey'))
-
-    @property
-    @allure.step('Verify: Identicon ring visible')
-    def is_identicon_ring_visible(self):
-        return self._identicon_ring.is_visible
 
     @allure.step('Click next in your emojihash and identicon ring view')
     def next(self):
