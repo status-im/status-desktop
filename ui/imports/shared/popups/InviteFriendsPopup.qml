@@ -1,5 +1,7 @@
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+
 import utils 1.0
 
 StatusModal {
@@ -13,7 +15,7 @@ StatusModal {
         tooltip.text: qsTr("Copied!")
         asset.name: "copy"
         iconButton.onClicked: {
-            Utils.copyToClipboard(Constants.downloadLink)
+            ClipboardUtils.setText(Constants.downloadLink)
             tooltip.visible = !tooltip.visible
         }
         width: parent.width

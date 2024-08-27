@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 
 import utils 1.0
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
@@ -177,9 +178,7 @@ StatusListItem {
             icon.name: "copy"
             timeout: 1500
             autoDismissMenu: true
-            onTriggered: {
-                RootStore.copyToClipboard(d.visibleAddress)
-            }
+            onTriggered: ClipboardUtils.setText(d.visibleAddress)
         }
 
         StatusAction {

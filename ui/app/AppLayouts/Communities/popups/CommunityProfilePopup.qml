@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
@@ -63,9 +64,7 @@ StatusModal {
                     root.community.spectated ? communitySectionModule.leaveCommunity()
                                              : Global.leaveCommunityRequested(root.community.name, root.community.id, root.community.outroMessage)
                 }
-                onCopyToClipboard: {
-                    Utils.copyToClipboard(link);
-                }
+                onCopyToClipboard: ClipboardUtils.setText(link)
             }
         }
     }

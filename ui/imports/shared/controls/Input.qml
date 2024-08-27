@@ -1,6 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
@@ -9,7 +10,6 @@ import utils 1.0
 
 import "../panels"
 import "../controls"
-import "../stores"
 
 Item {
     id: inputBox
@@ -157,7 +157,7 @@ Item {
                         }
                         onClicked: {
                            if (inputBox.copyToClipboard) {
-                               RootStore.copyToClipboard(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)
+                               ClipboardUtils.setText(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)
                            } else {
                                 inputValue.paste()
                            }

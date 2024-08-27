@@ -4,6 +4,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Window 2.12
 import QtGraphicalEffects 1.15
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
@@ -806,7 +807,7 @@ Item {
                     icon.width: 20
                     icon.height: 20
                     size: StatusButton.Small
-                    onClicked: RootStore.copyToClipboard(transactionHeader.getDetailsString(d.details))
+                    onClicked: ClipboardUtils.setText(transactionHeader.getDetailsString(d.details))
                 }
             }
         }

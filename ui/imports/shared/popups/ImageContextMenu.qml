@@ -1,4 +1,6 @@
 import QtQuick 2.15
+
+import StatusQ 0.1
 import StatusQ.Popups 0.1
 import utils 1.0
 
@@ -39,7 +41,7 @@ StatusMenu {
         text: qsTr("Copy link")
         icon.name: "copy"
         enabled: d.isUnfurled
-        onTriggered: Utils.copyToClipboard(url)
+        onTriggered: ClipboardUtils.setText(url)
     }
 
     StatusAction {

@@ -361,9 +361,6 @@ SplitView {
                             function getQrCodeSource() {
                                 return "https://upload.wikimedia.org/wikipedia/commons/4/41/QR_Code_Example.svg"
                             }
-                            function copyToClipboard(text) {
-                                logs.logEvent("profileStore::copyToClipboard", ["text"], arguments)
-                            }
                         }
 
                         contactsStore: ProfileStores.ContactsStore {

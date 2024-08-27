@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
 
+import StatusQ 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 
@@ -103,7 +104,7 @@ StatusMenu {
         text: qsTr("Copy message")
         icon.name: "copy"
         onTriggered: {
-            root.store.copyToClipboard(root.unparsedText)
+            ClipboardUtils.setText(root.unparsedText)
             close()
         }
         enabled: root.messageContentType === Constants.messageContentType.messageType && replyToMenuItem.enabled
@@ -115,7 +116,7 @@ StatusMenu {
         icon.name: "copy"
         enabled: root.isDebugEnabled && replyToMenuItem.enabled
         onTriggered: {
-            root.store.copyToClipboard(root.messageId)
+            ClipboardUtils.setText(root.messageId)
             close()
         }
     }

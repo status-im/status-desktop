@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.13
 import QtQuick.Controls 2.14
 import QtQuick.Window 2.12
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
@@ -279,7 +280,7 @@ StatusMenu {
             }
         }
         icon.name: "copy"
-        onTriggered: RootStore.copyToClipboard(d.selectedAddress)
+        onTriggered: ClipboardUtils.setText(d.selectedAddress)
     }
     StatusAction {
         id: showQrAction

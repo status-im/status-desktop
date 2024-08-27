@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import StatusQ 0.1
 import StatusQ.Popups 0.1
 
 import "../stores"
@@ -27,7 +28,7 @@ StatusMenu {
         icon.name: "copy"
         timeout: 1500
         enabled: !!root.account
-        onTriggered: RootStore.copyToClipboard(root.account.address?? "")
+        onTriggered: ClipboardUtils.setText(root.account.address?? "")
     }
 
     StatusMenuSeparator {

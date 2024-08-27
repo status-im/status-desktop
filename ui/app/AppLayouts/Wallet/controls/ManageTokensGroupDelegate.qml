@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -144,9 +145,7 @@ DropArea {
                     icon.color: Theme.palette.directColor1
                     color: Style.current.transparent
                     textToCopy: model.communityName
-                    onCopyClicked: {
-                        Utils.copyToClipboard(textToCopy)
-                    }
+                    onCopyClicked: ClipboardUtils.setText(textToCopy)
                 }
 
                 HoverHandler {

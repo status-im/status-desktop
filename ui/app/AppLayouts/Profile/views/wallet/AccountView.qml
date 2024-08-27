@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
@@ -197,7 +198,7 @@ ColumnLayout {
                 copyButtonEnabled: true
                 title: qsTr("Derivation Path")
                 subTitle: !!root.account? Utils.getPathForDisplay(root.account.path) : ""
-                onCopyClicked: root.walletStore.copyToClipboard(!!root.account? root.account.path : "")
+                onCopyClicked: ClipboardUtils.setText(!!root.account? root.account.path : "")
                 visible: !!subTitle && !d.privateKeyAccount && !d.watchOnlyAccount
             }
             Separator {
@@ -333,7 +334,7 @@ ColumnLayout {
         areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
         isGoerliEnabled: root.walletStore.isGoerliEnabled
         preferredSharedNetworkNamesArray: d.preferredSharingNetworkShortNames.split(":").filter(Boolean)
-        onCopyToClipboard: root.walletStore.copyToClipboard(address)
+        onCopyToClipboard: ClipboardUtils.setText(address)
     }
 
     WalletKeypairAccountMenu {

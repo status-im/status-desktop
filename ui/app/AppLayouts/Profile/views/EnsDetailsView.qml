@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1 as StatusQControls
@@ -98,7 +99,7 @@ Item {
         asset.name: "copy"
         tooltip.text: qsTr("Copied to clipboard!")
         iconButton.onClicked: {
-            root.ensUsernamesStore.copyToClipboard(subTitle)
+            ClipboardUtils.setText(subTitle)
             tooltip.visible = !tooltip.visible
         }
     }
@@ -111,7 +112,7 @@ Item {
         asset.name: "copy"
         tooltip.text: qsTr("Copied to clipboard!")
         iconButton.onClicked: {
-            root.ensUsernamesStore.copyToClipboard(subTitle)
+            ClipboardUtils.setText(subTitle)
             tooltip.visible = !tooltip.visible
         }
     }
