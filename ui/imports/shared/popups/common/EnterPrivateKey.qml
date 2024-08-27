@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -79,7 +80,7 @@ Item {
                         size: StatusBaseButton.Size.Tiny
                         text: qsTr("Paste")
                         onClicked: {
-                            privKeyInput.text = root.store.getFromClipboard()
+                            privKeyInput.text = ClipboardUtils.text
                         }
                     }
                 }
