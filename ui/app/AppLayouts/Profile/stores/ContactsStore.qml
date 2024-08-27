@@ -51,10 +51,6 @@ QtObject {
         return root.globalUtilsInst.generateAlias(pubKey)
     }
 
-    function getFromClipboard() {
-        return root.globalUtilsInst.getFromClipboard()
-    }
-
     function isMyMutualContact(pubKey) {
         return root.contactsModule.isMyMutualContact(pubKey)
     }

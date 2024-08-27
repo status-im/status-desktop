@@ -714,10 +714,6 @@ QtObject {
         return text
     }
 
-    function getFromClipboard() {
-        return globalUtilsInst.getFromClipboard()
-    }
-
     function copyImageToClipboardByUrl(content) {
         globalUtilsInst.copyImageToClipboardByUrl(content)
     }

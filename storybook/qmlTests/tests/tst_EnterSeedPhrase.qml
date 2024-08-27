@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQml 2.15
 import QtQml.Models 2.15
 
+import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
 
 import QtTest 1.15
@@ -133,9 +134,7 @@ Item {
 
             itemUnderTest.dictionary.append(expectedSeedPhrase.map((word) => ({seedWord: word})))
 
-            const clipboardHelper = createTemporaryQmlObject("import QtQuick 2.15; QtObject { property var getFromClipboard }", root)
-            clipboardHelper.getFromClipboard = () => expectedSeedPhrase.join(" ")
-            Utils.globalUtilsInst = clipboardHelper
+            ClipboardUtils.setText(expectedSeedPhrase.join(" "))
 
             // Trigger the paste action
             keyClick("v", Qt.ControlModifier)
@@ -239,9 +238,7 @@ Item {
 
             itemUnderTest.dictionary.append(dictionaryVariation.map((word) => ({seedWord: word})))
 
-            const clipboardHelper = createTemporaryQmlObject("import QtQuick 2.15; QtObject { property var getFromClipboard }", root)
-            clipboardHelper.getFromClipboard = () => expectedSeedPhrase.join(" ")
-            Utils.globalUtilsInst = clipboardHelper
+            ClipboardUtils.setText(expectedSeedPhrase.join(" "))
 
             // Trigger the paste action
             keyClick("v", Qt.ControlModifier)

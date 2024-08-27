@@ -19,8 +19,4 @@ QtObject {
     property var submitPopup: function(){}
     property var changeSeedPhrase: function(){}
     property var validSeedPhrase: function(){}
-
-    function getFromClipboard() {
-       return globalUtils.getFromClipboard()
-    }
 }
