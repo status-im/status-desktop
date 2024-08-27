@@ -338,14 +338,14 @@ QtObject {
 
     function isValidDragNDropImage(url) {
         return url.startsWith(Constants.dataImagePrefix) ||
-                QClipboardProxy.isValidImageUrl(url, Constants.acceptedDragNDropImageExtensions)
+                UrlUtils.isValidImageUrl(url, Constants.acceptedDragNDropImageExtensions)
     }
 
     function isFilesizeValid(img) {
         if (img.startsWith(Constants.dataImagePrefix)) {
             return img.length < maxImgSizeBytes
         }
-        const size = QClipboardProxy.getFileSize(img)
+        const size = UrlUtils.getFileSize(img)
         return size <= maxImgSizeBytes
     }
 

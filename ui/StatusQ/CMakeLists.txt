@@ -123,6 +123,7 @@ add_library(StatusQ SHARED
         include/StatusQ/sumaggregator.h
         include/StatusQ/systemutilsinternal.h
         include/StatusQ/undefinedfilter.h
+        include/StatusQ/urlutils.h
         include/StatusQ/writableproxymodel.h
         src/aggregator.cpp
         src/clipboardutils.cpp
@@ -155,6 +156,7 @@ add_library(StatusQ SHARED
         src/sumaggregator.cpp
         src/systemutilsinternal.cpp
         src/undefinedfilter.cpp
+        src/urlutils.cpp
         src/writableproxymodel.cpp
 
         # wallet
