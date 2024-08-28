@@ -45,10 +45,6 @@ SplitView {
             return url
         }
 
-        function copyImageToClipboardByUrl(data) {
-            logs.logEvent("Utils::copyImageToClipboardByUrl", ["data"], arguments)
-        }
-
         function downloadImageByUrl(url, path) {
             logs.logEvent("Utils::downloadImageByUrl", ["url", "path"], arguments)
         }

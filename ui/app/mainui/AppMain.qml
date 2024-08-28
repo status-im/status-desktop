@@ -615,7 +615,7 @@ Item {
         active: appMain.rootStore.mainModuleInst.sectionsLoaded
         sourceComponent: StatusEmojiPopup {
             width: 360
-            height: 440
+            height: 940
         }
     }
 
