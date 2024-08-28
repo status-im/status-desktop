@@ -70,4 +70,5 @@ class BlockPopupWarnings(Enum):
     BLOCK_WARNING_PART_1 = 'Blocking a user purges the database of all messages that you’ve previously received from '
     BLOCK_WARNING_PART_2 = ' in all contexts. This can take a moment.'
     UNBLOCK_TEXT_1 = 'Unblocking '
-    UNBLOCK_TEXT_2 = ' will allow new messages you receive from athletic to reach you.'
+    UNBLOCK_TEXT_2 = ' will allow new messages you receive from '
+    UNBLOCK_TEXT_3 = ' to reach you.'

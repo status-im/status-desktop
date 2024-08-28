@@ -35,7 +35,7 @@ def test_group_chat(multiple_instances):
             multiple_instances(user_data=None) as aut_one, \
             multiple_instances(user_data=None) as aut_two, \
             multiple_instances(user_data=None) as aut_three:
-        with step(f'Launch multiple instances with authorized users {user_one.name}, {user_two.name}, {user_three}'):
+        with step(f'Launch multiple instances with new users {user_one.name}, {user_two.name}, {user_three}'):
             for aut, account in zip([aut_one, aut_two, aut_three], [user_one, user_two, user_three]):
                 aut.attach()
                 main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()

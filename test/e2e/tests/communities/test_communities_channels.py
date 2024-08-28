@@ -25,7 +25,6 @@ pytestmark = marks
     'channel_name, channel_description, channel_emoji, channel_emoji_image, channel_color, new_channel_name, '
     'new_channel_description, new_channel_emoji',
     [('Channel', 'Description', 'sunglasses', None, '#4360df', 'New-channel', 'New channel description', 'thumbsup')])
- # @pytest.mark.critical TODO: https://github.com/status-im/desktop-qa-automation/issues/658
 def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description, channel_emoji,
                                               channel_emoji_image,
                                               channel_color, new_channel_name, new_channel_description,
@@ -168,6 +167,7 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
             main_screen.prepare()
             assert driver.waitFor(lambda: channel not in community_screen.left_panel.channels,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/737070',
                  'Owner can view and post in a non restricted channel')

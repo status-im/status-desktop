@@ -17,7 +17,6 @@ class BlockUserPopup(BasePopup):
         self._block_warning_box = QObject(names.blockWarningBox_StatusWarningBox)
         self._you_will_not_see_text = TextLabel(names.youWillNotSeeText_StatusBaseText)
 
-
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         self._block_user_button.wait_until_appears(timeout_msec)
