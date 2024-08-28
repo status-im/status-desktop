@@ -66,7 +66,6 @@ SplitView {
 
             sourceComponent: UserListPanel {
                 usersModel: model
-                label: "Some label"
             }
         }
     }
