@@ -83,7 +83,7 @@ class AccountPopup(BasePopup):
         self._color_radiobutton.click()
         return self
 
-    def set_random_color(self: str):
+    def set_random_color(self):
         if 'radioButtonColor' in self._color_radiobutton.real_name.keys():
             del self._color_radiobutton.real_name['radioButtonColor']
         colors = [str(item.radioButtonColor) for item in driver.findAllObjects(self._color_radiobutton.real_name)]
@@ -147,14 +147,14 @@ class AccountPopup(BasePopup):
     def set_derivation_path(self, value: str, index: int, password: str):
         self._edit_derivation_path_button.hover().click()
         AuthenticatePopup().wait_until_appears().authenticate(password)
-        if value in [_.value for _ in DerivationPath]:
+        if value in [_.value for _ in DerivationPathName]:
             self._derivation_path_combobox_button.click()
             self._derivation_path_list_item.real_name['title'] = value
             self._derivation_path_list_item.click()
             del self._derivation_path_list_item.real_name['title']
             self._address_combobox_button.click()
             GeneratedAddressesList().wait_until_appears().select(index)
-            if value != DerivationPath.ETHEREUM.value:
+            if value != DerivationPathName.ETHEREUM.value:
                 self._scroll.vertical_scroll_down(self._non_eth_checkbox)
                 self._non_eth_checkbox.set(True)
         else:

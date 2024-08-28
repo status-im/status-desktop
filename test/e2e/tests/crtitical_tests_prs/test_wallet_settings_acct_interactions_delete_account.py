@@ -10,7 +10,7 @@ from tests.settings.settings_wallet import marks
 
 import constants
 import driver
-from constants.wallet import WalletAccountSettings, DerivationPath
+from constants.wallet import WalletAccountSettings, DerivationPathValue
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
@@ -56,8 +56,8 @@ def test_delete_generated_account_from_wallet_settings(
         assert acc_view.get_account_origin_value() == WalletAccountSettings.STATUS_ACCOUNT_ORIGIN.value, \
             f"Status account origin label is incorrect"
 
-        assert acc_view.get_account_derivation_path_value() == DerivationPath.GENERATED_ACCOUNT_DERIVATION_PATH_1.value, \
-            f"Status account derivation path must be {DerivationPath.GENERATED_ACCOUNT_DERIVATION_PATH_1.value}"
+        assert acc_view.get_account_derivation_path_value() == DerivationPathValue.GENERATED_ACCOUNT_DERIVATION_PATH_1.value, \
+            f"Status account derivation path must be {DerivationPathValue.GENERATED_ACCOUNT_DERIVATION_PATH_1.value}"
 
         assert acc_view.get_account_storage_value() == WalletAccountSettings.STORED_ON_DEVICE.value, \
             f"Status account storage should be {WalletAccountSettings.STORED_ON_DEVICE.value}"

@@ -30,6 +30,12 @@ def random_mnemonic():
     return words
 
 
+def random_wallet_account_name():
+    return ''.join((random.choice(
+        string.ascii_letters + string.digits)
+        for _ in range(5, 21)))
+
+
 def get_wallet_address_from_mnemonic(mnemonic_data) -> str:
     w = HDWallet.from_mnemonic(mnemonic=mnemonic_data, passphrase='', network=EthereumMainNet)
     child_w = w.get_child_for_path("m/44'/60'/0'/0/0")

@@ -6,7 +6,7 @@ import pytest
 from allure_commons._allure import step
 from . import marks
 
-from constants.wallet import WalletNetworkSettings, DerivationPath, WalletAccountSettings
+from constants.wallet import WalletNetworkSettings, WalletAccountSettings, DerivationPathValue
 from gui.main_window import MainWindow
 from gui.screens.settings import SettingsScreen
 
@@ -44,8 +44,8 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
             f"Status main account color must be {WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_COLOR.value}"
         assert status_acc_view.get_account_origin_value() == WalletAccountSettings.STATUS_ACCOUNT_ORIGIN.value, \
             f"Status account origin label is incorrect"
-        assert status_acc_view.get_account_derivation_path_value() == DerivationPath.STATUS_ACCOUNT_DERIVATION_PATH.value, \
-            f"Status account derivation path must be {DerivationPath.STATUS_ACCOUNT_DERIVATION_PATH.value}"
+        assert status_acc_view.get_account_derivation_path_value() == DerivationPathValue.STATUS_ACCOUNT_DERIVATION_PATH.value, \
+            f"Status account derivation path must be {DerivationPathValue.STATUS_ACCOUNT_DERIVATION_PATH.value}"
         assert status_acc_view.get_account_storage_value() == WalletAccountSettings.STORED_ON_DEVICE.value, \
             f"Status account storage should be {WalletAccountSettings.STORED_ON_DEVICE.value}"
 

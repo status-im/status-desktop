@@ -2,7 +2,6 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import EmojiCodes
 from . import marks
 
 import configs
@@ -18,32 +17,30 @@ def _verify_account_order(account_order, main_screen, default_name, order):
     with step('Verify the account order'):
         with step('Account order is correct in wallet settings'):
             assert driver.waitFor(lambda: account_order.accounts[0].name == order[0],
-                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             assert driver.waitFor(lambda: account_order.accounts[1].name == order[1],
-                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             assert driver.waitFor(lambda: account_order.accounts[2].name == order[2],
-                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
         with step('Account order is correct in wallet'):
             wallet = main_screen.left_panel.open_wallet()
             wallet.left_panel.select_account(default_name)
             assert driver.waitFor(lambda: wallet.left_panel.accounts[0].name == order[0],
-                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             assert driver.waitFor(lambda: wallet.left_panel.accounts[1].name == order[1],
-                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             assert driver.waitFor(lambda: wallet.left_panel.accounts[2].name == order[2],
-                                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415',
                  'Account order: account order could be changed with drag&drop')
 @pytest.mark.case(703415)
-@pytest.mark.takoe2
 def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account):
-
-
     default_name = 'Account 1'
-    name_1, emoji_1, acc_emoji_1 = 'WatchOnly', 'sunglasses', '😎 '
-    name_2, emoji_2, acc_emoji_2 = 'Generated', 'thumbsup', '👍 '
+    name_1, emoji_1, acc_emoji_1 = 'Generated 1', 'sunglasses', '😎 '
+    name_2, emoji_2, acc_emoji_2 = 'Generated 2', 'thumbsup', '👍 '
 
     wallet = main_screen.left_panel.open_wallet()
     SigningPhrasePopup().wait_until_appears().confirm_phrase()
@@ -51,10 +48,9 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
     colors = []
 
     for account in (
-        (name_1, emoji_1, acc_emoji_1),
-        (name_2, emoji_2, acc_emoji_2)
+            (name_1, emoji_1, acc_emoji_1),
+            (name_2, emoji_2, acc_emoji_2)
     ):
-
         with step('Create generated wallet account'):
             account_popup = wallet.left_panel.open_add_account_popup()
             account_popup.set_name(account[0]).set_emoji(account[1])
@@ -96,7 +92,7 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
 @pytest.mark.case(703416)
 @pytest.mark.parametrize('default_name, text_on_top', [
     pytest.param('Account 1', 'This account looks a little lonely. Add another account'
-                                   ' to enable re-ordering.')
+                              ' to enable re-ordering.')
 ])
 def test_change_account_order_not_possible(main_screen: MainWindow, default_name: str, text_on_top: str):
     with step('Open edit account order view'):
