@@ -1675,12 +1675,6 @@ method addressWasShown*[T](self: Module[T], address: string) =
     return
   self.walletAccountService.addressWasShown(address)
 
-method checkIfAddressWasCopied*[T](self: Module[T], value: string) =
-  let walletAcc = self.walletAccountService.getAccountByAddress(value)
-  if walletAcc.isNil:
-    return
-  self.addressWasShown(value)
-
 method openSectionChatAndMessage*[T](self: Module[T], sectionId: string, chatId: string, messageId: string) =
   if sectionId in self.chatSectionModules:
     self.chatSectionModules[sectionId].openCommunityChatAndScrollToMessage(chatId, messageId)

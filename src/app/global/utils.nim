@@ -88,21 +88,6 @@ QtObject:
     except:
       return false
 
-  proc checkIfAddressWasCopied*(self: Utils, value: string) {.signal.}
-
-  proc copyToClipboard*(self: Utils, content: string) {.slot.} =
-    self.checkIfAddressWasCopied(content)
-    setClipBoardText(content)
-
-  proc getFromClipboard*(self: Utils): string {.slot.} =
-    return getClipBoardText()
-
-  proc copyImageToClipboard*(self: Utils, content: string) {.slot.} =
-    setClipBoardImage(content)
-
-  proc copyImageToClipboardByUrl*(self: Utils, url: string) {.slot.} =
-    setClipBoardImageByUrl(url)
-
   proc downloadImage*(self: Utils, content: string, path: string) {.slot.} =
     downloadImage(content, path)
 
