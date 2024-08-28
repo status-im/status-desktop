@@ -134,7 +134,7 @@ Item {
             const lvOther = findChild(controlUnderTest, "otherTokensListView")
             verify(!!lvOther)
 
-            tryCompare(lvOther, "count", 9)
+            tryCompare(lvOther, "count", 10)
             const delegate0 = findChild(lvOther, "manageTokensDelegate-0")
             verify(!!delegate0)
             const title = delegate0.title
@@ -144,7 +144,7 @@ Item {
             tryCompare(notificationSpy, "count", 1)
 
             // verify we now have -1 regular tokens after the "hide" operation
-            tryCompare(lvOther, "count", 8)
+            tryCompare(lvOther, "count", 9)
         }
 
         function test_showHideCommunityGroup() {

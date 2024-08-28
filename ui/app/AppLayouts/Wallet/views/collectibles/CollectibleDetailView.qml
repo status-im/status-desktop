@@ -361,11 +361,11 @@ Item {
 
     Component {
         id: collectibleimageComponent
-        StatusRoundedMedia {
+        CollectibleMedia {
             id: collectibleImage
-            readonly property bool isEmpty: !mediaUrl.toString() && !fallbackImageUrl.toString()
-            radius: Style.current.radius
-            color: isError || isEmpty ? Theme.palette.baseColor5 : collectible.backgroundColor
+            backgroundColor: collectible.backgroundColor
+            isCollectibleLoading: root.isCollectibleLoading
+            isMetadataValid: !collectible.isMetadataValid
             mediaUrl: collectible.mediaUrl ?? ""
             mediaType: !!collectible ? (modelIndex > 0 && collectible.mediaType.startsWith("video")) ? "" : collectible.mediaType: ""
             fallbackImageUrl: collectible.imageUrl
@@ -376,29 +376,6 @@ Item {
             onVideoClicked: (url) => Global.openVideoPopup(url)
             onOpenImageContextMenu: (url, isGif) => Global.openMenu(imageContextMenu, collectibleImage, { imageSource: url, isGif: isGif, isVideo: false })
             onOpenVideoContextMenu: (url) => Global.openMenu(imageContextMenu, collectibleImage, { imageSource: url, url: url, isVideo: true, isGif: false })
-
-            Loader {
-                anchors.fill: parent
-                active: collectibleImage.isLoading
-                sourceComponent: LoadingComponent {radius: collectibleImage.radius}
-            }
-
-            Loader {
-                anchors.fill: parent
-                active: collectibleImage.isError || collectibleImage.isEmpty
-                sourceComponent: LoadingErrorComponent {
-                    radius: collectibleImage.radius
-                    text: {
-                        if (collectibleImage.isError && collectibleImage.componentMediaType === StatusRoundedMedia.MediaType.Unkown) {
-                            return qsTr("Unsupported\nfile format")
-                        }
-                        if (!collectible.description && !collectible.name) {
-                            return qsTr("Info can't\nbe fetched")
-                        }
-                        return qsTr("Failed\nto load")
-                    }
-                }
-            }
 
             Component {
                 id: imageContextMenu

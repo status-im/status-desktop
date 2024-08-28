@@ -238,7 +238,7 @@ StatusScrollView {
                 delegate: CollectibleView {
                     height: collectiblesGrid.cellHeight
                     width: collectiblesGrid.cellWidth
-                    title: model.name ? model.name : "..."
+                    title: model.name ?? ""
                     subTitle: deployState === Constants.ContractTransactionStatus.Completed ?
                                   d.getRemainingInfo(model.privilegesLevel === Constants.TokenPrivilegesLevel.Owner,
                                                      model.privilegesLevel === Constants.TokenPrivilegesLevel.TMaster,
@@ -251,6 +251,7 @@ StatusScrollView {
                     fallbackImageUrl: model.image ? model.image : ""
                     backgroundColor: "transparent"
                     isLoading: false
+                    isMetadataValid: true
                     navigationIconVisible: false
                     privilegesLevel: model.privilegesLevel
                     ornamentColor: model.color
