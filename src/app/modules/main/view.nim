@@ -56,7 +56,6 @@ QtObject:
     result.ephemeralNotificationModelVariant = newQVariant(result.ephemeralNotificationModel)
 
     signalConnect(result.model, "notificationsCountChanged()", result, "onNotificationsCountChanged()", 2)
-    signalConnect(singletonInstance.utils, "checkIfAddressWasCopied(QString)", result, "onCheckIfAddressWasCopied(QString)", 2)
 
   proc load*(self: View) =
     # In some point, here, we will setup some exposed main module related things.
@@ -370,9 +369,6 @@ QtObject:
   ## and "mainModule" is accessible from everywhere
   proc addressWasShown*(self: View, address: string) {.slot.} =
     self.delegate.addressWasShown(address)
-
-  proc onCheckIfAddressWasCopied*(self: View, value: string) {.slot.} =
-    self.delegate.checkIfAddressWasCopied(value)
 
   proc communityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string, membershipState: int) {.signal.}
 

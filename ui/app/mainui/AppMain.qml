@@ -615,7 +615,7 @@ Item {
         active: appMain.rootStore.mainModuleInst.sectionsLoaded
         sourceComponent: StatusEmojiPopup {
             width: 360
-            height: 940
+            height: 440
         }
     }
 
@@ -2183,6 +2183,26 @@ Item {
                           : Constants.ephemeralNotificationType.success,
                     "")
             }
+        }
+    }
+
+    Connections {
+        target: ClipboardUtils
+
+        function onContentChanged() {
+            if (!ClipboardUtils.hasText)
+                return
+
+            const text = ClipboardUtils.text
+
+            if (text.length === 0 || text.length > 100)
+                return
+
+            const isAddress = SQUtils.ModelUtils.contains(
+                              WalletStores.RootStore.accounts, "address",
+                              text, Qt.CaseInsensitive)
+            if (isAddress)
+                WalletStores.RootStore.addressWasShown(text)
         }
     }
 }
