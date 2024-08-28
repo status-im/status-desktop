@@ -24,7 +24,7 @@ StatusMenu {
         icon.name: "copy"
         enabled: !!root.imageSource && !root.isVideo
         onTriggered: {
-            Utils.copyImageToClipboardByUrl(root.imageSource)
+            ClipboardUtils.setImageByUrl(root.imageSource)
         }
     }
 

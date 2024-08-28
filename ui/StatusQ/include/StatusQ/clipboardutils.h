@@ -3,15 +3,12 @@
 #include <QObject>
 #include <QImage>
 
-class QClipboard;
 class QJSEngine;
 class QQmlEngine;
 
 class ClipboardUtils : public QObject
 {
     Q_OBJECT
-
-    Q_DISABLE_COPY(ClipboardUtils)
 
     Q_PROPERTY(bool hasText READ hasText NOTIFY contentChanged)
     Q_PROPERTY(QString text READ text NOTIFY contentChanged)
@@ -41,19 +38,13 @@ class ClipboardUtils : public QObject
     bool hasUrls() const;
     QList<QUrl> urls() const;
 
-    QClipboard* m_clipboard{nullptr};
-
 public:
-    static QObject* qmlInstance(QQmlEngine* engine, QJSEngine* scriptEngine)
-    {
-        Q_UNUSED(engine);
-        Q_UNUSED(scriptEngine);
-
-        return new ClipboardUtils;
-    }
-
     Q_INVOKABLE void setText(const QString& text);
+    Q_INVOKABLE void setImageByUrl(const QUrl& url);
+
     Q_INVOKABLE void clear();
+
+    static QObject* qmlInstance(QQmlEngine* engine, QJSEngine* scriptEngine);
 
 signals:
     void contentChanged();

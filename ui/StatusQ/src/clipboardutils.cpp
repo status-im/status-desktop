@@ -2,18 +2,20 @@
 
 #include <QBuffer>
 #include <QClipboard>
+#include <QFile>
 #include <QGuiApplication>
 #include <QImage>
 #include <QMimeData>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QUrl>
-#include <QFile>
 
 #include <algorithm>
 
 ClipboardUtils::ClipboardUtils()
-    : m_clipboard(QGuiApplication::clipboard())
 {
-    connect(m_clipboard, &QClipboard::changed, this, [this](QClipboard::Mode mode) {
+    connect(QGuiApplication::clipboard(), &QClipboard::changed, this,
+            [this](QClipboard::Mode mode) {
         if (mode == QClipboard::Clipboard)
             emit contentChanged();
     });
@@ -21,33 +23,33 @@ ClipboardUtils::ClipboardUtils()
 
 bool ClipboardUtils::hasText() const
 {
-    return m_clipboard->mimeData()->hasText();
+    return QGuiApplication::clipboard()->mimeData()->hasText();
 }
 
 QString ClipboardUtils::text() const
 {
-    return m_clipboard->text();
+    return QGuiApplication::clipboard()->text();
 }
 
 bool ClipboardUtils::hasHtml() const
 {
-    return m_clipboard->mimeData()->hasHtml();
+    return QGuiApplication::clipboard()->mimeData()->hasHtml();
 }
 
 QString ClipboardUtils::html() const
 {
-    auto mimeData = m_clipboard->mimeData();
+    auto mimeData = QGuiApplication::clipboard()->mimeData();
     return mimeData ? mimeData->html() : QString{};
 }
 
 bool ClipboardUtils::hasImage() const
 {
-    return m_clipboard->mimeData()->hasImage();
+    return QGuiApplication::clipboard()->mimeData()->hasImage();
 }
 
 QImage ClipboardUtils::image() const
 {
-    return m_clipboard->image();
+    return QGuiApplication::clipboard()->image();
 }
 
 QString ClipboardUtils::imageBase64() const
@@ -64,20 +66,48 @@ QString ClipboardUtils::imageBase64() const
 
 bool ClipboardUtils::hasUrls() const
 {
-    return m_clipboard->mimeData()->hasUrls();
+    return QGuiApplication::clipboard()->mimeData()->hasUrls();
 }
 
 QList<QUrl> ClipboardUtils::urls() const
 {
-    return m_clipboard->mimeData()->urls();
+    return QGuiApplication::clipboard()->mimeData()->urls();
 }
 
 void ClipboardUtils::setText(const QString &text)
 {
-    m_clipboard->setText(text);
+    QGuiApplication::clipboard()->setText(text);
+}
+
+void ClipboardUtils::setImageByUrl(const QUrl &url)
+{
+    static thread_local QNetworkAccessManager manager;
+    manager.setAutoDeleteReplies(true);
+
+    QNetworkReply *reply = manager.get(QNetworkRequest(url));
+
+    QObject::connect(reply, &QNetworkReply::finished, [reply]() {
+        if(reply->error() == QNetworkReply::NoError) {
+            QByteArray btArray = reply->readAll();
+            QImage image;
+            image.loadFromData(btArray);
+            Q_ASSERT(!image.isNull());
+            QGuiApplication::clipboard()->setImage(image);
+        } else {
+            qWarning() << "ClipboardUtils::setImageByUrl: Downloading image failed!";
+        }
+    });
 }
 
 void ClipboardUtils::clear()
 {
-    m_clipboard->clear();
+    QGuiApplication::clipboard()->clear();
+}
+
+QObject* ClipboardUtils::qmlInstance(QQmlEngine* engine, QJSEngine* scriptEngine)
+{
+    Q_UNUSED(engine);
+    Q_UNUSED(scriptEngine);
+
+    return new ClipboardUtils;
 }
