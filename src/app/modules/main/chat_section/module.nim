@@ -88,7 +88,9 @@ method addOrUpdateChat(self: Module,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
+    isSectionBuild: bool = false,
   ): chat_item.Item
+proc updateParentBadgeNotifications(self: Module)
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -333,8 +335,11 @@ proc buildChatSectionUI(
       mailserversService,
       sharedUrlsService,
       setChatAsActive = false,
-      insertIntoModel = false
+      insertIntoModel = false,
+      isSectionBuild = true,
     ))
+
+  self.updateParentBadgeNotifications()
 
   self.view.chatsModel.setData(items)
   self.setActiveItem(selectedItemId)
@@ -431,6 +436,7 @@ method onChatsLoaded*(
     sharedUrlsService: shared_urls_service.Service,
   ) =
   self.chatsLoaded = true
+  
   self.buildChatSectionUI(community, chats, events, settingsService, nodeConfigurationService,
     contactService, chatService, communityService, messageService, mailserversService, sharedUrlsService)
 
@@ -570,21 +576,17 @@ proc updateParentBadgeNotifications(self: Module) =
     unviewedMentionsCount
   )
 
-proc updateChatLocked(self: Module, chatId: string) =
+proc updateChatLocked(self: Module, communityChat: ChatDto) =
   if not self.controller.isCommunity():
     return
-  let communityId = self.controller.getMySectionId()
-  let locked = self.controller.checkChatIsLocked(communityId, chatId)
-  self.view.chatsModel().setItemLocked(chatId, locked)
+  self.view.chatsModel().setItemLocked(communityChat.id, communityChat.tokenGated and not communityChat.canPost)
 
-proc updatePermissionsRequiredOnChat(self: Module, chatId: string) =
+proc updatePermissionsRequiredOnChat(self: Module, communityChat: ChatDto) =
   if not self.controller.isCommunity():
     return
-  let communityId = self.controller.getMySectionId
-  let requiresPermissions = self.controller.checkChatHasPermissions(communityId, chatId)
-  self.view.chatsModel().setItemPermissionsRequired(chatId, requiresPermissions)
+  self.view.chatsModel().setItemPermissionsRequired(communityChat.id, communityChat.tokenGated)
 
-proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bool, unviewedMentionsCount: int) =
+proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bool, unviewedMentionsCount: int, skipParentBadge: bool = false) =
   let chatId = chat.id
 
   if self.chatsLoaded:
@@ -601,7 +603,9 @@ proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bo
         let hasUnreadMessages = self.controller.categoryHasUnreadMessages(communityChat.communityId, communityChat.categoryId)
         self.view.chatsModel().setCategoryHasUnreadMessages(communityChat.categoryId, hasUnreadMessages)
 
-  self.updateParentBadgeNotifications()
+  # We skip evaluation the parent badge when initiating the section, since it's heavy and can be done at the end
+  if not skipParentBadge:
+    self.updateParentBadgeNotifications()
 
 method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTimestamp: int) =
   self.view.chatsModel().updateLastMessageTimestampOnItemById(chatId, lastMessageTimestamp)
@@ -701,6 +705,7 @@ proc getChatItemFromChatDto(
   var hideIfPermissionsNotMet = false
   var viewersCanPostReactions = true
   var missingEncryptionKey = false
+  var tokenGated = false
   if self.controller.isCommunity:
     # NOTE: workaround for new community chat, which is delivered in chatDto before the community will know about that
     if community.hasCommunityChat(chatDto.id):
@@ -712,6 +717,7 @@ proc getChatItemFromChatDto(
       hideIfPermissionsNotMet = communityChat.hideIfPermissionsNotMet
       viewersCanPostReactions = communityChat.viewersCanPostReactions
       missingEncryptionKey = communityChat.missingEncryptionKey
+      tokenGated = communityChat.tokenGated
     else:
       canPost = chatDto.canPost
       canView = chatDto.canView
@@ -744,14 +750,8 @@ proc getChatItemFromChatDto(
     categoryOpened,
     onlineStatus = onlineStatus,
     loaderActive = setChatAsActive,
-    locked = if self.controller.isCommunity:
-        self.controller.checkChatIsLocked(self.controller.getMySectionId(), chatDto.id)
-      else:
-        false,
-    requiresPermissions = if self.controller.isCommunity:
-        self.controller.checkChatHasPermissions(self.controller.getMySectionId(), chatDto.id)
-      else:
-        false,
+    locked = tokenGated and not canPost,
+    requiresPermissions = tokenGated,
     canPost = canPost,
     canView = canView,
     canPostReactions = canPostReactions,
@@ -957,9 +957,9 @@ method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
 proc changeCanPostValues*(self: Module, chatId: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool) =
   self.view.chatsModel().changeCanPostValues(chatId, canPost, canView, canPostReactions, viewersCanPostReactions)
 
-proc updateChatsRequiredPermissions(self: Module, chats: seq[ChatDto]) =
-  for chat in chats:
-    self.updatePermissionsRequiredOnChat(chat.id)
+proc updateChatsRequiredPermissions(self: Module, communityChats: seq[ChatDto]) =
+  for communityChat in communityChats:
+    self.updatePermissionsRequiredOnChat(communityChat)
 
 proc displayTokenPermissionChangeNotification(self: Module, title: string, message: string, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto) =
   if self.showPermissionUpdateNotification(community, tokenPermission):
@@ -969,17 +969,17 @@ method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, tok
   self.view.tokenPermissionsModel.removeItemWithId(tokenPermission.id)
   self.reevaluateRequiresTokenPermissionToJoin()
   let community = self.controller.getMyCommunity()
-  let chats = community.getCommunityChats(tokenPermission.chatIds)
+  let communityChats = community.getCommunityChats(tokenPermission.chatIds)
 
-  self.updateChatsRequiredPermissions(chats)
+  self.updateChatsRequiredPermissions(communityChats)
   self.displayTokenPermissionChangeNotification("Community permission deleted", "A token permission has been removed", community, tokenPermission)
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   let community = self.controller.getMyCommunity()
-  let chats = community.getCommunityChats(tokenPermission.chatIds)
-  let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
+  let communityChats = community.getCommunityChats(tokenPermission.chatIds)
+  let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, communityChats)
 
-  self.updateChatsRequiredPermissions(chats)
+  self.updateChatsRequiredPermissions(communityChats)
   self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
   self.displayTokenPermissionChangeNotification("Community permission created", "A token permission has been added", community, tokenPermission)
@@ -1079,8 +1079,9 @@ proc updateChannelPermissionViewData*(
   let viewOnlyUpdated = self.updateTokenPermissionModel(viewOnlyPermissions.permissions, community)
   let viewAndPostUpdated = self.updateTokenPermissionModel(viewAndPostPermissions.permissions, community)
   if viewOnlyUpdated or viewAndPostUpdated:
-    self.updatePermissionsRequiredOnChat(chatId)
-    self.updateChatLocked(chatId)
+    let communityChat = community.getCommunityChat(chatId)
+    self.updatePermissionsRequiredOnChat(communityChat)
+    self.updateChatLocked(communityChat)
 
   if self.chatContentModules.hasKey(chatId):
     self.chatContentModules[chatId].setPermissionsCheckOngoing(false)
@@ -1452,13 +1453,13 @@ method addOrUpdateChat(self: Module,
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
+    isSectionBuild: bool = false,
   ): chat_item.Item =
   let sectionId = self.controller.getMySectionId()
   if belongsToCommunity and sectionId != chat.communityId or
     not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():
     return
-
-  self.updateBadgeNotifications(chat, chat.unviewedMessagesCount > 0, chat.unviewedMentionsCount)
+  self.updateBadgeNotifications(chat, chat.unviewedMessagesCount > 0, chat.unviewedMentionsCount, skipParentBadge = isSectionBuild)
 
   if not self.chatsLoaded:
     return
@@ -1478,8 +1479,8 @@ method addOrUpdateChat(self: Module,
 
     self.changeMutedOnChat(chat.id, chat.muted)
     self.changeCanPostValues(chat.id, result.canPost, result.canView, result.canPostReactions, result.viewersCanPostReactions)
-    self.updatePermissionsRequiredOnChat(chat.id)
-    self.updateChatLocked(chat.id)
+    self.view.chatsModel().setItemPermissionsRequired(chat.id, result.requiresPermissions)
+    self.view.chatsModel().setItemLocked(chat.id, result.locked)
     self.view.chatsModel().updateMissingEncryptionKey(chat.id, result.missingEncryptionKey)
     if (chat.chatType == ChatType.PrivateGroupChat):
       self.onGroupChatDetailsUpdated(chat.id, chat.name, chat.color, chat.icon)

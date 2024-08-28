@@ -656,6 +656,8 @@ method onChatsLoaded*[T](
     myPubKey,
     sectionIsMuted = false
   )
+  var items: seq[SectionItem] = @[]
+
   let personalChatSectionItem = initItem(
     myPubKey,
     sectionType = SectionType.Chat,
@@ -671,7 +673,7 @@ method onChatsLoaded*[T](
     isMember = true,
     muted = false,
   )
-  self.view.model().addItem(personalChatSectionItem)
+  items.add(personalChatSectionItem)
   if activeSectionId == personalChatSectionItem.id:
     activeSection = personalChatSectionItem
 
@@ -699,11 +701,13 @@ method onChatsLoaded*[T](
       networkService
     )
     let communitySectionItem = self.createCommunitySectionItem(community)
-    self.view.model().addItem(communitySectionItem)
+    items.add(communitySectionItem)
     if activeSectionId == communitySectionItem.id:
       activeSection = communitySectionItem
 
     self.chatSectionModules[community.id].load()
+
+  self.view.model().addItems(items)
 
   # Set active section if it is one of the channel sections
   if not activeSection.isEmpty():

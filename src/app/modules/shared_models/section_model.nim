@@ -224,7 +224,6 @@ QtObject:
         return true
     return false
 
-
   proc addItem*(self: SectionModel, item: SectionItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
@@ -246,6 +245,20 @@ QtObject:
       self.endInsertRows()
 
       self.countChanged()
+
+  proc addItems*(self: SectionModel, items: seq[SectionItem]) =
+    if items.len == 0:
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    let first = self.items.len
+    let last = first + items.len - 1
+    self.beginInsertRows(parentModelIndex, first, last)
+    self.items.add(items)
+    self.endInsertRows()
+    self.countChanged()
 
   proc getItemIndex*(self: SectionModel, id: string): int =
     var i = 0

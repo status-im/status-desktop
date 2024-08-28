@@ -437,7 +437,7 @@ proc getChatsAndBuildUI*(self: Controller) =
     community = self.getMyCommunity()
     let normalChats = self.chatService.getChatsForCommunity(community.id)
 
-    # TODO remove this once we do this refactor https://github.com/status-im/status-desktop/issues/14219
+    # TODO remove this once we do this refactor https://github.com/status-im/status-desktop/issues/11694
     var fullChats: seq[ChatDto] = @[]
     for communityChat in community.chats:
       for chat in normalChats:
@@ -713,12 +713,6 @@ proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
 
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
-
-proc checkChatHasPermissions*(self: Controller, communityId: string, chatId: string): bool =
-  return self.communityService.checkChatHasPermissions(communityId, chatId)
-
-proc checkChatIsLocked*(self: Controller, communityId: string, chatId: string): bool =
-  return self.communityService.checkChatIsLocked(communityId, chatId)
 
 proc createOrEditCommunityTokenPermission*(self: Controller, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   self.communityService.createOrEditCommunityTokenPermission(communityId, tokenPermission)
