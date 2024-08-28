@@ -1,4 +1,4 @@
-const noGasErrorCode = "WR-017"
+const noGasErrorCode = "WR-002"
 
 # This method will group the account assets by symbol (in case of communiy, the token address)
 proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
@@ -119,7 +119,7 @@ proc getHasBalanceCache*(self: Service): bool =
 
 proc getChainsWithNoGasFromError*(self: Service, errCode: string, errDescription: string): Table[int, string] =
   ## Extracts the chainId and token from the error description for chains with no gas.
-  ## If the error code is not "WR-017", an empty table is returned.
+  ## If the error code is not "WR-002", an empty table is returned.
   result = initTable[int, string]()
 
   if errCode == noGasErrorCode:
