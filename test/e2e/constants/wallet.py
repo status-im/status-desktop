@@ -2,12 +2,19 @@ import random
 from enum import Enum
 
 
-class DerivationPath(Enum):
+class DerivationPathName(Enum):
     CUSTOM = 'Custom'
     ETHEREUM = 'Ethereum'
     ETHEREUM_ROPSTEN = 'Ethereum Testnet (Ropsten)'
     ETHEREUM_LEDGER = 'Ethereum (Ledger)'
     ETHEREUM_LEDGER_LIVE = 'Ethereum (Ledger Live/KeepKey)'
+
+    @classmethod
+    def select_random_path_name(cls):
+        return random.choice(list(DerivationPathName))
+
+
+class DerivationPathValue(Enum):
     STATUS_ACCOUNT_DERIVATION_PATH = "m / 44' / 60' / 0' / 0 / 0"
     GENERATED_ACCOUNT_DERIVATION_PATH_1 = "m / 44' / 60' / 0' / 0 / 1"
 
