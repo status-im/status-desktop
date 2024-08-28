@@ -366,11 +366,11 @@ SplitView {
             ComboBox {
                 id: routerErrorComboBox
                 model: [
-                    {name: "errNotEnoughTokenBalance", value: Constants.swap.errorCodes.errNotEnoughTokenBalance}, 
-                    {name: "errNotEnoughNativeBalance", value: Constants.swap.errorCodes.errNotEnoughNativeBalance}, 
-                    {name: "errPriceTimeout", value: Constants.swap.errorCodes.errPriceTimeout}, 
-                    {name: "errNotEnoughLiquidity", value: Constants.swap.errorCodes.errNotEnoughLiquidity},
-                    {name: "errPriceImpactTooHigh", value: Constants.swap.errorCodes.errPriceImpactTooHigh}
+                    {name: "errNotEnoughTokenBalance", value: Constants.routerErrorCodes.router.errNotEnoughTokenBalance},
+                    {name: "errNotEnoughNativeBalance", value: Constants.routerErrorCodes.router.errNotEnoughNativeBalance},
+                    {name: "errPriceTimeout", value: Constants.routerErrorCodes.processor.errPriceTimeout},
+                    {name: "errNotEnoughLiquidity", value: Constants.routerErrorCodes.processor.errNotEnoughLiquidity},
+                    {name: "errPriceImpactTooHigh", value: Constants.routerErrorCodes.processor.errPriceImpactTooHigh}
                 ]
                 textRole: "name"
                 valueRole: "value"
