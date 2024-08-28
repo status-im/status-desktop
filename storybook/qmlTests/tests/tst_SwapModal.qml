@@ -632,7 +632,7 @@ Item {
 
             // emit event that no routes were found due to not enough token balance
             txRoutes.uuid = root.swapAdaptor.uuid
-            root.swapStore.suggestedRoutesReady(txRoutes, Constants.swap.errorCodes.errNotEnoughTokenBalance, "errNotEnoughTokenBalance")
+            root.swapStore.suggestedRoutesReady(txRoutes, Constants.routerErrorCodes.router.errNotEnoughTokenBalance, "errNotEnoughTokenBalance")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
@@ -670,7 +670,7 @@ Item {
 
             // emit event that no routes were found due to not enough eth balance
             txRoutes.uuid = root.swapAdaptor.uuid
-            root.swapStore.suggestedRoutesReady(txRoutes, Constants.swap.errorCodes.errNotEnoughNativeBalance, "errNotEnoughNativeBalance")
+            root.swapStore.suggestedRoutesReady(txRoutes, Constants.routerErrorCodes.router.errNotEnoughNativeBalance, "errNotEnoughNativeBalance")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
@@ -708,7 +708,7 @@ Item {
 
             // emit event that no routes were found due to price timeout
             txRoutes.uuid = root.swapAdaptor.uuid
-            root.swapStore.suggestedRoutesReady(txRoutes, Constants.swap.errorCodes.errPriceTimeout, "errPriceTimeout")
+            root.swapStore.suggestedRoutesReady(txRoutes, Constants.routerErrorCodes.processor.errPriceTimeout, "errPriceTimeout")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)
@@ -746,7 +746,7 @@ Item {
 
             // emit event that no routes were found due to not enough liquidity
             txRoutes.uuid = root.swapAdaptor.uuid
-            root.swapStore.suggestedRoutesReady(txRoutes, Constants.swap.errorCodes.errNotEnoughLiquidity, "errNotEnoughLiquidity")
+            root.swapStore.suggestedRoutesReady(txRoutes, Constants.routerErrorCodes.processor.errNotEnoughLiquidity, "errNotEnoughLiquidity")
 
             // verify loading state was removed and that error was displayed
             verify(!root.swapAdaptor.validSwapProposalReceived)

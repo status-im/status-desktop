@@ -150,7 +150,7 @@ QtObject:
     uuidOfTheLastRequestForSuggestedRoutes: string
 
   ## Forward declarations
-  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string)
+  proc suggestedRoutesReady(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -181,7 +181,7 @@ QtObject:
 
     self.events.on(SignalType.WalletSuggestedRoutes.event) do(e:Args):
       var data = WalletSignal(e)
-      self.suggestedRoutesV2Ready(data.uuid, data.bestRoute, data.bestRouteRaw, data.errorCode, data.error)
+      self.suggestedRoutesReady(data.uuid, data.bestRoute, data.bestRouteRaw, data.errorCode, data.error)
 
     self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
       try:
@@ -645,7 +645,7 @@ QtObject:
     except Exception as e:
       error "Error getting suggested fees", msg = e.msg
 
-  proc suggestedRoutesV2Ready(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string) =
+  proc suggestedRoutesReady(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string) =
     if self.uuidOfTheLastRequestForSuggestedRoutes != uuid:
       return
 
@@ -660,7 +660,7 @@ QtObject:
       toNetworks: getToNetworksList(oldRoute),
     )
     self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(
-      uuid: uuid, 
+      uuid: uuid,
       suggestedRoutes: suggestedDto,
       errCode: errCode,
       errDescription: errDescription
@@ -689,7 +689,7 @@ QtObject:
       amountOutHex = "0x" & eth_utils.stripLeadingZeros(bigAmountOut.toHex)
 
     try:
-      let res = eth.suggestedRoutesV2Async(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
+      let res = eth.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
         toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
     except CatchableError as e:
       error "suggestedRoutes", exception=e.msg

@@ -1105,33 +1105,34 @@ QtObject {
         }
 
         readonly property QtObject router: QtObject {
-            readonly property string errENSRegisterRequiresUsernameAndPubKey      : "WR-001"
-            readonly property string errENSRegisterTestnetSTTOnly                 : "WR-002"
-            readonly property string errENSRegisterMainnetSNTOnly                 : "WR-003"
-            readonly property string errENSReleaseRequiresUsername                : "WR-004"
-            readonly property string errENSSetPubKeyRequiresUsernameAndPubKey     : "WR-005"
-            readonly property string errStickersBuyRequiresPackID                 : "WR-006"
-            readonly property string errSwapRequiresToTokenID                     : "WR-007"
-            readonly property string errSwapTokenIDMustBeDifferent                : "WR-008"
-            readonly property string errSwapAmountInAmountOutMustBeExclusive      : "WR-009"
-            readonly property string errSwapAmountInMustBePositive                : "WR-010"
-            readonly property string errSwapAmountOutMustBePositive               : "WR-011"
-            readonly property string errLockedAmountNotSupportedForNetwork        : "WR-012"
-            readonly property string errLockedAmountNotNegative                   : "WR-013"
-            readonly property string errLockedAmountExceedsTotalSendAmount        : "WR-014"
-            readonly property string errLockedAmountLessThanSendAmountAllNetworks : "WR-015"
-            readonly property string errNotEnoughTokenBalance                     : "WR-016"
-            readonly property string errNotEnoughNativeBalance                    : "WR-017"
-            readonly property string errNativeTokenNotFound                       : "WR-018"
-            readonly property string errDisabledChainFoundAmongLockedNetworks     : "WR-019"
-            readonly property string errENSSetPubKeyInvalidUsername               : "WR-020"
-            readonly property string errLockedAmountExcludesAllSupported          : "WR-021"
-            readonly property string errTokenNotFound                             : "WR-022"
-            readonly property string errNoBestRouteFound                          : "WR-023"
-            readonly property string errCannotCheckReceiverBalance                : "WR-024"
-            readonly property string errCannotCheckLockedAmounts                  : "WR-025"
-            readonly property string errLowAmountInForHopBridge                   : "WR-026"
-            readonly property string errNoPositiveBalance                         : "WR-027"
+            readonly property string errENSRegisterRequiresUsernameAndPubKey      : "WRR-001"
+            readonly property string errENSRegisterTestnetSTTOnly                 : "WRR-002"
+            readonly property string errENSRegisterMainnetSNTOnly                 : "WRR-003"
+            readonly property string errENSReleaseRequiresUsername                : "WRR-004"
+            readonly property string errENSSetPubKeyRequiresUsernameAndPubKey     : "WRR-005"
+            readonly property string errStickersBuyRequiresPackID                 : "WRR-006"
+            readonly property string errSwapRequiresToTokenID                     : "WRR-007"
+            readonly property string errSwapTokenIDMustBeDifferent                : "WRR-008"
+            readonly property string errSwapAmountInAmountOutMustBeExclusive      : "WRR-009"
+            readonly property string errSwapAmountInMustBePositive                : "WRR-010"
+            readonly property string errSwapAmountOutMustBePositive               : "WRR-011"
+            readonly property string errLockedAmountNotSupportedForNetwork        : "WRR-012"
+            readonly property string errLockedAmountNotNegative                   : "WRR-013"
+            readonly property string errLockedAmountExceedsTotalSendAmount        : "WRR-014"
+            readonly property string errLockedAmountLessThanSendAmountAllNetworks : "WRR-015"
+            readonly property string errDisabledChainFoundAmongLockedNetworks     : "WRR-016"
+            readonly property string errENSSetPubKeyInvalidUsername               : "WRR-017"
+            readonly property string errLockedAmountExcludesAllSupported          : "WRR-018"
+            readonly property string errCannotCheckLockedAmounts                  : "WRR-019"
+
+            readonly property string errNotEnoughTokenBalance                     : "WR-001"
+            readonly property string errNotEnoughNativeBalance                    : "WR-002"
+            readonly property string errNativeTokenNotFound                       : "WR-003"
+            readonly property string errTokenNotFound                             : "WR-004"
+            readonly property string errNoBestRouteFound                          : "WR-005"
+            readonly property string errCannotCheckReceiverBalance                : "WR-006"
+            readonly property string errLowAmountInForHopBridge                   : "WR-007"
+            readonly property string errNoPositiveBalance                         : "WR-008"
         }
     }
 
@@ -1443,15 +1444,6 @@ QtObject {
         readonly property string paraswapV5SwapContractAddress: "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57"
         readonly property string paraswapV6_2ContractAddress: "0x6a000f20005980200259b80c5102003040001068"
         readonly property string paraswapTermsAndConditionUrl: "https://files.paraswap.io/tos_v4.pdf"
-
-        // TOOD #15874: Unify with WalletUtils router error code handling
-        readonly property QtObject errorCodes: QtObject {
-            readonly property string errNotEnoughTokenBalance: "WR-016"
-            readonly property string errNotEnoughNativeBalance: "WR-017"
-            readonly property string errPriceTimeout: "WPP-037"
-            readonly property string errNotEnoughLiquidity: "WPP-038"
-            readonly property string errPriceImpactTooHigh: "WPP-039"
-        }
     }
 
     // Mirrors src/app_service/service/transaction/service.nim -> EstimatedTime

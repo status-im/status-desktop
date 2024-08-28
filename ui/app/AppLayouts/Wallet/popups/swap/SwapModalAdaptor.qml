@@ -150,9 +150,9 @@ QObject {
         }
 
         // Properties to handle error states
-        readonly property bool isRouteEthBalanceInsufficient: root.validSwapProposalReceived && root.swapOutputData.errCode === Constants.swap.errorCodes.errNotEnoughNativeBalance
+        readonly property bool isRouteEthBalanceInsufficient: root.validSwapProposalReceived && root.swapOutputData.errCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
 
-        readonly property bool isRouteTokenBalanceInsufficient: root.validSwapProposalReceived && root.swapOutputData.errCode === Constants.swap.errorCodes.errNotEnoughTokenBalance
+        readonly property bool isRouteTokenBalanceInsufficient: root.validSwapProposalReceived && root.swapOutputData.errCode === Constants.routerErrorCodes.router.errNotEnoughTokenBalance
 
         readonly property bool isTokenBalanceInsufficient: {
             if (!!root.fromToken && !!root.fromToken.symbol) {
@@ -186,12 +186,13 @@ QObject {
             } else if (isBalanceInsufficientForFees) {
                 return qsTr("Insufficient funds to pay gas fees")
             } else if (root.swapOutputData.hasError) {
+                // TOOD #15874: Unify with WalletUtils router error code handling
                 switch (root.swapOutputData.errCode) {
-                    case Constants.swap.errorCodes.errPriceTimeout:
+                    case Constants.routerErrorCodes.processor.errPriceTimeout:
                         return qsTr("Fetching the price took longer than expected. Please, try again later.")
-                    case Constants.swap.errorCodes.errNotEnoughLiquidity:
+                    case Constants.routerErrorCodes.processor.errNotEnoughLiquidity:
                         return qsTr("Not enough liquidity. Lower token amount or try again later.")
-                    case Constants.swap.errorCodes.errPriceImpactTooHigh:
+                    case Constants.routerErrorCodes.processor.errPriceImpactTooHigh:
                         return qsTr("Price impact too high. Lower token amount or try again later.")
                 }
                 return qsTr("Something went wrong. Change amount, token or try again later.")
