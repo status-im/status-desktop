@@ -6,6 +6,7 @@ import allure
 import configs.timeouts
 import driver
 from driver.objects_access import walk_children
+from gui.components.settings.block_user_popup import BlockUserPopup
 from gui.components.settings.respond_to_id_request_popup import RespondToIDRequestPopup
 from gui.components.settings.send_contact_request_popup import SendContactRequest
 from gui.components.settings.unblock_user_popup import UnblockUserPopup
@@ -120,7 +121,8 @@ class ContactsSettingsView(QObject):
         self._view_profile_item = QObject(settings_names.view_Profile_StatusMenuItem)
         self._respond_to_id_request_button = Button(
             settings_names.settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton)
-        self._unblock_item = Button(settings_names.unblock_user_StatusMenuItem)
+        self._unblock_item = QObject(settings_names.unblock_user_StatusMenuItem)
+        self._block_item = QObject(settings_names.block_user_StatusMenuItem)
 
     @property
     @allure.step('Get contact items')
@@ -210,7 +212,7 @@ class ContactsSettingsView(QObject):
         request = self.find_contact_in_list(contact, timeout_sec)
         request.reject()
 
-    @allure.step('Open verify identity popup')
+    @allure.step('Open thee dots menu for contact')
     def open_more_options_popup(
             self, contact: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC):
         request = self.find_contact_in_list(contact, timeout_sec)
@@ -235,3 +237,8 @@ class ContactsSettingsView(QObject):
     def unblock_user(self):
         self._unblock_item.click()
         return UnblockUserPopup().wait_until_appears()
+
+    @allure.step('Block user')
+    def block_user(self):
+        self._block_item.click()
+        return BlockUserPopup().wait_until_appears()
