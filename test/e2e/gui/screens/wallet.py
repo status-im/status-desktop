@@ -74,38 +74,42 @@ class LeftPanel(QObject):
         return self._all_accounts_balance.text
 
     @allure.step('Choose saved addresses on left wallet panel')
-    @close_exists(BasePopup())
     def open_saved_addresses(self) -> 'SavedAddressesView':
         self._saved_addresses_button.click()
         return SavedAddressesView().wait_until_appears()
 
     @allure.step('Select account from list')
-    @close_exists(BasePopup())
     def select_account(self, account_name: str) -> 'WalletAccountView':
         self._wallet_account_item.real_name['title'] = account_name
         self._wallet_account_item.click()
         return WalletAccountView().wait_until_appears()
 
     @allure.step('Open context menu from left wallet panel')
-    @close_exists(BasePopup())
     def _open_context_menu(self) -> ContextMenu:
         super(LeftPanel, self).right_click()
         return ContextMenu().wait_until_appears()
 
-    @allure.step('Open context menu for account')
-    @close_exists(BasePopup())
+    @allure.step('Open context menu for specific account')
     def _open_context_menu_for_account(self, account_name: str) -> ContextMenu:
-        self._wallet_account_item.real_name['title'] = account_name
-        self._wallet_account_item.wait_until_appears().right_click()
-        return ContextMenu().wait_until_appears()
+        account_items = self.accounts
+        existing_accounts_names = [account.name for account in account_items]
+        if account_name in existing_accounts_names:
+            self._wallet_account_item.real_name['title'] = account_name
+            self._wallet_account_item.click()
+            time.sleep(0.5)
+            self._wallet_account_item.right_click()
+            return ContextMenu()
+        else:
+            raise LookupError(f'{account_name} is not present in {account_items}')
 
     @allure.step("Select Hide/Include in total balance from context menu for account")
     def hide_include_in_total_balance_from_context_menu(self, account_name: str):
-        self._open_context_menu_for_account(account_name).select_hide_include_total_balance_from_context_menu()
+        self._open_context_menu_for_account(account_name).hide_include_in_total_balance.click()
 
     @allure.step('Open account popup for editing from context menu')
     def open_edit_account_popup_from_context_menu(self, account_name: str) -> AccountPopup:
-        self._open_context_menu_for_account(account_name).select_edit_account_from_context_menu()
+        context_menu = self._open_context_menu_for_account(account_name)
+        context_menu.edit_from_context.click()
         return AccountPopup().verify_edit_account_popup_present()
 
     @allure.step('Open account popup')
@@ -121,13 +125,13 @@ class LeftPanel(QObject):
 
     @allure.step('Select add watched address from context menu')
     def select_add_watched_address_from_context_menu(self) -> AccountPopup:
-        self._open_context_menu().select_add_watched_address_from_context_menu()
+        self._open_context_menu().add_watched_address_from_context.click()
         return AccountPopup().wait_until_appears()
 
     @allure.step('Delete account from the list from context menu')
     def delete_account_from_context_menu(self, account_name: str, attempt: int = 2) -> RemoveWalletAccountPopup:
         try:
-            self._open_context_menu_for_account(account_name).select_delete_account_from_context_menu()
+            self._open_context_menu_for_account(account_name).delete_from_context.click()
             return RemoveWalletAccountPopup().wait_until_appears()
         except Exception as ex:
             if attempt:
@@ -137,7 +141,7 @@ class LeftPanel(QObject):
 
     @allure.step('Copy address for the account in the context menu')
     def copy_account_address_in_context_menu(self, account_name: str):
-        self._open_context_menu_for_account(account_name).select_copy_address_from_context_menu()
+        self._open_context_menu_for_account(account_name).copy_address_from_context.click()
         return str(pyperclip.paste())
 
 
@@ -180,12 +184,12 @@ class SavedAddressesView(QObject):
 
     @allure.step('Open edit address popup for saved address')
     def open_edit_address_popup(self, name: str) -> 'EditSavedAddressPopup':
-        self.right_click(name).select_edit_saved_address()
+        self.right_click(name).edit_saved_address_from_context.click()
         return EditSavedAddressPopup()
 
     @allure.step('Delete saved address from the list')
     def delete_saved_address(self, address_name):
-        self.right_click(address_name).select_delete_saved_address()
+        self.right_click(address_name).delete_saved_address_from_context.click()
         assert ConfirmationPopup().get_confirmation_text().startswith('Are you sure you want to remove')
         ConfirmationPopup().confirm()
 
