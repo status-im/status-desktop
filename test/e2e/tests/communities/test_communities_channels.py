@@ -105,19 +105,19 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
         with step('Right-click on general channel in the left navigation bar'):
             general_channel_context_menu = community_screen.left_panel.open_general_channel_context_menu()
         with step('Verify that edit item is not present in channel context menu'):
-            assert general_channel_context_menu.is_edit_channel_option_present() is False, \
+            assert general_channel_context_menu.edit_channel_from_context.exists is False, \
                 f'Edit channel option is present when it should not'
         with step('Verify that delete item is not present in channel context menu'):
-            assert general_channel_context_menu.is_delete_channel_option_present() is False, \
+            assert general_channel_context_menu.delete_channel_from_context.exists is False, \
                 f'Delete channel option is present when it should not'
 
         with step('Open context menu from the tool bar'):
             more_options = community_screen.tool_bar.open_more_options_dropdown()
         with step('Verify that edit item is not present in context menu'):
-            assert more_options.is_edit_channel_option_present() is False, \
+            assert more_options.iedit_channel_from_context.exists is False, \
                 f'Edit channel option is present when it should not'
         with step('Verify that delete item is not present in context menu'):
-            assert more_options.is_delete_channel_option_present() is False, \
+            assert more_options.delete_channel_from_context.exists is False, \
                 f'Delete channel option is present when it should not'
 
 

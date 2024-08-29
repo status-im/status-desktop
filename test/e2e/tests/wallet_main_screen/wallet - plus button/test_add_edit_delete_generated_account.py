@@ -4,8 +4,8 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import UserAccount, RandomUser
-from scripts.utils.generators import random_password_string
+from constants import RandomUser
+from scripts.utils.generators import random_wallet_account_name
 from tests.wallet_main_screen import marks
 
 import constants
@@ -20,16 +20,17 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703033', 'Manage a generated account')
 @pytest.mark.case(703033)
 @pytest.mark.parametrize('user_account', [RandomUser()])
-@pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
-                         'new_name, new_color, new_emoji, new_emoji_unicode', [
-                             pytest.param('GenAcc1', '#2a4af5', 'sunglasses', '1f60e',
-                                          'GenAcc1edited', '#216266', 'thumbsup', '1f44d')
+@pytest.mark.parametrize('color, emoji, emoji_unicode, '
+                         'new_color, new_emoji, new_emoji_unicode', [
+                             pytest.param('#2a4af5', 'sunglasses', '1f60e',
+                                          '#216266', 'thumbsup', '1f44d')
                          ])
-def test_plus_button_manage_generated_account(main_screen: MainWindow, user_account,
-                                              color: str, emoji: str, emoji_unicode: str,
-                                              name: str, new_name: str, new_color: str, new_emoji: str,
-                                              new_emoji_unicode: str):
+def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account,
+                                           color: str, emoji: str, emoji_unicode: str,
+                                           new_color: str, new_emoji: str,
+                                           new_emoji_unicode: str):
     with step('Create generated wallet account'):
+        name = random_wallet_account_name()
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
@@ -52,6 +53,7 @@ def test_plus_button_manage_generated_account(main_screen: MainWindow, user_acco
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Edit wallet account'):
+        new_name = random_wallet_account_name()
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
         account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save_changes()
 

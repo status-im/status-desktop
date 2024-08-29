@@ -33,7 +33,7 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
 
     with step('Create watched address from context menu'):
-        account_popup = wallet.left_panel.select_add_watched_address_from_context_menu()
+        account_popup = wallet.left_panel.add_watched_address_from_context.click()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_eth_address(address).save_changes()
         account_popup.wait_until_hidden()
 
