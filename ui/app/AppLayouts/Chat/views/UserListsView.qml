@@ -20,9 +20,7 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 Item {
     id: root
 
-    property ChatStores.RootStore store
-    property var chatCommunitySectionModule
-    property string activeChatId: chatCommunitySectionModule && chatCommunitySectionModule.activeItem.id
+    required property ChatStores.RootStore store
     property string label
     property int communityMemberReevaluationStatus: Constants.CommunityMemberReevaluationStatus.None
 
@@ -94,7 +92,7 @@ Item {
 
         Repeater {
             id: chatRepeater
-            model: chatCommunitySectionModule && chatCommunitySectionModule.model
+            model: root.store.communityItemsModel
 
             Loader {
                 id: listLoader
@@ -129,14 +127,13 @@ Item {
                 sourceComponent: UserListPanel {
                     clip: false
 
-                    visible: listLoader.chatId === root.activeChatId
+                    visible: listLoader.chatId === root.store.activeChatId
 
                     anchors.fill: parent
                     anchors.bottomMargin: Style.current.bigPadding
 
                     usersModel: {
-                        root.chatCommunitySectionModule.prepareChatContentModuleForChatId(listLoader.chatId)
-                        const chatContentModule = root.chatCommunitySectionModule.getChatContentModule()
+                        const chatContentModule = root.store.getChatContentModule(listLoader.chatId)
                         if (!chatContentModule || !chatContentModule.usersModule) {
                             return null
                         }
@@ -165,7 +162,7 @@ Item {
                 }
                 onCreateOneToOneChat: {
                     Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                    root.store.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
+                    root.store.createOneToOneChat(communityId, chatId, ensName)
                 }
                 onClosed: {
                     destroy()

@@ -132,6 +132,8 @@ QtObject {
         root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
     }
 
+    readonly property string activeChatId: root.chatCommunitySectionModule && root.chatCommunitySectionModule.activeItem ? root.chatCommunitySectionModule.activeItem.id : ""
+
     readonly property bool allChannelsAreHiddenBecauseNotPermitted: root.chatCommunitySectionModule.allChannelsAreHiddenBecauseNotPermitted &&
                                                                     !root.chatCommunitySectionModule.requiresTokenPermissionToJoin
 
@@ -147,13 +149,17 @@ QtObject {
     readonly property bool isUserAllowedToSendMessage: _d.isUserAllowedToSendMessage
     readonly property string chatInputPlaceHolderText: _d.chatInputPlaceHolderText
     readonly property var oneToOneChatContact: _d.oneToOneChatContact
+
     // Since qml component doesn't follow encaptulation from the backend side, we're introducing
     // a method which will return appropriate chat content module for selected chat/channel
+    function getChatContentModule(chatId) {
+        chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
+        return chatCommunitySectionModule.getChatContentModule()
+    }
     function currentChatContentModule() {
         // When we decide to have the same struct as it's on the backend we will remove this function.
         // So far this is a way to deal with refactored backend from the current qml structure.
-        chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
-        return chatCommunitySectionModule.getChatContentModule()
+        return root.getChatContentModule(chatCommunitySectionModule.activeItem.id)
     }
 
     // Contact requests related part
@@ -176,6 +182,10 @@ QtObject {
     signal communityAccessRequested(string communityId)
 
     signal goToMembershipRequestsPage()
+
+    function createOneToOneChat(communityId, chatId, ensName) {
+        root.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
+    }
 
     function setActiveCommunity(communityId) {
         mainModule.setActiveSectionById(communityId);
@@ -320,29 +330,6 @@ QtObject {
         return userProfileInst.pubKey
     }
 
-    function getCommunity(communityId) {
-        // Not Refactored Yet
-//        try {
-//            const communityJson = chatsModelInst.communities.list.getCommunityByIdJson(communityId);
-//            if (!communityJson) {
-//                return null;
-//            }
-
-//            let community = JSON.parse(communityJson);
-//            if (community) {
-//                community.nbMembers = community.members.length;
-//            }
-//            return community
-//        } catch (e) {
-//            console.error("Error parsing community", e);
-//        }
-
-       return null;
-    }
-
-    // Not Refactored Yet
-    property var activeCommunityChatsModel: "" //chatsModelInst.communities.activeCommunity.chats
-
     function createCommunity(args = {
                                 name: "",
                                 description: "",
@@ -436,11 +423,6 @@ QtObject {
 
     function declineRequestToJoinCommunity(requestId, communityId) {
         chatCommunitySectionModule.declineRequestToJoinCommunity(requestId, communityId)
-    }
-
-    function userNameOrAlias(pk) {
-        // Not Refactored Yet
-//        return chatsModelInst.userNameOrAlias(pk);
     }
 
     function generateAlias(pk) {
@@ -688,7 +670,6 @@ QtObject {
             }
         }
 
-        readonly property string activeChatId: chatCommunitySectionModule && chatCommunitySectionModule.activeItem ? chatCommunitySectionModule.activeItem.id : ""
         readonly property int activeChatType: chatCommunitySectionModule && chatCommunitySectionModule.activeItem ? chatCommunitySectionModule.activeItem.type : -1
         readonly property bool amIMember: chatCommunitySectionModule ? chatCommunitySectionModule.amIMember : false
 
@@ -704,7 +685,7 @@ QtObject {
             enabled: _d.activeChatType === Constants.chatType.oneToOne
 
             function onItemChanged(pubKey) {
-                if (pubKey === _d.activeChatId) {
+                if (pubKey === root.activeChatId) {
                     _d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
                 }
             }
@@ -715,7 +696,7 @@ QtObject {
             enabled: _d.activeChatType === Constants.chatType.oneToOne
 
             function onItemChanged(pubKey) {
-                if (pubKey === _d.activeChatId) {
+                if (pubKey === root.activeChatId) {
                     _d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
                 }
             }
@@ -726,7 +707,7 @@ QtObject {
             enabled: _d.activeChatType === Constants.chatType.oneToOne
 
             function onItemChanged(pubKey) {
-                if (pubKey === _d.activeChatId) {
+                if (pubKey === root.activeChatId) {
                     _d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
                 }
             }
@@ -756,8 +737,8 @@ QtObject {
 
         //Update oneToOneChatContact when activeChat id changes
         Binding on oneToOneChatContact {
-            when: _d.activeChatId && _d.activeChatType === Constants.chatType.oneToOne
-            value: Utils.getContactDetailsAsJson(_d.activeChatId, false)
+            when: root.activeChatId && _d.activeChatType === Constants.chatType.oneToOne
+            value: Utils.getContactDetailsAsJson(root.activeChatId, false)
             restoreMode: Binding.RestoreBindingOrValue
         }
     }

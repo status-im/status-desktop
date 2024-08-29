@@ -174,7 +174,6 @@ StatusSectionLayout {
             store: root.rootStore
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
-            chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
         }
     }
 
