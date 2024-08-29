@@ -129,6 +129,7 @@ RightTabBaseView {
                             anchors.topMargin: 6
                             anchors.left: parent.right
                             anchors.leftMargin: 5
+                            cursorShape: Qt.PointingHandCursor
                         }
                     }
                     onCurrentIndexChanged: {
