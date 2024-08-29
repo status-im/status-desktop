@@ -988,7 +988,7 @@ QtObject {
     readonly property string statusHelpLinkPrefix: `https://status.app/help/`
     readonly property string downloadLink: "https://status.im/get"
 
-    readonly property int maxUploadFiles: 5
+    readonly property int maxUploadFiles: 6
     readonly property double maxUploadFilesizeMB: 10
 
     readonly property int maxNumberOfPins: 3
