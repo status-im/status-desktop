@@ -70,7 +70,7 @@ Rectangle {
 
     property bool askToEnableLinkPreview: false
 
-    property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this property?
+    property int imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this property?
 
     property alias suggestions: suggestionsBox
 
@@ -880,10 +880,7 @@ Rectangle {
         resetReplyArea()
     }
 
-    function validateImages(imagePaths) {
-        if (!imagePaths || !imagePaths.length) {
-            return []
-        }
+    function validateImages(imagePaths = []) {
         // needed because control.fileUrlsAndSources is not a normal js array
         const existing = (control.fileUrlsAndSources || []).map(x => x.toString())
         let validImages = Utils.deduplicate(existing.concat(imagePaths))
@@ -1144,13 +1141,23 @@ Rectangle {
                 z: 1
 
                 StatusChatImageExtensionValidator {
+                    id: imageExtValidator
                     Layout.alignment: Qt.AlignHCenter
                 }
                 StatusChatImageSizeValidator {
+                    id: imageSizeValidator
                     Layout.alignment: Qt.AlignHCenter
                 }
                 StatusChatImageQtyValidator {
+                    id: imageQtyValidator
                     Layout.alignment: Qt.AlignHCenter
+                }
+
+                Timer {
+                    interval: 3000
+                    repeat: true
+                    running: !imageQtyValidator.isValid || !imageSizeValidator.isValid || !imageExtValidator.isValid
+                    onTriggered: validateImages(control.fileUrlsAndSources)
                 }
             }
 
@@ -1195,6 +1202,7 @@ Rectangle {
                             urls.splice(index, 1)
                         }
                         control.fileUrlsAndSources = urls
+                        validateImages(control.fileUrlsAndSources)
                     }
                     onImageClicked: (chatImage) => Global.openImagePopup(chatImage, "", false)
                     onLinkReload: (link) => control.linkPreviewReloaded(link)
