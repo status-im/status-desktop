@@ -109,7 +109,7 @@ proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): Ne
 
 proc convertNetworkDtoToNetworkRouteItem(self: Module, network: network_service_item.NetworkItem): NetworkRouteItem =
   result = initNetworkRouteItem(
-      network.chainId, 
+      network.chainId,
       network.layer,
       true,
       false,
@@ -220,7 +220,7 @@ method authenticateAndTransferWithPaths*(self: Module, fromAddr: string, toAddr:
   # Temporary until transaction service rework is completed
   let pathsV2 = rawPaths.toTransactionPathsDtoV2()
   let pathsV1 = pathsV2.convertToOldRoute().addFirstSimpleBridgeTxFlag()
-  
+
   self.tmpSendTransactionDetails.paths = pathsV1
   self.tmpSendTransactionDetails.slippagePercentage = slippagePercentage
   self.authenticateAndTransfer(fromAddr, toAddr, assetKey, toAssetKey, uuid, sendType, selectedTokenName, selectedTokenIsOwnerToken)
@@ -324,6 +324,9 @@ method suggestedRoutes*(self: Module,
     lockedInAmounts,
     extraParamsTable
   )
+
+method stopUpdatesForSuggestedRoute*(self: Module) =
+  self.controller.stopSuggestedRoutesAsyncCalculation()
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   if addresses.len == 0:

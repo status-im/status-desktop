@@ -278,7 +278,10 @@ StatusDialog {
         }
     }
 
-    onClosed: popup.store.resetStoredProperties()
+    onClosed: {
+        popup.store.stopUpdatesForSuggestedRoute()
+        popup.store.resetStoredProperties()
+    }
 
     header: Item {
         implicitHeight: accountSelector.implicitHeight

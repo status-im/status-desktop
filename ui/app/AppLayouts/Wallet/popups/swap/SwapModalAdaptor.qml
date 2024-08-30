@@ -334,6 +334,10 @@ QObject {
         }
     }
 
+    function stopUpdatesForSuggestedRoute() {
+        root.swapStore.stopUpdatesForSuggestedRoute()
+    }
+
     function sendApproveTx() {
         root.approvalPending = true
         const accountAddress = root.swapFormData.selectedAccountAddress
