@@ -381,7 +381,8 @@ StatusDialog {
                         assetsModel: assetsAdaptor.outputAssetsModel
                         collectiblesModel: collectiblesAdaptorLoader.active
                                            ? collectiblesAdaptorLoader.item.model : null
-                        Layout.fillWidth: isTokenSelected
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: implicitWidth
 
                         TokenSelectorViewAdaptor {
                             id: assetsAdaptor
