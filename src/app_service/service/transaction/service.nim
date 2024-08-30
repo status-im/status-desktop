@@ -181,6 +181,7 @@ QtObject:
 
     self.events.on(SignalType.WalletSuggestedRoutes.event) do(e:Args):
       var data = WalletSignal(e)
+      self.tokenService.updateTokenPrices(data.updatedPrices)
       self.suggestedRoutesReady(data.uuid, data.bestRoute, data.bestRouteRaw, data.errorCode, data.error)
 
     self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
