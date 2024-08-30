@@ -11,10 +11,10 @@ import utils 1.0
 Control {
     id: root
 
-    /** Expected model structure: see TokenSelectorPanel::assetsModel **/
+    /** Expected model structure: see SearchableAssetsPanel::model **/
     property alias assetsModel: tokenSelectorPanel.assetsModel
 
-    /** Expected model structure: see TokenSelectorPanel::collectiblesModel **/
+    /** Expected model structure: see SearchableCollectiblesPanel::model **/
     property alias collectiblesModel: tokenSelectorPanel.collectiblesModel
 
     readonly property bool isTokenSelected: d.isTokenSelected

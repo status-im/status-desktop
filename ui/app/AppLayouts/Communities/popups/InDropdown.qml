@@ -122,11 +122,9 @@ StatusDropdown {
 
         sourceModel: joined
 
-        filters: RegExpFilter {
+        filters: SearchFilter {
             roleName: "name"
-            pattern: `*${searcher.text}*`
-            caseSensitivity : Qt.CaseInsensitive
-            syntax: RegExpFilter.Wildcard
+            searchPhrase: searcher.text
         }
     }
 
