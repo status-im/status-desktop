@@ -236,6 +236,9 @@ QtObject:
       extraParamsTable
     )
 
+  proc stopUpdatesForSuggestedRoute*(self: View) {.slot.} =
+    self.delegate.stopUpdatesForSuggestedRoute()
+
   proc updateRoutePreferredChains*(self: View, chainIds: string) {.slot.} =
     self.toNetworksRouteModel.updateRoutePreferredChains(chainIds)
 
@@ -325,7 +328,7 @@ QtObject:
   proc transactionSendingComplete*(self: View, txHash: string, success: bool) {.signal.}
   proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, success: bool) =
     self.transactionSendingComplete(txHash, success)
-      
+
   proc setSenderAccount*(self: View, address: string) {.slot.} =
     self.setSelectedSenderAccountAddress(address)
     self.delegate.notifySelectedSenderAccountChanged()

@@ -112,7 +112,10 @@ StatusDialog {
     }
 
     onOpened: payPanel.forceActiveFocus()
-    onClosed: root.swapAdaptor.reset()
+    onClosed: {
+        root.swapAdaptor.stopUpdatesForSuggestedRoute()
+        root.swapAdaptor.reset()
+    }
 
     header: Item {
         implicitHeight: selector.implicitHeight
