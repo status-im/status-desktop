@@ -156,7 +156,7 @@ Item {
 
             // verfy input and output panels
             verify(!payPanel.mainInputLoading)
-            verify(!payPanel.bottomTextLoading)
+            verify(payPanel.bottomTextLoading)
             compare(payPanel.selectedHoldingId, root.swapFormData.fromTokensKey)
             compare(payPanel.value, Number(root.swapFormData.fromTokenAmount))
             compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(root.swapFormData.fromTokenAmount, root.swapAdaptor.fromToken.decimals).toString())
@@ -808,6 +808,8 @@ Item {
             // verfy input and output panels
             waitForRendering(receivePanel)
             verify(payPanel.valueValid)
+            verify(!payPanel.mainInputLoading)
+            verify(!payPanel.bottomTextLoading)
             verify(!receivePanel.mainInputLoading)
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
@@ -858,6 +860,8 @@ Item {
             // verfy input and output panels
             waitForRendering(receivePanel)
             verify(payPanel.valueValid)
+            verify(!payPanel.mainInputLoading)
+            verify(!payPanel.bottomTextLoading)
             verify(!receivePanel.mainInputLoading)
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)

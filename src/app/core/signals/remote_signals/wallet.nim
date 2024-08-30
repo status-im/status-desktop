@@ -1,4 +1,4 @@
-import json, options, chronicles
+import json, options, chronicles, Tables
 
 import base
 import signal_type
@@ -24,6 +24,7 @@ type WalletSignal* = ref object of Signal
   bestRoute*: seq[TransactionPathDtoV2]
   error*: string
   errorCode*: string
+  updatedPrices*: Table[string, float64]
 
 proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNode): WalletSignal =
   result = WalletSignal()
@@ -67,6 +68,10 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
           result.error = errorResponseJsonNode["details"].getStr
         if errorResponseJsonNode.contains("code"):
           result.errorCode = errorResponseJsonNode["code"].getStr
+      result.updatedPrices = initTable[string, float64]()
+      if event.contains("UpdatedPrices"):
+        for tokenSymbol, price in event["UpdatedPrices"].pairs():
+          result.updatedPrices[tokenSymbol] = price.getFloat
     except:
       error "Error parsing best route"
     return

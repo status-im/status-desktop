@@ -238,6 +238,8 @@ StatusDialog {
                     swapSide: SwapInputPanel.SwapSide.Pay
                     swapExchangeButtonWidth: swapExchangeButton.width
 
+                    bottomTextLoading: root.swapAdaptor.swapProposalLoading
+
                     onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
 
                     onRawValueChanged: {
