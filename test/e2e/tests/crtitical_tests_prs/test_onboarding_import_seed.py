@@ -2,10 +2,11 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import ReturningUser, ReturningUsersData
+from constants import RandomUser
 from constants.onboarding import KeysExistText
 from constants.wallet import WalletNetworkSettings
 from driver.aut import AUT
+from scripts.utils.generators import random_mnemonic, get_wallet_address_from_mnemonic
 from tests.onboarding import marks
 
 import configs.system
@@ -30,15 +31,13 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736372', 'Re-importing seed-phrase')
 @pytest.mark.case(703040, 736372)
-@pytest.mark.parametrize('user_account', [ReturningUser(
-    seed_phrase=ReturningUsersData.RETURNING_USER_ONE.value[0],
-    status_address=ReturningUsersData.RETURNING_USER_ONE.value[1])])
+@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.critical
-# TODO: change to use random seeds in onboarding after https://github.com/status-im/status-desktop/issues/16216 is fixed
 def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account):
     with step('Open import seed phrase view and enter seed phrase'):
+        seed_phrase = random_mnemonic()
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
-        input_view.input_seed_phrase(user_account.seed_phrase, autocomplete=True)
+        input_view.input_seed_phrase(seed_phrase.split(), autocomplete=True)
         profile_view = input_view.import_seed_phrase()
         profile_view.set_display_name(user_account.name)
 
@@ -62,8 +61,9 @@ def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account):
             LeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value,
                                                                                                    status_account_index))
         address = status_acc_view.get_account_address_value()
-        assert address == user_account.status_address, \
-            f"Recovered account should have address {user_account.status_address}, but has {address}"
+        address_from_seed = get_wallet_address_from_mnemonic(seed_phrase)
+        assert address == address_from_seed, \
+            f"Recovered account should have address {address_from_seed}, but has {address}"
 
     with step('Verify that the user logged in via seed phrase correctly'):
         user_canvas = main_window.left_panel.open_online_identifier()
@@ -73,7 +73,7 @@ def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account):
     with step('Restart application and try re-importing seed phrase again'):
         aut.restart()
         enter_seed_view = LoginView().add_existing_status_user().open_keys_view().open_enter_seed_phrase_view()
-        enter_seed_view.input_seed_phrase(user_account.seed_phrase, autocomplete=False)
+        enter_seed_view.input_seed_phrase(seed_phrase.split(), autocomplete=False)
         confirm_import = enter_seed_view.click_import_seed_phrase_button()
 
     with step('Verify that keys already exist popup appears and text is correct'):

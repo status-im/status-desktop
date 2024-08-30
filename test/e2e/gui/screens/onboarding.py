@@ -247,7 +247,9 @@ class SeedPhraseInputView(OnboardingView):
         for index, word in enumerate(seed_phrase, start=1):
             self._seed_phrase_input_text_edit.real_name['objectName'] = f'enterSeedPhraseInputField{index}'
             if autocomplete:
-                word_to_put = word[:-1]
+                word_to_put = word
+                if len(word) > 4:
+                    word_to_put = word[:-1]
                 self._seed_phrase_input_text_edit.text = word_to_put
                 driver.type(self._seed_phrase_input_text_edit.object, "<Return>")
             else:
