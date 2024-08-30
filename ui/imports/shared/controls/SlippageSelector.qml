@@ -2,24 +2,29 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 Control {
     id: root
 
     property double value: d.defaultValue
     readonly property double defaultValue: d.defaultValue
-    readonly property bool valid: customInput.activeFocus && customInput.valid
-                                  || buttons.value !== null
+    readonly property bool valid: (customInput.activeFocus && customInput.valid) || buttons.value !== null
     readonly property bool isEdited: root.value !== d.defaultValue
+
+    property double valueTooHighThreshold: 5
 
     function reset() {
         value = d.defaultValue
+        customInput.focus = false
+        customButton.visible = true
     }
 
     onValueChanged: {
         if (d.internalUpdate)
-            return false
+            return
 
         const custom = !d.values.includes(value)
 
@@ -53,56 +58,77 @@ Control {
     }
 
     background: null
-    contentItem: RowLayout {
-        spacing: buttons.spacing
+    contentItem: ColumnLayout {
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: buttons.spacing
 
-        StatusButtonRow {
-            id: buttons
-            model: ListModel {}
+            StatusButtonRow {
+                id: buttons
+                model: ListModel {}
 
-            Binding on value {
-                value: customInput.activeFocus ? null : root.value
-            }
+                Binding on value {
+                    value: customInput.activeFocus ? null : root.value
+                }
 
-            onValueChanged: {
-                if (value === null)
-                    return
+                onValueChanged: {
+                    if (value === null)
+                        return
 
-                d.update(value)
-            }
-        }
-
-        StatusButton {
-            id: customButton
-            objectName: "customButton"
-
-            Layout.minimumWidth: 130
-
-            text: qsTr("Custom")
-            onClicked: {
-                visible = false
-                customInput.clear()
-                customInput.forceActiveFocus()
-            }
-        }
-
-        CurrencyAmountInput {
-            id: customInput
-            objectName: "customInput"
-
-            Layout.minimumWidth: customButton.Layout.minimumWidth
-
-            visible: !customButton.visible
-            minValue: 0.01
-            maxValue: 100.0
-            currencySymbol: d.customSymbol
-            onValueChanged: d.update(value)
-            onFocusChanged: {
-                if (focus && valid)
                     d.update(value)
-                else if (!valid)
-                    clear()
+                }
+                onButtonClicked: customButton.visible = true
             }
+
+            StatusButton {
+                id: customButton
+                objectName: "customButton"
+
+                Layout.minimumWidth: 130
+
+                text: qsTr("Custom")
+                onClicked: {
+                    visible = false
+                    customInput.clear()
+                    customInput.forceActiveFocus()
+                }
+            }
+
+            CurrencyAmountInput {
+                id: customInput
+                objectName: "customInput"
+
+                Layout.minimumWidth: customButton.Layout.minimumWidth
+
+                visible: !customButton.visible
+                minValue: 0.01
+                maxValue: 100.0
+                maximumLength: 6 // 3 integral + separator + 2 decimals (e.g. "999.99")
+                currencySymbol: d.customSymbol
+                onValueChanged: d.update(value)
+            }
+        }
+        StatusBaseText {
+            Layout.alignment: Qt.AlignRight
+            visible: customInput.visible && !customInput.valid
+            font.pixelSize: Theme.tertiaryTextFontSize
+            color: Theme.palette.dangerColor1
+            text: {
+                if (customInput.length === 0)
+                    return qsTr("Enter a slippage value")
+
+                if (customInput.value === 0)
+                    return qsTr("Slippage should be more than 0")
+
+                return qsTr("Invalid value")
+            }
+        }
+        StatusBaseText {
+            Layout.alignment: Qt.AlignRight
+            visible: customInput.visible && customInput.valid && customInput.value > root.valueTooHighThreshold
+            font.pixelSize: Theme.tertiaryTextFontSize
+            color: Theme.palette.warningColor1
+            text: qsTr("Slippage may be higher than necessary")
         }
     }
 }

@@ -47,8 +47,10 @@ TextField {
     }
 
     Keys.onPressed: (event) => {
-                        // additionally accept dot (.) and convert it to the correct decimal point char
-                        if (event.key === Qt.Key_Period) {
+                        // reject group (thousands) separator
+                        if (event.text === Qt.locale(root.locale).groupSeparator) {
+                            event.accepted = true
+                        } else if (event.key === Qt.Key_Period) { // additionally accept dot (.) and convert it to the correct decimal point char
                             root.insert(root.cursorPosition, Qt.locale(root.locale).decimalPoint)
                             event.accepted = true
                         } else if (event.modifiers === Qt.NoModifier && event.key >= Qt.Key_A && event.key <= Qt.Key_Z) {

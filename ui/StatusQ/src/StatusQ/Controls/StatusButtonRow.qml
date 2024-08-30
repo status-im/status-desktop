@@ -16,6 +16,8 @@ RowLayout {
 
     spacing: 8
 
+    signal buttonClicked()
+
     Repeater {
         id: repeater
 
@@ -34,7 +36,10 @@ RowLayout {
             checked: value === root.value
             text: model[root.textRole]
 
-            onClicked: root.value = value
+            onClicked: {
+                root.value = value
+                root.buttonClicked()
+            }
         }
     }
 }
