@@ -87,10 +87,19 @@ Item {
             mouseClick(firstButton)
             tryCompare(controlUnderTest, "value", firstButton.value)
             verify(controlUnderTest.valid)
+            tryCompare(customButton, "visible", true)
+            tryCompare(customInput, "visible", false)
         }
 
-        function test_setCustomValue() {
-            const theValue = 1.42
+        function test_setCustomValue_data() {
+            return [
+                {tag: "valid", value: 1.42, valid: true},
+                {tag: "invalid", value: 111.42, valid: false},
+            ]
+        }
+
+        function test_setCustomValue(data) {
+            const theValue = data.value
 
             verify(!!controlUnderTest)
             verify(controlUnderTest.valid)
@@ -100,9 +109,77 @@ Item {
             verify(!!customInput)
             tryCompare(customInput, "cursorVisible", true)
             tryCompare(customInput, "value", theValue)
+            tryCompare(customInput, "text", customInput.asString)
 
             verify(controlUnderTest.value, theValue)
-            verify(controlUnderTest.valid)
+            compare(controlUnderTest.valid, data.valid)
+        }
+
+        function test_setCustomValueAndReset_data() {
+            return [
+                {tag: "valid", value: 1.42, valid: true, isDefault: false},
+                {tag: "default", value: 0.5, valid: true, isDefault: true},
+                {tag: "invalid", value: 111.42, valid: false, isDefault: false},
+            ]
+        }
+
+        function test_setCustomValueAndReset(data) {
+            verify(!!controlUnderTest)
+
+            let defaultValue = NaN
+            let defaultButton = null
+            const isDefault = data.isDefault
+
+            // get the default (checked/selected) button and value
+            const buttonsRepeater = findChild(controlUnderTest, "buttonsRepeater")
+            verify(!!buttonsRepeater)
+            for (let i = 0; i < buttonsRepeater.count; i++) {
+                const button = buttonsRepeater.itemAt(i)
+                if (button && button.checked) {
+                    defaultButton = button
+                    defaultValue = button.value
+                    break
+                }
+            }
+
+            verify(!!defaultButton)
+            verify(defaultValue !== NaN)
+
+            // verify that by default, the custom button is visible, and custom input not
+            const customButton = findChild(controlUnderTest, "customButton")
+            verify(!!customButton)
+            tryCompare(customButton, "visible", true)
+            const customInput = findChild(controlUnderTest, "customInput")
+            verify(!!customInput)
+            tryCompare(customInput, "visible", false)
+            tryCompare(controlUnderTest, "valid", true)
+
+            // assign a new (custom) value
+            const theValue = data.value
+            controlUnderTest.value = theValue
+            tryCompare(controlUnderTest, "valid", data.valid)
+
+            // verify the custom input has the new value (and text), and Custom button is not visible
+            tryCompare(customInput, "visible", !isDefault)
+            tryCompare(customInput, "activeFocus", !isDefault)
+            tryCompare(customButton, "visible", isDefault)
+            if (!isDefault) {
+                tryCompare(customInput, "value", theValue)
+                tryCompare(customInput, "text", customInput.asString)
+            }
+
+            // call reset()
+            controlUnderTest.reset()
+
+            // verify that after reset, the Custom button is back
+            tryCompare(customInput, "visible", false)
+            tryCompare(customInput, "activeFocus", false)
+            tryCompare(customButton, "visible", true)
+
+            // verify that the button with default value is selected again
+            tryCompare(defaultButton, "checked", true)
+            tryCompare(controlUnderTest, "value", defaultValue)
+            tryCompare(controlUnderTest, "valid", true)
         }
 
         function test_resetDefaults() {
