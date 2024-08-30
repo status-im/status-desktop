@@ -34,6 +34,7 @@ Column {
             title: model.text
             asset.name: model.icon
             selected: Global.settingsSubsection === model.subsection
+            highlighted: !!betaTagLoader.item && betaTagLoader.item.hovered
             onClicked: root.menuItemClicked(model)
             badge.value: {
                 switch (model.subsection) {
@@ -64,6 +65,7 @@ Column {
 
                 sourceComponent: StatusBetaTag {
                     tooltipText: betaTagLoader.experimentalTooltip
+                    cursorShape: Qt.PointingHandCursor
                 }
             }
         }

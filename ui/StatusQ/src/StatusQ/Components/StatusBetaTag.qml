@@ -9,6 +9,9 @@ Rectangle {
 
     property color fgColor: Theme.palette.baseColor1
     property alias tooltipText: tip.text
+    property alias cursorShape: hoverHandler.cursorShape
+
+    readonly property bool hovered: hoverHandler.hovered
 
     implicitHeight: 20
     implicitWidth: 36
@@ -32,5 +35,6 @@ Rectangle {
 
     HoverHandler {
         id: hoverHandler
+        enabled: root.visible
     }
 }

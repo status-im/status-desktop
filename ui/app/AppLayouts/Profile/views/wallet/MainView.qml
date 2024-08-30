@@ -134,6 +134,7 @@ Column {
         title: qsTr("Account order")
         height: 64
         width: parent.width
+        highlighted: accountOrderBetaTag.hovered
         onClicked: goToAccountOrderView()
         components: [
             StatusIcon {
@@ -143,10 +144,12 @@ Column {
         ]
 
         StatusBetaTag {
+            id: accountOrderBetaTag
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 125
             tooltipText: qsTr("Under construction, you might experience some minor issues")
+            cursorShape: Qt.PointingHandCursor
         }
     }
 
@@ -157,6 +160,7 @@ Column {
         title: qsTr("Manage Tokens")
         height: 64
         width: parent.width
+        highlighted: manageTokensBetaTag.hovered
         onClicked: goToManageTokensView()
         components: [
             StatusIcon {
@@ -166,10 +170,12 @@ Column {
         ]
 
         StatusBetaTag {
+            id: manageTokensBetaTag
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 135
             tooltipText: qsTr("Under construction, you might experience some minor issues")
+            cursorShape: Qt.PointingHandCursor
         }
     }
 

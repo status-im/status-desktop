@@ -21,11 +21,13 @@ StatusListItem {
 
     statusListItemIcon.anchors.topMargin: 14
 
+    highlighted: sensor.containsMouse
+
     color: {
         if (selected) {
             return Theme.palette.statusNavigationListItem.selectedBackgroundColor
         }
-        return sensor.containsMouse ? 
+        return highlighted ?
           Theme.palette.statusNavigationListItem.hoverBackgroundColor :
           Theme.palette.baseColor4
     }

@@ -35,6 +35,7 @@ TabButton {
                 visible: root.showBetaTag
                 fgColor: root.checked ? Theme.palette.statusSwitchTab.selectedTextColor
                                       : Theme.palette.baseColor1
+                cursorShape: hovered ? Qt.PointingHandCursor : undefined
             }
         }
     }
