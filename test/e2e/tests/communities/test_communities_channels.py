@@ -114,7 +114,7 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
         with step('Open context menu from the tool bar'):
             more_options = community_screen.tool_bar.open_more_options_dropdown()
         with step('Verify that edit item is not present in context menu'):
-            assert more_options.iedit_channel_from_context.exists is False, \
+            assert more_options.edit_channel_from_context.exists is False, \
                 f'Edit channel option is present when it should not'
         with step('Verify that delete item is not present in context menu'):
             assert more_options.delete_channel_from_context.exists is False, \
