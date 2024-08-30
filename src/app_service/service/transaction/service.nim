@@ -694,6 +694,12 @@ QtObject:
     except CatchableError as e:
       error "suggestedRoutes", exception=e.msg
 
+  proc stopSuggestedRoutesAsyncCalculation*(self: Service) =
+    try:
+      discard eth.stopSuggestedRoutesAsyncCalculation()
+    except CatchableError as e:
+      error "stopSuggestedRoutesAsyncCalculation", exception=e.msg
+
   proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
     try:
       let response = backend.getTransactionEstimatedTime(chainId, maxFeePerGas).result.getInt

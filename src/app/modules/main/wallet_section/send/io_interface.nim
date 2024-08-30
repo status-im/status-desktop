@@ -37,6 +37,9 @@ method suggestedRoutes*(self: AccessInterface,
   extraParamsTable: Table[string, string] = initTable[string, string]()) {.base.} =
     raise newException(ValueError, "No implementation available")
 
+method stopUpdatesForSuggestedRoute*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method suggestedRoutesReady*(self: AccessInterface, uuid: string, suggestedRoutes: SuggestedRoutesDto, errCode: string, errDescription: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

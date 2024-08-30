@@ -70,6 +70,10 @@ QtObject {
         walletSectionSendInst.suggestedRoutes(valueIn.toFixed(), valueOut.toFixed(), extraParamsJson)
     }
 
+    function stopUpdatesForSuggestedRoute() {
+        walletSectionSendInst.stopUpdatesForSuggestedRoute()
+    }
+
     function resolveENS(value) {
         mainModuleInst.resolveENS(value, "")
     }

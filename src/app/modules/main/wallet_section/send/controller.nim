@@ -125,6 +125,9 @@ proc suggestedRoutes*(self: Controller,
   self.transactionService.suggestedRoutes(uuid, sendType, accountFrom, accountTo, token, amountIn, toToken, amountOut,
     disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
 
+proc stopSuggestedRoutesAsyncCalculation*(self: Controller) =
+  self.transactionService.stopSuggestedRoutesAsyncCalculation()
+
 proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string, toAssetKey: string,
     uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,
     usePassword: bool, doHashing: bool, tokenName: string, isOwnerToken: bool,
