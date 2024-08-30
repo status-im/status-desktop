@@ -195,7 +195,6 @@
         <file>StatusQ/Core/Utils/ClippingWrapper.qml</file>
         <file>StatusQ/Core/Utils/DoubleFlickable.qml</file>
         <file>StatusQ/Core/Utils/DoubleFlickableWithFolding.qml</file>
-        <file>StatusQ/Core/Utils/internal/HeaderWrapper.qml</file>
         <file>StatusQ/Core/Utils/Emoji.qml</file>
         <file>StatusQ/Core/Utils/JSONListModel.qml</file>
         <file>StatusQ/Core/Utils/ModelChangeGuard.qml</file>
@@ -204,6 +203,7 @@
         <file>StatusQ/Core/Utils/ModelsComparator.qml</file>
         <file>StatusQ/Core/Utils/OperatorsUtils.qml</file>
         <file>StatusQ/Core/Utils/QObject.qml</file>
+        <file>StatusQ/Core/Utils/SearchFilter.qml</file>
         <file>StatusQ/Core/Utils/StackViewStates.qml</file>
         <file>StatusQ/Core/Utils/StatesStack.qml</file>
         <file>StatusQ/Core/Utils/StringUtils.qml</file>
@@ -212,6 +212,7 @@
         <file>StatusQ/Core/Utils/Utils.qml</file>
         <file>StatusQ/Core/Utils/big.min.mjs</file>
         <file>StatusQ/Core/Utils/emojiList.js</file>
+        <file>StatusQ/Core/Utils/internal/HeaderWrapper.qml</file>
         <file>StatusQ/Core/Utils/qmldir</file>
         <file>StatusQ/Core/Utils/xss.js</file>
         <file>StatusQ/Core/qmldir</file>
