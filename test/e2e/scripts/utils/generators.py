@@ -1,8 +1,8 @@
 import random
 import string
-from mnemonic import Mnemonic
 from zpywallet import HDWallet
 from zpywallet.network import EthereumMainNet
+from eth_account.hdaccount import generate_mnemonic, Mnemonic
 
 
 def random_name_string():
@@ -25,8 +25,10 @@ def random_ens_string():
 
 
 def random_mnemonic():
-    mnemo = Mnemonic("english")
-    words = mnemo.generate(strength=random.choice([128, 192, 256]))
+    words = ''
+    while not Mnemonic().is_mnemonic_valid(mnemonic=words):
+        new_words = generate_mnemonic(num_words=random.choice([12, 18, 24]), lang='english')
+        words = new_words
     return words
 
 
