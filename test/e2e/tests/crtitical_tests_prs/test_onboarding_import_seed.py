@@ -4,6 +4,7 @@ from allure_commons._allure import step
 
 from constants import ReturningUser, ReturningUsersData
 from constants.onboarding import KeysExistText
+from constants.wallet import WalletNetworkSettings
 from driver.aut import AUT
 from tests.onboarding import marks
 
@@ -32,13 +33,12 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.parametrize('user_account', [ReturningUser(
     seed_phrase=ReturningUsersData.RETURNING_USER_ONE.value[0],
     status_address=ReturningUsersData.RETURNING_USER_ONE.value[1])])
-@pytest.mark.parametrize('autocomplete, default_name', [
-    pytest.param(True, 'Account 1', marks=pytest.mark.critical)
-])
-def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account, default_name: str, autocomplete: bool):
+@pytest.mark.critical
+# TODO: change to use random seeds in onboarding after https://github.com/status-im/status-desktop/issues/16216 is fixed
+def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
-        input_view.input_seed_phrase(user_account.seed_phrase, autocomplete)
+        input_view.input_seed_phrase(user_account.seed_phrase, autocomplete=True)
         profile_view = input_view.import_seed_phrase()
         profile_view.set_display_name(user_account.name)
 
@@ -59,7 +59,7 @@ def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account, de
     with (step('Verify that restored account reveals correct status wallet address')):
         status_account_index = 0
         status_acc_view = (
-            LeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(default_name,
+            LeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value,
                                                                                                    status_account_index))
         address = status_acc_view.get_account_address_value()
         assert address == user_account.status_address, \
@@ -73,7 +73,7 @@ def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account, de
     with step('Restart application and try re-importing seed phrase again'):
         aut.restart()
         enter_seed_view = LoginView().add_existing_status_user().open_keys_view().open_enter_seed_phrase_view()
-        enter_seed_view.input_seed_phrase(user_account.seed_phrase, autocomplete)
+        enter_seed_view.input_seed_phrase(user_account.seed_phrase, autocomplete=False)
         confirm_import = enter_seed_view.click_import_seed_phrase_button()
 
     with step('Verify that keys already exist popup appears and text is correct'):
