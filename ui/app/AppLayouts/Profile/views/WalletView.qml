@@ -31,6 +31,7 @@ SettingsContentBase {
     id: root
 
     property var emojiPopup
+    property string myPublicKey: ""
     property ProfileSectionStore rootStore
     property WalletStore walletStore: rootStore.walletStore
     required property TokensStore tokensStore
@@ -81,15 +82,14 @@ SettingsContentBase {
         }
 
         let sectionLink = "%1/%2/".arg(Constants.appSection.wallet).arg(WalletLayout.LeftPanelSelection.AllAddresses)
-
-        if (Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets) {
+        if (manageTokensView.assetsPanelVisible) {
             sectionLink += WalletLayout.RightPanelSelection.Assets
-            priv.assetSettings.setValue("currentSortValue", SortOrderComboBox.TokenOrderCustom)
-            priv.assetSettings.sync()
-        } else if (Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles) {
+            priv.walletSettings.setValue("assetsViewCustomOrderApplyTimestamp", new Date().getTime())
+            priv.walletSettings.sync()
+        } else if (manageTokensView.collectiblesPanelVisible) {
             sectionLink += WalletLayout.RightPanelSelection.Collectibles
-            priv.collectiblesSettings.setValue("currentSortValue", SortOrderComboBox.TokenOrderCustom)
-            priv.collectiblesSettings.sync()
+            priv.walletSettings.setValue("collectiblesViewCustomOrderApplyTimestamp", new Date().getTime())
+            priv.walletSettings.sync()
         }
 
         Global.displayToastMessage(
@@ -113,14 +113,8 @@ SettingsContentBase {
                                                          Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageHidden ||
                                                          Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAdvanced
 
-        readonly property var assetSettings: Settings {
-            category: "AssetsViewSortSettings"
-            //property int currentSortValue
-        }
-
-        readonly property var collectiblesSettings: Settings {
-            category: "CollectiblesViewSortSettings"
-            //property int currentSortValue
+        readonly property var walletSettings: Settings {
+            category: "walletSettings-" + root.myPublicKey
         }
     }
 

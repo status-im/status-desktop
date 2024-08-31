@@ -246,6 +246,7 @@ StatusSectionLayout {
             sourceComponent: WalletView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                myPublicKey: root.store.contactsStore.myPublicKey
                 rootStore: root.store
                 tokensStore: root.tokensStore
                 networkConnectionStore: root.networkConnectionStore

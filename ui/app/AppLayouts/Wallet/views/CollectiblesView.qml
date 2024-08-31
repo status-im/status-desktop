@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
-import Qt.labs.settings 1.1
 import QtQml 2.15
 
 import StatusQ 0.1
@@ -38,6 +37,11 @@ ColumnLayout {
     property bool isUpdating: false // Indicates if the collectibles list is being updated
     property bool isError: false // Indicates an error occurred while updating/fetching the collectibles list
 
+    // allows/disables choosing custom sort order from a sorter
+    property bool customOrderAvailable
+
+    property alias selectedFilterGroupIds: cmbFilter.selectedFilterGroupIds
+
     signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid, int tokenType, string communityId)
     signal sendRequested(string symbol, int tokenType, string fromAddress)
     signal receiveRequested(string symbol)
@@ -46,8 +50,27 @@ ColumnLayout {
 
     spacing: 0
 
+    function setSortOrder(order) {
+        d.sortOrder = order
+    }
+
+    function getSortOrder() {
+        return d.sortOrder
+    }
+
+    function getSortValue() {
+        return d.sortValue
+    }
+
+    function sortByValue(value) {
+        d.sortValue = value
+    }
+
     QtObject {
         id: d
+
+        property int sortValue: SortOrderComboBox.TokenOrderAlpha
+        property int sortOrder: Qt.DescendingOrder
 
         readonly property int cellHeight: 225
         readonly property int communityCellHeight: 242
@@ -67,15 +90,6 @@ ColumnLayout {
 
             if (!value && cmbTokenOrder.currentIndex === orderByDateIndex) {
                 cmbTokenOrder.indexOfValue(SortOrderComboBox.TokenOrderAlpha)
-            }
-        }
-
-        Component.onCompleted: {
-            settings.sync()
-            if (settings.currentSortValue === SortOrderComboBox.TokenOrderDateAdded && !d.hasAllTimestamps) {
-                cmbTokenOrder.currentIndex = cmbTokenOrder.indexOfValue(SortOrderComboBox.TokenOrderAlpha) // Change to a different default option
-            } else {
-                cmbTokenOrder.currentIndex = cmbTokenOrder.indexOfValue(settings.currentSortValue) // Change to a different default option
             }
         }
 
@@ -305,18 +319,6 @@ ColumnLayout {
         ]
     }
 
-    Settings {
-        id: settings
-        category: "CollectiblesViewSortSettings-" + root.addressFilters
-        property int currentSortValue: SortOrderComboBox.TokenOrderDateAdded
-        property alias currentSortOrder: cmbTokenOrder.currentSortOrder
-        property alias selectedFilterGroupIds: cmbFilter.selectedFilterGroupIds
-    }
-
-    Component.onDestruction: {
-        settings.currentSortValue = cmbTokenOrder.currentValue
-    }
-
     ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: false
@@ -386,7 +388,25 @@ ColumnLayout {
 
             SortOrderComboBox {
                 id: cmbTokenOrder
-                hasCustomOrderDefined: root.controller.hasSettings
+                hasCustomOrderDefined: root.customOrderAvailable
+                Binding on currentIndex {
+                    value: {
+                        cmbTokenOrder.count
+                        let sortValue = d.sortValue
+                        if (root.sortValue === SortOrderComboBox.TokenOrderDateAdded && !d.hasAllTimestamps)
+                            sortValue = SortOrderComboBox.TokenOrderAlpha
+                        let id = cmbTokenOrder.indexOfValue(sortValue)
+                        if (id === -1)
+                            id = cmbTokenOrder.indexOfValue(SortOrderComboBox.TokenOrderAlpha)
+                        return id
+                    }
+                    when: cmbTokenOrder.count > 0
+                }
+                onCurrentValueChanged: d.sortValue = cmbTokenOrder.currentValue
+                Binding on currentSortOrder {
+                    value: d.sortOrder
+                }
+                onCurrentSortOrderChanged: d.sortOrder = cmbTokenOrder.currentSortOrder
                 model: [
                     { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "", sortRoleName: "lastTxTimestamp", isDisabled: !d.hasAllTimestamps }, // Custom SFPM role
                     { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Collectible name"), icon: "", sortRoleName: "name" },

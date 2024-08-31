@@ -11,6 +11,7 @@ import Qt.labs.settings 1.1
 
 import Models 1.0
 
+import AppLayouts.Wallet.controls 1.0
 import AppLayouts.stores 1.0 as AppLayoutStores
 import AppLayouts.Wallet.views 1.0
 import AppLayouts.Wallet.stores 1.0
@@ -172,6 +173,7 @@ SplitView {
             SplitView.fillHeight: true
 
             AssetsView {
+                id: assetView
                 anchors.fill: parent
 
                 loading: loadingCheckBox.checked
@@ -264,6 +266,44 @@ SplitView {
                 id: marketDataErrorCheckBox
 
                 text: "market data error"
+            }
+            ColumnLayout {
+                spacing: 5
+                Button {
+                    text: "Sort desc"
+                    onClicked: assetView.setSortOrder(Qt.DescendingOrder)
+                }
+
+                Button {
+                    text: "Sort asc"
+                    onClicked: assetView.setSortOrder(Qt.AscendingOrder)
+                }
+            }
+            ColumnLayout {
+                spacing: 10
+                Layout.fillWidth: true
+                Label {
+                    text: "Sort by:"
+                }
+
+                ComboBox {
+                    id: sortValueComboBox
+                    Layout.fillWidth: true
+                    textRole: "text"
+                    valueRole: "value"
+                    displayText: currentText || ""
+                    currentIndex: 4
+                    model: [
+                        { value: SortOrderComboBox.TokenOrderCurrencyBalance, text: "TokenOrderCurrencyBalance" },
+                        { value: SortOrderComboBox.TokenOrderBalance, text: "TokenOrderBalance" },
+                        { value: SortOrderComboBox.TokenOrderCurrencyPrice, text: "TokenOrderCurrencyPrice" },
+                        { value: SortOrderComboBox.TokenOrder1DChange, text: "TokenOrder1DChange" },
+                        { value: SortOrderComboBox.TokenOrderAlpha, text: "TokenOrderAlpha" },
+                        { value: SortOrderComboBox.TokenOrderCustom, text: "TokenOrderCustom" }
+                    ]
+
+                    onCurrentValueChanged: assetView.sortByValue(currentValue)
+                }
             }
         }
     }
