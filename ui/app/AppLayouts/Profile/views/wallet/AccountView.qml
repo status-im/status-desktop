@@ -257,6 +257,8 @@ ColumnLayout {
                 flatNetworks: root.walletStore.filteredFlatModel
                 multiSelection: true
                 selection: d.preferredSharingNetworksArray
+
+                property string initialSelection
                 
                 onSelectionChanged: {
                     if (selection !== d.preferredSharingNetworksArray) {
@@ -264,8 +266,10 @@ ColumnLayout {
                     }
                 }
 
+                control.popup.onOpened: initialSelection = JSON.stringify(selection)
+
                 control.popup.onClosed: {
-                    if (!!root.account) {
+                    if (!!root.account && initialSelection !== JSON.stringify(selection)) {
                         root.walletStore.updateWalletAccountPreferredChains(root.account.address, d.preferredSharingNetworksArray.join(":"))
                     }
                 }
