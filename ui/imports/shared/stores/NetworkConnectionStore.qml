@@ -17,7 +17,7 @@ QtObject {
     readonly property bool balanceCache: walletSectionAssets.hasBalanceCache
     readonly property bool marketValuesCache: walletSectionAssets.hasMarketValuesCache
 
-    readonly property SortFilterProxyModel __filteredflatNetworks: SortFilterProxyModel {
+    readonly property SortFilterProxyModel filteredflatNetworks: SortFilterProxyModel {
                                                           sourceModel: networksModule.flatNetworks
                                                           filters: ValueFilter { roleName: "isTest"; value: networksModule.areTestNetworksEnabled }
                                                       }
