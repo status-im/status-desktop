@@ -356,6 +356,7 @@ RightTabBaseView {
             onVisibleChanged: {
                 if (!visible) {
                     RootStore.resetCurrentViewedHolding(Constants.TokenType.ERC721)
+                    RootStore.collectiblesStore.resetDetailedCollectible()
                 }
             }
 

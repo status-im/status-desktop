@@ -112,6 +112,10 @@ QtObject:
       error "error fetching collectible details: ", response.error
       return
 
+  proc resetDetailedCollectible*(self: Controller) {.slot.} =
+    self.detailedEntry = newCollectibleDetailsEmptyEntry()
+    self.detailedEntryChanged()
+
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onGetCollectiblesDetailsDone(proc (jsonObj: JsonNode) =
       self.processGetCollectiblesDetailsResponse(jsonObj)

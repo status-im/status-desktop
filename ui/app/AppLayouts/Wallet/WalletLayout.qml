@@ -297,7 +297,12 @@ Item {
         footer: WalletFooter {
             id: footer
 
-            readonly property bool isHoldingSelected: !!walletStore.currentViewedCollectible && walletStore.currentViewedHoldingID !== ""
+            readonly property bool isHoldingSelected: {
+                if (!rightPanelStackView.currentItem || rightPanelStackView.currentItem.currentTabIndex !== WalletLayout.RightPanelSelection.Collectibles) {
+                    return false
+                }
+                return !!walletStore.currentViewedCollectible && walletStore.currentViewedHoldingID !== ""
+            }
             readonly property bool isCommunityCollectible: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityId !== "" : false
             readonly property bool isOwnerCommunityCollectible: isCommunityCollectible ? (walletStore.currentViewedCollectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
 

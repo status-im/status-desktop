@@ -109,6 +109,10 @@ QtObject {
         walletSection.collectibleDetailsController.getDetailedCollectible(chainId, contractAddress, tokenId)
     }
 
+    function resetDetailedCollectible() {
+        walletSection.collectibleDetailsController.resetDetailedCollectible()
+    }
+
     function hasNFT(ownerAddress, chainId, tokenId, tokenAddress) {
         const uid = getUidForData(tokenId, tokenAddress, chainId)
         ownerAddress = ownerAddress.toLowerCase()
