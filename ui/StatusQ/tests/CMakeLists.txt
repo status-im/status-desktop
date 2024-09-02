@@ -64,10 +64,6 @@ add_executable(LeftJoinModelTest tst_LeftJoinModel.cpp)
 target_link_libraries(LeftJoinModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME LeftJoinModelTest COMMAND LeftJoinModelTest)
 
-add_executable(SubmodelProxyModelTest tst_SubmodelProxyModel.cpp)
-target_link_libraries(SubmodelProxyModelTest PRIVATE StatusQ StatusQTestLib)
-add_test(NAME SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
-
 add_executable(ObjectProxyModelTest tst_ObjectProxyModel.cpp)
 target_link_libraries(ObjectProxyModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME ObjectProxyModelTest COMMAND ObjectProxyModelTest)

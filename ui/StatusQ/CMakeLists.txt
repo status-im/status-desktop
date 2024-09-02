@@ -119,7 +119,6 @@ add_library(StatusQ SHARED
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
         include/StatusQ/stringutilsinternal.h
-        include/StatusQ/submodelproxymodel.h
         include/StatusQ/sumaggregator.h
         include/StatusQ/systemutilsinternal.h
         include/StatusQ/undefinedfilter.h
@@ -152,7 +151,6 @@ add_library(StatusQ SHARED
         src/statussyntaxhighlighter.cpp
         src/statuswindow.cpp
         src/stringutilsinternal.cpp
-        src/submodelproxymodel.cpp
         src/sumaggregator.cpp
         src/systemutilsinternal.cpp
         src/undefinedfilter.cpp
