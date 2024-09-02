@@ -8,7 +8,7 @@ import configs
 import constants
 import driver
 from constants import ReturningUser, ReturningUsersData
-from . import marks
+from tests.communities import marks
 from constants.community_settings import MintOwnerTokensElements
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
@@ -34,7 +34,7 @@ def keys_screen(main_window) -> KeysView:
     status_address=ReturningUsersData.WALLET_USER.value[1]
 )])
 @pytest.mark.transaction
-def test_mint_owner_token(keys_screen, main_window, user_account):
+def test_mint_owner_and_tokenmaster_tokens(keys_screen, main_window, user_account):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         input_view.input_seed_phrase(user_account.seed_phrase, True)
