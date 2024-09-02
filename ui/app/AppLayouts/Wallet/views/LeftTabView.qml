@@ -270,7 +270,7 @@ Rectangle {
                     onClicked: {
                         if (mouse.button === Qt.RightButton) {
                             walletAccountContextMenu.active = true
-                            walletAccountContextMenu.item.account = model
+                            walletAccountContextMenu.item.account = Object.assign({}, model)
                             walletAccountContextMenu.item.popup(this, mouse.x, mouse.y)
                             return
                         }
