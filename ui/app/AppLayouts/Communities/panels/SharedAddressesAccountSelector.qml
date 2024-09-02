@@ -179,13 +179,15 @@ StatusListView {
 
         onClicked: shareAddressCheckbox.toggle()
 
-        SubmodelProxyModel {
+        ObjectProxyModel {
             id: filteredBalances
-            sourceModel: root.walletAssetsModel
-            submodelRoleName: "balances"
-            delegateModel: SortFilterProxyModel {
-                sourceModel: submodel
 
+            sourceModel: root.walletAssetsModel
+
+            delegate: SortFilterProxyModel {
+                readonly property SortFilterProxyModel balances: this
+
+                sourceModel: model.balances
                 filters: RegExpFilter {
                     roleName: "account"
                     pattern: listItem.address
@@ -193,6 +195,9 @@ StatusListView {
                     caseSensitivity: Qt.CaseInsensitive
                 }
             }
+
+            expectedRoles: "balances"
+            exposedRoles: "balances"
         }
 
         SortFilterProxyModel {
