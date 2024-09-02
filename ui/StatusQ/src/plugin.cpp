@@ -26,7 +26,6 @@
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
 #include "StatusQ/stringutilsinternal.h"
-#include "StatusQ/submodelproxymodel.h"
 #include "StatusQ/sumaggregator.h"
 #include "StatusQ/systemutilsinternal.h"
 #include "StatusQ/undefinedfilter.h"
@@ -70,7 +69,6 @@ public:
 
         qmlRegisterType<ObjectProxyModel>("StatusQ", 0, 1, "ObjectProxyModel");
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
-        qmlRegisterType<SubmodelProxyModel>("StatusQ", 0, 1, "SubmodelProxyModel");
         qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
         qmlRegisterType<RolesRenamingModel>("StatusQ", 0, 1, "RolesRenamingModel");
         qmlRegisterType<SumAggregator>("StatusQ", 0, 1, "SumAggregator");
