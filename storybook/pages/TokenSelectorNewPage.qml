@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import AppLayouts.Wallet.controls 1.0
 import StatusQ.Core.Theme 0.1
@@ -175,12 +176,31 @@ Pane {
 
         anchors.centerIn: parent
 
-        assetsModel: assetsModel
-        collectiblesModel: collectiblesModel
+        assetsModel: assetsModelCheckBox.checked ? assetsModel : null
+        collectiblesModel: collectiblesModelCheckBox.checked ? collectiblesModel : null
 
         onCollectibleSelected: console.log("collectible selected:", key)
         onCollectionSelected: console.log("collection selected:", key)
         onAssetSelected: console.log("asset selected:", key)
+    }
+
+    RowLayout {
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        CheckBox {
+            id: assetsModelCheckBox
+
+            checked: true
+            text: "Assets model assigned"
+        }
+
+        CheckBox {
+            id: collectiblesModelCheckBox
+
+            checked: true
+            text: "Collectibles model assigned"
+        }
     }
 }
 

@@ -1,5 +1,8 @@
 AccountHeaderGradient 1.0 AccountHeaderGradient.qml
 ActivityFilterTagItem 1.0 ActivityFilterTagItem.qml
+AssetSelector 1.0 AssetSelector.qml
+BuyCryptoProvidersDelegate 1.0 BuyCryptoProvidersDelegate.qml
+BuyCryptoProvidersLoadingDelegate 1.0 BuyCryptoProvidersLoadingDelegate.qml
 CollectibleBalanceTag 1.0 CollectibleBalanceTag.qml
 CollectibleLinksTags 1.0 CollectibleLinksTags.qml
 DappsComboBox 1.0 DappsComboBox.qml
@@ -18,9 +21,7 @@ StatusDateRangePicker 1.0 StatusDateRangePicker.qml
 StatusNetworkListItemTag 1.0 StatusNetworkListItemTag.qml
 StatusTxProgressBar 1.0 StatusTxProgressBar.qml
 SwapExchangeButton 1.0 SwapExchangeButton.qml
+SwapProvidersTermsAndConditionsText 1.0 SwapProvidersTermsAndConditionsText.qml
 TokenSelector 1.0 TokenSelector.qml
 TokenSelectorButton 1.0 TokenSelectorButton.qml
 TokenSelectorNew 1.0 TokenSelectorNew.qml
-SwapProvidersTermsAndConditionsText 1.0 SwapProvidersTermsAndConditionsText.qml
-BuyCryptoProvidersDelegate 1.0 BuyCryptoProvidersDelegate.qml
-BuyCryptoProvidersLoadingDelegate 1.0 BuyCryptoProvidersLoadingDelegate.qml

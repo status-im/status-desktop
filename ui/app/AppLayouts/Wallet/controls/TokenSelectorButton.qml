@@ -15,6 +15,8 @@ Control {
     property bool selected
     property bool forceHovered
 
+    property string text: qsTr("Select token")
+
     property string name
     property url icon
 
@@ -49,7 +51,7 @@ Control {
                 font.pixelSize: root.font.pixelSize
                 font.weight: Font.Medium
                 color: Theme.palette.primaryColor1
-                text: qsTr("Select token")
+                text: root.text
             }
 
             StatusComboboxIndicator {

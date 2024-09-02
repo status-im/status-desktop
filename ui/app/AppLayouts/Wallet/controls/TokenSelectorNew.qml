@@ -29,8 +29,8 @@ Control {
 
     function setCustom(name: string, icon: url, key: string) {
         d.isTokenSelected = true
-        d.currentName = name
-        d.currentIcon = icon
+        tokenSelectorButton.name = name
+        tokenSelectorButton.icon = icon
         tokenSelectorPanel.highlightedKey = key ?? ""
     }
 
@@ -38,17 +38,13 @@ Control {
         id: d
 
         property bool isTokenSelected: false
-
-        property string currentName
-        property url currentIcon
     }
 
     contentItem: TokenSelectorButton {
+        id: tokenSelectorButton
+
         selected: d.isTokenSelected
         forceHovered: dropdown.opened
-
-        name: d.currentName
-        icon: d.currentIcon
 
         onClicked: dropdown.opened ? dropdown.close() : dropdown.open()
     }
@@ -59,6 +55,7 @@ Control {
         y: parent.height + 4
 
         closePolicy: Popup.CloseOnPressOutsideParent
+        horizontalPadding: 0
         bottomPadding: 0
 
         contentItem: TokenSelectorPanel {
@@ -77,8 +74,8 @@ Control {
             }
 
             function setCurrentAndClose(name, icon) {
-                d.currentName = name
-                d.currentIcon = icon
+                tokenSelectorButton.name = name
+                tokenSelectorButton.icon = icon
                 d.isTokenSelected = true
                 dropdown.close()
             }

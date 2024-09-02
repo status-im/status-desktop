@@ -123,9 +123,12 @@ Control {
 
                 section.property: "type"
                 section.delegate: StatusBaseText {
+                    width: ListView.view.width
                     color: Theme.palette.baseColor1
-                    topPadding: Style.current.padding
+                    padding: Style.current.padding
+                    bottomPadding: 0
 
+                    elide: Text.ElideRight
                     text: section === "community"
                           ? qsTr("Community minted")
                           : qsTr("Other")
