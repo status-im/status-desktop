@@ -105,22 +105,27 @@ QObject {
         // storing txHash to verify against tx completed event
         property string txHash
 
-        readonly property SubmodelProxyModel filteredBalancesModel: SubmodelProxyModel {
+        readonly property ObjectProxyModel filteredBalancesModel: ObjectProxyModel {
             sourceModel: root.walletAssetsStore.baseGroupedAccountAssetModel
-            submodelRoleName: "balances"
-            delegateModel: SortFilterProxyModel {
-                sourceModel: joinModel
-                filters: ValueFilter {
-                    roleName: "chainId"
-                    value: root.swapFormData.selectedNetworkChainId
-                }
-                readonly property LeftJoinModel joinModel: LeftJoinModel {
-                    leftModel: submodel
+
+            delegate: SortFilterProxyModel {
+                readonly property var balances: this
+
+                sourceModel: LeftJoinModel {
+                    leftModel: model.balances
                     rightModel: root.swapStore.flatNetworks
 
                     joinRole: "chainId"
                 }
+
+                filters: ValueFilter {
+                    roleName: "chainId"
+                    value: root.swapFormData.selectedNetworkChainId
+                }
             }
+
+            expectedRoles: "balances"
+            exposedRoles: "balances"
         }
 
         function processAccountBalance(address) {
