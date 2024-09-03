@@ -172,8 +172,7 @@ class AccountPopup(BasePopup):
     def save_changes(self):
         assert driver.waitFor(lambda: self.is_save_changes_button_enabled(),
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-        # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._add_save_account_confirmation_button.click(timeout=10)
+        self._add_save_account_confirmation_button.click()
         return self
 
     @allure.step('Get enabled state of (add account / save changes) button')

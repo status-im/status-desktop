@@ -26,8 +26,7 @@ class AuthenticatePopup(BasePopup):
     @allure.step('Authenticate actions with password {0}')
     def authenticate(self, password: str):
         self._password_text_edit.type_text(password)
-        # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._primary_button.click(timeout=10)
+        self._primary_button.click()
         self._authenticate_button.wait_until_hidden(10000)
 
     @allure.step('Check if authenticate button is present')

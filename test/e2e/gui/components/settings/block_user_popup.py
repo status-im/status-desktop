@@ -24,7 +24,7 @@ class BlockUserPopup(BasePopup):
 
     @allure.step('Block user')
     def block(self):
-        self._block_user_button.click(timeout=5)
+        self._block_user_button.click()
 
     @allure.step('Get warning text')
     def get_warning_text(self) -> str:

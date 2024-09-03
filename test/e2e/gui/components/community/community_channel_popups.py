@@ -48,7 +48,7 @@ class NewChannelPopup(ChannelPopup):
                 raise err
 
     def save(self):
-        self._save_create_button.click(timeout=5)
+        self._save_create_button.click()
 
 
 class EditChannelPopup(ChannelPopup):
