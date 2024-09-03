@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.0
 import SortFilterProxyModel 0.2
 
@@ -65,13 +64,6 @@ StatusDialog {
     property int loginType
     property bool showCustomRoutingMode
 
-    property MessageDialog sendingError: MessageDialog {
-        id: sendingError
-        title: qsTr("Error sending the transaction")
-        icon: StandardIcon.Critical
-        standardButtons: StandardButton.Ok
-    }
-
     // In case selected address is incorrect take first account from the list
     readonly property alias selectedAccount: selectedSenderAccountEntry.item
 
@@ -89,6 +81,8 @@ StatusDialog {
             popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSend.amount, "0", d.extraParamsJson)
         }
     })
+
+    property var generateUuid: () => { return Utils.uuid() }
 
     QtObject {
         id: d
@@ -140,7 +134,9 @@ StatusDialog {
         property string routerError: ""
         property string routerErrorDetails: ""
 
-        readonly property string uuid: Utils.uuid()
+        property string sendError: ""
+
+        readonly property string uuid: popup.generateUuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
         property double totalFeesInFiat
@@ -153,6 +149,7 @@ StatusDialog {
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.TokenType.ERC20
 
         onSelectedHoldingChanged: {
+            d.sendError = ""
             if (!selectedHolding) {
                 return
             }
@@ -315,6 +312,7 @@ StatusDialog {
             }
             selectedAddress: popup.preSelectedAccountAddress
             onCurrentAccountAddressChanged: {
+                d.sendError = ""
                 store.setSenderAccount(currentAccountAddress)
 
                 if (d.isSelectedHoldingValidAsset) {
@@ -536,7 +534,10 @@ StatusDialog {
                         formatBalance: amount => d.currencyStore.formatCurrencyAmount(
                                            amount, selectedSymbol)
 
-                        onAmountChanged: popup.recalculateRoutesAndFees()
+                        onAmountChanged: {
+                            d.sendError = ""
+                            popup.recalculateRoutesAndFees()
+                        }
                     }
 
                     // Horizontal spacer
@@ -582,7 +583,10 @@ StatusDialog {
                         interactive: popup.interactive
                         selectedAsset: d.selectedHolding
                         onIsLoading: popup.isLoading = true
-                        onRecalculateRoutesAndFees: popup.recalculateRoutesAndFees()
+                        onRecalculateRoutesAndFees: {
+                            d.sendError = ""
+                            popup.recalculateRoutesAndFees()
+                        }
                         onAddressTextChanged: store.setSelectedRecipient(addressText)
                     }
                 }
@@ -641,6 +645,11 @@ StatusDialog {
             visible: recipientInputLoader.ready &&
                      (amountToSend.ready || d.isCollectiblesTransfer)
 
+            onVisibleChanged: {
+                if (!visible)
+                    d.sendError = ""
+            }
+
             objectName: "sendModalScroll"
 
             Behavior on implicitHeight {
@@ -660,7 +669,10 @@ StatusDialog {
                 minSendCryptoDecimals: amountToSend.minSendCryptoDecimals
                 minReceiveCryptoDecimals: amountToSend.minReceiveCryptoDecimals
                 selectedAsset: d.selectedHolding
-                onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
+                onReCalculateSuggestedRoute: {
+                    d.sendError = ""
+                    popup.recalculateRoutesAndFees()
+                }
                 errorType: d.errorType
                 isLoading: popup.isLoading
                 isBridgeTx: d.isBridgeTx
@@ -675,6 +687,47 @@ StatusDialog {
                 routerErrorDetails: d.routerErrorDetails
             }
         }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.bigPadding
+            Layout.leftMargin: Style.current.xlPadding
+            Layout.rightMargin: Style.current.xlPadding
+            Layout.bottomMargin: Style.current.xlPadding
+            implicitHeight: sendErrorColumn.height + Style.current.padding
+            color: Theme.palette.dangerColor3
+            radius: 8
+            border.width: 1
+            border.color: Theme.palette.dangerColor2
+
+            visible: !!d.sendError
+
+            ColumnLayout {
+                id: sendErrorColumn
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
+                spacing: Style.current.padding
+
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    Layout.topMargin: Style.current.padding
+                    font.pixelSize: Style.current.secondaryTextFontSize
+                    font.bold: true
+                    wrapMode: Text.WrapAnywhere
+                    text: qsTr("Error sending the transaction")
+                }
+
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    font.pixelSize: Style.current.tertiaryTextFontSize
+                    wrapMode: Text.WrapAnywhere
+                    text: d.sendError
+                }
+            }
+        }
     }
 
     footer: TransactionModalFooter {
@@ -687,7 +740,10 @@ StatusDialog {
         pending: d.isPendingTx || popup.isLoading
         visible: recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer) && !d.errorMode && !d.routerError
 
-        onNextButtonClicked: popup.sendTransaction()
+        onNextButtonClicked: {
+            d.sendError = ""
+            popup.sendTransaction()
+        }
     }
 
     Connections {
@@ -715,10 +771,7 @@ StatusDialog {
             networkSelector.suggestedToNetworksList = txRoutes.toNetworksRouteModel
             popup.isLoading = false
         }
-    }
 
-    Connections {
-        target: popup.store.walletSectionSendInst
         function onTransactionSent(chainId: int, txHash: string, uuid: string, error: string) {
             d.isPendingTx = false
             if (uuid !== d.uuid) return
@@ -726,8 +779,8 @@ StatusDialog {
                 if (error.includes(Constants.walletSection.authenticationCanceled)) {
                     return
                 }
-                sendingError.text = error
-                return sendingError.open()
+                d.sendError = error
+                return
             }
             popup.close()
         }

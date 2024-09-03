@@ -206,6 +206,14 @@ QtObject:
       error "error: ", errDescription
       return
 
+  proc extractRpcErrorMessage(self: Service, errorMessage: string): string =
+    var startIndex = errorMessage.find("message:")
+    if startIndex < 0:
+      return errorMessage
+    startIndex += 8
+    let endIndex = errorMessage.rfind("]")
+    return errorMessage[startIndex..endIndex-1]
+
   proc getPendingTransactionsForType*(self: Service, transactionType: PendingTransactionTypeDto): seq[TransactionDto] =
     let allPendingTransactions = self.getPendingTransactions()
     return allPendingTransactions.filter(x => x.typeValue == $transactionType)
@@ -449,7 +457,7 @@ QtObject:
           toTokenSymbol, totalAmountToReceive.toString(10), uuid, routes, response)
     except Exception as e:
       self.sendTransactionSentSignal(sendType, from_addr, to_addr, tokenSymbol, "",
-        toTokenSymbol, "", uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
+        toTokenSymbol, "", uuid, @[], RpcResponse[JsonNode](), self.extractRpcErrorMessage(e.msg))
 
   proc mustIgnoreApprovalRequests(sendType: SendType): bool =
     # Swap requires approvals to be done in advance in a separate Tx
@@ -564,7 +572,7 @@ QtObject:
     except Exception as e:
       self.sendTransactionSentSignal(sendType, mtCommand.fromAddress, mtCommand.toAddress,
         assetKey, "", toAssetKey, "",
-        uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
+        uuid, @[], RpcResponse[JsonNode](), self.extractRpcErrorMessage(e.msg))
 
   proc transfer*(
     self: Service,
@@ -619,7 +627,7 @@ QtObject:
         sendType, tokenName, isOwnerToken, slippagePercentage)
 
     except Exception as e:
-      self.sendTransactionSentSignal(sendType, fromAddr, toAddr, assetKey, "", toAssetKey, "", uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
+      self.sendTransactionSentSignal(sendType, fromAddr, toAddr, assetKey, "", toAssetKey, "", uuid, @[], RpcResponse[JsonNode](), self.extractRpcErrorMessage(e.msg))
 
   proc proceedWithTransactionsSignatures*(self: Service, fromAddr: string, toAddr: string,
     fromTokenKey: string, toTokenKey: string, uuid: string, signatures: TransactionsSignatures,
