@@ -19,6 +19,8 @@ SplitView {
             anchors.horizontalCenter: parent.horizontalCenter
             model: emptyModelCheckbox.checked ? emptyModel : smallModelCheckbox.checked ? smallModel: dappsModel
             popup.visible: true
+
+            onPairDapp: console.log("onPairDapp")
         }
 
         ListModel {
@@ -100,16 +102,19 @@ SplitView {
         SplitView.fillHeight: true
 
         ColumnLayout {
-            CheckBox {
-                id: emptyModelCheckbox
-                text: "Empty model"
-                checked: false
+            RadioButton {
+                text: "Default model"
+                checked: true
             }
 
-            CheckBox {
+            RadioButton {
+                id: emptyModelCheckbox
+                text: "Empty model"
+            }
+
+            RadioButton {
                 id: smallModelCheckbox
                 text: "Small model"
-                checked: false
             }
         }
     }
@@ -118,3 +123,4 @@ SplitView {
 // category: Controls
 
 // https://www.figma.com/design/HrmZp1y4S77QJezRFRl6ku/dApp-Interactions---Milestone-1?node-id=130-31949&t=hnzB58fTnEnx2z84-0
+// https://www.figma.com/design/1OYKMzU6KTQHQAqDhojk0r/Status-connector?node-id=3216-5618&node-type=FRAME&t=CqsuoQHp1p5MOUt9-0

@@ -1,9 +1,7 @@
 import QtQuick 2.15
-import QtQml 2.15
 import QtQuick.Controls 2.15
 import QtQml.Models 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -14,52 +12,19 @@ import shared.controls 1.0
 
 import utils 1.0
 
-Popup {
+StatusDropdown {
     id: root
 
     objectName: "dappsPopup"
 
     required property DelegateModel delegateModel
 
-    signal pairWCDapp()
+    signal connectDapp()
 
     width: 312
     padding: 0
 
     modal: false
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnOutsideClick | Popup.CloseOnPressOutside
-
-    background: Rectangle {
-        id: backgroundContent
-
-        color: Theme.palette.statusMenu.backgroundColor
-        radius: 8
-        layer.enabled: true
-        layer.effect: DropShadow {
-            anchors.fill: parent
-            source: backgroundContent
-            horizontalOffset: 0
-            verticalOffset: 4
-            radius: 12
-            samples: 25
-            spread: 0.2
-            color: Theme.palette.dropShadow
-        }
-    }
-
-    // workaround for https://bugreports.qt.io/browse/QTBUG-87804
-    Binding on margins {
-        id: workaroundBinding
-
-        when: false
-        restoreMode: Binding.RestoreBindingOrValue
-    }
-
-    onImplicitContentHeightChanged: {
-        workaroundBinding.value = root.margins + 1
-        workaroundBinding.when = true
-        workaroundBinding.when = false
-    }
 
     contentItem: ColumnLayout {
         id: mainLayout
@@ -152,10 +117,8 @@ Popup {
 
             size: StatusButton.Size.Small
 
-            text: qsTr("Connect a dApp via WalletConnect")
-            onClicked: {
-                root.pairWCDapp()
-            }
+            text: qsTr("Connect a dApp")
+            onClicked: root.connectDapp()
         }
     }
 }
