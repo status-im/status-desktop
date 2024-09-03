@@ -10,7 +10,6 @@ function get_gh_pkgs_token() {
 }
 
 function get_bottle_json() {
-    # echo "Getting bottle JSON for $1 $2"
     brew info --json=v1 "${1}" | jq ".[0].bottle.stable.files[\"${2}\"]"
 }
 
