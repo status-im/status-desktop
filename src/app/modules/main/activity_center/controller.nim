@@ -167,5 +167,5 @@ proc setActivityCenterReadType*(self: Controller, readType: ActivityCenterReadTy
 proc getActivityCenterReadType*(self: Controller): ActivityCenterReadType =
   return self.activityCenterService.getActivityCenterReadType()
 
-proc enableAndSyncInstallation*(self: Controller, installationId: string) =
-  self.devicesService.enableAndSyncInstallation(installationId)
+proc enableInstallationAndSync*(self: Controller, installationId: string) =
+  self.devicesService.enableInstallationAndSync(installationId)

@@ -445,7 +445,7 @@ Popup {
                     StatusButton {
                         text: "Pair and Sync"
                         onClicked: {
-                            activityCenterStore.enableAndSyncInstallation(deviceId)
+                            activityCenterStore.enableInstallationAndSync(deviceId)
                             close()
                         }
                     }

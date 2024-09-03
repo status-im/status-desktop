@@ -121,7 +121,7 @@ QtObject {
         root.activityCenterModuleInst.dismissActivityCenterNotification(notification.id)
     }
 
-    function enableAndSyncInstallation(installationId) {
-        root.activityCenterModuleInst.enableAndSyncInstallation(installationId)
+    function enableInstallationAndSync(installationId) {
+        root.activityCenterModuleInst.enableInstallationAndSync(installationId)
     }
 }

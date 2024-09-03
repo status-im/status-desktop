@@ -40,10 +40,10 @@ proc finishPairingThroughSeedPhraseProcess*(installationId: string): RpcResponse
   let payload = %* [{
     "installationId": installationId,
   }]
-  result = callPrivateRPC("finishPairingThroughSeedPhraseProcess".prefix, payload)
+  result = callPrivateRPC("enableInstallationAndPair".prefix, payload)
 
-proc enableAndSyncInstallation*(installationId: string): RpcResponse[JsonNode] =
+proc enableInstallationAndSync*(installationId: string): RpcResponse[JsonNode] =
   let payload = %* [{
     "installationId": installationId,
   }]
-  result = callPrivateRPC("enableAndSyncInstallation".prefix, payload)
+  result = callPrivateRPC("enableInstallationAndSync".prefix, payload)

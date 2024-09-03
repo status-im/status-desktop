@@ -328,5 +328,5 @@ method getActivityCenterReadType*(self: Module): int =
 method setActivityGroupCounters*(self: Module, counters: Table[ActivityCenterGroup, int]) =
   self.view.setActivityGroupCounters(counters)
 
-method enableAndSyncInstallation*(self: Module, installationId: string) =
-  self.controller.enableAndSyncInstallation(installationId)
+method enableInstallationAndSync*(self: Module, installationId: string) =
+  self.controller.enableInstallationAndSync(installationId)

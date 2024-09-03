@@ -374,9 +374,9 @@ QtObject:
     except Exception as e:
       error "error: ", desription = e.msg
 
-  proc enableAndSyncInstallation*(self: Service, installationId: string) =
+  proc enableInstallationAndSync*(self: Service, installationId: string) =
     try:
-      let response = status_installations.enableAndSyncInstallation(installationId)
+      let response = status_installations.enableInstallationAndSync(installationId)
       if response.error != nil:
         let e = Json.decode($response.error, RpcError)
         raise newException(CatchableError, e.message)

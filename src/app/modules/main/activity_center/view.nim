@@ -212,5 +212,5 @@ QtObject:
     self.groupCounters = counters
     self.groupCountersChanged()
 
-  proc enableAndSyncInstallation*(self: View, installationId: string) {.slot.} =
-    self.delegate.enableAndSyncInstallation(installationId)
+  proc enableInstallationAndSync*(self: View, installationId: string) {.slot.} =
+    self.delegate.enableInstallationAndSync(installationId)
