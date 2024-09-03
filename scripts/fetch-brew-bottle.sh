@@ -10,6 +10,7 @@ function get_gh_pkgs_token() {
 }
 
 function get_bottle_json() {
+    # echo "Getting bottle JSON for $1 $2"
     brew info --json=v1 "${1}" | jq ".[0].bottle.stable.files[\"${2}\"]"
 }
 
@@ -53,8 +54,8 @@ BOTTLE_JSON=$(get_bottle_json "${BOTTLE_NAME}" "${BOTTLE_FILTER}")
 BOTTLE_URL=$(echo "${BOTTLE_JSON}" | jq -r .url)
 BOTTLE_SHA=$(echo "${BOTTLE_JSON}" | jq -r .sha256)
 
-if [[ -z "${BOTTLE_URL}" ]] || [[ -z "${BOTTLE_SHA}" ]]; then
-    echo "Failed to identify bottle URL or SHA256!" >&2
+if [[ "${BOTTLE_URL}" == "null" ]] || [[ "${BOTTLE_SHA}" == "null" ]]; then
+    echo "Failed to identify bottle URL or SHA256! Bottle dropped from Homebrew?" >&2
     exit 1
 fi
 
