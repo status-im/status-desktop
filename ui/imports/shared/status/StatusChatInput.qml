@@ -295,6 +295,26 @@ Rectangle {
         function getMentionAtPosition(position: int) {
             return mentionsPos.find(mention => mention.leftIndex < position && mention.rightIndex > position)
         }
+
+        function getSelectedTextWithFormationChars(messageInputField) {
+            const formationChars = ["*", "`", "~"]
+            let i = 1
+            let text = ""
+            while (true) {
+                if (messageInputField.selectionStart - i < 0 && messageInputField.selectionEnd + i > messageInputField.length) {
+                    break
+                }
+
+                text = messageInputField.getText(messageInputField.selectionStart - i, messageInputField.selectionEnd + i)
+
+                if (!formationChars.includes(text.charAt(0)) ||
+                        !formationChars.includes(text.charAt(text.length - 1))) {
+                    break
+                }
+                i++
+            }
+            return text
+        }
     }
 
     function insertInTextInput(start, text) {
@@ -1089,37 +1109,37 @@ Rectangle {
                         wrapper: "**"
                         icon.name: "bold"
                         text: qsTr("Bold")
-                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                        selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
                         onActionTriggered: checked ?
-                                               unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                               unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField)) :
                                                wrapSelection(wrapper)
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "*"
                         icon.name: "italic"
                         text: qsTr("Italic")
-                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                        selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
                         checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
                         onActionTriggered: checked ?
-                                               unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                               unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField)) :
                                                wrapSelection(wrapper)
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "~~"
                         icon.name: "strikethrough"
                         text: qsTr("Strikethrough")
-                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                        selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
                         onActionTriggered: checked ?
-                                               unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                               unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField)) :
                                                wrapSelection(wrapper)
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "`"
                         icon.name: "code"
                         text: qsTr("Code")
-                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                        selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
                         onActionTriggered: checked ?
-                                               unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                               unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField)) :
                                                wrapSelection(wrapper)
                     }
                     StatusChatInputTextFormationAction {
