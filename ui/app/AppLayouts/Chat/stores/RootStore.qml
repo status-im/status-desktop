@@ -625,10 +625,6 @@ QtObject {
         return profileSectionModule.ensUsernamesModule.getEtherscanLink()
     }
 
-    function hex2Eth(value) {
-        return globalUtilsInst.hex2Eth(value)
-    }
-
     function getLoginType() {
         if(!userProfileInst)
             return Constants.LoginType.Password

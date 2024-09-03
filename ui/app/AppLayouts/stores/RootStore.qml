@@ -218,10 +218,6 @@ QtObject {
         return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function hex2Eth(value) {
-        return globalUtils.hex2Eth(value)
-    }
-
     function setCurrentUserStatus(newStatus) {
         if (userProfileInst && userProfileInst.currentUserStatus !== newStatus) {
             mainModuleInst.setCurrentUserStatus(newStatus)
