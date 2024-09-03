@@ -157,7 +157,7 @@ StatusDialog {
     footer: StatusDialogFooter {
         id: footer
         rightButtons: ObjectModel {
-            StatusButton {
+            StatusFlatButton {
                 objectName: "rejectButton"
                 height: 44
                 text: qsTr("Reject")

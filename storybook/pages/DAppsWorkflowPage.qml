@@ -8,7 +8,6 @@ import QtQml.Models 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
-import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -16,7 +15,7 @@ import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import Models 1.0
-import Storybook 1.0
+import Storybook 1.0 as StoryBook
 
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.services.dapps 1.0
@@ -79,7 +78,7 @@ Item {
                 StatusBaseText { text: "projectId" }
                 StatusBaseText {
                     id: projectIdText
-                    readonly property string projectId: SystemUtils.getEnvVar("WALLET_CONNECT_PROJECT_ID")
+                    readonly property string projectId: StoryBook.SystemUtils.getEnvVar("WALLET_CONNECT_PROJECT_ID")
                     text: SQUtils.Utils.elideText(projectId, 3)
                     font.bold: true
                 }
@@ -410,7 +409,7 @@ Item {
             }
         }
 
-        walletRootStore: QObject {
+        walletRootStore: SQUtils.QObject {
             property var filteredFlatModel: SortFilterProxyModel {
                 sourceModel: NetworksModel.flatNetworks
                 filters: ValueFilter { roleName: "isTest"; value: settings.testNetworks; }
@@ -442,7 +441,7 @@ Item {
     }
 
 
-    QObject {
+    SQUtils.QObject {
         id: d
 
         property int activeTestCase: noTestCase

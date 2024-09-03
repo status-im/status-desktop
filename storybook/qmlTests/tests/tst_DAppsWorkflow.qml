@@ -807,6 +807,11 @@ Item {
             verify(pairWCReadySpy.count === 0, "expected NO pairWCReady signal to be emitted")
             mouseClick(connectButton)
             waitForRendering(controlUnderTest)
+
+            const btnWalletConnect = findChild(controlUnderTest, "btnWalletConnect")
+            verify(!!btnWalletConnect)
+            mouseClick(btnWalletConnect)
+
             verify(pairWCReadySpy.count === 1, "expected pairWCReady signal to be emitted")
 
             let pairWCModal = findChild(controlUnderTest, "pairWCModal")
