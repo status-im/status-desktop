@@ -444,6 +444,9 @@ Item {
 
         StatusBaseInput {
             id: statusBaseInput
+
+            objectName: "statusBaseInput"
+
             implicitWidth: parent.width
             implicitHeight: internal.inputHeight
             Layout.alignment: Qt.AlignTop

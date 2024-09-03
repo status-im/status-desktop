@@ -119,6 +119,8 @@ Control {
         StatusTabBar {
             id: tabBar
 
+            objectName: "tokensTabBar"
+
             visible: !!root.assetsModel && !!root.collectiblesModel
 
             currentIndex: !!root.assetsModel
@@ -126,6 +128,9 @@ Control {
                           : TokenSelectorPanel.Tabs.Collectibles
 
             StatusTabButton {
+
+                objectName: "assetsTab"
+
                 text: qsTr("Assets")
                 width: implicitWidth
 
@@ -133,6 +138,9 @@ Control {
             }
 
             StatusTabButton {
+
+                objectName: "collectiblesTab"
+                
                 text: qsTr("Collectibles")
                 width: implicitWidth
 

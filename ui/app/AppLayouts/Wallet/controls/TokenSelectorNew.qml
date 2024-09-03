@@ -139,6 +139,8 @@ Control {
         contentItem: TokenSelectorPanel {
             id: tokenSelectorPanel
 
+            objectName: "tokenSelectorPanel"
+
             function findSubitem(key) {
                 const count = collectiblesModel.rowCount()
 
