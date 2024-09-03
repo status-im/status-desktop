@@ -30,13 +30,11 @@ def keys_screen(main_window) -> KeysView:
     seed_phrase=ReturningUsersData.WALLET_USER.value[0],
     status_address=ReturningUsersData.WALLET_USER.value[1]
 )])
-@pytest.mark.parametrize('receiver_account_address, amount, asset, tab', [
-    pytest.param(ReturningUsersData.RETURNING_USER_ONE.value[1], 0, 'Ether', 'Assets')
+@pytest.mark.parametrize('receiver_account_address, amount, asset', [
+    pytest.param(ReturningUsersData.RETURNING_USER_ONE.value[1], 0, 'ETH')
 ])
 @pytest.mark.timeout(timeout=120)
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14862")
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14509")
-def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_account_address, amount, asset, tab):
+def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_account_address, amount, asset):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         input_view.input_seed_phrase(user_account.seed_phrase, True)
@@ -71,14 +69,15 @@ def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_acco
     with step('Open send popup'):
         wallet = main_window.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
-        assert driver.waitFor(lambda: wallet.left_panel.is_total_balance_visible, configs.timeouts.UI_LOAD_TIMEOUT_SEC)
-        f"Total balance is not visible"
+        assert \
+            driver.waitFor(lambda: wallet.left_panel.is_total_balance_visible, configs.timeouts.UI_LOAD_TIMEOUT_SEC), \
+            f"Total balance is not visible"
         wallet_account = wallet.left_panel.select_account('Account 1')
         send_popup = wallet_account.open_send_popup()
 
     with step('Enter asset, amount and address and click send and verify Mainnet network is shown'):
-        send_popup.send(receiver_account_address, amount, asset, tab)
-        assert driver.waitFor(lambda: send_popup.is_mainnet_network_identified, configs.timeouts.UI_LOAD_TIMEOUT_SEC)
+        send_popup.send(receiver_account_address, amount, asset)
+        assert driver.waitFor(lambda: send_popup._mainnet_network.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_SEC)
 
     with step('Enter password in authenticate popup'):
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)

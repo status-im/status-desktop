@@ -72,7 +72,7 @@ def test_wallet_send_nft(keys_screen, main_window, user_account, tab, receiver_a
 
     with step('Enter asset, amount and address on Collectibles tab, click send and verify Mainnet network is shown'):
         send_popup.send(receiver_account_address, amount, collectible, tab)
-        assert driver.waitFor(lambda: send_popup.is_mainnet_network_identified, configs.timeouts.UI_LOAD_TIMEOUT_SEC)
+        assert driver.waitFor(lambda: send_popup._mainnet_network.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_SEC)
 
     with step('Enter password in authenticate popup'):
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
