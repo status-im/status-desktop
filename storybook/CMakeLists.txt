@@ -15,7 +15,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if (APPLE)
-    set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=10.14)
+    set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=11.0)
 endif()
 
 find_package(
