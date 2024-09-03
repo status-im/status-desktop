@@ -123,7 +123,7 @@ QHash<int, QByteArray> ManageTokensModel::roleNames() const
         {BalanceRole, kEnabledNetworkBalanceRoleName},
         {CurrencyBalanceRole, kEnabledNetworkCurrencyBalanceRoleName},
         {CustomSortOrderNoRole, kCustomSortOrderNoRoleName},
-        {TokenImageRole, kTokenImageRoleName},
+        {TokenImageRole, kTokenImageUrlRoleName},
         {TokenBackgroundColorRole, kBackgroundColorRoleName},
         {TokenBalancesRole, kBalancesRoleName},
         {TokenDecimalsRole, kDecimalsRoleName},

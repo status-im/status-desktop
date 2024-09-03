@@ -81,7 +81,13 @@ DropArea {
                                                                             : LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.symbol))
         bgRadius: priv.bgRadius
         hasImage: true
-        icon.source: root.isCollectible ? model.imageUrl : Constants.tokenIcon(model.symbol) // TODO unify via backend model for both assets and collectibles; handle communityPrivilegesLevel
+        icon.source: {
+            // TODO unify via backend model for both assets and collectibles; handle communityPrivilegesLevel
+            let source = root.isCollectible || root.isCommunityToken ? model.imageUrl : ""
+            if (source === "")
+                source = Constants.tokenIcon(model.symbol)
+            return source
+        }
         icon.width: priv.iconSize
         icon.height: priv.iconSize
         spacing: 12

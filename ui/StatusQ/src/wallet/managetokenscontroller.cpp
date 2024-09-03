@@ -421,7 +421,13 @@ void ManageTokensController::addItem(int index)
     TokenData token;
     token.symbol = symbol;
     token.name = dataForIndex(srcIndex, kNameRoleName).toString();
-    token.image = dataForIndex(srcIndex, kTokenImageRoleName).toString();
+    token.image = dataForIndex(srcIndex, kTokenImageUrlRoleName).toString();
+    if (token.image.isEmpty()) {
+        token.image = dataForIndex(srcIndex, kTokenImageRoleName).toString();
+    }
+    if (token.image.isEmpty()) {
+        token.image = dataForIndex(srcIndex, kCollectibleMediaUrlRoleName).toString();
+    }
     if (bgColor.isValid())
         token.backgroundColor = bgColor;
     token.communityId = communityId;
