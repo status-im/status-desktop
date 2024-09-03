@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, stew/shims/strformat
+import NimQml, Tables, strutils, stew/shims/strformat, std/sequtils
 
 import ./item
 import ../../../shared_models/currency_amount
@@ -75,11 +75,55 @@ QtObject:
       ModelRole.CanSend.int: "canSend"
     }.toTable
 
+  proc removeItemWithIndex(self: Model, index: int) =
+    if (index < 0 or index >= self.items.len):
+      return
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginRemoveRows(parentModelIndex, index, index)
+    self.items.delete(index)
+    self.endRemoveRows()
+
+  proc insertItem(self: Model, item: Item, index: int) =
+    if (index < 0 or index > self.items.len):
+      return
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginInsertRows(parentModelIndex, index, index)
+    self.items.insert(item, index)
+    self.endInsertRows()
+
+  proc findAccountIndex(self: Model, account: Item): int =
+    for i in 0 ..< self.items.len:
+      if self.items[i].address() == account.address():
+        return i
+    return -1
 
   proc setItems*(self: Model, items: seq[Item]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
+    var indexesToRemove: seq[int]
+
+    #remove
+    for i in 0 ..< self.items.len:
+      if not items.anyIt(it.address() == self.items[i].address()):
+        indexesToRemove.add(i)
+
+    while indexesToRemove.len > 0:
+      let index = pop(indexesToRemove)
+      self.removeItemWithIndex(index)
+
+    # Update or insert
+    for i in 0 ..< items.len:
+      var account = items[i]
+      let index = self.findAccountIndex(account)
+      if index >= 0:
+        let qIndex = self.createIndex(i, 0, nil)
+        defer: qIndex.delete
+
+        self.items[index] = account
+        self.dataChanged(qIndex, qIndex)
+        continue
+      self.insertItem(account, i)
+      
     self.countChanged()
 
     for item in items:
