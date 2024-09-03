@@ -37,10 +37,6 @@ QtObject {
 
     property var flatNetworks: networksModule.flatNetworks
 
-    function hex2Dec(value) {
-        return globalUtils.hex2Dec(value)
-    }
-
     readonly property var formationChars: (["*", "`", "~"])
     function getSelectedTextWithFormationChars(messageInputField) {
         let i = 1
@@ -129,14 +125,6 @@ QtObject {
     function updateTransactionFilterIfDirty() {
         if (transactionActivityStatus.isFilterDirty)
             walletSectionInst.activityController.updateFilter()
-    }
-
-    function hex2Eth(value) {
-        return globalUtils.hex2Eth(value)
-    }
-
-    function hex2Gwei(value) {
-        return globalUtils.hex2Gwei(value)
     }
 
     function getCurrencyAmount(amount, symbol) {

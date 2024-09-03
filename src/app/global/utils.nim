@@ -1,4 +1,4 @@
-import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, re, httpclient
+import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, httpclient
 import stew/byteutils
 import ./utils/qrcodegen
 import ./utils/time_utils
@@ -60,20 +60,8 @@ QtObject:
       add(str, "0")
     return str
 
-  proc hex2Eth*(self: Utils, value: string): string {.slot.} =
-    return stripTrailingZeroes(conversion.wei2Eth(stint.fromHex(StUint[256], value)))
-
-  proc hex2Gwei*(self: Utils, value: string): string {.slot.} =
-    return stripTrailingZeroes(conversion.wei2Eth(stint.fromHex(StUint[256], value)*1000000000))
-
   proc gwei2Hex*(self: Utils, gwei: float): string {.slot.} =
     return "0x" & conversion.gwei2Wei(gwei).toHex()
-
-  proc hex2Dec*(self: Utils, value: string): string {.slot.} =
-    # somehow this value crashes the app
-    if value.find(re("0x0+$")) >= 0:
-      return "0"
-    return $stint.fromHex(StUint[256], value)
 
   proc readTextFile*(self: Utils, filepath: string): string {.slot.} =
     try:

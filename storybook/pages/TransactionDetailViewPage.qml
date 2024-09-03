@@ -27,7 +27,6 @@ SplitView {
     Component.onCompleted: {
         RootStore.getFiatValue = (cryptoValue, symbol) => { return (cryptoValue * 1800).toPrecision(2) }
         RootStore.getLatestBlockNumber = () => { return 4 }
-        RootStore.hex2Dec = (number) => { return 10 }
         RootStore.formatCurrencyAmount = (value, symbol) => { return value + " " + symbol }
         RootStore.getNameForSavedWalletAddress = (address) => { return "Saved Wallet Name" }
         RootStore.getNameForAddress = (address) => { return "Address Name" }

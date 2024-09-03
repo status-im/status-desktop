@@ -14,7 +14,6 @@ QtObject {
 
     property var getFiatValue
     property var getLatestBlockNumber
-    property var hex2Dec
     property var formatCurrencyAmount
     property var getNameForSavedWalletAddress
     property var getNameForAddress
