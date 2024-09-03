@@ -507,7 +507,7 @@ o_StatusTabBar = {"container": statusDesktop_mainWindow_overlay, "type": "Status
 tab_Status_template = {"container": o_StatusTabBar, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 o_TokenBalancePerChainDelegate_template = {"container": statusDesktop_mainWindow_overlay, "objectName": "tokenBalancePerChainDelegate", "type": "TokenBalancePerChainDelegate", "visible": True}
 o_CollectibleNestedDelegate_template = {"container": statusDesktop_mainWindow_overlay, "type": "CollectibleNestedDelegate", "unnamed": 1, "visible": True}
-amountInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "amountInput", "type": "TextEdit", "visible": True}
+amountInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "amountToSend_textField", "type": "StyledTextField", "visible": True}
 paste_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 ens_or_address_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 accountSelectionTabBar_StatusTabBar = {"container": statusDesktop_mainWindow_overlay, "id": "accountSelectionTabBar", "type": "StatusTabBar", "unnamed": 1, "visible": True}
@@ -544,6 +544,13 @@ networkSelectorDelegate_Arbitrum_NetworkSelectItemDelegate = {"container": statu
 # Bridge popup
 holdingSelector_TokenSelectorNew = {"container": statusDesktop_mainWindow_overlay, "objectName": "holdingSelector", "type": "TokenSelectorNew", "visible": True}
 modalHeader_HeaderTitleText = {"container": statusDesktop_mainWindow_overlay, "objectName": "modalHeader", "type": "HeaderTitleText", "visible": True}
+
+# Token Selector popup
+tokenSelectorPanel_TokenSelectorNew = {"container": statusDesktop_mainWindow_overlay, "objectName": "tokenSelectorPanel", "type": "TokenSelectorPanel", "visible": True}
+tokensTabBar_StatusTabBar = {"container": statusDesktop_mainWindow_overlay, "objectName": "tokensTabBar", "type": "StatusTabBar", "visible": True}
+tokenSelectorPanel_AssetsTab = {"container": tokensTabBar_StatusTabBar, "objectName": "assetsTab", "type": "StatusTabButton", "visible": True}
+tokenSelectorPanel_CollectiblesTab = {"container": tokensTabBar_StatusTabBar, "objectName": "collectiblesTab", "type": "StatusTabButton", "visible": True}
+tokenSelectorAssetDelegate_template = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("tokenSelectorAssetDelegate*"), "type": "TokenSelectorAssetDelegate", "visible": True}
 
 # Verify identity popup
 profileSendContactRequestModal_sayWhoYouAreInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sayWhoYouAreInput", "type": "TextEdit", "visible": True}

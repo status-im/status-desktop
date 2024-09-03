@@ -80,8 +80,12 @@ class LeftPanel(QObject):
 
     @allure.step('Select account from list')
     def select_account(self, account_name: str) -> 'WalletAccountView':
-        self._wallet_account_item.real_name['title'] = account_name
-        self._wallet_account_item.click()
+        account_items = self.accounts
+        existing_accounts_names = [account.name for account in account_items]
+        if account_name in existing_accounts_names:
+            self._wallet_account_item.real_name['title'] = account_name
+            time.sleep(0.5)
+            self._wallet_account_item.click()
         return WalletAccountView().wait_until_appears()
 
     @allure.step('Open context menu from left wallet panel')

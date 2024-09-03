@@ -78,7 +78,7 @@ def test_ens_name_purchase(keys_screen, main_window, user_account, ens_name):
 
     with step('Confirm sending amount for purchasing ens username in send popup'):
         register_ens.click_send()
-        assert driver.waitFor(lambda: SendPopup().is_mainnet_network_identified, configs.timeouts.UI_LOAD_TIMEOUT_SEC)
+        assert driver.waitFor(lambda: SendPopup()._mainnet_network.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_SEC)
 
     with step('Enter password in authenticate popup'):
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)

@@ -7,6 +7,7 @@ import configs.timeouts
 import driver
 from driver.objects_access import wait_for_template, walk_children
 from gui.components.base_popup import BasePopup
+from gui.components.wallet.token_selector_popup import TokenSelectorPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
@@ -23,7 +24,7 @@ class SendPopup(BasePopup):
         self._search_field = TextEdit(names.search_TextEdit)
         self._asset_list_item = QObject(names.o_TokenBalancePerChainDelegate_template)
         self._collectible_list_item = QObject(names.o_CollectibleNestedDelegate_template)
-        self._amount_text_edit = TextEdit(names.amountInput_TextEdit)
+        self._amount_to_send_text_edit = TextEdit(names.amountInput_TextEdit)
         self._paste_button = Button(names.paste_StatusButton)
         self._ens_address_text_edit = TextEdit(names.ens_or_address_TextEdit)
         self._my_accounts_tab = Button(names.accountSelectionTabBar_My_Accounts_StatusTabButton)
@@ -33,6 +34,7 @@ class SendPopup(BasePopup):
         self._fiat_fees_label = TextLabel(names.fiatFees_StatusBaseText)
         self._send_button = Button(names.send_StatusFlatButton)
         self._account_selector = QObject(names.accountSelector_AccountSelectorHeader)
+        self._holding_selector = QObject(names.holdingSelector_TokenSelectorNew)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
@@ -52,7 +54,7 @@ class SendPopup(BasePopup):
                 if getattr(item, 'title', '') == name:
                     QObject(item).click()
                     break
-            assert driver.waitFor(lambda: self._amount_text_edit.is_visible, timeout_msec=6000)
+            assert driver.waitFor(lambda: self._amount_to_send_text_edit.is_visible, timeout_msec=6000)
 
         elif tab == 'Collectibles':
             self._collectible_list_item.wait_until_appears(timeout_msec=15000)
@@ -82,34 +84,19 @@ class SendPopup(BasePopup):
                 assets_or_collectibles_list.append(asset)
         return assets_or_collectibles_list
 
-    @allure.step('Open tab')
-    def _open_tab(self, name: str):
-        assets_tab = wait_for_template(self._tab_item_template.real_name, name, 'text')
-        driver.mouseClick(assets_tab)
+    def open_token_selector(self):
+        self._holding_selector.click()
+        return TokenSelectorPopup().wait_until_appears()
 
     @allure.step('Send {2} {3} to {1}')
-    def send(self, address: str, amount: int, name: str, tab: str):
-        self._open_tab(tab)
-        self._select_asset_or_collectible(name, tab)
-        if tab == 'Assets':
-            self._amount_text_edit.text = str(amount)
-            self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+    def send(self, address: str, amount: int, asset: str):
+        token_selector = self.open_token_selector()
+        token_selector.select_asset_from_list(asset_name=asset)
+        assert driver.waitFor(lambda: self._amount_to_send_text_edit.is_visible, timeout_msec=6000), \
+            f"Asset selector popup was either not closed or send modal is not visible"
+        self._amount_to_send_text_edit.text = str(amount)
+        self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         self._ens_address_text_edit.type_text(address)
         assert driver.waitFor(lambda: self._send_button.is_visible, timeout_msec=8000)
-        self.click_send()
-
-    @allure.step('Click send button')
-    def click_send(self):
         self._send_button.click()
 
-    @allure.step('Get arbitrum network visibility state')
-    def is_arbitrum_network_identified(self) -> bool:
-        return self._arbitrum_network.is_visible
-
-    @allure.step('Get mainnet network visibility state')
-    def is_mainnet_network_identified(self) -> bool:
-        return self._mainnet_network.is_visible
-
-    @allure.step('Get fiat fees')
-    def get_fiat_fees(self) -> str:
-        return self._fiat_fees_label.text
