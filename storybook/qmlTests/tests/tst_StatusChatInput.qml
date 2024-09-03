@@ -703,31 +703,11 @@ Item {
 
         property ListModel gifColumnA: ListModel {}
 
-        readonly property var formationChars: (["*", "`", "~"])
         property bool gifUnfurlingEnabled: true
-        function getSelectedTextWithFormationChars(messageInputField) {
-            let i = 1
-            let text = ""
-            while (true) {
-                if (messageInputField.selectionStart - i < 0 && messageInputField.selectionEnd + i > messageInputField.length) {
-                    break
-                }
-
-                text = messageInputField.getText(messageInputField.selectionStart - i, messageInputField.selectionEnd + i)
-
-                if (!formationChars.includes(text.charAt(0)) ||
-                        !formationChars.includes(text.charAt(text.length - 1))) {
-                    break
-                }
-                i++
-            }
-            return text
-        }
 
         Component.onCompleted: {
             RootStore.isWalletEnabled = true
             RootStore.gifUnfurlingEnabled = rootStoreMock.gifUnfurlingEnabled
-            RootStore.getSelectedTextWithFormationChars = rootStoreMock.getSelectedTextWithFormationChars
             RootStore.gifColumnA = rootStoreMock.gifColumnA
 
             Global.dragArea = root
