@@ -25,7 +25,7 @@ pytestmark = marks
                              pytest.param('#2a4af5', 'sunglasses', '1f60e',
                                           '#216266', 'thumbsup', '1f44d')
                          ])
-# @pytest.mark.critical TODO: https://github.com/status-im/status-desktop/issues/16236
+@pytest.mark.critical
 def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account,
                                            color: str, emoji: str, emoji_unicode: str,
                                            new_color: str, new_emoji: str,
