@@ -738,7 +738,7 @@ $(NIM_WINDOWS_PREBUILT_DLLS):
 	unzip dlls.zip
 
 nim_windows_launcher: | deps
-	$(ENV_SCRIPT) nim c -d:debug --outdir:./bin --passL:"-static-libgcc -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive" src/nim_windows_launcher.nim
+	$(ENV_SCRIPT) nim c -d:debug --outdir:./bin --passL:"-static-libgcc -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive" --threads:off  src/nim_windows_launcher.nim
 
 STATUS_CLIENT_EXE ?= pkg/Status.exe
 STATUS_CLIENT_7Z ?= pkg/Status.7z
