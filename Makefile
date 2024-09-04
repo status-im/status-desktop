@@ -50,7 +50,8 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 
 ifeq ($(NIM_PARAMS),)
 # "variables.mk" was not included, so we update the submodules.
-GIT_SUBMODULE_UPDATE := git submodule update --init --recursive
+NUMPROC ?= 10
+GIT_SUBMODULE_UPDATE := git submodule update --init --recursive --jobs $(NUMPROC)
 .DEFAULT:
 	+@ echo -e "Git submodules not found. Running '$(GIT_SUBMODULE_UPDATE)'.\n"; \
 		$(GIT_SUBMODULE_UPDATE); \
