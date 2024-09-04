@@ -8,7 +8,7 @@ import shared.controls 1.0
 import shared.popups 1.0
 import shared.views.chat 1.0
 import shared.controls.chat 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -916,6 +916,7 @@ Loader {
 
                         store: root.rootStore
                         usersStore: root.usersStore
+                        sharedStore: SharedStores.RootStore
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
 

@@ -7,7 +7,7 @@ import Models 1.0
 
 import utils 1.0
 import shared.status 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 import StatusQ.Core.Utils 0.1
 
@@ -37,21 +37,6 @@ SplitView {
         }
     }
 
-    QtObject {
-        id: rootStoreMock
-
-        property bool ready: false
-
-        readonly property ListModel gifColumnA: ListModel {}
-
-        Component.onCompleted: {
-            RootStore.isWalletEnabled = true
-            RootStore.gifUnfurlingEnabled = true
-            RootStore.gifColumnA = rootStoreMock.gifColumnA
-            rootStoreMock.ready = true
-        }
-    }
-
     UsersModel {
         id: fakeUsersModel
     }
@@ -71,7 +56,7 @@ SplitView {
 
         Loader {
             id: chatInputLoader
-            active: rootStoreMock.ready && globalUtilsMock.ready
+            active: globalUtilsMock.ready
             sourceComponent: StatusChatInput {
                 id: chatInput
                 property var globalUtils: globalUtilsMock.globalUtils
@@ -112,6 +97,16 @@ SplitView {
                 usersStore: ChatStores.UsersStore {
                     readonly property var usersModel: fakeUsersModel
                 }
+
+                sharedStore: SharedStores.RootStore {
+                    isWalletEnabled: true
+                    gifUnfurlingEnabled: true
+
+                    property var gifStore: SharedStores.GifStore {
+                        property var gifColumnA: ListModel {}
+                    }
+                }
+
                 onSendMessage: {
                     logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])
                     logs.logEvent("StatusChatInput::sendMessage", ["PlainText"], [globalUtilsMock.globalUtils.plainText(chatInput.getTextWithPublicKeys())])

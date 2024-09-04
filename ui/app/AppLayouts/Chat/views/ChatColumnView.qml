@@ -10,13 +10,15 @@ import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 
-import utils 1.0
 import shared 1.0
-import shared.popups 1.0
-import shared.status 1.0
 import shared.controls 1.0
-import shared.views.chat 1.0
+import shared.popups 1.0
 import shared.popups.send 1.0
+import shared.status 1.0
+import shared.stores 1.0 as SharedStores
+import shared.views.chat 1.0
+import utils 1.0
+
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Communities.popups 1.0
@@ -270,7 +272,7 @@ Item {
                     id: chatInput
                     width: parent.width
                     visible: !!d.activeChatContentModule
-                    
+
                     // When `enabled` is switched true->false, `textInput.text` is cleared before d.activeChatContentModule updates.
                     // We delay the binding so that the `inputAreaModule.preservedProperties.text` doesn't get overriden with empty value.
                     Binding on enabled {
@@ -285,6 +287,9 @@ Item {
 
                     store: root.rootStore
                     usersStore: d.activeUsersStore
+
+                    sharedStore: SharedStores.RootStore
+
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
                     urlsList: d.urlsList
                     askToEnableLinkPreview: {
@@ -365,7 +370,7 @@ Item {
                     onKeyUpPress: {
                         d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
                     }
-                    
+
                     onLinkPreviewReloaded: (link) => d.activeChatContentModule.inputAreaModule.reloadLinkPreview(link)
                     onEnableLinkPreview: () => {
                         d.activeChatContentModule.inputAreaModule.enableLinkPreview()

@@ -7,7 +7,7 @@ import StatusQ 0.1 // https://github.com/status-im/status-desktop/issues/10218
 
 import utils 1.0
 import shared.status 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
@@ -28,6 +28,15 @@ Item {
             anchors.bottom: parent.bottom
             usersStore: ChatStores.UsersStore {
                 property var usersModel: ListModel {}
+            }
+
+            sharedStore: SharedStores.RootStore {
+                isWalletEnabled: true
+                gifUnfurlingEnabled: true
+
+                property var gifStore: SharedStores.GifStore {
+                    property var gifColumnA: ListModel {}
+                }
             }
         }
     }
@@ -696,20 +705,8 @@ Item {
         function isCompressedPubKey(publicKey) {
             return false
         }
-    }
-
-    QtObject {
-        id: rootStoreMock
-
-        property ListModel gifColumnA: ListModel {}
-
-        property bool gifUnfurlingEnabled: true
 
         Component.onCompleted: {
-            RootStore.isWalletEnabled = true
-            RootStore.gifUnfurlingEnabled = rootStoreMock.gifUnfurlingEnabled
-            RootStore.gifColumnA = rootStoreMock.gifColumnA
-
             Global.dragArea = root
         }
     }

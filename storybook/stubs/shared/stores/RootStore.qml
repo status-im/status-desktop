@@ -4,7 +4,6 @@ QtObject {
     property var userProfileInst
     property bool gifUnfurlingEnabled
     property bool isWalletEnabled
-    property var gifColumnA
     property var currentCurrency
     property bool neverAskAboutUnfurlingAgain: false
 
