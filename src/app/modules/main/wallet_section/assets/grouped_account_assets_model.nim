@@ -59,17 +59,27 @@ QtObject:
       result = newQVariant(self.balancesPerChain[index.row])
 
   proc modelsUpdated*(self: Model) =
-    self.beginResetModel()
-    let lengthOfGroupedAssets = self.delegate.getGroupedAccountsAssetsList().len
-    let balancesPerChainLen = self.balancesPerChain.len
-    let diff = abs(lengthOfGroupedAssets - balancesPerChainLen)
-    # Please note that in case more tokens are added either due to refresh or adding of new accounts
-    # new entries to fetch balances data are created.
-    # On the other hand we are not deleting in case the assets disappear either on refresh
-    # as there is no balance or accounts were deleted because it causes a crash on UI.
-    # Also this will automatically be removed on the next time app is restarted
-    if lengthOfGroupedAssets > balancesPerChainLen:
-      for i in countup(0, diff-1):
-        self.balancesPerChain.add(newBalancesModel(self.delegate, balancesPerChainLen+i))
-    self.endResetModel()
-    self.countChanged()
+    # first time model is fetched
+    if self.balancesPerChain.len == 0:
+      self.beginResetModel()
+      for i in countup(0, self.delegate.getGroupedAccountsAssetsList().len-1):
+        self.balancesPerChain.add(newBalancesModel(self.delegate, i))
+      self.endResetModel()
+    else :
+      # model is updated not reset
+      let lengthOfGroupedAssets = self.delegate.getGroupedAccountsAssetsList().len
+      let balancesPerChainLen = self.balancesPerChain.len
+      let diff = lengthOfGroupedAssets - balancesPerChainLen
+
+      if diff > 0:
+        for i in countup(0, diff-1):
+          self.balancesPerChain.add(newBalancesModel(self.delegate, balancesPerChainLen+i))
+
+      let index = self.createIndex(0, 0, nil)
+      let lastindex = self.createIndex(lengthOfGroupedAssets-1, 0, nil)
+      defer: index.delete
+      defer: lastindex.delete
+      self.dataChanged(index, lastindex, @[ModelRole.TokensKey.int, ModelRole.Balances.int])
+
+      if diff > 0:
+        self.countChanged()

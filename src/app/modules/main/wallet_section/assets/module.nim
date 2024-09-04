@@ -73,6 +73,3 @@ method getGroupedAccountAssetsDataSource*(self: Module): GroupedAccountAssetsDat
   return (
     getGroupedAccountsAssetsList: proc(): var seq[GroupedTokenItem] = self.controller.getGroupedAccountsAssetsList()
   )
-
-method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
-  self.controller.buildAllTokens(addresses)

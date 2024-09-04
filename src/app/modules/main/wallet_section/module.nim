@@ -226,7 +226,6 @@ proc notifyModulesOnFilterChanged(self: Module) =
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.allTokensModule.filterChanged(self.filter.addresses)
   self.allCollectiblesModule.refreshWalletAccounts()
-  self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
 
 proc notifyModulesBalanceIsLoaded(self: Module) =
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
