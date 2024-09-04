@@ -6,6 +6,8 @@ import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
 
+import utils 1.0
+
 /**
   Adaptor transforming input flat model of collectibles into grouped model,
   grouped by communities and collections to form expected by components like
@@ -78,7 +80,7 @@ QObject {
                 readonly property string key: model.symbol
 
                 readonly property url icon:
-                    model.imageUrl || model.mediaUrl || Qt.resolvedUrl("")
+                    model.imageUrl || model.mediaUrl || Style.png("tokens/DEFAULT-TOKEN")
 
                 SortFilterProxyModel { /* 1 */
                     id: ownershipFiltered
