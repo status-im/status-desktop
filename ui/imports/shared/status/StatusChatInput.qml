@@ -9,7 +9,7 @@ import shared 1.0
 import shared.controls.chat 1.0
 import shared.panels 1.0
 import shared.popups 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 //TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
@@ -38,6 +38,7 @@ Rectangle {
     
     property ChatStores.UsersStore usersStore
     property ChatStores.RootStore store
+    property SharedStores.RootStore sharedStore
 
     property var emojiPopup: null
     property var stickersPopup: null
@@ -1035,6 +1036,9 @@ Rectangle {
 
         StatusGifPopup {
             readonly property point relativePosition: d.getCommonPopupRelativePosition(this, parent)
+
+            gifStore: control.sharedStore.gifStore
+            gifUnfurlingEnabled: control.sharedStore.gifUnfurlingEnabled
 
             width: 360
             height: 440

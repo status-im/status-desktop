@@ -13,9 +13,11 @@ import shared.stores 1.0
 Column {
     id: root
     spacing: 8
+
+    property GifStore gifStore
+
     property alias gifList: repeater
     property int gifWidth: 0
-    property RootStore store
     property var gifSelected: function () {}
     property var toggleFavorite: function () {}
     property string lastHoveredId
@@ -52,7 +54,7 @@ Column {
 
             StatusBaseButton {
                 id: starButton
-                property bool favorite: RootStore.isFavorite(model.id)
+                property bool favorite: root.gifStore.isFavorite(model.id)
 
                 type: StatusFlatRoundButton.Type.Secondary
                 textColor: hovered || favorite ? Style.current.yellow : Style.current.secondaryText
@@ -111,7 +113,7 @@ Column {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: function (event) {
-                    root.store.addToRecentsGif(model.id)
+                    root.gifStore.addToRecentsGif(model.id)
                     root.gifSelected(event, model.url)
                 }
             }

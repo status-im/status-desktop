@@ -18,29 +18,32 @@ import "./StatusGifPopup"
 Popup {
     id: root
 
+    property GifStore gifStore
+    property bool gifUnfurlingEnabled
+
     property var gifSelected: function () {}
     property var searchGif: Backpressure.debounce(searchBox, 500, function (query) {
-        RootStore.searchGifs(query)
+        root.gifStore.searchGifs(query)
     })
     property var toggleCategory: function(newCategory) {
         previousCategory = currentCategory
         currentCategory = newCategory
         searchBox.text = ""
         if (currentCategory === GifPopupDefinitions.Category.Trending) {
-            RootStore.getTrendingsGifs()
+            root.gifStore.getTrendingsGifs()
         } else if(currentCategory === GifPopupDefinitions.Category.Favorite) {
-            RootStore.getFavoritesGifs()
+            root.gifStore.getFavoritesGifs()
         } else if(currentCategory === GifPopupDefinitions.Category.Recent) {
-            RootStore.getRecentsGifs()
+            root.gifStore.getRecentsGifs()
         }
     }
     property var toggleFavorite: function(item) {
-        RootStore.toggleFavoriteGif(item.id, currentCategory === GifPopupDefinitions.Category.Favorite)
+        root.gifStore.toggleFavoriteGif(item.id, currentCategory === GifPopupDefinitions.Category.Favorite)
     }
     property alias searchString: searchBox.text
     property int currentCategory: GifPopupDefinitions.Category.Trending
     property int previousCategory: GifPopupDefinitions.Category.Trending
-    property bool loading: RootStore.gifLoading
+    property bool loading: root.gifStore.gifLoading
 
     modal: false
     width: 360
@@ -62,8 +65,8 @@ Popup {
     onAboutToShow: {
         searchBox.text = ""
         searchBox.input.edit.forceActiveFocus()
-        if (RootStore.gifUnfurlingEnabled) {
-            RootStore.getTrendingsGifs()
+        if (root.gifUnfurlingEnabled) {
+            root.gifStore.getTrendingsGifs()
         }
     }
 
@@ -95,7 +98,7 @@ Popup {
                 SearchBox {
                     id: searchBox
                     placeholderText: qsTr("Search")
-                    enabled: RootStore.gifUnfurlingEnabled
+                    enabled: root.gifUnfurlingEnabled
                     anchors.right: parent.right
                     anchors.rightMargin: gifHeader.headerMargin
                     anchors.top: parent.top
@@ -137,14 +140,14 @@ Popup {
 
             Loader {
                 id: gifsLoader
-                active: root.opened && RootStore.gifUnfurlingEnabled
+                active: root.opened && root.gifUnfurlingEnabled
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                 Layout.preferredHeight: {
                     const headerTextHeight = searchBox.text === "" ? headerText.height : 0
                     return 400 - gifHeader.height - headerTextHeight
                 }
-                sourceComponent: RootStore.gifColumnA.rowCount() === 0 ? emptyPlaceholderComponent : gifItemsComponent
+                sourceComponent: root.gifStore.gifColumnA.rowCount() === 0 ? emptyPlaceholderComponent : gifItemsComponent
             }
 
             Row {
@@ -161,7 +164,7 @@ Popup {
                     onClicked: {
                         toggleCategory(GifPopupDefinitions.Category.Trending)
                     }
-                    enabled: RootStore.gifUnfurlingEnabled
+                    enabled: root.gifUnfurlingEnabled
                 }
 
                 StatusTabBarIconButton {
@@ -170,7 +173,7 @@ Popup {
                     onClicked: {
                         toggleCategory(GifPopupDefinitions.Category.Recent)
                     }
-                    enabled: RootStore.gifUnfurlingEnabled
+                    enabled: root.gifUnfurlingEnabled
                 }
 
                 StatusTabBarIconButton {
@@ -179,7 +182,7 @@ Popup {
                     onClicked: {
                         toggleCategory(GifPopupDefinitions.Category.Favorite)
                     }
-                    enabled: RootStore.gifUnfurlingEnabled
+                    enabled: root.gifUnfurlingEnabled
                 }
             }
         }
@@ -200,8 +203,13 @@ Popup {
 
         sourceComponent: ConfirmationPopup {
             visible: true
+
+            onEnableGifsRequested: {
+                RootStore.setGifUnfurlingEnabled(true)
+                root.gifStore.getTrendingsGifs()
+            }
         }
-        active: !RootStore.gifUnfurlingEnabled
+        active: !root.gifUnfurlingEnabled
     }
 
     Component {
@@ -219,36 +227,42 @@ Popup {
                 property string lastHoveredId
 
                 StatusGifColumn {
-                    gifList.model: RootStore.gifColumnA
+                    gifStore: root.gifStore
+
+                    gifList.model: root.gifStore.gifColumnA
                     gifWidth: (root.width / 3) - Style.current.padding
                     gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
-                    store: RootStore
+
                     onGifHovered: {
                         gifs.lastHoveredId = id
                     }
                 }
 
                 StatusGifColumn {
-                    gifList.model: RootStore.gifColumnB
+                    gifStore: root.gifStore
+
+                    gifList.model: root.gifStore.gifColumnB
                     gifWidth: (root.width / 3) - Style.current.padding
                     gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
-                    store: RootStore
+
                     onGifHovered: {
                         gifs.lastHoveredId = id
                     }
                 }
 
                 StatusGifColumn {
-                    gifList.model: RootStore.gifColumnC
+                    gifStore: root.gifStore
+
+                    gifList.model: root.gifStore.gifColumnC
                     gifWidth: (root.width / 3) - Style.current.padding
                     gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
-                    store: RootStore
+
                     onGifHovered: {
                         gifs.lastHoveredId = id
                     }
@@ -265,7 +279,7 @@ Popup {
             currentCategory: root.currentCategory
             loading: root.loading
             onDoRetry: searchBox.text === ""
-                        ? RootStore.getTrendingsGifs()
+                        ? root.gifStore.getTrendingsGifs()
                         : searchGif(searchBox.text)
         }
     }

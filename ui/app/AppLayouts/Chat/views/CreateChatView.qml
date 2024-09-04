@@ -9,9 +9,10 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-import utils 1.0
-import shared.status 1.0
 import shared.controls.delegates 1.0
+import shared.status 1.0
+import shared.stores 1.0 as SharedStores
+import utils 1.0
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
@@ -163,6 +164,7 @@ Page {
                 usersStore: ({
                     usersModel: membersSelector.model
                 })
+                sharedStore: SharedStores.RootStore
                 onStickerSelected: {
                     root.createChatPropertiesStore.createChatStickerHashId = hashId;
                     root.createChatPropertiesStore.createChatStickerPackId = packId;

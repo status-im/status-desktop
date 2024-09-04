@@ -13,6 +13,8 @@ import shared.controls 1.0
 Popup {
     id: root
 
+    signal enableGifsRequested
+
     anchors.centerIn: parent
     height: 278
     width: 291
@@ -79,8 +81,7 @@ Popup {
         size: StatusBaseButton.Size.Small
 
         onClicked: {
-            RootStore.setGifUnfurlingEnabled(true)
-            RootStore.getTrendingsGifs()
+            root.enableGifsRequested()
             root.close()
         }
     }

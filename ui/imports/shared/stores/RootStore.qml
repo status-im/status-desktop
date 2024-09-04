@@ -1,10 +1,12 @@
 pragma Singleton
 
-import QtQuick 2.12
+import QtQuick 2.15
 import utils 1.0
 
 QtObject {
     id: root
+
+    readonly property GifStore gifStore: GifStore {}
 
     property var profileSectionModuleInst: profileSectionModule
     property var privacyModule: profileSectionModuleInst.privacyModule
@@ -43,51 +45,6 @@ QtObject {
 
     function setGifUnfurlingEnabled(value) {
         localAccountSensitiveSettings.gifUnfurlingEnabled = value
-    }
-
-    property var gifsModuleInst: typeof gifsModule !== "undefined" ? gifsModule : null
-    property var gifColumnA: gifsModuleInst ? gifsModuleInst.gifColumnA
-                                                                 : null
-    property var gifColumnB: gifsModuleInst ? gifsModuleInst.gifColumnB
-                                                                 : null
-    property var gifColumnC: gifsModuleInst ? gifsModuleInst.gifColumnC
-                                                                 : null
-    property bool gifLoading: gifsModuleInst ? gifsModuleInst.gifLoading
-                                                                 : false
-
-    function searchGifs(query) {
-        if (gifsModuleInst)
-            gifsModuleInst.searchGifs(query)
-    }
-
-    function getTrendingsGifs() {
-        if (gifsModuleInst)
-            gifsModuleInst.getTrendingsGifs()
-    }
-
-    function getRecentsGifs() {
-        if (gifsModuleInst)
-            gifsModuleInst.getRecentsGifs()
-    }
-
-    function getFavoritesGifs() {
-        return gifsModuleInst ? gifsModuleInst.getFavoritesGifs()
-                                                   : null
-    }
-
-    function isFavorite(id) {
-        return gifsModuleInst ? gifsModuleInst.isFavorite(id)
-                                                   : null
-    }
-
-    function toggleFavoriteGif(id, reload) {
-        if (gifsModuleInst)
-            gifsModuleInst.toggleFavoriteGif(id, reload)
-    }
-
-    function addToRecentsGif(id) {
-        if (gifsModuleInst)
-            gifsModuleInst.addToRecentsGif(id)
     }
 
     function getPasswordStrengthScore(password) {
