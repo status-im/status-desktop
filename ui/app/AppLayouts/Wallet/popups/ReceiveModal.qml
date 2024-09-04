@@ -307,6 +307,8 @@ StatusModal {
                 NetworkSelectPopup {
                     id: selectPopup
 
+                    property string initialSelection
+
                     x: editButton.width - width
                     y: editButton.height + 2
 
@@ -323,8 +325,10 @@ StatusModal {
                             d.preferredChainIdsArray = selection
                     }
 
+                    onOpened: initialSelection = JSON.stringify(selection)
                     onClosed: {
-                        root.updatePreferredChains(root.selectedAccount.address, d.preferredChainIds)
+                        if (initialSelection !== JSON.stringify(selection))
+                            root.updatePreferredChains(root.selectedAccount.address, d.preferredChainIds)
                     }
                 }
             }
