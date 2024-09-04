@@ -124,6 +124,13 @@ Control {
                 section.property: "type"
                 section.delegate: StatusBaseText {
                     width: ListView.view.width
+
+                    // Fixed height as a workaround for the
+                    // https://bugreports.qt.io/browse/QTBUG-62411 bug
+                    // causing improper first item positioning in some cases
+                    // (overlapping with the section delegate)
+                    height: 50
+
                     color: Theme.palette.baseColor1
                     padding: Style.current.padding
                     bottomPadding: 0
@@ -163,6 +170,9 @@ Control {
                 icon.width: 12
                 icon.height: 12
                 text: qsTr("Back")
+
+                horizontalPadding: 21
+                bottomPadding: Style.current.halfPadding
 
                 onClicked: collectiblesStackView.pop(StackView.Immediate)
             }
