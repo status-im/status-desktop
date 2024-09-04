@@ -1427,11 +1427,8 @@ method reorderCommunityCategories*(self: Module, categoryId: string, categoryPos
 
   self.controller.reorderCommunityCategories(categoryId, finalPosition)
 
-method toggleCollapsedCommunityCategory*(self: Module, categoryId: string, collapsed: bool) =
-  self.controller.toggleCollapsedCommunityCategory(categoryId, collapsed)
-
-method onToggleCollapsedCommunityCategory*(self: Module, categoryId: string, collapsed: bool) =
-  self.view.chatsModel().changeCategoryOpened(categoryId, not collapsed)
+method toggleCollapsedCommunityCategoryAsync*(self: Module, categoryId: string, collapsed: bool) =
+  self.controller.toggleCollapsedCommunityCategoryAsync(categoryId, collapsed)
 
 method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, toPosition: int) =
   self.controller.reorderCommunityChat(categoryId, chatId, toPosition + 1)

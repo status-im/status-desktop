@@ -318,10 +318,7 @@ method prepareEditCategoryModel*(self: AccessInterface, categoryId: string) {.ba
 method reorderCommunityCategories*(self: AccessInterface, categoryId: string, position: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleCollapsedCommunityCategory*(self: AccessInterface, categoryId: string, collapsed: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onToggleCollapsedCommunityCategory*(self: AccessInterface, categoryId: string, collapsed: bool) {.base.} =
+method toggleCollapsedCommunityCategoryAsync*(self: AccessInterface, categoryId: string, collapsed: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: string, position: int) {.base.} =
