@@ -31,30 +31,12 @@ class ReturningUser(UserAccount):
         self.status_address = status_address
 
 
-class ReturningUsersData(Enum):
-    RETURNING_USER_ONE = (
-        [
-            'rail', 'witness', 'era', 'asthma', 'empty', 'cheap', 'shed', 'pond', 'skate', 'amount', 'invite', 'year'
-        ], '0x3286c371ef648fe6232324b27ee0515f4ded24d9')
-    RETURNING_USER_TWO = (
-        [
-            'measure', 'cube', 'cousin', 'debris', 'slam', 'ignore', 'seven', 'hat', 'satisfy', 'frown', 'casino',
-            'inflict'
-        ], '0x99C096bB5F12bDe37DE9dbee8257Ebe2a5667C46')
-    WALLET_USER = (
-        [
-            'vocal', 'fruit', 'ordinary', 'meadow', 'south', 'athlete', 'inherit', 'since', 'version', 'pitch',
-            'oppose', 'lonely'
-        ], '0x26d6e10a6af4eb4d12ff4cf133a843eb4fa88d0b')
-
-
 user_account_one = UserAccount('squisher', '0000000000', [
     'rail', 'witness', 'era', 'asthma', 'empty', 'cheap', 'shed', 'pond', 'skate', 'amount', 'invite', 'year'
 ], '0x3286c371ef648fe6232324b27ee0515f4ded24d9')
 user_account_two = UserAccount('athletic', '0000000000', [
     'measure', 'cube', 'cousin', 'debris', 'slam', 'ignore', 'seven', 'hat', 'satisfy', 'frown', 'casino', 'inflict'
 ], '0x99C096bB5F12bDe37DE9dbee8257Ebe2a5667C46')
-
 
 community_params = {
     'name': ''.join(random.choices(string.ascii_letters +

@@ -4,8 +4,9 @@ from allure_commons._allure import step
 
 import configs
 import driver
-from constants import ReturningUser, ReturningUsersData
-from constants.wallet import WalletTransactions
+from configs import WALLET_SEED
+from constants import ReturningUser
+from constants.wallet import WalletTransactions, WalletAddress
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.signing_phrase_popup import SigningPhrasePopup
@@ -27,11 +28,11 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.case(704527)
 @pytest.mark.transaction
 @pytest.mark.parametrize('user_account', [ReturningUser(
-    seed_phrase=ReturningUsersData.WALLET_USER.value[0],
-    status_address=ReturningUsersData.WALLET_USER.value[1]
+    seed_phrase=WALLET_SEED.split(),
+    status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43'
 )])
 @pytest.mark.parametrize('receiver_account_address, amount, asset', [
-    pytest.param(ReturningUsersData.RETURNING_USER_ONE.value[1], 0, 'ETH')
+    pytest.param(WalletAddress.RECEIVER_ADDRESS.value, 0, 'ETH')
 ])
 @pytest.mark.timeout(timeout=120)
 def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_account_address, amount, asset):

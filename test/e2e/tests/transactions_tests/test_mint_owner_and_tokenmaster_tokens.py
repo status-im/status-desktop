@@ -7,7 +7,8 @@ from allure_commons._allure import step
 import configs
 import constants
 import driver
-from constants import ReturningUser, ReturningUsersData
+from configs import WALLET_SEED
+from constants import ReturningUser
 from tests.communities import marks
 from constants.community_settings import MintOwnerTokensElements
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
@@ -30,8 +31,8 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')
 @pytest.mark.case(727245)
 @pytest.mark.parametrize('user_account', [ReturningUser(
-    seed_phrase=ReturningUsersData.WALLET_USER.value[0],
-    status_address=ReturningUsersData.WALLET_USER.value[1]
+    seed_phrase=WALLET_SEED.split(),
+    status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43'
 )])
 @pytest.mark.transaction
 def test_mint_owner_and_tokenmaster_tokens(keys_screen, main_window, user_account):
