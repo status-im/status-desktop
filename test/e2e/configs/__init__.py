@@ -21,6 +21,7 @@ if AUT_PATH is None:
 if get_platform() == "Windows" and 'bin' not in AUT_PATH:
     exit('Please use launcher from "bin" folder in "AUT_PATH"')
 AUT_PATH = SystemPath(AUT_PATH)
+WALLET_SEED = os.getenv('WALLET_TEST_USER_SEED')
 
 # Save application logs
 AUT_DIR = path.dirname(AUT_PATH)

@@ -5,7 +5,8 @@ from allure_commons._allure import step
 import configs
 import constants
 import driver
-from constants import ReturningUser, ReturningUsersData
+from configs import WALLET_SEED
+from constants import ReturningUser
 from constants.wallet import WalletTransactions
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
@@ -28,11 +29,11 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.case(704602)
 @pytest.mark.transaction
 @pytest.mark.parametrize('user_account', [[ReturningUser(
-    seed_phrase=ReturningUsersData.WALLET_USER.value[0],
-    status_address=ReturningUsersData.WALLET_USER.value[1]
+    seed_phrase=WALLET_SEED.split(),
+    status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43'
 )]])
 @pytest.mark.parametrize('tab, receiver_account_address, amount, collectible', [
-    pytest.param('Collectibles', ReturningUsersData.WALLET_USER.value[1], 1, 'Panda')
+    pytest.param('Collectibles', '0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43', 1, 'Panda')
 ])
 @pytest.mark.timeout(timeout=120)
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14862")
