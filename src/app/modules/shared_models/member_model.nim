@@ -179,6 +179,18 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
+  proc addItems*(self: Model, items: seq[MemberItem]) =
+    let modelIndex = newQModelIndex()
+    defer: modelIndex.delete
+
+    let first = self.items.len
+    let last = first + items.len - 1
+
+    self.beginInsertRows(modelIndex, first, last)
+    self.items.add(items)
+    self.endInsertRows()
+    self.countChanged()
+
   proc findIndexForMember(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].pubKey == pubKey):
