@@ -10,6 +10,7 @@ type
   ModelRole {.pure.} = enum
     PubKey = UserRole + 1
     DisplayName
+    PreferredDisplayName
     EnsName
     IsEnsVerified
     LocalNickname
@@ -79,6 +80,7 @@ QtObject:
     {
       ModelRole.PubKey.int: "pubKey",
       ModelRole.DisplayName.int: "displayName",
+      ModelRole.PreferredDisplayName.int: "preferredDisplayName",
       ModelRole.EnsName.int: "ensName",
       ModelRole.IsEnsVerified.int: "isEnsVerified",
       ModelRole.LocalNickname.int: "localNickname",
@@ -117,6 +119,15 @@ QtObject:
       result = newQVariant(item.pubKey)
     of ModelRole.DisplayName:
       result = newQVariant(item.displayName)
+    of ModelRole.PreferredDisplayName:
+      # ["localNickname", "ensName", "displayName", "alias"]
+      if item.localNickname != "":
+        return newQVariant(item.localNickname)
+      if item.ensName != "":
+        return newQVariant(item.ensName)
+      if item.displayName != "":
+        return newQVariant(item.displayName)
+      return newQVariant(item.alias)
     of ModelRole.EnsName:
       result = newQVariant(item.ensName)
     of ModelRole.IsEnsVerified:

@@ -90,15 +90,6 @@ Item {
             model: SortFilterProxyModel {
                 sourceModel: root.usersModel
 
-                proxyRoles: FastExpressionRole {
-                    function displayNameProxy(nickname, ensName, displayName, aliasName) {
-                        return ProfileUtils.displayName(nickname, ensName, displayName, aliasName)
-                    }
-                    name: "preferredDisplayName"
-                    expectedRoles: ["localNickname", "ensName", "displayName", "alias"]
-                    expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
-                }
-
                 sorters: [
                     RoleSorter {
                         roleName: "onlineStatus"
@@ -114,8 +105,7 @@ Item {
             section.delegate: (root.width > 58) ? sectionDelegateComponent : null
             delegate: StatusMemberListItem {
                 width: ListView.view.width
-                nickName: model.localNickname
-                userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
+                userName: model.preferredDisplayName
                 pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
                 isContact: model.isContact
                 isVerified: model.isVerified
