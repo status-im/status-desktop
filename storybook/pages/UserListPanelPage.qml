@@ -45,7 +45,7 @@ SplitView {
     // mainModuleInst mock
     QtObject {
         function getContactDetailsAsJson(publicKey, getVerificationRequest) {
-            return JSON.stringify({ ensVerified: false })
+            return JSON.stringify({ ensVerified: publicKey === "0x04d1bed192343f470f1255" }) // make Richard "ENS verified"
         }
         Component.onCompleted: {
             Utils.mainModuleInst = this
@@ -66,7 +66,7 @@ SplitView {
 
             sourceComponent: UserListPanel {
                 usersModel: model
-                label: "Some label"
+                label: "Members"
             }
         }
     }

@@ -90,13 +90,10 @@ Item {
             model: SortFilterProxyModel {
                 sourceModel: root.usersModel
 
-                proxyRoles: FastExpressionRole {
-                    function displayNameProxy(nickname, ensName, displayName, aliasName) {
-                        return ProfileUtils.displayName(nickname, ensName, displayName, aliasName)
-                    }
+                proxyRoles: JoinRole {
                     name: "preferredDisplayName"
-                    expectedRoles: ["localNickname", "ensName", "displayName", "alias"]
-                    expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
+                    roleNames: ["localNickname", "ensName", "displayName", "alias"]
+                    separator: ""
                 }
 
                 sorters: [
