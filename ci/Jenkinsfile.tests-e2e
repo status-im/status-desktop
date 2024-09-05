@@ -167,7 +167,8 @@ pipeline {
               credentialsId: 'test-rail-api-devops',
               usernameVariable: 'TESTRAIL_USR',
               passwordVariable: 'TESTRAIL_PSW'
-            )
+            ),
+            string(credentialsId: 'wallet-test-user-seed', variable: 'WALLET_TEST_USER_SEED')
           ]) {
             /* Keep the --reruns flag first, or it won't work */
             sh """
