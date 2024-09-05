@@ -179,11 +179,12 @@ StatusSectionLayout {
             Connections {
                 target: root
                 onChatContentModuleChanged: {
-                    if (userListPanel.usersModel != null && userListPanel.wasFullCommunityList && userListPanel.isFullCommunityList) {
+                    if (!root.chatContentModule ||
+                        (userListPanel.usersModel != null && root.chatContentModule.chatDetails.belongsToCommunity && userListPanel.wasFullCommunityList && userListPanel.isFullCommunityList)) {
                         // If the previous channel had the full community list already, and we still need the whole list, just keep the old model
                         return
                     }
-                    userListPanel.usersModel = root.chatContentModule && root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
+                    userListPanel.usersModel = root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
                     userListPanel.wasFullCommunityList = userListPanel.isFullCommunityList
                 }
             }
@@ -192,6 +193,7 @@ StatusSectionLayout {
             store: root.rootStore
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
+            usersModel: root.chatContentModule && root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
         }
     }
 
