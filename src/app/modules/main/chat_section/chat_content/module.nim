@@ -97,7 +97,7 @@ method load*(self: Module, chatItem: chat_item.Item) =
     chatItem.color, chatItem.description, chatItem.emoji, chatItem.hasUnreadMessages, chatItem.notificationsCount,
     chatItem.highlight, chatItem.muted, chatItem.position, isUntrustworthy = trustStatus == TrustStatus.Untrustworthy,
     isContact, chatItem.blocked, chatItem.canPost, chatItem.canView, chatItem.canPostReactions,
-    chatItem.hideIfPermissionsNotMet, chatItem.missingEncryptionKey)
+    chatItem.hideIfPermissionsNotMet, chatItem.missingEncryptionKey, chatItem.requiresPermissions)
   
   self.view.chatDetailsChanged()
 
