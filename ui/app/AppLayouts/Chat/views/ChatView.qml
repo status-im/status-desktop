@@ -162,12 +162,11 @@ StatusSectionLayout {
             return false
         }
 
-        let chatContentModule = root.rootStore.currentChatContentModule()
-        if (!chatContentModule) {
+        if (!root.chatContentModule) {
             return false
         }
         // Check if user list is available as an option for particular chat content module
-        return chatContentModule.chatDetails.isUsersListAvailable
+        return root.chatContentModule.chatDetails.isUsersListAvailable
     }
 
     rightPanel: Component {
