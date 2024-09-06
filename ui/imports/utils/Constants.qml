@@ -430,6 +430,13 @@ QtObject {
         readonly property int communityChat: 6
     }
 
+    readonly property QtObject profileType: QtObject {
+        readonly property int regular: 0
+        readonly property int self: 1
+        readonly property int blocked: 2
+        readonly property int bridged: 3
+    }
+
     readonly property QtObject memberRole: QtObject{
         readonly property int none: 0
         readonly property int owner: 1
@@ -473,6 +480,13 @@ QtObject {
 
     readonly property QtObject messageModelRoles: QtObject {
         readonly property int responseToMessageWithId: 262 // ModelRole.ResponseToMessageWithId
+    }
+
+    readonly property QtObject contactType: QtObject {
+        readonly property int nonContact: 0
+        readonly property int contact: 1
+        readonly property int contactRequestReceived: 2
+        readonly property int contactRequestSent: 3
     }
 
     readonly property QtObject trustStatus: QtObject {

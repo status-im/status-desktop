@@ -11,6 +11,7 @@ import Models 1.0
 
 import utils 1.0
 import shared.views.chat 1.0
+import shared.status 1.0
 
 SplitView {
 
@@ -30,30 +31,22 @@ SplitView {
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
             clip: true
 
-            RowLayout {
+            ColumnLayout {
                 anchors.centerIn: parent
-                Button {
-                    text: "Message context menu"
-                    onClicked: {
-                        menu1.createObject(this).popup()
+                spacing: 10
+
+                RowLayout {
+                    Button {
+                        text: "Message context menu"
+                        onClicked: {
+                            menu1.createObject(this).popup()
+                        }
                     }
-                }
-                Button {
-                    text: "Message context menu (hide disabled items)"
-                    onClicked: {
-                        menu2.createObject(this).popup()
-                    }
-                }
-                Button {
-                    text: "Profile context menu"
-                    onClicked: {
-                        menu3.createObject(this).popup()
-                    }
-                }
-                Button {
-                    text: "Profile context menu (hide disabled items)"
-                    onClicked: {
-                        menu4.createObject(this).popup()
+                    Button {
+                        text: "Message context menu (hide disabled items)"
+                        onClicked: {
+                            menu2.createObject(this).popup()
+                        }
                     }
                 }
             }
@@ -79,53 +72,22 @@ SplitView {
                     }
                 }
             }
-
-            Component {
-                id: menu3
-                ProfileContextMenu {
-                    anchors.centerIn: parent
-                    hideDisabledItems: false
-                    onClosed: {
-                        destroy()
-                    }
-                }
-            }
-
-            Component {
-                id: menu4
-                ProfileContextMenu {
-                    anchors.centerIn: parent
-                    hideDisabledItems: true
-                    onClosed: {
-                        destroy()
-                    }
-                }
-            }
-        }
-
-        LogsAndControlsPanel {
-            id: logsAndControlsPanel
-
-            SplitView.minimumHeight: 100
-            SplitView.preferredHeight: 150
-
-            logsView.logText: logs.logText
         }
     }
 
-    Pane {
-        SplitView.minimumWidth: 300
-        SplitView.preferredWidth: 300
+    LogsAndControlsPanel {
+        id: logsAndControlsPanel
 
-        ScrollView {
-            anchors.fill: parent
+        SplitView.minimumWidth: 150
+        SplitView.preferredWidth: 250
 
-            ColumnLayout {
-                spacing: 16
+        logsView.logText: logs.logText
 
-            }
+        controls: ColumnLayout {
+            spacing: 16
         }
     }
+
 }
 
 // category: Views

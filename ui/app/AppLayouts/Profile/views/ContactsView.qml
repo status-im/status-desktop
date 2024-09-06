@@ -34,11 +34,14 @@ SettingsContentBase {
     }
 
     function openContextMenu(publicKey, name, icon) {
+        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey, root.contactsStore.myPublicKey)
+
         Global.openMenu(contactContextMenuComponent, this, {
-                            selectedUserPublicKey: publicKey,
-                            selectedUserDisplayName: name,
-                            selectedUserIcon: icon,
-                        })
+            profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
+            publicKey: publicKey,
+            displayName: name,
+            userIcon: icon,
+        })
     }
 
     Item {
@@ -49,23 +52,45 @@ SettingsContentBase {
 
         Component {
             id: contactContextMenuComponent
-
             ProfileContextMenu {
                 id: contactContextMenu
-                store: ({contactsStore: root.contactsStore})
 
-                onOpenProfileClicked: function (pubkey) {
-                    Global.openProfilePopup(pubkey, null, null)
+                onOpenProfileClicked: Global.openProfilePopup(contactContextMenu.publicKey, null, null)
+                onCreateOneToOneChat: root.contactsStore.joinPrivateChat(contactContextMenu.publicKey)
+                onReviewContactRequest: () => {
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    Global.openReviewContactRequestPopup(contactContextMenu.publicKey, contactDetails, null)
                 }
-                onCreateOneToOneChat: function (communityId, chatId, ensName) {
-                    root.contactsStore.joinPrivateChat(chatId)
+                onSendContactRequest: () => {
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    Global.openContactRequestPopup(contactContextMenu.publicKey, contactDetails, null)
                 }
-                onClosed: {
-                    destroy()
+                onEditNickname: () => {
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    Global.openNicknamePopupRequested(contactContextMenu.publicKey, contactDetails, null)
+                }
+                onRemoveNickname: (displayName) => {
+                    root.contactsStore.changeContactNickname(contactContextMenu.publicKey, "", displayName, true)
+                }
+                onUnblockContact: () => {
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    Global.unblockContactRequested(contactContextMenu.publicKey, contactDetails)
+                }
+                onMarkAsUntrusted: () => {
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    Global.markAsUntrustedRequested(contactContextMenu.publicKey, contactDetails)
+                }
+                onRemoveTrustStatus: root.contactsStore.removeTrustStatus(contactContextMenu.publicKey)
+                onRemoveContact: () => {
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    Global.removeContactRequested(contactContextMenu.publicKey, contactDetails)
+                }
+                onBlockContact: () => {
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    Global.blockContactRequested(contactContextMenu.publicKey, contactDetails)
                 }
             }
         }
-
         SearchBox {
             id: searchBox
             anchors.left: parent.left
@@ -173,7 +198,7 @@ SettingsContentBase {
                     visible: root.contactsStore.myContactsModel.count === 0
                     NoFriendsRectangle {
                         anchors.centerIn: parent
-                        text: qsTr("You don’t have any contacts yet")
+                        text: qsTr("You don't have any contacts yet")
                     }
                 }
             }

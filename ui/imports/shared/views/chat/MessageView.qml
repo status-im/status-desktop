@@ -154,12 +154,14 @@ Loader {
             // so we don't enable to right click the unavailable profile
             return false
         }
+        const publicKey = isReply ? quotedMessageFrom : root.senderId
+        const isBridgedAccount = isReply ? (quotedMessageContentType === Constants.messageContentType.bridgeMessageType) : root.isBridgeMessage
+        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey, root.rootStore.contactsStore.myPublicKey, isBridgedAccount)
 
-        const params = {
-            selectedUserPublicKey: isReply ? quotedMessageFrom : root.senderId,
-            selectedUserDisplayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
-            selectedUserIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
-            isBridgedAccount: isReply ? (quotedMessageContentType === Constants.messageContentType.bridgeMessageType) : root.isBridgeMessage
+        const params = { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
+            publicKey: isReply ? quotedMessageFrom : root.senderId,
+            displayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
+            userIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
         }
 
         Global.openMenu(profileContextMenuComponent, sender, params)
@@ -1178,23 +1180,46 @@ Loader {
 
     Component {
         id: profileContextMenuComponent
-
         ProfileContextMenu {
-            store: root.rootStore
-            onOpenProfileClicked: (publicKey) => {
-                Global.openProfilePopup(publicKey, null)
-            }
-            onCreateOneToOneChat: (communityId, chatId, ensName) => {
+            id: profileContextMenu
+            onOpenProfileClicked: Global.openProfilePopup(profileContextMenu.publicKey, null)
+            onCreateOneToOneChat: () => {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.publicKey, "")
             }
-            onOpened: {
-                root.setMessageActive(root.messageId, true)
+            onReviewContactRequest: () => {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.openReviewContactRequestPopup(profileContextMenu.publicKey, contactDetails, null)
             }
-            onClosed: {
-                root.setMessageActive(root.messageId, false)
-                destroy()
+            onSendContactRequest: () => {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.openContactRequestPopup(profileContextMenu.publicKey, contactDetails, null)
             }
+            onEditNickname: () => {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.openNicknamePopupRequested(profileContextMenu.publicKey, contactDetails, null)
+            }
+            onRemoveNickname: () => {
+                root.rootStore.contactsStore.changeContactNickname(profileContextMenu.publicKey, "", profileContextMenu.displayName, true)
+            }
+            onUnblockContact: () => {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.unblockContactRequested(profileContextMenu.publicKey, contactDetails)
+            }
+            onMarkAsUntrusted: () => {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.markAsUntrustedRequested(profileContextMenu.publicKey, contactDetails)
+            }
+            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(profileContextMenu.publicKey)
+            onRemoveContact: () => {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.removeContactRequested(profileContextMenu.publicKey, contactDetails)
+            }
+            onBlockContact: () => {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.blockContactRequested(profileContextMenu.publicKey, contactDetails)
+            }
+            onOpened: root.setMessageActive(root.messageId, true)
         }
     }
 
