@@ -102,7 +102,7 @@ class LeftPanel(QObject):
     @allure.step('Open advanced settings')
     @handle_settings_opening(AdvancedSettingsView, '10-SettingsMenuItem')
     def open_advanced_settings(self, click_attempts: int = 2) -> 'AdvancedSettingsView':
-        assert AdvancedSettingsView().exists, 'Advanced settings view was not opened'
+        assert AdvancedSettingsView().wait_until_appears(), 'Advanced settings view was not opened'
         return AdvancedSettingsView()
 
 

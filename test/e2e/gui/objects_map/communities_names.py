@@ -1,4 +1,5 @@
 from gui.objects_map.names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay, mainWindow_StatusWindow
+from objectmaphelper import *
 
 # Map for communities screens, views locators
 
@@ -115,6 +116,7 @@ arbitrum_NetworkSelectItemDelegate = {"container": statusDesktop_mainWindow_over
 optimism_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionRadioButton_Optimism", "type": "StatusRadioButton", "visible": True}
 mainnet_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionRadioButton_Mainnet", "type": "StatusRadioButton", "visible": True}
 arbitrum_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionRadioButton_Arbitrum", "type": "StatusRadioButton", "visible": True}
+networkItem_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("networkSelectionRadioButton*"), "type": "StatusRadioButton", "visible": True}
 
 editOwnerTokenView_Mint_StatusButton = {"checkable": False, "container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "mintButton", "type": "StatusButton", "visible": True}
 editOwnerTokenView_FeeRow = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "FeeRow", "unnamed": 1, "visible": True}

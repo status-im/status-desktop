@@ -30,7 +30,7 @@ class MintOwnerTokensElements(Enum):
     MASTER_TOKEN_CHEKLIST_ELEMENT_3 = 'Ability to mint and airdrop Community tokens'
     MASTER_TOKEN_CHEKLIST_ELEMENT_4 = 'Non-transferrable'
     MASTER_TOKEN_CHEKLIST_ELEMENT_5 = 'Remotely destructible by the Owner token hodler'
-    SIGN_TRANSACTION_MINT_TITLE = ' Owner and TokenMaster tokens on Mainnet'
+    SIGN_TRANSACTION_MINT_TITLE = ' Owner and TokenMaster tokens on '
     OWNER_TOKEN_NAME = 'Owner-'
     MASTER_TOKEN_NAME = 'TMaster-'
     OWNER_TOKEN_SYMBOL = 'OWN'
