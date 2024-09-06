@@ -127,11 +127,13 @@ Item {
                 ringSettings.ringSpecModel: model.colorHash
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
+                        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.store.contactsStore.getProfileContext(model.pubKey, userProfile.pubKey)
+
                         Global.openMenu(profileContextMenuComponent, this, {
-                                            myPublicKey: root.store.myPublicKey(),
-                                            selectedUserPublicKey: model.pubKey,
-                                            selectedUserDisplayName: nickName || userName,
-                                            selectedUserIcon: model.icon,
+                                            profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
+                                            publicKey: model.pubKey,
+                                            displayName: nickName || userName,
+                                            userIcon: model.icon,
                                         })
                     } else if (mouse.button === Qt.LeftButton) {
                         Global.openProfilePopup(model.pubKey)
@@ -168,17 +170,44 @@ Item {
         id: profileContextMenuComponent
 
         ProfileContextMenu {
-            store: root.store
+            id: profileContextMenu
             margins: 8
-            onOpenProfileClicked: {
-                Global.openProfilePopup(publicKey, null)
-            }
+            onOpenProfileClicked: Global.openProfilePopup(profileContextMenu.publicKey, null)
             onCreateOneToOneChat: {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.store.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
+                root.store.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.publicKey, "")
             }
-            onClosed: {
-                destroy()
+            onReviewContactRequest: {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.openReviewContactRequestPopup(profileContextMenu.publicKey, contactDetails, null)
+            }
+            onSendContactRequest: {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.openContactRequestPopup(profileContextMenu.publicKey, contactDetails, null)
+            }
+            onEditNickname: {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.openNicknamePopupRequested(profileContextMenu.publicKey, contactDetails, null)
+            }
+            onRemoveNickname: (displayName) => {
+                root.store.contactsStore.changeContactNickname(profileContextMenu.publicKey, "", displayName, true)
+            }
+            onUnblockContact: {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.unblockContactRequested(profileContextMenu.publicKey, contactDetails)
+            }
+            onMarkAsUntrusted: {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.markAsUntrustedRequested(profileContextMenu.publicKey, contactDetails)
+            }
+            onRemoveTrustStatus: root.store.contactsStore.removeTrustStatus(profileContextMenu.publicKey)
+            onRemoveContact: {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.removeContactRequested(profileContextMenu.publicKey, contactDetails)
+            }
+            onBlockContact: {
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                Global.blockContactRequested(profileContextMenu.publicKey, contactDetails)
             }
         }
     }

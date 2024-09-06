@@ -303,11 +303,15 @@ Item {
 
                 onClicked: {
                     if(mouse.button === Qt.RightButton) {
+                        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.rootStore.contactsStore.getProfileContext(model.pubKey, Global.userProfile.pubKey)
+
                         Global.openMenu(memberContextMenuComponent, this, {
-                                            selectedUserPublicKey: model.pubKey,
-                                            selectedUserDisplayName: memberItem.title,
-                                            selectedUserIcon: icon.name,
-                                        })
+                            profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
+                            myPublicKey: Global.userProfile.pubKey,
+                            publicKey: model.pubKey,
+                            displayName: memberItem.title,
+                            userIcon: icon.name,
+                        })
                     } else {
                         Global.openProfilePopup(model.pubKey)
                     }
@@ -321,18 +325,43 @@ Item {
 
         ProfileContextMenu {
             id: memberContextMenuView
-            store: root.rootStore
-            myPublicKey: Global.userProfile.pubKey
 
-            onOpenProfileClicked: {
-                Global.openProfilePopup(publicKey, null)
-            }
+            onOpenProfileClicked: Global.openProfilePopup(memberContextMenuView.publicKey, null)
             onCreateOneToOneChat: {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", membersContextMenuView.publicKey, "")
             }
-            onClosed: {
-                destroy()
+            onReviewContactRequest: {
+                const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
+                Global.openReviewContactRequestPopup(memberContextMenuView.publicKey, contactDetails, null)
+            }
+            onSendContactRequest: {
+                const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
+                Global.openContactRequestPopup(memberContextMenuView.publicKey, contactDetails, null)
+            }
+            onEditNickname: {
+                const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
+                Global.openNicknamePopupRequested(memberContextMenuView.publicKey, contactDetails, null)
+            }
+            onRemoveNickname: (displayName) => {
+                root.store.contactsStore.changeContactNickname(memberContextMenuView.publicKey, "", displayName, true)
+            }
+            onUnblockContact: {
+                const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
+                Global.unblockContactRequested(memberContextMenuView.publicKey, contactDetails)
+            }
+            onMarkAsUntrusted: {
+                const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
+                Global.markAsUntrustedRequested(memberContextMenuView.publicKey, contactDetails)
+            }
+            onRemoveTrustStatus: root.store.contactsStore.removeTrustStatus(memberContextMenuView.publicKey)
+            onRemoveContact: {
+                const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
+                Global.removeContactRequested(memberContextMenuView.publicKey, contactDetails)
+            }
+            onBlockContact: {
+                const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
+                Global.blockContactRequested(memberContextMenuView.publicKey, contactDetails)
             }
         }
     }
