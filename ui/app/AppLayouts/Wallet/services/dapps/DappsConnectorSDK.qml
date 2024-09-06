@@ -439,7 +439,7 @@ WalletConnectSDKBase {
             dappUrl: request.dappUrl
             dappIcon: request.dappIcon
 
-            accountColor: request.account.color
+            accountColor: Utils.getColorForId(request.account.colorId)
             accountName: request.account.name
             accountAddress: request.account.address
             accountEmoji: request.account.emoji
