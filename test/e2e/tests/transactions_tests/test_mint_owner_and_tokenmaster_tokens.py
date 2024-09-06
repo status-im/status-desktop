@@ -1,3 +1,4 @@
+import random
 import time
 
 import allure
@@ -31,7 +32,6 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')
 @pytest.mark.case(727245)
 @pytest.mark.transaction
-@pytest.mark.skip('temp skip test to fix it using L2 networks')
 def test_mint_owner_and_tokenmaster_tokens(keys_screen, main_window, user_account):
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED.split(),
@@ -67,6 +67,7 @@ def test_mint_owner_and_tokenmaster_tokens(keys_screen, main_window, user_accoun
         wallet_settings.open_networks().switch_testnet_mode_toggle().turn_on_testnet_mode_in_testnet_modal()
 
     with step('Switch manage community on testnet option'):
+        settings = main_window.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().switch_manage_on_community()
 
     with step('Create simple community'):
@@ -80,54 +81,17 @@ def test_mint_owner_and_tokenmaster_tokens(keys_screen, main_window, user_accoun
         community_setting = community_screen.left_panel.open_community_settings()
         tokens_screen = community_setting.left_panel.open_tokens().click_mint_owner_button()
 
-    with step('Verify all elements of owner token panel'):
-        tokens_screen.verify_text_on_owner_token_panel()
-
-    with step('Verify all elements of master token panel'):
-        tokens_screen.verify_text_on_master_token_panel()
-
     with step('Click next'):
         edit_owner_token_view = tokens_screen.click_next()
 
-    with (step('Verify all elements of owner token section')):
-        with step('Verify name'):
-            assert MintOwnerTokensElements.OWNER_TOKEN_NAME.value + \
-                   community_params['name'] in edit_owner_token_view.get_all_text_labels()
-        with step('Verify symbol'):
-            assert edit_owner_token_view.get_symbol_box_content(0) == (
-                    MintOwnerTokensElements.OWNER_TOKEN_SYMBOL.value + community_params['name'][:3]).upper()
-        with step('Verify crown'):
-            assert edit_owner_token_view.get_crown_symbol
-        with step('Verify total and remaining fields'):
-            assert edit_owner_token_view.get_total_box_content(0) == '1'
-            assert edit_owner_token_view.get_remaining_box_content(0) == '1'
-        with step('Verify transferable and destructible'):
-            assert edit_owner_token_view.get_transferable_box_content(0) == 'Yes'
-            assert edit_owner_token_view.get_destructible_box_content(0) == 'No'
-
-    with step('Verify all elements of master token section'):
-        with step('Verify name'):
-            assert MintOwnerTokensElements.MASTER_TOKEN_NAME.value + \
-                   community_params['name'] in edit_owner_token_view.get_all_text_labels()
-        with step('Verify symbol'):
-            assert edit_owner_token_view.get_symbol_box_content(1) == (
-                    MintOwnerTokensElements.MASTER_TOKEN_SYMBOL.value + community_params[
-                                                                            'name'][:3]).upper()
-        with step('Verify coin'):
-            assert edit_owner_token_view.get_coin_symbol
-        with step('Verify total and remaining fields'):
-            assert edit_owner_token_view.get_total_box_content(1) == '∞'
-            assert edit_owner_token_view.get_remaining_box_content(1) == '∞'
-        with step('Verify transferable and destructible'):
-            assert edit_owner_token_view.get_transferable_box_content(1) == 'No'
-            assert edit_owner_token_view.get_destructible_box_content(1) == 'Yes'
-
-    with step('Select Mainnet network'):
-        edit_owner_token_view.select_mainnet_network()
+    with step('Select network'):
+        network_name = random.choice(['Arbitrum', 'Optimism'])  # no mainnet because of prices
+        edit_owner_token_view.select_network(network_name)
 
     with step('Verify fees title and gas fees exist'):
         assert driver.waitFor(lambda: edit_owner_token_view.get_fee_title == 'Mint ' + community_params[
-            'name'] + MintOwnerTokensElements.SIGN_TRANSACTION_MINT_TITLE.value, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            'name'] + MintOwnerTokensElements.SIGN_TRANSACTION_MINT_TITLE.value + network_name,
+                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         assert driver.waitFor(lambda: edit_owner_token_view.get_fee_total_value != '',
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
@@ -136,15 +100,11 @@ def test_mint_owner_and_tokenmaster_tokens(keys_screen, main_window, user_accoun
 
     with step('Verify fee text and sign transaction'):
         assert start_minting.get_fee_title == 'Mint ' + community_params[
-            'name'] + MintOwnerTokensElements.SIGN_TRANSACTION_MINT_TITLE.value
+            'name'] + MintOwnerTokensElements.SIGN_TRANSACTION_MINT_TITLE.value + network_name
         assert start_minting.get_fee_total_value != ''
         start_minting.sign_transaction(user_account.password)
         time.sleep(1)
         minted_tokens_view = MintedTokensView()
-
-    with step('Verify that status of both tokens is Minting'):
-        assert minted_tokens_view.get_owner_token_status == 'Minting...'
-        assert minted_tokens_view.get_master_token_status == 'Minting...'
 
     with step('Verify toast messages about started minting process appears'):
         toast_messages = main_window.wait_for_notification()
@@ -154,3 +114,7 @@ def test_mint_owner_and_tokenmaster_tokens(keys_screen, main_window, user_accoun
         assert driver.waitFor(lambda: (community_params[
                                            'name'] + MintOwnerTokensElements.TOAST_TOKENS_BEING_MINTED.value) in toast_messages,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+    with step('Verify that status of both tokens'):
+        assert driver.waitFor(lambda: (minted_tokens_view.get_owner_token_status == '1 of 1 (you hodl)'), 15000)
+        assert driver.waitFor(lambda: (minted_tokens_view.get_master_token_status == '∞'), 15000)

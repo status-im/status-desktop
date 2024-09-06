@@ -103,27 +103,27 @@ class TokensOwnerTokenSettingsView(QObject):
 
     @allure.step('Verify text on owner token panel')
     def verify_text_on_owner_token_panel(self):
-        assert str(self.get_text_labels_from_owner_token_panel[
-                       1].text) == MintOwnerTokensElements.OWNER_TOKEN_CHEKLIST_ELEMENT_1.value, f'Actual text is {self.get_text_labels_from_owner_token_panel[2].text}'
-        assert str(self.get_text_labels_from_owner_token_panel[
-                       2].text) == MintOwnerTokensElements.OWNER_TOKEN_CHEKLIST_ELEMENT_2.value, f'Actual text is {self.get_text_labels_from_owner_token_panel[3].text}'
-        assert str(self.get_text_labels_from_owner_token_panel[
-                       3].text) == MintOwnerTokensElements.OWNER_TOKEN_CHEKLIST_ELEMENT_3.value, f'Actual text is {self.get_text_labels_from_owner_token_panel[4].text}'
-        assert str(self.get_text_labels_from_owner_token_panel[
-                       4].text) == MintOwnerTokensElements.OWNER_TOKEN_CHEKLIST_ELEMENT_4.value, f'Actual text is {self.get_text_labels_from_owner_token_panel[5].text}'
+        assert str(self.get_text_labels_from_owner_token_panel[2].text) \
+               == MintOwnerTokensElements.OWNER_TOKEN_CHEKLIST_ELEMENT_1.value, f'Actual text is {self.get_text_labels_from_owner_token_panel[2].text}'
+        assert str(self.get_text_labels_from_owner_token_panel[3].text) \
+               == MintOwnerTokensElements.OWNER_TOKEN_CHEKLIST_ELEMENT_2.value, f'Actual text is {self.get_text_labels_from_owner_token_panel[3].text}'
+        assert str(self.get_text_labels_from_owner_token_panel[4].text) \
+               == MintOwnerTokensElements.OWNER_TOKEN_CHEKLIST_ELEMENT_3.value, f'Actual text is {self.get_text_labels_from_owner_token_panel[4].text}'
+        assert str(self.get_text_labels_from_owner_token_panel[5].text) \
+               == MintOwnerTokensElements.OWNER_TOKEN_CHEKLIST_ELEMENT_4.value, f'Actual text is {self.get_text_labels_from_owner_token_panel[5].text}'
 
     @allure.step('Verify text on master token panel')
     def verify_text_on_master_token_panel(self):
         assert str(self.get_text_labels_from_master_token_panel[
-                       1].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_1.value, f'Actual text is {self.get_text_labels_from_master_token_panel[1].text}'
+                       3].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_1.value, f'Actual text is {self.get_text_labels_from_master_token_panel[3].text}'
         assert str(self.get_text_labels_from_master_token_panel[
-                       2].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_2.value, f'Actual text is {self.get_text_labels_from_master_token_panel[2].text}'
+                       4].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_2.value, f'Actual text is {self.get_text_labels_from_master_token_panel[4].text}'
         assert str(self.get_text_labels_from_master_token_panel[
-                       3].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_3.value, f'Actual text is {self.get_text_labels_from_master_token_panel[3].text}'
+                       5].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_3.value, f'Actual text is {self.get_text_labels_from_master_token_panel[5].text}'
         assert str(self.get_text_labels_from_master_token_panel[
-                       4].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_4.value, f'Actual text is {self.get_text_labels_from_master_token_panel[4].text}'
+                       6].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_4.value, f'Actual text is {self.get_text_labels_from_master_token_panel[6].text}'
         assert str(self.get_text_labels_from_master_token_panel[
-                       5].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_5.value, f'Actual text is {self.get_text_labels_from_master_token_panel[5].text}'
+                       7].text) == MintOwnerTokensElements.MASTER_TOKEN_CHEKLIST_ELEMENT_5.value, f'Actual text is {self.get_text_labels_from_master_token_panel[5].text}'
 
     @property
     @allure.step('Get all text from master token panel')
@@ -151,6 +151,9 @@ class EditOwnerTokenView(QObject):
         self._select_network_filter = QObject(communities_names.editOwnerTokenView_netFilter_NetworkFilter)
         self._select_network_combobox = QObject(communities_names.editOwnerTokenView_comboBox_ComboBox)
         self._mainnet_network_item = CheckBox(communities_names.mainnet_StatusRadioButton)
+        self.optimism_network_item = CheckBox(communities_names.optimism_StatusRadioButton)
+        self.arbitrum_network_item = CheckBox(communities_names.arbitrum_StatusRadioButton)
+        self.network_item = CheckBox(communities_names.networkItem_StatusRadioButton)
         self._mint_button = Button(communities_names.editOwnerTokenView_Mint_StatusButton)
         self._fees_text_object = TextLabel(communities_names.editOwnerTokenView_fees_StatusBaseText)
         self._crown_icon = QObject(communities_names.editOwnerTokenView_crown_icon_StatusIcon)
@@ -255,20 +258,17 @@ class EditOwnerTokenView(QObject):
         destructible_box = self.get_destructible_boxes()[index]
         return str(destructible_box.value)
 
-    @allure.step('Select Mainnet network')
-    def select_mainnet_network(self, attempts: int = 2):
+    def select_network(self, network_name):
         if not self._fees_box.is_visible:
             self._scroll.vertical_scroll_down(self._fees_box)
         self._select_network_filter.click()
-        try:
-            self._mainnet_network_item.wait_until_appears()
-            self._mainnet_network_item.click()
-            return self
-        except AssertionError as err:
-            if attempts:
-                self.select_mainnet_network(attempts - 1)
-            else:
-                raise err
+        network_options = driver.findAllObjects(self.network_item.real_name)
+        assert network_options, f'Network options are not displayed'
+        for item in network_options:
+            if str(getattr(item, 'objectName', '')).endswith(network_name):
+                QObject(item).click()
+                break
+        return self
 
     @allure.step('Click mint button')
     def click_mint(self):
