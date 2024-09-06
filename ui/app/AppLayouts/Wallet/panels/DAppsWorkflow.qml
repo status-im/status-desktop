@@ -167,7 +167,7 @@ DappsComboBox {
             dappIcon: request.dappIcon
             dappName: request.dappName
 
-            accountColor: request.account.color
+            accountColor: Utils.getColorForId(request.account.colorId)
             accountName: request.account.name
             accountAddress: request.account.address
             accountEmoji: request.account.emoji
