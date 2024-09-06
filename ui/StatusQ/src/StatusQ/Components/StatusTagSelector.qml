@@ -415,14 +415,11 @@ Item {
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
                 isContact: model.isContact
-                asset.name: model.icon
-                asset.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.pubKey)]
-                asset.isImage: (asset.name !== "")
-                asset.isLetterIdenticon: (asset.name === "")
+                icon.name: model.icon
+                icon.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.pubKey)]
                 status: model.onlineStatus
-                statusListItemIcon.badge.border.color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
                 ringSettings.ringSpecModel: root.ringSpecModelGetter(model.pubKey)
-                color: (sensor.containsMouse || highlighted) ? Theme.palette.baseColor2 : "transparent"
+                color: (hovered || highlighted) ? Theme.palette.baseColor2 : "transparent"
                 onClicked: {
                     root.insertTag(model.displayName, model.pubKey, model.isAdmin, model.isAdmin ? "crown" : "");
                 }

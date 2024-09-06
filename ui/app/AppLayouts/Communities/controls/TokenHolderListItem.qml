@@ -103,7 +103,7 @@ ItemDelegate {
             color: "transparent"
             leftPadding: 0
             rightPadding: 0
-            sensor.enabled: false
+            hoverEnabled: false
             nickName: root.contactDetails.localNickname
             userName: ProfileUtils.displayName("", root.contactDetails.ensName, root.contactDetails.displayName, root.contactDetails.alias)
             pubKey: root.contactDetails.isEnsVerified ? "" : Utils.getCompressedPk(root.contactId)
@@ -112,10 +112,8 @@ ItemDelegate {
             isUntrustworthy: root.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
             isAdmin: root.contactDetails.memberRole === Constants.memberRole.owner
             status: root.contactDetails.onlineStatus
-            asset.name: root.contactDetails.thumbnailImage
-            asset.isImage: (asset.name !== "")
-            asset.isLetterIdenticon: (asset.name === "")
-            asset.color: Utils.colorForPubkey(root.contactId)
+            icon.name: root.contactDetails.thumbnailImage
+            icon.color: Utils.colorForPubkey(root.contactId)
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(root.contactId)
         }
     }

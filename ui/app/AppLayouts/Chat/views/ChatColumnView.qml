@@ -286,8 +286,7 @@ Item {
                     }
 
                     store: root.rootStore
-                    usersStore: d.activeUsersStore
-
+                    usersModel: d.activeUsersStore.usersModel
                     sharedStore: SharedStores.RootStore
 
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null

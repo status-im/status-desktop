@@ -71,8 +71,8 @@ Control {
                 delegate: ContactListItemDelegate {
                     width: ListView.view.width
                     height: d.delegateHeight
-                    asset.width: 29
-                    asset.height: 29
+                    icon.width: 29
+                    icon.height: 29
 
                     color: "transparent"
 

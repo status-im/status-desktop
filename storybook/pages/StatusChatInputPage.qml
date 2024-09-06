@@ -9,7 +9,7 @@ import utils 1.0
 import shared.status 1.0
 import shared.stores 1.0 as SharedStores
 
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
@@ -59,10 +59,9 @@ SplitView {
             active: globalUtilsMock.ready
             sourceComponent: StatusChatInput {
                 id: chatInput
-                property var globalUtils: globalUtilsMock.globalUtils
                 property string unformattedText: chatInput.textInput.getText(0, chatInput.textInput.length)
 
-                readonly property ModelChangeTracker urlsModelChangeTracker: ModelChangeTracker {
+                readonly property SQUtils.ModelChangeTracker urlsModelChangeTracker: SQUtils.ModelChangeTracker {
                     model: fakeLinksModel
                 }
 
@@ -85,7 +84,7 @@ SplitView {
                 linkPreviewModel: fakeLinksModel
                 urlsList: {
                     urlsModelChangeTracker.revision
-                    ModelUtils.modelToFlatArray(fakeLinksModel, "url")
+                    return SQUtils.ModelUtils.modelToFlatArray(fakeLinksModel, "url")
                 }
                 askToEnableLinkPreview: askToEnableLinkPreviewSwitch.checked
                 onAskToEnableLinkPreviewChanged: {
@@ -94,9 +93,7 @@ SplitView {
                         d.loadLinkPreviews(unformattedText)
                     }
                 }
-                usersStore: ChatStores.UsersStore {
-                    readonly property var usersModel: fakeUsersModel
-                }
+                usersModel: fakeUsersModel
 
                 sharedStore: SharedStores.RootStore {
                     isWalletEnabled: true

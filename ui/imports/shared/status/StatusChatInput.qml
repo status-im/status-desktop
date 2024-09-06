@@ -36,7 +36,7 @@ Rectangle {
     signal dismissLinkPreviewSettings()
     signal dismissLinkPreview(int index)
     
-    property ChatStores.UsersStore usersStore
+    property var usersModel
     property ChatStores.RootStore store
     property SharedStores.RootStore sharedStore
 
@@ -67,7 +67,7 @@ Rectangle {
 
     property var linkPreviewModel: null
 
-    property var urlsList: null
+    property var urlsList: []
 
     property bool askToEnableLinkPreview: false
 
@@ -1010,7 +1010,7 @@ Rectangle {
     SuggestionBoxPanel {
         id: suggestionsBox
         objectName: "suggestionsBox"
-        model: control.usersStore ? control.usersStore.usersModel : []
+        model: control.usersModel ?? []
         x : messageInput.x
         y: -height - Style.current.smallPadding
         width: messageInput.width

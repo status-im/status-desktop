@@ -915,7 +915,7 @@ Loader {
                         }
 
                         store: root.rootStore
-                        usersStore: root.usersStore
+                        usersModel: root.usersStore.usersModel
                         sharedStore: SharedStores.RootStore
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup

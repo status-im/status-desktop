@@ -161,9 +161,7 @@ Page {
                 emojiPopup: root.emojiPopup
                 stickersPopup: root.stickersPopup
                 closeGifPopupAfterSelection: true
-                usersStore: ({
-                    usersModel: membersSelector.model
-                })
+                usersModel: membersSelector.model
                 sharedStore: SharedStores.RootStore
                 onStickerSelected: {
                     root.createChatPropertiesStore.createChatStickerHashId = hashId;

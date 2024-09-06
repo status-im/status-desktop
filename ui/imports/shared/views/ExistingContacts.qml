@@ -86,19 +86,14 @@ Item {
             isContact: model.isContact
             status: model.onlineStatus
             height: visible ? implicitHeight : 0
-            color: sensor.containsMouse ? Theme.palette.baseColor2 : "transparent"
+            color: hovered ? Theme.palette.baseColor2 : "transparent"
             nickName: model.localNickname
             userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-            asset.name: model.icon
-            asset.isImage: (asset.name !== "")
-            asset.isLetterIdenticon: (asset.name === "")
-            asset.width: 40
-            asset.height: 40
-            asset.color: Utils.colorForColorId(model.colorId)
+            icon.name: model.icon
+            icon.width: 40
+            icon.height: 40
+            icon.color: Utils.colorForColorId(model.colorId)
             ringSettings.ringSpecModel: model.colorHash
-            statusListItemIcon.badge.border.color: Theme.palette.baseColor4
-            statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders
-            statusListItemIcon.badge.implicitWidth: 14 // 10 px + 2 px * 2 borders
 
             onClicked: {
                 root.contactClicked(model);

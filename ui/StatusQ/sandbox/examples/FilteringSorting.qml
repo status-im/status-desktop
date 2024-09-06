@@ -94,7 +94,6 @@ ColumnLayout {
             nickName: model.nick
             isVerified: model.isVerified
             isContact: model.isContact
-            asset.isLetterIdenticon: true
         }
     }
 

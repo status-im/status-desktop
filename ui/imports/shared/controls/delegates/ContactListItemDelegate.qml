@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -21,12 +21,9 @@ StatusMemberListItem {
     isVerified: model.isVerified
     isUntrustworthy: model.isUntrustworthy
     isContact: model.isContact
-    asset.name: model.icon
-    asset.color: Utils.colorForColorId(model.colorId)
-    asset.isImage: (asset.name !== "")
-    asset.isLetterIdenticon: (asset.name === "")
+    icon.name: model.icon
+    icon.color: Utils.colorForColorId(model.colorId)
     status: model.onlineStatus
-    statusListItemIcon.badge.border.color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
     ringSettings.ringSpecModel: model.colorHash
-    color: (sensor.containsMouse || highlighted) ? Theme.palette.baseColor2 : "transparent"
+    color: (hovered || highlighted) ? Theme.palette.baseColor2 : "transparent"
 }

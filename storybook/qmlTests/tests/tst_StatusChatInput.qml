@@ -26,9 +26,7 @@ Item {
             width: parent.width
             height: implicitHeight
             anchors.bottom: parent.bottom
-            usersStore: ChatStores.UsersStore {
-                property var usersModel: ListModel {}
-            }
+            usersModel: ListModel {}
 
             sharedStore: SharedStores.RootStore {
                 isWalletEnabled: true
