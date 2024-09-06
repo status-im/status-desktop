@@ -28,10 +28,6 @@ def keys_screen(main_window) -> KeysView:
                  'Send: can send ERC 721 token (collectible) to address pasted into receiver field with Simple flow')
 @pytest.mark.case(704602)
 @pytest.mark.transaction
-@pytest.mark.parametrize('user_account', [[ReturningUser(
-    seed_phrase=WALLET_SEED.split(),
-    status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43'
-)]])
 @pytest.mark.parametrize('tab, receiver_account_address, amount, collectible', [
     pytest.param('Collectibles', '0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43', 1, 'Panda')
 ])
@@ -40,6 +36,11 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14509")
 def test_wallet_send_nft(keys_screen, main_window, user_account, tab, receiver_account_address, amount, collectible):
     with step('Open import seed phrase view and enter seed phrase'):
+
+        user_account = ReturningUser(
+            seed_phrase=WALLET_SEED.split(),
+            status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43')
+
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         input_view.input_seed_phrase(user_account.seed_phrase, True)
         profile_view = input_view.import_seed_phrase()

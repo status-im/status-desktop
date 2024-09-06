@@ -30,13 +30,13 @@ def keys_screen(main_window) -> KeysView:
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')
 @pytest.mark.case(727245)
-@pytest.mark.parametrize('user_account', [ReturningUser(
-    seed_phrase=WALLET_SEED.split(),
-    status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43'
-)])
 @pytest.mark.transaction
 @pytest.mark.skip('temp skip test to fix it using L2 networks')
 def test_mint_owner_and_tokenmaster_tokens(keys_screen, main_window, user_account):
+    user_account = ReturningUser(
+        seed_phrase=WALLET_SEED.split(),
+        status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43')
+
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         input_view.input_seed_phrase(user_account.seed_phrase, True)
