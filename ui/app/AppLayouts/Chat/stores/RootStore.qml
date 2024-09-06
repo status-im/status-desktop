@@ -761,4 +761,9 @@ QtObject {
     function updatePermissionsModel(communityId, sharedAddresses) {
         communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
+
+    function removeMemberFromGroupChat(publicKey) {
+        const chatId = chatCommunitySectionModule.activeItem.id
+        chatCommunitySectionModule.removeMemberFromGroupChat("", chatId, publicKey)
+    }
 }
