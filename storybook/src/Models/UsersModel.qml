@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 ListModel {
     id: root
@@ -10,7 +10,7 @@ ListModel {
         isVerified: false
         isAdmin: false
         isUntrustworthy: true
-        displayName: "Mike"
+        displayName: "Mike has a very long name that should elide eventually and result in a tooltip displayed instead"
         alias: ""
         localNickname: ""
         ensName: ""
@@ -22,6 +22,8 @@ ListModel {
             ListElement {colorId: 0; segmentLength: 2},
             ListElement {colorId: 17; segmentLength: 2}
         ]
+        isAwaitingAddress: false
+        memberRole: 0 // Constants.memberRole.none
     }
     ListElement {
         pubKey: "0x04df12f12f12f12f1234"
@@ -41,6 +43,8 @@ ListModel {
             ListElement {colorId: 0; segmentLength: 1},
             ListElement {colorId: 19; segmentLength: 2}
         ]
+        isAwaitingAddress: false
+        memberRole: 1 // Constants.memberRole.owner
     }
     ListElement {
         pubKey: "0x04d1b7cc0ef3f470f1238"
@@ -53,9 +57,11 @@ ListModel {
         alias: ""
         localNickname: "Johnny Johny"
         ensName: ""
-        icon: ""
+        icon: "https://cryptologos.cc/logos/status-snt-logo.svg?v=033"
         colorId: 4
         isEnsVerified: false
+        isAwaitingAddress: false
+        memberRole: 0
     }
     ListElement {
         pubKey: "0x04d1bed192343f470f1257"
@@ -71,6 +77,8 @@ ListModel {
         icon: ""
         colorId: 5
         isEnsVerified: true
+        isAwaitingAddress: false
+        memberRole: 0
     }
     ListElement {
         pubKey: "0x04d1bed192343f470f1255"
@@ -86,6 +94,8 @@ ListModel {
         icon: ""
         colorId: 3
         isEnsVerified: true
+        isAwaitingAddress: false
+        memberRole: 0
     }
     ListElement {
         pubKey: "0x04d1bed192343f470fabc"
@@ -101,5 +111,7 @@ ListModel {
         icon: ""
         colorId: 7
         isEnsVerified: true
+        isAwaitingAddress: true
+        memberRole: 0
     }
 }

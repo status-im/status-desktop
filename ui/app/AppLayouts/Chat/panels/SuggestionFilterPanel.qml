@@ -95,7 +95,7 @@ Item {
             return
         }
 
-        return globalUtils.plainText(this.filter)
+        return Utils.plainText(this.filter)
     }
 
     function shouldShowAll(filter) {

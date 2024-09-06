@@ -304,7 +304,7 @@ StatusScrollView {
                         color: "transparent"
                         leftPadding: 0
                         rightPadding: 0
-                        sensor.enabled: false
+                        hoverEnabled: false
 
                         nickName: model.localNickname
                         userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
@@ -313,10 +313,8 @@ StatusScrollView {
                         isVerified: model.verificationStatus === Constants.verificationStatus.verified
                         isUntrustworthy: model.trustStatus === Constants.trustStatus.untrustworthy
                         status: model.onlineStatus
-                        asset.name: model.icon
-                        asset.isImage: (asset.name !== "")
-                        asset.isLetterIdenticon: (asset.name === "")
-                        asset.color: Utils.colorForPubkey(model.pubKey)
+                        icon.name: model.icon
+                        icon.color: Utils.colorForPubkey(model.pubKey)
                         ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
                     }
                 }

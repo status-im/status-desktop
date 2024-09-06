@@ -183,8 +183,8 @@ StatusDropdown {
 
                 width: ListView.view.width
                 height: d.delegateHeight
-                asset.width: 29
-                asset.height: 29
+                icon.width: 29
+                icon.height: 29
 
                 rightPadding: 0
                 leftPadding: 6

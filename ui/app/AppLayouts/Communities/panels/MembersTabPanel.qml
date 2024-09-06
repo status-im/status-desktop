@@ -143,7 +143,7 @@ Item {
                 readonly property bool ctaAllowed: !isRejectedPending && !isAcceptedPending && !isBanPending && !isUnbanPending && !isKickPending
 
                 readonly property bool itsMe: model.pubKey.toLowerCase() === Global.userProfile.pubKey.toLowerCase()
-                readonly property bool isHovered: memberItem.sensor.containsMouse
+                readonly property bool isHovered: memberItem.hovered
                 readonly property bool canBeBanned: {
                     if (memberItem.itsMe) {
                         return false
@@ -186,9 +186,6 @@ Item {
 
                 isAwaitingAddress: model.membershipRequestState === Constants.CommunityMembershipRequestState.AwaitingAddress
 
-                statusListItemComponentsSlot.spacing: 16
-                statusListItemTitleArea.anchors.rightMargin: 0
-                statusListItemSubTitle.elide: Text.ElideRight
                 rightPadding: 75
                 leftPadding: 12
 
@@ -297,21 +294,19 @@ Item {
                 nickName: model.localNickname
                 userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
                 status: model.onlineStatus
-                asset.color: Utils.colorForColorId(model.colorId)
-                asset.name: model.icon
-                asset.isImage: !!model.icon
-                asset.isLetterIdenticon: !model.icon
-                asset.width: 40
-                asset.height: 40
+                icon.color: Utils.colorForColorId(model.colorId)
+                icon.name: model.icon
+                icon.width: 40
+                icon.height: 40
                 ringSettings.ringSpecModel: model.colorHash
-                statusListItemIcon.badge.visible: (root.panelType === MembersTabPanel.TabType.AllMembers)
+                badge.visible: (root.panelType === MembersTabPanel.TabType.AllMembers)
 
                 onClicked: {
                     if(mouse.button === Qt.RightButton) {
                         Global.openMenu(memberContextMenuComponent, this, {
                                             selectedUserPublicKey: model.pubKey,
                                             selectedUserDisplayName: memberItem.title,
-                                            selectedUserIcon: asset.name,
+                                            selectedUserIcon: icon.name,
                                         })
                     } else {
                         Global.openProfilePopup(model.pubKey)

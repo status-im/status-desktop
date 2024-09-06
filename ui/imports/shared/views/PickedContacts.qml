@@ -45,21 +45,17 @@ Item {
             status: model.onlineStatus
             nickName: model.localNickname
             userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-            asset.name: model.icon
-            asset.isImage: asset.name !== ""
-            asset.isLetterIdenticon: asset.name === ""
-            asset.imgIsIdenticon: false
-            asset.width: 40
-            asset.height: 40
+            icon.name: model.icon
+            icon.width: 40
+            icon.height: 40
             color: "transparent"
-            asset.color: Utils.colorForColorId(model.colorId)
+            icon.color: Utils.colorForColorId(model.colorId)
             ringSettings.ringSpecModel: model.colorHash
-            statusListItemIcon.badge.border.color: Theme.palette.baseColor4
-            statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders
-            statusListItemIcon.badge.implicitWidth: 14 // 10 px + 2 px * 2 borders
+            badge.border.color: Theme.palette.baseColor4
+            badge.implicitHeight: 14 // 10 px + 2 px * 2 borders
+            badge.implicitWidth: 14 // 10 px + 2 px * 2 borders
 
-            sensor.enabled: false
+            hoverEnabled: false
         }
     }
 }
- 

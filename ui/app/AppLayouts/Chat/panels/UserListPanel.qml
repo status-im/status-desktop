@@ -121,22 +121,20 @@ Item {
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
                 isAdmin: model.memberRole === Constants.memberRole.owner
-                asset.name: model.icon
-                asset.isImage: (asset.name !== "")
-                asset.isLetterIdenticon: (asset.name === "")
-                asset.color: Utils.colorForColorId(model.colorId)
+                icon.name: model.icon
+                icon.color: Utils.colorForColorId(model.colorId)
                 status: model.onlineStatus
                 ringSettings.ringSpecModel: model.colorHash
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
                         Global.openMenu(profileContextMenuComponent, this, {
-                                            myPublicKey: userProfile.pubKey,
+                                            myPublicKey: root.store.myPublicKey(),
                                             selectedUserPublicKey: model.pubKey,
                                             selectedUserDisplayName: nickName || userName,
                                             selectedUserIcon: model.icon,
                                         })
                     } else if (mouse.button === Qt.LeftButton) {
-                        Global.openProfilePopup(model.pubKey);
+                        Global.openProfilePopup(model.pubKey)
                     }
                 }
             }

@@ -1,15 +1,18 @@
-import QtQuick 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
 /*!
    \qmltype StatusMemberListItem
-   \inherits StatusListItem
+   \inherits ItemDelegate
    \inqmlmodule StatusQ.Components
    \since StatusQ.Components 0.1
-   \brief It is a list item with a specific format to display members of a community or chat. Inherits from  \c StatusListItem.
+   \brief It is a list item with a specific format to display members of a community or chat. Inherits from \c ItemDelegate.
 
    The \c StatusMemberListItem is a clickable / hovering list item with a specific format to display members of a community or chat.
 
@@ -36,7 +39,7 @@ import StatusQ.Core.Utils 0.1
 
    For a list of components available see StatusQ.
 */
-StatusListItem {
+ItemDelegate {
     id: root
 
     /*!
@@ -91,6 +94,42 @@ StatusListItem {
     */
     property bool isAwaitingAddress: false
 
+    /*!
+       \qmlproperty color StatusMemberListItem::color
+       Defines the background color of the delegate
+    */
+    property color color: hovered || highlighted ? Theme.palette.baseColor2 : Theme.palette.baseColor4
+
+    /*!
+       \qmlproperty list<Item> StatusMemberListItem::components
+       This property holds the optional list of actions, displayed on the right side.
+       The actions are reparented into a Row.
+    */
+    property list<Item> components
+    onComponentsChanged: {
+        for (let idx in components) {
+            components[idx].parent = componentsRow
+        }
+    }
+
+    /*!
+       \qmlproperty StatusIdenticonRingSettings StatusMemberListItem::ringSettings
+       This property holds the StatusSmartIdenticon ring settings
+    */
+    property alias ringSettings: identicon.ringSettings
+
+    /*!
+       \qmlproperty StatusBadge StatusMemberListItem::badge
+       This property holds the StatusBadge used for displaying user's online status
+    */
+    property alias badge: identicon.badge
+
+    /*!
+        \qmlsignal
+        This signal is emitted when the StatusMemberListItem is clicked.
+    */
+    signal clicked(var mouse)
+
     QtObject {
         id: d
 
@@ -118,33 +157,108 @@ StatusListItem {
         }
     }
 
-    // root object settings:
-    title: root.nickName || Emoji.parse(root.userName)
-    statusListItemIcon.name: root.nickName || root.userName
-    statusListItemTitleIcons.sourceComponent: root.isAwaitingAddress ?
-                                                  awaitingAddressComponent : statusContactVerificationIcons
+    horizontalPadding: 8
+    verticalPadding: 12
+    spacing: 8
 
-    subTitle: d.composeSubtitle()
-    statusListItemSubTitle.font.pixelSize: 10
-    statusListItemIcon.badge.visible: true
-    statusListItemIcon.badge.color: root.status === 1 ? Theme.palette.successColor1 : Theme.palette.baseColor1 // FIXME
-    color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
+    icon.width: 32
+    icon.height: 32
 
-    // Default sizes / positions by design
-    implicitWidth: 256
-    implicitHeight: Math.max(56, statusListItemTitleArea.height + leftPadding)
-    leftPadding: 8
-    asset.width: 32
-    asset.height: 32
-    asset.charactersLen: 2
-    asset.letterSize: asset._twoLettersSize
-    statusListItemIcon.anchors.verticalCenter: sensor.verticalCenter
-    statusListItemIcon.anchors.top: undefined
-    statusListItemIcon.badge.border.width: 2
-    statusListItemIcon.badge.implicitHeight: 12 // 8 px + 2 px * 2 borders
-    statusListItemIcon.badge.implicitWidth: 12 // 8 px + 2 px * 2 borders
-    components: [
+    font.family: Theme.palette.baseFont.name
+    font.pixelSize: Theme.primaryTextFontSize
+
+    background: Rectangle {
+        color: root.color
+        radius: 8
+    }
+
+    contentItem: RowLayout {
+        spacing: root.spacing
+
+        StatusSmartIdenticon {
+            id: identicon
+
+            name: root.nickName || root.userName
+
+            asset.name: root.icon.name
+            asset.color: root.icon.color
+            asset.isImage: asset.name !== ""
+            asset.isLetterIdenticon: asset.name === ""
+            asset.width: root.icon.width
+            asset.height: root.icon.height
+            asset.charactersLen: 2
+            asset.letterSize: asset._twoLettersSize
+
+            // badge
+            badge.visible: true
+            badge.color: root.status === 1 ? Theme.palette.successColor1 : Theme.palette.baseColor1 // FIXME, see root.status
+            badge.anchors.top: undefined
+            badge.border.width: 2
+            badge.border.color: Theme.palette.statusListItem.backgroundColor
+            badge.implicitHeight: 12 // 8 px + 2 px * 2 borders
+            badge.implicitWidth: 12 // 8 px + 2 px * 2 borders
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 4
+            Row {
+                spacing: 4
+                Layout.fillWidth: true
+                StatusBaseText {
+                    width: Math.min(implicitWidth, parent.width - (iconsLoader.item ? iconsLoader.item.width + parent.spacing : 0))
+                    anchors.verticalCenter: parent.verticalCenter
+                    elide: Text.ElideRight
+                    text: root.nickName || Emoji.parse(root.userName)
+                    font.pixelSize: root.font.pixelSize
+                    font.weight: Font.Medium
+                    color: Theme.palette.directColor4
+
+                    HoverHandler {
+                        id: primaryTextHandler
+                    }
+
+                    StatusToolTip {
+                        text: parent.text
+                        delay: 0
+                        visible: parent.truncated && primaryTextHandler.hovered
+                    }
+                }
+                Loader {
+                    id: iconsLoader
+                    anchors.verticalCenter: parent.verticalCenter
+                    sourceComponent: root.isAwaitingAddress ? awaitingAddressComponent : statusContactVerificationIcons
+                }
+            }
+            StatusBaseText {
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                text: d.composeSubtitle()
+                font.pixelSize: 10
+                color: Theme.palette.baseColor1
+                visible: !!text
+
+                HoverHandler {
+                    id: secondaryTextHandler
+                }
+
+                StatusToolTip {
+                    text: parent.text
+                    delay: 0
+                    visible: parent.truncated && secondaryTextHandler.hovered
+                }
+            }
+        }
+
+        Row {
+            id: componentsRow
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+            spacing: 12
+        }
+
         Loader {
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
             active: root.isAdmin
             sourceComponent: StatusIcon {
                 anchors.verticalCenter: parent.verticalCenter
@@ -152,7 +266,14 @@ StatusListItem {
                 color: Theme.palette.directColor1
             }
         }
-    ]
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: root.clicked(mouse)
+    }
 
     Component {
         id: statusContactVerificationIcons

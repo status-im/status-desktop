@@ -140,7 +140,7 @@ Item {
                 let delegateUnderTest = providersList.itemAtIndex(i)
                 verify(!!delegateUnderTest)
 
-                compare(delegateUnderTest.title, modelToCompareAgainst.get(i).name)
+                tryCompare(delegateUnderTest, "title", modelToCompareAgainst.get(i).name)
                 compare(delegateUnderTest.subTitle, modelToCompareAgainst.get(i).description)
                 compare(delegateUnderTest.asset.name, modelToCompareAgainst.get(i).logoUrl)
                 compare(delegateUnderTest.isUrlLoading, false)
