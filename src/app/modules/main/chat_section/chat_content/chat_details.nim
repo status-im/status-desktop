@@ -114,6 +114,8 @@ QtObject:
     notify = nameChanged
 
   proc setName*(self: ChatDetails, value: string) = # this is not a slot
+    if self.name == value:
+      return
     self.name = value
     self.nameChanged()
 
@@ -125,6 +127,8 @@ QtObject:
     notify = iconChanged
 
   proc setIcon*(self: ChatDetails, icon: string) = # this is not a slot
+    if self.icon == icon:
+      return
     self.icon = icon
     self.iconChanged()
 
@@ -136,6 +140,8 @@ QtObject:
     notify = colorChanged
 
   proc setColor*(self: ChatDetails, value: string) = # this is not a slot
+    if self.color == value:
+      return
     self.color = value
     self.colorChanged()
 
@@ -147,6 +153,8 @@ QtObject:
     notify = emojiChanged
 
   proc setEmoji*(self: ChatDetails, value: string) = # this is not a slot
+    if self.emoji == value:
+      return
     self.emoji = value
     self.emojiChanged()
 
@@ -158,6 +166,8 @@ QtObject:
     notify = descriptionChanged
 
   proc setDescription*(self: ChatDetails, value: string) = # this is not a slot
+    if self.description == value:
+      return
     self.description = value
     self.descriptionChanged()
 
@@ -169,6 +179,8 @@ QtObject:
     notify = hasUnreadMessages
 
   proc setHasUnreadMessages*(self: ChatDetails, value: bool) = # this is not a slot
+    if self.hasUnreadMessages == value:
+      return
     self.hasUnreadMessages = value
     self.hasUnreadMessagesChanged()
 
@@ -180,6 +192,8 @@ QtObject:
     notify = notificationCountChanged
 
   proc setNotificationCount*(self: ChatDetails, value: int) = # this is not a slot
+    if self.notificationsCount == value:
+      return
     self.notificationsCount = value
     self.notificationCountChanged()
 
@@ -191,6 +205,8 @@ QtObject:
     notify = highlightChanged
 
   proc setHighlight*(self: ChatDetails, value: bool) = # this is not a slot
+    if self.highlight == value:
+      return
     self.highlight = value
     self.highlightChanged()
 
@@ -202,6 +218,8 @@ QtObject:
     notify = mutedChanged
 
   proc setMuted*(self: ChatDetails, value: bool) = # this is not a slot
+    if self.muted == value:
+      return
     self.muted = value
     self.mutedChanged()
 
@@ -213,6 +231,8 @@ QtObject:
     notify = positionChanged
 
   proc setPotion*(self: ChatDetails, value: int) = # this is not a slot
+    if self.position == value:
+      return
     self.position = value
     self.positionChanged()
 
@@ -224,6 +244,8 @@ QtObject:
     notify = isMutualContactChanged
 
   proc setIsMutualContact*(self: ChatDetails, value: bool) = # this is not a slot
+    if self.isContact == value:
+      return
     self.isContact = value
     self.isMutualContactChanged()
 
@@ -235,6 +257,8 @@ QtObject:
     notify = isUntrustworthyChanged
 
   proc setIsUntrustworthy*(self: ChatDetails, value: bool) = # this is not a slot
+    if self.isUntrustworthy == value:
+      return
     self.isUntrustworthy = value
     self.isUntrustworthyChanged()
 
@@ -246,6 +270,8 @@ QtObject:
     notify = activeChanged
 
   proc setActive*(self: ChatDetails, value: bool) =
+    if self.active == value:
+      return
     self.active = value
     self.activeChanged()
 
@@ -257,6 +283,8 @@ QtObject:
     notify = blockedChanged
 
   proc setBlocked*(self: ChatDetails, value: bool) =
+    if self.blocked == value:
+      return
     self.blocked = value
     self.blockedChanged()
 
@@ -268,6 +296,8 @@ QtObject:
     notify = canPostChanged
 
   proc setCanPost*(self: ChatDetails, value: bool) =
+    if self.canPost == value:
+      return
     self.canPost = value
     self.canPostChanged()
 
@@ -279,6 +309,8 @@ QtObject:
     notify = canViewChanged
 
   proc setCanView*(self: ChatDetails, value: bool) =
+    if self.canView == value:
+      return
     self.canView = value
     self.canViewChanged()
 
@@ -290,6 +322,8 @@ QtObject:
     notify = canPostReactionsChanged
 
   proc setCanPostReactions*(self: ChatDetails, value: bool) =
+    if self.canPostReactions == value:
+      return
     self.canPostReactions = value
     self.canPostReactionsChanged()
   
@@ -301,6 +335,8 @@ QtObject:
     notify = hideIfPermissionsNotMetChanged
 
   proc setHideIfPermissionsNotMet*(self: ChatDetails, value: bool) =
+    if self.hideIfPermissionsNotMet == value:
+      return
     self.hideIfPermissionsNotMet = value
     self.hideIfPermissionsNotMetChanged()
 
@@ -312,6 +348,8 @@ QtObject:
     notify = missingEncryptionKeyChanged
 
   proc setMissingEncryptionKey*(self: ChatDetails, value: bool) =
+    if self.missingEncryptionKey == value:
+      return
     self.missingEncryptionKey = value
     self.missingEncryptionKeyChanged()
 
@@ -323,5 +361,7 @@ QtObject:
     notify = requiresPermissionsChanged
 
   proc setRequiresPermissions*(self: ChatDetails, value: bool) =
+    if self.requiresPermissions == value:
+      return
     self.requiresPermissions = value
     self.requiresPermissionsChanged()

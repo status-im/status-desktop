@@ -105,7 +105,8 @@ Item {
             section.delegate: (root.width > 58) ? sectionDelegateComponent : null
             delegate: StatusMemberListItem {
                 width: ListView.view.width
-                userName: model.preferredDisplayName
+                nickName: model.localNickname
+                userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
                 pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
                 isContact: model.isContact
                 isVerified: model.isVerified

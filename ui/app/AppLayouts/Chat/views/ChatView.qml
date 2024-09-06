@@ -173,19 +173,19 @@ StatusSectionLayout {
         id: userListComponent
         UserListPanel {
             id: userListPanel
-            readonly property bool isFullCommunityList: !root.chatContentModule || !root.chatContentModule.chatDetails || !root.chatContentModule.chatDetails.requiresPermissions
             property bool wasFullCommunityList: false
 
             Connections {
                 target: root
                 onChatContentModuleChanged: {
+                    let isFullCommunityList = !root.chatContentModule || !root.chatContentModule.chatDetails || !root.chatContentModule.chatDetails.requiresPermissions
                     if (!root.chatContentModule ||
-                        (userListPanel.usersModel != null && root.chatContentModule.chatDetails.belongsToCommunity && userListPanel.wasFullCommunityList && userListPanel.isFullCommunityList)) {
+                        (userListPanel.usersModel != null && root.chatContentModule.chatDetails.belongsToCommunity && userListPanel.wasFullCommunityList && isFullCommunityList)) {
                         // If the previous channel had the full community list already, and we still need the whole list, just keep the old model
                         return
                     }
                     userListPanel.usersModel = root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
-                    userListPanel.wasFullCommunityList = userListPanel.isFullCommunityList
+                    userListPanel.wasFullCommunityList = isFullCommunityList
                 }
             }
 
