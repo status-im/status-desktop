@@ -21,6 +21,8 @@ StatusMenu {
     property int profileType: Constants.profileType.regular
     property bool ensVerified: false
     property bool hasLocalNickname: false
+    property int chatType: Constants.chatType.unknown
+    property bool isAdmin: false
 
     signal openProfileClicked
     signal createOneToOneChat
@@ -33,6 +35,7 @@ StatusMenu {
     signal removeTrustStatus
     signal removeContact
     signal blockContact
+    signal removeFromGroup
 
     ProfileHeader {
         width: parent.width
@@ -132,6 +135,15 @@ StatusMenu {
         icon.name: "cancel"
         type: StatusAction.Type.Danger
         onTriggered: root.unblockContact()
+    }
+
+    StatusAction {
+        text: qsTr("Remove from group")
+        objectName: "removeFromGroup_StatusItem"
+        icon.name: "remove-contact"
+        type: StatusAction.Type.Danger
+        enabled: root.isAdmin && root.profileType !== Constants.profileType.self && root.chatType === Constants.chatType.privateGroupChat
+        onTriggered: root.removeFromGroup()
     }
 
     // Mark as Untrusted

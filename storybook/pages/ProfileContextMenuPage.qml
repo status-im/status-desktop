@@ -62,6 +62,8 @@ SplitView {
                     ensVerified: ensVerifiedCheckBox.checked
                     onlineStatus: onlineStatusSelector.currentValue
                     hasLocalNickname: hasLocalNicknameCheckBox.checked
+                    chatType: chatTypeSelector.currentValue
+                    isAdmin: isAdminCheckBox.checked
                     publicKey: publicKeyInput.text
 
                     onOpenProfileClicked: () => {
@@ -96,6 +98,9 @@ SplitView {
                     }
                     onBlockContact: () => {
                         logs.logEvent("Block contact:", profileContextMenu.publicKey)
+                    }
+                    onRemoveFromGroup: (publicKey) => {
+                        logs.logEvent("Remove from group:", publicKey)
                     }
                     onClosed: {
                         destroy()
@@ -115,6 +120,8 @@ SplitView {
                     ensVerified: ensVerifiedCheckBox.checked
                     onlineStatus: onlineStatusSelector.currentValue
                     hasLocalNickname: hasLocalNicknameCheckBox.checked
+                    chatType: chatTypeSelector.currentValue
+                    isAdmin: isAdminCheckBox.checked
                     publicKey: publicKeyInput.text
 
                     onOpenProfileClicked: () => {
@@ -150,7 +157,9 @@ SplitView {
                     onBlockContact: () => {
                         logs.logEvent("Block contact:", profileContextMenu.publicKey)
                     }
-
+                    onRemoveFromGroup: (publicKey) => {
+                        logs.logEvent("Remove from group:", publicKey)
+                    }
                     onClosed: {
                         destroy()
                     }
@@ -273,6 +282,39 @@ SplitView {
                 Layout.fillWidth: true
                 text: "Has Local Nickname: " + (hasLocalNicknameCheckBox.checked ? "Yes" : "No")
             }
+
+            ComboBox {
+                id: chatTypeSelector
+                textRole: "text"
+                valueRole: "value"
+                model: [
+                    { text: "Unknown", value: Constants.chatType.unknown },
+                    { text: "Category", value: Constants.chatType.category },
+                    { text: "One-to-One", value: Constants.chatType.oneToOne },
+                    { text: "Public Chat", value: Constants.chatType.publicChat },
+                    { text: "Private Group Chat", value: Constants.chatType.privateGroupChat },
+                    { text: "Profile", value: Constants.chatType.profile },
+                    { text: "Community Chat", value: Constants.chatType.communityChat }
+                ]
+                currentIndex: 0
+            }
+
+            CheckBox {
+                id: isAdminCheckBox
+                text: "Is Admin"
+                checked: false
+            }
+
+            Label {
+                Layout.fillWidth: true
+                text: "Is Admin: " + (isAdminCheckBox.checked ? "Yes" : "No")
+            }
+
+            Label {
+                Layout.fillWidth: true
+                text: "Chat type: " + chatTypeSelector.currentText
+            }
+
         }
     }
 }

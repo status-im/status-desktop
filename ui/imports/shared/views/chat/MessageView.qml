@@ -155,8 +155,10 @@ Loader {
         const publicKey = isReply ? quotedMessageFrom : root.senderId
         const isBridgedAccount = isReply ? (quotedMessageContentType === Constants.messageContentType.bridgeMessageType) : root.isBridgeMessage
         const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey, root.rootStore.contactsStore.myPublicKey, isBridgedAccount)
+        const chatType = chatContentModule.chatDetails.type
+        const isAdmin = chatContentModule.amIChatAdmin()
 
-        const params = { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
+        const params = { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname, chatType, isAdmin,
             publicKey: isReply ? quotedMessageFrom : root.senderId,
             displayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
             userIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
@@ -1211,10 +1213,12 @@ Loader {
                 const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
                 Global.blockContactRequested(profileContextMenu.publicKey, contactDetails)
             }
+            onRemoveFromGroup: () => {
+                root.store.removeMemberFromGroupChat(profileContextMenu.publicKey)
+            }
             onOpened: root.setMessageActive(root.messageId, true)
         }
     }
-
     Component {
         id: messageContextMenuComponent
 

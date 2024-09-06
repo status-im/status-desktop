@@ -128,9 +128,11 @@ Item {
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
                         const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.store.contactsStore.getProfileContext(model.pubKey, userProfile.pubKey)
+                        const chatType = chatContentModule.chatDetails.type
+                        const isAdmin = chatContentModule.amIChatAdmin()
 
                         Global.openMenu(profileContextMenuComponent, this, {
-                                            profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
+                                            profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname, chatType, isAdmin,
                                             publicKey: model.pubKey,
                                             displayName: nickName || userName,
                                             userIcon: model.icon,
@@ -208,6 +210,9 @@ Item {
             onBlockContact: {
                 const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
                 Global.blockContactRequested(profileContextMenu.publicKey, contactDetails)
+            }
+            onRemoveFromGroup: {
+                root.store.removeMemberFromGroupChat(profileContextMenu.publicKey)
             }
         }
     }
