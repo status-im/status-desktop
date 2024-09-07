@@ -14,18 +14,10 @@ from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import LeftPanel
-from gui.screens.onboarding import BiometricsView, WelcomeToStatusView, KeysView, \
+from gui.screens.onboarding import BiometricsView, WelcomeToStatusView, \
     YourEmojihashAndIdenticonRingView, LoginView
 
 pytestmark = marks
-
-
-@pytest.fixture
-def keys_screen(main_window) -> KeysView:
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        welcome_screen = WelcomeToStatusView().wait_until_appears()
-        return welcome_screen.get_keys()
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
@@ -33,7 +25,12 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.case(703040, 736372)
 @pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.critical
-def test_import_seed_phrase(keys_screen, main_window, aut: AUT, user_account):
+def test_import_seed_phrase(main_window, aut: AUT, user_account):
+
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+
     with step('Open import seed phrase view and enter seed phrase'):
         seed_phrase = random_mnemonic()
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()

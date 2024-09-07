@@ -69,10 +69,6 @@ class OnboardingView(QObject):
         super(OnboardingView, self).__init__(object_name)
         self._back_button = Button(onboarding_names.mainWindow_onboardingBackButton_StatusRoundButton)
 
-    @abstractmethod
-    def back(self):
-        pass
-
 
 class KeysView(OnboardingView):
 

@@ -12,15 +12,7 @@ from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.authenticate_popup import AuthenticatePopup
-from gui.screens.onboarding import KeysView, WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
-
-
-@pytest.fixture
-def keys_screen(main_window) -> KeysView:
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        welcome_screen = WelcomeToStatusView().wait_until_appears()
-        return welcome_screen.get_keys()
+from gui.screens.onboarding import WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704527',
@@ -31,10 +23,14 @@ def keys_screen(main_window) -> KeysView:
     pytest.param(WalletAddress.RECEIVER_ADDRESS.value, 0, 'ETH')
 ])
 @pytest.mark.timeout(timeout=120)
-def test_wallet_send_0_eth(keys_screen, main_window, user_account, receiver_account_address, amount, asset):
+def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, amount, asset):
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED.split(),
         status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43')
+
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
 
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()

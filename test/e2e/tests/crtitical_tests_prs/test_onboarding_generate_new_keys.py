@@ -19,14 +19,6 @@ from gui.screens.onboarding import WelcomeToStatusView, BiometricsView, KeysView
 pytestmark = marks
 
 
-@pytest.fixture
-def keys_screen(main_window) -> KeysView:
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        welcome_screen = WelcomeToStatusView().wait_until_appears()
-        return welcome_screen.get_keys()
-
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
 @pytest.mark.case(703421, 703010)
@@ -45,9 +37,12 @@ def keys_screen(main_window) -> KeysView:
         5,
         shift_image(0, 1000, 1000, 0))
 ])
-def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen, user_name: str, password,
+def test_generate_new_keys_sign_out_from_settings(aut, main_window, user_name: str, password,
                                                   user_image: str, zoom: int, shift):
     with step('Click generate new keys and open profile view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+
         profile_view = keys_screen.generate_new_keys()
         assert profile_view.is_next_button_enabled is False, \
             f'Next button is enabled on profile screen when it should not'

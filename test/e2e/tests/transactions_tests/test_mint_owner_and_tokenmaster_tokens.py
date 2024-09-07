@@ -10,32 +10,28 @@ import constants
 import driver
 from configs import WALLET_SEED
 from constants import ReturningUser
+from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from tests.communities import marks
 from constants.community_settings import MintOwnerTokensElements
-from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.screens.community_settings_tokens import MintedTokensView
-from gui.screens.onboarding import KeysView, WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
+from gui.screens.onboarding import BiometricsView, YourEmojihashAndIdenticonRingView, WelcomeToStatusView
 
 pytestmark = marks
-
-
-@pytest.fixture
-def keys_screen(main_window) -> KeysView:
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        wellcome_screen = WelcomeToStatusView().wait_until_appears()
-        return wellcome_screen.get_keys()
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')
 @pytest.mark.case(727245)
 @pytest.mark.transaction
-def test_mint_owner_and_tokenmaster_tokens(keys_screen, main_window, user_account):
+def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED.split(),
         status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43')
+
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
 
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()

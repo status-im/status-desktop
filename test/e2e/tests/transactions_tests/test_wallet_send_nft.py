@@ -3,7 +3,6 @@ import pytest
 from allure_commons._allure import step
 
 import configs
-import constants
 import driver
 from configs import WALLET_SEED
 from constants import ReturningUser
@@ -13,15 +12,7 @@ from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.authenticate_popup import AuthenticatePopup
-from gui.screens.onboarding import KeysView, WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
-
-
-@pytest.fixture
-def keys_screen(main_window) -> KeysView:
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        welcome_screen = WelcomeToStatusView().wait_until_appears()
-        return welcome_screen.get_keys()
+from gui.screens.onboarding import WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704602',
@@ -34,7 +25,11 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.timeout(timeout=120)
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14862")
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14509")
-def test_wallet_send_nft(keys_screen, main_window, user_account, tab, receiver_account_address, amount, collectible):
+def test_wallet_send_nft(main_window, user_account, tab, receiver_account_address, amount, collectible):
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+
     with step('Open import seed phrase view and enter seed phrase'):
 
         user_account = ReturningUser(

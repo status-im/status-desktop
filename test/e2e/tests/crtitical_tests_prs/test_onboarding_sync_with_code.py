@@ -51,8 +51,8 @@ def test_sync_device_during_onboarding(multiple_instances):
             aut_two.attach()
             main_window.prepare()
             BeforeStartedPopUp().get_started()
-            wellcome_screen = WelcomeToStatusView().wait_until_appears()
-            sync_view = wellcome_screen.sync_existing_user().open_sync_code_view()
+            welcome_screen = WelcomeToStatusView().wait_until_appears()
+            sync_view = welcome_screen.sync_existing_user().open_sync_code_view()
 
         with step('Paste sync code on second instance and wait until device is synced'):
             sync_start = sync_view.open_enter_sync_code_form()
