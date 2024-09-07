@@ -15,18 +15,10 @@ from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.authenticate_popup import AuthenticatePopup
 from gui.components.wallet.send_popup import SendPopup
-from gui.screens.onboarding import KeysView, WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
+from gui.screens.onboarding import WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
 from gui.screens.settings_ens_usernames import ENSRegisteredView
 
 pytestmark = marks
-
-
-@pytest.fixture
-def keys_screen(main_window) -> KeysView:
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        wellcome_screen = WelcomeToStatusView().wait_until_appears()
-        return wellcome_screen.get_keys()
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704597',
@@ -34,11 +26,15 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.case(704597)
 @pytest.mark.transaction
 @pytest.mark.parametrize('ens_name', [pytest.param(random_ens_string())])
-def test_ens_name_purchase(keys_screen, main_window, user_account, ens_name):
+def test_ens_name_purchase(main_window, user_account, ens_name):
 
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED.split(),
         status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43')
+
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
 
     with step('Open import seed phrase view and enter seed phrase'):
 

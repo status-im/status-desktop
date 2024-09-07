@@ -15,19 +15,11 @@ from gui.screens.onboarding import WelcomeToStatusView, KeysView
 pytestmark = marks
 
 
-@pytest.fixture
-def keys_screen(main_window) -> KeysView:
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        welcome_screen = WelcomeToStatusView().wait_until_appears()
-        return welcome_screen.get_keys()
-
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702989',
                  'Strength of the password')
 @pytest.mark.case(702989)
 @pytest.mark.parametrize('user_account', [RandomUser()])
-def test_check_password_strength_and_login(keys_screen, main_window, user_account):
+def test_check_password_strength_and_login(main_window, user_account):
     values = [('abcdefghij', very_weak_lower_elements),
               ('ABCDEFGHIJ', very_weak_upper_elements),
               ('1234567890', very_weak_numbers_elements),
@@ -37,6 +29,10 @@ def test_check_password_strength_and_login(keys_screen, main_window, user_accoun
               ('+1_3!48aT1', good_elements),
               ('+1_3!48aTq', great_elements)]
     expected_password = ""
+
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
 
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()

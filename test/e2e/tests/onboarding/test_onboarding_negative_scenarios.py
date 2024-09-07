@@ -22,20 +22,16 @@ from gui.screens.onboarding import WelcomeToStatusView, KeysView, BiometricsView
 pytestmark = marks
 
 
-@pytest.fixture
-def keys_screen(main_window) -> KeysView:
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        welcome_screen = WelcomeToStatusView().wait_until_appears()
-        return welcome_screen.get_keys()
-
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702991', 'Login with an invalid password')
 @pytest.mark.case(702991)
 @pytest.mark.parametrize('error', [OnboardingMessages.PASSWORD_INCORRECT.value
                                    ])
-def test_login_with_wrong_password(aut: AUT, keys_screen, main_window, error: str):
+def test_login_with_wrong_password(aut: AUT, main_window, error: str):
     user_one: UserAccount = RandomUser()
+
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
 
     with step('Open generate keys view and set user name'):
         profile_view = keys_screen.generate_new_keys()
@@ -82,8 +78,12 @@ def test_login_with_wrong_password(aut: AUT, keys_screen, main_window, error: st
     pytest.param(''.join(random.choice(string.punctuation) for i in range(5, 25)),
                  OnboardingMessages.WRONG_LOGIN_SYMBOLS_NOT_ALLOWED.value)
 ])
-def test_sign_up_with_wrong_name(keys_screen, user_name: str, error: str):
-    with step(f'Input name {user_name}'):
+def test_sign_up_with_wrong_name(aut: AUT, main_window, user_name, error):
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+
+    with step(f'Input name Athl'):
         profile_view = keys_screen.generate_new_keys()
         profile_view.set_display_name(user_name)
 
@@ -104,7 +104,11 @@ def test_sign_up_with_wrong_name(keys_screen, user_name: str, error: str):
 @pytest.mark.parametrize('error', [
     pytest.param(OnboardingMessages.WRONG_PASSWORD.value),
 ])
-def test_sign_up_with_wrong_password_length(keys_screen, user_account, error: str):
+def test_sign_up_with_wrong_password_length(user_account, error: str, aut: AUT, main_window):
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
         profile_view.set_display_name(user_account.name)
@@ -124,7 +128,11 @@ def test_sign_up_with_wrong_password_length(keys_screen, user_account, error: st
 @pytest.mark.case(702994)
 @pytest.mark.parametrize('user_account', [
     RandomUser()])
-def test_sign_up_with_wrong_password_in_confirmation_field(keys_screen, user_account):
+def test_sign_up_with_wrong_password_in_confirmation_field(user_account, aut: AUT, main_window):
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
         profile_view.set_display_name(user_account.name)
@@ -145,8 +153,12 @@ def test_sign_up_with_wrong_password_in_confirmation_field(keys_screen, user_acc
 @pytest.mark.parametrize('error', [
     pytest.param(OnboardingMessages.PASSWORDS_DONT_MATCH.value),
 ])
-def test_sign_up_with_wrong_password_in_confirmation_again_field(keys_screen, user_account,
-                                                                 error: str):
+def test_sign_up_with_wrong_password_in_confirmation_again_field(user_account,
+                                                                 error: str, aut: AUT, main_window):
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
         profile_view.set_display_name(user_account.name)
@@ -169,7 +181,11 @@ def test_sign_up_with_wrong_password_in_confirmation_again_field(keys_screen, us
 @pytest.mark.parametrize('seed_phrase', [
     pytest.param('pelican chief sudden oval media rare swamp elephant lawsuit wheal knife initial'),
 ])
-def test_sign_up_with_wrong_seed_phrase(keys_screen, seed_phrase: str):
+def test_sign_up_with_wrong_seed_phrase(seed_phrase: str, aut: AUT, main_window):
+    with step('Open Generate new keys view'):
+        BeforeStartedPopUp().get_started()
+        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         input_view.input_seed_phrase(seed_phrase.split(), autocomplete=False)

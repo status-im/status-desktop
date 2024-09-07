@@ -26,8 +26,8 @@ pytestmark = marks
 def sync_screen(main_window) -> SyncCodeView:
     with step('Open Syncing view'):
         BeforeStartedPopUp().get_started()
-        wellcome_screen = WelcomeToStatusView().wait_until_appears()
-        return wellcome_screen.sync_existing_user().open_sync_code_view()
+        welcome_screen = WelcomeToStatusView().wait_until_appears()
+        return welcome_screen.sync_existing_user().open_sync_code_view()
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703631', 'Wrong sync code')
