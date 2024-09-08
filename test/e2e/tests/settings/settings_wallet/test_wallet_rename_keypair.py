@@ -8,6 +8,7 @@ from allure_commons._allure import step
 from constants import RandomUser
 from constants.wallet import WalletRenameKeypair, WalletAccountPopup
 from gui.components.authenticate_popup import AuthenticatePopup
+from helpers.WalletHelper import authenticate_with_password
 from tests.wallet_main_screen import marks
 
 import constants
@@ -39,7 +40,7 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, name: str, c
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_emoji(emoji).save_changes()
-        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
     with step('To create imported seed phrase account open add account popup and set name, emoji and color'):
@@ -55,7 +56,7 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, name: str, c
     with step('Enter seed phrase name with more than 5 characters and continue creating of seed phrase account'):
         new_account_popup.enter_seed_phrase_name(seed_phrase_name).click_continue()
         account_popup.save_changes()
-        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
     with step('To import an account within private key open add account popup and set name, emoji and color'):
@@ -71,7 +72,7 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, name: str, c
     with step('Enter private key name more than 5 characters and continue creating of import private key account'):
         new_account_popup.enter_private_key_name(address_pair.private_key[:5]).click_continue()
         account_popup.save_changes()
-        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
     with step('Open wallet settings and verify Status keypair title'):

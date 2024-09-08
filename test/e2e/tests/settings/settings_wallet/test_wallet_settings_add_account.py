@@ -7,6 +7,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants import UserAccount, RandomUser
+from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_name_string, random_password_string
 from constants.wallet import WalletAccountPopup
 from . import marks
@@ -43,7 +44,7 @@ def test_add_new_account_from_wallet_settings(
             assert add_account_popup.get_error_message() == WalletAccountPopup.WALLET_ACCOUNT_NAME_MIN.value
 
         add_account_popup.set_name(account_name).set_emoji(emoji).set_color(color).save_changes()
-        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        authenticate_with_password(user_account)
         add_account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):

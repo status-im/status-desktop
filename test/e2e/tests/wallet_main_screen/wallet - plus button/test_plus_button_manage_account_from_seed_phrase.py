@@ -6,6 +6,7 @@ from allure_commons._allure import step
 
 from constants import RandomUser
 from constants.wallet import WalletSeedPhrase
+from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_mnemonic
 from tests.wallet_main_screen import marks
 
@@ -40,7 +41,7 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
         account_popup.set_name(name).set_emoji(emoji).set_color(
             color).open_add_new_account_popup().import_new_seed_phrase(mnemonic_data.split())
         account_popup.save_changes()
-        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
@@ -86,7 +87,7 @@ def test_plus_button_re_importing_seed_phrase(main_screen: MainWindow, user_acco
         account_popup.set_name(name).set_emoji(emoji).set_color(
             color).open_add_new_account_popup().import_new_seed_phrase(seed_phrase.split())
         account_popup.save_changes()
-        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
     with step('Try to re-import seed phrase and verify that correct error appears'):

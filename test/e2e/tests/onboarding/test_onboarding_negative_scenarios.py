@@ -5,6 +5,8 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+
+from helpers.OnboardingHelper import open_generate_new_keys_view
 from . import marks
 
 import configs.system
@@ -29,9 +31,7 @@ pytestmark = marks
 def test_login_with_wrong_password(aut: AUT, main_window, error: str):
     user_one: UserAccount = RandomUser()
 
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+    keys_screen = open_generate_new_keys_view()
 
     with step('Open generate keys view and set user name'):
         profile_view = keys_screen.generate_new_keys()
@@ -79,9 +79,7 @@ def test_login_with_wrong_password(aut: AUT, main_window, error: str):
                  OnboardingMessages.WRONG_LOGIN_SYMBOLS_NOT_ALLOWED.value)
 ])
 def test_sign_up_with_wrong_name(aut: AUT, main_window, user_name, error):
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+    keys_screen = open_generate_new_keys_view()
 
     with step(f'Input name Athl'):
         profile_view = keys_screen.generate_new_keys()
@@ -105,9 +103,7 @@ def test_sign_up_with_wrong_name(aut: AUT, main_window, user_name, error):
     pytest.param(OnboardingMessages.WRONG_PASSWORD.value),
 ])
 def test_sign_up_with_wrong_password_length(user_account, error: str, aut: AUT, main_window):
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+    keys_screen = open_generate_new_keys_view()
 
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
@@ -129,9 +125,7 @@ def test_sign_up_with_wrong_password_length(user_account, error: str, aut: AUT, 
 @pytest.mark.parametrize('user_account', [
     RandomUser()])
 def test_sign_up_with_wrong_password_in_confirmation_field(user_account, aut: AUT, main_window):
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+    keys_screen = open_generate_new_keys_view()
 
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
@@ -155,9 +149,7 @@ def test_sign_up_with_wrong_password_in_confirmation_field(user_account, aut: AU
 ])
 def test_sign_up_with_wrong_password_in_confirmation_again_field(user_account,
                                                                  error: str, aut: AUT, main_window):
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+    keys_screen = open_generate_new_keys_view()
 
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
@@ -182,13 +174,11 @@ def test_sign_up_with_wrong_password_in_confirmation_again_field(user_account,
     pytest.param('pelican chief sudden oval media rare swamp elephant lawsuit wheal knife initial'),
 ])
 def test_sign_up_with_wrong_seed_phrase(seed_phrase: str, aut: AUT, main_window):
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+    keys_screen = open_generate_new_keys_view()
 
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
-        input_view.input_seed_phrase(seed_phrase.split(), autocomplete=False)
+        input_view.input_seed_phrase(seed_phrase.split(), False)
 
     with step('Verify that import button is disabled'):
         assert input_view.is_import_button_enabled is False

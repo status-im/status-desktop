@@ -76,7 +76,7 @@ class AUT:
         self.ctx = None
 
     @allure.step('Attach Squish to Test Application')
-    def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
+    def attach(self):
         LOG.info('Attaching to AUT: localhost:%d', self.port)
 
         try:

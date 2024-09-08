@@ -6,6 +6,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants import RandomUser
+from helpers.WalletHelper import authenticate_with_password
 from tests.settings.settings_wallet import marks
 
 import constants
@@ -38,7 +39,7 @@ def test_delete_generated_account_from_wallet_settings(
 
     with step('Add a new generated account from wallet settings screen'):
         add_account_popup.set_name(account_name).set_emoji(emoji).set_color(color).save_changes()
-        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        authenticate_with_password(user_account)
         add_account_popup.wait_until_hidden()
 
     with step('Open account details view for the generated account'):
