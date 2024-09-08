@@ -2,6 +2,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+from helpers.WalletHelper import authenticate_with_password
 from . import marks
 
 import configs
@@ -56,7 +57,7 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
             account_popup.set_name(account[0]).set_emoji(account[1])
             colors.append(account_popup.set_random_color())
             account_popup.save_changes()
-            AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+            authenticate_with_password(user_account)
             account_popup.wait_until_hidden()
 
     with step('Verify accounts in wallet settings'):

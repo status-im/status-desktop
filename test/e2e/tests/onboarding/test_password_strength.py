@@ -3,6 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants import UserAccount, RandomUser
+from helpers.OnboardingHelper import open_generate_new_keys_view
 from scripts.utils.generators import random_name_string, random_password_string
 from . import marks
 
@@ -30,9 +31,7 @@ def test_check_password_strength_and_login(main_window, user_account):
               ('+1_3!48aTq', great_elements)]
     expected_password = ""
 
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+    keys_screen = open_generate_new_keys_view()
 
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()

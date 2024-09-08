@@ -5,6 +5,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants import RandomUser
+from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_wallet_account_name
 from tests.wallet_main_screen import marks
 
@@ -36,7 +37,7 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).save_changes()
-        AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):

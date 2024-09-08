@@ -6,16 +6,13 @@ from constants import RandomUser
 from constants.onboarding import KeysExistText
 from constants.wallet import WalletNetworkSettings
 from driver.aut import AUT
+from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
+    finalize_onboarding_and_login
 from scripts.utils.generators import random_mnemonic, get_wallet_address_from_mnemonic
 from tests.onboarding import marks
 
-import configs.system
-from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
-from gui.components.splash_screen import SplashScreen
 from gui.main_window import LeftPanel
-from gui.screens.onboarding import BiometricsView, WelcomeToStatusView, \
-    YourEmojihashAndIdenticonRingView, LoginView
+from gui.screens.onboarding import LoginView
 
 pytestmark = marks
 
@@ -25,32 +22,13 @@ pytestmark = marks
 @pytest.mark.case(703040, 736372)
 @pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.critical
+# TODO: it may fail, https://github.com/status-im/status-desktop/issues/16291
 def test_import_seed_phrase(main_window, aut: AUT, user_account):
 
-    with step('Open Generate new keys view'):
-        BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
-
-    with step('Open import seed phrase view and enter seed phrase'):
-        seed_phrase = random_mnemonic()
-        input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
-        input_view.input_seed_phrase(seed_phrase.split(), autocomplete=True)
-        profile_view = input_view.import_seed_phrase()
-        profile_view.set_display_name(user_account.name)
-
-    with step('Finalize onboarding and open main screen'):
-        create_password_view = profile_view.next()
-        confirm_password_view = create_password_view.create_password(user_account.password)
-        confirm_password_view.confirm_password(user_account.password)
-        if configs.system.get_platform() == "Darwin":
-            BiometricsView().wait_until_appears().prefer_password()
-        SplashScreen().wait_until_appears().wait_until_hidden()
-        next_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
-        if configs.system.get_platform() == "Darwin":
-            next_view.start_using_status()
-        SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
-            BetaConsentPopup().confirm()
+    keys_screen = open_generate_new_keys_view()
+    seed_phrase = random_mnemonic()
+    profile_view = open_import_seed_view_and_do_import(keys_screen, seed_phrase, user_account)
+    finalize_onboarding_and_login(profile_view, user_account)
 
     with (step('Verify that restored account reveals correct status wallet address')):
         status_account_index = 0

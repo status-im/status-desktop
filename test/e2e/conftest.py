@@ -58,6 +58,7 @@ def pytest_runtest_setup(item):
     test_data.error = []
     test_data.steps = []
 
+
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield

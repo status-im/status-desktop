@@ -12,7 +12,7 @@ LOG = logging.getLogger(__name__)
 class Scroll(QObject):
 
     @allure.step('Scroll vertical down to object {1}')
-    def vertical_scroll_down(self, element: QObject, timeout_sec: int = 5, attempts: int = 2):
+    def vertical_scroll_down(self, element: QObject, timeout_sec: int = 5):
         started_at = time.monotonic()
         while not element.is_visible:
             self.object.scrollPageDown()
