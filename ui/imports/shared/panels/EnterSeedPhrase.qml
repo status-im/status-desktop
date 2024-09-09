@@ -55,7 +55,6 @@ ColumnLayout {
             let mnemonicString = ""
 
             if (d.allEntriesValid) {
-
                 mnemonicString = buildMnemonicString()
                 if (!Utils.isMnemonic(mnemonicString) || !root.isSeedPhraseValid(mnemonicString)) {
                     root.setWrongSeedPhraseMessage(qsTr("Invalid seed phrase"))
