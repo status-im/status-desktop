@@ -49,6 +49,52 @@ Item {
             waitForRendering(itemUnderTest)
         }
 
+        // regression test for https://github.com/status-im/status-desktop/issues/16291
+        function test_threeLetterPrefixSuggestionInput() {
+            const commonPrefixToTest = "cat"
+
+            //generate a seed phrase
+            const expectedSeedPhrase = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", commonPrefixToTest]
+            const baseDictionary = [...expectedSeedPhrase, "cow", "catalog", "catch", "category", "cattle"]
+
+            let isSeedPhraseValidCalled = false
+            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
+                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
+                isSeedPhraseValidCalled = true
+                return true
+            }
+
+            itemUnderTest.dictionary.append(baseDictionary.map((word) => ({seedWord: word})))
+
+            //Type the seed phrase except the last word
+            const str = expectedSeedPhrase.join(" ")
+            for (let i = 0; i < str.length - commonPrefixToTest.length; i++) {
+                keyPress(str.charAt(i))
+            }
+
+            const lastInputField = findChild(itemUnderTest, "enterSeedPhraseInputField12")
+            verify(!!lastInputField)
+            mouseClick(lastInputField)
+            tryCompare(lastInputField, "activeFocus", true)
+
+            // type the common prefix -> "cat..."
+            keyClick(Qt.Key_C)
+            keyClick(Qt.Key_A)
+            keyClick(Qt.Key_T)
+            tryCompare(lastInputField, "text", "cat")
+
+            // hit Enter to accept "cat"
+            keyClick(Qt.Key_Enter)
+            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+
+            // hit Enter to submit the form
+            keyClick(Qt.Key_Enter)
+            verify(itemUnderTest.submitSpy.count === 1, "submitSeedPhrase signal was not emitted")
+            // This signal is emitted multiple times due to the way the seed phrase is updated and validated
+            // The minimum is the length if the seed phrase
+            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+        }
+
         function test_componentCreation() {
             verify(itemUnderTest !== null, "Component creation failed")
         }
@@ -310,7 +356,6 @@ Item {
             }
 
             keyClick(Qt.Key_Enter)
-            print (itemUnderTest.seedPhraseUpdatedSpy.count)
             verify(itemUnderTest.submitSpy.count === 0, "submitSeedPhrase signal was emitted")
             verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
         }
@@ -354,10 +399,8 @@ Item {
             keyClick(Qt.Key_Enter)
 
             verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
-            print (lastVerifiedSeedPhrase)
             verify(lastVerifiedSeedPhrase === expectedSeedPhrase.join(" ").slice(0, -1) + "a", "Seed phrase is not updated")
             verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
-
         }
 
         // Test suggestions are active after the seed phrase word is fixed

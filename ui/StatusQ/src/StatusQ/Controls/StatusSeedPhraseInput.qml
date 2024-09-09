@@ -66,16 +66,13 @@ Item {
     property string leftComponentText: ""
     /*!
         \qmlproperty ListModel StatusSeedPhraseInput::inputList
-        This property holds the filtered words list based on the user's
-        input text.
+        This property holds the seed words dictionary
     */
     property ListModel inputList: ListModel { }
     /*!
         \qmlproperty ListModel StatusSeedPhraseInput::filteredList
-        This signal is emitted when the user selects a word from
-        the suggestions list, either by clicking on it or by completing
-        typing 4 charactersnd passes as a parameter the selected word.
-        The corresponding handler is \c onDoneInsertingWord
+        This property holds the filtered words list based on the user's
+        input text.
     */
     property ListModel filteredList: ListModel { }
     /*!
@@ -107,6 +104,7 @@ Item {
         let seedWordTrimmed = seedWord.trim()
         seedWordInput.input.edit.text = seedWordTrimmed
         seedWordInput.input.edit.cursorPosition = seedWordInput.text.length
+        filteredList.clear()
         root.doneInsertingWord(seedWordTrimmed)
     }
 
@@ -116,20 +114,14 @@ Item {
         }
     }
 
-    QtObject {
-        id: d
-
-        property bool isInputValidWord: false
-    }
-
     Component {
         id: seedInputLeftComponent
         StatusBaseText {
+            leftPadding: 4
             rightPadding: 6
             text: root.leftComponentText
             color: seedWordInput.input.edit.activeFocus ?
                    Theme.palette.primaryColor1 : Theme.palette.baseColor1
-            font.pixelSize: 15
         }
     }
 
@@ -140,7 +132,6 @@ Item {
         input.leftComponent: seedInputLeftComponent
         input.acceptReturn: true
         onTextChanged: {
-            d.isInputValidWord = false
             filteredList.clear();
             let textToCheck = text.trim().toLowerCase()
 
@@ -149,10 +140,9 @@ Item {
             }
 
             for (var i = 0; i < inputList.count; i++) {
-                if (inputList.get(i).seedWord.startsWith(textToCheck)) {
-                    filteredList.insert(filteredList.count, {"seedWord": inputList.get(i).seedWord});
-                    if(inputList.get(i).seedWord === textToCheck)
-                        d.isInputValidWord = true
+                const word = inputList.get(i).seedWord
+                if (word.startsWith(textToCheck)) {
+                    filteredList.insert(filteredList.count, {"seedWord": word})
                 }
             }
 
@@ -203,7 +193,7 @@ Item {
         }
     }
 
-    Popup {
+    StatusDropdown {
         id: suggListContainer
         contentWidth: seedSuggestionsList.width
         contentHeight: ((seedSuggestionsList.count <= 5) ? seedSuggestionsList.count : 5) *34
@@ -215,26 +205,11 @@ Item {
         rightPadding: 0
 
         visible: ((filteredList.count > 0) && seedWordInput.input.edit.activeFocus)
-        background: Rectangle {
-            id: statusMenuBackgroundContent
-            color: Theme.palette.statusMenu.backgroundColor
-            radius: 8
-            layer.enabled: true
-            layer.effect: DropShadow {
-                anchors.fill: parent
-                source: statusMenuBackgroundContent
-                horizontalOffset: 0
-                verticalOffset: 4
-                radius: 12
-                samples: 25
-                spread: 0.2
-                color: Theme.palette.dropShadow
-            }
-        }
-        ListView {
+
+        StatusListView {
             id: seedSuggestionsList
-            width: ((seedSuggestionsList.contentItem.childrenRect.width + 24) > root.width) ? root.width
-                    : (seedSuggestionsList.contentItem.childrenRect.width + 24)
+            width: (((seedSuggestionsList.contentItem.childrenRect.width + 24) > root.width) ? root.width
+                    : (seedSuggestionsList.contentItem.childrenRect.width + 24)) + 8
             anchors.top: parent.top
             anchors.bottom: parent.bottom
 
@@ -242,8 +217,6 @@ Item {
                 seedSuggestionsList.currentIndex = 0
             }
 
-            clip: true
-            ScrollBar.vertical: ScrollBar { }
             model: root.filteredList
 
             delegate: Item {
@@ -259,7 +232,7 @@ Item {
                 StatusBaseText {
                     id: suggWord
                     anchors.left: parent.left
-                    anchors.leftMargin: 14
+                    anchors.leftMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
                     text: seedWord
                     color: mouseArea.containsMouse || index === seedSuggestionsList.currentIndex ? Theme.palette.indirectColor1 : Theme.palette.directColor1
