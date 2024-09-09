@@ -211,6 +211,13 @@ SplitView {
                 preSelectedHoldingID: loader.preSelectedHoldingID
                 preSelectedHoldingType: loader.preSelectedHoldingType
                 showCustomRoutingMode: ctrlShowCustomMode.checked
+                generateUuid: () => { return "12345" }
+                sendTransaction: () => {
+                                    if (!showSendErrorCheckBox.checked)
+                                         return
+
+                                    txStore.walletSectionSendInst.transactionSent(1, "0x123", generateUuid(), "Send error, please ignore")
+                                 }
             }
             Component.onCompleted: loader.active = true
         }
@@ -351,6 +358,12 @@ SplitView {
                 id: ctrlShowCustomMode
                 text: "Show custom network routing panel"
                 checked: true
+            }
+
+            CheckBox {
+                id: showSendErrorCheckBox
+                text: "Show send error"
+                checked: false
             }
 
             CheckBox {
