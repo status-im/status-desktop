@@ -1005,6 +1005,7 @@ StackView {
                     token.accountAddress: model.accountAddress
                     token.multiplierIndex: model.multiplierIndex
                     token.tokenAddress: model.tokenAddress
+                    token.tokenHoldersLoading: model.tokenHoldersLoading
                 }
 
                 onCountChanged: {

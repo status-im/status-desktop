@@ -392,6 +392,10 @@ proc init*(self: Controller) =
     let args = CommunityTokenOwnersArgs(e)
     self.delegate.onCommunityTokenOwnersFetched(args.communityId, args.chainId, args.contractAddress, args.owners)
 
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_OWNERS_LOADING_FAILED) do(e: Args):
+    let args = CommunityTokenOwnersArgs(e)
+    self.delegate.errorLoadingTokenHolders(args.communityId, args.chainId, args.contractAddress, args.error)
+
   self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING) do(e: Args):
     var args = CommunityMemberArgs(e)
     self.delegate.onAcceptRequestToJoinLoading(args.communityId, args.pubKey)
@@ -411,10 +415,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED) do(e: Args):
     let args = CommunityMemberStatusUpdatedArgs(e)
     self.delegate.onMembershipStateUpdated(args.communityId, args.memberPubkey, args.state)
-
-  self.events.on(SIGNAL_COMMUNITY_MEMBERS_CHANGED) do(e: Args):
-    let args = CommunityMembersArgs(e)
-    self.communityTokensService.fetchCommunityTokenOwners(args.communityId)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
@@ -597,3 +597,9 @@ proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: strin
 
 proc asyncReevaluateCommunityMembersPermissions*(self: Controller, communityId: string) =
   self.communityService.asyncReevaluateCommunityMembersPermissions(communityId)
+
+proc startTokenHoldersManagement*(self: Controller, chainId: int, contractAddress: string) =
+  self.communityTokensService.startTokenHoldersManagement(chainId, contractAddress)
+
+proc stopTokenHoldersManagement*(self: Controller) =
+  self.communityTokensService.stopTokenHoldersManagement()

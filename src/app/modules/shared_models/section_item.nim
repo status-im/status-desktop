@@ -373,6 +373,9 @@ proc updateRemoteDestructedAddresses*(self: SectionItem, chainId: int, contractA
 proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) {.inline.} =
   self.communityTokensModel.setCommunityTokenOwners(chainId, contractAddress, owners)
 
+proc setCommunityTokenHoldersLoading*(self: SectionItem, chainId: int, contractAddress: string, value: bool) {.inline.} =
+  self.communityTokensModel.setCommunityTokenHoldersLoading(chainId, contractAddress, value)
+
 proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.inline.} =
   self.communityTokensModel
 

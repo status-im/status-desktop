@@ -96,6 +96,7 @@ StatusScrollView {
         id: d
 
         readonly property int iconSize: 20
+        property bool loadingTokenHolders: false
 
         readonly property var renamedTokenOwnersModel: RolesRenamingModel {
             sourceModel: root.tokenOwnersModel
@@ -172,7 +173,7 @@ StatusScrollView {
                 wrapMode: Text.Wrap
                 font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.baseColor1
-                text: qsTr("Review token details before minting it as they can’t be edited later")
+                text: qsTr("Review token details before minting it as they can't be edited later")
             }
         }
 
@@ -228,7 +229,15 @@ StatusScrollView {
             id: tokenHolderLoader
 
             visible: !root.preview && root.deploymentCompleted
-            sourceComponent: isOwnerTokenItem ? tokenHolderContact : sortableTokenHolderPanel
+            sourceComponent: isOwnerTokenItem ? tokenHolderContact : (token.tokenHoldersLoading ? tokenHoldersLoadingComponent : sortableTokenHolderPanel)
+        }
+
+        Component {
+            id: tokenHoldersLoadingComponent
+
+            StatusBaseText {
+                text: qsTr("Loading token holders...")
+            }
         }
 
         Component {

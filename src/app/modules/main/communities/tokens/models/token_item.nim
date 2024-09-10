@@ -20,6 +20,7 @@ type
     burnState*: ContractTransactionStatus
     remoteDestructedAddresses*: seq[string]
     tokenOwnersModel*: token_owners_model.TokenOwnersModel
+    tokenHoldersLoading*: bool
 
 proc initTokenItem*(
   tokenDto: CommunityTokenDto,
@@ -29,7 +30,7 @@ proc initTokenItem*(
   burnState: ContractTransactionStatus,
   remoteDestructedAddresses: seq[string],
   remainingSupply: Uint256,
-  destructedAmount: Uint256
+  destructedAmount: Uint256,
 ): TokenItem =
   result.tokenDto = tokenDto
   if network != nil:
@@ -45,6 +46,7 @@ proc initTokenItem*(
     # TODO: provide number of messages here
     result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, 0, owner.collectibleOwner, remoteDestructedAddresses)
   ))
+  result.tokenHoldersLoading = false
 
 proc `$`*(self: TokenItem): string =
   result = fmt"""TokenItem(
@@ -55,6 +57,7 @@ proc `$`*(self: TokenItem): string =
     destructedAmount: {self.destructedAmount},
     burnState: {self.burnState},
     tokenOwnersModel: {self.tokenOwnersModel},
+    tokenHoldersLoading: {self.tokenHoldersLoading},
     remoteDestructedAddresses: {self.remoteDestructedAddresses}
     ]"""
 

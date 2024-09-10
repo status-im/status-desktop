@@ -1213,6 +1213,20 @@ method onCommunityTokenRemoved*[T](self: Module[T], communityId: string, chainId
   if item.id != "":
     item.removeCommunityToken(chainId, address)
 
+method startTokenHoldersManagement*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string) =
+  self.controller.startTokenHoldersManagement(chainId, contractAddress)
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "" and not item.communityTokens.hasTokenHolders(chainId, contractAddress):
+    item.setCommunityTokenHoldersLoading(chainId, contractAddress, value = true)
+
+method stopTokenHoldersManagement*[T](self: Module[T]) =
+  self.controller.stopTokenHoldersManagement()
+
+method errorLoadingTokenHolders*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, error: string) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.setCommunityTokenHoldersLoading(chainId, contractAddress, value = false)
+
 method onCommunityTokenOwnersFetched*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":

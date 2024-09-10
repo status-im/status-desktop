@@ -337,6 +337,9 @@ method onOwnerTokensDeploymentStarted*(self: AccessInterface, ownerToken: Commun
 method onCommunityTokenOwnersFetched*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method errorLoadingTokenHolders*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -419,6 +422,12 @@ method openSectionChatAndMessage*(self: AccessInterface, sectionId: string, chat
   raise newException(ValueError, "No implementation available")
 
 method updateRequestToJoinState*(self: AccessInterface, sectionId: string, requestToJoinState: RequestToJoinState) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method startTokenHoldersManagement*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method stopTokenHoldersManagement*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
