@@ -3,7 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants import UserAccount, RandomUser
-from scripts.utils.generators import random_name_string, random_password_string
+from scripts.utils.generators import random_name_string
 from . import marks
 
 import constants
