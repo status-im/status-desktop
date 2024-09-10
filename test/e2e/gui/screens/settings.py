@@ -26,7 +26,8 @@ class LeftPanel(QObject):
         self._settings_section_template = QObject(settings_names.scrollView_MenuItem_StatusNavigationListItem)
         self._scroll = Scroll(settings_names.mainWindow_scrollView_StatusScrollView)
         self.settings_section_back_up_seed_option = QObject(settings_names.settingsBackUpSeedPhraseOption)
-        self._settings_section_wallet_option = QObject(settings_names.settingsWalletOption)
+        self.settings_section_wallet_option = QObject(settings_names.settingsWalletOption)
+        self.settings_section_sign_out_quit_option = QObject(settings_names.settingsSignOutQuitOption)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
@@ -84,7 +85,7 @@ class LeftPanel(QObject):
     @allure.step('Choose sign out and quit in settings')
     @handle_settings_opening(SignOutPopup, '17-ExtraMenuItem')
     def open_sign_out_and_quit(self, click_attempts: int = 2) -> 'SignOutPopup':
-        assert SignOutPopup().exists, 'Sign out modal was not opened'
+        assert SignOutPopup().wait_until_appears(), 'Sign out modal was not opened'
         return SignOutPopup()
 
     @allure.step('Open keycard settings')
