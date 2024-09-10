@@ -79,10 +79,11 @@ Pane {
         color: Theme.palette.baseColor3
     }
 
-    AssetSelector {
+    AssetSelectorCompact {
         id: panel
 
         anchors.centerIn: parent
+        width: 400
 
         model: assetsModel
         sectionProperty: "sectionText"
