@@ -29,9 +29,10 @@ Control {
             iconUrl             [url]    - chain's icon
     **/
     property alias model: sfpm.sourceModel
+    property string highlightedKey: ""
+    property string sectionProperty
 
     signal selected(string key)
-    property string highlightedKey: ""
 
     SortFilterProxyModel {
         id: sfpm
@@ -73,6 +74,13 @@ Control {
             Layout.preferredHeight: contentHeight
 
             model: sfpm
+
+            section.property: root.sectionProperty
+
+            section.delegate: TokenSelectorSectionDelegate {
+                width: ListView.view.width
+                text: section
+            }
 
             delegate: TokenSelectorAssetDelegate {
                 required property var model
