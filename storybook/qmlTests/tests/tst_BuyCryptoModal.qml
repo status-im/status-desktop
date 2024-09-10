@@ -216,34 +216,27 @@ Item {
             verify(!!networkFilter)
             compare(networkFilter.selection, [controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId])
 
-            const tokenSelector = findChild(selectParamsPanel, "tokenSelector")
+            const tokenSelector = findChild(selectParamsPanel, "assetSelector")
             verify(!!tokenSelector)
-            compare(tokenSelector.currentTokensKey, controlUnderTest.buyCryptoInputParamsForm.selectedTokenKey)
 
-            const selectedTokenItem = findChild(selectParamsPanel, "selectedTokenItem")
-            verify(!!selectedTokenItem)
+            compare(selectParamsPanel.selectedTokenKey, controlUnderTest.buyCryptoInputParamsForm.selectedTokenKey)
 
-            const modelDataToTest = ModelUtils.getByKey(tokenSelector.model, "tokensKey", tokenSelector.currentTokensKey)
-            const tokenSelectorIcon = findChild(selectedTokenItem, "tokenSelectorIcon")
-            verify(!!tokenSelectorIcon)
-            compare(tokenSelectorIcon.image.source, modelDataToTest.iconSource)
+            const selectedAssetButton = findChild(tokenSelector, "assetSelectorButton")
+            verify(!!selectedAssetButton)
 
-            const tokenSelectorContentItemName = findChild(selectedTokenItem, "tokenSelectorContentItemName")
-            verify(!!tokenSelectorContentItemName)
-            compare(tokenSelectorContentItemName.text,  modelDataToTest.name)
-
-            const tokenSelectorContentItemSymbol = findChild(selectedTokenItem, "tokenSelectorContentItemSymbol")
-            verify(!!tokenSelectorContentItemSymbol)
-            compare(tokenSelectorContentItemSymbol.text,  modelDataToTest.symbol)
+            const modelDataToTest = ModelUtils.getByKey(tokenSelector.model, "tokensKey",
+                                                        controlUnderTest.buyCryptoInputParamsForm.selectedTokenKey)
+            compare(selectedAssetButton.selected, true)
+            compare(selectedAssetButton.icon, modelDataToTest.iconSource)
+            compare(selectedAssetButton.name, modelDataToTest.name)
+            compare(selectedAssetButton.subname, modelDataToTest.symbol)
 
             //switch to a network that has no tokens and ensure its reset
-            controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId = 421613
+             controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId = 421613
 
-            waitForRendering(selectParamsPanel)
+             waitForRendering(selectParamsPanel)
 
-            const nothingSelectedContentItem = findChild(selectParamsPanel, "tokenSelectorContentItemText")
-            verify(!!nothingSelectedContentItem)
-            verify(!selectedTokenItem.visible)
+            compare(selectedAssetButton.selected, false)
             verify(!controlUnderTest.rightButtons[0].enabled)
 
             // switch back a network and token thats valid and check if clicking buy button works properly

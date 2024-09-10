@@ -112,7 +112,7 @@ StatusStackModal {
         }
 
         // used to filter items based on search string in the token selector
-        property string searchString
+
         readonly property var tokenSelectorViewAdaptor: TokenSelectorViewAdaptor {
             assetsModel: root.groupedAccountAssetsModel
             plainTokensBySymbolModel: root.plainTokensBySymbolModel
@@ -122,7 +122,6 @@ StatusStackModal {
             showAllTokens: true
             enabledChainIds: root.buyCryptoInputParamsForm.selectedNetworkChainId !== -1 ? [root.buyCryptoInputParamsForm.selectedNetworkChainId] : []
             accountAddress: root.buyCryptoInputParamsForm.selectedWalletAddress
-            searchString: d.searchString
         }
 
         readonly property var buyCryptoAdaptor: BuyCryptoModalAdaptor {
@@ -196,11 +195,6 @@ StatusStackModal {
                 if (root.buyCryptoInputParamsForm.selectedTokenKey !== tokensKey) {
                     root.buyCryptoInputParamsForm.selectedTokenKey = tokensKey
                 }
-            }
-            Binding {
-                target: d
-                property: "searchString"
-                value: searchString
             }
         }
     }
