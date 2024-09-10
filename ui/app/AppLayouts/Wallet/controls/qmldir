@@ -1,6 +1,7 @@
 AccountHeaderGradient 1.0 AccountHeaderGradient.qml
 ActivityFilterTagItem 1.0 ActivityFilterTagItem.qml
 AssetSelector 1.0 AssetSelector.qml
+AssetSelectorCompact 1.0 AssetSelectorCompact.qml
 BuyCryptoProvidersDelegate 1.0 BuyCryptoProvidersDelegate.qml
 BuyCryptoProvidersLoadingDelegate 1.0 BuyCryptoProvidersLoadingDelegate.qml
 CollectibleBalanceTag 1.0 CollectibleBalanceTag.qml
@@ -24,4 +25,5 @@ SwapExchangeButton 1.0 SwapExchangeButton.qml
 SwapProvidersTermsAndConditionsText 1.0 SwapProvidersTermsAndConditionsText.qml
 TokenSelector 1.0 TokenSelector.qml
 TokenSelectorButton 1.0 TokenSelectorButton.qml
+TokenSelectorCompactButton 1.0 TokenSelectorCompactButton.qml
 TokenSelectorNew 1.0 TokenSelectorNew.qml

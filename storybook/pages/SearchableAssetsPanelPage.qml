@@ -1,8 +1,8 @@
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
-import AppLayouts.Wallet.controls 1.0
-import StatusQ.Core.Theme 0.1
+import AppLayouts.Wallet.panels 1.0
 import utils 1.0
 
 Pane {
@@ -15,15 +15,22 @@ Pane {
             symbol: "STT",
             iconSource: Constants.tokenIcon("STT"),
             tokensKey: "STT",
-
             balances: [
                 {
                     balanceAsString: "0,56",
                     iconUrl: "network/Network=Ethereum"
+                },
+                {
+                    balanceAsString: "0,22",
+                    iconUrl: "network/Network=Arbitrum"
+                },
+                {
+                    balanceAsString: "0,12",
+                    iconUrl: "network/Network=Optimism"
                 }
             ],
 
-            sectionText: "My assets on Mainnet"
+            sectionText: ""
         },
         {
             tokensKey: "key_2",
@@ -33,15 +40,22 @@ Pane {
             symbol: "ETH",
             iconSource: Constants.tokenIcon("ETH"),
             tokensKey: "ETH",
-
             balances: [
+                {
+                    balanceAsString: "1,01",
+                    iconUrl: "network/Network=Optimism"
+                },
+                {
+                    balanceAsString: "0,47",
+                    iconUrl: "network/Network=Arbitrum"
+                },
                 {
                     balanceAsString: "0,12",
                     iconUrl: "network/Network=Ethereum"
                 }
             ],
 
-            sectionText: "My assets on Mainnet"
+            sectionText: ""
         },
         {
             tokensKey: "key_2",
@@ -75,20 +89,24 @@ Pane {
         Component.onCompleted: append(assetsData)
     }
 
-    background: Rectangle {
-        color: Theme.palette.baseColor3
+    Rectangle {
+        anchors.fill: panel
+        anchors.margins: -1
+
+        color: "transparent"
+        border.color: "lightgray"
     }
 
-    AssetSelector {
+    SearchableAssetsPanel {
         id: panel
 
         anchors.centerIn: parent
 
+        width: 350
+
         model: assetsModel
         sectionProperty: "sectionText"
-
-        onSelected: console.log("asset selected:", key)
     }
 }
 
-// category: Controls
+// category: Panels

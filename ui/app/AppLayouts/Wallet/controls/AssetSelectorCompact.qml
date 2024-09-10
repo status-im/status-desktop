@@ -20,19 +20,23 @@ Control {
 
     signal selected(string key)
 
-    function setCustom(name: string, icon: url, key: string) {
+    function setCustom(name: string, symbol: string, icon: url, key: string) {
         button.name = name
+        button.subname = symbol
         button.icon = icon
         button.selected = true
 
         searchableAssetsPanel.highlightedKey = key ?? ""
     }
 
-    contentItem: TokenSelectorButton {
+    function reset() {
+        button.selected = false
+    }
+
+    contentItem: TokenSelectorCompactButton {
         id: button
 
-        forceHovered: dropdown.opened
-        text: qsTr("Select asset")
+        objectName: "assetSelectorButton"
 
         onClicked: dropdown.opened ? dropdown.close() : dropdown.open()
     }
@@ -41,6 +45,7 @@ Control {
         id: dropdown
 
         y: parent.height + 4
+        width: parent.width
 
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         padding: 0
@@ -48,10 +53,12 @@ Control {
         contentItem: SearchableAssetsPanel {
             id: searchableAssetsPanel
 
-            function setCurrentAndClose(name, icon) {
+            function setCurrentAndClose(name, symbol, icon) {
                 button.name = name
+                button.subname = symbol
                 button.icon = icon
                 button.selected = true
+
                 dropdown.close()
             }
 
@@ -59,7 +66,7 @@ Control {
                 const entry = ModelUtils.getByKey(root.model, "tokensKey", key)
                 highlightedKey = key
 
-                setCurrentAndClose(entry.symbol, entry.iconSource)
+                setCurrentAndClose(entry.name, entry.symbol, entry.iconSource)
                 root.selected(key)
             }
         }
