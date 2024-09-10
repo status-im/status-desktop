@@ -1,5 +1,5 @@
-﻿import QtQuick 2.14
-import QtQuick.Layouts 1.0
+﻿import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
@@ -22,24 +22,11 @@ ColumnLayout {
     required property int selectedNetworkChainId
     required property var filteredFlatNetworksModel
 
-    // exposed api
-    property alias searchString: holdingSelector.searchString
     signal networkSelected(int chainId)
     signal tokenSelected(string tokensKey)
 
-    QtObject {
-        id: d
-        function updateTokenSelector() {
-            Qt.callLater(()=> {
-                             if(!!holdingSelector.model && !!root.selectedTokenKey && root.selectedNetworkChainId !== -1) {
-                                 holdingSelector.selectToken(root.selectedTokenKey)
-                             }
-                         })
-        }
-    }
-
-    onSelectedTokenKeyChanged: d.updateTokenSelector()
-    onSelectedNetworkChainIdChanged: d.updateTokenSelector()
+    onSelectedTokenKeyChanged: assetSelector.update()
+    onSelectedNetworkChainIdChanged: assetSelector.update()
 
     spacing: 20
 
@@ -58,12 +45,15 @@ ColumnLayout {
         color: Theme.palette.transparent
         enabled: false
     }
+
     StatusMenuSeparator {
         Layout.fillWidth: true
     }
+
     ColumnLayout {
         Layout.fillWidth: true
         spacing: 8
+
         StatusBaseText {
             text: qsTr("Select network")
             color: Theme.palette.directColor1
@@ -83,9 +73,11 @@ ColumnLayout {
             onSelectionChanged: root.networkSelected(selection[0])
         }
     }
+
     ColumnLayout {
         Layout.fillWidth: true
         spacing: 8
+
         StatusBaseText {
             text: qsTr("Select asset")
             color: Theme.palette.directColor1
@@ -94,58 +86,36 @@ ColumnLayout {
             lineHeightMode: Text.FixedHeight
             verticalAlignment: Text.AlignVCenter
         }
-        TokenSelector {
-            id: holdingSelector
-            objectName: "tokenSelector"
+
+        AssetSelectorCompact {
+            id: assetSelector
+
+            objectName: "assetSelector"
+
             Layout.fillWidth: true
+
             model: root.assetsModel
-            popup.width: parent.width
-            contentItem:  Loader {
-                height: 40 // by design
-                sourceComponent: !!holdingSelector.currentTokensKey ? selectedTokenCmp : nothingSelectedCmp
-            }
-            background: StatusComboboxBackground {
-                border.width: 1
-                color: Theme.palette.transparent
-            }
-            onTokenSelected: root.tokenSelected(tokensKey)
-        }
-    }
+            sectionProperty: "sectionName"
 
-    Component {
-        id: nothingSelectedCmp
-        StatusBaseText {
-            objectName: "tokenSelectorContentItemText"
-            font.pixelSize: Style.current.additionalTextSize
-            font.weight: Font.Medium
-            color: Theme.palette.primaryColor1
-            text: qsTr("Select asset")
-        }
-    }
+            onSelected: root.tokenSelected(key)
 
-    Component {
-        id: selectedTokenCmp
-        RowLayout {
-            objectName: "selectedTokenItem"
-            spacing: Style.current.halfPadding
-            StatusRoundedImage {
-                objectName: "tokenSelectorIcon"
-                Layout.preferredWidth: 20
-                Layout.preferredHeight: 20
-                image.source: ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey, "iconSource")
-            }
-            StatusBaseText {
-                objectName: "tokenSelectorContentItemName"
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
-                text: ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey, "name")
-            }
-            StatusBaseText {
-                Layout.fillWidth: true
-                objectName: "tokenSelectorContentItemSymbol"
-                font.pixelSize: 15
-                color: Theme.palette.baseColor1
-                text: ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey, "symbol")
+            function update() {
+                Qt.callLater(()=> {
+                    if (!root.assetsModel || !root.selectedTokenKey
+                        || root.selectedNetworkChainId === -1)
+                        return
+
+                    const entry = ModelUtils.getByKey(root.assetsModel,
+                                                      "tokensKey", root.selectedTokenKey)
+                    if (entry) {
+                        assetSelector.setCustom(entry.name, entry.symbol,
+                                                entry.iconSource, entry.tokensKey)
+                        root.tokenSelected(entry.tokensKey)
+                    } else {
+                        assetSelector.reset()
+                        root.tokenSelected("")
+                    }
+                })
             }
         }
     }
