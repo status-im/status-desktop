@@ -22,7 +22,6 @@ pytestmark = marks
 @pytest.mark.case(703040, 736372)
 @pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.critical
-# TODO: it may fail, https://github.com/status-im/status-desktop/issues/16291
 def test_import_seed_phrase(main_window, aut: AUT, user_account):
 
     keys_screen = open_generate_new_keys_view()
