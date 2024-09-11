@@ -28,14 +28,21 @@ Control {
             balanceAsString     [string] - formatted balance per chain
             iconUrl             [url]    - chain's icon
     **/
-    property alias model: sfpm.sourceModel
-    property string highlightedKey: ""
+    property var model
+    property string highlightedKey
+    property string nonInteractiveKey
+
     property string sectionProperty
 
     signal selected(string key)
 
     SortFilterProxyModel {
         id: sfpm
+
+        // workaround for https://github.com/status-im/status-desktop/issues/16310
+        Component.onCompleted: {
+            sourceModel = Qt.binding(() => root.model)
+        }
 
         filters: AnyOf {
             SearchFilter {
@@ -67,6 +74,8 @@ Control {
         StatusListView {
             id: listView
 
+            objectName: "assetsListView"
+
             clip: true
 
             Layout.fillWidth: true
@@ -74,7 +83,6 @@ Control {
             Layout.preferredHeight: contentHeight
 
             model: sfpm
-
             section.property: root.sectionProperty
 
             section.delegate: TokenSelectorSectionDelegate {
@@ -87,11 +95,12 @@ Control {
                 required property int index
 
                 highlighted: tokensKey === root.highlightedKey
+                interactive: tokensKey !== root.nonInteractiveKey
 
                 tokensKey: model.tokensKey
                 name: model.name
                 symbol: model.symbol
-                currencyBalanceAsString: model.currencyBalanceAsString
+                currencyBalanceAsString: model.currencyBalanceAsString ?? ""
                 iconSource: model.iconSource
                 balancesModel: model.balances
 

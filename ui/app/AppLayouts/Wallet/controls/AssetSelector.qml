@@ -13,6 +13,7 @@ Control {
 
     /** Expected model structure: see SearchableAssetsPanel::model **/
     property alias model: searchableAssetsPanel.model
+    property alias nonInteractiveKey: searchableAssetsPanel.nonInteractiveKey
 
     property alias sectionProperty: searchableAssetsPanel.sectionProperty
 
@@ -28,6 +29,10 @@ Control {
         searchableAssetsPanel.highlightedKey = key ?? ""
     }
 
+    function reset() {
+        button.selected = false
+    }
+
     contentItem: TokenSelectorButton {
         id: button
 
@@ -41,6 +46,7 @@ Control {
         id: dropdown
 
         y: parent.height + 4
+        x: parent.width - width
 
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         padding: 0
