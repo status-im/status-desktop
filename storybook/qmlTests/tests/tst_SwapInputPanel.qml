@@ -18,8 +18,8 @@ import Storybook 1.0
 
 Item {
     id: root
-    width: 600
-    height: 400
+    width: 1200
+    height: 800
 
     ListModel {
         id: plainTokensModel
@@ -207,7 +207,7 @@ Item {
             mouseClick(holdingSelector)
             waitForRendering(holdingSelector)
 
-            const assetSelectorList = findChild(holdingSelector, "tokenSelectorListview")
+            const assetSelectorList = findChild(holdingSelector, "assetsListView")
             verify(!!assetSelectorList)
             waitForRendering(assetSelectorList)
 
@@ -337,7 +337,7 @@ Item {
             const holdingSelector = findChild(controlUnderTest, "holdingSelector")
             verify(!!holdingSelector)
 
-            const assetSelectorList = findChild(holdingSelector, "tokenSelectorListview")
+            const assetSelectorList = findChild(holdingSelector, "assetsListView")
             verify(!!assetSelectorList)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
@@ -390,7 +390,7 @@ Item {
             const holdingSelector = findChild(controlUnderTest, "holdingSelector")
             verify(!!holdingSelector)
 
-            const assetSelectorList = findChild(holdingSelector, "tokenSelectorListview")
+            const assetSelectorList = findChild(holdingSelector, "assetsListView")
             verify(!!assetSelectorList)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
@@ -406,15 +406,15 @@ Item {
             keyClick(Qt.Key_4)
             keyClick(Qt.Key_2)
 
-            let numberTested = 5.42
+            const numberTested = 5.42
             tryCompare(amountToSendInput, "text", "5.42")
 
             for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
-                let modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
+                const modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
                 mouseClick(holdingSelector)
                 waitForRendering(holdingSelector)
 
-                let delToTest = assetSelectorList.itemAtIndex(i)
+                const delToTest = assetSelectorList.itemAtIndex(i)
                 verify(!!delToTest)
                 if(delToTest.interactive) {
                     mouseClick(delToTest)

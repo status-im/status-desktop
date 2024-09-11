@@ -49,8 +49,17 @@ Control {
 
     // FIXME drop after using ModelEntry, shouldn't be needed
     function reevaluateSelectedId() {
-        holdingSelector.selectToken(tokenKey)
-        d.selectedHolding = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey)
+        const entry = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", root.tokenKey)
+
+        if (entry) {
+            holdingSelector.currentTokensKey = root.tokenKey
+            holdingSelector.setCustom(entry.symbol, entry.iconSource, entry.tokensKey)
+        } else {
+            holdingSelector.currentTokensKey = ""
+            holdingSelector.reset()
+        }
+
+        d.selectedHolding = entry
     }
 
     // output API
@@ -108,7 +117,6 @@ Control {
             showAllTokens: true
             enabledChainIds: root.selectedNetworkChainId !== -1 ? [root.selectedNetworkChainId] : []
             accountAddress: root.selectedAccountAddress
-            searchString: holdingSelector.searchString
         }
 
         function updateInputText() {
@@ -246,14 +254,22 @@ Control {
 
             Item { Layout.fillHeight: true }
 
-            TokenSelector {
+            AssetSelector {
                 id: holdingSelector
+
                 objectName: "holdingSelector"
+
+                property string currentTokensKey
+
                 Layout.rightMargin: d.isSelectedHoldingValidAsset ? -root.padding : 0
                 Layout.alignment: Qt.AlignRight
+
                 model: d.adaptor.outputAssetsModel
-                nonInteractiveDelegateKey: root.nonInteractiveTokensKey
-                onActivated: if (root.interactive) root.forceActiveFocus()
+                nonInteractiveKey: root.nonInteractiveTokensKey
+
+                sectionProperty: "sectionName"
+
+                onSelected: currentTokensKey = key
             }
 
             Item { Layout.fillHeight: !maxSendButton.visible }
