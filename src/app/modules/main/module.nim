@@ -468,6 +468,9 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
     self.view.showToastTransactionSendingComplete(args.chainId, args.transactionHash, args.data, args.success,
     ord(args.txType), args.fromAddress, args.toAddress, args.fromTokenKey, args.fromAmount, args.toTokenKey, args.toAmount)
 
+  self.events.on(SIGNAL_PAIRING_FALLBACK_COMPLETED) do(e:Args):
+    self.view.showToastPairingFallbackCompleted()
+
 method load*[T](
   self: Module[T],
   events: EventEmitter,

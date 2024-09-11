@@ -50,6 +50,7 @@ const SIGNAL_DEVICES_LOADED* = "devicesLoaded"
 const SIGNAL_ERROR_LOADING_DEVICES* = "devicesErrorLoading"
 const SIGNAL_LOCAL_PAIRING_STATUS_UPDATE* = "localPairingStatusUpdate"
 const SIGNAL_INSTALLATION_NAME_UPDATED* = "installationNameUpdated"
+const SIGNAL_PAIRING_FALLBACK_COMPLETED* = "pairingFallbackCompleted"
 
 QtObject:
   type Service* = ref object of QObject
@@ -382,5 +383,6 @@ QtObject:
         raise newException(CatchableError, e.message)
       # Parse AC notif
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
+      self.events.emit(SIGNAL_PAIRING_FALLBACK_COMPLETED, Args())
     except Exception as e:
       error "error: ", desription = e.msg
