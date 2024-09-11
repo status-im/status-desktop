@@ -71,7 +71,7 @@ mainWallet_Send_Popup_Networks_List = {"container": statusDesktop_mainWindow, "o
 mainWallet_Send_Popup_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "transactionModalFooterButton", "type": "StatusButton"}
 mainWallet_Send_Popup_Asset_Selector = {"container": statusDesktop_mainWindow, "objectName": "assetSelectorButton", "type": "StatusComboBox"}
 mainWallet_Send_Popup_Asset_List = {"container": statusDesktop_mainWindow, "objectName": "assetSelectorList", "type": "StatusListView"}
-mainWallet_Send_Popup_GasPrice_Input = {"container": statusDesktop_mainWindow, "objectName": "gasPriceSelectorInput", "type": "StyledTextField"}
+mainWallet_Send_Popup_GasPrice_Input = {"container": statusDesktop_mainWindow, "objectName": "gasPriceSelectorInput", "type": "StatusTextField"}
 
 # Add/Edit account popup:
 grid_Grid = {"container": statusDesktop_mainWindow_overlay, "id": "grid", "type": "Grid", "unnamed": 1, "visible": True}

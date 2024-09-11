@@ -146,6 +146,7 @@
         <file>StatusQ/Controls/StatusTabButton.qml</file>
         <file>StatusQ/Controls/StatusTagItem.qml</file>
         <file>StatusQ/Controls/StatusTextArea.qml</file>
+        <file>StatusQ/Controls/StatusTextField.qml</file>
         <file>StatusQ/Controls/StatusTextWithLoadingState.qml</file>
         <file>StatusQ/Controls/StatusTokenInlineSelector.qml</file>
         <file>StatusQ/Controls/StatusToolTip.qml</file>

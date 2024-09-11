@@ -53,6 +53,7 @@ StatusScrollBar 0.1 StatusScrollBar.qml
 StatusComboBox 0.1 StatusComboBox.qml
 StatusItemDelegate 0.1 StatusItemDelegate.qml
 StatusTextArea 0.1 StatusTextArea.qml
+StatusTextField 0.1 StatusTextField.qml
 StatusBackButton 0.1 StatusBackButton.qml
 StatusPasswordInput 0.1 StatusPasswordInput.qml
 StatusTextWithLoadingState 0.1 StatusTextWithLoadingState.qml

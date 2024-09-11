@@ -6,6 +6,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Validators 0.1
 
 import utils 1.0
@@ -172,7 +173,7 @@ Control {
         }
 
         RowLayout {
-            StyledTextField {
+            StatusTextField {
                 id: textField
 
                 objectName: "amountToSend_textField"

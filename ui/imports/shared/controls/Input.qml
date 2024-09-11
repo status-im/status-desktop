@@ -79,7 +79,7 @@ Item {
         height: customHeight
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
-        StyledTextField {
+        StatusTextField {
             id: inputValue
             visible: !inputBox.isTextArea && !inputBox.isSelect
             placeholderText: inputBox.placeholderText
@@ -88,7 +88,6 @@ Item {
             anchors.right: clipboardButtonLoader.active ? clipboardButtonLoader.left : parent.right
             anchors.rightMargin: clipboardButtonLoader.active ? Style.current.padding : 0
             leftPadding: inputBox.hasIcon ? iconWidth + 20 : Style.current.padding
-            selectByMouse: true
             font.pixelSize: fontPixelSize
             readOnly: inputBox.readOnly
             background: Rectangle {
@@ -159,7 +158,7 @@ Item {
                            if (inputBox.copyToClipboard) {
                                ClipboardUtils.setText(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)
                            } else {
-                                inputValue.paste()
+                               inputValue.paste()
                            }
 
                            copyBtn.copied = true
@@ -188,9 +187,3 @@ Item {
         wrapMode: TextEdit.Wrap
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#c0c0c0";formeditorZoom:1.25}
-}
-##^##*/
