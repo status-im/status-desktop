@@ -50,6 +50,9 @@ Item {
         loader.item.resetChanges()
     }
 
+    readonly property bool assetsPanelVisible: tabBar.currentIndex === d.assetsTabIndex
+    readonly property bool collectiblesPanelVisible: tabBar.currentIndex === d.collectiblesTabIndex
+
     QtObject {
         id: d
 

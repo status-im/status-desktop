@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQml 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
@@ -82,10 +83,28 @@ Control {
     signal hideCommunityAssetsRequested(string communityKey)
     signal manageTokensRequested
 
+    function setSortOrder(order) {
+        d.sortOrder = order
+    }
+
+    function getSortOrder() {
+        return d.sortOrder
+    }
+
+    function getSortValue() {
+        return d.sortValue
+    }
+
+    function sortByValue(value) {
+        d.sortValue = value
+    }
+
     QtObject {
         id: d
 
         readonly property int loadingItemsCount: 25
+        property int sortOrder: Qt.DescendingOrder
+        property int sortValue: -1
     }
 
     SortFilterProxyModel {
@@ -159,7 +178,21 @@ Control {
 
                     objectName: "cmbTokenOrder"
                     hasCustomOrderDefined: root.customOrderAvailable
-
+                    Binding on currentIndex {
+                        value: {
+                            sortOrderComboBox.count
+                            let id = sortOrderComboBox.indexOfValue(d.sortValue)
+                            if (id === -1)
+                                id = sortOrderComboBox.indexOfValue(SortOrderComboBox.TokenOrderAlpha)
+                            return id
+                        }
+                        when: sortOrderComboBox.count > 0
+                    }
+                    onCurrentValueChanged: d.sortValue = sortOrderComboBox.currentValue
+                    Binding on currentSortOrder {
+                        value: d.sortOrder
+                    }
+                    onCurrentSortOrderChanged: d.sortOrder = sortOrderComboBox.currentSortOrder
                     model: [
                         { value: SortOrderComboBox.TokenOrderCurrencyBalance,
                             text: qsTr("Asset balance value"), icon: "", sortRoleName: "marketBalance" },
