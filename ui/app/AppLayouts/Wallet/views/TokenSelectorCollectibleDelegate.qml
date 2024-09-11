@@ -10,6 +10,7 @@ import utils 1.0
 
 ItemDelegate {
     id: root
+    objectName: "tokenSelectorCollectibleDelegate_" + name
 
     required property string name
     required property string balance
