@@ -403,8 +403,8 @@ Popup {
         }
     }
 
-    function trucateDeviceId(devideId) {
-        return devideId.substring(0, 7)
+    function trucateDeviceId(deviceId) {
+        return deviceId.substring(0, 7).toUpperCase()
     }
 
     Component {
@@ -414,7 +414,7 @@ Popup {
             property string name
             property string deviceId
 
-            width: 620
+            width: 480
             closePolicy: Popup.CloseOnPressOutside
             destroyOnClose: true
 
@@ -432,6 +432,7 @@ Popup {
                     Layout.alignment: Qt.AlignHCenter
                     font.pixelSize: 27
                     font.weight: Font.Medium
+                    font.letterSpacing: 5
                     text: trucateDeviceId(deviceId)
                 }
             }
@@ -464,7 +465,7 @@ Popup {
         StatusDialog {
             property string deviceId
 
-            width: 620
+            width: 480
             closePolicy: Popup.CloseOnPressOutside
             destroyOnClose: true
 
@@ -481,6 +482,7 @@ Popup {
                     Layout.alignment: Qt.AlignHCenter
                     font.pixelSize: 27
                     font.weight: Font.Medium
+                    font.letterSpacing: 5
                     text: trucateDeviceId(deviceId)
                 }
                 Item {
