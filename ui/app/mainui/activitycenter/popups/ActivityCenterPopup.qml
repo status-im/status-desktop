@@ -403,6 +403,10 @@ Popup {
         }
     }
 
+    function trucateDeviceId(devideId) {
+        return devideId.substring(0, 7)
+    }
+
     Component {
         id: pairDeviceDialog
 
@@ -412,6 +416,7 @@ Popup {
 
             width: 620
             closePolicy: Popup.CloseOnPressOutside
+            destroyOnClose: true
 
             title: qsTr("Pair new device and sync profile")
 
@@ -419,7 +424,6 @@ Popup {
                 spacing: 16
                 StatusBaseText {
                     Layout.fillWidth: true
-                    font.pixelSize: 15
                     text: qsTr("New device with %1 profile has been detected. You can see the device ID below and on your other device. Only confirm the request if the device ID matches.")
                         .arg(name)
                     wrapMode: Text.WordWrap
@@ -428,14 +432,14 @@ Popup {
                     Layout.alignment: Qt.AlignHCenter
                     font.pixelSize: 27
                     font.weight: Font.Medium
-                    text: deviceId
+                    text: trucateDeviceId(deviceId)
                 }
             }
 
             footer: StatusDialogFooter {
                 leftButtons: ObjectModel {
                    StatusFlatButton {
-                        text: "Cancel"
+                        text: qsTr("Cancel")
                         onClicked: {
                             close()
                         }
@@ -443,7 +447,7 @@ Popup {
                 }
                 rightButtons: ObjectModel {
                     StatusButton {
-                        text: "Pair and Sync"
+                        text: qsTr("Pair and Sync")
                         onClicked: {
                             activityCenterStore.enableInstallationAndSync(deviceId)
                             close()
@@ -462,6 +466,7 @@ Popup {
 
             width: 620
             closePolicy: Popup.CloseOnPressOutside
+            destroyOnClose: true
 
             title: qsTr("Pair this device and sync profile")
 
@@ -469,7 +474,6 @@ Popup {
                 spacing: 16
                 StatusBaseText {
                     Layout.fillWidth: true
-                    font.pixelSize: 15
                     text: qsTr("Check your other device for a pairing request. Ensure that the this device ID displayed on your other device. Only proceed with pairing and syncing if the IDs are identical.")
                     wrapMode: Text.WordWrap
                 }
@@ -477,7 +481,7 @@ Popup {
                     Layout.alignment: Qt.AlignHCenter
                     font.pixelSize: 27
                     font.weight: Font.Medium
-                    text: deviceId
+                    text: trucateDeviceId(deviceId)
                 }
                 Item {
                     Layout.fillWidth: true

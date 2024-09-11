@@ -28,8 +28,6 @@ Item {
     property int localPairingState: Constants.LocalPairingState.Idle
     property string localPairingError
 
-    signal proceedWithRecoveryPhrase
-
     implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
 

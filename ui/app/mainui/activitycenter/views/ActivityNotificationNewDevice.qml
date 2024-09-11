@@ -10,10 +10,6 @@ import shared 1.0
 import shared.panels 1.0
 import utils 1.0
 
-import "../panels"
-import "../popups"
-import "../stores"
-
 ActivityNotificationBase {
     id: root
 
@@ -46,11 +42,10 @@ ActivityNotificationBase {
 
         property string title: ""
         property string info: ""
-        property string assetColor: ""
-        property string assetName: ""
-        property string assetBgColor: ""
-        property string ctaText: ""
-        property var actionSourceComponent: undefined
+        property string assetColor: Theme.palette.primaryColor1
+        property string assetName: d.desktopAssetName
+        property string assetBgColor: Theme.palette.primaryColor3
+        property string ctaText: qsTr("More details")
 
         readonly property string desktopAssetName: "desktop"
     }
@@ -98,8 +93,15 @@ ActivityNotificationBase {
                     color: Theme.palette.baseColor1
                 }
 
-                Loader { sourceComponent: d.actionSourceComponent }
-
+                Loader {
+                    sourceComponent: StatusFlatButton {
+                        size: StatusBaseButton.Size.Small
+                        text: d.ctaText
+                        onClicked: {
+                            root.moreDetailsClicked()
+                        }
+                    }
+                }
             }
         }
     }
@@ -113,11 +115,6 @@ ActivityNotificationBase {
                 target: d
                 title: qsTr("New device detected")
                 info: qsTr("New device with %1 profile has been detected.").arg(accountName)
-                ctaText: qsTr("More details")
-                assetColor: Theme.palette.primaryColor1
-                assetBgColor: Theme.palette.primaryColor3
-                assetName: d.desktopAssetName
-                actionSourceComponent: ctaFlatBtnComponent
             }
         },
         State {
@@ -126,24 +123,7 @@ ActivityNotificationBase {
                 target: d
                 title: qsTr("Sync your profile")
                 info: qsTr("Check your other device for a pairing request.")
-                ctaText: qsTr("More details")
-                assetColor: Theme.palette.primaryColor1
-                assetBgColor: Theme.palette.primaryColor3
-                assetName: d.desktopAssetName
-                actionSourceComponent: ctaFlatBtnComponent
             }
         }
     ]
-
-    Component {
-        id: ctaFlatBtnComponent
-
-        StatusFlatButton {
-            size: StatusBaseButton.Size.Small
-            text: d.ctaText
-            onClicked: {
-                root.moreDetailsClicked()
-            }
-        }
-    }
 }
