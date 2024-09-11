@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -9,7 +9,7 @@ import StatusQ.Components 0.1
 
 /*!
    \qmltype StatusPasswordInput
-   \inherits Item
+   \inherits StatusTextField
    \inqmlmodule StatusQ.Controls
    \since StatusQ.Controls 0.1
    \brief The StatusPasswordInput control provides a generic user password input with an option to display signing phrase
@@ -26,7 +26,7 @@ import StatusQ.Components 0.1
    For a list of available components see StatusQ.
 */
 
-TextField {
+StatusTextField {
     id: root
 
     /*!
@@ -39,7 +39,6 @@ TextField {
         id: d
 
         readonly property int inputTextPadding: 16
-        readonly property int pixelSize: 15
         readonly property int radius: 8
         readonly property int signingPhrasePadding: 8
         readonly property int signingPhraseWordPadding: 8
@@ -57,30 +56,14 @@ TextField {
     implicitHeight: 44
     selectByMouse: true
 
-    placeholderTextColor: Theme.palette.baseColor1
     echoMode: TextInput.Password
-    font.pixelSize: d.pixelSize
-    font.family: Theme.palette.baseFont.name
     color: Theme.palette.directColor1
-    selectionColor: Theme.palette.primaryColor2
-    selectedTextColor: Theme.palette.directColor1
 
     background: Rectangle {
-        id: inputRectangle
-        anchors.fill: parent
         color: Theme.palette.baseColor2
         radius: d.radius
         border.width: root.focus ? 1 : 0
-        border.color: {
-            if (root.focus) {
-                return Theme.palette.primaryColor1
-            }
-            return "transparent"
-        }
-    }
-
-    cursorDelegate: StatusCursorDelegate {
-        cursorVisible: root.cursorVisible
+        border.color: Theme.palette.primaryColor1
     }
 
     RowLayout {

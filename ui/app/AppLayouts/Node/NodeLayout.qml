@@ -72,15 +72,14 @@ StatusSectionLayout {
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
-            // TODO: replace with StatusTextArea once it lives in StatusQ.
-            StyledTextArea {
+            StatusTextArea {
                 id: mailserverLogTxt
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
+                Layout.preferredHeight: 200
                 text: ""
-                customHeight: 200
-                textField.readOnly: true
+                readOnly: true
             }
         }
 
@@ -97,15 +96,14 @@ StatusSectionLayout {
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
-            // TODO: replace with StatusTextArea once it lives in StatusQ.
-            StyledTextArea {
+            StatusTextArea {
                 id: logsTxt
                 Layout.rightMargin: Style.current.padding
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
+                Layout.preferredHeight: 200
                 text: ""
-                customHeight: 200
-                textField.readOnly: true
+                readOnly: true
             }
         }
 
@@ -201,13 +199,12 @@ StatusSectionLayout {
                         }
                     }
 
-                    StyledTextField {
+                    StatusTextField {
                         id: txtData
                         text: ""
                         leftPadding: 0
                         padding: 0
                         font.pixelSize: 14
-                        selectByMouse: true
                         placeholderText: qsTr("Type json-rpc message... e.g {\"method\": \"eth_accounts\"}")
                         anchors.right: rpcSendBtn.left
                         anchors.rightMargin: 16
@@ -215,11 +212,7 @@ StatusSectionLayout {
                         anchors.topMargin: 24
                         anchors.left: parent.left
                         anchors.leftMargin: 24
-                        Keys.onEnterPressed: {
-                            root.store.onSend(txtData.text)
-                            txtData.text = ""
-                        }
-                        Keys.onReturnPressed: {
+                        onAccepted: {
                             root.store.onSend(txtData.text)
                             txtData.text = ""
                         }

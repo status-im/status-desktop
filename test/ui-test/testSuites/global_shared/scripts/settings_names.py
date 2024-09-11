@@ -41,12 +41,12 @@ LeftTabView_ScrollView = {"container": mainWindow_LeftTabView, "type": "StatusSc
 
 # ENS view;
 settings_ENS_Start_Button = {"container": statusDesktop_mainWindow, "objectName": "ensStartButton", "type": "StatusButton"}
-settings_ENS_Search_Input = {"container": statusDesktop_mainWindow, "objectName": "ensUsernameInput", "type": "StyledTextField"}
+settings_ENS_Search_Input = {"container": statusDesktop_mainWindow, "objectName": "ensUsernameInput", "type": "StatusTextField"}
 settings_ENS_Search_Next_Button = {"container": statusDesktop_mainWindow, "objectName": "ensNextButton", "type": "StatusRoundButton"}
 settings_ENS_Terms_Agree = {"container": statusDesktop_mainWindow, "objectName": "ensAgreeTerms", "type": "StatusCheckBox"}
 settings_ENS_Terms_Open_Transaction = {"container": statusDesktop_mainWindow, "objectName": "ensStartTransaction", "type": "StatusButton"}
 settings_ENS_Terms_Transaction_Next_Button = {"container": statusDesktop_mainWindow, "objectName": "sendNextButton", "type": "StatusButton"}
-settings_ENS_Terms_Transaction_Password_Input = {"container": statusDesktop_mainWindow, "objectName": "transactionSignerPasswordInput", "type": "StyledTextField"}
+settings_ENS_Terms_Transaction_Password_Input = {"container": statusDesktop_mainWindow, "objectName": "transactionSignerPasswordInput", "type": "StatusTextField"}
 
 # Side bar items (Secondary navigation):
 wallet_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.WALLET.value, "type": "StatusNavigationListItem", "visible": True}

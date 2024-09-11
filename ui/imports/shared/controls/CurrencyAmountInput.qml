@@ -11,7 +11,7 @@ import utils 1.0
 
 /*!
    \qmltype CurrencyAmountInput
-   \inherits TextField
+   \inherits StatusTextField
    \brief Provides a text input field that accepts a numeric value, with optional (currency) symbol (defaults to "USD").
           Utilizes a builtin DoubleValidator to validate the user's input.
           It accepts both the native decimal separator and optionally a period (`.`) for locales that don't use this.
@@ -19,7 +19,7 @@ import utils 1.0
 
    Internally it uses FormattedDoubleProperty object that keeps track of the value.
   */
-TextField {
+StatusTextField {
     id: root
 
     property alias value: internalProp.value // accepts double/float or string representation, rejects NaN
@@ -62,9 +62,6 @@ TextField {
     Component.onCompleted: text = internalProp.asLocaleString(decimals)
     onTextEdited: value = text
 
-    font.family: Style.current.baseFont.name
-    font.pixelSize: Style.current.primaryTextFontSize
-
     leftPadding: Style.current.padding
     rightPadding: currencySymbol !== "" ?
                       currencySymbolText.width + currencySymbolText.anchors.leftMargin + currencySymbolText.anchors.rightMargin :
@@ -72,14 +69,7 @@ TextField {
     topPadding: 10
     bottomPadding: 10
 
-    opacity: enabled ? 1 : 0.3
-    color: readOnly ? Theme.palette.baseColor1 : Theme.palette.directColor1
-    selectionColor: Theme.palette.primaryColor2
-    selectedTextColor: Theme.palette.directColor1
-    placeholderTextColor: Theme.palette.baseColor1
-
     hoverEnabled: !readOnly
-    selectByMouse: true
     inputMethodHints: Qt.ImhFormattedNumbersOnly
 
     validator: DoubleValidator {
@@ -104,10 +94,6 @@ TextField {
             return "transparent"
         }
         Behavior on border.color { ColorAnimation {} }
-    }
-
-    cursorDelegate: StatusCursorDelegate {
-        cursorVisible: root.cursorVisible
     }
 
     StatusBaseText {
