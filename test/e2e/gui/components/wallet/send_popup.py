@@ -66,10 +66,11 @@ class SendPopup(BasePopup):
                     QObject(item).click()
                     break
             try:
-                return self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                return self._ens_address_text_edit.wait_until_appears(
+                    timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             except AssertionError as err:
                 if attempts:
-                    self._select_asset_or_collectible(attempts-1)
+                    self._select_asset_or_collectible(attempts - 1)
                 else:
                     raise err
 
@@ -91,12 +92,16 @@ class SendPopup(BasePopup):
     @allure.step('Send {2} {3} to {1}')
     def send(self, address: str, amount: int, asset: str):
         token_selector = self.open_token_selector()
-        token_selector.select_asset_from_list(asset_name=asset)
-        assert driver.waitFor(lambda: self._amount_to_send_text_edit.is_visible, timeout_msec=6000), \
-            f"Asset selector popup was either not closed or send modal is not visible"
-        self._amount_to_send_text_edit.text = str(amount)
-        self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-        self._ens_address_text_edit.type_text(address)
+        if asset:
+            token_selector.select_asset_from_list(asset_name=asset)
+            self._amount_to_send_text_edit.text = str(amount)
+            self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            self._ens_address_text_edit.type_text(address)
+        else:
+            search_view = token_selector.open_collectibles_search_view()
+            search_view.select_random_collectible()
+            self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            self._ens_address_text_edit.type_text(address)
+
         assert driver.waitFor(lambda: self._send_button.is_visible, timeout_msec=8000)
         self._send_button.click()
-

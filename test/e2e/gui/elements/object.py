@@ -23,6 +23,12 @@ class QObject:
     def object(self):
         return driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
+    def set_text_property(self, text):
+        self.object.forceActiveFocus()
+        self.object.clear()
+        self.object.text = text
+        assert self.object.text == text, 'Text was not set'
+
     @property
     @allure.step('Get object exists {0}')
     def exists(self) -> bool:
@@ -72,7 +78,7 @@ class QObject:
     @allure.step('Get checked {0}')
     def is_checked(self) -> bool:
         return getattr(self.object, 'checked')
-    
+
     @property
     @allure.step('Get checkState {0}')
     def checkState(self) -> int:
