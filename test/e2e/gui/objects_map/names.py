@@ -552,6 +552,17 @@ tokensTabBar_StatusTabBar = {"container": statusDesktop_mainWindow_overlay, "obj
 tokenSelectorPanel_AssetsTab = {"container": tokensTabBar_StatusTabBar, "objectName": "assetsTab", "type": "StatusTabButton", "visible": True}
 tokenSelectorPanel_CollectiblesTab = {"container": tokensTabBar_StatusTabBar, "objectName": "collectiblesTab", "type": "StatusTabButton", "visible": True}
 tokenSelectorAssetDelegate_template = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("tokenSelectorAssetDelegate*"), "type": "TokenSelectorAssetDelegate", "visible": True}
+searchableCollectiblesPanel = {"container": statusDesktop_mainWindow_overlay, "id": "searchableCollectiblesPanel", "type": "SearchableCollectiblesPanel", "unnamed": 1, "visible": True}
+collectiblesListView = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListView", "id": "collectiblesListView", "visible": True}
+collectiblesInnerListView = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListView", "unnamed": 1, "visible": True}
+collectiblesListViewInnerItem = {"container": collectiblesListView, "type": "Item", "unnamed": 1, "visible": True}
+tokenSelectorCollectibleDelegate_template = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("tokenSelectorCollectibleDelegate_*"), "type": "TokenSelectorCollectibleDelegate", "visible": True}
+tokenSelectorBackButton = {"container": statusDesktop_mainWindow_overlay, "id": "backButton", "type": "StatusIconTextButton", "unnamed": 1, "visible": True}
+tokenSelectorSearchBar = {"container": statusDesktop_mainWindow_overlay, "objectName": "collectiblesSearchBox", "type": "TokenSearchBox", "visible": True}
+# tokenSelectorSearchBarBaseInput = {"container": tokenSelectorSearchBar, "objectName": "statusBaseInput", "occurrence": 2, "type": "StatusBaseInput", "visible": True}
+tokenSelectorSearchBarTextEdit = {"container": tokenSelectorSearchBar, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
+
+
 
 # Verify identity popup
 profileSendContactRequestModal_sayWhoYouAreInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sayWhoYouAreInput", "type": "TextEdit", "visible": True}

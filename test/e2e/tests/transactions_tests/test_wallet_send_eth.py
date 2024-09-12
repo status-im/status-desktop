@@ -16,11 +16,11 @@ from helpers.WalletHelper import authenticate_with_password, open_send_modal_for
                  'Send: can send 0 ETH to address pasted into receiver field with Simple flow')
 @pytest.mark.case(704527)
 @pytest.mark.transaction
-@pytest.mark.parametrize('receiver_account_address, amount, asset', [
-    pytest.param(WalletAddress.RECEIVER_ADDRESS.value, 0, 'ETH')
+@pytest.mark.parametrize('receiver_account_address, amount, asset, collectible', [
+    pytest.param(WalletAddress.RECEIVER_ADDRESS.value, 0, 'ETH', '')
 ])
 @pytest.mark.timeout(timeout=120)
-def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, amount, asset):
+def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, amount, asset, collectible):
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED,
         status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43')
