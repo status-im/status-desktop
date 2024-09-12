@@ -282,7 +282,6 @@ proc asyncReevaluateCommunityMembersPermissionsTask(argEncoded: string) {.gcsafe
       "error": e.msg,
     })
 
-
 type
   AsyncSetCommunityShardArg = ref object of QObjectTaskArg
     communityId: string
@@ -300,5 +299,28 @@ proc asyncSetCommunityShardTask(argEncoded: string) {.gcsafe, nimcall.} =
   except Exception as e:
     arg.finish(%* {
       "communityId": arg.communityId,
+      "error": e.msg,
+    })
+
+type
+  AsyncCollapseCategory = ref object of QObjectTaskArg
+    communityId: string
+    categoryId: string
+    collapsed: bool
+
+proc asyncCollapseCategoryTask(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncCollapseCategory](argEncoded)
+  try:
+    let response = status_go.toggleCollapsedCommunityCategory(
+      arg.communityId,
+      arg.categoryId,
+      arg.collapsed,
+    )
+    arg.finish(%* {
+      "response": response,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
       "error": e.msg,
     })

@@ -173,12 +173,6 @@ proc init*(self: Controller) =
       self.mailserversService, self.sharedUrlsService, setChatAsActive = true)
 
   if (self.isCommunitySection):
-    self.events.on(SIGNAL_COMMUNITY_CATEGORY_COLLAPSED_TOGGLED) do(e: Args):
-      let args = CommunityCategoryCollapsedArgs(e)
-
-      if (args.communityId == self.sectionId):
-        self.delegate.onToggleCollapsedCommunityCategory(args.categoryId, args.collapsed)
-
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)
       let belongsToCommunity = args.chat.communityId.len > 0
@@ -699,8 +693,8 @@ proc shareCommunityToUsers*(self: Controller, pubKeys: string, inviteMessage: st
 proc reorderCommunityCategories*(self: Controller, categoryId: string, position: int) =
   self.communityService.reorderCommunityCategories(self.sectionId, categoryId, position)
 
-proc toggleCollapsedCommunityCategory*(self: Controller, categoryId: string, collapsed: bool) =
-  self.communityService.toggleCollapsedCommunityCategory(self.sectionId, categoryId, collapsed)
+proc toggleCollapsedCommunityCategoryAsync*(self: Controller, categoryId: string, collapsed: bool) =
+  self.communityService.toggleCollapsedCommunityCategoryAsync(self.sectionId, categoryId, collapsed)
 
 proc reorderCommunityChat*(self: Controller, categoryId: string, chatId: string, position: int) =
   self.communityService.reorderCommunityChat(self.sectionId, categoryId, chatId, position)

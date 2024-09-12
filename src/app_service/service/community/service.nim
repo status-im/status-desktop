@@ -199,7 +199,6 @@ const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
 const SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED* = "communityCategoryNameEdited"
 const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
-const SIGNAL_COMMUNITY_CATEGORY_COLLAPSED_TOGGLED* = "communityCategoryCollapsedToggled"
 const SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED* = "communityChannelCategoryChanged"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 const SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED* = "communityMemberStatusChanged"
@@ -1479,19 +1478,28 @@ QtObject:
     except Exception as e:
       error "Error creating community category", msg = e.msg, communityId, name
 
-  proc toggleCollapsedCommunityCategory*(self: Service, communityId: string, categoryId: string, collapsed: bool) =
+  proc toggleCollapsedCommunityCategoryAsync*(self: Service, communityId: string, categoryId: string, collapsed: bool) =
+    let arg = AsyncCollapseCategory(
+      tptr: asyncCollapseCategoryTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncCollapseCategoryDone",
+      communityId: communityId,
+      categoryId: categoryId,
+      collapsed: collapsed,
+    )
+    self.threadpool.start(arg)
+
+  proc onAsyncCollapseCategoryDone*(self: Service, rpcResponse: string) {.slot.} =
     try:
-      let response = status_go.toggleCollapsedCommunityCategory(communityId, categoryId, collapsed)
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(CatchableError, rpcResponseObj["error"].getStr)
 
-      if response.error != nil:
-        let error = Json.decode($response.error, RpcError)
-        raise newException(RpcException, "Error toggling collapsed community category: " & error.message)
-
-      self.events.emit(SIGNAL_COMMUNITY_CATEGORY_COLLAPSED_TOGGLED, CommunityCategoryCollapsedArgs(
-          communityId: communityId, categoryId: categoryId, collapsed: collapsed))
-
+      if rpcResponseObj["response"]{"error"}.kind != JNull:
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        raise newException(RpcException, error.message)
     except Exception as e:
-      error "Error toggling collapsed community category ", msg = e.msg, communityId, collapsed
+      error "Error toggling collapsed community category", msg = e.msg
 
   proc editCommunityCategory*(
       self: Service,
@@ -2362,17 +2370,14 @@ QtObject:
       error "error while reevaluating community members permissions", msg = e.msg
 
   proc asyncSetCommunityShard*(self: Service, communityId: string, shardIndex: int) =
-    try:
-      let arg = AsyncSetCommunityShardArg(
-        tptr: asyncSetCommunityShardTask,
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onAsyncSetCommunityShardDone",
-        communityId: communityId,
-        shardIndex: shardIndex,
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      error "Error request to join community", msg = e.msg
+    let arg = AsyncSetCommunityShardArg(
+      tptr: asyncSetCommunityShardTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncSetCommunityShardDone",
+      communityId: communityId,
+      shardIndex: shardIndex,
+    )
+    self.threadpool.start(arg)
 
   proc onAsyncSetCommunityShardDone*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = communityIdAndRpcResponse.parseJson
