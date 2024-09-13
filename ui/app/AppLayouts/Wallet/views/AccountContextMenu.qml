@@ -4,40 +4,42 @@ import QtQuick.Controls 2.15
 import StatusQ 0.1
 import StatusQ.Popups 0.1
 
-import "../stores"
-
 import utils 1.0
 
 StatusMenu {
     id: root
 
-    property var account
+    property string address
+    property string name
+    property string walletType
+    property bool canDelete
+    property bool hideFromTotalBalance
+    property bool canAddWatchOnlyAccount: false
 
     signal editAccountClicked()
     signal deleteAccountClicked()
     signal addNewAccountClicked()
     signal addWatchOnlyAccountClicked()
-    signal hideFromTotalBalanceClicked(string address, bool hideFromTotalBalance)
-
+    signal hideFromTotalBalanceClicked(bool hideFromTotalBalance)
 
     StatusSuccessAction {
         id: copyAddressAction
-        objectName: "AccountMenu-CopyAddressAction_" + root.account.name
+        objectName: "AccountMenu-CopyAddressAction_" + root.name
         successText: qsTr("Address copied")
         text: qsTr("Copy address")
         icon.name: "copy"
         timeout: 1500
-        enabled: !!root.account
-        onTriggered: ClipboardUtils.setText(root.account.address?? "")
+        enabled: !!root.address
+        onTriggered: ClipboardUtils.setText(root.address)
     }
 
     StatusMenuSeparator {
-        visible: !!root.account
+        visible: !!root.address
     }
 
     StatusAction {
-        objectName: "AccountMenu-EditAction_" + root.account.name
-        enabled: !!root.account
+        objectName: "AccountMenu-EditAction_" + root.name
+        enabled: !!root.address
         text: qsTr("Edit")
         icon.name: "pencil-outline"
         onTriggered: {
@@ -46,17 +48,16 @@ StatusMenu {
     }   
 
     StatusAction {
-        objectName: "AccountMenu-HideFromTotalBalance_" + root.account.name
-        enabled: !!root.account && root.account.walletType === Constants.watchWalletType
-        text: !!root.account ? root.account.hideFromTotalBalance ? qsTr("Include in balances and activity")
-                                                                 : qsTr("Exclude from balances and activity") : ""
-        icon.name: !!root.account ? root.account.hideFromTotalBalance ? "show" : "hide": ""
-        onTriggered: root.hideFromTotalBalanceClicked(root.account.address, !root.account.hideFromTotalBalance)
+        objectName: "AccountMenu-HideFromTotalBalance_" + root.name
+        enabled: !!root.address && root.walletType === Constants.watchWalletType
+        text: root.hideFromTotalBalance ? qsTr("Include in balances and activity") : qsTr("Exclude from balances and activity")
+        icon.name: root.hideFromTotalBalance ? "show" : "hide"
+        onTriggered: root.hideFromTotalBalanceClicked(!root.hideFromTotalBalance)
     }
 
     StatusAction {
-        objectName: "AccountMenu-DeleteAction_" + root.account.name
-        enabled: !!root.account && !root.account.isWallet
+        objectName: "AccountMenu-DeleteAction_" + root.name
+        enabled: !!root.address && root.canDelete
         text: qsTr("Delete")
         icon.name: "info"
         type: StatusAction.Type.Danger
@@ -66,28 +67,22 @@ StatusMenu {
     }
 
     StatusAction {
-        objectName: "AccountMenu-AddNewAccountAction_" + root.account.name
+        objectName: "AccountMenu-AddNewAccountAction_" + root.name
         text: qsTr("Add new account")
-        enabled: !root.account
+        enabled: !root.address
         icon.name: "add"
         onTriggered: {
             root.addNewAccountClicked()
         }
     }
 
-    Loader {
-        active: !production
-        sourceComponent: StatusAction {
-            objectName: "AccountMenu-AddWatchOnlyAccountAction_" + root.account.name
-            text: qsTr("Add watched address")
-            enabled: !root.account
-            icon.name: "show"
-            onTriggered: {
-                root.addWatchOnlyAccountClicked()
-            }
-        }
-        onLoaded: {
-            root.addAction(item)
+    StatusAction {
+        objectName: "AccountMenu-AddWatchOnlyAccountAction_" + root.name
+        text: qsTr("Add watched address")
+        enabled: root.canAddWatchOnlyAccount && !root.address
+        icon.name: "show"
+        onTriggered: {
+            root.addWatchOnlyAccountClicked()
         }
     }
 }

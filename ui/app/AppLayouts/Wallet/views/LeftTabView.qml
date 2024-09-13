@@ -19,6 +19,8 @@ import shared.popups.keycard 1.0
 import shared.popups.addaccount 1.0
 import shared.stores 1.0
 
+import AppLayouts.Wallet 1.0
+
 import "../controls"
 import "../popups"
 import "../stores"
@@ -63,6 +65,23 @@ Rectangle {
         id: walletAccountContextMenu
         active: false
         sourceComponent: AccountContextMenu {
+            property var account: null
+            address: {
+                if (!account)
+                    return ""
+                let address = account.address
+                const preferredChains = account.preferredSharingChainIds
+                if (!!preferredChains) {
+                    const shortNames = WalletUtils.getNetworkShortNames(preferredChains, root.networkConnectionStore.filteredflatNetworks)
+                    address = `${shortNames}${address}`
+                }
+                return address
+            }
+            name: account ? account.name : ""
+            walletType: account ? account.walletType : ""
+            canDelete: account && !account.isWallet
+            hideFromTotalBalance: account && account.hideFromTotalBalance
+            canAddWatchOnlyAccount: !production
 
             onClosed: {
                 walletAccountContextMenu.active = false
@@ -95,7 +114,11 @@ Rectangle {
                 removeAccountConfirmation.active = true
             }
 
-            onHideFromTotalBalanceClicked: RootStore.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+            onHideFromTotalBalanceClicked: {
+                if (!account)
+                    return
+                RootStore.updateWatchAccountHiddenFromTotalBalance(account.address, hideFromTotalBalance)
+            }
         }
     }
 
