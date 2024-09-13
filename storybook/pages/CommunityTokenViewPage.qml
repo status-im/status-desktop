@@ -41,6 +41,7 @@ SplitView {
                 chainName: networksGroup.checkedButton.text
                 chainIcon: networksGroup.checkedButton.chainIcon
                 accountName: "helloworld"
+                tokenHoldersLoading: loadingTokenHolders.checked
 
                 // collectible-specific properties
                 remotelyDestructState: remotelyDestructStateBox.checked
@@ -138,6 +139,16 @@ SplitView {
                         id: previewBox
                         text: "Preview"
                         checked: true
+                    }
+                }
+
+                GroupBox {
+                    Layout.fillWidth: true
+
+                    CheckBox {
+                        id: loadingTokenHolders
+                        text: "Loading Token Holders"
+                        checked: false
                     }
                 }
 

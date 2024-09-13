@@ -1291,7 +1291,6 @@ QtObject:
       debug "Unable to fetch token hodlers for token type ", token=communityToken.tokenType
 
   proc onCommunityTokenOwnersFetched*(self:Service, response: string) {.slot.} =
-    # TODO add try
     let responseJson = response.parseJson()
     let chainId = responseJson{"chainId"}.getInt
     let contractAddress = responseJson{"contractAddress"}.getStr
