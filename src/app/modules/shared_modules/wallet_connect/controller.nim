@@ -119,7 +119,10 @@ QtObject:
         debug "signMessageWithCallback: signing on keycard started successfully"
         return
       let finalPassword = self.preparePassword(password)
-      res = self.service.signMessage(address, finalPassword, message)
+      var err: string
+      (res, err) = self.service.signMessage(address, finalPassword, message)
+      if err.len > 0:
+        raise newException(CatchableError, "signMessage failed: " & err)
     except Exception as e:
       error "signMessageWithCallback failed: ", msg=e.msg
     callback(topic, id, "", address, res)

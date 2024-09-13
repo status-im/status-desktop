@@ -17,7 +17,7 @@ QtObject {
     readonly property var walletSectionSendInst: walletSectionSend
 
     signal suggestedRoutesReady(var txRoutes, string errCode, string errDescription)
-    signal transactionSent(var chainId, var txHash, var uuid, var error)
+    signal transactionSent(var uuid, var chainId, var approvalTx, var txHash, var error)
     signal transactionSendingComplete(var txHash,  var success)
 
     readonly property Connections walletSectionSendConnections: Connections {
@@ -25,8 +25,8 @@ QtObject {
         function onSuggestedRoutesReady(txRoutes, errCode, errDescription) {
             root.suggestedRoutesReady(txRoutes, errCode, errDescription)
         }
-        function onTransactionSent(chainId, txHash, uuid, error) {
-            root.transactionSent(chainId, txHash, uuid, error)
+        function onTransactionSent(uuid, chainId, approvalTx, txHash, error) {
+            root.transactionSent(uuid, chainId, approvalTx, txHash, error)
         }
         function onTransactionSendingComplete(txHash, success) {
             root.transactionSendingComplete(txHash, success)
@@ -45,10 +45,8 @@ QtObject {
         root.walletSectionSendInst.stopUpdatesForSuggestedRoute()
     }
 
-    function authenticateAndTransfer(uuid, accountFrom, accountTo,
-            tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths, slippagePercentage) {
-        root.walletSectionSendInst.authenticateAndTransferWithParameters(uuid, accountFrom, accountTo,
-            tokenFrom, tokenTo, sendType, tokenName, tokenIsOwnerToken, paths, slippagePercentage)
+    function authenticateAndTransfer(uuid, slippagePercentage) {
+        root.walletSectionSendInst.authenticateAndTransfer(uuid, slippagePercentage)
     }
 
     function getWei2Eth(wei, decimals) {

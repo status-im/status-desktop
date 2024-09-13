@@ -1,6 +1,7 @@
-import Tables, options
+import Tables
 import app/modules/shared_models/currency_amount
 import app_service/service/transaction/dto
+import app_service/service/transaction/router_transactions_dto
 import app_service/service/network/network_item
 import app/modules/shared_models/collectibles_model as collectibles
 from app_service/service/keycard/service import KeycardEvent
@@ -27,6 +28,7 @@ method suggestedRoutes*(self: AccessInterface,
   accountFrom: string,
   accountTo: string,
   token: string,
+  tokenIsOwnerToken: bool,
   amountIn: string,
   toToken: string = "",
   amountOut: string = "",
@@ -42,19 +44,13 @@ method stopUpdatesForSuggestedRoute*(self: AccessInterface) {.base.} =
 method suggestedRoutesReady*(self: AccessInterface, uuid: string, suggestedRoutes: SuggestedRoutesDto, errCode: string, errDescription: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_addr: string, assetKey: string,
-  toAssetKey: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method authenticateAndTransferWithPaths*(self: AccessInterface, from_addr: string, to_addr: string, assetKey: string,
-  toAssetKey: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool, rawPaths: string,
-  slippagePercentage: Option[float]) {.base.} =
+method authenticateAndTransferV2*(self: AccessInterface, fromAddr: string, uuid: string, slippagePercentage: float) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method transactionWasSent*(self: AccessInterface, chainId: int = 0, txHash, uuid, error: string = "") {.base.} =
+method transactionWasSent*(self: AccessInterface, uuid: string, chainId: int = 0, approvalTx: bool = false, txHash: string = "", error: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
@@ -78,7 +74,7 @@ method getCollectiblesModel*(self: AccessInterface): collectibles.Model {.base.}
 method splitAndFormatAddressPrefix*(self: AccessInterface, text : string, updateInStore: bool): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method prepareSignaturesForTransactions*(self: AccessInterface, txHashes: seq[string]) {.base.} =
+method prepareSignaturesForTransactions*(self:AccessInterface, txForSigning: RouterTransactionsForSigningDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onTransactionSigned*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
@@ -87,7 +83,7 @@ method onTransactionSigned*(self: AccessInterface, keycardFlowType: string, keyc
 method hasGas*(self: AccessInterface, accountAddress: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method transactionSendingComplete*(self: AccessInterface, txHash: string, success: bool) {.base.} =
+method transactionSendingComplete*(self: AccessInterface, txHash: string, status: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getNetworkItem*(self: AccessInterface, chainId: int): NetworkItem {.base.} =
