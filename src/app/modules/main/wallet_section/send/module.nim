@@ -351,8 +351,8 @@ method suggestedRoutes*(self: Module,
 method stopUpdatesForSuggestedRoute*(self: Module) =
   self.controller.stopSuggestedRoutesAsyncCalculation()
 
-method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
-  if addresses.len == 0:
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], isDirty: bool) =
+  if not isDirty or addresses.len == 0:
     return
   self.view.setSenderAccount(addresses[0])
   self.view.setReceiverAccount(addresses[0])

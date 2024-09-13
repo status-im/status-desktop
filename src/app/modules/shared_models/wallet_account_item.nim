@@ -219,3 +219,7 @@ QtObject:
   QtProperty[bool] hideFromTotalBalance:
     read = hideFromTotalBalance
     notify = hideFromTotalBalanceChanged
+
+  proc `hideFromTotalBalance=`*(self: WalletAccountItem, value: bool) {.inline.} =
+    self.hideFromTotalBalance = value
+    self.hideFromTotalBalanceChanged()

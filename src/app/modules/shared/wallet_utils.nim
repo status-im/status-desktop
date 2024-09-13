@@ -33,8 +33,7 @@ proc walletAccountToWalletAccountItem*(w: WalletAccountDto, keycardAccount: bool
     w.hideFromTotalBalance
   )
 
-proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: bool,
-  chainIds: seq[int], enabledChainIds: seq[int], 
+proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, isKeycardAccount: bool, 
   currencyBalance: float64, currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool,
   marketValuesLoading: bool): wallet_accounts_item.Item =
   return wallet_accounts_item.newItem(
@@ -48,7 +47,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: boo
     w.keyUid,
     w.createdAt,
     w.position,
-    keycardAccount,
+    isKeycardAccount,
     w.assetsLoading or marketValuesLoading,
     w.isWallet,
     areTestNetworksEnabled,

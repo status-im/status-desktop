@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, stew/shims/strformat, std/sequtils
+import NimQml, Tables, strutils, stew/shims/strformat, std/sequtils, logging
 
 import ./item
 import ../../../shared_models/currency_amount
@@ -93,11 +93,14 @@ QtObject:
     self.items.insert(item, index)
     self.endInsertRows()
 
-  proc findAccountIndex(self: Model, account: Item): int =
+  proc findAccountIndex(self: Model, address: string): int =
     for i in 0 ..< self.items.len:
-      if self.items[i].address() == account.address():
+      if(cmpIgnoreCase(self.items[i].address(), address) == 0):
         return i
     return -1
+
+  proc findAccountIndex(self: Model, account: Item): int =
+    return self.findAccountIndex(account.address())
 
   proc setItems*(self: Model, items: seq[Item]) =
     var indexesToRemove: seq[int]
@@ -125,6 +128,21 @@ QtObject:
       self.insertItem(account, i)
       
     self.countChanged()
+
+    for item in items:
+      self.itemChanged(item.address())
+
+  proc updateItems*(self: Model, items: seq[Item]) =
+    for account in items:
+      let i = self.findAccountIndex(account)
+      if i >= 0:
+        self.items[i] = account
+        let index = self.createIndex(i, 0, nil)
+        defer: index.delete
+        self.dataChanged(index, index)
+      else:
+        self.insertItem(account, self.getCount())
+        self.countChanged()
 
     for item in items:
       self.itemChanged(item.address())
@@ -173,34 +191,73 @@ QtObject:
     of ModelRole.CanSend:
       result = newQVariant(item.canSend())
 
+  proc updateBalance*(self: Model, address: string, balance: CurrencyAmount, assetsLoading: bool) =
+    let i = self.findAccountIndex(address)
+    if i < 0:
+      error "Trying to update invalid account"
+      return
+    self.items[i].setBalance(balance)
+    self.items[i].setAssetsLoading(assetsLoading)
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.CurrencyBalance.int, ModelRole.AssetsLoading.int])
+
+  proc updateAccountHiddenFromTotalBalance*(self: Model, address: string, hideFromTotalBalance: bool) =
+    let i = self.findAccountIndex(address)
+    if i < 0:
+      return
+    self.items[i].setHideFromTotalBalance(hideFromTotalBalance)
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.HideFromTotalBalance.int])
+
+  proc updateAccountsPositions*(self: Model, values: Table[string, int]) =
+    for address, position in values:
+      let i = self.findAccountIndex(address)
+      if i < 0:
+        continue
+      self.items[i].setPosition(position)
+    let firstIndex = self.createIndex(0, 0, nil)
+    let lastIndex = self.createIndex(self.rowCount() - 1, 0, nil)
+    defer: 
+      firstIndex.delete
+      lastIndex.delete
+    self.dataChanged(firstIndex, lastIndex, @[ModelRole.Position.int])
+
+  proc deleteAccount*(self: Model, address: string) =
+    let i = self.findAccountIndex(address)
+    if i < 0:
+      return
+    self.removeItemWithIndex(i)
+
   proc getNameByAddress*(self: Model, address: string): string =
-    for item in self.items:
-      if(cmpIgnoreCase(item.address(), address) == 0):
-        return item.name()
-    return ""
+    let i = self.findAccountIndex(address)
+    if i < 0:
+      return ""
+    return self.items[i].name()
 
   proc getEmojiByAddress*(self: Model, address: string): string =
-    for item in self.items:
-      if(cmpIgnoreCase(item.address(), address) == 0):
-        return item.emoji()
-    return ""
+    let i = self.findAccountIndex(address)
+    if i < 0:
+      return ""
+    return self.items[i].emoji()
 
   proc getColorByAddress*(self: Model, address: string): string =
-    for item in self.items:
-      if(cmpIgnoreCase(item.address(), address) == 0):
-        return item.colorId()
-    return ""
+    let i = self.findAccountIndex(address)
+    if i < 0:
+      return ""
+    return self.items[i].colorId()
 
   proc isOwnedAccount*(self: Model, address: string): bool =
-    for item in self.items:
-      if cmpIgnoreCase(item.address(), address) == 0 and item.walletType != "watch":
-        return true
-    return false
+    let i = self.findAccountIndex(address)
+    if i < 0:
+      return false
+    return self.items[i].walletType != "watch"
 
   proc onPreferredSharingChainsUpdated*(self: Model, address, prodPreferredChainIds, testPreferredChainIds: string) =
     var i = 0
     for item in self.items.mitems:
-      if address == item.address:
+      if(cmpIgnoreCase(item.address, address) == 0):
         item.prodPreferredChainIds = prodPreferredChainIds
         item.testPreferredChainIds = testPreferredChainIds
         let index = self.createIndex(i, 0, nil)

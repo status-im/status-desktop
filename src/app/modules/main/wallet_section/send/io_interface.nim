@@ -65,7 +65,7 @@ method onUserAuthenticated*(self: AccessInterface, pin: string, password: string
 method setSelectedReceiveAccountIndex*(self: AccessInterface, index: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int]) {.base.} =
+method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int], isDirty: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCollectiblesModel*(self: AccessInterface): collectibles.Model {.base.} =

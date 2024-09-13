@@ -1,6 +1,7 @@
-import NimQml, json, sequtils, strutils
+import NimQml, json, sequtils, strutils, tables
 
 import app_service/service/wallet_account/service as wallet_account_service
+import app/modules/shared_models/currency_amount
 
 import ./model
 import ./item
@@ -39,6 +40,21 @@ QtObject:
 
   proc setItems*(self: View, items: seq[Item]) =
     self.accounts.setItems(items)
+
+  proc updateItems*(self: View, items: seq[Item]) =
+    self.accounts.updateItems(items)
+
+  proc updateBalance*(self: View, address: string, balance: CurrencyAmount, assetsLoading: bool) =
+    self.accounts.updateBalance(address, balance, assetsLoading)
+    
+  proc onAccountRemoved*(self: View, address: string) =
+    self.accounts.deleteAccount(address)
+
+  proc updateAccountsPositions*(self: View, values: Table[string, int]) =
+    self.accounts.updateAccountsPositions(values)
+
+  proc updateAccountHiddenFromTotalBalance*(self: View, address: string, hideFromTotalBalance: bool) =
+    self.accounts.updateAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
 
   proc deleteAccount*(self: View, address: string) {.slot.} =
     self.delegate.deleteAccount(address)
