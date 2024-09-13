@@ -60,6 +60,8 @@ Control {
             TokenSearchBox {
                 id: collectiblesSearchBox
 
+                objectName: "collectiblesSearchBox"
+
                 Layout.fillWidth: true
                 placeholderText: qsTr("Search collectibles")
             }
