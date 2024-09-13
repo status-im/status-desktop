@@ -75,7 +75,7 @@ SplitView {
             id: dSwapStore
             signal suggestedRoutesReady(var txRoutes, string errCode, string errDescription)
             signal transactionSent(var chainId, var txHash, var uuid, var error)
-            signal transactionSendingComplete(var txHash,  var success)
+            signal transactionSendingComplete(var txHash, var status)
 
             readonly property var accounts: WalletAccountsModel {}
             readonly property var flatNetworks: NetworksModel.flatNetworks
@@ -312,7 +312,7 @@ SplitView {
                                               dSwapStore.transactionSent(networksComboBox.currentValue, "0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", d.uuid, "")
                                           })()
                     Backpressure.debounce(this, 2000, () => {
-                                              dSwapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", true)
+                                              dSwapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", "Success")
                                           })()
                     fetchSuggestedRoutesSpy.wait()
                     Backpressure.debounce(this, 1000, () => {
@@ -352,7 +352,7 @@ SplitView {
                                               dSwapStore.transactionSent(networksComboBox.currentValue, "0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", d.uuid, "")
                                           })()
                     Backpressure.debounce(this, 2000, () => {
-                                              dSwapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", false)
+                                              dSwapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", "Failed")
                                           })()
                 }
             }
@@ -433,7 +433,7 @@ SplitView {
             Button {
                 text: "emit approval completed successfully"
                 onClicked: {
-                    dSwapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", true)
+                    dSwapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", "Success")
                 }
                 visible: advancedSignalsCheckBox.checked
             }
@@ -441,7 +441,7 @@ SplitView {
             Button {
                 text: "emit approval completed with failure"
                 onClicked: {
-                    dSwapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", false)
+                    dSwapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", "Failed")
                 }
                 visible: advancedSignalsCheckBox.checked
             }

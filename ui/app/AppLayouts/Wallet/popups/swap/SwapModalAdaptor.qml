@@ -264,7 +264,7 @@ QObject {
             root.suggestedRoutesReady()
         }
 
-        function onTransactionSent(chainId, txHash, uuid, error) {
+        function onTransactionSent(uuid, chainId, approvalTx, txHash, error) {
             if(root.swapOutputData.approvalNeeded) {
                 if (uuid !== d.uuid || !!error) {
                     root.approvalPending = false
@@ -276,11 +276,15 @@ QObject {
             }
         }
 
-        function onTransactionSendingComplete(txHash, success) {
+        function onTransactionSendingComplete(txHash, status) {
             if(d.txHash === txHash && root.swapOutputData.approvalNeeded && root.approvalPending) {
                 root.approvalPending = false
-                root.approvalSuccessful = success
+                root.approvalSuccessful = status == "Success" // TODO: make a all tx statuses Constants (success, pending, failed)
                 d.txHash = ""
+
+                if (root.approvalSuccessful) {
+                    root.swapOutputData.approvalNeeded = false
+                }
             }
         }
     }
@@ -342,16 +346,12 @@ QObject {
         root.approvalPending = true
         const accountAddress = root.swapFormData.selectedAccountAddress
 
-        root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
-            root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
-            Constants.SendType.Approve, "", false, root.swapOutputData.rawPaths, "")
+        root.swapStore.authenticateAndTransfer(d.uuid, "")
     }
 
     function sendSwapTx() {
         const accountAddress = root.swapFormData.selectedAccountAddress
 
-        root.swapStore.authenticateAndTransfer(d.uuid, accountAddress, accountAddress,
-            root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
-            Constants.SendType.Swap, "", false, root.swapOutputData.rawPaths, root.swapFormData.selectedSlippage)
+        root.swapStore.authenticateAndTransfer(d.uuid, root.swapFormData.selectedSlippage)
     }
 }

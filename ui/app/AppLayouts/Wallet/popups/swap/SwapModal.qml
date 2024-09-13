@@ -39,17 +39,6 @@ StatusDialog {
             root.swapAdaptor.fetchSuggestedRoutes(payPanel.rawValue)
         })
 
-        property Timer autoRefreshTimer: Timer {
-            interval: root.swapInputParamsForm.autoRefreshTime
-            running: false
-            repeat: false
-            onTriggered: {
-                if(!root.swapAdaptor.swapProposalLoading && !root.swapAdaptor.approvalPending) {
-                    d.fetchSuggestedRoutes()
-                }
-            }
-        }
-
         function fetchSuggestedRoutes() {
             if (root.swapInputParamsForm.isFormFilledCorrectly()) {
                 root.swapAdaptor.swapProposalLoading = true
@@ -90,19 +79,6 @@ StatusDialog {
             payPanel.reevaluateSelectedId()
         }
     }
-
-    Connections {
-        target: root.swapAdaptor
-        function onApprovalSuccessfulChanged() {
-            // perform a recalculation to make sure expected outcome shown is accurate
-            if(root.swapAdaptor.approvalSuccessful) {
-                d.fetchSuggestedRoutes()
-            }
-        }
-        function onSuggestedRoutesReady() {
-            d.autoRefreshTimer.restart()
-        }
-    }    
 
     // needed as the first time the value not loaded correctly without this Binding
     Binding {

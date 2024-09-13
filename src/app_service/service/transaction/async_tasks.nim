@@ -4,7 +4,6 @@
 
 import stint
 import ../../../backend/backend as backend
-import ../../common/conversion as service_conversion
 
 type
   GetSuggestedRoutesTaskArg* = ref object of QObjectTaskArg

@@ -6,6 +6,10 @@ type SignalType* {.pure.} = enum
   ## Wallet Signals
   Wallet = "wallet"
   WalletSignTransactions = "wallet.sign.transactions"
+  WalletRouterSendingTransactionsStarted = "wallet.router.sending-transactions-started"
+  WalletRouterSignTransactions = "wallet.router.sign-transactions"
+  WalletRouterTransactionsSent = "wallet.router.transactions-sent"
+  WalletTransactionStatusChanged = "wallet.transaction.status-changed"
   WalletSuggestedRoutes = "wallet.suggested.routes"
   NodeReady = "node.ready"
   NodeCrashed = "node.crashed"

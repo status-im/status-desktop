@@ -4,8 +4,8 @@ import backend/collectibles as collectibles
 import backend/transactions as transactions
 import backend/backend
 import backend/eth
+import backend/wallet
 
-import app_service/service/ens/utils as ens_utils
 import app_service/common/utils as common_utils
 import app_service/common/types as common_types
 
@@ -19,15 +19,14 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/token/service as token_service
 import app_service/service/settings/service as settings_service
-import app_service/service/eth/dto/transaction as transaction_data_dto
-import app_service/service/eth/dto/[coder, method_dto]
 import ./dto as transaction_dto
 import ./dtoV2
 import ./dto_conversion
+import ./router_transactions_dto
 import app_service/service/eth/utils as eth_utils
 
 
-export transaction_dto
+export transaction_dto, router_transactions_dto
 export transactions.TransactionsSignatures
 
 logScope:
@@ -37,6 +36,8 @@ include async_tasks
 include app_service/common/json_utils
 
 # Signals which may be emitted by this service:
+const SIGNAL_SIGN_ROUTER_TRANSACTIONS* = "signRouterTransactions"
+const SIGNAL_SENDING_TRANSACTIONS_STARTED* = "sendingTransactionsStarted"
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 const SIGNAL_SUGGESTED_ROUTES_READY* = "suggestedRoutesReady"
 const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
@@ -44,12 +45,7 @@ const SIGNAL_HISTORY_ERROR* = "historyError"
 const SIGNAL_TRANSACTION_DECODED* = "transactionDecoded"
 const SIGNAL_OWNER_TOKEN_SENT* = "ownerTokenSent"
 const SIGNAL_TRANSACTION_SENDING_COMPLETE* = "transactionSendingComplete"
-
-const SIMPLE_TX_BRIDGE_NAME = "Transfer"
-const HOP_TX_BRIDGE_NAME = "Hop"
-const ERC721_TRANSFER_NAME = "ERC721Transfer"
-const ERC1155_TRANSFER_NAME = "ERC1155Transfer"
-const SWAP_PARASWAP_NAME = "Paraswap"
+const SIGNAL_TRANSACTION_STATUS_CHANGED* = "transactionStatusChanged"
 
 type TokenTransferMetadata* = object
   tokenName*: string
@@ -119,6 +115,10 @@ type
     fromAmount*: string
     toTokenKey*: string
     toAmount*: string
+    approvalTx*: bool
+    username*: string
+    publicKey*: string
+    packId*: string
 
 type
   OwnerTokenSentArgs* = ref object of Args
@@ -140,6 +140,18 @@ type
     dataDecoded*: string
     txHash*: string
 
+type
+  RouterTransactionsForSigningArgs* = ref object of Args
+    data*: RouterTransactionsForSigningDto
+
+type
+  RouterTransactionsSendingStartedArgs* = ref object of Args
+    data*: SendDetailsDto
+
+type
+  TransactionStatusArgs* = ref object of Args
+    data*: TransactionStatusChange
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -151,6 +163,7 @@ QtObject:
 
   ## Forward declarations
   proc suggestedRoutesReady(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string)
+  proc sendTransactionsSignal(self: Service, sendDetails: SendDetailsDto, sentTransactions: seq[RouterSentTransaction] = @[])
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -183,6 +196,28 @@ QtObject:
       var data = WalletSignal(e)
       self.tokenService.updateTokenPrices(data.updatedPrices)
       self.suggestedRoutesReady(data.uuid, data.bestRoute, data.bestRouteRaw, data.errorCode, data.error)
+
+    self.events.on(SignalType.WalletRouterSendingTransactionsStarted.event) do(e:Args):
+      var data = WalletSignal(e)
+      self.events.emit(SIGNAL_SENDING_TRANSACTIONS_STARTED, RouterTransactionsSendingStartedArgs(data: data.routerTransactionsSendingDetails))
+      # TODO: the line below is to aling with the old implementation, remove it
+      self.sendTransactionsSignal(data.routerTransactionsSendingDetails)
+
+    self.events.on(SignalType.WalletRouterSignTransactions.event) do(e:Args):
+      var data = WalletSignal(e)
+      if data.routerTransactionsForSigning.sendDetails.errorResponse.isNil and
+        not data.routerTransactionsForSigning.signingDetails.isNil:
+          self.events.emit(SIGNAL_SIGN_ROUTER_TRANSACTIONS, RouterTransactionsForSigningArgs(data: data.routerTransactionsForSigning))
+          return
+      self.sendTransactionsSignal(data.routerTransactionsForSigning.sendDetails)
+
+    self.events.on(SignalType.WalletRouterTransactionsSent.event) do(e:Args):
+      var data = WalletSignal(e)
+      self.sendTransactionsSignal(data.routerSentTransactions.sendDetails, data.routerSentTransactions.sentTransactions)
+
+    self.events.on(SignalType.WalletTransactionStatusChanged.event) do(e:Args):
+      var data = WalletSignal(e)
+      self.events.emit(SIGNAL_TRANSACTION_STATUS_CHANGED, TransactionStatusArgs(data: data.transactionStatusChange))
 
     self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
       try:
@@ -287,372 +322,55 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc createApprovalPath*(self: Service, route: TransactionPathDto, from_addr: string, toAddress: Address, gasFees: string): TransactionBridgeDto =
-    var txData = TransactionDataDto()
-    let approve = Approve(
-      to: parseAddress(route.approvalContractAddress),
-      value: route.approvalAmountRequired,
-    )
-    let data = ERC20_procS.toTable["approve"].encodeAbi(approve)
-    txData = ens_utils.buildTokenTransaction(
-      parseAddress(from_addr),
-      toAddress,
-      $route.gasAmount,
-      gasFees,
-      route.gasFees.eip1559Enabled,
-      $route.gasFees.maxPriorityFeePerGas,
-      $route.gasFees.maxFeePerGasM
-    )
-    txData.data = data
-
-    var path = TransactionBridgeDto(bridgeName: SIMPLE_TX_BRIDGE_NAME, chainID: route.fromNetwork.chainId)
-    path.transferTx = txData
-    return path
-
-  proc createPath*(self: Service, route: TransactionPathDto, txData: TransactionDataDto, tokenSymbol: string, to_addr: string): TransactionBridgeDto =
-    var path = TransactionBridgeDto(bridgeName: route.bridgeName, chainID: route.fromNetwork.chainId)
-    var hopTx = TransactionDataDto()
-    var cbridgeTx = TransactionDataDto()
-    var eRC721TransferTx = TransactionDataDto()
-    var eRC1155TransferTx = TransactionDataDto()
-    var swapTx = TransactionDataDto()
-
-    if(route.bridgeName == SIMPLE_TX_BRIDGE_NAME):
-      path.transferTx = txData
-    elif(route.bridgeName == HOP_TX_BRIDGE_NAME):
-      hopTx = txData
-      hopTx.chainID =  route.fromNetwork.chainId.some
-      hopTx.chainIDTo = route.toNetwork.chainId.some
-      hopTx.symbol = tokenSymbol.some
-      hopTx.recipient = parseAddress(to_addr).some
-      hopTx.amount = route.amountIn.some
-      hopTx.bonderFee = route.txBonderFees.some
-      path.hopTx = hopTx
-    elif(route.bridgeName == ERC721_TRANSFER_NAME):
-      eRC721TransferTx = txData
-      eRC721TransferTx.chainID =  route.toNetwork.chainId.some
-      eRC721TransferTx.recipient = parseAddress(to_addr).some
-      eRC721TransferTx.tokenID = stint.u256(tokenSymbol).some
-      path.eRC721TransferTx = eRC721TransferTx
-    elif(route.bridgeName == ERC1155_TRANSFER_NAME):
-      eRC1155TransferTx = txData
-      eRC1155TransferTx.chainID =  route.toNetwork.chainId.some
-      eRC1155TransferTx.recipient = parseAddress(to_addr).some
-      eRC1155TransferTx.tokenID = stint.u256(tokenSymbol).some
-      eRC1155TransferTx.amount = route.amountIn.some
-      path.eRC1155TransferTx = eRC1155TransferTx
-    elif(route.bridgeName == SWAP_PARASWAP_NAME):
-      swapTx = txData
-      swapTx.chainID =  route.fromNetwork.chainId.some
-      swapTx.chainIDTo = route.toNetwork.chainId.some
-      swapTx.tokenIdFrom = route.fromToken.symbol.some
-      swapTx.tokenIdTo = route.toToken.symbol.some
-      path.swapTx = swapTx
-    else:
-      cbridgeTx = txData
-      cbridgeTx.chainID =  route.toNetwork.chainId.some
-      cbridgeTx.symbol = tokenSymbol.some
-      cbridgeTx.recipient = parseAddress(to_addr).some
-      cbridgeTx.amount = route.amountIn.some
-      path.cbridgeTx = cbridgeTx
-    return path
-
-  proc sendTransactionSentSignal(self: Service, txType: SendType, fromAddr: string, toAddr: string,
-    fromTokenKey: string, fromAmount: string, toTokenKey: string, toAmount: string, uuid: string,
-    routes: seq[TransactionPathDto], response: RpcResponse[JsonNode], err: string = "", tokenName = "", isOwnerToken=false) =
+  proc sendTransactionsSignal(self: Service, sendDetails: SendDetailsDto, sentTransactions: seq[RouterSentTransaction] = @[]) =
     # While preparing the tx in the Send modal user cannot see the address, it's revealed once the tx is sent
     # (there are few places where we display the toast from and link to the etherscan where the address can be seen)
     # that's why we need to mark the addresses as shown here (safer).
-    self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: @[fromAddr, toAddr]))
+    self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: @[sendDetails.fromAddress, sendDetails.toAddress]))
 
-    if err.len > 0:
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(uuid: uuid, error: err, txType: txType,
-        fromAddress: fromAddr, toAddress: toAddr, fromTokenKey: fromTokenKey, fromAmount: fromAmount,
-        toTokenKey: toTokenKey, toAmount: toAmount))
-      if txType == SendType.Swap:
-        singletonInstance.globalEvents.addCentralizedMetricIfEnabled("swap", $(%*{"subEvent": "tx error"}))
-    elif response.result{"hashes"} != nil:
-      for route in routes:
-        for hash in response.result["hashes"][$route.fromNetwork.chainID]:
-          if isOwnerToken:
-            self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr,
-              uuid: uuid, tokenName: tokenName, status: ContractTransactionStatus.InProgress))
-          else:
-            self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid ,
-              error: "", txType: txType, fromAddress: fromAddr, toAddress: toAddr, fromTokenKey: fromTokenKey, fromAmount: fromAmount, toTokenKey: toTokenKey, toAmount: toAmount))
+    if not sendDetails.errorResponse.isNil and sendDetails.errorResponse.details.len > 0:
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(
+        uuid: sendDetails.uuid,
+        error: sendDetails.errorResponse.details,
+        txType: SendType(sendDetails.sendType),
+        fromAddress: sendDetails.fromAddress,
+        toAddress: sendDetails.toAddress,
+        fromTokenKey: sendDetails.fromToken,
+        fromAmount: sendDetails.fromAmount.toString(10),
+        toTokenKey: sendDetails.toToken,
+        toAmount: sendDetails.toAmount.toString(10),
+        username: sendDetails.username,
+        publicKey: sendDetails.publicKey,
+        packId: sendDetails.packId
+      ))
+      return
 
-          let metadata = TokenTransferMetadata(tokenName: tokenName, isOwnerToken: isOwnerToken)
-          self.watchTransaction(hash.getStr, fromAddr, toAddr, $PendingTransactionTypeDto.WalletTransfer, $(%metadata), route.fromNetwork.chainID,
-                                fromTokenKey, fromAmount, toTokenKey, toAmount, txType)
-                                
-      if txType == SendType.Swap:
-        singletonInstance.globalEvents.addCentralizedMetricIfEnabled("swap", $(%*{"subEvent": "tx success"}))
-
-  proc isCollectiblesTransfer(self: Service, sendType: SendType): bool =
-    return sendType == ERC721Transfer or sendType == ERC1155Transfer
-
-  proc sendTypeToMultiTxType(sendType: SendType): transactions.MultiTransactionType =
-    case sendType
-    of SendType.Swap:
-      return transactions.MultiTransactionType.MultiTransactionSwap
-    of SendType.Approve:
-      return transactions.MultiTransactionType.MultiTransactionApprove
-    of SendType.Bridge:
-      return transactions.MultiTransactionType.MultiTransactionBridge
-    else:
-      return transactions.MultiTransactionType.MultiTransactionSend
-
-  proc transferEth(
-    self: Service,
-    from_addr: string,
-    to_addr: string,
-    tokenSymbol: string,
-    toTokenSymbol: string,
-    uuid: string,
-    routes: seq[TransactionPathDto],
-    password: string,
-    sendType: SendType,
-    slippagePercentage: Option[float]
-  ) =
-    try:
-      var paths: seq[TransactionBridgeDto] = @[]
-      var totalAmountToSend: UInt256
-      var totalAmountToReceive: UInt256
-      let toAddress = parseAddress(to_addr)
-
-      for route in routes:
-        var txData = TransactionDataDto()
-        var gasFees: string = ""
-
-        if( not route.gasFees.eip1559Enabled):
-          gasFees = $route.gasFees.gasPrice
-
-        if route.approvalRequired:
-          paths.add(self.createApprovalPath(route, from_addr, toAddress, gasFees))
-
-        totalAmountToSend += route.amountIn
-        totalAmountToReceive += route.amountOut
-        txData = ens_utils.buildTransaction(parseAddress(from_addr), route.amountIn,
-          $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
-        txData.to = parseAddress(to_addr).some
-        if sendType == SendType.Swap:
-          txData.slippagePercentage = slippagePercentage
-
-        paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
-
-      var mtCommand = MultiTransactionCommandDto(
-        fromAddress: from_addr,
-        toAddress: to_addr,
-        fromAsset: tokenSymbol,
-        toAsset: toTokenSymbol,
-        fromAmount:  "0x" & totalAmountToSend.toHex,
-        multiTxType: sendTypeToMultiTxType(sendType),
-      )
-
-      if sendType == SendType.Swap:
-        mtCommand.toAmount =  "0x" & totalAmountToReceive.toHex
-        singletonInstance.globalEvents.addCentralizedMetricIfEnabled("swap", $(%*{"subEvent": "send tx"}))
-
-      let response = transactions.createMultiTransaction(
-        mtCommand,
-        paths,
-        password,
-      )
-
-      if password != "":
-        self.sendTransactionSentSignal(sendType, from_addr, to_addr, tokenSymbol, totalAmountToSend.toString(10),
-          toTokenSymbol, totalAmountToReceive.toString(10), uuid, routes, response)
-    except Exception as e:
-      self.sendTransactionSentSignal(sendType, from_addr, to_addr, tokenSymbol, "",
-        toTokenSymbol, "", uuid, @[], RpcResponse[JsonNode](), self.extractRpcErrorMessage(e.msg))
-
-  proc mustIgnoreApprovalRequests(sendType: SendType): bool =
-    # Swap requires approvals to be done in advance in a separate Tx
-    return sendType == SendType.Swap
-
-  # in case of collectibles transfer, assetKey is used to get the contract address and token id
-  # in case of asset transfer, asset is valid and used to get the asset symbol and contract address
-  proc transferToken(
-    self: Service,
-    from_addr: string,
-    to_addr: string,
-    assetKey: string,
-    asset: TokenBySymbolItem,
-    toAssetKey: string,
-    toAsset: TokenBySymbolItem,
-    uuid: string,
-    routes: seq[TransactionPathDto],
-    password: string,
-    sendType: SendType,
-    tokenName: string,
-    isOwnerToken: bool,
-    slippagePercentage: Option[float]
-  ) =
-    var
-      toContractAddress: Address
-      paths: seq[TransactionBridgeDto] = @[]
-      totalAmountToSend: UInt256
-      totalAmountToReceive: UInt256
-      mtCommand = MultiTransactionCommandDto(
-        fromAddress: from_addr,
-        toAddress: to_addr,
-        fromAsset: if not asset.isNil: asset.symbol else: assetKey,
-        toAsset: if not toAsset.isNil: toAsset.symbol else: toAssetKey,
-        multiTxType: sendTypeToMultiTxType(sendType),
-      )
-
-    # if collectibles transfer ...
-    if asset.isNil:
-      let contract_tokenId = assetKey.split(":")
-      if contract_tokenId.len == 2:
-        toContractAddress = parseAddress(contract_tokenId[0])
-        mtCommand.fromAsset = contract_tokenId[1]
-        mtCommand.toAsset = contract_tokenId[1]
+    for tx in sentTransactions:
+      if sendDetails.ownerTokenBeingSent:
+        self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(
+          chainId: tx.fromChain,
+          txHash: tx.hash,
+          uuid: sendDetails.uuid,
+          tokenName: tx.fromToken,
+          status: ContractTransactionStatus.InProgress
+        ))
       else:
-        error "Invalid assetKey for collectibles transfer", assetKey=assetKey
-        return
-
-    try:
-      for route in routes:
-        var txData = TransactionDataDto()
-        var gasFees: string = ""
-
-        # If not collectible ...
-        if not asset.isNil:
-          var foundAddress = false
-          for addressPerChain in asset.addressPerChainId:
-            if addressPerChain.chainId == route.fromNetwork.chainId:
-              toContractAddress = parseAddress(addressPerChain.address)
-              foundAddress = true
-              break
-          if not foundAddress:
-            error "Contract address not found for asset", assetKey=assetKey
-            return
-
-        if not route.gasFees.eip1559Enabled:
-          gasFees = $route.gasFees.gasPrice
-
-        if route.approvalRequired and not mustIgnoreApprovalRequests(sendType):
-          let approvalPath = self.createApprovalPath(route, mtCommand.fromAddress, toContractAddress, gasFees)
-          paths.add(approvalPath)
-
-        totalAmountToSend += route.amountIn
-        totalAmountToReceive += route.amountOut
-
-        if sendType == SendType.Approve:
-          # We only do the approvals
-          continue
-
-        let transfer = Transfer(
-          to: parseAddress(mtCommand.toAddress),
-          value: route.amountIn,
-        )
-        let data = ERC20_procS.toTable["transfer"].encodeAbi(transfer)
-
-        txData = ens_utils.buildTokenTransaction(
-          parseAddress(mtCommand.fromAddress),
-          toContractAddress,
-          $route.gasAmount,
-          gasFees,
-          route.gasFees.eip1559Enabled,
-          $route.gasFees.maxPriorityFeePerGas,
-          $route.gasFees.maxFeePerGasM
-          )
-        txData.data = data
-        if sendType == SendType.Swap:
-          txData.slippagePercentage = slippagePercentage
-
-        let path = self.createPath(route, txData, mtCommand.toAsset, mtCommand.toAddress)
-        paths.add(path)
-
-      mtCommand.fromAmount =  "0x" & totalAmountToSend.toHex
-      if sendType == SendType.Swap:
-        mtCommand.toAmount =  "0x" & totalAmountToReceive.toHex
-        singletonInstance.globalEvents.addCentralizedMetricIfEnabled("swap", $(%*{"subEvent": "send tx"}))
-
-      let response = transactions.createMultiTransaction(mtCommand, paths, password)
-
-      if password != "":
-        self.sendTransactionSentSignal(sendType, mtCommand.fromAddress, mtCommand.toAddress,
-          assetKey, totalAmountToSend.toString(10), toAssetKey, totalAmountToReceive.toString(10),
-          uuid, routes, response, err="", tokenName, isOwnerToken)
-
-    except Exception as e:
-      self.sendTransactionSentSignal(sendType, mtCommand.fromAddress, mtCommand.toAddress,
-        assetKey, "", toAssetKey, "",
-        uuid, @[], RpcResponse[JsonNode](), self.extractRpcErrorMessage(e.msg))
-
-  proc transfer*(
-    self: Service,
-    fromAddr: string,
-    toAddr: string,
-    assetKey: string,
-    toAssetKey: string,
-    uuid: string,
-    selectedRoutes: seq[TransactionPathDto],
-    password: string,
-    sendType: SendType,
-    usePassword: bool,
-    doHashing: bool,
-    tokenName: string,
-    isOwnerToken: bool,
-    slippagePercentage: Option[float]
-  ) =
-    var finalPassword = ""
-    if usePassword:
-      finalPassword = password
-      if doHashing:
-        finalPassword = common_utils.hashPassword(password)
-    try:
-      var chainID = 0
-
-      if(selectedRoutes.len > 0):
-        chainID = selectedRoutes[0].fromNetwork.chainID
-
-      # asset == nil means transferToken is executed for a collectibles transfer
-      var
-        asset: TokenBySymbolItem
-        toAsset: TokenBySymbolItem
-      if not self.isCollectiblesTransfer(sendType):
-        asset = self.tokenService.getTokenBySymbolByTokensKey(assetKey)
-        if asset.isNil:
-          error "Asset not found for", assetKey=assetKey
-          return
-
-        toAsset = asset
-        if sendType == Swap:
-          toAsset = self.tokenService.getTokenBySymbolByTokensKey(toAssetKey)
-          if toAsset.isNil:
-            error "Asset not found for", assetKey=assetKey
-            return
-
-        let network = self.networkService.getNetworkByChainId(chainID)
-        if not network.isNil and network.nativeCurrencySymbol == asset.symbol:
-          self.transferEth(fromAddr, toAddr, asset.symbol, toAsset.symbol, uuid, selectedRoutes, finalPassword, sendType, slippagePercentage)
-          return
-
-      self.transferToken(fromAddr, toAddr, assetKey, asset, toAssetKey, toAsset, uuid, selectedRoutes, finalPassword,
-        sendType, tokenName, isOwnerToken, slippagePercentage)
-
-    except Exception as e:
-      self.sendTransactionSentSignal(sendType, fromAddr, toAddr, assetKey, "", toAssetKey, "", uuid, @[], RpcResponse[JsonNode](), self.extractRpcErrorMessage(e.msg))
-
-  proc proceedWithTransactionsSignatures*(self: Service, fromAddr: string, toAddr: string,
-    fromTokenKey: string, toTokenKey: string, uuid: string, signatures: TransactionsSignatures,
-    selectedRoutes: seq[TransactionPathDto], sendType: SendType) =
-    try:
-      let response = transactions.proceedWithTransactionsSignatures(signatures)
-
-      var totalAmountToSend: UInt256
-      var totalAmountToReceive: UInt256
-      for route in selectedRoutes:
-        totalAmountToSend += route.amountIn
-        totalAmountToReceive += route.amountOut
-
-      self.sendTransactionSentSignal(sendType, fromAddr, toAddr, fromTokenKey, totalAmountToSend.toString(10), toTokenKey, totalAmountToReceive.toString(10), uuid, selectedRoutes, response)
-    except Exception as e:
-      self.sendTransactionSentSignal(sendType, fromAddr, toAddr, fromTokenKey, "", toTokenKey, "",
-      uuid, @[], RpcResponse[JsonNode](), fmt"Error proceeding with transactions signatures: {e.msg}")
+        self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(
+          chainId: tx.fromChain,
+          txHash: tx.hash,
+          uuid: sendDetails.uuid,
+          txType: SendType(sendDetails.sendType),
+          fromAddress: tx.fromAddress,
+          toAddress: tx.toAddress,
+          fromTokenKey: tx.fromToken,
+          fromAmount: tx.amount.toString(10),
+          toTokenKey: tx.toToken,
+          toAmount: tx.amount.toString(10),
+          approvalTx: tx.approvalTx,
+          username: sendDetails.username,
+          publicKey: sendDetails.publicKey,
+          packId: sendDetails.packId
+        ))
 
   proc suggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
     try:
@@ -688,6 +406,7 @@ QtObject:
     accountFrom: string,
     accountTo: string,
     token: string,
+    tokenIsOwnerToken: bool,
     amountIn: string,
     toToken: string = "",
     amountOut: string = "",
@@ -706,7 +425,7 @@ QtObject:
 
     try:
       let res = eth.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
-        toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
+        tokenIsOwnerToken, toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
     except CatchableError as e:
       error "suggestedRoutes", exception=e.msg
 
@@ -747,3 +466,38 @@ proc getMultiTransactions*(transactionIDs: seq[int]): seq[MultiTransactionDto] =
     let errDescription = e.msg
     error "error: ", errDescription
     return
+
+proc signMessage*(self: Service, address: string, hashedPassword: string, hashedMessage: string): tuple[res: string, err: string] =
+  var signMsgRes: JsonNode
+  let err = wallet.signMessage(signMsgRes,
+    hashedMessage,
+    address,
+    hashedPassword)
+  if err.len > 0:
+    error "status-go - wallet_signMessage failed", err=err
+    result.err = err
+    return
+  result.res = signMsgRes.getStr
+  return
+
+proc buildTransactionsFromRoute*(self: Service, uuid: string, slippagePercentage: float): string =
+  var response: JsonNode
+  let err = transactions.buildTransactionsFromRoute(response, uuid, slippagePercentage)
+  if err.len > 0:
+    error "status-go - transfer failed", err=err
+    return err
+  if response.kind != JNull:
+    error "unexpected transfer response"
+    return "unexpected transfer response"
+  return ""
+
+proc sendRouterTransactionsWithSignatures*(self: Service, uuid: string, signatures: TransactionsSignatures): string =
+  var response: JsonNode
+  let err = transactions.sendRouterTransactionsWithSignatures(response, uuid, signatures)
+  if err.len > 0:
+    error "status-go - wallet_sendRouterTransactionsWithSignatures failed", err=err
+    return err
+  if response.kind != JNull:
+    error "unexpected sending transactions response"
+    return "unexpected sending transactions response"
+  return ""
