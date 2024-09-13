@@ -81,8 +81,12 @@ QtObject:
       of SignalType.WhisperFilterAdded: WhisperFilterSignal.fromEvent(jsonSignal)
       of SignalType.Wallet,
         SignalType.WalletSignTransactions,
+        SignalType.WalletRouterSendingTransactionsStarted,
+        SignalType.WalletRouterSignTransactions,
+        SignalType.WalletRouterTransactionsSent,
+        SignalType.WalletTransactionStatusChanged,
         SignalType.WalletSuggestedRoutes:
-        WalletSignal.fromEvent(signalType, jsonSignal)
+          WalletSignal.fromEvent(signalType, jsonSignal)
       of SignalType.NodeReady,
         SignalType.NodeCrashed,
         SignalType.NodeStarted,

@@ -138,15 +138,8 @@ QtObject:
       return ""
     return hashRes.result.getStr()
 
-  proc signMessage*(self: Service, address: string, hashedPassword: string, hashedMessage: string): string =
-    var signMsgRes: JsonNode
-    let err = wallet.signMessage(signMsgRes,
-      hashedMessage,
-      address,
-      hashedPassword)
-    if err.len > 0:
-      error "status-go - wallet_signMessage failed", err=err
-    return signMsgRes.getStr
+  proc signMessage*(self: Service, address: string, hashedPassword: string, hashedMessage: string): tuple[res: string, err: string] =
+    return self.transactions.signMessage(address, hashedPassword, hashedMessage)
 
   proc buildTransaction*(self: Service, chainId: int, txJson: string): tuple[txToSign: string, txData: JsonNode] =
     var buildTxResponse: JsonNode

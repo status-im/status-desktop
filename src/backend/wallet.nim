@@ -4,6 +4,8 @@ from ./gen import rpc
 
 import status_go
 
+include common
+
 rpc(signMessage, "wallet"):
   message: string
   address: string
@@ -24,17 +26,6 @@ rpc(sendTransactionWithSignature, "wallet"):
   sendTxArgsJson: string
   signature: string
 
-proc isErrorResponse(rpcResponse: RpcResponse[JsonNode]): bool =
-  if not rpcResponse.error.isNil:
-    return true
-  return false
-
-proc prepareResponse(resultOut: var JsonNode, rpcResponse: RpcResponse[JsonNode]): string =
-  if isErrorResponse(rpcResponse):
-    return rpcResponse.error.message
-  if rpcResponse.result.isNil:
-    return "no result"
-  resultOut = rpcResponse.result
 
 ## Signs the provided message with the provided account using the provided hashed password, performs `crypto.Sign`
 ## `resultOut` represents a json object that contains the signature if the call was successful, or `nil`

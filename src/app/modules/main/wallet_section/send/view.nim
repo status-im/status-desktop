@@ -1,5 +1,4 @@
-import NimQml, Tables, json, sequtils, strutils, stint, options, chronicles
-import uuids
+import NimQml, Tables, json, sequtils, strutils, stint, chronicles
 
 import ./io_interface, ./network_route_model, ./network_route_item, ./suggested_route_item, ./transaction_routes
 import app_service/service/network/service as network_service
@@ -165,9 +164,9 @@ QtObject:
     self.fromNetworksRouteModel.setItems(fromNetworks)
     self.toNetworksRouteModel.setItems(toNetworks)
 
-  proc transactionSent*(self: View, chainId: int, txHash: string, uuid: string, error: string) {.signal.}
-  proc sendTransactionSentSignal*(self: View, chainId: int, txHash: string, uuid: string, error: string) =
-    self.transactionSent(chainId, txHash, uuid, error)
+  proc transactionSent*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) {.signal.}
+  proc sendTransactionSentSignal*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) =
+    self.transactionSent(uuid, chainId, approvalTx, txHash, error)
 
   proc parseChainIds(chainIds: string): seq[int] =
     var parsedChainIds: seq[int] = @[]
@@ -175,9 +174,13 @@ QtObject:
       parsedChainIds.add(chainId.parseInt())
     return parsedChainIds
 
-  proc authenticateAndTransfer*(self: View, uuid: string) {.slot.} =
-    self.delegate.authenticateAndTransfer(self.selectedSenderAccountAddress, self.selectedRecipient, self.selectedAssetKey,
-      self.selectedToAssetKey, uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
+  proc authenticateAndTransfer*(self: View, uuid: string, slippagePercentageString: string) {.slot.} =
+    var slippagePercentage: float
+    try:
+      slippagePercentage = slippagePercentageString.parseFloat()
+    except:
+      error "parsing slippage failed", slippage=slippagePercentageString
+    self.delegate.authenticateAndTransferV2(self.selectedSenderAccountAddress, uuid, slippagePercentage)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant, errCode: string, errDescription: string) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes, errCode: string, errDescription: string) =
@@ -186,7 +189,7 @@ QtObject:
     self.errDescription = errDescription
     self.suggestedRoutesReady(newQVariant(self.transactionRoutes), errCode, errDescription)
 
-  proc suggestedRoutes*(self: View, amountIn: string, amountOut: string, extraParamsJson: string) {.slot.} =
+  proc suggestedRoutes*(self: View, uuid: string, amountIn: string, amountOut: string, extraParamsJson: string) {.slot.} =
     var extraParamsTable: Table[string, string]
     try:
       if extraParamsJson.len > 0:
@@ -201,11 +204,12 @@ QtObject:
       error "Error parsing extraParamsJson: ", msg=e.msg
 
     self.delegate.suggestedRoutes(
-      $genUUID(),
+      uuid,
       self.sendType,
       self.selectedSenderAccountAddress,
       self.selectedRecipient,
       self.selectedAssetKey,
+      self.selectedTokenIsOwnerToken,
       amountIn,
       self.selectedToAssetKey,
       amountOut,
@@ -283,6 +287,7 @@ QtObject:
         accountFrom,
         accountTo,
         token,
+        self.selectedTokenIsOwnerToken,
         amountIn,
         toToken,
         amountOut,
@@ -290,22 +295,9 @@ QtObject:
         parseChainIds(disabledToChainIDs),
         lockedInAmountsTable)
 
-  proc authenticateAndTransferWithParameters*(self: View, uuid: string, accountFrom: string, accountTo: string, token: string, toToken: string,
-    sendTypeInt: int, tokenName: string, tokenIsOwnerToken: bool, rawPaths: string, slippagePercentageString: string) {.slot.} =
-
-    let sendType = SendType(sendTypeInt)
-
-    var slippagePercentage: Option[float]
-    if sendType == SendType.Swap:
-      if slippagePercentageString.len > 0:
-        slippagePercentage = slippagePercentageString.parseFloat().some
-
-    self.delegate.authenticateAndTransferWithPaths(accountFrom, accountTo, token,
-      toToken, uuid, sendType, tokenName, tokenIsOwnerToken, rawPaths, slippagePercentage)
-
-  proc transactionSendingComplete*(self: View, txHash: string, success: bool) {.signal.}
-  proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, success: bool) =
-    self.transactionSendingComplete(txHash, success)
+  proc transactionSendingComplete*(self: View, txHash: string, status: string) {.signal.}
+  proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, status: string) =
+    self.transactionSendingComplete(txHash, status)
 
   proc setSenderAccount*(self: View, address: string) {.slot.} =
     self.setSelectedSenderAccountAddress(address)

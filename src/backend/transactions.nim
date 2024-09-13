@@ -1,7 +1,8 @@
-import Tables, json, stint, json_serialization, stew/shims/strformat
+import Tables, json, stint, json_serialization, stew/shims/strformat, logging
 
-import ../app_service/service/eth/dto/transaction
 import ./core as core
+
+include common
 
 type
   TransactionsSignatures* = Table[string, tuple[r: string, s: string, v: string]]
@@ -82,18 +83,6 @@ proc getTransfersByAddress*(chainId: int, address: string, toBlock: Uint256, lim
 proc getTransactionReceipt*(chainId: int, transactionHash: string): RpcResponse[JsonNode] =
   core.callPrivateRPCWithChainId("eth_getTransactionReceipt", chainId, %* [transactionHash])
 
-proc createMultiTransaction*(multiTransactionCommand: MultiTransactionCommandDto, data: seq[TransactionBridgeDto], password: string): RpcResponse[JsonNode] =
-  let payload = %* [multiTransactionCommand, data, password]
-  result = core.callPrivateRPC("wallet_createMultiTransaction", payload)
-
-proc proceedWithTransactionsSignatures*(signatures: TransactionsSignatures): RpcResponse[JsonNode] =
-  var data = %* {}
-  for key, value in signatures:
-    data[key] = %* { "r": value.r, "s": value.s, "v": value.v }
-
-  var payload = %* [data]
-  result = core.callPrivateRPC("wallet_proceedWithTransactionsSignatures", payload)
-
 proc getMultiTransactions*(transactionIDs: seq[int]): RpcResponse[JsonNode] =
   let payload = %* [transactionIDs]
   result = core.callPrivateRPC("wallet_getMultiTransactions", payload)
@@ -101,3 +90,31 @@ proc getMultiTransactions*(transactionIDs: seq[int]): RpcResponse[JsonNode] =
 proc watchTransaction*(chainId: int, hash: string): RpcResponse[JsonNode] =
   let payload = %* [chainId, hash]
   core.callPrivateRPC("wallet_watchTransactionByChainID", payload)
+
+proc buildTransactionsFromRoute*(resultOut: var JsonNode, uuid: string, slippagePercentage: float): string =
+  try:
+    let payload = %* [{
+      "uuid": uuid,
+      "slippagePercentage": slippagePercentage
+    }]
+    let response = core.callPrivateRPC("wallet_buildTransactionsFromRoute", payload)
+    return prepareResponse(resultOut, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg
+
+proc sendRouterTransactionsWithSignatures*(resultOut: var JsonNode, uuid: string, signatures: TransactionsSignatures): string =
+  try:
+    var jsonSignatures = %* {}
+    for key, value in signatures:
+      jsonSignatures[key] = %* { "r": value.r, "s": value.s, "v": value.v }
+
+    var payload = %* [{
+      "uuid": uuid,
+      "signatures": jsonSignatures
+    }]
+    let response = core.callPrivateRPC("wallet_sendRouterTransactionsWithSignatures", payload)
+    return prepareResponse(resultOut, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg

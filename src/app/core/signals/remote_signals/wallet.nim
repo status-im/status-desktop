@@ -4,6 +4,7 @@ import base
 import signal_type
 
 import app_service/service/transaction/dtoV2
+import app_service/service/transaction/router_transactions_dto
 
 const SignTransactionsEventType* = "sing-transactions"
 
@@ -25,6 +26,10 @@ type WalletSignal* = ref object of Signal
   error*: string
   errorCode*: string
   updatedPrices*: Table[string, float64]
+  routerTransactionsSendingDetails*: SendDetailsDto
+  routerTransactionsForSigning*: RouterTransactionsForSigningDto
+  routerSentTransactions*: RouterSentTransactionsDto
+  transactionStatusChange*: TransactionStatusChange
 
 proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNode): WalletSignal =
   result = WalletSignal()
@@ -53,6 +58,24 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
       return
     for tx in event:
       result.txHashes.add(tx.getStr)
+    return
+  if signalType == SignalType.WalletRouterSignTransactions:
+    if event.kind != JObject:
+      return
+    result.routerTransactionsForSigning = toRouterTransactionsForSigningDto(event)
+    return
+  if signalType == SignalType.WalletRouterTransactionsSent:
+    if event.kind != JObject:
+      return
+    result.routerSentTransactions = toRouterSentTransactionsDto(event)
+    return
+  if signalType == SignalType.WalletRouterSendingTransactionsStarted:
+    result.routerTransactionsSendingDetails = toSendDetailsDto(event)
+    return
+  if signalType == SignalType.WalletTransactionStatusChanged:
+    if event.kind != JObject:
+      return
+    result.transactionStatusChange = toTransactionStatusChange(event)
     return
   if signalType == SignalType.WalletSuggestedRoutes:
     try:

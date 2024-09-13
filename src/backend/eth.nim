@@ -39,7 +39,7 @@ proc suggestedFees*(chainId: int): RpcResponse[JsonNode] =
   return core.callPrivateRPC("wallet_getSuggestedFees", payload)
 
 proc prepareDataForSuggestedRoutes(uuid: string, sendType: int, accountFrom: string, accountTo: string, amountIn: string, amountOut: string,
-  token: string, toToken: string, disabledFromChainIDs, disabledToChainIDs: seq[int], lockedInAmounts: Table[string, string],
+  token: string, tokenIsOwnerToken: bool, toToken: string, disabledFromChainIDs, disabledToChainIDs: seq[int], lockedInAmounts: Table[string, string],
   extraParamsTable: Table[string, string]): JsonNode =
 
   let data = %* {
@@ -50,6 +50,7 @@ proc prepareDataForSuggestedRoutes(uuid: string, sendType: int, accountFrom: str
     "amountIn": amountIn,
     "amountOut": amountOut,
     "tokenID": token,
+    "tokenIDIsOwnerToken": tokenIsOwnerToken,
     "toTokenID": toToken,
     "disabledFromChainIDs": disabledFromChainIDs,
     "disabledToChainIDs": disabledToChainIDs,
@@ -69,19 +70,19 @@ proc prepareDataForSuggestedRoutes(uuid: string, sendType: int, accountFrom: str
   return %* [data]
 
 proc suggestedRoutes*(sendType: int, accountFrom: string, accountTo: string, amountIn: string, amountOut: string, token: string,
-  toToken: string, disabledFromChainIDs, disabledToChainIDs: seq[int], lockedInAmounts: Table[string, string],
+  tokenIsOwnerToken: bool, toToken: string, disabledFromChainIDs, disabledToChainIDs: seq[int], lockedInAmounts: Table[string, string],
   extraParamsTable: Table[string, string]): RpcResponse[JsonNode] {.raises: [RpcException].} =
-  let payload = prepareDataForSuggestedRoutes(uuid = "", sendType, accountFrom, accountTo, amountIn, amountOut, token, toToken, disabledFromChainIDs,
-    disabledToChainIDs, lockedInAmounts, extraParamsTable)
+  let payload = prepareDataForSuggestedRoutes(uuid = "", sendType, accountFrom, accountTo, amountIn, amountOut, token, tokenIsOwnerToken, toToken,
+    disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
   if payload.isNil:
     raise newException(RpcException, "Invalid key in extraParamsTable")
   return core.callPrivateRPC("wallet_getSuggestedRoutes", payload)
 
 proc suggestedRoutesAsync*(uuid: string, sendType: int, accountFrom: string, accountTo: string, amountIn: string, amountOut: string, token: string,
-  toToken: string, disabledFromChainIDs, disabledToChainIDs: seq[int], lockedInAmounts: Table[string, string],
+  tokenIsOwnerToken: bool, toToken: string, disabledFromChainIDs, disabledToChainIDs: seq[int], lockedInAmounts: Table[string, string],
   extraParamsTable: Table[string, string]): RpcResponse[JsonNode] {.raises: [RpcException].} =
-  let payload = prepareDataForSuggestedRoutes(uuid, sendType, accountFrom, accountTo, amountIn, amountOut, token, toToken, disabledFromChainIDs,
-    disabledToChainIDs, lockedInAmounts, extraParamsTable)
+  let payload = prepareDataForSuggestedRoutes(uuid, sendType, accountFrom, accountTo, amountIn, amountOut, token, tokenIsOwnerToken,  toToken,
+    disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
   if payload.isNil:
     raise newException(RpcException, "Invalid key in extraParamsTable")
   return core.callPrivateRPC("wallet_getSuggestedRoutesAsync", payload)

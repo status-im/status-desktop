@@ -78,7 +78,7 @@ StatusDialog {
             popup.isLoading = true
             d.routerError = ""
             d.routerErrorDetails = ""
-            popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSend.amount, "0", d.extraParamsJson)
+            popup.store.suggestedRoutes(d.uuid, d.isCollectiblesTransfer ? "1" : amountToSend.amount, "0", d.extraParamsJson)
         }
     })
 
@@ -788,7 +788,7 @@ StatusDialog {
             popup.isLoading = false
         }
 
-        function onTransactionSent(chainId: int, txHash: string, uuid: string, error: string) {
+        function onTransactionSent(uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) {
             d.isPendingTx = false
             if (uuid !== d.uuid) return
             if (!!error) {

@@ -1,5 +1,5 @@
 import Tables
-import uuids, chronicles, options
+import uuids, chronicles
 import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
@@ -13,7 +13,6 @@ import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_m
 import app/modules/shared/wallet_utils
 import app/modules/shared_models/currency_amount
 
-import app/core/signals/types
 import app/core/eventemitter
 
 logScope:
@@ -56,11 +55,11 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
     let args = TransactionSentArgs(e)
-    self.delegate.transactionWasSent(args.chainId, args.txHash, args.uuid, args.error)
+    self.delegate.transactionWasSent(args.uuid, args.chainId, args.approvalTx, args.txHash, args.error)
 
   self.events.on(SIGNAL_OWNER_TOKEN_SENT) do(e:Args):
     let args = OwnerTokenSentArgs(e)
-    self.delegate.transactionWasSent(args.chainId, args.txHash, args.uuid, "")
+    self.delegate.transactionWasSent(args.uuid, args.chainId, approvalTx = false, args.txHash, error = "")
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
@@ -72,13 +71,13 @@ proc init*(self: Controller) =
     let args = SuggestedRoutesArgs(e)
     self.delegate.suggestedRoutesReady(args.uuid, args.suggestedRoutes, args.errCode, args.errDescription)
 
-  self.events.on(SignalType.WalletSignTransactions.event) do(e:Args):
-    var data = WalletSignal(e)
-    self.delegate.prepareSignaturesForTransactions(data.txHashes)
+  self.events.on(SIGNAL_SIGN_ROUTER_TRANSACTIONS) do(e:Args):
+    var data = RouterTransactionsForSigningArgs(e)
+    self.delegate.prepareSignaturesForTransactions(data.data)
 
-  self.events.on(SIGNAL_TRANSACTION_SENDING_COMPLETE) do(e:Args):
-    let args = TransactionMinedArgs(e)
-    self.delegate.transactionSendingComplete(args.transactionHash, args.success)
+  self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
+    let args = TransactionStatusArgs(e)
+    self.delegate.transactionSendingComplete(args.data.hash, args.data.status)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
@@ -115,6 +114,7 @@ proc suggestedRoutes*(self: Controller,
     accountFrom: string,
     accountTo: string,
     token: string,
+    tokenIsOwnerToken: bool,
     amountIn: string,
     toToken: string = "",
     amountOut: string = "",
@@ -122,23 +122,20 @@ proc suggestedRoutes*(self: Controller,
     disabledToChainIDs: seq[int] = @[],
     lockedInAmounts: Table[string, string] = initTable[string, string](),
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
-  self.transactionService.suggestedRoutes(uuid, sendType, accountFrom, accountTo, token, amountIn, toToken, amountOut,
+  self.transactionService.suggestedRoutes(uuid, sendType, accountFrom, accountTo, token, tokenIsOwnerToken, amountIn, toToken, amountOut,
     disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
 
 proc stopSuggestedRoutesAsyncCalculation*(self: Controller) =
   self.transactionService.stopSuggestedRoutesAsyncCalculation()
 
-proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string, toAssetKey: string,
-    uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,
-    usePassword: bool, doHashing: bool, tokenName: string, isOwnerToken: bool,
-    slippagePercentage: Option[float]) =
-  self.transactionService.transfer(from_addr, to_addr, assetKey, toAssetKey, uuid, selectedRoutes, password, sendType,
-    usePassword, doHashing, tokenName, isOwnerToken, slippagePercentage)
+proc buildTransactionsFromRoute*(self: Controller, uuid: string, slippagePercentage: float): string =
+  return self.transactionService.buildTransactionsFromRoute(uuid, slippagePercentage)
 
-proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAddr: string,
-    fromTokenKey: string, toTokenKey: string, uuid: string, signatures: TransactionsSignatures,
-    selectedRoutes: seq[TransactionPathDto], sendType: SendType) =
-  self.transactionService.proceedWithTransactionsSignatures(fromAddr, toAddr, fromTokenKey, toTokenKey, uuid, signatures, selectedRoutes, sendType)
+proc signMessage*(self: Controller, address: string, hashedPassword: string, hashedMessage: string): tuple[res: string, err: string] =
+  return self.transactionService.signMessage(address, hashedPassword, hashedMessage)
+
+proc sendRouterTransactionsWithSignatures*(self: Controller, uuid: string, signatures: TransactionsSignatures): string =
+  return self.transactionService.sendRouterTransactionsWithSignatures(uuid, signatures)
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
@@ -159,7 +156,7 @@ proc connectKeycardReponseSignal(self: Controller) =
     let currentFlow = self.keycardService.getCurrentFlow()
     if currentFlow != KCSFlowType.Sign:
       error "trying to use keycard in the other than the signing a transaction flow"
-      self.delegate.transactionWasSent()
+      self.delegate.transactionWasSent(uuid = "", chainId = 0, approvalTx = false, txHash = "", error = "trying to use keycard in the other than the signing a transaction flow")
       return
     self.delegate.onTransactionSigned(args.flowType, args.flowEvent)
 
