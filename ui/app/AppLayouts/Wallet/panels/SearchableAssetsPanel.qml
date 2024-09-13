@@ -28,7 +28,7 @@ Control {
             balanceAsString     [string] - formatted balance per chain
             iconUrl             [url]    - chain's icon
     **/
-    property var model
+    property alias model: sfpm.sourceModel
     property string highlightedKey
     property string nonInteractiveKey
 
@@ -38,11 +38,6 @@ Control {
 
     SortFilterProxyModel {
         id: sfpm
-
-        // workaround for https://github.com/status-im/status-desktop/issues/16310
-        Component.onCompleted: {
-            sourceModel = Qt.binding(() => root.model)
-        }
 
         filters: AnyOf {
             SearchFilter {
