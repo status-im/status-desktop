@@ -44,7 +44,6 @@ QtObject {
     property var toNetworksRouteModel: NetworksModel.sendToNetworks
     property string selectedSenderAccountAddress
     readonly property QtObject collectiblesModel: ManageCollectiblesModel {}
-    readonly property QtObject nestedCollectiblesModel: ListModel {}
 
     readonly property QtObject walletSectionSendInst: QtObject {
         signal transactionSent(var chainId, var txHash, var uuid, var error)

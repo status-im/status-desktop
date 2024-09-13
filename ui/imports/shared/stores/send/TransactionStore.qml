@@ -29,7 +29,6 @@ QtObject {
     readonly property string selectedReceiverAccountAddress: walletSectionSendInst.selectedReceiveAccountAddress
     readonly property string selectedSenderAccountAddress: walletSectionSendInst.selectedSenderAccountAddress
     property var collectiblesModel: walletSectionSendInst.collectiblesModel
-    property var nestedCollectiblesModel: walletSectionSendInst.nestedCollectiblesModel
     property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var tmpActivityController0: walletSection.tmpActivityController0
     readonly property var _tmpActivityController1: walletSection.tmpActivityController1
@@ -166,7 +165,6 @@ QtObject {
 
     function resetStoredProperties() {
         walletSectionSendInst.resetStoredProperties()
-        nestedCollectiblesModel.currentCollectionUid = ""
     }
 
     function splitAndFormatAddressPrefix(text, updateInStore) {
