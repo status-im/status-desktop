@@ -94,21 +94,17 @@ ActivityNotificationBase {
                     wrapMode: Text.WordWrap
                     color: Theme.palette.baseColor1
                 }
-
-                Loader {
-                    sourceComponent: StatusFlatButton {
-                        size: StatusBaseButton.Size.Small
-                        text: d.ctaText
-                        onClicked: {
-                            root.moreDetailsClicked()
-                        }
-                    }
-                }
             }
         }
     }
 
-    ctaComponent: undefined
+    ctaComponent: StatusFlatButton {
+                    size: StatusBaseButton.Size.Small
+                    text: d.ctaText
+                    onClicked: {
+                        root.moreDetailsClicked()
+                    }
+                }
 
     states: [
         State {

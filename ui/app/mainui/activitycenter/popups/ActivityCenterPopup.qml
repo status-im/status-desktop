@@ -403,7 +403,7 @@ Popup {
         }
     }
 
-    function trucateDeviceId(deviceId) {
+    function truncateDeviceId(deviceId) {
         return deviceId.substring(0, 7).toUpperCase()
     }
 
@@ -433,7 +433,7 @@ Popup {
                     font.pixelSize: 27
                     font.weight: Font.Medium
                     font.letterSpacing: 5
-                    text: trucateDeviceId(deviceId)
+                    text: truncateDeviceId(deviceId)
                 }
             }
 
@@ -483,7 +483,7 @@ Popup {
                     font.pixelSize: 27
                     font.weight: Font.Medium
                     font.letterSpacing: 5
-                    text: trucateDeviceId(deviceId)
+                    text: truncateDeviceId(deviceId)
                 }
                 Item {
                     Layout.fillWidth: true
