@@ -66,9 +66,6 @@ method authenticateUser*(self: AccessInterface) {.base.} =
 method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method notifySelectedSenderAccountChanged*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method setSelectedReceiveAccountIndex*(self: AccessInterface, index: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 

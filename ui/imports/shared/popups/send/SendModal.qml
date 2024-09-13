@@ -426,8 +426,8 @@ StatusDialog {
 
                         onCollectibleSelected: {
                             const entry = SQUtils.ModelUtils.getByKey(
-                                            popup.store.collectiblesModel,
-                                            "uid", key)
+                                            popup.collectiblesStore.allCollectiblesModel,
+                                            "symbol", key)
                             d.selectedHoldingType = entry.tokenType
                             d.selectedHolding = entry
                             selectedItem = entry
@@ -435,7 +435,7 @@ StatusDialog {
 
                         onCollectionSelected: {
                             const entry = SQUtils.ModelUtils.getByKey(
-                                            popup.store.collectiblesModel,
+                                            popup.collectiblesStore.allCollectiblesModel,
                                             "collectionUid", key)
                             d.selectedHoldingType = entry.tokenType
                             d.selectedHolding = entry

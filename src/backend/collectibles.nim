@@ -12,7 +12,6 @@ type
   CollectiblesRequestID* = enum
     WalletAccount
     ProfileShowcase
-    WalletSend
     AllCollectibles
 
 # Declared in services/wallet/collectibles/service.go

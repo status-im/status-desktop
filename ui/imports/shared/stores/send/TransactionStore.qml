@@ -28,7 +28,6 @@ QtObject {
     readonly property var toNetworksRouteModel: walletSectionSendInst.toNetworksRouteModel
     readonly property string selectedReceiverAccountAddress: walletSectionSendInst.selectedReceiveAccountAddress
     readonly property string selectedSenderAccountAddress: walletSectionSendInst.selectedSenderAccountAddress
-    property var collectiblesModel: walletSectionSendInst.collectiblesModel
     property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var tmpActivityController0: walletSection.tmpActivityController0
     readonly property var _tmpActivityController1: walletSection.tmpActivityController1
@@ -93,14 +92,6 @@ QtObject {
             }
         }
         return {}
-    }
-
-    function getCollectible(uid) {
-        const idx = ModelUtils.indexOf(collectiblesModel, "uid", uid)
-        if (idx < 0) {
-            return {}
-        }
-        return ModelUtils.get(collectiblesModel, idx)
     }
 
     function setSenderAccount(address) {
