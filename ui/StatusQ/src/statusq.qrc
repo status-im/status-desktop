@@ -103,6 +103,7 @@
         <file>StatusQ/Controls/StatusChatInfoButton.qml</file>
         <file>StatusQ/Controls/StatusChatListCategoryItemButton.qml</file>
         <file>StatusQ/Controls/StatusCheckBox.qml</file>
+        <file>StatusQ/Controls/StatusCircularProgressBar.qml</file>
         <file>StatusQ/Controls/StatusClearButton.qml</file>
         <file>StatusQ/Controls/StatusColorRadioButton.qml</file>
         <file>StatusQ/Controls/StatusColorSelector.qml</file>

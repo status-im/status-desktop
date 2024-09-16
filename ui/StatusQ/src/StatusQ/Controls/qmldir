@@ -63,3 +63,4 @@ StatusColorRadioButton 0.1 StatusColorRadioButton.qml
 StatusBlockProgressBar 0.1 StatusBlockProgressBar.qml
 StatusWarningBox 0.1 StatusWarningBox.qml
 StatusIconSwitch 0.1 StatusIconSwitch.qml
+StatusCircularProgressBar 0.1 StatusCircularProgressBar.qml
