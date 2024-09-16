@@ -484,13 +484,11 @@ SQUtils.QObject {
 
             // Beware, the tx values are standard blockchain hex big number values; the fees values are nim's float64 values, hence the complex conversions
             if (!!tx.maxFeePerGas && !!tx.maxPriorityFeePerGas) {
-                let maxFeePerGasDec = root.store.hexToDec(tx.maxFeePerGas)
-                const gasPriceInWei = BigOps.fromString(maxFeePerGasDec)
+                maxFeePerGas = hexToGwei(tx.maxFeePerGas)
+                maxPriorityFeePerGas = hexToGwei(tx.maxPriorityFeePerGas)
+
+                // TODO: check why we need to set gasPrice here and why if it's not checked we cannot send the tx and fees are unknown????
                 gasPrice = hexToGwei(tx.maxFeePerGas)
-                // Source fees info from the incoming transaction for when we process it
-                maxFeePerGas = root.store.hexToDec(tx.maxFeePerGas)
-                let maxPriorityFeePerGasDec = hexToGwei(tx.maxPriorityFeePerGas)
-                maxPriorityFeePerGas = maxPriorityFeePerGasDec
             } else {
                 let fees = root.store.getSuggestedFees(chainId)
                 maxPriorityFeePerGas = fees.maxPriorityFeePerGas
