@@ -36,7 +36,7 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[uint64]): bool
 
 template getProp(obj: JsonNode, prop: string, value: var typedesc[string]): bool =
   var success = false
-  if (obj.kind == JObject and obj.contains(prop)):
+  if (obj.kind == JObject and obj.contains(prop) and obj[prop].kind == JString):
     value = obj[prop].getStr
     success = true
 
@@ -44,7 +44,7 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[string]): bool
 
 template getProp(obj: JsonNode, prop: string, value: var typedesc[float]): bool =
   var success = false
-  if (obj.kind == JObject and obj.contains(prop)):
+  if (obj.kind == JObject and obj.contains(prop) and obj[prop].kind == JFloat):
     value = obj[prop].getFloat
     success = true
 
