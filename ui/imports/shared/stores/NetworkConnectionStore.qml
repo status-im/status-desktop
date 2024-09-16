@@ -23,7 +23,7 @@ QtObject {
                                                       }
 
     readonly property var blockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
-    readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length < __filteredflatNetworks.count
+    readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length < filteredflatNetworks.count
 
     readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline &&
                                         (!networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
