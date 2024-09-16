@@ -440,7 +440,7 @@ class Members(QObject):
     @property
     @allure.step('Get all members')
     def members(self) -> typing.List[str]:
-        return [str(member.statusListItemTitle.text) for member in driver.findAllObjects(self._member_item.real_name)]
+        return [str(member.userName) for member in driver.findAllObjects(self._member_item.real_name)]
 
     @allure.step('Open banned tab')
     def click_banned_button(self):
@@ -453,7 +453,7 @@ class Members(QObject):
     @allure.step('Click member by name')
     def click_member(self, member_name: str):
         for member in driver.findAllObjects(self._member_item.real_name):
-            if getattr(member, 'title', '') == member_name:
+            if getattr(member, 'userName', '') == member_name:
                 driver.mouseClick(member)
                 break
         return ProfilePopupFromMembers().wait_until_appears()
@@ -461,7 +461,7 @@ class Members(QObject):
     @allure.step('Verify member is offline by index')
     def member_state(self, member_name: str) -> bool:
         for member in driver.findAllObjects(self._member_item.real_name):
-            if getattr(member, 'title', '') == member_name:
+            if getattr(member, 'userName', '') == member_name:
                 for child in walk_children(member):
                     if getattr(child, 'id', '') == 'statusBadge':
                         return child.color.name
