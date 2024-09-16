@@ -288,13 +288,14 @@ class CreateChatView(QObject):
 
     @property
     @allure.step('Get contacts')
-    def contacts(self) -> typing.List[str]:
-        return self._create_chat_contacts_list.get_values('title')
+    def contact_names(self) -> typing.List[str]:
+        user_names = [str(item.userName) for item in self._create_chat_contacts_list.items]
+        return user_names
 
     @allure.step('Select contact in the list')
     def select_contact(self, contact: str):
-        assert driver.waitFor(lambda: contact in self.contacts), f'Contact: {contact} not found in {self.contacts}'
-        self._create_chat_contacts_list.select(contact, 'title')
+        assert driver.waitFor(lambda: contact in self.contact_names), f'Contact: {contact} was not found in {self.contact_names}'
+        self._create_chat_contacts_list.select(contact, 'userName')
 
     @allure.step('Create chat by adding contacts from contact list')
     def create_chat(self, members):
@@ -528,7 +529,7 @@ class Members(QObject):
     @property
     @allure.step('Get group members')
     def members(self) -> typing.List[str]:
-        return [str(member.title) for member in driver.findAllObjects(self._member_item.real_name)]
+        return [str(member.userName) for member in driver.findAllObjects(self._member_item.real_name)]
 
 
 class MessagesScreen(QObject):
