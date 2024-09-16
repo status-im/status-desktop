@@ -1409,14 +1409,6 @@ QtObject {
         UrlUnfurlingModeDisableAll = 3
     }
 
-    // these are in sync with src/app/modules/shared_models/collectibles_nested_item.nim ItemType
-    enum CollectiblesNestedItemType {
-        CommunityCollectible = 0,
-        NonCommunityCollectible = 1,
-        Collection = 2,
-        Community = 3
-    }
-
     enum RequestToJoinState {
         None = 0,
         InProgress = 1,

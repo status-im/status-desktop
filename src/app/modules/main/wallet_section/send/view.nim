@@ -2,8 +2,6 @@ import NimQml, Tables, json, sequtils, strutils, stint, options, chronicles
 import uuids
 
 import ./io_interface, ./network_route_model, ./network_route_item, ./suggested_route_item, ./transaction_routes
-import app/modules/shared_models/collectibles_model as collectibles
-import app/modules/shared_models/collectibles_nested_model as nested_collectibles
 import app_service/service/network/service as network_service
 import app_service/service/transaction/dto as transaction_dto
 
@@ -15,9 +13,6 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      # list of collectibles owned by the selected sender account
-      collectiblesModel: collectibles.Model
-      nestedCollectiblesModel: nested_collectibles.Model
       # for send modal
       fromNetworksRouteModel: NetworkRouteModel
       toNetworksRouteModel: NetworkRouteModel
@@ -52,8 +47,6 @@ QtObject:
     result.fromNetworksRouteModel = newNetworkRouteModel()
     result.toNetworksRouteModel = newNetworkRouteModel()
     result.transactionRoutes = newTransactionRoutes()
-    result.collectiblesModel = delegate.getCollectiblesModel()
-    result.nestedCollectiblesModel = delegate.getNestedCollectiblesModel()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -68,20 +61,6 @@ QtObject:
   QtProperty[string] selectedSenderAccountAddress:
     read = getSelectedSenderAccountAddress
     notify = selectedSenderAccountAddressChanged
-
-  proc collectiblesModelChanged*(self: View) {.signal.}
-  proc getCollectiblesModel(self: View): QVariant {.slot.} =
-    return newQVariant(self.collectiblesModel)
-  QtProperty[QVariant] collectiblesModel:
-    read = getCollectiblesModel
-    notify = collectiblesModelChanged
-
-  proc nestedCollectiblesModelChanged*(self: View) {.signal.}
-  proc getNestedCollectiblesModel(self: View): QVariant {.slot.} =
-    return newQVariant(self.nestedCollectiblesModel)
-  QtProperty[QVariant] nestedCollectiblesModel:
-    read = getNestedCollectiblesModel
-    notify = nestedCollectiblesModelChanged
 
   proc selectedReceiveAccountAddressChanged*(self: View) {.signal.}
   proc getSelectedReceiveAccountAddress*(self: View): string {.slot.} =
@@ -247,7 +226,6 @@ QtObject:
     self.toNetworksRouteModel.resetPathData()
     for path in paths:
       let fromChainId = path.getfromNetwork()
-      let networkItem = self.delegate.getNetworkItem(fromChainId)
       self.fromNetworksRouteModel.updateFromNetworks(path, not chainsWithNoGas.hasKey(fromChainId))
       self.toNetworksRouteModel.updateToNetworks(path)
 
@@ -331,7 +309,6 @@ QtObject:
 
   proc setSenderAccount*(self: View, address: string) {.slot.} =
     self.setSelectedSenderAccountAddress(address)
-    self.delegate.notifySelectedSenderAccountChanged()
 
   proc setReceiverAccount*(self: View, address: string) {.slot.} =
     self.setSelectedReceiveAccountAddress(address)

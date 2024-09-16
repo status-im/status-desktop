@@ -3,7 +3,6 @@ import app/modules/shared_models/currency_amount
 import app_service/service/transaction/dto
 import app_service/service/network/network_item
 import app/modules/shared_models/collectibles_model as collectibles
-import app/modules/shared_models/collectibles_nested_model as nested_collectibles
 from app_service/service/keycard/service import KeycardEvent
 
 type
@@ -67,9 +66,6 @@ method authenticateUser*(self: AccessInterface) {.base.} =
 method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method notifySelectedSenderAccountChanged*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method setSelectedReceiveAccountIndex*(self: AccessInterface, index: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -77,9 +73,6 @@ method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: s
   raise newException(ValueError, "No implementation available")
 
 method getCollectiblesModel*(self: AccessInterface): collectibles.Model {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getNestedCollectiblesModel*(self: AccessInterface): nested_collectibles.Model {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method splitAndFormatAddressPrefix*(self: AccessInterface, text : string, updateInStore: bool): string {.base.} =
