@@ -54,8 +54,6 @@ IssuePill {
         d.ticker = 0
         d.secsDiff = 0
 
-        console.warn("!!! RESET at:", timestamp, "; expires:", d.expirationTimestamp)
-
         if (d.expirationTimestamp <= new Date()) {
             console.warn("Expiration time set in past, or expired already on:", d.expirationTimestamp)
             d.secsDiff = -1
@@ -72,17 +70,16 @@ IssuePill {
         readonly property real progress: d.secsDiff >= 0 ? d.secsDiff/(d.expirationTimestamp.valueOf() - timestamp.valueOf()) * 1000
                                                          : 0
 
-        property var expirationTimestamp: root.timestamp
+        property date expirationTimestamp: root.timestamp
         property int secsDiff
         property int ticker
 
         function formatSeconds(seconds) {
-            const isoString = new Date(seconds * 1000).toISOString()
-            const days = Math.floor(seconds/86400)
-            const hrs = parseInt(isoString.substring(11, 13))
-            const mins = parseInt(isoString.substring(14, 16))
+            const days = Math.floor(seconds / 86400)
+            const hrs = Math.floor(seconds / 3600) % 24
+            const mins = Math.floor(seconds / 60) % 60
 
-            var result = []
+            const result = []
             if (days > 0)
                 result.push(qsTr("%1d", "x days").arg(days))
             if (hrs > 0)
@@ -94,7 +91,7 @@ IssuePill {
                     result.push(qsTr("%1m", "x minutes").arg(mins))
             }
             if (days === 0 && hrs === 0 && mins === 0) {
-                const secs = parseInt(isoString.substring(17, 19))
+                const secs = Math.floor(seconds)
                 if (secs >= 0)
                     result.push(qsTr("%n sec(s)", "", secs))
             }
@@ -110,7 +107,6 @@ IssuePill {
         onTriggered: {
             d.ticker++
             d.secsDiff = (d.expirationTimestamp.valueOf() - root.timestamp.valueOf() - d.ticker*1000)/1000
-            console.warn("!!! REMAINING SECS:", d.secsDiff, "; PROGRESS:", d.progress)
             if (d.secsDiff < 0) { // we let it run 1 more second to finish the animation
                 timer.stop()
                 root.expired()

@@ -38,6 +38,9 @@ StatusDialog {
     property bool feesLoading
     property bool signButtonEnabled: true
 
+    property date requestTimestamp: new Date()
+    property int expirationSeconds
+
     property ObjectModel leftFooterContents
     property ObjectModel rightFooterContents: ObjectModel {
         RowLayout {
@@ -46,6 +49,7 @@ StatusDialog {
             StatusFlatButton {
                 objectName: "rejectButton"
                 Layout.preferredHeight: signButton.height
+                visible: !countdownPill.isExpired
                 text: qsTr("Reject")
                 onClicked: root.reject() // close and emit rejected() signal
             }
@@ -53,10 +57,18 @@ StatusDialog {
                 objectName: "signButton"
                 id: signButton
                 interactive: !root.feesLoading && root.signButtonEnabled
+                visible: !countdownPill.isExpired
                 icon.name: Constants.authenticationIconByType[root.loginType]
                 disabledColor: Theme.palette.directColor8
                 text: qsTr("Sign")
                 onClicked: root.accept() // close and emit accepted() signal
+            }
+            StatusButton {
+                objectName: "closeButton"
+                id: closeButton
+                visible: countdownPill.isExpired
+                text: qsTr("Close")
+                onClicked: root.close()
             }
         }
     }
@@ -77,6 +89,8 @@ StatusDialog {
     width: 480
     padding: 0
 
+    closePolicy: Popup.NoAutoClose
+
     function openLinkWithConfirmation(linkUrl) {
         Global.openLinkWithConfirmation(linkUrl, SQUtils.StringUtils.extractDomainFromLink(linkUrl))
     }
@@ -85,7 +99,7 @@ StatusDialog {
         visible: root.title || root.subtitle
         headline.title: root.title
         headline.subtitle: root.subtitle
-        actions.closeButton.onClicked: root.closeHandler()
+        actions.closeButton.visible: false // Close hidden explicitely until we have persistent notifications in place to reopen this dialog from outside
 
         leftComponent: root.headerIconComponent
     }
@@ -102,7 +116,7 @@ StatusDialog {
         anchors.fill: parent
         contentWidth: availableWidth
         topPadding: 0
-        bottomPadding: 0
+        bottomPadding: countdownPill.height
 
         ColumnLayout {
             anchors.left: parent.left
@@ -116,7 +130,7 @@ StatusDialog {
                 Layout.fillWidth: true
                 Layout.leftMargin: -parent.anchors.leftMargin - scrollView.leftPadding
                 Layout.rightMargin: -parent.anchors.rightMargin - scrollView.rightPadding
-                Layout.preferredHeight: childrenRect.height + 80 // 40 + 40 top/bottomMargin
+                Layout.preferredHeight: childrenRect.height + 80 - countdownPill.height // 40 + 40 top/bottomMargin
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: root.gradientColor }
                     GradientStop { position: 1.0; color: root.backgroundColor }
@@ -207,6 +221,16 @@ StatusDialog {
                         tagPrimaryLabel.text: root.infoTagText
                         visible: !!root.infoTagText
                     }
+                }
+
+                CountdownPill {
+                    id: countdownPill
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.margins: Style.current.padding
+                    timestamp: root.requestTimestamp
+                    expirationSeconds: root.expirationSeconds
+                    visible: !!expirationSeconds
                 }
             }
 

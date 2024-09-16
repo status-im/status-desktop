@@ -33,7 +33,7 @@ Item {
         }
 
         onPaint: {
-            var ctx = getContext("2d")
+            const ctx = getContext("2d")
 
             var x = root.width/2
             var y = root.height/2

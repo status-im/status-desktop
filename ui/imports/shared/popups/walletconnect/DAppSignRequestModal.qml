@@ -51,8 +51,8 @@ SignTransactionModalBase {
     }
 
     gradientColor: Utils.setColorAlpha(root.accountColor, 0.05) // 5% of wallet color
-    headerMainText: root.signingTransaction ? qsTr("%1 wants you to sign this transaction with %2").arg(root.dappName).arg(root.accountName) :
-                                                qsTr("%1 wants you to sign this message with %2").arg(root.dappName).arg(root.accountName)
+    headerMainText: root.signingTransaction ? qsTr("%1 wants you to sign this transaction with %2").arg(root.dappName).arg(root.accountName)
+                                            : qsTr("%1 wants you to sign this message with %2").arg(root.dappName).arg(root.accountName)
 
     fromImageSmartIdenticon.asset.name: "filled-account"
     fromImageSmartIdenticon.asset.emoji: root.accountEmoji

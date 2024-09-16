@@ -72,7 +72,6 @@ SplitView {
                     anchors.centerIn: parent
                     destroyOnClose: true
                     modal: false
-                    closePolicy: Popup.NoAutoClose
 
                     formatBigNumber: (number, symbol, noSymbolOption) => parseFloat(number).toLocaleString(Qt.locale(), 'f', 2)
                                      + (noSymbolOption ? "" : " " + (symbol || Qt.locale().currencySymbol(Locale.CurrencyIsoCode)))
@@ -106,6 +105,13 @@ SplitView {
                     loginType: ctrlLoginType.currentIndex
 
                     feesLoading: ctrlLoading.checked
+
+                    expirationSeconds: !!ctrlExpiration.text && parseInt(ctrlExpiration.text) ? parseInt(ctrlExpiration.text) : 0
+                    onExpirationSecondsChanged: requestTimestamp = new Date()
+
+                    onAccepted: logs.logEvent("accepted")
+                    onRejected: logs.logEvent("rejected")
+                    onClosed: logs.logEvent("closed")
                 }
             }
         }
@@ -177,6 +183,11 @@ SplitView {
             ComboBox {
                 id: ctrlLoginType
                 model: Constants.authenticationIconByType
+            }
+
+            TextField {
+                id: ctrlExpiration
+                placeholderText: "Expiration in seconds"
             }
         }
     }
