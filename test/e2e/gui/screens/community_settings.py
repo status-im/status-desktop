@@ -274,7 +274,7 @@ class MembersView(QObject):
     @property
     @allure.step('Get community members')
     def members(self) -> typing.List[str]:
-        return [str(member.title) for member in driver.findAllObjects(self._member_list_item.real_name)]
+        return [str(member.userName) for member in driver.findAllObjects(self._member_list_item.real_name)]
 
     @allure.step('Get community member objects')
     def get_member_objects(self) -> typing.List:

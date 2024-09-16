@@ -26,12 +26,12 @@ class InviteContactsPopup(BasePopup):
     @property
     @allure.step('Get contacts')
     def contacts(self) -> typing.List[str]:
-        return [str(getattr(user, 'title', '')) for user in driver.findAllObjects(self._member_item.real_name)]
+        return [str(user.userName) for user in driver.findAllObjects(self._member_item.real_name)]
 
     @property
     @allure.step('Invite contacts')
     def invited_contacts(self) -> typing.List[str]:
-        return [str(getattr(user, 'title', '')) for user in driver.findAllObjects(self._invited_member_item.real_name)]
+        return [str(user.userName) for user in driver.findAllObjects(self._invited_member_item.real_name)]
 
     def invite(self, contacts: typing.List[str], message: str):
         for contact in contacts:
@@ -40,9 +40,9 @@ class InviteContactsPopup(BasePopup):
 
         selected = []
         for member in driver.findAllObjects(self._member_item.real_name):
-            if str(getattr(member, 'title', '')) in contacts:
+            if str(getattr(member, 'userName', '')) in contacts:
                 driver.mouseClick(member)
-                selected.append(member.title)
+                selected.append(member.userName)
 
         assert len(contacts) == len(selected), f'Selected contacts: {selected}, expected: {contacts}'
 

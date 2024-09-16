@@ -12,7 +12,6 @@ from tests.wallet_main_screen import marks
 
 import constants
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 from scripts.utils.generators import get_wallet_address_from_mnemonic
 
@@ -59,7 +58,7 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Verify account address from UI is correct for derived account '):
-        address_in_ui = wallet.left_panel.copy_account_address_in_context_menu(name)
+        address_in_ui = wallet.left_panel.copy_account_address_in_context_menu(name).split(':')[-1]
         address_from_mnemonic = get_wallet_address_from_mnemonic(mnemonic_data)
         assert address_in_ui == address_from_mnemonic, \
             f'Expected to recover {address_from_mnemonic} but got {address_in_ui}'
