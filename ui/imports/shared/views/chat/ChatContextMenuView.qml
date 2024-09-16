@@ -64,6 +64,7 @@ StatusMenu {
     }
 
     StatusAction {
+        objectName: "addRemoveFromGroupStatusAction"
         text: root.amIChatAdmin ? qsTr("Add / remove from group") : qsTr("Add to group")
         icon.name: "add-to-dm"
         enabled: (root.chatType === Constants.chatType.privateGroupChat)
