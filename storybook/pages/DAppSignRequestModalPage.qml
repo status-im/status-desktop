@@ -31,7 +31,6 @@ SplitView {
 
             visible: true
             modal: false
-            closePolicy: Popup.NoAutoClose
             dappUrl: "https://example.com"
             dappIcon: "https://picsum.photos/200/200"
             dappName: "OpenSea"
@@ -54,8 +53,12 @@ SplitView {
             requestPayload: controls.contentToSign[contentToSignComboBox.currentIndex]
             signingTransaction: signingTransaction.checked
 
+            expirationSeconds: !!ctrlExpiration.text && parseInt(ctrlExpiration.text) ? parseInt(ctrlExpiration.text) : 0
+            onExpirationSecondsChanged: requestTimestamp = new Date()
+
             onAccepted: print ("Accepted")
             onRejected: print ("Rejected")
+            onClosed: print("Closed")
         }
     }
     Pane {
@@ -141,6 +144,10 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce nibh. Etiam quis
                 id: signingTransaction
                 text: "Signing transaction"
                 checked: false
+            }
+            TextField {
+                id: ctrlExpiration
+                placeholderText: "Expiration in seconds"
             }
         }
     }
