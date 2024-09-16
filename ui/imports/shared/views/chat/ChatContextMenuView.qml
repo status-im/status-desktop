@@ -55,6 +55,7 @@ StatusMenu {
     }
 
     StatusAction {
+        objectName: "viewMembersStatusAction"
         text: qsTr("View Members")
         icon.name: "group-chat"
         enabled: root.chatType === Constants.chatType.privateGroupChat
@@ -72,6 +73,7 @@ StatusMenu {
     }
 
     StatusAction {
+        objectName: "copyChannelLinkStatusAction"
         text: qsTr("Copy channel link")
         icon.name: "copy"
         enabled: root.isCommunityChat
@@ -120,6 +122,7 @@ StatusMenu {
     }
 
     StatusAction {
+        objectName: "muteChatStatusAction"
         enabled: root.chatMuted
         text: root.isCommunityChat ? qsTr("Unmute Channel") : qsTr("Unmute Chat")
         icon.name: "notification"
