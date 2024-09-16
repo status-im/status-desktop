@@ -109,6 +109,9 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  let seed = self.privacyService.getMnemonic()
+  info "SEED: ", seed
+
   self.events.on(SIGNAL_ACTIVE_CHATS_LOADED) do(e:Args):
     self.delegate.onChatsLoaded(
       self.events,
