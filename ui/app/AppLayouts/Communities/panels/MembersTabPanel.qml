@@ -70,23 +70,24 @@ Item {
 
                 sourceModel: root.model
 
-                proxyRoles: FastExpressionRole {
-                    function displayNameProxy(localNickname, ensName, displayName, aliasName) {
-                        return ProfileUtils.displayName(localNickname, ensName, displayName, aliasName);
-                    }
-
-                    name: "preferredDisplayName"
-                    expectedRoles: ["localNickname", "displayName", "ensName", "alias"]
-                    expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias);
-                }
-
-
                 sorters : [
                     StringSorter {
                         roleName: "preferredDisplayName"
                         caseSensitivity: Qt.CaseInsensitive
                     }
                 ]
+
+                filters: ExpressionFilter {
+                    enabled: !!memberSearch.text
+
+                    expression: {
+                        let keyword = memberSearch.text.trim().toUpperCase()
+                        return model.displayName.toUpperCase().includes(keyword) ||
+                                model.ensName.toUpperCase().includes(keyword) ||
+                                model.alias.toUpperCase().includes(keyword) 
+
+                    }
+                }
             }
             spacing: 0
 
@@ -288,8 +289,6 @@ Item {
                 readonly property string title: model.preferredDisplayName
 
                 width: membersList.width
-                visible: memberSearch.text === "" || title.toLowerCase().includes(memberSearch.text.toLowerCase())
-                height: visible ? implicitHeight : 0
                 color: "transparent"
 
                 pubKey: model.isEnsVerified ? "" : Utils.getElidedCompressedPk(model.pubKey)
