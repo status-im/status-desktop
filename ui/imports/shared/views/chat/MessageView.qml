@@ -737,8 +737,7 @@ Loader {
                 onLinkActivated: {
                     if (link.startsWith(Constants.sendViaChatPrefix)) {
                         const addressOrEns = link.replace(Constants.sendViaChatPrefix, "");
-                        // TODO:: will be removed in the PRs to follow
-                        Global.displayToastMessage(qsTr("TODO:: Send Via 1-1"), addressOrEns, "", false, 0, "")
+                        Global.openSendModal(addressOrEns)
                         return
                     }
                     if (link.startsWith('//')) {
