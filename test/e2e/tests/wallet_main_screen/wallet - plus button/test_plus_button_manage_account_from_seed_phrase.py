@@ -22,18 +22,17 @@ pytestmark = marks
 @pytest.mark.case(703030)
 @pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
-                         'new_name, new_color, new_emoji, new_emoji_unicode, mnemonic_data', [
+                         'new_name, new_color, new_emoji, new_emoji_unicode', [
                              pytest.param('SPAcc24', '#2a4af5', 'sunglasses', '1f60e',
-                                          'SPAcc24edited', '#216266', 'thumbsup', '1f44d',
-                                          random_mnemonic()
+                                          'SPAcc24edited', '#216266', 'thumbsup', '1f44d'
                                           )
                          ])
 def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, user_account,
                                                      name: str, color: str, emoji: str, emoji_unicode: str,
                                                      new_name: str, new_color: str, new_emoji: str,
-                                                     new_emoji_unicode: str,
-                                                     mnemonic_data: str):
+                                                     new_emoji_unicode: str):
     with step('Create imported seed phrase wallet account'):
+        mnemonic_data = random_mnemonic()
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
@@ -63,34 +62,8 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
         assert address_in_ui == address_from_mnemonic, \
             f'Expected to recover {address_from_mnemonic} but got {address_in_ui}'
 
-
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736371',
-                 "Can't import the same seed phrase when adding account")
-@pytest.mark.case(736371)
-@pytest.mark.parametrize('user_account', [RandomUser()])
-@pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
-                         'new_name, new_color, new_emoji, new_emoji_unicode, seed_phrase', [
-                             pytest.param('SPAcc24', '#2a4af5', 'sunglasses', '1f60e',
-                                          'SPAcc24edited', '#216266', 'thumbsup', '1f44d',
-                                          random_mnemonic()),
-                         ])
-def test_plus_button_re_importing_seed_phrase(main_screen: MainWindow, user_account,
-                                              name: str, color: str, emoji: str, emoji_unicode: str,
-                                              new_name: str, new_color: str, new_emoji: str,
-                                              new_emoji_unicode: str,
-                                              seed_phrase: str):
-    with (step('Create imported seed phrase wallet account')):
-        wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
-        account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(
-            color).open_add_new_account_popup().import_new_seed_phrase(seed_phrase.split())
-        account_popup.save_changes()
-        authenticate_with_password(user_account)
-        account_popup.wait_until_hidden()
-
     with step('Try to re-import seed phrase and verify that correct error appears'):
         account_popup = wallet.left_panel.open_add_account_popup()
         add_new_account = account_popup.set_name(name).set_emoji(emoji).set_color(color).open_add_new_account_popup()
-        add_new_account.enter_new_seed_phrase(seed_phrase.split())
+        add_new_account.enter_new_seed_phrase(mnemonic_data.split())
         assert add_new_account.get_already_added_error() == WalletSeedPhrase.WALLET_SEED_PHRASE_ALREADY_ADDED.value

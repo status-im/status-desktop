@@ -33,7 +33,7 @@ def test_link_previews(multiple_instances, community_name, domain_link, domain_l
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
 
     with (multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two):
-        with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
+        with step(f'Launch multiple instances with new users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
                 aut.attach()
                 main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()

@@ -10,16 +10,12 @@ import constants
 import driver
 from configs import WALLET_SEED
 from constants import ReturningUser
-from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
 from helpers.SettingsHelper import enable_testnet_mode
 from tests.communities import marks
 from constants.community_settings import MintOwnerTokensElements
-from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
-from gui.components.splash_screen import SplashScreen
 from gui.screens.community_settings_tokens import MintedTokensView
-from gui.screens.onboarding import BiometricsView, YourEmojihashAndIdenticonRingView, WelcomeToStatusView
 
 pytestmark = marks
 
