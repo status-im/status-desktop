@@ -528,7 +528,7 @@ Item {
             const store = service.store
 
             const testAddress = "0x3a"
-            const chainId = 2
+            const chainId = "2"
             const  method = "personal_sign"
             const message = "hello world"
             const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddress}"`]
@@ -550,10 +550,10 @@ Item {
             compare(request.dappName, Testing.dappName, "expected dappName to be set")
             compare(request.dappUrl, Testing.dappUrl, "expected dappUrl to be set")
             compare(request.dappIcon, Testing.dappFirstIcon, "expected dappIcon to be set")
-            verify(!!request.account, "expected account to be set")
-            compare(request.account.address, testAddress, "expected look up of the right account")
-            verify(!!request.network, "expected network to be set")
-            compare(request.network.chainId, chainId, "expected look up of the right network")
+            verify(!!request.accountAddress, "expected account to be set")
+            compare(request.accountAddress, testAddress, "expected look up of the right account")
+            verify(!!request.chainId, "expected network to be set")
+            compare(request.chainId, chainId, "expected look up of the right network")
             verify(!!request.data, "expected data to be set")
             compare(request.data.message, message, "expected message to be set")
         }
@@ -909,8 +909,8 @@ Item {
               topic,
               id: requestEvent.id,
               method: Constants.personal_sign,
-              account,
-              network,
+              accountAddress: account.address,
+              chainId: network.chainId,
               data: message,
               preparedData: message
         })

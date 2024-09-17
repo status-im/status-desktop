@@ -216,7 +216,7 @@ Item {
                         if (d.activeTestCase < d.openPairTestCase)
                             return
 
-                        let buttons = InspectionUtils.findVisualsByTypeName(dappsWorkflow.popup, "StatusButton")
+                        let buttons = StoryBook.InspectionUtils.findVisualsByTypeName(dappsWorkflow.popup, "StatusButton")
                         if (buttons.length === 1) {
                             buttons[0].clicked()
                         }
@@ -227,7 +227,7 @@ Item {
                             return
 
                         if (pairUriInput.text.length > 0) {
-                            let items = InspectionUtils.findVisualsByTypeName(dappsWorkflow, "StatusBaseInput")
+                            let items = StoryBook.InspectionUtils.findVisualsByTypeName(dappsWorkflow, "StatusBaseInput")
                             if (items.length === 1) {
                                 items[0].text = pairUriInput.text
 
@@ -241,9 +241,9 @@ Item {
                             return
                         }
 
-                        let modals = InspectionUtils.findVisualsByTypeName(dappsWorkflow, "PairWCModal")
+                        let modals = StoryBook.InspectionUtils.findVisualsByTypeName(dappsWorkflow, "PairWCModal")
                         if (modals.length === 1) {
-                            let buttons = InspectionUtils.findVisualsByTypeName(modals[0].footer, "StatusButton")
+                            let buttons = StoryBook.InspectionUtils.findVisualsByTypeName(modals[0].footer, "StatusButton")
                             if (buttons.length === 1 && buttons[0].enabled &&  walletConnectService.wcSDK.sdkReady) {
                                 d.activeTestCase = d.noTestCase
                                 buttons[0].clicked()
@@ -307,6 +307,7 @@ Item {
             signal dappsListReceived(string dappsJson)
             signal userAuthenticated(string topic, string id, string password, string pin)
             signal userAuthenticationFailed(string topic, string id)
+            signal signingResult(string topic, string id, string data)
 
             function addWalletConnectSession(sessionJson) {
                 console.info("Persist Session", sessionJson)
