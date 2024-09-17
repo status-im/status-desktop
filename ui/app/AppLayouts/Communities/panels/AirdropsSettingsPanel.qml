@@ -7,6 +7,8 @@ import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.helpers 1.0
 
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 
 StackView {
@@ -14,6 +16,7 @@ StackView {
 
     // id, name, image, color, owner properties expected
     required property var communityDetails
+    required property var communityTokens
 
     // User profiles
     required property bool isOwner
@@ -25,10 +28,6 @@ StackView {
     readonly property bool arePrivilegedTokensDeployed: root.isOwnerTokenDeployed && root.isTMasterTokenDeployed
     property bool isOwnerTokenDeployed: false
     property bool isTMasterTokenDeployed: false
-
-    // Token models:
-    required property var assetsModel
-    required property var collectiblesModel
 
     required property var membersModel
     required property var accountsModel
@@ -42,6 +41,86 @@ StackView {
     signal navigateToMintTokenSettings(bool isAssetType)
     signal registerAirdropFeeSubscriber(var feeSubscriber)
     signal enableNetwork(int chainId)
+
+    Loader {
+        id: assetsModelLoader
+        active: d.loadModels && airdropPanel.communityTokens
+
+        sourceComponent: SortFilterProxyModel {
+
+            sourceModel: root.communityTokens
+            filters: ValueFilter {
+                roleName: "tokenType"
+                value: Constants.TokenType.ERC20
+            }
+            proxyRoles: [
+                ExpressionRole {
+                    name: "category"
+
+                    // Singleton cannot be used directly in the expression
+                    readonly property int category: TokenCategories.Category.Own
+                    expression: category
+                },
+                ExpressionRole {
+                    name: "iconSource"
+                    expression: model.image
+                },
+                ExpressionRole {
+                    name: "key"
+                    expression: model.symbol
+                },
+                ExpressionRole {
+                    name: "communityId"
+                    expression: ""
+                }
+            ]
+        }
+    }
+
+    Loader {
+        id: collectiblesModelLoader
+        active: d.loadModels && root.communityTokens
+
+        sourceComponent: SortFilterProxyModel {
+
+            sourceModel: root.communityTokens
+            filters: [
+                ValueFilter {
+                    roleName: "tokenType"
+                    value: Constants.TokenType.ERC721
+                },
+                ExpressionFilter {
+                    function getPrivileges(privilegesLevel) {
+                        return privilegesLevel === Constants.TokenPrivilegesLevel.Community ||
+                                (root.isOwner && privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
+                    }
+
+                    expression: { return getPrivileges(model.privilegesLevel) }
+                }
+            ]
+            proxyRoles: [
+                ExpressionRole {
+                    name: "category"
+
+                    // Singleton cannot be used directly in the epression
+                    readonly property int category: TokenCategories.Category.Own
+                    expression: category
+                },
+                ExpressionRole {
+                    name: "iconSource"
+                    expression: model.image
+                },
+                ExpressionRole {
+                    name: "key"
+                    expression: model.symbol
+                },
+                ExpressionRole {
+                    name: "communityId"
+                    expression: ""
+                }
+            ]
+        }
+    }
 
     function navigateBack() {
         pop(StackView.Immediate)
@@ -63,6 +142,7 @@ StackView {
         id: d
 
         readonly property bool isAdminOnly: root.isAdmin && !root.isPrivilegedTokenOwnerProfile
+        property bool loadModels: false
         property AirdropFeesSubscriber aidropFeeSubscriber: null
         signal selectToken(string key, string amount, int type)
         signal addAddresses(var addresses)
@@ -79,7 +159,10 @@ StackView {
 
                 text: qsTr("New Airdrop")
                 enabled: !d.isAdminOnly && root.arePrivilegedTokensDeployed
-                onClicked: root.push(newAirdropView, StackView.Immediate)
+                onClicked: {
+                    d.loadModels = true
+                    root.push(newAirdropView, StackView.Immediate)
+                }
             }
         ]
 
@@ -115,8 +198,8 @@ StackView {
                 padding: 0
 
                 communityDetails: root.communityDetails
-                assetsModel: root.assetsModel
-                collectiblesModel: root.collectiblesModel
+                assetsModel: assetsModelLoader.item
+                collectiblesModel: collectiblesModelLoader.item
                 membersModel: root.membersModel
                 accountsModel: root.accountsModel
                 totalFeeText: feesSubscriber.totalFee
