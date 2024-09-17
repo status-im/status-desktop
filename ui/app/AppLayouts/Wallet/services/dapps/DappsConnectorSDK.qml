@@ -64,13 +64,13 @@ WalletConnectSDKBase {
 
         function resolveAsync(event) {
             let method = event.params.request.method
-            let account = lookupAccountFromEvent(event, method)
-            if(!account) {
-                console.error("Error finding account for event", JSON.stringify(event))
+            let accountAddress = lookupAccountFromEvent(event, method)
+            if(!accountAddress) {
+                console.error("Error finding accountAddress for event", JSON.stringify(event))
                 return null
             }
-            let network = lookupNetworkFromEvent(event, method)
-            if(!network) {
+            let chainId = lookupNetworkFromEvent(event, method)
+            if(!chainId) {
                 console.error("Error finding network for event", JSON.stringify(event))
                 return null
             }
@@ -85,8 +85,8 @@ WalletConnectSDKBase {
                 topic: event.topic,
                 id: event.id,
                 method,
-                account,
-                network,
+                accountAddress,
+                chainId,
                 data,
                 maxFeesText: "?",
                 maxFeesEthText: "?",
@@ -126,25 +126,25 @@ WalletConnectSDKBase {
             var address = ""
             if (method === SessionRequest.methods.personalSign.name) {
                 if (event.params.request.params.length < 2) {
-                    return null
+                    return address
                 }
                 address = event.params.request.params[0]
             } else if (method === SessionRequest.methods.sign.name) {
                 if (event.params.request.params.length === 1) {
-                    return null
+                    return address
                 }
                 address = event.params.request.params[0]
             } else if(method === SessionRequest.methods.signTypedData_v4.name ||
                       method === SessionRequest.methods.signTypedData.name)
             {
                 if (event.params.request.params.length < 2) {
-                    return null
+                    return address
                 }
                 address = event.params.request.params[0]
             } else if (method === SessionRequest.methods.signTransaction.name
                     || method === SessionRequest.methods.sendTransaction.name) {
                 if (event.params.request.params.length == 0) {
-                    return null
+                    return address
                 }
                 address = event.params.request.params[0]
             }
@@ -153,17 +153,10 @@ WalletConnectSDKBase {
             })
 
             if (!account) {
-                return null
+                return address
             }
 
-            // deep copy to avoid operations on the original object
-            try {
-                return JSON.parse(JSON.stringify(account))
-            }
-            catch (e) {
-                console.error("Error parsing account", e.message)
-                return null
-            }
+            return account.address
         }
 
         /// Returns null if the network is not found
@@ -172,20 +165,13 @@ WalletConnectSDKBase {
                 return null
             }
             const chainId = DAppsHelpers.chainIdFromEip155(event.params.chainId)
-            const network = SQUtils.ModelUtils.getByKey(networksModule.flatNetworks, "chainId", chainId)
+            const network = SQUtils.ModelUtils.getByKey(root.walletStore.filteredFlatModel, "chainId", chainId)
 
             if (!network) {
                 return null
             }
 
-            // deep copy to avoid operations on the original object
-            try {
-                return JSON.parse(JSON.stringify(network))
-            }
-            catch (e) {
-                console.error("Error parsing network", e)
-                return null
-            }
+            return network.chainId
         }
 
         function extractMethodData(event, method) {
@@ -248,14 +234,14 @@ WalletConnectSDKBase {
             if (request.method === SessionRequest.methods.sign.name) {
                 store.signMessageUnsafe(request.topic,
                                         request.id,
-                                        request.account.address,
+                                        request.accountAddress,
                                         SessionRequest.methods.personalSign.getMessageFromData(request.data),
                                         password,
                                         pin)
             } else if (request.method === SessionRequest.methods.personalSign.name) {
                 store.signMessage(request.topic,
                                   request.id,
-                                  request.account.address,
+                                  request.accountAddress,
                                   SessionRequest.methods.personalSign.getMessageFromData(request.data),
                                   password,
                                   pin)
@@ -265,9 +251,9 @@ WalletConnectSDKBase {
                 let legacy = request.method === SessionRequest.methods.signTypedData.name
                 store.safeSignTypedData(request.topic,
                                         request.id,
-                                        request.account.address,
+                                        request.accountAddress,
                                         SessionRequest.methods.signTypedData.getMessageFromData(request.data),
-                                        request.network.chainId,
+                                        request.chainId,
                                         legacy,
                                         password,
                                         pin)
@@ -275,8 +261,8 @@ WalletConnectSDKBase {
                 let txObj = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
                 store.signTransaction(request.topic,
                                       request.id,
-                                      request.account.address,
-                                      request.network.chainId,
+                                      request.accountAddress,
+                                      request.chainId,
                                       txObj,
                                       password,
                                       pin)
@@ -285,7 +271,7 @@ WalletConnectSDKBase {
                 store.sendTransaction(request.topic,
                                       request.id,
                                       request.account.address,
-                                      request.network.chainId,
+                                      request.chainId,
                                       txObj,
                                       password,
                                       pin)
@@ -430,7 +416,21 @@ WalletConnectSDKBase {
         sourceComponent: DAppSignRequestModal {
             id: dappRequestModal
             objectName: "connectorDappsRequestModal"
-            loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
+
+            readonly property var account: accountEntry.available ? accountEntry.model : {
+                "address": "",
+                "name": "",
+                "emoji": "",
+                "colorId": 0
+            }
+
+            readonly property var network: networkEntry.available ? networkEntry.model : {
+                "chainId": 0,
+                "chainName": "",
+                "iconUrl": ""
+            }
+
+            loginType: account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
             formatBigNumber: (number, symbol, noSymbolOption) => root.wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
             visible: true
@@ -439,13 +439,13 @@ WalletConnectSDKBase {
             dappUrl: request.dappUrl
             dappIcon: request.dappIcon
 
-            accountColor: Utils.getColorForId(request.account.colorId)
-            accountName: request.account.name
-            accountAddress: request.account.address
-            accountEmoji: request.account.emoji
+            accountColor: Utils.getColorForId(account.colorId)
+            accountName: account.name
+            accountAddress: account.address
+            accountEmoji: account.emoji
 
-            networkName: request.network.chainName
-            networkIconPath: Style.svg(request.network.iconUrl)
+            networkName: network.chainName
+            networkIconPath: Style.svg(network.iconUrl)
 
             fiatFees: request.maxFeesText
             cryptoFees: request.maxFeesEthText
@@ -502,6 +502,20 @@ WalletConnectSDKBase {
                 sessionRequestLoader.active = false
                 controller.rejectTransactionSigning(root.requestId)
                 root.wcService.displayToastMessage(qsTr("Failed to sign transaction from %1").arg(request.dappUrl), true)
+            }
+
+            ModelEntry {
+                id: networkEntry
+                sourceModel: root.wcService.flatNetworks
+                key: "chainId"
+                value: request.chainId
+            }
+
+            ModelEntry {
+                id: accountEntry
+                sourceModel: root.wcService.validAccounts
+                key: "address"
+                value: request.accountAddress
             }
         }
     }

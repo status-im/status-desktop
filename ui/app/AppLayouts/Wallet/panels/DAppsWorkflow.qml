@@ -157,23 +157,35 @@ DappsComboBox {
         sourceComponent: DAppSignRequestModal {
             id: dappRequestModal
             objectName: "dappsRequestModal"
-            loginType: request.account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
-            formatBigNumber: (number, symbol, noSymbolOption) => root.wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
-            visible: true
 
             property var feesInfo: null
+            readonly property var account: accountEntry.available ? accountEntry.item : {
+                name: "",
+                address: "",
+                emoji: "",
+                colorId: 0
+            }
+
+            readonly property var network: networkEntry.available ? networkEntry.item : {
+                chainName: "",
+                iconUrl: ""
+            }
+
+            loginType: account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            formatBigNumber: (number, symbol, noSymbolOption) => root.wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
+            visible: true
 
             dappUrl: request.dappUrl
             dappIcon: request.dappIcon
             dappName: request.dappName
 
-            accountColor: Utils.getColorForId(request.account.colorId)
-            accountName: request.account.name
-            accountAddress: request.account.address
-            accountEmoji: request.account.emoji
+            accountColor: Utils.getColorForId(account.colorId)
+            accountName: account.name
+            accountAddress: account.address
+            accountEmoji: account.emoji
 
-            networkName: request.network.chainName
-            networkIconPath: Style.svg(request.network.iconUrl)
+            networkName: network.chainName
+            networkIconPath: Style.svg(network.iconUrl)
 
             fiatFees: request.maxFeesText
             cryptoFees: request.maxFeesEthText
@@ -236,6 +248,20 @@ DappsComboBox {
                 function onEstimatedTimeUpdated(estimatedTimeEnum) {
                     dappRequestModal.estimatedTime = WalletUtils.getLabelForEstimatedTxTime(estimatedTimeEnum)
                 }
+            }
+
+            ModelEntry {
+                id: accountEntry
+                sourceModel: root.wcService.validAccounts
+                key: "address"
+                value: request.accountAddress
+            }
+
+            ModelEntry {
+                id: networkEntry
+                sourceModel: root.wcService.flatNetworks
+                key: "chainId"
+                value: request.chainId
             }
         }
     }

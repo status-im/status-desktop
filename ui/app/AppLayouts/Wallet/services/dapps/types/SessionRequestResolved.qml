@@ -18,9 +18,8 @@ QObject {
     required property string topic
     required property string id
     required property string method
-
-    required property var account
-    required property var network
+    required property string accountAddress
+    required property string chainId
 
     required property var data
     // Data prepared for display in a human readable format
