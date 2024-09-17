@@ -30,7 +30,7 @@ SQUtils.QObject {
 
     /// Beware, it will fail if called multiple times before getting an answer
     function authenticate(request, payload) {
-        return store.authenticateUser(request.topic, request.id, request.account.address, payload)
+        return store.authenticateUser(request.topic, request.id, request.accountAddress, payload)
     }
 
     signal sessionRequest(SessionRequestResolved request)
@@ -150,20 +150,20 @@ SQUtils.QObject {
         // }
         function resolveAsync(event) {
             const method = event.params.request.method
-            const res = lookupAccountFromEvent(event, method)
-            if(!res.success) {
-                console.info("Error finding account for event", JSON.stringify(event))
+            const { accountAddress, success } = lookupAccountFromEvent(event, method)
+            if(!success) {
+                console.info("Error finding accountAddress for event", JSON.stringify(event))
                 return { obj: null, code: resolveAsyncResult.error }
             }
-            if (!res.account) {
-                console.info("Ignoring request for an account not in the current profile.")
+
+            if (!accountAddress) {
+                console.info("Account not found for event", JSON.stringify(event))
                 return { obj: null, code: resolveAsyncResult.ignored }
             }
-            const account = res.account
 
-            let network = lookupNetworkFromEvent(event, method)
-            if(!network) {
-                console.error("Error finding network for event", JSON.stringify(event))
+            let chainId = lookupNetworkFromEvent(event, method)
+            if(!chainId) {
+                console.error("Error finding chainId for event", JSON.stringify(event))
                 return { obj: null, code: resolveAsyncResult.error }
             }
 
@@ -181,8 +181,8 @@ SQUtils.QObject {
                 topic: event.topic,
                 id: event.id,
                 method,
-                account,
-                network,
+                accountAddress,
+                chainId,
                 data,
                 preparedData: interpreted.preparedData,
                 maxFeesText: "?",
@@ -212,19 +212,20 @@ SQUtils.QObject {
                     return
                 }
 
-                let estimatedTimeEnum = getEstimatedTimeInterval(data, method, obj.network.chainId)
+
+                let estimatedTimeEnum = getEstimatedTimeInterval(data, method, obj.chainId)
                 root.estimatedTimeUpdated(estimatedTimeEnum)
 
                 const mainNet = lookupMainnetNetwork()
-                let mainChainId = obj.network.chainId
+                let mainChainId = obj.chainId
                 if (!!mainNet) {
                     mainChainId = mainNet.chainId
                 } else {
                     console.error("Error finding mainnet network")
                 }
-                let st = getEstimatedFeesStatus(data, method, obj.network.chainId, mainChainId)
+                let st = getEstimatedFeesStatus(data, method, obj.chainId, mainChainId)
 
-                let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, account.address, obj.network.chainId, mainNet.chainId, interpreted.value)
+                let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, obj.accountAddress, obj.chainId, mainNet.chainId, interpreted.value)
 
                 root.maxFeesUpdated(st.fiatMaxFees, st.maxFeesEth, fundsStatus.haveEnoughFunds,
                                     fundsStatus.haveEnoughForFees, st.symbol, st.feesInfo)
@@ -237,7 +238,7 @@ SQUtils.QObject {
         }
 
         /// returns {
-        ///   account
+        ///   accountAddress
         ///   success
         /// }
         /// if account is null and success is true it means that the account was not found
@@ -245,47 +246,39 @@ SQUtils.QObject {
             let address = ""
             if (method === SessionRequest.methods.personalSign.name) {
                 if (event.params.request.params.length < 2) {
-                    return { account: null, success: false }
+                    return { accountAddress: "", success: false }
                 }
                 address = event.params.request.params[1]
             } else if (method === SessionRequest.methods.sign.name) {
                 if (event.params.request.params.length === 1) {
-                    return { account: null, success: false }
+                    return { accountAddress: "", success: false }
                 }
                 address = event.params.request.params[0]
             } else if(method === SessionRequest.methods.signTypedData_v4.name ||
                       method === SessionRequest.methods.signTypedData.name)
             {
                 if (event.params.request.params.length < 2) {
-                    return { account: null, success: false }
+                    return { accountAddress: "", success: false }
                 }
                 address = event.params.request.params[0]
             } else if (d.isTransactionMethod(method)) {
                 if (event.params.request.params.length == 0) {
-                    return { account: null, success: false }
+                    return { accountAddress: "", success: false }
                 }
                 address = event.params.request.params[0].from
             } else {
                 console.error("Unsupported method to lookup account: ", method)
-                return { account: null, success: false }
+                return { accountAddress: "", success: false }
             }
             const account = SQUtils.ModelUtils.getFirstModelEntryIf(root.accountsModel, (account) => {
                 return account.address.toLowerCase() === address.toLowerCase();
             })
 
             if (!account) {
-                return { account: null, success: true }
+                return { accountAddress: "", success: true }
             }
 
-            // deep copy to avoid operations on the original object
-            try {
-                const accountCopy = JSON.parse(JSON.stringify(account))
-                return { account: accountCopy, success: true }
-            }
-            catch (e) {
-                console.error("Error parsing account", e)
-                return { account: null, success: false }
-            }
+            return { accountAddress: account.address, success: true }
         }
 
         /// Returns null if the network is not found
@@ -300,13 +293,7 @@ SQUtils.QObject {
                 return null
             }
 
-            // deep copy to avoid operations on the original object
-            try {
-                return JSON.parse(JSON.stringify(network))
-            } catch (e) {
-                console.error("Error parsing network", network)
-                return null
-            }
+            return network.chainId
         }
 
         /// Returns null if the network is not found
@@ -384,14 +371,14 @@ SQUtils.QObject {
             if (request.method === SessionRequest.methods.sign.name) {
                 store.signMessageUnsafe(request.topic,
                                         request.id,
-                                        request.account.address,
+                                        request.accountAddress,
                                         SessionRequest.methods.personalSign.getMessageFromData(request.data),
                                         password,
                                         pin)
             } else if (request.method === SessionRequest.methods.personalSign.name) {
                 store.signMessage(request.topic,
                                   request.id,
-                                  request.account.address,
+                                  request.accountAddress,
                                   SessionRequest.methods.personalSign.getMessageFromData(request.data),
                                   password,
                                   pin)
@@ -401,9 +388,9 @@ SQUtils.QObject {
                 let legacy = request.method === SessionRequest.methods.signTypedData.name
                 store.safeSignTypedData(request.topic,
                                         request.id,
-                                        request.account.address,
+                                        request.accountAddress,
                                         SessionRequest.methods.signTypedData.getMessageFromData(request.data),
-                                        request.network.chainId,
+                                        request.chainId,
                                         legacy,
                                         password,
                                         pin)
@@ -430,8 +417,8 @@ SQUtils.QObject {
                 if (request.method === SessionRequest.methods.signTransaction.name) {
                     store.signTransaction(request.topic,
                                           request.id,
-                                          request.account.address,
-                                          request.network.chainId,
+                                          request.accountAddress,
+                                          request.chainId,
                                           txObj,
                                           password,
                                           pin)
@@ -439,8 +426,8 @@ SQUtils.QObject {
                     store.sendTransaction(
                                 request.topic,
                                 request.id,
-                                request.account.address,
-                                request.network.chainId,
+                                request.accountAddress,
+                                request.chainId,
                                 txObj,
                                 password,
                                 pin)
@@ -539,7 +526,7 @@ SQUtils.QObject {
         function getBalanceInEth(balances, address, chainId) {
             const BigOps = SQUtils.AmountsArithmetic
             let accEth = SQUtils.ModelUtils.getFirstModelEntryIf(balances, (balance) => {
-                return balance.account.toLowerCase() === address.toLowerCase() && balance.chainId === chainId
+                return balance.account.toLowerCase() === address.toLowerCase() && balance.chainId == chainId
             })
             if (!accEth) {
                 console.error("Error balance lookup for account ", address, " on chain ", chainId)
