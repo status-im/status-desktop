@@ -126,7 +126,6 @@ proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, 
 proc mainProc() =
 
   when defined(macosx) and defined(arm64):
-    echo "Experimental support for Apple Silicon"
     var signalStack: cstring = cast[cstring](allocShared(SIGSTKSZ))
     var ss: ptr Stack = cast[ptr Stack](allocShared0(sizeof(Stack)))
     var ss2: ptr Stack = nil
