@@ -7,7 +7,6 @@ from allure_commons._allure import step
 
 from constants import RandomUser
 from constants.wallet import WalletRenameKeypair, WalletAccountPopup
-from gui.components.authenticate_popup import AuthenticatePopup
 from helpers.WalletHelper import authenticate_with_password
 from tests.wallet_main_screen import marks
 
