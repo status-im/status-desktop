@@ -67,7 +67,15 @@ Loader {
             }
             case Helpers.RecipientAddressObjectType.Address: {
                 root.addressText = root.selectedRecipient
-                root.item.input.text = root.addressText
+
+                // Resolve before using
+                if (Utils.isValidEns(root.selectedRecipient)) {
+                    d.isPending = true
+                    d.resolveENS(root.selectedRecipient)
+                }
+                else {
+                    root.item.input.text = root.addressText
+                }
                 break
             }
             }
