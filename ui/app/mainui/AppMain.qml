@@ -1353,7 +1353,7 @@ Item {
                                 currencyStore: appMain.currencyStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
-                                sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled
+                                sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled && appMain.networkConnectionStore.sendBuyBridgeEnabled
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
