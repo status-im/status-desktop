@@ -6,7 +6,7 @@ import pytest
 from allure_commons._allure import step
 
 import driver
-from . import marks
+from tests.messages import marks
 
 import configs.testpath
 import constants
@@ -195,8 +195,7 @@ def test_group_chat(multiple_instances):
                 assert user_two.name in messages_screen.right_panel.members
                 assert driver.waitFor(lambda: user_three.name not in messages_screen.right_panel.members,
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-                assert len(messages_screen.right_panel.members) == 2  # it has to be 2 since user3 is kicked and not
-                # receiving any updates from that moment
+                assert len(messages_screen.right_panel.members) == 2
 
             with step('Leave group'):
                 messages_screen.group_chat.leave_group().confirm_leaving()

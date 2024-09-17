@@ -1,13 +1,11 @@
 import allure
 import pytest
-from allure_commons._allure import step
 
 import configs
 import driver
 from configs import WALLET_SEED
 from constants import ReturningUser
 from constants.wallet import WalletTransactions, WalletNetworkSettings
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
 from helpers.SettingsHelper import enable_testnet_mode
