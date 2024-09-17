@@ -87,6 +87,7 @@ Item {
         connectorEnabled: featureFlags ? featureFlags.connectorEnabled : false
         dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
         swapEnabled: featureFlags ? featureFlags.swapEnabled : false
+        sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
     }
 
     required property bool isCentralizedMetricsEnabled
@@ -1352,6 +1353,7 @@ Item {
                                 currencyStore: appMain.currencyStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
+                                sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);

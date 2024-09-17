@@ -45,6 +45,8 @@ StackLayout {
 
     property bool communitySettingsDisabled
 
+    property bool sendViaPersonalChatEnabled
+
     property var emojiPopup
     property var stickersPopup
     signal profileButtonClicked()
@@ -158,6 +160,7 @@ StackLayout {
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
                              root.sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
+            sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
 
             hasUnrestrictedViewOnlyPermission: {
                 viewOnlyUnrestrictedPermissionHelper.revision

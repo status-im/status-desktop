@@ -56,6 +56,8 @@ Item {
     readonly property bool isUserAdded: !!root.contactDetails && root.contactDetails.isContactRequestSent
     property bool amISectionAdmin: false
 
+    property bool sendViaPersonalChatEnabled
+
     signal openStickerPackPopup(string stickerPackId)
 
     // This function is called once `1:1` or `group` chat is created.
@@ -238,6 +240,7 @@ Item {
                         stickersPopup: root.stickersPopup
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
+                        sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }

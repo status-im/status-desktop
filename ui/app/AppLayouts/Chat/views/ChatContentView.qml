@@ -52,6 +52,8 @@ ColumnLayout {
         chatSectionModule: root.rootStore.chatCommunitySectionModule
     }
 
+    property bool sendViaPersonalChatEnabled
+
     signal showReplyArea(messageId: string)
     signal forceInputFocus()
 
@@ -90,6 +92,7 @@ ColumnLayout {
             isOneToOne: root.chatType === Constants.chatType.oneToOne
             isChatBlocked: root.isBlocked || !root.isUserAllowedToSendMessage
             channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
+            sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             onShowReplyArea: (messageId, senderId) => {
                 root.showReplyArea(messageId)
             }

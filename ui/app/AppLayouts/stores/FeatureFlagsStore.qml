@@ -4,4 +4,5 @@ QtObject {
     property bool connectorEnabled
     property bool dappsEnabled
     property bool swapEnabled
+    property bool sendViaPersonalChatEnabled
 }

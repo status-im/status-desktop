@@ -13,6 +13,7 @@ Item {
     readonly property alias hoveredLink: chatText.hoveredLink
 
     property string highlightedLink: ""
+    property bool linkAddressAndEnsName
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property bool isEdited: false
@@ -42,7 +43,7 @@ Item {
             if (root.messageDetails.contentType === StatusMessage.ContentType.Emoji && !root.isEdited)
                 return Emoji.parse(root.messageDetails.messageText, Emoji.size.middle, Emoji.format.png);
 
-            let formattedMessage = Utils.linkifyAndXSS(root.messageDetails.messageText);
+            let formattedMessage = Utils.linkifyAndXSS(root.messageDetails.messageText, root.linkAddressAndEnsName);
 
             isQuote = (formattedMessage.startsWith("<blockquote>") && formattedMessage.endsWith("</blockquote>"));
 
