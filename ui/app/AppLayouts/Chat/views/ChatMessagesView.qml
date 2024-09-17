@@ -45,6 +45,8 @@ Item {
     property bool isChatBlocked: false
     property bool isOneToOne: false
 
+    property bool sendViaPersonalChatEnabled
+
     signal openStickerPackPopup(string stickerPackId)
     signal showReplyArea(string messageId, string author)
     signal editModeChanged(bool editModeOn)
@@ -275,6 +277,8 @@ Item {
             chatContentModule: root.chatContentModule
 
             isChatBlocked: root.isChatBlocked
+
+            sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
 
             chatId: root.chatId
             messageId: model.id

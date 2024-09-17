@@ -4,6 +4,7 @@ import os
 const DEFAULT_FLAG_DAPPS_ENABLED = false
 const DEFAULT_FLAG_SWAP_ENABLED = true
 const DEFAULT_FLAG_CONNECTOR_ENABLED* = false
+const DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED = false
 
 proc boolToEnv*(defaultValue: bool): string =
   return if defaultValue: "1" else: "0"
@@ -13,12 +14,14 @@ QtObject:
     dappsEnabled: bool
     swapEnabled: bool
     connectorEnabled: bool
+    sendViaPersonalChatEnabled: bool
 
   proc setup(self: FeatureFlags) =
     self.QObject.setup()
     self.dappsEnabled = getEnv("FLAG_DAPPS_ENABLED", boolToEnv(DEFAULT_FLAG_DAPPS_ENABLED)) != "0"
     self.swapEnabled = getEnv("FLAG_SWAP_ENABLED", boolToEnv(DEFAULT_FLAG_SWAP_ENABLED)) != "0"
     self.connectorEnabled = getEnv("FLAG_CONNECTOR_ENABLED", boolToEnv(DEFAULT_FLAG_CONNECTOR_ENABLED)) != "0"
+    self.sendViaPersonalChatEnabled = getEnv("FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED", boolToEnv(DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED)) != "0"
 
   proc delete*(self: FeatureFlags) =
     self.QObject.delete()
@@ -44,3 +47,9 @@ QtObject:
 
   QtProperty[bool] connectorEnabled:
     read = getConnectorEnabled
+
+  proc getSendViaPersonalChatEnabled*(self: FeatureFlags): bool {.slot.} =
+    return self.sendViaPersonalChatEnabled
+
+  QtProperty[bool] sendViaPersonalChatEnabled:
+    read = getSendViaPersonalChatEnabled

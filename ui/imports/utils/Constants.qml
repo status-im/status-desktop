@@ -1001,6 +1001,7 @@ QtObject {
     readonly property string statusLinkPrefix: 'https://status.im/'
     readonly property string statusHelpLinkPrefix: `https://status.app/help/`
     readonly property string downloadLink: "https://status.im/get"
+    readonly property string sendViaChatPrefix: '//send-via-personal-chat//'
 
     readonly property int maxUploadFiles: 6
     readonly property double maxUploadFilesizeMB: 10

@@ -157,7 +157,7 @@ QtObject {
         }
     }
 
-    function linkifyAndXSS(inputText) {
+    function linkifyAndXSS(inputText, linkAddressAndEnsName = false) {
         //URLs starting with http://, https://, ftp:// or status-app://
         var replacePattern1 = /(\b(https?|ftp|status-app):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;\(\)]*[-A-Z0-9+&@#\/%=~_|])/gim;
         var replacedText = inputText.replace(replacePattern1, "<a href='$1'>$1</a>");
@@ -165,6 +165,18 @@ QtObject {
         //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
         var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
         replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2'>$2</a>");
+
+        if (linkAddressAndEnsName) {
+            // Wallet address
+            var replacePatternWalletAddress = /(^|[^\/])(0x[a-fA-F0-9]{40})/gim;
+            replacedText = replacedText.replace(replacePatternWalletAddress, "$1<a href='//send-via-personal-chat//$2'>$2</a>");
+
+            // Ens Name
+            var replacePatternENS = /\b[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.eth\b(?!\.\w)/g;
+            replacedText = replacedText.replace(replacePatternENS, function(match) {
+                return "<a href='//send-via-personal-chat//" + match + "'>" + match + "</a>";
+            });
+        }
 
         return XSS.filterXSS(replacedText)
     }

@@ -128,6 +128,30 @@ SplitView {
                 outgoingStatus: StatusMessage.OutgoingStatus.Expired
                 resendError: "can't send message on Tuesday"
             }
+            ListElement {
+                timestamp: 1667937930159
+                senderId: "zqdeadbeef"
+                senderDisplayName: "replicator.stateofus.eth"
+                contentType: StatusMessage.ContentType.Text
+                message: "Test message with a link https://github.com/. Hey annyah! 0x16437e05858c1a34f0ae63c9ca960d61a5583d5e
+                          this is my wallet address eth:opt:arb:0x16437e05858c1a34f0ae63c9ca960d61a5583d5e,
+                          0x75d5673fc25bb4993ea1218d9d415487c3656853"
+                isContact: true
+                isAReply: true
+                trustIndicator: StatusContactVerificationIcons.TrustedType.None
+                outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+            }
+            ListElement {
+                timestamp: 1667937930159
+                senderId: "zqdeadbeef"
+                senderDisplayName: "replicator.stateofus.eth"
+                contentType: StatusMessage.ContentType.Text
+                message: "Ola!! qwerty.stateofus.eth hey this is my ens name"
+                isContact: true
+                isAReply: false
+                trustIndicator: StatusContactVerificationIcons.TrustedType.None
+                outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+            }
         }
         readonly property var colorHash: ListModel {
             ListElement { colorId: 13; segmentLength: 5 }
@@ -161,6 +185,7 @@ SplitView {
                     isAReply: model.isAReply
                     outgoingStatus: model.outgoingStatus
                     resendError: model.outgoingStatus === StatusMessage.OutgoingStatus.Expired ? model.resendError : ""
+                    linkAddressAndEnsName: true
 
                     messageDetails {
                         readonly property bool isEnsVerified: model.senderDisplayName.endsWith(".eth")
@@ -196,6 +221,7 @@ SplitView {
                     onReplyProfileClicked: logs.logEvent("StatusMessage::replyProfileClicked")
                     onReplyMessageClicked: logs.logEvent("StatusMessage::replyMessageClicked")
                     onResendClicked: logs.logEvent("StatusMessage::resendClicked")
+                    onLinkActivated: logs.logEvent("StatusMessage::linkActivated" + link)
                 }
             }
         }
