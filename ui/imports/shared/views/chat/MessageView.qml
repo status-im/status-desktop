@@ -131,6 +131,8 @@ Loader {
 
     property bool hasMention: false
 
+    property bool sendViaPersonalChatEnabled
+
     property bool stickersLoaded: false
     property string sticker
     property int stickerPack: -1
@@ -712,6 +714,7 @@ Loader {
 
                 disableEmojis: !d.addReactionAllowed
                 hideMessage: d.hideMessage
+                linkAddressAndEnsName: root.sendViaPersonalChatEnabled
 
                 overrideBackground: root.placeholderMessage
                 profileClickable: !root.isDiscordMessage
@@ -728,6 +731,12 @@ Loader {
                 }
 
                 onLinkActivated: {
+                    if (link.startsWith(Constants.sendViaChatPrefix)) {
+                        const addressOrEns = link.replace(Constants.sendViaChatPrefix, "");
+                        // TODO:: will be removed in the PRs to follow
+                        Global.displayToastMessage(qsTr("TODO:: Send Via 1-1"), addressOrEns, "", false, 0, "")
+                        return
+                    }
                     if (link.startsWith('//')) {
                         const pubkey = link.replace("//", "");
                         Global.openProfilePopup(pubkey)
