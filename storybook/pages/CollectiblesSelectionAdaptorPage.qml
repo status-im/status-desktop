@@ -319,7 +319,7 @@ Pane {
     ColumnLayout {
         anchors.fill: parent
 
-        TokenSelectorNew {
+        TokenSelector {
             collectiblesModel: adaptor.model
         }
 

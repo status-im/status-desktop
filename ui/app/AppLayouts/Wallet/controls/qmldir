@@ -23,6 +23,6 @@ StatusNetworkListItemTag 1.0 StatusNetworkListItemTag.qml
 StatusTxProgressBar 1.0 StatusTxProgressBar.qml
 SwapExchangeButton 1.0 SwapExchangeButton.qml
 SwapProvidersTermsAndConditionsText 1.0 SwapProvidersTermsAndConditionsText.qml
+TokenSelector 1.0 TokenSelector.qml
 TokenSelectorButton 1.0 TokenSelectorButton.qml
 TokenSelectorCompactButton 1.0 TokenSelectorCompactButton.qml
-TokenSelectorNew 1.0 TokenSelectorNew.qml

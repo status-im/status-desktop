@@ -171,7 +171,7 @@ Pane {
         color: Theme.palette.baseColor3
     }
 
-    TokenSelectorNew {
+    TokenSelector {
         id: panel
 
         anchors.centerIn: parent
