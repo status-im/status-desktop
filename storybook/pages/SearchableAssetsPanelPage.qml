@@ -8,13 +8,12 @@ import utils 1.0
 Pane {
     readonly property var assetsData: [
         {
-            tokensKey: "key_1",
+            tokensKey: "stt_key",
             communityId: "",
             name: "Status Test Token",
             currencyBalanceAsString: "42,23 USD",
             symbol: "STT",
             iconSource: Constants.tokenIcon("STT"),
-            tokensKey: "STT",
             balances: [
                 {
                     balanceAsString: "0,56",
@@ -33,13 +32,12 @@ Pane {
             sectionText: ""
         },
         {
-            tokensKey: "key_2",
+            tokensKey: "eth_key",
             communityId: "",
             name: "Ether",
             currencyBalanceAsString: "4 276,86 USD",
             symbol: "ETH",
             iconSource: Constants.tokenIcon("ETH"),
-            tokensKey: "ETH",
             balances: [
                 {
                     balanceAsString: "1,01",
@@ -58,25 +56,23 @@ Pane {
             sectionText: ""
         },
         {
-            tokensKey: "key_2",
+            tokensKey: "dai_key",
             communityId: "",
             name: "Dai Stablecoin",
             currencyBalanceAsString: "45,92 USD",
             symbol: "DAI",
             iconSource: Constants.tokenIcon("DAI"),
-            tokensKey: "DAI",
             balances: [],
 
             sectionText: "Popular assets"
         },
         {
-            tokensKey: "key_3",
+            tokensKey: "zrx_key",
             communityId: "",
             name: "0x",
             currencyBalanceAsString: "41,22 USD",
             symbol: "ZRX",
             iconSource: Constants.tokenIcon("ZRX"),
-            tokensKey: "ZRX",
             balances: [],
 
             sectionText: "Popular assets"
@@ -102,10 +98,13 @@ Pane {
 
         anchors.centerIn: parent
 
-        width: 350
+        width: 450
+        highlightedKey: "key_2"
 
         model: assetsModel
         sectionProperty: "sectionText"
+
+        onSelected: console.log("selected:", key)
     }
 }
 

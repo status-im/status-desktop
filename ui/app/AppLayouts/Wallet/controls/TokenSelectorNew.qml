@@ -53,6 +53,7 @@ Control {
         id: dropdown
 
         y: parent.height + 4
+        width: 448
 
         closePolicy: Popup.CloseOnPressOutsideParent
         horizontalPadding: 0

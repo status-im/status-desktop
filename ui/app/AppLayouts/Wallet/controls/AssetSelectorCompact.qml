@@ -31,6 +31,7 @@ Control {
 
     function reset() {
         button.selected = false
+        searchableAssetsPanel.highlightedKey = ""
     }
 
     contentItem: TokenSelectorCompactButton {

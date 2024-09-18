@@ -32,9 +32,10 @@ Pane {
 
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
-
                 Layout.maximumWidth: implicitWidth
+
                 selected: selectionCheckBox.checked
+                forceHovered: forceHoveredCheckBox.checked
 
                 name: "My token" + (longNameCheckBox.checked ? " long name" : "")
                 icon: Constants.tokenIcon("CFI")
@@ -54,11 +55,18 @@ Pane {
 
             text: "long name"
         }
+
+        CheckBox {
+            id: forceHoveredCheckBox
+
+            text: "force hovered"
+        }
     }
 
     Settings {
         property alias selected: selectionCheckBox.checked
         property alias longName: longNameCheckBox.checked
+        property alias forceHovered: forceHoveredCheckBox.checked
     }
 }
 

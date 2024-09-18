@@ -39,14 +39,14 @@ SplitView {
             anchors.centerIn: parent
 
             TokenSelectorAssetDelegate {
-                implicitWidth: 333
+                width: 333
                 anchors.centerIn: parent
 
-                tokensKey: "ETH"
                 name: "Ethereum"
                 symbol: "ETH"
                 currencyBalanceAsString: "14,456.42 USD"
                 iconSource: Constants.tokenIcon(symbol)
+
                 balancesModel: ListModel {
                     readonly property var data: [
                         { chainId: 1, balanceAsString: "1234.50", iconUrl: "network/Network=Ethereum" },
@@ -57,13 +57,10 @@ SplitView {
                     Component.onCompleted: append(data)
                 }
 
-                interactive: ctrlInteractive.checked
+                enabled: ctrlEnabled.checked
                 highlighted: ctrlHighlighted.checked
 
-                onAssetSelected: (tokensKey) => {
-                                     console.warn("!!! TOKEN SELECTED:", tokensKey)
-                                     logs.logEvent("TokenSelectorAssetDelegate::onTokenSelected", ["tokensKey"], arguments)
-                                 }
+                onClicked: key => logs.logEvent("TokenSelectorAssetDelegate::onClicked")
             }
         }
     }
@@ -79,8 +76,8 @@ SplitView {
 
             ColumnLayout {
                 Switch {
-                    id: ctrlInteractive
-                    text: "Interactive"
+                    id: ctrlEnabled
+                    text: "Enabled"
                     checked: true
                 }
                 Switch {
