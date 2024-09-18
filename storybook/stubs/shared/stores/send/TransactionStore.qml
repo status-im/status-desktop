@@ -75,13 +75,18 @@ QtObject {
         }
     }
 
-    function splitAndFormatAddressPrefix(textAddrss, updateInStore) {
-        return textAddrss
+    function splitAndFormatAddressPrefix(textAddress, updateInStore) {
+        return {
+            formattedText: textAddress,
+            address: textAddress
+        }
     }
 
     function resolveENS(value: string) {
         if (!!value && value.endsWith(".eth"))
             root.mainModuleInst.resolvedENS("", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc4", "") // return some valid address
+        else
+            root.mainModuleInst.resolvedENS("", "", "") // invalid
     }
 
     function getAsset(assetsList, symbol) {

@@ -667,7 +667,7 @@ StatusDialog {
                 store: popup.store
                 interactive: popup.interactive
                 selectedRecipient: popup.preSelectedRecipient
-                ensAddressOrEmpty: recipientInputLoader.resolvedENSAddress
+                ensAddressOrEmpty: recipientInputLoader.ready ? recipientInputLoader.resolvedENSAddress : ""
                 amountToSend: amountToSend.asNumber
                 minSendCryptoDecimals: amountToSend.minSendCryptoDecimals
                 minReceiveCryptoDecimals: amountToSend.minReceiveCryptoDecimals

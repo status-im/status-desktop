@@ -29,6 +29,7 @@ SplitView {
                 anchors.centerIn: parent
                 interactive: ctrlInteractive.checked
                 checkMarkVisible: ctrlCheckmark.checked
+                loading: ctrlLoading.checked
                 Component.onCompleted: forceActiveFocus()
 
                 onClearClicked: logs.logEvent("SendRecipientInput::clearClicked", [], arguments)
@@ -61,6 +62,11 @@ SplitView {
                     id: ctrlCheckmark
                     text: "Checkmark visible"
                     checked: false
+                }
+
+                Switch {
+                    id: ctrlLoading
+                    text: "Loading"
                 }
             }
         }

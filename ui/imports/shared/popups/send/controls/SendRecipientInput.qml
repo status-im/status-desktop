@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -12,6 +13,7 @@ StatusInput {
 
     property bool interactive: true
     property bool checkMarkVisible
+    property bool loading
 
     signal clearClicked()
     signal validateInputRequested()
@@ -19,7 +21,7 @@ StatusInput {
     placeholderText: qsTr("Enter an ENS name or address")
     input.background.color: Theme.palette.indirectColor1
     input.background.border.width: 0
-    input.implicitHeight: 56
+    input.implicitHeight: 64
     rightPadding: 12
     input.clearable: false // custom button below
     input.edit.readOnly: !root.interactive
@@ -27,6 +29,12 @@ StatusInput {
     input.edit.textFormat: TextEdit.RichText
 
     input.rightComponent: RowLayout {
+        StatusLoadingIndicator {
+            objectName: "loadingIndicator"
+            Layout.preferredWidth: 16
+            Layout.preferredHeight: 16
+            visible: root.input.edit.length !== 0 && root.loading
+        }
         StatusButton {
             objectName: "pasteButton"
             font.weight: Font.Normal

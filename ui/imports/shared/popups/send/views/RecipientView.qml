@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -15,7 +15,6 @@ import shared.popups.send.panels 1.0
 import shared.popups.send 1.0
 
 import utils 1.0
-import shared.stores.send 1.0
 
 import "../controls"
 
@@ -30,7 +29,7 @@ Loader {
     property var selectedRecipient: null
     property int selectedRecipientType: Helpers.RecipientAddressObjectType.Address
 
-    readonly property bool ready: (d.isAddressValid || !!resolvedENSAddress) && !d.isPending
+    readonly property bool ready: d.isAddressValid && !d.isPending
     property string addressText
     property string resolvedENSAddress
 
@@ -87,7 +86,7 @@ Loader {
 
     QtObject {
         id: d
-        property bool isAddressValid: Utils.isValidAddress(root.addressText)
+        readonly property bool isAddressValid: Utils.isValidAddress(root.addressText)
         readonly property var resolveENS: Backpressure.debounce(root, 1500, function (ensName) {
             store.resolveENS(ensName)
         })
@@ -105,7 +104,7 @@ Loader {
 
         function evaluateAndSetPreferredChains() {
             let address = !!root.item.input && !!root.store.plainText(root.item.input.text) ? root.store.plainText(root.item.input.text): ""
-            let result = store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !isCollectiblesTransfer)
+            let result = root.store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !root.isCollectiblesTransfer)
             if(!!result.address) {
                 root.addressText = result.address
                 if(!!root.item.input) {
@@ -198,6 +197,7 @@ Loader {
 
             interactive: root.interactive
             checkMarkVisible: root.ready
+            loading: d.isPending || d.waitTimer.running
             onClearClicked: d.clearValues()
             onValidateInputRequested: validateInput()
         }
