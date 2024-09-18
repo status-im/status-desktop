@@ -74,14 +74,14 @@ StatusSectionLayout {
 
     signal backToCommunityClicked
 
-    backButtonName: stackLayout.children[d.currentIndex].previousPageName || ""
+    backButtonName: stackLayout.children[d.currentIndex].item.previousPageName || ""
 
     //navigate to a specific section and subsection
     function goTo(section: int, subSection: int) {
         d.goTo(section, subSection)
     }
 
-    onBackButtonClicked: stackLayout.children[d.currentIndex].navigateBack()
+    onBackButtonClicked: stackLayout.children[d.currentIndex].item.navigateBack()
 
     leftPanel: Item {
         anchors.fill: parent
@@ -181,8 +181,8 @@ StatusSectionLayout {
             readonly property string sectionName: qsTr("Overview")
             readonly property string sectionIcon: "show"
             readonly property bool sectionEnabled: true
-            sourceComponent: OverviewSettingsPanel {
 
+            sourceComponent: OverviewSettingsPanel {
                 isOwner: root.isOwner
                 isAdmin: root.isAdmin
                 isTokenMaster: root.isTokenMasterOwner
@@ -284,7 +284,6 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
 
             sourceComponent: MembersSettingsPanel {
-
                 rootStore: root.rootStore
                 membersModel: root.community.members
                 bannedMembersModel: root.community.bannedMembers
@@ -346,12 +345,13 @@ StatusSectionLayout {
 
                 onNavigateToMintTokenSettings: {
                     root.goTo(Constants.CommunitySettingsSections.MintTokens)
-                    mintPanel.openNewTokenForm(isAssetType)
+                    mintPanelLoader.item.openNewTokenForm(isAssetType)
                 }
             }
         }
 
         Loader {
+            id: mintPanelLoader
             active: false
             readonly property int sectionKey: Constants.CommunitySettingsSections.MintTokens
             readonly property string sectionName: qsTr("Tokens")
@@ -359,8 +359,6 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
 
             sourceComponent: MintTokensSettingsPanel {
-                id: mintPanel
-
                 enabledChainIds: root.enabledChainIds
 
                 readonly property CommunityTokensStore communityTokensStore:
@@ -439,10 +437,10 @@ StatusSectionLayout {
                     root.goTo(Constants.CommunitySettingsSections.Airdrops)
 
                     // Force a token selection to be airdroped with given amount
-                    airdropPanel.selectToken(tokenKey, amount, type)
+                    airdropPanelLoader.item.selectToken(tokenKey, amount, type)
 
                     // Set given addresses as recipients
-                    airdropPanel.addAddresses(addresses)
+                    airdropPanelLoader.item.addAddresses(addresses)
                 }
 
                 onKickUserRequested: root.rootStore.removeUserFromCommunity(contactId)
@@ -451,6 +449,7 @@ StatusSectionLayout {
         }
 
         Loader {
+            id: airdropPanelLoader
             active: false
 
             readonly property int sectionKey: Constants.CommunitySettingsSections.Airdrops
@@ -459,8 +458,6 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
 
             sourceComponent: AirdropsSettingsPanel {
-                id: airdropPanel
-
                 communityDetails: d.communityDetails
 
                 // Profile type
@@ -488,7 +485,7 @@ StatusSectionLayout {
 
                 onNavigateToMintTokenSettings: {
                     root.goTo(Constants.CommunitySettingsSections.MintTokens)
-                    mintPanel.openNewTokenForm(isAssetType)
+                    mintPanelLoader.item.openNewTokenForm(isAssetType)
                 }
 
                 onRegisterAirdropFeeSubscriber: d.feesBroker.registerAirdropFeesSubscriber(feeSubscriber)
@@ -668,7 +665,7 @@ StatusSectionLayout {
             case Constants.ContractTransactionStatus.InProgress:
                 title = qsTr("Airdrop on %1 in progress...").arg(chainName)
                 loading = true
-                airdropPanel.navigateBack()
+                airdropPanelLoader.item.navigateBack()
                 break
             case Constants.ContractTransactionStatus.Completed:
                 title = qsTr("Airdrop on %1 in complete").arg(chainName)
