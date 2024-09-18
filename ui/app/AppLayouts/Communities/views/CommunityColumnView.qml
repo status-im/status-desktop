@@ -545,7 +545,7 @@ Item {
             collectiblesModel: root.store.collectiblesModel
             ensCommunityPermissionsEnabled: root.store.ensCommunityPermissionsEnabled
             permissionsModel: {
-                root.store.prepareTokenModelForCommunity(communityData.id)
+                root.store.prepareTokenModelForCommunityChat(communityData.id, chatId)
                 return root.store.permissionsModel
             }
             channelsModel: root.store.chatCommunitySectionModule.model

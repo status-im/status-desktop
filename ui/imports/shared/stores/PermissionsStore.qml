@@ -21,20 +21,6 @@ QtObject {
         //TODO: backend implementation
     }
 
-    // TODO: Replace with proper backend implementation
-    // This is per chat, not per community
-    readonly property bool viewAndPostCriteriaMet: {
-        if (selectedChannelPermissionsModel.count == 0)
-            return true
-
-        for (var i = 0; i < selectedChannelPermissionsModel.count; i++) {
-            var permissionItem = selectedChannelPermissionsModel.get(i);
-            if (permissionItem && permissionItem.tokenCriteriaMet)
-                return true
-        }
-        return false
-    }
-
     readonly property var selectedChannelPermissionsModel: SortFilterProxyModel {
         id: selectedChannelPermissionsModel
         sourceModel: root.permissionsModel

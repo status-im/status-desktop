@@ -77,16 +77,18 @@ Item {
                     }
                 ]
 
-                filters: ExpressionFilter {
+                filters: FastExpressionFilter {
                     enabled: !!memberSearch.text
 
                     expression: {
                         let keyword = memberSearch.text.trim().toUpperCase()
-                        return model.displayName.toUpperCase().includes(keyword) ||
+                        return model.localNickname.toUpperCase().includes(keyword) ||
+                                model.displayName.toUpperCase().includes(keyword) ||
                                 model.ensName.toUpperCase().includes(keyword) ||
                                 model.alias.toUpperCase().includes(keyword) 
 
                     }
+                    expectedRoles: ["localNickname", "displayName", "ensName", "alias"]
                 }
             }
             spacing: 0

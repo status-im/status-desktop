@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 
 import AppLayouts.Communities.controls 1.0
@@ -43,92 +44,11 @@ StackView {
     signal registerAirdropFeeSubscriber(var feeSubscriber)
     signal enableNetwork(int chainId)
 
-    Loader {
-        id: assetsModelLoader
-        active: d.loadModels && root.communityTokens
-
-        sourceComponent: SortFilterProxyModel {
-
-            sourceModel: root.communityTokens
-            filters: ValueFilter {
-                roleName: "tokenType"
-                value: Constants.TokenType.ERC20
-            }
-            proxyRoles: [
-                ExpressionRole {
-                    name: "category"
-
-                    // Singleton cannot be used directly in the expression
-                    readonly property int category: TokenCategories.Category.Own
-                    expression: category
-                },
-                ExpressionRole {
-                    name: "iconSource"
-                    expression: model.image
-                },
-                ExpressionRole {
-                    name: "key"
-                    expression: model.symbol
-                },
-                ExpressionRole {
-                    name: "communityId"
-                    expression: ""
-                }
-            ]
-        }
-    }
-
-    Loader {
-        id: collectiblesModelLoader
-        active: d.loadModels && root.communityTokens
-
-        sourceComponent: SortFilterProxyModel {
-
-            sourceModel: root.communityTokens
-            filters: [
-                ValueFilter {
-                    roleName: "tokenType"
-                    value: Constants.TokenType.ERC721
-                },
-                ExpressionFilter {
-                    function getPrivileges(privilegesLevel) {
-                        return privilegesLevel === Constants.TokenPrivilegesLevel.Community ||
-                                (root.isOwner && privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
-                    }
-
-                    expression: { return getPrivileges(model.privilegesLevel) }
-                }
-            ]
-            proxyRoles: [
-                ExpressionRole {
-                    name: "category"
-
-                    // Singleton cannot be used directly in the epression
-                    readonly property int category: TokenCategories.Category.Own
-                    expression: category
-                },
-                ExpressionRole {
-                    name: "iconSource"
-                    expression: model.image
-                },
-                ExpressionRole {
-                    name: "key"
-                    expression: model.symbol
-                },
-                ExpressionRole {
-                    name: "communityId"
-                    expression: ""
-                }
-            ]
-        }
-    }
-
     function navigateBack() {
         pop(StackView.Immediate)
     }
 
     function selectToken(key, amount, type) {
-        d.loadModels = true
         if (depth > 1)
             pop(StackView.Immediate)
 
@@ -144,7 +64,6 @@ StackView {
         id: d
 
         readonly property bool isAdminOnly: root.isAdmin && !root.isPrivilegedTokenOwnerProfile
-        property bool loadModels: false
         property AirdropFeesSubscriber aidropFeeSubscriber: null
         signal selectToken(string key, string amount, int type)
         signal addAddresses(var addresses)
@@ -162,7 +81,6 @@ StackView {
                 text: qsTr("New Airdrop")
                 enabled: !d.isAdminOnly && root.arePrivilegedTokensDeployed
                 onClicked: {
-                    d.loadModels = true
                     root.push(newAirdropView, StackView.Immediate)
                 }
             }
@@ -192,12 +110,98 @@ StackView {
         id: newAirdropView
 
         SettingsPage {
+            id: newAirdropPage
             title: qsTr("New airdrop")
 
             contentItem: EditAirdropView {
                 id: view
 
                 padding: 0
+
+                Loader {
+                    id: collectiblesModelLoader
+                    active: root.communityTokens
+
+                    sourceComponent: SortFilterProxyModel {
+
+                        sourceModel: root.communityTokens
+                        filters: [
+                            ValueFilter {
+                                roleName: "tokenType"
+                                value: Constants.TokenType.ERC721
+                            },
+                            FastExpressionFilter {
+                                function getPrivileges(privilegesLevel) {
+                                    return privilegesLevel === Constants.TokenPrivilegesLevel.Community ||
+                                            (root.isOwner && privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
+                                }
+
+                                expression: { return getPrivileges(model.privilegesLevel) }
+                                expectedRoles: [ "privilegesLevel" ]
+                            }
+                        ]
+                        proxyRoles: [
+                            ExpressionRole {
+                                name: "category"
+
+                                // Singleton cannot be used directly in the epression
+                                readonly property int category: TokenCategories.Category.Own
+                                expression: category
+                            },
+                            FastExpressionRole {
+                                name: "iconSource"
+                                expression: model.image
+                                expectedRoles: ["image"]
+                            },
+                            FastExpressionRole {
+                                name: "key"
+                                expression: model.symbol
+                                expectedRoles: ["symbol"]
+                            },
+                            ExpressionRole {
+                                name: "communityId"
+                                expression: ""
+                            }
+                        ]
+                    }
+                }
+
+                Loader {
+                    id: assetsModelLoader
+                    active: root.communityTokens
+
+                    sourceComponent: SortFilterProxyModel {
+
+                        sourceModel: root.communityTokens
+                        filters: ValueFilter {
+                            roleName: "tokenType"
+                            value: Constants.TokenType.ERC20
+                        }
+                        proxyRoles: [
+                            ExpressionRole {
+                                name: "category"
+
+                                // Singleton cannot be used directly in the expression
+                                readonly property int category: TokenCategories.Category.Own
+                                expression: category
+                            },
+                            FastExpressionRole {
+                                name: "iconSource"
+                                expression: model.image
+                                expectedRoles: ["image"]
+                            },
+                            FastExpressionRole {
+                                name: "key"
+                                expression: model.symbol
+                                expectedRoles: ["symbol"]
+                            },
+                            ExpressionRole {
+                                name: "communityId"
+                                expression: ""
+                            }
+                        ]
+                    }
+                }
 
                 communityDetails: root.communityDetails
                 assetsModel: assetsModelLoader.item

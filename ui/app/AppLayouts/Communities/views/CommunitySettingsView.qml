@@ -74,7 +74,12 @@ StatusSectionLayout {
 
     signal backToCommunityClicked
 
-    backButtonName: stackLayout.children[d.currentIndex].item.previousPageName || ""
+    backButtonName: {
+        if (!stackLayout.children[d.currentIndex].item || !stackLayout.children[d.currentIndex].item.previousPageName) {
+            return ""
+        }
+        return stackLayout.children[d.currentIndex].item.previousPageName
+    }
 
     //navigate to a specific section and subsection
     function goTo(section: int, subSection: int) {
@@ -174,6 +179,7 @@ StatusSectionLayout {
             }
         }
 
+        // OVERVIEW
         Loader {
             active: true
 
@@ -275,6 +281,7 @@ StatusSectionLayout {
             }
         }
 
+        // MEMBERS
         Loader {
             active: false
 
@@ -305,6 +312,7 @@ StatusSectionLayout {
             }
         }
 
+        // PERMISISONS
         Loader {
             active: false
             readonly property int sectionKey: Constants.CommunitySettingsSections.Permissions
@@ -350,6 +358,7 @@ StatusSectionLayout {
             }
         }
 
+        // TOKEN
         Loader {
             id: mintPanelLoader
             active: false
@@ -448,6 +457,7 @@ StatusSectionLayout {
             }
         }
 
+        // AIRDROPS
         Loader {
             id: airdropPanelLoader
             active: false

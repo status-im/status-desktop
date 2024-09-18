@@ -17,6 +17,7 @@ ColumnLayout {
     id: root
     width: root.viewWidth
     property int topPadding: count ? 16 : 0
+    property bool useFullHeight: false
     spacing: 24
 
     QtObject {
@@ -43,7 +44,7 @@ ColumnLayout {
     signal removePermissionRequested(int index)
     signal userRestrictionsToggled(bool checked)
 
-    readonly property alias count: repeater.count
+    readonly property int count: listView.count
 
     Connections {
         target: root.communityDetails
@@ -58,7 +59,7 @@ ColumnLayout {
         }
     }
 
-    function resetCommunityItemModel(){
+    function resetCommunityItemModel() {
         communityItemModel.clear()
         communityItemModel.append({
                    text: root.communityDetails.name,
@@ -87,14 +88,24 @@ ColumnLayout {
         ]
     }
 
-
-    Repeater {
-        id: repeater
-
+    StatusListView {
+        id: listView
+        reuseItems: true
         model: root.permissionsModel
+        spacing: 24
+        Layout.fillWidth: true
+        Layout.fillHeight: !useFullHeight
+        height: useFullHeight ? contentHeight : 0
+        Layout.topMargin: root.topPadding
 
-        delegate: PermissionItem {
-            Layout.fillWidth: true
+        delegate: permissionItemComponent
+    }
+
+    Component {
+        id: permissionItemComponent
+
+        PermissionItem {
+            width: root.viewWidth
 
             holdingsListModel: HoldingsSelectionModel {
                 sourceModel: model.holdingsListModel
@@ -155,6 +166,7 @@ ColumnLayout {
             root.userRestrictionsToggled(checked);
         }
     }
+
     ConfirmationDialog {
         id: declineAllDialog
 

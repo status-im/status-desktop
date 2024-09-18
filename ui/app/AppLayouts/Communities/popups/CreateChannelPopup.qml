@@ -836,6 +836,7 @@ StatusStackModal {
                     Layout.leftMargin: Style.current.padding
                     Layout.rightMargin: Style.current.padding
                     viewWidth: (scrollView.availableWidth - 32)
+                    useFullHeight: true
                     permissionsModel: d.channelEditModel.channelPermissionsModel
                     assetsModel: root.assetsModel
                     collectiblesModel: root.collectiblesModel
