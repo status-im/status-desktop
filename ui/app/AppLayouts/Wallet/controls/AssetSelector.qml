@@ -31,6 +31,7 @@ Control {
 
     function reset() {
         button.selected = false
+        searchableAssetsPanel.highlightedKey = ""
     }
 
     contentItem: TokenSelectorButton {
@@ -45,14 +46,18 @@ Control {
     StatusDropdown {
         id: dropdown
 
-        y: parent.height + 4
-        x: parent.width - width
+        y: root.height + 4
+        x: root.width - width
+
+        width: 448
 
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         padding: 0
 
         contentItem: SearchableAssetsPanel {
             id: searchableAssetsPanel
+
+            objectName: "searchableAssetsPanel"
 
             function setCurrentAndClose(name, icon) {
                 button.name = name
@@ -69,5 +74,7 @@ Control {
                 root.selected(key)
             }
         }
+
+        onClosed: searchableAssetsPanel.clearSearch()
     }
 }

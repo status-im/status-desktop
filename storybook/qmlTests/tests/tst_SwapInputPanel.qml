@@ -211,7 +211,9 @@ Item {
             verify(!!assetSelectorList)
             waitForRendering(assetSelectorList)
 
-            const sttDelegate = findChild(assetSelectorList, "tokenSelectorAssetDelegate_STT")
+            const delegateIndex = ModelUtils.indexOf(assetSelectorList.model, "symbol", "STT")
+
+            const sttDelegate = assetSelectorList.itemAtIndex(delegateIndex)
             verify(!!sttDelegate)
             mouseClick(sttDelegate)
 

@@ -36,6 +36,10 @@ Control {
 
     signal selected(string key)
 
+    function clearSearch() {
+        searchBox.text = ""
+    }
+
     SortFilterProxyModel {
         id: sfpm
 
@@ -56,6 +60,8 @@ Control {
 
         TokenSearchBox {
             id: searchBox
+
+            objectName: "searchBox"
 
             Layout.fillWidth: true
             placeholderText: qsTr("Search assets")
@@ -89,10 +95,12 @@ Control {
                 required property var model
                 required property int index
 
-                highlighted: tokensKey === root.highlightedKey
-                interactive: tokensKey !== root.nonInteractiveKey
+                width: ListView.view.width
 
-                tokensKey: model.tokensKey
+                highlighted: model.tokensKey === root.highlightedKey
+                enabled: model.tokensKey !== root.nonInteractiveKey
+                balancesListInteractive: !ListView.view.moving
+
                 name: model.name
                 symbol: model.symbol
                 currencyBalanceAsString: model.currencyBalanceAsString ?? ""

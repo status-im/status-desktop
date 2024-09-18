@@ -71,7 +71,6 @@ Item {
 
             const delegate = findChild(controlUnderTest, "tokenSelectorAssetDelegate_%1".arg(tokensKey))
             verify(!!delegate)
-            tryCompare(delegate, "tokensKey", tokensKey)
 
             // click the delegate, verify the signal has been fired and has the correct "tokensKey" as argument
             mouseClick(delegate)
