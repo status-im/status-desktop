@@ -49,9 +49,9 @@ Control {
             Layout.fillWidth: true
             visible: !!root.assetsModel && !!root.collectiblesModel
 
-            currentIndex: !!root.assetsModel
-                          ? TokenSelectorPanel.Tabs.Assets
-                          : TokenSelectorPanel.Tabs.Collectibles
+            currentIndex: !!root.collectiblesModel && !root.assetsModel
+                          ? TokenSelectorPanel.Tabs.Collectibles
+                          : TokenSelectorPanel.Tabs.Assets
 
             StatusTabButton {
                 objectName: "assetsTab"
