@@ -179,5 +179,15 @@ Item {
             verify(!!checkmarkIcon)
             verify(checkmarkIcon.visible)
         }
+
+        function test_loading() {
+            verify(!!controlUnderTest)
+            compare(controlUnderTest.loading, false)
+            controlUnderTest.loading = true
+            controlUnderTest.text = "replicator.eth" // loadingIndicator visible only with some text
+            const loadingIndicator = findChild(controlUnderTest, "loadingIndicator")
+            verify(!!loadingIndicator)
+            verify(loadingIndicator.visible)
+        }
     }
 }
