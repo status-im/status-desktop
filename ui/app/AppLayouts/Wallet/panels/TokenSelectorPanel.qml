@@ -46,6 +46,7 @@ Control {
 
             objectName: "tokensTabBar"
 
+            Layout.fillWidth: true
             visible: !!root.assetsModel && !!root.collectiblesModel
 
             currentIndex: !!root.assetsModel
@@ -53,7 +54,6 @@ Control {
                           : TokenSelectorPanel.Tabs.Collectibles
 
             StatusTabButton {
-
                 objectName: "assetsTab"
 
                 text: qsTr("Assets")
@@ -63,7 +63,6 @@ Control {
             }
 
             StatusTabButton {
-
                 objectName: "collectiblesTab"
                 
                 text: qsTr("Collectibles")

@@ -14,16 +14,20 @@ StatusListView {
     currentIndex: -1
 
     delegate: TokenSelectorAssetDelegate {
+        objectName: "tokenSelectorAssetDelegate_" + model.tokensKey
+
         required property var model
         required property int index
 
-        tokensKey: model.tokensKey
+        width: ListView.view.width
+        balancesListInteractive: !ListView.view.moving
+
         name: model.name
         symbol: model.symbol
         currencyBalanceAsString: model.currencyBalanceAsString ?? ""
         iconSource: model.iconSource
         balancesModel: model.balances
 
-        onAssetSelected: (tokensKey) => root.tokenSelected(tokensKey)
+        onClicked: root.tokenSelected(model.tokensKey)
     }
 }

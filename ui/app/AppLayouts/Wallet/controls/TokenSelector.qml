@@ -180,20 +180,24 @@ ComboBox {
     }
 
     delegate: TokenSelectorAssetDelegate {
+        objectName: "tokenSelectorAssetDelegate_" + model.tokensKey
+
         required property var model
         required property int index
 
-        highlighted: tokensKey === d.currentTokensKey
-        interactive: tokensKey !== root.nonInteractiveDelegateKey
+        width: ListView.view.width
 
-        tokensKey: model.tokensKey
+        highlighted: model.tokensKey === d.currentTokensKey
+        enabled: model.tokensKey !== root.nonInteractiveDelegateKey
+        balancesListInteractive: !ListView.view.moving
+
         name: model.name
         symbol: model.symbol
         currencyBalanceAsString: model.currencyBalanceAsString ?? ""
         iconSource: model.iconSource
         balancesModel: model.balances
 
-        onAssetSelected: (tokensKey) => root.selectToken(tokensKey)
+        onClicked: root.selectToken(model.tokensKey)
     }
 
     Component {
