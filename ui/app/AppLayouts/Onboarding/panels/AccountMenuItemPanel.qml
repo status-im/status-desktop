@@ -1,6 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Dialogs 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -21,12 +20,12 @@ Item {
     property bool keycardCreatedAccount: false
 
     property StatusAssetSettings asset: StatusAssetSettings {
-      name: "add"
+        name: "add"
     }
 
     signal clicked()
 
-    width: parent.width
+    implicitWidth: parent.width
     height: 64
 
     Rectangle {
@@ -68,6 +67,7 @@ Item {
         anchors.left: userImageOrIcon.right
         anchors.right: root.keycardCreatedAccount? keycardIcon.left : parent.right
         anchors.leftMargin: Style.current.padding
+        anchors.rightMargin: root.keycardCreatedAccount ? 0 : Style.current.padding
         color: !!root.colorId ? Theme.palette.directColor1 : Theme.palette.primaryColor1
         elide: Text.ElideRight
     }

@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQml 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
@@ -67,22 +68,11 @@ Menu {
     property var openHandler
     property var closeHandler
 
-    function checkIfEmpty() {
-        for (let i = 0; i < root.contentItem.count; ++i) {
-            const menuItem = root.contentItem.itemAtIndex(i)
-            if (menuItem.text !== undefined && menuItem.enabled) { // skip menu separators
-                return false
-            }
-        }
-        return true
-    }
-
     dim: false
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
     topPadding: 8
     bottomPadding: 8
     margins: 16
-    width: Math.min(implicitWidth, root.maxImplicitWidth)
 
     onOpened: {
         if (typeof openHandler === "function") {
@@ -96,27 +86,24 @@ Menu {
         }
     }
 
-    QtObject {
-        id: d
-        //helper property to get the max implicit width of the delegate
-        property real maxDelegateImplWidth: 0
-    }
-
     delegate: StatusMenuItem {
         visible: root.hideDisabledItems && !visibleOnDisabled ? enabled : true
         height: visible ? implicitHeight : 0
-        onImplicitWidthChanged: {
-            if (visible)
-                d.maxDelegateImplWidth = Math.max(d.maxDelegateImplWidth, implicitWidth)
-        }
     }
 
-    contentItem: StatusListView {
-        currentIndex: root.currentIndex
-        implicitHeight: contentHeight
-        implicitWidth: d.maxDelegateImplWidth
-        interactive: contentHeight > availableHeight
-        model: root.contentModel
+    contentItem: StatusScrollView {
+        padding: 0
+
+        ColumnLayout {
+            Repeater {
+                model: root.contentModel
+
+                onItemAdded: {
+                    item.Layout.fillWidth = true
+                    item.Layout.maximumWidth = root.maxImplicitWidth
+                }
+            }
+        }
     }
 
     background: Rectangle {

@@ -23,6 +23,8 @@ SplitView {
 
             startupStore: StartupStore {
                 readonly property QtObject startupModuleInst: QtObject {
+                    readonly property int remainingAttempts: 5
+
                     signal accountLoginError
                     signal obtainingPasswordSuccess
                     signal obtainingPasswordError
@@ -34,33 +36,46 @@ SplitView {
                             colorHash: "0xAB34"
                             username: "Bob"
                             thumbnailImage: ""
+                            icon: ""
                             keyUid: "uid_1"
                         }
                         ListElement {
                             keycardCreatedAccount: false
                             colorId: 2
-                            colorHash: "0xAB34"
+                            colorHash: "0xAB35"
                             username: "John"
                             thumbnailImage: ""
+                            icon: ""
                             keyUid: "uid_2"
                         }
                         ListElement {
-                            keycardCreatedAccount: true
+                            keycardCreatedAccount: false
                             colorId: 3
                             colorHash: "0xAB38"
                             username: "8️⃣6️⃣.eth"
                             thumbnailImage: ""
+                            icon: ""
                             keyUid: "uid_4"
+                        }
+                        ListElement {
+                            keycardCreatedAccount: true
+                            colorId: 4
+                            colorHash: "0xAB37"
+                            username: "Very long username that should eventually elide on the right side"
+                            thumbnailImage: ""
+                            icon: ""
+                            keyUid: "uid_3"
                         }
                     }
                 }
 
                 readonly property QtObject selectedLoginAccount: QtObject {
                     readonly property bool keycardCreatedAccount: false
-                    readonly property int colorId: 0
+                    readonly property int colorId: 3
                     readonly property string username: "8️⃣6️⃣.eth"
                     readonly property string thumbnailImage: ""
-                    readonly property string keyUid: "uid_3"
+                    readonly property string keyUid: "uid_4"
+                    readonly property string icon: ""
                 }
 
                 readonly property QtObject currentStartupState: QtObject {
@@ -109,13 +124,6 @@ SplitView {
 
             logsView.logText: logs.logText
         }
-    }
-
-    Control {
-        SplitView.minimumWidth: 300
-        SplitView.preferredWidth: 300
-
-        // model editor will go here
     }
 }
 

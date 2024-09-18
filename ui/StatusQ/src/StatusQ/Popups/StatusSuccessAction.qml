@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Popups 0.1
 
@@ -9,7 +9,7 @@ import StatusQ.Popups 0.1
    \since StatusQ.Popups 0.1
    \brief Menu action displaying success state.
 
-   The \c StatusSuccessAction visually indicate a success state after being triggered.
+   The \c StatusSuccessAction visually indicates a success state after being triggered.
    Success state is showed by changing action type to \c{Success}.
 
    \qml
@@ -27,31 +27,31 @@ StatusMenuItem {
     id: root
 
     /*!
-       \qmlproperty bool StatusSuccessAction.qml::success
+       \qmlproperty bool StatusSuccessAction::success
        This property holds state of the action.
     */
     property bool success: false
     /*!
-       \qmlproperty string StatusSuccessAction.qml::successText
+       \qmlproperty string StatusSuccessAction::successText
        This property holds success text displayed on success state.
 
-       Default value is binded to \c{text}.
+       Default value is bound to \c{text}.
     */
     property string successText: text
     /*!
-       \qmlproperty string StatusSuccessAction.qml::successIconName
+       \qmlproperty string StatusSuccessAction::successIconName
        This property holds icon name displayed on success state.
 
        Default value is \c{tiny/checkmark}.
     */
     property string successIconName: "tiny/checkmark"
     /*!
-       \qmlproperty bool StatusSuccessAction.qml::autoDismissMenu
+       \qmlproperty bool StatusSuccessAction::autoDismissMenu
        This property enable menu closing on click.
     */
     property bool autoDismissMenu: false
     /*!
-       \qmlproperty int StatusSuccessAction.qml::timeout
+       \qmlproperty int StatusSuccessAction::timeout
        This property controls how long success state is showed.
     */
     property int timeout: 2000
