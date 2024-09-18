@@ -33,3 +33,4 @@ TestRunnerControls 1.0 TestRunnerControls.qml
 singleton FigmaUtils 1.0 FigmaUtils.qml
 singleton InspectionUtils 1.0 InspectionUtils.qml
 singleton StorybookUtils 1.0 StorybookUtils.qml
+singleton TestUtils 1.0 TestUtils.qml
