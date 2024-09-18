@@ -372,7 +372,7 @@ StatusDialog {
                         text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
                     }
 
-                    TokenSelectorNew {
+                    TokenSelector {
                         id: holdingSelector
                         objectName: "holdingSelector"
 
