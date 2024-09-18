@@ -1,4 +1,5 @@
-import QtQuick 2.3
+import QtQuick 2.15
+
 import shared 1.0
 import shared.panels 1.0
 
