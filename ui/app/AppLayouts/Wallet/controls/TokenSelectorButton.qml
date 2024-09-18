@@ -44,6 +44,8 @@ Control {
         id: notSelectedContent
 
         RowLayout {
+            objectName: "notSelectedContent"
+
             spacing: 10
 
             StatusBaseText {
@@ -64,6 +66,8 @@ Control {
         id: selectedContent
 
         RowLayout {
+            objectName: "selectedContent"
+
             spacing: Style.current.halfPadding
 
             StatusRoundedImage {
