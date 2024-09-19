@@ -26,6 +26,7 @@ type
     ChainName
     ChainIcon
     TokenOwnersModel
+    TokenHoldersLoading
     AccountName
     AccountAddress
     RemainingSupply
@@ -50,76 +51,105 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc updateDeployState*(self: TokenModel, chainId: int, contractAddress: string, deployState: DeployState) =
+  proc getItemIndex(self: TokenModel, chainId: int, contractAddress: string): int =
     for i in 0 ..< self.items.len:
-      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
-        self.items[i].tokenDto.deployState = deployState
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.DeployState.int])
-        return
+      if self.items[i].tokenDto.address == contractAddress and self.items[i].tokenDto.chainId == chainId:
+        return i
+    return -1
+
+  proc updateDeployState*(self: TokenModel, chainId: int, contractAddress: string, deployState: DeployState) =
+    let itemIdx = self.getItemIndex(chainId, contractAddress)
+    if itemIdx == -1 and self.items[itemIdx].tokenDto.deployState == deployState:
+      return
+
+    self.items[itemIdx].tokenDto.deployState = deployState
+    let index = self.createIndex(itemIdx, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.DeployState.int])
 
   proc updateAddress*(self: TokenModel, chainId: int, oldContractAddress: string, newContractAddress: string) =
-    for i in 0 ..< self.items.len:
-      if((self.items[i].tokenDto.address == oldContractAddress) and (self.items[i].tokenDto.chainId == chainId)):
-        self.items[i].tokenDto.address = newContractAddress
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.TokenAddress.int])
-        return
+    let itemIdx = self.getItemIndex(chainId, oldContractAddress)
+    if itemIdx == -1 and self.items[itemIdx].tokenDto.address == newContractAddress:
+      return
+
+    self.items[itemIdx].tokenDto.address = newContractAddress
+    let index = self.createIndex(itemIdx, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.TokenAddress.int])
 
   proc updateBurnState*(self: TokenModel, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) =
-    for i in 0 ..< self.items.len:
-      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
-        self.items[i].burnState = burnState
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.BurnState.int])
-        return
+    let itemIdx = self.getItemIndex(chainId, contractAddress)
+    if itemIdx == -1 and self.items[itemIdx].burnState == burnState:
+      return
+  
+    self.items[itemIdx].burnState = burnState
+    let index = self.createIndex(itemIdx, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.BurnState.int])
 
   proc updateRemoteDestructedAddresses*(self: TokenModel, chainId: int, contractAddress: string, remoteDestructedAddresses: seq[string]) =
-    for i in 0 ..< self.items.len:
-      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
-        self.items[i].remoteDestructedAddresses = remoteDestructedAddresses
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.RemotelyDestructState.int])
-        self.items[i].tokenOwnersModel.updateRemoteDestructState(remoteDestructedAddresses)
-        self.dataChanged(index, index, @[ModelRole.TokenOwnersModel.int])
-        return
+    let itemIdx = self.getItemIndex(chainId, contractAddress)
+    if itemIdx == -1 and self.items[itemIdx].remoteDestructedAddresses == remoteDestructedAddresses:
+      return
+
+    self.items[itemIdx].remoteDestructedAddresses = remoteDestructedAddresses
+    let index = self.createIndex(itemIdx, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.RemotelyDestructState.int])
+    self.items[itemIdx].tokenOwnersModel.updateRemoteDestructState(remoteDestructedAddresses)
+    self.dataChanged(index, index, @[ModelRole.TokenOwnersModel.int])
 
   proc updateSupply*(self: TokenModel, chainId: int, contractAddress: string, supply: Uint256, destructedAmount: Uint256) =
-    for i in 0 ..< self.items.len:
-      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
-        if self.items[i].tokenDto.supply != supply or self.items[i].destructedAmount != destructedAmount:
-          self.items[i].tokenDto.supply = supply
-          self.items[i].destructedAmount = destructedAmount
-          let index = self.createIndex(i, 0, nil)
-          defer: index.delete
-          self.dataChanged(index, index, @[ModelRole.Supply.int])
-        return
+    let itemIdx = self.getItemIndex(chainId, contractAddress)
+    if itemIdx == -1:
+      return
+
+    if self.items[itemIdx].tokenDto.supply != supply or self.items[itemIdx].destructedAmount != destructedAmount:
+      self.items[itemIdx].tokenDto.supply = supply
+      self.items[itemIdx].destructedAmount = destructedAmount
+      let index = self.createIndex(itemIdx, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.Supply.int])
 
   proc updateRemainingSupply*(self: TokenModel, chainId: int, contractAddress: string, remainingSupply: Uint256) =
-    for i in 0 ..< self.items.len:
-      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
-        if self.items[i].remainingSupply != remainingSupply:
-          self.items[i].remainingSupply = remainingSupply
-          let index = self.createIndex(i, 0, nil)
-          defer: index.delete
-          self.dataChanged(index, index, @[ModelRole.RemainingSupply.int])
-        return
+    let itemIdx = self.getItemIndex(chainId, contractAddress)
+    if itemIdx == -1 and self.items[itemIdx].remainingSupply == remainingSupply:
+      return
+
+    self.items[itemIdx].remainingSupply = remainingSupply
+    let index = self.createIndex(itemIdx, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.RemainingSupply.int])
+
+  proc hasTokenHolders*(self: TokenModel, chainId: int, contractAddress: string): bool =
+    let itemIdx = self.getItemIndex(chainId, contractAddress)
+    if itemIdx == -1:
+      return false
+    return self.items[itemIdx].tokenOwnersModel.count > 0
 
   proc setCommunityTokenOwners*(self: TokenModel, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) =
-    for i in 0 ..< self.items.len:
-      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
-        self.items[i].tokenOwnersModel.setItems(owners.map(proc(owner: CommunityCollectibleOwner): TokenOwnersItem =
-          # TODO: provide number of messages here
-          result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, 0, owner.collectibleOwner, self.items[i].remoteDestructedAddresses)
-        ))
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.TokenOwnersModel.int])
-        return
+    let itemIdx = self.getItemIndex(chainId, contractAddress)
+    if itemIdx == -1:
+      return
+
+    self.items[itemIdx].tokenHoldersLoading = false
+    self.items[itemIdx].tokenOwnersModel.setItems(owners.map(proc(owner: CommunityCollectibleOwner): TokenOwnersItem =
+      # TODO: provide number of messages here
+      result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, 0, owner.collectibleOwner, self.items[itemIdx].remoteDestructedAddresses)
+    ))
+    let index = self.createIndex(itemIdx, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.TokenOwnersModel.int, ModelRole.TokenHoldersLoading.int])
+
+  proc setCommunityTokenHoldersLoading*(self: TokenModel, chainId: int, contractAddress: string, value: bool) =
+    let itemIdx = self.getItemIndex(chainId, contractAddress)
+    if itemIdx == -1 and self.items[itemIdx].tokenHoldersLoading == value:
+      return
+
+    self.items[itemIdx].tokenHoldersLoading = value
+    let index = self.createIndex(itemIdx, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.TokenHoldersLoading.int])
 
   proc countChanged(self: TokenModel) {.signal.}
 
@@ -128,7 +158,6 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
-
 
   proc getOwnerToken*(self: TokenModel): TokenItem =
     for i in 0 ..< self.items.len:
@@ -144,17 +173,18 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc removeItemByChainIdAndAddress*(self: TokenModel, chainId: int, address: string) =
-    for i in 0 ..< self.items.len:
-      if((self.items[i].tokenDto.address == address) and (self.items[i].tokenDto.chainId == chainId)):
-        let parentModelIndex = newQModelIndex()
-        defer: parentModelIndex.delete
+  proc removeItemByChainIdAndAddress*(self: TokenModel, chainId: int, contractAddress: string) =
+    let itemIdx = self.getItemIndex(chainId, contractAddress)
+    if itemIdx == -1:
+      return
 
-        self.beginRemoveRows(parentModelIndex, i, i)
-        self.items.delete(i)
-        self.endRemoveRows()
-        self.countChanged()
-        return
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginRemoveRows(parentModelIndex, itemIdx, itemIdx)
+    self.items.delete(itemIdx)
+    self.endRemoveRows()
+    self.countChanged()
 
   proc getCount*(self: TokenModel): int {.slot.} =
     self.items.len
@@ -184,6 +214,7 @@ QtObject:
       ModelRole.ChainName.int:"chainName",
       ModelRole.ChainIcon.int:"chainIcon",
       ModelRole.TokenOwnersModel.int:"tokenOwnersModel",
+      ModelRole.TokenHoldersLoading.int:"tokenHoldersLoading",
       ModelRole.AccountName.int:"accountName",
       ModelRole.AccountAddress.int:"accountAddress",
       ModelRole.RemainingSupply.int:"remainingSupply",
@@ -235,6 +266,8 @@ QtObject:
         result = newQVariant(item.chainIcon)
       of ModelRole.TokenOwnersModel:
         result = newQVariant(item.tokenOwnersModel)
+      of ModelRole.TokenHoldersLoading:
+        result = newQVariant(item.tokenHoldersLoading)
       of ModelRole.AccountName:
         result = newQVariant(item.accountName)
       of ModelRole.AccountAddress:

@@ -7,6 +7,7 @@ QtObject {
     id: root
 
     property var communityTokensModuleInst: communityTokensModule ?? null
+    property var mainModuleInst: mainModule ?? null
 
     // Network selection properties:
     property var flatNetworks: networksModule.flatNetworks
@@ -231,11 +232,11 @@ QtObject {
         communityTokensModuleInst.asyncGetOwnerTokenDetails(communityId)
     }
 
-    function startTokenHoldersManagement(chainId, contractAddress) {
-        communityTokensModuleInst.startTokenHoldersManagement(chainId, contractAddress)
+    function startTokenHoldersManagement(communityId, chainId, contractAddress) {
+        mainModuleInst.startTokenHoldersManagement(communityId, chainId, contractAddress)
     }
 
     function stopTokenHoldersManagement() {
-        communityTokensModuleInst.stopTokenHoldersManagement()
+        mainModuleInst.stopTokenHoldersManagement()
     }
 }

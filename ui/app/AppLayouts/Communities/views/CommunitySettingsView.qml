@@ -375,7 +375,7 @@ StatusSectionLayout {
 
             onRegisterBurnTokenFeesSubscriber: d.feesBroker.registerBurnFeesSubscriber(feeSubscriber)
 
-            onStartTokenHoldersManagement: communityTokensStore.startTokenHoldersManagement(chainId, address)
+            onStartTokenHoldersManagement: communityTokensStore.startTokenHoldersManagement(root.community.id, chainId, address)
 
             onStopTokenHoldersManagement: communityTokensStore.stopTokenHoldersManagement()
 

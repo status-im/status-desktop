@@ -156,6 +156,7 @@ type
     contractAddress*: string
     chainId*: int
     owners*: seq[CommunityCollectibleOwner]
+    error*: string
 
 type
   CommunityTokensDetailsArgs* =  ref object of Args
@@ -259,6 +260,7 @@ const SIGNAL_COMPUTE_SELF_DESTRUCT_FEE* = "communityTokens-computeSelfDestructFe
 const SIGNAL_COMPUTE_BURN_FEE* = "communityTokens-computeBurnFee"
 const SIGNAL_COMPUTE_AIRDROP_FEE* = "communityTokens-computeAirdropFee"
 const SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED* = "communityTokens-communityTokenOwnersFetched"
+const SIGNAL_COMMUNITY_TOKEN_OWNERS_LOADING_FAILED* = "communityTokens-communityTokenOwnersLoadingFailed"
 const SIGNAL_REMOTE_DESTRUCT_STATUS* = "communityTokens-communityTokenRemoteDestructStatus"
 const SIGNAL_BURN_STATUS* = "communityTokens-communityTokenBurnStatus"
 const SIGNAL_BURN_ACTION_RECEIVED* = "communityTokens-communityTokenBurnActionReceived"
@@ -1290,17 +1292,28 @@ QtObject:
 
   proc onCommunityTokenOwnersFetched*(self:Service, response: string) {.slot.} =
     let responseJson = response.parseJson()
-    if responseJson{"error"}.kind != JNull and responseJson{"error"}.getStr != "":
-      let errorMessage = responseJson["error"].getStr
-      error "Can't fetch community token owners", chainId=responseJson{"chainId"}, contractAddress=responseJson{"contractAddress"}, errorMsg=errorMessage
-      return
     let chainId = responseJson{"chainId"}.getInt
     let contractAddress = responseJson{"contractAddress"}.getStr
     let communityId = responseJson{"communityId"}.getStr
-    let communityTokenOwners = toCommunityCollectibleOwners(responseJson{"result"})
-    self.tokenOwnersCache[(chainId, contractAddress)] = communityTokenOwners
-    let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: communityTokenOwners)
-    self.events.emit(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED, data)
+
+    try:
+      if responseJson{"error"}.kind != JNull and responseJson{"error"}.getStr != "":
+        raise newException(ValueError, responseJson["error"].getStr)
+
+      let communityTokenOwners = toCommunityCollectibleOwners(responseJson{"result"})
+      self.tokenOwnersCache[(chainId, contractAddress)] = communityTokenOwners
+      let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: communityTokenOwners)
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED, data)
+    except Exception as e:
+      error "Can't fetch community token owners", chainId=responseJson{"chainId"}, contractAddress=responseJson{"contractAddress"}, errorMsg=e.msg
+
+      let data = CommunityTokenOwnersArgs(
+        chainId: chainId,
+        contractAddress: contractAddress,
+        communityId: communityId,
+        error: e.msg,
+      )
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_OWNERS_LOADING_FAILED, data)
 
     # restart token holders timer
     self.restartTokenHoldersTimer(chainId, contractAddress)
@@ -1312,14 +1325,6 @@ QtObject:
   proc iAmCommunityPrivilegedUser(self:Service, communityId: string): bool =
     let community = self.communityService.getCommunityById(communityId)
     return community.isPrivilegedUser()
-
-  # used when community members changed
-  proc fetchCommunityTokenOwners*(self: Service, communityId: string) =
-    if not self.iAmCommunityPrivilegedUser(communityId):
-      return
-    let tokens = self.getCommunityTokens(communityId)
-    for token in tokens:
-      self.fetchCommunityOwners(token)
 
   proc getOwnerToken*(self: Service, communityId: string): CommunityTokenDto =
     let communityTokens = self.getCommunityTokens(communityId)

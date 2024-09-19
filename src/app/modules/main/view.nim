@@ -375,3 +375,9 @@ QtObject:
   proc emitCommunityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string,
     membershipState: int) =
     self.communityMemberStatusEphemeralNotification(communityName, memberName, membershipState)
+
+  proc startTokenHoldersManagement*(self: View, communityId: string, chainId: int, contractAddress: string) {.slot.} =
+    self.delegate.startTokenHoldersManagement(communityId, chainId, contractAddress)
+
+  proc stopTokenHoldersManagement*(self: View) {.slot.} =
+    self.delegate.stopTokenHoldersManagement()

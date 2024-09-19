@@ -178,9 +178,3 @@ proc declineOwnership*(self: Controller, communityId: string) =
 
 proc asyncGetOwnerTokenOwnerAddress*(self: Controller, chainId: int, contractAddress: string) =
   self.communityTokensService.asyncGetOwnerTokenOwnerAddress(chainId, contractAddress)
-
-proc startTokenHoldersManagement*(self: Controller, chainId: int, contractAddress: string) =
-  self.communityTokensService.startTokenHoldersManagement(chainId, contractAddress)
-
-proc stopTokenHoldersManagement*(self: Controller) =
-  self.communityTokensService.stopTokenHoldersManagement()

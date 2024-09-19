@@ -51,4 +51,7 @@ QtObject {
 
     // Asset-specific properties:
     property int decimals: 2
+
+    // Loading indicators
+    property bool tokenHoldersLoading: false
 }
