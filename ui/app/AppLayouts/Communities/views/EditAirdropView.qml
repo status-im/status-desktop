@@ -512,6 +512,13 @@ StatusScrollView {
                 model: SortFilterProxyModel {
                     sourceModel: membersModel
 
+                    sorters : [
+                        StringSorter {
+                            roleName: "preferredDisplayName"
+                            caseSensitivity: Qt.CaseInsensitive
+                        }
+                    ]
+
                     filters: [
                         ExpressionFilter {
                             enabled: membersDropdown.searchText !== ""

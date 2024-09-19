@@ -53,8 +53,11 @@ StatusDropdown {
         listView.positionViewAtBeginning()
     }
 
-    onAboutToShow: listView.Layout.preferredHeight = Math.min(
+    onAboutToShow: {
+        searcher.input.edit.forceActiveFocus()
+        listView.Layout.preferredHeight = Math.min(
                        listView.implicitHeight, 420)
+    }
 
     // only channels (no entries representing categories), sorted according to
     // category position and position
