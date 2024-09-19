@@ -79,6 +79,7 @@ WalletConnectSDKBase {
                 console.error("Error in event data lookup", JSON.stringify(event))
                 return null
             }
+            const interpreted = d.prepareData(method, data)
             let enoughFunds = !isTransactionMethod(method)
             let obj = sessionRequestComponent.createObject(null, {
                 event,
@@ -88,12 +89,12 @@ WalletConnectSDKBase {
                 accountAddress,
                 chainId,
                 data,
+                preparedData: interpreted.preparedData,
                 maxFeesText: "?",
                 maxFeesEthText: "?",
                 enoughFunds: enoughFunds,
-                estimatedTimeText: "?",
-                preparedData: event.params.request.tx.data,
             })
+
             if (obj === null) {
                 console.error("Error creating SessionRequestResolved for event")
                 return null
@@ -113,7 +114,132 @@ WalletConnectSDKBase {
             }
             obj.resolveDappInfoFromSession(session)
 
+            if (d.isTransactionMethod(method)) {
+                let tx = obj.data.tx
+                if (tx === null) {
+                    console.error("Error cannot resolve tx object")
+                    return null
+                }
+                let BigOps = SQUtils.AmountsArithmetic
+                let gasLimit = hexToGwei(tx.gasLimit)
+
+                if (tx.gasPrice === null || tx.gasPrice === undefined) {
+                    let maxFeePerGas = hexToGwei(tx.maxFeePerGas)
+                    let maxPriorityFeePerGas = hexToGwei(tx.maxPriorityFeePerGas)
+                    let totalMaxFees = BigOps.sum(maxFeePerGas, maxPriorityFeePerGas)
+                    let maxFees = BigOps.times(gasLimit, totalMaxFees)
+                    let maxFeesString = maxFees.toString()
+                    obj.maxFeesText = maxFeesString
+                    obj.maxFeesEthText = maxFeesString
+                    obj.enoughFunds = true
+                } else {
+                    let gasPrice = hexToGwei(tx.gasPrice)
+                    let maxFees = BigOps.times(gasLimit, gasPrice)
+                    let maxFeesString = maxFees.toString()
+                    obj.maxFeesText = maxFeesString
+                    obj.maxFeesEthText = maxFeesString
+                    obj.enoughFunds = true
+                }
+            }
+
             return obj
+        }
+
+        function getTxObject(method, data) {
+            let tx
+            if (method === SessionRequest.methods.signTransaction.name) {
+                tx = SessionRequest.methods.signTransaction.getTxObjFromData(data)
+            } else if (method === SessionRequest.methods.sendTransaction.name) {
+                tx = SessionRequest.methods.sendTransaction.getTxObjFromData(data)
+            } else {
+                console.error("Not a transaction method")
+            }
+            return tx
+        }
+
+        // returns {
+        //   preparedData,
+        //   value // null or ETH Big number
+        // }
+        function prepareData(method, data) {
+            let payload = null
+            switch(method) {
+                case SessionRequest.methods.personalSign.name: {
+                    payload = SessionRequest.methods.personalSign.getMessageFromData(data)
+                    break
+                }
+                case SessionRequest.methods.sign.name: {
+                    payload = SessionRequest.methods.sign.getMessageFromData(data)
+                    break
+                }
+                case SessionRequest.methods.signTypedData_v4.name: {
+                    const stringPayload = SessionRequest.methods.signTypedData_v4.getMessageFromData(data)
+                    payload = JSON.stringify(JSON.parse(stringPayload), null, 2)
+                    break
+                }
+                case SessionRequest.methods.signTypedData.name: {
+                    const stringPayload = SessionRequest.methods.signTypedData.getMessageFromData(data)
+                    payload = JSON.stringify(JSON.parse(stringPayload), null, 2)
+                    break
+                }
+                case SessionRequest.methods.signTransaction.name:
+                case SessionRequest.methods.sendTransaction.name:
+                    // For transactions we process the data in a different way as follows
+                    break
+                default:
+                    console.error("Unhandled method", method)
+                    break;
+            }
+
+            let value = SQUtils.AmountsArithmetic.fromNumber(0)
+            if (d.isTransactionMethod(method)) {
+                let txObj = d.getTxObject(method, data)
+                let tx = Object.assign({}, txObj)
+                if (tx.value) {
+                    value = hexToEth(tx.value)
+                    tx.value = value.toString()
+                }
+                if (tx.maxFeePerGas) {
+                    tx.maxFeePerGas = hexToGwei(tx.maxFeePerGas).toString()
+                }
+                if (tx.maxPriorityFeePerGas) {
+                    tx.maxPriorityFeePerGas = hexToGwei(tx.maxPriorityFeePerGas).toString()
+                }
+                if (tx.gasPrice) {
+                    tx.gasPrice = hexToGwei(tx.gasPrice)
+                }
+                if (tx.gasLimit) {
+                    tx.gasLimit = parseInt(root.store.hexToDec(tx.gasLimit))
+                }
+                if (tx.nonce) {
+                    tx.nonce = parseInt(root.store.hexToDec(tx.nonce))
+                }
+
+                payload = JSON.stringify(tx, null, 2)
+            }
+            return {
+                    preparedData: payload,
+                    value: value
+                }
+        }
+
+        function hexToEth(value) {
+            return hexToEthDenomination(value, "eth")
+        }
+        function hexToGwei(value) {
+            return hexToEthDenomination(value, "gwei")
+        }
+        function hexToEthDenomination(value, ethUnit) {
+            let unitMapping = {
+                "gwei": 9,
+                "eth": 18
+            }
+            let BigOps = SQUtils.AmountsArithmetic
+            let decValue = root.store.hexToDec(value)
+            if (!!decValue) {
+                return BigOps.div(BigOps.fromNumber(decValue), BigOps.fromNumber(1, unitMapping[ethUnit]))
+            }
+            return BigOps.fromNumber(0)
         }
 
         function isTransactionMethod(method) {
@@ -128,7 +254,7 @@ WalletConnectSDKBase {
                 if (event.params.request.params.length < 2) {
                     return address
                 }
-                address = event.params.request.params[0]
+                address = event.params.request.params[1]
             } else if (method === SessionRequest.methods.sign.name) {
                 if (event.params.request.params.length === 1) {
                     return address
@@ -146,7 +272,10 @@ WalletConnectSDKBase {
                 if (event.params.request.params.length == 0) {
                     return address
                 }
-                address = event.params.request.params[0]
+                address = event.params.request.params[0].from
+            } else {
+                console.error("Unsupported method to lookup account: ", method)
+                return null
             }
             const account = SQUtils.ModelUtils.getFirstModelEntryIf(root.wcService.validAccounts, (account) => {
                 return account.address.toLowerCase() === address.toLowerCase();
@@ -213,7 +342,7 @@ WalletConnectSDKBase {
                 if (event.params.request.params.length == 0) {
                     return null
                 }
-                let tx = event.params.request.params[0]
+                const tx = event.params.request.params[0]
                 return SessionRequest.methods.sendTransaction.buildDataObject(tx)
             } else {
                 return null
@@ -267,12 +396,11 @@ WalletConnectSDKBase {
                                       password,
                                       pin)
             } else if (request.method === SessionRequest.methods.sendTransaction.name) {
-                let txObj = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
                 store.sendTransaction(request.topic,
                                       request.id,
                                       request.account.address,
-                                      request.chainId,
-                                      txObj,
+                                      request.network.chainId,
+                                      request.data.tx,
                                       password,
                                       pin)
             }
@@ -478,7 +606,7 @@ WalletConnectSDKBase {
                     }
                     case SessionRequest.methods.sendTransaction.name: {
                         const jsonPayload = SessionRequest.methods.sendTransaction.getTxObjFromData(request.data)
-                        return JSON.stringify(jsonPayload, null, 2)
+                        return JSON.stringify(request.data, null, 2)
                     }
                 }
             }
@@ -560,14 +688,20 @@ WalletConnectSDKBase {
                 "params": {
                     "chainId": `eip155:${dappInfo.chainId}`,
                     "request": {
-                        "method": SessionRequest.methods.personalSign.name,
-                        "tx": {
-                            "data": txArgsParams.data,
-                        },
+                        "method": SessionRequest.methods.sendTransaction.name,
                         "params": [
-                            txArgsParams.from,
-                            txArgsParams.to,
-                        ],
+                            {
+                                "from": txArgsParams.from,
+                                "to": txArgsParams.to,
+                                "value": txArgsParams.value,
+                                "gasLimit": txArgsParams.gas,
+                                "gasPrice": txArgsParams.gasPrice,
+                                "maxFeePerGas": txArgsParams.maxFeePerGas,
+                                "maxPriorityFeePerGas": txArgsParams.maxPriorityFeePerGas,
+                                "nonce": txArgsParams.nonce,
+                                "data": txArgsParams.data
+                            }
+                        ]
                     }
                 }
             }
