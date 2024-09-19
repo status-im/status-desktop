@@ -199,9 +199,13 @@ StackView {
     Component {
         id: ownerTokenViewComponent
 
+
         SettingsPage {
+
             id: ownerTokenPage
 
+            objectName: "ownerTokenPage"
+            
             title: qsTr("Mint Owner token")
 
             contentItem: OwnerTokenWelcomeView {
