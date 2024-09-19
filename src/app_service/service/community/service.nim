@@ -205,6 +205,7 @@ const SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED* = "communityMemberStatusChanged"
 const SIGNAL_COMMUNITY_MEMBERS_CHANGED* = "communityMembersChanged"
 const SIGNAL_COMMUNITY_KICKED* = "communityKicked"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
+const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY_ACCEPTED* = "requestToJoinCommunityAccepted"
 const SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED* = "requestToJoinCommunityCanceled"
 const SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN* = "waitingOnNewCommunityOwnerToConfirmRequestToRejoin"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
@@ -769,29 +770,31 @@ QtObject:
 
   proc handleCommunitiesRequestsToJoin(self: Service, membershipRequests: seq[CommunityMembershipRequestDto]) =
     for membershipRequest in membershipRequests:
-          if (not self.communities.contains(membershipRequest.communityId)):
-            error "Received a membership request for an unknown community", communityId=membershipRequest.communityId
-            continue
+      if (not self.communities.contains(membershipRequest.communityId)):
+        error "Received a membership request for an unknown community", communityId=membershipRequest.communityId
+        continue
 
-          let requestToJoinState = RequestToJoinType(membershipRequest.state)
-          let noAwaitingIndex = self.getWaitingForSharedAddressesRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1
-          if requestToJoinState == RequestToJoinType.AwaitingAddress and noAwaitingIndex:
-            self.communities[membershipRequest.communityId].waitingForSharedAddressesRequestsToJoin.add(membershipRequest)
-            let myPublicKey = singletonInstance.userProfile.getPubKey()
-            if myPublicKey == membershipRequest.publicKey:
-              self.events.emit(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN, CommunityIdArgs(communityId: membershipRequest.communityId))
-          elif RequestToJoinType.Pending == requestToJoinState and self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1:
-            self.communities[membershipRequest.communityId].pendingRequestsToJoin.add(membershipRequest)
-            self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY,
-              CommunityRequestArgs(communityRequest: membershipRequest))
-          else:
-            try:
-              self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, self.communities[membershipRequest.communityId],
-                requestToJoinState)
-            except Exception as e:
-              error "Unknown request", msg = e.msg
-
-          self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[membershipRequest.communityId]))
+      let requestToJoinState = RequestToJoinType(membershipRequest.state)
+      let noAwaitingIndex = self.getWaitingForSharedAddressesRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1
+      if requestToJoinState == RequestToJoinType.AwaitingAddress and noAwaitingIndex:
+        self.communities[membershipRequest.communityId].waitingForSharedAddressesRequestsToJoin.add(membershipRequest)
+        let myPublicKey = singletonInstance.userProfile.getPubKey()
+        if myPublicKey == membershipRequest.publicKey:
+          self.events.emit(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN, CommunityIdArgs(communityId: membershipRequest.communityId))
+      elif requestToJoinState == RequestToJoinType.Pending and self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1:
+        self.communities[membershipRequest.communityId].pendingRequestsToJoin.add(membershipRequest)
+        self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY,
+          CommunityRequestArgs(communityRequest: membershipRequest))
+      elif requestToJoinState == RequestToJoinType.Accepted:
+        # Request was accepted, update the member's airdrop address
+        self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY_ACCEPTED,
+          CommunityRequestArgs(communityRequest: membershipRequest))
+      else:
+        try:
+          self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, self.communities[membershipRequest.communityId],
+            requestToJoinState)
+        except Exception as e:
+          error "Unknown request", msg = e.msg
 
   proc init*(self: Service) =
     self.doConnect()

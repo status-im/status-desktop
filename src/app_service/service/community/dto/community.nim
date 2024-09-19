@@ -48,6 +48,13 @@ type
 proc isBanned*(state: CommunityMemberPendingBanOrKick): bool =
   return state == CommunityMemberPendingBanOrKick.Banned or state == CommunityMemberPendingBanOrKick.BannedWithAllMessagesDelete
 
+type RevealedAccount* = object
+  address*: string
+  chainIds*: seq[int]
+  isAirdropAddress*: bool
+
+type MembersRevealedAccounts* = Table[string, seq[RevealedAccount]]
+
 type CommunityMembershipRequestDto* = object
   id*: string
   publicKey*: string
@@ -55,6 +62,7 @@ type CommunityMembershipRequestDto* = object
   communityId*: string
   state*: int
   our*: string #FIXME: should be bool
+  revealedAccounts*: seq[RevealedAccount]
 
 type CommunitySettingsDto* = object
   id*: string
@@ -125,13 +133,6 @@ type CommunityMetricsDto* = object
   communityId*: string
   metricsType*: CommunityMetricsType
   intervals*: seq[MetricsIntervalDto]
-
-type RevealedAccount* = object
-  address*: string
-  chainIds*: seq[int]
-  isAirdropAddress*: bool
-
-type MembersRevealedAccounts* = Table[string, seq[RevealedAccount]]
 
 type CommunityDto* = object
   id*: string
@@ -388,6 +389,24 @@ proc toCommunityMetricsDto*(jsonObj: JsonNode): CommunityMetricsDto =
     for interval in intervalsObj:
       result.intervals.add(interval.toMetricsIntervalDto)
 
+proc toRevealedAccount*(revealedAccountObj: JsonNode): RevealedAccount =
+  var chainIdsObj: JsonNode
+  var chainIds: seq[int] = @[]
+  if revealedAccountObj.getProp("chain_ids", chainIdsObj):
+    for chainIdObj in chainIdsObj:
+      chainIds.add(chainIdObj.getInt)
+
+  result = RevealedAccount(
+    address: revealedAccountObj["address"].getStr,
+    chainIds: chainIds,
+    isAirdropAddress: revealedAccountObj{"isAirdropAddress"}.getBool,
+  )
+
+proc toRevealedAccounts*(revealedAccountsObj: JsonNode): seq[RevealedAccount] =
+  result = @[]
+  for revealedAccountObj in revealedAccountsObj:
+    result.add(revealedAccountObj.toRevealedAccount())
+
 proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipRequestDto =
   result = CommunityMembershipRequestDto()
   discard jsonObj.getProp("id", result.id)
@@ -396,6 +415,10 @@ proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipReq
   discard jsonObj.getProp("state", result.state)
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("our", result.our)
+
+  var revealedAccountObj: JsonNode
+  if(jsonObj.getProp("revealedAccounts", revealedAccountObj)):
+    result.revealedAccounts = toRevealedAccounts(revealedAccountObj)
 
 proc toCollapsedCategoryDto*(jsonObj: JsonNode, isCollapsed: bool = false): Category =
   result = Category()
@@ -578,24 +601,6 @@ proc parseDiscordChannels*(response: JsonNode): seq[DiscordChannelDto] =
   if (response["discordChannels"].kind == JArray):
     for channel in response["discordChannels"].items():
       result.add(channel.toDiscordChannelDto())
-
-proc toRevealedAccount*(revealedAccountObj: JsonNode): RevealedAccount =
-  var chainIdsObj: JsonNode
-  var chainIds: seq[int] = @[]
-  if revealedAccountObj.getProp("chain_ids", chainIdsObj):
-    for chainIdObj in chainIdsObj:
-      chainIds.add(chainIdObj.getInt)
-
-  result = RevealedAccount(
-    address: revealedAccountObj["address"].getStr,
-    chainIds: chainIds,
-    isAirdropAddress: revealedAccountObj{"isAirdropAddress"}.getBool,
-  )
-
-proc toRevealedAccounts*(revealedAccountsObj: JsonNode): seq[RevealedAccount] =
-  result = @[]
-  for revealedAccountObj in revealedAccountsObj:
-    result.add(revealedAccountObj.toRevealedAccount())
 
 proc toMembersRevealedAccounts*(membersRevealedAccountsObj: JsonNode): MembersRevealedAccounts =
   result = initTable[string, seq[RevealedAccount]]()

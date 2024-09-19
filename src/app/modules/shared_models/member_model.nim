@@ -396,6 +396,13 @@ QtObject:
       ModelRole.AirdropAddress.int
     ])
 
+  proc getAirdropAddressForMember*(self: Model, pubKey: string): string =
+    let idx = self.findIndexForMember(pubKey)
+    if idx == -1:
+      return ""
+
+    return self.items[idx].airdropAddress
+
 # TODO: rename me to removeItemByPubkey
   proc removeItemById*(self: Model, pubKey: string) =
     let ind = self.findIndexForMember(pubKey)
@@ -437,3 +444,13 @@ QtObject:
     self.dataChanged(index, index, @[
       ModelRole.MembershipRequestState.int
     ])
+
+  proc getNewMembers*(self: Model, pubkeys: seq[string]): seq[string] = 
+    for pubkey in pubkeys:
+      var found = false
+      for item in self.items:
+        if item.pubKey == pubkey:
+          found = true
+          break
+      if not found:
+        result.add(pubkey)

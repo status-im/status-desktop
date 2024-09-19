@@ -315,21 +315,24 @@ method onCommunityTokensDetailsLoaded[T](self: Module[T], communityId: string,
   )
   self.view.model().setTokenItems(communityId, communityTokensItems)
 
-proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityDto): SectionItem =
+proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityDto, isEdit: bool = false): SectionItem =
   var communityTokensItems: seq[TokenItem]
+  var communityMembersAirdropAddress: Table[string, string]
 
+  let existingCommunity = self.view.model().getItemById(communityDetails.id)
   if communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster:
-    self.controller.getCommunityTokensDetailsAsync(communityDetails.id)
+    if not isEdit:
+      # When first creating the section, we load the community tokens and the members revealed accounts
+      self.controller.getCommunityTokensDetailsAsync(communityDetails.id)
 
-    # Get community members' revealed accounts
-    # We will update the model later when we finish loading the accounts
-    self.controller.asyncGetRevealedAccountsForAllMembers(communityDetails.id)
+      # Get community members' revealed accounts
+      # We will update the model later when we finish loading the accounts
+      self.controller.asyncGetRevealedAccountsForAllMembers(communityDetails.id)
 
     # If there are tokens already in the model, we should keep the existing community tokens, until
     # getCommunityTokensDetailsAsync will trigger onCommunityTokensDetailsLoaded
-    let existingCommunity = self.view.model().getItemById(communityDetails.id)
     if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
-      communityTokensItems = existingCommunity.communityTokens.items
+      communityTokensItems = existingCommunity.communityTokens.items   
 
   let (unviewedCount, notificationsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
     communityDetails.id,
@@ -394,8 +397,16 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
           state = memberState
       elif not member.joined:
         state = MembershipRequestState.AwaitingAddress
-
-      result = self.createMemberItem(member.id, "", state, member.role)
+      var airdropAddress = ""
+      if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
+        airdropAddress = existingCommunity.members.getAirdropAddressForMember(member.id)
+      result = self.createMemberItem(
+        member.id,
+        requestId = "",
+        state,
+        member.role,
+        airdropAddress,
+      )
     ),
     # pendingRequestsToJoin
     communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
@@ -1093,7 +1104,7 @@ method communityEdited*[T](
     community: CommunityDto) =
   if(not self.chatSectionModules.contains(community.id)):
     return
-  var communitySectionItem = self.createCommunitySectionItem(community)
+  var communitySectionItem = self.createCommunitySectionItem(community, isEdit = true)
   # We need to calculate the unread counts because the community update doesn't come with it
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
     communitySectionItem.id,
@@ -1667,6 +1678,20 @@ method communityMembersRevealedAccountsLoaded*[T](self: Module[T], communityId: 
 
   self.view.model.setMembersAirdropAddress(communityId, communityMembersAirdropAddress)
 
+method communityMemberRevealedAccountsAdded*[T](self: Module[T], request: CommunityMembershipRequestDto) =
+  var airdropAddress = ""
+  for revealedAccount in request.revealedAccounts:
+    if revealedAccount.isAirdropAddress:
+      airdropAddress = revealedAccount.address
+      discard
+
+  if airdropAddress == "":
+    warn "Request to join doesn't have an airdrop address", requestId = request.id, communityId = request.communityId
+    return
+
+  let communityMembersAirdropAddress = {request.publicKey: airdropAddress}.toTable
+  self.view.model.setMembersAirdropAddress(request.communityId, communityMembersAirdropAddress)
+
 ## Used in test env only, for testing keycard flows
 method registerMockedKeycard*[T](self: Module[T], cardIndex: int, readerState: int, keycardState: int,
   mockedKeycard: string, mockedKeycardHelper: string) =
@@ -1700,7 +1725,14 @@ method updateRequestToJoinState*[T](self: Module[T], sectionId: string, requestT
   if sectionId in self.chatSectionModules:
     self.chatSectionModules[sectionId].updateRequestToJoinState(requestToJoinState)
 
-proc createMemberItem*[T](self: Module[T], memberId: string, requestId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
+proc createMemberItem*[T](
+    self: Module[T],
+    memberId: string,
+    requestId: string,
+    state: MembershipRequestState,
+    role: MemberRole,
+    airdropAddress: string = "",
+    ): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)
   let status = self.controller.getStatusForContactWithId(memberId)
   return initMemberItem(
@@ -1718,7 +1750,8 @@ proc createMemberItem*[T](self: Module[T], memberId: string, requestId: string, 
     isVerified = contactDetails.dto.isContactVerified(),
     memberRole = role,
     membershipRequestState = state,
-    requestToJoinId = requestId
+    requestToJoinId = requestId,
+    airdropAddress = airdropAddress,
   )
 
 {.pop.}
