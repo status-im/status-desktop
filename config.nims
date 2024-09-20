@@ -37,7 +37,8 @@ else:
   # don't link libraries we're not actually using
   switch("passL", "-Wl,-as-needed")
 
---define:chronicles_line_numbers # useful when debugging
+--define:chronicles_line_numbers # useful when debugging=
+switch("define", "chronicles_timestamps=RfcUtcTime")
 
 # The compiler doth protest too much, methinks, about all these cases where it can't
 # do its (N)RVO pass: https://github.com/nim-lang/RFCs/issues/230
