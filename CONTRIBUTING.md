@@ -316,7 +316,7 @@ consuming them.
 
 ### Features
 
-Storybook is an internal tool that supports rapid development of components in
+`Storybook` is an internal tool that supports rapid development of components in
 isolation, outside the application. It is also a kind of catalog of components from
 which the application is built.
 
@@ -380,6 +380,76 @@ It offers a number of functionalities that improve development:
   should be used instead of `import "./stores" as WalletStores`. Second version is
   relative import from the file system. As a consequence, the mechanism for
   overriding import paths for tests and Storybook's pages will not work.
+
+## Unit tests
+
+The project has unit tests for both C++ and QML code.
+
+### C++ unit tests
+
+C++ unit tests are located under `ui/StatusQ/tests`. They can be executed
+easily from QtCreator. Just open the `StatusQ` project in `QtCreator`
+(`status-desktop/ui/StatusQ/CMakeLists.txt`) and select the appropriate target (each test is a separate target).
+
+C++ unit tests are located under `ui/StatusQ/tests`. They can be executed
+easily from QtCreator or make target:
+
+- Open the `StatusQ` project in `QtCreator` (`status-desktop/ui/StatusQ/CMakeLists.txt`) and
+  select the appropriate target (each test is a separate target).
+- Run the `run-statusq-tests` target, e.g. `make -j10 run-statusq-tests ARGS="-R ModelEntryTest"`
+
+### QML unit tests
+
+QML tests are located under `storybook/qmlTests/tests` and `ui/StatusQ/tests`. The
+first location is recommended for all new tests because it provides integration with
+the `Storybook`.
+
+Unit tests operate without backend. Backend layer is cut-off using stubs mechanism in the same
+way as for pages in `Storybook`.
+
+QML tests can be executed by running `QmlTests` target of `Storybook` project
+(setup described in section regarding `Storybook` above) or from `QtCreator` where only
+single test or subset of tests can be selected easily. Another convenient option is to
+use the test runner in `Storybook`, which gives ability to automatically execute tests
+for currently opened page when changes are detected in the code, or on demand using the
+button in the bottom bar. `Storybook` discovers tests by naming convention
+(e.g. `SwapModalPage.qml` will run `tst_SwapModal.qml` tests).
+
+### Unit tests recommendations
+
+- Unit tests should be independent and isolated.
+
+  They should not depend on anything except the unit of code under test. It means that
+  dependencies should be mocked and input data provided in the simplest possible form.
+  If the component under test needs a model, ideally it should be provided as a simple `ListModel`
+  instead of being created using additional components such as adapters or stores. Using an
+  additional component introduces a dependency on it in the test, even if the component under test
+  itself is independent of it.
+
+> [!NOTE]
+> Separately testing components that are used together in an application may lead to the
+> conclusion that it is uncertain whether they are compatible. However, the point is not to
+> not test it, but to do it in an appropriate test (usually in test of component using those
+> two components together).
+
+- Unit tests should test units.
+
+  This statement is also true regarding subcomponents used in a component tested in a given
+  unit test. Subcomponents should not be subject of testing in unit test (as they form
+  a different unit), they should be subject of testing in their own unit test. The unit tests
+  should verify if subcomponents are used in the intended way and simply assume that
+  internally they work as expected.
+
+  Respecting this rule will help keep unit tests smaller, better structured and easier
+  to maintain.
+
+- Unit tests should execute very quickly.
+
+  Relying on `wait(...)` calls slows down tests and is unreliable, may lead to flakey tests,
+  therefore should be avoided.
+
+- Unit tests should not generate any warnings and debug logs. Expected warning from the
+  component can be supressed by using `TestCase::ignoreWarning`.
 
 ## Code Style
 
