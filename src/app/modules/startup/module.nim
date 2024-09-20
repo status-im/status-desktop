@@ -532,6 +532,8 @@ method addToKeycardUidPairsToCheckForAChangeAfterLogin*[T](self: Module[T], oldK
 
 method removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*[T](self: Module[T]) =
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin()
+  if self.view.getLocalPairingInstallationId() != "":
+    self.controller.finishPairingThroughSeedPhraseProcess(self.view.getLocalPairingInstallationId())
 
 method getConnectionString*[T](self: Module[T]): string =
   return self.controller.getConnectionString()
