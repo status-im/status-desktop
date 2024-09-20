@@ -951,9 +951,9 @@ Loader {
                             Global.openMenu(imageContextMenuComponent, item, { url: url, domain: domain, requireConfirmationOnOpen: true })
                         }
                         onHoveredLinkChanged: delegate.highlightedLink = linksMessageView.hoveredLink
-                        gifUnfurlingEnabled: RootStore.gifUnfurlingEnabled
-                        canAskToUnfurlGifs: !RootStore.neverAskAboutUnfurlingAgain
-                        onSetNeverAskAboutUnfurlingAgain: RootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+                        gifUnfurlingEnabled: SharedStores.RootStore.gifUnfurlingEnabled
+                        canAskToUnfurlGifs: !SharedStores.RootStore.neverAskAboutUnfurlingAgain
+                        onSetNeverAskAboutUnfurlingAgain: SharedStores.RootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
                         Component.onCompleted: {
                             root.messageStore.messageModule.forceLinkPreviewsLocalData(root.messageId)
