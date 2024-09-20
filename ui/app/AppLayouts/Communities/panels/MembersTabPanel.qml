@@ -285,6 +285,8 @@ Item {
                     }
                 ]
 
+                readonly property string title: model.preferredDisplayName
+
                 width: membersList.width
                 visible: memberSearch.text === "" || title.toLowerCase().includes(memberSearch.text.toLowerCase())
                 height: visible ? implicitHeight : 0
