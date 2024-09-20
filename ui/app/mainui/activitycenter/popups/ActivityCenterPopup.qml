@@ -335,15 +335,18 @@ Popup {
             activityCenterStore: root.activityCenterStore
             onCloseActivityCenter: root.close()
             onMoreDetailsClicked: {
-                if (type === ActivityNotificationNewDevice.InstallationType.Received) {
-                    Global.openPopup(pairDeviceDialog, {
-                        name: store.name,
-                        deviceId: notification.installationId
-                    })
-                } else if (type === ActivityNotificationNewDevice.InstallationType.Created) {
-                    Global.openPopup(checkOtherDeviceDialog, {
-                        deviceId: notification.installationId
-                    })
+                switch (type) {
+                    case ActivityNotificationNewDevice.InstallationType.Received:
+                        Global.openPopup(pairDeviceDialog, {
+                            name: store.name,
+                            deviceId: notification.installationId
+                        });
+                        break;
+                    case ActivityNotificationNewDevice.InstallationType.Created:
+                        Global.openPopup(checkOtherDeviceDialog, {
+                            deviceId: notification.installationId
+                        });
+                        break;
                 }
             }
         }

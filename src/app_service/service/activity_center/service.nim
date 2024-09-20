@@ -88,7 +88,7 @@ QtObject:
     result.chatService = chatService
 
   proc handleNewNotificationsLoaded(self: Service, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
-    # For now status-go notify about every notification update regardless active group so we need filter manualy on the desktop side
+    # For now status-go notify about every notification update regardless active group so we need filter manually on the desktop side
     let groupTypes = activityCenterNotificationTypesByGroup(self.activeGroup)
     let filteredNotifications = filter(activityCenterNotifications, proc(notification: ActivityCenterNotificationDto): bool =
       return (self.readType == ActivityCenterReadType.All or not notification.read) and groupTypes.contains(notification.notificationType.int)
