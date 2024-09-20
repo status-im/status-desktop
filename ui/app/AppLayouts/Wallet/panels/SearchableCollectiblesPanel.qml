@@ -53,6 +53,8 @@ Control {
     contentItem: StackView {
         id: collectiblesStackView
 
+        implicitHeight: currentItem.implicitHeight
+
         initialItem: ColumnLayout {
             spacing: 0
 

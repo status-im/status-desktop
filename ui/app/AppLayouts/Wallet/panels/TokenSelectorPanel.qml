@@ -72,28 +72,27 @@ Control {
             }
         }
 
-        StackLayout {
-            Layout.maximumHeight: 400
+        SearchableAssetsPanel {
+            id: searchableAssetsPanel
 
-            visible: !!root.assetsModel || !!root.collectiblesModel
-            currentIndex: tabBar.currentIndex
+            visible: tabBar.currentIndex === TokenSelectorPanel.Tabs.Assets
+                     && !!root.assetsModel
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-            SearchableAssetsPanel {
-                id: searchableAssetsPanel
+            onSelected: root.assetSelected(key)
+        }
 
-                Layout.preferredHeight: visible ? implicitHeight : 0
+        SearchableCollectiblesPanel {
+            id: searchableCollectiblesPanel
 
-                onSelected: root.assetSelected(key)
-            }
+            visible: tabBar.currentIndex === TokenSelectorPanel.Tabs.Collectibles
+                     && !!root.collectiblesModel
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-            SearchableCollectiblesPanel {
-                id: searchableCollectiblesPanel
-
-                Layout.preferredHeight: visible ? currentItem.implicitHeight : 0
-
-                onCollectibleSelected: root.collectibleSelected(key)
-                onCollectionSelected: root.collectionSelected(key)
-            }
+            onCollectibleSelected: root.collectibleSelected(key)
+            onCollectionSelected: root.collectionSelected(key)
         }
     }
 }
