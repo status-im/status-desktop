@@ -326,7 +326,7 @@ Item {
                             if (model.username === Constants.appTranslatableConstants.loginAccountsListAddNewUser) {
                                 return "LoginView_addNewUserItem"
                             }
-                            return ""
+                            return "LoginView_addExistingUserItem"
                         }
                         label: {
                             if (model.username === Constants.appTranslatableConstants.loginAccountsListAddNewUser ||

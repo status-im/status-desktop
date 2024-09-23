@@ -606,7 +606,7 @@ class LoginView(QObject):
         self._accounts_combobox = QObject(onboarding_names.accountsView_accountListPanel)
         self._password_object = QObject(onboarding_names.mainWindow_txtPassword_Input)
         self._add_new_user_item = QObject(onboarding_names.loginView_addNewUserItem_AccountMenuItemPanel)
-        self._add_existing_user_item = QObject(onboarding_names.o_AccountMenuItemPanel)
+        self._add_existing_user_item = QObject(onboarding_names.loginView_addExistingUserItem_AccountMenuItemPanel)
         self._use_password_instead = QObject(onboarding_names.mainWindowUsePasswordInsteadStatusBaseText)
 
     @property
