@@ -22,7 +22,7 @@ Pane {
                 }
             ],
 
-            sectionText: "My assets on Mainnet"
+            sectionName: "My assets on Mainnet"
         },
         {
             tokensKey: "eth_key",
@@ -39,7 +39,7 @@ Pane {
                 }
             ],
 
-            sectionText: "My assets on Mainnet"
+            sectionName: "My assets on Mainnet"
         },
         {
             tokensKey: "dai_key",
@@ -50,7 +50,7 @@ Pane {
             iconSource: Constants.tokenIcon("DAI"),
             balances: [],
 
-            sectionText: "Popular assets"
+            sectionName: "Popular assets"
         },
         {
             tokensKey: "zrx_key",
@@ -61,7 +61,7 @@ Pane {
             iconSource: Constants.tokenIcon("ZRX"),
             balances: [],
 
-            sectionText: "Popular assets"
+            sectionName: "Popular assets"
         }
     ]
 
@@ -81,7 +81,6 @@ Pane {
         anchors.centerIn: parent
 
         model: assetsModel
-        sectionProperty: "sectionText"
 
         onSelected: console.log("asset selected:", key)
     }

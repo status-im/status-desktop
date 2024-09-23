@@ -17,7 +17,7 @@ Control {
     /** Expected model structure: see SearchableCollectiblesPanel::model **/
     property alias collectiblesModel: tokenSelectorPanel.collectiblesModel
 
-    readonly property bool isTokenSelected: d.isTokenSelected
+    readonly property bool isTokenSelected: tokenSelectorButton.selected
 
     signal assetSelected(string key)
     signal collectionSelected(string key)
@@ -27,23 +27,16 @@ Control {
     // TokensSelectorPanel.Tabs enum values.
     property alias currentTab: tokenSelectorPanel.currentTab
 
-    function setCustom(name: string, icon: url, key: string) {
-        d.isTokenSelected = true
+    function setSelection(name: string, icon: url, key: string) {
+        tokenSelectorButton.selected = true
         tokenSelectorButton.name = name
         tokenSelectorButton.icon = icon
         tokenSelectorPanel.highlightedKey = key ?? ""
     }
 
-    QtObject {
-        id: d
-
-        property bool isTokenSelected: false
-    }
-
     contentItem: TokenSelectorButton {
         id: tokenSelectorButton
 
-        selected: d.isTokenSelected
         forceHovered: dropdown.opened
 
         onClicked: dropdown.opened ? dropdown.close() : dropdown.open()
@@ -79,7 +72,7 @@ Control {
             function setCurrentAndClose(name, icon) {
                 tokenSelectorButton.name = name
                 tokenSelectorButton.icon = icon
-                d.isTokenSelected = true
+                tokenSelectorButton.selected = true
                 dropdown.close()
             }
 

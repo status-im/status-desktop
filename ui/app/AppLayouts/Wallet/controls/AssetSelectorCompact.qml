@@ -14,13 +14,11 @@ Control {
     /** Expected model structure: see SearchableAssetsPanel::model **/
     property alias model: searchableAssetsPanel.model
 
-    property alias sectionProperty: searchableAssetsPanel.sectionProperty
-
     readonly property bool isSelected: button.selected
 
     signal selected(string key)
 
-    function setCustom(name: string, symbol: string, icon: url, key: string) {
+    function setSelection(name: string, symbol: string, icon: url, key: string) {
         button.name = name
         button.subname = symbol
         button.icon = icon
@@ -71,5 +69,7 @@ Control {
                 root.selected(key)
             }
         }
+
+        onClosed: searchableAssetsPanel.clearSearch()
     }
 }

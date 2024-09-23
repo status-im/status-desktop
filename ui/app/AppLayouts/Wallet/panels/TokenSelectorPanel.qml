@@ -80,6 +80,8 @@ Control {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
+            highlightedKey: root.highlightedKey
+
             onSelected: root.assetSelected(key)
         }
 
@@ -90,6 +92,8 @@ Control {
                      && !!root.collectiblesModel
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            highlightedKey: root.highlightedKey
 
             onCollectibleSelected: root.collectibleSelected(key)
             onCollectionSelected: root.collectionSelected(key)
