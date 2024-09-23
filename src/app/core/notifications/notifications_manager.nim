@@ -226,7 +226,7 @@ QtObject:
     var data = NotificationArgs(title: title, message: message, details: details)
     # All but the NewMessage notifications go to Activity Center
     if details.notificationType != NotificationType.NewMessage:
-      debug "Add AC notification", title=title, message=message
+      debug "Add AC notification", notificationType=details.notificationType
       self.events.emit(SIGNAL_ADD_NOTIFICATION_TO_ACTIVITY_CENTER, data)
 
     # An exemption from the diagrams, at least for now, is that we don't need to implement the "Badge Check" block here,
@@ -252,7 +252,7 @@ QtObject:
         return
 
     if appIsActive:
-      debug "Add APP notification", title=title, message=message
+      debug "Add APP notification", notificationType=details.notificationType
       self.events.emit(SIGNAL_DISPLAY_APP_NOTIFICATION, data)
 
     if not appIsActive or details.notificationType == NotificationType.TestNotification:
@@ -264,7 +264,7 @@ QtObject:
         data.message = "You have a new message"
 
       let identifier = $(details.toJsonNode())
-      debug "Add OS notification", title=data.title, message=data.message, identifier=identifier
+      debug "Add OS notification", notificationType=details.notificationType, identifier=identifier
       self.showOSNotification(data.title, data.message, identifier)
 
     if self.settingsService.getNotificationSoundsEnabled():
