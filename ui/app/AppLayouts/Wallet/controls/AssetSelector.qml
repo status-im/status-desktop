@@ -15,13 +15,11 @@ Control {
     property alias model: searchableAssetsPanel.model
     property alias nonInteractiveKey: searchableAssetsPanel.nonInteractiveKey
 
-    property alias sectionProperty: searchableAssetsPanel.sectionProperty
-
     readonly property bool isSelected: button.selected
 
     signal selected(string key)
 
-    function setCustom(name: string, icon: url, key: string) {
+    function setSelection(name: string, icon: url, key: string) {
         button.name = name
         button.icon = icon
         button.selected = true

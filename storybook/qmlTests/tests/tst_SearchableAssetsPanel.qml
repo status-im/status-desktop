@@ -19,7 +19,58 @@ Item {
         SearchableAssetsPanel {
             id: panel
 
-            sectionProperty: "sectionText"
+            readonly property var assetsData: [
+                {
+                    tokensKey: "stt_key",
+                    communityId: "",
+                    name: "Status Test Token",
+                    currencyBalanceAsString: "42,23 USD",
+                    symbol: "STT",
+                    iconSource: Constants.tokenIcon("STT"),
+                    balances: [
+                        {
+                            balanceAsString: "0,56",
+                            iconUrl: "network/Network=Ethereum"
+                        },
+                        {
+                            balanceAsString: "0,22",
+                            iconUrl: "network/Network=Arbitrum"
+                        },
+                        {
+                            balanceAsString: "0,12",
+                            iconUrl: "network/Network=Optimism"
+                        }
+                    ],
+
+                    sectionName: ""
+                },
+                {
+                    tokensKey: "dai_key",
+                    communityId: "",
+                    name: "Dai Stablecoin",
+                    currencyBalanceAsString: "45,92 USD",
+                    symbol: "DAI",
+                    iconSource: Constants.tokenIcon("DAI"),
+                    balances: [],
+
+                    sectionName: "Popular assets"
+                },
+                {
+                    tokensKey: "zrx_key",
+                    communityId: "",
+                    name: "0x",
+                    currencyBalanceAsString: "41,22 USD",
+                    symbol: "ZRX",
+                    iconSource: Constants.tokenIcon("ZRX"),
+                    balances: [],
+
+                    sectionName: "Popular assets"
+                }
+            ]
+
+            model: ListModel {
+                Component.onCompleted: append(panel.assetsData)
+            }
 
             readonly property SignalSpy selectedSpy: SignalSpy {
                 target: panel
@@ -28,67 +79,12 @@ Item {
         }
     }
 
-    readonly property var assetsData: [
-        {
-            tokensKey: "stt_key",
-            communityId: "",
-            name: "Status Test Token",
-            currencyBalanceAsString: "42,23 USD",
-            symbol: "STT",
-            iconSource: Constants.tokenIcon("STT"),
-            balances: [
-                {
-                    balanceAsString: "0,56",
-                    iconUrl: "network/Network=Ethereum"
-                },
-                {
-                    balanceAsString: "0,22",
-                    iconUrl: "network/Network=Arbitrum"
-                },
-                {
-                    balanceAsString: "0,12",
-                    iconUrl: "network/Network=Optimism"
-                }
-            ],
-
-            sectionText: ""
-        },
-        {
-            tokensKey: "dai_key",
-            communityId: "",
-            name: "Dai Stablecoin",
-            currencyBalanceAsString: "45,92 USD",
-            symbol: "DAI",
-            iconSource: Constants.tokenIcon("DAI"),
-            balances: [],
-
-            sectionText: "Popular assets"
-        },
-        {
-            tokensKey: "zrx_key",
-            communityId: "",
-            name: "0x",
-            currencyBalanceAsString: "41,22 USD",
-            symbol: "ZRX",
-            iconSource: Constants.tokenIcon("ZRX"),
-            balances: [],
-
-            sectionText: "Popular assets"
-        }
-    ]
-
-    ListModel {
-        id: model
-
-        Component.onCompleted: append(root.assetsData)
-    }
-
     TestCase {
         name: "SearchableAssetsPanel"
         when: windowShown
 
         function test_sections() {
-            const control = createTemporaryObject(panelCmp, root, { model })
+            const control = createTemporaryObject(panelCmp, root)
 
             const listView = findChild(control, "assetsListView")
             waitForRendering(listView)
@@ -109,9 +105,36 @@ Item {
 
             const sectionDelegate = TestUtils.findTextItem(listView, "Popular assets")
             verify(sectionDelegate)
+        }
 
-            control.sectionProperty = ""
+        function test_withNoSectionsModel() {
+            const model = createTemporaryQmlObject("import QtQuick 2.15; ListModel {}", root)
+            const control = createTemporaryObject(panelCmp, root, { model })
+
+            model.append(control.assetsData.map(
+                e => ({
+                        tokensKey: e.tokensKey,
+                        communityId: e.communityId,
+                        name: e.name,
+                        currencyBalanceAsString: e.currencyBalanceAsString,
+                        symbol: e.symbol,
+                        iconSource: e.iconSource,
+                        balances: e.balances
+                    })
+                )
+            )
+
+            const listView = findChild(control, "assetsListView")
             waitForRendering(listView)
+            compare(listView.count, 3)
+
+            const delegate1 = listView.itemAtIndex(0)
+            const delegate2 = listView.itemAtIndex(1)
+            const delegate3 = listView.itemAtIndex(2)
+
+            verify(delegate1)
+            verify(delegate2)
+            verify(delegate3)
 
             compare(delegate1.ListView.section, "")
             compare(delegate2.ListView.section, "")
@@ -119,7 +142,7 @@ Item {
         }
 
         function test_search() {
-            const control = createTemporaryObject(panelCmp, root, { model })
+            const control = createTemporaryObject(panelCmp, root)
 
             const listView = findChild(control, "assetsListView")
             waitForRendering(listView)
@@ -154,7 +177,7 @@ Item {
         }
 
         function test_highlightedKey() {
-            const control = createTemporaryObject(panelCmp, root, { model })
+            const control = createTemporaryObject(panelCmp, root)
             control.highlightedKey = "dai_key"
 
             const listView = findChild(control, "assetsListView")
@@ -176,7 +199,7 @@ Item {
         }
 
         function test_nonInteractiveKey() {
-            const control = createTemporaryObject(panelCmp, root, { model })
+            const control = createTemporaryObject(panelCmp, root)
             control.nonInteractiveKey = "dai_key"
 
             const listView = findChild(control, "assetsListView")

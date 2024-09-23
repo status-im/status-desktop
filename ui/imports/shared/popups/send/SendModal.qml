@@ -229,8 +229,8 @@ StatusDialog {
                 d.selectedHoldingType = Constants.TokenType.ERC20
                 d.selectedHolding = entry
 
-                holdingSelector.setCustom(entry.symbol, entry.iconSource,
-                                          popup.preSelectedHoldingID)
+                holdingSelector.setSelection(entry.symbol, entry.iconSource,
+                                             popup.preSelectedHoldingID)
                 holdingSelector.selectedItem = entry
             } else {
                 const entry = SQUtils.ModelUtils.getByKey(
@@ -242,9 +242,9 @@ StatusDialog {
 
                 const id = entry.communityId ? entry.collectionUid : entry.uid
 
-                holdingSelector.setCustom(entry.name,
-                                          entry.imageUrl || entry.mediaUrl,
-                                          id)
+                holdingSelector.setSelection(entry.name,
+                                             entry.imageUrl || entry.mediaUrl,
+                                             id)
                 holdingSelector.selectedItem = entry
                 holdingSelector.currentTab = TokenSelectorPanel.Tabs.Collectibles
             }

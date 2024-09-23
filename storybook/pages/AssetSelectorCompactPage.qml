@@ -23,7 +23,7 @@ Pane {
                 }
             ],
 
-            sectionText: "My assets on Mainnet"
+            sectionName: "My assets on Mainnet"
         },
         {
             tokensKey: "key_2",
@@ -41,7 +41,7 @@ Pane {
                 }
             ],
 
-            sectionText: "My assets on Mainnet"
+            sectionName: "My assets on Mainnet"
         },
         {
             tokensKey: "key_2",
@@ -53,7 +53,7 @@ Pane {
             tokensKey: "DAI",
             balances: [],
 
-            sectionText: "Popular assets"
+            sectionName: "Popular assets"
         },
         {
             tokensKey: "key_3",
@@ -65,7 +65,7 @@ Pane {
             tokensKey: "ZRX",
             balances: [],
 
-            sectionText: "Popular assets"
+            sectionName: "Popular assets"
         }
     ]
 
@@ -86,7 +86,6 @@ Pane {
         width: 400
 
         model: assetsModel
-        sectionProperty: "sectionText"
 
         onSelected: console.log("asset selected:", key)
     }

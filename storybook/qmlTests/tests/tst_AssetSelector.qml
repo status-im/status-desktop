@@ -12,60 +12,6 @@ Item {
     width: 600
     height: 600
 
-    readonly property var assetsData: [
-        {
-            tokensKey: "stt_key",
-            communityId: "",
-            name: "Status Test Token",
-            currencyBalanceAsString: "42,23 USD",
-            symbol: "STT",
-            iconSource: Constants.tokenIcon("STT"),
-
-            balances: [
-                {
-                    balanceAsString: "0,56",
-                    iconUrl: "network/Network=Ethereum"
-                }
-            ],
-
-            sectionText: "My assets on Mainnet"
-        },
-        {
-            tokensKey: "eth_key",
-            communityId: "",
-            name: "Ether",
-            currencyBalanceAsString: "4 276,86 USD",
-            symbol: "ETH",
-            iconSource: Constants.tokenIcon("ETH"),
-
-            balances: [
-                {
-                    balanceAsString: "0,12",
-                    iconUrl: "network/Network=Ethereum"
-                }
-            ],
-
-            sectionText: "My assets on Mainnet"
-        },
-        {
-            tokensKey: "dai_key",
-            communityId: "",
-            name: "Dai Stablecoin",
-            currencyBalanceAsString: "45,92 USD",
-            symbol: "DAI",
-            iconSource: Constants.tokenIcon("DAI"),
-            balances: [],
-
-            sectionText: "Popular assets"
-        }
-    ]
-
-    ListModel {
-        id: assetsModel
-
-        Component.onCompleted: append(assetsData)
-    }
-
     Component {
         id: selectorCmp
 
@@ -73,7 +19,58 @@ Item {
             id: selector
 
             anchors.centerIn: parent
-            model: assetsModel
+
+            readonly property var assetsData: [
+                {
+                    tokensKey: "stt_key",
+                    communityId: "",
+                    name: "Status Test Token",
+                    currencyBalanceAsString: "42,23 USD",
+                    symbol: "STT",
+                    iconSource: Constants.tokenIcon("STT"),
+
+                    balances: [
+                        {
+                            balanceAsString: "0,56",
+                            iconUrl: "network/Network=Ethereum"
+                        }
+                    ],
+
+                    sectionName: "My assets on Mainnet"
+                },
+                {
+                    tokensKey: "eth_key",
+                    communityId: "",
+                    name: "Ether",
+                    currencyBalanceAsString: "4 276,86 USD",
+                    symbol: "ETH",
+                    iconSource: Constants.tokenIcon("ETH"),
+
+                    balances: [
+                        {
+                            balanceAsString: "0,12",
+                            iconUrl: "network/Network=Ethereum"
+                        }
+                    ],
+
+                    sectionName: "My assets on Mainnet"
+                },
+                {
+                    tokensKey: "dai_key",
+                    communityId: "",
+                    name: "Dai Stablecoin",
+                    currencyBalanceAsString: "45,92 USD",
+                    symbol: "DAI",
+                    iconSource: Constants.tokenIcon("DAI"),
+                    balances: [],
+
+                    sectionName: "Popular assets"
+                }
+            ]
+
+            model: ListModel {
+                Component.onCompleted: append(selector.assetsData)
+            }
 
             readonly property SignalSpy selectedSpy: SignalSpy {
                 target: selector
@@ -89,8 +86,6 @@ Item {
         function test_basic() {
             const selector  = createTemporaryObject(selectorCmp, root)
             selector.nonInteractiveKey = "eth_key"
-            selector.sectionProperty = "sectionText"
-
             compare(selector.isSelected, false)
             waitForRendering(selector)
 
@@ -102,7 +97,6 @@ Item {
             const panel = findChild(selector.Overlay.overlay, "searchableAssetsPanel")
             compare(panel.model, selector.model)
             compare(panel.nonInteractiveKey, selector.nonInteractiveKey)
-            compare(panel.sectionProperty, selector.sectionProperty)
         }
 
         function test_basicSelection() {
@@ -121,7 +115,7 @@ Item {
             const listView = findChild(selector.Overlay.overlay, "assetsListView")
             verify(listView)
 
-            compare(listView.count, root.assetsData.length)
+            compare(listView.count, selector.assetsData.length)
             waitForRendering(listView)
 
             const delegate1 = listView.itemAtIndex(0)
@@ -196,7 +190,7 @@ Item {
             waitForRendering(selector)
 
             const imageUrl = Constants.tokenIcon("DAI")
-            selector.setCustom("Custom", imageUrl, "custom_key")
+            selector.setSelection("Custom", imageUrl, "custom_key")
 
             compare(selector.isSelected, true)
             compare(selector.selectedSpy.count, 0)
