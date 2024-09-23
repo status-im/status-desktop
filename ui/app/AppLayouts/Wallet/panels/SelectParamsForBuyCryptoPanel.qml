@@ -95,7 +95,6 @@ ColumnLayout {
             Layout.fillWidth: true
 
             model: root.assetsModel
-            sectionProperty: "sectionName"
 
             onSelected: root.tokenSelected(key)
 
@@ -108,8 +107,8 @@ ColumnLayout {
                     const entry = ModelUtils.getByKey(root.assetsModel,
                                                       "tokensKey", root.selectedTokenKey)
                     if (entry) {
-                        assetSelector.setCustom(entry.name, entry.symbol,
-                                                entry.iconSource, entry.tokensKey)
+                        assetSelector.setSelection(entry.name, entry.symbol,
+                                                   entry.iconSource, entry.tokensKey)
                         root.tokenSelected(entry.tokensKey)
                     } else {
                         assetSelector.reset()

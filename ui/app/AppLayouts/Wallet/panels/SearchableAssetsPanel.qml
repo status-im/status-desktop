@@ -27,12 +27,11 @@ Control {
         balances                [model]  - submodel of balances per chain
             balanceAsString     [string] - formatted balance per chain
             iconUrl             [url]    - chain's icon
+        sectionName (optional)  [string] - text to be rendered as a section
     **/
     property alias model: sfpm.sourceModel
     property string highlightedKey
     property string nonInteractiveKey
-
-    property string sectionProperty
 
     signal selected(string key)
 
@@ -84,7 +83,7 @@ Control {
             Layout.preferredHeight: contentHeight
 
             model: sfpm
-            section.property: root.sectionProperty
+            section.property: "sectionName"
 
             section.delegate: TokenSelectorSectionDelegate {
                 width: ListView.view.width

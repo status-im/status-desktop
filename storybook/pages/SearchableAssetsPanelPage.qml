@@ -29,7 +29,7 @@ Pane {
                 }
             ],
 
-            sectionText: ""
+            sectionName: ""
         },
         {
             tokensKey: "eth_key",
@@ -53,7 +53,7 @@ Pane {
                 }
             ],
 
-            sectionText: ""
+            sectionName: ""
         },
         {
             tokensKey: "dai_key",
@@ -64,7 +64,7 @@ Pane {
             iconSource: Constants.tokenIcon("DAI"),
             balances: [],
 
-            sectionText: "Popular assets"
+            sectionName: "Popular assets"
         },
         {
             tokensKey: "zrx_key",
@@ -75,7 +75,7 @@ Pane {
             iconSource: Constants.tokenIcon("ZRX"),
             balances: [],
 
-            sectionText: "Popular assets"
+            sectionName: "Popular assets"
         }
     ]
 
@@ -102,7 +102,6 @@ Pane {
         highlightedKey: "key_2"
 
         model: assetsModel
-        sectionProperty: "sectionText"
 
         onSelected: console.log("selected:", key)
     }

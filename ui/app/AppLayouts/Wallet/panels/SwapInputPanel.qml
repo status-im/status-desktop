@@ -53,7 +53,7 @@ Control {
 
         if (entry) {
             holdingSelector.currentTokensKey = root.tokenKey
-            holdingSelector.setCustom(entry.symbol, entry.iconSource, entry.tokensKey)
+            holdingSelector.setSelection(entry.symbol, entry.iconSource, entry.tokensKey)
         } else {
             holdingSelector.currentTokensKey = ""
             holdingSelector.reset()
@@ -266,8 +266,6 @@ Control {
 
                 model: d.adaptor.outputAssetsModel
                 nonInteractiveKey: root.nonInteractiveTokensKey
-
-                sectionProperty: "sectionName"
 
                 onSelected: currentTokensKey = key
             }
