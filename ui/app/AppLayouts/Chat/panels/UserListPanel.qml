@@ -90,14 +90,24 @@ Item {
             model: SortFilterProxyModel {
                 sourceModel: root.usersModel
 
-                proxyRoles: FastExpressionRole {
-                    function displayNameProxy(nickname, ensName, displayName, aliasName) {
-                        return ProfileUtils.displayName(nickname, ensName, displayName, aliasName)
+                proxyRoles: [
+                    FastExpressionRole {
+                        function displayNameProxy(nickname, ensName, displayName, aliasName) {
+                            return ProfileUtils.displayName(nickname, ensName, displayName, aliasName)
+                        }
+                        name: "preferredDisplayName"
+                        expectedRoles: ["localNickname", "ensName", "displayName", "alias"]
+                        expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
+                    },
+                    FastExpressionRole {
+                        function pubKeyProxy(ensVerified, pubKey) {
+                            return ensVerified ? "" : Utils.getCompressedPk(pubKey)
+                        }
+                        name: "preferredPubKey"
+                        expectedRoles: ["ensVerified", "pubKey"]
+                        expression: pubKeyProxy(model.ensVerified, model.pubKey)
                     }
-                    name: "preferredDisplayName"
-                    expectedRoles: ["localNickname", "ensName", "displayName", "alias"]
-                    expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
-                }
+                ]
 
                 sorters: [
                     RoleSorter {
@@ -115,8 +125,8 @@ Item {
             delegate: StatusMemberListItem {
                 width: ListView.view.width
                 nickName: model.localNickname
-                userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-                pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
+                userName: model.preferredDisplayName
+                pubKey: model.preferredPubKey
                 isContact: model.isContact
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
