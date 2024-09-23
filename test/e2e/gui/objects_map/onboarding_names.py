@@ -109,7 +109,7 @@ loginView_changeAccountBtn = {"container": mainWindow_LoginView, "objectName": "
 accountsView_accountListPanel = {"container": statusDesktop_mainWindow, "objectName": "LoginView_AccountsRepeater", "type": "Repeater", "visible": True}
 mainWindow_txtPassword_Input = {"container": statusDesktop_mainWindow, "id": "txtPassword", "type": "Input", "unnamed": 1, "visible": True}
 loginView_addNewUserItem_AccountMenuItemPanel = {"container": statusDesktop_mainWindow_overlay, "index": 0, "objectName": "LoginView_addNewUserItem", "type": "AccountMenuItemPanel", "visible": True}
-o_AccountMenuItemPanel = {"container": statusDesktop_mainWindow_overlay, "index": 1, "type": "AccountMenuItemPanel", "unnamed": 1, "visible": True}
+loginView_addExistingUserItem_AccountMenuItemPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "LoginView_addExistingUserItem", "type": "AccountMenuItemPanel", "visible": True}
 mainWindowUsePasswordInsteadStatusBaseText = {"container": statusDesktop_mainWindow, "text": "Use password instead", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
 # Touch ID Auth View
