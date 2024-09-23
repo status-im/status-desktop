@@ -21,8 +21,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
 @pytest.mark.case(703592)
-@pytest.mark.skip()
-# @pytest.mark.critical TODO: figure out why it fails
+@pytest.mark.critical
 def test_sync_device_during_onboarding(multiple_instances):
     user: UserAccount = RandomUser()
     main_window = MainWindow()
@@ -46,7 +45,7 @@ def test_sync_device_during_onboarding(multiple_instances):
         with step('Verify syncing code is correct'):
             sync_code_fields = sync_code.split(':')
             assert sync_code_fields[0] == 'cs3'
-            assert len(sync_code_fields) == 5
+            assert len(sync_code_fields) == 7
 
         with step('Open sync code form in second instance'):
             aut_two.attach()
