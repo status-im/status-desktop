@@ -309,7 +309,7 @@ Item {
                             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
                             myPublicKey: Global.userProfile.pubKey,
                             publicKey: model.pubKey,
-                            displayName: memberItem.title,
+                            displayName: memberItem.title || model.displayName,
                             userIcon: icon.name,
                         })
                     } else {
@@ -344,7 +344,7 @@ Item {
                 Global.openNicknamePopupRequested(memberContextMenuView.publicKey, contactDetails, null)
             }
             onRemoveNickname: (displayName) => {
-                root.store.contactsStore.changeContactNickname(memberContextMenuView.publicKey, "", displayName, true)
+                root.rootStore.contactsStore.changeContactNickname(memberContextMenuView.publicKey, "", displayName, true)
             }
             onUnblockContact: {
                 const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
@@ -354,7 +354,7 @@ Item {
                 const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
                 Global.markAsUntrustedRequested(memberContextMenuView.publicKey, contactDetails)
             }
-            onRemoveTrustStatus: root.store.contactsStore.removeTrustStatus(memberContextMenuView.publicKey)
+            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(memberContextMenuView.publicKey)
             onRemoveContact: {
                 const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
                 Global.removeContactRequested(memberContextMenuView.publicKey, contactDetails)
