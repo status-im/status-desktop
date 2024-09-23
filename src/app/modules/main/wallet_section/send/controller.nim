@@ -143,9 +143,6 @@ proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAd
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
 
-proc getTotalCurrencyBalance*(self: Controller, address: seq[string], chainIds: seq[int]): float64 =
-  return self.walletAccountService.getTotalCurrencyBalance(address, chainIds)
-
 proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networkService.getCurrentNetworks()
 
