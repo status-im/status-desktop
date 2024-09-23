@@ -105,7 +105,7 @@
                 "node-01.ac-cn-hongkong-c.waku.sandbox": "/dns4/node-01.ac-cn-hongkong-c.waku.sandbox.status.im/tcp/8000/wss/p2p/16Uiu2HAmQYiojgZ8APsh9wqbWNyCstVhnp9gbeNrxSEQnLJchC92"
             }
         },
-        "status.prod": {
+        "status.staging": {
             "tcp/p2p/waku": {
                 "boot-01.do-ams3.status.prod": "/dns4/boot-01.do-ams3.status.prod.status.im/tcp/30303/p2p/16Uiu2HAmAR24Mbb6VuzoyUiGx42UenDkshENVDj4qnmmbabLvo31",
                 "store-01.do-ams3.status.prod": "/dns4/store-01.do-ams3.status.prod.status.im/tcp/30303/p2p/16Uiu2HAmAUdrQ3uwzuE4Gy4D56hX6uLKEeerJAnhKEHZ3DxF1EfT",
@@ -131,7 +131,7 @@
                 "store-02.ac-cn-hongkong-c.status.prod": "/dns4/store-02.ac-cn-hongkong-c.shards.test.status.im/tcp/443/wss/p2p/16Uiu2HAm9CQhsuwPR54q27kNj9iaQVfyRzTGKrhFmr94oD8ujU6P"
             }
         },
-        "status.staging": {
+        "status.prod": {
             "tcp/p2p/waku": {
                 "boot-01.do-ams3.status.staging": "/dns4/boot-01.do-ams3.status.staging.status.im/tcp/30303/p2p/16Uiu2HAmQE7FXQc6iZHdBzYfw3qCSDa9dLc1wsBJKoP4aZvztq2d",
                 "store-01.do-ams3.status.staging": "/dns4/store-01.do-ams3.status.staging.status.im/tcp/30303/p2p/16Uiu2HAm3xVDaz6SRJ6kErwC21zBJEZjavVXg7VSkoWzaV1aMA3F",
