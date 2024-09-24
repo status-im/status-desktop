@@ -543,6 +543,7 @@ networkSelectorDelegate_Arbitrum_NetworkSelectItemDelegate = {"container": statu
 
 # Bridge popup
 holdingSelector_TokenSelectorNew = {"container": statusDesktop_mainWindow_overlay, "objectName": "holdingSelector", "type": "TokenSelectorNew", "visible": True}
+tokenSelectorButton = {"container": statusDesktop_mainWindow_overlay, "id": "tokenSelectorButton", "type": "TokenSelectorButton", "unnamed": 1, "visible": True}
 modalHeader_HeaderTitleText = {"container": statusDesktop_mainWindow_overlay, "objectName": "modalHeader", "type": "HeaderTitleText", "visible": True}
 
 # Token Selector popup

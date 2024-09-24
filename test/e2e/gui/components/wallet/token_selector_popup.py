@@ -1,12 +1,13 @@
 import driver
+from gui.components.base_popup import BasePopup
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class TokenSelectorPopup(QObject):
+class TokenSelectorPopup(BasePopup):
     def __init__(self):
-        super().__init__(names.tokenSelectorPanel_TokenSelectorNew)
+        super().__init__()
         self.token_selector_panel = QObject(names.tokenSelectorPanel_TokenSelectorNew)
         self.tab_bar = QObject(names.tokensTabBar_StatusTabBar)
         self.assets_tab = QObject(names.tokenSelectorPanel_AssetsTab)
@@ -19,7 +20,7 @@ class TokenSelectorPopup(QObject):
         assets_list = driver.findAllObjects(self.asset_list_item.real_name)
         assert assets_list, f'Assets are not displayed'
         for item in assets_list:
-            if getattr(item, 'tokensKey', '') == asset_name:
+            if getattr(item, 'symbol', '') == asset_name:
                 QObject(item).click()
                 break
         return self

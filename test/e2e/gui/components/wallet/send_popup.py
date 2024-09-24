@@ -34,7 +34,7 @@ class SendPopup(BasePopup):
         self._fiat_fees_label = TextLabel(names.fiatFees_StatusBaseText)
         self._send_button = Button(names.send_StatusFlatButton)
         self._account_selector = QObject(names.accountSelector_AccountSelectorHeader)
-        self._holding_selector = QObject(names.holdingSelector_TokenSelectorNew)
+        self._holding_selector = Button(names.tokenSelectorButton)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
