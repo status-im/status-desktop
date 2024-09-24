@@ -64,32 +64,6 @@ QtObject {
             walletSectionInst.activityController.updateFilter()
     }
 
-    function getCurrencyAmount(amount, symbol) {
-        return currencyStore.getCurrencyAmount(amount, symbol)
-    }
-
-    function getFiatValue(balance, cryptoSymbol) {
-        return currencyStore.getFiatValue(balance, cryptoSymbol)
-    }
-
-    function getCryptoValue(balance, cryptoSymbol) {
-        return currencyStore.getCryptoValue(balance, cryptoSymbol)
-    }
-
-    function getGasEthValue(gweiValue, gasLimit) {
-        return currencyStore.getGasEthValue(gweiValue, gasLimit)
-    }
-
-    function getFeeEthValue(feeCurrency) {
-        if (!feeCurrency || feeCurrency.symbol !== "Gwei")
-            return 0
-        return currencyStore.getGasEthValue(feeCurrency.amount / Math.pow(10, feeCurrency.displayDecimals), 1)
-    }
-
-    function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
-        return currencyStore.formatCurrencyAmount(amount, symbol, options, locale)
-    }
-
     function getHistoricalDataForToken(symbol, currency) {
         if (Global.appIsReady)
             walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
