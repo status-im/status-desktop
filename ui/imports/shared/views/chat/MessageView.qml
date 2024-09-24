@@ -10,6 +10,7 @@ import shared.views.chat 1.0
 import shared.controls.chat 1.0
 import shared.stores 1.0 as SharedStores
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
@@ -1232,20 +1233,14 @@ Loader {
         id: messageContextMenuComponent
 
         MessageContextMenuView {
-            store: root.rootStore
+            id: messageContextMenuView
             reactionModel: root.emojiReactionsModel
             disabledForChat: !root.rootStore.isUserAllowedToSendMessage
             forceEnableEmojiReactions: !root.rootStore.isUserAllowedToSendMessage && d.addReactionAllowed
-
-            onPinMessage: (messageId) => {
-                root.messageStore.pinMessage(messageId)
-            }
-
-            onUnpinMessage: (messageId) => {
-                root.messageStore.unpinMessage(messageId)
-            }
-
-            onPinnedMessagesLimitReached: (messageId) => {
+            isDebugEnabled: root.rootStore && root.rootStore.isDebugEnabled
+            onPinMessage: root.messageStore.pinMessage(messageContextMenuView.messageId)
+            onUnpinMessage: root.messageStore.unpinMessage(messageContextMenuView.messageId)
+            onPinnedMessagesLimitReached: () => {
                 if (!root.chatContentModule) {
                     console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
                     return
@@ -1253,30 +1248,21 @@ Loader {
                 Global.openPinnedMessagesPopupRequested(root.rootStore,
                                                         root.messageStore,
                                                         root.chatContentModule.pinnedMessagesModel,
-                                                        messageId,
+                                                        messageContextMenuView.messageId,
                                                         root.chatId)
             }
-
-            onMarkMessageAsUnread: (messageId) => {
-                root.messageStore.markMessageAsUnread(messageId)
+            onMarkMessageAsUnread: root.messageStore.markMessageAsUnread(messageContextMenuView.messageId)
+            onToggleReaction: (emojiId) => {
+                root.messageStore.toggleReaction(messageContextMenuView.messageId, emojiId)
             }
-
-            onToggleReaction: (messageId, emojiId) => {
-                root.messageStore.toggleReaction(messageId, emojiId)
+            onDeleteMessage: root.messageStore.warnAndDeleteMessage(messageContextMenuView.messageId)
+            onEditClicked: root.messageStore.setEditModeOn(messageContextMenuView.messageId)
+            onShowReplyArea: (senderId) => {
+                root.showReplyArea(messageContextMenuView.messageId, senderId)
             }
-
-            onDeleteMessage: (messageId) => {
-                root.messageStore.warnAndDeleteMessage(messageId)
+            onCopyToClipboard: (text) => {
+                ClipboardUtils.setText(text)
             }
-
-            onEditClicked: (messageId) => {
-                root.messageStore.setEditModeOn(messageId)
-            }
-
-            onShowReplyArea: (messageId, senderId) => {
-                root.showReplyArea(messageId, senderId)
-            }
-
             onOpened: {
                 root.setMessageActive(model.id, true)
             }

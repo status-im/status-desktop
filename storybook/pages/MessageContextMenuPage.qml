@@ -54,10 +54,39 @@ SplitView {
             Component {
                 id: menu1
                 MessageContextMenuView {
+                    id: messageContextMenuView
                     anchors.centerIn: parent
                     hideDisabledItems: false
+                    isDebugEnabled: isDebugEnabledCheckBox.checked
                     onClosed: {
                         destroy()
+                    }
+                    onPinMessage: () => {
+                        logs.logEvent("Pin message:", messageContextMenuView.messageId)
+                    }
+                    onUnpinMessage: () => {
+                        logs.logEvent("Unpin message:", messageContextMenuView.messageId)
+                    }
+                    onPinnedMessagesLimitReached: () => {
+                        logs.logEvent("Pinned messages limit reached:", messageContextMenuView.messageId)
+                    }
+                    onMarkMessageAsUnread: () => {
+                        logs.logEvent("Mark message as unread:", messageContextMenuView.messageId)
+                    }
+                    onToggleReaction: (emojiId) => {
+                        logs.logEvent("Toggle reaction:", messageContextMenuView.messageId, emojiId)
+                    }
+                    onDeleteMessage: () => {
+                        logs.logEvent("Delete message:", messageContextMenuView.messageId)
+                    }
+                    onEditClicked: () => {
+                        logs.logEvent("Edit message:", messageContextMenuView.messageId)
+                    }
+                    onShowReplyArea: (senderId) => {
+                        logs.logEvent("Show reply area:", messageContextMenuView.messageId, senderId)
+                    }
+                    onCopyToClipboard: (text) => {
+                        logs.logEvent("Copy to clipboard:", text)
                     }
                 }
             }
@@ -65,10 +94,39 @@ SplitView {
             Component {
                 id: menu2
                 MessageContextMenuView {
+                    id: messageContextMenuView
                     anchors.centerIn: parent
                     hideDisabledItems: true
+                    isDebugEnabled: isDebugEnabledCheckBox.checked
                     onClosed: {
                         destroy()
+                    }
+                    onPinMessage: () => {
+                        logs.logEvent("Pin message:", messageContextMenuView.messageId)
+                    }
+                    onUnpinMessage: () => {
+                        logs.logEvent("Unpin message:", messageContextMenuView.messageId)
+                    }
+                    onPinnedMessagesLimitReached: () => {
+                        logs.logEvent("Pinned messages limit reached:", messageContextMenuView.messageId)
+                    }
+                    onMarkMessageAsUnread: () => {
+                        logs.logEvent("Mark message as unread:", messageContextMenuView.messageId)
+                    }
+                    onToggleReaction: (emojiId) => {
+                        logs.logEvent("Toggle reaction:", messageContextMenuView.messageId, emojiId)
+                    }
+                    onDeleteMessage: () => {
+                        logs.logEvent("Delete message:", messageContextMenuView.messageId)
+                    }
+                    onEditClicked: () => {
+                        logs.logEvent("Edit message:", messageContextMenuView.messageId)
+                    }
+                    onShowReplyArea: (senderId) => {
+                        logs.logEvent("Show reply area:", messageContextMenuView.messageId, senderId)
+                    }
+                    onCopyToClipboard: (text) => {
+                        logs.logEvent("Copy to clipboard:", text)
                     }
                 }
             }
@@ -85,6 +143,12 @@ SplitView {
 
         controls: ColumnLayout {
             spacing: 16
+
+            CheckBox {
+                id: isDebugEnabledCheckBox
+                text: "Enable Debug"
+                checked: false
+            }
         }
     }
 
