@@ -31,6 +31,7 @@ Item {
     id: root
 
     property var overview: WalletStores.RootStore.overview
+    property RootStore rootStore
     property ProfileStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
     property NetworkConnectionStore networkConnectionStore
@@ -66,18 +67,18 @@ Item {
         onDetailsChanged: {
             if (!!d.details && !!d.details.input && d.details.input !== "0x") {
                 d.loadingInputDate = true
-                RootStore.fetchDecodedTxData(d.details.txHashOut, d.details.input)
+                root.rootStore.fetchDecodedTxData(d.details.txHashOut, d.details.input)
             }
         }
 
         readonly property bool isIncoming: transactionType === Constants.TransactionType.Received || transactionType === Constants.TransactionType.ContractDeployment
-        readonly property string networkShortName: d.isTransactionValid ? ModelUtils.getByKey(RootStore.flatNetworks, "chainId", transaction.chainId, "shortName") : ""
-        readonly property string networkIcon: isTransactionValid ? ModelUtils.getByKey(RootStore.flatNetworks, "chainId", transaction.chainId, "iconUrl") : "network/Network=Custom"
+        readonly property string networkShortName: d.isTransactionValid ? ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", transaction.chainId, "shortName") : ""
+        readonly property string networkIcon: isTransactionValid ? ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", transaction.chainId, "iconUrl") : "network/Network=Custom"
         readonly property int blockNumber: isDetailsValid ? details.blockNumber : 0
         readonly property int blockNumberIn: isDetailsValid ? details.blockNumberIn : 0
         readonly property int blockNumberOut: isDetailsValid ? details.blockNumberOut : 0
         readonly property string networkShortNameOut: networkShortName
-        readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? ModelUtils.getByKey(RootStore.flatNetworks, "chainId", transaction.chainIdIn, "shortName") : ""
+        readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", transaction.chainIdIn, "shortName") : ""
         readonly property string symbol: isTransactionValid ? transaction.symbol : ""
         readonly property string inSymbol: isTransactionValid ? transaction.inSymbol : ""
         readonly property string outSymbol: isTransactionValid ? transaction.outSymbol : ""
@@ -85,27 +86,27 @@ Item {
         readonly property string fiatValueFormatted: {
             if (!d.isTransactionValid || transactionHeader.isMultiTransaction || !symbol)
                 return ""
-            return RootStore.formatCurrencyAmount(transactionHeader.fiatValue, RootStore.currentCurrency)
+            return root.rootStore.formatCurrencyAmount(transactionHeader.fiatValue, root.rootStore.currentCurrency)
         }
         readonly property string cryptoValueFormatted: {
             if (!d.isTransactionValid || transactionHeader.isMultiTransaction)
                 return ""
-            const formatted = RootStore.formatCurrencyAmount(transaction.amount, transaction.symbol)
+            const formatted = root.rootStore.formatCurrencyAmount(transaction.amount, transaction.symbol)
             return symbol || (!d.isDetailsValid || !d.details.contract) ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenAddress, 4))
         }
         readonly property string outFiatValueFormatted: {
             if (!d.isTransactionValid || !transactionHeader.isMultiTransaction || !outSymbol)
                 return ""
-            return RootStore.formatCurrencyAmount(transactionHeader.outFiatValue, RootStore.currentCurrency)
+            return root.rootStore.formatCurrencyAmount(transactionHeader.outFiatValue, root.rootStore.currentCurrency)
         }
         readonly property string outCryptoValueFormatted: {
             if (!d.isTransactionValid || !transactionHeader.isMultiTransaction)
                 return ""
-            const formatted = RootStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
+            const formatted = root.rootStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
             return outSymbol || !transaction.tokenOutAddress ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenOutAddress, 4))
         }
-        readonly property real feeEthValue: d.details ? RootStore.getFeeEthValue(d.details.totalFees) : 0
-        readonly property real feeFiatValue: RootStore.getFiatValue(d.feeEthValue, Constants.ethToken)
+        readonly property real feeEthValue: d.details ? root.rootStore.getFeeEthValue(d.details.totalFees) : 0
+        readonly property real feeFiatValue: root.rootStore.getFiatValue(d.feeEthValue, Constants.ethToken)
         readonly property int transactionType: d.isTransactionValid ? WalletStores.RootStore.transactionType(transaction) : Constants.TransactionType.Send
         readonly property bool isBridge: d.transactionType === Constants.TransactionType.Bridge
 
@@ -126,7 +127,7 @@ Item {
     }
 
     Connections {
-        target: RootStore.walletSectionInst
+        target: root.rootStore.walletSectionInst
         function onTxDecoded(txHash: string, dataDecoded: string) {
             if (!d.isTransactionValid || (d.isDetailsValid && txHash !== d.details.txHashOut))
                 return
@@ -176,7 +177,7 @@ Item {
                     showAllAccounts: root.showAllAccounts
                     modelData: transaction
                     timeStampText: d.isTransactionValid ? qsTr("Signed at %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)): ""
-                    rootStore: RootStore
+                    rootStore: root.rootStore
                     walletRootStore: WalletStores.RootStore
                     community: isModelDataValid && communityId && communitiesStore ? communitiesStore.getCommunityDetailsAsJson(communityId) : null
 
@@ -193,9 +194,9 @@ Item {
                 readonly property int latestBlockNumberIn: d.isTransactionValid && !pending && !error && transactionHeader.isMultiTransaction && d.isBridge ? WalletStores.RootStore.getEstimatedLatestBlockNumber(d.transaction.chainIdIn) : 0
                 error: transactionHeader.transactionStatus === Constants.TransactionStatus.Failed
                 pending: transactionHeader.transactionStatus === Constants.TransactionStatus.Pending
-                outNetworkLayer: d.isTransactionValid ? Number(ModelUtils.getByKey(RootStore.flatNetworks, "chainId", transactionHeader.isMultiTransaction ? d.transaction.chainIdOut : d.transaction.chainId, "layer")) : 0
+                outNetworkLayer: d.isTransactionValid ? Number(ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", transactionHeader.isMultiTransaction ? d.transaction.chainIdOut : d.transaction.chainId, "layer")) : 0
                 inNetworkLayer: d.isTransactionValid && transactionHeader.isMultiTransaction && d.isBridge ?
-                                    ModelUtils.getByKey(RootStore.flatNetworks, "chainId", d.transaction.chainIdIn, "layer") : 0
+                                    ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", d.transaction.chainIdIn, "layer") : 0
                 outNetworkTimestamp: d.isTransactionValid ? d.transaction.timestamp : 0
                 inNetworkTimestamp: d.isTransactionValid ? d.transaction.timestamp : 0
                 outChainName: transactionHeader.isMultiTransaction ? transactionHeader.networkNameOut : transactionHeader.networkName
@@ -266,7 +267,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.outSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return Style.svg(ModelUtils.getByKey(RootStore.flatNetworks, "chainId", d.transaction.chainIdOut, "iconUrl")) ?? Style.svg("network/Network=Custom")
+                                    return Style.svg(ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", d.transaction.chainIdOut, "iconUrl")) ?? Style.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }
@@ -293,7 +294,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.inSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return Style.svg(ModelUtils.getByKey(RootStore.flatNetworks, "chainId", d.transaction.chainIdIn, "iconUrl")) ?? Style.svg("network/Network=Custom")
+                                    return Style.svg(ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", d.transaction.chainIdIn, "iconUrl")) ?? Style.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }
@@ -648,20 +649,20 @@ Item {
                                 return ""
                             const type = d.transactionType
                             if (type === Constants.TransactionType.Swap) {
-                                return RootStore.formatCurrencyAmount(transactionHeader.inCryptoValue, d.inSymbol)
+                                return root.rootStore.formatCurrencyAmount(transactionHeader.inCryptoValue, d.inSymbol)
                             } else if (type === Constants.TransactionType.Bridge) {
                                 // Reduce crypto value by fee value
-                                const valueInCrypto = RootStore.getCryptoValue(transactionHeader.outFiatValue - d.feeFiatValue, d.inSymbol)
-                                return RootStore.formatCurrencyAmount(valueInCrypto, d.inSymbol)
+                                const valueInCrypto = root.rootStore.getCryptoValue(transactionHeader.outFiatValue - d.feeFiatValue, d.inSymbol)
+                                return root.rootStore.formatCurrencyAmount(valueInCrypto, d.inSymbol)
                             }
                             return ""
                         }
                         tertiaryTitle: {
                             const type = d.transactionType
                             if (type === Constants.TransactionType.Swap) {
-                                return RootStore.formatCurrencyAmount(transactionHeader.inFiatValue, RootStore.currentCurrency)
+                                return root.rootStore.formatCurrencyAmount(transactionHeader.inFiatValue, root.rootStore.currentCurrency)
                             } else if (type === Constants.TransactionType.Bridge) {
-                                return RootStore.formatCurrencyAmount(transactionHeader.outFiatValue - d.feeFiatValue, RootStore.currentCurrency)
+                                return root.rootStore.formatCurrencyAmount(transactionHeader.outFiatValue - d.feeFiatValue, root.rootStore.currentCurrency)
                             }
                             return ""
                         }
@@ -675,8 +676,8 @@ Item {
                             if (!d.isTransactionValid || transactionHeader.isNFT || !d.isDetailsValid)
                                 return ""
                             if (!d.symbol) {
-                                const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
-                                return RootStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
+                                const maxFeeEth = root.rootStore.getFeeEthValue(d.details.maxTotalFees)
+                                return root.rootStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
                             }
 
                             switch(d.transactionType) {
@@ -693,12 +694,12 @@ Item {
                                 return ""
                             let fiatValue
                             if (!d.symbol) {
-                                const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
-                                fiatValue = RootStore.getFiatValue(maxFeeEth, Constants.ethToken)
+                                const maxFeeEth = root.rootStore.getFeeEthValue(d.details.maxTotalFees)
+                                fiatValue = root.rootStore.getFiatValue(maxFeeEth, Constants.ethToken)
                             } else {
                                 fiatValue = d.feeFiatValue
                             }
-                            return RootStore.formatCurrencyAmount(fiatValue, RootStore.currentCurrency)
+                            return root.rootStore.formatCurrencyAmount(fiatValue, root.rootStore.currentCurrency)
                         }
                         visible: !!subTitle
                     }
@@ -722,30 +723,30 @@ Item {
                             if (fieldIsHidden)
                                 return ""
                             if (showMaxFee) {
-                                const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
-                                return RootStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
+                                const maxFeeEth = root.rootStore.getFeeEthValue(d.details.maxTotalFees)
+                                return root.rootStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
                             } else if (showFee) {
-                                return RootStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken)
+                                return root.rootStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken)
                             } else if (showValue) {
                                 return d.cryptoValueFormatted
                             }
                             const cryptoValue = transactionHeader.isMultiTransaction ? d.outCryptoValueFormatted : d.cryptoValueFormatted
-                            return "%1 + %2".arg(cryptoValue).arg(RootStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken))
+                            return "%1 + %2".arg(cryptoValue).arg(root.rootStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken))
                         }
                         tertiaryTitle: {
                             if (fieldIsHidden)
                                 return ""
                             if (showMaxFee) {
-                                const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
-                                const maxFeeFiat = RootStore.getFiatValue(d.feeEthValue, Constants.ethToken)
-                                return RootStore.formatCurrencyAmount(maxFeeFiat, RootStore.currentCurrency)
+                                const maxFeeEth = root.rootStore.getFeeEthValue(d.details.maxTotalFees)
+                                const maxFeeFiat = root.rootStore.getFiatValue(d.feeEthValue, Constants.ethToken)
+                                return root.rootStore.formatCurrencyAmount(maxFeeFiat, root.rootStore.currentCurrency)
                             } else if (showFee) {
-                                return RootStore.formatCurrencyAmount(d.feeFiatValue, RootStore.currentCurrency)
+                                return root.rootStore.formatCurrencyAmount(d.feeFiatValue, root.rootStore.currentCurrency)
                             } else if (showValue) {
                                 return d.fiatValueFormatted
                             }
                             const fiatValue = transactionHeader.isMultiTransaction ? transactionHeader.outFiatValue : transactionHeader.fiatValue
-                            return RootStore.formatCurrencyAmount(fiatValue + d.feeFiatValue, RootStore.currentCurrency)
+                            return root.rootStore.formatCurrencyAmount(fiatValue + d.feeFiatValue, root.rootStore.currentCurrency)
                         }
                         visible: !!subTitle
                         highlighted: true

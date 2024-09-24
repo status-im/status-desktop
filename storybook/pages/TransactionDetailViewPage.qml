@@ -20,23 +20,23 @@ SplitView {
 
     property bool globalUtilsReady: false
     property bool mainModuleReady: false
-    property bool rootStoreReady: false
 
     property bool isIncoming: false
 
-    Component.onCompleted: {
-        RootStore.getFiatValue = (cryptoValue, symbol) => { return (cryptoValue * 1800).toPrecision(2) }
-        RootStore.getLatestBlockNumber = () => { return 4 }
-        RootStore.formatCurrencyAmount = (value, symbol) => { return value + " " + symbol }
-        RootStore.getNameForSavedWalletAddress = (address) => { return "Saved Wallet Name" }
-        RootStore.getNameForAddress = (address) => { return "Address Name" }
-        RootStore.getEnsForSavedWalletAddress = (address) => { return "123" }
-        RootStore.getChainShortNamesForSavedWalletAddress = (address) => { return "" }
-        RootStore.getGasEthValue = (gasAmount, gasPrice) => { return (gasAmount * Math.pow(10, -9)).toPrecision(5) }
-        RootStore.currentCurrency = "USD"
-        RootStore.flatNetworks = NetworksModel.flatNetworks
+    RootStore {
+        id: rootStoreMock
 
-        root.rootStoreReady = true
+        function getFiatValue(cryptoValue, symbol) { return (cryptoValue * 1800).toPrecision(2) }
+        function getLatestBlockNumber() { return 4 }
+        function formatCurrencyAmount(value, symbol) { return value + " " + symbol }
+        function getNameForSavedWalletAddress(address) { return "Saved Wallet Name" }
+        function getNameForAddress(address) { return "Address Name" }
+        function getEnsForSavedWalletAddress(address) { return "123" }
+        function getChainShortNamesForSavedWalletAddress(address) { return "" }
+        function getGasEthValue(gasAmount, gasPrice) { return (gasAmount * Math.pow(10, -9)).toPrecision(5) }
+
+        readonly property string currentCurrency: "USD"
+        readonly property var flatNetworks: NetworksModel.flatNetworks
     }
 
     // globalUtilsInst mock
@@ -225,8 +225,9 @@ SplitView {
                 width: 800
                 height: 500
 
-                active: root.globalUtilsReady && root.mainModuleReady && root.rootStoreReady
+                active: root.globalUtilsReady && root.mainModuleReady
                 sourceComponent: TransactionDetailView {
+                    rootStore: rootStoreMock
                     contactsStore: contactsStoreMockup
                     controller: controllerMockup
                     overview: overviewMockup
