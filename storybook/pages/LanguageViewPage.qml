@@ -72,33 +72,6 @@ SplitView {
 
             currencyStore: CurrenciesStore {
                 property string currentCurrency: "USD"
-                property string currentCurrencySymbol: "$"
-
-                readonly property ListModel currenciesModel: ListModel {
-                    ListElement {
-                        key: "usd"
-                        shortName: "USD"
-                        name: "US Dollars"
-                        symbol: "$"
-                        category: ""
-                        imageSource: "../../assets/twemoji/svg/1f1fa-1f1f8.svg"
-                        selected: true
-                    }
-
-                    ListElement {
-                        key: "gbp"
-                        shortName: "GBP"
-                        name: "British Pound"
-                        symbol: "£"
-                        category: ""
-                        imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
-                        selected: false
-                    }
-                }
-
-                function updateCurrenciesModel() {
-                    logs.logEvent("currencyStore::updateCurrenciesModel")
-                }
 
                 function updateCurrency(currencyKey) {
                     logs.logEvent("currencyStore::updateCurrency", ["currencyKey"], arguments)

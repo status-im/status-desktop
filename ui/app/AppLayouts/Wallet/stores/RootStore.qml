@@ -231,10 +231,6 @@ QtObject {
         return walletSectionAccounts.deleteAccount(address)
     }
 
-    function updateCurrency(newCurrency) {
-        walletSection.updateCurrency(newCurrency)
-    }
-
     function getQrCode(address) {
         return globalUtils.qrCode(address)
     }

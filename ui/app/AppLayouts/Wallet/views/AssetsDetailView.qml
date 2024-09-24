@@ -228,7 +228,7 @@ Item {
                                         return graphDetail.dateToShortLabel(value)
                                     },
                                     valueCallback: function(value) {
-                                        return LocaleUtils.currencyAmountToLocaleString({ amount: value, symbol: RootStore.currencyStore.currentCurrencySymbol, displayDecimals: 2 })
+                                        return root.currencyStore.formatCurrencyAmount(value, root.currencyStore.currentCurrency)
                                     }
                                 },
                                 intersect: false,
@@ -243,7 +243,9 @@ Item {
                                         if (graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance)
                                             return label + tooltipItem.yLabel // already formatted in tooltips.value.callback
 
-                                        const value = LocaleUtils.currencyAmountToLocaleString({ amount: tooltipItem.yLabel, symbol: RootStore.currencyStore.currentCurrencySymbol, displayDecimals: 2 })
+                                        const value = root.currencyStore.formatCurrencyAmount(
+                                                        tooltipItem.yLabel, root.currencyStore.currentCurrency)
+
                                         return label + value
                                     }
                                 }
