@@ -31,9 +31,6 @@ SettingsContentBase {
     onVisibleChanged: { if(!visible) root.setViewIdleState()}
     onBaseAreaClicked: { root.setViewIdleState() }
 
-    Component.onCompleted: {
-        root.currencyStore.updateCurrenciesModel()
-    }
 
     function setViewIdleState() {
         currencyPicker.close()
@@ -62,17 +59,35 @@ SettingsContentBase {
 
                 property string newKey
 
+                // updateCurrency function operation blocks a little bit the UI
+                // so getting around it with a small pause (timer) in order to get
+                // the desired visual behavior
                 Timer {
                     id: currencyPause
                     interval: 100
                     onTriggered: {
-                        // updateCurrency function operation blocks a little bit the UI so getting around it with a small pause (timer) in order to get the desired visual behavior
-                        root.currencyStore.updateCurrency(currencyPicker.newKey)
+                        const idx = StatusQUtils.ModelUtils.indexOf(currenciesModel, "key", currencyPicker.newKey)
+                        const shortName = currenciesModel.get(idx === -1 ? 0 : idx).shortName
+                        root.currencyStore.updateCurrency(shortName)
                     }
                 }
 
                 z: root.z + 2
-                inputList: root.currencyStore.currenciesModel
+
+                inputList: CurrenciesModel {
+                    id: currenciesModel
+
+                    readonly property Connections connections: Connections {
+                        target: root.currencyStore
+
+                        function onCurrentCurrencyChanged() {
+                            currenciesModel.setSelected(root.currencyStore.currentCurrency)
+                        }
+                    }
+
+                    Component.onCompleted: setSelected(root.currencyStore.currentCurrency)
+                }
+
                 printSymbol: true
                 placeholderSearchText: qsTr("Search Currencies")
                 maxPickerHeight: 350

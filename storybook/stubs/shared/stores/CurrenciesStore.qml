@@ -6,8 +6,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 QtObject {
     id: root
 
-    readonly property string currentCurrency: "USD"
-    property string currentCurrencySymbol: "$"
+    /*readonly*/ property string currentCurrency: "USD"
 
     function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
         if (isNaN(amount)) {
