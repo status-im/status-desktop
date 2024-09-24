@@ -22,7 +22,6 @@ QtObject {
     property bool gifUnfurlingEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.gifUnfurlingEnabled : false
 
     property CurrenciesStore currencyStore: CurrenciesStore {}
-    property string currentCurrency: Global.appIsReady? walletSectionInst.currentCurrency : ""
 
     readonly property var transactionActivityStatus: Global.appIsReady ? walletSectionInst.activityController.status : null
 

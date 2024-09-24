@@ -299,7 +299,8 @@ Item {
                             width: parent.width
                             modelData: model.activityEntry
                             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
-                            rootStore: root.rootStore
+                            flatNetworks: root.rootStore.flatNetworks
+                            currenciesStore: root.rootStore.currencyStore
                             walletRootStore: root.walletRootStore
                             showAllAccounts: root.walletRootStore.showAllAccounts
                             displayValues: true

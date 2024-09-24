@@ -32,6 +32,7 @@ Item {
 
     property var overview: WalletStores.RootStore.overview
     property RootStore rootStore
+    property CurrenciesStore currenciesStore
     property ProfileStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
     property NetworkConnectionStore networkConnectionStore
@@ -86,27 +87,27 @@ Item {
         readonly property string fiatValueFormatted: {
             if (!d.isTransactionValid || transactionHeader.isMultiTransaction || !symbol)
                 return ""
-            return root.rootStore.currencyStore.formatCurrencyAmount(transactionHeader.fiatValue, root.rootStore.currentCurrency)
+            return root.currenciesStore.formatCurrencyAmount(transactionHeader.fiatValue, root.currenciesStore.currentCurrency)
         }
         readonly property string cryptoValueFormatted: {
             if (!d.isTransactionValid || transactionHeader.isMultiTransaction)
                 return ""
-            const formatted = root.rootStore.currencyStore.formatCurrencyAmount(transaction.amount, transaction.symbol)
+            const formatted = root.currenciesStore.formatCurrencyAmount(transaction.amount, transaction.symbol)
             return symbol || (!d.isDetailsValid || !d.details.contract) ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenAddress, 4))
         }
         readonly property string outFiatValueFormatted: {
             if (!d.isTransactionValid || !transactionHeader.isMultiTransaction || !outSymbol)
                 return ""
-            return root.rootStore.currencyStore.formatCurrencyAmount(transactionHeader.outFiatValue, root.rootStore.currentCurrency)
+            return root.currenciesStore.formatCurrencyAmount(transactionHeader.outFiatValue, root.currenciesStore.currentCurrency)
         }
         readonly property string outCryptoValueFormatted: {
             if (!d.isTransactionValid || !transactionHeader.isMultiTransaction)
                 return ""
-            const formatted = root.rootStore.currencyStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
+            const formatted = root.currenciesStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
             return outSymbol || !transaction.tokenOutAddress ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenOutAddress, 4))
         }
-        readonly property real feeEthValue: d.details ? root.rootStore.currencyStore.getFeeEthValue(d.details.totalFees) : 0
-        readonly property real feeFiatValue: root.rootStore.currencyStore.getFiatValue(d.feeEthValue, Constants.ethToken)
+        readonly property real feeEthValue: d.details ? root.currenciesStore.getFeeEthValue(d.details.totalFees) : 0
+        readonly property real feeFiatValue: root.currenciesStore.getFiatValue(d.feeEthValue, Constants.ethToken)
         readonly property int transactionType: d.isTransactionValid ? WalletStores.RootStore.transactionType(transaction) : Constants.TransactionType.Send
         readonly property bool isBridge: d.transactionType === Constants.TransactionType.Bridge
 
@@ -177,7 +178,8 @@ Item {
                     showAllAccounts: root.showAllAccounts
                     modelData: transaction
                     timeStampText: d.isTransactionValid ? qsTr("Signed at %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)): ""
-                    rootStore: root.rootStore
+                    flatNetworks: root.rootStore.flatNetworks
+                    currenciesStore: root.currenciesStore
                     walletRootStore: WalletStores.RootStore
                     community: isModelDataValid && communityId && communitiesStore ? communitiesStore.getCommunityDetailsAsJson(communityId) : null
 
@@ -649,20 +651,20 @@ Item {
                                 return ""
                             const type = d.transactionType
                             if (type === Constants.TransactionType.Swap) {
-                                return root.rootStore.currencyStore.formatCurrencyAmount(transactionHeader.inCryptoValue, d.inSymbol)
+                                return root.currenciesStore.formatCurrencyAmount(transactionHeader.inCryptoValue, d.inSymbol)
                             } else if (type === Constants.TransactionType.Bridge) {
                                 // Reduce crypto value by fee value
-                                const valueInCrypto = root.rootStore.currencyStore.getCryptoValue(transactionHeader.outFiatValue - d.feeFiatValue, d.inSymbol)
-                                return root.rootStore.currencyStore.formatCurrencyAmount(valueInCrypto, d.inSymbol)
+                                const valueInCrypto = root.currenciesStore.getCryptoValue(transactionHeader.outFiatValue - d.feeFiatValue, d.inSymbol)
+                                return root.currenciesStore.formatCurrencyAmount(valueInCrypto, d.inSymbol)
                             }
                             return ""
                         }
                         tertiaryTitle: {
                             const type = d.transactionType
                             if (type === Constants.TransactionType.Swap) {
-                                return root.rootStore.currencyStore.formatCurrencyAmount(transactionHeader.inFiatValue, root.rootStore.currentCurrency)
+                                return root.currenciesStore.formatCurrencyAmount(transactionHeader.inFiatValue, root.currenciesStore.currentCurrency)
                             } else if (type === Constants.TransactionType.Bridge) {
-                                return root.rootStore.currencyStore.formatCurrencyAmount(transactionHeader.outFiatValue - d.feeFiatValue, root.rootStore.currentCurrency)
+                                return root.currenciesStore.formatCurrencyAmount(transactionHeader.outFiatValue - d.feeFiatValue, root.currenciesStore.currentCurrency)
                             }
                             return ""
                         }
@@ -676,8 +678,8 @@ Item {
                             if (!d.isTransactionValid || transactionHeader.isNFT || !d.isDetailsValid)
                                 return ""
                             if (!d.symbol) {
-                                const maxFeeEth = root.rootStore.currencyStore.getFeeEthValue(d.details.maxTotalFees)
-                                return root.rootStore.currencyStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
+                                const maxFeeEth = root.currenciesStore.getFeeEthValue(d.details.maxTotalFees)
+                                return root.currenciesStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
                             }
 
                             switch(d.transactionType) {
@@ -694,12 +696,12 @@ Item {
                                 return ""
                             let fiatValue
                             if (!d.symbol) {
-                                const maxFeeEth = root.rootStore.currencyStore.getFeeEthValue(d.details.maxTotalFees)
-                                fiatValue = root.rootStore.currencyStore.getFiatValue(maxFeeEth, Constants.ethToken)
+                                const maxFeeEth = root.currenciesStore.getFeeEthValue(d.details.maxTotalFees)
+                                fiatValue = root.currenciesStore.getFiatValue(maxFeeEth, Constants.ethToken)
                             } else {
                                 fiatValue = d.feeFiatValue
                             }
-                            return root.rootStore.currencyStore.formatCurrencyAmount(fiatValue, root.rootStore.currentCurrency)
+                            return root.currenciesStore.formatCurrencyAmount(fiatValue, root.currenciesStore.currentCurrency)
                         }
                         visible: !!subTitle
                     }
@@ -723,30 +725,30 @@ Item {
                             if (fieldIsHidden)
                                 return ""
                             if (showMaxFee) {
-                                const maxFeeEth = root.rootStore.currencyStore.getFeeEthValue(d.details.maxTotalFees)
-                                return root.rootStore.currencyStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
+                                const maxFeeEth = root.currenciesStore.getFeeEthValue(d.details.maxTotalFees)
+                                return root.currenciesStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
                             } else if (showFee) {
-                                return root.rootStore.currencyStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken)
+                                return root.currenciesStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken)
                             } else if (showValue) {
                                 return d.cryptoValueFormatted
                             }
                             const cryptoValue = transactionHeader.isMultiTransaction ? d.outCryptoValueFormatted : d.cryptoValueFormatted
-                            return "%1 + %2".arg(cryptoValue).arg(root.rootStore.currencyStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken))
+                            return "%1 + %2".arg(cryptoValue).arg(root.currenciesStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken))
                         }
                         tertiaryTitle: {
                             if (fieldIsHidden)
                                 return ""
                             if (showMaxFee) {
-                                const maxFeeEth = root.rootStore.currencyStore.getFeeEthValue(d.details.maxTotalFees)
-                                const maxFeeFiat = root.rootStore.currencyStore.getFiatValue(d.feeEthValue, Constants.ethToken)
-                                return root.rootStore.currencyStore.formatCurrencyAmount(maxFeeFiat, root.rootStore.currentCurrency)
+                                const maxFeeEth = root.currenciesStore.getFeeEthValue(d.details.maxTotalFees)
+                                const maxFeeFiat = root.currenciesStore.getFiatValue(d.feeEthValue, Constants.ethToken)
+                                return root.currenciesStore.formatCurrencyAmount(maxFeeFiat, root.currenciesStore.currentCurrency)
                             } else if (showFee) {
-                                return root.rootStore.currencyStore.formatCurrencyAmount(d.feeFiatValue, root.rootStore.currentCurrency)
+                                return root.currenciesStore.formatCurrencyAmount(d.feeFiatValue, root.currenciesStore.currentCurrency)
                             } else if (showValue) {
                                 return d.fiatValueFormatted
                             }
                             const fiatValue = transactionHeader.isMultiTransaction ? transactionHeader.outFiatValue : transactionHeader.fiatValue
-                            return root.rootStore.currencyStore.formatCurrencyAmount(fiatValue + d.feeFiatValue, root.rootStore.currentCurrency)
+                            return root.currenciesStore.formatCurrencyAmount(fiatValue + d.feeFiatValue, root.currenciesStore.currentCurrency)
                         }
                         visible: !!subTitle
                         highlighted: true

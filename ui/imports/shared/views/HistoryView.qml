@@ -486,7 +486,8 @@ ColumnLayout {
                 Layout.fillWidth: true
                 modelData: transactionDelegate.model.activityEntry
                 timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
-                rootStore: RootStore
+                flatNetworks: RootStore.flatNetworks
+                currenciesStore: RootStore.currencyStore
                 walletRootStore: WalletStores.RootStore
                 showAllAccounts: root.showAllAccounts
                 displayValues: root.displayValues
@@ -549,7 +550,9 @@ ColumnLayout {
                 }
                 TransactionDelegate {
                     Layout.fillWidth: true
-                    rootStore: RootStore
+
+                    flatNetworks: RootStore.flatNetworks
+                    currenciesStore: RootStore.currencyStore
                     walletRootStore: WalletStores.RootStore
                     loading: true
                 }

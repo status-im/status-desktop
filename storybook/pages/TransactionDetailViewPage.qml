@@ -228,6 +228,7 @@ SplitView {
                 active: root.globalUtilsReady && root.mainModuleReady
                 sourceComponent: TransactionDetailView {
                     rootStore: rootStoreMock
+                    currenciesStore: CurrenciesStore {}
                     contactsStore: contactsStoreMockup
                     controller: controllerMockup
                     overview: overviewMockup

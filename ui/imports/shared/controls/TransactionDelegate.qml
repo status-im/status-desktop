@@ -29,7 +29,8 @@ import shared.stores 1.0 as SharedStores
         id: delegate
         width: ListView.view.width
         modelData: model.activityEntry
-        rootStore: RootStore
+        flatNetworks: root.flatNetworks
+        currenciesStore: root.currencyStore
         walletRootStore: WalletStores.RootStore
         loading: isModelDataValid
     }
@@ -48,7 +49,9 @@ StatusListItem {
     property bool showAllAccounts: false
     property bool displayValues: true
 
-    required property SharedStores.RootStore rootStore
+    required property var flatNetworks
+
+    required property SharedStores.CurrenciesStore currenciesStore
     required property WalletStores.RootStore walletRootStore
 
     readonly property bool isModelDataValid: modelData !== undefined && !!modelData
@@ -56,17 +59,17 @@ StatusListItem {
     readonly property string txID: isModelDataValid ? modelData.id : "INVALID"
     readonly property int transactionStatus: isModelDataValid ? modelData.status : Constants.TransactionStatus.Pending
     readonly property bool isMultiTransaction: isModelDataValid && modelData.isMultiTransaction
-    readonly property string currentCurrency: rootStore.currentCurrency
+    readonly property string currentCurrency: currenciesStore.currentCurrency
     readonly property double cryptoValue: isModelDataValid ? modelData.amount : 0.0
-    readonly property double fiatValue: isModelDataValid && !isMultiTransaction ? rootStore.currencyStore.getFiatValue(cryptoValue, modelData.symbol) : 0.0
+    readonly property double fiatValue: isModelDataValid && !isMultiTransaction ? currenciesStore.getFiatValue(cryptoValue, modelData.symbol) : 0.0
     readonly property double inCryptoValue: isModelDataValid ? modelData.inAmount : 0.0
-    readonly property double inFiatValue: isModelDataValid && isMultiTransaction ? rootStore.currencyStore.getFiatValue(inCryptoValue, modelData.inSymbol): 0.0
+    readonly property double inFiatValue: isModelDataValid && isMultiTransaction ? currenciesStore.getFiatValue(inCryptoValue, modelData.inSymbol): 0.0
     readonly property double outCryptoValue: isModelDataValid ? modelData.outAmount : 0.0
-    readonly property double outFiatValue: isModelDataValid && isMultiTransaction ? rootStore.currencyStore.getFiatValue(outCryptoValue, modelData.outSymbol): 0.0
-    readonly property string networkColor: isModelDataValid ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainId, "chainColor") : ""
-    readonly property string networkName: isModelDataValid ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainId, "chainName") : ""
-    readonly property string networkNameIn: isMultiTransaction ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainIdIn, "chainName") : ""
-    readonly property string networkNameOut: isMultiTransaction ? SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainIdOut, "chainName") : ""
+    readonly property double outFiatValue: isModelDataValid && isMultiTransaction ? currenciesStore.getFiatValue(outCryptoValue, modelData.outSymbol): 0.0
+    readonly property string networkColor: isModelDataValid ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainId, "chainColor") : ""
+    readonly property string networkName: isModelDataValid ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainId, "chainName") : ""
+    readonly property string networkNameIn: isMultiTransaction ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdIn, "chainName") : ""
+    readonly property string networkNameOut: isMultiTransaction ? SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdOut, "chainName") : ""
     readonly property string addressNameTo: isModelDataValid ? walletRootStore.getNameForAddress(modelData.recipient) : ""
     readonly property string addressNameFrom: isModelDataValid ? walletRootStore.getNameForAddress(modelData.sender) : ""
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
@@ -105,26 +108,26 @@ StatusListItem {
             value += (modelData.nftName ? modelData.nftName : "#" + modelData.tokenID)
             return value
         } else if (!modelData.symbol && !!modelData.tokenAddress) {
-            return "%1 (%2)".arg(root.rootStore.currencyStore.formatCurrencyAmount(cryptoValue, "")).arg(Utils.compactAddress(modelData.tokenAddress, 4))
+            return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(cryptoValue, "")).arg(Utils.compactAddress(modelData.tokenAddress, 4))
         }
-        return root.rootStore.currencyStore.formatCurrencyAmount(cryptoValue, modelData.symbol)
+        return root.currenciesStore.formatCurrencyAmount(cryptoValue, modelData.symbol)
     }
 
     readonly property string inTransactionValue: {
         if (!isModelDataValid || !isMultiTransaction) {
             return qsTr("N/A")
         } else if (!modelData.inSymbol && !!modelData.tokenInAddress) {
-            return "%1 (%2)".arg(root.rootStore.currencyStore.formatCurrencyAmount(inCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenInAddress, 4))
+            return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(inCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenInAddress, 4))
         }
-        return rootStore.currencyStore.formatCurrencyAmount(inCryptoValue, modelData.inSymbol)
+        return currenciesStore.formatCurrencyAmount(inCryptoValue, modelData.inSymbol)
     }
     readonly property string outTransactionValue: {
         if (!isModelDataValid || !isMultiTransaction) {
             return qsTr("N/A")
         } else if (!modelData.outSymbol && !!modelData.tokenOutAddress) {
-            return "%1 (%2)".arg(root.rootStore.currencyStore.formatCurrencyAmount(outCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenOutAddress, 4))
+            return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(outCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenOutAddress, 4))
         }
-        return rootStore.currencyStore.formatCurrencyAmount(outCryptoValue, modelData.outSymbol)
+        return currenciesStore.formatCurrencyAmount(outCryptoValue, modelData.outSymbol)
     }
 
     readonly property string tokenImage: {
@@ -239,7 +242,7 @@ StatusListItem {
         const endl = "\n"
         const endl2 = endl + endl
         const type = d.txType
-        const feeEthValue = rootStore.currencyStore.getGasEthValue(detailsObj.totalFees.amount, 1)
+        const feeEthValue = currenciesStore.getGasEthValue(detailsObj.totalFees.amount, 1)
 
         // TITLE
         switch (type) {
@@ -309,7 +312,7 @@ StatusListItem {
         }
 
         // PROGRESS
-        const networkLayer = SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainId, "layer")
+        const networkLayer = SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainId, "layer")
 
         const isBridge = type === Constants.TransactionType.Bridge
         switch(transactionStatus) {
@@ -335,7 +338,7 @@ StatusListItem {
             details += qsTr("Confirmed on %1").arg(root.networkName) + endl
             details += LocaleUtils.formatDateTime(confirmationTimeStamp * 1000, Locale.LongFormat) + endl2
             if (isBridge) {
-                const networkInLayer = SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainIdIn, "layer")
+                const networkInLayer = SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdIn, "layer")
                 const confirmationTimeStampIn = WalletUtils.calculateConfirmationTimestamp(networkInLayer, modelData.timestamp)
                 details += qsTr("Signed on %1").arg(root.networkNameIn) + endl + timestampString + endl2
                 details += qsTr("Confirmed on %1").arg(root.networkNameIn) + endl
@@ -356,7 +359,7 @@ StatusListItem {
             details += qsTr("Finalised on %1").arg(root.networkName) + endl
             details += LocaleUtils.formatDateTime(finalisationTimeStamp * 1000, Locale.LongFormat) + endl2
             if (isBridge) {
-                const networkInLayer = SQUtils.ModelUtils.getByKey(rootStore.flatNetworks, "chainId", modelData.chainIdIn, "layer")
+                const networkInLayer = SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdIn, "layer")
                 const confirmationTimeStampIn = WalletUtils.calculateConfirmationTimestamp(networkInLayer, modelData.timestamp)
                 const finalisationTimeStampIn = WalletUtils.calculateFinalisationTimestamp(networkInLayer, modelData.timestamp)
                 const epochIn = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainIdIn) - detailsObj.blockNumberIn)
@@ -469,8 +472,8 @@ StatusListItem {
         }
 
         // VALUES
-        const fiatTransactionValue = rootStore.currencyStore.formatCurrencyAmount(isMultiTransaction ? root.outFiatValue : root.fiatValue, root.currentCurrency)
-        const feeFiatValue = rootStore.currencyStore.getFiatValue(feeEthValue, Constants.ethToken)
+        const fiatTransactionValue = currenciesStore.formatCurrencyAmount(isMultiTransaction ? root.outFiatValue : root.fiatValue, root.currentCurrency)
+        const feeFiatValue = currenciesStore.getFiatValue(feeEthValue, Constants.ethToken)
         let valuesString = ""
         if (!root.isNFT) {
             switch(type) {
@@ -485,14 +488,14 @@ StatusListItem {
                 break
             }
             if (type === Constants.TransactionType.Swap) {
-                const crypto = rootStore.currencyStore.formatCurrencyAmount(root.inCryptoValue, modelData.inSymbol)
-                const fiat = rootStore.currencyStore.formatCurrencyAmount(root.inCryptoValue, modelData.inSymbol)
+                const crypto = currenciesStore.formatCurrencyAmount(root.inCryptoValue, modelData.inSymbol)
+                const fiat = currenciesStore.formatCurrencyAmount(root.inCryptoValue, modelData.inSymbol)
                 valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2
             } else if (type === Constants.TransactionType.Bridge) {
                 // Reduce crypto value by fee value
-                const valueInCrypto = rootStore.currencyStore.getCryptoValue(root.fiatValue - feeFiatValue, modelData.inSymbol)
-                const crypto = rootStore.currencyStore.formatCurrencyAmount(valueInCrypto, modelData.inSymbol)
-                const fiat = rootStore.currencyStore.formatCurrencyAmount(root.fiatValue - feeFiatValue, root.currentCurrency)
+                const valueInCrypto = currenciesStore.getCryptoValue(root.fiatValue - feeFiatValue, modelData.inSymbol)
+                const crypto = currenciesStore.formatCurrencyAmount(valueInCrypto, modelData.inSymbol)
+                const fiat = currenciesStore.formatCurrencyAmount(root.fiatValue - feeFiatValue, root.currentCurrency)
                 valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2
             }
             switch(type) {
@@ -500,7 +503,7 @@ StatusListItem {
             case Constants.TransactionType.Swap:
             case Constants.TransactionType.Bridge:
                 const feeValue = LocaleUtils.currencyAmountToLocaleString(detailsObj.totalFees)
-                const feeFiat = rootStore.currencyStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
+                const feeFiat = currenciesStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
                 valuesString += qsTr("Fees %1 (%2)").arg(feeValue).arg(feeFiat) + endl2
                 break
             default:
@@ -510,25 +513,25 @@ StatusListItem {
 
         if (!root.isNFT || type !== Constants.TransactionType.Receive) {
             if (type === Constants.TransactionType.Destroy || root.isNFT) {
-                const feeCrypto = rootStore.currencyStore.formatCurrencyAmount(feeEthValue, "ETH")
-                const feeFiat = rootStore.currencyStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
+                const feeCrypto = currenciesStore.formatCurrencyAmount(feeEthValue, "ETH")
+                const feeFiat = currenciesStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
                 valuesString += qsTr("Fees %1 (%2)").arg(feeCrypto).arg(feeFiat) + endl2
             } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && networkLayer === 1)) {
                 valuesString += qsTr("Total %1 (%2)").arg(root.transactionValue).arg(fiatTransactionValue) + endl2
             } else if (type === Constants.TransactionType.ContractDeployment) {
                 const isPending = root.transactionStatus === Constants.TransactionStatus.Pending
                 if (isPending) {
-                    const maxFeeEthValue = rootStore.currencyStore.getFeeEthValue(detailsObj.maxTotalFees.amount)
-                    const maxFeeCrypto = rootStore.currencyStore.formatCurrencyAmount(maxFeeEthValue, "ETH")
-                    const maxFeeFiat = rootStore.currencyStore.formatCurrencyAmount(maxFeeCrypto, root.currentCurrency)
+                    const maxFeeEthValue = currenciesStore.getFeeEthValue(detailsObj.maxTotalFees.amount)
+                    const maxFeeCrypto = currenciesStore.formatCurrencyAmount(maxFeeEthValue, "ETH")
+                    const maxFeeFiat = currenciesStore.formatCurrencyAmount(maxFeeCrypto, root.currentCurrency)
                     valuesString += qsTr("Estimated max fee %1 (%2)").arg(maxFeeCrypto).arg(maxFeeFiat) + endl2
                 } else {
-                    const feeCrypto = rootStore.currencyStore.formatCurrencyAmount(feeEthValue, "ETH")
-                    const feeFiat = rootStore.currencyStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
+                    const feeCrypto = currenciesStore.formatCurrencyAmount(feeEthValue, "ETH")
+                    const feeFiat = currenciesStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
                     valuesString += qsTr("Fees %1 (%2)").arg(feeCrypto).arg(feeFiat) + endl2
                 }
             } else {
-                const feeEth = rootStore.currencyStore.formatCurrencyAmount(feeEthValue, "ETH")
+                const feeEth = currenciesStore.formatCurrencyAmount(feeEthValue, "ETH")
                 const txValue = isMultiTransaction ? root.inTransactionValue : root.transactionValue
                 valuesString += qsTr("Total %1 + %2 (%3)").arg(txValue).arg(feeEth).arg(fiatTransactionValue) + endl2
             }
@@ -845,12 +848,12 @@ StatusListItem {
                         case Constants.TransactionType.Send:
                         case Constants.TransactionType.Sell:
                         case Constants.TransactionType.Buy:
-                            return "−" + root.rootStore.currencyStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
+                            return "−" + root.currenciesStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
                         case Constants.TransactionType.Receive:
-                            return "+" + root.rootStore.currencyStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
+                            return "+" + root.currenciesStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
                         case Constants.TransactionType.Swap:
-                            return "-%1 / +%2".arg(root.rootStore.currencyStore.formatCurrencyAmount(root.outFiatValue, root.currentCurrency))
-                                              .arg(root.rootStore.currencyStore.formatCurrencyAmount(root.inFiatValue, root.currentCurrency))
+                            return "-%1 / +%2".arg(root.currenciesStore.formatCurrencyAmount(root.outFiatValue, root.currentCurrency))
+                                              .arg(root.currenciesStore.formatCurrencyAmount(root.inFiatValue, root.currentCurrency))
                         case Constants.TransactionType.Bridge:
                         case Constants.TransactionType.Approve:
                         default:
