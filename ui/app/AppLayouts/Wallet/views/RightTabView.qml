@@ -502,6 +502,7 @@ RightTabBaseView {
                 communitiesStore: root.communitiesStore
                 sendModal: root.sendModal
                 rootStore: SharedStores.RootStore
+                currenciesStore: SharedStores.RootStore.currencyStore
                 contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 visible: (stack.currentIndex === 3)

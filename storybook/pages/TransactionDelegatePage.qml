@@ -76,7 +76,7 @@ SplitView {
                     id: delegate
                     Layout.fillWidth: true
                     modelData: root.mockupModelData
-                    rootStore: SharedStores.RootStore {
+                    currenciesStore: SharedStores.CurrenciesStore {
                         readonly property string currentCurrency: "EUR"
 
                         function getFiatValue(cryptoValue, symbol) {
@@ -86,9 +86,8 @@ SplitView {
                         function formatCurrencyAmount(cryptoValue, symbol) {
                             return "%L1 %2".arg(cryptoValue).arg(symbol)
                         }
-
-                        property var flatNetworks: NetworksModel.flatNetworks
                     }
+                    flatNetworks: NetworksModel.flatNetworks
                     walletRootStore: WalletStores.RootStore
                 }
             }
