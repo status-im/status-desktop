@@ -1737,14 +1737,25 @@ Item {
             asynchronous: true
             sourceComponent: StatusSearchListPopup {
                 searchBoxPlaceholder: qsTr("Where do you want to go?")
-                model: rootStore.chatSearchModel
+                model: SortFilterProxyModel {
+                    sourceModel: rootStore.chatSearchModel
+
+                    filters: [
+                        FastExpressionFilter {
+                            enabled: channelPickerLoader.searchText !== ""
+                            expression: {
+                                const lowerCaseSearchText = searchText.toLowerCase()
+                                return model.sectionName.toLowerCase().includes(lowerCaseSearchText) ||
+                                        model.name.toLowerCase().includes(lowerCaseSearchText)
+                            }
+                            expectedRoles: ["sectionName", "name"]
+                        }
+                    ]
+                }
+                
                 delegate: StatusListItem {
                     property var modelData
                     property bool isCurrentItem: true
-                    function filterAccepts(searchText) {
-                        const lowerCaseSearchText = searchText.toLowerCase()
-                        return title.toLowerCase().includes(lowerCaseSearchText) || label.toLowerCase().includes(lowerCaseSearchText)
-                    }
 
                     title: modelData ? modelData.name : ""
                     label: modelData? modelData.sectionName : ""

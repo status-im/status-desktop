@@ -19,14 +19,12 @@ Popup {
     height: 300
 
     property alias model: listView.model
+    property alias searchText: searchBox.text
 
     // delegate interface has to be fulfilled
     property Component delegate: Item {
         property var modelData
         property bool isCurrentItem
-        function filterAccepts(searchText) {
-            return true
-        }
     }
     property string searchBoxPlaceholder: qsTr("Search...")
 
@@ -121,7 +119,6 @@ Popup {
                     onLoaded: {
                         item.modelData = delegateItem.myData
                         item.isCurrentItem = Qt.binding(() => delegateItem.ListView.isCurrentItem)
-                        delegateItem.visible = Qt.binding(() => item.filterAccepts(searchBox.text))
                     }
                 }
 
