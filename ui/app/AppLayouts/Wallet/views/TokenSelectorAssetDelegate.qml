@@ -11,6 +11,8 @@ import utils 1.0
 ItemDelegate {
     id: root
 
+    objectName: "tokenSelectorAssetDelegate_" + name
+
     required property string name
     required property string symbol
     required property string currencyBalanceAsString
