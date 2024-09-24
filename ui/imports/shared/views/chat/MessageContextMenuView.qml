@@ -15,12 +15,9 @@ import shared.status 1.0
 import shared.controls.chat 1.0
 import shared.controls.chat.menuItems 1.0
 
-import AppLayouts.Chat.stores 1.0 as ChatStores
-
 StatusMenu {
     id: root
 
-    property ChatStores.RootStore store
     property var reactionModel: []
 
     property string myPublicKey: ""
@@ -35,7 +32,7 @@ StatusMenu {
     property int messageContentType: Constants.messageContentType.unknownContentType
 
     property bool pinMessageAllowedForMembers: false
-    property bool isDebugEnabled: store && store.isDebugEnabled
+    property bool isDebugEnabled: false
     property bool editRestricted: false
     property bool pinnedMessage: false
     property bool canPin: false
@@ -44,14 +41,15 @@ StatusMenu {
         return root.messageSenderId !== "" && root.messageSenderId === root.myPublicKey;
     }
 
-    signal pinMessage(string messageId)
-    signal unpinMessage(string messageId)
-    signal pinnedMessagesLimitReached(string messageId)
-    signal showReplyArea(string messageId, string messageSenderId)
-    signal toggleReaction(string messageId, int emojiId)
-    signal deleteMessage(string messageId)
-    signal editClicked(string messageId)
-    signal markMessageAsUnread(string messageId)
+    signal pinMessage()
+    signal unpinMessage()
+    signal pinnedMessagesLimitReached()
+    signal showReplyArea(string messageSenderId)
+    signal toggleReaction(int emojiId)
+    signal deleteMessage()
+    signal editClicked()
+    signal markMessageAsUnread()
+    signal copyToClipboard(string text)
 
     width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 230)
 
@@ -65,10 +63,7 @@ StatusMenu {
             id: emojiRow
             reactionsModel: root.reactionModel
             bottomPadding: Style.current.padding
-            onToggleReaction: {
-                root.toggleReaction(root.messageId, emojiId)
-                close()
-            }
+            onToggleReaction: root.toggleReaction(emojiId)
         }
     }
 
@@ -80,19 +75,14 @@ StatusMenu {
         id: replyToMenuItem
         text: qsTr("Reply to")
         icon.name: "chat"
-        onTriggered: {
-            root.showReplyArea(root.messageId, root.messageSenderId)
-            root.close()
-        }
+        onTriggered: root.showReplyArea(root.messageSenderId)
         enabled: !root.disabledForChat
     }
 
     StatusAction {
         id: editMessageAction
         text: qsTr("Edit message")
-        onTriggered: {
-            editClicked(messageId)
-        }
+        onTriggered: editClicked()
         icon.name: "edit"
         enabled: root.isMyMessage &&
                  !root.editRestricted &&
@@ -103,10 +93,7 @@ StatusMenu {
         id: copyMessageMenuItem
         text: qsTr("Copy message")
         icon.name: "copy"
-        onTriggered: {
-            ClipboardUtils.setText(root.unparsedText)
-            close()
-        }
+        onTriggered: root.copyToClipboard(root.unparsedText)
         enabled: root.messageContentType === Constants.messageContentType.messageType && replyToMenuItem.enabled
     }
 
@@ -115,10 +102,7 @@ StatusMenu {
         text: qsTr("Copy Message Id")
         icon.name: "copy"
         enabled: root.isDebugEnabled && replyToMenuItem.enabled
-        onTriggered: {
-            ClipboardUtils.setText(root.messageId)
-            close()
-        }
+        onTriggered: root.copyToClipboard(root.messageId)
     }
 
     StatusAction {
@@ -126,18 +110,9 @@ StatusMenu {
         text: root.pinnedMessage ? qsTr("Unpin") : qsTr("Pin")
         icon.name: root.pinnedMessage ? "unpin" : "pin"
         onTriggered: {
-            if (root.pinnedMessage) {
-                root.unpinMessage(root.messageId)
-                return
-            }
-
-            if (!root.canPin) {
-                root.pinnedMessagesLimitReached(root.messageId)
-                return
-            }
-
-            root.pinMessage(root.messageId)
-            root.close()
+            if (root.pinnedMessage) return root.unpinMessage()
+            if (!root.canPin) return root.pinnedMessagesLimitReached()
+            root.pinMessage()
         }
         enabled: {
             if (root.disabledForChat)
@@ -163,10 +138,7 @@ StatusMenu {
         text: qsTr("Mark as unread")
         icon.name: "hide"
         enabled: !root.disabledForChat
-        onTriggered: {
-            root.markMessageAsUnread(root.messageId)
-            root.close()
-        }
+        onTriggered: root.markMessageAsUnread()
     }
 
     StatusMenuSeparator {
@@ -191,8 +163,6 @@ StatusMenu {
         text: qsTr("Delete message")
         icon.name: "delete"
         type: StatusAction.Type.Danger
-        onTriggered: {
-            root.deleteMessage(messageId)
-        }
+        onTriggered: root.deleteMessage()
     }
 }
