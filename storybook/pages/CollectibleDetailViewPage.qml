@@ -87,7 +87,7 @@ SplitView {
                     activityModel: d.transactionsModel
                     addressFilters: d.addressesSelected
                     rootStore: SharedStores.RootStore {
-                        currentCurrency: "EUR"
+                        readonly property string currentCurrency: "EUR"
 
                         function getFiatValue(cryptoValue, symbol) {
                             return cryptoValue * 0.1;
