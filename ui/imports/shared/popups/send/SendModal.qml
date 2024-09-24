@@ -537,6 +537,11 @@ StatusDialog {
                         formatBalance: amount => d.currencyStore.formatCurrencyAmount(
                                            amount, selectedSymbol)
 
+                        onValidChanged: {
+                            d.sendError = ""
+                            popup.recalculateRoutesAndFees()
+                        }
+
                         onAmountChanged: {
                             d.sendError = ""
                             popup.recalculateRoutesAndFees()
