@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -520,7 +521,7 @@ StatusScrollView {
                     ]
 
                     filters: [
-                        ExpressionFilter {
+                        FastExpressionFilter {
                             enabled: membersDropdown.searchText !== ""
 
                             function matchesAlias(name, filter) {
@@ -528,8 +529,6 @@ StatusScrollView {
                             }
 
                             expression: {
-                                membersDropdown.searchText
-
                                 const filter = membersDropdown.searchText.toLowerCase()
                                 return matchesAlias(model.alias.toLowerCase(), filter)
                                          || model.displayName.toLowerCase().includes(filter)
@@ -537,9 +536,11 @@ StatusScrollView {
                                          || model.localNickname.toLowerCase().includes(filter)
                                          || model.pubKey.toLowerCase().includes(filter)
                             }
+                            expectedRoles: ["alias", "displayName", "ensName", "localNickname", "pubKey"]
                         },
-                        ExpressionFilter {
+                        FastExpressionFilter {
                             expression: !!model.airdropAddress
+                            expectedRoles: ["airdropAddress"]
                         }
                     ]
                 }
