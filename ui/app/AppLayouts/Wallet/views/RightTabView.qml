@@ -501,6 +501,7 @@ RightTabBaseView {
                 showAllAccounts: RootStore.showAllAccounts
                 communitiesStore: root.communitiesStore
                 sendModal: root.sendModal
+                rootStore: SharedStores.RootStore
                 contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 visible: (stack.currentIndex === 3)
