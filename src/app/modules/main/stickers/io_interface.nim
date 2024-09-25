@@ -1,8 +1,7 @@
-import Tables, stint
+import Tables
 import ./item
 
 import app_service/service/stickers/service as stickers_service
-from app_service/service/keycard/service import KeycardEvent
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -18,9 +17,6 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method authenticateAndBuy*(self: AccessInterface, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool){.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getRecentStickers*(self: AccessInterface) {.base.} =
@@ -68,8 +64,6 @@ method onStickerPackInstalled*(self: AccessInterface, packId: string) {.base.} =
 method uninstallStickerPack*(self: AccessInterface, packId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method wei2Eth*(self: AccessInterface, price: Stuint[256]): string {.base.} =
-  raise newException(ValueError, "No implementation available")
 
 method removeRecentStickers*(self: AccessInterface, packId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -78,9 +72,6 @@ method sendSticker*(self: AccessInterface, channelId: string, replyTo: string, s
   raise newException(ValueError, "No implementation available")
 
 method populateInstalledStickerPacks*(self: AccessInterface, stickers: Table[string, StickerPackDto]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method gasEstimateReturned*(self: AccessInterface, estimate: int, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addStickerPackToList*(self: AccessInterface, stickerPack: StickerPackDto, isInstalled: bool, isBought: bool, isPending: bool) {.base.} =
@@ -92,20 +83,15 @@ method getWalletDefaultAddress*(self: AccessInterface): string {.base.} =
 method getCurrentCurrency*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getGasEthValue*(self: AccessInterface, gweiValue: string, gasLimit: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
 
 method getStatusTokenKey*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method stickerTransactionSent*(self: AccessInterface, chainId: int, packId: string, txHash: string, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method stickerTransactionConfirmed*(self: AccessInterface, trxType: string, packID: string, transactionHash: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method stickerTransactionReverted*(self: AccessInterface, trxType: string, packID: string, transactionHash: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onKeypairAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onTransactionSigned*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
   raise newException(ValueError, "No implementation available")

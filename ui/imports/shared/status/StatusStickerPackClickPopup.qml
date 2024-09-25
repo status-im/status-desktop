@@ -86,20 +86,7 @@ ModalPopup {
                     return !!token && !!token.symbol ? token.symbol : ""
                 }
                 preSelectedHoldingType: Constants.TokenType.ERC20
-                sendTransaction: function() {
-                    if(bestRoutes.count === 1) {
-                        let path = bestRoutes.firstItem()
-                        let eip1559Enabled = path.gasFees.eip1559Enabled
-                        let maxFeePerGas = path.gasFees.maxFeePerGasM
-                        stickerPackDetailsPopup.store.stickersStore.authenticateAndBuy(packId,
-                                                                                       store.selectedSenderAccountAddress,
-                                                                                       path.gasAmount,
-                                                                                       eip1559Enabled ? "" : path.gasFees.gasPrice,
-                                                                                       eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",
-                                                                                       eip1559Enabled ? maxFeePerGas : path.gasFees.gasPrice,
-                                                                                       eip1559Enabled)
-                    }
-                }
+
                 Connections {
                     target: stickerPackDetailsPopup.store.stickersStore.stickersModule
                     function onTransactionWasSent(chainId: int, txHash: string, error: string) {

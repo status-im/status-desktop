@@ -2,12 +2,6 @@ include ../../common/json_utils
 include ../../../app/core/tasks/common
 
 type
-  EstimateTaskArg = ref object of QObjectTaskArg
-    chainId*: int
-    packId*: string
-    fromAddress*: string
-    uuid*: string
-
   ObtainMarketStickerPacksTaskArg = ref object of QObjectTaskArg
     chainId*: int
   InstallStickerPackTaskArg = ref object of QObjectTaskArg
@@ -50,24 +44,6 @@ proc getMarketStickerPacks*(chainId: int):
   except RpcException:
     error "Error in getMarketStickerPacks", message = getCurrentExceptionMsg()
     result.error = getCurrentExceptionMsg()
-
-# The pragmas `{.gcsafe, nimcall.}` in this context do not force the compiler
-# to accept unsafe code, rather they work in conjunction with the proc
-# signature for `type Task` in tasks/common.nim to ensure that the proc really
-# is gcsafe and that a helpful error message is displayed
-proc estimateTask(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[EstimateTaskArg](argEncoded)
-  var estimate = 325000
-  try:
-    let estimateResponse = status_stickers.buyEstimate(arg.chainId, parseAddress(arg.fromAddress), arg.packId)
-    estimate = estimateResponse.result.getInt + 1000
-  except ValueError:
-    # TODO: notify the UI that the trx is likely to fail
-    error "Error in buyPack estimate", message = getCurrentExceptionMsg()
-  except RpcException:
-    error "Error in buyPack estimate", message = getCurrentExceptionMsg()
-  let tpl: tuple[estimate: int, uuid: string] = (estimate, arg.uuid)
-  arg.finish(tpl)
 
 proc obtainMarketStickerPacksTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ObtainMarketStickerPacksTaskArg](argEncoded)
