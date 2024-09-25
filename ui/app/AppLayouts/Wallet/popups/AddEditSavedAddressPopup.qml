@@ -7,6 +7,7 @@ import QtQuick.Layouts 1.15
 import utils 1.0
 import shared.controls 1.0
 import shared.panels 1.0
+import shared.stores 1.0 as SharedStores
 
 import StatusQ 0.1
 import StatusQ.Components 0.1
@@ -28,16 +29,17 @@ import ".."
 StatusModal {
     id: root
 
+    required property WalletStores.RootStore store
+    required property SharedStores.RootStore sharedRootStore
+
     property var flatNetworks
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     width: 477
 
-    headerSettings.title: d.editMode? qsTr("Edit saved addres") : qsTr("Add new saved address")
+    headerSettings.title: d.editMode? qsTr("Edit saved address") : qsTr("Add new saved address")
     headerSettings.subTitle: d.editMode? d.name : ""
-
-    property WalletStores.RootStore store
 
     function initWithParams(params = {}) {
         d.storedName = params.name?? ""
@@ -180,7 +182,7 @@ StatusModal {
             mainModule.resolveENS(name, d.uuid)
         });
 
-        property var contactsModuleInst: root.store.profileSectionModuleInst.contactsModule
+        property var contactsModuleInst: root.sharedRootStore.profileSectionModuleInst.contactsModule
 
         /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
         property bool initialized: false
@@ -559,7 +561,7 @@ StatusModal {
                     let unknownPrefixes = prefixes.filter(e => {
                                                               for (let i = 0; i < networksCount; i++) {
                                                                   if (e == StatusQUtils.ModelUtils.get(root.flatNetworks, i).shortName)
-                                                                  return false
+                                                                      return false
                                                               }
                                                               return true
                                                           })
