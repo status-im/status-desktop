@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 import SortFilterProxyModel 0.2
 
 import StatusQ.Core 0.1
@@ -461,6 +461,5 @@ Rectangle {
                 }
             }
         }
-
     }
 }

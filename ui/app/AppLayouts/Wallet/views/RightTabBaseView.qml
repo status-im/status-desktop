@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 
@@ -41,6 +41,7 @@ FocusScope {
             walletStore: WalletStores.RootStore
             networkConnectionStore: root.networkConnectionStore
             dappsEnabled: root.dappsEnabled
+            loginType: root.store.loginType
         }
 
         Item {
