@@ -58,14 +58,6 @@ QtObject:
 
   proc transactionCompleted*(self: View, success: bool, txHash: string) {.signal.}
 
-  proc estimate*(self: View, packId: string, address: string, price: string, uuid: string) {.slot.} =
-    self.delegate.estimate(packId, address, price, uuid)
-
-  proc gasEstimateReturned*(self: View, estimate: int, uuid: string) {.signal.}
-
-  proc authenticateAndBuy*(self: View, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
-    self.delegate.authenticateAndBuy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
-
   proc stickerPacksLoaded*(self: View) {.signal.}
 
   proc stickerPackInstalled*(self: View, packId: string) {.signal.}
@@ -179,8 +171,6 @@ QtObject:
   proc getCurrentCurrency*(self: View): string {.slot.} =
     return self.delegate.getCurrentCurrency()
 
-  proc getGasEthValue*(self: View, gweiValue: string, gasLimit: string): string {.slot.} =
-    return self.delegate.getGasEthValue(gweiValue, gasLimit)
 
   proc getStatusTokenKey*(self: View): string {.slot.} =
     return self.delegate.getStatusTokenKey()

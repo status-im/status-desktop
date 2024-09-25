@@ -98,7 +98,6 @@ proc toSendDetailsDto*(jsonObj: JsonNode): SendDetailsDto =
     let packId = stint.fromHex(UInt256, tmpObj.getStr)
     result.packId = $packId
 
-
 proc toSigningDetails*(jsonObj: JsonNode): SigningDetails =
   result = SigningDetails()
   discard jsonObj.getProp("address", result.address)
