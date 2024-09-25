@@ -561,6 +561,10 @@ QtObject {
         return transaction.txType
     }
 
+    function addressesEqual(address1, address2) {
+        return address1.toUpperCase() === address2.toUpperCase()
+    }
+
     // TODO: https://github.com/status-im/status-desktop/issues/15329
     // Get DApp data from the backend
     function getDappDetails(chainId, contractAddress) {

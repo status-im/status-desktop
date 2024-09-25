@@ -202,10 +202,6 @@ StatusListItem {
         property color animatedBgColor
         property int txType: walletRootStore.transactionType(root.modelData)
 
-        function addressesEqual(address1, address2) {
-            return address1.toUpperCase() == address2.toUpperCase()
-        }
-
         readonly property var secondIconAsset: StatusAssetSettings {
             width: root.tokenIconAsset.width
             height: root.tokenIconAsset.height
