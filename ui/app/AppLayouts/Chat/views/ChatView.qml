@@ -172,7 +172,6 @@ StatusSectionLayout {
     rightPanel: Component {
         id: userListComponent
         UserListPanel {
-            id: userListPanel
             anchors.fill: parent
             store: root.rootStore
             label: qsTr("Members")

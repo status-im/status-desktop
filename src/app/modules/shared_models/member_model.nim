@@ -179,6 +179,9 @@ QtObject:
     self.countChanged()
 
   proc addItems*(self: Model, items: seq[MemberItem]) =
+    if items.len == 0:
+      return
+
     let modelIndex = newQModelIndex()
     defer: modelIndex.delete
 
@@ -272,16 +275,21 @@ QtObject:
 
     var roles: seq[int] = @[]
 
+    var preferredNameMightHaveChanged = false
+
     if self.items[ind].displayName != displayName:
       self.items[ind].displayName = displayName
+      preferredNameMightHaveChanged = true
       roles.add(ModelRole.DisplayName.int)
 
     if self.items[ind].ensName != ensName:
       self.items[ind].ensName = ensName
+      preferredNameMightHaveChanged = true
       roles.add(ModelRole.EnsName.int)
 
     if self.items[ind].localNickname != localNickname:
       self.items[ind].localNickname = localNickname
+      preferredNameMightHaveChanged = true
       roles.add(ModelRole.LocalNickname.int)
 
     if self.items[ind].isEnsVerified != isEnsVerified:
@@ -290,6 +298,7 @@ QtObject:
 
     if self.items[ind].alias != alias:
       self.items[ind].alias = alias
+      preferredNameMightHaveChanged = true
       roles.add(ModelRole.Alias.int)
 
     if self.items[ind].icon != icon:
@@ -316,10 +325,11 @@ QtObject:
       self.items[ind].isUntrustworthy = isUntrustworthy
       roles.add(ModelRole.IsUntrustworthy.int)
 
+    if preferredNameMightHaveChanged:
+      roles.add(ModelRole.PreferredDisplayName.int)
+
     if roles.len == 0:
       return
-
-    roles.add(ModelRole.PreferredDisplayName.int)
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
