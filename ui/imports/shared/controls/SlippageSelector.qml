@@ -102,7 +102,7 @@ Control {
 
                 visible: !customButton.visible
                 minValue: 0.01
-                maxValue: 100.0
+                maxValue: 99.99
                 maximumLength: 6 // 3 integral + separator + 2 decimals (e.g. "999.99")
                 currencySymbol: d.customSymbol
                 onValueChanged: d.update(value)
