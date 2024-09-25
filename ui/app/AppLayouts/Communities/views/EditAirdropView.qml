@@ -524,13 +524,9 @@ StatusScrollView {
                         FastExpressionFilter {
                             enabled: membersDropdown.searchText !== ""
 
-                            function matchesAlias(name, filter) {
-                                return name.split(" ").some(p => p.startsWith(filter))
-                            }
-
                             expression: {
                                 const filter = membersDropdown.searchText.toLowerCase()
-                                return matchesAlias(model.alias.toLowerCase(), filter)
+                                return model.alias.toLowerCase().includes(filter)
                                          || model.displayName.toLowerCase().includes(filter)
                                          || model.ensName.toLowerCase().includes(filter)
                                          || model.localNickname.toLowerCase().includes(filter)
@@ -538,9 +534,10 @@ StatusScrollView {
                             }
                             expectedRoles: ["alias", "displayName", "ensName", "localNickname", "pubKey"]
                         },
-                        FastExpressionFilter {
-                            expression: !!model.airdropAddress
-                            expectedRoles: ["airdropAddress"]
+                        ValueFilter {
+                            roleName: "airdropAddress"
+                            value: ""
+                            inverted: true
                         }
                     ]
                 }
