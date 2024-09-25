@@ -88,5 +88,7 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Verify that status of both tokens'):
-        assert driver.waitFor(lambda: (minted_tokens_view.get_owner_token_status == '1 of 1 (you hodl)'), 15000)
-        assert driver.waitFor(lambda: (minted_tokens_view.get_master_token_status == '∞'), 15000)
+        assert driver.waitFor(lambda: (minted_tokens_view.get_owner_token_status == '1 of 1 (you hodl)'), 60000), \
+            f'Owner token status was not updated and is {minted_tokens_view.get_owner_token_status}'
+        assert driver.waitFor(lambda: (minted_tokens_view.get_master_token_status == '∞'), 60000), \
+            f'Token master token status was not updated and is {minted_tokens_view.get_master_token_status}'

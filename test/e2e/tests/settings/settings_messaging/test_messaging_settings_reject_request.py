@@ -59,7 +59,7 @@ def test_messaging_settings_rejecting_request(multiple_instances):
         with step(f'Verify that contacts list of {user_two.name} is empty in messaging settings'):
             contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             contacts_settings.open_contacts()
-            assert contacts_settings.no_friends_item_text == Messaging.NO_FRIENDS_ITEM.value
+            assert str(contacts_settings.no_friends_item_text) == Messaging.NO_FRIENDS_ITEM.value
             assert contacts_settings.is_invite_friends_button_visible
             main_window.hide()
 
@@ -68,5 +68,5 @@ def test_messaging_settings_rejecting_request(multiple_instances):
             main_window.prepare()
             contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             contacts_settings.open_contacts()
-            assert contacts_settings.no_friends_item_text == Messaging.NO_FRIENDS_ITEM.value
+            assert str(contacts_settings.no_friends_item_text) == Messaging.NO_FRIENDS_ITEM.value
             assert contacts_settings.is_invite_friends_button_visible
