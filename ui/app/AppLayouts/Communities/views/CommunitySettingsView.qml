@@ -521,13 +521,16 @@ StatusSectionLayout {
                             roleName: "tokenType"
                             value: Constants.TokenType.ERC721
                         },
-                        ExpressionFilter {
-                            function getPrivileges(privilegesLevel) {
-                                return privilegesLevel === Constants.TokenPrivilegesLevel.Community ||
-                                        (root.isOwner && privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
+                        AnyOf {
+                            ValueFilter {
+                                roleName: "privilegesLevel"
+                                value: Constants.TokenPrivilegesLevel.Community
                             }
-
-                            expression: { return getPrivileges(model.privilegesLevel) }
+                            ValueFilter {
+                                roleName: "privilegesLevel"
+                                value: Constants.TokenPrivilegesLevel.TMaster
+                                enabled: root.isOwner
+                            }
                         }
                     ]
                     proxyRoles: [
