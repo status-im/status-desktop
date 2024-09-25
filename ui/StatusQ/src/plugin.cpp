@@ -5,6 +5,7 @@
 
 #include "StatusQ/clipboardutils.h"
 #include "StatusQ/concatmodel.h"
+#include "StatusQ/constantrole.h"
 #include "StatusQ/fastexpressionfilter.h"
 #include "StatusQ/fastexpressionrole.h"
 #include "StatusQ/fastexpressionsorter.h"
@@ -32,6 +33,7 @@
 #include "StatusQ/undefinedfilter.h"
 #include "StatusQ/urlutils.h"
 #include "StatusQ/writableproxymodel.h"
+
 
 #include "wallet/managetokenscontroller.h"
 #include "wallet/managetokensmodel.h"
@@ -67,6 +69,7 @@ public:
         qmlRegisterType<FastExpressionRole>("StatusQ", 0, 1, "FastExpressionRole");
         qmlRegisterType<FastExpressionSorter>("StatusQ", 0, 1, "FastExpressionSorter");
         qmlRegisterType<UndefinedFilter>("StatusQ", 0, 1, "UndefinedFilter");
+        qmlRegisterType<ConstantRole>("StatusQ", 0, 1, "ConstantRole");
 
         qmlRegisterType<ObjectProxyModel>("StatusQ", 0, 1, "ObjectProxyModel");
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
