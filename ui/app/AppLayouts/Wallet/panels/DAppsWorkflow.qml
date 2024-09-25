@@ -163,7 +163,8 @@ DappsComboBox {
                 name: "",
                 address: "",
                 emoji: "",
-                colorId: 0
+                colorId: 0,
+                migratedToKeycard: false
             }
 
             readonly property var network: networkEntry.available ? networkEntry.item : {
@@ -171,7 +172,7 @@ DappsComboBox {
                 iconUrl: ""
             }
 
-            loginType: account.migragedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            loginType: account.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
             formatBigNumber: (number, symbol, noSymbolOption) => root.wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
             visible: true
 

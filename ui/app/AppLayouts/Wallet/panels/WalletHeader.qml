@@ -30,6 +30,7 @@ Item {
     property WalletStores.RootStore walletStore
 
     property bool dappsEnabled
+    property int loginType // RootStore.loginType -> Constants.LoginType enum
 
     property alias headerButton: headerButton
     property alias networkFilter: networkFilter
@@ -145,7 +146,7 @@ Item {
 
 
                 wcService: Global.walletConnectService
-                loginType: root.store.loginType
+                loginType: root.loginType
                 selectedAccountAddress: root.walletStore.selectedAddress
             }
 
