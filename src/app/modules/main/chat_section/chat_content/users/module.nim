@@ -22,7 +22,7 @@ type
     moduleLoaded: bool
 
 # Forward declaration
-proc addChatMember(self: Module,  member: ChatMember)
+proc processChatMember(self: Module,  member: ChatMember): MemberItem
 
 proc newModule*(
   events: EventEmitter, sectionId: string, chatId: string,
@@ -95,7 +95,9 @@ method userProfileUpdated*(self: Module) =
 method loggedInUserImageChanged*(self: Module) =
   self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
-proc addChatMember(self: Module,  member: ChatMember) =
+# This function either removes the member if it is no longer part of the community,
+# does nothing if the member is already in the model or creates the MemberItem
+proc processChatMember(self: Module,  member: ChatMember): MemberItem =
   if member.id == "":
     return
 
@@ -118,7 +120,7 @@ proc addChatMember(self: Module,  member: ChatMember) =
     let statusUpdateDto = self.controller.getStatusForContact(member.id)
     status = toOnlineStatus(statusUpdateDto.statusType)
 
-  self.view.model().addItem(initMemberItem(
+  return initMemberItem(
     pubKey = member.id,
     displayName = contactDetails.dto.displayName,
     ensName = contactDetails.dto.name,
@@ -134,11 +136,17 @@ proc addChatMember(self: Module,  member: ChatMember) =
     memberRole = member.role,
     joined = member.joined,
     isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
-    ))
+    )
 
 method onChatMembersAdded*(self: Module, ids: seq[string]) =
+  var memberItems: seq[MemberItem] = @[]
+
   for memberId in ids:
-    self.addChatMember(ChatMember(id: memberId, role: MemberRole.None, joined: true))
+    let item = self.processChatMember(ChatMember(id: memberId, role: MemberRole.None, joined: true))
+    if item.pubKey != "":
+      memberItems.add(item)
+
+  self.view.model().addItems(memberItems)
 
 method onChatMemberRemoved*(self: Module, id: string) =
   self.view.model().removeItemById(id)
@@ -148,8 +156,12 @@ method onMembersChanged*(self: Module,  members: seq[ChatMember]) =
   let membersAdded = filter(members, member => not modelIDs.contains(member.id))
   let membersRemoved = filter(modelIDs, id => not members.any(member => member.id == id))
 
+  var memberItems: seq[MemberItem] = @[]
   for member in membersAdded:
-    self.addChatMember(member)
+    let item = self.processChatMember(member)
+    if item.pubKey != "":
+      memberItems.add(item)
+  self.view.model().addItems(memberItems)
 
   for id in membersRemoved:
     self.onChatMemberRemoved(id)
@@ -181,5 +193,11 @@ method removeGroupMembers*(self: Module, pubKeys: seq[string]) =
 
 method updateMembersList*(self: Module) =
   let members = self.controller.getChatMembers()
+  var memberItems: seq[MemberItem] = @[]
+
   for member in members:
-    self.addChatMember(member)
+    let item = self.processChatMember(member)
+    if item.pubKey != "":
+      memberItems.add(item)
+
+  self.view.model().addItems(memberItems)

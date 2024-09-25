@@ -10,6 +10,7 @@ type
   ModelRole {.pure.} = enum
     PubKey = UserRole + 1
     DisplayName
+    PreferredDisplayName
     EnsName
     IsEnsVerified
     LocalNickname
@@ -79,6 +80,7 @@ QtObject:
     {
       ModelRole.PubKey.int: "pubKey",
       ModelRole.DisplayName.int: "displayName",
+      ModelRole.PreferredDisplayName.int: "preferredDisplayName",
       ModelRole.EnsName.int: "ensName",
       ModelRole.IsEnsVerified.int: "isEnsVerified",
       ModelRole.LocalNickname.int: "localNickname",
@@ -117,6 +119,14 @@ QtObject:
       result = newQVariant(item.pubKey)
     of ModelRole.DisplayName:
       result = newQVariant(item.displayName)
+    of ModelRole.PreferredDisplayName:
+      if item.localNickname != "":
+        return newQVariant(item.localNickname)
+      if item.ensName != "":
+        return newQVariant(item.ensName)
+      if item.displayName != "":
+        return newQVariant(item.displayName)
+      return newQVariant(item.alias)
     of ModelRole.EnsName:
       result = newQVariant(item.ensName)
     of ModelRole.IsEnsVerified:
@@ -168,6 +178,21 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
+  proc addItems*(self: Model, items: seq[MemberItem]) =
+    if items.len == 0:
+      return
+
+    let modelIndex = newQModelIndex()
+    defer: modelIndex.delete
+
+    let first = self.items.len
+    let last = first + items.len - 1
+
+    self.beginInsertRows(modelIndex, first, last)
+    self.items.add(items)
+    self.endInsertRows()
+    self.countChanged()
+
   proc findIndexForMember(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].pubKey == pubKey):
@@ -187,27 +212,40 @@ QtObject:
   proc isContactWithIdAdded*(self: Model, id: string): bool =
     return self.findIndexForMember(id) != -1
 
-  proc setName*(self: Model, pubKey: string, displayName: string,
-      ensName: string, localNickname: string) =
+  proc setName*(self: Model, pubKey: string, displayName: string, ensName: string, localNickname: string) =
     let ind = self.findIndexForMember(pubKey)
-    if(ind == -1):
+    if ind == -1:
       return
 
-    self.items[ind].displayName = displayName
-    self.items[ind].ensName = ensName
-    self.items[ind].localNickname = localNickname
+    var roles: seq[int] = @[]
+
+    if self.items[ind].displayName != displayName:
+      self.items[ind].displayName = displayName
+      roles.add(ModelRole.DisplayName.int)
+
+    if self.items[ind].ensName != ensName:
+      self.items[ind].ensName = ensName
+      roles.add(ModelRole.EnsName.int)
+
+    if self.items[ind].localNickname != localNickname:
+      self.items[ind].localNickname = localNickname
+      roles.add(ModelRole.LocalNickname.int)
+
+    if roles.len == 0:
+      return
+
+    roles.add(ModelRole.PreferredDisplayName.int)
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.DisplayName.int,
-      ModelRole.EnsName.int,
-      ModelRole.LocalNickname.int,
-      ])
+    self.dataChanged(index, index, roles)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
     let ind = self.findIndexForMember(pubKey)
-    if(ind == -1):
+    if ind == -1:
+      return
+
+    if self.items[ind].icon == icon:
       return
 
     self.items[ind].icon = icon
@@ -232,36 +270,70 @@ QtObject:
       isUntrustworthy: bool,
       ) =
     let ind = self.findIndexForMember(pubKey)
-    if(ind == -1):
+    if ind == -1:
       return
 
-    self.items[ind].displayName = displayName
-    self.items[ind].ensName = ensName
-    self.items[ind].isEnsVerified = isEnsVerified
-    self.items[ind].localNickname = localNickname
-    self.items[ind].alias = alias
-    self.items[ind].icon = icon
-    self.items[ind].isContact = isContact
-    self.items[ind].isVerified = isVerified
-    self.items[ind].memberRole = memberRole
-    self.items[ind].joined = joined
-    self.items[ind].isUntrustworthy = isUntrustworthy
+    var roles: seq[int] = @[]
+
+    var preferredNameMightHaveChanged = false
+
+    if self.items[ind].displayName != displayName:
+      self.items[ind].displayName = displayName
+      preferredNameMightHaveChanged = true
+      roles.add(ModelRole.DisplayName.int)
+
+    if self.items[ind].ensName != ensName:
+      self.items[ind].ensName = ensName
+      preferredNameMightHaveChanged = true
+      roles.add(ModelRole.EnsName.int)
+
+    if self.items[ind].localNickname != localNickname:
+      self.items[ind].localNickname = localNickname
+      preferredNameMightHaveChanged = true
+      roles.add(ModelRole.LocalNickname.int)
+
+    if self.items[ind].isEnsVerified != isEnsVerified:
+      self.items[ind].isEnsVerified = isEnsVerified
+      roles.add(ModelRole.IsEnsVerified.int)
+
+    if self.items[ind].alias != alias:
+      self.items[ind].alias = alias
+      preferredNameMightHaveChanged = true
+      roles.add(ModelRole.Alias.int)
+
+    if self.items[ind].icon != icon:
+      self.items[ind].icon = icon
+      roles.add(ModelRole.Icon.int)
+
+    if self.items[ind].isContact != isContact:
+      self.items[ind].isContact = isContact
+      roles.add(ModelRole.IsContact.int)
+
+    if self.items[ind].isVerified != isVerified:
+      self.items[ind].isVerified = isVerified
+      roles.add(ModelRole.IsVerified.int)
+
+    if self.items[ind].memberRole != memberRole:
+      self.items[ind].memberRole = memberRole
+      roles.add(ModelRole.MemberRole.int)
+
+    if self.items[ind].joined != joined:
+      self.items[ind].joined = joined
+      roles.add(ModelRole.Joined.int)
+
+    if self.items[ind].isUntrustworthy != isUntrustworthy:
+      self.items[ind].isUntrustworthy = isUntrustworthy
+      roles.add(ModelRole.IsUntrustworthy.int)
+
+    if preferredNameMightHaveChanged:
+      roles.add(ModelRole.PreferredDisplayName.int)
+
+    if roles.len == 0:
+      return
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.DisplayName.int,
-      ModelRole.IsEnsVerified.int,
-      ModelRole.EnsName.int,
-      ModelRole.LocalNickname.int,
-      ModelRole.Alias.int,
-      ModelRole.Icon.int,
-      ModelRole.IsContact.int,
-      ModelRole.IsVerified.int,
-      ModelRole.MemberRole.int,
-      ModelRole.Joined.int,
-      ModelRole.IsUntrustworthy.int,
-    ])
+    self.dataChanged(index, index, roles)
 
   proc updateItem*(
       self: Model,
@@ -277,39 +349,30 @@ QtObject:
       isUntrustworthy: bool,
       ) =
     let ind = self.findIndexForMember(pubKey)
-    if(ind == -1):
+    if ind == -1:
       return
 
-    self.items[ind].displayName = displayName
-    self.items[ind].ensName = ensName
-    self.items[ind].isEnsVerified = isEnsVerified
-    self.items[ind].localNickname = localNickname
-    self.items[ind].alias = alias
-    self.items[ind].icon = icon
-    self.items[ind].isContact = isContact
-    self.items[ind].isVerified = isVerified
-    self.items[ind].isUntrustworthy = isUntrustworthy
-
-    let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.DisplayName.int,
-      ModelRole.EnsName.int,
-      ModelRole.IsEnsVerified.int,
-      ModelRole.LocalNickname.int,
-      ModelRole.Alias.int,
-      ModelRole.Icon.int,
-      ModelRole.IsContact.int,
-      ModelRole.IsVerified.int,
-      ModelRole.IsUntrustworthy.int,
-    ])
+    self.updateItem(
+      pubKey,
+      displayName,
+      ensName,
+      isEnsVerified,
+      localNickname,
+      alias,
+      icon,
+      isContact,
+      isVerified,
+      memberRole = self.items[ind].memberRole,
+      joined = self.items[ind].joined,
+      isUntrustworthy,
+    )
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =
     let idx = self.findIndexForMember(pubKey)
-    if(idx == -1):
+    if idx == -1:
       return
 
-    if(self.items[idx].onlineStatus == onlineStatus):
+    if self.items[idx].onlineStatus == onlineStatus:
       return
 
     self.items[idx].onlineStatus = onlineStatus
@@ -321,10 +384,10 @@ QtObject:
 
   proc setAirdropAddress*(self: Model, pubKey: string, airdropAddress: string) =
     let idx = self.findIndexForMember(pubKey)
-    if(idx == -1):
+    if idx == -1:
       return
 
-    if(self.items[idx].airdropAddress == airdropAddress):
+    if self.items[idx].airdropAddress == airdropAddress:
       return
 
     self.items[idx].airdropAddress = airdropAddress
@@ -337,7 +400,7 @@ QtObject:
 # TODO: rename me to removeItemByPubkey
   proc removeItemById*(self: Model, pubKey: string) =
     let ind = self.findIndexForMember(pubKey)
-    if(ind == -1):
+    if ind == -1:
       return
 
     self.removeItemWithIndex(ind)
@@ -348,7 +411,10 @@ QtObject:
 
   proc updateLoadingState*(self: Model, memberKey: string, requestToJoinLoading: bool) =
     let idx = self.findIndexForMember(memberKey)
-    if(idx == -1):
+    if idx == -1:
+      return
+
+    if self.items[idx].requestToJoinLoading == requestToJoinLoading:
       return
 
     self.items[idx].requestToJoinLoading = requestToJoinLoading
@@ -358,12 +424,15 @@ QtObject:
       ModelRole.RequestToJoinLoading.int
     ])
 
-  proc updateMembershipStatus*(self: Model, memberKey: string, status: MembershipRequestState) {.inline.} =
+  proc updateMembershipStatus*(self: Model, memberKey: string, membershipRequestState: MembershipRequestState) {.inline.} =
     let idx = self.findIndexForMember(memberKey)
-    if(idx == -1):
+    if idx == -1:
       return
 
-    self.items[idx].membershipRequestState = status
+    if self.items[idx].membershipRequestState == membershipRequestState:
+      return
+
+    self.items[idx].membershipRequestState = membershipRequestState
     let index = self.createIndex(idx, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[

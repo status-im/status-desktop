@@ -149,21 +149,13 @@ QtObject {
         mainModuleInst.switchTo(sectionId, chatId)
     }
 
-    // Not Refactored Yet
-//    property var chatsModelInst: chatsModel
-    // Not Refactored Yet
-//    property var walletModelInst: walletModel
     property var userProfileInst: userProfile
     readonly property var accounts: walletSectionAccounts.accounts
-    // Not Refactored Yet
-//    property var profileModelInst: profileModel
 
     property ProfileStores.ContactsStore contactStore: profileSectionStore.contactsStore
     property ProfileStores.PrivacyStore privacyStore: profileSectionStore.privacyStore
     property ProfileStores.MessagingStore messagingStore: profileSectionStore.messagingStore
     property bool hasAddedContacts: contactStore.myContactsModel.count > 0
-
-//    property MessageStore messageStore: MessageStore { }
 
     property real volume: !!appSettings ? appSettings.volume * 0.01 : 0.5
     property bool notificationSoundsEnabled: !!appSettings ? appSettings.notificationSoundsEnabled : true

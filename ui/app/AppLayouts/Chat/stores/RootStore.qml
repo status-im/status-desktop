@@ -320,29 +320,6 @@ QtObject {
         return userProfileInst.pubKey
     }
 
-    function getCommunity(communityId) {
-        // Not Refactored Yet
-//        try {
-//            const communityJson = chatsModelInst.communities.list.getCommunityByIdJson(communityId);
-//            if (!communityJson) {
-//                return null;
-//            }
-
-//            let community = JSON.parse(communityJson);
-//            if (community) {
-//                community.nbMembers = community.members.length;
-//            }
-//            return community
-//        } catch (e) {
-//            console.error("Error parsing community", e);
-//        }
-
-       return null;
-    }
-
-    // Not Refactored Yet
-    property var activeCommunityChatsModel: "" //chatsModelInst.communities.activeCommunity.chats
-
     function createCommunity(args = {
                                 name: "",
                                 description: "",
@@ -436,11 +413,6 @@ QtObject {
 
     function declineRequestToJoinCommunity(requestId, communityId) {
         chatCommunitySectionModule.declineRequestToJoinCommunity(requestId, communityId)
-    }
-
-    function userNameOrAlias(pk) {
-        // Not Refactored Yet
-//        return chatsModelInst.userNameOrAlias(pk);
     }
 
     function generateAlias(pk) {
