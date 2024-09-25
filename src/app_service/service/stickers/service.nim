@@ -10,7 +10,6 @@ import backend/chat as status_chat
 import backend/response_type
 import backend/eth as status_eth
 import backend/backend as status_go_backend
-import backend/wallet as status_wallet
 
 import ./dto/stickers
 import ../token/service as token_service
@@ -20,7 +19,6 @@ import ../transaction/service as transaction_service
 import ../network/service as network_service
 import ../chat/service as chat_service
 import app_service/common/types
-import ../eth/utils as status_utils
 
 export StickerDto
 export StickerPackDto
@@ -53,6 +51,7 @@ type
     packs*: Table[string, StickerPackDto]
   StickerBuyResultArgs* = ref object of Args
     chainId*: int
+    packId*: string
     txHash*: string
     error*: string
 
@@ -60,7 +59,7 @@ type
 const SIGNAL_STICKER_PACK_LOADED* = "stickerPackLoaded"
 const SIGNAL_ALL_STICKER_PACKS_LOADED* = "allStickerPacksLoaded"
 const SIGNAL_ALL_STICKER_PACKS_LOAD_FAILED* = "allStickerPacksLoadFailed"
-const SIGNAL_STICKER_GAS_ESTIMATED* = "stickerGasEstimated"
+const SIGNAL_STICKER_TRANSACTION_SENT* = "stickerTransactionSent"
 const SIGNAL_STICKER_TRANSACTION_CONFIRMED* = "stickerTransactionConfirmed"
 const SIGNAL_STICKER_TRANSACTION_REVERTED* = "stickerTransactionReverted"
 const SIGNAL_STICKER_PACK_INSTALLED* = "stickerPackInstalled"
@@ -126,56 +125,46 @@ QtObject:
     except RpcException:
       error "Error obtaining sticker market address", message = getCurrentExceptionMsg()
 
-  proc confirmTransaction(self: Service, trxType: string, packID: string, transactionHash: string) =
-    try:
-      if not self.marketStickerPacks.contains(packID):
-        let pendingStickerPacksResponse = status_stickers.pending()
-        for (pID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
-          if packID != pID: continue
-          self.marketStickerPacks[packID] = stickerPackJson.toStickerPackDto()
-          self.marketStickerPacks[packID].status = StickerPackStatus.Purchased
-          self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
-                  stickerPack: self.marketStickerPacks[packID],
-                  isInstalled: false,
-                  isBought: true,
-                  isPending: false
-                ))
+  proc updateStickersPack(self: Service, transactionHash: string, status: string) =
+    if status == TxStatusPending:
+      return
 
-      discard status_stickers.removePending(packID)
-      self.marketStickerPacks[packID].status = StickerPackStatus.Purchased
-      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packID, transactionType: $trxType)
+    # find packID by transactionHash
+    var packId = ""
+    for pId, stickerPack in self.marketStickerPacks.pairs:
+      if stickerPack.txHash == transactionHash:
+        packId = pId
+        break
+
+    if packId.len == 0:
+      error "Error updating sticker pack status", message = "no packId found for transactionHash: " & transactionHash
+      return
+
+    if status == TxStatusSuccess:
+      self.marketStickerPacks[packId].status = StickerPackStatus.Purchased
+      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packId, transactionType: $PendingTransactionTypeDto.BuyStickerPack)
       self.events.emit(SIGNAL_STICKER_TRANSACTION_CONFIRMED, data)
-    except:
-      error "Error confirming sticker transaction", message = getCurrentExceptionMsg()
-
-  proc revertTransaction(self: Service, trxType: string, packID: string, transactionHash: string) =
-    try:
-      if not self.marketStickerPacks.contains(packID):
-        let pendingStickerPacksResponse = status_stickers.pending()
-        for (pID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
-          if packID != pID: continue
-          self.marketStickerPacks[packID] = stickerPackJson.toStickerPackDto()
-          self.marketStickerPacks[packID].status = StickerPackStatus.Available
-          self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
-                  stickerPack: self.marketStickerPacks[packID],
-                  isInstalled: false,
-                  isBought: false,
-                  isPending: false
-                ))
-      discard status_stickers.removePending(packID)
-      self.marketStickerPacks[packID].status = StickerPackStatus.Available
-      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packID, transactionType: $trxType)
+      return
+    if status == TxStatusFailed:
+      self.marketStickerPacks[packId].status = StickerPackStatus.Available
+      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packId, transactionType: $PendingTransactionTypeDto.BuyStickerPack)
       self.events.emit(SIGNAL_STICKER_TRANSACTION_REVERTED, data)
-    except:
-      error "Error reverting sticker transaction", message = getCurrentExceptionMsg()
+      return
+    error "Error updating sticker pack status", message = "unknown status: " & status
 
   proc init*(self: Service) =
-    self.events.on(PendingTransactionTypeDto.BuyStickerPack.event) do(e: Args):
-      var receivedData = TransactionMinedArgs(e)
-      if receivedData.success:
-        self.confirmTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash)
-      else:
-        self.revertTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash)
+    self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
+      let args = TransactionSentArgs(e)
+      if args.txType != SendType.StickersBuy:
+        return
+      self.marketStickerPacks[$args.packId].status = StickerPackStatus.Pending
+      self.marketStickerPacks[$args.packId].txHash = args.txHash
+      let data = StickerBuyResultArgs(chainId: args.chainId, packId: args.packId, txHash: args.txHash, error: args.error)
+      self.events.emit(SIGNAL_STICKER_TRANSACTION_SENT, data)
+
+    self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
+      let args = TransactionStatusArgs(e)
+      self.updateStickersPack(args.data.hash, args.data.status)
 
   proc setMarketStickerPacks*(self: Service, strickersJSON: string) {.slot.} =
     let stickersResult = Json.decode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])
@@ -187,7 +176,8 @@ QtObject:
     let availableStickers = stickersResult.packs
 
     for stickerPack in availableStickers:
-      if self.marketStickerPacks.contains(stickerPack.id): continue
+      if self.marketStickerPacks.contains(stickerPack.id):
+        continue
 
       self.marketStickerPacks[stickerPack.id] = stickerPack
       self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
@@ -198,11 +188,12 @@ QtObject:
       ))
 
     let pendingStickerPacksResponse = status_stickers.pending()
-    for (packID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
-        if self.marketStickerPacks.contains(packID): continue
-        self.marketStickerPacks[packID] = stickerPackJson.toStickerPackDto()
+    for (packId, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
+        if self.marketStickerPacks.contains(packId):
+          continue
+        self.marketStickerPacks[packId] = stickerPackJson.toStickerPackDto()
         self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
-          stickerPack: self.marketStickerPacks[packID],
+          stickerPack: self.marketStickerPacks[packId],
           isInstalled: false,
           isBought: false,
           isPending: true
@@ -217,27 +208,6 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "setMarketStickerPacks",
       chainId: chainId,
-    )
-    self.threadpool.start(arg)
-
-  proc setGasEstimate*(self: Service, estimateJson: string) {.slot.} =
-    let estimateResult = Json.decode(estimateJson, tuple[estimate: int, uuid: string])
-    self.events.emit(SIGNAL_STICKER_GAS_ESTIMATED, StickerGasEstimatedArgs(estimate: estimateResult.estimate, uuid: estimateResult.uuid))
-
-  # the [T] here is annoying but the QtObject template only allows for one type
-  # definition so we'll need to setup the type, task, and helper outside of body
-  # passed to `QtObject:`
-  proc estimate*(self: Service, packId: string, address: string, price: string, uuid: string) =
-    let chainId = self.networkService.getAppNetwork().chainId
-
-    let arg = EstimateTaskArg(
-      tptr: estimateTask,
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "setGasEstimate",
-      packId: packId,
-      uuid: uuid,
-      chainId: chainId,
-      fromAddress: address
     )
     self.threadpool.start(arg)
 
@@ -386,97 +356,3 @@ QtObject:
       discard status_stickers.clearRecentStickers()
     except RpcException:
       error "Error removing recent stickers", message = getCurrentExceptionMsg()
-
-  # proc prepareTxForBuyingStickers*(self: Service, chainId: int, packId: string, address: string): JsonNode =
-  proc prepareTxForBuyingStickers*(self: Service, chainId: int, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
-    maxFeePerGas: string, eip1559Enabled: bool): JsonNode =
-    try:
-      var prepareTxResponse = status_stickers.prepareTxForBuyingStickers(chainId, address, packId)
-      if not prepareTxResponse.error.isNil:
-        error "error occurred", procName="prepareTxForBuyingStickers", msg = prepareTxResponse.error.message
-        return
-
-      prepareTxResponse.result["gas"] = %* (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some)
-      if eip1559Enabled:
-        let maxPriorityFeePerGasFinal = if maxPriorityFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxPriorityFeePerGas)).some
-        let maxFeePerGasFinal = if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxFeePerGas)).some
-        prepareTxResponse.result["maxPriorityFeePerGas"] = %* ("0x" & maxPriorityFeePerGasFinal.unsafeGet.toHex)
-        prepareTxResponse.result["maxFeePerGas"] = %* ("0x" & maxFeePerGasFinal.unsafeGet.toHex)
-      else:
-        let gasPriceFinal = if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some
-        prepareTxResponse.result["gasPrice"] = %* ("0x" & gasPriceFinal.unsafeGet.toHex.stripLeadingZeros)
-
-      var buildTxResponse: JsonNode
-      let err = status_wallet.buildTransaction(buildTxResponse, chainId, $prepareTxResponse.result)
-      if err.len > 0:
-        error "error occurred", procName="prepareTxForBuyingStickers", msg = err
-        return
-
-      return buildTxResponse
-    except Exception as e:
-      error "error occurred", procName="prepareTxForBuyingStickers", msg = e.msg
-
-  proc signBuyingStickersTxLocally*(self: Service, data, account, hashedPasssword: string): string =
-    try:
-      var response: JsonNode
-      let err = status_wallet.signMessage(response, data, account, hashedPasssword)
-      if err.len > 0 or response.isNil:
-        error "error occurred", procName="signBuyingStickersTxLocally", msg = err
-        return
-      return response.getStr()
-    except Exception as e:
-      error "error occurred", procName="signBuyingStickersTxLocally", msg = e.msg
-
-  proc sendBuyingStickersTxWithSignatureAndWatch*(self: Service, chainId: int, txData: JsonNode, packId: string,
-    signature: string): StickerBuyResultArgs =
-    result = StickerBuyResultArgs(chainId: chainId)
-    try:
-      if txData.isNil:
-        result.error = "txData is nil"
-        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
-        return
-      if not txData.hasKey("from") or txData["from"].getStr().len == 0:
-        result.error = "from address is empty"
-        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
-        return
-      if not txData.hasKey("to") or txData["to"].getStr().len == 0:
-        result.error = "to address is empty"
-        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
-        return
-
-      var finalSignature = signature
-      if finalSignature.startsWith("0x"):
-        finalSignature = finalSignature[2..^1]
-
-      var txResponse: JsonNode
-      let err = status_wallet.sendTransactionWithSignature(txResponse, chainId, $PendingTransactionTypeDto.BuyStickerPack,
-        $txData, finalSignature)
-      if err.len > 0 or txResponse.isNil:
-        result.error = err
-        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
-        return
-
-      let
-        transactionHash = txResponse.getStr()
-        fromAddress = txData["from"].getStr()
-        toAddress = txData["to"].getStr()
-
-      let addPendingResponse = status_stickers.addPending(chainId, packId)
-      if not addPendingResponse.error.isNil:
-        result.error = addPendingResponse.error.message
-        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
-        return
-
-      self.transactionService.watchTransaction(
-        transactionHash,
-        fromAddress,
-        toAddress,
-        $PendingTransactionTypeDto.BuyStickerPack,
-        packId,
-        chainId,
-      )
-
-      result.txHash = transactionHash
-    except Exception as e:
-      result.error = e.msg
-      error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error

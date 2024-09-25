@@ -26,7 +26,7 @@ type StickerPackDto* = object
   stickers*: seq[StickerDto]
   thumbnail*: string
   status* : StickerPackStatus
-
+  txHash*: string
 
 proc toStickerPackStatus*(value: int): StickerPackStatus =
   result = StickerPackStatus.Unknown

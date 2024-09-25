@@ -2,7 +2,9 @@ import NimQml, Tables, sequtils, sugar
 import ./sticker_list
 import ../io_interface, ../item
 # TODO remove those uses of services stuff
-import ../../../../../app_service/service/eth/utils as eth_utils
+import app_service/service/eth/utils as eth_utils
+import app_service/common/conversion as service_conversion
+
 
 type
   StickerPackRoles {.pure.} = enum
@@ -57,7 +59,7 @@ QtObject:
       of StickerPackRoles.Author: result = newQVariant(stickerPack.author)
       of StickerPackRoles.Id: result = newQVariant(stickerPack.id)
       of StickerPackRoles.Name: result = newQVariant(stickerPack.name)
-      of StickerPackRoles.Price: result = newQVariant(self.delegate.wei2Eth(stickerPack.price))
+      of StickerPackRoles.Price: result = newQVariant(service_conversion.wei2Eth(stickerPack.price))
       of StickerPackRoles.Preview: result = newQVariant(stickerPack.preview)
       of StickerPackRoles.Stickers: result = newQVariant(packInfo.stickers)
       of StickerPackRoles.Thumbnail: result = newQVariant(stickerPack.thumbnail)
