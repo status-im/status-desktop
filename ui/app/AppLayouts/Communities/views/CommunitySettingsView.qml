@@ -501,16 +501,13 @@ StatusSectionLayout {
                         value: Constants.TokenType.ERC20
                     }
                     proxyRoles: [
-                        ExpressionRole {
+                        ConstantRole {
                             name: "category"
-
-                            // Singleton cannot be used directly in the expression
-                            readonly property int category: TokenCategories.Category.Own
-                            expression: category
+                            value: TokenCategories.Category.Own
                         },
-                        ExpressionRole {
+                        ConstantRole {
                             name: "communityId"
-                            expression: ""
+                            value: ""
                         }
                     ]
                 }
@@ -534,16 +531,13 @@ StatusSectionLayout {
                         }
                     ]
                     proxyRoles: [
-                        ExpressionRole {
+                        ConstantRole {
                             name: "category"
-
-                            // Singleton cannot be used directly in the epression
-                            readonly property int category: TokenCategories.Category.Own
-                            expression: category
+                            value: TokenCategories.Category.Own
                         },
-                        ExpressionRole {
+                        ConstantRole {
                             name: "communityId"
-                            expression: ""
+                            value: ""
                         }
                     ]
                 }
