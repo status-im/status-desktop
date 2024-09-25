@@ -23,6 +23,21 @@ QtObject {
         RecentsAddress // Recent addresses object got from transactions history
     }
 
+    function recipientAddressObjectTypeToString(type) {
+        switch (type) {
+            case RecipientAddressObjectType.Address:
+                return "Address"
+            case RecipientAddressObjectType.Account:
+                return "Account"
+            case RecipientAddressObjectType.SavedAddress:
+                return "SavedAddress"
+            case RecipientAddressObjectType.RecentsAddress:
+                return "RecentsAddress"
+            default:
+                return "Unknown"
+        }
+    }
+
     function createSendModalRequirements() {
         return {
             preSelectedAccount: null,
