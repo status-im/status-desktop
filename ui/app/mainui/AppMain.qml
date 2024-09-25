@@ -38,7 +38,7 @@ import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
-import AppLayouts.stores 1.0
+import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
@@ -55,7 +55,7 @@ Item {
     id: appMain
 
     property alias appLayout: appLayout
-    property RootStore rootStore: RootStore {
+    property AppStores.RootStore rootStore: AppStores.RootStore {
         profileSectionStore.sendModalPopup: sendModal
     }
     property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
@@ -81,7 +81,7 @@ Item {
     }
     readonly property WalletStores.BuyCryptoStore buyCryptoStore: WalletStores.BuyCryptoStore {}
 
-    readonly property FeatureFlagsStore featureFlagsStore: FeatureFlagsStore {
+    readonly property AppStores.FeatureFlagsStore featureFlagsStore: AppStores.FeatureFlagsStore {
         readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
 
         connectorEnabled: featureFlags ? featureFlags.connectorEnabled : false
@@ -628,7 +628,6 @@ Item {
         id: statusStickersPopupLoader
         active: appMain.rootStore.mainModuleInst.sectionsLoaded
         sourceComponent: StatusStickersPopup {
-            id: statusStickersPopup
             store: appMain.rootChatStore
             transactionStore: appMain.transactionStore
             walletAssetsStore: appMain.walletAssetsStore
@@ -1887,7 +1886,7 @@ Item {
 
         sourceComponent: WalletPopups.AddEditSavedAddressPopup {
             store: WalletStores.RootStore
-
+            sharedRootStore: RootStore
             flatNetworks: WalletStores.RootStore.filteredFlatModel
 
             onClosed: {

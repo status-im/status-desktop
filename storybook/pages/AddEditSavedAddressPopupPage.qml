@@ -12,6 +12,7 @@ import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import utils 1.0
+import shared.stores 1.0 as SharedStores
 
 SplitView {
     orientation: Qt.Horizontal
@@ -52,6 +53,7 @@ SplitView {
                 }
 
                 store: WalletStores.RootStore
+                sharedRootStore: SharedStores.RootStore {}
 
                 // Emulate resolving ENS by simple validation
                 QtObject {
