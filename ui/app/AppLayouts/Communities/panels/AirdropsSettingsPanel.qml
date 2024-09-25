@@ -18,7 +18,6 @@ StackView {
 
     // id, name, image, color, owner properties expected
     required property var communityDetails
-    required property var communityTokens
 
     // User profiles
     required property bool isOwner
@@ -30,6 +29,10 @@ StackView {
     readonly property bool arePrivilegedTokensDeployed: root.isOwnerTokenDeployed && root.isTMasterTokenDeployed
     property bool isOwnerTokenDeployed: false
     property bool isTMasterTokenDeployed: false
+
+    // Token models:
+    required property var assetsModel
+    required property var collectiblesModel
 
     required property var membersModel
     required property var accountsModel
@@ -80,9 +83,7 @@ StackView {
 
                 text: qsTr("New Airdrop")
                 enabled: !d.isAdminOnly && root.arePrivilegedTokensDeployed
-                onClicked: {
-                    root.push(newAirdropView, StackView.Immediate)
-                }
+                onClicked: root.push(newAirdropView, StackView.Immediate)
             }
         ]
 
@@ -110,7 +111,6 @@ StackView {
         id: newAirdropView
 
         SettingsPage {
-            id: newAirdropPage
             title: qsTr("New airdrop")
 
             contentItem: EditAirdropView {
@@ -118,94 +118,9 @@ StackView {
 
                 padding: 0
 
-                Loader {
-                    id: collectiblesModelLoader
-                    active: root.communityTokens
-
-                    sourceComponent: SortFilterProxyModel {
-
-                        sourceModel: root.communityTokens
-                        filters: [
-                            ValueFilter {
-                                roleName: "tokenType"
-                                value: Constants.TokenType.ERC721
-                            },
-                            FastExpressionFilter {
-                                function getPrivileges(privilegesLevel) {
-                                    return privilegesLevel === Constants.TokenPrivilegesLevel.Community ||
-                                            (root.isOwner && privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
-                                }
-
-                                expression: { return getPrivileges(model.privilegesLevel) }
-                                expectedRoles: [ "privilegesLevel" ]
-                            }
-                        ]
-                        proxyRoles: [
-                            ExpressionRole {
-                                name: "category"
-
-                                // Singleton cannot be used directly in the epression
-                                readonly property int category: TokenCategories.Category.Own
-                                expression: category
-                            },
-                            FastExpressionRole {
-                                name: "iconSource"
-                                expression: model.image
-                                expectedRoles: ["image"]
-                            },
-                            FastExpressionRole {
-                                name: "key"
-                                expression: model.symbol
-                                expectedRoles: ["symbol"]
-                            },
-                            ExpressionRole {
-                                name: "communityId"
-                                expression: ""
-                            }
-                        ]
-                    }
-                }
-
-                Loader {
-                    id: assetsModelLoader
-                    active: root.communityTokens
-
-                    sourceComponent: SortFilterProxyModel {
-
-                        sourceModel: root.communityTokens
-                        filters: ValueFilter {
-                            roleName: "tokenType"
-                            value: Constants.TokenType.ERC20
-                        }
-                        proxyRoles: [
-                            ExpressionRole {
-                                name: "category"
-
-                                // Singleton cannot be used directly in the expression
-                                readonly property int category: TokenCategories.Category.Own
-                                expression: category
-                            },
-                            FastExpressionRole {
-                                name: "iconSource"
-                                expression: model.image
-                                expectedRoles: ["image"]
-                            },
-                            FastExpressionRole {
-                                name: "key"
-                                expression: model.symbol
-                                expectedRoles: ["symbol"]
-                            },
-                            ExpressionRole {
-                                name: "communityId"
-                                expression: ""
-                            }
-                        ]
-                    }
-                }
-
                 communityDetails: root.communityDetails
-                assetsModel: assetsModelLoader.item
-                collectiblesModel: collectiblesModelLoader.item
+                assetsModel: root.assetsModel
+                collectiblesModel:  root.collectiblesModel
                 membersModel: root.membersModel
                 accountsModel: root.accountsModel
                 totalFeeText: feesSubscriber.totalFee

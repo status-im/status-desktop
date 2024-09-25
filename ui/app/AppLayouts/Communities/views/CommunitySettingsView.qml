@@ -4,6 +4,7 @@ import QtQuick.Dialogs 1.3
 
 import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -479,7 +480,71 @@ StatusSectionLayout {
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
 
-                communityTokens: root.community.communityTokens
+                readonly property RolesRenamingModel renamedTokensBySymbolModel: RolesRenamingModel {
+                    sourceModel: root.community.communityTokens || null
+                    mapping: [
+                        RoleRename {
+                            from: "symbol"
+                            to: "key"
+                        },
+                        RoleRename {
+                            from: "image"
+                            to: "iconSource"
+                        }
+                    ]
+                }
+
+                assetsModel: SortFilterProxyModel {
+                    sourceModel: renamedTokensBySymbolModel
+                    filters: ValueFilter {
+                        roleName: "tokenType"
+                        value: Constants.TokenType.ERC20
+                    }
+                    proxyRoles: [
+                        ExpressionRole {
+                            name: "category"
+
+                            // Singleton cannot be used directly in the expression
+                            readonly property int category: TokenCategories.Category.Own
+                            expression: category
+                        },
+                        ExpressionRole {
+                            name: "communityId"
+                            expression: ""
+                        }
+                    ]
+                }
+                collectiblesModel: SortFilterProxyModel {
+                    sourceModel: renamedTokensBySymbolModel
+                    filters: [
+                        ValueFilter {
+                            roleName: "tokenType"
+                            value: Constants.TokenType.ERC721
+                        },
+                        ExpressionFilter {
+                            function getPrivileges(privilegesLevel) {
+                                return privilegesLevel === Constants.TokenPrivilegesLevel.Community ||
+                                        (root.isOwner && privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
+                            }
+
+                            expression: { return getPrivileges(model.privilegesLevel) }
+                        }
+                    ]
+                    proxyRoles: [
+                        ExpressionRole {
+                            name: "category"
+
+                            // Singleton cannot be used directly in the epression
+                            readonly property int category: TokenCategories.Category.Own
+                            expression: category
+                        },
+                        ExpressionRole {
+                            name: "communityId"
+                            expression: ""
+                        }
+                    ]
+                }
+
 
                 membersModel: community.members
                 enabledChainIds: root.enabledChainIds
