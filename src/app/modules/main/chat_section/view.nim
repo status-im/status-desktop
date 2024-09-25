@@ -573,3 +573,11 @@ QtObject:
       return
     self.communityMemberReevaluationStatus = value
     self.communityMemberReevaluationStatusChanged()
+
+  proc membersModelChanged*(self: View) {.signal.}
+  proc getMembersModel(self: View): QVariant {.slot.} =
+    return self.delegate.getSectionMemberList()
+
+  QtProperty[QVariant] membersModel:
+    read = getMembersModel
+    notify = membersModelChanged

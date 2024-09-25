@@ -68,7 +68,7 @@ proc `$`(self: Images): string =
     ]"""
 
 proc `$`*(self: ContactsDto): string =
-  result = fmt"""ContactDto(
+  result = fmt"""ContactsDto(
     id: {self.id},
     name: {self.name},
     ensVerified: {self.ensVerified},
