@@ -120,6 +120,7 @@ Item {
                 {tag: "valid", value: 1.42, valid: true, isDefault: false},
                 {tag: "default", value: 0.5, valid: true, isDefault: true},
                 {tag: "invalid", value: 111.42, valid: false, isDefault: false},
+                {tag: "hundred", value: 100, valid: false, isDefault: false},
             ]
         }
 
