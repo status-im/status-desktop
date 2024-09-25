@@ -44,7 +44,7 @@ ColumnLayout {
     signal removePermissionRequested(int index)
     signal userRestrictionsToggled(bool checked)
 
-    readonly property int count: listView.count
+    readonly property alias count: listView.count
 
     Connections {
         target: root.communityDetails
@@ -95,16 +95,10 @@ ColumnLayout {
         spacing: 24
         Layout.fillWidth: true
         Layout.fillHeight: !useFullHeight
-        height: useFullHeight ? contentHeight : 0
+        Layout.preferredHeight: useFullHeight ? contentHeight : 0
         Layout.topMargin: root.topPadding
 
-        delegate: permissionItemComponent
-    }
-
-    Component {
-        id: permissionItemComponent
-
-        PermissionItem {
+        delegate: PermissionItem {
             width: root.viewWidth
 
             holdingsListModel: HoldingsSelectionModel {

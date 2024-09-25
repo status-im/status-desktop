@@ -173,10 +173,7 @@ StatusSectionLayout {
         currentIndex: d.currentIndex
 
         onCurrentIndexChanged: {
-            if (!children[currentIndex].active) {
-                // Turn on sections one by one
-                children[currentIndex].active = true
-            }
+            children[currentIndex].active = true
         }
 
         // OVERVIEW

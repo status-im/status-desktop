@@ -5,6 +5,7 @@ import QtQuick.Controls 2.14
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
@@ -77,18 +78,23 @@ Item {
                     }
                 ]
 
-                filters: FastExpressionFilter {
-                    enabled: !!memberSearch.text
-
-                    expression: {
-                        let keyword = memberSearch.text.trim().toUpperCase()
-                        return model.localNickname.toUpperCase().includes(keyword) ||
-                                model.displayName.toUpperCase().includes(keyword) ||
-                                model.ensName.toUpperCase().includes(keyword) ||
-                                model.alias.toUpperCase().includes(keyword) 
-
+                filters: AnyOf {
+                    SearchFilter {
+                        roleName: "localNickname"
+                        searchPhrase: memberSearch.text
                     }
-                    expectedRoles: ["localNickname", "displayName", "ensName", "alias"]
+                    SearchFilter {
+                        roleName: "displayName"
+                        searchPhrase: memberSearch.text
+                    }
+                    SearchFilter {
+                        roleName: "ensName"
+                        searchPhrase: memberSearch.text
+                    }
+                    SearchFilter {
+                        roleName: "alias"
+                        searchPhrase: memberSearch.text
+                    }
                 }
             }
             spacing: 0
