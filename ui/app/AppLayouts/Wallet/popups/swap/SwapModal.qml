@@ -355,7 +355,8 @@ StatusDialog {
                 RowLayout {
                     StatusBaseText {
                         objectName: "maxSlippageValue"
-                        text: "%1%".arg(LocaleUtils.numberToLocaleString(root.swapInputParamsForm.selectedSlippage))
+                        text: editSlippagePanel.valid ? "%1%".arg(LocaleUtils.numberToLocaleString(root.swapInputParamsForm.selectedSlippage))
+                                                      : qsTr("N/A")
                         color: Theme.palette.directColor4
                         font.weight: Font.Medium
                     }
