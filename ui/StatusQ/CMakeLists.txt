@@ -95,6 +95,7 @@ add_library(StatusQ SHARED
         include/StatusQ/aggregator.h
         include/StatusQ/clipboardutils.h
         include/StatusQ/concatmodel.h
+        include/StatusQ/constantrole.h
         include/StatusQ/fastexpressionfilter.h
         include/StatusQ/fastexpressionrole.h
         include/StatusQ/fastexpressionsorter.h
@@ -128,6 +129,7 @@ add_library(StatusQ SHARED
         src/aggregator.cpp
         src/clipboardutils.cpp
         src/concatmodel.cpp
+        src/constantrole.cpp
         src/fastexpressionfilter.cpp
         src/fastexpressionrole.cpp
         src/fastexpressionsorter.cpp
