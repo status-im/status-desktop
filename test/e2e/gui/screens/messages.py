@@ -236,7 +236,7 @@ class ChatView(QObject):
     @allure.step('Get messages')
     def messages(self, index: int) -> typing.List[Message]:
         _messages = []
-        time.sleep(1)
+        time.sleep(2)
         # message_list_item has different indexes if we run multiple instances, so we pass index
         if index is not None:
             self._message_list_item.real_name['index'] = index

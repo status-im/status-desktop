@@ -155,7 +155,7 @@ class CategoryItem:
 
     def __init__(self, obj):
         self.object = obj
-        self.category_name: typing.Optional[Image] = None
+        self._category_name: typing.Optional[Image] = None
         self._add_category_button: typing.Optional[Button] = None
         self._more_button: typing.Optional[Button] = None
         self._arrow_button: typing.Optional[Button] = None
@@ -198,14 +198,19 @@ class LeftPanel(QObject):
         self._members_text_label = TextLabel(communities_names.mainWindow_Members_TruncatedTextWithTooltip)
         self._general_channel_item = QObject(communities_names.scrollView_general_StatusChatListItem)
         self._add_channels_button = Button(communities_names.add_channels_StatusButton)
-        self._channel_list_item = QObject(communities_names.channel_listItem)
         self._channel_icon_template = QObject(communities_names.channel_identicon_StatusSmartIdenticon)
         self._channel_or_category_button = Button(
             communities_names.mainWindow_createChannelOrCategoryBtn_StatusBaseText)
         self._create_channel_menu_item = Button(communities_names.create_channel_StatusMenuItem)
         self._create_category_menu_item = Button(communities_names.create_category_StatusMenuItem)
         self._join_community_button = Button(communities_names.mainWindow_Join_Community_StatusButton)
-        self._categories_items_list = List(communities_names.scrollView_chatListItems_StatusListView)
+
+        self.communityChatListAndCategories = QObject(communities_names.communityChatListAndCategories)
+        self.channelAndCategoriesListItems = QObject(communities_names.channelAndCategoriesListItems)
+        self.chatListItems = QObject(communities_names.chatListItems)
+        self.chatListItemDropAreaItem = QObject(communities_names.chatListItemDropAreaItem)
+        self.categoryItemDropAreaItem = QObject(communities_names.categoryListItemDropAreaItem)
+
         self._category_list_item = QObject(communities_names.categoryItem_StatusChatListCategoryItem)
         self._create_category_button = Button(communities_names.add_categories_StatusFlatButton)
         self._delete_category_item = QObject(communities_names.delete_Category_StatusMenuItem)
@@ -241,7 +246,7 @@ class LeftPanel(QObject):
     def channels(self) -> typing.List[UserChannel]:
         time.sleep(0.5)
         channels_list = []
-        for obj in driver.findAllObjects(self._channel_list_item.real_name):
+        for obj in driver.findAllObjects(self.chatListItemDropAreaItem.real_name):
             container = driver.objectMap.realName(obj)
             self._channel_icon_template.real_name['container'] = container
             channels_list.append(UserChannel(
@@ -254,7 +259,7 @@ class LeftPanel(QObject):
     @property
     @allure.step('Get categories')
     def categories_items(self) -> typing.List[CategoryItem]:
-        return [CategoryItem(item) for item in self._categories_items_list.items]
+        return [CategoryItem(item) for item in driver.findAllObjects(self.categoryItemDropAreaItem.real_name)]
 
     @allure.step('Get arrow button rotation value')
     def get_arrow_icon_rotation_value(self, category_name) -> int:
@@ -289,7 +294,8 @@ class LeftPanel(QObject):
 
     @allure.step('Select channel')
     def select_channel(self, name: str):
-        for obj in driver.findAllObjects(self._channel_list_item.real_name):
+        time.sleep(3)
+        for obj in driver.findAllObjects(self.chatListItemDropAreaItem.real_name):
             if str(obj.objectName) == name:
                 driver.mouseClick(obj)
                 return obj
@@ -302,7 +308,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open category context menu')
     def open_category_context_menu(self):
-        self._category_list_item.right_click()
+        self.categoryItemDropAreaItem.right_click()
 
     @allure.step('Open create category popup')
     def open_create_category_popup(self, attempts: int = 2) -> NewCategoryPopup:
@@ -324,16 +330,14 @@ class LeftPanel(QObject):
 
     @allure.step('Find category')
     def find_category_in_list(
-            self, category_name: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC):
-        started_at = time.monotonic()
-        category = None
-        while category is None:
-            categories = self.categories_items
-            for _category in categories:
-                if _category.category_name == category_name:
-                    category = _category
-            assert time.monotonic() - started_at < timeout_sec, f'Category: {category_name} not found in {categories}'
-        return category
+            self, category_name: str):
+        time.sleep(1)
+        categories = self.categories_items
+        for _category in categories:
+            if _category.category_name == category_name:
+                category = _category
+                return category
+            raise LookupError(f'Category: {category_name} not found in {categories}')
 
     def click_category(self, category_name: str):
         driver.mouseClick(self.find_category_in_list(category_name).object)
@@ -376,7 +380,7 @@ class LeftPanel(QObject):
 
     @allure.step('Get channel or category index in the list')
     def get_channel_or_category_index(self, name: str) -> int:
-        for child in walk_children(self._categories_items_list.object):
+        for child in walk_children(self.chatListItems.object):
             if child.objectName == name:
                 return child.visualIndex
 

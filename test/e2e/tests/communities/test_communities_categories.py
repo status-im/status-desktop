@@ -12,9 +12,6 @@ from . import marks
 pytestmark = marks
 
 
-
-
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703272', 'Member role cannot add category')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703273', 'Member role cannot edit category')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703274', 'Member role cannot remove category')
@@ -53,7 +50,6 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow)
 @pytest.mark.parametrize('category_name, general_checkbox',
                          [pytest.param('Category in general', True)])
 def test_clicking_community_category(main_screen: MainWindow, category_name, general_checkbox):
-
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()

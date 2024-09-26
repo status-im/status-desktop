@@ -12,6 +12,7 @@ from constants import UserAccount
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
+from scripts.utils.parsers import remove_tags
 from . import marks
 
 pytestmark = marks
@@ -205,14 +206,15 @@ def test_view_and_post_in_non_restricted_channel(multiple_instances, user_data_o
             main_screen.hide()
 
         with step(
-                f'User {user_one.name}, select non-restricted channel, verify that can view other messages and also can send message'):
+                f'User {user_one.name}, select non-restricted channel, verify that can view other messages and also '
+                f'can send message'):
             aut_one.attach()
             main_screen.prepare()
             community_screen = main_screen.left_panel.select_community('Community with 2 users')
             community_screen.left_panel.select_channel(channel_name)
             messages_screen = MessagesScreen()
             message_object = messages_screen.chat.messages(0)[0]
-            assert 'Hi' in message_object.text, f"Message text is not found in last message"
+            assert 'Hi' in str(message_object.text), f"Message text is not found in last message"
             message_text = "Hi hi"
             messages_screen.group_chat.send_message_to_group_chat(message_text)
             main_screen.hide()
@@ -221,7 +223,7 @@ def test_view_and_post_in_non_restricted_channel(multiple_instances, user_data_o
             aut_two.attach()
             main_screen.prepare()
             message_object = messages_screen.chat.messages(0)[0]
-            assert driver.waitFor(lambda: 'Hi hi' in message_object.text,
+            assert driver.waitFor(lambda: 'Hi hi' in remove_tags(str(message_object.text)),
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Message text is not found in last message"
 
             community_screen.delete_channel(channel_name)
