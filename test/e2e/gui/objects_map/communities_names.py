@@ -19,8 +19,13 @@ mainWindow_startChatButton_StatusIconTabButton = {"checkable": True, "container"
 mainWindow_createChatOrCommunity_Loader = {"container": mainWindow_communityColumnView_CommunityColumnView, "id": "createChatOrCommunity", "type": "Loader", "unnamed": 1, "visible": True}
 mainWindow_scrollView_StatusScrollView = {"container": mainWindow_communityColumnView_CommunityColumnView, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 scrollView_Flickable = {"container": mainWindow_scrollView_StatusScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
-scrollView_chatListItems_StatusListView = {"container": scrollView_Flickable, "objectName": "chatListItems", "type": "StatusListView", "visible": True}
-channel_listItem = {"container": scrollView_chatListItems_StatusListView, "id": "chatListDelegate", "type": "DropArea", "isCategory": False, "visible": True}
+
+# Channels and categories
+communityChatListAndCategories = {"container": scrollView_Flickable, "id": "communityChatListAndCategories", "type": "StatusChatListAndCategories", "unnamed": 1, "visible": True}
+channelAndCategoriesListItems = {"container": communityChatListAndCategories, "objectName": "statusChatListAndCategoriesChatList", "type": "StatusChatList"}
+chatListItems = {"container": channelAndCategoriesListItems, "objectName": "chatListItems", "type": "StatusListView", "visible": True}
+chatListItemDropAreaItem = {"container": chatListItems,  "id": "chatListDelegate", "type": "DropArea", "isCategory": False, "visible": True}
+categoryListItemDropAreaItem = {"container": chatListItems, "id": "chatListDelegate", "type": "DropArea", "isCategory": True, "visible": True}
 channel_identicon_StatusSmartIdenticon = {"container": None, "id": "identicon", "type": "StatusSmartIdenticon", "unnamed": 1, "visible": True}
 channel_name_StatusBaseText = {"container": None, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_createChannelOrCategoryBtn_StatusBaseText = {"container": mainWindow_communityColumnView_CommunityColumnView, "objectName": "createChannelOrCategoryBtn", "type": "StatusBaseText", "visible": True}
