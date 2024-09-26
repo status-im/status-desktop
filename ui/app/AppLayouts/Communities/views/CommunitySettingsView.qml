@@ -466,6 +466,8 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
 
             sourceComponent: AirdropsSettingsPanel {
+                id: airdropsSettingsPanel
+
                 communityDetails: d.communityDetails
 
                 // Profile type
