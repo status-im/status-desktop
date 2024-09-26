@@ -1740,43 +1740,21 @@ Item {
                 model: SortFilterProxyModel {
                     sourceModel: rootStore.chatSearchModel
 
-                    filters: [
-                        FastExpressionFilter {
-                            enabled: channelPickerLoader.searchText !== ""
-                            expression: {
-                                const lowerCaseSearchText = searchText.toLowerCase()
-                                return model.sectionName.toLowerCase().includes(lowerCaseSearchText) ||
-                                        model.name.toLowerCase().includes(lowerCaseSearchText)
-                            }
-                            expectedRoles: ["sectionName", "name"]
+                    filters: AnyOf {
+                        SQUtils.SearchFilter {
+                            roleName: "sectionName"
+                            searchPhrase: searchText
                         }
-                    ]
-                }
-                
-                delegate: StatusListItem {
-                    property var modelData
-                    property bool isCurrentItem: true
-
-                    title: modelData ? modelData.name : ""
-                    label: modelData? modelData.sectionName : ""
-                    highlighted: isCurrentItem
-                    sensor.hoverEnabled: false
-                    statusListItemIcon {
-                        name: modelData ? modelData.name : ""
-                        active: true
+                        SQUtils.SearchFilter {
+                            roleName: "name"
+                            searchPhrase: searchText
+                        }
                     }
-                    asset.width: 30
-                    asset.height: 30
-                    asset.color: modelData ? modelData.color ? modelData.color : Utils.colorForColorId(modelData.colorId) : ""
-                    asset.name: modelData ? modelData.icon : ""
-                    asset.charactersLen: 2
-                    asset.letterSize: asset._twoLettersSize
-                    ringSettings.ringSpecModel: modelData ? modelData.colorHash : undefined
                 }
 
                 onAboutToShow: rootStore.rebuildChatSearchModel()
                 onSelected: {
-                    rootStore.setActiveSectionChat(modelData.sectionId, modelData.chatId)
+                    rootStore.setActiveSectionChat(sectionId, chatId)
                     close()
                 }
             }
