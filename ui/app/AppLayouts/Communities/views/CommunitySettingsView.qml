@@ -544,6 +544,19 @@ StatusSectionLayout {
                     ]
                 }
 
+                Connections {
+                    target: root.rootStore.communityTokensStore
+
+                    function onAirdropStateChanged(communityId, tokenName, chainName, status, url) {
+                        if (root.community.id !== communityId) {
+                            return
+                        }
+
+                        if (status == Constants.ContractTransactionStatus.InProgress) {
+                            airdropsSettingsPanel.navigateBack()
+                        }
+                    }
+                }
 
                 membersModel: community.members
                 enabledChainIds: root.enabledChainIds
