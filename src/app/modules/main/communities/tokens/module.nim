@@ -184,7 +184,11 @@ method deployCollectibles*(self: Module, communityId: string, fromAddress: strin
   self.tempDeploymentParams.masterTokenAddress = masterTokenAddress
   self.tempDeploymentParams.tokenType = TokenType.ERC721
   self.tempDeploymentParams.description = description
-  self.tempDeploymentParams.croppedImageJson = imageCropInfoJson
+
+  let croppedImage = imageCropInfoJson.parseJson
+  let base65Image = singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr)
+  self.tempDeploymentParams.base64image = base65Image
+
   self.tempDeploymentParams.communityId = communityId
   self.tempContractAction = ContractAction.Deploy
   self.authenticate()
@@ -241,7 +245,11 @@ method deployAssets*(self: Module, communityId: string, fromAddress: string, nam
   self.tempDeploymentParams.masterTokenAddress = masterTokenAddress
   self.tempDeploymentParams.tokenType = TokenType.ERC20
   self.tempDeploymentParams.description = description
-  self.tempDeploymentParams.croppedImageJson = imageCropInfoJson
+
+  let croppedImage = imageCropInfoJson.parseJson
+  let base65Image = singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr)
+  self.tempDeploymentParams.base64image = base65Image
+
   self.tempDeploymentParams.communityId = communityId
   self.tempContractAction = ContractAction.Deploy
   self.authenticate()
