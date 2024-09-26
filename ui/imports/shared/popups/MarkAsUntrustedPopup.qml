@@ -12,6 +12,12 @@ import utils 1.0
 CommonContactDialog {
     id: root
 
+    // New properties to replace contactDetails, with default values
+    property int verificationStatus: Constants.verificationStatus.unverified
+    property int incomingVerificationStatus: Constants.verificationStatus.unverified
+    property bool isContact: false
+    property int trustStatus: Constants.trustStatus.untrusted
+
     readonly property bool removeIDVerification: ctrlRemoveIDVerification.checked
     readonly property bool removeContact: ctrlRemoveContact.checked
 
@@ -19,8 +25,8 @@ CommonContactDialog {
 
     readonly property var d: QtObject {
         id: d
-        readonly property int outgoingVerificationStatus: contactDetails.verificationStatus
-        readonly property int incomingVerificationStatus: contactDetails.incomingVerificationStatus
+        readonly property int outgoingVerificationStatus: root.verificationStatus
+        readonly property int incomingVerificationStatus: root.incomingVerificationStatus
         readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
                                           incomingVerificationStatus === Constants.verificationStatus.trusted
     }
@@ -34,7 +40,7 @@ CommonContactDialog {
 
     StatusCheckBox {
         id: ctrlRemoveIDVerification
-        visible: (contactDetails.isContact && d.isTrusted) || contactDetails.trustStatus === Constants.trustStatus.trusted
+        visible: (root.isContact && d.isTrusted) || root.trustStatus === Constants.trustStatus.trusted
         checked: visible
         enabled: false
         text: qsTr("Remove ID verification")
@@ -42,7 +48,7 @@ CommonContactDialog {
 
     StatusCheckBox {
         id: ctrlRemoveContact
-        visible: contactDetails.isContact
+        visible: root.isContact
         text: qsTr("Remove contact")
     }
 

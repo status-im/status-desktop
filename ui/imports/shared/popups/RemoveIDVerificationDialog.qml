@@ -19,12 +19,12 @@ CommonContactDialog {
         Layout.fillWidth: true
         Layout.bottomMargin: Style.current.halfPadding
         wrapMode: Text.WordWrap
-        text: qsTr("%1’s identity will no longer be verified. This is only visible to you.").arg(mainDisplayName)
+        text: qsTr("%1’s identity will no longer be verified. This is only visible to you.").arg(root.mainDisplayName)
     }
 
     StatusCheckBox {
         id: ctrlMarkAsUntrusted
-        text: qsTr("Mark %1 as untrusted").arg(mainDisplayName)
+        text: qsTr("Mark %1 as untrusted").arg(root.mainDisplayName)
     }
 
     StatusCheckBox {

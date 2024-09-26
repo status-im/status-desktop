@@ -20,12 +20,14 @@ CommonContactDialog {
     property string verificationResponseIcon
     property string verificationRequestedAt
     property string verificationRepliedAt
+    property bool ensVerified
 
     readonly property bool hasReply: root.verificationResponse !== ""
 
-    signal verificationRequestCanceled(string publicKey)
-    signal untrustworthyVerified(string publicKey)
-    signal trustedVerified(string publicKey)
+    signal verificationRequestCanceled()
+    signal untrustworthyVerified()
+    signal trustedVerified()
+    signal onLinkActivated()
 
     title: !hasReply ? qsTr("ID verification pending") : qsTr("Review ID verification reply")
 
@@ -36,7 +38,7 @@ CommonContactDialog {
             borderColor: "transparent"
             visible: !root.hasReply
             onClicked: {
-                root.verificationRequestCanceled(root.publicKey)
+                root.verificationRequestCanceled()
                 root.close()
             }
         }
@@ -51,7 +53,7 @@ CommonContactDialog {
             visible: root.hasReply
             type: StatusBaseButton.Type.Danger
             onClicked: {
-                root.untrustworthyVerified(root.publicKey)
+                root.untrustworthyVerified()
                 root.close()
             }
         }
@@ -60,7 +62,7 @@ CommonContactDialog {
             visible: root.hasReply
             type: StatusBaseButton.Type.Success
             onClicked: {
-                root.trustedVerified(root.publicKey)
+                root.trustedVerified()
                 root.close()
             }
         }
@@ -91,7 +93,7 @@ CommonContactDialog {
         messageDetails.sender.profileImage.assetSettings.isImage: true
         messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(root.publicKey)
         messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(root.publicKey)
-        messageDetails.sender.isEnsVerified: contactDetails.ensVerified
+        messageDetails.sender.isEnsVerified: root.ensVerified
         Layout.fillWidth: true
     }
 
@@ -105,10 +107,6 @@ CommonContactDialog {
         wrapMode: Text.WordWrap
         textFormat: Text.RichText
         color: root.hasReply ? Theme.palette.directColor1 : Theme.palette.baseColor1
-        onLinkActivated: {
-            root.verificationRequestCanceled(root.publicKey)
-            root.close()
-            Global.openSendIDRequestPopup(root.publicKey, root.contactDetails, null)
-        }
+        onLinkActivated: root.onLinkActivated()
     }
 }

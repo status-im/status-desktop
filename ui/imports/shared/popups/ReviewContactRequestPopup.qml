@@ -12,11 +12,14 @@ import utils 1.0
 CommonContactDialog {
     id: root
 
-    // expected roles: id, from, clock, text, contactRequestState
-    required property var crDetails
+    property string contactRequestId: ""
+    property string fromAddress: ""
+    property int clock: 0
+    property string text: ""
+    property int contactRequestState: 0
 
-    signal accepted(string contactRequestId)
-    signal discarded(string contactRequestId)
+    signal accepted()
+    signal discarded()
 
     title: qsTr("Review contact request")
 
@@ -35,12 +38,12 @@ CommonContactDialog {
 
             StatusTimeStampLabel {
                 Layout.maximumWidth: parent.width
-                timestamp: crDetails.clock
+                timestamp: root.clock
             }
             StatusBaseText {
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
-                text: crDetails.text
+                text: root.text
             }
         }
     }
@@ -49,13 +52,13 @@ CommonContactDialog {
         StatusFlatButton {
             text: qsTr("Ignore")
             objectName: "ignoreButton"
-            onClicked: root.discarded(crDetails.id ?? "")
+            onClicked: root.discarded()
         }
         StatusButton {
             text: qsTr("Accept")
             type: StatusBaseButton.Type.Success
             objectName: "acceptButton"
-            onClicked: root.accepted(crDetails.id ?? "")
+            onClicked: root.accepted()
         }
     }
 }

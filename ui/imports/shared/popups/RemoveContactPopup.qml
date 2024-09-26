@@ -12,6 +12,10 @@ import utils 1.0
 CommonContactDialog {
     id: root
 
+    property int outgoingVerificationStatus: Constants.verificationStatus.unverified
+    property int incomingVerificationStatus: Constants.verificationStatus.unverified
+    property int trustStatus: Constants.trustStatus.none
+
     readonly property bool removeIDVerification: ctrlRemoveIDVerification.checked
     readonly property bool markAsUntrusted: ctrlMarkAsUntrusted.checked
 
@@ -19,8 +23,8 @@ CommonContactDialog {
 
     readonly property var d: QtObject {
         id: d
-        readonly property bool isTrusted: contactDetails.outgoingVerificationStatus === Constants.verificationStatus.trusted ||
-                                          contactDetails.incomingVerificationStatus === Constants.verificationStatus.trusted
+        readonly property bool isTrusted: root.outgoingVerificationStatus === Constants.verificationStatus.trusted ||
+                                          root.incomingVerificationStatus === Constants.verificationStatus.trusted
     }
 
     StatusBaseText {
@@ -32,7 +36,7 @@ CommonContactDialog {
 
     StatusCheckBox {
         id: ctrlRemoveIDVerification
-        visible: d.isTrusted || contactDetails.trustStatus === Constants.trustStatus.trusted
+        visible: d.isTrusted || root.trustStatus === Constants.trustStatus.trusted
         checked: visible
         enabled: false
         text: qsTr("Remove ID verification")
@@ -40,7 +44,7 @@ CommonContactDialog {
 
     StatusCheckBox {
         id: ctrlMarkAsUntrusted
-        visible: contactDetails.trustStatus !== Constants.trustStatus.untrustworthy
+        visible: root.trustStatus !== Constants.trustStatus.untrustworthy
         text: qsTr("Mark %1 as untrusted").arg(mainDisplayName)
     }
 
