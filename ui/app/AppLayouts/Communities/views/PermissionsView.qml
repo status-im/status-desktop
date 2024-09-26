@@ -17,7 +17,6 @@ ColumnLayout {
     id: root
     width: root.viewWidth
     property int topPadding: count ? 16 : 0
-    property bool useFullHeight: false
     spacing: 24
 
     QtObject {
@@ -94,8 +93,8 @@ ColumnLayout {
         model: root.permissionsModel
         spacing: 24
         Layout.fillWidth: true
-        Layout.fillHeight: !useFullHeight
-        Layout.preferredHeight: useFullHeight ? contentHeight : 0
+        Layout.fillHeight: true
+        Layout.preferredHeight: contentHeight
         Layout.topMargin: root.topPadding
 
         delegate: PermissionItem {

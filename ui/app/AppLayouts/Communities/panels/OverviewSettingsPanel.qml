@@ -255,21 +255,16 @@ StackLayout {
 
         title: qsTr("Edit Community")
 
-        Connections {
-            id: indexConnection
-            target: root
-            onCurrentIndexChanged: {
-                if (root.currentIndex === index) {
-                    editSettingsPanelLoader.active = true
-                    indexConnection.enabled = false
-                }
-            }
-        }
-
         contentItem: Loader {
             id: editSettingsPanelLoader
 
             active: false
+
+            onVisibleChanged: {
+                if (visible) {
+                    active = true
+                }
+            }
 
             function reloadContent() {
                 active = false

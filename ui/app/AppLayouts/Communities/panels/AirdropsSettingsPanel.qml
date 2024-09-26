@@ -63,6 +63,20 @@ StackView {
         d.addAddresses(addresses)
     }
 
+    Connections {
+        target: rootStore.communityTokensStore
+
+        function onAirdropStateChanged(communityId, tokenName, chainName, status, url) {
+            if (root.communityDetails.id !== communityId) {
+                return
+            }
+
+            if (status == Constants.ContractTransactionStatus.InProgress) {
+                root.navigateBack()
+            }
+        }
+    }
+
     QtObject {
         id: d
 
