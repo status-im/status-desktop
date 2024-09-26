@@ -4,7 +4,8 @@ import app/modules/shared_models/currency_amount
 
 type
   SourcesOfTokensModelDataSource* = tuple[
-    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem]
+    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem],
+    subscribeToModelUpdates: proc(callback: proc())
   ]
 type
   FlatTokenModelDataSource* = tuple[
@@ -14,6 +15,11 @@ type
     getCommunityTokenDescription: proc(chainId: int, address: string): string,
     getTokensDetailsLoading: proc(): bool,
     getTokensMarketValuesLoading: proc(): bool,
+    subscribeToModelUpdates: proc(callback: proc()),
+    subscribeToTokenDetailsUpdates: proc(callback: proc()),
+    subscribeToTokenMarketValuesUpdates: proc(callback: proc()),
+    subscribeToTokenPreferencesUpdates: proc(callback: proc()),
+    subscribeToCurrencyFormatsUpdates: proc(callback: proc())
   ]
 type
   TokenBySymbolModelDataSource* = tuple[
@@ -23,6 +29,11 @@ type
     getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string,
     getTokensDetailsLoading: proc(): bool,
     getTokensMarketValuesLoading: proc(): bool,
+    subscribeToModelUpdates: proc(callback: proc()),
+    subscribeToTokenDetailsUpdates: proc(callback: proc()),
+    subscribeToTokenMarketValuesUpdates: proc(callback: proc()),
+    subscribeToTokenPreferencesUpdates: proc(callback: proc()),
+    subscribeToCurrencyFormatsUpdates: proc(callback: proc())
   ]
 type
   TokenMarketValuesDataSource* = tuple[

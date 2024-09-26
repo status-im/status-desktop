@@ -30,7 +30,8 @@ QtObject:
     result.delegate = delegate
     result.marketHistoryIsLoading = false
     result.balanceHistoryIsLoading = false
-    result.sourcesOfTokensModel = newSourcesOfTokensModel(delegate.getSourcesOfTokensModelDataSource())
+    result.sourcesOfTokensModel = newSourcesOfTokensModel(
+      delegate.getSourcesOfTokensModelDataSource())
     result.flatTokensModel = newFlatTokensModel(
       delegate.getFlatTokenModelDataSource(),
       delegate.getTokenMarketValuesDataSource())
@@ -115,35 +116,6 @@ QtObject:
   QtProperty[QVariant] tokensBySymbolModel:
     read = getTokensBySymbolModel
     notify = tokensBySymbolModelChanged
-
-  proc modelsUpdated*(self: View) =
-    self.sourcesOfTokensModel.modelsUpdated()
-    self.flatTokensModel.modelsUpdated()
-    self.tokensBySymbolModel.modelsUpdated()
-
-  proc tokensMarketValuesUpdated*(self: View) =
-    self.flatTokensModel.tokensMarketValuesUpdated()
-    self.tokensBySymbolModel.tokensMarketValuesUpdated()
-
-  proc tokensMarketValuesAboutToUpdate*(self: View) =
-    self.flatTokensModel.tokensMarketValuesAboutToUpdate()
-    self.tokensBySymbolModel.tokensMarketValuesAboutToUpdate()
-
-  proc tokensDetailsAboutToUpdate*(self: View) =
-    self.flatTokensModel.tokensDetailsAboutToUpdate()
-    self.tokensBySymbolModel.tokensDetailsAboutToUpdate()
-
-  proc tokensDetailsUpdated*(self: View) =
-    self.flatTokensModel.tokensDetailsUpdated()
-    self.tokensBySymbolModel.tokensDetailsUpdated()
-
-  proc currencyFormatsUpdated*(self: View) =
-    self.flatTokensModel.currencyFormatsUpdated()
-    self.tokensBySymbolModel.currencyFormatsUpdated()
-
-  proc tokenPreferencesUpdated*(self: View) =
-    self.flatTokensModel.tokenPreferencesUpdated()
-    self.tokensBySymbolModel.tokenPreferencesUpdated()
 
   proc updateTokenPreferences*(self: View, tokenPreferencesJson: string) {.slot.} =
     self.delegate.updateTokenPreferences(tokenPreferencesJson)
