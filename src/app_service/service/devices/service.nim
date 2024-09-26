@@ -176,6 +176,9 @@ QtObject:
   #
 
   proc inputConnectionStringForBootstrappingFinished*(self: Service, responseJson: string) {.slot.} =
+    if self.localPairingStatus.state == LocalPairingState.Error:
+      # The error was already returned by an event
+      return
     let response = responseJson.parseJson
     let errorDescription = response["error"].getStr
     if len(errorDescription) == 0:

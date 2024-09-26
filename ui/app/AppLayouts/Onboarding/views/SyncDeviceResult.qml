@@ -29,7 +29,7 @@ Item {
         id: layout
 
         anchors.centerIn: parent
-        spacing: 48
+        spacing: 24
 
         StatusBaseText {
             Layout.fillWidth: true
@@ -61,6 +61,13 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Use recovery phrase")
             onClicked: root.startupStore.doSecondaryAction()
+        }
+
+        StatusFlatButton {
+            visible: d.pairingFailed
+            Layout.alignment: Qt.AlignHCenter
+            text: qsTr("Try again")
+            onClicked: root.startupStore.doTertiaryAction()
         }
 
         StatusButton {
