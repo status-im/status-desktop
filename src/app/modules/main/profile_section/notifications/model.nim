@@ -150,7 +150,6 @@ QtObject:
     let ind = self.findIndexForItemId(id)
     if(ind == -1):
       return
-
     
     var roles: seq[int] = @[]
 

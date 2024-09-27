@@ -319,8 +319,7 @@ method navigateToCommunity*(self: Module, communityId: string) =
     self.delegate.setActiveSectionById(communityId)
 
 method communityEdited*(self: Module, community: CommunityDto) =
-  self.view.model().editItem(self.getCommunityItem(community))
-  self.view.communityChanged(community.id)
+  self.view.updateItem(self.getCommunityItem(community))
 
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto]) =
   for community in curatedCommunities:
