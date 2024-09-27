@@ -1737,20 +1737,7 @@ Item {
             asynchronous: true
             sourceComponent: StatusSearchListPopup {
                 searchBoxPlaceholder: qsTr("Where do you want to go?")
-                model: SortFilterProxyModel {
-                    sourceModel: rootStore.chatSearchModel
-
-                    filters: AnyOf {
-                        SQUtils.SearchFilter {
-                            roleName: "sectionName"
-                            searchPhrase: searchText
-                        }
-                        SQUtils.SearchFilter {
-                            roleName: "name"
-                            searchPhrase: searchText
-                        }
-                    }
-                }
+                model: rootStore.chatSearchModel
 
                 onAboutToShow: rootStore.rebuildChatSearchModel()
                 onSelected: {

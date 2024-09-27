@@ -7,7 +7,9 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
+import SortFilterProxyModel 0.2
 import utils 1.0
 
 Popup {
@@ -18,8 +20,7 @@ Popup {
     width: 400
     height: 300
 
-    property alias model: listView.model
-    property alias searchText: searchBox.text
+    required property var model
 
     property string searchBoxPlaceholder: qsTr("Search...")
 
@@ -95,6 +96,21 @@ Popup {
             property bool selectByHover: false
 
             highlightMoveDuration: 200
+
+            model: SortFilterProxyModel {
+                sourceModel: root.model
+
+                filters: AnyOf {
+                    SearchFilter {
+                        roleName: "sectionName"
+                        searchPhrase: searchBox.text
+                    }
+                    SearchFilter {
+                        roleName: "name"
+                        searchPhrase: searchBox.text
+                    }
+                }
+            }
 
             delegate: StatusListItem {
                 id: listItem
