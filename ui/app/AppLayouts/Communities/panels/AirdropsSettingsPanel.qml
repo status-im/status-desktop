@@ -1,15 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-import StatusQ 0.1
 import StatusQ.Controls 0.1
 
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.helpers 1.0
-
-import SortFilterProxyModel 0.2
 
 import utils 1.0
 
@@ -120,7 +117,7 @@ StackView {
 
                 communityDetails: root.communityDetails
                 assetsModel: root.assetsModel
-                collectiblesModel:  root.collectiblesModel
+                collectiblesModel: root.collectiblesModel
                 membersModel: root.membersModel
                 accountsModel: root.accountsModel
                 totalFeeText: feesSubscriber.totalFee
