@@ -5,6 +5,7 @@ import QtQuick.Controls 2.14
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
@@ -70,23 +71,31 @@ Item {
 
                 sourceModel: root.model
 
-                proxyRoles: FastExpressionRole {
-                    function displayNameProxy(localNickname, ensName, displayName, aliasName) {
-                        return ProfileUtils.displayName(localNickname, ensName, displayName, aliasName);
-                    }
-
-                    name: "preferredDisplayName"
-                    expectedRoles: ["localNickname", "displayName", "ensName", "alias"]
-                    expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias);
-                }
-
-
                 sorters : [
                     StringSorter {
                         roleName: "preferredDisplayName"
                         caseSensitivity: Qt.CaseInsensitive
                     }
                 ]
+
+                filters: AnyOf {
+                    SearchFilter {
+                        roleName: "localNickname"
+                        searchPhrase: memberSearch.text
+                    }
+                    SearchFilter {
+                        roleName: "displayName"
+                        searchPhrase: memberSearch.text
+                    }
+                    SearchFilter {
+                        roleName: "ensName"
+                        searchPhrase: memberSearch.text
+                    }
+                    SearchFilter {
+                        roleName: "alias"
+                        searchPhrase: memberSearch.text
+                    }
+                }
             }
             spacing: 0
 
@@ -288,8 +297,6 @@ Item {
                 readonly property string title: model.preferredDisplayName
 
                 width: membersList.width
-                visible: memberSearch.text === "" || title.toLowerCase().includes(memberSearch.text.toLowerCase())
-                height: visible ? implicitHeight : 0
                 color: "transparent"
 
                 pubKey: model.isEnsVerified ? "" : Utils.getElidedCompressedPk(model.pubKey)

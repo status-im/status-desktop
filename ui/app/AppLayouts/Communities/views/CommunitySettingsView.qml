@@ -4,6 +4,7 @@ import QtQuick.Dialogs 1.3
 
 import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -74,14 +75,19 @@ StatusSectionLayout {
 
     signal backToCommunityClicked
 
-    backButtonName: stackLayout.children[d.currentIndex].previousPageName || ""
+    backButtonName: {
+        if (!stackLayout.children[d.currentIndex].item || !stackLayout.children[d.currentIndex].item.previousPageName) {
+            return ""
+        }
+        return stackLayout.children[d.currentIndex].item.previousPageName
+    }
 
     //navigate to a specific section and subsection
     function goTo(section: int, subSection: int) {
         d.goTo(section, subSection)
     }
 
-    onBackButtonClicked: stackLayout.children[d.currentIndex].navigateBack()
+    onBackButtonClicked: stackLayout.children[d.currentIndex].item.navigateBack()
 
     leftPanel: Item {
         anchors.fill: parent
@@ -167,387 +173,407 @@ StatusSectionLayout {
 
         currentIndex: d.currentIndex
 
-        OverviewSettingsPanel {
+        onCurrentIndexChanged: {
+            children[currentIndex].active = true
+        }
+
+        // OVERVIEW
+        Loader {
+            active: true
+
             readonly property int sectionKey: Constants.CommunitySettingsSections.Overview
             readonly property string sectionName: qsTr("Overview")
             readonly property string sectionIcon: "show"
             readonly property bool sectionEnabled: true
 
-            isOwner: root.isOwner
-            isAdmin: root.isAdmin
-            isTokenMaster: root.isTokenMasterOwner
-            communityId: root.community.id
-            name: root.community.name
-            description: root.community.description
-            introMessage: root.community.introMessage
-            outroMessage: root.community.outroMessage
-            logoImageData: root.community.image
-            bannerImageData: root.community.bannerImageData
-            color: root.community.color
-            tags: root.rootStore.communityTags
-            selectedTags: root.filteredSelectedTags
-            archiveSupportEnabled: root.community.historyArchiveSupportEnabled
-            archiveSupporVisible: root.community.isControlNode
-            requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
-            pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
-            editable: true
-            loginType: root.rootStore.loginType
-            isControlNode: root.isControlNode
-            communitySettingsDisabled: root.communitySettingsDisabled
-            overviewChartData: rootStore.overviewChartData
-            shardingEnabled: !isAdmin && !isTokenMaster && localAppSettings.wakuV2ShardedCommunitiesEnabled
-            shardIndex: root.community.shardIndex
-            shardingInProgress: root.chatCommunitySectionModule.shardingInProgress
-            pubsubTopic: root.community.pubsubTopic
-            pubsubTopicKey: root.community.pubsubTopicKey
+            sourceComponent: OverviewSettingsPanel {
+                isOwner: root.isOwner
+                isAdmin: root.isAdmin
+                isTokenMaster: root.isTokenMasterOwner
+                communityId: root.community.id
+                name: root.community.name
+                description: root.community.description
+                introMessage: root.community.introMessage
+                outroMessage: root.community.outroMessage
+                logoImageData: root.community.image
+                bannerImageData: root.community.bannerImageData
+                color: root.community.color
+                tags: root.rootStore.communityTags
+                selectedTags: root.filteredSelectedTags
+                archiveSupportEnabled: root.community.historyArchiveSupportEnabled
+                archiveSupporVisible: root.community.isControlNode
+                requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
+                pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
+                editable: true
+                loginType: root.rootStore.loginType
+                isControlNode: root.isControlNode
+                communitySettingsDisabled: root.communitySettingsDisabled
+                overviewChartData: rootStore.overviewChartData
+                shardingEnabled: !isAdmin && !isTokenMaster && localAppSettings.wakuV2ShardedCommunitiesEnabled
+                shardIndex: root.community.shardIndex
+                shardingInProgress: root.chatCommunitySectionModule.shardingInProgress
+                pubsubTopic: root.community.pubsubTopic
+                pubsubTopicKey: root.community.pubsubTopicKey
 
-            sendModalPopup: root.sendModalPopup
-            ownerToken: tokensModelChangesTracker.ownerToken
+                sendModalPopup: root.sendModalPopup
+                ownerToken: tokensModelChangesTracker.ownerToken
 
-            isPendingOwnershipRequest: root.isPendingOwnershipRequest
+                isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
-            onFinaliseOwnershipClicked: root.finaliseOwnershipClicked()
+                onFinaliseOwnershipClicked: root.finaliseOwnershipClicked()
 
-            onCollectCommunityMetricsMessagesCount: {
-                rootStore.collectCommunityMetricsMessagesCount(intervals)
-            }
-
-            onEdited: {
-                const error = root.chatCommunitySectionModule.editCommunity(
-                                StatusQUtils.Utils.filterXSS(item.name),
-                                StatusQUtils.Utils.filterXSS(item.description),
-                                StatusQUtils.Utils.filterXSS(item.introMessage),
-                                StatusQUtils.Utils.filterXSS(item.outroMessage),
-                                item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess
-                                                                  : Constants.communityChatPublicAccess,
-                                item.color.toString().toUpperCase(),
-                                item.selectedTags,
-                                Utils.getImageAndCropInfoJson(item.logoImagePath, item.logoCropRect),
-                                Utils.getImageAndCropInfoJson(item.bannerPath, item.bannerCropRect),
-                                item.options.archiveSupportEnabled,
-                                item.options.pinMessagesEnabled
-                                )
-                if (error) {
-                    errorDialog.text = error.error
-                    errorDialog.open()
+                onCollectCommunityMetricsMessagesCount: {
+                    rootStore.collectCommunityMetricsMessagesCount(intervals)
                 }
-            }
 
-            onInviteNewPeopleClicked: {
-                Global.openInviteFriendsToCommunityPopup(root.community,
-                                                         root.chatCommunitySectionModule,
-                                                         null)
-            }
+                onEdited: {
+                    const error = root.chatCommunitySectionModule.editCommunity(
+                                    StatusQUtils.Utils.filterXSS(item.name),
+                                    StatusQUtils.Utils.filterXSS(item.description),
+                                    StatusQUtils.Utils.filterXSS(item.introMessage),
+                                    StatusQUtils.Utils.filterXSS(item.outroMessage),
+                                    item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess
+                                                                    : Constants.communityChatPublicAccess,
+                                    item.color.toString().toUpperCase(),
+                                    item.selectedTags,
+                                    Utils.getImageAndCropInfoJson(item.logoImagePath, item.logoCropRect),
+                                    Utils.getImageAndCropInfoJson(item.bannerPath, item.bannerCropRect),
+                                    item.options.archiveSupportEnabled,
+                                    item.options.pinMessagesEnabled
+                                    )
+                    if (error) {
+                        errorDialog.text = error.error
+                        errorDialog.open()
+                    }
+                }
 
-            onAirdropTokensClicked: root.goTo(Constants.CommunitySettingsSections.Airdrops)
-            onExportControlNodeClicked: {
-                if(!root.isControlNode)
-                    return
+                onInviteNewPeopleClicked: {
+                    Global.openInviteFriendsToCommunityPopup(root.community,
+                                                            root.chatCommunitySectionModule,
+                                                            null)
+                }
 
-                Global.openExportControlNodePopup(root.community)
-            }
+                onAirdropTokensClicked: root.goTo(Constants.CommunitySettingsSections.Airdrops)
+                onExportControlNodeClicked: {
+                    if(!root.isControlNode)
+                        return
 
-            onImportControlNodeClicked: {
-                if(root.isControlNode)
-                    return
+                    Global.openExportControlNodePopup(root.community)
+                }
 
-                Global.openImportControlNodePopup(root.community)
-            }
+                onImportControlNodeClicked: {
+                    if(root.isControlNode)
+                        return
 
-            onMintOwnerTokenClicked: {
-                root.goTo(Constants.CommunitySettingsSections.MintTokens)
-                mintPanel.openNewTokenForm(false/*Collectible owner token*/)
-            }
+                    Global.openImportControlNodePopup(root.community)
+                }
 
-            onShardIndexEdited: if (root.community.shardIndex !== shardIndex) {
-                root.chatCommunitySectionModule.setCommunityShard(shardIndex)
+                onMintOwnerTokenClicked: {
+                    root.goTo(Constants.CommunitySettingsSections.MintTokens)
+                    mintPanel.openNewTokenForm(false/*Collectible owner token*/)
+                }
+
+                onShardIndexEdited: if (root.community.shardIndex !== shardIndex) {
+                    root.chatCommunitySectionModule.setCommunityShard(shardIndex)
+                }
             }
         }
 
-        MembersSettingsPanel {
+        // MEMBERS
+        Loader {
+            active: false
+
             readonly property int sectionKey: Constants.CommunitySettingsSections.Members
             readonly property string sectionName: qsTr("Members")
             readonly property string sectionIcon: "group-chat"
             readonly property bool sectionEnabled: true
 
-            rootStore: root.rootStore
-            membersModel: root.community.members
-            bannedMembersModel: root.community.bannedMembers
-            pendingMemberRequestsModel: root.community.pendingMemberRequests
-            declinedMemberRequestsModel: root.community.declinedMemberRequests
-            editable: root.isAdmin || root.isOwner || root.isTokenMasterOwner
-            memberRole: community.memberRole
-            communityName: root.community.name
+            sourceComponent: MembersSettingsPanel {
+                rootStore: root.rootStore
+                membersModel: root.community.members
+                bannedMembersModel: root.community.bannedMembers
+                pendingMemberRequestsModel: root.community.pendingMemberRequests
+                declinedMemberRequestsModel: root.community.declinedMemberRequests
+                editable: root.isAdmin || root.isOwner || root.isTokenMasterOwner
+                memberRole: community.memberRole
+                communityName: root.community.name
 
-            onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
-            onBanUserClicked: root.rootStore.banUserFromCommunity(id, deleteAllMessages)
-            onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
-            onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id, root.community.id)
-            onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.community.id)
-            onViewMemberMessagesClicked: {
-                root.rootStore.loadCommunityMemberMessages(root.community.id, pubKey)
-                Global.openCommunityMemberMessagesPopupRequested(root.rootStore, root.chatCommunitySectionModule, pubKey, displayName)
+                onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
+                onBanUserClicked: root.rootStore.banUserFromCommunity(id, deleteAllMessages)
+                onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
+                onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id, root.community.id)
+                onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.community.id)
+                onViewMemberMessagesClicked: {
+                    root.rootStore.loadCommunityMemberMessages(root.community.id, pubKey)
+                    Global.openCommunityMemberMessagesPopupRequested(root.rootStore, root.chatCommunitySectionModule, pubKey, displayName)
+                }
             }
         }
 
-        PermissionsSettingsPanel {
+        // PERMISISONS
+        Loader {
+            active: false
             readonly property int sectionKey: Constants.CommunitySettingsSections.Permissions
             readonly property string sectionName: qsTr("Permissions")
             readonly property string sectionIcon: "objects"
             readonly property bool sectionEnabled: true
+        
+            sourceComponent: PermissionsSettingsPanel {
+                readonly property PermissionsStore permissionsStore:
+                    rootStore.permissionsStore
 
-            readonly property PermissionsStore permissionsStore:
-                rootStore.permissionsStore
+                permissionsModel: permissionsStore.permissionsModel
 
-            permissionsModel: permissionsStore.permissionsModel
+                // temporary solution to provide icons for assets, similar
+                // method is used in wallet (constructing filename from asset's
+                // symbol) and is intended to be replaced by more robust
+                // solution soon.
 
-            // temporary solution to provide icons for assets, similar
-            // method is used in wallet (constructing filename from asset's
-            // symbol) and is intended to be replaced by more robust
-            // solution soon.
+                assetsModel: rootStore.assetsModel
 
-            assetsModel: rootStore.assetsModel
+                collectiblesModel: rootStore.collectiblesModel
+                channelsModel: rootStore.chatCommunitySectionModule.model
 
-            collectiblesModel: rootStore.collectiblesModel
-            channelsModel: rootStore.chatCommunitySectionModule.model
+                ensCommunityPermissionsEnabled: rootStore.ensCommunityPermissionsEnabled
 
-            ensCommunityPermissionsEnabled: rootStore.ensCommunityPermissionsEnabled
+                communityDetails: d.communityDetails
 
-            communityDetails: d.communityDetails
+                onCreatePermissionRequested:
+                    permissionsStore.createPermission(holdings, permissionType,
+                                                    isPrivate, channels)
 
-            onCreatePermissionRequested:
-                permissionsStore.createPermission(holdings, permissionType,
-                                                  isPrivate, channels)
+                onUpdatePermissionRequested:
+                    permissionsStore.editPermission(
+                        key, holdings, permissionType, channels, isPrivate)
 
-            onUpdatePermissionRequested:
-                permissionsStore.editPermission(
-                    key, holdings, permissionType, channels, isPrivate)
+                onRemovePermissionRequested:
+                    permissionsStore.removePermission(key)
 
-            onRemovePermissionRequested:
-                permissionsStore.removePermission(key)
-
-            onNavigateToMintTokenSettings: {
-                root.goTo(Constants.CommunitySettingsSections.MintTokens)
-                mintPanel.openNewTokenForm(isAssetType)
+                onNavigateToMintTokenSettings: {
+                    root.goTo(Constants.CommunitySettingsSections.MintTokens)
+                    mintPanelLoader.item.openNewTokenForm(isAssetType)
+                }
             }
         }
 
-        MintTokensSettingsPanel {
-            id: mintPanel
-
+        // TOKEN
+        Loader {
+            id: mintPanelLoader
+            active: false
             readonly property int sectionKey: Constants.CommunitySettingsSections.MintTokens
             readonly property string sectionName: qsTr("Tokens")
             readonly property string sectionIcon: "token"
             readonly property bool sectionEnabled: true
-            enabledChainIds: root.enabledChainIds
 
-            readonly property CommunityTokensStore communityTokensStore:
-                rootStore.communityTokensStore
+            sourceComponent: MintTokensSettingsPanel {
+                enabledChainIds: root.enabledChainIds
 
-            // General community props
-            communityId: root.community.id
-            communityName: root.community.name
-            communityLogo: root.community.image
-            communityColor: root.community.color
-            sendModalPopup: root.sendModalPopup
+                readonly property CommunityTokensStore communityTokensStore:
+                    rootStore.communityTokensStore
 
-            // User profile props
-            isOwner: root.isOwner
-            isAdmin: root.isAdmin
-            isTokenMasterOwner: root.isTokenMasterOwner
+                // General community props
+                communityId: root.community.id
+                communityName: root.community.name
+                communityLogo: root.community.image
+                communityColor: root.community.color
+                sendModalPopup: root.sendModalPopup
 
-            // Owner and TMaster properties
-            isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
-            isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
-            anyPrivilegedTokenFailed: tokensModelChangesTracker.isOwnerTokenFailed || tokensModelChangesTracker.isTMasterTokenFailed
-            ownerOrTMasterTokenItemsExist: tokensModelChangesTracker.ownerOrTMasterTokenItemsExist
+                // User profile props
+                isOwner: root.isOwner
+                isAdmin: root.isAdmin
+                isTokenMasterOwner: root.isTokenMasterOwner
 
-            // Models
-            tokensModel: root.community.communityTokens
-            membersModel: root.community.members
-            flatNetworks: communityTokensStore.filteredFlatModel
-            accounts: root.walletAccountsModel
-            referenceAssetsBySymbolModel: root.tokensStore.assetsBySymbolModel
+                // Owner and TMaster properties
+                isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
+                isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
+                anyPrivilegedTokenFailed: tokensModelChangesTracker.isOwnerTokenFailed || tokensModelChangesTracker.isTMasterTokenFailed
+                ownerOrTMasterTokenItemsExist: tokensModelChangesTracker.ownerOrTMasterTokenItemsExist
 
-            onRegisterDeployFeesSubscriber: d.feesBroker.registerDeployFeesSubscriber(feeSubscriber)
+                // Models
+                tokensModel: root.community.communityTokens
+                membersModel: root.community.members
+                flatNetworks: communityTokensStore.filteredFlatModel
+                accounts: root.walletAccountsModel
+                referenceAssetsBySymbolModel: root.tokensStore.assetsBySymbolModel
 
-            onRegisterSelfDestructFeesSubscriber: d.feesBroker.registerSelfDestructFeesSubscriber(feeSubscriber)
+                onRegisterDeployFeesSubscriber: d.feesBroker.registerDeployFeesSubscriber(feeSubscriber)
 
-            onRegisterBurnTokenFeesSubscriber: d.feesBroker.registerBurnFeesSubscriber(feeSubscriber)
+                onRegisterSelfDestructFeesSubscriber: d.feesBroker.registerSelfDestructFeesSubscriber(feeSubscriber)
 
-            onStartTokenHoldersManagement: communityTokensStore.startTokenHoldersManagement(root.community.id, chainId, address)
+                onRegisterBurnTokenFeesSubscriber: d.feesBroker.registerBurnFeesSubscriber(feeSubscriber)
 
-            onStopTokenHoldersManagement: communityTokensStore.stopTokenHoldersManagement()
+                onStartTokenHoldersManagement: communityTokensStore.startTokenHoldersManagement(root.community.id, chainId, address)
 
-            onEnableNetwork: root.enableNetwork(chainId)
+                onStopTokenHoldersManagement: communityTokensStore.stopTokenHoldersManagement()
 
-            onMintCollectible:
-                communityTokensStore.deployCollectible(
-                    root.community.id, collectibleItem)
+                onEnableNetwork: root.enableNetwork(chainId)
 
-            onMintAsset:
-                communityTokensStore.deployAsset(root.community.id, assetItem)
+                onMintCollectible:
+                    communityTokensStore.deployCollectible(
+                        root.community.id, collectibleItem)
 
-            onMintOwnerToken:
-                communityTokensStore.deployOwnerToken(
-                    root.community.id, ownerToken, tMasterToken)
+                onMintAsset:
+                    communityTokensStore.deployAsset(root.community.id, assetItem)
 
-            onRemotelyDestructCollectibles:
-                communityTokensStore.remoteSelfDestructCollectibles(
-                    root.community.id, walletsAndAmounts, tokenKey, accountAddress)
+                onMintOwnerToken:
+                    communityTokensStore.deployOwnerToken(
+                        root.community.id, ownerToken, tMasterToken)
 
-            onRemotelyDestructAndBan:
-                communityTokensStore.remotelyDestructAndBan(
-                    root.community.id, contactId, tokenKey, accountAddress)
+                onRemotelyDestructCollectibles:
+                    communityTokensStore.remoteSelfDestructCollectibles(
+                        root.community.id, walletsAndAmounts, tokenKey, accountAddress)
 
-            onRemotelyDestructAndKick:
-                communityTokensStore.remotelyDestructAndKick(
-                    root.community.id, contactId, tokenKey, accountAddress)
+                onRemotelyDestructAndBan:
+                    communityTokensStore.remotelyDestructAndBan(
+                        root.community.id, contactId, tokenKey, accountAddress)
 
-            onBurnToken:
-                communityTokensStore.burnToken(root.community.id, tokenKey, amount, accountAddress)
+                onRemotelyDestructAndKick:
+                    communityTokensStore.remotelyDestructAndKick(
+                        root.community.id, contactId, tokenKey, accountAddress)
 
-            onDeleteToken:
-                communityTokensStore.deleteToken(root.community.id, tokenKey)
+                onBurnToken:
+                    communityTokensStore.burnToken(root.community.id, tokenKey, amount, accountAddress)
 
-            onRefreshToken:
-                communityTokensStore.refreshToken(tokenKey)
+                onDeleteToken:
+                    communityTokensStore.deleteToken(root.community.id, tokenKey)
 
-            onAirdropToken: {
-                root.goTo(Constants.CommunitySettingsSections.Airdrops)
+                onRefreshToken:
+                    communityTokensStore.refreshToken(tokenKey)
 
-                // Force a token selection to be airdroped with given amount
-                airdropPanel.selectToken(tokenKey, amount, type)
+                onAirdropToken: {
+                    root.goTo(Constants.CommunitySettingsSections.Airdrops)
 
-                // Set given addresses as recipients
-                airdropPanel.addAddresses(addresses)
+                    // Force a token selection to be airdroped with given amount
+                    airdropPanelLoader.item.selectToken(tokenKey, amount, type)
+
+                    // Set given addresses as recipients
+                    airdropPanelLoader.item.addAddresses(addresses)
+                }
+
+                onKickUserRequested: root.rootStore.removeUserFromCommunity(contactId)
+                onBanUserRequested: root.rootStore.banUserFromCommunity(contactId)
             }
-
-            onKickUserRequested: root.rootStore.removeUserFromCommunity(contactId)
-            onBanUserRequested: root.rootStore.banUserFromCommunity(contactId)
         }
 
-        AirdropsSettingsPanel {
-            id: airdropPanel
+        // AIRDROPS
+        Loader {
+            id: airdropPanelLoader
+            active: false
 
             readonly property int sectionKey: Constants.CommunitySettingsSections.Airdrops
             readonly property string sectionName: qsTr("Airdrops")
             readonly property string sectionIcon: "airdrop"
             readonly property bool sectionEnabled: true
 
-            communityDetails: d.communityDetails
+            sourceComponent: AirdropsSettingsPanel {
+                id: airdropsSettingsPanel
 
-            // Profile type
-            isOwner: root.isOwner
-            isTokenMasterOwner: root.isTokenMasterOwner
-            isAdmin: root.isAdmin
+                communityDetails: d.communityDetails
 
-            // Owner and TMaster properties
-            isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
-            isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
+                // Profile type
+                isOwner: root.isOwner
+                isTokenMasterOwner: root.isTokenMasterOwner
+                isAdmin: root.isAdmin
 
-            readonly property CommunityTokensStore communityTokensStore:
-                rootStore.communityTokensStore
+                // Owner and TMaster properties
+                isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
+                isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
 
-            readonly property var communityTokens: root.community.communityTokens
+                readonly property CommunityTokensStore communityTokensStore:
+                    rootStore.communityTokensStore
 
-            Loader {
-                id: assetsModelLoader
-                active: airdropPanel.communityTokens
+                readonly property RolesRenamingModel renamedTokensBySymbolModel: RolesRenamingModel {
+                    sourceModel: root.community.communityTokens || null
+                    mapping: [
+                        RoleRename {
+                            from: "symbol"
+                            to: "key"
+                        },
+                        RoleRename {
+                            from: "image"
+                            to: "iconSource"
+                        }
+                    ]
+                }
 
-                sourceComponent: SortFilterProxyModel {
-
-                    sourceModel: airdropPanel.communityTokens
+                assetsModel: SortFilterProxyModel {
+                    sourceModel: renamedTokensBySymbolModel
                     filters: ValueFilter {
                         roleName: "tokenType"
                         value: Constants.TokenType.ERC20
                     }
                     proxyRoles: [
-                        ExpressionRole {
+                        ConstantRole {
                             name: "category"
-
-                            // Singleton cannot be used directly in the expression
-                            readonly property int category: TokenCategories.Category.Own
-                            expression: category
+                            value: TokenCategories.Category.Own
                         },
-                        ExpressionRole {
-                            name: "iconSource"
-                            expression: model.image
-                        },
-                        ExpressionRole {
-                            name: "key"
-                            expression: model.symbol
-                        },
-                        ExpressionRole {
+                        ConstantRole {
                             name: "communityId"
-                            expression: ""
+                            value: ""
                         }
                     ]
                 }
-            }
-
-            Loader {
-                id: collectiblesModelLoader
-                active: airdropPanel.communityTokens
-
-                sourceComponent: SortFilterProxyModel {
-
-                    sourceModel: airdropPanel.communityTokens
+                collectiblesModel: SortFilterProxyModel {
+                    sourceModel: renamedTokensBySymbolModel
                     filters: [
                         ValueFilter {
                             roleName: "tokenType"
                             value: Constants.TokenType.ERC721
                         },
-                        ExpressionFilter {
-                            function getPrivileges(privilegesLevel) {
-                                return privilegesLevel === Constants.TokenPrivilegesLevel.Community ||
-                                        (root.isOwner && privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
+                        AnyOf {
+                            ValueFilter {
+                                roleName: "privilegesLevel"
+                                value: Constants.TokenPrivilegesLevel.Community
                             }
-
-                            expression: { return getPrivileges(model.privilegesLevel) }
+                            ValueFilter {
+                                roleName: "privilegesLevel"
+                                value: Constants.TokenPrivilegesLevel.TMaster
+                                enabled: root.isOwner
+                            }
                         }
                     ]
                     proxyRoles: [
-                        ExpressionRole {
+                        ConstantRole {
                             name: "category"
-
-                            // Singleton cannot be used directly in the epression
-                            readonly property int category: TokenCategories.Category.Own
-                            expression: category
+                            value: TokenCategories.Category.Own
                         },
-                        ExpressionRole {
-                            name: "iconSource"
-                            expression: model.image
-                        },
-                        ExpressionRole {
-                            name: "key"
-                            expression: model.symbol
-                        },
-                        ExpressionRole {
+                        ConstantRole {
                             name: "communityId"
-                            expression: ""
+                            value: ""
                         }
                     ]
                 }
+
+                Connections {
+                    target: root.rootStore.communityTokensStore
+
+                    function onAirdropStateChanged(communityId, tokenName, chainName, status, url) {
+                        if (root.community.id !== communityId) {
+                            return
+                        }
+
+                        if (status == Constants.ContractTransactionStatus.InProgress) {
+                            airdropsSettingsPanel.navigateBack()
+                        }
+                    }
+                }
+
+                membersModel: community.members
+                enabledChainIds: root.enabledChainIds
+                onEnableNetwork: root.enableNetwork(chainId)
+
+                accountsModel: root.walletAccountsModel
+                onAirdropClicked: communityTokensStore.airdrop(
+                                    root.community.id, airdropTokens, addresses,
+                                    feeAccountAddress)
+
+                onNavigateToMintTokenSettings: {
+                    root.goTo(Constants.CommunitySettingsSections.MintTokens)
+                    mintPanelLoader.item.openNewTokenForm(isAssetType)
+                }
+
+                onRegisterAirdropFeeSubscriber: d.feesBroker.registerAirdropFeesSubscriber(feeSubscriber)
             }
-
-            assetsModel: assetsModelLoader.item
-            collectiblesModel: collectiblesModelLoader.item
-            membersModel: community.members
-            enabledChainIds: root.enabledChainIds
-            onEnableNetwork: root.enableNetwork(chainId)
-
-            accountsModel: root.walletAccountsModel
-            onAirdropClicked: communityTokensStore.airdrop(
-                                   root.community.id, airdropTokens, addresses,
-                                   feeAccountAddress)
-
-            onNavigateToMintTokenSettings: {
-                root.goTo(Constants.CommunitySettingsSections.MintTokens)
-                mintPanel.openNewTokenForm(isAssetType)
-            }
-
-            onRegisterAirdropFeeSubscriber: d.feesBroker.registerAirdropFeesSubscriber(feeSubscriber)
         }
     }
 
@@ -723,7 +749,6 @@ StatusSectionLayout {
             case Constants.ContractTransactionStatus.InProgress:
                 title = qsTr("Airdrop on %1 in progress...").arg(chainName)
                 loading = true
-                airdropPanel.navigateBack()
                 break
             case Constants.ContractTransactionStatus.Completed:
                 title = qsTr("Airdrop on %1 in complete").arg(chainName)

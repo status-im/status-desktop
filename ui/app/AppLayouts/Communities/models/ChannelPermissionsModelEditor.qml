@@ -252,7 +252,7 @@ QtObject {
             filters: [
                 FastExpressionFilter {
                     function filterPredicate(id, permissionType) {
-                        return !PermissionTypes.isCommunityPermission(permissionType) && root.permissionsModel.belongsToChat(id, root.channelId)
+                        return !PermissionTypes.isCommunityPermission(permissionType)
                     }
                     expression: {
                         return filterPredicate(model.id, model.permissionType)

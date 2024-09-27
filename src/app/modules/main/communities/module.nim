@@ -886,6 +886,25 @@ method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
   self.checkPermissions(communityId, @[])
 
+method prepareTokenModelForCommunityChat*(self: Module, communityId: string, chatId: string) =
+  let community = self.controller.getCommunityById(communityId)
+  var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
+  for id, tokenPermission in community.tokenPermissions:
+    var containsChat = false
+    for id in tokenPermission.chatIds:
+      if id == chatId:
+        containsChat = true
+        break
+    if not containsChat:
+      continue
+
+    let chats = community.getCommunityChats(tokenPermission.chatIds)
+    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
+    tokenPermissionsItems.add(tokenPermissionItem)
+
+  self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
+  self.checkPermissions(communityId, @[])
+
 proc applyPermissionResponse*(self: Module, communityId: string, permissions: Table[string, CheckPermissionsResultDto]) =
   let community = self.controller.getCommunityById(communityId)
   for id, criteriaResult in permissions:

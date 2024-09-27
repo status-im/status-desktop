@@ -132,6 +132,10 @@ QtObject {
         root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
     }
 
+    function prepareTokenModelForCommunityChat(publicKey, chatId) {
+        root.communitiesModuleInst.prepareTokenModelForCommunityChat(publicKey, chatId)
+    }
+
     readonly property bool allChannelsAreHiddenBecauseNotPermitted: root.chatCommunitySectionModule.allChannelsAreHiddenBecauseNotPermitted &&
                                                                     !root.chatCommunitySectionModule.requiresTokenPermissionToJoin
 

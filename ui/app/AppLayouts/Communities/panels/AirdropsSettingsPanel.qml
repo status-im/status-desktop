@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
 
+import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.helpers 1.0

@@ -258,6 +258,14 @@ StackLayout {
         contentItem: Loader {
             id: editSettingsPanelLoader
 
+            active: false
+
+            onVisibleChanged: {
+                if (visible) {
+                    active = true
+                }
+            }
+
             function reloadContent() {
                 active = false
                 active = true

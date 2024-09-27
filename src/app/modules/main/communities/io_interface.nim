@@ -236,6 +236,9 @@ method joinCommunityOrEditSharedAddresses*(self: AccessInterface) {.base.} =
 method prepareTokenModelForCommunity*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method prepareTokenModelForCommunityChat*(self: AccessInterface, communityId: string, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getCommunityPublicKeyFromPrivateKey*(self: AccessInterface, communityPrivateKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -99,52 +99,47 @@ StackView {
             onClicked: root.push(newPermissionView, StackView.Immediate)
         }
 
-        contentItem: StatusScrollView {
-            contentHeight: (permissionsView.height + topPadding)
-            topPadding: permissionsView.topPadding
-            padding: 0
-            PermissionsView {
-                id: permissionsView
-                permissionsModel: root.permissionsModel
-                assetsModel: root.assetsModel
-                collectiblesModel: root.collectiblesModel
-                channelsModel: allChannelsTransformed
+        contentItem: PermissionsView {
+            id: permissionsView
+            permissionsModel: root.permissionsModel
+            assetsModel: root.assetsModel
+            collectiblesModel: root.collectiblesModel
+            channelsModel: allChannelsTransformed
 
-                communityDetails: root.communityDetails
+            communityDetails: root.communityDetails
 
-                viewWidth: root.viewWidth
+            viewWidth: root.viewWidth
 
-                onEditPermissionRequested: {
-                    const item = ModelUtils.get(root.permissionsModel, index)
+            onEditPermissionRequested: {
+                const item = ModelUtils.get(root.permissionsModel, index)
 
-                    const properties = {
-                        permissionKeyToEdit: item.key,
-                        holdingsToEditModel: item.holdingsListModel,
-                        channelsToEditModel: item.channelsListModel,
-                        permissionTypeToEdit: item.permissionType,
-                        isPrivateToEditValue: item.isPrivate
-                    }
-
-                    root.pushEditView(properties);
+                const properties = {
+                    permissionKeyToEdit: item.key,
+                    holdingsToEditModel: item.holdingsListModel,
+                    channelsToEditModel: item.channelsListModel,
+                    permissionTypeToEdit: item.permissionType,
+                    isPrivateToEditValue: item.isPrivate
                 }
 
-                onDuplicatePermissionRequested: {
-                    const item = ModelUtils.get(root.permissionsModel, index)
+                root.pushEditView(properties);
+            }
 
-                    const properties = {
-                        holdingsToEditModel: item.holdingsListModel,
-                        channelsToEditModel: item.channelsListModel,
-                        permissionTypeToEdit: item.permissionType,
-                        isPrivateToEditValue: item.isPrivate
-                    }
+            onDuplicatePermissionRequested: {
+                const item = ModelUtils.get(root.permissionsModel, index)
 
-                    root.pushEditView(properties);
+                const properties = {
+                    holdingsToEditModel: item.holdingsListModel,
+                    channelsToEditModel: item.channelsListModel,
+                    permissionTypeToEdit: item.permissionType,
+                    isPrivateToEditValue: item.isPrivate
                 }
 
-                onRemovePermissionRequested: {
-                    const key = ModelUtils.get(root.permissionsModel, index, "key")
-                    root.removePermissionRequested(key)
-                }
+                root.pushEditView(properties);
+            }
+
+            onRemovePermissionRequested: {
+                const key = ModelUtils.get(root.permissionsModel, index, "key")
+                root.removePermissionRequested(key)
             }
         }
     }

@@ -43,7 +43,7 @@ ColumnLayout {
     signal removePermissionRequested(int index)
     signal userRestrictionsToggled(bool checked)
 
-    readonly property alias count: repeater.count
+    readonly property alias count: listView.count
 
     Connections {
         target: root.communityDetails
@@ -58,7 +58,7 @@ ColumnLayout {
         }
     }
 
-    function resetCommunityItemModel(){
+    function resetCommunityItemModel() {
         communityItemModel.clear()
         communityItemModel.append({
                    text: root.communityDetails.name,
@@ -87,14 +87,18 @@ ColumnLayout {
         ]
     }
 
-
-    Repeater {
-        id: repeater
-
+    StatusListView {
+        id: listView
+        reuseItems: true
         model: root.permissionsModel
+        spacing: 24
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.preferredHeight: contentHeight
+        Layout.topMargin: root.topPadding
 
         delegate: PermissionItem {
-            Layout.fillWidth: true
+            width: root.viewWidth
 
             holdingsListModel: HoldingsSelectionModel {
                 sourceModel: model.holdingsListModel
@@ -155,6 +159,7 @@ ColumnLayout {
             root.userRestrictionsToggled(checked);
         }
     }
+
     ConfirmationDialog {
         id: declineAllDialog
 
