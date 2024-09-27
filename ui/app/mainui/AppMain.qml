@@ -1738,34 +1738,10 @@ Item {
             sourceComponent: StatusSearchListPopup {
                 searchBoxPlaceholder: qsTr("Where do you want to go?")
                 model: rootStore.chatSearchModel
-                delegate: StatusListItem {
-                    property var modelData
-                    property bool isCurrentItem: true
-                    function filterAccepts(searchText) {
-                        const lowerCaseSearchText = searchText.toLowerCase()
-                        return title.toLowerCase().includes(lowerCaseSearchText) || label.toLowerCase().includes(lowerCaseSearchText)
-                    }
-
-                    title: modelData ? modelData.name : ""
-                    label: modelData? modelData.sectionName : ""
-                    highlighted: isCurrentItem
-                    sensor.hoverEnabled: false
-                    statusListItemIcon {
-                        name: modelData ? modelData.name : ""
-                        active: true
-                    }
-                    asset.width: 30
-                    asset.height: 30
-                    asset.color: modelData ? modelData.color ? modelData.color : Utils.colorForColorId(modelData.colorId) : ""
-                    asset.name: modelData ? modelData.icon : ""
-                    asset.charactersLen: 2
-                    asset.letterSize: asset._twoLettersSize
-                    ringSettings.ringSpecModel: modelData ? modelData.colorHash : undefined
-                }
 
                 onAboutToShow: rootStore.rebuildChatSearchModel()
                 onSelected: {
-                    rootStore.setActiveSectionChat(modelData.sectionId, modelData.chatId)
+                    rootStore.setActiveSectionChat(sectionId, chatId)
                     close()
                 }
             }

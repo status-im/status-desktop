@@ -7,7 +7,9 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
+import SortFilterProxyModel 0.2
 import utils 1.0
 
 Popup {
@@ -18,19 +20,11 @@ Popup {
     width: 400
     height: 300
 
-    property alias model: listView.model
+    required property var model
 
-    // delegate interface has to be fulfilled
-    property Component delegate: Item {
-        property var modelData
-        property bool isCurrentItem
-        function filterAccepts(searchText) {
-            return true
-        }
-    }
     property string searchBoxPlaceholder: qsTr("Search...")
 
-    signal selected(int index, var modelData)
+    signal selected(string sectionId, string chatId)
 
     background: Rectangle {
         radius: Style.current.radius
@@ -83,8 +77,7 @@ Popup {
                     return root.close()
                 }
                 if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
-                    return root.selected(listView.currentIndex,
-                                         listView.currentItem.myData)
+                    return listView.currentItem.selectThisItem()
                 }
                 if (!listView.currentItem.visible) {
                     goToNextAvailableIndex(false)
@@ -104,36 +97,54 @@ Popup {
 
             highlightMoveDuration: 200
 
-            delegate: Item {
-                id: delegateItem
+            model: SortFilterProxyModel {
+                sourceModel: root.model
 
-                property var myData: typeof modelData === "undefined" ? model : modelData
-
-                width: listView.width
-                height: visible ? delegateLoader.height : 0
-
-                Loader {
-                    id: delegateLoader
-
-                    width: parent.width
-                    sourceComponent: root.delegate
-
-                    onLoaded: {
-                        item.modelData = delegateItem.myData
-                        item.isCurrentItem = Qt.binding(() => delegateItem.ListView.isCurrentItem)
-                        delegateItem.visible = Qt.binding(() => item.filterAccepts(searchBox.text))
+                filters: AnyOf {
+                    SearchFilter {
+                        roleName: "sectionName"
+                        searchPhrase: searchBox.text
+                    }
+                    SearchFilter {
+                        roleName: "name"
+                        searchPhrase: searchBox.text
                     }
                 }
+            }
+
+            delegate: StatusListItem {
+                id: listItem
+
+                function selectThisItem() {
+                    root.selected(model.sectionId, model.chatId)
+                }
+
+                title: model ? model.name : ""
+                label: model? model.sectionName : ""
+                highlighted: ListView.isCurrentItem
+                width: ListView.view.width
+                sensor.hoverEnabled: false
+                statusListItemIcon {
+                    name: model ? model.name : ""
+                    active: true
+                }
+                asset.width: 30
+                asset.height: 30
+                asset.color: model ? model.color ? model.color : Utils.colorForColorId(model.colorId) : ""
+                asset.name: model ? model.icon : ""
+                asset.charactersLen: 2
+                asset.letterSize: asset._twoLettersSize
+                ringSettings.ringSpecModel: model ? model.colorHash : undefined
 
                 MouseArea {
                     anchors.fill: parent
 
                     hoverEnabled: true
                     onClicked: (mouse) => {
-                                   listView.currentIndex = index
-                                   root.selected(index, delegateItem.myData)
-                                   mouse.accepted = false
-                               }
+                                listView.currentIndex = index
+                                listItem.selectThisItem()
+                                mouse.accepted = false
+                            }
                     onContainsMouseChanged: if (containsMouse) listView.currentIndex = index
                     cursorShape: Qt.PointingHandCursor
                 }
