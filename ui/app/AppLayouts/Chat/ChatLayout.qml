@@ -234,8 +234,7 @@ StackLayout {
     Loader {
         id: communitySettingsLoader
         active: root.rootStore.chatCommunitySectionModule.isCommunity() &&
-                root.isPrivilegedUser &&
-                (root.currentIndex === 1 || !!communitySettingsLoader.item) // lazy load and preserve state after loading
+                root.isPrivilegedUser &&  root.currentIndex === 1
         asynchronous: false // It's false on purpose. We want to load the component synchronously
         sourceComponent: CommunitySettingsView {
             id: communitySettingsView
