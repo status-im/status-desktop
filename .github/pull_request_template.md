@@ -9,7 +9,7 @@
 ### Architecture compliance
 
 - [ ] I am familiar with the application architecture and agreed good practices.
-My PR is consistent with this document: [Architecture guidelines](../architecture-guide.md)
+My PR is consistent with this document: [Status Desktop Architecture Guide](https://github.com/status-im/status-desktop/blob/master/CONTRIBUTING.md)
 
 ### Screenshot of functionality (including design for comparison)
 
