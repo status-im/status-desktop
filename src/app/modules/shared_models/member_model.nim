@@ -174,21 +174,6 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc addItems*(self: Model, items: seq[MemberItem]) =
-    if items.len == 0:
-      return
-
-    let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
-
-    let first = self.items.len
-    let last = first + items.len - 1
-
-    self.beginInsertRows(modelIndex, first, last)
-    self.items.add(items)
-    self.endInsertRows()
-    self.countChanged()
-
   proc findIndexForMember(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].pubKey == pubKey):
@@ -203,6 +188,29 @@ QtObject:
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
     self.endRemoveRows()
+    self.countChanged()
+
+  # TODO: rename me to removeItemByPubkey
+  proc removeItemById*(self: Model, pubKey: string) =
+    let ind = self.findIndexForMember(pubKey)
+    if ind == -1:
+      return
+
+    self.removeItemWithIndex(ind)
+
+  proc addItems*(self: Model, items: seq[MemberItem]) =
+    if items.len == 0:
+      return
+
+    let modelIndex = newQModelIndex()
+    defer: modelIndex.delete
+
+    let first = self.items.len
+    let last = first + items.len - 1
+
+    self.beginInsertRows(modelIndex, first, last)
+    self.items.add(items)
+    self.endInsertRows()
     self.countChanged()
 
   proc isContactWithIdAdded*(self: Model, id: string): bool =
@@ -334,6 +342,39 @@ QtObject:
     defer: index.delete
     self.dataChanged(index, index, roles)
 
+  proc updateItems*(self: Model, items: seq[MemberItem]) =
+    # Check for removals
+    for oldItem in self.items:
+      var found = false
+      for newItem in items:
+        if oldItem.pubKey == newItem.pubKey:
+          found = true
+          break
+      if not found:
+        self.removeItemById(oldItem.pubKey)
+
+    for item in items:
+      let ind = self.findIndexForMember(item.pubKey)
+      if ind == -1:
+        # Item does not exist, we add it
+        self.addItem(item)
+        return
+
+      self.updateItem(
+        item.pubKey,
+        item.displayName,
+        item.ensName,
+        item.isEnsVerified,
+        item.localNickname,
+        item.alias,
+        item.icon,
+        item.isContact,
+        item.isVerified,
+        item.memberRole,
+        item.joined,
+        item.isUntrustworthy,
+      )
+
   proc updateItem*(
       self: Model,
       pubKey: string,
@@ -402,14 +443,6 @@ QtObject:
       return ""
 
     return self.items[idx].airdropAddress
-
-# TODO: rename me to removeItemByPubkey
-  proc removeItemById*(self: Model, pubKey: string) =
-    let ind = self.findIndexForMember(pubKey)
-    if ind == -1:
-      return
-
-    self.removeItemWithIndex(ind)
 
 # TODO: rename me to getItemsAsPubkeys
   proc getItemIds*(self: Model): seq[string] =
