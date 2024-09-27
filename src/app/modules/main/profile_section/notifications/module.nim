@@ -129,27 +129,29 @@ method addCommunity*(self: Module, communityDto: CommunityDto) =
   self.view.exemptionsModel().addItem(item)
 
 method editCommunity*(self: Module, communityDto: CommunityDto) =
-  self.view.exemptionsModel().removeItemById(communityDto.id)
-  let item = self.createItem(communityDto.id, communityDto.name, communityDto.images.thumbnail, communityDto.color, 
-    joinedTimestamp = 0, item.Type.Community)
-  self.view.exemptionsModel().addItem(item)
+  self.view.exemptionsModel().updateItem(
+    communityDto.id,
+    communityDto.name,
+    communityDto.images.thumbnail,
+    communityDto.color,
+  )
 
 method removeItemWithId*(self: Module, itemId: string) =
-  if(self.controller.removeNotifSettingExemptions(itemId)):
+  if self.controller.removeNotifSettingExemptions(itemId):
     self.view.exemptionsModel().removeItemById(itemId)
   
 method addChat*(self: Module, chatDto: ChatDto) =
   if chatDto.chatType != ChatType.OneToOne and chatDto.chatType != ChatType.PrivateGroupChat:
     return
   let ind = self.view.exemptionsModel().findIndexForItemId(chatDto.id)
-  if(ind != -1):
+  if ind != -1:
     return
   let item = self.createChatItem(chatDto)
   self.view.exemptionsModel().addItem(item)
 
 method addChat*(self: Module, itemId: string) =
   let ind = self.view.exemptionsModel().findIndexForItemId(itemId)
-  if(ind != -1):
+  if ind != -1:
     return
   let chatDto = self.controller.getChatDetails(itemId)
   if chatDto.chatType != ChatType.OneToOne and chatDto.chatType != ChatType.PrivateGroupChat:

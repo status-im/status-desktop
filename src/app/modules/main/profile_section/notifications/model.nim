@@ -57,10 +57,10 @@ QtObject:
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
-    if (not index.isValid):
+    if not index.isValid:
       return
 
-    if (index.row < 0 or index.row >= self.items.len):
+    if index.row < 0 or index.row >= self.items.len:
       return
 
     let item = self.items[index.row]
@@ -108,7 +108,7 @@ QtObject:
     self.countChanged()
 
   proc setItems*(self: Model, items: seq[Item]) =
-    if(items.len == 0):
+    if items.len == 0:
       return
 
     let parentModelIndex = newQModelIndex()
@@ -129,7 +129,7 @@ QtObject:
 
   proc removeItemById*(self: Model, id: string) =
     let ind = self.findIndexForItemId(id)
-    if(ind == -1):
+    if ind == -1:
       return
 
     let parentModelIndex = newQModelIndex()
@@ -151,19 +151,37 @@ QtObject:
     if(ind == -1):
       return
 
-    self.items[ind].muteAllMessages = muteAllMessages
-    self.items[ind].personalMentions = personalMentions
-    self.items[ind].globalMentions = globalMentions
-    self.items[ind].otherMessages = otherMessages
+    
+    var roles: seq[int] = @[]
+
+    if self.items[ind].muteAllMessages != muteAllMessages:
+      self.items[ind].muteAllMessages = muteAllMessages
+      roles.add(ModelRole.MuteAllMessages.int)
+
+    if self.items[ind].personalMentions != personalMentions:
+      self.items[ind].personalMentions = personalMentions
+      roles.add(ModelRole.PersonalMentions.int)
+
+    if self.items[ind].globalMentions != globalMentions:
+      self.items[ind].globalMentions = globalMentions
+      roles.add(ModelRole.GlobalMentions.int)
+
+    if self.items[ind].otherMessages != otherMessages:
+      self.items[ind].otherMessages = otherMessages
+      roles.add(ModelRole.OtherMessages.int)
+
+    if roles.len == 0:
+      return
+
+    roles.add(ModelRole.Customized.int)
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
-    self.dataChanged(index, index, @[ModelRole.MuteAllMessages.int, ModelRole.PersonalMentions.int,
-      ModelRole.GlobalMentions.int, ModelRole.OtherMessages.int, ModelRole.Customized.int])
+    self.dataChanged(index, index, roles)
 
   proc updateName*(self: Model, id: string, name: string) =
     let ind = self.findIndexForItemId(id)
-    if(ind == -1):
+    if ind == -1 or self.items[ind].name == name:
       return
 
     self.items[ind].name = name
@@ -171,3 +189,29 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Name.int])
+
+  proc updateItem*(self: Model, id, name, image, color: string) =
+    let ind = self.findIndexForItemId(id)
+    if ind == -1:
+      return
+
+    var roles: seq[int] = @[]
+
+    if self.items[ind].name != name:
+      self.items[ind].name = name
+      roles.add(ModelRole.Name.int)
+
+    if self.items[ind].image != image:
+      self.items[ind].image = image
+      roles.add(ModelRole.Image.int)
+
+    if self.items[ind].color != color:
+      self.items[ind].color = color
+      roles.add(ModelRole.Color.int)
+
+    if roles.len == 0:
+      return
+
+    let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, roles)
