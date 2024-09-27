@@ -9,11 +9,13 @@ from allure_commons._allure import step
 import driver
 from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, \
     LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
+from constants.wallet import WalletAddress
 from gui.screens.messages import MessagesScreen, ToolBar
 
 import configs.testpath
 from constants import RandomUser, UserAccount
 from gui.main_window import MainWindow
+from scripts.utils.parsers import remove_tags
 
 from tests.messages import marks
 
@@ -66,23 +68,30 @@ def test_1x1_chat(multiple_instances):
                 'Contact requests').accept_contact_request(request)
             main_window.hide()
 
-        with step(f'User {user_one.name} send another message to {user_two.name}, edit it and verify it was changed'):
+        with step(f'User {user_one.name} send  a message to {user_two.name}'):
             aut_one.attach()
             main_window.prepare()
             left_panel_chat = main_window.left_panel.open_messages_screen().left_panel
             assert driver.waitFor(lambda: user_two.name in left_panel_chat.get_chats_names,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             chat = left_panel_chat.click_chat_by_name(user_two.name)
-            chat_message1 = \
-                ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
+            chat_message1 = WalletAddress.RECEIVER_ADDRESS.value
+
             messages_screen.group_chat.send_message_to_group_chat(chat_message1)
             message = chat.find_message_by_text(chat_message1, 0)
-            additional_text = '?'
+            additional_text = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
             time.sleep(5)
+
+        with step(f'User {user_one.name}, click address / ens link in message and verify send modal appears'):
+            send_modal = chat.open_send_modal_from_link(chat_message1)
+            assert remove_tags(send_modal._ens_address_text_edit.text) == chat_message1
+            left_panel_chat.click()
+
+        with step(f'User {user_one.name}, edit message and verify it was changed'):
             message_actions = message.hover_message()
             message_actions.edit_message(additional_text)
             message_object = messages_screen.chat.messages(0)[0]
-            assert chat_message1 + additional_text in message_object.text, \
+            assert chat_message1 + additional_text in str(message_object.object.unparsedText), \
                 f"Message text is not found in last message"
             assert message_object.delegate_button.object.isEdited, \
                 f"Message status was not changed to edited"
@@ -101,7 +110,7 @@ def test_1x1_chat(multiple_instances):
             assert chat_message2 in message_object_0.text, \
                 f"Message text is not found in the last message"
             message_object_1 = messages_screen.chat.messages(1)[0]
-            assert chat_message1 in message_object_1.text,\
+            assert chat_message1 in str(message_object_1.object.unparsedText),\
                 f"Message text is not found in the last message"
 
         with step(f'User {user_two.name} send emoji to {user_one.name}'):
@@ -121,12 +130,12 @@ def test_1x1_chat(multiple_instances):
             main_window.prepare()
             time.sleep(4)
             message_object = messages_screen.chat.messages(2)[0]
-            assert driver.waitFor(lambda: chat_message2 in message_object.text),\
+            assert driver.waitFor(lambda: chat_message2 in str(message_object.object.unparsedText)),\
                 f"Message text is not found in the last message"
 
         with step(f'User {user_one.name}, received emoji from {user_two.name}'):
             message_object = messages_screen.chat.messages(1)[0]
-            assert driver.waitFor(lambda: '😎' in message_object.text, timeout),\
+            assert driver.waitFor(lambda: '😎' in str(message_object.object.unparsedText)    , timeout),\
                 f"Message text is not found in the last message"
 
         with step(f'User {user_one.name}, received image from {user_two.name}'):

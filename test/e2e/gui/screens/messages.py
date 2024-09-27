@@ -1,4 +1,5 @@
 import pathlib
+import re
 import time
 import typing
 from typing import List
@@ -18,6 +19,7 @@ from gui.components.messaging.edit_group_name_and_image_popup import EditGroupNa
 from gui.components.messaging.leave_group_popup import LeaveGroupPopup
 from gui.components.messaging.link_preview_options_popup import LinkPreviewOptionsPopup
 from gui.components.messaging.message_context_menu_popup import MessageContextMenuPopup
+from gui.components.wallet.send_popup import SendPopup
 from gui.elements.button import Button
 from gui.elements.list import List
 from gui.elements.object import QObject
@@ -27,6 +29,7 @@ from gui.elements.text_label import TextLabel
 from gui.objects_map import messaging_names, communities_names
 from gui.screens.community import CommunityScreen
 from scripts.tools.image import Image
+from scripts.utils.parsers import remove_tags
 
 
 class LeftPanel(QObject):
@@ -230,6 +233,7 @@ class ChatView(QObject):
     def __init__(self):
         super().__init__(messaging_names.mainWindow_ChatColumnView)
         self._message_list_item = QObject(messaging_names.chatLogView_chatMessageViewDelegate_MessageView)
+        self._message_text_item = QObject(messaging_names.StatusTextMessage_chatTextMessage)
         self._deleted_message = QObject(messaging_names.chatMessageViewDelegate_deletedMessage_RowLayout)
         self._recent_messages_button = QObject(messaging_names.layout_recentMessagesButton_AnchorButton)
 
@@ -243,9 +247,20 @@ class ChatView(QObject):
         if self._recent_messages_button.is_visible:
             self._recent_messages_button.click()
         for item in driver.findAllObjects(self._message_list_item.real_name):
-            if getattr(item, 'isMessage', False):
+            if getattr(item, 'isMessage', True):
                 _messages.append(Message(item))
         return _messages
+
+    def open_send_modal_from_link(self, text):
+        text_messages = driver.findAllObjects(self._message_text_item.real_name)
+        for item in text_messages:
+            if remove_tags(str(getattr(item, 'text', ''))) == text:
+                pattern = r'(//send-via-personal-chat//0x[a-fA-F0-9]{40})'
+                raw_link = str(getattr(item, 'text', ''))
+                match = re.search(pattern, raw_link)
+                link = match.group(1)
+                item.linkActivated(link)
+                return SendPopup().wait_until_appears()
 
     @allure.step('Get deleted message state')
     def get_deleted_message_state(self):
@@ -256,7 +271,7 @@ class ChatView(QObject):
         started_at = time.monotonic()
         while message is None:
             for _message in self.messages(index):
-                if message_text in _message.text:
+                if message_text in remove_tags(_message.text):
                     message = _message
                     break
             if time.monotonic() - started_at > configs.timeouts.MESSAGING_TIMEOUT_SEC:
@@ -294,7 +309,8 @@ class CreateChatView(QObject):
 
     @allure.step('Select contact in the list')
     def select_contact(self, contact: str):
-        assert driver.waitFor(lambda: contact in self.contact_names), f'Contact: {contact} was not found in {self.contact_names}'
+        assert driver.waitFor(
+            lambda: contact in self.contact_names), f'Contact: {contact} was not found in {self.contact_names}'
         self._create_chat_contacts_list.select(contact, 'userName')
 
     @allure.step('Create chat by adding contacts from contact list')
