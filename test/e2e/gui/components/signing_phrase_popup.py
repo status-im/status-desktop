@@ -13,7 +13,7 @@ class SigningPhrasePopup(QObject):
 
     @allure.step('Confirm signing phrase in popup')
     def confirm_phrase(self):
-        self._ok_got_it_button.click()
+        self._ok_got_it_button.click(timeout=10)
         SigningPhrasePopup().wait_until_hidden()
 
     @allure.step('Verify if the signing phrase popup is visible')
