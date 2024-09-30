@@ -150,56 +150,41 @@ QtObject {
         openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup}, cb)
     }
 
-    function openNicknamePopup(publicKey: string, contactDetails, cb) {
-        openPopup(nicknamePopupComponent, {
+    function getContactDetails(publicKey) {
+        const details = Utils.getContactDetailsAsJson(publicKey)
+        return {
             publicKey: publicKey,
-            localNickname: contactDetails.localNickname,
-            name: contactDetails.name,
-            displayName: contactDetails.displayName,
-            alias: contactDetails.alias,
-            ensVerified: contactDetails.ensVerified,
-            onlineStatus: contactDetails.onlineStatus,
-            largeImage: contactDetails.largeImage,
-            isContact: contactDetails.isContact,
-            trustStatus: contactDetails.trustStatus,
-            isBlocked: contactDetails.isBlocked
-        }, cb)
+            localNickname: details.localNickname,
+            name: details.name,
+            displayName: details.displayName,
+            alias: details.alias,
+            ensVerified: details.ensVerified,
+            onlineStatus: details.onlineStatus,
+            largeImage: details.largeImage,
+            isContact: details.isContact,
+            trustStatus: details.trustStatus,
+            isBlocked: details.isBlocked
+        }
+    }
+
+    function openNicknamePopup(publicKey: string, contactDetails, cb) {
+        const details = getContactDetails(publicKey)
+        openPopup(nicknamePopupComponent, details, cb)
     }
 
     function openMarkAsUntrustedPopup(publicKey: string, contactDetails) {
-        openPopup(markAsUntrustedComponent, {
-            publicKey: publicKey,
-            localNickname: contactDetails.localNickname,
-            name: contactDetails.name,
-            displayName: contactDetails.displayName,
-            alias: contactDetails.alias,
-            ensVerified: contactDetails.ensVerified,
-            onlineStatus: contactDetails.onlineStatus,
-            largeImage: contactDetails.largeImage,
-            isContact: contactDetails.isContact,
-            trustStatus: contactDetails.trustStatus,
-            isBlocked: contactDetails.isBlocked
-        })
+        const details = getContactDetails(publicKey)
+        openPopup(markAsUntrustedComponent, details)
     }
 
     function openBlockContactPopup(publicKey: string, contactDetails) {
-        openPopup(blockContactConfirmationComponent, {
-            publicKey: publicKey,
-            localNickname: contactDetails.localNickname,
-            name: contactDetails.name,
-            displayName: contactDetails.displayName,
-            alias: contactDetails.alias,
-            ensVerified: contactDetails.ensVerified,
-            onlineStatus: contactDetails.onlineStatus,
-            largeImage: contactDetails.largeImage,
-            isContact: contactDetails.isContact,
-            trustStatus: contactDetails.trustStatus,
-            isBlocked: contactDetails.isBlocked
-        })
+        const details = getContactDetails(publicKey)
+        openPopup(blockContactConfirmationComponent, details)
     }
 
     function openUnblockContactPopup(publicKey: string, contactDetails) {
-        openPopup(unblockContactConfirmationComponent, {publicKey, contactDetails})
+        const details = getContactDetails(publicKey)
+        openPopup(unblockContactConfirmationComponent, details)
     }
 
     function openChangeProfilePicPopup(cb) {
@@ -216,78 +201,40 @@ QtObject {
     }
 
     function openSendIDRequestPopup(publicKey, contactDetails, cb) {
-        openPopup(sendIDRequestPopupComponent, {
-            publicKey: publicKey,
-            contactDetails: contactDetails,
-            title: qsTr("Request ID verification"),
-            labelText: qsTr("Ask a question only they can answer"),
-            challengeText: qsTr("Ask your question..."),
-            buttonText: qsTr("Request ID verification")
-        }, cb)
+        const details = getContactDetails(publicKey)
+        details.title = qsTr("Request ID verification")
+        details.labelText = qsTr("Ask a question only they can answer")
+        details.challengeText = qsTr("Ask your question...")
+        details.buttonText = qsTr("Request ID verification")
+        openPopup(sendIDRequestPopupComponent, details, cb)
     }
 
-    function openMarkAsIDVerifiedPopup(publicKey, contactDetails, cb) {
-        openPopup(markAsIDVerifiedPopupComponent, {
-            publicKey: publicKey,
-            localNickname: contactDetails.localNickname,
-            name: contactDetails.name,
-            displayName: contactDetails.displayName,
-            alias: contactDetails.alias,
-            ensVerified: contactDetails.ensVerified,
-            onlineStatus: contactDetails.onlineStatus,
-            largeImage: contactDetails.largeImage,
-            isContact: contactDetails.isContact,
-            trustStatus: contactDetails.trustStatus,
-            isBlocked: contactDetails.isBlocked
-        }, cb)
+    function openMarkAsIDVerifiedPopup(publicKey: string, contactDetails, cb) {
+        const details = getContactDetails(publicKey)
+        openPopup(markAsIDVerifiedPopupComponent, details, cb)
     }
 
-    function openRemoveIDVerificationDialog(publicKey, contactDetails, cb) {
-        openPopup(removeIDVerificationPopupComponent, {
-            publicKey: publicKey,
-            localNickname: contactDetails.localNickname,
-            name: contactDetails.name,
-            displayName: contactDetails.displayName,
-            alias: contactDetails.alias,
-            ensVerified: contactDetails.ensVerified,
-            onlineStatus: contactDetails.onlineStatus,
-            largeImage: contactDetails.largeImage,
-            isContact: contactDetails.isContact,
-            trustStatus: contactDetails.trustStatus,
-            isBlocked: contactDetails.isBlocked
-        }, cb)
+    function openRemoveIDVerificationDialog(publicKey: string, contactDetails, cb) {
+        const details = getContactDetails(publicKey)
+        openPopup(removeIDVerificationPopupComponent, details, cb)
     }
 
-    function openOutgoingIDRequestPopup(publicKey, contactDetails, cb) {
-        let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey)
+    function openOutgoingIDRequestPopup(publicKey: string, contactDetails, cb) {
+        let details = getContactDetails(publicKey)
         try {
             const verificationDetails = rootStore.contactStore.getSentVerificationDetailsAsJson(publicKey)
-            const popupProperties = {
-                publicKey: publicKey,
-                contactDetails: details,
-                verificationStatus: verificationDetails.requestStatus,
-                verificationChallenge: verificationDetails.challenge,
-                verificationResponse: verificationDetails.response,
-                verificationResponseDisplayName: verificationDetails.displayName,
-                verificationResponseIcon: verificationDetails.icon,
-                verificationRequestedAt: verificationDetails.requestedAt,
-                verificationRepliedAt: verificationDetails.repliedAt,
-                localNickname: contactDetails.localNickname,
-                name: contactDetails.name,
-                displayName: contactDetails.displayName,
-                alias: contactDetails.alias,
-                ensVerified: contactDetails.ensVerified,
-                onlineStatus: contactDetails.onlineStatus,
-                largeImage: contactDetails.largeImage,
-                isContact: contactDetails.isContact,
-                trustStatus: contactDetails.trustStatus,
-                isBlocked: contactDetails.isBlocked,
-                pubKey: Global.userProfile.pubKey,
-                preferredName: Global.userProfile.preferredName,
-                name: Global.userProfile.name,
-                icon: Global.userProfile.icon
-            }
-            openPopup(contactOutgoingVerificationRequestPopupComponent, popupProperties, cb)
+            details.verificationStatus = verificationDetails.requestStatus
+            details.verificationChallenge = verificationDetails.challenge
+            details.verificationResponse = verificationDetails.response
+            details.verificationResponseDisplayName = verificationDetails.displayName
+            details.verificationResponseIcon = verificationDetails.icon
+            details.verificationRequestedAt = verificationDetails.requestedAt
+            details.verificationRepliedAt = verificationDetails.repliedAt
+            details.pubKey = Global.userProfile.pubKey
+            details.preferredName = Global.userProfile.preferredName
+            details.name = Global.userProfile.name
+            details.icon = Global.userProfile.icon
+            openPopup(contactOutgoingVerificationRequestPopupComponent, details, cb)
         } catch (e) {
             console.error("Error getting or parsing verification data", e)
         }
@@ -413,21 +360,10 @@ QtObject {
     }
 
     function openRemoveContactConfirmationPopup(publicKey, contactDetails) {
-        openPopup(removeContactConfirmationDialog, {
-            publicKey: publicKey,
-            localNickname: contactDetails.localNickname,
-            name: contactDetails.name,
-            displayName: contactDetails.displayName,
-            alias: contactDetails.alias,
-            ensVerified: contactDetails.ensVerified,
-            onlineStatus: contactDetails.onlineStatus,
-            largeImage: contactDetails.largeImage,
-            isContact: contactDetails.isContact,
-            trustStatus: contactDetails.trustStatus,
-            isBlocked: contactDetails.isBlocked,
-            outgoingVerificationStatus: contactDetails.outgoingVerificationStatus,
-            incomingVerificationStatus: contactDetails.incomingVerificationStatus,
-        })
+        const details = getContactDetails(publicKey)
+        details.outgoingVerificationStatus = contactDetails.outgoingVerificationStatus
+        details.incomingVerificationStatus = contactDetails.incomingVerificationStatus
+        openPopup(removeContactConfirmationDialog, details)
     }
 
     function openDeleteMessagePopup(messageId, messageStore) {
