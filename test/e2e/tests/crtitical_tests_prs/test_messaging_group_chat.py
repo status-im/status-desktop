@@ -22,6 +22,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
 @pytest.mark.case(703014)
 @pytest.mark.timeout(timeout=315)
+@pytest.mark.critical
 def test_group_chat(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
