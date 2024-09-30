@@ -39,6 +39,8 @@ Item {
     property double totalFeesInFiat
     property bool showCustomRoutingMode
 
+    readonly property int currentIndex: tabBar.currentIndex
+
     property string routerError: ""
     property string routerErrorDetails: ""
 

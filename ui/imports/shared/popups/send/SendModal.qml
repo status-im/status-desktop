@@ -173,6 +173,10 @@ StatusDialog {
 
             recalculateRoutesAndFees()
         }
+
+        function addMetricsEvent(subEventName) {
+            Global.addCentralizedMetricIfEnabled(d.isBridgeTx ? "bridge" : "send", {subEvent: subEventName})
+        }
     }
 
     LeftJoinModel {
@@ -276,11 +280,14 @@ StatusDialog {
             .arg(Constants.suggestedRoutesExtraParamsProperties.publicKey)
             .arg(popup.publicKey)
         }
+
+        d.addMetricsEvent("popup opened")
     }
 
     onClosed: {
         popup.store.stopUpdatesForSuggestedRoute()
         popup.store.resetStoredProperties()
+        d.addMetricsEvent("popup closed")
     }
 
     header: Item {
@@ -751,6 +758,7 @@ StatusDialog {
         onNextButtonClicked: {
             d.sendError = ""
             popup.sendTransaction()
+            d.addMetricsEvent("next button clicked")
         }
     }
 
@@ -788,8 +796,10 @@ StatusDialog {
                     return
                 }
                 d.sendError = error
+                d.addMetricsEvent("tx send error")
                 return
             }
+            d.addMetricsEvent("tx send successful")
             popup.close()
         }
     }

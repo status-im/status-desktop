@@ -68,6 +68,10 @@ StatusDialog {
             selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
             selectedTokenKey: root.swapInputParamsForm.fromTokensKey
         }
+
+        function addMetricsEvent(subEventName) {
+            Global.addCentralizedMetricIfEnabled("swap", {subEvent: subEventName})
+        }
     }
 
     Connections {
@@ -111,10 +115,14 @@ StatusDialog {
         NumberAnimation { duration: 1000; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
     }
 
-    onOpened: payPanel.forceActiveFocus()
+    onOpened: {
+        payPanel.forceActiveFocus()
+        d.addMetricsEvent("popup opened")
+    }
     onClosed: {
         root.swapAdaptor.stopUpdatesForSuggestedRoute()
         root.swapAdaptor.reset()
+        d.addMetricsEvent("popup closed")
     }
 
     header: Item {
@@ -431,6 +439,7 @@ StatusDialog {
                                  !root.swapAdaptor.approvalPending
                     onClicked: {
                         if (root.swapAdaptor.validSwapProposalReceived) {
+                            d.addMetricsEvent("next button pressed")
                             if (root.swapAdaptor.swapOutputData.approvalNeeded)
                                 Global.openPopup(swapApproveModalComponent)
                             else
@@ -485,7 +494,9 @@ StatusDialog {
             serviceProviderContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
             serviceProviderHostname: Constants.swap.paraswapHostname
 
+            onRejected: d.addMetricsEvent("rejected approve")
             onAccepted: {
+                d.addMetricsEvent("send approve tx")
                 root.swapAdaptor.sendApproveTx()
             }
         }
@@ -535,7 +546,9 @@ StatusDialog {
             serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
             serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
 
+            onRejected: d.addMetricsEvent("rejected sign")
             onAccepted: {
+                d.addMetricsEvent("send swap tx")
                 root.swapAdaptor.sendSwapTx()
                 root.close()
             }

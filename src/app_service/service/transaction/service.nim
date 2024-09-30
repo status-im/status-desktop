@@ -369,6 +369,8 @@ QtObject:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(uuid: uuid, error: err, txType: txType,
         fromAddress: fromAddr, toAddress: toAddr, fromTokenKey: fromTokenKey, fromAmount: fromAmount,
         toTokenKey: toTokenKey, toAmount: toAmount))
+      if txType == SendType.Swap:
+        singletonInstance.globalEvents.addCentralizedMetricIfEnabled("swap", $(%*{"subEvent": "tx error"}))
     elif response.result{"hashes"} != nil:
       for route in routes:
         for hash in response.result["hashes"][$route.fromNetwork.chainID]:
@@ -382,6 +384,9 @@ QtObject:
           let metadata = TokenTransferMetadata(tokenName: tokenName, isOwnerToken: isOwnerToken)
           self.watchTransaction(hash.getStr, fromAddr, toAddr, $PendingTransactionTypeDto.WalletTransfer, $(%metadata), route.fromNetwork.chainID,
                                 fromTokenKey, fromAmount, toTokenKey, toAmount, txType)
+                                
+      if txType == SendType.Swap:
+        singletonInstance.globalEvents.addCentralizedMetricIfEnabled("swap", $(%*{"subEvent": "tx success"}))
 
   proc isCollectiblesTransfer(self: Service, sendType: SendType): bool =
     return sendType == ERC721Transfer or sendType == ERC1155Transfer
@@ -446,6 +451,7 @@ QtObject:
 
       if sendType == SendType.Swap:
         mtCommand.toAmount =  "0x" & totalAmountToReceive.toHex
+        singletonInstance.globalEvents.addCentralizedMetricIfEnabled("swap", $(%*{"subEvent": "send tx"}))
 
       let response = transactions.createMultiTransaction(
         mtCommand,
@@ -562,6 +568,7 @@ QtObject:
       mtCommand.fromAmount =  "0x" & totalAmountToSend.toHex
       if sendType == SendType.Swap:
         mtCommand.toAmount =  "0x" & totalAmountToReceive.toHex
+        singletonInstance.globalEvents.addCentralizedMetricIfEnabled("swap", $(%*{"subEvent": "send tx"}))
 
       let response = transactions.createMultiTransaction(mtCommand, paths, password)
 
