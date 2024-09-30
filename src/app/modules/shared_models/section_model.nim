@@ -4,7 +4,7 @@ import json
 
 import section_item, member_model
 import ../main/communities/tokens/models/[token_item, token_model]
-import ../main/communities/models/[pending_request_model]
+import ../main/communities/models/[pending_request_model, pending_request_item]
 
 type
   ModelRole {.pure.} = enum
@@ -610,9 +610,31 @@ QtObject:
     for pubkey, airdropAddress in communityMembersAirdropAddress.pairs:
       self.items[index].members.setAirdropAddress(pubkey, airdropAddress)
 
-  proc setTokenItems*(self: SectionModel, id: string, communityTokensItems: seq[TokenItem]) = 
+  proc setTokenItems*(self: SectionModel, id: string, communityTokensItems: seq[TokenItem]) =
     let index = self.getItemIndex(id)
     if (index == -1):
       return
 
     self.items[index].communityTokens.setItems(communityTokensItems)
+
+  proc addRequestToJoinToModel*(self: SectionModel, pendingRequestItem: PendingRequestItem) =
+    let i = self.getItemIndex(pendingRequestItem.communityId)
+    if i == -1:
+      return
+
+    self.items[i].pendingRequestsToJoin.addItem(pendingRequestItem)
+
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.PendingRequestsToJoinModel.int])
+
+  proc removeRequestToJoinFromModel*(self: SectionModel, communityId: string, pendingRequestId: string) =
+    let i = self.getItemIndex(communityId)
+    if i == -1:
+      return
+
+    self.items[i].pendingRequestsToJoin.removeItemWithId(pendingRequestId)
+
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.PendingRequestsToJoinModel.int])

@@ -103,12 +103,9 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc containsItemWithId*(self: PendingRequestModel, id: string): bool =
-    return self.findIndexById(id) != -1
-
   proc removeItemWithId*(self: PendingRequestModel, id: string) =
     let ind = self.findIndexById(id)
-    if(ind == -1):
+    if ind == -1:
       return
 
     let parentModelIndex = newQModelIndex()
