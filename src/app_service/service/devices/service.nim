@@ -176,9 +176,11 @@ QtObject:
   #
 
   proc inputConnectionStringForBootstrappingFinished*(self: Service, responseJson: string) {.slot.} =
+    var currentError = ""
     if self.localPairingStatus.state == LocalPairingState.Error:
-      # The error was already returned by an event
-      return
+      # The error was already returned by an event, keep it to reuse
+      currentError = self.localPairingStatus.error
+
     let response = responseJson.parseJson
     let errorDescription = response["error"].getStr
     if len(errorDescription) == 0:
@@ -189,7 +191,8 @@ QtObject:
         eventType: EventCompletedAndNodeReady,
         action: ActionPairingInstallation,
         accountData: LocalPairingAccountData(),
-        error: "")
+        error: currentError,
+      )
       self.updateLocalPairingStatus(data)
       return
     error "failed to start bootstrapping device", errorDescription
@@ -197,7 +200,8 @@ QtObject:
       eventType: EventConnectionError,
       action: ActionUnknown,
       accountData: LocalPairingAccountData(),
-      error: errorDescription)
+      error: errorDescription,
+    )
     self.updateLocalPairingStatus(data)
 
   proc validateConnectionString*(self: Service, connectionString: string): string =
