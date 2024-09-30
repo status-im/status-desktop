@@ -55,6 +55,10 @@ type
   CommunityRequestArgs* = ref object of Args
     communityRequest*: CommunityMembershipRequestDto
 
+  CanceledCommunityRequestArgs* = ref object of Args
+    communityId*: string
+    requestId*: string
+
   CommunityRequestFailedArgs* = ref object of Args
     communityId*: string
     error*: string
@@ -1982,6 +1986,9 @@ QtObject:
         # If the state is now declined, add to the declined requests
         if newState == RequestToJoinType.Declined:
           community.declinedRequestsToJoin.add(community.pendingRequestsToJoin[indexPending])
+        elif newState == RequestToJoinType.Canceled:
+          self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED,
+            CanceledCommunityRequestArgs(communityId: communityId, requestId: requestId))
 
         # If the state is no longer pending, delete the request
         community.pendingRequestsToJoin.delete(indexPending)
@@ -2021,7 +2028,8 @@ QtObject:
 
           community.pendingRequestsToJoin.delete(i)
           self.communities[communityId] = community
-          self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, CommunityIdArgs(communityId: communityId))
+          self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED,
+            CanceledCommunityRequestArgs(communityId: communityId, requestId: myPendingRequest.id))
           checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
           return
 

@@ -219,6 +219,9 @@ method newCommunityMembershipRequestReceived*(self: AccessInterface, membershipR
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communityMembershipRequestCanceled*(self: AccessInterface, communityId: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method meMentionedCountChanged*(self: AccessInterface, allMentions: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
