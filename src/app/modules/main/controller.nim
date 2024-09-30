@@ -309,6 +309,10 @@ proc init*(self: Controller) =
     var args = CommunityRequestArgs(e)
     self.delegate.newCommunityMembershipRequestReceived(args.communityRequest)
 
+  self.events.on(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED) do(e:Args):
+    let args = community_service.CanceledCommunityRequestArgs(e)
+    self.delegate.communityMembershipRequestCanceled(args.communityId, args.requestId)
+
   self.events.on(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY_ACCEPTED) do(e: Args):
     var args = CommunityRequestArgs(e)
     self.delegate.communityMemberRevealedAccountsAdded(args.communityRequest)

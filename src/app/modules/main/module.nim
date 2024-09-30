@@ -1102,7 +1102,7 @@ method communityLeft*[T](self: Module[T], communityId: string) =
 method communityEdited*[T](
     self: Module[T],
     community: CommunityDto) =
-  if(not self.chatSectionModules.contains(community.id)):
+  if not self.chatSectionModules.contains(community.id):
     return
   var communitySectionItem = self.createCommunitySectionItem(community, isEdit = true)
   # We need to calculate the unread counts because the community update doesn't come with it
@@ -1367,7 +1367,20 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
   let (contactName, _, _) = self.controller.getContactNameAndImage(membershipRequest.publicKey)
   let community =  self.controller.getCommunityById(membershipRequest.communityId)
   singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
-  fmt "{contactName} asks to join {community.name}", community.id)
+    fmt "{contactName} asks to join {community.name}", community.id)
+
+  self.view.model().addRequestToJoinToModel(pending_request_item.initItem(
+    membershipRequest.id,
+    membershipRequest.publicKey,
+    membershipRequest.chatId,
+    membershipRequest.communityId,
+    membershipRequest.state,
+    membershipRequest.our
+  ))
+
+method communityMembershipRequestCanceled*[T](self: Module[T], communityId: string, requestId: string) =
+  self.view.model().removeRequestToJoinFromModel(communityId, requestId)
+  let item2 = self.view.model().getItemById(communityId)
 
 method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)
