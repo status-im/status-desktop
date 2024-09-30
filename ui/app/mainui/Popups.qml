@@ -269,7 +269,6 @@ QtObject {
         let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey, false)
         const popupProperties = {
             publicKey: publicKey,
-            // contactDetails: details
             localNickname: details.localNickname,
             name: details.name,
             displayName: details.displayName,
