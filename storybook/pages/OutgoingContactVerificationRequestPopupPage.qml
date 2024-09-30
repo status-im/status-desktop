@@ -45,11 +45,15 @@ SplitView {
                     verificationStatus: verificationStatusSelector.currentValue
                     verificationChallenge: challengeInput.text
                     verificationResponse: responseInput.text
-                    verificationResponseDisplayName: nameInput.text
-                    verificationResponseIcon: iconInput.text
+                    verificationResponseDisplayName: verificationResponseNameInput.text
+                    verificationResponseIcon: verificationResponseIconInput.text
                     verificationRequestedAt: requestedAtInput.text
                     verificationRepliedAt: repliedAtInput.text
                     ensVerified: ensVerifiedCheckBox.checked
+                    pubKey: pubKeyInput.text
+                    preferredName: preferredNameInput.text
+                    name: nameInput.text
+                    icon: iconInput.text
                     onVerificationRequestCanceled: {
                         log("Verification request canceled")
                     }
@@ -122,6 +126,20 @@ SplitView {
                 placeholderText: "Enter response"
             }
 
+            Label { text: "Verification Response Display Name" }
+            TextField {
+                id: verificationResponseNameInput
+                Layout.fillWidth: true
+                placeholderText: "Enter verification response display name"
+            }
+
+            Label { text: "Verification Response Icon" }
+            TextField {
+                id: verificationResponseIconInput
+                Layout.fillWidth: true
+                placeholderText: "Enter verification response icon"
+            }
+
             Label { text: "Requested At" }
             TextField {
                 id: requestedAtInput
@@ -134,6 +152,20 @@ SplitView {
                 id: repliedAtInput
                 Layout.fillWidth: true
                 placeholderText: "Enter replied time"
+            }
+
+            Label { text: "Public Key" }
+            TextField {
+                id: pubKeyInput
+                Layout.fillWidth: true
+                placeholderText: "Enter public key"
+            }
+
+            Label { text: "Preferred Name" }
+            TextField {
+                id: preferredNameInput
+                Layout.fillWidth: true
+                placeholderText: "Enter preferred name"
             }
 
             CheckBox {

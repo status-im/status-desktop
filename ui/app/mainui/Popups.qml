@@ -281,7 +281,11 @@ QtObject {
                 largeImage: contactDetails.largeImage,
                 isContact: contactDetails.isContact,
                 trustStatus: contactDetails.trustStatus,
-                isBlocked: contactDetails.isBlocked
+                isBlocked: contactDetails.isBlocked,
+                pubKey: Global.userProfile.pubKey,
+                preferredName: Global.userProfile.preferredName,
+                name: Global.userProfile.name,
+                icon: Global.userProfile.icon
             }
             openPopup(contactOutgoingVerificationRequestPopupComponent, popupProperties, cb)
         } catch (e) {
@@ -291,7 +295,15 @@ QtObject {
 
     function openIncomingIDRequestPopup(publicKey, contactDetails, cb) {
         let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey)
-        openPopup(contactVerificationRequestPopupComponent, {publicKey, contactDetails: details})
+
+        openPopup(contactVerificationRequestPopupComponent, {
+            publicKey: publicKey,
+            senderPublicKey: request.from,
+            challengeText: request.challenge,
+            responseText: request.response,
+            messageTimestamp: request.requestedAt,
+            requestStatus: request.requestStatus
+        })
     }
 
     function openInviteFriendsToCommunityPopup(community, communitySectionModule, cb) {
@@ -310,7 +322,16 @@ QtObject {
         let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey, false)
         const popupProperties = {
             publicKey: publicKey,
-            contactDetails: details
+            // contactDetails: details
+            localNickname: details.localNickname,
+            name: details.name,
+            displayName: details.displayName,
+            alias: details.alias,
+            ensVerified: details.ensVerified,
+            onlineStatus: details.onlineStatus,
+            largeImage: details.largeImage,
+            isContact: details.isContact,
+            trustStatus: details.trustStatus,
         }
         openPopup(sendContactRequestPopupComponent, popupProperties, cb)
     }
@@ -322,7 +343,14 @@ QtObject {
                 console.warn("Popups.openReviewContactRequestPopup: not matching publicKey:", publicKey)
                 return
             }
-            openPopup(reviewContactRequestPopupComponent, {publicKey, contactDetails, ...crDetails}, cb)
+            openPopup(reviewContactRequestPopupComponent, {
+                publicKey,
+                contactRequestId: crDetails.id,
+                fromAddress: crDetails.from,
+                clock: crDetails.requestedAt,
+                text: crDetails.challenge,
+                contactRequestState: crDetails.requestStatus
+            }, cb)
         } catch (e) {
             console.error("Popups.openReviewContactRequestPopup: error getting or parsing contact request data", e)
         }
@@ -512,13 +540,13 @@ QtObject {
         Component {
             id: contactVerificationRequestPopupComponent
             ContactVerificationRequestPopup {
-                contactsStore: rootStore.contactStore
-                onResponseSent: (senderPublicKey, response) => {
-                    contactsStore.acceptVerificationRequest(senderPublicKey, response)
+                id: contactVerificationRequestPopup
+                onResponseSent: (response) => {
+                    contactsStore.acceptVerificationRequest(contactVerificationRequestPopup.senderPublicKey, response)
                     Global.displaySuccessToastMessage(qsTr("ID verification reply sent"))
                 }
-                onVerificationRefused: (senderPublicKey) => {
-                    contactsStore.declineVerificationRequest(senderPublicKey)
+                onVerificationRefused: () => {
+                    contactsStore.declineVerificationRequest(contactVerificationRequestPopup.senderPublicKey)
                     Global.displaySuccessToastMessage(qsTr("ID verification request declined"))
                 }
                 onClosed: destroy()
@@ -551,8 +579,8 @@ QtObject {
         Component {
             id: sendIDRequestPopupComponent
             SendContactRequestModal {
-                rootStore: root.rootStore
-                onAccepted: rootStore.contactStore.sendVerificationRequest(publicKey, message)
+                id: sendIDRequestPopup
+                onAccepted: rootStore.contactStore.sendVerificationRequest(sendIDRequestPopup.publicKey, sendIDRequestPopup.message)
                 onClosed: destroy()
             }
         },
@@ -609,8 +637,8 @@ QtObject {
             id: sendContactRequestPopupComponent
 
             SendContactRequestModal {
-                rootStore: root.rootStore
-                onAccepted: rootStore.contactStore.sendContactRequest(publicKey, message)
+                id: sendContactRequestPopup
+                onAccepted: rootStore.contactStore.sendContactRequest(sendContactRequestPopup.publicKey, sendContactRequestPopup.message)
                 onClosed: destroy()
             }
         },

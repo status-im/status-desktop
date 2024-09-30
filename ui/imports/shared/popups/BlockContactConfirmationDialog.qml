@@ -15,7 +15,6 @@ CommonContactDialog {
     readonly property bool removeIDVerification: ctrlRemoveIDVerification.checked
     readonly property bool removeContact: ctrlRemoveContact.checked
 
-    // New properties to replace contactDetails
     property bool isContact: false
     property int outgoingVerificationStatus: Constants.verificationStatus.untrustworthy
     property int incomingVerificationStatus: Constants.verificationStatus.untrustworthy

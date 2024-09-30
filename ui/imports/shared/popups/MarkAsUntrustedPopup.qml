@@ -12,7 +12,6 @@ import utils 1.0
 CommonContactDialog {
     id: root
 
-    // New properties to replace contactDetails, with default values
     property int verificationStatus: Constants.verificationStatus.unverified
     property int incomingVerificationStatus: Constants.verificationStatus.unverified
     property bool isContact: false

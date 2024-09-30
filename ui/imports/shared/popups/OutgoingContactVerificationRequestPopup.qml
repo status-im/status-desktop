@@ -21,13 +21,17 @@ CommonContactDialog {
     property string verificationRequestedAt
     property string verificationRepliedAt
     property bool ensVerified
+    property string pubKey
+    property string preferredName
+    property string name
+    property string icon
 
     readonly property bool hasReply: root.verificationResponse !== ""
 
     signal verificationRequestCanceled()
     signal untrustworthyVerified()
     signal trustedVerified()
-    signal onLinkActivated()
+    signal linkActivated()
 
     title: !hasReply ? qsTr("ID verification pending") : qsTr("Review ID verification reply")
 
@@ -72,11 +76,11 @@ CommonContactDialog {
         id: challengeMessage
         timestamp: root.verificationRequestedAt
         messageDetails.messageText: root.verificationChallenge
-        messageDetails.sender.id: Global.userProfile.pubKey
-        messageDetails.sender.displayName: Global.userProfile.name
-        messageDetails.sender.profileImage.name: Global.userProfile.icon
+        messageDetails.sender.id: root.pubKey
+        messageDetails.sender.displayName: root.name
+        messageDetails.sender.profileImage.name: root.icon
         messageDetails.sender.profileImage.assetSettings.isImage: true
-        messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(Global.userProfile.pubKey)
+        messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(root.pubKey)
         messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(Global.userProfile.pubKey, !!Global.userProfile.preferredName)
         messageDetails.sender.isEnsVerified: !!Global.userProfile.preferredName
         Layout.fillWidth: true
@@ -107,6 +111,6 @@ CommonContactDialog {
         wrapMode: Text.WordWrap
         textFormat: Text.RichText
         color: root.hasReply ? Theme.palette.directColor1 : Theme.palette.baseColor1
-        onLinkActivated: root.onLinkActivated()
+        onLinkActivated: root.linkActivated()
     }
 }
