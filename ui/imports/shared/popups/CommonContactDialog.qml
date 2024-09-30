@@ -17,11 +17,7 @@ StatusDialog {
     id: root
 
     property string publicKey: ""
-    // Remove the contactDetails object
-    // required property var contactDetails
     property bool loadingContactDetails: false
-
-    // Add individual required properties
     property string localNickname
     property string name
     property string displayName

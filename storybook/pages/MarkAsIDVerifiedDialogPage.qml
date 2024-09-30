@@ -42,7 +42,6 @@ SplitView {
                 MarkAsIDVerifiedDialog {
                     id: markAsIDVerifiedDialog
                     visible: false
-                    // mainDisplayName: nameInput.text
                     onAccepted: {
                         markAsIDVerifiedDialog.close()
                         log("User marked as ID verified: " + nameInput.text)
@@ -78,7 +77,6 @@ SplitView {
                 Layout.fillHeight: true
             }
 
-            // Add logs section
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: 8
@@ -110,7 +108,6 @@ SplitView {
         }
     }
 
-    // Add log function
     function log(message) {
         var timestamp = new Date().toLocaleTimeString(Qt.locale(), "HH:mm:ss")
         logsTextArea.append(timestamp + ": " + message)

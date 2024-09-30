@@ -15,7 +15,6 @@ import utils 1.0
 CommonContactDialog {
     id: root
 
-    property string publicKey: ""
     property string nickname: ""
 
     signal editDone(string newNickname)
