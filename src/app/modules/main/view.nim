@@ -73,7 +73,7 @@ QtObject:
 
   proc editItem*(self: View, item: SectionItem) =
     self.model.editItem(item)
-    if (self.activeSection.getId() == item.id):
+    if self.activeSection.getId() == item.id:
       self.activeSectionSet(item)
 
   proc model*(self: View): SectionModel =
@@ -164,7 +164,6 @@ QtObject:
 
   proc activeSectionSet*(self: View, item: SectionItem) =
     self.activeSection.setActiveSectionData(item)
-    self.activeSectionChanged()
 
   proc setNthEnabledSectionActive*(self: View, nth: int) {.slot.} =
     let item = self.model.getNthEnabledItem(nth)

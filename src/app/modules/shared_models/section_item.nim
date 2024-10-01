@@ -1,6 +1,5 @@
 import stew/shims/strformat, stint
 import ./member_model, ./member_item
-import ../main/communities/models/[pending_request_item, pending_request_model]
 import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../main/communities/tokens/models/token_item
 
@@ -48,7 +47,6 @@ type
     ensOnly: bool
     muted: bool
     membersModel: member_model.Model
-    pendingRequestsToJoinModel: PendingRequestModel
     historyArchiveSupportEnabled: bool
     pinMessageAllMembersEnabled: bool
     bannedMembersModel: member_model.Model
@@ -89,7 +87,6 @@ proc initItem*(
     ensOnly = false,
     muted = false,
     members: seq[MemberItem] = @[],
-    pendingRequestsToJoin: seq[PendingRequestItem] = @[],
     historyArchiveSupportEnabled = false,
     pinMessageAllMembersEnabled = false,
     bannedMembers: seq[MemberItem] = @[],
@@ -130,8 +127,6 @@ proc initItem*(
   result.muted = muted
   result.membersModel = newModel()
   result.membersModel.setItems(members)
-  result.pendingRequestsToJoinModel = newPendingRequestModel()
-  result.pendingRequestsToJoinModel.setItems(pendingRequestsToJoin)
   result.historyArchiveSupportEnabled = historyArchiveSupportEnabled
   result.pinMessageAllMembersEnabled = pinMessageAllMembersEnabled
   result.bannedMembersModel = newModel()
@@ -390,9 +385,6 @@ proc `isPendingOwnershipRequest=`*(self: var SectionItem, value: bool) {.inline.
 
 proc setIsPendingOwnershipRequest*(self: var SectionItem, isPending: bool) {.inline.} =
   self.isPendingOwnershipRequest = isPending
-
-proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
-  self.pendingRequestsToJoinModel
 
 proc historyArchiveSupportEnabled*(self: SectionItem): bool {.inline.} =
   self.historyArchiveSupportEnabled

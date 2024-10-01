@@ -2,9 +2,8 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import json
 
-import section_item, member_model
+import section_item, member_model, member_item
 import ../main/communities/tokens/models/[token_item, token_model]
-import ../main/communities/models/[pending_request_model, pending_request_item]
 
 type
   ModelRole {.pure.} = enum
@@ -35,7 +34,6 @@ type
     EnsOnly
     Muted
     MembersModel
-    PendingRequestsToJoinModel
     HistoryArchiveSupportEnabled
     PinMessageAllMembersEnabled
     BannedMembersModel
@@ -112,7 +110,6 @@ QtObject:
       ModelRole.EnsOnly.int:"ensOnly",
       ModelRole.Muted.int:"muted",
       ModelRole.MembersModel.int:"members",
-      ModelRole.PendingRequestsToJoinModel.int:"pendingRequestsToJoin",
       ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
       ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
       ModelRole.BannedMembersModel.int:"bannedMembers",
@@ -192,8 +189,6 @@ QtObject:
       result = newQVariant(item.muted)
     of ModelRole.MembersModel:
       result = newQVariant(item.members)
-    of ModelRole.PendingRequestsToJoinModel:
-      result = newQVariant(item.pendingRequestsToJoin)
     of ModelRole.HistoryArchiveSupportEnabled:
       result = newQVariant(item.historyArchiveSupportEnabled)
     of ModelRole.PinMessageAllMembersEnabled:
@@ -617,24 +612,16 @@ QtObject:
 
     self.items[index].communityTokens.setItems(communityTokensItems)
 
-  proc addRequestToJoinToModel*(self: SectionModel, pendingRequestItem: PendingRequestItem) =
-    let i = self.getItemIndex(pendingRequestItem.communityId)
-    if i == -1:
-      return
-
-    self.items[i].pendingRequestsToJoin.addItem(pendingRequestItem)
-
-    let index = self.createIndex(i, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[ModelRole.PendingRequestsToJoinModel.int])
-
-  proc removeRequestToJoinFromModel*(self: SectionModel, communityId: string, pendingRequestId: string) =
+  proc addPendingMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
     let i = self.getItemIndex(communityId)
     if i == -1:
       return
 
-    self.items[i].pendingRequestsToJoin.removeItemWithId(pendingRequestId)
+    self.items[i].pendingMemberRequests.addItem(memberItem)
 
-    let index = self.createIndex(i, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[ModelRole.PendingRequestsToJoinModel.int])
+  proc removePendingMember*(self: SectionModel, communityId: string, memberId: string) =
+    let i = self.getItemIndex(communityId)
+    if i == -1:
+      return
+
+    self.items[i].pendingMemberRequests.removeItemById(memberId)
