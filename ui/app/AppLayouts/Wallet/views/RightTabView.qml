@@ -423,6 +423,7 @@ RightTabBaseView {
                     id: historyView
                     HistoryView {
                         overview: RootStore.overview
+                        walletRootStore: RootStore
                         communitiesStore: root.communitiesStore
                         showAllAccounts: RootStore.showAllAccounts
                         sendModal: root.sendModal
