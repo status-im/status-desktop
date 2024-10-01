@@ -1,24 +1,18 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import QtQml.Models 2.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 
 import utils 1.0
-import shared 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.status 1.0
 import shared.controls.chat 1.0
-import shared.controls.chat.menuItems 1.0
 
 StatusMenu {
     id: root
 
-    property var reactionModel: []
+    // expected roles: emojiId:int, filename:string, didIReactWithThisEmoji:bool
+    property var reactionModel
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
@@ -51,27 +45,19 @@ StatusMenu {
     signal markMessageAsUnread()
     signal copyToClipboard(string text)
 
-    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 230)
-
-    Item {
-        id: emojiContainer
-        width: emojiRow.width
-        height: visible ? emojiRow.height : 0
+    MessageReactionsRow {
+        id: emojiRow
         visible: !root.disabledForChat || root.forceEnableEmojiReactions
-
-        MessageReactionsRow {
-            id: emojiRow
-            reactionsModel: root.reactionModel
-            bottomPadding: Style.current.padding
-            onToggleReaction: {
-                root.toggleReaction(emojiId)
-                root.close()
-            }
+        reactionsModel: root.reactionModel
+        bottomPadding: Style.current.halfPadding
+        onToggleReaction: {
+            root.toggleReaction(emojiId)
+            root.close()
         }
     }
 
     StatusMenuSeparator {
-        visible: emojiContainer.visible
+        visible: emojiRow.visible
     }
 
     StatusAction {
@@ -148,9 +134,10 @@ StatusMenu {
         visible: deleteMessageAction.enabled &&
                  (replyToMenuItem.enabled ||
                   copyMessageMenuItem.enabled ||
-                  copyMessageIdAction ||
+                  copyMessageIdAction.enabled ||
                   editMessageAction.enabled ||
-                  pinAction.enabled)
+                  pinAction.enabled ||
+                  markMessageAsUnreadAction.enabled)
     }
 
     StatusAction {
