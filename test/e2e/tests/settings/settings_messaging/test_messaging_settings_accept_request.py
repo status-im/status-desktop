@@ -16,7 +16,6 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703011', 'Add a contact with a chat key')
 @pytest.mark.case(703011)
-# TODO: reason='https://github.com/status-im/desktop-qa-automation/issues/346'
 def test_messaging_settings_accepting_request(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
