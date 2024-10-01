@@ -2,11 +2,13 @@ import NimQml, Tables, stew/shims/strformat, sequtils, sugar
 import user_item
 
 import ../../../app_service/common/types
+import contacts_utils
 
 type
   ModelRole {.pure.} = enum
     PubKey = UserRole + 1
     DisplayName
+    PreferredDisplayName
     EnsName
     IsEnsVerified
     LocalNickname
@@ -83,6 +85,7 @@ QtObject:
     {
       ModelRole.PubKey.int: "pubKey",
       ModelRole.DisplayName.int: "displayName",
+      ModelRole.PreferredDisplayName.int: "preferredDisplayName",
       ModelRole.EnsName.int: "ensName",
       ModelRole.IsEnsVerified.int: "isEnsVerified",
       ModelRole.LocalNickname.int: "localNickname",
@@ -128,6 +131,9 @@ QtObject:
       result = newQVariant(item.pubKey)
     of ModelRole.DisplayName:
       result = newQVariant(item.displayName)
+    of ModelRole.PreferredDisplayName:
+      return newQVariant(resolvePreferredDisplayName(
+        item.localNickname, item.ensName, item.displayName, item.alias))
     of ModelRole.EnsName:
       result = newQVariant(item.ensName)
     of ModelRole.IsEnsVerified:
@@ -260,17 +266,33 @@ QtObject:
     if(ind == -1):
       return
 
-    self.items[ind].displayName = displayName
-    self.items[ind].ensName = ensName
-    self.items[ind].localNickname = localNickname
+    var roles: seq[int] = @[]
+
+    let preferredDisplayNameChanged =
+      resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
+      resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
+
+    if self.items[ind].displayName != displayName:
+      self.items[ind].displayName = displayName
+      roles.add(ModelRole.DisplayName.int)
+
+    if self.items[ind].ensName != ensName:
+      self.items[ind].ensName = ensName
+      roles.add(ModelRole.EnsName.int)
+
+    if self.items[ind].localNickname != localNickname:
+      self.items[ind].localNickname = localNickname
+      roles.add(ModelRole.LocalNickname.int)
+
+    if preferredDisplayNameChanged:
+      roles.add(ModelRole.PreferredDisplayName.int)
+
+    if roles.len == 0:
+      return
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.DisplayName.int,
-      ModelRole.EnsName.int,
-      ModelRole.LocalNickname.int,
-      ])
+    self.dataChanged(index, index, roles)
     self.itemChanged(pubKey)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
@@ -300,25 +322,49 @@ QtObject:
     if(ind == -1):
       return
 
-    self.items[ind].displayName = displayName
-    self.items[ind].ensName = ensName
-    self.items[ind].isEnsVerified = isEnsVerified
-    self.items[ind].localNickname = localNickname
-    self.items[ind].alias = alias
-    self.items[ind].icon = icon
-    self.items[ind].isUntrustworthy = isUntrustworthy
+    var roles: seq[int] = @[]
+
+    let preferredDisplayNameChanged =
+      resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
+      resolvePreferredDisplayName(localNickname, ensName, displayName, alias)
+
+    if self.items[ind].displayName != displayName:
+      self.items[ind].displayName = displayName
+      roles.add(ModelRole.DisplayName.int)
+
+    if self.items[ind].ensName != ensName:
+      self.items[ind].ensName = ensName
+      roles.add(ModelRole.EnsName.int)
+
+    if self.items[ind].isEnsVerified != isEnsVerified:
+      self.items[ind].isEnsVerified = isEnsVerified
+      roles.add(ModelRole.IsEnsVerified.int)
+
+    if self.items[ind].localNickname != localNickname:
+      self.items[ind].localNickname = localNickname
+      roles.add(ModelRole.LocalNickname.int)
+
+    if self.items[ind].alias != alias:
+      self.items[ind].alias = alias
+      roles.add(ModelRole.Alias.int)
+
+    if self.items[ind].icon != icon:
+      self.items[ind].icon = icon
+      roles.add(ModelRole.Icon.int)
+
+    if self.items[ind].isUntrustworthy != isUntrustworthy:
+      self.items[ind].isUntrustworthy = isUntrustworthy
+      roles.add(ModelRole.IsUntrustworthy.int)
+
+    if preferredDisplayNameChanged:
+      roles.add(ModelRole.PreferredDisplayName.int)
+
+    if roles.len == 0:
+      return
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.DisplayName.int,
-      ModelRole.EnsName.int,
-      ModelRole.IsEnsVerified.int,
-      ModelRole.LocalNickname.int,
-      ModelRole.Alias.int,
-      ModelRole.Icon.int,
-      ModelRole.IsUntrustworthy.int,
-    ])
+    self.dataChanged(index, index, roles)
     self.itemChanged(pubKey)
 
   proc updateIncomingRequestStatus*(

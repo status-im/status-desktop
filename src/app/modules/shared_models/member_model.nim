@@ -5,6 +5,7 @@ import NimQml, Tables, stew/shims/strformat, sequtils, sugar
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contacts
 import member_item
+import contacts_utils
 
 type
   ModelRole {.pure.} = enum
@@ -120,13 +121,8 @@ QtObject:
     of ModelRole.DisplayName:
       result = newQVariant(item.displayName)
     of ModelRole.PreferredDisplayName:
-      if item.localNickname != "":
-        return newQVariant(item.localNickname)
-      if item.ensName != "":
-        return newQVariant(item.ensName)
-      if item.displayName != "":
-        return newQVariant(item.displayName)
-      return newQVariant(item.alias)
+      return newQVariant(resolvePreferredDisplayName(
+        item.localNickname, item.ensName, item.displayName, item.alias))
     of ModelRole.EnsName:
       result = newQVariant(item.ensName)
     of ModelRole.IsEnsVerified:
@@ -219,6 +215,10 @@ QtObject:
 
     var roles: seq[int] = @[]
 
+    let preferredDisplayNameChanged =
+      resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
+      resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
+
     if self.items[ind].displayName != displayName:
       self.items[ind].displayName = displayName
       roles.add(ModelRole.DisplayName.int)
@@ -234,7 +234,8 @@ QtObject:
     if roles.len == 0:
       return
 
-    roles.add(ModelRole.PreferredDisplayName.int)
+    if preferredDisplayNameChanged:
+      roles.add(ModelRole.PreferredDisplayName.int)
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
@@ -275,21 +276,20 @@ QtObject:
 
     var roles: seq[int] = @[]
 
-    var preferredNameMightHaveChanged = false
+    let preferredDisplayNameChanged =
+      resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
+      resolvePreferredDisplayName(localNickname, ensName, displayName, alias)
 
     if self.items[ind].displayName != displayName:
       self.items[ind].displayName = displayName
-      preferredNameMightHaveChanged = true
       roles.add(ModelRole.DisplayName.int)
 
     if self.items[ind].ensName != ensName:
       self.items[ind].ensName = ensName
-      preferredNameMightHaveChanged = true
       roles.add(ModelRole.EnsName.int)
 
     if self.items[ind].localNickname != localNickname:
       self.items[ind].localNickname = localNickname
-      preferredNameMightHaveChanged = true
       roles.add(ModelRole.LocalNickname.int)
 
     if self.items[ind].isEnsVerified != isEnsVerified:
@@ -298,7 +298,6 @@ QtObject:
 
     if self.items[ind].alias != alias:
       self.items[ind].alias = alias
-      preferredNameMightHaveChanged = true
       roles.add(ModelRole.Alias.int)
 
     if self.items[ind].icon != icon:
@@ -325,7 +324,7 @@ QtObject:
       self.items[ind].isUntrustworthy = isUntrustworthy
       roles.add(ModelRole.IsUntrustworthy.int)
 
-    if preferredNameMightHaveChanged:
+    if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
 
     if roles.len == 0:
