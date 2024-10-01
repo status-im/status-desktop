@@ -279,9 +279,11 @@ QtObject:
     self.countChanged()
 
   proc setMuted*(self: SectionModel, id: string, muted: bool) = 
-
     let index = self.getItemIndex(id)
-    if (index == -1):
+    if index == -1:
+      return
+
+    if self.items[index].muted == muted:
       return
 
     self.items[index].muted = muted 
@@ -459,13 +461,17 @@ QtObject:
 
   proc setActiveSection*(self: SectionModel, id: string) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].active):
+      if self.items[i].active:
+        if self.items[i].active == false:
+          continue
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.items[i].active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
-      if(self.items[i].id == id):
+      if self.items[i].id == id:
+        if self.items[i].active == true:
+          continue
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.items[i].active = true
@@ -477,9 +483,11 @@ QtObject:
   proc notificationsCountChanged*(self: SectionModel) {.signal.}
 
   proc enableDisableSection(self: SectionModel, sectionType: SectionType, value: bool) =
-    if(sectionType != SectionType.Community):
+    if sectionType != SectionType.Community:
       for i in 0 ..< self.items.len:
-        if(self.items[i].sectionType == sectionType):
+        if self.items[i].sectionType == sectionType:
+          if self.items[i].enabled == value:
+            continue
           let index = self.createIndex(i, 0, nil)
           defer: index.delete
           self.items[i].enabled = value
@@ -488,9 +496,9 @@ QtObject:
       var topInd = -1
       var bottomInd = -1
       for i in 0 ..< self.items.len:
-        if(self.items[i].sectionType == sectionType):
+        if self.items[i].sectionType == sectionType:
           self.items[i].enabled = value
-          if(topInd == -1):
+          if topInd == -1:
             topInd = i
 
           bottomInd = i
@@ -522,21 +530,37 @@ QtObject:
 
   proc updateIsPendingOwnershipRequest*(self: SectionModel, id: string, isPending: bool) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
+      if self.items[i].id == id:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
+
+        if self.items[i].isPendingOwnershipRequest == isPending:
+          return
+
         self.items[i].setIsPendingOwnershipRequest(isPending)
         self.dataChanged(index, index, @[ModelRole.IsPendingOwnershipRequest.int])
         return
 
   proc updateNotifications*(self: SectionModel, id: string, hasNotification: bool, notificationsCount: int) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
+      if self.items[i].id == id:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
-        self.items[i].hasNotification = hasNotification
-        self.items[i].notificationsCount = notificationsCount
-        self.dataChanged(index, index, @[ModelRole.HasNotification.int, ModelRole.NotificationsCount.int])
+
+        var roles: seq[int] = @[]
+
+        if self.items[i].hasNotification != hasNotification:
+          self.items[i].hasNotification = hasNotification
+          roles.add(ModelRole.HasNotification.int)
+
+        if self.items[i].notificationsCount != notificationsCount:
+          self.items[i].notificationsCount = notificationsCount
+          roles.add(ModelRole.NotificationsCount.int)
+
+        if roles.len == 0:
+          return
+
+        self.dataChanged(index, index, roles)
         self.notificationsCountChanged()
         return
 
@@ -552,7 +576,6 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.items[i].appendCommunityToken(item)
-        self.dataChanged(index, index, @[ModelRole.CommunityTokensModel.int])
         return
 
   proc getSectionNameById*(self: SectionModel, sectionId: string): string {.slot.} =
