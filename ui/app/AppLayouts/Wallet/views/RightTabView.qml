@@ -305,8 +305,8 @@ RightTabBaseView {
                         onAssetClicked: (key) => {
                             const token = ModelUtils.getByKey(model, "key", key)
 
-                            SharedStores.RootStore.getHistoricalDataForToken(
-                                        token.symbol, RootStore.currencyStore.currentCurrency)
+                            RootStore.tokensStore.getHistoricalDataForToken(
+                                                token.symbol, RootStore.currencyStore.currentCurrency)
 
                             assetDetailView.token = token
                             RootStore.setCurrentViewedHolding(
@@ -468,6 +468,7 @@ RightTabBaseView {
 
             visible: (stack.currentIndex === 2)
 
+            tokensStore: RootStore.tokensStore
             allNetworksModel: RootStore.filteredFlatModel
             address: RootStore.overview.mixedcaseAddress
             currencyStore: RootStore.currencyStore
