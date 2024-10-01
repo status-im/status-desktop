@@ -17,25 +17,39 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc setActiveSectionData*(self: SectionDetails, item: SectionItem) =
-    self.id = item.id
-    self.sectionType = item.sectionType
-    self.joined = item.joined
-
+  proc idChanged*(self: SectionDetails) {.signal.}
   proc getId*(self: SectionDetails): string {.slot.} =
     return self.id
 
   QtProperty[string] id:
     read = getId
+    notify = idChanged
 
+  proc sectionTypeChanged*(self: SectionDetails) {.signal.}
   proc getSectionType(self: SectionDetails): int {.slot.} =
     return self.sectionType.int
 
   QtProperty[int] sectionType:
     read = getSectionType
+    notify = sectionTypeChanged
 
+  proc joinedChanged*(self: SectionDetails) {.signal.}
   proc getJoined(self: SectionDetails): bool {.slot.} =
     return self.joined
 
   QtProperty[bool] joined:
     read = getJoined
+    notify = joinedChanged
+
+  proc setActiveSectionData*(self: SectionDetails, item: SectionItem) =
+    if self.joined != item.joined:
+      self.joined = item.joined
+      self.joinedChanged()
+
+    if self.id != item.id:
+      self.id = item.id
+      self.idChanged()
+
+    if self.sectionType != item.sectionType:
+      self.sectionType = item.sectionType
+      self.sectionTypeChanged()

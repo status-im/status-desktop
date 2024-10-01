@@ -1,8 +1,7 @@
-import NimQml, tables, json, sugar, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, browsers, strutils
+import NimQml, tables, json, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, browsers, strutils
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
-import ./communities/models/[pending_request_item, pending_request_model]
 import ../shared_models/[user_item, member_item, member_model, section_item, section_model, section_details]
 import ../shared_models/[color_hash_item, color_hash_model]
 import ../shared_modules/keycard_popup/module as keycard_shared_module
@@ -408,15 +407,6 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
         airdropAddress,
       )
     ),
-    # pendingRequestsToJoin
-    communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
-      x.id,
-      x.publicKey,
-      x.chatId,
-      x.communityId,
-      x.state,
-      x.our
-    )),
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
     bannedMembers,
@@ -1369,18 +1359,15 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
   singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
     fmt "{contactName} asks to join {community.name}", community.id)
 
-  self.view.model().addRequestToJoinToModel(pending_request_item.initItem(
-    membershipRequest.id,
+  self.view.model().addPendingMember(membershipRequest.communityId, self.createMemberItem(
     membershipRequest.publicKey,
-    membershipRequest.chatId,
-    membershipRequest.communityId,
-    membershipRequest.state,
-    membershipRequest.our
+    membershipRequest.id,
+    MembershipRequestState(membershipRequest.state),
+    MemberRole.None,
   ))
 
-method communityMembershipRequestCanceled*[T](self: Module[T], communityId: string, requestId: string) =
-  self.view.model().removeRequestToJoinFromModel(communityId, requestId)
-  let item2 = self.view.model().getItemById(communityId)
+method communityMembershipRequestCanceled*[T](self: Module[T], communityId: string, requestId: string, pubKey: string) =
+  self.view.model().removePendingMember(communityId, pubKey)
 
 method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)
