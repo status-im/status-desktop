@@ -15,6 +15,8 @@ import shared.views 1.0
 import shared.controls 1.0
 import shared.stores 1.0
 
+import AppLayouts.Wallet.stores 1.0 as WalletStores
+
 import SortFilterProxyModel 0.2
 
 import "../controls"
@@ -26,6 +28,7 @@ Item {
     id: root
 
     property var token: ({})
+    property WalletStores.TokensStore tokensStore
     property CurrenciesStore currencyStore
     property NetworkConnectionStore networkConnectionStore
     property var allNetworksModel
@@ -187,7 +190,7 @@ Item {
                                     LocaleUtils.getMonthYear(value)
                     }
                     chart.type: 'line'
-                    chart.labels: RootStore.marketHistoryIsLoading ? [] : graphDetail.labelsData
+                    chart.labels: root.tokensStore.marketHistoryIsLoading ? [] : graphDetail.labelsData
                     chart.datasets: {
                         return [{
                             xAxisId: 'x-axis-1',
@@ -196,7 +199,7 @@ Item {
                             borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
                             borderWidth: graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? 3 : 2,
                             pointRadius: 0,
-                            data: RootStore.marketHistoryIsLoading ? [] : graphDetail.dataRange,
+                            data: root.tokensStore.marketHistoryIsLoading ? [] : graphDetail.dataRange,
                             parsing: false,
                         }]
                     }
@@ -310,7 +313,7 @@ Item {
 
                     LoadingGraphView {
                         anchors.fill: chart
-                        active: RootStore.marketHistoryIsLoading
+                        active: root.tokensStore.marketHistoryIsLoading
                     }
 
                     function updateBalanceStore() {
@@ -318,7 +321,7 @@ Item {
 
                         let currencySymbol = RootStore.currencyStore.currentCurrency
                         if(!balanceStore.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum) || d.forceRefreshBalanceStore) {
-                            RootStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
+                            root.tokensStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
                         }
                     }
 

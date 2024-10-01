@@ -63,11 +63,6 @@ QtObject {
             walletSectionInst.activityController.updateFilter()
     }
 
-    function getHistoricalDataForToken(symbol, currency) {
-        if (Global.appIsReady)
-            walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
-    }
-
     function fetchDecodedTxData(txHash, input) {
         walletSectionInst.fetchDecodedTxData(txHash, input)
     }
@@ -80,14 +75,4 @@ QtObject {
     function getTxDetails() {
         return walletSectionInst.activityDetailsController.activityDetails
     }
-
-    property bool marketHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.marketHistoryIsLoading : false
-
-    function fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum) {
-        if (Global.appIsReady)
-            walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)
-    }
-
-    property bool balanceHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.balanceHistoryIsLoading : false
-
 }
