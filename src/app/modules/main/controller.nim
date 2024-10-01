@@ -311,7 +311,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED) do(e:Args):
     let args = community_service.CanceledCommunityRequestArgs(e)
-    self.delegate.communityMembershipRequestCanceled(args.communityId, args.requestId)
+    self.delegate.communityMembershipRequestCanceled(args.communityId, args.requestId, args.pubKey)
 
   self.events.on(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY_ACCEPTED) do(e: Args):
     var args = CommunityRequestArgs(e)
