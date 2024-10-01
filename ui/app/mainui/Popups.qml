@@ -264,7 +264,8 @@ QtObject {
             messageStore: messageStore,
             pinnedMessagesModel: pinnedMessagesModel,
             messageToPin: messageToPin,
-            chatId: chatId
+            chatId: chatId,
+            isPinActionAvaliable: store && store.oneToOneChatContact ? store.oneToOneChatContact.isContact : true
         })
     }
 
@@ -642,6 +643,9 @@ QtObject {
             id: pinnedMessagesPopup
             PinnedMessagesPopup {
                 onClosed: destroy()
+                onPinMessageRequested: messageStore.pinMessage(messageId)
+                onUnpinMessageRequested: messageStore.unpinMessage(messageId)
+                onJumpToMessageRequested: messageStore.messageModule.jumpToMessage(messageId)
             }
         },
 

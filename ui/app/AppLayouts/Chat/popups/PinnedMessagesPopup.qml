@@ -25,8 +25,11 @@ StatusDialog {
     property string messageToUnpin
     property string chatId
 
-    readonly property var contactDetails: store ? store.oneToOneChatContact : null
-    readonly property bool isPinActionAvaliable: contactDetails ? contactDetails.isContact : true
+    readonly property bool isPinActionAvaliable: true
+
+    signal pinMessageRequested(string messageId)
+    signal unpinMessageRequested(string messageId)
+    signal jumpToMessageRequested(string messageId)
 
     width: 800
     height: 428
@@ -41,7 +44,7 @@ StatusDialog {
 
         function jumpToMessage(messageId) {
             root.close()
-            root.messageStore.messageModule.jumpToMessage(messageId)
+            root.jumpToMessageRequested(messageId)
         }
     }
 
@@ -167,7 +170,7 @@ StatusDialog {
                     tooltip.text: qsTr("Unpin")
                     color: hovered ? Theme.palette.primaryColor2 : Theme.palette.indirectColor1
                     onClicked: {
-                        root.messageStore.unpinMessage(model.id)
+                        root.unpinMessageRequested(model.id)
                     }
                 }
 
@@ -246,9 +249,9 @@ StatusDialog {
                 enabled: !!root.messageToUnpin && pinButtonGroup.checkedButton
                 text: qsTr("Unpin selected message and pin new message")
                 onClicked: {
-                    root.messageStore.unpinMessage(root.messageToUnpin)
+                    root.unpinMessageRequested(root.messageToUnpin)
                     root.messageToUnpin = ""
-                    root.messageStore.pinMessage(root.messageToPin)
+                    root.pinMessageRequested(root.messageToPin)
                     root.messageToPin = ""
                     root.close()
                 }
