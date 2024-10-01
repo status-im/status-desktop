@@ -6,7 +6,7 @@ import shared 1.0
 Row {
     id: root
 
-    property var reactionsModel: []
+    property var reactionsModel
 
     signal toggleReaction(int emojiId)
 
@@ -17,7 +17,7 @@ Row {
     Repeater {
         model: root.reactionsModel
         delegate: EmojiReaction {
-            source: Style.svg(filename)
+            source: Style.svg(model.filename)
             emojiId: model.emojiId
             reactedByUser: model.didIReactWithThisEmoji
             onCloseModal: {

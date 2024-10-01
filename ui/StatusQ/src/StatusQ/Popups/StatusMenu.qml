@@ -95,6 +95,7 @@ Menu {
         padding: 0
 
         ColumnLayout {
+            spacing: 0
             Repeater {
                 model: root.contentModel
 
