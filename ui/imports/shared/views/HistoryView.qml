@@ -31,6 +31,8 @@ ColumnLayout {
     id: root
 
     property var overview
+
+    property WalletStores.RootStore walletRootStore
     property CommunitiesStore communitiesStore
     property bool showAllAccounts: false
     property bool displayValues: true
@@ -56,11 +58,11 @@ ColumnLayout {
 
     Component.onCompleted: {
         if (RootStore.transactionActivityStatus.isFilterDirty) {
-            WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
+            root.walletRootStore.currentActivityFiltersStore.applyAllFilters()
         }
 
-        WalletStores.RootStore.currentActivityFiltersStore.updateCollectiblesModel()
-        WalletStores.RootStore.currentActivityFiltersStore.updateRecipientsModel()
+        root.walletRootStore.currentActivityFiltersStore.updateCollectiblesModel()
+        root.walletRootStore.currentActivityFiltersStore.updateRecipientsModel()
     }
 
     Connections {
@@ -70,13 +72,13 @@ ColumnLayout {
             RootStore.updateTransactionFilterIfDirty()
         }
         function onFilterChainsChanged() {
-            WalletStores.RootStore.currentActivityFiltersStore.updateCollectiblesModel()
-            WalletStores.RootStore.currentActivityFiltersStore.updateRecipientsModel()
+            root.walletRootStore.currentActivityFiltersStore.updateCollectiblesModel()
+            root.walletRootStore.currentActivityFiltersStore.updateRecipientsModel()
         }
     }
 
     Connections {
-        target: WalletStores.RootStore.currentActivityFiltersStore
+        target: root.walletRootStore.currentActivityFiltersStore
         enabled: root.visible
         function onDisplayTxDetails(txHash) {
             if (!d.openTxDetails(txHash)) {
@@ -126,8 +128,8 @@ ColumnLayout {
             .arg(Utils.getStyledLink("OP Explorer", "https://optimistic.etherscan.io/", tagPrimaryLabel.hoveredLink))
             .arg(Utils.getStyledLink("Arbiscan", "https://arbiscan.io/", tagPrimaryLabel.hoveredLink))
         tagPrimaryLabel.onLinkActivated: (link) => {
-            const explorerUrl = WalletStores.RootStore.showAllAccounts ? link
-                                                                       : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(WalletStores.RootStore.selectedAddress)
+            const explorerUrl = root.walletRootStore.showAllAccounts ? link
+                                                                       : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.walletRootStore.selectedAddress)
             Global.openLinkWithConfirmation(explorerUrl, SQUtils.StringUtils.extractDomainFromLink(explorerUrl))
         }
         asset {
@@ -158,20 +160,20 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 42
         Layout.topMargin: !nonArchivalNodeError.visible? root.firstItemOffset : 0
-        visible: !d.isInitialLoading && !WalletStores.RootStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
+        visible: !d.isInitialLoading && !root.walletRootStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
         font.pixelSize: Style.current.primaryTextFontSize
         text: qsTr("Activity for this account will appear here")
     }
 
     Loader {
         id: filterPanelLoader
-        active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || WalletStores.RootStore.currentActivityFiltersStore.filtersSet)
+        active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || root.walletRootStore.currentActivityFiltersStore.filtersSet)
         visible: active && !noTxs.visible
         asynchronous: true
         Layout.fillWidth: true
         sourceComponent: ActivityFilterPanel {
-            activityFilterStore: WalletStores.RootStore.currentActivityFiltersStore
-            store: WalletStores.RootStore
+            activityFilterStore: root.walletRootStore.currentActivityFiltersStore
+            store: root.walletRootStore
             hideNoResults: newTransactions.visible
             isLoading: d.isInitialLoading
         }
@@ -346,16 +348,16 @@ ColumnLayout {
             enabled: {
                 if (!overview.isWatchOnlyAccount && !tx)
                     return false
-                return WalletStores.RootStore.isTxRepeatable(tx)
+                return root.walletRootStore.isTxRepeatable(tx)
             }
 
             onTriggered: {
                 if (!tx)
                     return
-                let asset = WalletStores.RootStore.getAssetForSendTx(tx)
+                let asset = root.walletRootStore.getAssetForSendTx(tx)
 
-                const req = Helpers.lookupAddressesForSendModal(WalletStores.RootStore.accounts,
-                                                              WalletStores.RootStore.savedAddresses,
+                const req = Helpers.lookupAddressesForSendModal(root.walletRootStore.accounts,
+                                                              root.walletRootStore.savedAddresses,
                                                               tx.sender,
                                                               tx.recipient,
                                                               asset,
@@ -382,9 +384,9 @@ ColumnLayout {
             onTriggered: {
                 if (!delegateMenu.transactionDelegate)
                     return
-                WalletStores.RootStore.addressWasShown(delegateMenu.transaction.sender)
+                root.walletRootStore.addressWasShown(delegateMenu.transaction.sender)
                 if (delegateMenu.transaction.sender !== delegateMenu.transaction.recipient) {
-                    WalletStores.RootStore.addressWasShown(delegateMenu.transaction.recipient)
+                    root.walletRootStore.addressWasShown(delegateMenu.transaction.recipient)
                 }
 
                 RootStore.fetchTxDetails(delegateMenu.transaction.id)
@@ -401,7 +403,7 @@ ColumnLayout {
             text: qsTr("Filter by similar")
             icon.name: "filter"
             onTriggered: {
-                const store = WalletStores.RootStore.currentActivityFiltersStore
+                const store = root.walletRootStore.currentActivityFiltersStore
                 const tx = delegateMenu.transaction
 
                 store.autoUpdateFilter = false
@@ -488,7 +490,7 @@ ColumnLayout {
                 timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
                 flatNetworks: RootStore.flatNetworks
                 currenciesStore: RootStore.currencyStore
-                walletRootStore: WalletStores.RootStore
+                walletRootStore: root.walletRootStore
                 showAllAccounts: root.showAllAccounts
                 displayValues: root.displayValues
                 community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null
@@ -553,7 +555,7 @@ ColumnLayout {
 
                     flatNetworks: RootStore.flatNetworks
                     currenciesStore: RootStore.currencyStore
-                    walletRootStore: WalletStores.RootStore
+                    walletRootStore: root.walletRootStore
                     loading: true
                 }
             }

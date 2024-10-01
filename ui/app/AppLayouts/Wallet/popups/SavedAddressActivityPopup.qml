@@ -271,6 +271,7 @@ StatusModal {
                            isWatchOnlyAccount: false,
                            mixedcaseAddress: d.address
                        })
+            walletRootStore: WalletStore.RootStore
         }
     }
 }
