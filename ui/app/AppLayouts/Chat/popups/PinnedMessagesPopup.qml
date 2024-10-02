@@ -12,12 +12,14 @@ import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared.views.chat 1.0
+import shared.stores 1.0 as SharedStores
 
 import AppLayouts.Chat.stores 1.0
 
 StatusDialog {
     id: root
 
+    property SharedStores.RootStore sharedStore
     property RootStore store
     property MessageStore messageStore
     property var pinnedMessagesModel //this doesn't belong to the messageStore, it is a part of the ChatContentStore, but we didn't introduce it yet.
@@ -77,6 +79,7 @@ StatusDialog {
 
                     width: parent.width
 
+                    sharedRootStore: root.sharedStore
                     rootStore: root.store
                     messageStore: root.messageStore
 

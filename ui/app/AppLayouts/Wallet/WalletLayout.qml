@@ -10,7 +10,7 @@ import utils 1.0
 import shared.controls 1.0
 import shared.popups.keypairimport 1.0
 
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import shared.stores.send 1.0
 
 import AppLayouts.stores 1.0 as AppLayoutsStores
@@ -30,6 +30,7 @@ Item {
 
     property bool hideSignPhraseModal: false
 
+    property SharedStores.RootStore sharedRootStore
     property AppLayoutsStores.RootStore store
     property ProfileStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
@@ -37,7 +38,7 @@ Item {
 
     property var emojiPopup: null
     property var sendModalPopup
-    property NetworkConnectionStore networkConnectionStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     property bool appMainVisible
 
     property bool dappsEnabled
@@ -220,6 +221,7 @@ Item {
     Component {
         id: walletContainer
         RightTabView {
+            sharedRootStore: root.sharedRootStore
             store: root.store
             contactsStore: root.contactsStore
             communitiesStore: root.communitiesStore

@@ -7,9 +7,9 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import shared.views.chat 1.0
-import shared.stores.send 1.0
+import shared.stores.send 1.0 as SendStores
 import SortFilterProxyModel 0.2
 
 import StatusQ.Core 0.1
@@ -29,10 +29,12 @@ import AppLayouts.Communities.views 1.0
 
 import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
+
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 import "../popups"
 import "../helpers"
 import "../controls"
-import "../stores"
 
 StatusSectionLayout {
     id: root
@@ -40,12 +42,13 @@ StatusSectionLayout {
     property ContactsStore contactsStore
     property bool hasAddedContacts: contactsStore.myContactsModel.count > 0
 
-    property RootStore rootStore
-    required property TransactionStore transactionStore
-    property CreateChatPropertiesStore createChatPropertiesStore
+    property SharedStores.RootStore sharedRootStore
+    property ChatStores.RootStore rootStore
+    required property SendStores.TransactionStore transactionStore
+    property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
-    required property CurrenciesStore currencyStore
+    required property SharedStores.CurrenciesStore currencyStore
     property var sectionItemModel
 
     property var emojiPopup
@@ -220,6 +223,7 @@ StatusSectionLayout {
 
         ChatColumnView {
             parentModule: root.rootStore.chatCommunitySectionModule
+            sharedRootStore: root.sharedRootStore
             rootStore: root.rootStore
             createChatPropertiesStore: root.createChatPropertiesStore
             contactsStore: root.contactsStore

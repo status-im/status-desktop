@@ -35,6 +35,7 @@ StatusSectionLayout {
 
     objectName: "profileStatusSectionLayout"
 
+    property SharedStores.RootStore sharedRootStore
     property ProfileSectionStore store
     property AppLayoutsStores.RootStore globalStore
     property var systemPalette
@@ -188,7 +189,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 privacyStore: root.store.privacyStore
-                passwordStrengthScoreFunction: SharedStores.RootStore.getPasswordStrengthScore
+                passwordStrengthScoreFunction: root.sharedRootStore.getPasswordStrengthScore
                 contentWidth: d.contentWidth
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.password)
             }
@@ -247,6 +248,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 myPublicKey: root.store.contactsStore.myPublicKey
+                currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 rootStore: root.store
                 tokensStore: root.tokensStore
                 networkConnectionStore: root.networkConnectionStore

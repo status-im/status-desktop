@@ -39,6 +39,7 @@ Item {
     // don't follow struct we have on the backend.
     property var parentModule
 
+    property SharedStores.RootStore sharedRootStore
     property RootStore rootStore
     property CreateChatPropertiesStore createChatPropertiesStore
     property ContactsStore contactsStore
@@ -234,6 +235,7 @@ Item {
                         chatId: model.itemId
                         chatType: model.type
                         chatMessagesLoader.active: model.loaderActive
+                        sharedRootStore: root.sharedRootStore
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
                         emojiPopup: root.emojiPopup
@@ -290,7 +292,7 @@ Item {
 
                     store: root.rootStore
                     usersModel: d.activeUsersStore.usersModel
-                    sharedStore: SharedStores.RootStore
+                    sharedStore: root.sharedRootStore
 
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
                     urlsList: d.urlsList

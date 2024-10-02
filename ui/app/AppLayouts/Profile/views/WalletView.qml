@@ -32,6 +32,8 @@ SettingsContentBase {
 
     property var emojiPopup
     property string myPublicKey: ""
+    property alias currencySymbol: manageTokensView.currencySymbol
+
     property ProfileSectionStore rootStore
     property WalletStore walletStore: rootStore.walletStore
     required property TokensStore tokensStore

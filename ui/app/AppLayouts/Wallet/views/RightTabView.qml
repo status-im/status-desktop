@@ -24,6 +24,8 @@ import "../views/collectibles"
 RightTabBaseView {
     id: root
 
+    property SharedStores.RootStore sharedRootStore
+
     property alias currentTabIndex: walletTabBar.currentIndex
 
     signal launchShareAddressModal()
@@ -445,7 +447,7 @@ RightTabBaseView {
             isCollectibleLoading: RootStore.collectiblesStore.isDetailedCollectibleLoading
             activityModel: d.detailedCollectibleActivityController.model
             addressFilters: RootStore.addressFilters
-            rootStore: SharedStores.RootStore
+            rootStore: root.sharedRootStore
             walletRootStore: RootStore
             communitiesStore: root.communitiesStore
 
@@ -469,6 +471,7 @@ RightTabBaseView {
 
             visible: (stack.currentIndex === 2)
 
+            sharedRootStore: root.sharedRootStore
             tokensStore: RootStore.tokensStore
             allNetworksModel: RootStore.filteredFlatModel
             address: RootStore.overview.mixedcaseAddress
@@ -503,8 +506,8 @@ RightTabBaseView {
                 showAllAccounts: RootStore.showAllAccounts
                 communitiesStore: root.communitiesStore
                 sendModal: root.sendModal
-                rootStore: SharedStores.RootStore
-                currenciesStore: SharedStores.RootStore.currencyStore
+                rootStore: root.sharedRootStore
+                currenciesStore: root.sharedRootStore.currencyStore
                 contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 visible: (stack.currentIndex === 3)

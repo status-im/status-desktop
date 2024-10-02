@@ -37,6 +37,8 @@ QtObject {
     id: root
 
     required property var popupParent
+
+    required property RootStore sharedRootStore
     required property AppLayoutStores.RootStore rootStore
     required property CommunityTokensStore communityTokensStore
     property CommunitiesStore communitiesStore
@@ -641,6 +643,7 @@ QtObject {
         Component {
             id: pinnedMessagesPopup
             PinnedMessagesPopup {
+                sharedStore: root.sharedRootStore
                 onClosed: destroy()
             }
         },
@@ -1230,6 +1233,7 @@ QtObject {
         Component {
             id: communityMemberMessagesPopup
             CommunityMemberMessagesPopup {
+                sharedRootStore: root.sharedRootStore
                 onClosed: destroy()
             }
         },

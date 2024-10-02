@@ -19,6 +19,7 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 Page {
     id: root
 
+    property SharedStores.RootStore sharedRootStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property var emojiPopup: null
@@ -162,7 +163,7 @@ Page {
                 stickersPopup: root.stickersPopup
                 closeGifPopupAfterSelection: true
                 usersModel: membersSelector.model
-                sharedStore: SharedStores.RootStore
+                sharedStore: root.sharedRootStore
                 onStickerSelected: {
                     root.createChatPropertiesStore.createChatStickerHashId = hashId;
                     root.createChatPropertiesStore.createChatStickerPackId = packId;

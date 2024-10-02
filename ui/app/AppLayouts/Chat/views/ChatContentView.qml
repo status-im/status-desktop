@@ -10,6 +10,7 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared 1.0
+import shared.stores 1.0 as SharedStores
 import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
@@ -30,6 +31,7 @@ ColumnLayout {
     // Important: each chat/channel has its own ChatContentModule
     property var chatContentModule
     property var chatSectionModule
+    property SharedStores.RootStore sharedRootStore
     property RootStore rootStore
     property ContactsStore contactsStore
     property string chatId
@@ -81,6 +83,8 @@ ColumnLayout {
 
         sourceComponent: ChatMessagesView {
             chatContentModule: root.chatContentModule
+
+            sharedRootStore: root.sharedRootStore
             rootStore: root.rootStore
             contactsStore: root.contactsStore
             messageStore: root.messageStore
