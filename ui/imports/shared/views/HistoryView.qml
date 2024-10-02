@@ -57,7 +57,7 @@ ColumnLayout {
     }
 
     Component.onCompleted: {
-        if (RootStore.transactionActivityStatus.isFilterDirty) {
+        if (root.walletRootStore.transactionActivityStatus.isFilterDirty) {
             root.walletRootStore.currentActivityFiltersStore.applyAllFilters()
         }
 
@@ -66,10 +66,10 @@ ColumnLayout {
     }
 
     Connections {
-        target: RootStore.transactionActivityStatus
+        target: root.walletRootStore.transactionActivityStatus
         enabled: root.visible
         function onIsFilterDirtyChanged() {
-            RootStore.updateTransactionFilterIfDirty()
+            root.walletRootStore.updateTransactionFilterIfDirty()
         }
         function onFilterChainsChanged() {
             root.walletRootStore.currentActivityFiltersStore.updateCollectiblesModel()
@@ -89,7 +89,7 @@ ColumnLayout {
 
     QtObject {
         id: d
-        readonly property bool isInitialLoading: RootStore.loadingHistoryTransactions && transactionListRoot.count === 0
+        readonly property bool isInitialLoading: root.walletRootStore.loadingHistoryTransactions && transactionListRoot.count === 0
 
         readonly property int loadingSectionWidth: 56
 
@@ -101,7 +101,7 @@ ColumnLayout {
 
         function openTxDetails(txID) {
             // Prevent opening details when loading, that will invalidate the model data
-            if (RootStore.loadingHistoryTransactions) {
+            if (root.walletRootStore.loadingHistoryTransactions) {
                 return false
             }
 
@@ -148,7 +148,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: root.firstItemOffset
-        visible: RootStore.isNonArchivalNode
+        visible: root.walletRootStore.isNonArchivalNode
         text: qsTr("Status Desktop is connected to a non-archival node. Transaction history may be incomplete.")
         font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.danger
@@ -204,7 +204,7 @@ ColumnLayout {
                     if (d.openTxDetails(d.openTxDetailsHash)) {
                         d.openTxDetailsHash = ""
                     } else {
-                        RootStore.fetchMoreTransactions()
+                        root.walletRootStore.fetchMoreTransactions()
                     }
                 }
             }
@@ -212,7 +212,7 @@ ColumnLayout {
             model: SortFilterProxyModel {
                 id: txModel
 
-                sourceModel: RootStore.historyTransactions
+                sourceModel: root.walletRootStore.historyTransactions
 
                 // LocaleUtils is not accessable from inside expression, but local function works
                 property var daysTo: (d1, d2) => LocaleUtils.daysTo(d1, d2)
@@ -267,16 +267,17 @@ ColumnLayout {
             }
 
             Connections {
-                target: RootStore
+                target: root.walletRootStore
+
                 function onLoadingHistoryTransactionsChanged() {
                     // Calling timer instead directly to not cause binding loop
-                    if (!RootStore.loadingHistoryTransactions)
+                    if (!root.walletRootStore.loadingHistoryTransactions)
                         fetchMoreTimer.start()
                 }
             }
 
             function tryFetchMoreTransactions() {
-                if (d.isInitialLoading || !footerItem || !RootStore.historyTransactions.hasMore)
+                if (d.isInitialLoading || !footerItem || !root.walletRootStore.historyTransactions.hasMore)
                     return
                 const footerYPosition = footerItem.height / contentHeight
                 if (footerYPosition >= 1.0) {
@@ -285,7 +286,7 @@ ColumnLayout {
 
                 // On startup, first loaded ListView will have heightRatio equal 0
                 if (footerYPosition + visibleArea.yPosition + visibleArea.heightRatio > 1.0) {
-                    RootStore.fetchMoreTransactions()
+                    root.walletRootStore.fetchMoreTransactions()
                 }
             }
 
@@ -304,8 +305,8 @@ ColumnLayout {
 
             text: qsTr("New transactions")
 
-            visible: RootStore.newDataAvailable && !RootStore.loadingHistoryTransactions
-            onClicked: RootStore.resetActivityData()
+            visible: root.walletRootStore.newDataAvailable && !root.walletRootStore.loadingHistoryTransactions
+            onClicked: root.walletRootStore.resetActivityData()
 
             icon.name: "arrow-up"
 
@@ -389,8 +390,8 @@ ColumnLayout {
                     root.walletRootStore.addressWasShown(delegateMenu.transaction.recipient)
                 }
 
-                RootStore.fetchTxDetails(delegateMenu.transaction.id)
-                let detailsObj = RootStore.getTxDetails()
+                root.walletRootStore.fetchTxDetails(delegateMenu.transaction.id)
+                let detailsObj = root.walletRootStore.getTxDetails()
                 let detailsString = delegateMenu.transactionDelegate.getDetailsString(detailsObj)
                 ClipboardUtils.setText(detailsString)
             }
@@ -516,7 +517,7 @@ ColumnLayout {
         id: footerComp
         ColumnLayout {
             id: footerColumn
-            readonly property bool allActivityLoaded: !RootStore.historyTransactions.hasMore && transactionListRoot.count !== 0
+            readonly property bool allActivityLoaded: !root.walletRootStore.historyTransactions.hasMore && transactionListRoot.count !== 0
             width: root.width
             spacing: d.isInitialLoading ? 6 : 12
 
@@ -544,7 +545,7 @@ ColumnLayout {
                         const delegateHeight = 64 + footerColumn.spacing
                         if (d.isInitialLoading) {
                             return Math.floor(transactionListRoot.height / delegateHeight)
-                        } else if (RootStore.historyTransactions.hasMore) {
+                        } else if (root.walletRootStore.historyTransactions.hasMore) {
                             return Math.max(3, Math.floor(transactionListRoot.height / delegateHeight) - 3)
                         }
                     }
