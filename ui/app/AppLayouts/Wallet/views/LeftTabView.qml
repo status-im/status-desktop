@@ -69,13 +69,7 @@ Rectangle {
             address: {
                 if (!account)
                     return ""
-                let address = account.address
-                const preferredChains = account.preferredSharingChainIds
-                if (!!preferredChains) {
-                    const shortNames = WalletUtils.getNetworkShortNames(preferredChains, root.networkConnectionStore.filteredflatNetworks)
-                    address = `${shortNames}${address}`
-                }
-                return address
+                return account.address
             }
             name: account ? account.name : ""
             walletType: account ? account.walletType : ""
@@ -108,7 +102,6 @@ Rectangle {
                 removeAccountConfirmation.accountName = account.name
                 removeAccountConfirmation.accountAddress = account.address
                 removeAccountConfirmation.accountDerivationPath = account.path
-                removeAccountConfirmation.preferredSharingChainIds = account.preferredSharingChainIds
                 removeAccountConfirmation.emoji = account.emoji
                 removeAccountConfirmation.colorId = account.colorId
                 removeAccountConfirmation.active = true
@@ -131,7 +124,6 @@ Rectangle {
         property string accountName
         property string accountAddress
         property string accountDerivationPath
-        property string preferredSharingChainIds
         property string emoji
         property string colorId
 
@@ -140,7 +132,6 @@ Rectangle {
             accountName: removeAccountConfirmation.accountName
             accountAddress: removeAccountConfirmation.accountAddress
             accountDerivationPath: removeAccountConfirmation.accountDerivationPath
-            preferredSharingNetworkShortNames: RootStore.getNetworkShortNames(removeAccountConfirmation.preferredSharingChainIds)
             emoji: removeAccountConfirmation.emoji
             color: Utils.getColorForId(removeAccountConfirmation.colorId)
 
