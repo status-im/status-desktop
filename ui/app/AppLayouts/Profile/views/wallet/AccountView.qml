@@ -44,9 +44,6 @@ ColumnLayout {
         readonly property bool watchOnlyAccount: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.watchOnly: false
         readonly property bool privateKeyAccount: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.privateKeyImport: false
         readonly property bool seedImport: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.seedImport: false
-        readonly property string preferredSharingNetworks: !!root.account? root.account.preferredSharingChainIds: ""
-        property var preferredSharingNetworksArray: preferredSharingNetworks.split(":").filter(Boolean).map(Number)
-        property string preferredSharingNetworkShortNames: walletStore.getNetworkShortNames(preferredSharingNetworks)
     }
 
     spacing: 0
@@ -130,10 +127,7 @@ ColumnLayout {
                 isInteractive: true
                 moreButtonEnabled: true
                 title: qsTr("Address")
-                subTitle: {
-                    let address = !!root.account && root.account.address ? root.account.address: ""
-                    return WalletUtils.colorizedChainPrefix(d.preferredSharingNetworkShortNames) + address
-                }
+                subTitle: !!root.account && root.account.address ? root.account.address: ""
                 onButtonClicked: addressMenu.openMenu(this)
             }
             Separator {
@@ -219,6 +213,7 @@ ColumnLayout {
     }
 
     Separator {
+        visible: d.watchOnlyAccount
         Layout.topMargin: 40
         Layout.fillWidth: true
         Layout.preferredHeight: 1
@@ -241,43 +236,6 @@ ColumnLayout {
 
     Separator {
         visible: d.watchOnlyAccount
-        Layout.fillWidth: true
-        Layout.preferredHeight: 1
-        color: Theme.palette.baseColor2
-    }
-
-    StatusListItem {
-        objectName: "PreferredNetworks_ListItem"
-        Layout.fillWidth: true
-        Layout.topMargin: Style.current.halfPadding
-        title: qsTr("Preferred networks when sharing this address")
-        color: Theme.palette.transparent
-        components: [
-            NetworkFilter {
-                flatNetworks: root.walletStore.filteredFlatModel
-                multiSelection: true
-                selection: d.preferredSharingNetworksArray
-
-                property string initialSelection
-                
-                onSelectionChanged: {
-                    if (selection !== d.preferredSharingNetworksArray) {
-                        d.preferredSharingNetworksArray = selection
-                    }
-                }
-
-                control.popup.onOpened: initialSelection = JSON.stringify(selection)
-
-                control.popup.onClosed: {
-                    if (!!root.account && initialSelection !== JSON.stringify(selection)) {
-                        root.walletStore.updateWalletAccountPreferredChains(root.account.address, d.preferredSharingNetworksArray.join(":"))
-                    }
-                }
-            }
-        ]
-    }
-
-    Separator {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
         color: Theme.palette.baseColor2
@@ -309,7 +267,8 @@ ColumnLayout {
             accountName: !!root.account ? root.account.name : ""
             accountAddress: !!root.account ? root.account.address : ""
             accountDerivationPath: !!root.account ? root.account.path : ""
-            preferredSharingNetworkShortNames: d.preferredSharingNetworkShortNames
+            // TODO: remove in when RemoveAccountConfirmationPopup.qml removes preferred networks
+            preferredSharingNetworkShortNames: ""
             emoji: !!root.account ? root.account.emoji : ""
             color: !!root.account ? Utils.getColorForId(root.account.colorId) : ""
 
@@ -337,7 +296,6 @@ ColumnLayout {
         selectedAccount: root.account
         areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
         isGoerliEnabled: root.walletStore.isGoerliEnabled
-        preferredSharedNetworkNamesArray: d.preferredSharingNetworkShortNames.split(":").filter(Boolean)
         onCopyToClipboard: ClipboardUtils.setText(address)
     }
 

@@ -3,6 +3,7 @@ import QtQuick 2.14
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet 1.0
 
@@ -12,7 +13,6 @@ StatusListItem {
     id: root
     
     property var account
-    property var getNetworkShortNames: function(chainIds){}
     property int totalCount: 0
     property bool nextIconVisible: true
 
@@ -20,7 +20,8 @@ StatusListItem {
 
     objectName: account.name
     title: account.name
-    subTitle: WalletUtils.addressToDisplay(account.address, root.getNetworkShortNames(account.preferredSharingChainIds), true, sensor.containsMouse)
+    subTitle: SQUtils.Utils.elideText(account.address, 6, 4)
+    statusListItemSubTitle.customColor: sensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
     asset.color: !!account.colorId ? Utils.getColorForId(account.colorId): ""
     asset.emoji: account.emoji
     asset.name: !account.emoji ? "filled-account": ""

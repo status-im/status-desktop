@@ -16,7 +16,6 @@ Rectangle {
 
     property var keyPair
     property bool hasPairedDevices
-    property var getNetworkShortNames: function(chainIds){}
     property string userProfilePublicKey
 
     signal goToAccountView(var account)
@@ -112,7 +111,6 @@ Rectangle {
                 width: ListView.view.width
                 account: model.account
                 totalCount: ListView.view.count
-                getNetworkShortNames: root.getNetworkShortNames
                 onGoToAccountView: root.goToAccountView(model.account)
 
                 RowLayout {
