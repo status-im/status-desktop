@@ -17,8 +17,7 @@ import configs.testpath
 from constants import RandomUser, UserAccount
 from gui.main_window import MainWindow
 from scripts.utils.parsers import remove_tags
-
-from tests.messages import marks
+from . import marks
 
 pytestmark = marks
 

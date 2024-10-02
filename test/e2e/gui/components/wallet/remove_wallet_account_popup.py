@@ -22,7 +22,7 @@ class RemoveWalletAccountPopup(BasePopup):
 
     @allure.step('Confirm removing account')
     def confirm(self):
-        self._confirm_button.click()
+        self._confirm_button.click(timeout=10)
         self._confirm_button.wait_until_hidden()
 
     @allure.step('Agree and confirm removing account')

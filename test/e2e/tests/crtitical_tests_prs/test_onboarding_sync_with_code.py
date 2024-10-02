@@ -6,7 +6,6 @@ from allure_commons._allure import step
 from . import marks
 
 import configs.testpath
-import constants
 import driver
 from constants import UserAccount, RandomUser
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
