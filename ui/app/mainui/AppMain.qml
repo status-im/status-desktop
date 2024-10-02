@@ -23,7 +23,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.popups.keycard 1.0
 import shared.status 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import shared.popups.send 1.0 as SendPopups
 import shared.popups.send.views 1.0
 import shared.stores.send 1.0
@@ -55,6 +55,9 @@ Item {
     id: appMain
 
     property alias appLayout: appLayout
+
+    readonly property SharedStores.RootStore sharedRootStore: SharedStores.RootStore {}
+
     property AppStores.RootStore rootStore: AppStores.RootStore {
         profileSectionStore.sendModalPopup: sendModal
     }
@@ -67,13 +70,13 @@ Item {
     }
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
-    property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
-    property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
+    property SharedStores.NetworkConnectionStore networkConnectionStore: SharedStores.NetworkConnectionStore {}
+    property SharedStores.CommunityTokensStore communityTokensStore: SharedStores.CommunityTokensStore {}
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     readonly property WalletStores.TokensStore tokensStore: WalletStores.RootStore.tokensStore
     readonly property WalletStores.WalletAssetsStore walletAssetsStore: WalletStores.RootStore.walletAssetsStore
     readonly property WalletStores.CollectiblesStore walletCollectiblesStore: WalletStores.RootStore.collectiblesStore
-    readonly property CurrenciesStore currencyStore: CurrenciesStore {}
+    readonly property SharedStores.CurrenciesStore currencyStore: SharedStores.CurrenciesStore {}
     readonly property TransactionStore transactionStore: TransactionStore {
         walletAssetStore: appMain.walletAssetsStore
         tokensStore: appMain.tokensStore
@@ -409,7 +412,7 @@ Item {
     Popups {
         id: popups
 
-        sharedRootStore: RootStore
+        sharedRootStore: appMain.sharedRootStore
         popupParent: appMain
         rootStore: appMain.rootStore
         communityTokensStore: appMain.communityTokensStore
@@ -1352,7 +1355,7 @@ Item {
                                     restoreMode: Binding.RestoreBindingOrValue
                                 }
 
-                                sharedRootStore: RootStore
+                                sharedRootStore: appMain.sharedRootStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     communityTokensStore: appMain.communityTokensStore
@@ -1400,7 +1403,7 @@ Item {
                         asynchronous: true
                         sourceComponent: WalletLayout {
                             objectName: "walletLayoutReal"
-                            sharedRootStore: RootStore
+                            sharedRootStore: appMain.sharedRootStore
                             store: appMain.rootStore
                             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                             communitiesStore: appMain.communitiesStore
@@ -1421,7 +1424,7 @@ Item {
                         active: appView.currentIndex === Constants.appViewStackIndex.profile
                         asynchronous: true
                         sourceComponent: ProfileLayout {
-                            sharedRootStore: RootStore
+                            sharedRootStore: appMain.sharedRootStore
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
                             systemPalette: appMain.sysPalette
@@ -1511,7 +1514,7 @@ Item {
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled)
-                                sharedRootStore: RootStore
+                                sharedRootStore: appMain.sharedRootStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     communityTokensStore: appMain.communityTokensStore
@@ -1556,7 +1559,7 @@ Item {
                             anchors.rightMargin - anchors.leftMargin : 0
 
                     sourceComponent: CreateChatView {
-                        sharedRootStore: RootStore
+                        sharedRootStore: appMain.sharedRootStore
                         rootStore: ChatStores.RootStore {
                             contactsStore: appMain.rootStore.contactStore
                             communityTokensStore: appMain.communityTokensStore
@@ -1882,7 +1885,7 @@ Item {
 
         sourceComponent: WalletPopups.AddEditSavedAddressPopup {
             store: WalletStores.RootStore
-            sharedRootStore: RootStore
+            sharedRootStore: appMain.sharedRootStore
             flatNetworks: WalletStores.RootStore.filteredFlatModel
 
             onClosed: {
@@ -2141,7 +2144,7 @@ Item {
             controller: WalletStores.RootStore.dappsConnectorController
             wcService: Global.walletConnectService
             walletStore: WalletStores.RootStore
-            store: DAppsStore {
+            store: SharedStores.DAppsStore {
                 controller: WalletStores.RootStore.walletConnectController
             }
             loginType: appMain.rootStore.loginType
@@ -2168,7 +2171,7 @@ Item {
                 userUID: appMain.rootStore.profileSectionStore.profileStore.pubkey
                 projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
             }
-            store: DAppsStore {
+            store: SharedStores.DAppsStore {
                 controller: WalletStores.RootStore.walletConnectController
             }
             walletRootStore: WalletStores.RootStore
