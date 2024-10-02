@@ -22,6 +22,8 @@ Popup {
     required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
 
+    property alias isWalletEnabled: stickerMarket.isWalletEnabled
+
     signal stickerSelected(string hashId, string packId, string url)
 
     QtObject {
@@ -95,6 +97,7 @@ Popup {
 
         StatusStickerMarket {
             id: stickerMarket
+
             visible: false
             Layout.fillWidth: true
             Layout.fillHeight: true

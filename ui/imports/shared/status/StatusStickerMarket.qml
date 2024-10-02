@@ -13,7 +13,6 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
-import shared.stores 1.0 as SharedStores
 import shared.popups.send 1.0
 import shared.stores.send 1.0
 
@@ -30,6 +29,7 @@ Item {
     required property WalletAssetsStore walletAssetsStore
     property string packId
     property bool marketVisible
+    property bool isWalletEnabled
 
     signal backClicked
     signal uninstallClicked(string packId)
@@ -81,7 +81,7 @@ Item {
                 }
             }
 
-            readonly property bool walletEnabled: SharedStores.RootStore.isWalletEnabled
+            readonly property bool walletEnabled: root.isWalletEnabled
             onWalletEnabledChanged: {
                 update()
             }

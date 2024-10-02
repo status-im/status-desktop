@@ -96,7 +96,6 @@ SplitView {
                 usersModel: fakeUsersModel
 
                 sharedStore: SharedStores.RootStore {
-                    property bool isWalletEnabled: true
                     property bool gifUnfurlingEnabled: true
 
                     property var gifStore: SharedStores.GifStore {
