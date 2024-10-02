@@ -170,7 +170,7 @@ method onMembersChanged*(self: Module,  members: seq[ChatMember]) =
 method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberRole, joined: bool) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   let isMe = publicKey == singletonInstance.userProfile.getPubKey()
-  self.view.model().updateItem(
+  discard self.view.model().updateItem(
     pubKey = publicKey,
     displayName = contactDetails.dto.displayName,
     ensName = contactDetails.dto.name,
