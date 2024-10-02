@@ -24,8 +24,6 @@ QtObject {
 
     property TokenMarketValuesStore marketValueStore: TokenMarketValuesStore {}
 
-    property var flatNetworks: networksModule.flatNetworks
-
     function setNeverAskAboutUnfurlingAgain(value) {
         localAccountSensitiveSettings.neverAskAboutUnfurlingAgain = value;
     }
