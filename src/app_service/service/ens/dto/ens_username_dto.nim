@@ -1,11 +1,15 @@
 {.used.}
 
 import json, stew/shims/strformat, hashes
-include ../../../common/json_utils
+import app_service/service/transaction/dto
+include app_service/common/json_utils
 
 type EnsUsernameDto* = ref object
   chainId*: int
   username*: string
+  txType*: PendingTransactionTypeDto
+  txHash*: string
+  txStatus*: string
 
 proc `==`*(l, r: EnsUsernameDto): bool =
     return l.chainId == r.chainid and l.username == r.username
@@ -13,7 +17,10 @@ proc `==`*(l, r: EnsUsernameDto): bool =
 proc `$`*(self: EnsUsernameDto): string =
   result = fmt"""ContactDto(
     chainId: {self.chainId},
-    username: {self.username}
+    username: {self.username},
+    txType: {self.txType},
+    txHash: {self.txHash},
+    txStatus: {self.txStatus}
     )"""
 
 proc hash*(dto: EnsUsernameDto): Hash =

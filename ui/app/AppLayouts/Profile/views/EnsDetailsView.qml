@@ -131,23 +131,7 @@ Item {
             preSelectedHoldingType: Constants.TokenType.ERC20
             publicKey: root.contactsStore.myPublicKey
             ensName: root.username
-            sendTransaction: function() {
-                if(bestRoutes.count === 1) {
-                    let path = bestRoutes.firstItem()
-                    let eip1559Enabled = path.gasFees.eip1559Enabled
-                    let maxFeePerGas = path.gasFees.maxFeePerGasM
-                    root.ensUsernamesStore.authenticateAndReleaseEns(
-                                root.chainId,
-                                root.username,
-                                store.selectedSenderAccountAddress,
-                                path.gasAmount,
-                                eip1559Enabled ? "" : path.gasFees.gasPrice,
-                                eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",
-                                eip1559Enabled ? maxFeePerGas: path.gasFees.gasPrice,
-                                eip1559Enabled,
-                                )
-                }
-            }
+
             Connections {
                 target: root.ensUsernamesStore.ensUsernamesModule
                 function onTransactionWasSent(chainId: int, txHash: string, error: string) {
@@ -159,13 +143,6 @@ Item {
                         return releaseEnsModal.sendingError.open()
                     }
                     usernameReleased()
-                    let url =  "%1/%2".arg(releaseEnsModal.store.getEtherscanLink(chainId)).arg(txHash)
-                    Global.displayToastMessage(qsTr("Transaction pending..."),
-                                               qsTr("View on etherscan"),
-                                               "",
-                                               true,
-                                               Constants.ephemeralNotificationType.normal,
-                                               url)
                     releaseEnsModal.close()
                 }
             }

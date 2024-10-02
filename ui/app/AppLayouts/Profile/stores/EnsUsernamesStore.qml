@@ -48,34 +48,11 @@ QtObject {
         ensUsernamesModule.fetchDetailsForEnsUsername(chainId, ensUsername)
     }
 
-    function setPubKeyGasEstimate(chainId, ensUsername, address) {
-        if(!root.ensUsernamesModule)
-            return 0
-        return ensUsernamesModule.setPubKeyGasEstimate(chainId, ensUsername, address)
-    }
-
-    function authenticateAndSetPubKey(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled) {
-        if(!root.ensUsernamesModule)
-            return ""
-        return ensUsernamesModule.authenticateAndSetPubKey(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
-    }
 
     function getEtherscanLink() {
         if(!root.ensUsernamesModule)
             return ""
         return ensUsernamesModule.getEtherscanLink()
-    }
-
-    function getSigningPhrase() {
-        if(!root.ensUsernamesModule)
-            return ""
-        return ensUsernamesModule.getSigningPhrase()
-    }
-
-    function authenticateAndReleaseEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled) {
-        if(!root.ensUsernamesModule)
-            return ""
-        return ensUsernamesModule.authenticateAndReleaseEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
     }
 
     function ensConnectOwnedUsername(name, isStatus) {
@@ -88,12 +65,6 @@ QtObject {
         if(!root.ensUsernamesModule)
             return ""
         return ensUsernamesModule.getEnsRegisteredAddress()
-    }
-
-    function authenticateAndRegisterEns(chainId, ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, eip1559Enabled) {
-        if(!root.ensUsernamesModule)
-            return
-        ensUsernamesModule.authenticateAndRegisterEns(chainId, ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, eip1559Enabled)
     }
 
     function getEnsRegistry() {
