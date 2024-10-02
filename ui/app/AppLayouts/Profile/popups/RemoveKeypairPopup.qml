@@ -19,7 +19,6 @@ StatusDialog {
 
     property string name
     property var relatedAccounts
-    property var getNetworkShortNames: function(chainIds){}
 
     signal confirmClicked()
 
@@ -68,7 +67,6 @@ StatusDialog {
                                 id: delegate
                                 width: parent.width
                                 account : model.account
-                                getNetworkShortNames: root.getNetworkShortNames
                                 color: Theme.palette.transparent
                                 nextIconVisible: false
                                 components: StatusBaseText {

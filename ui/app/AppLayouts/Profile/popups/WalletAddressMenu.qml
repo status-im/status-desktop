@@ -26,11 +26,9 @@ StatusMenu {
                                        name: "",
                                        emoji: "",
                                        colorId: "",
-                                       preferredSharingChainIds: ""
                                    })
     property bool areTestNetworksEnabled: false
     property bool isGoerliEnabled: false
-    property var preferredSharedNetworkNamesArray
 
     signal copyToClipboard(string address)
 
@@ -42,7 +40,6 @@ StatusMenu {
 
     StatusAction {
         text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.mainnet)
-        enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.mainnet)
         icon.name: "link"
         onTriggered: {
             let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
@@ -52,7 +49,6 @@ StatusMenu {
 
     StatusAction {
         text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.arbitrum)
-        enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbitrum)
         icon.name: "link"
         onTriggered: {
             let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbitrum, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
@@ -62,7 +58,6 @@ StatusMenu {
 
     StatusAction {
         text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.optimism)
-        enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.optimism)
         icon.name: "link"
         onTriggered: {
             let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
@@ -89,8 +84,7 @@ StatusMenu {
                                                 name: root.selectedAccount.name?? "",
                                                 address: root.selectedAccount.address?? "",
                                                 emoji: root.selectedAccount.emoji?? "",
-                                                colorId: root.selectedAccount.colorId?? "",
-                                                preferredSharingChainIds: root.selectedAccount.preferredSharingChainIds?? ""
+                                                colorId: root.selectedAccount.colorId?? ""
                                             })
     }
 }

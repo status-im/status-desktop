@@ -285,7 +285,6 @@ Column {
                 width: parent.width
                 keyPair: model.keyPair
                 hasPairedDevices: root.walletStore.walletModule.hasPairedDevices
-                getNetworkShortNames: walletStore.getNetworkShortNames
                 userProfilePublicKey: walletStore.userProfilePublicKey
                 onGoToAccountView: root.goToAccountView(account)
                 onRunRenameKeypairFlow: root.runRenameKeypairFlow(model)

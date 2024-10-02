@@ -163,15 +163,6 @@ QtObject {
         networksModuleInst.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
     }
 
-    function updateWalletAccountPreferredChains(address, preferredChainIds) {
-        if(areTestNetworksEnabled) {
-            accountsModule.updateWalletAccountTestPreferredChains(address, preferredChainIds)
-        }
-        else {
-            accountsModule.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-        }
-    }
-
     function getNetworkShortNames(chainIds) {
         return networksModuleInst.getNetworkShortNames(chainIds)
     }
