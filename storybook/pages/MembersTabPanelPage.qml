@@ -12,6 +12,7 @@ import Models 1.0
 import SortFilterProxyModel 0.2
 import Storybook 1.0
 
+import StatusQ 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 SplitView {
@@ -54,7 +55,7 @@ SplitView {
             Global.userProfile = this
         }
         Component.onDestruction: {
-            Utils.userProfile = {}
+            Global.userProfile = {}
         }
     }
 
@@ -85,6 +86,10 @@ SplitView {
         onDeclineRequestToJoin: {
             logs.logEvent("MembersTabPanel::onDeclineRequestToJoin", ["id"], arguments)
         }
+
+        onViewMemberMessagesClicked: {
+            logs.logEvent("MembersTabPanel::onViewMemberMessagesClicked", ["pubKey", "displayName"], arguments)
+        }
     }
 
     UsersModel {
@@ -104,16 +109,26 @@ SplitView {
         sortRole: membersTabPanelPage.panelType
 
         proxyRoles: [
-            ExpressionRole {
+            FastExpressionRole {
                 name: "membershipRequestState"
                 expression: {
                     var memberStates = usersModelWithMembershipState.membershipStatePerView[membersTabPanelPage.panelType]
                     return memberStates[model.index % (memberStates.length)]
                 }
+                expectedRoles: ["index"]
             },
-            ExpressionRole {
+            ConstantRole {
                 name: "requestToJoinLoading"
-                expression: false
+                value: false
+            },
+            FastExpressionRole {
+                function displayNameProxy(localNickname, ensName, displayName, aliasName) {
+                    return ProfileUtils.displayName(localNickname, ensName, displayName, aliasName)
+                }
+
+                name: "preferredDisplayName"
+                expectedRoles: ["localNickname", "displayName", "ensName", "alias"]
+                expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
             }
         ]
     }
@@ -125,9 +140,7 @@ SplitView {
         logsView.logText: logs.logText
 
         ColumnLayout {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
             Label {
                 text: "View state"
             }

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -68,7 +68,6 @@ Item {
             Layout.fillHeight: true
 
             model: SortFilterProxyModel {
-
                 sourceModel: root.model
 
                 sorters : [
@@ -234,7 +233,7 @@ Item {
                         text: qsTr("View Messages")
                         visible: viewMessagesButtonVisible
                         size: StatusBaseButton.Size.Small
-                        onClicked: root.viewMemberMessagesClicked(model.pubKey, model.displayName)
+                        onClicked: root.viewMemberMessagesClicked(model.pubKey, memberItem.title)
                     },
 
                     StatusButton {
