@@ -1,7 +1,7 @@
 import NimQml
 import io_interface
 import model
-from ../../../../../app_service/service/ens/utils import ENS_REGISTRY
+from app_service/service/ens/utils import ENS_REGISTRY
 
 QtObject:
   type
@@ -10,7 +10,6 @@ QtObject:
       model: Model
       modelVariant: QVariant
       etherscanLink: string
-      signingPhrase: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -24,9 +23,8 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.delegate = delegate
 
-  proc load*(self: View, link: string, signingPhrase: string) =
+  proc load*(self: View, link: string) =
     self.etherscanLink = link
-    self.signingPhrase = signingPhrase
     self.delegate.viewDidLoad()
 
   proc model*(self: View): Model =
@@ -68,18 +66,8 @@ QtObject:
   proc emitTransactionWasSentSignal*(self: View, chainId: int, txHash: string, error: string) =
     self.transactionWasSent(chainId, txHash, error)
 
-  proc setPubKeyGasEstimate*(self: View, chainId: int, ensUsername: string, address: string): int {.slot.} =
-    return self.delegate.setPubKeyGasEstimate(chainId, ensUsername, address)
-
-  proc authenticateAndSetPubKey*(self: View, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
-    self.delegate.authenticateAndSetPubKey(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
-
   proc getEtherscanLink*(self: View): string {.slot.} =
     return self.etherscanLink
-
-  proc getSigningPhrase*(self: View): string {.slot.} =
-    return self.signingPhrase
 
   proc usernameConfirmed(self: View, username: string) {.signal.}
   proc emitUsernameConfirmedSignal*(self: View, ensUsername: string) =
@@ -92,25 +80,11 @@ QtObject:
   proc removeEnsUsername*(self: View, chainId: int, ensUsername: string): bool {.slot.} =
     return self.delegate.removeEnsUsername(chainId, ensUsername)
 
-  proc releaseEnsEstimate*(self: View, chainId: int, ensUsername: string, address: string): int {.slot.} =
-    return self.delegate.releaseEnsEstimate(chainId, ensUsername, address)
-
-  proc authenticateAndReleaseEns*(self: View, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
-    self.delegate.authenticateAndReleaseEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
-
   proc connectOwnedUsername*(self: View, ensUsername: string, isStatus: bool) {.slot.} =
     self.delegate.connectOwnedUsername(ensUsername, isStatus)
 
   proc getEnsRegisteredAddress*(self: View): string {.slot.} =
     return self.delegate.getEnsRegisteredAddress()
-
-  proc registerEnsGasEstimate*(self: View, chainId: int, ensUsername: string, address: string): int {.slot.} =
-    return self.delegate.registerEnsGasEstimate(chainId, ensUsername, address)
-
-  proc authenticateAndRegisterEns*(self: View, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
-    self.delegate.authenticateAndRegisterEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
 
   proc getWalletDefaultAddress*(self: View): string {.slot.} =
     return self.delegate.getWalletDefaultAddress()

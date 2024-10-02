@@ -19,20 +19,10 @@ proc getRegistrarAddress*(chainId: int): RpcResponse[JsonNode] =
 
   return core.callPrivateRPC("ens_getRegistrarAddress", payload)
 
-proc resolver*(chainId: int, username: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, username]
-
-  return core.callPrivateRPC("ens_resolver", payload)
-
 proc ownerOf*(chainId: int, username: string): RpcResponse[JsonNode] =
   let payload = %* [chainId, username]
 
   return core.callPrivateRPC("ens_ownerOf", payload)
-
-proc contentHash*(chainId: int, username: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, username]
-
-  return core.callPrivateRPC("ens_contentHash", payload)
 
 proc publicKeyOf*(chainId: int, username: string): RpcResponse[JsonNode] =
   let payload = %* [chainId, username]
@@ -56,27 +46,3 @@ proc price*(chainId: int): RpcResponse[JsonNode] =
 proc resourceURL*(chainId: int, username: string): RpcResponse[JsonNode] =
   let payload = %* [chainId, username]
   return core.callPrivateRPC("ens_resourceURL", payload)
-
-proc prepareTxForRegisterEnsUsername*(chainId: int, txData: JsonNode, username: string, pubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, txData, username, pubkey]
-  return core.callPrivateRPC("ens_registerPrepareTx", payload)
-
-proc registerEstimate*(chainId: int, txData: JsonNode, username: string, pubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, txData, username, pubkey]
-  return core.callPrivateRPC("ens_registerEstimate", payload)
-
-proc prepareTxForReleaseEnsUsername*(chainId: int, txData: JsonNode, username: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, txData, username]
-  return core.callPrivateRPC("ens_releasePrepareTx", payload)
-
-proc releaseEstimate*(chainId: int, txData: JsonNode, username: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, txData, username]
-  return core.callPrivateRPC("ens_releaseEstimate", payload)
-
-proc prepareTxForSetPubKey*(chainId: int, txData: JsonNode, username: string, pubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, txData, username, pubkey]
-  return core.callPrivateRPC("ens_setPubKeyPrepareTx", payload)
-
-proc setPubKeyEstimate*(chainId: int, txData: JsonNode, username: string, pubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, txData, username, pubkey]
-  return core.callPrivateRPC("ens_setPubKeyEstimate", payload)

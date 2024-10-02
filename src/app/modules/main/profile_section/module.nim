@@ -107,7 +107,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.wakuModule = waku_module.newModule(result, events, settingsService, nodeConfigurationService)
   result.notificationsModule = notifications_module.newModule(result, events, settingsService, chatService, contactsService, communityService)
   result.ensUsernamesModule = ens_usernames_module.newModule(
-    result, events, settingsService, ensService, walletAccountService, networkService, tokenService, keycardService
+    result, events, settingsService, ensService, walletAccountService, networkService, tokenService
   )
   result.communitiesModule = communities_module.newModule(result, communityService)
   result.keycardModule = keycard_module.newModule(result, events, keycardService, settingsService, networkService,

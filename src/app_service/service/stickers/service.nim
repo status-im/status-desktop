@@ -137,7 +137,6 @@ QtObject:
         break
 
     if packId.len == 0:
-      error "Error updating sticker pack status", message = "no packId found for transactionHash: " & transactionHash
       return
 
     if status == TxStatusSuccess:

@@ -76,22 +76,7 @@ Item {
             preSelectedHoldingType: Constants.TokenType.ERC20
             publicKey: root.contactsStore.myPublicKey
             ensName: ensUsername.text
-            sendTransaction: function() {
-                if(bestRoutes.count === 1) {
-                    let path = bestRoutes.firstItem()
-                    let eip1559Enabled = path.gasFees.eip1559Enabled
-                    root.ensUsernamesStore.authenticateAndSetPubKey(
-                                root.ensUsernamesStore.chainId,
-                                ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
-                                store.selectedSenderAccountAddress,
-                                path.gasAmount,
-                                eip1559Enabled ? "" : path.gasFees.gasPrice,
-                                "",
-                                "",
-                                eip1559Enabled,
-                                )
-                }
-            }
+
             Connections {
                 target: root.ensUsernamesStore.ensUsernamesModule
                 function onTransactionWasSent(chainId: int, txHash: string, error: string) {
@@ -103,13 +88,6 @@ Item {
                         return connectEnsModal.sendingError.open()
                     }
                     usernameUpdated(ensUsername.text);
-                    let url =  "%1/%2".arg(connectEnsModal.store.getEtherscanLink(chainId)).arg(txHash)
-                    Global.displayToastMessage(qsTr("Transaction pending..."),
-                                               qsTr("View on etherscan"),
-                                               "",
-                                               true,
-                                               Constants.ephemeralNotificationType.normal,
-                                               url)
                     connectEnsModal.close()
                 }
             }
