@@ -7,6 +7,7 @@ import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/chat/service as chat_service
+import ../../../../app_service/service/devices/service as devices_service
 
 type
   Controller* = ref object of RootObj
@@ -17,6 +18,7 @@ type
     messageService: message_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
+    devicesService: devices_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -26,6 +28,7 @@ proc newController*(
     messageService: message_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
+    devicesService: devices_service.Service,
     ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -35,6 +38,7 @@ proc newController*(
   result.messageService = messageService
   result.chatService = chatService
   result.communityService = communityService
+  result.devicesService = devicesService
 
 proc delete*(self: Controller) =
   discard
@@ -162,3 +166,6 @@ proc setActivityCenterReadType*(self: Controller, readType: ActivityCenterReadTy
 
 proc getActivityCenterReadType*(self: Controller): ActivityCenterReadType =
   return self.activityCenterService.getActivityCenterReadType()
+
+proc enableInstallationAndSync*(self: Controller, installationId: string) =
+  self.devicesService.enableInstallationAndSync(installationId)

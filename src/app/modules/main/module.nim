@@ -225,7 +225,7 @@ proc newModule*[T](
     networkService, tokenService)
   result.gifsModule = gifs_module.newModule(result, events, gifService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
-  messageService, chatService, communityService)
+  messageService, chatService, communityService, devicesService)
   result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService,
     networkService, transactionService, tokenService, chatService, walletAccountService, keycardService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
@@ -467,6 +467,9 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
     let args = TransactionMinedArgs(e)
     self.view.showToastTransactionSendingComplete(args.chainId, args.transactionHash, args.data, args.success,
     ord(args.txType), args.fromAddress, args.toAddress, args.fromTokenKey, args.fromAmount, args.toTokenKey, args.toAmount)
+
+  self.events.on(SIGNAL_PAIRING_FALLBACK_COMPLETED) do(e:Args):
+    self.view.showToastPairingFallbackCompleted()
 
 method load*[T](
   self: Module[T],

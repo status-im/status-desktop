@@ -27,6 +27,18 @@ Rectangle {
         property bool detailsVisible: false
     }
 
+    CopyButton {
+        width: 20
+        height: 20
+        visible: d.detailsVisible
+        color: Theme.palette.baseColor1
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: 8
+        anchors.rightMargin: 8
+        textToCopy: root.details
+    }
+
     ColumnLayout {
         id: layout
 

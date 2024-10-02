@@ -211,3 +211,6 @@ QtObject:
   proc setActivityGroupCounters*(self: View, counters: Table[ActivityCenterGroup, int]) =
     self.groupCounters = counters
     self.groupCountersChanged()
+
+  proc enableInstallationAndSync*(self: View, installationId: string) {.slot.} =
+    self.delegate.enableInstallationAndSync(installationId)

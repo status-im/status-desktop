@@ -1,11 +1,14 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import shared 1.0
 import shared.popups 1.0
@@ -149,6 +152,9 @@ Popup {
                     return communityUnbannedNotificationComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.NewPrivateGroupChat:
                     return groupChatInvitationNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationReceived:
+                case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationCreated:
+                    return newDeviceDetectedComponent
                 default:
                     return null
                 }
@@ -317,6 +323,36 @@ Popup {
     }
 
     Component {
+        id: newDeviceDetectedComponent
+
+        ActivityNotificationNewDevice {
+            type: setType(notification)
+
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            accountName: store.name
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+            onMoreDetailsClicked: {
+                switch (type) {
+                    case ActivityNotificationNewDevice.InstallationType.Received:
+                        Global.openPopup(pairDeviceDialog, {
+                            name: store.name,
+                            deviceId: notification.installationId
+                        });
+                        break;
+                    case ActivityNotificationNewDevice.InstallationType.Created:
+                        Global.openPopup(checkOtherDeviceDialog, {
+                            deviceId: notification.installationId
+                        });
+                        break;
+                }
+            }
+        }
+    }
+
+    Component {
         id: communityTokenReceivedComponent
 
         ActivityNotificationCommunityTokenReceived {
@@ -367,6 +403,96 @@ Popup {
             store: root.store
             activityCenterStore: root.activityCenterStore
             onCloseActivityCenter: root.close()
+        }
+    }
+
+    function truncateDeviceId(deviceId) {
+        return deviceId.substring(0, 7).toUpperCase()
+    }
+
+    Component {
+        id: pairDeviceDialog
+
+        StatusDialog {
+            property string name
+            property string deviceId
+
+            width: 480
+            closePolicy: Popup.CloseOnPressOutside
+            destroyOnClose: true
+
+            title: qsTr("Pair new device and sync profile")
+
+            contentItem: ColumnLayout {
+                spacing: 16
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr("New device with %1 profile has been detected. You can see the device ID below and on your other device. Only confirm the request if the device ID matches.")
+                        .arg(name)
+                    wrapMode: Text.WordWrap
+                }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignHCenter
+                    font.pixelSize: 27
+                    font.weight: Font.Medium
+                    font.letterSpacing: 5
+                    text: truncateDeviceId(deviceId)
+                }
+            }
+
+            footer: StatusDialogFooter {
+                leftButtons: ObjectModel {
+                   StatusFlatButton {
+                        text: qsTr("Cancel")
+                        onClicked: {
+                            close()
+                        }
+                    }
+                }
+                rightButtons: ObjectModel {
+                    StatusButton {
+                        text: qsTr("Pair and Sync")
+                        onClicked: {
+                            activityCenterStore.enableInstallationAndSync(deviceId)
+                            close()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Component {
+        id: checkOtherDeviceDialog
+
+        StatusDialog {
+            property string deviceId
+
+            width: 480
+            closePolicy: Popup.CloseOnPressOutside
+            destroyOnClose: true
+
+            title: qsTr("Pair this device and sync profile")
+
+            contentItem: ColumnLayout {
+                spacing: 16
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr("Check your other device for a pairing request. Ensure that the this device ID displayed on your other device. Only proceed with pairing and syncing if the IDs are identical.")
+                    wrapMode: Text.WordWrap
+                }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignHCenter
+                    font.pixelSize: 27
+                    font.weight: Font.Medium
+                    font.letterSpacing: 5
+                    text: truncateDeviceId(deviceId)
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+            }
+            footer: null
         }
     }
 }

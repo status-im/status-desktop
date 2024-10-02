@@ -137,10 +137,6 @@ proc init*(self: Controller) =
     self.delegate.emitLogOut()
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SignalType.NodeReady.event) do(e:Args):
-    self.events.emit("nodeReady", Args())
-  self.connectionIds.add(handlerId)
-
   handlerId = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
     let args = KeycardLibArgs(e)
     self.delegate.onKeycardResponse(args.flowType, args.flowEvent)
@@ -642,3 +638,6 @@ proc notificationsNeedsEnable*(self: Controller): bool =
 
 proc proceedToApp*(self: Controller) =
   self.delegate.finishAppLoading()
+
+proc finishPairingThroughSeedPhraseProcess*(self: Controller, installationId: string) =
+  self.devicesService.finishPairingThroughSeedPhraseProcess(installationId)

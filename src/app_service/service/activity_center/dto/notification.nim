@@ -32,6 +32,8 @@ type ActivityCenterNotificationType* {.pure.}= enum
   FirstCommunityTokenReceived = 20
   CommunityBanned = 21
   CommunityUnbanned = 22
+  NewInstallationReceived = 23
+  NewInstallationCreated = 24
 
 type ActivityCenterGroup* {.pure.}= enum
   All = 0,
@@ -65,6 +67,7 @@ type ActivityCenterNotificationDto* = ref object of RootObj
   verificationStatus*: VerificationStatus
   name*: string
   author*: string
+  installationId*: string
   notificationType*: ActivityCenterNotificationType
   message*: MessageDto
   replyMessage*: MessageDto
@@ -84,6 +87,7 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     membershipStatus: {self.membershipStatus},
     contactVerificationStatus: {self.verificationStatus},
     author: {self.author},
+    installationId: {self.installationId},
     notificationType: {$self.notificationType.int},
     timestamp: {self.timestamp},
     read: {$self.read},
@@ -117,6 +121,7 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
       result.verificationStatus = VerificationStatus(verificationStatusInt)
 
   discard jsonObj.getProp("author", result.author)
+  discard jsonObj.getProp("installationId", result.installationId)
 
   result.notificationType = ActivityCenterNotificationType.NoType
   var notificationTypeInt: int
@@ -179,7 +184,9 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
         ActivityCenterNotificationType.CommunityTokenReceived.int,
         ActivityCenterNotificationType.FirstCommunityTokenReceived.int,
         ActivityCenterNotificationType.CommunityBanned.int,
-        ActivityCenterNotificationType.CommunityUnbanned.int
+        ActivityCenterNotificationType.CommunityUnbanned.int,
+        ActivityCenterNotificationType.NewInstallationReceived.int,
+        ActivityCenterNotificationType.NewInstallationCreated.int,
       ]
     of ActivityCenterGroup.Mentions:
       return @[ActivityCenterNotificationType.Mention.int]

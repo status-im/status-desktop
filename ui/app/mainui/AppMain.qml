@@ -370,6 +370,17 @@ Item {
                 ""
             )
         }
+
+        function onShowToastPairingFallbackCompleted() {
+            Global.displayToastMessage(
+                qsTr("Device paired"),
+                qsTr("Sync in process. Keep device powered and app open."),
+                "checkmark-circle",
+                false,
+                Constants.ephemeralNotificationType.success,
+                ""
+            )
+        }
     }
 
     QtObject {

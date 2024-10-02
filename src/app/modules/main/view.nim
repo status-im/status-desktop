@@ -344,6 +344,7 @@ QtObject:
     txType: int, fromAddr: string, toAddr: string, fromTokenKey: string, fromAmount: string, toTokenKey: string, toAmount: string) {.signal.}
   proc showToastTransactionSendingComplete*(self: View, chainId: int, txHash: string, data: string, success: bool,
     txType: int, fromAddr: string, toAddr: string, fromTokenKey: string, fromAmount: string, toTokenKey: string, toAmount: string) {.signal.}
+  proc showToastPairingFallbackCompleted*(self: View) {.signal.}
 
   ## Used in test env only, for testing keycard flows
   proc registerMockedKeycard*(self: View, cardIndex: int, readerState: int, keycardState: int,

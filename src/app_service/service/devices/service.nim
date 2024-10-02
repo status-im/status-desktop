@@ -9,6 +9,7 @@ import ./dto/local_pairing_status
 import app_service/service/settings/service as settings_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
+import ../../common/activity_center
 
 import app/global/global_singleton
 import app/core/[main]
@@ -49,6 +50,7 @@ const SIGNAL_DEVICES_LOADED* = "devicesLoaded"
 const SIGNAL_ERROR_LOADING_DEVICES* = "devicesErrorLoading"
 const SIGNAL_LOCAL_PAIRING_STATUS_UPDATE* = "localPairingStatusUpdate"
 const SIGNAL_INSTALLATION_NAME_UPDATED* = "installationNameUpdated"
+const SIGNAL_PAIRING_FALLBACK_COMPLETED* = "pairingFallbackCompleted"
 
 QtObject:
   type Service* = ref object of QObject
@@ -174,14 +176,23 @@ QtObject:
   #
 
   proc inputConnectionStringForBootstrappingFinished*(self: Service, responseJson: string) {.slot.} =
+    var currentError = ""
+    if self.localPairingStatus.state == LocalPairingState.Error:
+      # The error was already returned by an event, keep it to reuse
+      currentError = self.localPairingStatus.error
+
     let response = responseJson.parseJson
     let errorDescription = response["error"].getStr
     if len(errorDescription) == 0:
+      var installation = InstallationDto()
+      installation.id = response["installationId"].getStr # Set the installation with the ID (only info we have for now)
       let data = LocalPairingEventArgs(
+        installation: installation, 
         eventType: EventCompletedAndNodeReady,
         action: ActionPairingInstallation,
         accountData: LocalPairingAccountData(),
-        error: "")
+        error: currentError,
+      )
       self.updateLocalPairingStatus(data)
       return
     error "failed to start bootstrapping device", errorDescription
@@ -189,7 +200,8 @@ QtObject:
       eventType: EventConnectionError,
       action: ActionUnknown,
       accountData: LocalPairingAccountData(),
-      error: errorDescription)
+      error: errorDescription,
+    )
     self.updateLocalPairingStatus(data)
 
   proc validateConnectionString*(self: Service, connectionString: string): string =
@@ -360,3 +372,24 @@ QtObject:
       configJSON: $configJSON
     )
     self.threadpool.start(arg)
+
+  proc finishPairingThroughSeedPhraseProcess*(self: Service, installationId: string) =
+    try:
+      let response = status_installations.finishPairingThroughSeedPhraseProcess(installationId)
+      if response.error != nil:
+        let e = Json.decode($response.error, RpcError)
+        raise newException(CatchableError, e.message)
+    except Exception as e:
+      error "error: ", desription = e.msg
+
+  proc enableInstallationAndSync*(self: Service, installationId: string) =
+    try:
+      let response = status_installations.enableInstallationAndSync(installationId)
+      if response.error != nil:
+        let e = Json.decode($response.error, RpcError)
+        raise newException(CatchableError, e.message)
+      # Parse AC notif
+      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
+      self.events.emit(SIGNAL_PAIRING_FALLBACK_COMPLETED, Args())
+    except Exception as e:
+      error "error: ", desription = e.msg
