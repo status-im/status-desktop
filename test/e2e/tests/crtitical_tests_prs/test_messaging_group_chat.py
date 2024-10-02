@@ -6,15 +6,14 @@ import pytest
 from allure_commons._allure import step
 
 import driver
-from tests.messages import marks
+from constants.links import external_link, link_to_status_community
 
 import configs.testpath
-import constants
 from constants import UserAccount, RandomUser
-from scripts.utils.generators import random_name_string, random_password_string
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen, ToolBar
+from . import marks
 
 pytestmark = marks
 
@@ -23,13 +22,17 @@ pytestmark = marks
 @pytest.mark.case(703014)
 @pytest.mark.timeout(timeout=315)
 @pytest.mark.critical
-def test_group_chat_add_contact_in_ac(multiple_instances):
+@pytest.mark.parametrize('community_name, domain_link, domain_link_2',
+                         [pytest.param('Status', 'status.app', 'github.com')
+                          ])
+def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain_link, domain_link_2):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
     user_three: UserAccount = RandomUser()
     members = [user_two.name, user_three.name]
     main_window = MainWindow()
     messages_screen = MessagesScreen()
+    path = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
 
     with \
@@ -171,6 +174,97 @@ def test_group_chat_add_contact_in_ac(multiple_instances):
                 for message_item in message_items:
                     assert chat_message_2 in message_item
 
+            with step(f'User {user_two.name}, get own profile link and emoji hash in online identifier'):
+                profile_link = main_window.left_panel.open_online_identifier().copy_link_to_profile()
+                public_key_from_emoji_hash = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier().get_emoji_hash
+
+            with step(f'User {user_two.name} paste external link'):
+                message = external_link
+                messages_screen.group_chat.send_message_to_group_chat(message)
+                messages_screen.group_chat.type_message(message)
+
+            with step('Verify text in the link preview bubble'):
+                assert driver.waitFor(
+                    lambda: Messaging.SHOW_PREVIEWS_TITLE.value == messages_screen.group_chat.get_show_link_preview_bubble_title(),
+                    timeout), f'Actual title of the link preview is not correct'
+                assert Messaging.SHOW_PREVIEWS_TEXT.value == messages_screen.group_chat.get_show_link_preview_bubble_description(), \
+                    f'Actual text of the link preview is not correct'
+
+            with step('Click options combobox and verify that there are 3 options'):
+                messages_screen.group_chat.click_options().are_all_options_visible()
+
+            with step('Close link preview options popup and send a message'):
+                messages_screen.group_chat.close_link_preview_popup().confirm_sending_message()
+
+            with step('Verify that message was sent without preview'):
+                sent_message = messages_screen.chat.messages(0)
+                assert driver.waitFor(lambda: sent_message[0].link_preview is None,
+                                      timeout), f'Message was wrongly sent with preview'
+
+            with step(f'Paste external link again and verify that there are still 3 options'):
+                messages_screen.group_chat.type_message(message)
+                messages_screen.group_chat.click_options().are_all_options_visible()
+
+            with step('Close link preview options popup and send a message'):
+                messages_screen.group_chat.close_link_preview_popup().confirm_sending_message()
+
+            with step('Change preview settings to always show previews in messaging settings'):
+                main_window.left_panel.open_settings().left_panel.open_messaging_settings().click_always_show()
+                main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(group_chat_new_name)
+
+            with step(f'Paste external link again'):
+                messages_screen.group_chat.type_message(message)
+
+            with step('Wait until link preview is ready'):
+                assert driver.waitFor(
+                    lambda: domain_link_2 == messages_screen.group_chat.get_link_preview_bubble_description(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+            with step(f'Paste image to the same message'):
+                messages_screen.group_chat.choose_image(str(path))
+                messages_screen.group_chat.send_message()
+
+            with step('Verify image and link unfurl are present in the last sent message'):
+                message_object = messages_screen.chat.messages(0)[0]
+                assert driver.waitFor(lambda: message_object.image_message.visible,
+                                      timeout), f"Image is not found in the last message"
+                assert driver.waitFor(lambda: message_object.delegate_button.is_visible,
+                                      timeout), f"Link preview is not found in the last message"
+                assert driver.waitFor(lambda: message_object.banner_image.is_visible,
+                                      timeout), f"Banner image is not found in the last message"
+                assert driver.waitFor(
+                    lambda: domain_link_2 == message_object.get_link_domain(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+            with step(f'Paste link to status community'):
+                message_community = link_to_status_community
+                messages_screen.group_chat.type_message(message_community)
+
+            with step('Verify title and subtitle of preview are correct and close button exists'):
+                assert driver.waitFor(
+                    lambda: community_name == messages_screen.group_chat.get_link_preview_bubble_title(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                assert driver.waitFor(
+                    lambda: domain_link == messages_screen.group_chat.get_link_preview_bubble_description(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+            with step('Close link preview options popup and send a message'):
+                messages_screen.group_chat.confirm_sending_message()
+
+            with step(f'Paste link to user profile link and send message'):
+                message_user = profile_link
+                messages_screen.group_chat.type_message(message_user)
+                assert driver.waitFor(
+                    lambda: user_two.name == messages_screen.group_chat.get_link_preview_bubble_title(), 12000)
+                messages_screen.group_chat.confirm_sending_message()
+
+            with step('Verify title and emojihash are correct for link preview of sent message'):
+                sent_message = messages_screen.chat.messages(0)
+                assert driver.waitFor(lambda: sent_message[0].get_link_preview_title() == user_two.name,
+                                      timeout)
+                assert driver.waitFor(lambda: sent_message[0].link_preview_emoji_hash == public_key_from_emoji_hash,
+                                      timeout)
+
             with step('Leave group'):
                 messages_screen.group_chat.leave_group().confirm_leaving()
 
@@ -205,7 +299,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances):
                 assert group_chat_new_name not in messages_screen.left_panel.get_chats_names
             main_window.hide()
 
-        with step(f'Get back to {aut_one} and check members list'):
+        with step(f'Get back to {user_one.name} and check members list'):
             aut_one.attach()
             main_window.prepare()
             assert group_chat_new_name in messages_screen.left_panel.get_chats_names, \

@@ -7,13 +7,11 @@ from allure_commons._allure import step
 
 from constants import RandomUser
 from helpers.WalletHelper import authenticate_with_password
-from tests.settings.settings_wallet import marks
+from . import marks
 
-import constants
 import driver
 from constants.wallet import WalletAccountSettings, DerivationPathValue
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
 

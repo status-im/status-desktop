@@ -8,7 +8,7 @@ import constants
 import driver
 from constants import RandomUser
 from gui.components.back_up_your_seed_phrase_banner import BackUpSeedPhraseBanner
-from tests.onboarding import marks
+from . import marks
 
 import configs.timeouts
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp

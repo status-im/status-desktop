@@ -9,7 +9,7 @@ from driver.aut import AUT
 from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
 from scripts.utils.generators import random_mnemonic, get_wallet_address_from_mnemonic
-from tests.onboarding import marks
+from . import marks
 
 from gui.main_window import LeftPanel
 from gui.screens.onboarding import LoginView

@@ -5,7 +5,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from tests.settings.settings_wallet import marks
+from . import marks
 
 import configs
 import driver
