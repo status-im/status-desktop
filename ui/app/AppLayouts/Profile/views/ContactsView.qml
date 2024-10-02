@@ -89,6 +89,7 @@ SettingsContentBase {
                     const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
                     Global.blockContactRequested(contactContextMenu.publicKey, contactDetails)
                 }
+                onClosed: destroy()
             }
         }
         SearchBox {

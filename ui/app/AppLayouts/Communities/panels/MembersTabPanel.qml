@@ -371,6 +371,7 @@ Item {
                 const contactDetails = memberContextMenuView.publicKey === "" ? {} : Utils.getContactDetailsAsJson(memberContextMenuView.publicKey, true, true)
                 Global.blockContactRequested(memberContextMenuView.publicKey, contactDetails)
             }
+            onClosed: destroy()
         }
     }
 

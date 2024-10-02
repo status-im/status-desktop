@@ -205,6 +205,7 @@ Item {
             onRemoveFromGroup: {
                 root.store.removeMemberFromGroupChat(profileContextMenu.publicKey)
             }
+            onClosed: destroy()
         }
     }
 }

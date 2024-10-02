@@ -1227,6 +1227,10 @@ Loader {
                 root.store.removeMemberFromGroupChat(profileContextMenu.publicKey)
             }
             onOpened: root.setMessageActive(root.messageId, true)
+            onClosed: {
+                root.setMessageActive(root.messageId, false)
+                destroy()
+            }
         }
     }
     Component {
