@@ -1,5 +1,5 @@
 import NimQml, Tables, stew/shims/strformat, sequtils, sugar
-
+import std/macros
 # TODO: use generics to remove duplication between user_model and member_model
 
 import ../../../app_service/common/types
@@ -263,6 +263,18 @@ QtObject:
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
+
+  # Macro that simplifies checking and updating values in a model
+  # IMPORTANT:
+    # The model's items need to be in a `seq` called `items`
+    # A `seq[string]` named `roles` needs to exist
+    # The index of the item being checked must be named `index`
+  macro updateRole(propertyName: untyped, roleName: untyped): untyped =
+    quote do:
+      if self.items[ind].`propertyName` != `propertyName`:
+        self.items[ind].`propertyName` = `propertyName`
+        roles.add(ModelRole.`roleName`.int)
+
   proc updateItem*(
       self: Model,
       pubKey: string,
@@ -284,55 +296,21 @@ QtObject:
 
     var roles: seq[int] = @[]
 
-    let preferredDisplayNameChanged =
-      resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
-      resolvePreferredDisplayName(localNickname, ensName, displayName, alias)
+    var preferredNameChanged = false
 
-    if self.items[ind].displayName != displayName:
-      self.items[ind].displayName = displayName
-      roles.add(ModelRole.DisplayName.int)
+    updateRole(displayName, DisplayName)
+    updateRole(ensName, EnsName)
+    updateRole(localNickname, LocalNickname)
+    updateRole(isEnsVerified, IsEnsVerified)
+    updateRole(alias, Alias)
+    updateRole(icon, Icon)
+    updateRole(isContact, IsContact)
+    updateRole(isVerified, IsVerified)
+    updateRole(memberRole, MemberRole)
+    updateRole(joined, Joined)
+    updateRole(isUntrustworthy, IsUntrustworthy)
 
-    if self.items[ind].ensName != ensName:
-      self.items[ind].ensName = ensName
-      roles.add(ModelRole.EnsName.int)
-
-    if self.items[ind].localNickname != localNickname:
-      self.items[ind].localNickname = localNickname
-      roles.add(ModelRole.LocalNickname.int)
-
-    if self.items[ind].isEnsVerified != isEnsVerified:
-      self.items[ind].isEnsVerified = isEnsVerified
-      roles.add(ModelRole.IsEnsVerified.int)
-
-    if self.items[ind].alias != alias:
-      self.items[ind].alias = alias
-      roles.add(ModelRole.Alias.int)
-
-    if self.items[ind].icon != icon:
-      self.items[ind].icon = icon
-      roles.add(ModelRole.Icon.int)
-
-    if self.items[ind].isContact != isContact:
-      self.items[ind].isContact = isContact
-      roles.add(ModelRole.IsContact.int)
-
-    if self.items[ind].isVerified != isVerified:
-      self.items[ind].isVerified = isVerified
-      roles.add(ModelRole.IsVerified.int)
-
-    if self.items[ind].memberRole != memberRole:
-      self.items[ind].memberRole = memberRole
-      roles.add(ModelRole.MemberRole.int)
-
-    if self.items[ind].joined != joined:
-      self.items[ind].joined = joined
-      roles.add(ModelRole.Joined.int)
-
-    if self.items[ind].isUntrustworthy != isUntrustworthy:
-      self.items[ind].isUntrustworthy = isUntrustworthy
-      roles.add(ModelRole.IsUntrustworthy.int)
-
-    if preferredDisplayNameChanged:
+    if preferredNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
 
     if roles.len == 0:
@@ -342,7 +320,7 @@ QtObject:
     defer: index.delete
     self.dataChanged(index, index, roles)
 
-  proc updateItems*(self: Model, items: seq[MemberItem]) =
+  proc updateToTheseItems*(self: Model, items: seq[MemberItem]) =
     # Check for removals
     for oldItem in self.items:
       var found = false
@@ -353,13 +331,18 @@ QtObject:
       if not found:
         self.removeItemById(oldItem.pubKey)
 
+    var itemsToAdd: seq[MemberItem] = @[]
+    var itemsToUpdate: seq[MemberItem] = @[]
+
     for item in items:
       let ind = self.findIndexForMember(item.pubKey)
       if ind == -1:
         # Item does not exist, we add it
-        self.addItem(item)
-        return
+        # self.addItem(item)
+        itemsToAdd.add(item)
+        continue
 
+      itemsToUpdate.add(item)
       self.updateItem(
         item.pubKey,
         item.displayName,
@@ -374,6 +357,12 @@ QtObject:
         item.joined,
         item.isUntrustworthy,
       )
+
+    if itemsToAdd.len > 0:
+      self.addItems(itemsToAdd)
+
+    # if itemsToUpdate.len > 0:
+    #   self.addItems(itemsToAdd)
 
   proc updateItem*(
       self: Model,

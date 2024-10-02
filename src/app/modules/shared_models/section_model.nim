@@ -422,10 +422,10 @@ QtObject:
       self.items[index].isPendingOwnershipRequest = item.isPendingOwnershipRequest
       roles.add(ModelRole.IsPendingOwnershipRequest.int)
 
-    self.items[index].members.updateItems(item.members.getItems())
-    self.items[index].bannedMembers.updateItems(item.bannedMembers.getItems())
-    self.items[index].pendingMemberRequests.updateItems(item.pendingMemberRequests.getItems())
-    self.items[index].declinedMemberRequests.updateItems(item.declinedMemberRequests.getItems())
+    self.items[index].members.updateToTheseItems(item.members.getItems())
+    self.items[index].bannedMembers.updateToTheseItems(item.bannedMembers.getItems())
+    self.items[index].pendingMemberRequests.updateToTheseItems(item.pendingMemberRequests.getItems())
+    self.items[index].declinedMemberRequests.updateToTheseItems(item.declinedMemberRequests.getItems())
 
     if roles.len == 0:
       return
@@ -462,16 +462,12 @@ QtObject:
   proc setActiveSection*(self: SectionModel, id: string) =
     for i in 0 ..< self.items.len:
       if self.items[i].active:
-        if self.items[i].active == false:
-          continue
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.items[i].active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
       if self.items[i].id == id:
-        if self.items[i].active == true:
-          continue
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.items[i].active = true
