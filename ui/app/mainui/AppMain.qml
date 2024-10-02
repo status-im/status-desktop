@@ -631,6 +631,8 @@ Item {
             store: appMain.rootChatStore
             transactionStore: appMain.transactionStore
             walletAssetsStore: appMain.walletAssetsStore
+
+            isWalletEnabled: appMain.rootStore.profileSectionStore.profileStore.isWalletEnabled
         }
     }
 
