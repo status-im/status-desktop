@@ -59,7 +59,6 @@ Item {
             asset.letterSize: 14
             asset.bgColor: Theme.palette.primaryColor3
             asset.isImage: asset.emoji
-            enabledNetworks: root.walletStore.filteredFlatModel // TODO: https://github.com/status-im/status-desktop/issues/14227
             rightSideButtons: RowLayout {
                 StatusFlatRoundButton {
                     Layout.preferredWidth: 32
@@ -84,14 +83,12 @@ Item {
                     icon.color: (hovered || d.menuOpened) ? Theme.palette.directColor1 : Theme.palette.baseColor1
                     highlighted: d.menuOpened
                     onClicked: {
-                        const preferredChains = StatusQUtils.ModelUtils.modelToArray(accountInfoDelegate.enabledNetworks, ["chainId"]).map((item) => item.chainId).join(":")
                         Global.openMenu(delegatesActionsMenu, this, { 
                             x: moreButton.x, 
                             y : moreButton.y, 
                             accountAddress: model.address,
                             accountName: model.name,
-                            accountColorId: model.colorId,
-                            accountPrefferedChains: preferredChains
+                            accountColorId: model.colorId
                         });
                     }
                     onHoveredChanged: accountInfoDelegate.highlight = hovered
@@ -99,12 +96,10 @@ Item {
             }
             onClicked: {
                 if (mouse.button === Qt.RightButton) {
-                    const preferredChains = StatusQUtils.ModelUtils.modelToArray(accountInfoDelegate.enabledNetworks, ["chainId"]).map((item) => item.chainId).join(":")
                     Global.openMenu(delegatesActionsMenu, this, { 
                         accountAddress: model.address,
                         accountName: model.name,
-                        accountColorId: model.colorId,
-                        accountPrefferedChains: preferredChains
+                        accountColorId: model.colorId
                     });
                 }
             }
@@ -118,7 +113,6 @@ Item {
             property string accountAddress: ""
             property string accountName: ""
             property string accountColorId: ""
-            property var accountPrefferedChains: []
 
             onOpened: { d.menuOpened = true; }
             onClosed: { d.menuOpened = false; }
@@ -140,11 +134,9 @@ Item {
                     Global.openShowQRPopup({
                         showSingleAccount: true,
                         switchingAccounsEnabled: false,
-                        changingPreferredChainsEnabled: false,
                         hasFloatingButtons: false,
                         name: contextMenu.accountName,
                         address: contextMenu.accountAddress,
-                        preferredSharingChainIds: contextMenu.accountPrefferedChains,
                         colorId: contextMenu.accountColorId
                     })
                 }

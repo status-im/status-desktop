@@ -21,7 +21,6 @@ ProfileShowcasePanel {
     delegate: ProfileShowcasePanelDelegate {
         title: model ? model.name : ""
         secondaryTitle: WalletUtils.addressToDisplay(model ? model.address ?? "" : "",
-                                                     model ? model.preferredSharingChainShortNames ?? "" : "",
                                                      true,
                                                      containsMouse)
         hasEmoji: model && !!model.emoji
@@ -35,9 +34,8 @@ ProfileShowcasePanel {
         expression: {
             lowerCaseSearchText
             return (address.toLowerCase().includes(lowerCaseSearchText) ||
-                    name.toLowerCase().includes(lowerCaseSearchText) ||
-                    preferredSharingChainShortNames.toLowerCase().includes(lowerCaseSearchText))
+                    name.toLowerCase().includes(lowerCaseSearchText))
         }
-        expectedRoles: ["address", "name", "preferredSharingChainShortNames"]
+        expectedRoles: ["address", "name"]
     }
 }

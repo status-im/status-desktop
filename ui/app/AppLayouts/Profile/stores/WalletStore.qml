@@ -45,13 +45,6 @@ QtObject {
         sourceModel: root.accounts
         proxyRoles: [
             FastExpressionRole {
-                name: "preferredSharingChainShortNames"
-                expression: {
-                    return root.networksModuleInst.getNetworkShortNames(model.preferredSharingChainIds)
-                }
-                expectedRoles: ["preferredSharingChainIds"]
-            },
-            FastExpressionRole {
                 name: "color"
 
                 function getColor(colorId) {
