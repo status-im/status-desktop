@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
-import QtQuick.Controls 2.14
-import QtQuick.Window 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
 
 import StatusQ 0.1
 import StatusQ.Components 0.1
@@ -13,7 +13,7 @@ import StatusQ.Controls 0.1
 import utils 1.0
 import shared.views 1.0
 import shared.controls 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 
@@ -28,18 +28,19 @@ Item {
     id: root
 
     property var token: ({})
+    property SharedStores.RootStore sharedRootStore
     property WalletStores.TokensStore tokensStore
-    property CurrenciesStore currencyStore
-    property NetworkConnectionStore networkConnectionStore
+    property SharedStores.CurrenciesStore currencyStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     property var allNetworksModel
     property var networkFilters
     onNetworkFiltersChanged: d.forceRefreshBalanceStore = true
     /*required*/ property string address: ""
-    property TokenBalanceHistoryStore balanceStore: TokenBalanceHistoryStore {}
+    property SharedStores.TokenBalanceHistoryStore balanceStore: SharedStores.TokenBalanceHistoryStore {}
 
     QtObject {
         id: d
-        property TokenMarketValuesStore marketValueStore : RootStore.marketValueStore
+        property SharedStores.TokenMarketValuesStore marketValueStore : root.sharedRootStore.marketValueStore
         readonly property string symbol: !!root.token? root.token.symbol?? "" : ""
         property bool marketDetailsLoading: !!root.token? root.token.marketDetailsLoading?? false : false
         property bool tokenDetailsLoading: !!root.token? root.token.detailsLoading?? false: false
@@ -136,7 +137,7 @@ Item {
                     id: graphDetail
 
                     property int selectedGraphType: AssetsDetailView.GraphType.Price
-                    property TokenMarketValuesStore selectedStore: d.marketValueStore
+                    property SharedStores.TokenMarketValuesStore selectedStore: d.marketValueStore
 
                     function dataReady() {
                         return typeof selectedStore != "undefined"
@@ -165,7 +166,7 @@ Item {
                         {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price, visible: !d.isCommunityAsset},
                         {text: qsTr("Balance"), enabled: true, id: AssetsDetailView.GraphType.Balance, visible: true},
                     ]
-                    defaultTimeRangeIndexShown: ChartStoreBase.TimeRange.All
+                    defaultTimeRangeIndexShown: SharedStores.ChartStoreBase.TimeRange.All
                     timeRangeModel: dataReady() && selectedStore.timeRangeTabsModel
                     onHeaderTabClicked: (privateIdentifier, isTimeRange) => {
                                             if(!isTimeRange && graphDetail.selectedGraphType !== privateIdentifier) {
@@ -185,7 +186,7 @@ Item {
 
                     readonly property var dateToShortLabel: function (value) {
                         const range = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
-                        return range === ChartStoreBase.TimeRange.Weekly || range === ChartStoreBase.TimeRange.Monthly ?
+                        return range === SharedStores.ChartStoreBase.TimeRange.Weekly || range === SharedStores.ChartStoreBase.TimeRange.Monthly ?
                                     LocaleUtils.getDayMonth(value) :
                                     LocaleUtils.getMonthYear(value)
                     }
@@ -319,7 +320,7 @@ Item {
                     function updateBalanceStore() {
                         let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
 
-                        let currencySymbol = RootStore.currencyStore.currentCurrency
+                        let currencySymbol = root.sharedRootStore.currencyStore.currentCurrency
                         if(!balanceStore.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum) || d.forceRefreshBalanceStore) {
                             root.tokensStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
                         }

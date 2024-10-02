@@ -34,6 +34,7 @@ Item {
     required property var baseWalletAssetsModel
     required property var baseWalletCollectiblesModel
 
+    property string currencySymbol: "USD"
     property var getCurrencyAmount: function (balance, symbol) {}
     property var getCurrentCurrencyAmount: function(balance){}
 
@@ -216,7 +217,7 @@ Item {
                         CurrencyAmountInput {
                             id: currencyAmount
                             enabled: displayThresholdSwitch.checked
-                            currencySymbol: SharedStores.RootStore.currencyStore.currentCurrency
+                            currencySymbol: root.currencySymbol
                             value: advancedSettings.getDisplayThresholdAmount()
                             onValueChanged: {
                                 if (!advancedSettings.dirty && advancedSettings.getDisplayThresholdAmount() === value) {

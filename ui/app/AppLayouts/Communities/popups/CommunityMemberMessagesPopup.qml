@@ -12,12 +12,14 @@ import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared.views.chat 1.0
+import shared.stores 1.0 as SharedStores
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
 StatusDialog {
     id: root
 
+    property SharedStores.RootStore sharedRootStore
     property ChatStores.RootStore rootStore
     property var chatCommunitySectionModule
     property var memberMessagesModel: chatCommunitySectionModule.memberMessagesModel
@@ -62,6 +64,7 @@ StatusDialog {
 
                     width: parent.width
 
+                    sharedRootStore: root.sharedRootStore
                     rootStore: root.store
                     chatCommunitySectionModule: root.chatCommunitySectionModule
                     messageStore: root.memberMessagesModel

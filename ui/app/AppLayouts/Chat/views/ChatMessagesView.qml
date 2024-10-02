@@ -12,6 +12,7 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
+import shared.stores 1.0 as SharedStores
 import shared.views 1.0
 import shared.panels 1.0
 import shared.popups 1.0
@@ -29,6 +30,8 @@ Item {
     id: root
 
     property var chatContentModule
+
+    property SharedStores.RootStore sharedRootStore
     property RootStore rootStore
     property MessageStore messageStore
     property UsersStore usersStore
@@ -266,6 +269,8 @@ Item {
             width: ListView.view.width
 
             objectName: "chatMessageViewDelegate"
+
+            sharedRootStore: root.sharedRootStore
             rootStore: root.rootStore
             messageStore: root.messageStore
             usersStore: root.usersStore

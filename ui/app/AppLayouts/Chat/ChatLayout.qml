@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.14
 
 import utils 1.0
 import shared.popups 1.0
-import shared.stores 1.0
-import shared.stores.send 1.0
+import shared.stores 1.0 as SharedStores
+import shared.stores.send 1.0 as SendStores
 
 import "views"
 
@@ -14,8 +14,8 @@ import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Communities.stores 1.0 as CommunitiesStores
 
-import AppLayouts.Chat.stores 1.0
-import AppLayouts.Profile.stores 1.0
+import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import StatusQ.Core.Utils 0.1
@@ -23,15 +23,16 @@ import StatusQ.Core.Utils 0.1
 StackLayout {
     id: root
 
-    property RootStore rootStore
-    property CreateChatPropertiesStore createChatPropertiesStore
-    readonly property ContactsStore contactsStore: rootStore.contactsStore
-    readonly property PermissionsStore permissionsStore: rootStore.permissionsStore
+    property SharedStores.RootStore sharedRootStore
+    property ChatStores.RootStore rootStore
+    property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
+    readonly property ProfileStores.ContactsStore contactsStore: rootStore.contactsStore
+    readonly property SharedStores.PermissionsStore permissionsStore: rootStore.permissionsStore
     property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStore.TokensStore tokensStore
-    required property TransactionStore transactionStore
+    required property SendStores.TransactionStore transactionStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
-    required property CurrenciesStore currencyStore
+    required property SharedStores.CurrenciesStore currencyStore
 
     property var sectionItemModel
     property var sendModalPopup
@@ -148,6 +149,7 @@ StackLayout {
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
             contactsStore: root.contactsStore
+            sharedRootStore: root.sharedRootStore
             rootStore: root.rootStore
             transactionStore: root.transactionStore
             createChatPropertiesStore: root.createChatPropertiesStore

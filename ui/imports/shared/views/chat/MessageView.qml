@@ -23,6 +23,7 @@ import AppLayouts.Profile.stores 1.0 as ProfileStores
 Loader {
     id: root
 
+    property SharedStores.RootStore sharedRootStore
     property ChatStores.RootStore rootStore
     property ChatStores.MessageStore messageStore
     property ChatStores.UsersStore usersStore
@@ -930,7 +931,7 @@ Loader {
 
                         store: root.rootStore
                         usersModel: root.usersStore.usersModel
-                        sharedStore: SharedStores.RootStore
+                        sharedStore: root.sharedRootStore
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
 
@@ -961,9 +962,9 @@ Loader {
                             Global.openMenu(imageContextMenuComponent, item, { url: url, domain: domain, requireConfirmationOnOpen: true })
                         }
                         onHoveredLinkChanged: delegate.highlightedLink = linksMessageView.hoveredLink
-                        gifUnfurlingEnabled: SharedStores.RootStore.gifUnfurlingEnabled
-                        canAskToUnfurlGifs: !SharedStores.RootStore.neverAskAboutUnfurlingAgain
-                        onSetNeverAskAboutUnfurlingAgain: SharedStores.RootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+                        gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
+                        canAskToUnfurlGifs: !root.sharedRootStore.neverAskAboutUnfurlingAgain
+                        onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
                         Component.onCompleted: {
                             root.messageStore.messageModule.forceLinkPreviewsLocalData(root.messageId)

@@ -408,6 +408,8 @@ Item {
 
     Popups {
         id: popups
+
+        sharedRootStore: RootStore
         popupParent: appMain
         rootStore: appMain.rootStore
         communityTokensStore: appMain.communityTokensStore
@@ -1350,6 +1352,7 @@ Item {
                                     restoreMode: Binding.RestoreBindingOrValue
                                 }
 
+                                sharedRootStore: RootStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     communityTokensStore: appMain.communityTokensStore
@@ -1397,6 +1400,7 @@ Item {
                         asynchronous: true
                         sourceComponent: WalletLayout {
                             objectName: "walletLayoutReal"
+                            sharedRootStore: RootStore
                             store: appMain.rootStore
                             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                             communitiesStore: appMain.communitiesStore
@@ -1417,6 +1421,7 @@ Item {
                         active: appView.currentIndex === Constants.appViewStackIndex.profile
                         asynchronous: true
                         sourceComponent: ProfileLayout {
+                            sharedRootStore: RootStore
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
                             systemPalette: appMain.sysPalette
@@ -1506,6 +1511,7 @@ Item {
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled)
+                                sharedRootStore: RootStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     communityTokensStore: appMain.communityTokensStore
@@ -1550,6 +1556,7 @@ Item {
                             anchors.rightMargin - anchors.leftMargin : 0
 
                     sourceComponent: CreateChatView {
+                        sharedRootStore: RootStore
                         rootStore: ChatStores.RootStore {
                             contactsStore: appMain.rootStore.contactStore
                             communityTokensStore: appMain.communityTokensStore
