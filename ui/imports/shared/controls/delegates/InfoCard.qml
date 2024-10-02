@@ -20,7 +20,6 @@ Control {
     property string title: ""
     property string subTitle: ""
     property string tagIcon: ""
-    property var enabledNetworks
     property bool loading: false
     property alias rightSideButtons: rightSideButtonsLoader.sourceComponent
     signal clicked(var mouse)
@@ -111,29 +110,6 @@ Control {
                 elide: Text.ElideRight
             }
             Item { Layout.fillHeight: true }
-            Row {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 20
-                spacing: -4
-                visible: (chainRepeater.count > 0)
-                Repeater {
-                    id: chainRepeater
-                    model: root.enabledNetworks
-                    delegate: StatusRoundedComponent {
-                        width: 20
-                        height: 20
-                        visible: model.iconUrl !== ""
-                        color: Theme.palette.baseColor3
-                        z: index + 1
-                        border.color: Style.current.background
-                        StatusIcon {
-                            anchors.fill:parent
-                            anchors.margins: 1
-                            icon: Style.svg(model.iconUrl)
-                        }
-                    }
-                }
-            }
 
             ManageTokensCommunityTag {
                 Layout.preferredWidth: 24

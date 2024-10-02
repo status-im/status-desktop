@@ -80,12 +80,12 @@ QtObject {
         return timestamp + Constants.time.secondsIn7Days
     }
 
-    function addressToDisplay(address, chainShortNames, shortForm, hovered) {
+    function addressToDisplay(address, shortForm, hovered) {
         let finalAddress = address
         if (shortForm) {
             finalAddress = StatusQUtils.Utils.elideText(address,6,4)
         }
-        return hovered? WalletUtils.colorizedChainPrefix(chainShortNames) + Utils.richColorText(finalAddress, Theme.palette.directColor1) : chainShortNames + finalAddress
+        return hovered ? Utils.richColorText(finalAddress, Theme.palette.directColor1) : finalAddress
     }
 
     /**
