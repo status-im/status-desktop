@@ -160,9 +160,10 @@ proc mainProc() =
   let fleetConfig = readFile(joinPath(getAppDir(), fleetsPath))
   let statusFoundation = newStatusFoundation(fleetConfig)
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
+  # Required by the WalletConnectSDK view right after creating the QGuiApplication instance
+  initializeWebView()
   enableHDPI(uiScaleFilePath)
   tryEnableThreadedRenderer()
-  initializeOpenGL()
 
   let imageCert = imageServerTLSCert()
   installSelfSignedCertificate(imageCert)
@@ -173,9 +174,6 @@ proc mainProc() =
   if not singletonInstance.localAppSettings.getTranslationsEnabled():
     if singletonInstance.localAppSettings.getLanguage() != DEFAULT_LAS_KEY_LANGUAGE:
       singletonInstance.localAppSettings.setLanguage(DEFAULT_LAS_KEY_LANGUAGE)
-
-  # Required by the WalletConnectSDK view right after creating the QGuiApplication instance
-  initializeWebView()
 
   let singleInstance = newSingleInstance($toMD5(DATADIR), openUri)
   let urlSchemeEvent = newStatusUrlSchemeEventObject()
