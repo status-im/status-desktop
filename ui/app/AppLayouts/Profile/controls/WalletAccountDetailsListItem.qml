@@ -21,6 +21,7 @@ StatusListItem {
         readonly property var timer: Timer {}
     }
 
+    sensor.enabled: isInteractive
     statusListItemTitle.customColor: Theme.palette.baseColor1
     statusListItemTitle.font.pixelSize: 13
     statusListItemTitle.lineHeightMode: Text.FixedHeight

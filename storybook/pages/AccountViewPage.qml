@@ -66,10 +66,6 @@ SplitView {
             function getAllNetworksChainIds() {
                 return "1:10:42161"
             }
-
-            function updateWalletAccountPreferredChains(address, preferredChainIds) {
-                console.warn("updateWalletAccountPreferredChains :: address ::", address, "preferredChainIds :: ", preferredChainIds)
-            }
         }
 
         property var keyPairModel: WalletKeyPairModel {}
