@@ -40,8 +40,7 @@ SplitView {
                                                displayDecimals: 4,
                                                stripTrailingZeroes: false}),
                                  isAllAccounts: false,
-                                 path: "m/44’/60’/0’/0’/34",
-                                 preferredSharingChainIds:  walletStore.areTestNetworksEnabled ? "5:420:421613": "1:10:42161"
+                                 path: "m/44’/60’/0’/0’/34"
                              })
         }
 
