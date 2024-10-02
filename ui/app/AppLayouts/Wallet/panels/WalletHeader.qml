@@ -118,7 +118,7 @@ Item {
                                                                      RootStore.lastReloadTimestamp * 1000) : ""
                     tooltip.text: qsTr("Last refreshed %1").arg(lastReloadTimeFormated)
 
-                    onClicked: RootStore.walletSectionInst.reloadAccountTokens()
+                    onClicked: RootStore.reloadAccountTokens()
 
                     Timer {
                         id: throttleTimer

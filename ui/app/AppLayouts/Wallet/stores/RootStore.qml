@@ -34,6 +34,8 @@ QtObject {
     readonly property string signingPhrase: walletSectionInst.signingPhrase
     readonly property string mnemonicBackedUp: walletSectionInst.isMnemonicBackedUp
 
+    readonly property var transactionActivityStatus: walletSectionInst.activityController.status
+
     /* This property holds networks currently selected in the Wallet Main layout  */
     readonly property var networkFilters: networksModule.enabledChainIds
     readonly property var networkFiltersArray: networkFilters.split(":").filter(Boolean).map(Number)
@@ -109,6 +111,11 @@ QtObject {
 
     readonly property bool isAccountTokensReloading: walletSectionInst.isAccountTokensReloading
     readonly property double lastReloadTimestamp: walletSectionInst.lastReloadTimestamp
+
+    readonly property var historyTransactions: walletSectionInst.activityController.model
+    readonly property bool loadingHistoryTransactions: walletSectionInst.activityController.status.loadingData
+    readonly property bool newDataAvailable: walletSectionInst.activityController.status.newDataAvailable
+    readonly property bool isNonArchivalNode: walletSectionInst.isNonArchivalNode
 
     signal savedAddressAddedOrUpdated(added: bool, name: string, address: string, errorMsg: string)
     signal savedAddressDeleted(name: string, address: string, errorMsg: string)
@@ -584,5 +591,39 @@ QtObject {
                 }
         }
         return undefined
+    }
+
+    function resetActivityData() {
+        root.walletSectionInst.activityController.resetActivityData()
+    }
+
+    function updateTransactionFilterIfDirty() {
+        if (root.transactionActivityStatus.isFilterDirty)
+            root.walletSectionInst.activityController.updateFilter()
+    }
+
+    function getTxDetails() {
+        return root.walletSectionInst.activityDetailsController.activityDetails
+    }
+
+    function fetchTxDetails(txID) {
+        root.walletSectionInst.activityController.fetchTxDetails(txID)
+        root.walletSectionInst.activityDetailsController.fetchExtraTxDetails()
+    }
+
+    function fetchDecodedTxData(txHash, input) {
+        root.walletSectionInst.fetchDecodedTxData(txHash, input)
+    }
+
+    function fetchMoreTransactions() {
+        if (root.historyTransactions.count === 0
+                || !root.historyTransactions.hasMore
+                || root.loadingHistoryTransactions)
+            return
+        root.walletSectionInst.activityController.loadMoreItems()
+    }
+
+    function reloadAccountTokens() {
+        root.walletSectionInst.reloadAccountTokens()
     }
 }

@@ -68,7 +68,7 @@ Item {
         onDetailsChanged: {
             if (!!d.details && !!d.details.input && d.details.input !== "0x") {
                 d.loadingInputDate = true
-                root.rootStore.fetchDecodedTxData(d.details.txHashOut, d.details.input)
+                WalletStores.RootStore.fetchDecodedTxData(d.details.txHashOut, d.details.input)
             }
         }
 
@@ -128,7 +128,7 @@ Item {
     }
 
     Connections {
-        target: root.rootStore.walletSectionInst
+        target: WalletStores.RootStore.walletSectionInst
         function onTxDecoded(txHash: string, dataDecoded: string) {
             if (!d.isTransactionValid || (d.isDetailsValid && txHash !== d.details.txHashOut))
                 return
