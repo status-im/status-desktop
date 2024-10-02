@@ -170,6 +170,13 @@ ItemDelegate {
     background: Rectangle {
         color: root.color
         radius: 8
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onClicked: root.clicked(mouse)
+        }
     }
 
     contentItem: RowLayout {
@@ -266,13 +273,6 @@ ItemDelegate {
                 color: Theme.palette.directColor1
             }
         }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: root.clicked(mouse)
     }
 
     Component {
