@@ -1,5 +1,3 @@
-pragma Singleton
-
 import QtQuick 2.15
 import utils 1.0
 

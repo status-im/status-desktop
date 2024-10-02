@@ -6,7 +6,6 @@ import Monitoring 1.0
 import Qt.labs.settings 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
-import shared.stores 1.0 as SharedStores
 
 Component {
 
@@ -315,8 +314,7 @@ Component {
                             onClicked: {
                                 const roots = [
                                     applicationWindow,
-                                    WalletStores.RootStore,
-                                    SharedStores.RootStore
+                                    WalletStores.RootStore
                                 ]
 
                                 let obj = null
