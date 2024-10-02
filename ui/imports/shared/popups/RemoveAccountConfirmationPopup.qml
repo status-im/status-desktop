@@ -22,7 +22,6 @@ StatusDialog {
     required property string accountName
     required property string accountAddress
     required property string accountDerivationPath
-    required property string preferredSharingNetworkShortNames
     required property string emoji
     required property string color
 
@@ -47,7 +46,7 @@ StatusDialog {
 
      header: StatusDialogHeader {
         headline.title: qsTr("Remove %1").arg(root.accountName)
-        headline.subtitle: WalletUtils.colorizedChainPrefix(root.preferredSharingNetworkShortNames) + StatusQUtils.Utils.elideText(root.accountAddress, 6, 4)
+        headline.subtitle: StatusQUtils.Utils.elideText(root.accountAddress, 6, 4)
         actions.closeButton.onClicked: root.close()
         leftComponent: StatusSmartIdenticon {
             asset.emoji: root.emoji
