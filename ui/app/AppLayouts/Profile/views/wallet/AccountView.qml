@@ -267,8 +267,6 @@ ColumnLayout {
             accountName: !!root.account ? root.account.name : ""
             accountAddress: !!root.account ? root.account.address : ""
             accountDerivationPath: !!root.account ? root.account.path : ""
-            // TODO: remove in when RemoveAccountConfirmationPopup.qml removes preferred networks
-            preferredSharingNetworkShortNames: ""
             emoji: !!root.account ? root.account.emoji : ""
             color: !!root.account ? Utils.getColorForId(root.account.colorId) : ""
 
