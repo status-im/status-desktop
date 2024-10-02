@@ -263,12 +263,11 @@ QtObject:
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
-
   # Macro that simplifies checking and updating values in a model
   # IMPORTANT:
     # The model's items need to be in a `seq` called `items`
     # A `seq[string]` named `roles` needs to exist
-    # The index of the item being checked must be named `index`
+    # The index of the item being checked must be named `ind`
   macro updateRole(propertyName: untyped, roleName: untyped): untyped =
     quote do:
       if self.items[ind].`propertyName` != `propertyName`:
@@ -289,14 +288,17 @@ QtObject:
       memberRole: MemberRole,
       joined: bool,
       isUntrustworthy: bool,
-      ) =
+      callDataChanged: bool = true,
+    ): seq[int] =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
       return
 
     var roles: seq[int] = @[]
 
-    var preferredNameChanged = false
+    let preferredDisplayNameChanged =
+      resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
+      resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
 
     updateRole(displayName, DisplayName)
     updateRole(ensName, EnsName)
@@ -310,15 +312,56 @@ QtObject:
     updateRole(joined, Joined)
     updateRole(isUntrustworthy, IsUntrustworthy)
 
-    if preferredNameChanged:
+    if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
 
     if roles.len == 0:
       return
 
-    let index = self.createIndex(ind, 0, nil)
+    if callDataChanged:
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, roles)
+
+    return roles
+
+  proc updateItems*(self: Model, items: seq[MemberItem]) =
+    var i = 0
+    var startIndex = -1
+    var endIndex = -1
+    var allRoles: seq[int] = @[]
+    for item in items:
+      let roles = self.updateItem(
+        item.pubKey,
+        item.displayName,
+        item.ensName,
+        item.isEnsVerified,
+        item.localNickname,
+        item.alias,
+        item.icon,
+        item.isContact,
+        item.isVerified,
+        item.memberRole,
+        item.joined,
+        item.isUntrustworthy,
+        callDataChanged = false,
+      )
+
+      if roles.len > 0:
+        if startIndex == -1:
+          endIndex = i
+        endIndex = i
+        allRoles = concat(allRoles, roles)
+
+      i.inc()
+
+    if allRoles.len == 0:
+      return
+
+    let index = self.createIndex(startIndex, endIndex, nil)
     defer: index.delete
-    self.dataChanged(index, index, roles)
+    self.dataChanged(index, index, allRoles)
+
 
   proc updateToTheseItems*(self: Model, items: seq[MemberItem]) =
     # Check for removals
@@ -338,31 +381,16 @@ QtObject:
       let ind = self.findIndexForMember(item.pubKey)
       if ind == -1:
         # Item does not exist, we add it
-        # self.addItem(item)
         itemsToAdd.add(item)
         continue
 
       itemsToUpdate.add(item)
-      self.updateItem(
-        item.pubKey,
-        item.displayName,
-        item.ensName,
-        item.isEnsVerified,
-        item.localNickname,
-        item.alias,
-        item.icon,
-        item.isContact,
-        item.isVerified,
-        item.memberRole,
-        item.joined,
-        item.isUntrustworthy,
-      )
 
     if itemsToAdd.len > 0:
       self.addItems(itemsToAdd)
 
-    # if itemsToUpdate.len > 0:
-    #   self.addItems(itemsToAdd)
+    if itemsToUpdate.len > 0:
+      self.updateItems(itemsToAdd)
 
   proc updateItem*(
       self: Model,
@@ -381,7 +409,7 @@ QtObject:
     if ind == -1:
       return
 
-    self.updateItem(
+    discard self.updateItem(
       pubKey,
       displayName,
       ensName,
