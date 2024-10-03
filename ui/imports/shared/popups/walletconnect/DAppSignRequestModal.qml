@@ -41,7 +41,7 @@ SignTransactionModalBase {
     property bool enoughFundsForTransaction: true
     property bool enoughFundsForFees: false
 
-    signButtonEnabled: enoughFundsForTransaction && enoughFundsForFees
+    signButtonEnabled: (!hasFees) || enoughFundsForTransaction && enoughFundsForFees
     title: qsTr("Sign Request")
     subtitle: SQUtils.StringUtils.extractDomainFromLink(root.dappUrl)
     headerIconComponent: RoundImageWithBadge {
@@ -68,7 +68,7 @@ SignTransactionModalBase {
     infoTag.states: [
         State {
             name: "insufficientFunds"
-            when: !root.enoughFundsForTransaction
+            when: root.hasFees && !root.enoughFundsForTransaction
             PropertyChanges {
                 target: infoTag
                 asset.color: Theme.palette.dangerColor1
@@ -96,8 +96,8 @@ SignTransactionModalBase {
                     Layout.fillWidth: true
                     objectName: "footerFiatFeesText"
                     text: formatBigNumber(root.fiatFees, root.currentCurrency)
-                    loading: root.feesLoading
-                    customColor: root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
+                    loading: root.feesLoading && root.hasFees
+                    customColor: !root.hasFees || root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
                     elide: Qt.ElideMiddle
                     Binding on text {
                         when: !root.hasFees

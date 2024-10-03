@@ -16,6 +16,7 @@ import SortFilterProxyModel 0.2
 import shared.stores 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Wallet.services.dapps 1.0
 
 import utils 1.0
 
@@ -135,19 +136,53 @@ Item {
             }
 
             DAppsWorkflow {
+                id: dappsWorkflow
                 Layout.alignment: Qt.AlignTop
+
+                readonly property WalletConnectService wcService: Global.walletConnectService
 
                 spacing: 8
 
                 visible: !root.walletStore.showSavedAddresses
                          && root.dappsEnabled
-                         && Global.walletConnectService.isServiceAvailableForAddressSelection
+                         && wcService.serviceAvailableToCurrentAddress
                 enabled: !!Global.walletConnectService
 
 
-                wcService: Global.walletConnectService
                 loginType: root.loginType
                 selectedAccountAddress: root.walletStore.selectedAddress
+                model: wcService.dappsModel
+                accountsModel: wcService.validAccounts
+                networksModel: wcService.flatNetworks
+                sessionRequestsModel: wcService.sessionRequestsModel
+
+                formatBigNumber: (number, symbol, noSymbolOption) => wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
+
+                onDisconnectRequested: (connectionId) => wcService.disconnectDapp(connectionId)
+                onPairingRequested: (uri) => wcService.pair(uri)
+                onPairingValidationRequested: (uri) => wcService.validatePairingUri(uri)
+                onConnectionAccepted: (pairingId, chainIds, selectedAccount) => wcService.approvePairSession(pairingId, chainIds, selectedAccount)
+                onConnectionDeclined: (pairingId) => wcService.rejectPairSession(pairingId)
+                onSignRequestAccepted: (connectionId, requestId) => wcService.sign(connectionId, requestId)
+                onSignRequestRejected: (connectionId, requestId) => wcService.rejectSign(connectionId, requestId, false /*hasError*/)
+
+                Connections {
+                    target: dappsWorkflow.wcService
+                    function onPairingValidated(validationState) {
+                        dappsWorkflow.pairingValidated(validationState)
+                    }
+                    function onApproveSessionResult(pairingId, err, newConnectionId) {
+                        if (err) {
+                            dappsWorkflow.connectionFailed(pairingId)
+                            return
+                        }
+
+                        dappsWorkflow.connectionSuccessful(pairingId, newConnectionId)
+                    }
+                    function onConnectDApp(dappChains, dappUrl, dappName, dappIcon, pairingId) {
+                        dappsWorkflow.connectDApp(dappChains, dappUrl, dappName, dappIcon, pairingId)
+                    }
+                }
             }
 
             StatusButton {

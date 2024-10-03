@@ -3,8 +3,6 @@ import QtQuick 2.15
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
 
-import SortFilterProxyModel 0.2
-
 import AppLayouts.Wallet.services.dapps 1.0
 
 import shared.stores 1.0
@@ -17,25 +15,8 @@ QObject {
     required property WalletConnectSDKBase sdk
     required property DAppsStore store
     required property var supportedAccountsModel
-
-    property string selectedAddress: ""
-
-    readonly property SortFilterProxyModel dappsModel: SortFilterProxyModel {
-        objectName: "DAppsModelFiltered"
-        sourceModel: d.dappsModel
-
-        filters: FastExpressionFilter {
-            enabled: !!root.selectedAddress
-
-            function isAddressIncluded(accountAddressesSubModel, selectedAddress) {
-                const addresses = ModelUtils.modelToFlatArray(accountAddressesSubModel, "address")
-                return addresses.includes(root.selectedAddress)
-            }
-            expression: isAddressIncluded(model.accountAddresses, root.selectedAddress)
-
-            expectedRoles: "accountAddresses"
-        }
-    }
+    readonly property int connectorId: Constants.WalletConnect
+    readonly property var dappsModel: d.dappsModel
 
     function updateDapps() {
         d.updateDappsModel()
@@ -66,7 +47,10 @@ QObject {
                         url: cachedEntry.url,
                         name: cachedEntry.name,
                         iconUrl: cachedEntry.iconUrl,
-                        accountAddresses: [{address: ''}]
+                        accountAddresses: [],
+                        topic: "",
+                        connectorId: root.connectorId, 
+                        sessions: []
                     }
                     dapps.append(dappEntryWithRequiredRoles);
                 }
@@ -86,6 +70,7 @@ QObject {
                     const dAppsMap = {}
                     const topics = []
                     const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(allSessionsAllProfiles, supportedAccountsModel)
+
                     for (const sessionID in sessions) {
                         const session = sessions[sessionID]
                         const dapp = session.peer.metadata
@@ -101,11 +86,13 @@ QObject {
                             // more modern syntax (ES-6) is not available yet
                             const combinedAddresses = new Set(existingDApp.accountAddresses.concat(accounts));
                             existingDApp.accountAddresses = Array.from(combinedAddresses);
+                            dapp.sessions = [...existingDApp.sessions, session]
                         } else {
                             dapp.accountAddresses = accounts
+                            dapp.topic = sessionID
+                            dapp.sessions = [session]
                             dAppsMap[dapp.url] = dapp
                         }
-
                         topics.push(sessionID)
                     }
 
@@ -113,11 +100,12 @@ QObject {
                     dapps.clear();
 
                     // Iterate dAppsMap and fill dapps
-                    for (const topic in dAppsMap) {
-                        const dAppEntry = dAppsMap[topic];
+                    for (const uri in dAppsMap) {
+                        const dAppEntry = dAppsMap[uri];
                         // Due to ListModel converting flat array to empty nested ListModel
                         // having array of key value pair fixes the problem
                         dAppEntry.accountAddresses = dAppEntry.accountAddresses.filter(account => (!!account)).map(account => ({address: account}));
+                        dAppEntry.connectorId = root.connectorId;
                         dapps.append(dAppEntry);
                     }
 

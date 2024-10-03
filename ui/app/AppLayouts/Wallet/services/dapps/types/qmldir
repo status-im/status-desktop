@@ -1,3 +1,4 @@
 SessionRequestResolved 1.0 SessionRequestResolved.qml
+SessionRequestsModel 1.0 SessionRequestsModel.qml
 singleton SessionRequest 1.0 SessionRequest.qml
 singleton Pairing 1.0 Pairing.qml

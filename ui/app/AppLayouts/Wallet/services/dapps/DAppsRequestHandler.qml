@@ -23,22 +23,17 @@ SQUtils.QObject {
 
     property alias requestsModel: requests
 
-    function rejectSessionRequest(request, userRejected) {
-        let error = userRejected ? false : true
-        sdk.rejectSessionRequest(request.topic, request.id, error)
+    function rejectSessionRequest(topic, id, hasError) {
+        sdk.rejectSessionRequest(topic, id, hasError)
     }
 
     /// Beware, it will fail if called multiple times before getting an answer
-    function authenticate(request, payload) {
-        return store.authenticateUser(request.topic, request.id, request.accountAddress, payload)
+    function authenticate(topic, id, address, payload) {
+        return store.authenticateUser(topic, id, address, payload)
     }
 
-    signal sessionRequest(SessionRequestResolved request)
+    signal sessionRequest(string id)
     signal displayToastMessage(string message, bool error)
-    signal sessionRequestResult(/*model entry of SessionRequestResolved*/ var request, bool isSuccess)
-    signal maxFeesUpdated(var /* Big */ fiatMaxFees, var /* Big */ ethMaxFees, bool haveEnoughFunds, bool haveEnoughFees, string symbol, var feesInfo)
-    // Reports Constants.TransactionEstimatedTime values
-    signal estimatedTimeUpdated(int estimatedTimeEnum)
 
     Connections {
         target: sdk
@@ -75,19 +70,19 @@ SQUtils.QObject {
             d.lookupSession(topic, function(session) {
                 if (session === null)
                     return
+                const appUrl = session.peer.metadata.url
+                const appDomain = SQUtils.StringUtils.extractDomainFromLink(appUrl)
                 if (error) {
-                    root.displayToastMessage(qsTr("Fail to %1 from %2").arg(methodStr).arg(session.peer.metadata.url), true)
+                    root.displayToastMessage(qsTr("Fail to %1 from %2").arg(methodStr).arg(appDomain), true)
 
-                    root.sessionRequestResult(request, false /*isSuccessful*/)
+                    root.rejectSessionRequest(topic, id, true /*hasError*/)
 
                     console.error(`Error accepting session request for topic: ${topic}, id: ${id}, accept: ${accept}, error: ${error}`)
                     return
                 }
 
                 let actionStr = accept ? qsTr("accepted") : qsTr("rejected")
-                root.displayToastMessage("%1 %2 %3".arg(session.peer.metadata.url).arg(methodStr).arg(actionStr), false)
-
-                root.sessionRequestResult(request, true /*isSuccessful*/)
+                root.displayToastMessage("%1 %2 %3".arg(appDomain).arg(methodStr).arg(actionStr), false)
             })
         }
     }
@@ -113,24 +108,19 @@ SQUtils.QObject {
             d.lookupSession(topic, function(session) {
                 if (session === null)
                     return
-                root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(session.peer.metadata.url), true)
-                root.sessionRequestResult(request, false /*isSuccessful*/)
+                const appDomain = SQUtils.StringUtils.extractDomainFromLink(session.peer.metadata.url)
+                root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(appDomain), true)
+                root.rejectSessionRequest(topic, id, false /*hasErrors*/)
             })
         }
 
         function onSigningResult(topic, id, data) {
-            let isSuccessful = (data != "")
-            if (isSuccessful) {
+            let hasErrors = (data == "")
+            if (!hasErrors) {
                 // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
                 sdk.acceptSessionRequest(topic, id, data)
             } else {
-                console.error("signing error")
-                var request = requests.findRequest(topic, id)
-                if (request === null) {
-                    console.error("Error finding event for topic", topic, "id", id)
-                    return
-                }
-                root.sessionRequestResult(request, isSuccessful)
+                root.rejectSessionRequest(topic, id, hasErrors)
             }
         }
     }
@@ -167,7 +157,7 @@ SQUtils.QObject {
                 return { obj: null, code: resolveAsyncResult.error }
             }
 
-            let data = extractMethodData(event, method)
+            const data = extractMethodData(event, method)
             if(!data) {
                 console.error("Error in event data lookup", JSON.stringify(event))
                 return { obj: null, code: resolveAsyncResult.error }
@@ -175,7 +165,8 @@ SQUtils.QObject {
 
             const interpreted = d.prepareData(method, data)
 
-            let enoughFunds = !d.isTransactionMethod(method)
+            const enoughFunds = !d.isTransactionMethod(method)
+
             let obj = sessionRequestComponent.createObject(null, {
                 event,
                 topic: event.topic,
@@ -205,16 +196,15 @@ SQUtils.QObject {
                     console.error("DAppsRequestHandler.lookupSession: error finding session for topic", obj.topic)
                     return
                 }
+
                 obj.resolveDappInfoFromSession(session)
-                root.sessionRequest(obj)
+                root.sessionRequest(obj.id)
 
                 if (!d.isTransactionMethod(method)) {
                     return
                 }
 
-
-                let estimatedTimeEnum = getEstimatedTimeInterval(data, method, obj.chainId)
-                root.estimatedTimeUpdated(estimatedTimeEnum)
+                obj.estimatedTimeCategory = getEstimatedTimeInterval(data, method, obj.chainId)
 
                 const mainNet = lookupMainnetNetwork()
                 let mainChainId = obj.chainId
@@ -224,11 +214,12 @@ SQUtils.QObject {
                     console.error("Error finding mainnet network")
                 }
                 let st = getEstimatedFeesStatus(data, method, obj.chainId, mainChainId)
-
                 let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, obj.accountAddress, obj.chainId, mainNet.chainId, interpreted.value)
-
-                root.maxFeesUpdated(st.fiatMaxFees, st.maxFeesEth, fundsStatus.haveEnoughFunds,
-                                    fundsStatus.haveEnoughForFees, st.symbol, st.feesInfo)
+                obj.fiatMaxFees = st.fiatMaxFees
+                obj.ethMaxFees = st.maxFeesEth
+                obj.haveEnoughFunds = fundsStatus.haveEnoughFunds
+                obj.haveEnoughFees = fundsStatus.haveEnoughForFees
+                obj.feesInfo = st.feesInfo
             })
 
             return {
@@ -696,6 +687,7 @@ SQUtils.QObject {
         id: sessionRequestComponent
 
         SessionRequestResolved {
+            sourceId: Constants.DAppConnectors.WalletConnect
         }
     }
 }

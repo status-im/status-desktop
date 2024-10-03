@@ -15,11 +15,14 @@ QObject {
     /// }
     required property var event
 
+    /// dApp request data
     required property string topic
     required property string id
     required property string method
     required property string accountAddress
     required property string chainId
+    // Maps to Constants.DAppConnectors values
+    required property int sourceId
 
     required property var data
     // Data prepared for display in a human readable format
@@ -29,9 +32,18 @@ QObject {
     readonly property alias dappUrl: d.dappUrl
     readonly property alias dappIcon: d.dappIcon
 
+    /// extra data resolved from wallet
     property string maxFeesText: ""
     property string maxFeesEthText: ""
-    property bool enoughFunds: false
+    property bool haveEnoughFunds: false
+    property bool haveEnoughFees: false
+
+    property var /* Big */ fiatMaxFees
+    property var /* Big */ ethMaxFees
+    property var feesInfo
+
+    /// maps to Constants.TransactionEstimatedTime values
+    property int estimatedTimeCategory: 0
 
     function resolveDappInfoFromSession(session) {
         let meta = session.peer.metadata

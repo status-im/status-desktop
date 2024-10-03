@@ -79,10 +79,10 @@ StatusDialog {
     readonly property int connectionSuccessfulStatus: 1
     readonly property int connectionFailedStatus: 2
 
-    function pairSuccessful(session) {
+    function pairSuccessful() {
         d.connectionStatus = root.connectionSuccessfulStatus
     }
-    function pairFailed(session, err) {
+    function pairFailed() {
         d.connectionStatus = root.connectionFailedStatus
     }
 

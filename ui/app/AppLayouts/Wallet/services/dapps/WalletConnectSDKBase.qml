@@ -9,9 +9,10 @@ Item {
     signal pairResponse(bool success)
     signal sessionProposal(var sessionProposal)
     signal sessionProposalExpired()
-    signal buildApprovedNamespacesResult(var session, string error)
-    signal approveSessionResult(var approvedNamespaces, string error)
-    signal rejectSessionResult(string error)
+    signal buildApprovedNamespacesResult(var id, var session, string error)
+    signal approveSessionResult(var proposalId, var approvedNamespaces, string error)
+    signal rejectSessionResult(var proposalId, string error)
+    signal sessionRequestExpired(var id)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(string topic, string id, bool accept /* not reject */, string error)
 
@@ -41,7 +42,7 @@ Item {
         console.error("ping not implemented")
     }
 
-    property var buildApprovedNamespaces: function(params, supportedNamespaces) {
+    property var buildApprovedNamespaces: function(id, params, supportedNamespaces) {
         console.error("buildApprovedNamespaces not implemented")
     }
     property var approveSession: function(sessionProposal, supportedNamespaces) {
