@@ -273,7 +273,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: (root.cardSize === StatusCommunityCard.Size.Big) ? 16 : 8
         anchors.left: parent.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: d.margins
         width: root.asset.width + 4
         height: width
         radius: width / 2
@@ -313,15 +313,14 @@ Rectangle {
         // Community info
         ColumnLayout {
             anchors.top: parent.top
-            anchors.topMargin: (root.cardSize === StatusCommunityCard.Size.Big) ? 32 : 26
+            anchors.topMargin: (root.cardSize === StatusCommunityCard.Size.Big) ? 32 : 22
             anchors.left: parent.left
             anchors.leftMargin: d.margins
             anchors.right: parent.right
             anchors.rightMargin: d.margins
-            spacing: (root.cardSize === StatusCommunityCard.Size.Big) ? 6 : 0
+            spacing: (root.cardSize === StatusCommunityCard.Size.Big) ? 6 : 2
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 22
                 text: root.name
                 font.weight: d.titleFontWeight
                 font.pixelSize: root.titleFontSize
@@ -345,8 +344,8 @@ Rectangle {
             anchors.leftMargin: d.margins
             anchors.right: parent.right
             anchors.rightMargin: d.margins
-            anchors.bottomMargin: d.margins
-            spacing: (root.cardSize === StatusCommunityCard.Size.Big) ? 18 : 0
+            anchors.bottomMargin: 8
+            spacing: (root.cardSize === StatusCommunityCard.Size.Big) ? 18 : 4
             Row {
                 spacing: 20
                 // Members
@@ -391,7 +390,8 @@ Rectangle {
             // Bottom Row extra info component
             Loader {
                 id: bottomRowLoader
-                Layout.fillWidth: true
+                Layout.maximumWidth: parent.width
+                Layout.alignment: Qt.AlignHCenter
                 Layout.preferredHeight: 24
                 active: ((root.categories.count > 0) || !!root.bottomRowComponent)
                 sourceComponent: tagsListComponent
@@ -400,6 +400,7 @@ Rectangle {
             Component {
                 id: tagsListComponent
                 StatusRollArea {
+                    implicitWidth: d.cardWidth
                     arrowsGradientColor: d.cardColor
 
                     // TODO: Replace by `StatusListItemTagRow` - To be done!
