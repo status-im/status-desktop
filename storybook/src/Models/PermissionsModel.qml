@@ -85,6 +85,24 @@ QtObject {
         }
     ]
 
+    readonly property var privatePermissionsMemberModelNotMetData: [
+        {
+            holdingsListModel: root.createHoldingsModel4(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Approved,
+            isPrivate: true,
+            tokenCriteriaMet: false
+        },
+        {
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Approved,
+            isPrivate: true,
+            tokenCriteriaMet: false
+        }
+    ]
 
     readonly property var shortPermissionsModelData: [
         {
@@ -550,6 +568,17 @@ QtObject {
 
         Component.onCompleted: {
             append(privatePermissionsModelNotMetData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property ListModel privatePermissionsMemberNotMetModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.privatePermissionsMemberNotMetModel
+        }
+
+        Component.onCompleted: {
+            append(privatePermissionsMemberModelNotMetData)
             guard.enabled = true
         }
     }

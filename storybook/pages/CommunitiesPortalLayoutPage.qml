@@ -22,7 +22,7 @@ SplitView {
     Popups {
         popupParent: root
         sharedRootStore: SharedStores.RootStore {}
-        rootStore: AppLayoutStores.RootStore
+        rootStore: AppLayoutStores.RootStore {}
         communityTokensStore: SharedStores.CommunityTokensStore {}
     }
 

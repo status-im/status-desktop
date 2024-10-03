@@ -8,14 +8,14 @@ ListModel {
 
     Component.onCompleted: append([
         {
-            featured: true,
+            featured: false,
             id: "id1",
             loaded: true,
             icon: ModelsData.icons.status,
             banner: ModelsData.banners.status,
             color: "blue",
-            name: "Status.im",
-            description: "Your portal to Web3. Secure wallet. dApp browser. Private messaging. All-in-one.",
+            name: "Status.app",
+            description: "Your portal to Web3. Secure wallet. Private messaging. Requires secret tokens to join",
             members: 130,
             activeMembers: 61,
             popularity: 4,
@@ -42,8 +42,8 @@ ListModel {
                     "emoji": "💼",
                 },
             ]),
-            permissionsModel: PermissionsModel.shortPermissionsModel,
-            allTokenRequirementsMet: true
+            permissionsModel: PermissionsModel.privatePermissionsMemberNotMetModel,
+            allTokenRequirementsMet: false
         },
         {
             featured: true,
@@ -168,7 +168,7 @@ ListModel {
                 },
             ]),
             permissionsModel: PermissionsModel.threeShortPermissionsModel,
-            allTokenRequirementsMet: true
+            allTokenRequirementsMet: false
         },
         {
             featured: false,
@@ -218,7 +218,7 @@ ListModel {
                     "emoji": "💼",
                 },
             ]),
-            permissionsModel: PermissionsModel.longPermissionsModel,
+            permissionsModel: PermissionsModel.twoLongPermissionsModel,
             allTokenRequirementsMet: true
         },
         {
@@ -235,7 +235,8 @@ ListModel {
             popularity: 4,
             available: true,
             tags: JSON.stringify([]),
-            permissionsModel: emptyModel
+            permissionsModel: emptyModel,
+            allTokenRequirementsMet: false
         }
         ])
 }

@@ -104,6 +104,22 @@ SplitView {
             Label {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
 
+                text: "Private + unmet permissions:"
+            }
+
+            PermissionsRow {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                Layout.bottomMargin: spacing
+
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
+                model: PermissionsModel.privatePermissionsMemberNotMetModel
+                requirementsMet: false
+            }
+
+            Label {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+
                 text: "5 permissions - long ones"
             }
 
@@ -139,7 +155,7 @@ SplitView {
             }
 
             Label {
-                text: "Row heigh:"
+                text: "Row height:"
             }
 
             Slider {

@@ -1,7 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
@@ -10,6 +11,8 @@ import StatusQ.Controls 0.1
 
 import AppLayouts.Communities.views 1.0
 
+import SortFilterProxyModel 0.2
+
 /*!
    \qmltype PermissionsRow
    \inherits Control
@@ -17,7 +20,7 @@ import AppLayouts.Communities.views 1.0
    \brief It is a permissions row control that provides information about community tokens permissions. Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-controls2-control.html}{Control}.
 
    The \c PermissionsRow is the token permissions representation row component.
-   It has different ui abreviations / permutations depending on the tokens and permissons the permissions model provides.
+   It has different ui abreviations / permutations depending on the tokens and permissions the permissions model provides.
 
    Example of how to use it:
    \qml
@@ -112,8 +115,22 @@ Control {
 
         property bool dotsVisible: false
 
+        readonly property var filteredModel: SortFilterProxyModel {
+            sourceModel: root.model
+            filters: FastExpressionFilter {
+                expression: {
+                    if (model.isPrivate) {
+                        return model.tokenCriteriaMet
+                    }
+                    return true
+                }
+                expectedRoles: ["isPrivate", "tokenCriteriaMet"]
+            }
+        }
+
         function buildShortModel(model) {
             shortModel.clear()
+            dotsVisible = false
 
             if(!model)
                 return
@@ -170,7 +187,7 @@ Control {
 
     implicitHeight: 24
     spacing: 4
-    padding: 1
+    padding: 4
 
     background: Rectangle {
         color: root.backgroundColor
@@ -179,19 +196,14 @@ Control {
     }
 
     contentItem: RowLayout {
-        id: container
-
-        anchors.centerIn: parent
-        anchors.margins: root.padding
         spacing: root.spacing
 
         StatusIcon {
-            Layout.preferredHeight: container.height - 6
-            Layout.preferredWidth: Layout.preferredHeight
-            Layout.leftMargin: 4
+            Layout.fillHeight: true
+            Layout.preferredWidth: height
 
             icon: root.requirementsMet ? "tiny/unlocked" : "tiny/locked"
-            color: Theme.palette.baseColor1
+            color: root.hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
         }
 
         Repeater {
@@ -216,8 +228,8 @@ Control {
         }
 
         StatusRoundedComponent {
-            Layout.preferredHeight: container.height
-            Layout.preferredWidth: Layout.preferredHeight
+            Layout.fillHeight: true
+            Layout.preferredWidth: height
 
             visible: d.dotsVisible
             color: Theme.palette.baseColor3
@@ -232,21 +244,21 @@ Control {
                 width: height
             }
         }
-    }
 
-    onModelChanged: d.buildShortModel(root.model)
-    Connections {
-        target: root.model
-        function onCountChanged() {
-            d.buildShortModel(root.model)
+        StatusToolTip {
+            text: root.requirementsMet ? qsTr("Eligible to join") : qsTr("Not eligible to join")
+            visible: root.hovered
         }
     }
-    Component.onCompleted: d.buildShortModel(root.model)
+
+    ModelChangeTracker {
+        model: d.filteredModel
+        onRevisionChanged: d.buildShortModel(d.filteredModel)
+    }
 
     ListModel { id: shortModel }
 
-
-    component SinglePermissionRow:  RowLayout {
+    component SinglePermissionRow: RowLayout {
         id: singlePermissionItem
 
         readonly property int maxVisualTokens: 3
@@ -284,7 +296,7 @@ Control {
         Connections {
             target: singlePermissionItem.model
             function onCountChanged() {
-                buildTokensRowModel(singlePermissionItem.model)
+                singlePermissionItem.buildTokensRowModel(singlePermissionItem.model)
             }
         }
         Component.onCompleted: buildTokensRowModel(singlePermissionItem.model)
@@ -300,8 +312,8 @@ Control {
             }
 
             StatusRoundedImage {
-                Layout.preferredHeight: container.height
-                Layout.preferredWidth: Layout.preferredHeight
+                Layout.fillHeight: true
+                Layout.preferredWidth: height
 
                 z: index
                 image.source: model.imageSource
@@ -313,8 +325,8 @@ Control {
 
         StatusRoundedComponent {
             visible: singlePermissionItem.plusElementVisible
-            Layout.preferredHeight: container.height
-            Layout.preferredWidth: Layout.preferredHeight
+            Layout.fillHeight: true
+            Layout.preferredWidth: height
 
             z: d.maxTokens
             color: Theme.palette.baseColor3

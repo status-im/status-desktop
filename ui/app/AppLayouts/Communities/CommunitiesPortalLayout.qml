@@ -1,10 +1,10 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
@@ -71,21 +71,19 @@ StatusSectionLayout {
         sourceModel: root.communitiesStore.curatedCommunitiesModel
 
         filters: [
-            ExpressionFilter {
-                enabled: d.searchMode
-                expression: {
-                    searcher.text
-                    return name.toLowerCase().includes(searcher.text.toLowerCase())
-                }
+            SQUtils.SearchFilter {
+                roleName: "name"
+                searchPhrase: searcher.text
             },
-            ExpressionFilter {
+            FastExpressionFilter {
                 expression: {
                     return filteredCommunitiesModel.selectedTagsPredicate(communityTags.selectedTagsNames, model.tags)
                 }
+                expectedRoles: ["tags"]
             },
-            FastExpressionFilter {
-                expression: !model.amIBanned
-                expectedRoles: ["amIBanned"]
+            ValueFilter {
+                roleName: "amIBanned"
+                value: false
             }
         ]
     }
