@@ -18,14 +18,46 @@ import utils 1.0
 DappsComboBox {
     id: root
 
-    required property WalletConnectService wcService
     // Values mapped to Constants.LoginType
     required property int loginType
+    property var accountsModel
+    property var networksModel
+    property SessionRequestsModel sessionRequestsModel
     property string selectedAccountAddress
+
+    property var formatBigNumber: (number, symbol, noSymbolOption) => console.error("formatBigNumber not set")
 
     signal pairWCReady()
 
-    model: root.wcService.dappsModel
+    signal disconnectRequested(string connectionId)
+    signal pairingRequested(string uri)
+    signal pairingValidationRequested(string uri)
+    signal connectionAccepted(var pairingId, var chainIds, string selectedAccount)
+    signal connectionDeclined(var pairingId)
+    signal signRequestAccepted(string connectionId, string requestId)
+    signal signRequestRejected(string connectionId, string requestId)
+
+    /// Response to pairingValidationRequested
+    function pairingValidated(validationState) {
+        if (pairWCLoader.item) {
+            pairWCLoader.item.pairingValidated(validationState)
+        }
+    }
+
+    /// Confirmation received on connectionAccepted
+    function connectionSuccessful(pairingId, newConnectionId) {
+        connectDappLoader.connectionSuccessful(pairingId, newConnectionId)
+    }
+
+    /// Confirmation received on connectionAccepted
+    function connectionFailed(pairingId) {
+        connectDappLoader.connectionFailed(pairingId)
+    }
+
+    /// Request to connect to a dApp
+    function connectDApp(dappChains, dappUrl, dappName, dappIcon, pairingId) {
+        connectDappLoader.connect(dappChains, dappUrl, dappName, dappIcon, pairingId)
+    }
 
     onPairDapp: {
         pairWCLoader.active = true
@@ -44,7 +76,7 @@ DappsComboBox {
         active: false
 
         onLoaded: {
-            const dApp = wcService.getDApp(dAppUrl);
+            const dApp = SQUtils.ModelUtils.getByKey(root.model, "url", dAppUrl);
             if (dApp) {
                 item.dappName = dApp.name;
                 item.dappIcon = dApp.iconUrl;
@@ -63,7 +95,11 @@ DappsComboBox {
             }
 
             onAccepted: {
-                root.wcService.disconnectDapp(dappUrl)
+                SQUtils.ModelUtils.forEach(model, (dApp) => {
+                    if (dApp.url === dAppUrl) {
+                        root.disconnectRequested(dApp.topic)
+                    }
+                })
             }
         }
     }
@@ -82,15 +118,8 @@ DappsComboBox {
             visible: true
 
             onClosed: pairWCLoader.active = false
-
-            onPair: (uri) => {
-                this.isPairing = true
-                root.wcService.pair(uri)
-            }
-
-            onPairUriChanged: (uri) => {
-                root.wcService.validatePairingUri(uri)
-            }
+            onPair: (uri) => root.pairingRequested(uri)
+            onPairUriChanged: (uri) => root.pairingValidationRequested(uri)
         }
     }
 
@@ -99,21 +128,67 @@ DappsComboBox {
 
         active: false
 
-        property var dappChains: []
-        property var sessionProposal: null
-        property var availableNamespaces: null
-        property var sessionTopic: null
-        readonly property var proposalMedatada: !!sessionProposal
-                                                ? sessionProposal.params.proposer.metadata 
-                                                : { name: "", url: "", icons: [] }
+        // Array of chaind ids
+        property var dappChains
+        property url dappUrl
+        property string dappName
+        property url dappIcon
+        property var key
+        property var topic
+
+        property var connectionQueue: []
+        onActiveChanged: {
+            if (!active && connectionQueue.length > 0) {
+                connect(connectionQueue[0].dappChains,
+                        connectionQueue[0].dappUrl,
+                        connectionQueue[0].dappName,
+                        connectionQueue[0].dappIcon,
+                        connectionQueue[0].key)
+                connectionQueue.shift()
+            }
+        }
+
+        function connect(dappChains, dappUrl, dappName, dappIcon, key) {
+            if (connectDappLoader.active) {
+                connectionQueue.push({ dappChains, dappUrl, dappName, dappIcon, key })
+                return
+            }
+
+            connectDappLoader.dappChains = dappChains
+            connectDappLoader.dappUrl = dappUrl
+            connectDappLoader.dappName = dappName
+            connectDappLoader.dappIcon = dappIcon
+            connectDappLoader.key = key
+
+            if (pairWCLoader.item) {
+                // Allow user to get the uri valid confirmation
+                pairWCLoader.item.pairingValidated(Pairing.errors.dappReadyForApproval)
+                connectDappTimer.start()
+            } else {
+                connectDappLoader.active = true
+            }
+        }
+
+        function connectionSuccessful(key, newTopic) {
+            if (connectDappLoader.key === key && connectDappLoader.item) {
+                connectDappLoader.topic = newTopic
+                connectDappLoader.item.pairSuccessful()
+            }
+        }
+
+        function connectionFailed(id) {
+            if (connectDappLoader.key === key && connectDappLoader.item) {
+                connectDappLoader.item.pairFailed()
+            }
+        }
 
         sourceComponent: ConnectDAppModal {
             visible: true
-
+            
             onClosed: connectDappLoader.active = false
-            accounts: root.wcService.validAccounts
+            accounts: root.accountsModel
             flatNetworks: SortFilterProxyModel {
-                sourceModel: root.wcService.flatNetworks
+                sourceModel: root.networksModel
                 filters: [
                     FastExpressionFilter {
                         inverted: true
@@ -124,41 +199,45 @@ DappsComboBox {
             }
             selectedAccountAddress: root.selectedAccountAddress
 
-            dAppUrl: proposalMedatada.url
-            dAppName: proposalMedatada.name
-            dAppIconUrl: !!proposalMedatada.icons && proposalMedatada.icons.length > 0 ? proposalMedatada.icons[0] : ""
+            dAppUrl: connectDappLoader.dappUrl
+            dAppName: connectDappLoader.dappName
+            dAppIconUrl: connectDappLoader.dappIcon
 
             onConnect: {
-                root.wcService.approvePairSession(sessionProposal, selectedChains, selectedAccount)
+                if (!selectedAccount || !selectedAccount.address) {
+                    console.error("Missing account selection")
+                    return
+                }
+                if (!selectedChains || selectedChains.length === 0) {
+                    console.error("Missing chain selection")
+                    return
+                }
+                
+                root.connectionAccepted(connectDappLoader.key, selectedChains, selectedAccount.address)
             }
 
             onDecline: {
-                connectDappLoader.active = false
-                root.wcService.rejectPairSession(sessionProposal.id)
+                root.connectionDeclined(connectDappLoader.key)
+                close()
             }
 
-            onDisconnect: {
-                connectDappLoader.active = false
-                root.wcService.disconnectSession(sessionTopic)
+           onDisconnect: {
+                root.disconnectRequested(connectDappLoader.topic)
+                close()
             }
         }
     }
 
-    Loader {
-        id: sessionRequestLoader
-
-        active: false
-
-        onLoaded: item.open()
-
-        property SessionRequestResolved request: null
-        property bool requestHandled: false
-
-        sourceComponent: DAppSignRequestModal {
+    Instantiator {
+        model: root.sessionRequestsModel
+        delegate: DAppSignRequestModal {
             id: dappRequestModal
             objectName: "dappsRequestModal"
 
-            property var feesInfo: null
+            required property var model
+            required property int index
+
+            readonly property var request: model.requestItem
             readonly property var account: accountEntry.available ? accountEntry.item : {
                 name: "",
                 address: "",
@@ -171,10 +250,24 @@ DappsComboBox {
                 chainName: "",
                 iconUrl: ""
             }
+            property bool requestHandled: false
+
+            function rejectRequest() {
+                // Allow rejecting only once
+                if (requestHandled) {
+                    return
+                }
+                requestHandled = true
+                let userRejected = true
+                root.signRequestRejected(request.topic, request.id)
+            }
+
+            parent: root
 
             loginType: account.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
-            formatBigNumber: (number, symbol, noSymbolOption) => root.wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
-            visible: true
+            formatBigNumber: root.formatBigNumber
+
+            visible: !!request.dappUrl
 
             dappUrl: request.dappUrl
             dappIcon: request.dappIcon
@@ -188,140 +281,44 @@ DappsComboBox {
             networkName: network.chainName
             networkIconPath: Style.svg(network.iconUrl)
 
-            fiatFees: request.maxFeesText
-            cryptoFees: request.maxFeesEthText
-            estimatedTime: ""
-            feesLoading: !request.maxFeesText || !request.maxFeesEthText
+            fiatFees: request.fiatMaxFees ? request.fiatMaxFees.toFixed() : ""
+            cryptoFees: request.ethMaxFees ? request.ethMaxFees.toFixed() : ""
+            estimatedTime: WalletUtils.getLabelForEstimatedTxTime(request.estimatedTimeCategory)
+            feesLoading: hasFees && (!fiatFees || !cryptoFees)
             hasFees: signingTransaction
-            enoughFundsForTransaction: request.enoughFunds
-            enoughFundsForFees: request.enoughFunds
+            enoughFundsForTransaction: request.haveEnoughFunds
+            enoughFundsForFees: request.haveEnoughFees
 
             signingTransaction: !!request.method && (request.method === SessionRequest.methods.signTransaction.name
                                                   || request.method === SessionRequest.methods.sendTransaction.name)
             requestPayload: request.preparedData
+
             onClosed: {
-                Qt.callLater( () => {
-                    rejectRequest()
-                    sessionRequestLoader.active = false
-                })
+                Qt.callLater(rejectRequest)
             }
 
             onAccepted: {
-                if (!request) {
-                    console.error("Error signing: request is null")
-                    return
-                }
-
                 requestHandled = true
-                root.wcService.requestHandler.authenticate(request, JSON.stringify(feesInfo))
+                root.signRequestAccepted(request.topic, request.id)
             }
 
             onRejected: {
                 rejectRequest()
             }
 
-            function rejectRequest() {
-                // Allow rejecting only once
-                if (requestHandled) {
-                    return
-                }
-                requestHandled = true
-                let userRejected = true
-                root.wcService.requestHandler.rejectSessionRequest(request, userRejected)
-            }
-
-            Connections {
-                target: root.wcService.requestHandler
-
-                function onMaxFeesUpdated(fiatMaxFees, ethMaxFees, haveEnoughFunds, haveEnoughFees, symbol, feesInfo) {
-                    dappRequestModal.hasFees = !!ethMaxFees
-                    dappRequestModal.feesLoading = !dappRequestModal.hasFees
-                    if (!dappRequestModal.hasFees) {
-                        return
-                    }
-                    dappRequestModal.fiatFees = fiatMaxFees.toFixed()
-                    dappRequestModal.cryptoFees = ethMaxFees.toFixed()
-                    dappRequestModal.enoughFundsForTransaction = haveEnoughFunds
-                    dappRequestModal.enoughFundsForFees = haveEnoughFees
-                    dappRequestModal.feesInfo = feesInfo
-                }
-
-                function onEstimatedTimeUpdated(estimatedTimeEnum) {
-                    dappRequestModal.estimatedTime = WalletUtils.getLabelForEstimatedTxTime(estimatedTimeEnum)
-                }
-            }
-
             ModelEntry {
                 id: accountEntry
-                sourceModel: root.wcService.validAccounts
+                sourceModel: root.accountsModel
                 key: "address"
                 value: request.accountAddress
             }
 
             ModelEntry {
                 id: networkEntry
-                sourceModel: root.wcService.flatNetworks
+                sourceModel: root.networksModel
                 key: "chainId"
                 value: request.chainId
             }
-        }
-    }
-
-    Connections {
-        target: root.wcService ? root.wcService.requestHandler : null
-
-        function onSessionRequestResult(request, isSuccess) {
-            if (isSuccess) {
-                sessionRequestLoader.active = false
-            } else {
-                // TODO #14762 handle the error case
-                let userRejected = false
-                root.wcService.requestHandler.rejectSessionRequest(request, userRejected)
-            }
-        }
-    }
-
-    Connections {
-        target: root.wcService
-
-        function onPairingValidated(validationState) {
-            if (pairWCLoader.item) {
-                pairWCLoader.item.pairingValidated(validationState)
-            }
-        }
-
-        function onConnectDApp(dappChains, sessionProposal, availableNamespaces) {
-            connectDappLoader.dappChains = dappChains
-            connectDappLoader.sessionProposal = sessionProposal
-            connectDappLoader.availableNamespaces = availableNamespaces
-            connectDappLoader.sessionTopic = null
-
-            if (pairWCLoader.item) {
-                // Allow user to get the uri valid confirmation
-                pairWCLoader.item.pairingValidated(Pairing.errors.dappReadyForApproval)
-                connectDappTimer.start()
-            } else {
-                connectDappLoader.active = true
-            }
-        }
-
-        function onApproveSessionResult(session, err) {
-            connectDappLoader.sessionTopic = session.topic
-
-            let modal = connectDappLoader.item
-            if (!!modal) {
-                if (err) {
-                    modal.pairFailed(session, err)
-                } else {
-                    modal.pairSuccessful(session)
-                }
-            }
-        }
-
-        function onSessionRequest(request) {
-            sessionRequestLoader.request = request
-            sessionRequestLoader.requestHandled = false
-            sessionRequestLoader.active = true
         }
     }
 

@@ -1464,4 +1464,9 @@ QtObject {
     }
 
     readonly property string navigationMetric: "navigation"
+
+    enum DAppConnectors {
+        WalletConnect = 1,
+        StatusConnect = 2
+    }
 }

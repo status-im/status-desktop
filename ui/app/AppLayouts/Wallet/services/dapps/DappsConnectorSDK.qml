@@ -40,6 +40,7 @@ WalletConnectSDKBase {
     property alias requestsModel: requests
 
     readonly property string invalidDAppUrlError: "Invalid dappInfo: URL is missing"
+    readonly property string invalidDAppTopicError: "Invalid dappInfo: failed to parse topic"
 
     projectId: ""
 
@@ -432,14 +433,12 @@ WalletConnectSDKBase {
                 };
             }
 
-            let sessionString = root.wcService.connectorDAppsProvider.getActiveSession(dappInfos.url)
-            if (sessionString === null) {
+            let session = root.wcService.connectorDAppsProvider.getActiveSession(dappInfos.url)
+            if (!session) {
                 console.error("Connector.lookupSession: error finding session for requestId ", root.requestId)
 
                 return
             }
-
-            let session = JSON.parse(sessionString);
 
             return sessionTemplate(session.url, session.name, session.icon)
         }
@@ -652,6 +651,7 @@ WalletConnectSDKBase {
         id: sessionRequestComponent
 
         SessionRequestResolved {
+            sourceId: Constants.DAppConnectors.StatusConnect
         }
     }
 
@@ -662,15 +662,14 @@ WalletConnectSDKBase {
     Connections {
         target: root.wcService
 
-        function onRevokeSession(dAppUrl) {
-            if (!dAppUrl) {
-                console.warn(invalidDAppUrlError)
+        function onRevokeSession(topic) {
+            if (!topic) {
+                console.warn(invalidDAppTopicError)
                 return
             }
 
-            controller.recallDAppPermission(dAppUrl)
-            const session = { url: dAppUrl, name: "", icon: "" }
-            root.wcService.connectorDAppsProvider.revokeSession(JSON.stringify(session))
+            controller.recallDAppPermission(topic)
+            root.wcService.connectorDAppsProvider.revokeSession(topic)
         }
     }
 
@@ -753,8 +752,8 @@ WalletConnectSDKBase {
                 console.warn(invalidDAppUrlError)
                 return
             }
-            const session = { url, name, iconUrl }
-            root.wcService.connectorDAppsProvider.addSession(JSON.stringify(session))
+
+            root.wcService.connectorDAppsProvider.addSession(url, name, iconUrl)
         }
 
         onDappRevokeDAppPermission: function(dappInfoString) {
@@ -762,7 +761,8 @@ WalletConnectSDKBase {
             let session = {
                 "url": dappItem.url,
                 "name": dappItem.name,
-                "iconUrl": dappItem.icon
+                "iconUrl": dappItem.icon,
+                "topic": dappItem.url
             }
 
             if (!session.url) {
@@ -777,6 +777,10 @@ WalletConnectSDKBase {
     approveSession: function(requestId, account, selectedChains) {
         controller.approveDappConnectRequest(requestId, account, JSON.stringify(selectedChains))
         const { url, name, icon: iconUrl } = root.dappInfo;
+        //TODO: temporary solution until we have a proper way to handle accounts
+        //The dappProvider should add a new session only when the backend has validated the connection
+        //Currently the dapp info is limited to the url, name and icon
+        root.wcService.connectorDAppsProvider.addSession(url, name, iconUrl, account)
         root.wcService.displayToastMessage(qsTr("Successfully authenticated %1").arg(url), false);
     }
 

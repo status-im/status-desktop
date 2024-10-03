@@ -22,11 +22,14 @@ ColumnLayout {
     StatusBaseInput {
         id: input
 
+        Component.onCompleted: {
+            forceActiveFocus()
+        }
+
         Layout.fillWidth: true
         Layout.preferredHeight: 132
 
         placeholderText: qsTr("Paste URI")
-
         verticalAlignment: TextInput.AlignTop
 
         valid: {

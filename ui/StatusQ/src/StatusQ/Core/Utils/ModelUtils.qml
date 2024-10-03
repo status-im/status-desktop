@@ -157,4 +157,16 @@ QtObject {
 
         return null
     }
+
+    function forEach(model, callback) {
+        if (!model)
+            return
+
+        const count = model.rowCount()
+
+        for (let i = 0; i < count; i++) {
+            const modelItem = Internal.ModelUtils.get(model, i)
+            callback(modelItem)
+        }
+    }
 }

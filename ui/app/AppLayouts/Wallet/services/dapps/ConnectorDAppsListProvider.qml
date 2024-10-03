@@ -1,6 +1,8 @@
 import QtQuick 2.15
-import StatusQ.Core.Utils 0.1
+
 import AppLayouts.Wallet.services.dapps 1.0
+import StatusQ.Core.Utils 0.1
+
 import shared.stores 1.0
 import utils 1.0
 
@@ -8,17 +10,39 @@ QObject {
     id: root
 
     readonly property alias dappsModel: d.dappsModel
+    readonly property int connectorId: Constants.StatusConnect
 
-    function addSession(session) {
-        d.addSession(session)
+    function addSession(url, name, iconUrl, accountAddress) {
+        if (!url || !name || !iconUrl || !accountAddress) {
+            console.error("addSession: missing required parameters")
+            return
+        }
+
+        const topic = url
+        const activeSession = getActiveSession(topic)
+        if (!activeSession) {
+            d.addSession({
+                url,
+                name,
+                iconUrl,
+                topic,
+                connectorId: root.connectorId,
+                accountAddresses: [{address: accountAddress}]
+            })
+            return
+        }
+
+        if (!ModelUtils.contains(activeSession.accountAddresses, "address", accountAddress, Qt.CaseInsensitive)) {
+            activeSession.accountAddresses.append({address: accountAddress})
+        }
     }
 
-    function revokeSession(session) {
-        d.revokeSession(session)
+    function revokeSession(topic) {
+        d.revokeSession(topic)
     }
 
-    function getActiveSession(dAppUrl) {
-        return d.getActionSession(dAppUrl)
+    function getActiveSession(topic) {
+        return d.getActiveSession(topic)
     }
 
     QObject {
@@ -28,16 +52,14 @@ QObject {
             id: dapps
         }
 
-        function addSession(dappInfo) {
-            let dappItem = JSON.parse(dappInfo)
+        function addSession(dappItem) {
             dapps.append(dappItem)
         }
 
-        function revokeSession(dappInfo) {
-            let dappItem = JSON.parse(dappInfo)
+        function revokeSession(topic) {
             for (let i = 0; i < dapps.count; i++) {
                 let existingDapp = dapps.get(i)
-                if (existingDapp.url === dappItem.url) {
+                if (existingDapp.topic === topic) {
                     dapps.remove(i)
                     break
                 }
@@ -50,19 +72,21 @@ QObject {
             }
         }
 
-        function getActionSession(dAppUrl) {
+        function getActiveSession(topic) {
             for (let i = 0; i < dapps.count; i++) {
-                let existingDapp = dapps.get(i)
+                const existingDapp = dapps.get(i)
 
-                if (existingDapp.url === dAppUrl) {
-                    return JSON.stringify({
+                if (existingDapp.topic === topic) {
+                    return {
                         name: existingDapp.name,
                         url: existingDapp.url,
-                        icon: existingDapp.iconUrl
-                    });
+                        icon: existingDapp.iconUrl,
+                        topic: existingDapp.topic,
+                        connectorId: existingDapp.connectorId,
+                        accountAddresses: existingDapp.accountAddresses
+                    };
                 }
             }
-
             return null
         }
     }
