@@ -56,7 +56,6 @@ Loader {
                     d.isPending = true
                     d.resolveENS(root.selectedRecipient.ens)
                 }
-                preferredChainIds = store.getShortChainIds(root.selectedRecipient.chainShortNames)
                 break
             }
             case Helpers.RecipientAddressObjectType.RecentsAddress: {
@@ -132,7 +131,6 @@ Loader {
     Component {
         id: savedAddressRecipient
         SavedAddressListItem {
-            property string chainShortNames: !!modelData ? modelData.chainShortNames: ""
             implicitWidth: parent.width
             modelData: root.selectedRecipient
             radius: 8
@@ -144,7 +142,7 @@ Loader {
                     if (!!modelData && !!modelData.ens && modelData.ens.length > 0)
                         return Utils.richColorText(modelData.ens, Theme.palette.directColor1)
                     else
-                        return WalletUtils.colorizedChainPrefix(modelData.chainShortNames) + StatusQUtils.Utils.elideText(modelData.address,6,4)
+                        return StatusQUtils.Utils.elideText(modelData.address,6,4)
                 }
                 return ""
             }

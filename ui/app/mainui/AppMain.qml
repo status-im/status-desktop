@@ -1886,7 +1886,6 @@ Item {
         sourceComponent: WalletPopups.AddEditSavedAddressPopup {
             store: WalletStores.RootStore
             sharedRootStore: appMain.sharedRootStore
-            flatNetworks: WalletStores.RootStore.filteredFlatModel
 
             onClosed: {
                 addEditSavedAddress.close()
@@ -1953,7 +1952,6 @@ Item {
             deleteSavedAddress.item.ens = deleteSavedAddress.params.ens?? ""
             deleteSavedAddress.item.name = deleteSavedAddress.params.name?? ""
             deleteSavedAddress.item.colorId = deleteSavedAddress.params.colorId?? "blue"
-            deleteSavedAddress.item.chainShortNames = deleteSavedAddress.params.chainShortNames?? ""
 
             deleteSavedAddress.item.open()
         }
@@ -2036,7 +2034,6 @@ Item {
 
         onLoaded: {
             showQR.item.switchingAccounsEnabled = showQR.params.switchingAccounsEnabled?? true
-            showQR.item.changingPreferredChainsEnabled = showQR.params.changingPreferredChainsEnabled?? true
             showQR.item.hasFloatingButtons = showQR.params.hasFloatingButtons?? true
 
             showQR.item.open()
@@ -2070,15 +2067,6 @@ Item {
                     return
                 }
                 appMain.transactionStore.setReceiverAccount(address)
-            }
-
-            onUpdatePreferredChains: {
-                if (showQR.showForSavedAddress) {
-                    let shortNames = WalletStores.RootStore.getNetworkShortNames(preferredChains)
-                    WalletStores.RootStore.updatePreferredChains(address, shortNames)
-                    return
-                }
-                WalletStores.RootStore.updateWalletAccountPreferredChains(address, preferredChains)
             }
 
             onClosed: {

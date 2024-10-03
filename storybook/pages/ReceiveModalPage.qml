@@ -43,22 +43,10 @@ SplitView {
                 "emoji": "🚗",
                 "color": "#216266",
                 "address": "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
-                "preferredSharingChainIds": "5:420:421613",
             }
             switchingAccounsEnabled: true
-            changingPreferredChainsEnabled: true
             hasFloatingButtons: true
             qrImageSource: "https://upload.wikimedia.org/wikipedia/commons/4/41/QR_Code_Example.svg"
-            getNetworkShortNames: function (chainIDsString) {
-                let chainArray = chainIDsString.split(":")
-                let chainNameString = ""
-                for (let i =0; i<chainArray.length; i++) {
-                    chainNameString += NetworksModel.getShortChainName(Number(chainArray[i])) + ":"
-                }
-                return chainNameString
-            }
-
-            property string networksNames: "oeth:arb1:eth:"
 
             store: WalletStores.RootStore
         }
@@ -67,39 +55,6 @@ SplitView {
     Pane {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
-
-        Column {
-            spacing: 12
-
-            Label {
-                text: "Test extended footer"
-                font.bold: true
-            }
-
-            Column {
-                RadioButton {
-                    text: "Medium length address"
-                    onCheckedChanged: {
-                        dialog.networksNames = "oeth:arb1:eth:arb1:solana:status:other:"
-                    }
-                }
-
-                RadioButton {
-                    text: "Super long address"
-                    onCheckedChanged: {
-                        dialog.networksNames = "oeth:arb1:eth:arb1:solana:status:other:something:hey:whatsapp:tele:viber:do:it:now:blackjack:some:black:number:check:it:out:heyeey:dosay:what:are:you:going:to:do:with:me:forever:young:michael:jackson:super:long:string:crasy:daisy:this:is:amazing:whatever:you:do:whenever:you:go:"
-                    }
-                }
-
-                RadioButton {
-                    checked: true
-                    text: "Short address"
-                    onCheckedChanged: {
-                        dialog.networksNames = "oeth:arb1:eth:"
-                    }
-                }
-            }
-        }
     }
 }
 

@@ -32,21 +32,12 @@ StatusModal {
     property var selectedAccount
 
     property bool switchingAccounsEnabled: true
-    property bool changingPreferredChainsEnabled: true
 
-    property string qrImageSource: root.store.getQrCode(d.visibleAddress)
-    property var getNetworkShortNames: function(chainIDsString) {
-        return root.store.getNetworkShortNames(chainIDsString)
-    }
+    property string qrImageSource: root.store.getQrCode(root.selectedAccount.address)
 
     property WalletStores.RootStore store: WalletStores.RootStore
 
     signal updateSelectedAddress(string address)
-    signal updatePreferredChains(string address, string preferredChains)
-
-    onSelectedAccountChanged: {
-        d.preferredChainIdsArray = root.selectedAccount.preferredSharingChainIds.split(":").filter(Boolean).map(Number)
-    }
 
     width: 556
     contentHeight: content.implicitHeight + d.advanceFooterHeight
@@ -64,19 +55,7 @@ StatusModal {
             width: implicitWidth
             model: SortFilterProxyModel {
                 sourceModel: root.accounts
-
                 sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
-                proxyRoles: [
-                    FastExpressionRole {
-                        name: "colorizedChainPrefixes"
-                        function getChainShortNames(chainIds) {
-                            const chainShortNames = root.getNetworkShortNames(chainIds)
-                            return WalletUtils.colorizedChainPrefix(chainShortNames)
-                        }
-                        expression: getChainShortNames(model.preferredSharingChainIds)
-                        expectedRoles: ["preferredSharingChainIds"]
-                    }
-                ]
             }
 
             selectedAddress: !!root.selectedAccount ? root.selectedAccount.address : ""
@@ -129,7 +108,7 @@ StatusModal {
                     verticalAlignment: Text.AlignVCenter
                     textFormat: TextEdit.RichText
                     wrapMode: Text.WrapAnywhere
-                    text: WalletUtils.colorizedChainPrefix(d.preferredChainShortNames) + root.selectedAccount.address
+                    text: root.selectedAccount.address
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                 }
@@ -141,7 +120,7 @@ StatusModal {
                     Layout.preferredWidth: 32
                     Layout.preferredHeight: 32
                     Layout.fillWidth: true
-                    textToCopy: d.visibleAddress
+                    textToCopy: root.selectedAccount.address
                     successCircleVisible: true
                 }
             }
@@ -155,22 +134,7 @@ StatusModal {
     QtObject {
         id: d
 
-        readonly property bool multiChainView: tabBar.currentIndex === 1
         readonly property int advanceFooterHeight: 88
-
-        property var preferredChainIdsArray: []
-        Binding on preferredChainIdsArray {
-            value: root.selectedAccount.preferredSharingChainIds.split(":").filter(Boolean).map(Number)
-        }
-        onPreferredChainIdsArrayChanged: {
-            if (preferredChainIdsArray !== selectPopup.selection) {
-                selectPopup.selection = preferredChainIdsArray
-            }
-        }
-        property var preferredChainIds: d.preferredChainIdsArray.join(":")
-
-        readonly property string preferredChainShortNames: d.multiChainView? root.getNetworkShortNames(d.preferredChainIds) : ""
-        readonly property string visibleAddress: "%1%2".arg(d.preferredChainShortNames).arg(root.selectedAccount.address)
     }
 
     Column {
@@ -181,21 +145,6 @@ StatusModal {
         topPadding: Style.current.xlPadding
         bottomPadding: Style.current.xlPadding
         spacing: Style.current.bigPadding
-
-        StatusSwitchTabBar {
-            id: tabBar
-            anchors.horizontalCenter: parent.horizontalCenter
-            currentIndex: 1
-
-            StatusSwitchTabButton {
-                objectName: "legacyButton"
-                text: qsTr("Legacy")
-            }
-            StatusSwitchTabButton {
-                objectName: "multichainButton"
-                text: qsTr("Multichain")
-            }
-        }
 
         Item {
             id: qrCode
@@ -263,72 +212,6 @@ StatusModal {
                         charactersLen: 1
                         isLetterIdenticon: root.selectedAccount.name && !root.selectedAccount.emoji
                         letterIdenticonBgWithAlpha: root.selectedAccount.name && !root.selectedAccount.emoji
-                    }
-                }
-            }
-        }
-
-        Item {
-            width: parent.width
-            height: Math.max(flow.height, editButton.height)
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible: d.multiChainView && (d.preferredChainIdsArray.length > 0 || root.changingPreferredChainsEnabled)
-
-            Flow {
-                id: flow
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
-
-                Repeater {
-                    model: root.store.filteredFlatModel
-                    delegate: StatusNetworkListItemTag {
-                        enabled: false
-                        button.visible: false
-                        title: model.shortName
-                        asset.name: model.isTest ? Style.svg(model.iconUrl + "-test") : Style.svg(model.iconUrl)
-                        visible: d.preferredChainIdsArray.includes(model.chainId)
-                    }
-                }
-            }
-
-            StatusRoundButton {
-                id: editButton
-                width: 32
-                height: 32
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.bigPadding
-                anchors.verticalCenter: parent.verticalCenter
-                icon.name: "edit_pencil"
-                type: StatusRoundButton.Type.Tertiary
-                visible: root.changingPreferredChainsEnabled
-                highlighted: selectPopup.visible
-                onClicked: selectPopup.open()
-
-                NetworkSelectPopup {
-                    id: selectPopup
-
-                    property string initialSelection
-
-                    x: editButton.width - width
-                    y: editButton.height + 2
-
-                    margins: -1 // to allow positioning outside the bounds of the dialog
-
-                    flatNetworks: root.store.filteredFlatModel
-                    selection: d.preferredChainIdsArray
-                    multiSelection: true
-
-                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-                    onSelectionChanged: {
-                        if (selection !== d.preferredChainIdsArray)
-                            d.preferredChainIdsArray = selection
-                    }
-
-                    onOpened: initialSelection = JSON.stringify(selection)
-                    onClosed: {
-                        if (initialSelection !== JSON.stringify(selection))
-                            root.updatePreferredChains(root.selectedAccount.address, d.preferredChainIds)
                     }
                 }
             }

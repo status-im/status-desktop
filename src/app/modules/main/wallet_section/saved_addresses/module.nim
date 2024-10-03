@@ -42,7 +42,6 @@ method loadSavedAddresses*(self: Module) =
       s.mixedcaseAddress,
       s.ens,
       s.colorId,
-      s.chainShortNames,
       s.isTest,
     ))
   )
@@ -61,15 +60,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.savedAddressesModuleDidLoad()
 
-method createOrUpdateSavedAddress*(self: Module, name: string, address: string, ens: string, colorId: string,
-  chainShortNames: string) =
-  self.controller.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
-
-method updatePreferredChains*(self: Module, address: string, chainShortNames: string) =
-  let item = self.view.getModel().getItemByAddress(address, self.controller.areTestNetworksEnabled())
-  if item.getAddress().len == 0:
-    return
-  self.controller.createOrUpdateSavedAddress(item.getName(), address, item.getEns(), item.getColorId(), chainShortNames)
+method createOrUpdateSavedAddress*(self: Module, name: string, address: string, ens: string, colorId: string) =
+  self.controller.createOrUpdateSavedAddress(name, address, ens, colorId)
 
 method deleteSavedAddress*(self: Module, address: string) =
   self.controller.deleteSavedAddress(address)
@@ -100,7 +92,6 @@ method getSavedAddressAsJson*(self: Module, address: string): string =
     "address": saDto.address,
     "ens": saDto.ens,
     "colorId": saDto.colorId,
-    "chainShortNames": saDto.chainShortNames,
     "isTest": saDto.isTest,
   }
   return $jsonObj

@@ -81,18 +81,6 @@ QtObject:
         break
       i.inc
 
-  proc onPreferredSharingChainsUpdated*(self: Model, address, prodPreferredChainIds, testPreferredChainIds: string) =
-    var i = 0
-    for item in self.items.mitems:
-      if address == item.address:
-        item.prodPreferredChainIds = prodPreferredChainIds
-        item.testPreferredChainIds = testPreferredChainIds
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.PreferredSharingChainIds.int])
-        break
-      i.inc
-
   method data(self: Model, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return

@@ -290,7 +290,6 @@ QtObject {
             address: "",
             ens: "",
             colorId: Constants.walletAccountColors.primary,
-            chainShortNames: "",
             isTest: false,
         }
 
@@ -356,13 +355,9 @@ QtObject {
         return walletSectionAccounts.getColorByAddress(address)
     }
 
-    function createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames) {
+    function createOrUpdateSavedAddress(name, address, ens, colorId) {
         root.addingSavedAddress = true
-        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
-    }
-
-    function updatePreferredChains(address, chainShortNames) {
-        walletSectionSavedAddresses.updatePreferredChains(address, chainShortNames)
+        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, ens, colorId)
     }
 
     function deleteSavedAddress(address) {
@@ -417,15 +412,6 @@ QtObject {
 
     function getNetworkIds(shortNames) {
         return networksModule.getNetworkIds(shortNames)
-    }
-
-    function updateWalletAccountPreferredChains(address, preferredChainIds) {
-        if(areTestNetworksEnabled) {
-            walletSectionAccounts.updateWalletAccountTestPreferredChains(address, preferredChainIds)
-        }
-        else {
-            walletSectionAccounts.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-        }
     }
 
     function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {

@@ -121,8 +121,7 @@ ColumnLayout {
                     let keyword = searchBox.text.trim().toUpperCase()
                     return spellingTolerantSearch(model.name, keyword) ||
                             model.address.toUpperCase().includes(keyword) ||
-                            model.ens.toUpperCase().includes(keyword) ||
-                            model.chainShortNames.toUpperCase().includes(keyword)
+                            model.ens.toUpperCase().includes(keyword)
                 }
             }
         }
@@ -146,7 +145,6 @@ ColumnLayout {
             objectName: "savedAddressView_Delegate_" + name
             name: model.name
             address: model.mixedcaseAddress
-            chainShortNames: model.chainShortNames
             ens: model.ens
             colorId: model.colorId
             networkConnectionStore: root.networkConnectionStore

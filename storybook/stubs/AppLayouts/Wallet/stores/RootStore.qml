@@ -15,7 +15,7 @@ QtObject {
         return false
     }
 
-    function createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames) {
+    function createOrUpdateSavedAddress(name, address, ens, colorId) {
         console.log("createOrUpdateSavedAddress")
     }
 

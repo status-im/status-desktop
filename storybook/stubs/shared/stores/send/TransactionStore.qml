@@ -64,13 +64,11 @@ QtObject {
                            name: "some saved addr name " + i,
                            ens: [],
                            address: "0x2B748A02e06B159C7C3E98F5064577B96E55A7b4",
-                           chainShortNames: "eth:arb1"
                        })
             append({
                        name: "some saved ENS name ",
                        ens: ["me@status.eth"],
                        address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc4",
-                       chainShortNames: "eth:arb1:opt"
                    })
         }
     }
@@ -145,15 +143,6 @@ QtObject {
 
     function getNetworkShortNames(chainIds) {
         return ""
-    }
-
-    function getShortChainIds(chainIds) {
-        let listOfChains = chainIds.split(":")
-        let listOfChainIds = []
-        for (let k =0;k<listOfChains.length;k++) {
-            listOfChainIds.push(SQUtils.ModelUtils.getByKey(flatNetworksModel, "shortName", listOfChains[k], "chainId"))
-        }
-        return listOfChainIds
     }
 
     function setSendType(sendType) {

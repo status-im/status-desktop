@@ -184,12 +184,6 @@ QtObject:
       return self.testPreferredChainIds
     else :
       return self.prodPreferredChainIds
-  proc setProdPreferredChainIds*(self: KeyPairAccountItem, value: string) =
-    self.prodPreferredChainIds = value
-    self.preferredSharingChainIdsChanged()
-  proc setTestPreferredChainIds*(self: KeyPairAccountItem, value: string) =
-    self.testPreferredChainIds = value
-    self.preferredSharingChainIdsChanged()
   QtProperty[string] preferredSharingChainIds:
     read = preferredSharingChainIds
     notify = preferredSharingChainIdsChanged

@@ -311,22 +311,6 @@ proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, e
     if notify:
       self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, Args())
 
-proc updateTestPreferredSharingChainsAndNotify(self: Service, address, testPreferredChains: string) =
-  var account = self.getAccountByAddress(address)
-  if account.isNil:
-    error "account's address is not among known addresses: ", address=address, procName="updateTestPreferredSharingChainsAndNotify"
-    return
-  account.testPreferredChainIds = testPreferredChains
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED, AccountArgs(account: account))
-
-proc updateProdPreferredSharingChainsAndNotify(self: Service, address, prodPreferredChains: string) =
-  var account = self.getAccountByAddress(address)
-  if account.isNil:
-    error "account's address is not among known addresses: ", address=address, procName="updateProdPreferredSharingChainsAndNotify"
-    return
-  account.prodPreferredChainIds = prodPreferredChains
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED, AccountArgs(account: account))
-
 ## if password is not provided local keystore file won't be created
 proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey,
   keyUid, accountType, colorId, emoji: string, hideFromTotalBalance: bool): string =
@@ -585,40 +569,6 @@ proc updateWalletAccount*(self: Service, address: string, accountName: string, c
     return true
   except Exception as e:
     error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
-  return false
-
-proc updateWalletAccountProdPreferredChains*(self: Service, address, preferredChainIds: string): bool =
-  try:
-    var account = self.getAccountByAddress(address)
-    if account.isNil:
-      error "account's address is not among known addresses: ", address=address, procName="updateWalletAccountProdPreferredChains"
-      return false
-    let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
-      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, preferredChainIds, account.testPreferredChainIds, account.hideFromTotalBalance)
-    if not response.error.isNil:
-      error "status-go error", procName="updateWalletAccountProdPreferredChains", errCode=response.error.code, errDesription=response.error.message
-      return false
-    self.updateProdPreferredSharingChainsAndNotify(address, preferredChainIds)
-    return true
-  except Exception as e:
-    error "error: ", procName="updateWalletAccountProdPreferredChains", errName=e.name, errDesription=e.msg
-  return false
-
-proc updateWalletAccountTestPreferredChains*(self: Service, address, preferredChainIds: string): bool =
-  try:
-    var account = self.getAccountByAddress(address)
-    if account.isNil:
-      error "account's address is not among known addresses: ", address=address, procName="updateWalletAccountTestPreferredChains"
-      return false
-    let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
-      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, preferredChainIds, account.hideFromTotalBalance)
-    if not response.error.isNil:
-      error "status-go error", procName="updateWalletAccountTestPreferredChains", errCode=response.error.code, errDesription=response.error.message
-      return false
-    self.updateTestPreferredSharingChainsAndNotify(address, preferredChainIds)
-    return true
-  except Exception as e:
-    error "error: ", procName="updateWalletAccountTestPreferredChains", errName=e.name, errDesription=e.msg
   return false
 
 proc updateWatchAccountHiddenFromTotalBalance*(self: Service, address: string, hideFromTotalBalance: bool): bool =
