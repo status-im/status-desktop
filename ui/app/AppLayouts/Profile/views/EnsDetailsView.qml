@@ -64,7 +64,7 @@ Item {
 
     Connections {
         target: root.ensUsernamesStore.ensUsernamesModule
-        function onDetailsObtained(ensName: string, address: string, pubkey: string, isStatus: bool, expirationTime: int) {
+        function onDetailsObtained(chainId: int, ensName: string, address: string, pubkey: string, isStatus: bool, expirationTime: int) {
             if(username != (isStatus ? ensName + ".stateofus.eth" : ensName))
                 return;
             walletAddressLbl.subTitle = address;
