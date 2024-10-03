@@ -274,7 +274,7 @@ class AddNewAccountPopup(BasePopup):
 
     @allure.step('Click continue')
     def click_continue(self):
-        self._continue_button.click()
+        self._continue_button.click(timeout=10)
         return self
 
     @allure.step('Import new seed phrase and continue')
@@ -287,7 +287,7 @@ class AddNewAccountPopup(BasePopup):
 
     @allure.step('Enter new seed phrase')
     def enter_new_seed_phrase(self, seed_phrase_words: list):
-        self._import_seed_phrase_button.click()
+        self._import_seed_phrase_button.click(timeout=10)
         if len(seed_phrase_words) == 12:
             self._seed_phrase_12_words_button.click()
         elif len(seed_phrase_words) == 18:

@@ -141,8 +141,7 @@ editOwnerTokenView_Fees_FeesBox = {"container": mainWindow_editOwnerTokenView_Ed
 mainWindow_MintedTokensView = {"container": mainWindow_StatusWindow, "type": "MintedTokensView", "unnamed": 1, "visible": True}
 specialCollectible_PrivilegedTokenArtworkPanel = {"container": mainWindow_MintedTokensView, "id": "specialCollectible", "type": "PrivilegedTokenArtworkPanel", "unnamed": 1, "visible": True}
 specialCollectible_PrivilegedTokenArtworkPanel_2 = {"container": mainWindow_MintedTokensView, "id": "specialCollectible", "occurrence": 2, "type": "PrivilegedTokenArtworkPanel", "unnamed": 1, "visible": True}
-o_CollectibleView_2 = {"container": mainWindow_MintedTokensView, "index": 1, "type": "CollectibleView", "unnamed": 1, "visible": True}
-o_CollectibleView = {"container": mainWindow_MintedTokensView, "index": 0, "type": "CollectibleView", "unnamed": 1, "visible": True}
+collectibleView_control = {"container": mainWindow_MintedTokensView, "objectName": "collectibleViewControl", "type": "CollectibleView", "visible": True}
 token_sale_icon_StatusIcon = {"container": mainWindow_MintedTokensView, "objectName": "token-sale-icon", "type": "StatusIcon", "visible": True}
 crown_icon_StatusIcon = {"container": mainWindow_MintedTokensView, "objectName": "crown-icon", "type": "StatusIcon", "visible": True}
 
