@@ -221,16 +221,16 @@ method setTotalCurrencyBalance*(self: Module) =
 
 proc notifyModulesOnFilterChanged(self: Module) =
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
-  self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
-  self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.accountsModule.filterChanged(self.filter.chainIds)
+  self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.isDirty)
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.allTokensModule.filterChanged(self.filter.addresses)
   self.allCollectiblesModule.refreshWalletAccounts()
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.filter.isDirty = false
 
 proc notifyModulesBalanceIsLoaded(self: Module) =
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
-  self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
 
 proc updateViewWithAddressFilterChanged(self: Module) =
   if self.overviewModule.getIsAllAccounts():
@@ -289,7 +289,10 @@ method load*(self: Module) =
     self.setTotalCurrencyBalance()
     self.filter.removeAddress(args.account.address)
     self.view.emitWalletAccountRemoved(args.account.address)
-    self.notifyFilterChanged()
+    if(cmpIgnoreCase(self.view.getAddressFilters(), args.account.address) == 0):
+      self.setFilterAllAddresses()
+    else:
+      self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
     self.filter.updateNetworks()
     self.setTotalCurrencyBalance()
@@ -397,6 +400,7 @@ proc checkIfModuleDidLoad(self: Module) =
   self.filter.setAddresses(self.getWalletAddressesNotHidden())
   self.filter.load()
   self.notifyFilterChanged()
+  self.accountsModule.loadAllWalletAccounts()
   self.moduleLoaded = true
   self.delegate.walletSectionDidLoad()
   self.view.setWalletReady()

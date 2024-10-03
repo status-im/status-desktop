@@ -32,6 +32,9 @@ proc init*(self: Controller) =
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
+proc getWalletAccountsByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletAccountDto] =
+  return self.walletAccountService.getAccountsByAddresses(addresses)
+
 proc isKeycardAccount*(self: Controller, account: WalletAccountDto): bool =
   return self.walletAccountService.isKeycardAccount(account)
 
@@ -73,6 +76,3 @@ proc updateWatchAccountHiddenFromTotalBalance*(self: Controller, address: string
 
 proc getTokensMarketValuesLoading*(self: Controller): bool =
   return self.walletAccountService.getTokensMarketValuesLoading()
-
-proc getChainIds*(self: Controller): seq[int] =
-  return self.networkService.getCurrentNetworksChainIds()

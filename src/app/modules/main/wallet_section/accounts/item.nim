@@ -125,3 +125,13 @@ QtObject:
 
   proc canSend*(self: Item): bool =
     return self.canSend
+
+  proc setAssetsLoading*(self: Item, value: bool) =
+    self.assetsLoading = value
+
+  proc setBalance*(self: Item, value: CurrencyAmount) =
+    self.currencyBalance = value
+    self.currencyBalanceChanged()
+
+  proc setHideFromTotalBalance*(self: Item, value: bool) =
+    self.hideFromTotalBalance = value
