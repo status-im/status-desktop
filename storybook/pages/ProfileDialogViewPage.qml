@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.14
 
 import utils 1.0
 import shared.views 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import mainui 1.0
 
 import StatusQ 0.1
@@ -172,6 +172,7 @@ SplitView {
 
     Popups {
         popupParent: root
+        sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutStores.RootStore {
             property var contactStore: QtObject {
                 property var contactsModule: null
@@ -304,7 +305,7 @@ SplitView {
                 }
             }
         }
-        communityTokensStore: CommunityTokensStore {}
+        communityTokensStore: SharedStores.CommunityTokensStore {}
     }
 
     WalletAssetsStore {

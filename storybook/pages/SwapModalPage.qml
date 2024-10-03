@@ -18,7 +18,7 @@ import mainui 1.0
 import AppLayouts.Wallet.popups.swap 1.0
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.stores 1.0 as AppLayoutStores
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 SplitView {
     id: root
@@ -50,8 +50,9 @@ SplitView {
 
     Popups {
         popupParent: root
+        sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutStores.RootStore {}
-        communityTokensStore: CommunityTokensStore {}
+        communityTokensStore: SharedStores.CommunityTokensStore {}
     }
 
     PopupBackground {
@@ -131,7 +132,7 @@ SplitView {
                 readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
                 assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
-            currencyStore: CurrenciesStore {
+            currencyStore: SharedStores.CurrenciesStore {
                 function formatBigNumber(number: string, symbol: string, noSymbolOption: bool) {
                     if (!number)
                         return "N/A"

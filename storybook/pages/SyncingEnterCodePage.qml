@@ -6,7 +6,7 @@ import Storybook 1.0
 
 import mainui 1.0
 import shared.views 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 import AppLayouts.stores 1.0 as AppLayoutStores
 
@@ -18,8 +18,9 @@ SplitView {
 
     Popups {
         popupParent: root
+        sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutStores.RootStore {}
-        communityTokensStore: CommunityTokensStore {}
+        communityTokensStore: SharedStores.CommunityTokensStore {}
     }
 
     Item {

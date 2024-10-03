@@ -13,7 +13,7 @@ import Models 1.0
 
 import utils 1.0
 import mainui 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 SplitView {
     id: root
@@ -21,8 +21,9 @@ SplitView {
 
     Popups {
         popupParent: root
+        sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutStores.RootStore
-        communityTokensStore: CommunityTokensStore {}
+        communityTokensStore: SharedStores.CommunityTokensStore {}
     }
 
     SplitView {

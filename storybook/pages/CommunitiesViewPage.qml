@@ -12,7 +12,7 @@ import utils 1.0
 
 import Storybook 1.0
 import Models 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 SplitView {
     id: root
@@ -25,12 +25,13 @@ SplitView {
         assetsWithFilteredBalances: walletAssetStore.groupedAccountsAssetsModel
     }
 
-    readonly property var currencyStore: CurrenciesStore {}
+    readonly property var currencyStore: SharedStores.CurrenciesStore {}
 
     Popups {
         popupParent: root
+        sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutsStores.RootStore
-        communityTokensStore: CommunityTokensStore {}
+        communityTokensStore: SharedStores.CommunityTokensStore {}
     }
 
     ListModel {
