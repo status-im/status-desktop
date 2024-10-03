@@ -190,6 +190,21 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
+  proc removeAllItems(self: Model) =
+    if self.items.len <= 0:
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+  
+    let startIdx = 0
+    let endIdx = startIdx + self.items.len - 1
+  
+    self.beginRemoveRows(parentModelIndex, startIdx, endIdx)
+    self.items = @[]
+    self.endRemoveRows()
+    self.countChanged()
+
   # TODO: rename me to removeItemByPubkey
   proc removeItemById*(self: Model, pubKey: string) =
     let ind = self.findIndexForMember(pubKey)
@@ -345,6 +360,10 @@ QtObject:
 
 
   proc updateToTheseItems*(self: Model, items: seq[MemberItem]) =
+    if items.len == 0:
+      self.removeAllItems()
+      return
+
     # Check for removals
     for oldItem in self.items:
       var found = false
@@ -367,11 +386,11 @@ QtObject:
 
       itemsToUpdate.add(item)
 
-    if itemsToAdd.len > 0:
-      self.addItems(itemsToAdd)
-
     if itemsToUpdate.len > 0:
       self.updateItems(itemsToAdd)
+
+    if itemsToAdd.len > 0:
+      self.addItems(itemsToAdd)
 
   proc updateItem*(
       self: Model,
