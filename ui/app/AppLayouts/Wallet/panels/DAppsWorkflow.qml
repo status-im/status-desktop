@@ -20,8 +20,44 @@ DappsComboBox {
 
     // Values mapped to Constants.LoginType
     required property int loginType
+    /*
+        Accounts model
+
+        Expected model structure:
+        name                    [string] - account name e.g. "Piggy Bank"
+        address                 [string] - wallet account address e.g. "0x1234567890"
+        colorizedChainPrefixes  [string] - chain prefixes with rich text colors e.g. "<font color=\"red\">eth:</font><font color=\"blue\">oeth:</font><font color=\"green\">arb:</font>"
+        emoji                   [string] - emoji for account e.g. "🐷"
+        colorId                 [string] - color id for account e.g. "1"
+        currencyBalance         [var]    - fiat currency balance
+            amount              [number] - amount of currency e.g. 1234
+            symbol              [string] - currency symbol e.g. "USD"
+            optDisplayDecimals  [number] - optional number of decimals to display
+            stripTrailingZeroes [bool]   - strip trailing zeroes
+        walletType              [string] - wallet type e.g. Constants.watchWalletType. See `Constants` for possible values
+        migratedToKeycard       [bool]   - whether account is migrated to keycard
+        accountBalance          [var]    - account balance for a specific network
+            formattedBalance    [string] - formatted balance e.g. "1234.56B"
+            balance             [string] - balance e.g. "123456000000"
+            iconUrl             [string] - icon url e.g. "network/Network=Hermez"
+            chainColor          [string] - chain color e.g. "#FF0000"
+    */
     property var accountsModel
+    /*
+      Networks model
+      Expected model structure:
+        chainName      [string]          - chain long name. e.g. "Ethereum" or "Optimism"
+        chainId        [int]             - chain unique identifier
+        iconUrl        [string]          - SVG icon name. e.g. "network/Network=Ethereum"
+        layer          [int]             - chain layer. e.g. 1 or 2
+        isTest         [bool]            - true if the chain is a testnet
+    */
     property var networksModel
+    /*
+      ObjectModel containig session requests
+        requestId     [string]                  - unique identifier for the request
+        requestItem   [SessionRequestResolved]  - request object
+    */ 
     property SessionRequestsModel sessionRequestsModel
     property string selectedAccountAddress
 
@@ -184,7 +220,7 @@ DappsComboBox {
 
         sourceComponent: ConnectDAppModal {
             visible: true
-            
+
             onClosed: connectDappLoader.active = false
             accounts: root.accountsModel
             flatNetworks: SortFilterProxyModel {

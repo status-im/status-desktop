@@ -154,10 +154,11 @@ function formatApproveSessionResponse(networksArray, accountsArray, custom) {
     }`
 }
 
-function formatSessionRequest(chainId, method, params, topic) {
+function formatSessionRequest(chainId, method, params, topic, requestId) {
+    const reqId = requestId || 1717149885151715
     let paramsStr = params.map(param => `${param}`).join(',')
     return `{
-    "id": 1717149885151715,
+    "id": ${reqId},
     "params": {
         "chainId": "eip155:${chainId}",
         "request": {
