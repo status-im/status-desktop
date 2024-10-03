@@ -1,3 +1,4 @@
+import time
 import typing
 
 import allure
@@ -280,38 +281,15 @@ class EditOwnerTokenView(QObject):
 
 class MintedTokensView(QObject):
     def __init__(self):
-        super(MintedTokensView, self).__init__(communities_names.mainWindow_MintedTokensView)
+        super().__init__(communities_names.mainWindow_MintedTokensView)
+        self.minted_tokens_view = QObject(communities_names.mainWindow_MintedTokensView)
         self._coin_symbol = QObject(communities_names.token_sale_icon_StatusIcon)
         self._crown_symbol = QObject(communities_names.crown_icon_StatusIcon)
-        self._master_token = QObject(communities_names.o_CollectibleView)
-        self._owner_token = QObject(communities_names.o_CollectibleView_2)
+        self.collectible = QObject(communities_names.collectibleView_control)
 
-    @property
-    @allure.step('Check crown symbol is visible on owner token')
-    def does_crown_exist(self) -> bool:
-        return self._crown_symbol.exists
-
-    @property
-    @allure.step('Check coin symbol is visible on master token')
-    def does_coin_exist(self) -> bool:
-        return self._coin_symbol.exists
-
-    @property
-    @allure.step('Get title of owner token')
-    def get_owner_token_title(self) -> str:
-        return str(self._owner_token.object.title)
-
-    @property
-    @allure.step('Get title of master token')
-    def get_master_token_title(self) -> str:
-        return str(self._master_token.object.title)
-
-    @property
-    @allure.step('Get status of owner token')
-    def get_owner_token_status(self) -> str:
-        return str(self._owner_token.object.subTitle)
-
-    @property
-    @allure.step('Get status of master token')
-    def get_master_token_status(self) -> str:
-        return str(self._master_token.object.subTitle)
+    def check_community_collectibles_statuses(self):
+        assert len(driver.findAllObjects(self.collectible.real_name)) == 2
+        assert self.wait_for(({'∞', '1 of 1 (you hodl)'} == set(
+            [str(getattr(collectible, 'subTitle', '')) for collectible in
+             driver.findAllObjects(self.collectible.wait_until_appears().real_name)]), 180000)), \
+            f"Token statuses were not changed within 3 minutes: {*[str(getattr(collectible, 'subTitle', '')) for collectible in driver.findAllObjects(self.collectible.real_name)],}"

@@ -15,6 +15,8 @@ import utils 1.0
 Control {
     id: root
 
+    objectName: "collectibleViewControl"
+
     property string title: ""
     property string unknownTitle: "..."
     property string subTitle: ""
