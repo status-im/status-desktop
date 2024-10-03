@@ -126,7 +126,7 @@ method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string)
 proc checkIfWeHaveNotifications[T](self: Module[T])
-
+proc createMemberItem[T](self: Module[T], memberId: string, requestId: string, state: MembershipRequestState, role: MemberRole, airdropAddress: string = ""): MemberItem
 
 proc newModule*[T](
   delegate: T,
@@ -340,7 +340,6 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
 
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
   let active = self.getActiveSectionId() == communityDetails.id # We must pass on if the current item section is currently active to keep that property as it is
-
 
   # Add members who were kicked from the community after the ownership change for auto-rejoin after they share addresses
   var members = communityDetails.members
@@ -1725,7 +1724,7 @@ method updateRequestToJoinState*[T](self: Module[T], sectionId: string, requestT
   if sectionId in self.chatSectionModules:
     self.chatSectionModules[sectionId].updateRequestToJoinState(requestToJoinState)
 
-proc createMemberItem*[T](
+proc createMemberItem[T](
     self: Module[T],
     memberId: string,
     requestId: string,
@@ -1752,6 +1751,22 @@ proc createMemberItem*[T](
     membershipRequestState = state,
     requestToJoinId = requestId,
     airdropAddress = airdropAddress,
+  )
+
+method contactUpdated*[T](self: Module[T], contactId: string) =
+  let contactDetails = self.controller.getContactDetails(contactId)
+  let isMe = contactId == singletonInstance.userProfile.getPubKey()
+  self.view.model().updateMemberItems(
+    pubKey = contactId,
+    displayName = contactDetails.dto.displayName,
+    ensName = contactDetails.dto.name,
+    isEnsVerified = contactDetails.dto.ensVerified,
+    localNickname = contactDetails.dto.localNickname,
+    alias = contactDetails.dto.alias,
+    icon = contactDetails.icon,
+    isContact = contactDetails.dto.isContact,
+    isVerified = not isMe and contactDetails.dto.isContactVerified(),
+    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
   )
 
 {.pop.}

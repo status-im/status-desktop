@@ -434,6 +434,70 @@ QtObject:
     defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, roles)
 
+  proc updateMemberItems*(
+      self: SectionModel,
+      pubKey: string,
+      displayName: string,
+      ensName: string,
+      isEnsVerified: bool,
+      localNickname: string,
+      alias: string,
+      icon: string,
+      isContact: bool,
+      isVerified: bool,
+      isUntrustworthy: bool,
+    ) =
+    for item in self.items:
+      # TODO refactor to use only one model https://github.com/status-im/status-desktop/issues/16433
+      item.members.updateItem(
+        pubKey,
+        displayName,
+        ensName,
+        isEnsVerified,
+        localNickname,
+        alias,
+        icon,
+        isContact,
+        isVerified,
+        isUntrustworthy,
+      )
+      item.bannedMembers.updateItem(
+        pubKey,
+        displayName,
+        ensName,
+        isEnsVerified,
+        localNickname,
+        alias,
+        icon,
+        isContact,
+        isVerified,
+        isUntrustworthy,
+      )
+      item.pendingMemberRequests.updateItem(
+        pubKey,
+        displayName,
+        ensName,
+        isEnsVerified,
+        localNickname,
+        alias,
+        icon,
+        isContact,
+        isVerified,
+        isUntrustworthy,
+      )
+      item.declinedMemberRequests.updateItem(
+        pubKey,
+        displayName,
+        ensName,
+        isEnsVerified,
+        localNickname,
+        alias,
+        icon,
+        isContact,
+        isVerified,
+        isUntrustworthy,
+      )
+
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =
     if nth >= 0 and nth < self.items.len:
       var counter = 0
