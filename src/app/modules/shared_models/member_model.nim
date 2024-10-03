@@ -1,11 +1,11 @@
 import NimQml, Tables, stew/shims/strformat, sequtils, sugar
-import std/macros
 # TODO: use generics to remove duplication between user_model and member_model
 
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contacts
 import member_item
 import contacts_utils
+import model_utils
 
 type
   ModelRole {.pure.} = enum
@@ -227,17 +227,9 @@ QtObject:
       resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
       resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
 
-    if self.items[ind].displayName != displayName:
-      self.items[ind].displayName = displayName
-      roles.add(ModelRole.DisplayName.int)
-
-    if self.items[ind].ensName != ensName:
-      self.items[ind].ensName = ensName
-      roles.add(ModelRole.EnsName.int)
-
-    if self.items[ind].localNickname != localNickname:
-      self.items[ind].localNickname = localNickname
-      roles.add(ModelRole.LocalNickname.int)
+    updateRole(displayName, DisplayName)
+    updateRole(ensName, EnsName)
+    updateRole(localNickname, LocalNickname)
 
     if roles.len == 0:
       return
@@ -262,17 +254,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
-
-  # Macro that simplifies checking and updating values in a model
-  # IMPORTANT:
-    # The model's items need to be in a `seq` called `items`
-    # A `seq[string]` named `roles` needs to exist
-    # The index of the item being checked must be named `ind`
-  macro updateRole(propertyName: untyped, roleName: untyped): untyped =
-    quote do:
-      if self.items[ind].`propertyName` != `propertyName`:
-        self.items[ind].`propertyName` = `propertyName`
-        roles.add(ModelRole.`roleName`.int)
 
   proc updateItem*(
       self: Model,

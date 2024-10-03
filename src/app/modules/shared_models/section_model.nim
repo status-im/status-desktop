@@ -4,6 +4,7 @@ import json
 
 import section_item, member_model, member_item
 import ../main/communities/tokens/models/[token_item, token_model]
+import model_utils
 
 type
   ModelRole {.pure.} = enum
@@ -292,145 +293,53 @@ QtObject:
     self.dataChanged(dataIndex, dataIndex, @[ModelRole.Muted.int])
 
   proc editItem*(self: SectionModel, item: SectionItem) =
-    let index = self.getItemIndex(item.id)
-    if index == -1:
+    let ind = self.getItemIndex(item.id)
+    if ind == -1:
       return
     
     var roles: seq[int] = @[]
 
-    if self.items[index].name != item.name:
-      self.items[index].name = item.name
-      roles.add(ModelRole.Name.int)
+    updateRoleWithValue(name, Name, item.name)
+    updateRoleWithValue(memberRole, MemberRole, item.memberRole)
+    updateRoleWithValue(isControlNode, IsControlNode, item.isControlNode)
+    updateRoleWithValue(description, Description, item.description)
+    updateRoleWithValue(introMessage, IntroMessage, item.introMessage)
+    updateRoleWithValue(outroMessage, OutroMessage, item.outroMessage)
+    updateRoleWithValue(image, Image, item.image)
+    updateRoleWithValue(bannerImageData, BannerImageData, item.bannerImageData)
+    updateRoleWithValue(icon, Icon, item.icon)
+    updateRoleWithValue(color, Color, item.color)
+    updateRoleWithValue(tags, Tags, item.tags)
+    updateRoleWithValue(hasNotification, HasNotification, item.hasNotification)
+    updateRoleWithValue(notificationsCount, NotificationsCount, item.notificationsCount)
+    updateRoleWithValue(active, Active, item.active)
+    updateRoleWithValue(enabled, Enabled, item.enabled)
+    updateRoleWithValue(joined, Joined, item.joined)
+    updateRoleWithValue(spectated, Spectated, item.spectated)
+    updateRoleWithValue(isMember, IsMember, item.isMember)
+    updateRoleWithValue(isMember, IsMember, item.isMember)
+    updateRoleWithValue(canManageUsers, CanManageUsers, item.canManageUsers)
+    updateRoleWithValue(canRequestAccess, CanRequestAccess, item.canRequestAccess)
+    updateRoleWithValue(access, Access, item.access)
+    updateRoleWithValue(ensOnly, EnsOnly, item.ensOnly)
+    updateRoleWithValue(muted, Muted, item.muted)
+    updateRoleWithValue(historyArchiveSupportEnabled, HistoryArchiveSupportEnabled, item.historyArchiveSupportEnabled)
+    updateRoleWithValue(pinMessageAllMembersEnabled, PinMessageAllMembersEnabled, item.pinMessageAllMembersEnabled)
+    updateRoleWithValue(encrypted, Encrypted, item.encrypted)
+    updateRoleWithValue(pubsubTopic, PubsubTopic, item.pubsubTopic)
+    updateRoleWithValue(pubsubTopicKey, PubsubTopicKey, item.pubsubTopicKey)
+    updateRoleWithValue(shardIndex, ShardIndex, item.shardIndex)
+    updateRoleWithValue(isPendingOwnershipRequest, IsPendingOwnershipRequest, item.isPendingOwnershipRequest)
 
-    if self.items[index].memberRole != item.memberRole:
-      self.items[index].memberRole = item.memberRole
-      roles.add(ModelRole.MemberRole.int)
-
-    if self.items[index].isControlNode != item.isControlNode:
-      self.items[index].isControlNode = item.isControlNode
-      roles.add(ModelRole.IsControlNode.int)
-
-    if self.items[index].description != item.description:
-      self.items[index].description = item.description
-      roles.add(ModelRole.Description.int)
-
-    if self.items[index].introMessage != item.introMessage:
-      self.items[index].introMessage = item.introMessage
-      roles.add(ModelRole.IntroMessage.int)
-
-    if self.items[index].outroMessage != item.outroMessage:
-      self.items[index].outroMessage = item.outroMessage
-      roles.add(ModelRole.OutroMessage.int)
-
-    if self.items[index].image != item.image:
-      self.items[index].image = item.image
-      roles.add(ModelRole.Image.int)
-
-    if self.items[index].bannerImageData != item.bannerImageData:
-      self.items[index].bannerImageData = item.bannerImageData
-      roles.add(ModelRole.BannerImageData.int)
-
-    if self.items[index].icon != item.icon:
-      self.items[index].icon = item.icon
-      roles.add(ModelRole.Icon.int)
-
-    if self.items[index].color != item.color:
-      self.items[index].color = item.color
-      roles.add(ModelRole.Color.int)
-
-    if self.items[index].tags != item.tags:
-      self.items[index].tags = item.tags
-      roles.add(ModelRole.Tags.int)
-
-    if self.items[index].hasNotification != item.hasNotification:
-      self.items[index].hasNotification = item.hasNotification
-      roles.add(ModelRole.HasNotification.int)
-
-    if self.items[index].notificationsCount != item.notificationsCount:
-      self.items[index].notificationsCount = item.notificationsCount
-      roles.add(ModelRole.NotificationsCount.int)
-
-    if self.items[index].active != item.active:
-      self.items[index].active = item.active
-      roles.add(ModelRole.Active.int)
-
-    if self.items[index].enabled != item.enabled:
-      self.items[index].enabled = item.enabled
-      roles.add(ModelRole.Enabled.int)
-
-    if self.items[index].joined != item.joined:
-      self.items[index].joined = item.joined
-      roles.add(ModelRole.Joined.int)
-
-    if self.items[index].spectated != item.spectated:
-      self.items[index].spectated = item.spectated
-      roles.add(ModelRole.Spectated.int)
-
-    if self.items[index].isMember != item.isMember:
-      self.items[index].isMember = item.isMember
-      roles.add(ModelRole.IsMember.int)
-
-    if self.items[index].canJoin != item.canJoin:
-      self.items[index].canJoin = item.canJoin
-      roles.add(ModelRole.CanJoin.int)
-
-    if self.items[index].canManageUsers != item.canManageUsers:
-      self.items[index].canManageUsers = item.canManageUsers
-      roles.add(ModelRole.CanManageUsers.int)
-
-    if self.items[index].canRequestAccess != item.canRequestAccess:
-      self.items[index].canRequestAccess = item.canRequestAccess
-      roles.add(ModelRole.CanRequestAccess.int)
-
-    if self.items[index].access != item.access:
-      self.items[index].access = item.access
-      roles.add(ModelRole.Access.int)
-
-    if self.items[index].ensOnly != item.ensOnly:
-      self.items[index].ensOnly = item.ensOnly
-      roles.add(ModelRole.EnsOnly.int)
-
-    if self.items[index].muted != item.muted:
-      self.items[index].muted = item.muted
-      roles.add(ModelRole.Muted.int)
-
-    if self.items[index].historyArchiveSupportEnabled != item.historyArchiveSupportEnabled:
-      self.items[index].historyArchiveSupportEnabled = item.historyArchiveSupportEnabled
-      roles.add(ModelRole.HistoryArchiveSupportEnabled.int)
-
-    if self.items[index].pinMessageAllMembersEnabled != item.pinMessageAllMembersEnabled:
-      self.items[index].pinMessageAllMembersEnabled = item.pinMessageAllMembersEnabled
-      roles.add(ModelRole.PinMessageAllMembersEnabled.int)
-
-    if self.items[index].encrypted != item.encrypted:
-      self.items[index].encrypted = item.encrypted
-      roles.add(ModelRole.Encrypted.int)
-
-    if self.items[index].pubsubTopic != item.pubsubTopic:
-      self.items[index].pubsubTopic = item.pubsubTopic
-      roles.add(ModelRole.PubsubTopic.int)
-
-    if self.items[index].pubsubTopicKey != item.pubsubTopicKey:
-      self.items[index].pubsubTopicKey = item.pubsubTopicKey
-      roles.add(ModelRole.PubsubTopicKey.int)
-
-    if self.items[index].shardIndex != item.shardIndex:
-      self.items[index].shardIndex = item.shardIndex
-      roles.add(ModelRole.ShardIndex.int)
-
-    if self.items[index].isPendingOwnershipRequest != item.isPendingOwnershipRequest:
-      self.items[index].isPendingOwnershipRequest = item.isPendingOwnershipRequest
-      roles.add(ModelRole.IsPendingOwnershipRequest.int)
-
-    self.items[index].members.updateToTheseItems(item.members.getItems())
-    self.items[index].bannedMembers.updateToTheseItems(item.bannedMembers.getItems())
-    self.items[index].pendingMemberRequests.updateToTheseItems(item.pendingMemberRequests.getItems())
-    self.items[index].declinedMemberRequests.updateToTheseItems(item.declinedMemberRequests.getItems())
+    self.items[ind].members.updateToTheseItems(item.members.getItems())
+    self.items[ind].bannedMembers.updateToTheseItems(item.bannedMembers.getItems())
+    self.items[ind].pendingMemberRequests.updateToTheseItems(item.pendingMemberRequests.getItems())
+    self.items[ind].declinedMemberRequests.updateToTheseItems(item.declinedMemberRequests.getItems())
 
     if roles.len == 0:
       return
 
-    let dataIndex = self.createIndex(index, 0, nil)
+    let dataIndex = self.createIndex(ind, 0, nil)
     defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, roles)
 
@@ -602,24 +511,18 @@ QtObject:
         return
 
   proc updateNotifications*(self: SectionModel, id: string, hasNotification: bool, notificationsCount: int) =
-    for i in 0 ..< self.items.len:
-      if self.items[i].id == id:
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-
+    for ind in 0 ..< self.items.len:
+      if self.items[ind].id == id:
         var roles: seq[int] = @[]
 
-        if self.items[i].hasNotification != hasNotification:
-          self.items[i].hasNotification = hasNotification
-          roles.add(ModelRole.HasNotification.int)
-
-        if self.items[i].notificationsCount != notificationsCount:
-          self.items[i].notificationsCount = notificationsCount
-          roles.add(ModelRole.NotificationsCount.int)
+        updateRole(hasNotification, HasNotification)
+        updateRole(notificationsCount, NotificationsCount)
 
         if roles.len == 0:
           return
 
+        let index = self.createIndex(ind, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, roles)
         self.notificationsCountChanged()
         return
