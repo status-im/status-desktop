@@ -62,9 +62,9 @@ QtObject:
     self.loading(false)
     self.detailsObtained(chainId, ensUsername, address, pubkey, isStatus, expirationTime)
 
-  proc transactionWasSent(self: View, chainId: int, txHash: string, error: string) {.signal.}
-  proc emitTransactionWasSentSignal*(self: View, chainId: int, txHash: string, error: string) =
-    self.transactionWasSent(chainId, txHash, error)
+  proc transactionWasSent(self: View, trxType: string, chainId: int, txHash: string, username: string, error: string) {.signal.}
+  proc emitTransactionWasSentSignal*(self: View, trxType: string, chainId: int, txHash: string, username: string, error: string) =
+    self.transactionWasSent(trxType, chainId, txHash, username, error)
 
   proc getEtherscanLink*(self: View): string {.slot.} =
     return self.etherscanLink

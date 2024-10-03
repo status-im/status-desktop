@@ -19,15 +19,13 @@ import AppLayouts.Profile.stores 1.0
 Item {
     id: root
     property EnsUsernamesStore ensUsernamesStore
-    property ContactsStore contactsStore
-    required property TransactionStore transactionStore
     property string username: ""
     property string chainId: ""
     property string walletAddress: "-"
     property string key: "-"
 
-    signal backBtnClicked();
-    signal usernameReleased()
+    signal backBtnClicked()
+    signal releaseUsernameRequested()
 
     QtObject {
         id: d
@@ -117,38 +115,6 @@ Item {
         }
     }
 
-    Component {
-        id: transactionDialogComponent
-        SendModal {
-            id: releaseEnsModal
-            modalHeader: qsTr("Release your username")
-            interactive: false
-            store: root.transactionStore
-            preSelectedSendType: Constants.SendType.ENSRelease
-            preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
-            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
-            preSelectedHoldingID: Constants.ethToken
-            preSelectedHoldingType: Constants.TokenType.ERC20
-            publicKey: root.contactsStore.myPublicKey
-            ensName: root.username
-
-            Connections {
-                target: root.ensUsernamesStore.ensUsernamesModule
-                function onTransactionWasSent(chainId: int, txHash: string, error: string) {
-                    if (!!error) {
-                        if (error.includes(Constants.walletSection.cancelledMessage)) {
-                            return
-                        }
-                        releaseEnsModal.sendingError.text = error
-                        return releaseEnsModal.sendingError.open()
-                    }
-                    usernameReleased()
-                    releaseEnsModal.close()
-                }
-            }
-        }
-    }
-
     RowLayout {
         id: actionsLayout
 
@@ -174,7 +140,7 @@ Item {
             enabled: false
             text: qsTr("Release username")
             onClicked: {
-                Global.openPopup(transactionDialogComponent)
+                root.releaseUsernameRequested()
             }
         }
     }

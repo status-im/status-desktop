@@ -47,6 +47,8 @@ const SIGNAL_OWNER_TOKEN_SENT* = "ownerTokenSent"
 const SIGNAL_TRANSACTION_SENDING_COMPLETE* = "transactionSendingComplete"
 const SIGNAL_TRANSACTION_STATUS_CHANGED* = "transactionStatusChanged"
 
+const InternalErrorCode = -1
+
 type TokenTransferMetadata* = object
   tokenName*: string
   isOwnerToken*: bool
@@ -428,6 +430,7 @@ QtObject:
         tokenIsOwnerToken, toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
     except CatchableError as e:
       error "suggestedRoutes", exception=e.msg
+      self.suggestedRoutesReady(uuid, @[], "", $InternalErrorCode, e.msg)
 
   proc stopSuggestedRoutesAsyncCalculation*(self: Service) =
     try:

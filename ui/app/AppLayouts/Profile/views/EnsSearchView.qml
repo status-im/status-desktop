@@ -22,13 +22,10 @@ Item {
     id: root
 
     property EnsUsernamesStore ensUsernamesStore
-    property ContactsStore contactsStore
-    required property TransactionStore transactionStore
     property int profileContentWidth
 
+    signal connectUsername(string username)
     signal continueClicked(string output, string username)
-    signal usernameUpdated(username: string);
-
 
     property string validationMessage: ""
     property bool valid: false
@@ -60,39 +57,6 @@ Item {
         }
         loading = true;
         Qt.callLater(validateENS, ensUsername, isStatus)
-    }
-
-    Component {
-        id: transactionDialogComponent
-        SendModal {
-            id: connectEnsModal
-            modalHeader: qsTr("Connect username with your pubkey")
-            interactive: false
-            store: root.transactionStore
-            preSelectedSendType: Constants.SendType.ENSSetPubKey
-            preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
-            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
-            preSelectedHoldingID: Constants.ethToken
-            preSelectedHoldingType: Constants.TokenType.ERC20
-            publicKey: root.contactsStore.myPublicKey
-            ensName: ensUsername.text
-
-            Connections {
-                target: root.ensUsernamesStore.ensUsernamesModule
-                function onTransactionWasSent(chainId: int, txHash: string, error: string) {
-                    if (!!error) {
-                        if (error.includes(Constants.walletSection.cancelledMessage)) {
-                            return
-                        }
-                        connectEnsModal.sendingError.text = error
-                        return connectEnsModal.sendingError.open()
-                    }
-                    usernameUpdated(ensUsername.text);
-                    connectEnsModal.close()
-                }
-            }
-        }
-
     }
 
     Item {
@@ -206,8 +170,7 @@ Item {
                 }
 
                 if(ensStatus === Constants.ens_connected_dkey || ensStatus === Constants.ens_owned){
-                    Global.openPopup(transactionDialogComponent, {ensUsername: ensUsername.text})
-                    return;
+                    root.connectUsername(ensUsername.text)
                 }
             }
         }

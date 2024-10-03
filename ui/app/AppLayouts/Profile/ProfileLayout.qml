@@ -38,11 +38,11 @@ StatusSectionLayout {
     property SharedStores.RootStore sharedRootStore
     property ProfileSectionStore store
     property AppLayoutsStores.RootStore globalStore
+    required property var sendModalPopup
     property var systemPalette
     property var emojiPopup
     property SharedStores.NetworkConnectionStore networkConnectionStore
     required property TokensStore tokensStore
-    required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
@@ -220,9 +220,9 @@ StatusSectionLayout {
                 implicitHeight: parent.height
                 ensUsernamesStore: root.store.ensUsernamesStore
                 walletAssetsStore: root.walletAssetsStore
+                sendModalPopup: root.sendModalPopup
                 contactsStore: root.store.contactsStore
                 networkConnectionStore: root.networkConnectionStore
-                transactionStore: root.transactionStore
                 profileContentWidth: d.contentWidth
             }
         }

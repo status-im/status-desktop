@@ -1434,11 +1434,11 @@ Item {
                             sharedRootStore: appMain.sharedRootStore
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
+                            sendModalPopup: sendModal
                             systemPalette: appMain.sysPalette
                             emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
                             tokensStore: appMain.tokensStore
-                            transactionStore: appMain.transactionStore
                             walletAssetsStore: appMain.walletAssetsStore
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
@@ -1625,6 +1625,8 @@ Item {
                 this.active = false
             }
 
+            property string modalHeaderText
+            property bool interactive: true
             property string preSelectedAccountAddress
             property var preSelectedRecipient
             property int preSelectedRecipientType
@@ -1635,7 +1637,12 @@ Item {
             property int preSelectedChainId: 0
             property bool onlyAssets: false
 
+            property string stickersPackId: ""
+            property string publicKey: ""
+            property string ensName: ""
+
             sourceComponent: SendPopups.SendModal {
+                interactive: sendModal.interactive
                 onlyAssets: sendModal.onlyAssets                
 
                 loginType: appMain.rootStore.loginType
@@ -1647,6 +1654,8 @@ Item {
 
                 onClosed: {
                     sendModal.closed()
+                    sendModal.modalHeaderText = ""
+                    sendModal.interactive = true
                     sendModal.preSelectedSendType = Constants.SendType.Unknown
                     sendModal.preSelectedHoldingID = ""
                     sendModal.preSelectedHoldingType = Constants.TokenType.Unknown
@@ -1654,6 +1663,10 @@ Item {
                     sendModal.preSelectedRecipient = undefined
                     sendModal.preDefinedAmountToSend = ""
                     sendModal.preSelectedChainId = 0
+
+                    sendModal.stickersPackId = ""
+                    sendModal.publicKey = ""
+                    sendModal.ensName = ""
                 }
             }
             onLoaded: {
@@ -1665,18 +1678,28 @@ Item {
                     item.preSelectedRecipientType = sendModal.preSelectedRecipientType
                     item.preSelectedRecipient = sendModal.preSelectedRecipient
                 }
-                if(sendModal.preSelectedSendType !== Constants.SendType.Unknown) {
+                if (sendModal.preSelectedSendType !== Constants.SendType.Unknown) {
                     item.preSelectedSendType = sendModal.preSelectedSendType
                 }
-                if(preSelectedHoldingType !== Constants.TokenType.Unknown) {
+                if (sendModal.preSelectedHoldingType !== Constants.TokenType.Unknown) {
                     item.preSelectedHoldingID = sendModal.preSelectedHoldingID
                     item.preSelectedHoldingType = sendModal.preSelectedHoldingType
                 }
-                if(preDefinedAmountToSend != "") {
-                    item.preDefinedAmountToSend = preDefinedAmountToSend
+                if (sendModal.preDefinedAmountToSend != "") {
+                    item.preDefinedAmountToSend = sendModal.preDefinedAmountToSend
                 }
-                if(!!sendModal.preSelectedChainId) {
+                if (!!sendModal.preSelectedChainId) {
                     item.preSelectedChainId = sendModal.preSelectedChainId
+                }
+
+                if (!!sendModal.stickersPackId) {
+                    item.stickersPackId = sendModal.stickersPackId
+                }
+                if (!!sendModal.publicKey) {
+                    item.publicKey = sendModal.publicKey
+                }
+                if (!!sendModal.ensName) {
+                    item.ensName = sendModal.ensName
                 }
             }
         }
