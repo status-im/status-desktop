@@ -29,7 +29,7 @@ import AppLayouts.Wallet.stores 1.0 as WalletStore
 import AppLayouts.stores 1.0 as AppLayoutStores
 
 import mainui 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import utils 1.0
 
 Item {
@@ -38,8 +38,9 @@ Item {
     // Needed for DAppsWorkflow->PairWCModal to open its instructions popup
     Popups {
         popupParent: root
+        sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutStores.RootStore {}
-        communityTokensStore: CommunityTokensStore {}
+        communityTokensStore: SharedStores.CommunityTokensStore {}
     }
 
     SplitView {
@@ -303,7 +304,7 @@ Item {
             projectId: projectIdText.projectId
         }
 
-        store: DAppsStore {
+        store: SharedStores.DAppsStore {
             signal dappsListReceived(string dappsJson)
             signal userAuthenticated(string topic, string id, string password, string pin)
             signal userAuthenticationFailed(string topic, string id)
@@ -421,7 +422,7 @@ Item {
             function getNetworkShortNames(chainIds) {
                 return "eth:oeth:arb"
             }
-            readonly property CurrenciesStore currencyStore: CurrenciesStore {}
+            readonly property SharedStores.CurrenciesStore currencyStore: SharedStores.CurrenciesStore {}
             readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.WalletAssetsStore {
                 // Silence warnings
                 assetsWithFilteredBalances: ListModel {}

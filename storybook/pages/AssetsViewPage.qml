@@ -7,14 +7,9 @@ import utils 1.0
 
 import Storybook 1.0
 
-import Qt.labs.settings 1.1
-
-import Models 1.0
-
 import AppLayouts.Wallet.controls 1.0
-import AppLayouts.stores 1.0 as AppLayoutStores
-import AppLayouts.Wallet.views 1.0
-import AppLayouts.Wallet.stores 1.0
+
+import Qt.labs.settings 1.1
 
 SplitView {
     id: root

@@ -17,7 +17,7 @@ import AppLayouts.Communities.stores 1.0 as CommunitiesStore
 import AppLayouts.Wallet.views 1.0
 import AppLayouts.Wallet.stores 1.0
 
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import shared.views 1.0
 
 import Storybook 1.0
@@ -50,8 +50,9 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: AppLayoutStores.RootStore
-        communityTokensStore: CommunityTokensStore {}
+        sharedRootStore: SharedStores.RootStore {}
+        rootStore: AppLayoutStores.RootStore {}
+        communityTokensStore: SharedStores.CommunityTokensStore {}
         walletCollectiblesStore: CollectiblesStore {
             collectiblesController: collectiblesView.controller
         }
