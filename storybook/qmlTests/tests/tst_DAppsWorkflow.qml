@@ -26,6 +26,46 @@ Item {
     width: 600
     height: 400
 
+    function mockSessionRequestEvent(tc, sdk, accountsModel, networksModel) {
+        const account = accountsModel.get(1)
+        const network = networksModel.get(1)
+        const topic = "b536a"
+        const requestId = 1717149885151715
+        const request = buildSessionRequestResolved(tc, account.address, network.chainId, topic, requestId)
+        // Expect to have calls to getActiveSessions from service initialization
+        const prevRequests = sdk.getActiveSessionsCallbacks.length
+        sdk.sessionRequestEvent(request.event)
+        // Service might trigger a sessionRequest event following the getActiveSessions call
+        const callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
+        const session = JSON.parse(Testing.formatApproveSessionResponse([network.chainId, 7], [account.address]))
+        callback({"b536a": session})
+
+        return {sdk, session, account, network, topic, request}
+    }
+
+    function buildSessionRequest(chainId, method, params, topic, requestId) {
+        return JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic, requestId))
+    }
+
+    function buildSessionRequestResolved(testCase, account, network, topic, requestId) {
+        const requestObj = buildSessionRequest(network, Constants.personal_sign, [`"${DAppsHelpers.strToHex("hello world")}"`, `"${account}"`], topic, requestId)
+        const requestItem = testCase.createTemporaryObject(sessionRequestComponent, root, {
+            event: requestObj,
+            topic,
+            id: requestObj.id,
+            method: Constants.personal_sign,
+            accountAddress: account,
+            chainId: network,
+            data: "hello world",
+            preparedData: "hello world",
+            expirationTimestamp: Date.now() + 1000,
+            sourceId: Constants.DAppConnectors.WalletConnect
+        })
+
+        requestItem.resolveDappInfoFromSession({peer: {metadata: {name: "Test DApp", url: "https://test.dapp", icons: ["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAcCAYAAACdz7SqAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAM2SURBVHgBtVbNbtNAEJ7ZpBQ4pRGF9kQqWqkBRNwnwLlxI9y4NX2CiiOntE9QeINw49a8QdwT3NhKQCKaSj4WUVXmABRqe5hxE+PGTuyk5ZOSXe/ftzs/3y5CBiw/NEzw/cdAaCJAifgXdCA4QGAjggbEvbMf0LJt7aSth6lkHjW4akIG8GI2/1k5H7e7XW2PGRdHqWQU8jdoNytZIrnC7YNPupnUnxtuWF01SjhD77hqwPQosNlrxdt34OTb172xpELoKvrA1QW4EqCZRJyLEnpI7ZBQggThlGvXYVLI3HAeE88vfj85Pno/6FaDiqeoEUZlMA9bvc/7cxyxVa6/SeM5j2Tcdn/hnHsNly520s7KAyN0V17+7pWNGhHVhxYJTNLraosLi8e0kMBxT0FH00IW830oeT/ButBertjRQ5BPO1xUQ1IE2oQUHHZ0K6mdI1RzoSEdpqRg76O2lPgSElKDdz919JYMoxA95QDow7qUykWoxTo5z2YIXsGUsLV2CPD1cDu7MODiQKKnsVmI1jhFyQJvFrb6URxFQWJAYYIZSEF6tKZATitFQpehEm1PkCraWYCE+8Nt5ENBwX8EAd2NNaKQxu0ukVuCqwATQHwnjhphShMuiSAVKZ527E6bzYt78Q3SulxvcAm44K8ntXMqagmkJDUpzNwMZGsqBDqLuDXcLvkvqajcWWgm+ZUI6svlym5fsbITlh9tsgi0Ezs5//vkMtBocqSJOZw84ZrHPiXFJ6UwECx5A/FbqNXX2hAiefkzqCNRha1Wi8yJgddeCk4qHzkK1aMgdypfshYRbkTGm3z0Rs6LW0REgDXVEMuMI0TE5kDlgkv8+PjIKRYXfzPxEyH2EYzDzv7L4q1FHsvpg8Gkt186OlGp5uYXZMjzkYS8txwfQnj63//APmzDIF1yWJVrCDJgeZVfjTjCj0KicC3qlny0053FZ/k/PFnyy6P2yv1Kk1T/1eCGF/pEYCncGI6DCzIo/uGnRvg8CfzE5MEPoQGT4Pz5Uj3oxp+hMe0V4oOOrssOMfmWyMJo5X1cG2WZkYIvO2Tn85sGXwg5B5Q9kiKMas5DntPr6Oq4+/gvs8hkkbAzoC8AAAAASUVORK5CYII="]}}})
+        return requestItem
+    }
+
     Component {
         id: sdkComponent
 
@@ -43,8 +83,8 @@ Item {
             }
 
             property var buildApprovedNamespacesCalls: []
-            buildApprovedNamespaces: function(params, supportedNamespaces) {
-                buildApprovedNamespacesCalls.push({params, supportedNamespaces})
+            buildApprovedNamespaces: function(id, params, supportedNamespaces) {
+                buildApprovedNamespacesCalls.push({id, params, supportedNamespaces})
             }
 
             property var approveSessionCalls: []
@@ -94,6 +134,7 @@ Item {
             signal dappsListReceived(string dappsJson)
             signal userAuthenticated(string topic, string id, string password, string pin)
             signal userAuthenticationFailed(string topic, string id)
+            signal signingResult(string topic, string id, string data)
 
             // By default, return no dapps in store
             function getDapps() {
@@ -209,6 +250,14 @@ Item {
 
             readonly property var currencyStore: CurrenciesStore {}
             readonly property var walletAssetsStore: assetsStoreMock
+            readonly property string selectedAddress: "0x1"
+        }
+    }
+
+    Component {
+        id: sessionRequestComponent
+
+        SessionRequestResolved {
         }
     }
 
@@ -226,11 +275,6 @@ Item {
         DAppsRequestHandler {
             currenciesStore: CurrenciesStore {}
             assetsStore: assetsStoreMock
-
-            property var maxFeesUpdatedCalls: []
-            onMaxFeesUpdated: function(fiatMaxFees, ethMaxFees, haveEnoughFunds, haveEnoughForFees, symbol, feesInfo) {
-                maxFeesUpdatedCalls.push({fiatMaxFees, ethMaxFees, haveEnoughFunds, haveEnoughForFees, symbol, feesInfo})
-            }
         }
     }
 
@@ -322,6 +366,7 @@ Item {
 
                 expect: {
                     haveEnoughForFees: true,
+                    fee: "0.0000231"
                 }
             },
             {
@@ -332,6 +377,7 @@ Item {
 
                 expect: {
                     haveEnoughForFees: false,
+                    fee: "21"
                 }
             },
             {
@@ -342,6 +388,7 @@ Item {
 
                 expect: {
                     haveEnoughForFees: false,
+                    fee: "1.0000231"
                 }
             },
             {
@@ -354,6 +401,7 @@ Item {
 
                 expect: {
                     haveEnoughForFees: false,
+                    fee: "21.00000001"
                 }
             }]
         }
@@ -386,15 +434,15 @@ Item {
             compare(sdk.getActiveSessionsCallbacks.length, 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
             let callback = sdk.getActiveSessionsCallbacks[0].callback
             callback({"b536a": JSON.parse(Testing.formatApproveSessionResponse([chainId, 7], [testAddress]))})
-            compare(handler.maxFeesUpdatedCalls.length, 1, "expected a call to handler.onMaxFeesUpdated")
 
-            let args = handler.maxFeesUpdatedCalls[0]
-            verify(args.ethMaxFees > 0, "expected ethMaxFees to be set")
+            let request = handler.requestsModel.findById(session.id)
+            verify(!!request, "expected request to be found")
+            compare(request.fiatMaxFees.toFixed(), data.expect.fee, "expected ethMaxFees to be set")
             // storybook's CurrenciesStore mock up getFiatValue returns the balance
-            compare(args.fiatMaxFees.toString(), args.ethMaxFees.toString(), "expected fiatMaxFees to be set")
-            verify(args.haveEnoughFunds, "expected haveEnoughFunds to be set")
-            compare(args.haveEnoughForFees, data.expect.haveEnoughForFees, "expected haveEnoughForFees to be set")
-            verify(!!args.feesInfo, "expected feesInfo to be set")
+            compare(request.ethMaxFees, data.expect.fee, "expected fiatMaxFees to be set")
+            verify(request.haveEnoughFunds, "expected haveEnoughFunds to be set")
+            compare(request.haveEnoughFees, data.expect.haveEnoughForFees, "expected haveEnoughForFees to be set")
+            verify(!!request.feesInfo, "expected feesInfo to be set")
         }
     }
 
@@ -411,8 +459,10 @@ Item {
 
             property var argPos: {
                 "dappChains": 0,
-                "sessionProposalJson": 1,
-                "availableNamespaces": 0
+                "dappUrl": 1,
+                "dappName": 2,
+                "dappIcon": 3,
+                "key": 4,
             }
         }
 
@@ -421,7 +471,7 @@ Item {
             signalName: "sessionRequest"
 
             property var argPos: {
-                "request": 0
+                "id": 0
             }
         }
 
@@ -472,34 +522,38 @@ Item {
         function test_TestPairing() {
             const {sdk, walletStore, store, networksArray, accountsArray} = testSetupPair(Testing.formatSessionProposal())
 
+            compare(sdk.buildApprovedNamespacesCalls.length, 1, "expected a call to sdk.buildApprovedNamespaces")
             let allApprovedNamespaces = JSON.parse(Testing.formatBuildApprovedNamespacesResult(networksArray, accountsArray))
-            sdk.buildApprovedNamespacesResult(allApprovedNamespaces, "")
+            sdk.buildApprovedNamespacesResult(sdk.buildApprovedNamespacesCalls[0].id, allApprovedNamespaces, "")
             compare(connectDAppSpy.count, 1, "expected a call to service.connectDApp")
             let connectArgs = connectDAppSpy.signalArguments[0]
-            compare(connectArgs[connectDAppSpy.argPos.dappChains], networksArray, "expected all provided networks (walletStore.filteredFlatModel) for the dappChains")
-            verify(!!connectArgs[connectDAppSpy.argPos.sessionProposalJson], "expected sessionProposalJson to be set")
-            verify(!!connectArgs[connectDAppSpy.argPos.availableNamespaces], "expected availableNamespaces to be set")
 
-            let selectedAccount = walletStore.nonWatchAccounts.get(1)
-            service.approvePairSession(connectArgs[connectDAppSpy.argPos.sessionProposalJson], connectArgs[connectDAppSpy.argPos.dappChains], selectedAccount)
+            compare(connectArgs[connectDAppSpy.argPos.dappChains], networksArray, "expected all provided networks (walletStore.filteredFlatModel) for the dappChains")
+            compare(connectArgs[connectDAppSpy.argPos.dappUrl], Testing.dappUrl, "expected dappUrl to be set")
+            compare(connectArgs[connectDAppSpy.argPos.dappName], Testing.dappName, "expected dappName to be set")
+            compare(connectArgs[connectDAppSpy.argPos.dappIcon], Testing.dappFirstIcon, "expected dappIcon to be set")
+            verify(!!connectArgs[connectDAppSpy.argPos.key], "expected key to be set")
+
+            let selectedAccount = walletStore.nonWatchAccounts.get(1).address
+            service.approvePairSession(connectArgs[connectDAppSpy.argPos.key], connectArgs[connectDAppSpy.argPos.dappChains], selectedAccount)
             compare(sdk.buildApprovedNamespacesCalls.length, 2, "expected a call to sdk.buildApprovedNamespaces")
             const approvedArgs = sdk.buildApprovedNamespacesCalls[1]
             verify(!!approvedArgs.supportedNamespaces, "expected supportedNamespaces to be set")
             // We test here that only one account for all chains is provided
             let accountsForApproval = approvedArgs.supportedNamespaces.eip155.accounts
             compare(accountsForApproval.length, networksArray.length, "expect only one account per chain")
-            compare(accountsForApproval[0], `eip155:${networksArray[0]}:${selectedAccount.address}`)
-            compare(accountsForApproval[1], `eip155:${networksArray[1]}:${selectedAccount.address}`)
+            compare(accountsForApproval[0], `eip155:${networksArray[0]}:${selectedAccount}`)
+            compare(accountsForApproval[1], `eip155:${networksArray[1]}:${selectedAccount}`)
 
-            let approvedNamespaces = JSON.parse(Testing.formatBuildApprovedNamespacesResult(networksArray, [selectedAccount.address]))
-            sdk.buildApprovedNamespacesResult(approvedNamespaces, "")
+            let approvedNamespaces = JSON.parse(Testing.formatBuildApprovedNamespacesResult(networksArray, [selectedAccount]))
+            sdk.buildApprovedNamespacesResult(approvedArgs.id, approvedNamespaces, "")
 
             compare(sdk.approveSessionCalls.length, 1, "expected a call to sdk.approveSession")
             verify(!!sdk.approveSessionCalls[0].sessionProposalJson, "expected sessionProposalJson to be set")
             verify(!!sdk.approveSessionCalls[0].approvedNamespaces, "expected approvedNamespaces to be set")
 
             let finalApprovedNamespaces = JSON.parse(Testing.formatApproveSessionResponse(networksArray, [selectedAccount.address]))
-            sdk.approveSessionResult(finalApprovedNamespaces, "")
+            sdk.approveSessionResult(connectArgs[connectDAppSpy.argPos.key], finalApprovedNamespaces, "")
             verify(store.addWalletConnectSessionCalls.length === 1)
             verify(store.addWalletConnectSessionCalls[0].sessionJson, "expected sessionJson to be set")
 
@@ -515,7 +569,8 @@ Item {
             const {sdk, walletStore, store} = testSetupPair(Testing.formatSessionProposal())
 
             let allApprovedNamespaces = JSON.parse(Testing.formatBuildApprovedNamespacesResult([], []))
-            sdk.buildApprovedNamespacesResult(allApprovedNamespaces, "")
+            const approvedArgs = sdk.buildApprovedNamespacesCalls[0]
+            sdk.buildApprovedNamespacesResult(approvedArgs.id, allApprovedNamespaces, "")
             compare(connectDAppSpy.count, 0, "expected not to have calls to service.connectDApp")
             compare(service.onPairingValidatedTriggers.length, 1, "expected a call to service.onPairingValidated")
             compare(service.onPairingValidatedTriggers[0].validationState, Pairing.errors.unsupportedNetwork, "expected unsupportedNetwork state error")
@@ -543,7 +598,9 @@ Item {
             callback({"b536a": JSON.parse(Testing.formatApproveSessionResponse([chainId, 7], [testAddress]))})
 
             compare(sessionRequestSpy.count, 1, "expected service.sessionRequest trigger")
-            const request = sessionRequestSpy.signalArguments[0][sessionRequestSpy.argPos.request]
+            const requestId = sessionRequestSpy.signalArguments[0][sessionRequestSpy.argPos.id]
+            const request = service.sessionRequestsModel.findById(requestId)
+            verify(!!request, "expected request to be found")
             compare(request.topic, topic, "expected topic to be set")
             compare(request.method, method, "expected method to be set")
             compare(request.event, session, "expected event to be the one sent by the sdk")
@@ -731,6 +788,12 @@ Item {
         id: componentUnderTest
         DAppsWorkflow {
             loginType: Constants.LoginType.Password
+            model: ListModel {}
+            accountsModel: ListModel {}
+            networksModel: ListModel {}
+            sessionRequestsModel: SessionRequestsModel {}
+            selectedAccountAddress: ""
+            formatBigNumber: (number, symbol, noSymbolOption) => number + symbol
         }
     }
 
@@ -744,58 +807,87 @@ Item {
         property DAppsWorkflow controlUnderTest: null
 
         SignalSpy {
-            id: dappsListReadySpy
-            target: dappsWorkflowTest.controlUnderTest
-            signalName: "dappsListReady"
-        }
-
-        SignalSpy {
             id: pairWCReadySpy
             target: dappsWorkflowTest.controlUnderTest
             signalName: "pairWCReady"
         }
 
+        SignalSpy {
+            id: disconnectRequestedSpy
+            target: dappsWorkflowTest.controlUnderTest
+            signalName: "disconnectRequested"
+        }
+
+        SignalSpy {
+            id: pairingRequestedSpy
+            target: dappsWorkflowTest.controlUnderTest
+            signalName: "pairingRequested"
+        }
+
+        SignalSpy {
+            id: pairingValidationRequestedSpy
+            target: dappsWorkflowTest.controlUnderTest
+            signalName: "pairingValidationRequested"
+        }
+
+        SignalSpy {
+            id: connectionAcceptedSpy
+            target: dappsWorkflowTest.controlUnderTest
+            signalName: "connectionAccepted"
+        }
+
+        SignalSpy {
+            id: connectionDeclinedSpy
+            target: dappsWorkflowTest.controlUnderTest
+            signalName: "connectionDeclined"
+        }
+
+        SignalSpy {
+            id: signRequestAcceptedSpy
+            target: dappsWorkflowTest.controlUnderTest
+            signalName: "signRequestAccepted"
+        }
+
+        SignalSpy {
+            id: signRequestRejectedSpy
+            target: dappsWorkflowTest.controlUnderTest
+            signalName: "signRequestRejected"
+        }
+
         function init() {
-            let walletStore = createTemporaryObject(walletStoreComponent, root)
-            verify(!!walletStore)
-            let sdk = createTemporaryObject(sdkComponent, root, { projectId: "12ab" })
-            verify(!!sdk)
-            let store = createTemporaryObject(dappsStoreComponent, root)
-            verify(!!store)
-            let service = createTemporaryObject(serviceComponent, root, {wcSDK: sdk, store: store, walletRootStore: walletStore})
-            verify(!!service)
-            controlUnderTest = createTemporaryObject(componentUnderTest, root, {wcService: service})
+            controlUnderTest = createTemporaryObject(componentUnderTest, root)
             verify(!!controlUnderTest)
         }
 
         function cleanup() {
-            dappsListReadySpy.clear()
             pairWCReadySpy.clear()
+            disconnectRequestedSpy.clear()
+            pairingRequestedSpy.clear()
+            pairingValidationRequestedSpy.clear()
+            connectionAcceptedSpy.clear()
+            connectionDeclinedSpy.clear()
+            signRequestAcceptedSpy.clear()
+            signRequestRejectedSpy.clear()
         }
 
         function test_OpenAndCloseDappList() {
             waitForRendering(controlUnderTest)
 
-            compare(dappsListReadySpy.count, 0, "expected NO dappsListReady signal to be emitted")
             mouseClick(controlUnderTest)
             waitForRendering(controlUnderTest)
-            compare(dappsListReadySpy.count, 1, "expected dappsListReady signal to be emitted")
-
             let popup = findChild(controlUnderTest, "dappsListPopup")
             verify(!!popup)
             verify(popup.opened)
 
             popup.close()
             waitForRendering(controlUnderTest)
-
             verify(!popup.opened)
         }
 
-        function test_OpenPairModal() {
+        function openPairModal() {
             waitForRendering(controlUnderTest)
 
             mouseClick(controlUnderTest)
-            waitForRendering(controlUnderTest)
 
             let popup = findChild(controlUnderTest, "dappsListPopup")
             verify(!!popup)
@@ -804,10 +896,7 @@ Item {
             let connectButton = findChild(popup, "connectDappButton")
             verify(!!connectButton)
 
-            verify(pairWCReadySpy.count === 0, "expected NO pairWCReady signal to be emitted")
             mouseClick(connectButton)
-            waitForRendering(controlUnderTest)
-
             const btnWalletConnect = findChild(controlUnderTest, "btnWalletConnect")
             verify(!!btnWalletConnect)
             mouseClick(btnWalletConnect)
@@ -816,31 +905,63 @@ Item {
 
             let pairWCModal = findChild(controlUnderTest, "pairWCModal")
             verify(!!pairWCModal)
+            return pairWCModal
         }
 
-        Component {
-            id: sessionRequestComponent
+        function test_OpenPairModal() {
+            const pairWCModal = openPairModal()
+        }
 
-            SessionRequestResolved {
-            }
+        function test_uriPairingSuccess() {
+            const pairWCModal = openPairModal()
+            //type: test url
+            keyClick("a")
+            keyClick("b")
+            keyClick("c")
+            keyClick("d")
+
+            compare(pairingValidationRequestedSpy.count, 4, "expected pairingValidationRequested signal to be emitted")
+            controlUnderTest.pairingValidated(Pairing.errors.uriOk)
+            compare(pairingRequestedSpy.count, 1, "expected pairingRequested signal to be emitted")
+        }
+
+        function test_uriPairingFail() {
+            const pairWCModal = openPairModal()
+            //type: test url
+            keyClick("a")
+            keyClick("b")
+            keyClick("c")
+
+            compare(pairingValidationRequestedSpy.count, 3, "expected pairingValidationRequested signal to be emitted")
+            controlUnderTest.pairingValidated(Pairing.errors.invalidUri)
+            compare(pairingRequestedSpy.count, 0, "expected pairingRequested signal to not be emitted")
         }
 
         function test_OpenDappRequestModal() {
             waitForRendering(controlUnderTest)
-
-            let service = controlUnderTest.wcService
-            let td = mockSessionRequestEvent(this, service.wcSDK, service.walletRootStore.nonWatchAccounts, service.walletRootStore.filteredFlatModel)
-
+            const request = buildSessionRequestResolved(dappsWorkflowTest, "0x1", "1", "b536a")
+            controlUnderTest.accountsModel.append({
+                    address: request.accountAddress,
+                    name: "helloworld",
+                    emoji: "😋",
+                    color: "#2A4AF5",
+                    keycardAccount: false
+            })
+            controlUnderTest.networksModel.append({
+                    chainId: request.chainId,
+                    chainName: "Test Chain",
+                    iconUrl: "network/Network=Ethereum",
+                    layer: 1
+            })
+            controlUnderTest.sessionRequestsModel.enqueue(request)
             waitForRendering(controlUnderTest)
             let popup = findChild(controlUnderTest, "dappsRequestModal")
             verify(!!popup)
             verify(popup.opened)
             verify(popup.visible)
 
-            compare(popup.dappName, td.session.peer.metadata.name)
-            compare(popup.accountName, td.account.name)
-            compare(popup.accountAddress, td.account.address)
-            compare(popup.networkName, td.network.chainName)
+            compare(popup.dappName, request.dappName)
+            compare(popup.accountAddress, request.accountAddress)
 
             popup.close()
             waitForRendering(controlUnderTest)
@@ -848,80 +969,63 @@ Item {
             verify(!popup.visible)
         }
 
-        function showRequestModal() {
+        function showRequestModal(topic, requestId) {
             waitForRendering(controlUnderTest)
-
-            let service = controlUnderTest.wcService
-            let td = mockSessionRequestEvent(this, service.wcSDK, service.walletRootStore.nonWatchAccounts, service.walletRootStore.filteredFlatModel)
-
+            const request = buildSessionRequestResolved(dappsWorkflowTest, "0x1", "1", topic, requestId)
+            controlUnderTest.accountsModel.append({
+                    address: request.accountAddress,
+                    name: "helloworld",
+                    emoji: "😋",
+                    color: "#2A4AF5",
+                    keycardAccount: false
+            })
+            controlUnderTest.networksModel.append({
+                    chainId: request.chainId,
+                    chainName: "Test Chain",
+                    iconUrl: "network/Network=Ethereum",
+                    layer: 1
+            })
+            controlUnderTest.sessionRequestsModel.enqueue(request)
             waitForRendering(controlUnderTest)
-            td.popup = findChild(controlUnderTest, "dappsRequestModal")
-            verify(td.popup.opened)
-            return td
+            const popup = findChild(controlUnderTest, "dappsRequestModal")
+            verify(popup.opened)
+            return popup
         }
 
         function test_RejectDappRequestModal() {
-            let td = showRequestModal()
+            const topic = "abcd"
+            const requestId = "12345"
+            let popup = showRequestModal(topic, requestId)
 
-            let rejectButton = findChild(td.popup, "rejectButton")
+            let rejectButton = findChild(popup, "rejectButton")
 
             mouseClick(rejectButton)
-            compare(td.sdk.rejectSessionRequestCalls.length, 1, "expected a call to service.rejectSessionRequest")
-            compare(td.sdk.acceptSessionRequestCalls.length, 0, "expected no call to service.acceptSessionRequest")
-            let store = controlUnderTest.wcService.store
-            compare(store.authenticateUserCalls.length, 0, "expected no call to store.authenticateUser for rejection")
-            let args = td.sdk.rejectSessionRequestCalls[0]
-            compare(args.topic, td.topic, "expected topic to be set")
-            compare(args.id, td.request.id, "expected id to be set")
-            compare(args.error, false, "expected no error; it was user rejected")
-
             waitForRendering(controlUnderTest)
-            verify(!td.popup.opened)
-            verify(!td.popup.visible)
+            compare(signRequestRejectedSpy.count, 1, "expected signRequestRejected signal to be emitted")
+            compare(signRequestAcceptedSpy.count, 0, "expected signRequestAccepted signal to not be emitted")
+            compare(signRequestRejectedSpy.signalArguments[0][0], topic, "expected id to be set")
+            compare(signRequestRejectedSpy.signalArguments[0][1], requestId, "expected requestId to be set")
+
+            verify(!popup.opened)
+            verify(!popup.visible)
         }
 
         function test_AcceptDappRequestModal() {
-            let td = showRequestModal()
+            const topic = "abcd"
+            const requestId = "12345"
+            let popup = showRequestModal(topic, requestId)
 
-            let signButton = findChild(td.popup, "signButton")
+            let signButton = findChild(popup, "signButton")
 
             mouseClick(signButton)
-            let store = controlUnderTest.wcService.store
-            compare(store.authenticateUserCalls.length, 1, "expected a call to store.authenticateUser")
-            compare(td.sdk.rejectSessionRequestCalls.length, 0, "regression, expected no call to service.rejectSessionRequest")
+            compare(signRequestAcceptedSpy.count, 1, "expected signRequestAccepted signal to be emitted")
+            compare(signRequestRejectedSpy.count, 0, "expected signRequestRejected signal to not be emitted")
+            compare(signRequestAcceptedSpy.signalArguments[0][0], topic, "expected id to be set")
+            compare(signRequestAcceptedSpy.signalArguments[0][1], requestId, "expected requestId to be set")
 
             waitForRendering(controlUnderTest)
-            verify(!td.popup.opened)
-            verify(!td.popup.visible)
+            verify(!popup.opened)
+            verify(!popup.visible)
         }
-    }
-
-    function mockSessionRequestEvent(tc, sdk, accountsModel, networksModel) {
-        const account = accountsModel.get(1)
-        const network = networksModel.get(1)
-        const method = "personal_sign"
-        const message = "hello world"
-        const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${account.address}"`]
-        const topic = "b536a"
-        const requestEvent = JSON.parse(Testing.formatSessionRequest(network.chainId, method, params, topic))
-        const request = tc.createTemporaryObject(sessionRequestComponent, root, {
-              event: requestEvent,
-              topic,
-              id: requestEvent.id,
-              method: Constants.personal_sign,
-              accountAddress: account.address,
-              chainId: network.chainId,
-              data: message,
-              preparedData: message
-        })
-        // Expect to have calls to getActiveSessions from service initialization
-        const prevRequests = sdk.getActiveSessionsCallbacks.length
-        sdk.sessionRequestEvent(requestEvent)
-        // Service might trigger a sessionRequest event following the getActiveSessions call
-        const callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
-        const session = JSON.parse(Testing.formatApproveSessionResponse([network.chainId, 7], [account.address]))
-        callback({"b536a": session})
-
-        return {sdk, session, account, network, topic, request}
     }
 }
