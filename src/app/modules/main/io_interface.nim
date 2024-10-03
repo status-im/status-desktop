@@ -436,6 +436,9 @@ method startTokenHoldersManagement*(self: AccessInterface, communityId: string, 
 method stopTokenHoldersManagement*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method contactUpdated*(self: AccessInterface, contactId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
