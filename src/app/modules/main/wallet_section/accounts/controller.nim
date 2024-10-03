@@ -59,12 +59,6 @@ proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
 proc updateAccount*(self: Controller, address: string, accountName: string, colorId: string, emoji: string) =
   discard self.walletAccountService.updateWalletAccount(address, accountName, colorId, emoji)
 
-proc updateWalletAccountProdPreferredChains*(self: Controller, address, preferredChainIds: string) =
-  discard self.walletAccountService.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-
-proc updateWalletAccountTestPreferredChains*(self: Controller, address, preferredChainIds: string) =
-  discard self.walletAccountService.updateWalletAccountTestPreferredChains(address, preferredChainIds)
-
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
 

@@ -45,12 +45,7 @@ SplitView {
                 visible: true
                 destroyOnClose: true
                 modal: false
-                closePolicy: Popup.NoAutoClose
-                
-                flatNetworks: SortFilterProxyModel {
-                    sourceModel: NetworksModel.flatNetworks
-                    filters: ValueFilter { roleName: "isTest"; value: false }
-                }
+                closePolicy: Popup.NoAutoClose               
 
                 store: WalletStores.RootStore
                 sharedRootStore: SharedStores.RootStore {}

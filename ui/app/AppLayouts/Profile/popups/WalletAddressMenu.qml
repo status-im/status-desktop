@@ -39,28 +39,10 @@ StatusMenu {
     }
 
     StatusAction {
-        text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.mainnet)
+        text: qsTr("View on Etherscan")
         icon.name: "link"
         onTriggered: {
             let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
-            Global.openLink(link)
-        }
-    }
-
-    StatusAction {
-        text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.arbitrum)
-        icon.name: "link"
-        onTriggered: {
-            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbitrum, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
-            Global.openLink(link)
-        }
-    }
-
-    StatusAction {
-        text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.optimism)
-        icon.name: "link"
-        onTriggered: {
-            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
             Global.openLink(link)
         }
     }
@@ -79,7 +61,6 @@ StatusMenu {
         onTriggered: Global.openShowQRPopup({
                                                 showSingleAccount: true,
                                                 switchingAccounsEnabled: false,
-                                                changingPreferredChainsEnabled: false,
                                                 hasFloatingButtons: false,
                                                 name: root.selectedAccount.name?? "",
                                                 address: root.selectedAccount.address?? "",

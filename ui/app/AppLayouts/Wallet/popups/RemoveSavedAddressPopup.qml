@@ -22,7 +22,6 @@ StatusDialog {
     property string address
     property string ens
     property string colorId
-    property string chainShortNames
 
     signal removeSavedAddress(string address)
 
@@ -46,7 +45,7 @@ StatusDialog {
             if (root.ens.length > 0)
                 return root.ens
 
-            return WalletUtils.colorizedChainPrefix(root.chainShortNames) + Utils.richColorText(StatusQUtils.Utils.elideText(root.address, 6, 4), Theme.palette.directColor1)
+            return Utils.richColorText(StatusQUtils.Utils.elideText(root.address, 6, 4), Theme.palette.directColor1)
         }
         actions.closeButton.onClicked: root.close()
 

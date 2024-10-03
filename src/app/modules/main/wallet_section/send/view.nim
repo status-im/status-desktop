@@ -252,14 +252,6 @@ QtObject:
         return splitWords[i]
     return ""
 
-  proc getShortChainIds(self: View, chainShortNames : string): string {.slot.} =
-    if chainShortNames.isEmptyOrWhitespace():
-      return ""
-    var preferredChains: seq[int]
-    for shortName in chainShortNames.split(':'):
-      preferredChains.add(self.delegate.getNetworkChainId(shortName))
-    return preferredChains.join(":")
-
 # "Stateless" methods
   proc fetchSuggestedRoutesWithParameters*(self: View,
     uuid: string,

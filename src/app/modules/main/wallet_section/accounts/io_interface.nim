@@ -34,11 +34,5 @@ method getWalletAccountAsJson*(self: AccessInterface, address: string): JsonNode
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateWalletAccountProdPreferredChains*(self: AccessInterface, address, preferredChainIds: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method updateWalletAccountTestPreferredChains*(self: AccessInterface, address, preferredChainIds: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method updateWatchAccountHiddenFromTotalBalance*(self: AccessInterface, address: string, hideFromTotalBalance: bool) {.base.} =
   raise newException(ValueError, "No implementation available")

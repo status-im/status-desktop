@@ -24,7 +24,7 @@ StatusListItem {
             }
             else {
                 let elidedAddress = StatusQUtils.Utils.elideText(modelData.address,6,4)
-                return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(modelData.chainShortNames) + Utils.richColorText(elidedAddress, Theme.palette.directColor1): modelData.chainShortNames + elidedAddress
+                return sensor.containsMouse ? Utils.richColorText(elidedAddress, Theme.palette.directColor1): elidedAddress
             }
         }
         return ""

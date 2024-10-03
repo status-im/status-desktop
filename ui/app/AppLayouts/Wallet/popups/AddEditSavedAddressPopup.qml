@@ -32,8 +32,6 @@ StatusModal {
     required property WalletStores.RootStore store
     required property SharedStores.RootStore sharedRootStore
 
-    property var flatNetworks
-
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     width: 477
@@ -44,7 +42,6 @@ StatusModal {
     function initWithParams(params = {}) {
         d.storedName = params.name?? ""
         d.storedColorId = params.colorId?? ""
-        d.storedChainShortNames = params.chainShortNames?? ""
 
         d.editMode = params.edit?? false
         d.addAddress = params.addAddress?? false
@@ -53,7 +50,6 @@ StatusModal {
         d.address = params.address?? Constants.zeroAddress
         d.ens = params.ens?? ""
         d.colorId = d.storedColorId
-        d.chainShortNames = d.storedChainShortNames
 
         d.initialized = true
 
@@ -68,9 +64,7 @@ StatusModal {
         if (d.addressInputIsENS)
             addressInput.setPlainText(d.ens)
         else
-            addressInput.setPlainText("%1%2"
-                                      .arg(d.chainShortNames)
-                                      .arg(d.address == Constants.zeroAddress? "" : d.address))
+            addressInput.setPlainText("%1".arg(d.address == Constants.zeroAddress? "" : d.address))
 
         nameInput.input.edit.forceActiveFocus()
     }
@@ -92,20 +86,9 @@ StatusModal {
         property string address: Constants.zeroAddress // Setting as zero address since we don't have the address yet
         property string ens: ""
         property string colorId: ""
-        property string chainShortNames: ""
 
         property string storedName: ""
         property string storedColorId: ""
-        property string storedChainShortNames: ""
-
-        property bool chainShortNamesDirty: false
-        property var networkSelection: []
-
-        onNetworkSelectionChanged: {
-            if (d.networkSelection !== networkSelectPopup.selection) {
-                networkSelectPopup.selection = d.networkSelection
-            }
-        }
 
         property bool addressInputValid: d.editMode ||
                                          addressInput.input.dirty &&
@@ -115,21 +98,19 @@ StatusModal {
                                          !d.addressAlreadyAddedToSavedAddressesError
         readonly property bool valid: d.addressInputValid && nameInput.valid
         readonly property bool dirty: nameInput.input.dirty && (!d.editMode || d.storedName !== d.name)
-                                      || chainShortNamesDirty && (!d.editMode || d.storedChainShortNames !== d.chainShortNames)
+                                      || !d.editMode
                                       || d.colorId.toUpperCase() !== d.storedColorId.toUpperCase()
 
         property bool incorrectChecksum: false
 
 
-        readonly property var chainPrefixRegexPattern: /[^:]+\:?|:/g
         readonly property bool addressInputIsENS: !!d.ens &&
                                                   Utils.isValidEns(d.ens)
         readonly property bool addressInputIsAddress: !!d.address &&
                                                       d.address != Constants.zeroAddress &&
-                                                      (Utils.isAddress(d.address) || Utils.isValidAddressWithChainPrefix(d.address))
+                                                      Utils.isAddress(d.address)
         readonly property bool addressInputHasError: !!addressInput.errorMessageCmp.text
         onAddressInputHasErrorChanged: addressInput.input.valid = !addressInputHasError // can't use binding because valid is overwritten in StatusInput
-        readonly property string networksHiddenState: "networksHidden"
 
         property ListModel cardsModel: ListModel {}
 
@@ -184,19 +165,13 @@ StatusModal {
 
         property var contactsModuleInst: root.sharedRootStore.profileSectionModuleInst.contactsModule
 
-        /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
+        /// Ensures that the \c root.address is not reset when the initial text is set
         property bool initialized: false
-
-        function getPrefixArrayWithColumns(prefixStr) {
-            return prefixStr.match(d.chainPrefixRegexPattern)
-        }
 
         function resetAddressValues(fullReset) {
             if (fullReset) {
                 d.ens = ""
                 d.address = Constants.zeroAddress
-                d.chainShortNames = ""
-                d.networkSelection = []
             }
 
             d.cardsModel.clear()
@@ -266,7 +241,6 @@ StatusModal {
                 return
             }
 
-            networkSelector.state = ""
             if (d.addressInputIsAddress) {
                 d.checkForAddressInputOwningErrorsWarnings()
                 d.checkIfAddressChecksumIsValid()
@@ -288,7 +262,7 @@ StatusModal {
                 return
             }
 
-            root.store.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.chainShortNames)
+            root.store.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId)
             root.close()
         }
     }
@@ -307,11 +281,6 @@ StatusModal {
             }
             catch (e) {
             }
-
-            if (!d.addressInputHasError)
-                networkSelector.state = d.networksHiddenState
-            else
-                networkSelector.state = ""
         }
     }
 
@@ -500,15 +469,7 @@ StatusModal {
                     plainText = input.edit.getText(0, text.length).trim()
 
                     if (input.edit.previousText != plainText) {
-                        let newText = plainText
-                        const prefixAndAddress = Utils.splitToChainPrefixAndAddress(plainText)
-
-                        if (!Utils.isLikelyEnsName(plainText)) {
-                            newText = WalletUtils.colorizedChainPrefix(prefixAndAddress.prefix) +
-                                    prefixAndAddress.address
-                        }
-
-                        setRichText(newText)
+                        setRichText(plainText)
 
                         // Reset
                         d.resetAddressValues(plainText.length == 0)
@@ -518,18 +479,10 @@ StatusModal {
                             if (Utils.isLikelyEnsName(plainText)) {
                                 d.ens = plainText
                                 d.address = Constants.zeroAddress
-                                d.chainShortNames = ""
                             }
                             else {
                                 d.ens = ""
-                                d.address = prefixAndAddress.address
-                                d.chainShortNames = prefixAndAddress.prefix
-
-                                Qt.callLater(()=> {
-                                    // Sync chain short names with model. This could result in removing networks from this text
-                                    // Call it later to avoid binding loop warnings
-                                    d.networkSelection = store.getNetworkIds(d.chainShortNames).split(":").filter(Boolean).map(Number)
-                            })
+                                d.address = plainText
                             }
                         }
 
@@ -554,41 +507,6 @@ StatusModal {
                     setPlainText(val)
                     input.cursorPosition = curPos
                     skipTextUpdate = false
-                }
-
-                function getUnknownPrefixes(prefixes) {
-                    const networksCount = root.flatNetworks.rowCount()
-                    let unknownPrefixes = prefixes.filter(e => {
-                                                              for (let i = 0; i < networksCount; i++) {
-                                                                  if (e == StatusQUtils.ModelUtils.get(root.flatNetworks, i).shortName)
-                                                                      return false
-                                                              }
-                                                              return true
-                                                          })
-
-                    return unknownPrefixes
-                }
-
-                // Add all chain short names from model, while keeping existing
-                function syncChainPrefixWithModel(prefix, model) {
-                    let prefixes = prefix.split(":").filter(Boolean)
-                    let prefixStr = ""
-
-                    // Keep unknown prefixes from user input, the rest must be taken
-                    // from the model
-                    for (let i = 0; i < model.count; i++) {
-                        const item = model.get(i)
-                        prefixStr += item.shortName + ":"
-                        // Remove all added prefixes from initial array
-                        prefixes = prefixes.filter(e => e !== item.shortName)
-                    }
-
-                    const unknownPrefixes = getUnknownPrefixes(prefixes)
-                    if (unknownPrefixes.length > 0) {
-                        prefixStr += unknownPrefixes.join(":") + ":"
-                    }
-
-                    return prefixStr
                 }
             }
 
@@ -645,110 +563,6 @@ StatusModal {
 
                 onSelectedColorChanged: {
                     d.colorId = Utils.getIdForColor(selectedColor)
-                }
-            }
-
-            StatusNetworkSelector {
-                id: networkSelector
-
-                objectName: "addSavedAddressNetworkSelector"
-                title: qsTr("Network preference")
-                implicitWidth: d.componentWidth
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                enabled: d.addressInputValid && !d.addressInputIsENS
-                visible: !(d.editMode && d.addressInputIsENS)
-                defaultItemText: qsTr("Add networks")
-                defaultItemImageSource: "add"
-                rightButtonVisible: true
-
-                itemsModel: SortFilterProxyModel {
-                    sourceModel: root.flatNetworks
-                    filters: FastExpressionFilter {
-                        readonly property var filteredNetworks: d.networkSelection
-                        expression: {
-                            return filteredNetworks.length > 0 && filteredNetworks.includes(model.chainId)
-                        }
-                        expectedRoles: ["chainId"]
-                    }
-
-                    onCountChanged: {
-                        if (d.initialized) {
-                            // Initially source model is empty, filter proxy is also empty, but does
-                            // extra work and mistakenly overwrites d.chainShortNames property
-                            if (sourceModel.count != 0) {
-                                const prefixAndAddress = Utils.splitToChainPrefixAndAddress(addressInput.plainText)
-                                const syncedPrefix = addressInput.syncChainPrefixWithModel(prefixAndAddress.prefix, this)
-                                if (addressInput.text !== syncedPrefix + prefixAndAddress.address)
-                                    addressInput.setPlainText(syncedPrefix + prefixAndAddress.address)
-                            }
-                        }
-                    }
-                }
-
-                addButton.highlighted: networkSelectPopup.visible
-                addButton.onClicked: {
-                    networkSelectPopup.openAtPosition(addButton.x, addButton.height + Style.current.xlPadding)
-                }
-
-                onItemClicked: function (item, index, mouse) {
-                    // Append first item
-                    if (index === 0 && defaultItem.visible)
-                        networkSelectPopup.openAtPosition(defaultItem.x, defaultItem.height + Style.current.xlPadding)
-                }
-
-                onItemRightButtonClicked: function (item, index, mouse) {
-                    let networkSelection = [...d.networkSelection]
-                    d.networkSelection = networkSelection.filter(n => n !== item.modelRef.chainId)
-                    d.chainShortNamesDirty = true
-                }
-
-                readonly property int animationDuration: 350
-                states: [
-                    // As when networks seclector becomes invisible, spacing before it disappears as well, we see jumping height
-                    // To overcome this, we animate bottom padding to 0 and when spacing disappears, reset bottom padding to spacing to compensate it
-                    State {
-                        name: d.networksHiddenState
-                        PropertyChanges { target: networkSelector; height: 0 }
-                        PropertyChanges { target: networkSelector;  opacity: 0 }
-                        PropertyChanges { target: column; bottomPadding: 0 }
-                    }
-                ]
-                transitions: [
-                    Transition {
-                        NumberAnimation { property: "height"; duration: networkSelector.animationDuration; easing.type: Easing.OutCirc }
-                        NumberAnimation { property: "opacity"; duration: networkSelector.animationDuration; easing.type: Easing.OutCirc}
-                        SequentialAnimation {
-                            NumberAnimation { property: "bottomPadding"; duration: networkSelector.animationDuration; easing.type: Easing.OutCirc }
-                            PropertyAction { target: column; property: "bottomPadding"; value: column.spacing }
-                        }
-                    }
-                ]
-
-                NetworkSelectPopup {
-                    id: networkSelectPopup
-
-                    function openAtPosition(x, y) {
-                        networkSelectPopup.x = x
-                        networkSelectPopup.y = y
-                        networkSelectPopup.open()
-                    }
-
-                    flatNetworks: root.flatNetworks
-                    selection: d.networkSelection
-                    multiSelection: true
-
-                    onSelectionChanged: {
-                        if (d.networkSelection !== networkSelectPopup.selection) {
-                            d.networkSelection = networkSelectPopup.selection
-                            d.chainShortNamesDirty = true
-                        }
-                    }
-
-                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-                    modal: true
-                    dim: false
                 }
             }
         }

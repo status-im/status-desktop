@@ -58,7 +58,6 @@ StatusMenu {
         property string addressName: ""
         property string addressEns: ""
         property string colorId: ""
-        property string addressChains: ""
 
         property string contractName: ""
 
@@ -155,7 +154,6 @@ StatusMenu {
                 d.addressName = savedAddress.name
                 d.addressEns = savedAddress.ens
                 d.colorId = savedAddress.colorId
-                d.addressChains = savedAddress.chainShortNames
             }
         }
 
@@ -300,7 +298,6 @@ StatusMenu {
             onTriggered: Global.openShowQRPopup({
                                                     showSingleAccount: true,
                                                     switchingAccounsEnabled: false,
-                                                    changingPreferredChainsEnabled: false,
                                                     hasFloatingButtons: false,
                                                     name: d.addressName,
                                                     address: d.selectedAddress,
@@ -324,11 +321,10 @@ StatusMenu {
         icon.name: "star-icon-outline"
         onTriggered: {
             Global.openAddEditSavedAddressesPopup({
-                                 addAddress: true,
-                                 address: d.selectedAddress,
-                                 ens: d.addressEns,
-                                 chainShortNames: d.addressChains
-                             })
+                                                      addAddress: true,
+                                                      address: d.selectedAddress,
+                                                      ens: d.addressEns
+                                                  })
         }
     }
     StatusAction {
@@ -341,9 +337,7 @@ StatusMenu {
                                           name: d.addressName,
                                           address: d.selectedAddress,
                                           ens: d.addressEns,
-                                          colorId: d.colorId,
-                                          chainShortNames: d.addressChains
-                                      })
+                                          colorId: d.colorId})
     }
     StatusAction {
         id: sendToAddressAction

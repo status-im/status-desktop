@@ -12,7 +12,6 @@ type
     MixedcaseAddress
     Ens
     ColorId
-    ChainShortNames
     IsTest
 
 QtObject:
@@ -55,7 +54,6 @@ QtObject:
       ModelRole.MixedcaseAddress.int:"mixedcaseAddress",
       ModelRole.Ens.int:"ens",
       ModelRole.ColorId.int:"colorId",
-      ModelRole.ChainShortNames.int:"chainShortNames",
       ModelRole.IsTest.int:"isTest",
     }.toTable
 
@@ -80,8 +78,6 @@ QtObject:
       result = newQVariant(item.getEns())
     of ModelRole.ColorId:
       result = newQVariant(item.getColorId())
-    of ModelRole.ChainShortNames:
-      result = newQVariant(item.getChainShortNames())
     of ModelRole.IsTest:
       result = newQVariant(item.getIsTest())
 
