@@ -140,12 +140,6 @@ QtObject:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
         self.items[i].setBalance(balance)
 
-  proc updatePreferredSharingChainsForAddress*(self: KeyPairAccountModel, address, prodPreferredChainIds, testPreferredChainIds: string) =
-    for i in 0 ..< self.items.len:
-      if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
-        self.items[i].setProdPreferredChainIds(prodPreferredChainIds)
-        self.items[i].setTestPreferredChainIds(testPreferredChainIds)
-
   proc updateAccountHiddenInTotalBalance*(self: KeyPairAccountModel, address: string, hideFromTotalBalance: bool) =
     for i in 0 ..< self.items.len:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:

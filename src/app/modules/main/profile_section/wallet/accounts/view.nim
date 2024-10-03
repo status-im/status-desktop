@@ -93,11 +93,6 @@ QtObject:
     self.keyPairModel.onUpdatedKeypairOperability(keyUid, operability)
     self.refreshSelectedAccount()
 
-  proc onPreferredSharingChainsUpdated*(self: View, keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
-    self.accounts.onPreferredSharingChainsUpdated(address, prodPreferredChainIds, testPreferredChainIds)
-    self.keyPairModel.onPreferredSharingChainsUpdated(keyUid, address, prodPreferredChainIds, testPreferredChainIds)
-    self.refreshSelectedAccount()
-
   proc onHideFromTotalBalanceUpdated*(self: View, keyUid, address: string, hideFromTotalBalance: bool) =
     self.keyPairModel.onHideFromTotalBalanceUpdated(keyUid, address, hideFromTotalBalance)
     self.refreshSelectedAccount()
@@ -134,12 +129,6 @@ QtObject:
 
   proc moveAccountFinally(self: View, fromRow: int, toRow: int) {.slot.} =
     self.delegate.moveAccountFinally(fromRow, toRow)
-
-  proc updateWalletAccountProdPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
-    self.delegate.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-
-  proc updateWalletAccountTestPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
-    self.delegate.updateWalletAccountTestPreferredChains(address, preferredChainIds)
 
   proc setBalanceForKeyPairs*(self: View, address: string, balance: CurrencyAmount) =
     self.keyPairModel.setBalanceForAddress(address, balance)

@@ -9,7 +9,6 @@ type
     mixedcaseAddress: string
     ens: string
     colorId: string
-    chainShortNames: string
     isTest: bool
 
 proc initItem*(
@@ -18,7 +17,6 @@ proc initItem*(
   mixedcaseAddress: string,
   ens: string,
   colorId: string,
-  chainShortNames: string,
   isTest: bool
 ): Item =
   result.name = name
@@ -26,7 +24,6 @@ proc initItem*(
   result.mixedcaseAddress = mixedcaseAddress
   result.ens = ens
   result.colorId = colorId
-  result.chainShortNames = chainShortNames
   result.isTest = isTest
 
 proc `$`*(self: Item): string =
@@ -36,7 +33,6 @@ proc `$`*(self: Item): string =
     mixedcaseAddress: {self.mixedcaseAddress},
     ens: {self.ens},
     colorId: {self.colorId},
-    chainShortNames: {self.chainShortNames},
     isTest: {self.isTest},
     ]"""
 
@@ -57,9 +53,6 @@ proc getMixedcaseAddress*(self: Item): string =
 
 proc getColorId*(self: Item): string =
   return self.colorId
-
-proc getChainShortNames*(self: Item): string =
-  return self.chainShortNames
 
 proc getIsTest*(self: Item): bool =
   return self.isTest

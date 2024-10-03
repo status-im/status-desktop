@@ -161,10 +161,6 @@ QtObject {
         }
     }
 
-    function getShortChainIds(chainShortNames) {
-        return walletSectionSendInst.getShortChainIds(chainShortNames)
-    }
-
     function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
         return currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
     }

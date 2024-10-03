@@ -11,7 +11,6 @@ type
     name: string
     address: string
     colorId: string
-    chainShortNames: string
     ens: string
     isTestAddress: bool
 
@@ -82,7 +81,6 @@ proc upsertSavedAddressTask(argEncoded: string) {.gcsafe, nimcall.} =
       name: arg.name,
       address: arg.address,
       colorId: arg.colorId,
-      chainShortNames: arg.chainShortNames,
       ens: arg.ens,
       isTest: arg.isTestAddress)
     let rpcResponse = checkForEnsNameAndUpdate(arg.chainId, savedAddress, UpdateCriteria.AlwaysUpdate)

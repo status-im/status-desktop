@@ -98,9 +98,6 @@ method load*(self: Module) =
   self.controller.init()
   self.view.load()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED) do(e: Args):
-    let args = AccountArgs(e)
-    self.view.onPreferredSharingChainsUpdated(args.account.keyUid, args.account.address, args.account.prodPreferredChainIds, args.account.testPreferredChainIds)
   self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e:Args):
     self.refreshAllWalletAccountsBalances()
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
@@ -146,12 +143,6 @@ method deleteAccount*(self: Module, address: string) =
 
 method updateAccount*(self: Module, address: string, accountName: string, colorId: string, emoji: string) =
   self.controller.updateAccount(address, accountName, colorId, emoji)
-
-method updateWalletAccountProdPreferredChains*(self: Module, address, preferredChainIds: string) =
-  self.controller.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-
-method updateWalletAccountTestPreferredChains*(self: Module, address, preferredChainIds: string) =
-  self.controller.updateWalletAccountTestPreferredChains(address, preferredChainIds)
 
 method updateWatchAccountHiddenFromTotalBalance*(self: Module, address: string, hideFromTotalBalance: bool) =
   self.controller.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)

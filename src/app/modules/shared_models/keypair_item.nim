@@ -285,8 +285,6 @@ QtObject:
     return self.accounts.containsPathOutOfTheDefaultStatusDerivationTree()
   proc updateDetailsForAccountWithAddressIfTheyAreSet*(self: KeyPairItem, address, name, colorId, emoji: string) =
     self.accounts.updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
-  proc updatePreferredSharingChainsForAddress*(self: KeyPairItem, address, prodPreferredChainIds, testPreferredChainIds: string) =
-    self.accounts.updatePreferredSharingChainsForAddress(address, prodPreferredChainIds, testPreferredChainIds)
   proc updateAccountHiddenInTotalBalance*(self: KeyPairItem, address: string, hideFromTotalBalance: bool) =
     self.accounts.updateAccountHiddenInTotalBalance(address, hideFromTotalBalance)
   proc setBalanceForAddress*(self: KeyPairItem, address: string, balance: CurrencyAmount) =

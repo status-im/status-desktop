@@ -26,7 +26,6 @@ StatusListItem {
     property string address
     property string ens
     property string colorId
-    property string chainShortNames
     property bool areTestNetworksEnabled: false
     property bool isGoerliEnabled: false
 
@@ -51,9 +50,7 @@ StatusListItem {
         if (ens.length > 0)
             return ens
         else {
-            return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(root.chainShortNames) +
-                                          Utils.richColorText(root.address, Theme.palette.directColor1)
-                                        : root.chainShortNames + root.address
+            return WalletUtils.addressToDisplay(root.address, false, sensor.containsMouse)
         }
     }
 
@@ -75,7 +72,6 @@ StatusListItem {
         id: d
 
         readonly property string visibleAddress: !!root.ens? root.ens : root.address
-        readonly property var preferredSharedNetworkNamesArray: root.chainShortNames.split(":").filter(Boolean)
     }
 
     onClicked: {
@@ -85,7 +81,6 @@ StatusListItem {
         Global.openSavedAddressActivityPopup({
                                                  name: root.name,
                                                  address: root.address,
-                                                 chainShortNames: root.chainShortNames,
                                                  ens: root.ens,
                                                  colorId: root.colorId
                                               })
@@ -113,7 +108,6 @@ StatusListItem {
                     {
                         name: root.name,
                         address: root.address,
-                        chainShortNames: root.chainShortNames,
                         ens: root.ens,
                         colorId: root.colorId,
                     }
@@ -127,7 +121,6 @@ StatusListItem {
         id: menu
         property string name
         property string address
-        property string chainShortNames
         property string ens
         property string colorId
 
@@ -138,7 +131,6 @@ StatusListItem {
         function openMenu(parent, x, y, model) {
             menu.name = model.name;
             menu.address = model.address;
-            menu.chainShortNames = model.chainShortNames;
             menu.ens = model.ens;
             menu.colorId = model.colorId;
             popup(parent, x, y);
@@ -146,7 +138,6 @@ StatusListItem {
         onClosed: {
             menu.name = "";
             menu.address = "";
-            menu.chainShortNames = ""
             menu.ens = ""
             menu.colorId = ""
         }
@@ -163,7 +154,6 @@ StatusListItem {
                                                           edit: true,
                                                           address: menu.address,
                                                           name: menu.name,
-                                                          chainShortNames: menu.chainShortNames,
                                                           ens: menu.ens,
                                                           colorId: menu.colorId
                                                       })
@@ -193,12 +183,10 @@ StatusListItem {
                                            showSingleAccount: true,
                                            showForSavedAddress: true,
                                            switchingAccounsEnabled: false,
-                                           changingPreferredChainsEnabled: true,
-                                           hasFloatingButtons: true,
+                                           hasFloatingButtons: false,
                                            name: menu.name,
                                            address: menu.address,
-                                           colorId: menu.colorId,
-                                           preferredSharingChainIds: RootStore.getNetworkIds(menu.chainShortNames)
+                                           colorId: menu.colorId
                                        })
             }
         }
@@ -218,36 +206,13 @@ StatusListItem {
             }
         }
 
-        StatusMenuSeparator {
-            visible: d.preferredSharedNetworkNamesArray.length > 0
-        }
+        StatusMenuSeparator {}
 
         StatusAction {
-            text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.mainnet)
-            enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.mainnet)
+            text: qsTr("View on Etherscan")
             icon.name: "link"
             onTriggered: {
                 let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isGoerliEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
-                Global.openLink(link)
-            }
-        }
-
-        StatusAction {
-            text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.arbitrum)
-            enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbitrum)
-            icon.name: "link"
-            onTriggered: {
-                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbitrum, root.areTestNetworksEnabled, root.isGoerliEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
-                Global.openLink(link)
-            }
-        }
-
-        StatusAction {
-            text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.optimism)
-            enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.optimism)
-            icon.name: "link"
-            onTriggered: {
-                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism, root.areTestNetworksEnabled, root.isGoerliEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
                 Global.openLink(link)
             }
         }
@@ -267,8 +232,7 @@ StatusListItem {
                                                          name: menu.name,
                                                          address: menu.address,
                                                          ens: menu.ens,
-                                                         colorId: menu.colorId,
-                                                         chainShortNames: menu.chainShortNames
+                                                         colorId: menu.colorId
                                                      })
             }
         }

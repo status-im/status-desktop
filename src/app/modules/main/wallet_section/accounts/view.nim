@@ -74,17 +74,8 @@ QtObject:
   proc isOwnedAccount(self: View, address: string): bool {.slot.} =
     return self.accounts.isOwnedAccount(address)
 
-  proc updateWalletAccountProdPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
-    self.delegate.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-
-  proc updateWalletAccountTestPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
-    self.delegate.updateWalletAccountTestPreferredChains(address, preferredChainIds)
-
   proc updateWatchAccountHiddenFromTotalBalance*(self: View, address: string, hideFromTotalBalance: bool) {.slot.} =
     self.delegate.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
 
   proc getWalletAccountAsJson*(self: View, address: string): string {.slot.} =
     return $self.delegate.getWalletAccountAsJson(address)
-
-  proc onPreferredSharingChainsUpdated*(self: View, keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
-    self.accounts.onPreferredSharingChainsUpdated(address, prodPreferredChainIds, testPreferredChainIds)

@@ -161,30 +161,6 @@ Item {
                     Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
                 }
             }
-
-            StatusAction {
-                text: qsTr("View on Optimism Explorer")
-                icon.name: "link"
-                onTriggered: {
-                    let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism,
-                                                               root.walletStore.areTestNetworksEnabled,
-                                                               root.walletStore.isGoerliEnabled,
-                                                               contextMenu.accountAddress);
-                    Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
-                }
-            }
-
-            StatusAction {
-                text: qsTr("View on Arbiscan")
-                icon.name: "link"
-                onTriggered: {
-                    let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbitrum,
-                                                               root.walletStore.areTestNetworksEnabled,
-                                                               root.walletStore.isGoerliEnabled,
-                                                               contextMenu.accountAddress);
-                    Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
-                }
-            }
         }
     }
 

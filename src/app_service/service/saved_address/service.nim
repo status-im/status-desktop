@@ -114,15 +114,13 @@ QtObject:
       error "onSavedAddressesFetched", msg = e.msg
     self.events.emit(SIGNAL_SAVED_ADDRESSES_UPDATED, Args())
 
-  proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, ens: string, colorId: string,
-    chainShortNames: string) =
+  proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, ens: string, colorId: string) =
     let arg = SavedAddressTaskArg(
       chainId: self.networkService.getAppNetwork().chainId,
       name: name,
       address: address,
       ens: ens,
       colorId: colorId,
-      chainShortNames: chainShortNames,
       isTestAddress: self.areTestNetworksEnabled(),
       tptr: upsertSavedAddressTask,
       vptr: cast[ByteAddress](self.vptr),

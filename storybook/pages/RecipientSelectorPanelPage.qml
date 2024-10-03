@@ -38,7 +38,6 @@ SplitView {
                               name: "some saved addr name " + i,
                               ens: [],
                               address: "0x2B748A02e06B159C7C3E98F5064577B96E55A7b4",
-                              chainShortNames: "eth:arb1"
                           })
             append(data)
         }

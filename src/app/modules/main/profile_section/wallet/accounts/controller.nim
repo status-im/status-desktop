@@ -60,12 +60,6 @@ proc getCurrentCurrency*(self: Controller): string =
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.walletAccountService.getCurrencyFormat(symbol)
 
-proc updateWalletAccountProdPreferredChains*(self: Controller, address, preferredChainIds: string) =
-  discard self.walletAccountService.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-
-proc updateWalletAccountTestPreferredChains*(self: Controller, address, preferredChainIds: string) =
-  discard self.walletAccountService.updateWalletAccountTestPreferredChains(address, preferredChainIds)
-
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
 
