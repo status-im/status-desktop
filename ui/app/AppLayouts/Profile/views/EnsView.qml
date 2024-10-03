@@ -3,10 +3,14 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 import QtQml.StateMachine 1.14 as DSM
 
+import StatusQ 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
+
 import utils 1.0
 import shared 1.0
 import shared.stores 1.0 as SharedStores
-import shared.stores.send 1.0
+import shared.popups.send 1.0
 
 import AppLayouts.Wallet.stores 1.0
 
@@ -18,9 +22,10 @@ Item {
     property EnsUsernamesStore ensUsernamesStore
     property WalletAssetsStore walletAssetsStore
 
+    required property var sendModalPopup
+
     property ContactsStore contactsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
-    required property TransactionStore transactionStore
 
     property int profileContentWidth
     property bool showSearchScreen: false
@@ -39,6 +44,21 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
     clip: true
+
+    QtObject {
+        id: d
+
+        readonly property string registerENS: "RegisterENS"
+        readonly property string setPubKey: "SetPubKey"
+        readonly property string releaseENS: "ReleaseENS"
+
+        readonly property var sntToken: ModelUtils.getByKey(ensView.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", ensView.ensUsernamesStore.getStatusTokenKey())
+        readonly property SumAggregator aggregator: SumAggregator {
+            model: !!d.sntToken && !!d.sntToken.balances ? d.sntToken.balances: nil
+            roleName: "balance"
+        }
+        property real sntBalance: !!sntToken && !!sntToken.decimals ? aggregator.value/(10 ** sntToken.decimals): 0
+    }
 
     DSM.StateMachine {
         id: stateMachine
@@ -226,9 +246,8 @@ Item {
         id: search
         EnsSearchView {
             ensUsernamesStore: ensView.ensUsernamesStore
-            contactsStore: ensView.contactsStore
-            transactionStore: ensView.transactionStore
             profileContentWidth: ensView.profileContentWidth
+
             onContinueClicked: {
                 if(output === "connected"){
                     connect(username)
@@ -237,9 +256,32 @@ Item {
                     next(output);
                 }
             }
-            onUsernameUpdated: {
-                selectedUsername = username;
-                done(username);
+
+            onConnectUsername: {
+                ensView.selectedUsername = username
+
+                ensView.sendModalPopup.modalHeaderText = qsTr("Connect username with your pubkey")
+                ensView.sendModalPopup.interactive = false
+                ensView.sendModalPopup.preSelectedRecipient = ensView.ensUsernamesStore.getEnsRegisteredAddress()
+                ensView.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
+                ensView.sendModalPopup.preSelectedHoldingID = Constants.ethToken
+                ensView.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC20
+                ensView.sendModalPopup.preSelectedSendType = Constants.SendType.ENSSetPubKey
+                ensView.sendModalPopup.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(0)
+                ensView.sendModalPopup.preSelectedChainId = ensView.selectedChainId
+                ensView.sendModalPopup.publicKey = ensView.contactsStore.myPublicKey
+                ensView.sendModalPopup.ensName = ensView.selectedUsername
+                ensView.sendModalPopup.open()
+            }
+
+            Connections {
+                target: ensView.ensUsernamesStore.ensUsernamesModule
+                function onTransactionWasSent(trxType: string, chainId: int, txHash: string, username: string, error: string) {
+                    if (!!error || trxType !== d.setPubKey) {
+                        return
+                    }
+                    done(ensView.selectedUsername)
+                }
             }
         }
     }
@@ -248,12 +290,33 @@ Item {
         id: termsAndConditions
         EnsTermsAndConditionsView {
             ensUsernamesStore: ensView.ensUsernamesStore
-            contactsStore: ensView.contactsStore
-            transactionStore: ensView.transactionStore
-            walletAssetsStore: ensView.walletAssetsStore
             username: selectedUsername
+
             onBackBtnClicked: back();
-            onUsernameRegistered: done(userName);
+
+            onRegisterUsername: {
+                ensView.sendModalPopup.interactive = false
+                ensView.sendModalPopup.preSelectedRecipient = ensView.ensUsernamesStore.getEnsRegisteredAddress()
+                ensView.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
+                ensView.sendModalPopup.preSelectedHoldingID = !!d.sntToken && !!d.sntToken.symbol ? d.sntToken.symbol: ""
+                ensView.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC20
+                ensView.sendModalPopup.preSelectedSendType = Constants.SendType.ENSRegister
+                ensView.sendModalPopup.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(10)
+                ensView.sendModalPopup.preSelectedChainId = ensView.selectedChainId
+                ensView.sendModalPopup.publicKey = ensView.contactsStore.myPublicKey
+                ensView.sendModalPopup.ensName = ensView.selectedUsername
+                ensView.sendModalPopup.open()
+            }
+
+            Connections {
+                target: ensView.ensUsernamesStore.ensUsernamesModule
+                function onTransactionWasSent(trxType: string, chainId: int, txHash: string, username: string, error: string) {
+                    if (!!error || trxType !== d.registerENS) {
+                        return
+                    }
+                    done(ensView.selectedUsername)
+                }
+            }
         }
     }
 
@@ -308,15 +371,34 @@ Item {
         id: details
         EnsDetailsView {
             ensUsernamesStore: ensView.ensUsernamesStore
-            contactsStore: ensView.contactsStore
-            transactionStore: ensView.transactionStore
             username: selectedUsername
             chainId: selectedChainId
+
             onBackBtnClicked: back()
-            onUsernameReleased: {
-                selectedUsername = username
-                selectedChainId = chainId
-                done(username)
+
+            onReleaseUsernameRequested: {
+                ensView.sendModalPopup.modalHeaderText = qsTr("Release your username")
+                ensView.sendModalPopup.interactive = false
+                ensView.sendModalPopup.preSelectedRecipient = ensView.ensUsernamesStore.getEnsRegisteredAddress()
+                ensView.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
+                ensView.sendModalPopup.preSelectedHoldingID = Constants.ethToken
+                ensView.sendModalPopup.preSelectedHoldingType = Constants.TokenType.Native
+                ensView.sendModalPopup.preSelectedSendType = Constants.SendType.ENSRelease
+                ensView.sendModalPopup.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(0)
+                ensView.sendModalPopup.preSelectedChainId = ensView.selectedChainId
+                ensView.sendModalPopup.publicKey = ensView.contactsStore.myPublicKey
+                ensView.sendModalPopup.ensName = ensView.selectedUsername
+                ensView.sendModalPopup.open()
+            }
+
+            Connections {
+                target: ensView.ensUsernamesStore.ensUsernamesModule
+                function onTransactionWasSent(trxType: string, chainId: int, txHash: string, username: string, error: string) {
+                    if (!!error || trxType !== d.releaseENS) {
+                        return
+                    }
+                    done(ensView.selectedUsername)
+                }
             }
         }
     }
@@ -333,18 +415,24 @@ Item {
         function onTransactionCompleted(success: bool, txHash: string, username: string, trxType: string) {
             let title = ""
             switch(trxType){
-            case "RegisterENS":
+            case d.registerENS:
                 title = !success ?
                             qsTr("ENS Registration failed")
                           :
                             qsTr("ENS Registration completed");
                 break;
-            case "SetPubKey":
+            case d.setPubKey:
                 title = !success ?
                             qsTr("Updating ENS pubkey failed")
                           :
                             qsTr("Updating ENS pubkey completed");
                 break;
+            case d.releaseENS:
+                title = !success ?
+                            qsTr("Releasing ENS name failed")
+                          :
+                            qsTr("ENS name released");
+                break
             default:
                 console.error("unknown transaction type: ", trxType);
                 return

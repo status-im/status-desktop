@@ -139,6 +139,8 @@ QtObject {
         }
 
         switch(code) {
+        case Constants.routerErrorCodes.errInternal:
+            return qsTr("an internal error occurred")
         case Constants.routerErrorCodes.errGeneric:
             return qsTr("unknown error occurred, try again later")
         case Constants.routerErrorCodes.processor.errFailedToParseBaseFee:
@@ -225,6 +227,7 @@ QtObject {
         }
 
         switch(code) {
+        case Constants.routerErrorCodes.errInternal:
         case Constants.routerErrorCodes.errGeneric:
             return details
         case Constants.routerErrorCodes.processor.errFailedToParseBaseFee:

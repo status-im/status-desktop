@@ -1075,6 +1075,7 @@ QtObject {
 
     readonly property QtObject routerErrorCodes: QtObject {
 
+        readonly property string errInternal: "-1" // comes from Nim side
         readonly property string errGeneric: "0"
 
         readonly property QtObject processor: QtObject {

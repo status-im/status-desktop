@@ -127,7 +127,7 @@ method connectOwnedUsername*(self: Module, ensUsername: string, isStatus: bool) 
 method ensTransactionSent*(self: Module, trxType: string, chainId: int, ensUsername: string, txHash: string, err: string) =
   var finalError = err
   defer:
-    self.view.emitTransactionWasSentSignal(chainId, txHash, finalError)
+    self.view.emitTransactionWasSentSignal(trxType, chainId, txHash, ensUsername, finalError)
   if (err.len != 0):
     error "sending ens tx failed", errMsg=err, methodName="ensTransactionSent"
     return

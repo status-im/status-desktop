@@ -16,30 +16,16 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
-import AppLayouts.Wallet.stores 1.0
 import AppLayouts.Profile.stores 1.0
 
 Item {
     id: root
 
     property EnsUsernamesStore ensUsernamesStore
-    property ContactsStore contactsStore
-    required property TransactionStore transactionStore
-    property WalletAssetsStore walletAssetsStore
     property string username: ""
 
     signal backBtnClicked()
-    signal usernameRegistered(userName: string)
-
-    QtObject {
-        id: d
-        readonly property var sntToken: ModelUtils.getByKey(root.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", root.ensUsernamesStore.getStatusTokenKey())
-        readonly property SumAggregator aggregator: SumAggregator {
-            model: !!d.sntToken && !!d.sntToken.balances ? d.sntToken.balances: nil
-            roleName: "balance"
-        }
-        property real sntBalance: !!sntToken && !!sntToken.decimals ? aggregator.value/(10 ** sntToken.decimals): 0
-    }
+    signal registerUsername()
 
     StatusBaseText {
         id: sectionTitle
@@ -56,43 +42,6 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.right
             anchors.leftMargin: 7
-        }
-    }
-
-    Loader {
-        id: transactionDialog
-        function open() {
-            this.active = true
-            this.item.open()
-        }
-        function closed() {
-            this.active = false // kill an opened instance
-        }
-        sourceComponent: SendModal {
-            id: buyEnsModal
-            interactive: false
-            store: root.transactionStore
-            preSelectedSendType: Constants.SendType.ENSRegister
-            preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
-            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
-            preSelectedHoldingID: !!d.sntToken && !!d.sntToken.symbol ? d.sntToken.symbol: ""
-            preSelectedHoldingType: Constants.TokenType.ERC20
-            publicKey: root.contactsStore.myPublicKey
-            ensName: root.username
-
-            Connections {
-                target: root.ensUsernamesStore.ensUsernamesModule
-                function onTransactionWasSent(chainId: int, txHash: string, error: string) {
-                        if (!!error) {
-                            if (error.includes(Constants.walletSection.cancelledMessage)) {
-                                return
-                            }
-                            buyEnsModal.sendingError.text = error
-                            return buyEnsModal.sendingError.open()
-                        }
-                        usernameRegistered(username)
-                }
-            }
         }
     }
 
@@ -395,6 +344,6 @@ Item {
           qsTr("Not enough SNT") :
           qsTr("Register")
         enabled: d.sntBalance >= 10 && termsAndConditionsCheckbox.checked
-        onClicked: transactionDialog.open()
+        onClicked: root.registerUsername(root.username)
     }
 }
