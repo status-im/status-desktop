@@ -2,6 +2,7 @@ import NimQml, Tables
 import item
 
 import ../../../../../app_service/service/settings/dto/settings
+import ../../../shared_models/model_utils
 
 type
   ModelRole {.pure.} = enum
@@ -153,21 +154,10 @@ QtObject:
     
     var roles: seq[int] = @[]
 
-    if self.items[ind].muteAllMessages != muteAllMessages:
-      self.items[ind].muteAllMessages = muteAllMessages
-      roles.add(ModelRole.MuteAllMessages.int)
-
-    if self.items[ind].personalMentions != personalMentions:
-      self.items[ind].personalMentions = personalMentions
-      roles.add(ModelRole.PersonalMentions.int)
-
-    if self.items[ind].globalMentions != globalMentions:
-      self.items[ind].globalMentions = globalMentions
-      roles.add(ModelRole.GlobalMentions.int)
-
-    if self.items[ind].otherMessages != otherMessages:
-      self.items[ind].otherMessages = otherMessages
-      roles.add(ModelRole.OtherMessages.int)
+    updateRole(muteAllMessages, MuteAllMessages)
+    updateRole(personalMentions, PersonalMentions)
+    updateRole(globalMentions, GlobalMentions)
+    updateRole(otherMessages, OtherMessages)
 
     if roles.len == 0:
       return
@@ -196,17 +186,9 @@ QtObject:
 
     var roles: seq[int] = @[]
 
-    if self.items[ind].name != name:
-      self.items[ind].name = name
-      roles.add(ModelRole.Name.int)
-
-    if self.items[ind].image != image:
-      self.items[ind].image = image
-      roles.add(ModelRole.Image.int)
-
-    if self.items[ind].color != color:
-      self.items[ind].color = color
-      roles.add(ModelRole.Color.int)
+    updateRole(name, Name)
+    updateRole(image, Image)
+    updateRole(color, Color)
 
     if roles.len == 0:
       return
