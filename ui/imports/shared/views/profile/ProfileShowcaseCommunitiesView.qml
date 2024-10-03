@@ -1,8 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-import AppLayouts.Communities.controls 1.0
-
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -10,6 +8,9 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
 import utils 1.0
+
+import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.helpers 1.0
 
 Item {
     id: root
@@ -48,7 +49,8 @@ Item {
         delegate: StatusCommunityCard {
             id: profileDialogCommunityCard
             readonly property var permissionsList: model.permissionsModel
-            readonly property bool requirementsMet: !!model.allTokenRequirementsMet ? model.allTokenRequirementsMet : false
+            readonly property bool isTokenGatedCommunity: PermissionsHelpers.isTokenGatedCommunity(permissionsList)
+
             cardSize: StatusCommunityCard.Size.Small
             implicitWidth: GridView.view.cellWidth - Style.current.padding
             implicitHeight: GridView.view.cellHeight - Style.current.padding
@@ -60,7 +62,7 @@ Item {
             asset.width: 32
             asset.height: 32
             name: model.name ?? ""
-            memberCountVisible: false
+            memberCountVisible: model.joined || !model.encrypted
             banner: model.bannerImageData ?? ""
             descriptionFontSize: 12
             descriptionFontColor: Theme.palette.baseColor1
@@ -80,8 +82,7 @@ Item {
             // Community restrictions
             bottomRowComponent: (model.joined && !root.readOnly) ?
                                     communityMembershipComponent :
-                                    !!profileDialogCommunityCard.permissionsList && profileDialogCommunityCard.permissionsList.count > 0 ?
-                                        permissionsRowComponent : null
+                                    isTokenGatedCommunity ? permissionsRowComponent : null
 
             Component {
                 id: communityMembershipComponent
@@ -116,13 +117,17 @@ Item {
             Component {
                 id: permissionsRowComponent
                 PermissionsRow {
-                    hoverEnabled: false
+                    readonly property int eligibleToJoinAs: PermissionsHelpers.isEligibleToJoinAs(profileDialogCommunityCard.permissionsList)
+
                     assetsModel: root.globalAssetsModel
                     collectiblesModel: root.globalCollectiblesModel
                     model: profileDialogCommunityCard.permissionsList
-                    requirementsMet: profileDialogCommunityCard.requirementsMet
+                    requirementsMet: eligibleToJoinAs === PermissionTypes.Type.Member
+                                     || eligibleToJoinAs === PermissionTypes.Type.Admin
+                                     || eligibleToJoinAs === PermissionTypes.Type.Owner
                     backgroundBorderColor: Theme.palette.baseColor2
                     backgroundRadius: 20
+                    fontPixelSize: 10
                 }
             }
 
@@ -174,6 +179,8 @@ Item {
                     root.copyToClipboard(contextMenu.url)
                 }
             }
+
+            onClosed: destroy()
         }
     }
 }

@@ -115,7 +115,7 @@ ListModel {
                     members: [{ pubKey: "0xdeadbeef" }],
                     membersCount: 1,
                     loading: false,
-                    permissionsModel: null,
+                    permissionsModel: PermissionsModel.privatePermissionsMemberNotMetModel,
                     allTokenRequirementsMet: false
                 },
                 {
