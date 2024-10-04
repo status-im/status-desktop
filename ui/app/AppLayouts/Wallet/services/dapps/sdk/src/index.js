@@ -93,8 +93,8 @@ window.wc = {
                     // const { topic } = event;
                 });
                 window.wc.web3wallet.on("session_request_expire", (event) => {
-                    wc.statusObject.echo("debug", `WC unhandled event: "session_request_expire" ${JSON.stringify(event)}`);
-                    // const { id } = event
+                    const { id } = event
+                    wc.statusObject.onSessionRequestExpire(id)
                 });
                 window.wc.core.relayer.on("relayer_connect", () => {
                     wc.statusObject.echo("debug", `WC unhandled event: "relayer_connect" connection to the relay server is established`);

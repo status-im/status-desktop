@@ -40,6 +40,7 @@ StatusDialog {
 
     property date requestTimestamp: new Date()
     property int expirationSeconds
+    property bool hasExpiryDate: false
 
     property ObjectModel leftFooterContents
     property ObjectModel rightFooterContents: ObjectModel {
@@ -49,7 +50,7 @@ StatusDialog {
             StatusFlatButton {
                 objectName: "rejectButton"
                 Layout.preferredHeight: signButton.height
-                visible: !countdownPill.isExpired
+                visible: !root.hasExpiryDate || !countdownPill.isExpired
                 text: qsTr("Reject")
                 onClicked: root.reject() // close and emit rejected() signal
             }
@@ -57,7 +58,7 @@ StatusDialog {
                 objectName: "signButton"
                 id: signButton
                 interactive: !root.feesLoading && root.signButtonEnabled
-                visible: !countdownPill.isExpired
+                visible: !root.hasExpiryDate || !countdownPill.isExpired
                 icon.name: Constants.authenticationIconByType[root.loginType]
                 disabledColor: Theme.palette.directColor8
                 text: qsTr("Sign")
@@ -66,7 +67,7 @@ StatusDialog {
             StatusButton {
                 objectName: "closeButton"
                 id: closeButton
-                visible: countdownPill.isExpired
+                visible: root.hasExpiryDate && countdownPill.isExpired
                 text: qsTr("Close")
                 onClicked: root.close()
             }
@@ -225,12 +226,13 @@ StatusDialog {
 
                 CountdownPill {
                     id: countdownPill
+                    objectName: "countdownPill"
                     anchors.right: parent.right
                     anchors.top: parent.top
                     anchors.margins: Style.current.padding
                     timestamp: root.requestTimestamp
                     expirationSeconds: root.expirationSeconds
-                    visible: !!expirationSeconds
+                    visible: !!root.hasExpiryDate
                 }
             }
 

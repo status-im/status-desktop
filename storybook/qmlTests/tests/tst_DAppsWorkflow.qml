@@ -58,7 +58,7 @@ Item {
             chainId: network,
             data: "hello world",
             preparedData: "hello world",
-            expirationTimestamp: Date.now() + 1000,
+            expirationTimestamp: (Date.now() + 10000) / 1000,
             sourceId: Constants.DAppConnectors.WalletConnect
         })
 
@@ -114,8 +114,8 @@ Item {
             }
 
             property var onDisplayToastMessageTriggers: []
-            onDisplayToastMessage: function(message, error) {
-                onDisplayToastMessageTriggers.push({message, error})
+            onDisplayToastMessage: function(message, type) {
+                onDisplayToastMessageTriggers.push({message, type})
             }
 
             property var onPairingValidatedTriggers: []
@@ -444,6 +444,150 @@ Item {
             compare(request.haveEnoughFees, data.expect.haveEnoughForFees, "expected haveEnoughForFees to be set")
             verify(!!request.feesInfo, "expected feesInfo to be set")
         }
+
+        function test_sessionRequestExpiryInTheFuture() {
+            const sdk = handler.sdk
+            const testAddressUpper = "0x3A"
+            const chainId = 2
+            const method = "personal_sign"
+            const message = "hello world"
+            const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddressUpper}"`]
+            const topic = "b536a"
+            const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+
+            verify(session.params.request.expiryTimestamp > Date.now() / 1000, "expected expiryTimestamp to be in the future")
+
+            // Expect to have calls to getActiveSessions from service initialization
+            const prevRequests = sdk.getActiveSessionsCallbacks.length
+            sdk.sessionRequestEvent(session)
+
+            verify(handler.requestsModel.count === 1, "expected a request to be added")
+            const request = handler.requestsModel.findRequest(topic, session.id)
+            verify(!!request, "expected request to be found")
+            verify(!request.isExpired(), "expected request to not be expired")
+        }
+
+        function test_sessionRequestExpiryInThePast()
+        {
+            const sdk = handler.sdk
+            const testAddressUpper = "0x3A"
+            const chainId = 2
+            const method = "personal_sign"
+            const message = "hello world"
+            const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddressUpper}"`]
+            const topic = "b536a"
+            const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            session.params.request.expiryTimestamp = (Date.now() - 10000) / 1000
+
+            verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
+
+            sdk.sessionRequestEvent(session)
+
+            verify(handler.requestsModel.count === 1, "expected a request to be added")
+            const request = handler.requestsModel.findRequest(topic, session.id)
+            verify(!!request, "expected request to be found")
+            verify(request.isExpired(), "expected request to be expired")
+            verify(displayToastMessageSpy.count === 0, "no toast message should be displayed")
+        }
+
+        function test_wcSignalsSessionRequestExpiry()
+        {
+            const sdk = handler.sdk
+            const testAddressUpper = "0x3A"
+            const chainId = 2
+            const method = "personal_sign"
+            const message = "hello world"
+            const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddressUpper}"`]
+            const topic = "b536a"
+            const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+
+            verify(session.params.request.expiryTimestamp > Date.now() / 1000, "expected expiryTimestamp to be in the future")
+            sdk.sessionRequestEvent(session)
+            const request = handler.requestsModel.findRequest(topic, session.id)
+            verify(!!request, "expected request to be found")
+            verify(!request.isExpired(), "expected request to not be expired")
+
+            sdk.sessionRequestExpired(session.id)
+            verify(request.isExpired(), "expected request to be expired")
+            verify(displayToastMessageSpy.count === 0, "no toast message should be displayed")
+        }
+
+        function test_acceptExpiredSessionRequest()
+        {
+            const sdk = handler.sdk
+            const testAddressUpper = "0x3A"
+            const chainId = 2
+            const method = "personal_sign"
+            const message = "hello world"
+            const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddressUpper}"`]
+            const topic = "b536a"
+            const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            session.params.request.expiryTimestamp = (Date.now() - 10000) / 1000
+
+            verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
+
+            sdk.sessionRequestEvent(session)
+
+            verify(handler.requestsModel.count === 1, "expected a request to be added")
+            const request = handler.requestsModel.findRequest(topic, session.id)
+            request.resolveDappInfoFromSession({peer: {metadata: {name: "Test DApp", url: "https://test.dapp", icons:[]}}})
+            verify(!!request, "expected request to be found")
+            verify(request.isExpired(), "expected request to be expired")
+            verify(sdk.rejectSessionRequestCalls.length === 0, "expected no call to sdk.rejectSessionRequest")
+
+            ignoreWarning("Error: request expired")
+            handler.store.userAuthenticated(topic, session.id, "1234", "", message)
+            verify(sdk.rejectSessionRequestCalls.length === 1, "expected a call to sdk.rejectSessionRequest")
+            sdk.sessionRequestUserAnswerResult(topic, session.id, false, "")
+            verify(displayToastMessageSpy.count === 1, "expected a toast message to be displayed")
+            compare(displayToastMessageSpy.signalArguments[0][0], "test.dapp sign request timed out")
+        }
+
+        function test_rejectExpiredSessionRequest()
+        {
+            const sdk = handler.sdk
+            const testAddressUpper = "0x3A"
+            const chainId = 2
+            const method = "personal_sign"
+            const message = "hello world"
+            const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddressUpper}"`]
+            const topic = "b536a"
+            const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            session.params.request.expiryTimestamp = (Date.now() - 10000) / 1000
+
+            verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
+
+            sdk.sessionRequestEvent(session)
+
+            verify(sdk.rejectSessionRequestCalls.length === 0, "expected no call to sdk.rejectSessionRequest")
+
+            ignoreWarning("Error: request expired")
+            handler.store.userAuthenticationFailed(topic, session.id)
+            verify(sdk.rejectSessionRequestCalls.length === 1, "expected a call to sdk.rejectSessionRequest")
+        }
+
+        function test_signFailedAuthOnExpiredRequest()
+        {
+            const sdk = handler.sdk
+            const testAddressUpper = "0x3A"
+            const chainId = 2
+            const method = "personal_sign"
+            const message = "hello world"
+            const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddressUpper}"`]
+            const topic = "b536a"
+            const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            session.params.request.expiryTimestamp = (Date.now() - 10000) / 1000
+
+            verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
+
+            sdk.sessionRequestEvent(session)
+
+            verify(sdk.rejectSessionRequestCalls.length === 0, "expected no call to sdk.rejectSessionRequest")
+
+            ignoreWarning("Error: request expired")
+            handler.store.userAuthenticationFailed(topic, session.id)
+            verify(sdk.rejectSessionRequestCalls.length === 1, "expected a call to sdk.rejectSessionRequest")
+        }
     }
 
     TestCase {
@@ -561,7 +705,7 @@ Item {
             verify(service.onApproveSessionResultTriggers[0].session, "expected session to be set")
 
             compare(service.onDisplayToastMessageTriggers.length, 1, "expected a success message to be displayed")
-            verify(!service.onDisplayToastMessageTriggers[0].error, "expected no error")
+            verify(service.onDisplayToastMessageTriggers[0].type !== Constants.ephemeralNotificationType.danger, "expected no error")
             verify(service.onDisplayToastMessageTriggers[0].message, "expected message to be set")
         }
 
@@ -1026,6 +1170,78 @@ Item {
             waitForRendering(controlUnderTest)
             verify(!popup.opened)
             verify(!popup.visible)
+        }
+
+        function test_SignRequestExpired() {
+            const topic = "abcd"
+            const requestId = "12345"
+            let popup = showRequestModal(topic, requestId)
+
+            const request = controlUnderTest.sessionRequestsModel.findRequest(topic, requestId)
+            verify(!!request)
+
+            const countDownPill = findChild(popup, "countdownPill")
+            verify(!!countDownPill)
+            tryVerify(() => countDownPill.remainingSeconds > 0)
+            // Hackish -> countdownPill internals ask for a refresh before going to expired state
+            const remainingSeconds = countDownPill.remainingSeconds
+            tryVerify(() => countDownPill.visible)
+            tryVerify(() => countDownPill.remainingSeconds !== remainingSeconds)
+
+            request.setExpired()
+            tryVerify(() => countDownPill.isExpired)
+            verify(countDownPill.visible)
+
+            const signButton = findChild(popup, "signButton")
+            const rejectButton = findChild(popup, "rejectButton")
+            const closeButton = findChild(popup, "closeButton")
+
+            tryVerify(() => !signButton.visible)
+            verify(!rejectButton.visible)
+            verify(closeButton.visible)
+        }
+
+        function test_SignRequestDoesWithoutExpiry()
+        {
+            const topic = "abcd"
+            const requestId = "12345"
+            let popup = showRequestModal(topic, requestId)
+
+            const request = controlUnderTest.sessionRequestsModel.findRequest(topic, requestId)
+            verify(!!request)
+            request.expirationTimestamp = undefined
+
+            const countDownPill = findChild(popup, "countdownPill")
+            verify(!!countDownPill)
+            tryVerify(() => !countDownPill.visible)
+
+            request.setExpired()
+            tryVerify(() => countDownPill.visible)
+
+            const signButton = findChild(popup, "signButton")
+            const rejectButton = findChild(popup, "rejectButton")
+            const closeButton = findChild(popup, "closeButton")
+
+            verify(signButton.visible)
+            verify(rejectButton.visible)
+            verify(!closeButton.visible)
+        }
+
+        function test_SignRequestModalAfterModelRemove()
+        {
+            const topic = "abcd"
+            const requestId = "12345"
+            let popup = showRequestModal(topic, requestId)
+
+            const request = controlUnderTest.sessionRequestsModel.findRequest(topic, requestId)
+            verify(!!request)
+
+            controlUnderTest.sessionRequestsModel.removeRequest(topic, requestId)
+            verify(!controlUnderTest.sessionRequestsModel.findRequest(topic, requestId))
+
+            waitForRendering(controlUnderTest)
+            popup = findChild(controlUnderTest, "dappsRequestModal")
+            verify(!popup)
         }
     }
 }

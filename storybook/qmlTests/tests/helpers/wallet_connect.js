@@ -156,13 +156,14 @@ function formatApproveSessionResponse(networksArray, accountsArray, custom) {
 
 function formatSessionRequest(chainId, method, params, topic, requestId) {
     const reqId = requestId || 1717149885151715
+    const expiry = Date.now() / 1000 + 6000
     let paramsStr = params.map(param => `${param}`).join(',')
     return `{
     "id": ${reqId},
     "params": {
         "chainId": "eip155:${chainId}",
         "request": {
-            "expiryTimestamp": 1717150185,
+            "expiryTimestamp": ${expiry},
             "method": "${method}",
             "params": [${paramsStr}]
         }

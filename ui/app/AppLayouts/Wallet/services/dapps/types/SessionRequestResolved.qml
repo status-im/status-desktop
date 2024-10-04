@@ -21,6 +21,9 @@ QObject {
     required property string method
     required property string accountAddress
     required property string chainId
+    // optional expiry date in ms
+    property var expirationTimestamp
+
     // Maps to Constants.DAppConnectors values
     required property int sourceId
 
@@ -54,6 +57,14 @@ QObject {
         }
     }
 
+    function isExpired() {
+        return !!expirationTimestamp && expirationTimestamp > 0 && Math.floor(Date.now() / 1000) >= expirationTimestamp
+    }
+
+    function setExpired() {
+        expirationTimestamp = Math.floor(Date.now() / 1000)
+    }
+
     // dApp info
     QtObject {
         id: d
@@ -61,5 +72,6 @@ QObject {
         property string dappName
         property string dappUrl
         property url dappIcon
+        property bool hasExpiry
     }
 }
