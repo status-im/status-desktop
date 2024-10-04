@@ -1,6 +1,7 @@
 import time
 
 import allure
+import pyperclip
 import pytest
 from allure_commons._allure import step
 
@@ -67,3 +68,22 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
         add_new_account = account_popup.set_name(name).set_emoji(emoji).set_color(color).open_add_new_account_popup()
         add_new_account.enter_new_seed_phrase(mnemonic_data.split())
         assert add_new_account.get_already_added_error() == WalletSeedPhrase.WALLET_SEED_PHRASE_ALREADY_ADDED.value
+
+    with step('Delete account'):
+        with step('Delete wallet account'):
+            wallet.left_panel.delete_account_from_context_menu(name).agree_and_confirm()
+
+    with step('Add the same account again and check derivation path'):
+        add_new_account_popup = wallet.left_panel.open_add_account_popup()
+        add_same_account = add_new_account_popup.set_name(name).set_emoji(emoji).set_color(color).open_add_new_account_popup()
+        add_same_account.import_new_seed_phrase(mnemonic_data.split())
+        add_new_account_popup.save_changes()
+        authenticate_with_password(user_account)
+        add_new_account_popup.wait_until_hidden()
+
+    with step('Verify derivation path'):
+        edit_account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
+        edit_account_popup.copy_derivation_path_button.click()
+        derivation_path = pyperclip.paste()
+        assert derivation_path.endswith('0')
+
