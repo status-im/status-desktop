@@ -7,14 +7,19 @@
 
 final: prev: let
   inherit (prev) config stdenv callPackage recurseIntoAttrs makeOverridable fetchurl lib writeShellScriptBin __splicedPackages;
-in rec {
-  linuxdeployqt = callPackage ./pkgs/linuxdeployqt/default.nix { };
+in {
+  # TODO: Remove once nixpkgs is upgraded.
+  mockgen = callPackage ./pkgs/mockgen { };
+  protobuf3_20 = callPackage ./pkgs/protobuf { };
+  protoc-gen-go = callPackage ./pkgs/protoc-gen-go { };
+
+  linuxdeployqt = callPackage ./pkgs/linuxdeployqt { };
 
   # Copyied from d9424d2191d6439a276b69ae1fd0a800586135ca
   # 2018-07-27 -> 2020-12-31
   # TODO: override and upgrade
   # Copy is uses because of initial complexity of package override (probably due to fuse override)
-  appimagekit = callPackage ./pkgs/appimagekit/default.nix { };
+  appimagekit = callPackage ./pkgs/appimagekit { };
 
   # Requirement from Makefile - 3.19
   cmake_3_19 = prev.cmake.overrideAttrs ( attrs : rec {
@@ -33,6 +38,7 @@ in rec {
   # TODO: compile, not binary
   # Binary is used because of initial complexity of both package override and copy from newer nixpkgs
   go_1_21 = callPackage ./pkgs/go/bootstrap121.nix { };
+  buildGo121Module = callPackage ./pkgs/go-module { go = final.go_1_21; };
 
   # Fix for linuxdeployqt running ldd from nix with system shell
   # ERROR: findDependencyInfo: "/bin/sh: /nix/store/HASH-glibc-2.31-74/lib/libc.so.6: version `GLIBC_2.33' not found (required by /bin/sh)\n/bin/sh: /nix/store/0c7c96gikmzv87i7lv3vq5s1cmfjd6zf-glibc-2.31-74/lib/libc.so.6: version `GLIBC_2.34' not found (required by /bin/sh)"

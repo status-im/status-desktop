@@ -149,7 +149,7 @@ $(BOTTLES_DIR):
 bottles: $(BOTTLES)
 endif
 
-deps: | check-qt-dir deps-common bottles
+deps: | check-qt-dir deps-common status-go-deps bottles
 
 update: | check-qt-dir update-common
 ifeq ($(detected_OS),Darwin)
@@ -434,13 +434,17 @@ STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
 export STATUSGO_LIBDIR
 
-$(STATUSGO): | deps
+$(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
 	$(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
 		$(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
 status-go: $(STATUSGO)
+
+status-go-deps:
+	go install go.uber.org/mock/mockgen@v0.4.0
+	go install github.com/kevinburke/go-bindata/v4/...@v4.0.2
 
 status-go-clean:
 	echo -e "\033[92mCleaning:\033[39m status-go"

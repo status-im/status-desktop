@@ -63,6 +63,8 @@ pipeline {
     /* Control output the filename */
     STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'nix.AppImage', arch: getArch())}"
     STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'nix.tar.gz', arch: getArch())}"
+    /* prevent sharing cache dir across different jobs */
+    GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
   }
 
   stages {

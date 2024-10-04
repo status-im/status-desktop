@@ -70,7 +70,7 @@ pipeline {
     MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Explicitly set the QT version */
     QTDIR = "/c/Qt/5.15.2/msvc2019_64"
-    PATH = "${env.QTDIR}/bin:${env.PATH}"
+    PATH = "${env.QTDIR}/bin:${goPath()}/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
@@ -79,6 +79,8 @@ pipeline {
     STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch())}"
     /* Hack-fix for params not being set in env on first job run. */
     WINDOWS_CODESIGN_TIMESTAMP_URL = "${params.WINDOWS_CODESIGN_TIMESTAMP_URL}"
+    /* prevent sharing cache dir across different jobs */
+    GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
   }
 
   stages {
@@ -141,4 +143,8 @@ def getArch() {
     for (def arch in ['x86_64', 'aarch64']) {
       if (tokens.contains(arch)) { return arch }
     }
+}
+
+def goPath() {
+  return sh(script: 'go env GOPATH', returnStdout: true).trim().replace('C:', '/c')
 }

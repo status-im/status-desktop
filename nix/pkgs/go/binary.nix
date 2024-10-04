@@ -4,17 +4,15 @@ let
     if platform.isDarwin then "darwin"
     else platform.parsed.kernel.name;
 
-  toGoCPU = platform: {
-    "i686" = "386";
-    "x86_64" = "amd64";
+  goarch = platform: {
     "aarch64" = "arm64";
-    "armv6l" = "armv6l";
-    "armv7l" = "armv6l";
-    "powerpc64le" = "ppc64le";
-    "riscv64" = "riscv64";
-  }.${platform.parsed.cpu.name} or (throw "Unsupported CPU ${platform.parsed.cpu.name}");
+    "arm"     = "arm";
+    "armv6l"  = "arm";
+    "armv7l"  = "arm";
+    "x86_64"  = "amd64";
+  }.${platform.parsed.cpu.name} or (throw "Unsupported system: ${platform.parsed.cpu.name}");
 
-  toGoPlatform = platform: "${toGoKernel platform}-${toGoCPU platform}";
+  toGoPlatform = platform: "${toGoKernel platform}-${goarch platform}";
 
   platform = toGoPlatform stdenv.hostPlatform;
 in
@@ -38,4 +36,7 @@ stdenv.mkDerivation rec {
     ln -s $out/share/go/bin/go $out/bin/go
     runHook postInstall
   '';
+
+  GOOS = stdenv.targetPlatform.parsed.kernel.name;
+  GOARCH = goarch stdenv.targetPlatform;
 }
