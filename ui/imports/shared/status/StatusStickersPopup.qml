@@ -19,8 +19,8 @@ Popup {
     id: root
 
     property ChatStores.RootStore store
-    required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
+    required property var sendModalPopup
 
     property alias isWalletEnabled: stickerMarket.isWalletEnabled
 
@@ -102,8 +102,8 @@ Popup {
             Layout.fillWidth: true
             Layout.fillHeight: true
             store: root.store
-            transactionStore: root.transactionStore
             walletAssetsStore: root.walletAssetsStore
+            sendModalPopup: root.sendModalPopup
             stickerPacks: d.stickerPackList
             packId: stickerPackListView.selectedPackId
             marketVisible: d.stickerPacksLoaded && d.online

@@ -25,8 +25,8 @@ Item {
 
     property ChatStores.RootStore store
     property var stickerPacks: ChatStores.StickerPackData {}
-    required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
+    required property var sendModalPopup
     property string packId
     property bool marketVisible
     property bool isWalletEnabled
@@ -37,6 +37,26 @@ Item {
     signal cancelClicked(string packId)
     signal updateClicked(string packId)
     signal buyClicked(string packId)
+
+    QtObject {
+        id: d
+
+        function runSendModal(price, packId) {
+
+            const token = ModelUtils.getByKey(root.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", root.store.stickersStore.getStatusTokenKey())
+
+            root.sendModalPopup.interactive = false
+            root.sendModalPopup.preSelectedRecipient = root.store.stickersStore.getStickersMarketAddress()
+            root.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
+            root.sendModalPopup.preSelectedHoldingID = !!token && !!token.symbol ? token.symbol : ""
+            root.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC20
+            root.sendModalPopup.preSelectedSendType = Constants.SendType.StickersBuy
+            root.sendModalPopup.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(parseFloat(price))
+            root.sendModalPopup.preSelectedChainId = root.store.appNetworkId
+            root.sendModalPopup.stickersPackId = packId
+            root.sendModalPopup.open()
+        }
+    }
 
     StatusGridView {
         id: availableStickerPacks
@@ -154,7 +174,7 @@ Item {
                         onCancelClicked: root.cancelClicked(packId)
                         onUpdateClicked: root.updateClicked(packId)
                         onBuyClicked: {
-                            Global.openPopup(stickerPackPurchaseModal, {price, packId})
+                            d.runSendModal(price, packId)
                             root.buyClicked(packId)
                         }
                     }
@@ -187,53 +207,10 @@ Item {
                         onCancelClicked: root.cancelClicked(packId)
                         onUpdateClicked: root.updateClicked(packId)
                         onBuyClicked: {
-                            Global.openPopup(stickerPackPurchaseModal, {price, packId})
+                            d.runSendModal(price, packId)
                             root.buyClicked(packId)
                         }
                     }
-                }
-            }
-        }
-    }
-
-    Component {
-        id: stickerPackPurchaseModal
-        SendModal {
-            id: buyStickersModal
-
-            required property int price
-            required property string packId
-
-            interactive: false
-            store: root.transactionStore
-            preSelectedSendType: Constants.SendType.StickersBuy
-            preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
-            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-            stickersPackId: packId
-            preSelectedHoldingID: {
-                let token = ModelUtils.getByKey(root.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", root.store.stickersStore.getStatusTokenKey())
-                return !!token && !!token.symbol ? token.symbol : ""
-            }
-            preSelectedHoldingType: Constants.TokenType.ERC20
-
-            Connections {
-                target: root.store.stickersStore.stickersModule
-                function onTransactionWasSent(chainId: int, txHash: string, error: string) {
-                    if (!!error) {
-                        if (error.includes(Constants.walletSection.cancelledMessage)) {
-                            return
-                        }
-                        buyStickersModal.sendingError.text = error
-                        return buyStickersModal.sendingError.open()
-                    }
-                    let url =  "%1/%2".arg(buyStickersModal.store.getEtherscanLink(chainId)).arg(txHash)
-                    Global.displayToastMessage(qsTr("Transaction pending..."),
-                                               qsTr("View on etherscan"),
-                                               "",
-                                               true,
-                                               Constants.ephemeralNotificationType.normal,
-                                               url)
-                    buyStickersModal.close()
                 }
             }
         }

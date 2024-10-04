@@ -25,8 +25,8 @@ ModalPopup {
     property string packId
 
     property ChatStores.RootStore store
-    required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
+    required property var sendModalPopup
     property string thumbnail: ""
     property string name: ""
     property string author: ""
@@ -72,43 +72,6 @@ ModalPopup {
         anchors.fill: parent
         anchors.topMargin: Style.current.padding
         packId: stickerPackDetailsPopup.packId
-        Component {
-            id: stickerPackPurchaseModal
-            SendModal {
-                id: buyStickersPackModal
-                interactive: false
-                store: stickerPackDetailsPopup.transactionStore
-                preSelectedSendType: Constants.SendType.StickersBuy
-                preSelectedRecipient: stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
-                preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-                preSelectedHoldingID: {
-                    let token = SQUtils.ModelUtils.getByKey(stickerPackDetailsPopup.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", stickerPackDetailsPopup.store.stickersStore.getStatusTokenKey())
-                    return !!token && !!token.symbol ? token.symbol : ""
-                }
-                preSelectedHoldingType: Constants.TokenType.ERC20
-
-                Connections {
-                    target: stickerPackDetailsPopup.store.stickersStore.stickersModule
-                    function onTransactionWasSent(chainId: int, txHash: string, error: string) {
-                        if (!!error) {
-                            if (error.includes(Constants.walletSection.cancelledMessage)) {
-                                return
-                            }
-                            buyStickersPackModal.sendingError.text = error
-                            return buyStickersPackModal.sendingError.open()
-                        }
-                        let url =  "%1/%2".arg(buyStickersPackModal.store.getEtherscanLink(chainId)).arg(txHash)
-                        Global.displayToastMessage(qsTr("Transaction pending..."),
-                                                   qsTr("View on etherscan"),
-                                                   "",
-                                                   true,
-                                                   Constants.ephemeralNotificationType.normal,
-                                                   url)
-                        buyStickersPackModal.close()
-                    }
-                }
-            }
-        }
     }
 
     footer: StatusStickerButton {
@@ -131,8 +94,20 @@ ModalPopup {
         onCancelClicked: function(){}
         onUpdateClicked: function(){}
         onBuyClicked: {
-            Global.openPopup(stickerPackPurchaseModal)
-            stickerPackDetailsPopup.buyClicked(packId)
+            const token = SQUtils.ModelUtils.getByKey(stickerPackDetailsPopup.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", stickerPackDetailsPopup.store.stickersStore.getStatusTokenKey())
+
+            stickerPackDetailsPopup.sendModalPopup.interactive = false
+            stickerPackDetailsPopup.sendModalPopup.preSelectedRecipient = stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
+            stickerPackDetailsPopup.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
+            stickerPackDetailsPopup.sendModalPopup.preSelectedHoldingID = !!token && !!token.symbol ? token.symbol : ""
+            stickerPackDetailsPopup.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC20
+            stickerPackDetailsPopup.sendModalPopup.preSelectedSendType = Constants.SendType.StickersBuy
+            stickerPackDetailsPopup.sendModalPopup.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(parseFloat(stickerPackDetailsPopup.price))
+            stickerPackDetailsPopup.sendModalPopup.preSelectedChainId = stickerPackDetailsPopup.store.appNetworkId
+            stickerPackDetailsPopup.sendModalPopup.stickersPackId = stickerPackDetailsPopup.packId
+            stickerPackDetailsPopup.sendModalPopup.open()
+
+            stickerPackDetailsPopup.buyClicked(stickerPackDetailsPopup.packId)
         }
     }
 }
