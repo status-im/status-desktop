@@ -316,11 +316,13 @@ QtObject:
     return roles
 
   proc updateItems*(self: Model, items: seq[MemberItem]) =
-    var i = 0
     var startIndex = -1
     var endIndex = -1
     var allRoles: seq[int] = @[]
     for item in items:
+      let itemIndex = self.findIndexForMember(item.pubKey)
+      if itemIndex == -1:
+        continue
       let roles = self.updateItem(
         item.pubKey,
         item.displayName,
@@ -339,18 +341,18 @@ QtObject:
 
       if roles.len > 0:
         if startIndex == -1:
-          endIndex = i
-        endIndex = i
+          startIndex = itemIndex
+        endIndex = itemIndex
         allRoles = concat(allRoles, roles)
-
-      i.inc()
 
     if allRoles.len == 0:
       return
 
-    let index = self.createIndex(startIndex, endIndex, nil)
-    defer: index.delete
-    self.dataChanged(index, index, allRoles)
+    let startModelIndex = self.createIndex(startIndex, 0, nil)
+    let endModelIndex = self.createIndex(endIndex, 0, nil)
+    defer: startModelIndex.delete
+    defer: endModelIndex.delete
+    self.dataChanged(startModelIndex, endModelIndex, allRoles)
 
 
   proc updateToTheseItems*(self: Model, items: seq[MemberItem]) =
@@ -381,7 +383,7 @@ QtObject:
       itemsToUpdate.add(item)
 
     if itemsToUpdate.len > 0:
-      self.updateItems(itemsToAdd)
+      self.updateItems(itemsToUpdate)
 
     if itemsToAdd.len > 0:
       self.addItems(itemsToAdd)
