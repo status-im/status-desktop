@@ -49,6 +49,10 @@ SplitView {
             qrImageSource: "https://upload.wikimedia.org/wikipedia/commons/4/41/QR_Code_Example.svg"
 
             store: WalletStores.RootStore
+
+            onUpdateSelectedAddress: {
+               dialog.selectedAccount = ModelUtils.getByKey(dialog.accounts, "address", address)
+            }
         }
     }
 

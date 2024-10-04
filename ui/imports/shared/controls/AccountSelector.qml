@@ -18,7 +18,6 @@ import shared.controls 1.0
     Expected model structure:
     name                    [string] - account name e.g. "Piggy Bank"
     address                 [string] - wallet account address e.g. "0x1234567890"
-    colorizedChainPrefixes  [string] - chain prefixes with rich text colors e.g. "<font color=\"red\">eth:</font><font color=\"blue\">oeth:</font><font color=\"green\">arb:</font>"
     emoji                   [string] - emoji for account e.g. "🐷"
     colorId                 [string] - color id for account e.g. "1"
     currencyBalance         [var]    - fiat currency balance
@@ -101,7 +100,6 @@ StatusComboBox {
         width: ListView.view.width
         name: model.name
         address: model.address
-        chainShortNames: model.colorizedChainPrefixes ?? ""
         emoji: model.emoji
         walletColor: Utils.getColorForId(model.colorId)
         currencyBalance: model.currencyBalance

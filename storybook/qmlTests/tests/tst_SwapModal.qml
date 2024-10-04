@@ -236,14 +236,16 @@ Item {
 
             for(let i =0; i< comboBoxList.model.count; i++) {
                 let delegateUnderTest = comboBoxList.itemAtIndex(i)
-                compare(delegateUnderTest.title, swapAdaptor.nonWatchAccounts.get(i).name)
-                compare(delegateUnderTest.subTitle, SQUtils.Utils.elideAndFormatWalletAddress(swapAdaptor.nonWatchAccounts.get(i).address))
-                compare(delegateUnderTest.asset.color.toString().toUpperCase(), swapAdaptor.nonWatchAccounts.get(i).color.toString().toUpperCase())
-                compare(delegateUnderTest.asset.emoji, swapAdaptor.nonWatchAccounts.get(i).emoji)
+                let accountToBeTested = swapAdaptor.nonWatchAccounts.get(i)
+                let elidedAddress = SQUtils.Utils.elideAndFormatWalletAddress(accountToBeTested.address)
+                compare(delegateUnderTest.title, accountToBeTested.name)
+                compare(delegateUnderTest.subTitle, elidedAddress)
+                compare(delegateUnderTest.asset.color.toString().toUpperCase(), accountToBeTested.color.toString().toUpperCase())
+                compare(delegateUnderTest.asset.emoji, accountToBeTested.emoji)
 
                 const walletAccountCurrencyBalance = findChild(delegateUnderTest, "walletAccountCurrencyBalance")
                 verify(!!walletAccountCurrencyBalance)
-                verify(walletAccountCurrencyBalance.text, LocaleUtils.currencyAmountToLocaleString(swapAdaptor.nonWatchAccounts.get(i).currencyBalance))
+                verify(walletAccountCurrencyBalance.text, LocaleUtils.currencyAmountToLocaleString(accountToBeTested.currencyBalance))
 
                 // check if selected item in combo box is highlighted with the right color
                 if(comboBoxList.currentIndex === i) {
@@ -256,13 +258,13 @@ Item {
                 // TODO: always null not sure why
                 // const walletAccountTypeIcon = findChild(delegateUnderTest, "walletAccountTypeIcon")
                 // verify(!!walletAccountTypeIcon)
-                // compare(walletAccountTypeIcon.icon, swapAdaptor.nonWatchAccounts.get(i).walletType === Constants.watchWalletType ? "show" : delegateUnderTest.model.migratedToKeycard ? "keycard": "")
+                // compare(walletAccountTypeIcon.icon, accountToBeTested.walletType === Constants.watchWalletType ? "show" : delegateUnderTest.model.migratedToKeycard ? "keycard": "")
 
                 // Hover over the item and check hovered state
                 mouseMove(delegateUnderTest, delegateUnderTest.width/2, delegateUnderTest.height/2)
                 verify(delegateUnderTest.sensor.containsMouse)
-                compare(delegateUnderTest.title, swapAdaptor.nonWatchAccounts.get(i).name)
-                compare(delegateUnderTest.subTitle, WalletUtils.colorizedChainPrefix(WalletUtils.getNetworkShortNames(swapAdaptor.nonWatchAccounts.get(i).preferredSharingChainIds, root.swapStore.flatNetworks)), "Randomly failing locally. Add a bug if you see this failing in CI")
+                compare(delegateUnderTest.title, accountToBeTested.name)
+                compare(delegateUnderTest.subTitle,  Utils.richColorText(elidedAddress, Theme.palette.directColor1))
                 verify(delegateUnderTest.color, Theme.palette.baseColor2)
 
             }

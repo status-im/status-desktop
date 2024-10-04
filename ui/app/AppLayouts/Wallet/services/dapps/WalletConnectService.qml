@@ -39,7 +39,7 @@ QObject {
     /// Model containig the dApps session requests to be resolved by the user
     readonly property SessionRequestsModel sessionRequestsModel: requestHandler.requestsModel
     /// Model containing the valid accounts a dApp can interact with
-    readonly property var validAccounts: d.validAccounts
+    readonly property var validAccounts: root.walletRootStore.nonWatchAccounts
     /// Model containing the networks a dApp can interact with
     readonly property var flatNetworks: root.walletRootStore.filteredFlatModel
     /// Service can interact with the current address selection
@@ -123,21 +123,6 @@ QObject {
 
     QObject {
         id: d
-
-        readonly property var validAccounts: SortFilterProxyModel {
-            sourceModel: root.walletRootStore.nonWatchAccounts
-            proxyRoles: [
-                FastExpressionRole {
-                    name: "colorizedChainPrefixes"
-                    function getChainShortNames(chainIds) {
-                        const chainShortNames = root.walletRootStore.getNetworkShortNames(chainIds)
-                        return WalletUtils.colorizedChainPrefix(chainShortNames)
-                    }
-                    expression: getChainShortNames(model.preferredSharingChainIds)
-                    expectedRoles: ["preferredSharingChainIds"]
-                }
-            ]
-        }
 
         readonly property var dappsModel: ConcatModel {
             id: dappsModel

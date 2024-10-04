@@ -89,12 +89,6 @@ StatusDialog {
 
         property string extraParamsJson: ""
 
-        readonly property WalletAccountsAdaptor accountsAdaptor: WalletAccountsAdaptor {
-            accountsModel: popup.store.accounts
-            flatNetworksModel: popup.store.flatNetworksModel
-            areTestNetworksEnabled: popup.store.areTestNetworksEnabled
-        }
-
         property bool ensOrStickersPurpose: popup.preSelectedSendType === Constants.SendType.ENSRegister ||
                                             popup.preSelectedSendType === Constants.SendType.ENSRelease ||
                                             popup.preSelectedSendType === Constants.SendType.ENSSetPubKey ||
@@ -308,17 +302,6 @@ StatusDialog {
                     }
                 ]
                 sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
-                proxyRoles: [
-                    FastExpressionRole {
-                        name: "colorizedChainPrefixes"
-                        function getChainShortNames(chainIds) {
-                            const chainShortNames = popup.store.getNetworkShortNames(chainIds)
-                            return WalletUtils.colorizedChainPrefix(chainShortNames)
-                        }
-                        expression: getChainShortNames(model.preferredSharingChainIds)
-                        expectedRoles: ["preferredSharingChainIds"]
-                    }
-                ]
             }
             selectedAddress: popup.preSelectedAccountAddress
             onCurrentAccountAddressChanged: {
@@ -621,7 +604,7 @@ StatusDialog {
             visible: !recipientInputLoader.ready && !d.isBridgeTx
 
             savedAddressesModel: popup.store.savedAddressesModel
-            myAccountsModel: d.accountsAdaptor.model
+            myAccountsModel: popup.store.accounts
             recentRecipientsModel: popup.store.tempActivityController1Model // Use Layer1 controller since this could go on top of other activity lists
 
             onRecipientSelected:  {

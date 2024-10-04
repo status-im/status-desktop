@@ -52,7 +52,7 @@ Item {
         delegate: Item {
             id: delegateItem
             function getCollectibleURL() {
-                const networkShortName = root.walletStore.getNetworkShortNames(model.chainId);
+                const networkShortName = StatusQUtils.ModelUtils.getByKey(root.walletStore.filteredFlatModel, "chainId", model.chainId, "shortName")
                 return root.walletStore.getOpenSeaCollectibleUrl(networkShortName, model.contractAddress, model.tokenId)
             }
             function openCollectibleURL() {
@@ -61,7 +61,7 @@ Item {
             }
 
             function openCollectionURL() {
-                let networkShortName = root.walletStore.getNetworkShortNames(model.chainId);
+                const networkShortName = StatusQUtils.ModelUtils.getByKey(root.walletStore.filteredFlatModel, "chainId", model.chainId, "shortName")
                 let link = root.walletStore.getOpenSeaCollectionUrl(networkShortName, model.contractAddress)
                 Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
             }

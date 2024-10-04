@@ -244,9 +244,6 @@ Item {
                     keycardAccount: false
                 }
             }
-            function getNetworkShortNames(chainIds) {
-                 return "eth:oeth:arb"
-            }
 
             readonly property var currencyStore: CurrenciesStore {}
             readonly property var walletAssetsStore: assetsStoreMock

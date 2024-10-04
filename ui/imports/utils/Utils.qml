@@ -57,14 +57,6 @@ QtObject {
         return "<font color=\"" + color + "\">" + text + "</font>"
     }
 
-    function splitToChainPrefixAndAddress(input) {
-        const addressIdx = input.indexOf('0x')
-        if (addressIdx < 0)
-            return { prefix: input, address: "" }
-
-        return { prefix: input.substring(0, addressIdx), address: input.substring(addressIdx) }
-    }
-
     function isPrivateKey(value) {
         return isHex(value) && ((startsWith0x(value) && value.length === 66) ||
                                 (!startsWith0x(value) && value.length === 64))

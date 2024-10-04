@@ -28,8 +28,6 @@ proc walletAccountToWalletAccountItem*(w: WalletAccountDto, keycardAccount: bool
     w.position,
     w.operable,
     areTestNetworksEnabled,
-    w.prodPreferredChainIds,
-    w.testPreferredChainIds,
     w.hideFromTotalBalance
   )
 
@@ -51,8 +49,6 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, isKeycardAccount: b
     w.assetsLoading or marketValuesLoading,
     w.isWallet,
     areTestNetworksEnabled,
-    w.prodPreferredChainIds,
-    w.testPreferredChainIds,
     w.hideFromTotalBalance,
     canSend=w.walletType != "watch" and (w.operable==AccountFullyOperable or w.operable==AccountPartiallyOperable)
   )

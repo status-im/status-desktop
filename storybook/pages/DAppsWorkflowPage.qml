@@ -462,9 +462,6 @@ Item {
             property var accounts: customAccountsModel.count > 0 ? customAccountsModel : defaultAccountsModel
             readonly property ListModel nonWatchAccounts: accounts
 
-            function getNetworkShortNames(chainIds) {
-                return "eth:oeth:arb"
-            }
             readonly property SharedStores.CurrenciesStore currencyStore: SharedStores.CurrenciesStore {}
             readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.WalletAssetsStore {
                 // Silence warnings

@@ -80,7 +80,6 @@ Item {
         id: d
 
         property string contactPubKey: !!root.contactsStore ? root.contactsStore.getContactPublicKeyByAddress(root.address) : ""
-        readonly property var prefixAndAddress: Utils.splitToChainPrefixAndAddress(root.address)
         readonly property bool isContact: contactData.isContact
         readonly property bool isWallet: !isContact && !!walletAddressName
         property var contactData
@@ -193,15 +192,7 @@ Item {
                 color: Theme.palette.directColor1
                 wrapMode: Text.WrapAnywhere
                 enabled: false // Set to false to disable hover for rich text
-                text: {
-                    if(!!root.address == false)
-                        return ""
-                    if (d.prefixAndAddress.prefix.length > 0) {
-                        return WalletUtils.colorizedChainPrefix(d.prefixAndAddress.prefix) + d.prefixAndAddress.address
-                    } else {
-                        return d.prefixAndAddress.address
-                    }
-                }
+                text: root.address
                 visible: !!root.address
                 elide: Text.ElideRight
             }

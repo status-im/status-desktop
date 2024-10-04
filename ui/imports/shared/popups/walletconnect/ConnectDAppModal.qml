@@ -31,7 +31,6 @@ StatusDialog {
         Expected model structure:
         name                    [string] - account name e.g. "Piggy Bank"
         address                 [string] - wallet account address e.g. "0x1234567890"
-        colorizedChainPrefixes  [string] - chain prefixes with rich text colors e.g. "<font color=\"red\">eth:</font><font color=\"blue\">oeth:</font><font color=\"green\">arb:</font>"
         emoji                   [string] - emoji for account e.g. "🐷"
         colorId                 [string] - color id for account e.g. "1"
         currencyBalance         [var]    - fiat currency balance

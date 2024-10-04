@@ -41,11 +41,9 @@ Loader {
     onSelectedRecipientChanged: {
         root.isLoading()
         if(!!root.selectedRecipient) {
-            let preferredChainIds = []
             switch(root.selectedRecipientType) {
             case Helpers.RecipientAddressObjectType.Account: {
                 root.addressText = root.selectedRecipient.address
-                preferredChainIds = root.selectedRecipient.preferredSharingChainIds
                 break
             }
             case Helpers.RecipientAddressObjectType.SavedAddress: {
@@ -84,7 +82,7 @@ Loader {
                 if(root.isBridgeTx)
                     root.store.setAllNetworksAsRoutePreferredChains()
                 else
-                    root.store.updateRoutePreferredChains(preferredChainIds)
+                    root.store.updateRoutePreferredChains([])
             }
 
             recalculateRoutesAndFees()
@@ -159,7 +157,6 @@ Loader {
 
             name: !!modelData ? modelData.name : ""
             address: !!modelData ? modelData.address : ""
-            chainShortNames: !!modelData ? store.getNetworkShortNames(modelData.preferredSharingChainIds) : ""
             emoji: !!modelData ? modelData.emoji : ""
             walletColor: !!modelData ? Utils.getColorForId(modelData.colorId): ""
             currencyBalance: !!modelData ? modelData.currencyBalance : ""
@@ -174,8 +171,7 @@ Loader {
             sensor.enabled: false
             subTitle: {
                 if(!!modelData) {
-                    const elidedAddress = StatusQUtils.Utils.elideAndFormatWalletAddress(modelData.address)
-                    return WalletUtils.colorizedChainPrefix(accountItem.chainShortNames) + elidedAddress
+                    return StatusQUtils.Utils.elideAndFormatWalletAddress(modelData.address)
                 }
                 return ""
             }

@@ -16,7 +16,6 @@ SplitView {
             clearVisible: showClearButton.checked
             name: nameField.text
             address: addressField.text
-            chainShortNames: chainShortNamesField.text
             emoji: emojiField.text
             walletColor: walletColorField.text
             currencyBalance: QtObject {
@@ -68,12 +67,6 @@ SplitView {
                 id: addressField
                 text: "0x1234567890abcdef"
                 placeholderText: "Address"
-            }
-
-            TextField {
-                id: chainShortNamesField
-                text: "<font color=\"red\">eth:</font><font color=\"blue\">oeth:</font><font color=\"green\">arb:</font>"
-                placeholderText: "Chain Short Names"
             }
 
             TextField {
