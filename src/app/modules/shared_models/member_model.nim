@@ -74,7 +74,7 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  method rowCount(self: Model, index: QModelIndex = nil): int =
+  method rowCount*(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
@@ -180,6 +180,11 @@ QtObject:
         return i
 
     return -1
+
+  proc getMemberItem*(self: Model, pubKey: string): MemberItem =
+    let ind = self.findIndexForMember(pubKey)
+    if ind != -1:
+      return self.items[ind]
 
   proc removeItemWithIndex(self: Model, index: int) =
     let parentModelIndex = newQModelIndex()
@@ -361,6 +366,7 @@ QtObject:
       return
 
     # Check for removals
+    var itemsToRemove: seq[string] = @[]
     for oldItem in self.items:
       var found = false
       for newItem in items:
@@ -368,7 +374,11 @@ QtObject:
           found = true
           break
       if not found:
-        self.removeItemById(oldItem.pubKey)
+        itemsToRemove.add(oldItem.pubKey)
+    
+    if itemsToRemove.len > 0:
+      for itemToRemove in itemsToRemove:
+        self.removeItemById(itemToRemove)
 
     var itemsToAdd: seq[MemberItem] = @[]
     var itemsToUpdate: seq[MemberItem] = @[]
