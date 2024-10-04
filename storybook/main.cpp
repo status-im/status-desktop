@@ -40,7 +40,11 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationName(QStringLiteral("Status Desktop Storybook"));
 
     qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", QByteArrayLiteral("1"));
-    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", QByteArrayLiteral("--disable-seccomp-filter-sandbox"));
+    auto chromiumFlags = qgetenv("QTWEBENGINE_CHROMIUM_FLAGS");
+    if(!chromiumFlags.contains("--disable-seccomp-filter-sandbox")) {
+        chromiumFlags +=" --disable-seccomp-filter-sandbox";
+    }
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags);
 
     QQmlApplicationEngine engine;
 

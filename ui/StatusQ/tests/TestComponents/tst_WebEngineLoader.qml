@@ -72,9 +72,6 @@ TestCase {
         webEngineLoadedSpy.wait(1000)
         verify(webEngine.instance !== null , "The WebEngineView should be available")
 
-        if (Qt.platform.os === "linux") {
-            skip("fails to load page on linux")
-        }
         pageLoadedSpy.wait(1000)
         webEngine.active = false
         engineUnloadedSpy.wait(1000);
@@ -85,10 +82,6 @@ TestCase {
     SignalSpy { id: wcInitOkSpy; target: testObject; signalName: "webChannelInitOk" }
     SignalSpy { id: wcInitErrorSpy; target: testObject; signalName: "webChannelError" }
     function test_executeCode() {
-        if (Qt.platform.os === "linux") {
-            skip("fails to load page on linux")
-        }
-
         const webEngine = loader.item
         webEngine.active = true
         pageLoadedSpy.wait(1000);
