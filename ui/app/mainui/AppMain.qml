@@ -56,13 +56,16 @@ Item {
 
     property alias appLayout: appLayout
 
-    readonly property SharedStores.RootStore sharedRootStore: SharedStores.RootStore {}
+    readonly property SharedStores.RootStore sharedRootStore: SharedStores.RootStore {
+        currencyStore: appMain.currencyStore
+    }
 
     property AppStores.RootStore rootStore: AppStores.RootStore {
         profileSectionStore.sendModalPopup: sendModal
     }
     property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
         contactsStore: appMain.rootStore.contactStore
+        currencyStore: appMain.currencyStore
         communityTokensStore: appMain.communityTokensStore
         emojiReactionsModel: appMain.rootStore.emojiReactionsModel
         openCreateChat: createChatView.opened
@@ -1358,6 +1361,7 @@ Item {
                                 sharedRootStore: appMain.sharedRootStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
+                                    currencyStore: appMain.currencyStore
                                     communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
@@ -1517,6 +1521,7 @@ Item {
                                 sharedRootStore: appMain.sharedRootStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
+                                    currencyStore: appMain.currencyStore
                                     communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
@@ -1562,6 +1567,7 @@ Item {
                         sharedRootStore: appMain.sharedRootStore
                         rootStore: ChatStores.RootStore {
                             contactsStore: appMain.rootStore.contactStore
+                            currencyStore: appMain.currencyStore
                             communityTokensStore: appMain.communityTokensStore
                             emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                             openCreateChat: createChatView.opened
@@ -1586,6 +1592,7 @@ Item {
                 height: appView.height - _buttonSize * 2
                 store: ChatStores.RootStore {
                     contactsStore: appMain.rootStore.contactStore
+                    currencyStore: appMain.currencyStore
                     communityTokensStore: appMain.communityTokensStore
                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                     openCreateChat: createChatView.opened

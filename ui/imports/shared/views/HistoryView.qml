@@ -34,6 +34,7 @@ ColumnLayout {
 
     property WalletStores.RootStore walletRootStore
     property CommunitiesStore communitiesStore
+    property CurrenciesStore currencyStore
     property bool showAllAccounts: false
     property bool displayValues: true
     property var sendModal
@@ -490,7 +491,7 @@ ColumnLayout {
                 modelData: transactionDelegate.model.activityEntry
                 timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
                 flatNetworks: root.walletRootStore.flatNetworks
-                currenciesStore: RootStore.currencyStore
+                currenciesStore: root.currencyStore
                 walletRootStore: root.walletRootStore
                 showAllAccounts: root.showAllAccounts
                 displayValues: root.displayValues
@@ -555,7 +556,7 @@ ColumnLayout {
                     Layout.fillWidth: true
 
                     flatNetworks: root.walletRootStore.flatNetworks
-                    currenciesStore: RootStore.currencyStore
+                    currenciesStore: root.currencyStore
                     walletRootStore: root.walletRootStore
                     loading: true
                 }

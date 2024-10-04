@@ -17,7 +17,7 @@ QtObject {
     property bool neverAskAboutUnfurlingAgain: !!accountSensitiveSettings ? accountSensitiveSettings.neverAskAboutUnfurlingAgain : false
     property bool gifUnfurlingEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.gifUnfurlingEnabled : false
 
-    property CurrenciesStore currencyStore: CurrenciesStore {}
+    required property CurrenciesStore currencyStore
 
     property TokenMarketValuesStore marketValueStore: TokenMarketValuesStore {}
 

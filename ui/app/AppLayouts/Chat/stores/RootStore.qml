@@ -18,7 +18,7 @@ QtObject {
     property ContactsStore contactsStore
     property CommunityTokensStore communityTokensStore
     property WalletStore.RootStore walletStore
-
+    property CurrenciesStore currencyStore
     property NetworkConnectionStore networkConnectionStore
 
     readonly property PermissionsStore permissionsStore: PermissionsStore {
@@ -535,7 +535,6 @@ QtObject {
     // Needed for TX in chat for stickers and via contact
     readonly property var accounts: walletSectionAccounts.accounts
     property string currentCurrency: walletSection.currentCurrency
-    property CurrenciesStore currencyStore: CurrenciesStore {}
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
     property var disabledChainIdsFromList: []
