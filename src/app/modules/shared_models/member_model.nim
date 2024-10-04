@@ -194,15 +194,9 @@ QtObject:
     if self.items.len <= 0:
       return
 
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-  
-    let startIdx = 0
-    let endIdx = startIdx + self.items.len - 1
-  
-    self.beginRemoveRows(parentModelIndex, startIdx, endIdx)
+    self.beginResetModel()
     self.items = @[]
-    self.endRemoveRows()
+    self.endResetModel()
     self.countChanged()
 
   # TODO: rename me to removeItemByPubkey
