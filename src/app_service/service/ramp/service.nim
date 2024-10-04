@@ -52,7 +52,7 @@ QtObject:
   proc fetchCryptoRampProviders*(self: Service) =
     let arg = QObjectTaskArg(
       tptr: getCryptoServicesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onFetchCryptoRampProviders",
     )
     self.threadpool.start(arg)
@@ -69,7 +69,7 @@ QtObject:
   proc fetchCryptoRampUrl*(self: Service, uuid: string, providerID: string, parameters: CryptoRampParametersDto) =
     let arg = GetCryptoRampUrlTaskArg(
       tptr: getCryptoRampURLTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onFetchCryptoRampURL",
       uuid: uuid,
       providerID: providerID,

@@ -551,7 +551,7 @@ QtObject:
       return
     let arg = LookupContactTaskArg(
       tptr: lookupContactTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "ensResolved",
       value: value,
       chainId: self.networkService.getAppNetwork().chainId,
@@ -639,7 +639,7 @@ QtObject:
     try:
       let arg = AsyncRequestContactInfoTaskArg(
         tptr: asyncRequestContactInfoTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "asyncContactInfoLoaded",
         pubkey: pubkey,
       )
@@ -673,7 +673,7 @@ QtObject:
       pubkey: contactId,
       validate: validate,
       tptr: asyncGetProfileShowcaseForContactTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "asyncProfileShowcaseForContactLoaded",
     )
     self.threadpool.start(arg)
@@ -700,7 +700,7 @@ QtObject:
     let arg = FetchProfileShowcaseAccountsTaskArg(
       address: address,
       tptr: fetchProfileShowcaseAccountsTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onProfileShowcaseAccountsByAddressFetched",
     )
     self.threadpool.start(arg)

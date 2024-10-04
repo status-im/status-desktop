@@ -297,7 +297,7 @@ method getDetails*(self: Module, sectionId: string, chatId: string): string =
   var chatName = c.name
   var chatImage = c.icon
   if c.chatType == ChatType.OneToOne:
-    (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
+    (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(c.id)
 
   jsonObject["cName"] = %* chatName
   jsonObject["cImage"] = %* chatImage

@@ -291,7 +291,7 @@ QtObject:
     else:
       let arg = CheckEnsAvailabilityTaskArg(
         tptr: checkEnsAvailabilityTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onEnsUsernameAvailabilityChecked",
         ensUsername: ensUsername,
         chainId: self.getChainId(),
@@ -332,7 +332,7 @@ QtObject:
 
     let arg = EnsUsernamDetailsTaskArg(
       tptr: ensUsernameDetailsTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onEnsUsernameDetailsFetched",
       ensUsername: username,
       chainId: chainId,

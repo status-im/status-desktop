@@ -571,6 +571,7 @@ $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
 $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@"
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
+		--mm:refc \
 		--passL:"-L$(STATUSGO_LIBDIR)" \
 		--passL:"-lstatus" \
 		--passL:"-L$(STATUSQ_INSTALL_PATH)/StatusQ" \

@@ -287,7 +287,7 @@ QtObject:
       toAmount: toAmount,
       data: data,
       tptr: watchTransactionTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "watchTransactionResult",
     )
     self.threadpool.start(arg)
@@ -307,7 +307,7 @@ QtObject:
   proc fetchDecodedTxData*(self: Service, txHash: string, data: string) =
     let arg = FetchDecodedTxDataTaskArg(
       tptr: fetchDecodedTxDataTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       data: data,
       txHash: txHash,
       slot: "onFetchDecodedTxData",

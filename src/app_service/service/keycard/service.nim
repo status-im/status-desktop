@@ -260,7 +260,7 @@ QtObject:
 
     let arg = TimerTaskArg(
       tptr: timerTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onTimeout",
       timeoutInMilliseconds: timeoutInMilliseconds,
       reason: reason

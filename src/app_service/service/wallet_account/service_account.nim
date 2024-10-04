@@ -460,7 +460,7 @@ proc migrateNonProfileKeycardKeypairToAppAsync*(self: Service, keyUid, seedPhras
     finalPassword = utils.hashPassword(password)
   let arg = MigrateNonProfileKeycardKeypairToAppTaskArg(
     tptr: migrateNonProfileKeycardKeypairToAppTask,
-    vptr: cast[ByteAddress](self.vptr),
+    vptr: cast[uint](self.vptr),
     slot: "onNonProfileKeycardKeypairMigratedToApp",
     keyUid: keyUid,
     seedPhrase: seedPhrase,
@@ -484,7 +484,7 @@ proc onENSNamesFetched*(self: Service, response: string) {.slot.} =
 proc fetchENSNamesForAddressesAsync(self: Service, addresses: seq[string], chainId: int) =
   let arg = FetchENSNamesForAddressesTaskArg(
     tptr: fetchENSNamesForAddressesTask,
-    vptr: cast[ByteAddress](self.vptr),
+    vptr: cast[uint](self.vptr),
     slot: "onENSNamesFetched",
     addresses: addresses,
     chainId: chainId
@@ -619,7 +619,7 @@ proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string
     derivedFrom: derivedFrom,
     paths: paths,
     tptr: fetchDerivedAddressesTask,
-    vptr: cast[ByteAddress](self.vptr),
+    vptr: cast[uint](self.vptr),
     slot: "onDerivedAddressesFetched",
   )
   self.threadpool.start(arg)
@@ -639,7 +639,7 @@ proc fetchDerivedAddressesForMnemonic*(self: Service, mnemonic: string, paths: s
     mnemonic: mnemonic,
     paths: paths,
     tptr: fetchDerivedAddressesForMnemonicTask,
-    vptr: cast[ByteAddress](self.vptr),
+    vptr: cast[uint](self.vptr),
     slot: "onDerivedAddressesForMnemonicFetched",
   )
   self.threadpool.start(arg)
@@ -660,7 +660,7 @@ proc fetchDetailsForAddresses*(self: Service, uniqueId: string, addresses: seq[s
     uniqueId: uniqueId,
     addresses: addresses,
     tptr: fetchDetailsForAddressesTask,
-    vptr: cast[ByteAddress](self.vptr),
+    vptr: cast[uint](self.vptr),
     slot: "onAddressDetailsFetched",
   )
   self.threadpool.start(arg)
@@ -725,7 +725,7 @@ proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.} =
 proc fetchChainIdForUrl*(self: Service, url: string, isMainUrl: bool) =
   let arg = FetchChainIdForUrlTaskArg(
     tptr: fetchChainIdForUrlTask,
-    vptr: cast[ByteAddress](self.vptr),
+    vptr: cast[uint](self.vptr),
     slot: "onFetchChainIdForUrl",
     url: url,
     isMainUrl: isMainUrl
