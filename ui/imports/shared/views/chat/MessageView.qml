@@ -1,5 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.panels 1.0
@@ -950,9 +951,10 @@ Loader {
                 linksComponent: Component {
                     LinksMessageView {
                         id: linksMessageView
+
                         linkPreviewModel: root.linkPreviewModel
                         gifLinks: root.gifLinks
-                        playAnimations: root.messageStore.playAnimation
+                        playAnimations: Window.window.active && root.messageStore.isChatActive
                         isOnline: root.rootStore.mainModuleInst.isOnline
                         highlightLink: delegate.hoveredLink
                         onImageClicked: (image, mouse, imageSource, url) => {

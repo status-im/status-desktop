@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 import QtGraphicalEffects 1.15
 
 import utils 1.0
@@ -72,7 +73,7 @@ Rectangle {
         if (!active || !flickable)
             return;
 
-        const item = Global.applicationWindow.activeFocusItem;
+        const item = Window.window.activeFocusItem;
         const h1 = this.height;
         const y1 = this.mapToGlobal(0, 0).y;
         const h2 = item.height;

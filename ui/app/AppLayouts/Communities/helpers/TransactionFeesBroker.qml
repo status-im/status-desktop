@@ -1,7 +1,6 @@
 import QtQuick 2.15
 
 import shared.stores 1.0
-import utils 1.0
 
 import StatusQ.Core.Utils 0.1
 
@@ -17,6 +16,7 @@ QtObject {
     }
 
     property CommunityTokensStore communityTokensStore
+    property alias active: feesBroker.active
 
     property QtObject d: QtObject {
         id: internal
@@ -122,7 +122,8 @@ QtObject {
         readonly property Component setSignerFeeSubscriptionComponent: SetSignerFeeSubscription {}
 
         readonly property SubscriptionBroker feesBroker: SubscriptionBroker {
-            active: Global.applicationWindow.active
+            id: feesBroker
+
             onRequest: internal.computeFee(topic)
         }
 

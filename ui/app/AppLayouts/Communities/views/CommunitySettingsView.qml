@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 import QtQuick.Dialogs 1.3
 
 import SortFilterProxyModel 0.2
@@ -594,6 +595,7 @@ StatusSectionLayout {
 
         readonly property TransactionFeesBroker feesBroker: TransactionFeesBroker {
             communityTokensStore: root.rootStore.communityTokensStore
+            active: root.Window.window.active
         }
 
         function goTo(section: int, subSection: int) {

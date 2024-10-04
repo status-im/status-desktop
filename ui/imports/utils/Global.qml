@@ -6,7 +6,6 @@ QtObject {
     id: root
 
     property var dragArea
-    property var applicationWindow
     property bool activityPopupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
     property int settingsSubSubsection: -1

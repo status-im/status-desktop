@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
 import QtMultimedia 5.15
 
 import StatusQ.Popups.Dialog 0.1
@@ -24,8 +25,8 @@ StatusDialog {
     QtObject {
         id: d
 
-        readonly property int maxHeight: Global.applicationWindow.height - 80
-        readonly property int maxWidth: Global.applicationWindow.width - 80
+        readonly property int maxHeight: root.contentItem.Window.window.height - 80
+        readonly property int maxWidth: root.contentItem.Window.window.width - 80
     }
 
     onOpened: {
