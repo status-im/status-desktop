@@ -25,7 +25,7 @@ StatusDialog {
     property string messageToUnpin
     property string chatId
 
-    readonly property bool isPinActionAvaliable: true
+    readonly property bool isPinActionAvailable: true
 
     signal pinMessageRequested(string messageId)
     signal unpinMessageRequested(string messageId)
@@ -165,7 +165,7 @@ StatusDialog {
                     z: mouseArea.z + 1
                     width: 32
                     height: 32
-                    visible: root.isPinActionAvaliable && !root.messageToPin && (hovered || mouseArea.containsMouse)
+                    visible: root.isPinActionAvailable && !root.messageToPin && (hovered || mouseArea.containsMouse)
                     icon.name: "unpin"
                     tooltip.text: qsTr("Unpin")
                     color: hovered ? Theme.palette.primaryColor2 : Theme.palette.indirectColor1

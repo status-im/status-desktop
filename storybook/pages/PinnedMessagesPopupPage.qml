@@ -274,7 +274,7 @@ SplitView {
                 text: "Is Pin Action Available"
                 checked: true
                 onCheckedChanged: {
-                    pinnedMessagesPopup.isPinActionAvaliable = checked
+                    pinnedMessagesPopup.isPinActionAvailable = checked
                 }
             }
 

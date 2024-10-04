@@ -265,7 +265,7 @@ QtObject {
             pinnedMessagesModel: pinnedMessagesModel,
             messageToPin: messageToPin,
             chatId: chatId,
-            isPinActionAvaliable: store && store.oneToOneChatContact ? store.oneToOneChatContact.isContact : true
+            isPinActionAvailable: store && store.oneToOneChatContact ? store.oneToOneChatContact.isContact : true
         })
     }
 
