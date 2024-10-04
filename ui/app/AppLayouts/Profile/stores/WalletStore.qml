@@ -126,15 +126,6 @@ QtObject {
         root.accountsModule.setSelectedAccount(address)
     }
 
-    function getAllNetworksChainIds() {
-        let result = []
-        let chainIdsArray = ModelUtils.modelToFlatArray(root.filteredFlatModel, "chainId")
-        for(let i = 0; i< chainIdsArray.length; i++) {
-            result.push(chainIdsArray[i].toString())
-        }
-        return result
-    }
-
     function runAddAccountPopup() {
         // TODO:
         // - `runAddAccountPopup` should be part of `root.walletModule`
@@ -154,10 +145,6 @@ QtObject {
 
     function updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault) {
         networksModuleInst.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
-    }
-
-    function getNetworkShortNames(chainIds) {
-        return networksModuleInst.getNetworkShortNames(chainIds)
     }
 
     function getNetworkData(combinedNetwork) {

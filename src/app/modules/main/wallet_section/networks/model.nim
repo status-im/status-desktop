@@ -170,26 +170,5 @@ QtObject:
 
     return (chainIds, enable)
 
-  # TODO: To be removed once all qml calls to this method are removed. Normally the formatting methods should live in the qml project.
-  proc getNetworkShortNames*(self: Model, preferredNetworks: string, areTestNetworksEnabled: bool): string =
-    var networkString = ""
-    let networks = preferredNetworks.split(":")
-    for nw in networks:
-      for item in self.delegate.getFlatNetworksList():
-        if $item.chainId == nw and item.isTest == areTestNetworksEnabled:
-          networkString = networkString & item.shortName & ':'
-          break
-    return networkString
-
-  proc getNetworkIds*(self: Model, shortNames: string, areTestNetworksEnabled: bool): string =
-    var networkIds = ""
-    let networksNames = shortNames.split(":")
-    for name in networksNames:
-      for item in self.delegate.getFlatNetworksList():
-        if item.shortName == name and item.isTest == areTestNetworksEnabled:
-          networkIds = networkIds & $item.chainId & ':'
-          break
-    return networkIds
-
   proc getEnabledChainIds*(self: Model, areTestNetworksEnabled: bool): string =
     return self.delegate.getFlatNetworksList().filter(n => n.isEnabled and n.isTest == areTestNetworksEnabled).map(n => n.chainId).join(":")

@@ -16,8 +16,6 @@ QtObject:
     position: int
     operability: string
     areTestNetworksEnabled: bool
-    prodPreferredChainIds: string
-    testPreferredChainIds: string
     hideFromTotalBalance: bool
 
   proc setup*(self: WalletAccountItem,
@@ -32,8 +30,6 @@ QtObject:
     position: int = 0,
     operability: string = wa_dto.AccountFullyOperable,
     areTestNetworksEnabled: bool = false,
-    prodPreferredChainIds: string = "",
-    testPreferredChainIds: string = "",
     hideFromTotalBalance: bool = true
     ) =
       self.QObject.setup
@@ -48,8 +44,6 @@ QtObject:
       self.position = position
       self.operability = operability
       self.areTestNetworksEnabled = areTestNetworksEnabled
-      self.prodPreferredChainIds = prodPreferredChainIds
-      self.testPreferredChainIds = testPreferredChainIds
       self.hideFromTotalBalance = hideFromTotalBalance
 
   proc delete*(self: WalletAccountItem) =
@@ -67,8 +61,6 @@ QtObject:
     position: int = 0,
     operability: string = wa_dto.AccountFullyOperable,
     areTestNetworksEnabled: bool = false,
-    prodPreferredChainIds: string = "",
-    testPreferredChainIds: string = "",
     hideFromTotalBalance: bool = true): WalletAccountItem =
     new(result, delete)
     result.QObject.setup
@@ -83,8 +75,6 @@ QtObject:
     result.position = position
     result.operability = operability
     result.areTestNetworksEnabled = areTestNetworksEnabled
-    result.prodPreferredChainIds = prodPreferredChainIds
-    result.testPreferredChainIds = testPreferredChainIds
     result.hideFromTotalBalance = hideFromTotalBalance
 
   proc `$`*(self: WalletAccountItem): string =
@@ -100,8 +90,6 @@ QtObject:
       position: {self.position},
       operability: {self.operability},
       areTestNetworksEnabled: {self.areTestNetworksEnabled},
-      prodPreferredChainIds: {self.prodPreferredChainIds},
-      testPreferredChainIds: {self.testPreferredChainIds},
       hideFromTotalBalance: {self.hideFromTotalBalance}
       ]"""
 
@@ -194,24 +182,6 @@ QtObject:
     read = getOperability
     write = setOperability
     notify = operabilityChanged
-
-  proc preferredSharingChainIdsChanged*(self: WalletAccountItem) {.signal.}
-  proc preferredSharingChainIds*(self: WalletAccountItem): string {.slot.} =
-    if self.areTestNetworksEnabled:
-      return self.testPreferredChainIds
-    else :
-      return self.prodPreferredChainIds
-  QtProperty[string] preferredSharingChainIds:
-    read = preferredSharingChainIds
-    notify = preferredSharingChainIdsChanged
-
-  proc `testPreferredChainIds=`*(self: WalletAccountItem, value: string) {.inline.} =
-    self.testPreferredChainIds = value
-    self.preferredSharingChainIdsChanged()
-
-  proc `prodPreferredChainIds=`*(self: WalletAccountItem, value: string) {.inline.} =
-    self.prodPreferredChainIds = value
-    self.preferredSharingChainIdsChanged()
 
   proc hideFromTotalBalanceChanged*(self: WalletAccountItem) {.signal.}
   proc hideFromTotalBalance*(self: WalletAccountItem): bool {.slot.} =

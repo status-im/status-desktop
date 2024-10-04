@@ -141,10 +141,6 @@ QtObject {
         }
     }
 
-    function getNetworkShortNames(chainIds) {
-        return ""
-    }
-
     function setSendType(sendType) {
         root.sendType = sendType
     }

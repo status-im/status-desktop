@@ -11,61 +11,6 @@ import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 QtObject {
 
-    function colorizedChainPrefixNew(chainColors, prefix) {
-        if (!prefix)
-            return ""
-
-        const prefixes = prefix.split(":").filter(Boolean)
-        let prefixStr = ""
-        const lastPrefixEndsWithColumn = prefix.endsWith(":")
-        const defaultColor = Theme.palette.baseColor1
-
-        for (let i in prefixes) {
-            const pref = prefixes[i]
-            let col = chainColors[pref]
-            if (!col)
-                col = defaultColor
-
-            prefixStr += Utils.richColorText(pref, col)
-            // Avoid adding ":" if it was not there for the last prefix,
-            // because when user manually edits the address, it breaks editing
-            if (!(i === (prefixes.length - 1) && !lastPrefixEndsWithColumn)) {
-                prefixStr += Utils.richColorText(":", Theme.palette.baseColor1)
-            }
-        }
-
-        return prefixStr
-    }
-
-    // TODO: Remove dependency to RootStore by requesting model or chainColors as a parameter. Indeed, this
-    // method should be just replaced by `colorizedChainPrefixNew`
-    // Issue #15494
-    function colorizedChainPrefix(prefix) {
-        if (!prefix)
-            return ""
-
-        const prefixes = prefix.split(":").filter(Boolean)
-        let prefixStr = ""
-        const lastPrefixEndsWithColumn = prefix.endsWith(":")
-        const defaultColor = Theme.palette.baseColor1
-
-        for (let i in prefixes) {
-            const pref = prefixes[i]
-            let col = WalletStores.RootStore.colorForChainShortName(pref)
-            if (!col)
-                col = defaultColor
-
-            prefixStr += Utils.richColorText(pref, col)
-            // Avoid adding ":" if it was not there for the last prefix,
-            // because when user manually edits the address, it breaks editing
-            if (!(i === (prefixes.length - 1) && !lastPrefixEndsWithColumn)) {
-                prefixStr += Utils.richColorText(":", Theme.palette.baseColor1)
-            }
-        }
-
-        return prefixStr
-    }
-
     function calculateConfirmationTimestamp(chainLayer, timestamp) {
         if (chainLayer === 1) {
             return timestamp + 12 * 4 // A block on layer1 is every 12s
@@ -118,20 +63,6 @@ QtObject {
             return qsTr("> 5 minutes")
         }
     }
-
-    // Where: chainIds [string] - separated by `:`, e.g "42161:10:1"
-    function getNetworkShortNames(chainIds: string, flatNetworksModel) {
-        let networkString = ""
-        const chainIdsArray = chainIds.split(":")
-        for (let i = 0; i < chainIdsArray.length; i++) {
-            const nwShortName = StatusQUtils.ModelUtils.getByKey(flatNetworksModel, "chainId", Number(chainIdsArray[i]), "shortName")
-            if (!!nwShortName)
-                networkString = networkString + nwShortName + ':'
-        }
-        return networkString
-    }
-
-
 
     function getRouterErrorBasedOnCode(code) {
         if (code === "") {

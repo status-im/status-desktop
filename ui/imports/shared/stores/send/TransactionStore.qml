@@ -102,10 +102,6 @@ QtObject {
         walletSectionSendInst.setReceiverAccount(address)
     }
 
-    function getNetworkShortNames(chainIds) {
-       return networksModule.getNetworkShortNames(chainIds)
-    }
-
     function toggleFromDisabledChains(chainId) {
         walletSectionSendInst.fromNetworksRouteModel.toggleRouteDisabledChains(chainId)
     }

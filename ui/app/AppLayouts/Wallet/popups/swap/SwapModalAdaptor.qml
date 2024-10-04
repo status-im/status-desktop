@@ -37,7 +37,7 @@ QObject {
 
     readonly property string uuid: d.uuid
 
-    // TO REVIEW: It has been created a `WalletAccountsAdaptor.qml` file.
+    // TO REVIEW: Handle this in a separate `WalletAccountsAdaptor.qml` file.
     // Probably this data transformation should live there since they have common base.
     readonly property var nonWatchAccounts: SortFilterProxyModel {
         sourceModel: root.swapStore.accounts
@@ -74,15 +74,6 @@ QObject {
             FastExpressionRole {
                 name: "fromToken"
                 expression: root.fromToken
-            },
-            FastExpressionRole {
-                name: "colorizedChainPrefixes"
-                function getChainShortNames(chainIds) {
-                    const chainShortNames = WalletUtils.getNetworkShortNames(chainIds, root.filteredFlatNetworksModel)
-                    return WalletUtils.colorizedChainPrefix(chainShortNames)
-                }
-                expression: getChainShortNames(model.preferredSharingChainIds)
-                expectedRoles: ["preferredSharingChainIds"]
             }
         ]
     }
