@@ -4,6 +4,7 @@ import allure
 import squish
 
 import configs
+import driver
 from driver.server import SquishServer
 
 LOG = logging.getLogger(__name__)
@@ -13,7 +14,7 @@ LOG = logging.getLogger(__name__)
 def get_context(aut_id: str):
     LOG.info('Attaching to: %s', aut_id)
     try:
-        context = squish.attachToApplication(aut_id, SquishServer().host, SquishServer().port)
+        context = driver.attachToApplication(aut_id, SquishServer().host, SquishServer().port)
         if context is not None:
             LOG.info('AUT %s context found', aut_id)
             return context
@@ -24,7 +25,7 @@ def get_context(aut_id: str):
 
 @allure.step('Detaching')
 def detach():
-    for ctx in squish.applicationContextList():
+    for ctx in driver.applicationContextList():
         ctx.detach()
         assert squish.waitFor(lambda: not ctx.isRunning, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
     LOG.info('All AUTs detached')

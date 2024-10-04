@@ -72,7 +72,7 @@ class AUT:
     def detach_context(self):
         if self.ctx is None:
             return
-        squish.currentApplicationContext().detach()
+        driver.currentApplicationContext().detach()
         self.ctx = None
 
     @allure.step('Attach Squish to Test Application')
@@ -83,7 +83,7 @@ class AUT:
             SquishServer().add_attachable_aut(self.aut_id, self.port)
             if self.ctx is None:
                 self.ctx = context.get_context(self.aut_id)
-            squish.setApplicationContext(self.ctx)
+            driver.setApplicationContext(self.ctx)
             assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
         except Exception as err:
             LOG.error('Failed to attach AUT: %s', err)
