@@ -330,6 +330,7 @@ statusq-tests:
 		--build $(STATUSQ_BUILD_PATH) \
 		$(HANDLE_OUTPUT)
 
+run-statusq-tests: export QTWEBENGINE_CHROMIUM_FLAGS := "${QTWEBENGINE_CHROMIUM_FLAGS} --disable-seccomp-filter-sandbox"
 run-statusq-tests: statusq-tests
 	echo -e "\033[92mRunning:\033[39m StatusQ Unit Tests"
 	ctest -V --test-dir $(STATUSQ_BUILD_PATH) ${ARGS}
