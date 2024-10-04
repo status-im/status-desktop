@@ -129,7 +129,7 @@ QtObject:
   proc requestMoreMessages*(self: Service, chatId: string) =
     let arg = RequestMoreMessagesTaskArg(
       tptr: requestMoreMessagesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       chatId: chatId,
     )
     self.threadpool.start(arg)
@@ -137,7 +137,7 @@ QtObject:
   proc fillGaps*(self: Service, chatId: string, messageId: string) =
     let arg = FillGapsTaskArg(
       tptr: fillGapsTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       chatId: chatId,
       messageIds: @[messageId]
     )
@@ -237,7 +237,7 @@ QtObject:
       #let mailserverWorker = self.marathon[MailserverWorker().name]
       #let task = GetActiveMailserverTaskArg(
       #    `proc`: "getActiveMailserver",
-      #    vptr: cast[ByteAddress](self.vptr),
+      #    vptr: cast[uint](self.vptr),
       #    slot: "onActiveMailserverResult"
       #  )
       #mailserverWorker.start(task)

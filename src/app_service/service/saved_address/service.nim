@@ -96,7 +96,7 @@ QtObject:
     let arg = SavedAddressTaskArg(
       chainId: self.networkService.getAppNetwork().chainId,
       tptr: fetchSavedAddressesAndResolveEnsNamesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onSavedAddressesFetched",
     )
     self.threadpool.start(arg)
@@ -125,7 +125,7 @@ QtObject:
       chainShortNames: chainShortNames,
       isTestAddress: self.areTestNetworksEnabled(),
       tptr: upsertSavedAddressTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onSavedAddressCreatedOrUpdated",
     )
     self.threadpool.start(arg)
@@ -152,7 +152,7 @@ QtObject:
       address: address,
       isTestAddress: self.areTestNetworksEnabled(),
       tptr: deleteSavedAddressTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onDeleteSavedAddress",
     )
     self.threadpool.start(arg)

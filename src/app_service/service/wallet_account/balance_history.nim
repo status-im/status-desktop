@@ -12,7 +12,7 @@ proc fetchHistoricalBalanceForTokenAsJson*(self: Service, addresses: seq[string]
   var chainIds: seq[int] = self.networkService.getEnabledChainIds()
   let arg = GetTokenBalanceHistoryDataTaskArg(
     tptr: getTokenBalanceHistoryDataTask,
-    vptr: cast[ByteAddress](self.vptr),
+    vptr: cast[uint](self.vptr),
     slot: "tokenBalanceHistoryDataResolved",
     chainIds: chainIds,
     addresses: addresses,

@@ -68,7 +68,7 @@ QtObject:
   proc postMessage*(self: Service, payloadMethod: string, requestType: string, message: string) =
     let arg = PostMessageTaskArg(
       tptr: postMessageTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "postMessageResolved",
       payloadMethod: payloadMethod,
       requestType: requestType,

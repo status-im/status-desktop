@@ -799,7 +799,7 @@ QtObject:
     try:
       let arg = AsyncLoadCommunitiesDataTaskArg(
         tptr: asyncLoadCommunitiesDataTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "asyncCommunitiesDataLoaded",
       )
       self.threadpool.start(arg)
@@ -1481,7 +1481,7 @@ QtObject:
   proc toggleCollapsedCommunityCategoryAsync*(self: Service, communityId: string, categoryId: string, collapsed: bool) =
     let arg = AsyncCollapseCategory(
       tptr: asyncCollapseCategoryTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncCollapseCategoryDone",
       communityId: communityId,
       categoryId: categoryId,
@@ -1636,7 +1636,7 @@ QtObject:
   proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string]) =
     let arg = AsyncCheckPermissionsToJoinTaskArg(
       tptr: asyncCheckPermissionsToJoinTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncCheckPermissionsToJoinDone",
       communityId: communityId,
       addresses: addresses,
@@ -1712,7 +1712,7 @@ QtObject:
     try:
       let arg = AsyncRequestToJoinCommunityTaskArg(
         tptr: asyncRequestToJoinCommunityTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAsyncRequestToJoinCommunityDone",
         communityId: communityId,
         ensName: ensName,
@@ -1747,7 +1747,7 @@ QtObject:
     signatures: seq[string]) =
     let arg = AsyncEditSharedAddressesTaskArg(
       tptr: asyncEditSharedAddressesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncEditSharedAddressesDone",
       communityId: communityId,
       addressesToShare: addressesToShare,
@@ -1779,7 +1779,7 @@ QtObject:
       self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING, CommunityMemberArgs(communityId: communityId, pubKey: userKey))
       let arg = AsyncAcceptRequestToJoinCommunityTaskArg(
         tptr: asyncAcceptRequestToJoinCommunityTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAsyncAcceptRequestToJoinCommunityDone",
         communityId: communityId,
         requestId: requestId
@@ -1836,7 +1836,7 @@ QtObject:
     try:
       let arg = AsyncLoadCuratedCommunitiesTaskArg(
         tptr: asyncLoadCuratedCommunitiesTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAsyncLoadCuratedCommunitiesDone",
       )
       self.threadpool.start(arg)
@@ -1868,7 +1868,7 @@ QtObject:
   proc collectCommunityMetricsMessagesTimestamps*(self: Service, communityId: string, intervals: string) =
     let arg = AsyncCollectCommunityMetricsTaskArg(
       tptr: asyncCollectCommunityMetricsTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "asyncCommunityMetricsLoaded",
       communityId: communityId,
       metricsType: CommunityMetricsType.MessagesTimestamps,
@@ -1879,7 +1879,7 @@ QtObject:
   proc collectCommunityMetricsMessagesCount*(self: Service, communityId: string, intervals: string) =
     let arg = AsyncCollectCommunityMetricsTaskArg(
       tptr: asyncCollectCommunityMetricsTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "asyncCommunityMetricsLoaded",
       communityId: communityId,
       metricsType: CommunityMetricsType.MessagesCount,
@@ -1902,7 +1902,7 @@ QtObject:
 
     let arg = AsyncRequestCommunityInfoTaskArg(
       tptr: asyncRequestCommunityInfoTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "asyncCommunityInfoLoaded",
       communityId: communityId,
       importing: importing,
@@ -2082,7 +2082,7 @@ QtObject:
   proc asyncRemoveUserFromCommunity*(self: Service, communityId, pubKey: string) =
     let arg = AsyncCommunityMemberActionTaskArg(
       tptr: asyncRemoveUserFromCommunityTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncCommunityMemberActionCompleted",
       communityId: communityId,
       pubKey: pubKey,
@@ -2092,7 +2092,7 @@ QtObject:
   proc asyncBanUserFromCommunity*(self: Service, communityId, pubKey: string, deleteAllMessages: bool) =
     let arg = AsyncCommunityMemberActionTaskArg(
       tptr: asyncBanUserFromCommunityTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncCommunityMemberActionCompleted",
       communityId: communityId,
       pubKey: pubKey,
@@ -2103,7 +2103,7 @@ QtObject:
   proc asyncUnbanUserFromCommunity*(self: Service, communityId, pubKey: string) =
     let arg = AsyncCommunityMemberActionTaskArg(
       tptr: asyncUnbanUserFromCommunityTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncCommunityMemberActionCompleted",
       communityId: communityId,
       pubKey: pubKey,
@@ -2293,7 +2293,7 @@ QtObject:
   proc asyncGetRevealedAccountsForMember*(self: Service, communityId, memberPubkey: string) =
     let arg = AsyncGetRevealedAccountsArg(
       tptr: asyncGetRevealedAccountsForMemberTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncGetRevealedAccountsForMemberCompleted",
       communityId: communityId,
       memberPubkey: memberPubkey,
@@ -2324,7 +2324,7 @@ QtObject:
   proc asyncGetRevealedAccountsForAllMembers*(self: Service, communityId: string) =
     let arg = AsyncGetRevealedAccountsArg(
       tptr: asyncGetRevealedAccountsForAllMembersTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncGetRevealedAccountsForAllMembersCompleted",
       communityId: communityId,
     )
@@ -2353,7 +2353,7 @@ QtObject:
   proc asyncReevaluateCommunityMembersPermissions*(self: Service, communityId: string) =
     let arg = AsyncGetRevealedAccountsArg(
       tptr: asyncReevaluateCommunityMembersPermissionsTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncReevaluateCommunityMembersPermissionsCompleted",
       communityId: communityId,
     )
@@ -2372,7 +2372,7 @@ QtObject:
   proc asyncSetCommunityShard*(self: Service, communityId: string, shardIndex: int) =
     let arg = AsyncSetCommunityShardArg(
       tptr: asyncSetCommunityShardTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncSetCommunityShardDone",
       communityId: communityId,
       shardIndex: shardIndex,

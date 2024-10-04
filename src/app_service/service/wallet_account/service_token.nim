@@ -92,7 +92,7 @@ proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
 
   let arg = BuildTokensTaskArg(
     tptr: prepareTokensTask,
-    vptr: cast[ByteAddress](self.vptr),
+    vptr: cast[uint](self.vptr),
     slot: "onAllTokensBuilt",
     accounts: accounts,
     storeResult: store

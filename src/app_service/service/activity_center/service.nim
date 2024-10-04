@@ -150,7 +150,7 @@ QtObject:
   proc asyncActivityNotificationLoad*(self: Service) =
     let arg = AsyncActivityNotificationLoadTaskArg(
       tptr: asyncActivityNotificationLoadTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "asyncActivityNotificationLoaded",
       cursor: self.cursor,
       limit: DEFAULT_LIMIT,

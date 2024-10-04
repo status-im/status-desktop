@@ -236,7 +236,7 @@ QtObject:
 
     let arg = AsyncFetchChatMessagesTaskArg(
       tptr: asyncFetchChatMessagesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncLoadMoreMessagesForChat",
       chatId: chatId,
       msgCursor: msgCursorValue,
@@ -260,7 +260,7 @@ QtObject:
 
     let arg = AsyncFetchChatMessagesTaskArg(
       tptr: asyncFetchPinnedChatMessagesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncLoadPinnedMessagesForChat",
       chatId: chatId,
       msgCursor: pinnedMsgCursorValue,
@@ -285,7 +285,7 @@ QtObject:
       communityId: communityId,
       memberPubKey: memberPublicKey,
       tptr: asyncLoadCommunityMemberAllMessagesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncLoadCommunityMemberAllMessages"
     )
 
@@ -673,7 +673,7 @@ QtObject:
 
     let arg = AsyncMarkMessageAsUnreadTaskArg(
       tptr: asyncMarkMessageAsUnreadTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncMarkMessageAsUnread",
       messageId: messageId,
       chatId: chatId
@@ -724,7 +724,7 @@ QtObject:
     let requestId = genUUID()
     let arg = AsyncGetMessageByMessageIdTaskArg(
       tptr: asyncGetMessageByMessageIdTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncGetMessageById",
       requestId: $requestId,
       messageId: messageId,
@@ -776,7 +776,7 @@ QtObject:
 
     let arg = AsyncSearchMessagesInChatTaskArg(
       tptr: asyncSearchMessagesInChatTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncSearchMessages",
       chatId: chatId,
       searchTerm: searchTerm,
@@ -799,7 +799,7 @@ QtObject:
 
     let arg = AsyncSearchMessagesInChatsAndCommunitiesTaskArg(
       tptr: asyncSearchMessagesInChatsAndCommunitiesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncSearchMessages",
       communityIds: communityIds,
       chatIds: chatIds,
@@ -835,7 +835,7 @@ QtObject:
 
     let arg = AsyncMarkAllMessagesReadTaskArg(
       tptr: asyncMarkAllMessagesReadTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onMarkAllMessagesRead",
       chatId: chatId
     )
@@ -920,7 +920,7 @@ QtObject:
 
     let arg = AsyncMarkCertainMessagesReadTaskArg(
       tptr: asyncMarkCertainMessagesReadTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onMarkCertainMessagesRead",
       chatId: chatId,
       messagesIds: messagesIds
@@ -931,7 +931,7 @@ QtObject:
   proc getAsyncFirstUnseenMessageId*(self: Service, chatId: string) =
     let arg = AsyncGetFirstUnseenMessageIdForTaskArg(
       tptr: asyncGetFirstUnseenMessageIdForTaskArg,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onGetFirstUnseenMessageIdFor",
       chatId: chatId,
     )
@@ -994,7 +994,7 @@ QtObject:
     let uuid = $genUUID()
     let arg = AsyncGetTextURLsToUnfurlTaskArg(
       tptr: asyncGetTextURLsToUnfurlTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncGetTextURLsToUnfurl",
       text: text,
       requestUuid: uuid,
@@ -1050,7 +1050,7 @@ QtObject:
     let uuid = $genUUID()
     let arg = AsyncUnfurlUrlsTaskArg(
       tptr: asyncUnfurlUrlsTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncUnfurlUrlsFinished",
       urls: urls,
       requestUuid: uuid,

@@ -45,7 +45,7 @@ QtObject:
   proc addCentralizedMetricIfEnabled*(self: MetricsService, eventName: string, eventValueJson: string) {.slot.} =
     let arg = AsyncAddCentralizedMetricIfEnabledTaskArg(
       tptr: asyncAddCentralizedMetricIfEnabledTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onCentralizedMetricAddedIdEnabled",
       eventName: eventName,
       eventValueJson: eventValueJson,
