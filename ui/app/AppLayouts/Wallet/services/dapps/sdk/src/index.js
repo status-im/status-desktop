@@ -1,5 +1,5 @@
 import { Core } from "@walletconnect/core";
-import { Web3Wallet } from "@walletconnect/web3wallet";
+import { WalletKit } from "@reown/walletkit";
 
 // import the builder util
 import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
@@ -7,7 +7,7 @@ import { formatJsonRpcResult, formatJsonRpcError } from "@walletconnect/jsonrpc-
 
 window.wc = {
     core: null,
-    web3wallet: null,
+    walletKit: null,
     statusObject: null,
 
     init: function (projectId) {
@@ -35,7 +35,7 @@ window.wc = {
                 const coreInst = new Core({
                     projectId: projectId,
                 });
-                window.wc.web3wallet = await Web3Wallet.init({
+                window.wc.walletKit = await WalletKit.init({
                     core: coreInst, // <- pass the shared `core` instance
                     metadata: {
                         name: "Status",
@@ -47,52 +47,52 @@ window.wc = {
                 window.wc.core = coreInst
 
                 // connect session responses https://specs.walletconnect.com/2.0/specs/clients/sign/session-events#events
-                window.wc.web3wallet.on("session_proposal", (details) => {
+                window.wc.walletKit.on("session_proposal", (details) => {
                     wc.statusObject.onSessionProposal(details)
                 });
 
-                window.wc.web3wallet.on("session_update", (details) => {
+                window.wc.walletKit.on("session_update", (details) => {
                     wc.statusObject.onSessionUpdate(details)
                 });
 
-                window.wc.web3wallet.on("session_extend", (details) => {
+                window.wc.walletKit.on("session_extend", (details) => {
                     wc.statusObject.onSessionExtend(details)
                 });
 
-                window.wc.web3wallet.on("session_ping", (details) => {
+                window.wc.walletKit.on("session_ping", (details) => {
                     wc.statusObject.onSessionPing(details)
                 });
 
-                window.wc.web3wallet.on("session_delete", (details) => {
+                window.wc.walletKit.on("session_delete", (details) => {
                     wc.statusObject.onSessionDelete(details)
                 });
 
-                window.wc.web3wallet.on("session_expire", (details) => {
+                window.wc.walletKit.on("session_expire", (details) => {
                     wc.statusObject.onSessionExpire(details)
                 });
 
-                window.wc.web3wallet.on("session_request", (details) => {
+                window.wc.walletKit.on("session_request", (details) => {
                     wc.statusObject.onSessionRequest(details)
                 });
 
-                window.wc.web3wallet.on("session_request_sent", (details) => {
+                window.wc.walletKit.on("session_request_sent", (details) => {
                     wc.statusObject.onSessionRequestSent(details)
                 });
 
-                window.wc.web3wallet.on("session_event", (details) => {
+                window.wc.walletKit.on("session_event", (details) => {
                     wc.statusObject.onSessionEvent(details)
                 });
 
-                window.wc.web3wallet.on("proposal_expire", (details) => {
+                window.wc.walletKit.on("proposal_expire", (details) => {
                     wc.statusObject.onProposalExpire(details)
                 });
 
                 // Debug event handlers
-                window.wc.web3wallet.on("pairing_expire", (event) => {
+                window.wc.walletKit.on("pairing_expire", (event) => {
                     wc.statusObject.echo("debug", `WC unhandled event: "pairing_expire" ${JSON.stringify(event)}`);
                     // const { topic } = event;
                 });
-                window.wc.web3wallet.on("session_request_expire", (event) => {
+                window.wc.walletKit.on("session_request_expire", (event) => {
                     const { id } = event
                     wc.statusObject.onSessionRequestExpire(id)
                 });
@@ -112,19 +112,19 @@ window.wc = {
 
     // TODO: there is a corner case when attempting to pair with a link that is already paired or was rejected won't trigger any event back
     pair: async function (uri) {
-        await window.wc.web3wallet.pair({ uri });
+        await window.wc.walletKit.pair({ uri });
     },
 
     getPairings: function () {
-        return window.wc.web3wallet.core.pairing.getPairings();
+        return window.wc.walletKit.core.pairing.getPairings();
     },
 
     getActiveSessions: function () {
-        return window.wc.web3wallet.getActiveSessions();
+        return window.wc.walletKit.getActiveSessions();
     },
 
     disconnect: async function (topic) {
-        await window.wc.web3wallet.disconnectSession(
+        await window.wc.walletKit.disconnectSession(
             {
                 topic,
                 reason: getSdkError('USER_DISCONNECTED')
@@ -133,7 +133,7 @@ window.wc = {
     },
 
     ping: async function (topic) {
-        await window.wc.web3wallet.engine.signClient.ping({ topic });
+        await window.wc.walletKit.engine.signClient.ping({ topic });
     },
 
     buildApprovedNamespaces: async function (params, supportedNamespaces) {
@@ -148,7 +148,7 @@ window.wc = {
 
         const { relays } = params
 
-        return await window.wc.web3wallet.approveSession(
+        return await window.wc.walletKit.approveSession(
             {
                 id,
                 relayProtocol: relays[0].protocol,
@@ -158,7 +158,7 @@ window.wc = {
     },
 
     rejectSession: async function (id) {
-        await window.wc.web3wallet.rejectSession(
+        await window.wc.walletKit.rejectSession(
             {
                 id,
                 reason: getSdkError("USER_REJECTED"), // TODO USER_REJECTED_METHODS, USER_REJECTED_CHAINS, USER_REJECTED_EVENTS
@@ -169,7 +169,7 @@ window.wc = {
     respondSessionRequest: async function (topic, id, signature) {
         const response = formatJsonRpcResult(id, signature)
 
-        await window.wc.web3wallet.respondSessionRequest(
+        await window.wc.walletKit.respondSessionRequest(
             {
                 topic: topic,
                 response: response
@@ -180,7 +180,7 @@ window.wc = {
     rejectSessionRequest: async function (topic, id, error = false) {
         const errorType = error ? "SESSION_SETTLEMENT_FAILED" : "USER_REJECTED";
 
-        await window.wc.web3wallet.respondSessionRequest(
+        await window.wc.walletKit.respondSessionRequest(
             {
                 topic: topic,
                 response: formatJsonRpcError(id, getSdkError(errorType)),
