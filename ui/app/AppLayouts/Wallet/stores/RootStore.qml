@@ -432,7 +432,7 @@ QtObject {
         walletSectionAccounts.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
     }
 
-    property SharedStores.CurrenciesStore currencyStore: SharedStores.CurrenciesStore {}
+    property SharedStores.CurrenciesStore currencyStore: SharedStores.CurrenciesStore {} // FIXME pass it down from AppMain instead of recreating it here
 
     function addressWasShown(address) {
         return d.mainModuleInst.addressWasShown(address)

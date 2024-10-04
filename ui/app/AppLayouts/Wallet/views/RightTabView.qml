@@ -427,6 +427,7 @@ RightTabBaseView {
                         overview: RootStore.overview
                         walletRootStore: RootStore
                         communitiesStore: root.communitiesStore
+                        currencyStore: root.sharedRootStore.currencyStore
                         showAllAccounts: RootStore.showAllAccounts
                         sendModal: root.sendModal
                         filterVisible: filterButton.checked
