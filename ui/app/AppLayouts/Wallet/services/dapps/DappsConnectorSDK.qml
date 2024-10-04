@@ -93,7 +93,7 @@ WalletConnectSDKBase {
                 preparedData: interpreted.preparedData,
                 maxFeesText: "?",
                 maxFeesEthText: "?",
-                enoughFunds: enoughFunds,
+                enoughFunds: enoughFunds
             })
 
             if (obj === null) {

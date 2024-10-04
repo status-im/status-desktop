@@ -2188,12 +2188,10 @@ Item {
                 Global.walletConnectService = walletConnectService
             }
 
-            onDisplayToastMessage: (message, isErr) => {
-                Global.displayToastMessage(message, "",
-                    isErr ? "warning" : "checkmark-circle", false,
-                    isErr ? Constants.ephemeralNotificationType.danger
-                          : Constants.ephemeralNotificationType.success,
-                    "")
+            onDisplayToastMessage: (message, type) => {
+                const icon = type === Constants.ephemeralNotificationType.danger ? "warning" : 
+                            type === Constants.ephemeralNotificationType.success ? "checkmark-circle" : "info"
+                Global.displayToastMessage(message, "", icon, false, type, "")
             }
         }
     }

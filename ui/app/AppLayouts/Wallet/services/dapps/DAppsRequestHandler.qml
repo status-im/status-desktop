@@ -33,7 +33,8 @@ SQUtils.QObject {
     }
 
     signal sessionRequest(string id)
-    signal displayToastMessage(string message, bool error)
+    /*type - maps to Constants.ephemeralNotificationType*/
+    signal displayToastMessage(string message, int type)
 
     Connections {
         target: sdk
@@ -61,29 +62,49 @@ SQUtils.QObject {
                 console.error("Error finding event for topic", topic, "id", id)
                 return
             }
+
             let methodStr = SessionRequest.methodToUserString(request.method)
             if (!methodStr) {
                 console.error("Error finding user string for method", request.method)
                 return
             }
 
-            d.lookupSession(topic, function(session) {
-                if (session === null)
-                    return
-                const appUrl = session.peer.metadata.url
-                const appDomain = SQUtils.StringUtils.extractDomainFromLink(appUrl)
-                if (error) {
-                    root.displayToastMessage(qsTr("Fail to %1 from %2").arg(methodStr).arg(appDomain), true)
+            const appUrl = request.dappUrl
+            const appDomain = SQUtils.StringUtils.extractDomainFromLink(appUrl)
+            const requestExpired = request.isExpired()
 
-                    root.rejectSessionRequest(topic, id, true /*hasError*/)
+            requests.removeRequest(topic, id)
 
-                    console.error(`Error accepting session request for topic: ${topic}, id: ${id}, accept: ${accept}, error: ${error}`)
-                    return
-                }
+            if (error) {
+                root.displayToastMessage(qsTr("Fail to %1 from %2").arg(methodStr).arg(appDomain), Constants.ephemeralNotificationType.danger)
+                root.rejectSessionRequest(topic, id, true /*hasError*/)
+                console.error(`Error accepting session request for topic: ${topic}, id: ${id}, accept: ${accept}, error: ${error}`)
+                return
+            }
 
+            if (!requestExpired) {
                 let actionStr = accept ? qsTr("accepted") : qsTr("rejected")
-                root.displayToastMessage("%1 %2 %3".arg(appDomain).arg(methodStr).arg(actionStr), false)
-            })
+                root.displayToastMessage("%1 %2 %3".arg(appDomain).arg(methodStr).arg(actionStr), Constants.ephemeralNotificationType.success)
+                return
+            }
+
+            root.displayToastMessage("%1 sign request timed out".arg(appDomain), Constants.ephemeralNotificationType.normal)
+        }
+
+        function onSessionRequestExpired(sessionId) {
+            // Expired event coming from WC
+            // Handling as a failsafe in case the event is not processed by the SDK
+            let request = requests.findById(sessionId)
+            if (request === null) {
+                console.error("Error finding event for session id", sessionId)
+                return
+            }
+
+            if (request.isExpired()) {
+                return //nothing to do. The request is already expired
+            }
+
+            request.setExpired()
         }
     }
 
@@ -96,6 +117,12 @@ SQUtils.QObject {
                 console.error("Error finding event for topic", topic, "id", id)
                 return
             }
+            if (request.isExpired()) {
+                console.warn("Error: request expired")
+                root.rejectSessionRequest(topic, id, true /*hasError*/)
+                return
+            }
+
             d.executeSessionRequest(request, password, pin, payload)
         }
 
@@ -105,13 +132,16 @@ SQUtils.QObject {
             if (request === null || !methodStr) {
                 return
             }
-            d.lookupSession(topic, function(session) {
-                if (session === null)
-                    return
-                const appDomain = SQUtils.StringUtils.extractDomainFromLink(session.peer.metadata.url)
-                root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(appDomain), true)
-                root.rejectSessionRequest(topic, id, false /*hasErrors*/)
-            })
+
+            if (request.isExpired()) {
+                console.warn("Error: request expired")
+                root.rejectSessionRequest(topic, id, true /*hasError*/)
+                return
+            }
+
+            const appDomain = SQUtils.StringUtils.extractDomainFromLink(request.dappUrl)
+            root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(appDomain), Constants.ephemeralNotificationType.danger)
+            root.rejectSessionRequest(topic, id, true /*hasError*/)
         }
 
         function onSigningResult(topic, id, data) {
@@ -166,6 +196,7 @@ SQUtils.QObject {
             const interpreted = d.prepareData(method, data)
 
             const enoughFunds = !d.isTransactionMethod(method)
+            const requestExpiry = event.params.request.expiryTimestamp
 
             let obj = sessionRequestComponent.createObject(null, {
                 event,
@@ -179,6 +210,7 @@ SQUtils.QObject {
                 maxFeesText: "?",
                 maxFeesEthText: "?",
                 enoughFunds: enoughFunds,
+                expirationTimestamp: requestExpiry
             })
             if (obj === null) {
                 console.error("Error creating SessionRequestResolved for event")
@@ -213,6 +245,7 @@ SQUtils.QObject {
                 } else {
                     console.error("Error finding mainnet network")
                 }
+
                 let st = getEstimatedFeesStatus(data, method, obj.chainId, mainChainId)
                 let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, obj.accountAddress, obj.chainId, mainNet.chainId, interpreted.value)
                 obj.fiatMaxFees = st.fiatMaxFees

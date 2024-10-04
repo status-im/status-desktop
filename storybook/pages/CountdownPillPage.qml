@@ -75,6 +75,12 @@ SplitView {
                 }
             }
             Button {
+                text: "Set expired now"
+                onClicked: {
+                    pill.expirationSeconds = 0
+                }
+            }
+            Button {
                 text: "Set 5 minutes (10 minutes ago) -> expired"
                 onClicked: {
                     const tenMinsAgo = new Date()

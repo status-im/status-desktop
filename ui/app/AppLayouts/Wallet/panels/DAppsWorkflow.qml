@@ -328,6 +328,9 @@ DappsComboBox {
             signingTransaction: !!request.method && (request.method === SessionRequest.methods.signTransaction.name
                                                   || request.method === SessionRequest.methods.sendTransaction.name)
             requestPayload: request.preparedData
+            expirationSeconds: request.expirationTimestamp ? request.expirationTimestamp - requestTimestamp.getTime() / 1000
+                                                            : 0
+            hasExpiryDate: !!request.expirationTimestamp
 
             onClosed: {
                 Qt.callLater(rejectRequest)

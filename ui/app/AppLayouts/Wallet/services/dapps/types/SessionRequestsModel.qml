@@ -17,6 +17,16 @@ ListModel {
         return null;
     }
 
+    function removeRequest(topic, id) {
+        for (var i = 0; i < root.count; i++) {
+            let entry = root.get(i).requestItem
+            if (entry.topic == topic && entry.id == id) {
+                root.remove(i, 1);
+                return;
+            }
+        }
+    }
+
     /// returns null if not found
     function findRequest(topic, id) {
         for (var i = 0; i < root.count; i++) {

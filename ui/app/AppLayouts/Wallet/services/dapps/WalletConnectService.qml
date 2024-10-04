@@ -112,7 +112,10 @@ QObject {
     signal approveSessionResult(var key, var error, var topic)
     // Emitted when a new session is requested by a dApp
     signal sessionRequest(string id)
-    signal displayToastMessage(string message, bool error)
+    // Emitted when the services requests to display a toast message
+    // @param message The message to display
+    // @param type The type of the message. Maps to Constants.ephemeralNotificationType
+    signal displayToastMessage(string message, int type)
     // Emitted as a response to WalletConnectService.validatePairingUri or other WalletConnectService.pair
     // and WalletConnectService.approvePair errors
     signal pairingValidated(int validationState)
@@ -298,9 +301,9 @@ QObject {
         function notifyDappDisconnect(dappUrl, err) {
             const appDomain = StringUtils.extractDomainFromLink(dappUrl)
             if(err) {
-                root.displayToastMessage(qsTr("Failed to disconnect from %1").arg(appDomain), true)
+                root.displayToastMessage(qsTr("Failed to disconnect from %1").arg(appDomain), Constants.ephemeralNotificationType.danger)
             } else {
-                root.displayToastMessage(qsTr("Disconnected from %1").arg(appDomain), false)
+                root.displayToastMessage(qsTr("Disconnected from %1").arg(appDomain), Constants.ephemeralNotificationType.success)
             }
         }
 
@@ -399,7 +402,7 @@ QObject {
             // TODO #14754: implement custom dApp notification
             const app_url = proposal.params.proposer.metadata.url ?? "-"
             const app_domain = StringUtils.extractDomainFromLink(app_url)
-            root.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_domain), false)
+            root.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_domain), Constants.ephemeralNotificationType.success)
 
             // Persist session
             if(!store.addWalletConnectSession(JSON.stringify(session))) {
@@ -425,9 +428,9 @@ QObject {
             const app_domain = StringUtils.extractDomainFromLink(app_url)
             if(err) {
                 d.reportPairErrorState(Pairing.errors.unknownError)
-                root.displayToastMessage(qsTr("Failed to reject connection request for %1").arg(app_domain), true)
+                root.displayToastMessage(qsTr("Failed to reject connection request for %1").arg(app_domain), Constants.ephemeralNotificationType.danger)
             } else {
-                root.displayToastMessage(qsTr("Connection request for %1 was rejected").arg(app_domain), false)
+                root.displayToastMessage(qsTr("Connection request for %1 was rejected").arg(app_domain), Constants.ephemeralNotificationType.success)
             }
         }
 
@@ -454,8 +457,8 @@ QObject {
             timeoutTimer.stop()
             root.sessionRequest(id)
         }
-        onDisplayToastMessage: (message, error) => {
-            root.displayToastMessage(message, error)
+        onDisplayToastMessage: (message, type) => {
+            root.displayToastMessage(message, type)
         }
     }
 

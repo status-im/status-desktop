@@ -198,7 +198,7 @@ WalletConnectSDKBase {
             console.debug(`WC WalletConnectSDK.wcCall.rejectSessionRequest; topic: "${topic}", id: ${id}, error: "${error}"`)
 
             d.engine.runJavaScript(`
-                                    wc.rejectSessionRequest("${topic}", ${id}, "${error}")
+                                    wc.rejectSessionRequest("${topic}", ${id}, ${error})
                                     .then((value) => {
                                         wc.statusObject.onRejectSessionRequestResponse("${topic}", ${id}, "")
                                     })
@@ -365,6 +365,11 @@ WalletConnectSDKBase {
         function onProposalExpire(details) {
             console.debug(`WC WalletConnectSDK.onProposalExpire; details: ${JSON.stringify(details)}`)
             root.sessionProposalExpired()
+        }
+
+        function onSessionRequestExpire(id) {
+            console.debug(`WC WalletConnectSDK.onSessionRequestExpire; id: ${id}`)
+            root.sessionRequestExpired(id)
         }
     }
 

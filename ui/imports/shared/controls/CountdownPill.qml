@@ -17,7 +17,7 @@ IssuePill {
     required property int expirationSeconds
     onExpirationSecondsChanged: Qt.callLater(reset)
 
-    readonly property bool isExpired: expirationSeconds > 0 && d.secsDiff <= 0
+    readonly property bool isExpired: remainingSeconds <= 0
     readonly property int remainingSeconds: d.secsDiff
 
     signal expired
@@ -44,6 +44,8 @@ IssuePill {
     function reset() {
         if (expirationSeconds === 0) {
             timer.stop()
+            d.secsDiff = -1
+            root.expired()
             return
         }
 
