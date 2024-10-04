@@ -651,8 +651,8 @@ Item {
         active: appMain.rootStore.mainModuleInst.sectionsLoaded
         sourceComponent: StatusStickersPopup {
             store: appMain.rootChatStore
-            transactionStore: appMain.transactionStore
             walletAssetsStore: appMain.walletAssetsStore
+            sendModalPopup: sendModal
 
             isWalletEnabled: appMain.rootStore.profileSectionStore.profileStore.isWalletEnabled
         }

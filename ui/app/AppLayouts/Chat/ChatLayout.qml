@@ -151,11 +151,11 @@ StackLayout {
             contactsStore: root.contactsStore
             sharedRootStore: root.sharedRootStore
             rootStore: root.rootStore
-            transactionStore: root.transactionStore
             createChatPropertiesStore: root.createChatPropertiesStore
             communitiesStore: root.communitiesStore
             walletAssetsStore: root.walletAssetsStore
             currencyStore: root.currencyStore
+            sendModalPopup: root.sendModalPopup
             sectionItemModel: root.sectionItemModel
             amIMember: sectionItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||

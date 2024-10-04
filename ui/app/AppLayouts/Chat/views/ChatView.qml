@@ -44,11 +44,11 @@ StatusSectionLayout {
 
     property SharedStores.RootStore sharedRootStore
     property ChatStores.RootStore rootStore
-    required property SendStores.TransactionStore transactionStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property SharedStores.CurrenciesStore currencyStore
+    required property var sendModalPopup
     property var sectionItemModel
 
     property var emojiPopup
@@ -307,8 +307,8 @@ StatusSectionLayout {
     Component {
         id: statusStickerPackClickPopup
         StatusStickerPackClickPopup{
-            transactionStore: root.transactionStore
             walletAssetsStore: root.walletAssetsStore
+            sendModalPopup: root.sendModalPopup
             onClosed: {
                 destroy();
             }

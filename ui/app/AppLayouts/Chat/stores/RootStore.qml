@@ -283,6 +283,8 @@ QtObject {
 
     property var mainModuleInst: mainModule
 
+    readonly property string appNetworkId: mainModuleInst.appNetworkId
+
     property var communitiesModuleInst: communitiesModule
     property var communitiesList: communitiesModuleInst.model
 
