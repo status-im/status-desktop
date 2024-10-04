@@ -39,6 +39,7 @@ class AccountPopup(BasePopup):
         # derivation
         self._address_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountWatchOnlyAddress)
         self._add_save_account_confirmation_button = Button(names.mainWallet_AddEditAccountPopup_PrimaryButton)
+        self.copy_derivation_path_button = Button(names.mainWallet_AddEditAccountPopup_CopyDerivationPathButton)
         self._edit_derivation_path_button = Button(names.mainWallet_AddEditAccountPopup_EditDerivationPathButton)
         self._derivation_path_combobox_button = Button(
             names.mainWallet_AddEditAccountPopup_PreDefinedDerivationPathsButton)
