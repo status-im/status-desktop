@@ -7,8 +7,12 @@ type
 proc asyncLoadCommunitiesDataTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncLoadCommunitiesDataTaskArg](argEncoded)
   try:
+    echo "get tags"
     let responseTags = status_go.getCommunityTags()
+    echo "Hot tags ", responseTags
+    echo "get comms ples"
     let responseCommunities = status_go.getAllCommunities()
+    echo "got comms ", responseCommunities
     let responseSettings = status_go.getCommunitiesSettings()
     let responseNonApprovedRequestsToJoin = status_go.allNonApprovedCommunitiesRequestsToJoin()
     let responseCollapsedCommunityCategories = status_go.collapsedCommunityCategories()

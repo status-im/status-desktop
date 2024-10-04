@@ -72,6 +72,7 @@ proc enableDeveloperFeatures*(self: Controller) =
   discard self.settingsService.saveAutoMessageEnabled(true)
   discard self.nodeConfigurationService.setLogLevel(LogLevel.DEBUG)
 
+  echo "enableDeveloperFeatures"
   quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
 proc isTelemetryEnabled*(self: Controller): bool =

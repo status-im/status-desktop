@@ -210,6 +210,7 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
         standardButtons: Dialog.Ok
         onAccepted: {
             if (msgDialog.errType == Constants.startupErrorType.convertToRegularAccError) {
+                console.log('quit convertToRegularAccError')
                 Qt.quit();
             }
             console.log("TODO: restart flow...")
