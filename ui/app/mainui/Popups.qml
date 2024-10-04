@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 import QtQuick.Dialogs 1.3
 import QtQml.Models 2.15
 import QtQml 2.15
@@ -1112,6 +1113,7 @@ QtObject {
 
                     readonly property TransactionFeesBroker feesBroker: TransactionFeesBroker {
                         communityTokensStore: root.communityTokensStore
+                        active: finalisePopup.contentItem.Window.window.active
                     }
 
                     chainId: finalisePopup.ownerTokenDetails.chainId

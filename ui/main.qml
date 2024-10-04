@@ -283,7 +283,6 @@ StatusWindow {
     }
 
     Component.onCompleted: {
-        Global.applicationWindow = this;
         Style.changeTheme(Universal.System, systemPalette.isCurrentSystemThemeDark());
 
         restoreAppState();

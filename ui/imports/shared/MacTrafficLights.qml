@@ -1,10 +1,10 @@
-import QtQuick 2.13
-
+import QtQuick 2.15
+import QtQuick.Window 2.15
 
 import utils 1.0
 
 MouseArea {
-    id: statusMacWindowButtons
+    id: root
 
     signal close()
     signal minimised()
@@ -20,6 +20,12 @@ MouseArea {
     readonly property color inactiveBorder: Style.current.name === Constants.lightThemeName ? "#10000000"
                                                                                             : "#10FFFFFF"
 
+    QtObject {
+        id: d
+
+        readonly property bool windowActive: root.Window.window.active
+    }
+
     Row {
         id: layout
         spacing: 8
@@ -30,15 +36,13 @@ MouseArea {
             radius: width / 2
             antialiasing: true
 
-            color: closeSensor.pressed ? "#B24F47" : (Global.applicationWindow.active || statusMacWindowButtons.containsMouse ? Qt.lighter("#E9685C", 1.07)
-                                                                        : inactive )
-            border.color:closeSensor.pressed ? "#943229" : (Global.applicationWindow.active ? "#D14C40"
-                                                                              : inactiveBorder)
+            color: closeSensor.pressed ? "#B24F47" : (d.windowActive || root.containsMouse ? Qt.lighter("#E9685C", 1.07) : inactive)
+            border.color:closeSensor.pressed ? "#943229" : (d.windowActive ? "#D14C40" : inactiveBorder)
             border.width: Style.current.name === Constants.lightThemeName ? 0.5 : 0
 
             Image {
                 anchors.centerIn: parent
-                visible: statusMacWindowButtons.containsMouse
+                visible: root.containsMouse
                 source: Style.png("traffic_lights/" + (closeSensor.pressed ? "close_pressed" : "close"))
                 scale: 0.25
             }
@@ -48,7 +52,7 @@ MouseArea {
                 id: closeSensor
                 anchors.fill: parent
 
-                onClicked: statusMacWindowButtons.close()
+                onClicked: root.close()
             }
         }
 
@@ -58,16 +62,14 @@ MouseArea {
             radius: width / 2
             antialiasing: true
 
-            color: miniSensor.pressed ? "#878E3B" :  (Global.applicationWindow.active || statusMacWindowButtons.containsMouse ? Qt.lighter("#EDB84C", 1.07)
-                                                                       : inactive)
-            border.color:miniSensor.pressed ? "#986E29" : (Global.applicationWindow.active ? "#D79F3D"
-                                                                             : inactiveBorder)
+            color: miniSensor.pressed ? "#878E3B" : (d.windowActive || root.containsMouse ? Qt.lighter("#EDB84C", 1.07) : inactive)
+            border.color:miniSensor.pressed ? "#986E29" : (d.windowActive ? "#D79F3D" : inactiveBorder)
             border.width: Style.current.name === Constants.lightThemeName ? 0.5 : 0
 
             Image {
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: -0.25
-                visible: statusMacWindowButtons.containsMouse
+                visible: root.containsMouse
                 source: Style.png("traffic_lights/" + (miniSensor.pressed ? "minimise_pressed" : "minimise"))
                 scale: 0.27
             }
@@ -76,7 +78,7 @@ MouseArea {
                 id: miniSensor
                 anchors.fill: parent
 
-                onClicked: statusMacWindowButtons.minimised()
+                onClicked: root.minimised()
             }
         }
 
@@ -86,15 +88,13 @@ MouseArea {
             radius: width / 2
             antialiasing: true
 
-            color: maxiSensor.pressed ? "#48943f" : (Global.applicationWindow.active || statusMacWindowButtons.containsMouse ?  Qt.lighter("#62C454", 1.06)
-                                                                       : inactive)
-            border.color: maxiSensor.pressed ? "#357225" : (Global.applicationWindow.active ? "#53A73E"
-                                                                              : inactiveBorder)
+            color: maxiSensor.pressed ? "#48943f" : (d.windowActive || root.containsMouse ?  Qt.lighter("#62C454", 1.06) : inactive)
+            border.color: maxiSensor.pressed ? "#357225" : (d.windowActive ? "#53A73E" : inactiveBorder)
             border.width: Style.current.name === Constants.lightThemeName ? 0.5 : 0
 
             Image {
                 anchors.centerIn: parent
-                visible: statusMacWindowButtons.containsMouse
+                visible: root.containsMouse
                 source: Style.png("traffic_lights/" + (maxiSensor.pressed ? "maximize_pressed" : "maximize"))
                 scale: 0.25
             }
@@ -103,7 +103,7 @@ MouseArea {
                 id: maxiSensor
                 anchors.fill: parent
 
-                onClicked: statusMacWindowButtons.maximized()
+                onClicked: root.maximized()
             }
         }
     }

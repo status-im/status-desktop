@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import QtMultimedia 5.15
 import Qt.labs.platform 1.1
@@ -576,11 +577,13 @@ Item {
     }
 
     Connections {
-        target: Global.applicationWindow
+        target: Window.window
 
         function onActiveChanged() {
-            if (Global.applicationWindow.active) appMain.rootStore.windowActivated()
-            else appMain.rootStore.windowDeactivated()
+            if (Window.window.active)
+                appMain.rootStore.windowActivated()
+            else
+                appMain.rootStore.windowDeactivated()
         }
     }
 

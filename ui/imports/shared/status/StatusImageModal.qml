@@ -1,14 +1,13 @@
-import QtQuick 2.13
-import QtQuick.Window 2.2
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
-import shared 1.0
 import shared.popups 1.0
 
 StatusDialog {
@@ -30,8 +29,8 @@ StatusDialog {
     QtObject {
         id: d
 
-        property int maxHeight: Global.applicationWindow.height - 80
-        property int maxWidth: Global.applicationWindow.width - 80
+        property int maxHeight: root.contentItem.Window.window.height - 80
+        property int maxWidth: root.contentItem.Window.window.width - 80
         readonly property int radius: Style.current.radius
     }
 

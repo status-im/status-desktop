@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.12
+import QtQuick.Window 2.15
 import QtQml.Models 2.15
 import QtGraphicalEffects 1.15
 
@@ -93,9 +94,9 @@ StatusDialog {
             ShaderEffectSource {
                 id: blurSource
 
-                sourceItem: Global.applicationWindow.contentItem
-                width: Global.applicationWindow.contentItem.width
-                height: Global.applicationWindow.contentItem.height
+                sourceItem: Window.window.contentItem
+                width: Window.window.contentItem.width
+                height: Window.window.contentItem.height
 
                 live: false
                 visible: false

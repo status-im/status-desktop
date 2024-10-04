@@ -1,9 +1,7 @@
-import QtQuick 2.3
-import QtGraphicalEffects 1.13
-import shared 1.0
+import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtGraphicalEffects 1.15
 import shared.panels 1.0
-
-import utils 1.0
 
 Item {
     id: root
@@ -12,7 +10,8 @@ Item {
     property int imageWidth: 350
     property url source
     property bool isActiveChannel: false
-    property bool playing: Global.applicationWindow.active
+    property bool playing: Window.window.active
+
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
     property alias imageAlias: imageMessage
     property bool allCornersRounded: false

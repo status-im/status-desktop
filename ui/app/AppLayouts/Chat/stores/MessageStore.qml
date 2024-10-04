@@ -206,10 +206,7 @@ QtObject {
         messageModule.addNewMessagesMarker()
     }
 
-    property bool playAnimation: {
-        if (!Global.applicationWindow.active)
-            return false
-
+    readonly property bool isChatActive: {
         if (root.getSectionId() !== mainModule.activeSection.id)
             return false
 
