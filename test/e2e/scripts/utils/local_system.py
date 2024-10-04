@@ -2,6 +2,7 @@ import logging
 import os
 import signal
 import subprocess
+import time
 import typing
 
 import allure
@@ -39,11 +40,15 @@ def kill_process(pid):
         if get_platform() == "Windows":
             subprocess.call(f"taskkill /F /T /PID {str(pid)}")
         elif get_platform() in ["Linux", "Darwin"]:
-            os.kill(pid, signal.SIGKILL)
+            p = psutil.Process(pid)
+            p.kill()
+            time.sleep(1)
+            assert not p.is_running()
         else:
             raise NotImplementedError(f"Unsupported platform: {get_platform()}")
     except Exception as e:
         print(f"Failed to terminate process {pid}: {e}")
+
 
 @allure.step('System execute command')
 def execute(
@@ -74,6 +79,7 @@ def run(
         timeout=timeout_sec,
         check=True
     )
+
 
 @allure.step('Get pid by process name')
 def get_pid_by_process_name(name):
