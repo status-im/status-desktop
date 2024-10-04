@@ -79,8 +79,6 @@ proc convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: WalletAc
     operability = account.operable,
     isDefaultAccount = account.isWallet,
     self.controller.areTestNetworksEnabled(),
-    prodPreferredChainIds = account.prodPreferredChainIds,
-    testPreferredChainIds = account.testPreferredChainIds,
     hideFromTotalBalance = account.hideFromTotalBalance)
 
 proc setBalance(self: Module, accountAddresses: seq[string]) =

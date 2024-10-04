@@ -216,7 +216,7 @@ StatusMenu {
                             }
                             else {
                                 let elidedAddress = StatusQUtils.Utils.elideText(model.address,6,4)
-                                return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(model.chainShortNames) + Utils.richColorText(elidedAddress, Theme.palette.directColor1): model.chainShortNames + elidedAddress
+                                return sensor.containsMouse ? Utils.richColorText(elidedAddress, Theme.palette.directColor1): elidedAddress
                             }
                         }
                         statusListItemSubTitle.elide: Text.ElideMiddle

@@ -165,10 +165,6 @@ QtObject {
         }
     }
 
-    function colorForChainShortName(chainShortName) {
-        return d.chainColors[chainShortName]
-    }
-
     readonly property var flatNetworks: networksModule.flatNetworks
     readonly property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
         sourceModel: root.flatNetworks
@@ -265,8 +261,6 @@ QtObject {
             operable: "",
             createdAt: -1,
             position: -1,
-            prodPreferredChainIds: "",
-            testPreferredChainIds: "",
             hideFromTotalBalance: false
         }
 
@@ -395,23 +389,6 @@ QtObject {
 
     function toggleWatchOnlyAccounts() {
         walletSection.toggleWatchOnlyAccounts()
-    }
-
-    function getAllNetworksChainIds() {
-        let result = []
-        let chainIdsArray = SQUtils.ModelUtils.modelToFlatArray(root.filteredFlatModel, "chainId")
-        for(let i = 0; i< chainIdsArray.length; i++) {
-            result.push(chainIdsArray[i].toString())
-        }
-        return result
-    }
-
-    function getNetworkShortNames(chainIds) {
-        return networksModule.getNetworkShortNames(chainIds)
-    }
-
-    function getNetworkIds(shortNames) {
-        return networksModule.getNetworkIds(shortNames)
     }
 
     function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {

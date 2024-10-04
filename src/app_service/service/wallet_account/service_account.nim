@@ -36,8 +36,6 @@ proc replaceKeypair(self: Service, keypair: KeypairDto) =
       locAcc.emoji = acc.emoji
       locAcc.operable = acc.operable
       locAcc.removed = acc.removed
-      locAcc.prodPreferredChainIds = acc.prodPreferredChainIds
-      locAcc.testPreferredChainIds = acc.testPreferredChainIds
       break
 
 proc storeAccountToKeypair(self: Service, account: WalletAccountDto) =
@@ -561,7 +559,7 @@ proc updateWalletAccount*(self: Service, address: string, accountName: string, c
       error "account's address is not among known addresses: ", address=address, procName="updateWalletAccount"
       return false
     let response = status_go_accounts.updateAccount(accountName, account.address, account.path, account.publicKey,
-      account.keyUid, account.walletType, colorId, emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, account.testPreferredChainIds, account.hideFromTotalBalance)
+      account.keyUid, account.walletType, colorId, emoji, account.isWallet, account.isChat, account.hideFromTotalBalance)
     if not response.error.isNil:
       error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
       return false
@@ -578,7 +576,7 @@ proc updateWatchAccountHiddenFromTotalBalance*(self: Service, address: string, h
       error "account's address is not among known addresses: ", address=address, procName="updateWatchAccountHiddenFromTotalBalance"
       return false
     let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
-      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, account.testPreferredChainIds, hideFromTotalBalance)
+      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, hideFromTotalBalance)
     if not response.error.isNil:
       error "status-go error", procName="updateWatchAccountHiddenFromTotalBalance", errCode=response.error.code, errDesription=response.error.message
       return false

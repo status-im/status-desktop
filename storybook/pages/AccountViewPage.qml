@@ -57,14 +57,6 @@ SplitView {
             property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
             function toggleNetwork(chainId) {
             }
-
-            function getNetworkShortNames() {
-                return "eth:oeth:arb1:"
-            }
-
-            function getAllNetworksChainIds() {
-                return "1:10:42161"
-            }
         }
 
         property var keyPairModel: WalletKeyPairModel {}

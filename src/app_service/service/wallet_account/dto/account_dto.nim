@@ -34,8 +34,6 @@ type
     operable*: string
     createdAt*: int
     position*: int
-    prodPreferredChainIDs*: string
-    testPreferredChainIDs*: string
     hideFromTotalBalance*: bool
 
 proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
@@ -56,8 +54,6 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("operable", result.operable)
   discard jsonObj.getProp("createdAt", result.createdAt)
   discard jsonObj.getProp("position", result.position)
-  discard jsonObj.getProp("prodPreferredChainIds", result.prodPreferredChainIds)
-  discard jsonObj.getProp("testPreferredChainIds", result.testPreferredChainIds)
   discard jsonObj.getProp("hidden", result.hideFromTotalBalance)
   result.assetsLoading = true
 
@@ -76,8 +72,6 @@ proc `$`*(self: WalletAccountDto): string =
     assetsLoading: {self.assetsLoading},
     removed: {self.removed},
     operable: {self.operable},
-    prodPreferredChainIds: {self.prodPreferredChainIds},
-    testPreferredChainIds: {self.testPreferredChainIds},
     hideFromTotalBalance: {self.hideFromTotalBalance}
     ]"""
 
@@ -100,6 +94,4 @@ proc `%`*(x: WalletAccountDto): JsonNode =
   result["operable"] = % x.operable
   result["createdAt"] = % x.createdAt
   result["position"] = % x.position
-  result["prodPreferredChainIds"] = % x.prodPreferredChainIds
-  result["testPreferredChainIds"] = % x.testPreferredChainIds
   result["hideFromTotalBalance"] = % x.hideFromTotalBalance

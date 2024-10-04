@@ -18,7 +18,6 @@ type
     KeycardAccount,
     AssetsLoading,
     IsWallet,
-    PreferredSharingChainIds,
     HideFromTotalBalance,
     CanSend
 
@@ -70,7 +69,6 @@ QtObject:
       ModelRole.KeycardAccount.int: "keycardAccount",
       ModelRole.AssetsLoading.int: "assetsLoading",
       ModelRole.IsWallet.int: "isWallet",
-      ModelRole.PreferredSharingChainIds.int: "preferredSharingChainIds",
       ModelRole.HideFromTotalBalance.int: "hideFromTotalBalance",
       ModelRole.CanSend.int: "canSend"
     }.toTable
@@ -184,8 +182,6 @@ QtObject:
       result = newQVariant(item.assetsLoading())
     of ModelRole.IsWallet:
       result = newQVariant(item.isWallet())
-    of ModelRole.PreferredSharingChainIds:
-      result = newQVariant(item.preferredSharingChainIds())
     of ModelRole.HideFromTotalBalance:
       result = newQVariant(item.hideFromTotalBalance())
     of ModelRole.CanSend:
