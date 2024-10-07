@@ -376,9 +376,8 @@ QtObject:
       if not found:
         itemsToRemove.add(oldItem.pubKey)
     
-    if itemsToRemove.len > 0:
-      for itemToRemove in itemsToRemove:
-        self.removeItemById(itemToRemove)
+    for itemToRemove in itemsToRemove:
+      self.removeItemById(itemToRemove)
 
     var itemsToAdd: seq[MemberItem] = @[]
     var itemsToUpdate: seq[MemberItem] = @[]

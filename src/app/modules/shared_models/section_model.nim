@@ -343,7 +343,7 @@ QtObject:
     defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, roles)
 
-  proc updateMemberItems*(
+  proc updateMemberItemInSections*(
       self: SectionModel,
       pubKey: string,
       displayName: string,
