@@ -152,19 +152,8 @@ QtObject {
 
     function getContactDetails(publicKey) {
         const details = Utils.getContactDetailsAsJson(publicKey)
-        return {
-            publicKey: publicKey,
-            localNickname: details.localNickname,
-            name: details.name,
-            displayName: details.displayName,
-            alias: details.alias,
-            ensVerified: details.ensVerified,
-            onlineStatus: details.onlineStatus,
-            largeImage: details.largeImage,
-            isContact: details.isContact,
-            trustStatus: details.trustStatus,
-            isBlocked: details.isBlocked
-        }
+        details.publicKey = publicKey
+        return details
     }
 
     function openNicknamePopup(publicKey: string, contactDetails, cb) {
