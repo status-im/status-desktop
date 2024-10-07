@@ -8,7 +8,6 @@ from . import marks
 import configs
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
