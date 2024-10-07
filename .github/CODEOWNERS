@@ -1,0 +1,28 @@
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# By default adding the desktop team to review any changes
+*           @status-im/desktop
+Makefile    @status-im/devops @status-im/desktop
+
+# Any change in the ci requires approval from DevOps team
+/ci/        @status-im/devops
+/nix/       @status-im/devops
+/scripts/   @status-im/devops
+# Default qml/js code reviewers
+*.qml       @micieslak @caybro @alexjba
+*.js        @micieslak @caybro @alexjba
+/storybook/ @micieslak @caybro @alexjba
+# Default squish tests owners
+/test/e2e/  @status-im/desktop-qa
+
+# Wallet - nim
+/src/app/modules/main/wallet_section/           @status-im/desktop-wallet
+/src/app_service/service/wallet_account/        @status-im/desktop-wallet
+/src/app_service/service/wallet_connect/        @status-im/desktop-wallet
+/src/app_service/service/transaction/           @status-im/desktop-wallet
+/src/app_service/service/saved_address/         @status-im/desktop-wallet
+/src/app_service/service/ramp/                  @status-im/desktop-wallet
+/src/app_service/service/network/               @status-im/desktop-wallet
+
+# Wallet - qml
+/ui/app/AppLayouts/Wallet/                      @status-im/desktop-wallet @micieslak
