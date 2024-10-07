@@ -1756,7 +1756,7 @@ proc createMemberItem[T](
 method contactUpdated*[T](self: Module[T], contactId: string) =
   let contactDetails = self.controller.getContactDetails(contactId)
   let isMe = contactId == singletonInstance.userProfile.getPubKey()
-  self.view.model().updateMemberItems(
+  self.view.model().updateMemberItemInSections(
     pubKey = contactId,
     displayName = contactDetails.dto.displayName,
     ensName = contactDetails.dto.name,
