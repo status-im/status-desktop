@@ -42,14 +42,25 @@ QtObject:
     notify = joinedChanged
 
   proc setActiveSectionData*(self: SectionDetails, item: SectionItem) =
-    if self.joined != item.joined:
-      self.joined = item.joined
-      self.joinedChanged()
+    var idChanged = false
+    var joinedChanged = false
+    var sectionTypeChanged = false
 
     if self.id != item.id:
       self.id = item.id
-      self.idChanged()
+      idChanged = true
+
+    if self.joined != item.joined:
+      self.joined = item.joined
+      joinedChanged = true
 
     if self.sectionType != item.sectionType:
       self.sectionType = item.sectionType
+      sectionTypeChanged = true
+
+    if idChanged:
+      self.idChanged()
+    if joinedChanged:
+      self.joinedChanged()
+    if sectionTypeChanged:
       self.sectionTypeChanged()
