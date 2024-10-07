@@ -45,6 +45,7 @@ def kill_process(pid):
     except Exception as e:
         print(f"Failed to terminate process {pid}: {e}")
 
+
 @allure.step('System execute command')
 def execute(
         command: list,
@@ -74,6 +75,7 @@ def run(
         timeout=timeout_sec,
         check=True
     )
+
 
 @allure.step('Get pid by process name')
 def get_pid_by_process_name(name):

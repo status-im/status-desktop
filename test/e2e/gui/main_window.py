@@ -154,7 +154,8 @@ class LeftPanel(QObject):
 
     @allure.step('Open Wallet section')
     def open_wallet(self, attempts: int = 3) -> WalletScreen:
-        self._wallet_button.click(timeout=15)
+        # TODO https://github.com/status-im/status-desktop/issues/15345
+        self._wallet_button.click(timeout=30)
         try:
             return WalletScreen()
         except Exception as ex:

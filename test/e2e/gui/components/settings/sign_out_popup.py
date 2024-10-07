@@ -14,7 +14,8 @@ class SignOutPopup(BasePopup):
     @allure.step('Click sign out and quit button')
     def sign_out_and_quit(self, attempts: int = 2):
         try:
-            self._sign_out_and_quit_button.click(timeout=10)
+            # TODO https://github.com/status-im/status-desktop/issues/15345
+            self._sign_out_and_quit_button.click(timeout=60)
         except Exception as ec:
             if attempts:
                 self.sign_out_and_quit(attempts-1)

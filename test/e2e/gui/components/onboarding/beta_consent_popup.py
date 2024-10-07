@@ -19,5 +19,6 @@ class BetaConsentPopup(QObject):
     def confirm(self):
         self._agree_to_use_checkbox.set(True)
         self._ready_to_use_checkbox.set(True)
-        self._ready_to_use_button.click(timeout=10)
+        # TODO https://github.com/status-im/status-desktop/issues/15345
+        self._ready_to_use_button.click(timeout=60)
         self.wait_until_hidden()

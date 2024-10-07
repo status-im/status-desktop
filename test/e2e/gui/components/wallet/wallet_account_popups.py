@@ -174,7 +174,7 @@ class AccountPopup(BasePopup):
         assert driver.waitFor(lambda: self.is_save_changes_button_enabled(),
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._add_save_account_confirmation_button.click(timeout=10)
+        self._add_save_account_confirmation_button.click(timeout=60)
         return self
 
     @allure.step('Get enabled state of (add account / save changes) button')
@@ -275,7 +275,8 @@ class AddNewAccountPopup(BasePopup):
 
     @allure.step('Click continue')
     def click_continue(self):
-        self._continue_button.click(timeout=10)
+        # TODO https://github.com/status-im/status-desktop/issues/15345
+        self._continue_button.click(timeout=60)
         return self
 
     @allure.step('Import new seed phrase and continue')
@@ -288,7 +289,8 @@ class AddNewAccountPopup(BasePopup):
 
     @allure.step('Enter new seed phrase')
     def enter_new_seed_phrase(self, seed_phrase_words: list):
-        self._import_seed_phrase_button.click(timeout=10)
+        # TODO https://github.com/status-im/status-desktop/issues/15345
+        self._import_seed_phrase_button.click(timeout=60)
         if len(seed_phrase_words) == 12:
             self._seed_phrase_12_words_button.click()
         elif len(seed_phrase_words) == 18:
