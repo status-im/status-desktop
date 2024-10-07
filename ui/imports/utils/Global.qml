@@ -5,7 +5,6 @@ import QtQml 2.15
 QtObject {
     id: root
 
-    property var dragArea
     property bool activityPopupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
     property int settingsSubSubsection: -1
