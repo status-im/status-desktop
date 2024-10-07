@@ -2,3 +2,4 @@ AppMain 1.0 AppMain.qml
 SplashScreen 1.0 SplashScreen.qml
 Popups 1.0 Popups.qml
 StatusTrayIcon 1.0 StatusTrayIcon.qml
+DropAreaPanel 1.0 panels/DropAreaPanel.qml

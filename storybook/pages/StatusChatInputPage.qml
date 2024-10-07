@@ -32,7 +32,6 @@ SplitView {
         }
         Component.onCompleted: {
             Utils.globalUtilsInst = globalUtilsMock.globalUtils
-            Global.dragArea = null
             globalUtilsMock.ready = true
         }
     }

@@ -11,6 +11,8 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0 as SharedStores
 
+import mainui 1.0
+
 //TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
@@ -948,11 +950,11 @@ Rectangle {
         messageInputField.forceActiveFocus();
     }
 
-    Connections {
-        target: Global.dragArea
-        enabled: control.visible
-        ignoreUnknownSignals: true
-        function onDroppedOnValidScreen(drop) {
+    DropAreaPanel {
+        enabled: control.visible && control.enabled
+        parent: Overlay.overlay
+        anchors.fill: parent
+        onDroppedOnValidScreen: (drop) => {
             let dropUrls = drop.urls
             if (!drop.hasUrls) {
                 console.warn("Trying to drop, list of URLs is empty tho; formats:", drop.formats)

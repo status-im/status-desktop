@@ -50,8 +50,6 @@ import mainui.activitycenter.popups 1.0
 
 import SortFilterProxyModel 0.2
 
-import "panels"
-
 Item {
     id: appMain
 
@@ -1353,14 +1351,6 @@ Item {
                             ChatLayout {
                                 id: chatLayoutContainer
 
-                                Binding {
-                                    target: rootDropAreaPanel
-                                    property: "enabled"
-                                    value: chatLayoutContainer.currentIndex === 0 // Meaning: Chats / channels view
-                                    when: visible
-                                    restoreMode: Binding.RestoreBindingOrValue
-                                }
-
                                 sharedRootStore: appMain.sharedRootStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
@@ -1486,14 +1476,6 @@ Item {
                                 id: chatLayoutComponent
 
                                 readonly property bool isManageCommunityEnabledInAdvanced: appMain.rootStore.profileSectionStore.advancedStore.isManageCommunityOnTestModeEnabled
-
-                                Binding {
-                                    target: rootDropAreaPanel
-                                    property: "enabled"
-                                    value: chatLayoutComponent.currentIndex === 0 // Meaning: Chats / channels view
-                                    when: visible
-                                    restoreMode: Binding.RestoreBindingOrValue
-                                }
 
                                 Connections {
                                     target: Global
@@ -2151,13 +2133,6 @@ Item {
                 savedAddressActivity.close()
             }
         }
-    }
-
-    DropAreaPanel {
-        id: rootDropAreaPanel
-
-        width: appMain.width
-        height: appMain.height
     }
 
     Loader {

@@ -1,4 +1,5 @@
-import QtQuick 2.14
+import QtQuick 2.15
+
 import utils 1.0
 
 DropArea {
@@ -11,10 +12,6 @@ DropArea {
 
     function cleanup() {
         rptDraggedPreviews.model = []
-    }
-
-    Component.onCompleted: {
-        Global.dragArea = this;
     }
 
     onDropped: (drop) => {
@@ -42,7 +39,7 @@ DropArea {
     onExited: cleanup()
 
     Loader {
-        active: root.containsDrag
+        active: root.containsDrag && root.enabled
         width: active ? parent.width : 0
         height: active ? parent.height : 0
         sourceComponent: Rectangle {

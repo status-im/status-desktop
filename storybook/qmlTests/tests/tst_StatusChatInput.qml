@@ -702,9 +702,5 @@ Item {
         function isCompressedPubKey(publicKey) {
             return false
         }
-
-        Component.onCompleted: {
-            Global.dragArea = root
-        }
     }
 }
