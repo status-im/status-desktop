@@ -6,15 +6,13 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import UserAccount, RandomUser
+from constants import RandomUser
 from helpers.WalletHelper import authenticate_with_password
-from scripts.utils.generators import random_name_string, random_password_string
 from constants.wallet import WalletAccountPopup
 from . import marks
 
 import constants
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
