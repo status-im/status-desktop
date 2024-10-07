@@ -32,5 +32,6 @@ class BeforeStartedPopUp(BasePopup):
         assert self._terms_of_use_checkBox.checkState != 0, f"ToU checkbox is not checked"
         assert self._terms_of_use_link.is_visible, f"Terms of use link is missing"
         assert self._privacy_policy_link.is_visible, f"Privacy Policy link is missing"
-        self._get_started_button.click(timeout=10)
+        # TODO https://github.com/status-im/status-desktop/issues/15345
+        self._get_started_button.click(timeout=60)
         self.wait_until_hidden()

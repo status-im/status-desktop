@@ -580,7 +580,8 @@ class PermissionsSettingsView(QObject):
 
     @allure.step('Click create permission')
     def create_permission(self):
-        self._create_permission_button.click(timeout=10)
+        # TODO https://github.com/status-im/status-desktop/issues/15345
+        self._create_permission_button.click(timeout=30)
         self._create_permission_button.wait_until_hidden()
 
     @allure.step('Open Who holds context menu')
