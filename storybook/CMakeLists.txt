@@ -112,7 +112,6 @@ add_test(NAME DirectoryFilesWatcherTest COMMAND DirectoryFilesWatcherTest)
 
 add_executable(QmlTests
     qmlTests/main.cpp
-    qmlTests/src/TextUtils.cpp qmlTests/src/TextUtils.h
     ${TEST_QML_FILES})
 
 add_dependencies(QmlTests StatusQ)
