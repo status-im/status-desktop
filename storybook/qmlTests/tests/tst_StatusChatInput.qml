@@ -4,14 +4,13 @@ import QtQml 2.14
 import QtTest 1.0
 
 import StatusQ 0.1 // https://github.com/status-im/status-desktop/issues/10218
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 import shared.status 1.0
 import shared.stores 1.0 as SharedStores
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
-
-import TextUtils 1.0
 
 Item {
     id: root
@@ -601,7 +600,7 @@ Item {
             keyClick(Qt.Key_Left)
             compare(controlUnderTest.textInput.getText(0, controlUnderTest.textInput.length), "Hello @JohnDoe !")
 
-            var plainTextWithPubKey = TextUtils.htmlToPlainText(controlUnderTest.getTextWithPublicKeys())
+            var plainTextWithPubKey = SQUtils.StringUtils.plainText(controlUnderTest.getTextWithPublicKeys())
             compare(plainTextWithPubKey, "Hello @0x0JohnDoe !")
 
             controlUnderTest.textInput.cursorPosition = 15
@@ -609,7 +608,7 @@ Item {
             compare(controlUnderTest.textInput.getText(0, controlUnderTest.textInput.length), "Hello @JohnDoe!")
 
             keyClick(Qt.Key_S)
-            plainTextWithPubKey = TextUtils.htmlToPlainText(controlUnderTest.getTextWithPublicKeys())
+            plainTextWithPubKey = SQUtils.StringUtils.plainText(controlUnderTest.getTextWithPublicKeys())
             compare(plainTextWithPubKey, "Hello @0x0JohnDoe s!")
         }
 
@@ -633,7 +632,7 @@ Item {
             compare(controlUnderTest.textInput.getText(0, controlUnderTest.textInput.length),
                     "Hels")
 
-            const plainTextWithPubKey = TextUtils.htmlToPlainText(controlUnderTest.getTextWithPublicKeys())
+            const plainTextWithPubKey = SQUtils.StringUtils.plainText(controlUnderTest.getTextWithPublicKeys())
             compare(plainTextWithPubKey,
                     "Hels")
         }
