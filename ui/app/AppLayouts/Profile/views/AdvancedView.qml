@@ -362,7 +362,7 @@ SettingsContentBase {
                     headerSettings.title: qsTr("Language reset")
                     confirmationText: qsTr("Display language will be switched back to English. You must restart the application for changes to take effect.")
                     confirmButtonLabel: qsTr("Restart")
-                    onConfirmButtonClicked: Utils.restartApplication()
+                    onConfirmButtonClicked: SystemUtils.restartApplication()
                 }
             }
 
@@ -517,7 +517,7 @@ SettingsContentBase {
                 onConfirmButtonClicked: {
                     root.advancedStore.toggleIsGoerliEnabled()
                     close()
-                    Utils.restartApplication()
+                    SystemUtils.restartApplication()
                 }
                 onCancelButtonClicked: {
                     close()

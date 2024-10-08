@@ -767,10 +767,6 @@ QtObject {
     property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
     property var communitiesModuleInst: typeof communitiesModule !== "undefined" ? communitiesModule : null
 
-    function restartApplication() {
-        globalUtilsInst.restartApplication()
-    }
-
     function isChatKey(value) {
         return (startsWith0x(value) && isHex(value) && value.length === 132) || globalUtilsInst.isCompressedPubKey(value)
     }
