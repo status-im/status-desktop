@@ -72,7 +72,7 @@ StatusModal {
             }
 
             AgreementSection {
-                body: qsTr("We are working to fix all these issues ASAP, ahead of Status Desktop’s 1.0 release!")
+                body: qsTr("We are working to fix all these issues ASAP")
             }
 
             StatusCheckBox {
