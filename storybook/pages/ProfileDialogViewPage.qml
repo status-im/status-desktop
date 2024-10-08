@@ -45,10 +45,6 @@ SplitView {
             return url
         }
 
-        function downloadImageByUrl(url, path) {
-            logs.logEvent("Utils::downloadImageByUrl", ["url", "path"], arguments)
-        }
-
         function isAlias(name)  {
             return false
         }

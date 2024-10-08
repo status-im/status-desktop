@@ -956,10 +956,6 @@ QtObject {
         }
     }
 
-    function downloadImageByUrl(url, path) {
-        globalUtilsInst.downloadImageByUrl(url, path)
-    }
-
     function getKeypairLocation(keypair, fromAccountDetailsView) {
         if (!keypair || keypair.pairType === Constants.keypair.type.watchOnly) {
             return ""
