@@ -56,7 +56,7 @@ SettingsPage {
                 break
             }
             
-            if(tabButton.enabled)
+            if (tabButton.enabled)
                 membersTabBar.currentIndex = tabButton.TabBar.index
         }
         

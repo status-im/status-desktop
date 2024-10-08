@@ -37,11 +37,8 @@ type
     MembersModel
     HistoryArchiveSupportEnabled
     PinMessageAllMembersEnabled
-    BannedMembersModel
     Encrypted
     CommunityTokensModel
-    PendingMemberRequestsModel
-    DeclinedMemberRequestsModel
     AmIBanned
     PubsubTopic
     PubsubTopicKey
@@ -110,14 +107,11 @@ QtObject:
       ModelRole.Access.int:"access",
       ModelRole.EnsOnly.int:"ensOnly",
       ModelRole.Muted.int:"muted",
-      ModelRole.MembersModel.int:"members",
+      ModelRole.MembersModel.int:"allMembers",
       ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
       ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
-      ModelRole.BannedMembersModel.int:"bannedMembers",
       ModelRole.Encrypted.int:"encrypted",
       ModelRole.CommunityTokensModel.int:"communityTokens",
-      ModelRole.PendingMemberRequestsModel.int:"pendingMemberRequests",
-      ModelRole.DeclinedMemberRequestsModel.int:"declinedMemberRequests",
       ModelRole.AmIBanned.int:"amIBanned",
       ModelRole.PubsubTopic.int:"pubsubTopic",
       ModelRole.PubsubTopicKey.int:"pubsubTopicKey",
@@ -194,16 +188,10 @@ QtObject:
       result = newQVariant(item.historyArchiveSupportEnabled)
     of ModelRole.PinMessageAllMembersEnabled:
       result = newQVariant(item.pinMessageAllMembersEnabled)
-    of ModelRole.BannedMembersModel:
-      result = newQVariant(item.bannedMembers)
     of ModelRole.Encrypted:
       result = newQVariant(item.encrypted)
     of ModelRole.CommunityTokensModel:
       result = newQVariant(item.communityTokens)
-    of ModelRole.PendingMemberRequestsModel:
-      result = newQVariant(item.pendingMemberRequests)
-    of ModelRole.DeclinedMemberRequestsModel:
-      result = newQVariant(item.declinedMemberRequests)
     of ModelRole.AmIBanned:
       result = newQVariant(item.amIBanned)
     of ModelRole.PubsubTopic:
