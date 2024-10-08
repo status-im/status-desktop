@@ -80,7 +80,8 @@ StatusScrollView {
             communityColor: model.color
             name: model.name
             description: model.description
-            members: model.members
+            // TODO fix this
+            members: model.allMembers
             activeUsers: model.activeMembers
             popularity: model.popularity
             categories: tagsJson.model
