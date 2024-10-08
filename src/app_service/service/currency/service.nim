@@ -97,7 +97,7 @@ QtObject:
   proc fetchAllCurrencyFormats(self: Service) =
     let arg = FetchAllCurrencyFormatsTaskArg(
       tptr: fetchAllCurrencyFormatsTaskArg,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAllCurrencyFormatsFetched",
     )
     self.threadpool.start(arg)

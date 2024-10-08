@@ -115,7 +115,7 @@ QtObject:
   proc asyncLoadDevices*(self: Service) =
     let arg = AsyncLoadDevicesTaskArg(
       tptr: asyncLoadDevicesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "asyncDevicesLoaded",
     )
     self.threadpool.start(arg)
@@ -244,7 +244,7 @@ QtObject:
 
     let arg = AsyncInputConnectionStringArg(
       tptr: asyncInputConnectionStringTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "inputConnectionStringForBootstrappingFinished",
       connectionString: connectionString,
       configJSON: $configJSON
@@ -366,7 +366,7 @@ QtObject:
 
     let arg = AsyncInputConnectionStringArg(
       tptr: asyncInputConnectionStringForImportingKeystoreTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "inputConnectionStringForImportingKeystoreFinished",
       connectionString: connectionString,
       configJSON: $configJSON

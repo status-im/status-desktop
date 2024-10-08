@@ -14,12 +14,12 @@ type
   WorkerThreadArg* = object # of RootObj
     chanSendToMain*: AsyncChannel[ThreadSafeString]
     chanRecvFromMain*: AsyncChannel[ThreadSafeString]
-    vptr*: ByteAddress
+    vptr*: uint
   MarathonWorker* = ref object of RootObj
     chanSendToWorker*: AsyncChannel[ThreadSafeString]
     chanRecvFromWorker*: AsyncChannel[ThreadSafeString]
     thread*: Thread[WorkerThreadArg]
-    vptr*: ByteAddress
+    vptr*: uint
 
 method name*(self: MarathonWorker): string {.base.} =
   # override this base method

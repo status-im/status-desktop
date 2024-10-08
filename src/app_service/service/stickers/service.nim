@@ -204,7 +204,7 @@ QtObject:
 
     let arg = ObtainMarketStickerPacksTaskArg(
       tptr: obtainMarketStickerPacksTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "setMarketStickerPacks",
       chainId: chainId,
     )
@@ -235,7 +235,7 @@ QtObject:
     try:
       let arg = AsyncGetRecentStickersTaskArg(
         tptr: asyncGetRecentStickersTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAsyncGetRecentStickersDone"
       )
       self.threadpool.start(arg)
@@ -259,7 +259,7 @@ QtObject:
     try:
       let arg = AsyncGetInstalledStickerPacksTaskArg(
         tptr: asyncGetInstalledStickerPacksTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAsyncGetInstalledStickerPacksDone"
       )
       self.threadpool.start(arg)
@@ -290,7 +290,7 @@ QtObject:
   proc installStickerPack*(self: Service, packId: string) =
     let arg = InstallStickerPackTaskArg(
       tptr: installStickerPackTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onStickerPackInstalled",
       chainId: self.networkService.getAppNetwork().chainId,
       packId: packId,
@@ -322,7 +322,7 @@ QtObject:
       preferredUsername: string) =
     let arg = AsyncSendStickerTaskArg(
       tptr: asyncSendStickerTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncSendStickerDone",
       chatId: chatId,
       replyTo: replyTo,

@@ -703,7 +703,7 @@ QtObject:
   proc getCommunityTokensDetailsAsync*(self: Service, communityId: string) =
     let arg = GetCommunityTokensDetailsArg(
       tptr: getCommunityTokensDetailsTaskArg,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onCommunityTokensDetailsLoaded",
       communityId: communityId
     )
@@ -731,7 +731,7 @@ QtObject:
   proc getAllCommunityTokensAsync*(self: Service) =
     let arg = GetAllCommunityTokensArg(
       tptr: getAllCommunityTokensTaskArg,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onGotAllCommunityTokens",
     )
     self.threadpool.start(arg)
@@ -854,7 +854,7 @@ QtObject:
       self.tempTokensAndAmounts = collectiblesAndAmounts
       let arg = AsyncGetMintFees(
         tptr: asyncGetMintFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAirdropFees",
         collectiblesAndAmounts: collectiblesAndAmounts,
         walletAddresses: walletAddresses,
@@ -887,7 +887,7 @@ QtObject:
         return
       let arg = AsyncGetDeployFeesArg(
         tptr: asyncGetDeployFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onDeployFees",
         chainId: chainId,
         addressFrom: accountAddress,
@@ -903,7 +903,7 @@ QtObject:
     try:
       let arg = AsyncSetSignerFeesArg(
         tptr: asyncSetSignerFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onSetSignerFees",
         chainId: chainId,
         contractAddress: contractAddress,
@@ -921,7 +921,7 @@ QtObject:
     try:
       let arg = AsyncDeployOwnerContractsFeesArg(
         tptr: asyncGetDeployOwnerContractsFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onDeployOwnerContractsFees",
         chainId: chainId,
         addressFrom: accountAddress,
@@ -994,7 +994,7 @@ QtObject:
         return
       let arg = AsyncGetRemoteBurnFees(
         tptr: asyncGetRemoteBurnFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onSelfDestructFees",
         chainId: contract.chainId,
         contractAddress: contract.address,
@@ -1072,7 +1072,7 @@ QtObject:
       let contract = self.findContractByUniqueId(contractUniqueKey)
       let arg = AsyncGetBurnFees(
         tptr: asyncGetBurnFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onBurnFees",
         chainId: contract.chainId,
         contractAddress: contract.address,
@@ -1268,7 +1268,7 @@ QtObject:
     if communityToken.tokenType == TokenType.ERC20:
       let arg = FetchAssetOwnersArg(
         tptr: fetchAssetOwnersTaskArg,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onCommunityTokenOwnersFetched",
         chainId: communityToken.chainId,
         contractAddress: communityToken.address,
@@ -1279,7 +1279,7 @@ QtObject:
     elif communityToken.tokenType == TokenType.ERC721:
       let arg = FetchCollectibleOwnersArg(
         tptr: fetchCollectibleOwnersTaskArg,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onCommunityTokenOwnersFetched",
         chainId: communityToken.chainId,
         contractAddress: communityToken.address,
@@ -1353,7 +1353,7 @@ QtObject:
   proc asyncGetOwnerTokenOwnerAddress*(self: Service, chainId: int, contractAddress: string) =
     let arg = GetOwnerTokenOwnerAddressArgs(
       tptr: getOwnerTokenOwnerAddressTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onGetOwnerTokenOwner",
       chainId: chainId,
       contractAddress: contractAddress

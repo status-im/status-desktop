@@ -69,7 +69,7 @@ QtObject:
     try:
       let arg = AsyncGetRecentGifsTaskArg(
         tptr: asyncGetRecentGifsTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAsyncGetRecentGifsDone"
       )
       self.threadpool.start(arg)
@@ -92,7 +92,7 @@ QtObject:
     try:
       let arg = AsyncGetFavoriteGifsTaskArg(
         tptr: asyncGetFavoriteGifsTask,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAsyncGetFavoriteGifsDone"
       )
       self.threadpool.start(arg)
@@ -118,7 +118,7 @@ QtObject:
       self.events.emit(SIGNAL_SEARCH_GIFS_STARTED, Args())
       let arg = AsyncTenorQueryArg(
         tptr: asyncTenorQuery,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAsyncTenorQueryDone",
         apiKeySet: self.apiKeySet,
         apiKey: TENOR_API_KEY_RESOLVED,
@@ -138,7 +138,7 @@ QtObject:
       self.events.emit(SIGNAL_LOAD_TRENDING_GIFS_STARTED, Args())
       let arg = AsyncTenorQueryArg(
         tptr: asyncTenorQuery,
-        vptr: cast[ByteAddress](self.vptr),
+        vptr: cast[uint](self.vptr),
         slot: "onAsyncTenorQueryDone",
         apiKeySet: self.apiKeySet,
         apiKey: TENOR_API_KEY_RESOLVED,

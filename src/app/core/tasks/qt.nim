@@ -6,7 +6,7 @@ import # status-desktop libs
 
 type
   QObjectTaskArg* = ref object of TaskArg
-    vptr*: ByteAddress
+    vptr*: uint
     slot*: string
 
 proc finish*[T](arg: QObjectTaskArg, payload: T) =
