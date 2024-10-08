@@ -72,3 +72,104 @@ community_tags = ['Activism', 'Art', 'Blockchain', 'Books & blogs', 'Career', 'C
                   'Lifestyle', 'Local', 'Love', 'Markets', 'Movies & TV', 'Music', 'NFT', 'NSFW', 'News', 'Non-profit',
                   'Org', 'Pets', 'Play', 'Podcast', 'Politics', 'Privacy', 'Product', 'Psyche', 'Security', 'Social',
                   'Software dev', 'Sports', 'Tech', 'Travel', 'Vehicles', 'Web3']
+
+permission_data = [
+        {
+            'checkbox_state': True,
+            'first_asset': 'Dai Stablecoin',
+            'second_asset': False,
+            'amount': '10',
+            'allowed_to': 'becomeMember',
+            'in_channel': False,
+            'asset_title': '10 DAI',
+            'second_asset_title': False,
+            'allowed_to_title': 'Become member'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': 'Ether',
+            'second_asset': False,
+            'amount': '1',
+            'allowed_to': 'becomeAdmin',
+            'in_channel': False,
+            'asset_title': '1 ETH',
+            'second_asset_title': False,
+            'allowed_to_title': 'Become an admin'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': 'Ether',
+            'second_asset': 'Dai Stablecoin',
+            'amount': '10',
+            'allowed_to': 'viewAndPost',
+            'in_channel': '#general',
+            'asset_title': '10 ETH',
+            'second_asset_title': '10 DAI',
+            'allowed_to_title': 'View and post'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': 'Ether',
+            'second_asset': 'Dai Stablecoin',
+            'amount': '10',
+            'allowed_to': 'viewOnly',
+            'in_channel': '#general',
+            'asset_title': '10 ETH',
+            'second_asset_title': '10 DAI',
+            'allowed_to_title': 'View only'
+        },
+        {
+            'checkbox_state': False,
+            'first_asset': False,
+            'second_asset': False,
+            'amount': False,
+            'allowed_to': 'becomeAdmin',
+            'in_channel': False,
+            'asset_title': False,
+            'second_asset_title': False,
+            'allowed_to_title': 'Become an admin'
+        }
+    ]
+
+permission_data_member = [
+        {
+            'checkbox_state': True,
+            'first_asset': 'Dai Stablecoin',
+            'amount': '1',
+            'allowed_to': 'becomeMember',
+            'asset_title': '1 DAI',
+            'allowed_to_title': 'Become member'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': 'Aragon',
+            'amount': '2',
+            'allowed_to': 'becomeMember',
+            'asset_title': '2 ANT',
+            'allowed_to_title': 'Become member'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': '1inch',
+            'amount': '3',
+            'allowed_to': 'becomeMember',
+            'asset_title': '3 1INCH',
+            'allowed_to_title': 'Become member'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': 'ABYSS',
+            'amount': '4',
+            'allowed_to': 'becomeMember',
+            'asset_title': '4 ABYSS',
+            'allowed_to_title': 'Become member'
+        },
+        {
+            'checkbox_state': True,
+            'first_asset': 'Bytom',
+            'amount': '5',
+            'allowed_to': 'becomeMember',
+            'asset_title': '5 BTM',
+            'allowed_to_title': 'Become member'
+        }
+    ]

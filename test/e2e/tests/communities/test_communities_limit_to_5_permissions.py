@@ -5,6 +5,7 @@ from allure_commons._allure import step
 import configs
 import constants
 import driver
+from constants import permission_data_member
 from constants.community_settings import LimitWarnings
 from gui.main_window import MainWindow
 from . import marks
@@ -17,6 +18,8 @@ pytestmark = marks
 @pytest.mark.case(739309)
 @pytest.mark.parametrize('params', [constants.community_params])
 def test_add_5_member_role_permissions(main_screen: MainWindow, params):
+
+    permission_data = permission_data_member
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
@@ -24,49 +27,6 @@ def test_add_5_member_role_permissions(main_screen: MainWindow, params):
     main_screen.create_community(params['name'], params['description'],
                                  params['intro'], params['outro'],
                                  params['logo']['fp'], params['banner']['fp'])
-
-    permission_data = [
-        {
-            'checkbox_state': True,
-            'first_asset': 'Dai Stablecoin',
-            'amount': '1',
-            'allowed_to': 'becomeMember',
-            'asset_title': '1 DAI',
-            'allowed_to_title': 'Become member'
-        },
-        {
-            'checkbox_state': True,
-            'first_asset': 'Aragon',
-            'amount': '2',
-            'allowed_to': 'becomeMember',
-            'asset_title': '2 ANT',
-            'allowed_to_title': 'Become member'
-        },
-        {
-            'checkbox_state': True,
-            'first_asset': '1inch',
-            'amount': '3',
-            'allowed_to': 'becomeMember',
-            'asset_title': '3 1INCH',
-            'allowed_to_title': 'Become member'
-        },
-        {
-            'checkbox_state': True,
-            'first_asset': 'ABYSS',
-            'amount': '4',
-            'allowed_to': 'becomeMember',
-            'asset_title': '4 ABYSS',
-            'allowed_to_title': 'Become member'
-        },
-        {
-            'checkbox_state': True,
-            'first_asset': 'Bytom',
-            'amount': '5',
-            'allowed_to': 'becomeMember',
-            'asset_title': '5 BTM',
-            'allowed_to_title': 'Become member'
-        }
-    ]
 
     with step('Open add new permission page'):
         community_screen = main_screen.left_panel.select_community(params['name'])
