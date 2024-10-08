@@ -942,10 +942,6 @@ QtObject {
         return getElidedPk(compressedPk)
     }
 
-    function plainText(text) {
-        return globalUtilsInst.plainText(text)
-    }
-
     function parseContactUrl(link) {
         let index = link.lastIndexOf("/u/")
 

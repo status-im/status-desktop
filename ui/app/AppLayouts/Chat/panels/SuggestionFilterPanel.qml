@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import utils 1.0
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 Item {
     id: suggestionsPanelRoot
@@ -95,7 +95,7 @@ Item {
             return
         }
 
-        return Utils.plainText(this.filter)
+        return SQUtils.StringUtils.plainText(this.filter)
     }
 
     function shouldShowAll(filter) {
