@@ -382,3 +382,8 @@ QtObject:
 
   proc stopTokenHoldersManagement*(self: View) {.slot.} =
     self.delegate.stopTokenHoldersManagement()
+
+  proc showTransactionModal*(self: View, txType: int, asset: string, amount: string, address: string, chainId: int, toAsset: string) {.signal.}
+  proc emitShowTransactionModal*(self: View, txType: int, asset: string, amount: string, address: string, chainId: int, toAsset: string) =
+    self.showTransactionModal(txType, asset, amount, address, chainId, toAsset)
+    

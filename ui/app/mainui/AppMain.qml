@@ -381,6 +381,41 @@ Item {
                 ""
             )
         }
+
+        function onShowTransactionModal(txType, asset, amount, address, chainId, toAsset) {
+            console.log("=========== onShowTransactionModal txType:", txType, "asset:", asset, "amount:", amount, "address:", address, "chainId:", chainId, "toAsset:", toAsset)
+
+            if (txType === Constants.SendType.Swap) {
+                // TODO_ES implement
+                return
+            }
+
+            sendModal.preSelectedSendType = txType
+            sendModal.preDefinedAmountToSend = amount
+            sendModal.preSelectedHoldingID = asset
+            switch(txType) {
+            case Constants.SendType.ERC721Transfer:
+                sendModal.preSelectedHoldingType = Constants.TokenType.ERC721
+                break
+            case Constants.SendType.ERC1155Transfer:
+                sendModal.preSelectedHoldingType = Constants.TokenType.ERC1155
+                break
+            case Constants.SendType.Transfer:
+                sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
+                break
+            case Constants.SendType.ENSRegister: // TODO_ES test ens
+            case Constants.SendType.ENSSetPubKey:
+            case Constants.SendType.ENSRelease:
+                sendModal.preSelectedHoldingType = Constants.TokenType.ENS
+                break
+            case Constants.SendType.StickersBuy:
+                // TOOD_ES handle
+                break
+            default:
+                break
+            }
+            sendModal.open(address)
+        }
     }
 
     QtObject {

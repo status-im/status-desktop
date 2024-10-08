@@ -3,6 +3,7 @@ import NimQml, Tables, json, sequtils, strutils, stint, chronicles
 import ./io_interface, ./network_route_model, ./network_route_item, ./suggested_route_item, ./transaction_routes
 import app_service/service/network/service as network_service
 import app_service/service/transaction/dto as transaction_dto
+import app_service/service/shared_urls/dto/url_data as shared_urls_dto
 
 import app_service/common/utils as common_utils
 import app_service/service/eth/utils as eth_utils
@@ -294,6 +295,16 @@ QtObject:
         parseChainIds(disabledFromChainIDs),
         parseChainIds(disabledToChainIDs),
         lockedInAmountsTable)
+
+  proc shareTransactionURL*(self: View, txType: int, asset: string, amount: string, address: string, chainId: int, toAsset: string): string {.slot.} =
+    return self.delegate.shareTransactionURL(shared_urls_dto.TransactionURLDataDto(
+      txType: txType,
+      asset: asset,
+      amount: amount,
+      address: address,
+      chainId: chainId,
+      toAsset: toAsset
+    ))
 
   proc transactionSendingComplete*(self: View, txHash: string, status: string) {.signal.}
   proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, status: string) =

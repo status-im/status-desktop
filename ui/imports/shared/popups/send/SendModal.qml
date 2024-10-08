@@ -486,6 +486,19 @@ StatusDialog {
                             amountToSend.forceActiveFocus()
                         }
                     }
+
+                    ShareButton {
+                        id: shareButton
+
+                        onClicked: {
+                            let asset = ""
+                            if (!!d.selectedHolding) { 
+                                asset = d.isCollectiblesTransfer ? d.selectedHolding.symbol : d.selectedHolding.tokensKey
+                            }
+                            const url = popup.store.getShareTransactionUrl(store.sendType, asset, amountToSend.asNumber, popup.store.selectedSenderAccountAddress, 0)
+                            ClipboardUtils.setText(url)
+                        }
+                    }
                 }
                 RowLayout {
                     visible: d.isSelectedHoldingValidAsset && !d.isCollectiblesTransfer

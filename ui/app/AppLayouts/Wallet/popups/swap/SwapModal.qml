@@ -4,6 +4,7 @@ import QtQml.Models 2.15
 
 import utils 1.0
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
@@ -145,6 +146,19 @@ StatusDialog {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                         text: qsTr("Swap")
+                    }
+                    ShareButton {
+                        id: shareButton
+
+                        onClicked: {
+                            const url = root.swapAdaptor.getShareTransactionUrl(Constants.SendType.Swap,
+                                                                                root.swapInputParamsForm.fromTokensKey,
+                                                                                root.swapInputParamsForm.fromTokenAmount,
+                                                                                root.swapInputParamsForm.selectedAccountAddress,
+                                                                                root.swapInputParamsForm.selectedNetworkChainId,
+                                                                                root.swapInputParamsForm.toTokensKey)
+                            ClipboardUtils.setText(url)
+                        }
                     }
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter

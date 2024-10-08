@@ -1646,6 +1646,8 @@ method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
     self.onStatusUrlRequested(StatusUrlAction.DisplayUserProfile, communityId="", channelId="", url="",
       urlData.contact.publicKey, urlData.community.shard)
     return
+  if urlData.transaction.txType >= 0:
+    self.view.emitShowTransactionModal(urlData.transaction.txType, urlData.transaction.asset, urlData.transaction.amount, urlData.transaction.address, urlData.transaction.chainId, urlData.transaction.toAsset)
 
 method onDeactivateChatLoader*[T](self: Module[T], sectionId: string, chatId: string) =
   if (sectionId.len > 0 and self.chatSectionModules.contains(sectionId)):

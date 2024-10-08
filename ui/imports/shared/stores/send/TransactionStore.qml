@@ -165,6 +165,10 @@ QtObject {
         }
     }
 
+    function getShareTransactionUrl(txType, asset, amount, address, chainId) {
+        return walletSectionSendInst.shareTransactionURL(txType, asset, amount, address, chainId, "")
+    }
+
     function getShortChainIds(chainShortNames) {
         return walletSectionSendInst.getShortChainIds(chainShortNames)
     }
