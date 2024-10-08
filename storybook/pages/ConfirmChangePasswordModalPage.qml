@@ -6,16 +6,8 @@ import AppLayouts.Profile.popups 1.0
 
 import Storybook 1.0
 
-import utils 1.0
-
 SplitView {
-    id: root
-
     PopupBackground {
-        id: popupBg
-
-        property var popupIntance: null
-
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
@@ -23,38 +15,21 @@ SplitView {
             id: reopenButton
             anchors.centerIn: parent
             text: "Reopen"
-            enabled: globalUtilsMock.ready
 
             onClicked: modal.open()
         }
 
-        QtObject {
-            id: globalUtilsMock
-
-            property bool ready: false
-            property var globalUtils: QtObject {
-                function restartApplication() {
-                    if (popupBg.popupIntance)
-                        popupBg.popupIntance.close()
-                }
-            }
-            Component.onCompleted: {
-                Utils.globalUtilsInst = globalUtilsMock.globalUtils
-                globalUtilsMock.ready = true
-            }
-        }
-
         ConfirmChangePasswordModal {
             id: modal
+
             visible: true
-            onChangePasswordRequested: {
-                passwordChangedTimer.start()
-            }
-            Component.onCompleted: {
-                popupBg.popupIntance = modal
-            }
+            modal: false
+
+            onChangePasswordRequested: passwordChangedTimer.start()
+
             Timer {
                 id: passwordChangedTimer
+
                 interval: 2000
                 repeat: false
                 onTriggered: {

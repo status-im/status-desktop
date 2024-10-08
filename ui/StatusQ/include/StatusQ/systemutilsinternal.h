@@ -9,4 +9,5 @@ public:
     explicit SystemUtilsInternal(QObject *parent = nullptr);
 
     Q_INVOKABLE QString qtRuntimeVersion() const;
+    Q_INVOKABLE void restartApplication() const;
 };
