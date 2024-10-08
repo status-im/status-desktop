@@ -455,7 +455,7 @@ Item {
 
         function onOpenLink(link: string) {
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
-            link = appMain.rootStore.plainText(link)
+            link = SQUtils.StringUtils.plainText(link)
             Qt.openUrlExternally(link)
         }
 

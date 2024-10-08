@@ -695,10 +695,6 @@ Item {
     QtObject {
         id: globalUtilsMock
 
-        function plainText(htmlText) {
-            return TextUtils.htmlToPlainText(htmlText)
-        }
-
         function isCompressedPubKey(publicKey) {
             return false
         }

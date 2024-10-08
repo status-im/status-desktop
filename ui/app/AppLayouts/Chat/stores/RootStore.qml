@@ -233,7 +233,7 @@ QtObject {
     }
 
     function cleanMessageText(formattedMessage) {
-        const text = globalUtilsInst.plainText(StatusQUtils.Emoji.deparse(formattedMessage))
+        const text = StatusQUtils.StringUtils.plainText(StatusQUtils.Emoji.deparse(formattedMessage))
         return interpretMessage(text)
     }
 
@@ -425,10 +425,6 @@ QtObject {
 
     function generateAlias(pk) {
         return globalUtilsInst.generateAlias(pk);
-    }
-
-    function plainText(text) {
-        return globalUtilsInst.plainText(text)
     }
 
     function removeCommunityChat(chatId) {
