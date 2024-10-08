@@ -1,6 +1,7 @@
-import QtQuick 2.0
-import QtTest 1.0
+import QtQuick 2.15
+import QtTest 1.15
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
@@ -24,7 +25,7 @@ Item {
 
         property StatusInput testControl: null
 
-        name: "RegexValidationTest"
+        name: "StatusInput-RegexValidationTest"
 
         when: windowShown
 
@@ -110,7 +111,7 @@ Item {
 
         property StatusInput testControl: null
 
-        name: "BindedValuesTest"
+        name: "StatusInput-BindedValuesTest"
         when: windowShown
 
         property QtObject dataObject: QtObject {
@@ -166,6 +167,35 @@ Item {
             verify(!testControl.valid, "Expected valid input")
 
             verify(qtOuput.qtOuput().length === 0, `No output expected. Found:\n"${qtOuput.qtOuput()}"\n`)
+        }
+
+        // regression test for https://github.com/status-im/status-desktop/issues/16479
+        function test_paste_text() {
+            verify(!!testControl)
+
+            const textToPaste = "1234567890abcdef" // 16 chars
+            ClipboardUtils.setText(textToPaste)
+
+            // clear
+            testControl.input.edit.clear()
+            testControl.charLimit = 0
+
+            keySequence(StandardKey.Paste)
+
+            // verify we can paste the full text
+            compare(testControl.input.edit.length, textToPaste.length)
+            compare(testControl.input.edit.text, textToPaste)
+            compare(testControl.input.dirty, true)
+
+            // clear again, and set a lower limit
+            testControl.input.edit.clear()
+            testControl.charLimit = 10
+
+            keySequence(StandardKey.Paste)
+
+            // verify we can paste (some) text and it gets truncated to the charLimit
+            compare(testControl.input.edit.length, testControl.charLimit)
+            compare(testControl.input.edit.text, textToPaste.slice(0, testControl.charLimit))
         }
     }
 

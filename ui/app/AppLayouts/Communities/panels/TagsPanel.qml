@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -23,6 +23,7 @@ StatusScrollView {
     property var rightButtons: StatusButton {
         objectName: "confirmCommunityTagsButton"
         text: qsTr("Confirm Community Tags")
+        enabled: d.countSelectedTags > 0
         onClicked: {
             var selectedTags = [];
             for (let i = 0; i < d.tagsModel.count; ++i) {
@@ -39,12 +40,12 @@ StatusScrollView {
     function updateSelectedTags() {
         var array = selectedTags.length ? JSON.parse(selectedTags) : [];
 
-        d.cntSelectedTags = 0;
+        d.countSelectedTags = 0;
         for (let i = 0; i < d.tagsModel.count; ++i) {
             let item = d.tagsModel.get(i);
-            if (array.indexOf(item.name) != -1) {
+            if (array.indexOf(item.name) !== -1) {
                 item.selected = true;
-                d.cntSelectedTags++;
+                d.countSelectedTags++;
             } else {
                 item.selected = false;
             }
@@ -55,7 +56,7 @@ StatusScrollView {
     onTagsChanged: {
         var obj = JSON.parse(tags);
 
-        d.cntSelectedTags = 0;
+        d.countSelectedTags = 0;
         d.tagsModel.clear();
         for (const key of Object.keys(obj)) {
             d.tagsModel.append({ name: key, emoji: obj[key], selected: false });
@@ -70,7 +71,7 @@ StatusScrollView {
     QtObject {
         id: d
 
-        property int cntSelectedTags: 0
+        property int countSelectedTags: 0
         property ListModel tagsModel: ListModel {}
     }
 
@@ -83,7 +84,6 @@ StatusScrollView {
             id: tagsFilter
             label: qsTr("Select tags that will fit your Community")
             labelPadding: Style.current.bigPadding
-            font.pixelSize: 15
             input.asset.name: "search"
             placeholderText: qsTr("Search tags")
             Layout.fillWidth: true
@@ -96,9 +96,9 @@ StatusScrollView {
             StatusCommunityTags {
                 filterString: tagsFilter.text
                 model: d.tagsModel
-                enabled: d.cntSelectedTags < maxSelectedTags
+                enabled: d.countSelectedTags < maxSelectedTags
                 onClicked: {
-                    d.cntSelectedTags++;
+                    d.countSelectedTags++;
                     item.selected = true;
                 }
                 Layout.fillWidth: true
@@ -112,12 +112,11 @@ StatusScrollView {
         RowLayout {
             StatusBaseText {
                 text: qsTr("Selected tags")
-                font.pixelSize: 15
                 Layout.fillWidth: true
             }
 
             StatusBaseText {
-                text: qsTr("%1 / %2").arg(d.cntSelectedTags).arg(maxSelectedTags)
+                text: qsTr("%1 / %2").arg(d.countSelectedTags).arg(maxSelectedTags)
                 color: Theme.palette.baseColor1
                 font.pixelSize: 13
             }
@@ -127,10 +126,21 @@ StatusScrollView {
             model: d.tagsModel
             mode: StatusCommunityTags.ShowSelectedOnly
             onClicked: {
-                d.cntSelectedTags--;
+                d.countSelectedTags--;
                 item.selected = false;
             }
             Layout.fillWidth: true
+            Layout.bottomMargin: Style.current.padding
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.bottomMargin: Style.current.padding
+            text: qsTr("No tags selected yet")
+            color: Theme.palette.baseColor1
+            visible: d.countSelectedTags === 0
+            font.pixelSize: 13
+            horizontalAlignment: Qt.AlignHCenter
         }
     }
 }

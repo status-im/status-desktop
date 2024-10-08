@@ -8,8 +8,8 @@ StatusValidator {
 
     errorMessage: {
         minLength === 1 ?
-            "Please enter a value" :
-            `The value must be at least ${minLength} characters.`
+            qsTr("Please enter a value") :
+            qsTr("The value must be at least %n character(s).", "", minLength)
     }
 
     validate: function (value) {
@@ -19,4 +19,3 @@ StatusValidator {
         }
     }
 }
-

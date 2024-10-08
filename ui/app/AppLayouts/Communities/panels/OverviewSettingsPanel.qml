@@ -173,7 +173,9 @@ StackLayout {
 
                 Connections {
                     target: root
-                    onCommunityIdChanged: reset()
+                    function onCommunityIdChanged() {
+                        reset()
+                    }
                 }
             }
 

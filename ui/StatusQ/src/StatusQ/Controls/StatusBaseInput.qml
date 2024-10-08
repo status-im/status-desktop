@@ -419,7 +419,7 @@ Item {
                                 let utf8Length = Utils.encodeUtf8(text).length
                                 if (utf8Length > root.maximumLength) {
                                     var cursor = cursorPosition
-                                    text = previousText
+                                    text = text.slice(0, maximumLength)
                                     if (cursor > edit.length) {
                                         cursorPosition = edit.length
                                     } else {

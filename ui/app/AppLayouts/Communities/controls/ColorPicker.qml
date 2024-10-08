@@ -19,8 +19,6 @@ ColumnLayout {
 
     spacing: 8
 
-    implicitHeight: childrenRect.height
-
     StatusBaseText {
         Layout.fillWidth: true
         text: root.title
@@ -35,6 +33,9 @@ ColumnLayout {
         bgColor: root.color
         contentColor: Theme.palette.white
         text: root.color.toString()
+        font.weight: Font.Normal
+        icon.width: 24
+        icon.height: 24
         onClicked: root.pick()
 
         onTextChanged: {

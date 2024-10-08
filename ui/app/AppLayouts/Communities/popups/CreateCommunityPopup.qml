@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
@@ -30,6 +30,8 @@ StatusStackModal {
                                   qsTr("Create New Community")
     width: 640
 
+    closePolicy: Popup.NoAutoClose // explicit [x] click needed, or via the `close()` method
+
     nextButton: StatusButton {
         objectName: "createCommunityNextBtn"
         font.weight: Font.Medium
@@ -55,8 +57,6 @@ StatusStackModal {
             if (typeof (nextAction) == "function") {
                 return nextAction()
             }
-            if (!root.isDiscordImport)
-                d.createCommunity()
         }
     }
 
@@ -363,7 +363,12 @@ StatusStackModal {
         StatusScrollView {
             id: generalView
             contentWidth: availableWidth
-            readonly property bool canGoNext: generalViewLayout.isNameValid && generalViewLayout.isDescriptionValid && (root.isDevBuild || (generalViewLayout.isLogoSelected && generalViewLayout.isBannerSelected))
+
+            readonly property var nextAction: () => {
+                if (generalViewLayout.validate(root.isDevBuild)) {
+                    root.currentIndex++
+                }
+            }
 
             padding: 0
             clip: false
@@ -389,8 +394,20 @@ StatusStackModal {
 
         ColumnLayout {
             id: introOutroMessageView
-            spacing: 11
-            readonly property bool canGoNext: introMessageInput.valid && outroMessageInput.valid
+            spacing: 16
+
+            readonly property var nextAction: () => {
+                if (!introMessageInput.validate(true))
+                    introMessageInput.input.dirty = true
+                if (!outroMessageInput.validate(true))
+                    outroMessageInput.input.dirty = true
+                if (introMessageInput.valid && outroMessageInput.valid) {
+                    if (root.isDiscordImport)
+                        root.currentIndex++
+                    else
+                        d.createCommunity()
+                }
+            }
 
             IntroMessageInput {
                 id: introMessageInput
