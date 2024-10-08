@@ -862,7 +862,7 @@ QtObject {
                 selectMultiple: false
                 modality: Qt.NonModal
                 onAccepted: {
-                    Utils.downloadImageByUrl(imageSource, fileUrl)
+                    SystemUtils.downloadImageByUrl(imageSource, fileUrl)
                     destroy()
                 }
                 onRejected: {
