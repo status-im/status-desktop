@@ -362,6 +362,8 @@ Item {
                 verify(!!headerContentItemEmoji)
                 compare(headerContentItemEmoji.asset.emoji, swapAdaptor.nonWatchAccounts.get(i).emoji)
 
+                waitForRendering(amountToSendInput)
+
                 verify(amountToSendInput.cursorVisible)
             }
             closeAndVerfyModal()
@@ -1398,6 +1400,7 @@ Item {
             launchAndVerfyModal()
             waitForRendering(payPanel)
             waitForRendering(receivePanel)
+            waitForRendering(payAmountToSendInput)
 
             let paytokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
             verify(!!paytokenSelectorContentItemText)

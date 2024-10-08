@@ -397,10 +397,12 @@ StatusDialog {
                                                                                   : Constants.authenticationIconByType[root.loginType]
                     text: {
                         if(root.swapAdaptor.validSwapProposalReceived) {
-                            if (root.swapAdaptor.approvalPending) {
-                                return qsTr("Approving %1").arg(fromTokenSymbol)
-                            } else if(root.swapAdaptor.swapOutputData.approvalNeeded) {
-                                return qsTr("Approve %1").arg(fromTokenSymbol)
+                            if(root.swapAdaptor.swapOutputData.approvalNeeded) {
+                                if (root.swapAdaptor.approvalPending) {
+                                    return qsTr("Approving %1").arg(fromTokenSymbol)
+                                } else if(!root.swapAdaptor.approvalSuccessful) {
+                                    return qsTr("Approve %1").arg(fromTokenSymbol)
+                                }
                             }
                         }
                         return qsTr("Swap")
@@ -416,7 +418,7 @@ StatusDialog {
                     onClicked: {
                         if (root.swapAdaptor.validSwapProposalReceived) {
                             d.addMetricsEvent("next button pressed")
-                            if (root.swapAdaptor.swapOutputData.approvalNeeded)
+                            if (root.swapAdaptor.swapOutputData.approvalNeeded && !root.swapAdaptor.approvalSuccessful)
                                 Global.openPopup(swapApproveModalComponent)
                             else
                                 Global.openPopup(swapSignModalComponent)
@@ -482,6 +484,9 @@ StatusDialog {
         id: swapSignModalComponent
         SwapSignModal {
             destroyOnClose: true
+
+            title: root.swapAdaptor.swapOutputData.approvalNeeded && root.swapAdaptor.approvalSuccessful? qsTr("Swap") : qsTr("Sign Swap")
+            signButtonText: root.swapAdaptor.swapOutputData.approvalNeeded && root.swapAdaptor.approvalSuccessful? qsTr("Swap") : qsTr("Sign")
 
             formatBigNumber: (number, symbol, noSymbolOption) => root.swapAdaptor.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 

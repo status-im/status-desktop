@@ -26,17 +26,13 @@ const authenticationCanceled* = "authenticationCanceled"
 
 # Shouldn't be public ever, use only within this module.
 type TmpSendTransactionDetails = object
-  fromAddr: string
   fromAddrPath: string
-  toAddr: string
-  assetKey: string
-  toAssetKey: string
-  paths: seq[TransactionPathDto]
   uuid: string
   sendType: SendType
+  pin: string
+  password: string
+  txHashBeingProcessed: string
   resolvedSignatures: TransactionsSignatures
-  tokenName: string
-  isOwnerToken: bool
   slippagePercentage: float
 
 type
@@ -48,9 +44,7 @@ type
     controller: controller.Controller
     moduleLoaded: bool
     tmpSendTransactionDetails: TmpSendTransactionDetails
-    tmpPin: string
-    tmpPassword: string
-    tmpTxHashBeingProcessed: string
+    tmpKeepPinPass: bool
 
 # Forward declaration
 method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount
@@ -79,12 +73,15 @@ method delete*(self: Module) =
   self.view.delete
   self.controller.delete
 
-proc clearTmpData(self: Module) =
-  self.tmpPin = ""
-  self.tmpPassword = ""
-  self.tmpTxHashBeingProcessed = ""
+proc clearTmpData(self: Module, keepPinPass = false) =
+  if keepPinPass:
+    self.tmpSendTransactionDetails = TmpSendTransactionDetails(
+      sendType: self.tmpSendTransactionDetails.sendType,
+      pin: self.tmpSendTransactionDetails.pin,
+      password: self.tmpSendTransactionDetails.password
+    )
+    return
   self.tmpSendTransactionDetails = TmpSendTransactionDetails()
-  writeStackTrace()
 
 proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): NetworkRouteItem =
   result = initNetworkRouteItem(
@@ -183,10 +180,21 @@ method getNetworkItem*(self: Module, chainId: int): network_service_item.Network
     return nil
   return networks[0]
 
-method authenticateAndTransferV2*(self: Module, fromAddr: string, uuid: string,  slippagePercentage: float) =
+proc buildTransactionsFromRoute(self: Module) =
+  let err = self.controller.buildTransactionsFromRoute(self.tmpSendTransactionDetails.uuid, self.tmpSendTransactionDetails.slippagePercentage)
+  if err.len > 0:
+    self.transactionWasSent(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error = err)
+    self.clearTmpData()
+
+method authenticateAndTransfer*(self: Module, fromAddr: string, uuid: string,  slippagePercentage: float) =
   self.tmpSendTransactionDetails.uuid = uuid
   self.tmpSendTransactionDetails.slippagePercentage = slippagePercentage
   self.tmpSendTransactionDetails.resolvedSignatures.clear()
+
+  if self.tmpKeepPinPass:
+    # no need to authenticate again, just send a swap tx
+    self.buildTransactionsFromRoute()
+    return
 
   let kp = self.controller.getKeypairByAccountAddress(fromAddr)
   if kp.migratedToKeycard():
@@ -203,12 +211,9 @@ method onUserAuthenticated*(self: Module, password: string, pin: string) =
     self.transactionWasSent(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error = authenticationCanceled)
     self.clearTmpData()
   else:
-    self.tmpPin = pin
-    self.tmpPassword = password
-    let err = self.controller.buildTransactionsFromRoute(self.tmpSendTransactionDetails.uuid, self.tmpSendTransactionDetails.slippagePercentage)
-    if err.len > 0:
-      self.transactionWasSent(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error = err)
-      self.clearTmpData()
+    self.tmpSendTransactionDetails.pin = pin
+    self.tmpSendTransactionDetails.password = password
+    self.buildTransactionsFromRoute()
 
 proc sendSignedTransactions*(self: Module) =
   try:
@@ -226,17 +231,17 @@ proc sendSignedTransactions*(self: Module) =
     self.clearTmpData()
 
 proc signOnKeycard(self: Module) =
-  self.tmpTxHashBeingProcessed = ""
+  self.tmpSendTransactionDetails.txHashBeingProcessed = ""
   for h, (r, s, v) in self.tmpSendTransactionDetails.resolvedSignatures.pairs:
     if r.len != 0 and s.len != 0 and v.len != 0:
       continue
-    self.tmpTxHashBeingProcessed = h
-    var txForKcFlow = self.tmpTxHashBeingProcessed
+    self.tmpSendTransactionDetails.txHashBeingProcessed = h
+    var txForKcFlow = self.tmpSendTransactionDetails.txHashBeingProcessed
     if txForKcFlow.startsWith("0x"):
       txForKcFlow = txForKcFlow[2..^1]
-    self.controller.runSignFlow(self.tmpPin, self.tmpSendTransactionDetails.fromAddrPath, txForKcFlow)
+    self.controller.runSignFlow(self.tmpSendTransactionDetails.pin, self.tmpSendTransactionDetails.fromAddrPath, txForKcFlow)
     break
-  if self.tmpTxHashBeingProcessed.len == 0:
+  if self.tmpSendTransactionDetails.txHashBeingProcessed.len == 0:
     self.sendSignedTransactions()
     self.clearTmpData()
 
@@ -265,7 +270,7 @@ method prepareSignaturesForTransactions*(self:Module, txForSigning: RouterTransa
         self.tmpSendTransactionDetails.resolvedSignatures[h] = ("", "", "")
       self.signOnKeycard()
     else:
-      let finalPassword = hashPassword(self.tmpPassword)
+      let finalPassword = hashPassword(self.tmpSendTransactionDetails.password)
       for h in txForSigning.signingDetails.hashes:
         self.tmpSendTransactionDetails.resolvedSignatures[h] = ("", "", "")
         var
@@ -288,19 +293,18 @@ method onTransactionSigned*(self: Module, keycardFlowType: string, keycardEvent:
     self.transactionWasSent(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error = err)
     self.clearTmpData()
     return
-  self.tmpSendTransactionDetails.resolvedSignatures[self.tmpTxHashBeingProcessed] = (keycardEvent.txSignature.r,
+  self.tmpSendTransactionDetails.resolvedSignatures[self.tmpSendTransactionDetails.txHashBeingProcessed] = (keycardEvent.txSignature.r,
     keycardEvent.txSignature.s, keycardEvent.txSignature.v)
   self.signOnKeycard()
 
 method transactionWasSent*(self: Module, uuid: string, chainId: int = 0, approvalTx: bool = false, txHash: string = "", error: string = "") =
+  self.tmpKeepPinPass = approvalTx # need to automate the swap flow with approval
   if txHash.len == 0:
     self.view.sendTransactionSentSignal(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error)
     return
   self.view.sendTransactionSentSignal(uuid, chainId, approvalTx, txHash, error)
 
 method suggestedRoutesReady*(self: Module, uuid: string, suggestedRoutes: SuggestedRoutesDto, errCode: string, errDescription: string) =
-  self.tmpSendTransactionDetails.paths = suggestedRoutes.best
-  self.tmpSendTransactionDetails.slippagePercentage = 0
   let paths = suggestedRoutes.best.map(x => self.convertTransactionPathDtoToSuggestedRouteItem(x))
   let suggestedRouteModel = newSuggestedRouteModel()
   suggestedRouteModel.setItems(paths)
@@ -332,6 +336,7 @@ method suggestedRoutes*(self: Module,
   disabledToChainIDs: seq[int] = @[],
   lockedInAmounts: Table[string, string] = initTable[string, string](),
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
+  self.tmpSendTransactionDetails.sendType = sendType
   self.controller.suggestedRoutes(
     uuid,
     sendType,
@@ -403,4 +408,5 @@ method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: 
   return editedText
 
 method transactionSendingComplete*(self: Module, txHash: string, status: string) =
+  self.clearTmpData(self.tmpKeepPinPass)
   self.view.sendtransactionSendingCompleteSignal(txHash, status)
