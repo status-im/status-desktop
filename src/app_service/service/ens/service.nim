@@ -129,7 +129,6 @@ QtObject:
         break
 
     if ensDto.username.len == 0:
-      error "Error updating ens username status", message = "no ens username found for transactionHash: " & transactionHash
       return
 
     let key = makeKey(ensDto.username, chainId)

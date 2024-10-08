@@ -87,8 +87,6 @@ QObject {
     readonly property bool isEthBalanceInsufficient: d.isEthBalanceInsufficient
     readonly property bool isTokenBalanceInsufficient: d.isTokenBalanceInsufficient
 
-    signal suggestedRoutesReady()
-
     QtObject {
         id: d
 
@@ -252,11 +250,10 @@ QObject {
                 root.swapOutputData.hasError = true
             }
             root.swapOutputData.hasError = root.swapOutputData.hasError || root.swapOutputData.errCode !== ""
-            root.suggestedRoutesReady()
         }
 
         function onTransactionSent(uuid, chainId, approvalTx, txHash, error) {
-            if(root.swapOutputData.approvalNeeded) {
+            if(root.swapOutputData.approvalNeeded && !root.approvalSuccessful) {
                 if (uuid !== d.uuid || !!error) {
                     root.approvalPending = false
                     root.approvalSuccessful = false
@@ -272,10 +269,6 @@ QObject {
                 root.approvalPending = false
                 root.approvalSuccessful = status == "Success" // TODO: make a all tx statuses Constants (success, pending, failed)
                 d.txHash = ""
-
-                if (root.approvalSuccessful) {
-                    root.swapOutputData.approvalNeeded = false
-                }
             }
         }
     }
@@ -335,14 +328,10 @@ QObject {
 
     function sendApproveTx() {
         root.approvalPending = true
-        const accountAddress = root.swapFormData.selectedAccountAddress
-
         root.swapStore.authenticateAndTransfer(d.uuid, "")
     }
 
     function sendSwapTx() {
-        const accountAddress = root.swapFormData.selectedAccountAddress
-
         root.swapStore.authenticateAndTransfer(d.uuid, root.swapFormData.selectedSlippage)
     }
 }
