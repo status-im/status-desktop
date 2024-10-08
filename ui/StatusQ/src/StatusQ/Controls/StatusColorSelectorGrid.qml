@@ -1,9 +1,7 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-
-import "./"
 
 Column {
     id: root
@@ -27,7 +25,6 @@ Column {
         id: title
         width: parent.width
         verticalAlignment: Text.AlignVCenter
-        font.pixelSize: 15
         color: Theme.palette.baseColor1
     }
 

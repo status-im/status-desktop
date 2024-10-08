@@ -10,7 +10,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 /*!
-  /brief Image icon and ulopad text hints for banner and logo
+  /brief Image icon and upload text hints for banner and logo
  */
 Control {
     id: root

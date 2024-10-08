@@ -97,8 +97,8 @@ Item {
     */
     property alias errorMessageCmp: errorMessage
     /*!
-        \qmlproperty string StatusInput::label
-        This property sets the label text.
+        \qmlproperty int StatusInput::labelPadding
+        This property sets the padding of the label text.
     */
     property int labelPadding: 8
     /*!
@@ -118,7 +118,7 @@ Item {
     property int charLimit: 0
     /*!
         \qmlproperty string StatusInput::charLimitLabel
-        This property overrides the char default chart limit text format.
+        This property overrides the default char limit text.
     */
     property string charLimitLabel: ""
     /*!
@@ -157,12 +157,12 @@ Item {
     */
     property real maximumHeight: 44
     /*!
-        \qmlproperty list StatusBaseInput::validators
+        \qmlproperty list<StatusValidator> StatusBaseInput::validators
         This property sets the list of validators to be considered.
     */
     property list<StatusValidator> validators
     /*!
-        \qmlproperty list StatusBaseInput::validators
+        \qmlproperty list<StatusAsyncValidator> StatusBaseInput::asyncValidators
         This property sets the list of async validators to be considered.
     */
     property list<StatusAsyncValidator> asyncValidators
@@ -250,7 +250,7 @@ Item {
     */
     property var errors: ({})
     /*!
-        \qmlproperty var StatusBaseInput::errors
+        \qmlproperty var StatusBaseInput::asyncErrors
         This property holds the validation async errors.
     */
     property var asyncErrors: ({})
@@ -343,8 +343,9 @@ Item {
             root.validatedValue = root.text
         }
     }
+
     /*!
-        \qmlmethod
+        \qmlmethod updateAsyncValidity(validatorName, value, result)
         This function updates the text input async validation.
     */
     function updateAsyncValidity(validatorName, value, result) {
@@ -435,7 +436,7 @@ Item {
                 id: charLimitLabelItem
                 Layout.alignment: Qt.AlignVCenter
                 height: visible ? contentHeight : 0
-                visible: root.charLimit > 0
+                visible: root.charLimit > 0 || !!root.charLimitLabel
                 text: root.charLimitLabel ? root.charLimitLabel : "%1 / %2".arg(Utils.encodeUtf8(statusBaseInput.text).length).arg(root.charLimit)
                 font.pixelSize: 12
                 color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
