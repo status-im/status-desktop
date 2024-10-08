@@ -174,12 +174,16 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc findIndexForMember(self: Model, pubKey: string): int =
+  proc findIndexForMember*(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
-      if(self.items[i].pubKey == pubKey):
+      if self.items[i].pubKey == pubKey:
         return i
 
     return -1
+
+  proc getMemberItemByIndex*(self: Model, ind: int): MemberItem =
+    if ind >= 0 and ind < self.items.len:
+      return self.items[ind]
 
   proc getMemberItem*(self: Model, pubKey: string): MemberItem =
     let ind = self.findIndexForMember(pubKey)
@@ -283,6 +287,7 @@ QtObject:
       memberRole: MemberRole,
       joined: bool,
       isUntrustworthy: bool,
+      membershipRequestState: MembershipRequestState = MembershipRequestState.None,
       callDataChanged: bool = true,
     ): seq[int] =
     let ind = self.findIndexForMember(pubKey)
@@ -306,6 +311,12 @@ QtObject:
     updateRole(memberRole, MemberRole)
     updateRole(joined, Joined)
     updateRole(isUntrustworthy, IsUntrustworthy)
+
+    var updatedMembershipRequestState = membershipRequestState
+    if updatedMembershipRequestState == MembershipRequestState.None:
+      updatedMembershipRequestState = self.items[ind].membershipRequestState
+
+    updateRoleWithValue(membershipRequestState, MembershipRequestState, updatedMembershipRequestState)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
@@ -341,6 +352,7 @@ QtObject:
         item.memberRole,
         item.joined,
         item.isUntrustworthy,
+        item.membershipRequestState,
         callDataChanged = false,
       )
 
@@ -409,7 +421,7 @@ QtObject:
       isContact: bool,
       isVerified: bool,
       isUntrustworthy: bool,
-      ) =
+    ) =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
       return
@@ -427,6 +439,7 @@ QtObject:
       memberRole = self.items[ind].memberRole,
       joined = self.items[ind].joined,
       isUntrustworthy,
+      self.items[ind].membershipRequestState,
     )
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =
@@ -509,3 +522,9 @@ QtObject:
           break
       if not found:
         result.add(pubkey)
+
+  proc isUserBanned*(self: Model, pubkey: string): bool = 
+    let ind = self.findIndexForMember(pubkey)
+    if ind == -1:
+      return false
+    return self.getMemberItemByIndex(ind).membershipRequestState == MembershipRequestState.Banned

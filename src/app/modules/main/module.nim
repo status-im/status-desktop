@@ -359,6 +359,36 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
       else:
         discard
 
+  var memberItems = members.map(proc(member: ChatMember): MemberItem =
+      var state = MembershipRequestState.Accepted
+      if member.id in communityDetails.pendingAndBannedMembers:
+        let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
+        if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
+          state = memberState
+      elif not member.joined:
+        state = MembershipRequestState.AwaitingAddress
+      var airdropAddress = ""
+      if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
+        airdropAddress = existingCommunity.members.getAirdropAddressForMember(member.id)
+      result = self.createMemberItem(
+        member.id,
+        requestId = "",
+        state,
+        member.role,
+        airdropAddress,
+      )
+    )
+
+  let pendingMembers = communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
+    )
+
+  let declinedMemberItems = communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
+    )
+
+  memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
+
   result = initItem(
     communityDetails.id,
     sectionType = SectionType.Community,
@@ -386,42 +416,15 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     communityDetails.permissions.access,
     communityDetails.permissions.ensOnly,
     communityDetails.muted,
-    # members
-    members.map(proc(member: ChatMember): MemberItem =
-      var state = MembershipRequestState.Accepted
-      if member.id in communityDetails.pendingAndBannedMembers:
-        let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
-        if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
-          state = memberState
-      elif not member.joined:
-        state = MembershipRequestState.AwaitingAddress
-      var airdropAddress = ""
-      if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
-        airdropAddress = existingCommunity.members.getAirdropAddressForMember(member.id)
-      result = self.createMemberItem(
-        member.id,
-        requestId = "",
-        state,
-        member.role,
-        airdropAddress,
-      )
-    ),
+    memberItems,
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
-    bannedMembers,
-    # pendingMemberRequests
-    communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    ),
-    # declinedMemberRequests
-    communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    ),
     communityDetails.encrypted,
     communityTokensItems,
     communityDetails.pubsubTopic,
     communityDetails.pubsubTopicKey,
     communityDetails.shard.index,
+    activeMembersCount = int(communityDetails.activeMembersCount),
   )
 
 proc connectForNotificationsOnly[T](self: Module[T]) =
@@ -1358,7 +1361,7 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
   singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
     fmt "{contactName} asks to join {community.name}", community.id)
 
-  self.view.model().addPendingMember(membershipRequest.communityId, self.createMemberItem(
+  self.view.model().addMember(membershipRequest.communityId, self.createMemberItem(
     membershipRequest.publicKey,
     membershipRequest.id,
     MembershipRequestState(membershipRequest.state),
@@ -1366,7 +1369,7 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
   ))
 
 method communityMembershipRequestCanceled*[T](self: Module[T], communityId: string, requestId: string, pubKey: string) =
-  self.view.model().removePendingMember(communityId, pubKey)
+  self.view.model().removeMember(communityId, pubKey)
 
 method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)

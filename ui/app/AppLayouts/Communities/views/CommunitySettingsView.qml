@@ -38,7 +38,11 @@ StatusSectionLayout {
     property ChatStores.RootStore rootStore
     property var chatCommunitySectionModule
     required property TokensStore tokensStore
-    property var community
+    required property var community
+    required property var joinedMembers
+    required property var bannedMembers
+    required property var pendingMembers
+    required property var declinedMembers
     required property TransactionStore transactionStore
     property bool communitySettingsDisabled
     property var sendModalPopup
@@ -109,7 +113,7 @@ StatusSectionLayout {
                 id: communityHeader
 
                 title: community.name
-                subTitle: qsTr("%n member(s)", "", community.members.count || 0)
+                subTitle: qsTr("%n member(s)", "", root.joinedMembers.ModelCount.count || 0)
                 asset.name: community.image
                 asset.color: community.color
                 asset.isImage: true
@@ -291,10 +295,10 @@ StatusSectionLayout {
 
             sourceComponent: MembersSettingsPanel {
                 rootStore: root.rootStore
-                membersModel: root.community.members
-                bannedMembersModel: root.community.bannedMembers
-                pendingMemberRequestsModel: root.community.pendingMemberRequests
-                declinedMemberRequestsModel: root.community.declinedMemberRequests
+                membersModel: root.joinedMembers
+                bannedMembersModel: root.bannedMembers
+                pendingMembersModel: root.pendingMembers
+                declinedMembersModel: root.declinedMembers
                 editable: root.isAdmin || root.isOwner || root.isTokenMasterOwner
                 memberRole: community.memberRole
                 communityName: root.community.name
@@ -392,7 +396,7 @@ StatusSectionLayout {
 
                 // Models
                 tokensModel: root.community.communityTokens
-                membersModel: root.community.members
+                membersModel: root.joinedMembers
                 flatNetworks: communityTokensStore.filteredFlatModel
                 accounts: root.walletAccountsModel
                 referenceAssetsBySymbolModel: root.tokensStore.assetsBySymbolModel
@@ -559,7 +563,7 @@ StatusSectionLayout {
                     }
                 }
 
-                membersModel: community.members
+                membersModel: root.joinedMembers
                 enabledChainIds: root.enabledChainIds
                 onEnableNetwork: root.enableNetwork(chainId)
 

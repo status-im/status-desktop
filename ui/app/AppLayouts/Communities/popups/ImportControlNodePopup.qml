@@ -17,7 +17,7 @@ StatusDialog {
 
     required property var community
 
-    signal importControlNode(var community)
+    signal importControlNode(string communityId)
 
     width: 640
 
@@ -76,7 +76,7 @@ StatusDialog {
                 text: qsTr("Make this device the control node for %1").arg(root.community.name)
                 enabled: agreementCheckBox.checked && agreementCheckBox2.checked
                 onClicked: {
-                    root.importControlNode(root.community)
+                    root.importControlNode(root.community.id)
                     root.close()
                 }
             }

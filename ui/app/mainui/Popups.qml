@@ -963,7 +963,7 @@ QtObject {
             id: importControlNodePopup
             ImportControlNodePopup {
                 onClosed: destroy()
-                onImportControlNode: root.rootStore.promoteSelfToControlNode(community.id)
+                onImportControlNode: root.rootStore.promoteSelfToControlNode(communityId)
             }
         },
 

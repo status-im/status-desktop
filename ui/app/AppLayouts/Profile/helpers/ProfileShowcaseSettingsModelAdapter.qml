@@ -55,12 +55,12 @@ QObject {
             },
             FastExpressionRole {
                 name: "membersCount"
-                expression: model.members.count
-                expectedRoles: ["members"]
+                expression: model.allMembers.rowCount()
+                expectedRoles: ["allMembers"]
             },
-            FastExpressionRole {
+            ConstantRole {
                 name: "isShowcaseLoading"
-                expression: false
+                value: false
             }
         ]
         filters: ValueFilter {

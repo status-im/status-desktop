@@ -37,16 +37,14 @@ type
     MembersModel
     HistoryArchiveSupportEnabled
     PinMessageAllMembersEnabled
-    BannedMembersModel
     Encrypted
     CommunityTokensModel
-    PendingMemberRequestsModel
-    DeclinedMemberRequestsModel
     AmIBanned
     PubsubTopic
     PubsubTopicKey
     ShardIndex
     IsPendingOwnershipRequest
+    ActiveMembersCount
 
 QtObject:
   type
@@ -110,19 +108,17 @@ QtObject:
       ModelRole.Access.int:"access",
       ModelRole.EnsOnly.int:"ensOnly",
       ModelRole.Muted.int:"muted",
-      ModelRole.MembersModel.int:"members",
+      ModelRole.MembersModel.int:"allMembers",
       ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
       ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
-      ModelRole.BannedMembersModel.int:"bannedMembers",
       ModelRole.Encrypted.int:"encrypted",
       ModelRole.CommunityTokensModel.int:"communityTokens",
-      ModelRole.PendingMemberRequestsModel.int:"pendingMemberRequests",
-      ModelRole.DeclinedMemberRequestsModel.int:"declinedMemberRequests",
       ModelRole.AmIBanned.int:"amIBanned",
       ModelRole.PubsubTopic.int:"pubsubTopic",
       ModelRole.PubsubTopicKey.int:"pubsubTopicKey",
       ModelRole.ShardIndex.int:"shardIndex",
       ModelRole.IsPendingOwnershipRequest.int:"isPendingOwnershipRequest",
+      ModelRole.ActiveMembersCount.int:"activeMembersCount",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -194,16 +190,10 @@ QtObject:
       result = newQVariant(item.historyArchiveSupportEnabled)
     of ModelRole.PinMessageAllMembersEnabled:
       result = newQVariant(item.pinMessageAllMembersEnabled)
-    of ModelRole.BannedMembersModel:
-      result = newQVariant(item.bannedMembers)
     of ModelRole.Encrypted:
       result = newQVariant(item.encrypted)
     of ModelRole.CommunityTokensModel:
       result = newQVariant(item.communityTokens)
-    of ModelRole.PendingMemberRequestsModel:
-      result = newQVariant(item.pendingMemberRequests)
-    of ModelRole.DeclinedMemberRequestsModel:
-      result = newQVariant(item.declinedMemberRequests)
     of ModelRole.AmIBanned:
       result = newQVariant(item.amIBanned)
     of ModelRole.PubsubTopic:
@@ -214,6 +204,8 @@ QtObject:
       result = newQVariant(item.shardIndex)
     of ModelRole.IsPendingOwnershipRequest:
       result = newQVariant(item.isPendingOwnershipRequest)
+    of ModelRole.ActiveMembersCount:
+      result = newQVariant(item.activeMembersCount)
 
   proc itemExists*(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -330,11 +322,9 @@ QtObject:
     updateRoleWithValue(pubsubTopicKey, PubsubTopicKey, item.pubsubTopicKey)
     updateRoleWithValue(shardIndex, ShardIndex, item.shardIndex)
     updateRoleWithValue(isPendingOwnershipRequest, IsPendingOwnershipRequest, item.isPendingOwnershipRequest)
+    updateRoleWithValue(activeMembersCount, ActiveMembersCount, item.activeMembersCount)
 
     self.items[ind].members.updateToTheseItems(item.members.getItems())
-    self.items[ind].bannedMembers.updateToTheseItems(item.bannedMembers.getItems())
-    self.items[ind].pendingMemberRequests.updateToTheseItems(item.pendingMemberRequests.getItems())
-    self.items[ind].declinedMemberRequests.updateToTheseItems(item.declinedMemberRequests.getItems())
 
     if roles.len == 0:
       return
@@ -357,44 +347,7 @@ QtObject:
       isUntrustworthy: bool,
     ) =
     for item in self.items:
-      # TODO refactor to use only one model https://github.com/status-im/status-desktop/issues/16433
       item.members.updateItem(
-        pubKey,
-        displayName,
-        ensName,
-        isEnsVerified,
-        localNickname,
-        alias,
-        icon,
-        isContact,
-        isVerified,
-        isUntrustworthy,
-      )
-      item.bannedMembers.updateItem(
-        pubKey,
-        displayName,
-        ensName,
-        isEnsVerified,
-        localNickname,
-        alias,
-        icon,
-        isContact,
-        isVerified,
-        isUntrustworthy,
-      )
-      item.pendingMemberRequests.updateItem(
-        pubKey,
-        displayName,
-        ensName,
-        isEnsVerified,
-        localNickname,
-        alias,
-        icon,
-        isContact,
-        isVerified,
-        isUntrustworthy,
-      )
-      item.declinedMemberRequests.updateItem(
         pubKey,
         displayName,
         ensName,
@@ -598,16 +551,16 @@ QtObject:
 
     self.items[index].communityTokens.setItems(communityTokensItems)
 
-  proc addPendingMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
+  proc addMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
     let i = self.getItemIndex(communityId)
     if i == -1:
       return
 
-    self.items[i].pendingMemberRequests.addItem(memberItem)
+    self.items[i].members.addItem(memberItem)
 
-  proc removePendingMember*(self: SectionModel, communityId: string, memberId: string) =
+  proc removeMember*(self: SectionModel, communityId: string, memberId: string) =
     let i = self.getItemIndex(communityId)
     if i == -1:
       return
 
-    self.items[i].pendingMemberRequests.removeItemById(memberId)
+    self.items[i].members.removeItemById(memberId)
