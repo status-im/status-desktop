@@ -57,7 +57,7 @@ Item {
             sourceComponent: ProfilePopupInviteFriendsPanel {
                 id: panel
 
-                community: ({ id: "communityId" })
+                communityId: "communityId"
 
                 rootStore: AppLayoutStores.RootStore {
                     function communityHasMember(communityId, pubKey) {

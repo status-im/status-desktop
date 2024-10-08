@@ -25,7 +25,7 @@ ColumnLayout {
 
     property AppLayoutStores.RootStore rootStore
     property ProfileStores.ContactsStore contactsStore
-    property var community
+    property string communityId
 
     property var pubKeys: ([])
 
@@ -58,7 +58,7 @@ ColumnLayout {
 
         rootStore: root.rootStore
         contactsStore: root.contactsStore
-        communityId: root.community.id
+        communityId: root.communityId
 
         hideCommunityMembers: true
         showCheckbox: true
@@ -90,11 +90,11 @@ ColumnLayout {
     StatusDescriptionListItem {
         Layout.fillWidth: true
         title: qsTr("Share community")
-        subTitle: Utils.getCommunityShareLink(root.community.id)
+        subTitle: Utils.getCommunityShareLink(root.communityId)
         tooltip.text: qsTr("Copied!")
         asset.name: "copy"
         iconButton.onClicked: {
-            let link = Utils.getCommunityShareLink(root.community.id)
+            let link = Utils.getCommunityShareLink(root.communityId)
             ClipboardUtils.setText(link)
             tooltip.visible = !tooltip.visible
         }
