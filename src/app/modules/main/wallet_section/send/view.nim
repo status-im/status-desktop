@@ -180,7 +180,7 @@ QtObject:
       slippagePercentage = slippagePercentageString.parseFloat()
     except:
       error "parsing slippage failed", slippage=slippagePercentageString
-    self.delegate.authenticateAndTransferV2(self.selectedSenderAccountAddress, uuid, slippagePercentage)
+    self.delegate.authenticateAndTransfer(self.selectedSenderAccountAddress, uuid, slippagePercentage)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant, errCode: string, errDescription: string) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes, errCode: string, errDescription: string) =

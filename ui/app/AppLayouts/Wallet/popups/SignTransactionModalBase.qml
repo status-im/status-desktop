@@ -36,7 +36,11 @@ StatusDialog {
     property Component headerIconComponent
 
     property bool feesLoading
+
+    property string signButtonText: qsTr("Sign")
     property bool signButtonEnabled: true
+
+    property string closeButtonText: qsTr("Close")
 
     property date requestTimestamp: new Date()
     property int expirationSeconds
@@ -61,14 +65,14 @@ StatusDialog {
                 visible: !root.hasExpiryDate || !countdownPill.isExpired
                 icon.name: Constants.authenticationIconByType[root.loginType]
                 disabledColor: Theme.palette.directColor8
-                text: qsTr("Sign")
+                text: root.signButtonText
                 onClicked: root.accept() // close and emit accepted() signal
             }
             StatusButton {
                 objectName: "closeButton"
                 id: closeButton
                 visible: root.hasExpiryDate && countdownPill.isExpired
-                text: qsTr("Close")
+                text: root.closeButtonText
                 onClicked: root.close()
             }
         }
