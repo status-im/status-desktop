@@ -68,13 +68,15 @@ pipeline {
     /* WARNING: Qt 5.15.8 installed via Brew. */
     QTDIR = '/opt/homebrew/opt/qt@5'
     /* Enforce Go version installed infra-role-golang. */
-    PATH = "${env.QTDIR}/bin:/usr/local/go/bin:${env.PATH}"
+    PATH = "${env.QTDIR}/bin:${env.HOME}/go/bin:/usr/local/go/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
     STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg', arch: getArch())}"
     /* Apple Team ID for Notarization */
     MACOS_NOTARIZE_TEAM_ID = "8B5X2M6H2Y"
+    /* prevent sharing cache dir across different jobs */
+    GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
   }
 
   stages {

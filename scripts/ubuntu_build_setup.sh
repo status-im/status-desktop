@@ -15,9 +15,10 @@ function check_version {
 function install_build_dependencies {
   echo "Install build dependencies"
   apt update
-  apt install -yq git build-essential pkg-config mesa-common-dev unixodbc-dev libpq-dev \
-     libglu1-mesa-dev wget libpcsclite-dev libpcre3-dev libssl-dev libpulse-mainloop-glib0 \
-     libxkbcommon-x11-dev extra-cmake-modules cmake
+  apt install -yq git wget build-essential \
+    cmake extra-cmake-modules pkg-config protoc-gen-go \
+    mesa-common-dev unixodbc-dev libpq-dev libglu1-mesa-dev libpcsclite-dev \
+    libpcre3-dev libssl-dev libpulse-mainloop-glib0 libxkbcommon-x11-dev
 }
 
 function install_release_dependencies {
@@ -87,7 +88,7 @@ SUCCESS!
 Before you attempt to build status-dektop you'll need a few environment variables set:
 
 export QTDIR=${QT_INSTALL_DIR}/${QT_VERSION}/gcc_64
-export PATH=\$QTDIR:\$QTDIR/bin:\$PATH
+export PATH=\$QTDIR:\$QTDIR/bin:\$(go env GOPATH)\bin:$PATH
 "
   echo $msg
 }

@@ -15,7 +15,7 @@ function check_version {
 
 function install_build_dependencies {
   echo "Install build dependencies"
-  brew install cmake pkg-config libtool jq node@18 yarn
+  brew install cmake pkg-config libtool jq node@18 yarn protoc-gen-go
 }
 
 function install_qt {
