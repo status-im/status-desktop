@@ -9,18 +9,9 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 QtObject {
-    property var mainModuleInst: typeof mainModule !== "undefined" ? mainModule : null
-    property var sharedUrlsModuleInst: typeof  sharedUrlsModule !== "undefined" ? sharedUrlsModule : null
-    property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
-    property var communitiesModuleInst: typeof communitiesModule !== "undefined" ? communitiesModule : null
-
     readonly property int maxImgSizeBytes: Constants.maxUploadFilesizeMB * 1048576 /* 1 MB in bytes */
     readonly property int communityIdLength: 68
 
-    function restartApplication() {
-        globalUtilsInst.restartApplication()
-    }
-    
     function isDigit(value) {
         return /^\d$/.test(value);
     }
@@ -31,22 +22,6 @@ QtObject {
 
     function startsWith0x(value) {
         return !!value && value.startsWith('0x')
-    }
-
-    function isChatKey(value) {
-        return (startsWith0x(value) && isHex(value) && value.length === 132) || globalUtilsInst.isCompressedPubKey(value)
-    }
-
-    function isCommunityPublicKey(value) {
-        return (startsWith0x(value) && isHex(value) && value.length === communityIdLength) || globalUtilsInst.isCompressedPubKey(value)
-    }
-
-    function isCompressedPubKey(pubKey) {
-        return globalUtilsInst.isCompressedPubKey(pubKey)
-    }
-
-    function isAlias(name) {
-        return globalUtilsInst.isAlias(name)
     }
 
     function getCommunityIdFromFullChatId(fullChatId) {
@@ -210,7 +185,6 @@ QtObject {
         return strNumber.replace(/^(0*)([0-9\.]+)/, "$2")
     }
 
-
     function setColorAlpha(color, alpha) {
         return Qt.hsla(color.hslHue, color.hslSaturation, color.hslLightness, alpha)
     }
@@ -266,7 +240,6 @@ QtObject {
     function uuid() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
     }
-
 
     function validatePasswords(item, firstPasswordField, repeatPasswordField) {
         switch (item) {
@@ -407,88 +380,6 @@ QtObject {
 
     /* Validation section end */
 
-    function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false, includeDetails=false) {
-        const defaultValue = {
-            defaultDisplayName: "",
-            optionalName: "",
-            icon: "",
-            isCurrentUser: "",
-            colorId: "",
-            colorHash: "",
-            displayName: "",
-            publicKey: publicKey,
-            name: "",
-            ensVerified: false,
-            alias: "",
-            lastUpdated: 0,
-            lastUpdatedLocally: 0,
-            localNickname: "",
-            thumbnailImage: "",
-            largeImage: "",
-            isContact: false,
-            isBlocked: false,
-            isContactRequestReceived: false,
-            isContactRequestSent: false,
-            isSyncing: false,
-            removed: false,
-            trustStatus: Constants.trustStatus.unknown,
-            contactRequestState: Constants.ContactRequestState.None,
-            verificationStatus: Constants.verificationStatus.unverified,
-            incomingVerificationStatus: Constants.verificationStatus.unverified,
-            socialLinks: [],
-            bio: "",
-            onlineStatus: Constants.onlineStatus.inactive
-        }
-
-        if (!mainModuleInst || !publicKey)
-            return defaultValue
-
-        const jsonObj = mainModuleInst.getContactDetailsAsJson(publicKey, getVerificationRequest, getOnlineStatus, includeDetails)
-
-        try {
-            return JSON.parse(jsonObj)
-        }
-        catch (e) {
-            // This log is available only in debug mode, if it's annoying we can remove it
-            console.warn("error parsing contact details for public key: ", publicKey, " error: ", e.message)
-            return defaultValue
-        }
-    }
-
-    function isEnsVerified(publicKey) {
-        if (publicKey === "" || !isChatKey(publicKey) )
-            return false
-        if (!mainModuleInst)
-            return false
-        return mainModuleInst.isEnsVerified(publicKey)
-    }
-
-    function getEmojiHashAsJson(publicKey) {
-        if (publicKey === "" || !isChatKey(publicKey)) {
-            return ""
-        }
-        let jsonObj = globalUtilsInst.getEmojiHashAsJson(publicKey)
-        return JSON.parse(jsonObj)
-    }
-
-    function getColorHashAsJson(publicKey, skipEnsVerification=false) {
-        if (publicKey === "" || !isChatKey(publicKey))
-            return
-        if (skipEnsVerification) // we know already the user is ENS verified -> no color ring
-            return
-        if (isEnsVerified(publicKey)) // ENS verified -> no color ring
-            return
-        let jsonObj = globalUtilsInst.getColorHashAsJson(publicKey)
-        return JSON.parse(jsonObj)
-    }
-
-    function colorIdForPubkey(publicKey) {
-        if (publicKey === "" || !isChatKey(publicKey)) {
-            return 0
-        }
-        return globalUtilsInst.getColorId(publicKey)
-    }
-
     function colorForColorId(colorId)  {
         if (colorId < 0 || colorId >= Theme.palette.userCustomizationColors.length) {
             console.warn("Utils.colorForColorId : colorId is out of bounds")
@@ -497,77 +388,12 @@ QtObject {
         return Theme.palette.userCustomizationColors[colorId]
     }
 
-    function colorForPubkey(publicKey) {
-        const pubKeyColorId = colorIdForPubkey(publicKey)
-        return colorForColorId(pubKeyColorId)
-    }
-
-    function getCommunityShareLink(communityId) {
-        if (communityId === "") {
-            return ""
-        }
-
-        return communitiesModuleInst.shareCommunityUrlWithData(communityId)
-    }
-
-    function getCommunityChannelShareLink(communityId, channelId) {
-        if (communityId === "" || channelId === "")
-            return ""
-        return communitiesModuleInst.shareCommunityChannelUrlWithData(communityId, channelId)
-    }
-
-    function getCommunityChannelShareLinkWithChatId(chatId) {
-        const communityId = getCommunityIdFromFullChatId(chatId)
-        const channelId = getChannelUuidFromFullChatId(chatId)
-        return getCommunityChannelShareLink(communityId, channelId)
-    }
-
     function getChatKeyFromShareLink(link) {
         let index = link.lastIndexOf("/u/")
         if (index === -1) {
             return link
         }
         return link.substring(index + 3)
-    }
-
-    function getCommunityIdFromShareLink(link) {
-        let index = link.lastIndexOf("/c/")
-        if (index === -1) {
-            return ""
-        }
-        const communityKey = link.substring(index + 3)
-        if (globalUtilsInst.isCompressedPubKey(communityKey)) {
-            // is zQ.., need to be converted to standard compression
-            return globalUtilsInst.changeCommunityKeyCompression(communityKey)
-        }
-        return communityKey
-    }
-
-    function getCommunityDataFromSharedLink(link) {
-        const index = link.lastIndexOf("/c/")
-        if (index === -1)
-            return null
-
-        const communityDataString = sharedUrlsModuleInst.parseCommunitySharedUrl(link)
-        try {
-            return JSON.parse(communityDataString)
-        } catch (e) {
-            console.warn("Error while parsing community data from url:", e.message)
-            return null
-        }
-    }
-
-    function changeCommunityKeyCompression(communityKey) {
-        return globalUtilsInst.changeCommunityKeyCompression(communityKey)
-    }
-
-    function getCompressedPk(publicKey) {
-        if (publicKey === "") {
-            return ""
-        }
-        if (!isChatKey(publicKey))
-            return publicKey
-        return globalUtilsInst.getCompressedPk(publicKey)
     }
 
     function getElidedPk(publicKey) {
@@ -584,20 +410,8 @@ QtObject {
         return StatusQUtils.Utils.elideText(publicKey, 16)
     }
 
-    function getElidedCompressedPk(publicKey) {
-        if (publicKey === "") {
-            return ""
-        }
-        let compressedPk = getCompressedPk(publicKey)
-        return getElidedPk(compressedPk)
-    }
-
     function elideIfTooLong(str, maxLength) {
         return (str.length > maxLength) ? str.substr(0, maxLength-4) + '...' : str;
-    }
-
-    function plainText(text) {
-        return globalUtilsInst.plainText(text)
     }
 
     function isInvalidPasswordMessage(msg) {
@@ -690,32 +504,10 @@ QtObject {
         return text
     }
 
-    function parseContactUrl(link) {
-        let index = link.lastIndexOf("/u/")
-
-        if (index === -1) {
-            index = link.lastIndexOf("/u#")
-        }
-
-        if (index === -1)
-            return null
-
-        const contactDataString = sharedUrlsModuleInst.parseContactSharedUrl(link)
-        try {
-            return JSON.parse(contactDataString)
-        } catch (e) {
-            return null
-        }
-    }
-
     function dropCommunityLinkPrefix(text) {
         if (text.startsWith(Constants.communityLinkPrefix))
             text = text.slice(Constants.communityLinkPrefix.length)
         return text
-    }
-
-    function downloadImageByUrl(url, path) {
-        globalUtilsInst.downloadImageByUrl(url, path)
     }
 
     function getHoveredColor(colorId) {
@@ -751,7 +543,6 @@ QtObject {
             return getColorForId(colorId)
         }
     }
-
 
     function getIdForColor(color){
         let c = color.toString().toUpperCase()
@@ -853,37 +644,6 @@ QtObject {
                     Theme.palette.warningColor1
     }
 
-    function getKeypairLocation(keypair, fromAccountDetailsView) {
-        if (!keypair || keypair.pairType === Constants.keypair.type.watchOnly) {
-            return ""
-        }
-
-        let profileTitle = ""
-        if (keypair.pairType === Constants.keypair.type.profile) {
-            profileTitle = Utils.getElidedCompressedPk(keypair.pubKey) + Constants.settingsSection.dotSepString
-        }
-        if (keypair.migratedToKeycard) {
-            return profileTitle + qsTr("On Keycard")
-        }
-        if (keypair.operability === Constants.keypair.operability.fullyOperable ||
-                keypair.operability === Constants.keypair.operability.partiallyOperable) {
-            return profileTitle + qsTr("On device")
-        }
-        if (keypair.operability === Constants.keypair.operability.nonOperable) {
-            if (fromAccountDetailsView) {
-                return qsTr("Requires import")
-            } else if (keypair.syncedFrom === Constants.keypair.syncedFrom.backup) {
-                if (keypair.pairType === Constants.keypair.type.seedImport ||
-                        keypair.pairType === Constants.keypair.type.privateKeyImport) {
-                    return qsTr("Restored from backup. Import key pair to use derived accounts.")
-                }
-            }
-            return qsTr("Import key pair to use derived accounts")
-        }
-
-        return ""
-    }
-
     function getActionNameForDisplayingAddressOnNetwork(networkShortName)  {
         if (networkShortName === Constants.networkShortChainNames.arbitrum) {
             return qsTr("View on Arbiscan")
@@ -946,26 +706,6 @@ QtObject {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
     }
 
-    function addTimestampToURL(url) {
-        return globalUtilsInst.addTimestampToURL(url)
-    }
-    
-    // Returns true if the provided displayName occurs in community members
-    function isDisplayNameDupeOfCommunityMember(displayName) {
-        if (!communitiesModuleInst)
-            return false
-
-        if (displayName === "")
-            return false
-
-        const myDisplayName = Global.userProfile ? Global.userProfile.name : ""
-
-        if (displayName === myDisplayName)
-            return false
-
-        return communitiesModuleInst.isDisplayNameDupeOfCommunityMember(displayName)
-    }
-
     function getUrlStatus(url) {
         // TODO: Analyse and implement
         // #15331
@@ -1015,5 +755,267 @@ QtObject {
             }
         }
         xhr.send();
+    }
+
+    // BACKEND DEPENDENT PART
+    //
+    // Methods and properties below are intended to be refactored in various
+    // ways to finally make that singleton fully stateless and backend-independent.
+
+    property var mainModuleInst: typeof mainModule !== "undefined" ? mainModule : null
+    property var sharedUrlsModuleInst: typeof  sharedUrlsModule !== "undefined" ? sharedUrlsModule : null
+    property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
+    property var communitiesModuleInst: typeof communitiesModule !== "undefined" ? communitiesModule : null
+
+    function restartApplication() {
+        globalUtilsInst.restartApplication()
+    }
+
+    function isChatKey(value) {
+        return (startsWith0x(value) && isHex(value) && value.length === 132) || globalUtilsInst.isCompressedPubKey(value)
+    }
+
+    function isCommunityPublicKey(value) {
+        return (startsWith0x(value) && isHex(value) && value.length === communityIdLength) || globalUtilsInst.isCompressedPubKey(value)
+    }
+
+    function isCompressedPubKey(pubKey) {
+        return globalUtilsInst.isCompressedPubKey(pubKey)
+    }
+
+    function isAlias(name) {
+        return globalUtilsInst.isAlias(name)
+    }
+
+    function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false, includeDetails=false) {
+        const defaultValue = {
+            defaultDisplayName: "",
+            optionalName: "",
+            icon: "",
+            isCurrentUser: "",
+            colorId: "",
+            colorHash: "",
+            displayName: "",
+            publicKey: publicKey,
+            name: "",
+            ensVerified: false,
+            alias: "",
+            lastUpdated: 0,
+            lastUpdatedLocally: 0,
+            localNickname: "",
+            thumbnailImage: "",
+            largeImage: "",
+            isContact: false,
+            isBlocked: false,
+            isContactRequestReceived: false,
+            isContactRequestSent: false,
+            isSyncing: false,
+            removed: false,
+            trustStatus: Constants.trustStatus.unknown,
+            contactRequestState: Constants.ContactRequestState.None,
+            verificationStatus: Constants.verificationStatus.unverified,
+            incomingVerificationStatus: Constants.verificationStatus.unverified,
+            socialLinks: [],
+            bio: "",
+            onlineStatus: Constants.onlineStatus.inactive
+        }
+
+        if (!mainModuleInst || !publicKey)
+            return defaultValue
+
+        const jsonObj = mainModuleInst.getContactDetailsAsJson(publicKey, getVerificationRequest, getOnlineStatus, includeDetails)
+
+        try {
+            return JSON.parse(jsonObj)
+        }
+        catch (e) {
+            // This log is available only in debug mode, if it's annoying we can remove it
+            console.warn("error parsing contact details for public key: ", publicKey, " error: ", e.message)
+            return defaultValue
+        }
+    }
+
+    function isEnsVerified(publicKey) {
+        if (publicKey === "" || !isChatKey(publicKey) )
+            return false
+        if (!mainModuleInst)
+            return false
+        return mainModuleInst.isEnsVerified(publicKey)
+    }
+
+    function getEmojiHashAsJson(publicKey) {
+        if (publicKey === "" || !isChatKey(publicKey)) {
+            return ""
+        }
+        let jsonObj = globalUtilsInst.getEmojiHashAsJson(publicKey)
+        return JSON.parse(jsonObj)
+    }
+
+    function getColorHashAsJson(publicKey, skipEnsVerification=false) {
+        if (publicKey === "" || !isChatKey(publicKey))
+            return
+        if (skipEnsVerification) // we know already the user is ENS verified -> no color ring
+            return
+        if (isEnsVerified(publicKey)) // ENS verified -> no color ring
+            return
+        let jsonObj = globalUtilsInst.getColorHashAsJson(publicKey)
+        return JSON.parse(jsonObj)
+    }
+
+    function colorIdForPubkey(publicKey) {
+        if (publicKey === "" || !isChatKey(publicKey)) {
+            return 0
+        }
+        return globalUtilsInst.getColorId(publicKey)
+    }
+
+    function colorForPubkey(publicKey) {
+        const pubKeyColorId = colorIdForPubkey(publicKey)
+        return colorForColorId(pubKeyColorId)
+    }
+
+    function getCommunityShareLink(communityId) {
+        if (communityId === "") {
+            return ""
+        }
+
+        return communitiesModuleInst.shareCommunityUrlWithData(communityId)
+    }
+
+    function getCommunityChannelShareLink(communityId, channelId) {
+        if (communityId === "" || channelId === "")
+            return ""
+        return communitiesModuleInst.shareCommunityChannelUrlWithData(communityId, channelId)
+    }
+
+    function getCommunityChannelShareLinkWithChatId(chatId) {
+        const communityId = getCommunityIdFromFullChatId(chatId)
+        const channelId = getChannelUuidFromFullChatId(chatId)
+        return getCommunityChannelShareLink(communityId, channelId)
+    }
+
+    function getCommunityIdFromShareLink(link) {
+        let index = link.lastIndexOf("/c/")
+        if (index === -1) {
+            return ""
+        }
+        const communityKey = link.substring(index + 3)
+        if (globalUtilsInst.isCompressedPubKey(communityKey)) {
+            // is zQ.., need to be converted to standard compression
+            return globalUtilsInst.changeCommunityKeyCompression(communityKey)
+        }
+        return communityKey
+    }
+
+    function getCommunityDataFromSharedLink(link) {
+        const index = link.lastIndexOf("/c/")
+        if (index === -1)
+            return null
+
+        const communityDataString = sharedUrlsModuleInst.parseCommunitySharedUrl(link)
+        try {
+            return JSON.parse(communityDataString)
+        } catch (e) {
+            console.warn("Error while parsing community data from url:", e.message)
+            return null
+        }
+    }
+
+    function changeCommunityKeyCompression(communityKey) {
+        return globalUtilsInst.changeCommunityKeyCompression(communityKey)
+    }
+
+    function getCompressedPk(publicKey) {
+        if (publicKey === "") {
+            return ""
+        }
+        if (!isChatKey(publicKey))
+            return publicKey
+        return globalUtilsInst.getCompressedPk(publicKey)
+    }
+
+    function getElidedCompressedPk(publicKey) {
+        if (publicKey === "") {
+            return ""
+        }
+        let compressedPk = getCompressedPk(publicKey)
+        return getElidedPk(compressedPk)
+    }
+
+    function plainText(text) {
+        return globalUtilsInst.plainText(text)
+    }
+
+    function parseContactUrl(link) {
+        let index = link.lastIndexOf("/u/")
+
+        if (index === -1) {
+            index = link.lastIndexOf("/u#")
+        }
+
+        if (index === -1)
+            return null
+
+        const contactDataString = sharedUrlsModuleInst.parseContactSharedUrl(link)
+        try {
+            return JSON.parse(contactDataString)
+        } catch (e) {
+            return null
+        }
+    }
+
+    function downloadImageByUrl(url, path) {
+        globalUtilsInst.downloadImageByUrl(url, path)
+    }
+
+    function getKeypairLocation(keypair, fromAccountDetailsView) {
+        if (!keypair || keypair.pairType === Constants.keypair.type.watchOnly) {
+            return ""
+        }
+
+        let profileTitle = ""
+        if (keypair.pairType === Constants.keypair.type.profile) {
+            profileTitle = Utils.getElidedCompressedPk(keypair.pubKey) + Constants.settingsSection.dotSepString
+        }
+        if (keypair.migratedToKeycard) {
+            return profileTitle + qsTr("On Keycard")
+        }
+        if (keypair.operability === Constants.keypair.operability.fullyOperable ||
+                keypair.operability === Constants.keypair.operability.partiallyOperable) {
+            return profileTitle + qsTr("On device")
+        }
+        if (keypair.operability === Constants.keypair.operability.nonOperable) {
+            if (fromAccountDetailsView) {
+                return qsTr("Requires import")
+            } else if (keypair.syncedFrom === Constants.keypair.syncedFrom.backup) {
+                if (keypair.pairType === Constants.keypair.type.seedImport ||
+                        keypair.pairType === Constants.keypair.type.privateKeyImport) {
+                    return qsTr("Restored from backup. Import key pair to use derived accounts.")
+                }
+            }
+            return qsTr("Import key pair to use derived accounts")
+        }
+
+        return ""
+    }
+
+    function addTimestampToURL(url) {
+        return globalUtilsInst.addTimestampToURL(url)
+    }
+
+    // Returns true if the provided displayName occurs in community members
+    function isDisplayNameDupeOfCommunityMember(displayName) {
+        if (!communitiesModuleInst)
+            return false
+
+        if (displayName === "")
+            return false
+
+        const myDisplayName = Global.userProfile ? Global.userProfile.name : ""
+
+        if (displayName === myDisplayName)
+            return false
+
+        return communitiesModuleInst.isDisplayNameDupeOfCommunityMember(displayName)
     }
 }
