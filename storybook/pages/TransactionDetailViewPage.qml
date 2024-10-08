@@ -32,7 +32,6 @@ SplitView {
         function getNameForSavedWalletAddress(address) { return "Saved Wallet Name" }
         function getNameForAddress(address) { return "Address Name" }
         function getEnsForSavedWalletAddress(address) { return "123" }
-        function getChainShortNamesForSavedWalletAddress(address) { return "" }
         function getGasEthValue(gasAmount, gasPrice) { return (gasAmount * Math.pow(10, -9)).toPrecision(5) }
 
         readonly property string currentCurrency: "USD"

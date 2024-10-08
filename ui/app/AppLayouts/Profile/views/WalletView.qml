@@ -447,7 +447,6 @@ SettingsContentBase {
             sourceComponent: RemoveKeypairPopup {
                 name: removeKeypairPopup.name
                 relatedAccounts: removeKeypairPopup.accounts
-                getNetworkShortNames: function(chainIds) {return root.walletStore.getNetworkShortNames(chainIds)}
                 onClosed: removeKeypairPopup.active = false
                 onConfirmClicked: {
                     root.walletStore.deleteKeypair(removeKeypairPopup.keyUid)

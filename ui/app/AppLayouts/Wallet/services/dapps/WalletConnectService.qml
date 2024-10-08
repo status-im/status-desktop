@@ -52,20 +52,8 @@ QObject {
 
     readonly property alias connectorDAppsProvider: connectorDAppsProvider
 
-    readonly property var validAccounts: SortFilterProxyModel {
-        sourceModel: d.supportedAccountsModel
-        proxyRoles: [
-            FastExpressionRole {
-                name: "colorizedChainPrefixes"
-                function getChainShortNames(chainIds) {
-                    const chainShortNames = root.walletRootStore.getNetworkShortNames(chainIds)
-                    return WalletUtils.colorizedChainPrefix(chainShortNames)
-                }
-                expression: getChainShortNames(model.preferredSharingChainIds)
-                expectedRoles: ["preferredSharingChainIds"]
-            }
-        ]
-    }
+    readonly property var validAccounts: d.supportedAccountsModel
+
     readonly property var flatNetworks: root.walletRootStore.filteredFlatModel
 
     function validatePairingUri(uri) {

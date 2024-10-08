@@ -19,7 +19,6 @@ const SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED* = "walletAccount/addressDet
 const SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED* = "walletAccount/positionUpdated"
 const SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED* = "walletAccount/operabilityUpdated"
 const SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED* = "walletAccount/chainIdForUrlFetched"
-const SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED* = "walletAccount/preferredSharingChainsUpdated"
 const SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED* = "walletAccount/accountHiddenChanged"
 
 const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"

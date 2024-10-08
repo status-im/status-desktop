@@ -102,10 +102,6 @@ QtObject {
         walletSectionSendInst.setReceiverAccount(address)
     }
 
-    function getNetworkShortNames(chainIds) {
-       return networksModule.getNetworkShortNames(chainIds)
-    }
-
     function toggleFromDisabledChains(chainId) {
         walletSectionSendInst.fromNetworksRouteModel.toggleRouteDisabledChains(chainId)
     }
@@ -163,10 +159,6 @@ QtObject {
             formattedText: walletSectionSendInst.splitAndFormatAddressPrefix(text, updateInStore),
             address: walletSectionSendInst.getAddressFromFormattedString(text)
         }
-    }
-
-    function getShortChainIds(chainShortNames) {
-        return walletSectionSendInst.getShortChainIds(chainShortNames)
     }
 
     function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {

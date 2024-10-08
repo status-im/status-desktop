@@ -12,7 +12,6 @@ StatusListItem {
     id: root
     
     property var account
-    property var getNetworkShortNames: function(chainIds){}
     property int totalCount: 0
     property bool nextIconVisible: true
 
@@ -20,7 +19,7 @@ StatusListItem {
 
     objectName: account.name
     title: account.name
-    subTitle: WalletUtils.addressToDisplay(account.address, root.getNetworkShortNames(account.preferredSharingChainIds), true, sensor.containsMouse)
+    subTitle: WalletUtils.addressToDisplay(account.address, true, sensor.containsMouse)
     asset.color: !!account.colorId ? Utils.getColorForId(account.colorId): ""
     asset.emoji: account.emoji
     asset.name: !account.emoji ? "filled-account": ""

@@ -18,7 +18,6 @@ StatusListItem {
 
     required property string name
     required property string address
-    required property string chainShortNames
     required property string emoji
     required property string walletColor
     required property var currencyBalance
@@ -41,7 +40,7 @@ StatusListItem {
     subTitle:{
         if(!!root.address) {
             let elidedAddress = StatusQUtils.Utils.elideAndFormatWalletAddress(root.address)
-            return sensor.containsMouse ? root.chainShortNames ||  Utils.richColorText(elidedAddress, Theme.palette.directColor1) : elidedAddress
+            return sensor.containsMouse ?  Utils.richColorText(elidedAddress, Theme.palette.directColor1) : elidedAddress
         }
         return ""
     }

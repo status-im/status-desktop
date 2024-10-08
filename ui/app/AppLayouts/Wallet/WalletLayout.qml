@@ -235,7 +235,6 @@ Item {
             headerButton.visible: !RootStore.overview.isAllAccounts
             onLaunchShareAddressModal: Global.openShowQRPopup({
                                                                   switchingAccounsEnabled: true,
-                                                                  changingPreferredChainsEnabled: true,
                                                                   hasFloatingButtons: true
                                                               })
             onLaunchSwapModal: {
@@ -326,7 +325,6 @@ Item {
 
             onLaunchShareAddressModal: Global.openShowQRPopup({
                                                                   switchingAccounsEnabled: true,
-                                                                  changingPreferredChainsEnabled: true,
                                                                   hasFloatingButtons: true
                                                               })
             onLaunchSendModal: (fromAddress) => {

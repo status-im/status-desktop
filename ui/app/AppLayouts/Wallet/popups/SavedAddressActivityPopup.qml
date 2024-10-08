@@ -43,7 +43,6 @@ StatusModal {
         d.address = params.address?? Constants.zeroAddress
         d.ens = params.ens?? ""
         d.colorId = params.colorId?? ""
-        d.chainShortNames = params.chainShortNames?? ""
 
         walletSection.activityController.setFilterToAddresses(JSON.stringify([d.address]))
         walletSection.activityController.updateFilter()
@@ -62,7 +61,6 @@ StatusModal {
         property string address: Constants.zeroAddress
         property string ens: ""
         property string colorId: ""
-        property string chainShortNames: ""
 
         readonly property string visibleAddress: !!d.ens? d.ens : d.address
 
@@ -133,7 +131,7 @@ StatusModal {
                                 return d.ens
                             }
                             else {
-                                return WalletUtils.colorizedChainPrefix(d.chainShortNames) + Utils.richColorText(StatusQUtils.Utils.elideText(d.address,6,4), Theme.palette.directColor1)
+                                return Utils.richColorText(StatusQUtils.Utils.elideText(d.address,6,4), Theme.palette.directColor1)
                             }
                         }
                         return ""
@@ -152,7 +150,6 @@ StatusModal {
 
                     name: d.name
                     address: d.address
-                    chainShortNames: d.chainShortNames
                     ens: d.ens
                     colorId: d.colorId
 
@@ -213,7 +210,7 @@ StatusModal {
                         anchors.rightMargin: Style.current.padding
                         anchors.leftMargin: Style.current.padding
                         anchors.verticalCenter: parent.verticalCenter
-                        text: !!d.ens? d.ens : WalletUtils.colorizedChainPrefix(d.chainShortNames) + d.address
+                        text: !!d.ens ? d.ens : d.address
                         wrapMode: Text.WrapAnywhere
                         font.pixelSize: 15
                         color: Theme.palette.directColor1

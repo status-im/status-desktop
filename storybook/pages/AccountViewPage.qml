@@ -40,8 +40,7 @@ SplitView {
                                                displayDecimals: 4,
                                                stripTrailingZeroes: false}),
                                  isAllAccounts: false,
-                                 path: "m/44’/60’/0’/0’/34",
-                                 preferredSharingChainIds:  walletStore.areTestNetworksEnabled ? "5:420:421613": "1:10:42161"
+                                 path: "m/44’/60’/0’/0’/34"
                              })
         }
 
@@ -57,18 +56,6 @@ SplitView {
             property var filteredFlatModel: networks
             property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
             function toggleNetwork(chainId) {
-            }
-
-            function getNetworkShortNames() {
-                return "eth:oeth:arb1:"
-            }
-
-            function getAllNetworksChainIds() {
-                return "1:10:42161"
-            }
-
-            function updateWalletAccountPreferredChains(address, preferredChainIds) {
-                console.warn("updateWalletAccountPreferredChains :: address ::", address, "preferredChainIds :: ", preferredChainIds)
             }
         }
 

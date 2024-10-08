@@ -22,7 +22,6 @@ Item {
                               name: "some saved addr name " + i,
                               ens: [],
                               address: "0x2B748A02e06B159C7C3E98F5064577B96E55A7b4",
-                              chainShortNames: "eth:arb1"
                           })
             append(data)
         }
@@ -38,7 +37,6 @@ Item {
                 color: "#2A4AF5",
                 address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
                 walletType: "",
-                preferredSharingChainIds: "5:420:421613",
                 currencyBalance: ({amount: 1.25,
                                       symbol: "USD",
                                       displayDecimals: 2,
@@ -52,7 +50,6 @@ Item {
                 color: "#216266",
                 address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
                 walletType: Constants.generatedWalletType,
-                preferredSharingChainIds: "5:420:421613",
                 currencyBalance: ({amount: 10,
                                       symbol: "USD",
                                       displayDecimals: 2,
@@ -66,7 +63,6 @@ Item {
                 color: "#EC266C",
                 address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882",
                 walletType: Constants.seedWalletType,
-                preferredSharingChainIds: "5:420:421613",
                 currencyBalance: ({amount: 110.05,
                                       symbol: "USD",
                                       displayDecimals: 2,
@@ -80,7 +76,6 @@ Item {
                 color: "#C78F67",
                 address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884",
                 walletType: Constants.keyWalletType,
-                preferredSharingChainIds: "5:420:421613",
                 currencyBalance: ({amount: 999,
                                       symbol: "USD",
                                       displayDecimals: 2,

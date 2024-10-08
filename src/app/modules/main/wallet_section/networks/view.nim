@@ -93,13 +93,7 @@ QtObject:
 
   proc enableNetwork*(self: View, chainId: int) {.slot.} =
     self.delegate.setNetworksState(@[chainId], enable = true)
-
-  proc getNetworkShortNames*(self: View, preferredNetworks: string): string {.slot.} =
-    return self.flatNetworks.getNetworkShortNames(preferredNetworks, self.areTestNetworksEnabled)
   
-  proc getNetworkIds*(self: View, shortNames: string): string {.slot.} =
-    return self.flatNetworks.getNetworkIds(shortNames, self.areTestNetworksEnabled)
-
   proc getBlockExplorerURL*(self: View, chainId: int): string {.slot.} =
     return self.flatNetworks.getBlockExplorerURL(chainId)
 

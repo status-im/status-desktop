@@ -41,11 +41,9 @@ Loader {
     onSelectedRecipientChanged: {
         root.isLoading()
         if(!!root.selectedRecipient) {
-            let preferredChainIds = []
             switch(root.selectedRecipientType) {
             case Helpers.RecipientAddressObjectType.Account: {
                 root.addressText = root.selectedRecipient.address
-                preferredChainIds = root.selectedRecipient.preferredSharingChainIds
                 break
             }
             case Helpers.RecipientAddressObjectType.SavedAddress: {
@@ -56,7 +54,6 @@ Loader {
                     d.isPending = true
                     d.resolveENS(root.selectedRecipient.ens)
                 }
-                preferredChainIds = store.getShortChainIds(root.selectedRecipient.chainShortNames)
                 break
             }
             case Helpers.RecipientAddressObjectType.RecentsAddress: {
@@ -85,7 +82,7 @@ Loader {
                 if(root.isBridgeTx)
                     root.store.setAllNetworksAsRoutePreferredChains()
                 else
-                    root.store.updateRoutePreferredChains(preferredChainIds)
+                    root.store.updateRoutePreferredChains([])
             }
 
             recalculateRoutesAndFees()
@@ -132,7 +129,6 @@ Loader {
     Component {
         id: savedAddressRecipient
         SavedAddressListItem {
-            property string chainShortNames: !!modelData ? modelData.chainShortNames: ""
             implicitWidth: parent.width
             modelData: root.selectedRecipient
             radius: 8
@@ -144,7 +140,7 @@ Loader {
                     if (!!modelData && !!modelData.ens && modelData.ens.length > 0)
                         return Utils.richColorText(modelData.ens, Theme.palette.directColor1)
                     else
-                        return WalletUtils.colorizedChainPrefix(modelData.chainShortNames) + StatusQUtils.Utils.elideText(modelData.address,6,4)
+                        return StatusQUtils.Utils.elideText(modelData.address,6,4)
                 }
                 return ""
             }
@@ -160,7 +156,6 @@ Loader {
 
             name: !!modelData ? modelData.name : ""
             address: !!modelData ? modelData.address : ""
-            chainShortNames: !!modelData ? store.getNetworkShortNames(modelData.preferredSharingChainIds) : ""
             emoji: !!modelData ? modelData.emoji : ""
             walletColor: !!modelData ? Utils.getColorForId(modelData.colorId): ""
             currencyBalance: !!modelData ? modelData.currencyBalance : ""
@@ -175,8 +170,7 @@ Loader {
             sensor.enabled: false
             subTitle: {
                 if(!!modelData) {
-                    const elidedAddress = StatusQUtils.Utils.elideAndFormatWalletAddress(modelData.address)
-                    return WalletUtils.colorizedChainPrefix(accountItem.chainShortNames) + elidedAddress
+                    return StatusQUtils.Utils.elideAndFormatWalletAddress(modelData.address)
                 }
                 return ""
             }

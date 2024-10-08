@@ -134,7 +134,6 @@ Item {
                     walletType: model.walletType
                     migratedToKeycard: model.migratedToKeycard ?? false
                     accountBalance: model.accountBalance ?? null
-                    chainShortNames: model.colorizedChainShortNames ?? ""
                     // This should only pass a `key` role to identify the accounts object but not necessary to pass the complete object structure
                     // TODO issue: #15492
                     onClicked: recipientSelected({name: model.name,
@@ -144,7 +143,6 @@ Item {
                                                      emoji: model.emoji,
                                                      walletType: model.walletType,
                                                      currencyBalance: model.currencyBalance,
-                                                     preferredSharingChainIds: model.preferredSharingChainIds,
                                                      migratedToKeycard: model.migratedToKeycard
                                                  },
                                                  Helpers.RecipientAddressObjectType.Account)

@@ -65,10 +65,6 @@ QtObject {
         return startsWith0x(value) && isHex(value) && value.length === 42
     }
 
-    function isValidAddressWithChainPrefix(value) {
-        return value.match(/^(([a-zA-Z]{3,5}:)*)?(0x[a-fA-F0-9]{40})$/)
-    }
-
     function getChainsPrefix(address) {
         // matchAll is not supported by QML JS engine
         return address.match(/([a-zA-Z]{3,5}:)*/)[0].split(':').filter(e => !!e)
@@ -84,14 +80,6 @@ QtObject {
 
     function richColorText(text, color) {
         return "<font color=\"" + color + "\">" + text + "</font>"
-    }
-
-    function splitToChainPrefixAndAddress(input) {
-        const addressIdx = input.indexOf('0x')
-        if (addressIdx < 0)
-            return { prefix: input, address: "" }
-
-        return { prefix: input.substring(0, addressIdx), address: input.substring(addressIdx) }
     }
 
     function isPrivateKey(value) {
@@ -882,17 +870,6 @@ QtObject {
         }
 
         return ""
-    }
-
-    function getActionNameForDisplayingAddressOnNetwork(networkShortName)  {
-        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
-            return qsTr("View on Arbiscan")
-        }
-        if (networkShortName === Constants.networkShortChainNames.optimism) {
-            return qsTr("View on Optimism Explorer")
-        }
-
-        return qsTr("View on Etherscan")
     }
 
     function getEtherscanUrl(networkShortName, testnetMode, sepoliaEnabled, addressOrTx, isAddressNotTx)  {

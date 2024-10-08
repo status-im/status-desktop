@@ -46,9 +46,8 @@ proc getSavedAddresses*(self: Controller): seq[saved_address_service.SavedAddres
 proc getSavedAddress*(self: Controller, address: string, ignoreNetworkMode: bool): SavedAddressDto =
   return self.savedAddressService.getSavedAddress(address, ignoreNetworkMode)
 
-proc createOrUpdateSavedAddress*(self: Controller, name: string, address: string, ens: string, colorId: string,
-  chainShortNames: string) =
-  self.savedAddressService.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
+proc createOrUpdateSavedAddress*(self: Controller, name: string, address: string, ens: string, colorId: string) =
+  self.savedAddressService.createOrUpdateSavedAddress(name, address, ens, colorId)
 
 proc deleteSavedAddress*(self: Controller, address: string) =
   self.savedAddressService.deleteSavedAddress(address)

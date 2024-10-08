@@ -27,8 +27,6 @@ QtObject:
     assetsLoading: bool,
     isWallet: bool,
     areTestNetworksEnabled: bool,
-    prodPreferredChainIds: string,
-    testPreferredChainIds: string,
     hideFromTotalBalance: bool,
     canSend: bool
   ) =
@@ -44,8 +42,6 @@ QtObject:
       position,
       operability = wa_dto.AccountFullyOperable,
       areTestNetworksEnabled,
-      prodPreferredChainIds,
-      testPreferredChainIds,
       hideFromTotalBalance)
     self.createdAt = createdAt
     self.assetsLoading = assetsLoading
@@ -71,8 +67,6 @@ QtObject:
     assetsLoading: bool = true,
     isWallet: bool = false,
     areTestNetworksEnabled: bool = false,
-    prodPreferredChainIds: string = "",
-    testPreferredChainIds: string = "",
     hideFromTotalBalance: bool = false,
     canSend: bool = true
   ): Item =
@@ -91,8 +85,6 @@ QtObject:
       assetsLoading,
       isWallet,
       areTestNetworksEnabled,
-      prodPreferredChainIds,
-      testPreferredChainIds,
       hideFromTotalBalance,
       canSend)
 

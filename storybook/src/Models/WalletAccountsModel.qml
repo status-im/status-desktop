@@ -42,7 +42,6 @@ ListModel {
                     }
                 }
             ],
-            preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 1.25,
                                   symbol: "USD",
                                   displayDecimals: 2,
@@ -69,7 +68,6 @@ ListModel {
                     }
                 }
             ],
-            preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 10,
                                   symbol: "USD",
                                   displayDecimals: 2,
@@ -105,7 +103,6 @@ ListModel {
                     }
                 }
             ],
-            preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 110.05,
                                   symbol: "USD",
                                   displayDecimals: 2,
@@ -123,7 +120,6 @@ ListModel {
             position: 2,
             assets: [
             ],
-            preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 3,
                                   symbol: "USD",
                                   displayDecimals: 2,
@@ -150,7 +146,6 @@ ListModel {
                     }
                 }
             ],
-            preferredSharingChainIds: "5:420:421613",
             currencyBalance: ({amount: 999,
                                   symbol: "USD",
                                   displayDecimals: 2,

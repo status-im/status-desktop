@@ -12,8 +12,7 @@ type
     Emoji,
     KeyUid,
     Position,
-    KeycardAccount,
-    PreferredSharingChainIds
+    KeycardAccount
 
 QtObject:
   type
@@ -58,7 +57,6 @@ QtObject:
       ModelRole.KeyUid.int: "keyUid",
       ModelRole.Position.int: "position",
       ModelRole.KeycardAccount.int: "keycardAccount",
-      ModelRole.PreferredSharingChainIds.int: "preferredSharingChainIds"
     }.toTable
 
 
@@ -78,18 +76,6 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.ColorId.int, ModelRole.Emoji.int])
-        break
-      i.inc
-
-  proc onPreferredSharingChainsUpdated*(self: Model, address, prodPreferredChainIds, testPreferredChainIds: string) =
-    var i = 0
-    for item in self.items.mitems:
-      if address == item.address:
-        item.prodPreferredChainIds = prodPreferredChainIds
-        item.testPreferredChainIds = testPreferredChainIds
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.PreferredSharingChainIds.int])
         break
       i.inc
 
@@ -122,8 +108,6 @@ QtObject:
       result = newQVariant(item.getPosition())
     of ModelRole.KeycardAccount:
       result = newQVariant(item.keycardAccount())
-    of ModelRole.PreferredSharingChainIds:
-      result = newQVariant(item.preferredSharingChainIds())
 
   proc moveItem*(self: Model, fromRow: int, toRow: int): bool =
     if toRow < 0 or toRow > self.items.len - 1:

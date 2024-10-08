@@ -45,13 +45,6 @@ QtObject {
         sourceModel: root.accounts
         proxyRoles: [
             FastExpressionRole {
-                name: "preferredSharingChainShortNames"
-                expression: {
-                    return root.networksModuleInst.getNetworkShortNames(model.preferredSharingChainIds)
-                }
-                expectedRoles: ["preferredSharingChainIds"]
-            },
-            FastExpressionRole {
                 name: "color"
 
                 function getColor(colorId) {
@@ -133,15 +126,6 @@ QtObject {
         root.accountsModule.setSelectedAccount(address)
     }
 
-    function getAllNetworksChainIds() {
-        let result = []
-        let chainIdsArray = ModelUtils.modelToFlatArray(root.filteredFlatModel, "chainId")
-        for(let i = 0; i< chainIdsArray.length; i++) {
-            result.push(chainIdsArray[i].toString())
-        }
-        return result
-    }
-
     function runAddAccountPopup() {
         // TODO:
         // - `runAddAccountPopup` should be part of `root.walletModule`
@@ -161,19 +145,6 @@ QtObject {
 
     function updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault) {
         networksModuleInst.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
-    }
-
-    function updateWalletAccountPreferredChains(address, preferredChainIds) {
-        if(areTestNetworksEnabled) {
-            accountsModule.updateWalletAccountTestPreferredChains(address, preferredChainIds)
-        }
-        else {
-            accountsModule.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-        }
-    }
-
-    function getNetworkShortNames(chainIds) {
-        return networksModuleInst.getNetworkShortNames(chainIds)
     }
 
     function getNetworkData(combinedNetwork) {

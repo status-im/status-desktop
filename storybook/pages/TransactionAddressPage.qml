@@ -79,13 +79,11 @@ SplitView {
 
         QtObject {
             id: d
-            property string addressPrefixString: "eth:oeth:arb1:"
             property string addressName: "Ariana Pearlona"
             property bool isContact: true
             property bool isWallet: false
             property bool isSavedAccount: false
-            property bool showPrefix: true
-            readonly property string displayAddress: (d.showPrefix ? d.addressPrefixString : "") + "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B"
+            readonly property string displayAddress: "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B"
         }
 
         QtObject {
@@ -205,20 +203,6 @@ SplitView {
                 TextField {
                     text: d.addressName
                     onTextChanged: d.addressName = text
-                }
-            }
-            Label {
-                text: "Address prefix:"
-            }
-            RowLayout {
-                TextField {
-                    text: d.addressPrefixString
-                    onTextChanged: d.addressPrefixString = text
-                }
-                CheckBox {
-                    text: "Show"
-                    checked: d.showPrefix
-                    onCheckedChanged: d.showPrefix = checked
                 }
             }
         }

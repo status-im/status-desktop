@@ -79,8 +79,6 @@ proc convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: WalletAc
     operability = account.operable,
     isDefaultAccount = account.isWallet,
     self.controller.areTestNetworksEnabled(),
-    prodPreferredChainIds = account.prodPreferredChainIds,
-    testPreferredChainIds = account.testPreferredChainIds,
     hideFromTotalBalance = account.hideFromTotalBalance)
 
 proc setBalance(self: Module, accountAddresses: seq[string]) =
@@ -184,10 +182,6 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED) do(e: Args):
-    let args = AccountArgs(e)
-    self.view.onPreferredSharingChainsUpdated(args.account.keyUid, args.account.address, args.account.prodPreferredChainIds, args.account.testPreferredChainIds)
-
   self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
     let args = AccountArgs(e)
     self.view.onHideFromTotalBalanceUpdated(args.account.keyUid, args.account.address, args.account.hideFromTotalBalance)
@@ -220,12 +214,6 @@ method renameKeypair*(self: Module, keyUid: string, name: string) =
 
 proc onKeypairRenamed(self: Module, keyUid: string, name: string) =
   self.view.keyPairModel.updateKeypairName(keyUid, name)
-
-method updateWalletAccountProdPreferredChains*(self: Module, address, preferredChainIds: string) =
-  self.controller.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-
-method updateWalletAccountTestPreferredChains*(self: Module, address, preferredChainIds: string) =
-  self.controller.updateWalletAccountTestPreferredChains(address, preferredChainIds)
 
 method updateWatchAccountHiddenFromTotalBalance*(self: Module, address: string, hideFromTotalBalance: bool) =
   self.controller.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)

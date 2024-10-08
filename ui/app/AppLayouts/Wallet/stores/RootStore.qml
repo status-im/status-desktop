@@ -165,10 +165,6 @@ QtObject {
         }
     }
 
-    function colorForChainShortName(chainShortName) {
-        return d.chainColors[chainShortName]
-    }
-
     readonly property var flatNetworks: networksModule.flatNetworks
     readonly property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
         sourceModel: root.flatNetworks
@@ -265,8 +261,6 @@ QtObject {
             operable: "",
             createdAt: -1,
             position: -1,
-            prodPreferredChainIds: "",
-            testPreferredChainIds: "",
             hideFromTotalBalance: false
         }
 
@@ -290,7 +284,6 @@ QtObject {
             address: "",
             ens: "",
             colorId: Constants.walletAccountColors.primary,
-            chainShortNames: "",
             isTest: false,
         }
 
@@ -356,13 +349,9 @@ QtObject {
         return walletSectionAccounts.getColorByAddress(address)
     }
 
-    function createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames) {
+    function createOrUpdateSavedAddress(name, address, ens, colorId) {
         root.addingSavedAddress = true
-        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
-    }
-
-    function updatePreferredChains(address, chainShortNames) {
-        walletSectionSavedAddresses.updatePreferredChains(address, chainShortNames)
+        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, ens, colorId)
     }
 
     function deleteSavedAddress(address) {
@@ -400,32 +389,6 @@ QtObject {
 
     function toggleWatchOnlyAccounts() {
         walletSection.toggleWatchOnlyAccounts()
-    }
-
-    function getAllNetworksChainIds() {
-        let result = []
-        let chainIdsArray = SQUtils.ModelUtils.modelToFlatArray(root.filteredFlatModel, "chainId")
-        for(let i = 0; i< chainIdsArray.length; i++) {
-            result.push(chainIdsArray[i].toString())
-        }
-        return result
-    }
-
-    function getNetworkShortNames(chainIds) {
-        return networksModule.getNetworkShortNames(chainIds)
-    }
-
-    function getNetworkIds(shortNames) {
-        return networksModule.getNetworkIds(shortNames)
-    }
-
-    function updateWalletAccountPreferredChains(address, preferredChainIds) {
-        if(areTestNetworksEnabled) {
-            walletSectionAccounts.updateWalletAccountTestPreferredChains(address, preferredChainIds)
-        }
-        else {
-            walletSectionAccounts.updateWalletAccountProdPreferredChains(address, preferredChainIds)
-        }
     }
 
     function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {
