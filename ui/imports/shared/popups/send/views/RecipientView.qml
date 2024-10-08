@@ -111,8 +111,9 @@ Loader {
         }
 
         function evaluateAndSetPreferredChains() {
-            let address = !!root.item.input && !!root.store.plainText(root.item.input.text) ? root.store.plainText(root.item.input.text): ""
-            let result = root.store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !root.isCollectiblesTransfer)
+            const plainText = StatusQUtils.StringUtils.plainText(root.item.input.text)
+            const address = !!root.item.input && !!plainText ? plainText: ""
+            const result = root.store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !root.isCollectiblesTransfer)
             if(!!result.address) {
                 root.addressText = result.address
                 if(!!root.item.input) {
@@ -193,7 +194,7 @@ Loader {
             text: root.addressText
 
             function validateInput() {
-                const plainText = store.plainText(text)
+                const plainText = StatusQUtils.StringUtils.plainText(text)
                 root.isLoading()
                 if (Utils.isValidEns(plainText)) {
                     d.isPending = true

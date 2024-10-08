@@ -481,7 +481,7 @@ Rectangle {
                 validateImagesAndShowImageArea([clipboardImage])
                 event.accepted = true
             } else if (ClipboardUtils.hasText) {
-                const clipboardText = Utils.plainText(ClipboardUtils.text)
+                const clipboardText = StatusQUtils.StringUtils.plainText(ClipboardUtils.text)
                 // prevent repetitive & huge clipboard paste, where huge is total char count > than messageLimitHard
                 const selectionLength = messageInputField.selectionEnd - messageInputField.selectionStart;
                 if ((messageLength + clipboardText.length - selectionLength) > control.messageLimitHard)
@@ -498,7 +498,7 @@ Rectangle {
                 d.copyTextStart = messageInputField.cursorPosition
                 messageInputField.readOnly = true
 
-                const copiedText = Utils.plainText(d.copiedTextPlain)
+                const copiedText = StatusQUtils.StringUtils.plainText(d.copiedTextPlain)
                 if (copiedText === clipboardText) {
                     if (d.copiedTextPlain.includes("@")) {
                         d.copiedTextFormatted = d.copiedTextFormatted.replace(/span style="/g, "span style=\" text-decoration:none;")
@@ -622,7 +622,7 @@ Rectangle {
 
         const deparsedEmoji = StatusQUtils.Emoji.deparse(textWithoutMention);
 
-        return Utils.plainText(deparsedEmoji)
+        return StatusQUtils.StringUtils.plainText(deparsedEmoji)
     }
 
     function removeMentions(currentText) {

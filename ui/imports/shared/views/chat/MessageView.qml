@@ -660,7 +660,7 @@ Loader {
                         return
                     }
 
-                    const message = root.rootStore.plainText(StatusQUtils.Emoji.deparse(newMessageText))
+                    const message = StatusQUtils.StringUtils.plainText(StatusQUtils.Emoji.deparse(newMessageText))
 
                     if (message.length <= 0)
                         return;

@@ -23,9 +23,6 @@ SplitView {
 
         property bool ready: false
         property var globalUtils: QtObject {
-            function plainText(htmlText) {
-                return htmlText.replace(/(?:<style[^]+?>[^]+?<\/style>|[\n]|<script[^]+?>[^]+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g,'')
-            }
             function isCompressedPubKey(publicKey) {
                 return false
             }
@@ -104,7 +101,7 @@ SplitView {
 
                 onSendMessage: {
                     logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])
-                    logs.logEvent("StatusChatInput::sendMessage", ["PlainText"], [globalUtilsMock.globalUtils.plainText(chatInput.getTextWithPublicKeys())])
+                    logs.logEvent("StatusChatInput::sendMessage", ["PlainText"], [SQUtils.StringUtils.plainText(chatInput.getTextWithPublicKeys())])
                     logs.logEvent("StatusChatInput::sendMessage", ["RawText"], [chatInput.textInput.text])
                 }
                 onEnableLinkPreviewForThisMessage: {
