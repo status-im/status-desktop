@@ -35,6 +35,7 @@ Item {
 
     property bool userSelectedImage: false
     readonly property bool nothingToShow: state === d.noImageState
+    property bool isError
 
     readonly property alias cropWorkflow : imageCropWorkflow
 
@@ -119,6 +120,9 @@ Item {
 
                 icon.name: "edit_pencil"
 
+                width: 40
+                height: 40
+
                 readonly property real rotationRadius: root.roundedImage ? parent.width/2 : imageCropEditor.radius
                 transform: [
                     Translate {
@@ -154,10 +158,16 @@ Item {
             radius: roundedImage ? Math.max(width, height)/2 : croppedPreview.radius
             color: Style.current.inputBackground
 
+            border.color: Theme.palette.dangerColor1
+            border.width: root.isError ? 1 : 0
+
             StatusRoundButton {
                 id: addButton
 
                 icon.name: "add"
+                width: 40
+                height: 40
+
                 readonly property real rotationRadius: root.roundedImage ? parent.width/2 : imageCropEditor.radius
 
                 transform: [

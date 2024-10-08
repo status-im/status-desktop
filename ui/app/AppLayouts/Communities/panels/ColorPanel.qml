@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -69,7 +69,7 @@ StatusScrollView {
             // TODO: editingFinished() signal instead of this crutch
             property bool locked: false
 
-            implicitWidth: 256
+            Layout.preferredWidth: 256
             validators: [
                 StatusRegularExpressionValidator {
                     regularExpression: /^#(?:[0-9a-fA-F]{3}){1,2}$/
@@ -91,22 +91,18 @@ StatusScrollView {
 
         StatusBaseText {
             text: qsTr("Preview")
-            font.pixelSize: 15
         }
 
         Rectangle {
-            implicitHeight: 48
+            Layout.fillWidth: true
+            Layout.preferredHeight: 44
             radius: 10
             color: root.color
-            Layout.fillWidth: true
 
             StatusBaseText {
-                id: preview
-                x: 16
-                y: 16
+                anchors.centerIn: parent
                 text: qsTr("White text should be legible on top of this colour")
                 color: Theme.palette.white
-                font.pixelSize: 15
             }
         }
 
@@ -114,7 +110,6 @@ StatusScrollView {
             id: colorSelectionGrid
             titleText: qsTr("Standard colours")
             title.color: Theme.palette.directColor1
-            title.font.pixelSize: 15
             columns: 8
             model: Theme.palette.communityColorsArray
             selectedColorIndex: -1

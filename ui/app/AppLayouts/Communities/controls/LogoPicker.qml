@@ -27,6 +27,10 @@ Item {
 
     implicitHeight: layout.childrenRect.height
 
+    function validate() {
+        editor.isError = !hasSelectedImage
+    }
+
     ColumnLayout {
         id: layout
 
@@ -37,7 +41,6 @@ Item {
             id: label
             Layout.fillWidth: true
             text: qsTr("Community logo")
-            font.pixelSize: 15
             color: Theme.palette.directColor1
             horizontalAlignment: Qt.AlignLeft
         }
@@ -58,6 +61,16 @@ Item {
 
                 visible: !editor.userSelectedImage && !root.imageData
             }
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            visible: editor.isError
+            text: qsTr("Upload a community logo")
+            font.pixelSize: Theme.tertiaryTextFontSize
+            color: Theme.palette.dangerColor1
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 }

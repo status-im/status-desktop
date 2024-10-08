@@ -21,6 +21,7 @@ Control {
     readonly property alias isDescriptionDirty: descriptionTextInput.input.dirty
     readonly property alias isLogoSelected: logoPicker.hasSelectedImage
     readonly property alias isBannerSelected: bannerPicker.hasSelectedImage
+    readonly property alias areTagsSelected: tagsPicker.hasSelectedTags
 
     property alias name: nameInput.text
     property alias description: descriptionTextInput.text
@@ -38,31 +39,50 @@ Control {
     
     implicitWidth: 608
 
-    contentItem: ColumnLayout {    
+    function validate(isDevBuild = false) {
+        if (!nameInput.validate(true))
+            nameInput.input.dirty = true
+        if (!descriptionTextInput.validate(true))
+            descriptionTextInput.input.dirty = true
+        if (!isDevBuild) {
+            logoPicker.validate()
+            bannerPicker.validate()
+            tagsPicker.validate()
+        }
+
+        return nameInput.valid && descriptionTextInput.valid &&
+                (isDevBuild ? true : logoPicker.hasSelectedImage && bannerPicker.hasSelectedImage && tagsPicker.hasSelectedTags)
+    }
+
+    contentItem: ColumnLayout {
         spacing: 16
 
         NameInput {
             id: nameInput
             input.edit.objectName: "communityNameInput"
             Layout.fillWidth: true
-            Component.onCompleted: nameInput.input.forceActiveFocus(Qt.MouseFocusReason)
+            input.tabNavItem: descriptionTextInput.input.edit
+            Component.onCompleted: nameInput.input.forceActiveFocus()
         }
 
         DescriptionInput {
             id: descriptionTextInput
             input.edit.objectName: "communityDescriptionInput"
+            input.tabNavItem: nameInput.input.edit
             Layout.fillWidth: true
         }
 
         LogoPicker {
             id: logoPicker
             objectName: "communityLogoPicker"
+            onHasSelectedImageChanged: validate()
             Layout.fillWidth: true
         }
 
         BannerPicker {
             id: bannerPicker
             objectName: "communityBannerPicker"
+            onHasSelectedImageChanged: validate()
             Layout.fillWidth: true
             Layout.topMargin: -8 //Closer by design
         }
@@ -109,12 +129,13 @@ Control {
                     width: 640
                     replaceItem: TagsPanel {
                         Component.onCompleted: {
-                            tags = tagsPicker.tags;
-                            selectedTags = tagsPicker.selectedTags;
+                            tags = tagsPicker.tags
+                            selectedTags = tagsPicker.selectedTags
                         }
                         onAccepted: {
-                            tagsPicker.selectedTags = selectedTags;
-                            close();
+                            tagsPicker.selectedTags = selectedTags
+                            tagsPicker.validate()
+                            close()
                         }
                     }
                     onClosed: destroy()

@@ -29,6 +29,8 @@ StatusButton {
         Down
     }
 
+    property bool isError
+
     horizontalPadding: 16
     verticalPadding: 3
     spacing: 4
@@ -37,6 +39,8 @@ StatusButton {
     background: Rectangle {
         radius: 8
         color: root.bgColor
+        border.color: Theme.palette.dangerColor1
+        border.width: root.isError ? 1 : 0
     }
     opacity: !root.interactive || !root.enabled ? 0.5 : 1
     contentItem: RowLayout {
@@ -62,16 +66,11 @@ StatusButton {
             elide: Text.ElideRight
         }
         StatusIcon {
-            icon: "tiny/chevron-right"
+            icon: "next"
             visible: root.type === StatusPickerButton.PickerType.Next
             color: !Qt.colorEqual(root.contentColor, Theme.palette.baseColor1) ? root.contentColor : Theme.palette.directColor1
             width: root.icon.width
             height: root.icon.height
         }
-    }
-
-    HoverHandler {
-        enabled: root.enabled
-        cursorShape: Qt.PointingHandCursor
     }
 }

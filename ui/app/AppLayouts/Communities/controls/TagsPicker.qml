@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 
@@ -15,13 +15,18 @@ ColumnLayout {
     property string tags
     property string selectedTags
 
+    readonly property bool hasSelectedTags: localAppSettings.testEnvironment || selectedTags !== ""
+
     signal pick()
 
-    implicitHeight: childrenRect.height
-    spacing: 14
+    spacing: 8
 
     onSelectedTagsChanged: d.handleSelectedTags()
     Component.onCompleted: d.handleSelectedTags()
+
+    function validate() {
+        pickerButton.isError = !hasSelectedTags
+    }
 
     QtObject {
         id: d
@@ -33,7 +38,7 @@ ColumnLayout {
 
             d.tagsModel.clear();
             for (const key of Object.keys(obj)) {
-                if (array.indexOf(key) != -1) {
+                if (array.indexOf(key) !== -1) {
                     d.tagsModel.append({ name: key, emoji: obj[key], selected: false });
                 }
             }
@@ -42,15 +47,19 @@ ColumnLayout {
 
     StatusBaseText {
         text: qsTr("Tags")
-        font.pixelSize: 15
         color: Theme.palette.directColor1
     }
 
     StatusPickerButton {
+        id: pickerButton
         bgColor: d.tagsModel.count === 0 ? Theme.palette.baseColor2 : "transparent"
         text: d.tagsModel.count === 0 ? qsTr("Choose tags describing the community") : ""
         onClicked: root.pick()
+        font.weight: Font.Normal
+        icon.width: 24
+        icon.height: 24
         Layout.fillWidth: true
+        Layout.preferredHeight: 44
 
         StatusCommunityTags {
             anchors.verticalCenter: parent.verticalCenter
@@ -59,5 +68,15 @@ ColumnLayout {
             width: parent.width
             contentWidth: width
         }
+    }
+
+    StatusBaseText {
+        Layout.fillWidth: true
+        visible: pickerButton.isError
+        text: qsTr("Add at least 1 tag")
+        font.pixelSize: Theme.tertiaryTextFontSize
+        color: Theme.palette.dangerColor1
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignRight
     }
 }
