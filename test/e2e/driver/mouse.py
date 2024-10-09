@@ -42,3 +42,16 @@ def press_and_move(
     move(obj, x, y, dx, dy, step, sleep)
     squish.mouseRelease(mouse)
     time.sleep(1)
+
+def scroll(
+        obj,
+        x: int,
+        y: int,
+        dx: int,
+        dy: int,
+        steps: int = 1,
+        sleep: float = 0
+):
+    for _ in range(steps):
+        squish.mouseWheel(obj, x, y, dx, dy, squish.Qt.NoModifier)
+        time.sleep(sleep)
