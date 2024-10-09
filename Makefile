@@ -13,6 +13,48 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 # we don't want an error here, so we can handle things later, in the ".DEFAULT" target
 -include $(BUILD_SYSTEM_DIR)/makefiles/variables.mk
 
+EXCLUDED_NIM_PACKAGES :=	vendor/status-go/third_party/nwaku/vendor/nim-bearssl \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-bearssl \
+							vendor/status-go/third_party/nwaku/vendor/nim-chronicles \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-chronicles \
+							vendor/status-go/third_party/nwaku/vendor/nim-chronos \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-chronos \
+							vendor/status-go/third_party/nwaku/vendor/nim-confutils \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-confutils \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-eth \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-faststreams \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-http-utils \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-json-rpc \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-json-serialization \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-secp256k1 \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-serialization \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-stew \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-websock \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-zlib \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nimbus-build-system/vendor/Nim \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nimbus-build-system/vendor/nimble \
+							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nimcrypto \
+							vendor/status-go/third_party/nwaku/vendor/nim-eth \
+							vendor/status-go/third_party/nwaku/vendor/nim-faststreams \
+							vendor/status-go/third_party/nwaku/vendor/nim-http-utils \
+							vendor/status-go/third_party/nwaku/vendor/nim-json-rpc \
+							vendor/status-go/third_party/nwaku/vendor/nim-json-serialization \
+							vendor/status-go/third_party/nwaku/vendor/nim-libp2p \
+							vendor/status-go/third_party/nwaku/vendor/nim-metrics \
+							vendor/status-go/third_party/nwaku/vendor/nim-results \
+							vendor/status-go/third_party/nwaku/vendor/nim-secp256k1 \
+							vendor/status-go/third_party/nwaku/vendor/nim-serialization \
+							vendor/status-go/third_party/nwaku/vendor/nim-stew \
+							vendor/status-go/third_party/nwaku/vendor/nim-stint \
+							vendor/status-go/third_party/nwaku/vendor/nim-taskpools \
+							vendor/status-go/third_party/nwaku/vendor/nim-testutils \
+							vendor/status-go/third_party/nwaku/vendor/nim-unittest2 \
+							vendor/status-go/third_party/nwaku/vendor/nim-web3 \
+							vendor/status-go/third_party/nwaku/vendor/nim-websock \
+							vendor/status-go/third_party/nwaku/vendor/nim-zlib \
+							vendor/status-go/third_party/nwaku/vendor/nimbus-build-system/vendor/Nim \
+							vendor/status-go/third_party/nwaku/vendor/nimcrypto
+							
 .PHONY: \
 	all \
 	nix-shell \
@@ -83,7 +125,7 @@ ifeq ($(detected_OS),Darwin)
  export CFLAGS
  CGO_CFLAGS := -mmacosx-version-min=12.0
  export CGO_CFLAGS
- LIBSTATUS_EXT := dylib
+ LIB_EXT := dylib
   # keep in sync with BOTTLE_MACOS_VERSION
  MACOSX_DEPLOYMENT_TARGET := 12.0
  export MACOSX_DEPLOYMENT_TARGET
@@ -92,14 +134,14 @@ ifeq ($(detected_OS),Darwin)
  QMAKE_PATH := $(shell which qmake);
  QT_ARCH := $(shell lipo -archs $(QMAKE_PATH))
 else ifeq ($(detected_OS),Windows)
- LIBSTATUS_EXT := dll
+ LIB_EXT := dll
  PKG_TARGET := pkg-windows
  QRCODEGEN_MAKE_PARAMS := CC=gcc
  RUN_TARGET := run-windows
  VCINSTALLDIR ?= C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\
  export VCINSTALLDIR
 else
- LIBSTATUS_EXT := so
+ LIB_EXT := so
  PKG_TARGET := pkg-linux
  RUN_TARGET := run-linux
 endif
@@ -215,6 +257,15 @@ ifeq ($(detected_OS),Darwin)
 	NIM_PARAMS += --cpu:amd64 --os:MacOSX --passL:"-arch x86_64" --passC:"-arch x86_64"
   endif
  endif
+endif
+
+ifeq ($(USE_NWAKU), true)
+	STATUSGO_MAKE_PARAMS += USE_NWAKU=true
+	NEGENTROPY := vendor/status-go/third_party/nwaku/vendor/negentropy/cpp/libnegentropy.a
+	LIBWAKU := vendor/status-go/third_party/nwaku/build/libwaku.$(LIB_EXT)
+	LIBWAKU_LIBDIR := $(shell pwd)/$(shell dirname "$(LIBWAKU)")
+	export LIBWAKU
+	NIM_EXTRA_PARAMS +=	--passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku" --passL:"$(NEGENTROPY)"
 endif
 
 INCLUDE_DEBUG_SYMBOLS ?= false
@@ -440,14 +491,14 @@ dotherside: | dotherside-build
 ##	status-go
 ##
 
-STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
+STATUSGO := vendor/status-go/build/bin/libstatus.$(LIB_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
 export STATUSGO_LIBDIR
 
 $(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
-	$(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
+	$(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/bash \
 		SENTRY_CONTEXT_NAME="status-desktop" \
 		SENTRY_CONTEXT_VERSION="$(DESKTOP_VERSION)" \
 		$(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
@@ -463,7 +514,7 @@ status-go-clean:
 	echo -e "\033[92mCleaning:\033[39m status-go"
 	rm -f $(STATUSGO)
 
-export STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
+export STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIB_EXT)
 export STATUSKEYCARDGO_LIBDIR := "$(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")"
 
 status-keycard-go: $(STATUSKEYCARDGO)
@@ -838,12 +889,12 @@ ICON_TOOL := node_modules/.bin/fileicon
 
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	./bin/nim_status_client $(ARGS)
 
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	gdb -ex=r ./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
