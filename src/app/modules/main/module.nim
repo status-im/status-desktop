@@ -424,6 +424,7 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     communityDetails.pubsubTopic,
     communityDetails.pubsubTopicKey,
     communityDetails.shard.index,
+    activeMembersCount = int(communityDetails.activeMembersCount),
   )
 
 proc connectForNotificationsOnly[T](self: Module[T]) =

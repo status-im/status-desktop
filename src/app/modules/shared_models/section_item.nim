@@ -53,6 +53,7 @@ type
     pubsubTopicKey: string
     shardIndex: int
     isPendingOwnershipRequest: bool
+    activeMembersCount: int
 
 proc initItem*(
     id: string,
@@ -89,7 +90,8 @@ proc initItem*(
     pubsubTopic = "",
     pubsubTopicKey = "",
     shardIndex = -1,
-    isPendingOwnershipRequest: bool = false
+    isPendingOwnershipRequest: bool = false,
+    activeMembersCount: int = 0,
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -128,6 +130,7 @@ proc initItem*(
   result.pubsubTopicKey = pubsubTopicKey
   result.shardIndex = shardIndex
   result.isPendingOwnershipRequest = isPendingOwnershipRequest
+  result.activeMembersCount = activeMembersCount
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -436,3 +439,9 @@ proc shardIndex*(self: SectionItem): int {.inline.} =
 
 proc `shardIndex=`*(self: var SectionItem, value: int) {.inline.} =
   self.shardIndex = value
+
+proc activeMembersCount*(self: SectionItem): int {.inline.} =
+  self.activeMembersCount
+
+proc `activeMembersCount=`*(self: var SectionItem, value: int) {.inline.} =
+  self.activeMembersCount = value

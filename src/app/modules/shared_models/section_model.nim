@@ -44,6 +44,7 @@ type
     PubsubTopicKey
     ShardIndex
     IsPendingOwnershipRequest
+    ActiveMembersCount
 
 QtObject:
   type
@@ -117,6 +118,7 @@ QtObject:
       ModelRole.PubsubTopicKey.int:"pubsubTopicKey",
       ModelRole.ShardIndex.int:"shardIndex",
       ModelRole.IsPendingOwnershipRequest.int:"isPendingOwnershipRequest",
+      ModelRole.ActiveMembersCount.int:"activeMembersCount",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -202,6 +204,8 @@ QtObject:
       result = newQVariant(item.shardIndex)
     of ModelRole.IsPendingOwnershipRequest:
       result = newQVariant(item.isPendingOwnershipRequest)
+    of ModelRole.ActiveMembersCount:
+      result = newQVariant(item.activeMembersCount)
 
   proc itemExists*(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -318,6 +322,7 @@ QtObject:
     updateRoleWithValue(pubsubTopicKey, PubsubTopicKey, item.pubsubTopicKey)
     updateRoleWithValue(shardIndex, ShardIndex, item.shardIndex)
     updateRoleWithValue(isPendingOwnershipRequest, IsPendingOwnershipRequest, item.isPendingOwnershipRequest)
+    updateRoleWithValue(activeMembersCount, ActiveMembersCount, item.activeMembersCount)
 
     self.items[ind].members.updateToTheseItems(item.members.getItems())
 
