@@ -1,7 +1,7 @@
 import allure
 
 import configs
-import driver.objects_access
+import driver
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
@@ -28,13 +28,15 @@ class CategoryPopup(BasePopup):
         self._name_text_edit.text = title
         return self
 
-    @allure.step('Click checkbox in category popup')
+    @allure.step('Click checkbox in edit category popup')
     def click_checkbox_by_index(self, index: int):
-        checkboxes = []
-        for child in driver.objects_access.walk_children(self._channels_view.object):
-            if child.id == 'channelItemCheckbox':
-                checkboxes.append(child)
-        driver.mouseClick(checkboxes[index])
+        checkboxes = driver.findAllObjects(self._channel_item_checkbox.real_name)
+        if len(checkboxes) > 0:
+            for _index, item in enumerate(checkboxes):
+                if index == _index:
+                    driver.mouseClick(item)
+        else:
+            raise AssertionError('Empty list of channels')
         return self
 
 
@@ -50,7 +52,6 @@ class NewCategoryPopup(CategoryPopup):
         if checkbox_state:
             self._channel_item_checkbox.click()
         self._create_button.click()
-        self.wait_until_hidden()
 
 
 class EditCategoryPopup(CategoryPopup):
@@ -63,4 +64,3 @@ class EditCategoryPopup(CategoryPopup):
     @allure.step('Click save in edit category popup')
     def save(self):
         self._save_button.click()
-        self.wait_until_hidden()
