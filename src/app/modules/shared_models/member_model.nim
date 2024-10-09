@@ -283,6 +283,7 @@ QtObject:
       memberRole: MemberRole,
       joined: bool,
       isUntrustworthy: bool,
+      membershipRequestState: MembershipRequestState = MembershipRequestState.None,
       callDataChanged: bool = true,
     ): seq[int] =
     let ind = self.findIndexForMember(pubKey)
@@ -306,6 +307,12 @@ QtObject:
     updateRole(memberRole, MemberRole)
     updateRole(joined, Joined)
     updateRole(isUntrustworthy, IsUntrustworthy)
+
+    var updatedMembershipRequestState = membershipRequestState
+    if updatedMembershipRequestState == MembershipRequestState.None:
+      updatedMembershipRequestState = self.items[ind].membershipRequestState
+
+    updateRoleWithValue(membershipRequestState, MembershipRequestState, updatedMembershipRequestState)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
@@ -341,6 +348,7 @@ QtObject:
         item.memberRole,
         item.joined,
         item.isUntrustworthy,
+        item.membershipRequestState,
         callDataChanged = false,
       )
 
@@ -409,7 +417,7 @@ QtObject:
       isContact: bool,
       isVerified: bool,
       isUntrustworthy: bool,
-      ) =
+    ) =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
       return
@@ -427,6 +435,7 @@ QtObject:
       memberRole = self.items[ind].memberRole,
       joined = self.items[ind].joined,
       isUntrustworthy,
+      self.items[ind].membershipRequestState,
     )
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =

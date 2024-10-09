@@ -3,8 +3,6 @@ import ./member_model, ./member_item
 import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../main/communities/tokens/models/token_item
 
-import ../../global/global_singleton
-
 import ../../../app_service/common/types
 import ../../../app_service/service/community_tokens/community_collectible_owner
 
@@ -49,9 +47,6 @@ type
     membersModel: member_model.Model
     historyArchiveSupportEnabled: bool
     pinMessageAllMembersEnabled: bool
-    bannedMembersModel: member_model.Model
-    pendingMemberRequestsModel*: member_model.Model
-    declinedMemberRequestsModel: member_model.Model
     encrypted: bool
     communityTokensModel: community_tokens_model.TokenModel
     pubsubTopic: string
@@ -89,9 +84,6 @@ proc initItem*(
     members: seq[MemberItem] = @[],
     historyArchiveSupportEnabled = false,
     pinMessageAllMembersEnabled = false,
-    bannedMembers: seq[MemberItem] = @[],
-    pendingMemberRequests: seq[MemberItem] = @[],
-    declinedMemberRequests: seq[MemberItem] = @[],
     encrypted: bool = false,
     communityTokens: seq[TokenItem] = @[],
     pubsubTopic = "",
@@ -129,12 +121,6 @@ proc initItem*(
   result.membersModel.setItems(members)
   result.historyArchiveSupportEnabled = historyArchiveSupportEnabled
   result.pinMessageAllMembersEnabled = pinMessageAllMembersEnabled
-  result.bannedMembersModel = newModel()
-  result.bannedMembersModel.setItems(bannedMembers)
-  result.pendingMemberRequestsModel = newModel()
-  result.pendingMemberRequestsModel.setItems(pendingMemberRequests)
-  result.declinedMemberRequestsModel = newModel()
-  result.declinedMemberRequestsModel.setItems(declinedMemberRequests)
   result.encrypted = encrypted
   result.communityTokensModel = newTokenModel()
   result.communityTokensModel.setItems(communityTokens)
@@ -177,9 +163,6 @@ proc `$`*(self: SectionItem): string =
     members:{self.membersModel},
     historyArchiveSupportEnabled:{self.historyArchiveSupportEnabled},
     pinMessageAllMembersEnabled:{self.pinMessageAllMembersEnabled},
-    bannedMembers:{self.bannedMembersModel},
-    pendingMemberRequests:{self.pendingMemberRequestsModel},
-    declinedMemberRequests:{self.declinedMemberRequestsModel},
     encrypted:{self.encrypted},
     communityTokensModel:{self.communityTokensModel},
     isPendingOwnershipRequest:{self.isPendingOwnershipRequest}
@@ -365,17 +348,10 @@ proc updateMember*(
   self.membersModel.updateItem(pubkey, name, ensName, isEnsVerified, nickname, alias, image, isContact,
     isVerified, isUntrustworthy)
 
-proc bannedMembers*(self: SectionItem): member_model.Model {.inline.} =
-  self.bannedMembersModel
-
 proc amIBanned*(self: SectionItem): bool {.inline.} =
-  self.bannedMembersModel.isContactWithIdAdded(singletonInstance.userProfile.getPubKey())
-
-proc pendingMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
-  self.pendingMemberRequestsModel
-
-proc declinedMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
-  self.declinedMemberRequestsModel
+  # TODO check if I'm banned
+  return false
+  # self.bannedMembersModel.isContactWithIdAdded(singletonInstance.userProfile.getPubKey())
 
 proc isPendingOwnershipRequest*(self: SectionItem): bool {.inline.} =
   self.isPendingOwnershipRequest
@@ -438,14 +414,10 @@ proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.in
   self.communityTokensModel
 
 proc updatePendingRequestLoadingState*(self: SectionItem, memberKey: string, loading: bool) {.inline.} =
-  self.pendingMemberRequestsModel.updateLoadingState(memberKey, loading)
+  self.membersModel.updateLoadingState(memberKey, loading)
 
 proc updateMembershipStatus*(self: SectionItem, memberKey: string, state: MembershipRequestState) {.inline.} =
-  case state:
-    of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete, MembershipRequestState.UnbannedPending:
-      self.bannedMembersModel.updateMembershipStatus(memberKey, state)
-    else:
-      self.membersModel.updateMembershipStatus(memberKey, state)
+  self.membersModel.updateMembershipStatus(memberKey, state)
 
 proc pubsubTopic*(self: SectionItem): string {.inline.} =
   self.pubsubTopic
