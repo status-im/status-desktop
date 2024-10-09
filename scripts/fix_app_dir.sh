@@ -6,7 +6,7 @@ set -e pipefail
 if [[ ! -z "${IN_NIX_SHELL}" ]]; then
 	patchelf --set-rpath '$ORIGIN/../../lib' \
     "${APP_DIR}/usr/plugins/platforminputcontexts/libfcitx5platforminputcontextplugin.so" \
-	  "${APP_DIR}/usr/bin/StatusQ/libStatusQ.so"
+          "${APP_DIR}/usr/lib/libStatusQ.so"
 
 	patchelf --set-rpath '$ORIGIN' \
 		"${APP_DIR}/usr/lib/libcom_err.so.3" \

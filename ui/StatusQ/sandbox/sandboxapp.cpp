@@ -5,9 +5,13 @@
 #include <QDebug>
 #include <QDirIterator>
 
+#include <StatusQ/typesregistration.h>
+
 SandboxApp::SandboxApp(int &argc, char **argv)
     : QGuiApplication(argc, argv)
 {
+    registerStatusQTypes();
+
 #ifdef QT_DEBUG
     connect(&m_watcher, &QFileSystemWatcher::fileChanged, this, [this](const QString& path) {
         qDebug().noquote() << QString("File change detected in '%1'").arg(path);
@@ -34,7 +38,7 @@ void SandboxApp::startEngine()
 {
 #ifdef QT_DEBUG
     watchDirectoryChanges(SANDBOX_SRC_DIR);
-    watchDirectoryChanges(STATUSQ_MODULE_PATH);
+    watchDirectoryChanges(STATUSQ_MODULE_IMPORT_PATH);
 #endif
     restartEngine();
 }

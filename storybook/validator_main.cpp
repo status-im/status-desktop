@@ -1,7 +1,8 @@
+#include <QDir>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#include <QDir>
+#include <StatusQ/typesregistration.h>
 
 int main(int argc, char *argv[])
 {
@@ -53,6 +54,7 @@ int main(int argc, char *argv[])
         auto fileName = fileInfo.filePath();
         qInfo() << ">>> Checking StoryBook page:" << fileName;
 
+        registerStatusQTypes();
         engine.load(fileName);
     }
 

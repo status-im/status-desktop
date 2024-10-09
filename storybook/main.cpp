@@ -17,6 +17,8 @@
 
 #include <memory>
 
+#include <StatusQ/typesregistration.h>
+
 struct PagesModelInitialized : public PagesModel {
     explicit PagesModelInitialized(QObject *parent = nullptr)
         : PagesModel(QML_IMPORT_ROOT + QStringLiteral("/pages"), parent) {}
@@ -101,6 +103,8 @@ int main(int argc, char *argv[])
                 "Storybook", 1, 0, "SystemUtils", [](QQmlEngine*, QJSEngine*) {
                     return new SystemUtils;
                 });
+
+    registerStatusQTypes();
 
     loadContextPropertiesMocks(QML_IMPORT_ROOT, engine);
 #ifdef Q_OS_WIN

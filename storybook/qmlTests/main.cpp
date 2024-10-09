@@ -1,6 +1,8 @@
 #include <QQmlEngine>
 #include <QtQuickTest>
 
+#include <StatusQ/typesregistration.h>
+
 #include "src/TextUtils.h"
 
 class Setup : public QObject
@@ -28,6 +30,8 @@ public slots:
             engine->addImportPath(path);
 
         qmlRegisterSingletonType<TextUtils>("TextUtils", 1, 0, "TextUtils", &TextUtils::qmlInstance);
+
+        registerStatusQTypes();
 
         QStandardPaths::setTestModeEnabled(true);
 

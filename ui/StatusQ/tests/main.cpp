@@ -6,6 +6,8 @@
 #include <TestHelpers/MonitorQtOutput.h>
 #include <TestHelpers/modelaccessobserverproxy.h>
 
+#include <StatusQ/typesregistration.h>
+
 class RunBeforeQApplicationIsInitialized {
 public:
     RunBeforeQApplicationIsInitialized()
@@ -29,6 +31,8 @@ public slots:
         // TODO: Alternative to not yet supported QML_ELEMENT
         qmlRegisterType<MonitorQtOutput>("StatusQ.TestHelpers", 0, 1, "MonitorQtOutput");
         qmlRegisterType<ModelAccessObserverProxy>("StatusQ.TestHelpers", 0, 1, "ModelAccessObserverProxy");
+
+        registerStatusQTypes();
     }
 };
 

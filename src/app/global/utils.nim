@@ -14,7 +14,6 @@ const URL_STATUS_OK* = "200 OK"
 QtObject:
   type Utils* = ref object of QObject
 
-  proc isCompressedPubKey*(self: Utils, publicKey: string): bool
   proc getDecompressedPk*(self: Utils, compressedKey: string): string
 
   proc setup(self: Utils) =
@@ -112,19 +111,19 @@ QtObject:
 
   proc getEmojiHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
     var pk = publicKey
-    if self.isCompressedPubKey(publicKey):
+    if conversion.isCompressedPubKey(publicKey):
       pk = self.getDecompressedPk(publicKey)
     procs_from_visual_identity_service.getEmojiHashAsJson(pk)
 
   proc getColorHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
     var pk = publicKey
-    if self.isCompressedPubKey(publicKey):
+    if conversion.isCompressedPubKey(publicKey):
       pk = self.getDecompressedPk(publicKey)
     procs_from_visual_identity_service.getColorHashAsJson(pk)
 
   proc getColorId*(self: Utils, publicKey: string): int {.slot.} =
     var pk = publicKey
-    if self.isCompressedPubKey(publicKey):
+    if conversion.isCompressedPubKey(publicKey):
       pk = self.getDecompressedPk(publicKey)
     int(procs_from_visual_identity_service.colorIdOf(pk))
 
@@ -139,9 +138,6 @@ QtObject:
 
   proc compressCommunityKey*(self: Utils, publicKey: string): string {.slot.} =
     compressCommunityKey(publicKey)
-
-  proc isCompressedPubKey*(self: Utils, publicKey: string): bool {.slot.} =
-    conversion.isCompressedPubKey(publicKey)
 
   # Changes publicKey compression between 33-bytes and multiformat zQ..
   proc changeCommunityKeyCompression*(self: Utils, publicKey: string): string {.slot.} =

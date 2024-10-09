@@ -10,6 +10,7 @@ import shared.controls 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
 
@@ -56,7 +57,7 @@ StatusDialog {
             }
             if (!Utils.isCommunityPublicKey(inputKey))
                 return ""
-            if (!Utils.isCompressedPubKey(inputKey))
+            if (!SQUtils.StringUtils.isCompressedPubKey(inputKey))
                 return inputKey
             return Utils.changeCommunityKeyCompression(inputKey)
         }
