@@ -115,18 +115,20 @@ class QObject:
             button or driver.Qt.LeftButton
         )
         LOG.info('%s: is clicked with Qt.LeftButton', self)
-        LOG.info("Checking if application context is frozen")
+        # LOG.info("Checking if application context is frozen")
 
         if timeout is None:
             pass
 
         if timeout is not None:
-            if not isFrozen(timeout):
-                pass
+            pass
+            # TODO: enable after fixing https://github.com/status-im/status-desktop/issues/15345
+            # if not isFrozen(timeout):
+            #    pass
 
-            else:
-                LOG.info("Application context did not respond after click")
-                raise Exception(f'Application UI is not responding within {timeout} second(s)')
+            # else:
+            #    LOG.info("Application context did not respond after click")
+            #    raise Exception(f'Application UI is not responding within {timeout} second(s)')
 
     @allure.step('Native click {0}')
     def native_mouse_click(

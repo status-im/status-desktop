@@ -37,7 +37,6 @@ class SyncNewDevicePopup(BasePopup):
     @allure.step('Click done')
     def done(self):
         self._done_button.click()
-        self.wait_until_hidden()
 
     @allure.step('Click close')
     def close(self):

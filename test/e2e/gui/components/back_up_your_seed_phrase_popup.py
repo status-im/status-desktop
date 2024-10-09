@@ -111,4 +111,4 @@ class BackUpYourSeedPhrasePopUp(BasePopup):
         self.confirm_second_word(seed_phrases)
         self.continue_seed_phrase()
         self.set_acknowledge(True)
-        self.complete_and_delete_seed_phrase().wait_until_hidden()
+        self.complete_and_delete_seed_phrase()

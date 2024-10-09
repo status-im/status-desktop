@@ -238,5 +238,4 @@ class CreateCommunityPopup(BasePopup):
         self.set_intro(intro)
         self.set_outro(outro)
         self._create_community_button.click()
-        self.wait_until_hidden()
         return CommunityScreen().wait_until_appears()

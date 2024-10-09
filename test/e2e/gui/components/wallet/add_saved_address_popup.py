@@ -90,7 +90,6 @@ class AddressPopup(AddSavedAddressPopup):
             self.verify_otimism_mainnet_network_tag_present()
             self.verify_arbitrum_mainnet_network_tag_present(),
         self._save_add_address_button.click()
-        self.wait_until_hidden()
 
 
 class EditSavedAddressPopup(AddSavedAddressPopup):

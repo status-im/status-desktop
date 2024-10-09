@@ -12,7 +12,6 @@ from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
-from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.toast_message import ToastMessage
 from gui.components.online_identifier import OnlineIdentifier
@@ -176,7 +175,6 @@ class MainWindow(Window):
 
     @allure.step('Sign Up user')
     def sign_up(self, user_account: UserAccount = RandomUser()):
-        share_updates_popup = ShareUsageDataPopup()
         BeforeStartedPopUp().get_started()
         welcome_screen = WelcomeToStatusView().wait_until_appears()
         profile_view = welcome_screen.get_keys().generate_new_keys()
@@ -193,19 +191,14 @@ class MainWindow(Window):
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             BetaConsentPopup().confirm()
-        if share_updates_popup.exists:
-            share_updates_popup.skip()
         return self
 
     @allure.step('Log in user')
     def log_in(self, user_account: UserAccount):
-        share_updates_popup = ShareUsageDataPopup()
         LoginView().log_in(user_account)
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             BetaConsentPopup().confirm()
-        if share_updates_popup.exists:
-            share_updates_popup.skip()
         return self
 
     @allure.step('Authorize user')

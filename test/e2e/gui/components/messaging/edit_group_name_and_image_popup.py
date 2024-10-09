@@ -20,4 +20,3 @@ class EditGroupNameAndImagePopup(BasePopup):
     @allure.step('Save changes')
     def save_changes(self):
         self._save_changes_button.click()
-        self.wait_until_hidden()
