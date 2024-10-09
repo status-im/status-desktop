@@ -66,7 +66,7 @@ else # "variables.mk" was included. Business as usual until the end of this file
 all: nim_status_client
 
 nix-shell: export NIX_USER_CONF_FILES := $(PWD)/nix/nix.conf
-nix-shell: 
+nix-shell:
 	nix-shell
 
 # must be included after the default target
@@ -445,6 +445,7 @@ status-go: $(STATUSGO)
 status-go-deps:
 	go install go.uber.org/mock/mockgen@v0.4.0
 	go install github.com/kevinburke/go-bindata/v4/...@v4.0.2
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.34.1
 
 status-go-clean:
 	echo -e "\033[92mCleaning:\033[39m status-go"
