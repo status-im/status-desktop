@@ -320,9 +320,6 @@ QtObject:
     updateRoleWithValue(isPendingOwnershipRequest, IsPendingOwnershipRequest, item.isPendingOwnershipRequest)
 
     self.items[ind].members.updateToTheseItems(item.members.getItems())
-    self.items[ind].bannedMembers.updateToTheseItems(item.bannedMembers.getItems())
-    self.items[ind].pendingMemberRequests.updateToTheseItems(item.pendingMemberRequests.getItems())
-    self.items[ind].declinedMemberRequests.updateToTheseItems(item.declinedMemberRequests.getItems())
 
     if roles.len == 0:
       return
@@ -345,44 +342,7 @@ QtObject:
       isUntrustworthy: bool,
     ) =
     for item in self.items:
-      # TODO refactor to use only one model https://github.com/status-im/status-desktop/issues/16433
       item.members.updateItem(
-        pubKey,
-        displayName,
-        ensName,
-        isEnsVerified,
-        localNickname,
-        alias,
-        icon,
-        isContact,
-        isVerified,
-        isUntrustworthy,
-      )
-      item.bannedMembers.updateItem(
-        pubKey,
-        displayName,
-        ensName,
-        isEnsVerified,
-        localNickname,
-        alias,
-        icon,
-        isContact,
-        isVerified,
-        isUntrustworthy,
-      )
-      item.pendingMemberRequests.updateItem(
-        pubKey,
-        displayName,
-        ensName,
-        isEnsVerified,
-        localNickname,
-        alias,
-        icon,
-        isContact,
-        isVerified,
-        isUntrustworthy,
-      )
-      item.declinedMemberRequests.updateItem(
         pubKey,
         displayName,
         ensName,
@@ -586,16 +546,17 @@ QtObject:
 
     self.items[index].communityTokens.setItems(communityTokensItems)
 
+  # TODO do we want a shared function
   proc addPendingMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
     let i = self.getItemIndex(communityId)
     if i == -1:
       return
 
-    self.items[i].pendingMemberRequests.addItem(memberItem)
+    self.items[i].members.addItem(memberItem)
 
   proc removePendingMember*(self: SectionModel, communityId: string, memberId: string) =
     let i = self.getItemIndex(communityId)
     if i == -1:
       return
 
-    self.items[i].pendingMemberRequests.removeItemById(memberId)
+    self.items[i].members.removeItemById(memberId)

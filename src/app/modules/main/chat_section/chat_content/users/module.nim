@@ -206,10 +206,10 @@ method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberR
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
     isVerified = not isMe and contactDetails.dto.isContactVerified(),
-    memberRole = memberRole,
-    joined = joined,
+    memberRole,
+    joined,
     isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
-    )
+  )
 
 method addGroupMembers*(self: Module, pubKeys: seq[string]) =
   self.controller.addGroupMembers(pubKeys)

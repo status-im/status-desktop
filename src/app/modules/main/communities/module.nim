@@ -239,11 +239,6 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.muted,
       members = members,
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
-      bannedMembers = bannedMembers,
-      pendingMemberRequests = c.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-        result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))),
-      declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-        result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))),
       encrypted = c.encrypted,
       communityTokens = @[]
     )
