@@ -58,13 +58,6 @@ StatusModal {
 
             AgreementSection {
                 title: qsTr("Warning - Status desktop is currently in Beta")
-                body: qsTr(" •  The Wallet is not yet safe or secure to use
- •  Do not use real funds in the Wallet
- •  Do not use accounts that contain tokens of value in the Wallet")
-            }
-
-            AgreementSection {
-                title: qsTr("Also be aware")
                 body: qsTr(" •  Status Desktop is incompatible with Status Mobile versions 1.x
  •  This version of Status may break or stop working without warning
  •  Communities created with this version may be broken by future releases
