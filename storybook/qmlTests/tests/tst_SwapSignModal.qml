@@ -99,8 +99,7 @@ Item {
             controlUnderTest.toTokenAmount = "1.42"
             controlUnderTest.toTokenContractAddress = "0xdeadcaff"
 
-            // title & subtitle
-            compare(controlUnderTest.title, qsTr("Sign Swap"))
+            // subtitle
             compare(controlUnderTest.subtitle, qsTr("%1 to %2").arg(controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount, controlUnderTest.fromTokenSymbol))
                     .arg(controlUnderTest.formatBigNumber(controlUnderTest.toTokenAmount, controlUnderTest.toTokenSymbol)))
 

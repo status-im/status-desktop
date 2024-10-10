@@ -45,7 +45,6 @@ SignTransactionModalBase {
     required property string serviceProviderURL
     required property string serviceProviderTandCUrl
 
-    title: qsTr("Sign Swap")
     //: e.g. (swap) 100 DAI to 100 USDT
     subtitle: qsTr("%1 to %2").arg(formatBigNumber(fromTokenAmount, fromTokenSymbol)).arg(formatBigNumber(toTokenAmount, toTokenSymbol))
 
