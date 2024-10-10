@@ -473,8 +473,8 @@ QtObject:
     if (index == -1):
       return
 
-    for pubkey, revealedAccounts in communityMembersAirdropAddress.pairs:
-      self.items[index].members.setAirdropAddress(pubkey, revealedAccounts)
+    for pubkey, airdropAddress in communityMembersAirdropAddress.pairs:
+      self.items[index].members.setAirdropAddress(pubkey, airdropAddress)
 
   proc setTokenItems*(self: SectionModel, id: string, communityTokensItems: seq[TokenItem]) = 
     let index = self.getItemIndex(id)

@@ -391,6 +391,9 @@ method windowDeactivated*(self: AccessInterface) {.base.} =
 method communityMembersRevealedAccountsLoaded*(self: AccessInterface, communityId: string, membersRevealedAccounts: MembersRevealedAccounts) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communityMemberRevealedAccountsAdded*(self: AccessInterface, request: CommunityMembershipRequestDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 ## Used in test env only, for testing keycard flows
 method registerMockedKeycard*(self: AccessInterface, cardIndex: int, readerState: int, keycardState: int,
   mockedKeycard: string, mockedKeycardHelper: string) {.base.} =

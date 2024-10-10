@@ -67,6 +67,7 @@ StatusDropdown {
     onOpened: {
         listView.positionViewAtBeginning()
         filterInput.text = ""
+        filterInput.input.edit.forceActiveFocus()
     }
 
     QtObject {

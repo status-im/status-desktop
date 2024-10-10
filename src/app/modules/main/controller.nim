@@ -309,6 +309,10 @@ proc init*(self: Controller) =
     var args = CommunityRequestArgs(e)
     self.delegate.newCommunityMembershipRequestReceived(args.communityRequest)
 
+  self.events.on(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY_ACCEPTED) do(e: Args):
+    var args = CommunityRequestArgs(e)
+    self.delegate.communityMemberRevealedAccountsAdded(args.communityRequest)
+
   self.events.on(SIGNAL_NETWORK_CONNECTED) do(e: Args):
     self.delegate.onNetworkConnected()
 
@@ -594,6 +598,9 @@ proc getColorId*(self: Controller, pubkey: string): int =
 
 proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: string) =
   self.communityService.asyncGetRevealedAccountsForAllMembers(communityId)
+
+proc asyncGetRevealedAccountsForMember*(self: Controller, communityId, memberPubkey: string) =
+  self.communityService.asyncGetRevealedAccountsForMember(communityId, memberPubkey)
 
 proc asyncReevaluateCommunityMembersPermissions*(self: Controller, communityId: string) =
   self.communityService.asyncReevaluateCommunityMembersPermissions(communityId)

@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -512,27 +513,31 @@ StatusScrollView {
                 model: SortFilterProxyModel {
                     sourceModel: membersModel
 
+                    sorters : [
+                        StringSorter {
+                            roleName: "preferredDisplayName"
+                            caseSensitivity: Qt.CaseInsensitive
+                        }
+                    ]
+
                     filters: [
-                        ExpressionFilter {
+                        FastExpressionFilter {
                             enabled: membersDropdown.searchText !== ""
 
-                            function matchesAlias(name, filter) {
-                                return name.split(" ").some(p => p.startsWith(filter))
-                            }
-
                             expression: {
-                                membersDropdown.searchText
-
                                 const filter = membersDropdown.searchText.toLowerCase()
-                                return matchesAlias(model.alias.toLowerCase(), filter)
+                                return model.alias.toLowerCase().includes(filter)
                                          || model.displayName.toLowerCase().includes(filter)
                                          || model.ensName.toLowerCase().includes(filter)
                                          || model.localNickname.toLowerCase().includes(filter)
                                          || model.pubKey.toLowerCase().includes(filter)
                             }
+                            expectedRoles: ["alias", "displayName", "ensName", "localNickname", "pubKey"]
                         },
-                        ExpressionFilter {
-                            expression: !!model.airdropAddress
+                        ValueFilter {
+                            roleName: "airdropAddress"
+                            value: ""
+                            inverted: true
                         }
                     ]
                 }
