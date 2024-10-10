@@ -33,15 +33,14 @@ if [[ -z "${IN_NIX_SHELL}" ]]; then
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 "${APP_DIR}/usr/lib/"
 else
 	mkdir -p "${APP_DIR}"/usr/lib/{gstreamer1.0,gstreamer-1.0,nss}
-	mkdir -p "${APP_DIR}"/usr/libexec
 
 	echo "${GST_PLUGIN_SYSTEM_PATH_1_0}" | tr ':' '\n' | sort -u | xargs -I {} find {} -name "*.so" | xargs -I {} cp {} "${APP_DIR}/usr/lib/gstreamer-1.0/"
 	cp -r "${GSTREAMER_PATH}/libexec/gstreamer-1.0" "${APP_DIR}/usr/lib/gstreamer1.0/"
 	cp "${LIBKRB5_PATH}/lib/libcom_err.so.3" "${APP_DIR}/usr/lib/libcom_err.so.3"
 	cp "${NSS_PATH}"/lib/{libfreebl3,libfreeblpriv3,libnssckbi,libnssdbm3,libsoftokn3}.{chk,so} "${APP_DIR}/usr/lib/nss/" || true
-	cp "${QTWEBENGINE_PATH}/libexec/QtWebEngineProcess" "${APP_DIR}/usr/libexec/QtWebEngineProcess"
-	cp "${QTWEBENGINE_PATH}"/resources/* "${APP_DIR}/usr/libexec/"
-	cp -r "${QTWEBENGINE_PATH}/translations/qtwebengine_locales" "${APP_DIR}/usr/libexec/"
+	cp "${QTWEBENGINE_PATH}/libexec/QtWebEngineProcess" "${APP_DIR}/usr/bin/QtWebEngineProcess"
+	cp "${QTWEBENGINE_PATH}"/resources/* "${APP_DIR}/usr/bin/"
+	cp -r "${QTWEBENGINE_PATH}/translations/qtwebengine_locales" "${APP_DIR}/usr/bin/"
 
 	chmod -R u+w "${APP_DIR}/usr"
 fi

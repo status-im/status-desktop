@@ -18,11 +18,11 @@ if [[ ! -z "${IN_NIX_SHELL}" ]]; then
 
 	patchelf --set-rpath '$ORIGIN/../../' "${APP_DIR}"/usr/lib/gstreamer1.0/gstreamer-1.0/*
 
-	patchelf --set-rpath '$ORIGIN/../lib' "${APP_DIR}/usr/libexec/QtWebEngineProcess"
+	patchelf --set-rpath '$ORIGIN/../lib' "${APP_DIR}/usr/bin/QtWebEngineProcess"
 
 	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 \
 		"${APP_DIR}/usr/bin/nim_status_client" \
-		"${APP_DIR}/usr/libexec/QtWebEngineProcess" \
+		"${APP_DIR}/usr/bin/QtWebEngineProcess" \
 		"${APP_DIR}/usr/lib/libQt5Core.so.5" \
 		"${APP_DIR}"/usr/lib/gstreamer1.0/gstreamer-1.0/*
 fi

@@ -17,6 +17,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	all \
 	nix-shell \
 	bottles \
+	check-nix-shell \
 	check-qt-dir \
 	check-pkg-target-linux \
 	check-pkg-target-macos \
@@ -48,6 +49,31 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
         run-storybook-tests \
 	update
 
+# This is a code for automatic help generator.
+# It supports ANSI colors and categories.
+# To add new item into help output, simply add comments
+# starting with '##'. To add category, use @category.
+GREEN  := $(shell echo "\e[32m")
+WHITE  := $(shell echo "\e[37m")
+YELLOW := $(shell echo "\e[33m")
+RESET  := $(shell echo "\e[0m")
+HELP_FUN = \
+		   %help; \
+		   while(<>) { push @{$$help{$$2 // 'options'}}, [$$1, $$3] if /^([a-zA-Z0-9\-]+)\s*:.*\#\#(?:@([a-zA-Z\-]+))?\s(.*)$$/ }; \
+		   print "Usage: make [target]\n\n"; \
+		   for (sort keys %help) { \
+			   print "${WHITE}$$_:${RESET}\n"; \
+			   for (@{$$help{$$_}}) { \
+				   $$sep = " " x (32 - length $$_->[0]); \
+				   print "  ${YELLOW}$$_->[0]${RESET}$$sep${GREEN}$$_->[1]${RESET}\n"; \
+			   }; \
+			   print "\n"; \
+		   }
+
+help: SHELL := /bin/sh
+help: ##@other Show this help
+	@perl -e '$(HELP_FUN)' $(MAKEFILE_LIST)
+
 ifeq ($(NIM_PARAMS),)
 # "variables.mk" was not included, so we update the submodules.
 GIT_SUBMODULE_UPDATE := git submodule update --init --recursive
@@ -65,9 +91,14 @@ else # "variables.mk" was included. Business as usual until the end of this file
 
 all: nim_status_client
 
-nix-shell: export NIX_USER_CONF_FILES := $(PWD)/nix/nix.conf
-nix-shell:
-	nix-shell
+shell: export NIX_USER_CONF_FILES := $(shell pwd)/nix/nix.conf
+shell: ##@prepare Enter into a pre-configured shell
+shell:
+ifndef IN_NIX_SHELL
+	nix develop --impure # nixGL needs currentTime
+else
+	@echo "${YELLOW}Nix shell is already active$(RESET)"
+endif
 
 # must be included after the default target
 -include $(BUILD_SYSTEM_DIR)/makefiles/targets.mk
@@ -102,6 +133,13 @@ else
  LIBSTATUS_EXT := so
  PKG_TARGET := pkg-linux
  RUN_TARGET := run-linux
+endif
+
+check-nix-shell:
+ifeq ($(detected_OS),Linux)
+ ifndef IN_NIX_SHELL
+	$(error Running outside of Nix shell is not supported)
+ endif
 endif
 
 check-qt-dir:
@@ -365,7 +403,7 @@ storybook-build: | storybook-configure
 
 run-storybook: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook"
-	$(STORYBOOK_BUILD_PATH)/bin/Storybook
+	nixGL $(STORYBOOK_BUILD_PATH)/bin/Storybook
 
 run-storybook-tests: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook Tests"
@@ -453,7 +491,7 @@ status-go-clean:
 	rm -f $(STATUSGO)
 
 export STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
-export STATUSKEYCARDGO_LIBDIR := "$(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")"
+export STATUSKEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")
 
 status-keycard-go: $(STATUSKEYCARDGO)
 $(STATUSKEYCARDGO): | deps
@@ -578,7 +616,7 @@ ifeq ($(detected_OS),Darwin)
 		bin/nim_status_client
 endif
 
-nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
+nim_status_client: check-nix-shell force-rebuild-status-go $(NIM_STATUS_CLIENT)
 
 ifdef IN_NIX_SHELL
 APPIMAGE_TOOL := appimagetool
@@ -825,15 +863,15 @@ ICON_TOOL := node_modules/.bin/fileicon
 # STATUS_PORT ?= 30306
 # WAKUV2_PORT ?= 30307
 
+run-linux: export LD_LIBRARY_PATH := $(QT5_LIBDIR):$(STATUSGO_LIBDIR):$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)" \
-	./bin/nim_status_client $(ARGS)
+	nixGL ./bin/nim_status_client $(ARGS)
 
+run-linux-gdb: export LD_LIBRARY_PATH := $(QT5_LIBDIR):$(STATUSGO_LIBDIR):$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)" \
-	gdb -ex=r ./bin/nim_status_client $(ARGS)
+	nixGL gdb -ex=r ./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
 	mkdir -p bin/StatusDev.app/Contents/{MacOS,Resources}
