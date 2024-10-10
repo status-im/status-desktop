@@ -55,7 +55,7 @@ class MockedKeycardController(Window):
     @allure.step('Click Register keycard')
     def register_keycard(self):
         time.sleep(1)
-        self._scroll_flick.vertical_down_to(self._register_keycard_button)
+        self._scroll_flick.vertical_scroll_down(self._register_keycard_button)
         self._register_keycard_button.click()
         time.sleep(1)
         return self
