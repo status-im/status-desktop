@@ -174,12 +174,16 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc findIndexForMember(self: Model, pubKey: string): int =
+  proc findIndexForMember*(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
-      if(self.items[i].pubKey == pubKey):
+      if self.items[i].pubKey == pubKey:
         return i
 
     return -1
+
+  proc getMemberItemByIndex*(self: Model, ind: int): MemberItem =
+    if ind >= 0 and ind < self.items.len:
+      return self.items[ind]
 
   proc getMemberItem*(self: Model, pubKey: string): MemberItem =
     let ind = self.findIndexForMember(pubKey)
@@ -518,3 +522,9 @@ QtObject:
           break
       if not found:
         result.add(pubkey)
+
+  proc isUserBanned*(self: Model, pubkey: string): bool = 
+    let ind = self.findIndexForMember(pubkey)
+    if ind == -1:
+      return false
+    return self.getMemberItemByIndex(ind).membershipRequestState == MembershipRequestState.Banned

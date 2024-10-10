@@ -551,15 +551,14 @@ QtObject:
 
     self.items[index].communityTokens.setItems(communityTokensItems)
 
-  # TODO do we want a shared function
-  proc addPendingMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
+  proc addMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
     let i = self.getItemIndex(communityId)
     if i == -1:
       return
 
     self.items[i].members.addItem(memberItem)
 
-  proc removePendingMember*(self: SectionModel, communityId: string, memberId: string) =
+  proc removeMember*(self: SectionModel, communityId: string, memberId: string) =
     let i = self.getItemIndex(communityId)
     if i == -1:
       return

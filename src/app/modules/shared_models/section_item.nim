@@ -3,6 +3,8 @@ import ./member_model, ./member_item
 import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../main/communities/tokens/models/token_item
 
+import ../../global/global_singleton
+
 import ../../../app_service/common/types
 import ../../../app_service/service/community_tokens/community_collectible_owner
 
@@ -352,9 +354,7 @@ proc updateMember*(
     isVerified, isUntrustworthy)
 
 proc amIBanned*(self: SectionItem): bool {.inline.} =
-  # TODO check if I'm banned
-  return false
-  # self.bannedMembersModel.isContactWithIdAdded(singletonInstance.userProfile.getPubKey())
+  return self.membersModel.isUserBanned(singletonInstance.userProfile.getPubKey())
 
 proc isPendingOwnershipRequest*(self: SectionItem): bool {.inline.} =
   self.isPendingOwnershipRequest
