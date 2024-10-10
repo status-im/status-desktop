@@ -3,7 +3,6 @@ import QtQuick 2.15
 import QtTest 1.15
 import "helpers/wallet_connect.js" as Testing
 
-import StatusQ 0.1 // See #10218
 import StatusQ.Core.Utils 0.1
 
 import QtQuick.Controls 2.15
