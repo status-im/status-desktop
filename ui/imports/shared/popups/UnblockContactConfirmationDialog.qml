@@ -17,7 +17,7 @@ CommonContactDialog {
         objectName: "unblockingText"
         Layout.fillWidth: true
         wrapMode: Text.WordWrap
-        text: qsTr("Unblocking %1 will allow new messages you receive from %1 to reach you.").arg(mainDisplayName)
+        text: qsTr("Unblocking %1 will allow new messages you receive from %1 to reach you.").arg(root.mainDisplayName)
     }
 
     rightButtons: ObjectModel {

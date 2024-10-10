@@ -16,19 +16,28 @@ import shared.controls.chat 1.0
 StatusDialog {
     id: root
 
-    required property string publicKey
-    required property var contactDetails
-    property bool loadingContactDetails
+    property string publicKey: ""
+    property bool loadingContactDetails: false
+    property string localNickname
+    property string name
+    property string displayName
+    property string alias
+    property bool ensVerified
+    property int onlineStatus
+    property string largeImage
+    property bool isContact
+    property int trustStatus
+    property bool isBlocked
 
     default property alias content: contentLayout.children
 
     property ObjectModel rightButtons
 
     readonly property string mainDisplayName: StatusQUtils.Emoji.parse(
-                                                  ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
-                                                                           contactDetails.displayName, contactDetails.alias))
+                                                  ProfileUtils.displayName(localNickname, name,
+                                                                           displayName, alias))
     readonly property string optionalDisplayName: StatusQUtils.Emoji.parse(
-                                                      ProfileUtils.displayName("", contactDetails.name, contactDetails.displayName, contactDetails.alias))
+                                                      ProfileUtils.displayName("", name, displayName, alias))
 
     width: Math.max(implicitWidth, 480)
     horizontalPadding: 0
@@ -45,12 +54,12 @@ StatusDialog {
             UserImage {
                 name: root.mainDisplayName
                 pubkey: root.publicKey
-                image: Utils.addTimestampToURL(contactDetails.largeImage)
+                image: Utils.addTimestampToURL(root.largeImage)
                 interactive: false
                 imageWidth: 60
                 imageHeight: 60
-                ensVerified: contactDetails.ensVerified
-                onlineStatus: contactDetails.onlineStatus
+                ensVerified: root.ensVerified
+                onlineStatus: root.onlineStatus
                 loading: root.loadingContactDetails
             }
 
@@ -77,9 +86,9 @@ StatusDialog {
                         anchors.left: contactName.right
                         anchors.leftMargin: Style.current.halfPadding
                         anchors.verticalCenter: contactName.verticalCenter
-                        isContact: contactDetails.isContact
-                        trustIndicator: contactDetails.trustStatus
-                        isBlocked: contactDetails.isBlocked
+                        isContact: root.isContact
+                        trustIndicator: root.trustStatus
+                        isBlocked: root.isBlocked
                         tiny: false
                     }
                 }
@@ -90,7 +99,7 @@ StatusDialog {
                         color: Theme.palette.baseColor1
                         font.pixelSize: 13
                         text: root.optionalDisplayName
-                        visible: !!contactDetails.localNickname
+                        visible: !!root.localNickname
                     }
                     Rectangle {
                         Layout.preferredWidth: 4

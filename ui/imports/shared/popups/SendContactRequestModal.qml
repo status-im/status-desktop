@@ -15,8 +15,6 @@ import AppLayouts.stores 1.0 as AppLayoutStores
 CommonContactDialog {
     id: root
 
-    property AppLayoutStores.RootStore rootStore
-
     property string labelText: qsTr("Why should they accept your contact request?")
     property string challengeText: qsTr("Write a short message telling them who you are...")
     property string buttonText: qsTr("Send contact request")
@@ -25,49 +23,23 @@ CommonContactDialog {
 
     title: qsTr("Send contact request")
 
-    onAboutToShow: {
-        messageInput.input.edit.forceActiveFocus()
-
-        // (request) update from mailserver
-        if (d.userDisplayName === "") {
-            root.rootStore.contactStore.requestContactInfo(root.publicKey)
-            root.loadingContactDetails = true
-        }
-    }
-
-    readonly property var d: QtObject {
-        id: d
-
-        readonly property int maxMsgLength: 280
-        readonly property int minMsgLength: 1
-        readonly property int msgHeight: 152
-    }
-
-    readonly property var _conn: Connections {
-        target: root.rootStore.contactStore.contactsModule
-
-        function onContactInfoRequestFinished(publicKey, ok) {
-            if (publicKey !== root.publicKey)
-                return
-            if (ok)
-                root.contactDetails = Utils.getContactDetailsAsJson(root.publicKey, false)
-            root.loadingContactDetails = false
-        }
-    }
+    readonly property int maxMsgLength: 280
+    readonly property int minMsgLength: 1
+    readonly property int msgHeight: 152
 
     StatusInput {
         id: messageInput
         input.edit.objectName: "ProfileSendContactRequestModal_sayWhoYouAreInput"
         Layout.fillWidth: true
         label: root.labelText
-        charLimit: d.maxMsgLength
+        charLimit: root.maxMsgLength
         placeholderText: root.challengeText
         input.multiline: true
-        minimumHeight: d.msgHeight
-        maximumHeight: d.msgHeight
+        minimumHeight: root.msgHeight
+        maximumHeight: root.msgHeight
         input.verticalAlignment: TextEdit.AlignTop
         validators: StatusMinLengthValidator {
-            minLength: d.minMsgLength
+            minLength: root.minMsgLength
             errorMessage: Utils.getErrorMessage(messageInput.errors, qsTr("who are you"))
         }
     }

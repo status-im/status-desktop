@@ -15,7 +15,7 @@ import utils 1.0
 CommonContactDialog {
     id: root
 
-    readonly property string nickname: contactDetails.localNickname
+    property string nickname: ""
 
     signal editDone(string newNickname)
     signal removeNicknameRequested()
