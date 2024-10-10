@@ -101,6 +101,10 @@ ENV HOME="/home/jenkins"
 # Nix for jenkins user to build status-go.
 RUN curl -s https://nixos.org/releases/nix/nix-2.19.3/install | sh -s -- --no-daemon
 
+# Installing rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain 1.78 -y
+ENV PATH="~/.cargo/bin:${PATH}"
+
 LABEL maintainer="jakub@status.im"
 LABEL source="https://github.com/status-im/status-desktop"
 LABEL description="Build image for the Status Desktop client written in Nim."
