@@ -12,6 +12,7 @@ proc createTestMessageItem(id: string, clock: int64): Item =
   return initItem(
     id = id,
     communityId = "",
+    chatId = "",
     responseToMessageWithId = "",
     senderId = "",
     senderDisplayName = "",
@@ -60,6 +61,7 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     albumMessageIds = @[],
     albumImagesCount = 0,
     bridgeMessage = BridgeMessage(),
+    quotedBridgeMessage = BridgeMessage(),
   )
 
 let message0_chatIdentifier = createTestMessageItem("chat-identifier", -2)
