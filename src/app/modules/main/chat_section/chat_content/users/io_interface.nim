@@ -20,6 +20,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getUsersListVariant*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onNewMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -59,5 +62,5 @@ method addGroupMembers*(self: AccessInterface, pubKeys: seq[string]) {.base.} =
 method removeGroupMembers*(self: AccessInterface, pubKeys: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateMembersList*(self: AccessInterface) {.base.} =
+method updateMembersList*(self: AccessInterface, membersToReset: seq[ChatMember] = @[]) {.base.} =
   raise newException(ValueError, "No implementation available")

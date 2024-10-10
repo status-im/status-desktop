@@ -401,7 +401,11 @@ method onCommunityChannelEdited*(self: Module, chatDto: ChatDto) =
   self.view.chatDetails.setName(chatDto.name)
   self.view.chatDetails.setIcon(chatDto.icon)
   self.view.chatDetails.setMissingEncryptionKey(chatDto.missingEncryptionKey)
-  self.view.chatDetails.setRequiresPermissions(chatDto.tokenGated)
+
+  if self.view.chatDetails.getRequiresPermissions() != chatDto.tokenGated:
+    # The channel permission status changed. Update the member list
+    self.view.chatDetails.setRequiresPermissions(chatDto.tokenGated)
+    self.usersModule.updateMembersList()
 
   self.messagesModule.updateChatFetchMoreMessages()
   self.messagesModule.updateChatIdentifier()
