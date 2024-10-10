@@ -391,7 +391,7 @@ QtObject {
 
     function openCommunityMemberMessagesPopup(store, chatCommunitySectionModule, memberPubKey, displayName) {
         openPopup(communityMemberMessagesPopup, {
-            store: store,
+            rootStore: store,
             chatCommunitySectionModule: chatCommunitySectionModule,
             memberPubKey: memberPubKey,
             displayName: displayName
