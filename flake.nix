@@ -1,5 +1,5 @@
 {
-  description = "Status Desktop"
+  description = "Status Desktop";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/release-20.09";
   # for nix-shell support
