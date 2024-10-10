@@ -15,7 +15,8 @@ Button {
     property string subTitle
     property bool muted
     property int pinnedMessagesCount
-
+    property bool requiresPermissions
+    property bool locked
     property bool forceHideTypeIcon: false
 
     property StatusAssetSettings asset: StatusAssetSettings {
@@ -108,8 +109,12 @@ Button {
                             return "tiny/public-chat"
                         case StatusChatInfoButton.Type.GroupChat:
                             return "tiny/group"
-                        case StatusChatInfoButton.Type.CommunityChat:
-                            return "tiny/channel"
+                        case StatusChatInfoButton.Type.CommunityChat: {
+                            var iconName = "tiny/channel"
+                            if (root.requiresPermissions)
+                                iconName = root.locked ? "tiny/channel-locked" : "tiny/channel-unlocked"
+                            return Theme.palette.name === "light" ? iconName : iconName+"-white"
+                        }
                         default:
                             return ""
                         }
