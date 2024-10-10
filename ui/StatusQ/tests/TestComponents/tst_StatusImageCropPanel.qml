@@ -1,11 +1,8 @@
-import QtQuick 2.0
-import QtTest 1.0
-
-import StatusQ 0.1 // https://github.com/status-im/status-desktop/issues/10218
+import QtQuick 2.15
+import QtTest 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-
 import StatusQ.TestHelpers 0.1
 
 Item {

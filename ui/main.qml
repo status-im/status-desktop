@@ -16,7 +16,7 @@ import shared.stores 1.0
 import mainui 1.0
 import AppLayouts.Onboarding 1.0
 
-import StatusQ 0.1 // Force import StatusQ plugin to load all StatusQ resources
+import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
 
 StatusWindow {
