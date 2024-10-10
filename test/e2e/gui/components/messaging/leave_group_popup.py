@@ -14,4 +14,5 @@ class LeaveGroupPopup(BasePopup):
     @allure.step("Confirm leaving group")
     def confirm_leaving(self):
         self._leave_button.click()
+        self.wait_until_hidden()
 

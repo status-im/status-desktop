@@ -82,8 +82,8 @@ class CommunityScreen(QObject):
     @allure.step('Edit category')
     def edit_category(self):
         self.left_panel.open_more_options()
-        self.left_panel.open_edit_category_popup()
-        return EditCategoryPopup()
+        self.left_panel.edit_category_item.click()
+        return EditCategoryPopup().wait_until_appears()
 
     @allure.step('Verify category in the list')
     def verify_category(self, category_name: str):
@@ -214,7 +214,7 @@ class LeftPanel(QObject):
         self._category_list_item = QObject(communities_names.categoryItem_StatusChatListCategoryItem)
         self._create_category_button = Button(communities_names.add_categories_StatusFlatButton)
         self._delete_category_item = QObject(communities_names.delete_Category_StatusMenuItem)
-        self._edit_category_item = QObject(communities_names.edit_Category_StatusMenuItem)
+        self.edit_category_item = QObject(communities_names.edit_Category_StatusMenuItem)
         self._add_channel_inside_category_item = QObject(
             communities_names.scrollView_addButton_StatusChatListCategoryItemButton)
         self._more_button = Button(communities_names.scrollView_menuButton_StatusChatListCategoryItemButton)
@@ -360,7 +360,7 @@ class LeftPanel(QObject):
 
     @allure.step('Get visibility state of edit item')
     def is_edit_item_visible(self) -> bool:
-        return self._edit_category_item.is_visible
+        return self.edit_category_item.is_visible
 
     @allure.step('Open delete category popup')
     def open_delete_category_popup(self) -> DeleteCategoryPopup:
@@ -369,7 +369,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open edit category popup')
     def open_edit_category_popup(self) -> EditCategoryPopup:
-        self._edit_category_item.click()
+        self.edit_category_item.click()
         return CategoryPopup().wait_until_appears()
 
     @allure.step('Open new channel popup inside category')

@@ -10,7 +10,7 @@ from gui.objects_map import names
 class BeforeStartedPopUp(BasePopup):
 
     def __init__(self):
-        super(BeforeStartedPopUp, self).__init__()
+        super().__init__()
         self._acknowledge_checkbox = CheckBox(names.acknowledge_checkbox)
         self._terms_of_use_checkBox = CheckBox(names.termsOfUseCheckBox_StatusCheckBox)
         self._acknowledgeIndicator = QObject(names.acknowledgeIndicator)

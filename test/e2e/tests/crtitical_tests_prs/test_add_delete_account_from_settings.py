@@ -38,6 +38,7 @@ def test_delete_generated_account_from_wallet_settings(
     with step('Add a new generated account from wallet settings screen'):
         add_account_popup.set_name(account_name).set_emoji(emoji).set_color(color).save_changes()
         authenticate_with_password(user_account)
+        add_account_popup.wait_until_hidden()
 
     with step('Open account details view for the generated account'):
         account_index = 1

@@ -10,10 +10,10 @@ from gui.objects_map import names
 class BetaConsentPopup(QObject):
 
     def __init__(self):
+        super().__init__(names.betaConsent_StatusModal)
         self._agree_to_use_checkbox = CheckBox(names.agreeToUse_StatusCheckBox)
         self._ready_to_use_checkbox = CheckBox(names.readyToUse_StatusCheckBox)
         self._ready_to_use_button = Button(names.i_m_ready_to_use_Status_Desktop_Beta_StatusButton)
-        super(BetaConsentPopup, self).__init__(names.betaConsent_StatusModal)
 
     @allure.step('Confirm all')
     def confirm(self):

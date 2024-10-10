@@ -30,30 +30,22 @@ class ProfileSettingsView(QObject):
     @allure.step('Get display name')
     def get_display_name(self) -> str:
         self._identity_tab_button.click()
-        if BuildShowcasePopup().is_visible:
-            BuildShowcasePopup().close()
         return self._display_name_text_field.text
 
     @allure.step('Set user name')
     def set_name(self, value: str):
         self._identity_tab_button.click()
-        if BuildShowcasePopup().is_visible:
-            BuildShowcasePopup().close()
         self._display_name_text_field.text = value
 
     @property
     @allure.step('Get bio')
     def get_bio(self) -> str:
         self._identity_tab_button.click()
-        if BuildShowcasePopup().is_visible:
-            BuildShowcasePopup().close()
         return self._bio_text_field.text
 
     @allure.step('Set bio')
     def set_bio(self, value: str):
         self._identity_tab_button.click()
-        if BuildShowcasePopup().is_visible:
-            BuildShowcasePopup().close()
         self._bio_text_field.text = value
 
     @property
