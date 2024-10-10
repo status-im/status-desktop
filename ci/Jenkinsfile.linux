@@ -6,15 +6,7 @@ def isPRBuild = utils.isPRBuild()
 def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
-  agent {
-    /* Necessary image with Ubuntu 20.04 for older Glibc. */
-    docker {
-      label 'linux'
-      image 'statusteam/nim-status-client-build:1.5.0-qt5.15.2'
-      /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
-      args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
-    }
-  }
+  agent { label 'linux && x86_64 && nix-2.19' }
 
   parameters {
     booleanParam(
@@ -77,21 +69,21 @@ pipeline {
 
   stages {
     stage('Deps') {
-      steps {
-        sh 'make update'
-        sh 'make deps'
-      }
+      steps { script {
+        nix.shell('make update', pure: true)
+        nix.shell('make deps', pure: true)
+      } }
     }
 
     stage('status-go') {
-      steps {
-        sh 'make status-go'
-      }
+      steps { script {
+        nix.shell('make status-go', pure: true)
+      } }
     }
 
     stage('Package') {
       steps { script {
-        linux.bundle('tgz-linux')
+        linux.bundle('tgz-linux', nixShell=true)
       } }
     }
 
