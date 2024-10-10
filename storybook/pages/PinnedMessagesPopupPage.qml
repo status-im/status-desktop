@@ -22,81 +22,61 @@ SplitView {
     Logs { id: logs }
 
     QtObject {
-        id: mockMessageStore
-        property var messages: [
-            {
-                messageId: "msg1",
-                senderId: "user1",
-                senderDisplayName: "Alice",
-                senderOptionalName: "",
-                senderIsEnsVerified: false,
-                senderIcon: "",
-                amISender: false,
-                senderIsAdded: false,
-                senderTrustStatus: Constants.trustStatus.unknown,
-                messageText: "This is a pinned message",
-                unparsedText: "This is a pinned message",
-                messageImage: "",
-                messageTimestamp: 1621234567,
-                messageOutgoingStatus: "",
-                resendError: "",
-                messageContentType: Constants.messageContentType.messageType,
-                pinnedMessage: true,
-                messagePinnedBy: "user2",
-                reactionsModel: [],
-                linkPreviewModel: null,
-                messageAttachments: "",
-                transactionParams: null,
-                emojiReactionsModel: null,
-                responseToMessageWithId: "",
-                quotedMessageText: "",
-                quotedMessageFrom: "",
-                quotedMessageContentType: Constants.messageContentType.messageType,
-                quotedMessageDeleted: false,
-                album: [],
-                albumCount: 0,
-                quotedMessageAlbumMessageImages: [],
-                quotedMessageAlbumImagesCount: 0
-            },
-            {
-                messageId: "msg2",
-                senderId: "user2",
-                senderDisplayName: "Bob",
-                senderOptionalName: "",
-                senderIsEnsVerified: false,
-                senderIcon: "",
-                amISender: false,
-                senderIsAdded: false,
-                senderTrustStatus: Constants.trustStatus.unknown,
-                messageText: "Another pinned message",
-                unparsedText: "Another pinned message",
-                messageImage: "",
-                messageTimestamp: 1621234568,
-                messageOutgoingStatus: "",
-                resendError: "",
-                messageContentType: Constants.messageContentType.messageType,
-                pinnedMessage: true,
-                messagePinnedBy: "user1",
-                reactionsModel: [],
-                linkPreviewModel: null,
-                messageAttachments: "",
-                transactionParams: null,
-                emojiReactionsModel: null,
-                responseToMessageWithId: "",
-                quotedMessageText: "",
-                quotedMessageFrom: "",
-                quotedMessageContentType: Constants.messageContentType.messageType,
-                quotedMessageDeleted: false,
-                album: [],
-                albumCount: 0,
-                quotedMessageAlbumMessageImages: [],
-                quotedMessageAlbumImagesCount: 0
+        id: d_msg
+
+        readonly property var messagesModel: ListModel {
+            ListElement {
+                timestamp: 1656937930123
+                senderId: "zq123456789"
+                senderDisplayName: "simon"
+                profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+                              nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+                contentType: StatusMessage.ContentType.Text
+                message: "Hello, this is awesome! Feels like decentralized Discord! And it even supports HTML markup, like <b>bold</b>, <i>italics</i> or <u>underline</u>"
+                isContact: true
+                isAReply: false
+                trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
+                outgoingStatus: StatusMessage.OutgoingStatus.Delivered
             }
-        ]
+            ListElement {
+                timestamp: 1657937930135
+                senderId: "zqABCDEFG"
+                senderDisplayName: "Mark Cuban"
+                contentType: StatusMessage.ContentType.Text
+                message: "I know a lot of you really seem to get off or be validated by arguing with strangers online but please know it's a complete waste of your time and energy"
+                isContact: false
+                isAReply: false
+                trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
+                outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+            }
+            ListElement {
+                timestamp: 1667937930159
+                senderId: "zqdeadbeef"
+                senderDisplayName: "replicator.stateofus.eth"
+                contentType: StatusMessage.ContentType.Text
+                message: "Test reply; the original text above should have a horizontal gradient mask"
+                isContact: true
+                isAReply: true
+                trustIndicator: StatusContactVerificationIcons.TrustedType.None
+                outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+            }
+        }
+        readonly property var colorHash: ListModel {
+            ListElement { colorId: 13; segmentLength: 5 }
+            ListElement { colorId: 31; segmentLength: 5 }
+            ListElement { colorId: 10; segmentLength: 1 }
+        }
+    }
+
+    QtObject {
+        id: mockMessageStore
+        // redo it, use first message as pinned message from d_msg.messagesModel the one whose timestamp is 1656937930123
+        property ListModel pinnedMessagesModel: ListModel {
+        }
 
         function getMessageByIndexAsJson(index) {
-            if (index >= 0 && index < messages.length) {
-                return JSON.stringify(messages[index])
+            if (index >= 0 && index < pinnedMessagesModel.count) {
+                return JSON.stringify(pinnedMessagesModel.get(index))
             }
             return "{}"
         }
@@ -153,8 +133,45 @@ SplitView {
                 spacing: 10
 
                 Button {
-                    text: "Open Pinned Messages Popup"
+                    text: "Open Empty Pinned Messages Popup"
                     onClicked: {
+                        mockMessageStore.pinnedMessagesModel.clear()
+                        pinnedMessagesPopup.messageToPin = ""
+                        pinnedMessagesPopup.open()
+                    }
+                }
+
+                Button {
+                    text: "Open Pinned Messages Popup (2 messages)"
+                    onClicked: {
+                        mockMessageStore.pinnedMessagesModel.clear()
+                        mockMessageStore.pinnedMessagesModel.append(d_msg.messagesModel.get(0))
+                        mockMessageStore.pinnedMessagesModel.append(d_msg.messagesModel.get(1))
+                        pinnedMessagesPopup.messageToPin = ""
+                        pinnedMessagesPopup.open()
+                    }
+                }
+
+                Button {
+                    text: "Open Full Pinned Messages Popup (3 messages)"
+                    onClicked: {
+                        mockMessageStore.pinnedMessagesModel.clear()
+                        mockMessageStore.pinnedMessagesModel.append(d_msg.messagesModel.get(0))
+                        mockMessageStore.pinnedMessagesModel.append(d_msg.messagesModel.get(1))
+                        mockMessageStore.pinnedMessagesModel.append(d_msg.messagesModel.get(2))
+                        pinnedMessagesPopup.messageToPin = ""
+                        pinnedMessagesPopup.open()
+                    }
+                }
+
+                Button {
+                    text: "Open Unpin Messages Popup (3 messages + messageToPin)"
+                    onClicked: {
+                        mockMessageStore.pinnedMessagesModel.clear()
+                        mockMessageStore.pinnedMessagesModel.append(d_msg.messagesModel.get(0))
+                        mockMessageStore.pinnedMessagesModel.append(d_msg.messagesModel.get(1))
+                        mockMessageStore.pinnedMessagesModel.append(d_msg.messagesModel.get(2))
+                        pinnedMessagesPopup.messageToPin = "This is a message to pin"
                         pinnedMessagesPopup.open()
                     }
                 }
@@ -163,8 +180,8 @@ SplitView {
             PinnedMessagesPopup {
                 id: pinnedMessagesPopup
                 store: mockRootStore
-                messageStore: mockMessageStore
-                pinnedMessagesModel: mockMessageStore.messages
+                messageStore: d_msg
+                pinnedMessagesModel: mockMessageStore.pinnedMessagesModel
                 chatId: "chat1"
 
                 property var chatContentModule: QtObject {
@@ -173,7 +190,7 @@ SplitView {
                         property bool canPost: true
                         property bool canView: true
                     }
-                    property var pinnedMessagesModel: mockMessageStore.messages
+                    property var pinnedMessagesModel: mockMessageStore.pinnedMessagesModel
                 }
 
                 property var usersStore: QtObject {
@@ -219,72 +236,6 @@ SplitView {
 
         controls: ColumnLayout {
             spacing: 16
-
-            Button {
-                text: "Add Pinned Message"
-                onClicked: {
-                    mockMessageStore.messages.push({
-                        messageId: "msg" + (mockMessageStore.messages.length + 1),
-                        senderId: "user" + (mockMessageStore.messages.length + 1),
-                        senderDisplayName: "User " + (mockMessageStore.messages.length + 1),
-                        senderOptionalName: "",
-                        senderIsEnsVerified: false,
-                        senderIcon: "",
-                        amISender: false,
-                        senderIsAdded: false,
-                        senderTrustStatus: Constants.trustStatus.unknown,
-                        messageText: "New pinned message " + (mockMessageStore.messages.length + 1),
-                        unparsedText: "New pinned message " + (mockMessageStore.messages.length + 1),
-                        messageImage: "",
-                        messageTimestamp: Date.now() / 1000,
-                        messageOutgoingStatus: "",
-                        resendError: "",
-                        messageContentType: Constants.messageContentType.messageType,
-                        pinnedMessage: true,
-                        messagePinnedBy: "user1",
-                        reactionsModel: [],
-                        linkPreviewModel: null,
-                        messageAttachments: "",
-                        transactionParams: null,
-                        emojiReactionsModel: null,
-                        responseToMessageWithId: "",
-                        quotedMessageText: "",
-                        quotedMessageFrom: "",
-                        quotedMessageContentType: Constants.messageContentType.messageType,
-                        quotedMessageDeleted: false,
-                        album: [],
-                        albumCount: 0,
-                        quotedMessageAlbumMessageImages: [],
-                        quotedMessageAlbumImagesCount: 0
-                    })
-                    pinnedMessagesPopup.pinnedMessagesModel = mockMessageStore.messages
-                }
-            }
-
-            Button {
-                text: "Clear Pinned Messages"
-                onClicked: {
-                    mockMessageStore.messages = []
-                    pinnedMessagesPopup.pinnedMessagesModel = mockMessageStore.messages
-                }
-            }
-
-            CheckBox {
-                id: isPinActionAvailableCheckBox
-                text: "Is Pin Action Available"
-                checked: true
-                onCheckedChanged: {
-                    pinnedMessagesPopup.isPinActionAvailable = checked
-                }
-            }
-
-            TextField {
-                id: messageToPinInput
-                placeholderText: "Message to pin"
-                onTextChanged: {
-                    pinnedMessagesPopup.messageToPin = text
-                }
-            }
         }
     }
 }
