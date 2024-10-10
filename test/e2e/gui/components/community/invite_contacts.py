@@ -54,7 +54,6 @@ class InviteContactsPopup(BasePopup):
                 f'Contact: {contact} not found in {self.invited_contacts}'
 
         self._send_button.click()
-        self.wait_until_hidden()
 
     @allure.step('Copy community link')
     def copy_community_link(self):

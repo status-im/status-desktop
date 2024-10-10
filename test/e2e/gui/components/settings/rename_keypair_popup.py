@@ -15,12 +15,12 @@ class RenameKeypairPopup(BasePopup):
     def __init__(self):
         super(RenameKeypairPopup, self).__init__()
         self._rename_text_edit = TextEdit(names.edit_TextEdit)
-        self._save_changes_button = Button(names.save_changes_rename_StatusButton)
+        self.save_changes_button = Button(names.save_changes_rename_StatusButton)
         self._name_input = QObject(names.nameInput_StatusInput)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        driver.waitForObjectExists(self._save_changes_button.real_name, timeout_msec)
+        driver.waitForObjectExists(self.save_changes_button.real_name, timeout_msec)
         return self
 
     @allure.step('Rename keypair')
@@ -30,11 +30,6 @@ class RenameKeypairPopup(BasePopup):
                 text_edit = TextEdit(real_name=driver.objectMap.realName(child))
                 text_edit.text = name
                 break
-
-    @allure.step('Save changes')
-    def save_changes(self):
-        self._save_changes_button.click()
-        self.wait_until_hidden()
 
     @allure.step('Get error message')
     def get_error_message(self) -> str:

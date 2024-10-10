@@ -59,7 +59,7 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
                 request = activity_center.find_contact_request_in_list(user_one.name, timeout)
                 activity_center.click_activity_center_button(
                     'Contact requests').accept_contact_request(request)
-                activity_center.click()
+                main_screen.left_panel.click()
                 main_screen.hide()
 
             with step(f'User {user_three.name}, get chat key'):
@@ -85,7 +85,7 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
                 request = activity_center.find_contact_request_in_list(user_two.name, timeout)
                 activity_center.click_activity_center_button(
                     'Contact requests').accept_contact_request(request)
-                activity_center.click()
+                main_screen.left_panel.click()
                 main_screen.hide()
 
         with step(

@@ -16,7 +16,7 @@ from gui.objects_map import names
 class BackUpYourSeedPhrasePopUp(BasePopup):
 
     def __init__(self):
-        super(BackUpYourSeedPhrasePopUp, self).__init__()
+        super().__init__()
         self._scroll = Scroll(names.generalView_StatusScrollView)
         self._i_have_a_pen_and_paper_check_box = CheckBox(names.i_have_a_pen_and_paper_StatusCheckBox)
         self._i_know_where_i_ll_store_it_check_box = CheckBox(names.i_know_where_I_ll_store_it_StatusCheckBox)
@@ -111,4 +111,4 @@ class BackUpYourSeedPhrasePopUp(BasePopup):
         self.confirm_second_word(seed_phrases)
         self.continue_seed_phrase()
         self.set_acknowledge(True)
-        self.complete_and_delete_seed_phrase()
+        self.complete_and_delete_seed_phrase().wait_until_hidden()

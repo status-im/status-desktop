@@ -15,7 +15,7 @@ from gui.objects_map import names
 
 class AddSavedAddressPopup(BasePopup):
     def __init__(self):
-        super(AddSavedAddressPopup, self).__init__()
+        super().__init__()
         self._name_text_edit = TextEdit(names.mainWallet_Saved_Addreses_Popup_Name_Input)
         self._save_add_address_button = Button(names.mainWallet_Saved_Addreses_Popup_Address_Add_Button)
         self._add_networks_selector = QObject(names.mainWallet_Saved_Addreses_Popup_Add_Network_Selector_Tag)
@@ -90,6 +90,7 @@ class AddressPopup(AddSavedAddressPopup):
             self.verify_otimism_mainnet_network_tag_present()
             self.verify_arbitrum_mainnet_network_tag_present(),
         self._save_add_address_button.click()
+        self.wait_until_hidden()
 
 
 class EditSavedAddressPopup(AddSavedAddressPopup):

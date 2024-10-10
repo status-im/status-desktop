@@ -68,7 +68,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             request = activity_center.find_contact_request_in_list(user_one.name, timeout)
             activity_center.click_activity_center_button(
                 'Contact requests').accept_contact_request(request)
-            activity_center.click()
+            main_window.left_panel.click()
             main_window.hide()
 
         with step(f'User {user_three.name}, get chat key'):
@@ -93,7 +93,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             request = activity_center.find_contact_request_in_list(user_one.name, timeout)
             activity_center.click_activity_center_button(
                 'Contact requests').accept_contact_request(request)
-            activity_center.click()
+            main_window.left_panel.click()
             main_window.hide()
 
         with step(f'User {user_one.name}, start chat and add {members}'):

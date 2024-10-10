@@ -36,7 +36,7 @@ pytestmark = marks
 def test_wallet_sort_assets(main_screen: MainWindow, address, name, dai, wrappedeth, stt, eth):
     with step('Turn on Testnet mode'):
         networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
-        networks.switch_testnet_mode_toggle().turn_on_testnet_mode_in_testnet_modal()
+        networks.switch_testnet_mode_toggle().turn_on_button.click()
 
     with step('Add watched address with plus action button'):
         wallet = main_screen.left_panel.open_wallet()
@@ -155,7 +155,7 @@ def test_wallet_sort_assets(main_screen: MainWindow, address, name, dai, wrapped
 def test_custom_ordering(main_screen: MainWindow, address, name, dai, wrappedeth, stt, eth):
     with step('Turn on Testnet mode'):
         networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
-        networks.switch_testnet_mode_toggle().turn_on_testnet_mode_in_testnet_modal()
+        networks.switch_testnet_mode_toggle().turn_on_button.click()
 
     with step('Add watched address with plus action button'):
         wallet = main_screen.left_panel.open_wallet()

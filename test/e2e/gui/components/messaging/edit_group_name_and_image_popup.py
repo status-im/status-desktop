@@ -9,7 +9,7 @@ from gui.objects_map import names
 class EditGroupNameAndImagePopup(BasePopup):
 
     def __init__(self):
-        super(EditGroupNameAndImagePopup, self).__init__()
+        super().__init__()
         self._group_name_field = TextEdit(names.groupChatEdit_name_TextEdit)
         self._save_changes_button = Button(names.save_changes_StatusButton)
 
@@ -20,3 +20,4 @@ class EditGroupNameAndImagePopup(BasePopup):
     @allure.step('Save changes')
     def save_changes(self):
         self._save_changes_button.click()
+        self.wait_until_hidden()

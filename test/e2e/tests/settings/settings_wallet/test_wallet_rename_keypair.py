@@ -49,7 +49,6 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, emoji: str, 
         new_account_popup.enter_private_key_name(pk_name).click_continue()
         account_popup.save_changes()
         authenticate_with_password(user_account)
-        account_popup.wait_until_hidden()
 
     with step('Open wallet settings and verify Status keypair title'):
         settings = main_screen.left_panel.open_settings().left_panel.open_wallet_settings()
@@ -68,7 +67,8 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, emoji: str, 
         settings.click_open_menu_button(pk_name)
         rename_keypair_popup = settings.click_rename_keypair()
         rename_keypair_popup.rename_keypair(pk_new_name)
-        rename_keypair_popup.save_changes()
+        rename_keypair_popup.save_changes_button.click()
+        rename_keypair_popup.wait_until_hidden()
         assert pk_new_name in settings.get_keypairs_names()
 
     with step('Verify toast message with successful renaming appears'):

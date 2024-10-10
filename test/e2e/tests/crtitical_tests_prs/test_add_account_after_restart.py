@@ -40,6 +40,7 @@ def test_add_generated_account_restart_add_again(
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).save_changes()
         authenticate_with_password(user_account)
+        account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
         assert len(main_screen.wait_for_notification()) == 1, \
@@ -66,6 +67,7 @@ def test_add_generated_account_restart_add_again(
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name2).set_emoji(emoji2).set_color(color2).save_changes()
         authenticate_with_password(user_account)
+        account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
         assert len(main_screen.wait_for_notification()) == 1, \

@@ -1,3 +1,5 @@
+import time
+
 import allure
 
 import configs
@@ -30,6 +32,7 @@ class CategoryPopup(BasePopup):
 
     @allure.step('Click checkbox in edit category popup')
     def click_checkbox_by_index(self, index: int):
+        time.sleep(1)
         checkboxes = driver.findAllObjects(self._channel_item_checkbox.real_name)
         if len(checkboxes) > 0:
             for _index, item in enumerate(checkboxes):
@@ -52,6 +55,7 @@ class NewCategoryPopup(CategoryPopup):
         if checkbox_state:
             self._channel_item_checkbox.click()
         self._create_button.click()
+        self.wait_until_hidden()
 
 
 class EditCategoryPopup(CategoryPopup):

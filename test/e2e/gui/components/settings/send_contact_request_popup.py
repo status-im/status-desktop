@@ -20,6 +20,7 @@ class SendContactRequest(BasePopup):
         self._chat_key_text_edit.text = chat_key
         self._message_text_edit.text = message
         self._send_button.click()
+        self.wait_until_hidden()
 
 
 class SendContactRequestFromProfile(BasePopup):
