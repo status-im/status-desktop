@@ -62,6 +62,7 @@ StatusDialog {
     property alias dAppUrl: dappCard.dAppUrl
     property alias dAppName: dappCard.name
     property alias dAppIconUrl: dappCard.iconUrl
+    property alias dAppBadgeIcon: dappCard.badgeIcon
     property alias connectionStatus: d.connectionStatus
 
     /*
