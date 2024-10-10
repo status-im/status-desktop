@@ -20,4 +20,8 @@ QtObject {
     function plainText(htmlFragment) {
         return Internal.StringUtils.plainText(htmlFragment)
     }
+
+    function isCompressedPubKey(pubKey) {
+        return Internal.StringUtils.isCompressedPubKey(pubKey)
+    }
 }

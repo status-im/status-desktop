@@ -11,6 +11,7 @@ import ../../global/app_signals
 import ../../global/global_singleton
 import ../../global/utils as utils
 import ../../../constants
+import ../../../app_service/common/conversion
 
 import chat_section/model as chat_model
 import chat_section/item as chat_item
@@ -1477,7 +1478,7 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
 
   case action:
     of StatusUrlAction.DisplayUserProfile:
-      if singletonInstance.utils().isCompressedPubKey(userId):
+      if conversion.isCompressedPubKey(userId):
         let contactPk = singletonInstance.utils().getDecompressedPk(userId)
         self.switchToContactOrDisplayUserProfile(contactPk)
       else:

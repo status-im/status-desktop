@@ -320,10 +320,6 @@ StatusSectionLayout {
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
                 isContact: model.isContact
-                asset.name: model.icon
-                asset.isImage: (asset.name !== "")
-                asset.isLetterIdenticon: (asset.name === "")
-                asset.imgIsIdenticon: false
                 status: model.onlineStatus
             }
         }

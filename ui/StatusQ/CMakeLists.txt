@@ -23,7 +23,7 @@ set(QZXING_MULTIMEDIA ON)
 set(QZXING_USE_DECODER_QR_CODE ON)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 find_package(Qt5 COMPONENTS
@@ -48,11 +48,9 @@ if (NOT DEFINED STATUSQ_SHADOW_BUILD)
     #
     #   This is an option that defaults to OFF in Debug mode and ON otherwise.
     #   When ON:
-    #     - resources are compiled into plugin
-    #     - plugin is compiled in the ${CMAKE_BINARY_DIR}/StatusQ
+    #     - resources are compiled into a a shared library
     #   When OFF:
     #     - no resources are compiled, it's expected to use QML/JS sources
-    #     - the plugin is compiled in src directory
     #
     #   STATUSQ_SHADOW_BUILD mode is created for sandbox/storybook hot reloading
     #   without copying all qml files to build directory.
@@ -71,15 +69,12 @@ endif()
 set(STATUSQ_SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ")
 
 if (${STATUSQ_SHADOW_BUILD})
-    set(STATUSQ_MODULE_PATH "${CMAKE_BINARY_DIR}/bin/StatusQ")
     set(STATUSQ_MODULE_IMPORT_PATH ":/")
 else()
-    set(STATUSQ_MODULE_PATH "${STATUSQ_SOURCE_PATH}")
     set(STATUSQ_MODULE_IMPORT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src")
 endif()
 
 if (NOT PROJECT_IS_TOP_LEVEL)
-    set(STATUSQ_MODULE_PATH "${STATUSQ_MODULE_PATH}" PARENT_SCOPE)
     set(STATUSQ_MODULE_IMPORT_PATH "${STATUSQ_MODULE_IMPORT_PATH}" PARENT_SCOPE)
     set(STATUSQ_SHADOW_BUILD "${STATUSQ_SHADOW_BUILD}" PARENT_SCOPE)
 endif ()
@@ -123,6 +118,7 @@ add_library(StatusQ SHARED
         include/StatusQ/stringutilsinternal.h
         include/StatusQ/sumaggregator.h
         include/StatusQ/systemutilsinternal.h
+        include/StatusQ/typesregistration.h
         include/StatusQ/undefinedfilter.h
         include/StatusQ/urlutils.h
         include/StatusQ/writableproxymodel.h
@@ -130,6 +126,7 @@ add_library(StatusQ SHARED
         src/clipboardutils.cpp
         src/concatmodel.cpp
         src/constantrole.cpp
+        src/externc.cpp
         src/fastexpressionfilter.cpp
         src/fastexpressionrole.cpp
         src/fastexpressionsorter.cpp
@@ -145,7 +142,6 @@ add_library(StatusQ SHARED
         src/networkchecker.cpp
         src/objectproxymodel.cpp
         src/permissionutilsinternal.cpp
-        src/plugin.cpp
         src/rolesrenamingmodel.cpp
         src/rxvalidator.cpp
         src/singleroleaggregator.cpp
@@ -157,6 +153,7 @@ add_library(StatusQ SHARED
         src/stringutilsinternal.cpp
         src/sumaggregator.cpp
         src/systemutilsinternal.cpp
+        src/typesregistration.cpp
         src/undefinedfilter.cpp
         src/urlutils.cpp
         src/writableproxymodel.cpp
@@ -172,14 +169,6 @@ add_library(StatusQ SHARED
 
 target_compile_features(StatusQ PRIVATE cxx_std_17)
 
-set_target_properties(StatusQ PROPERTIES
-    ADDITIONAL_CLEAN_FILES bin/StatusQ/qmldir
-    RUNTIME_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${STATUSQ_MODULE_PATH}
-    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${STATUSQ_MODULE_PATH}
-    LIBRARY_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}
-)
-
 if (APPLE)
     find_library(AppKit AppKit)
     find_library(Foundation Foundation)
@@ -187,18 +176,6 @@ if (APPLE)
     target_sources(StatusQ PRIVATE src/statuswindow_osx.mm)
 else ()
     target_sources(StatusQ PRIVATE src/statuswindow_other.cpp)
-endif ()
-
-if (${STATUSQ_SHADOW_BUILD})
-    set(COPY_QMLDIR_COMMAND
-            ${CMAKE_COMMAND} -E copy
-            ${STATUSQ_SOURCE_PATH}/qmldir
-            ${STATUSQ_MODULE_PATH}/qmldir)
-    add_custom_command(
-            TARGET StatusQ
-            POST_BUILD
-            COMMAND ${COPY_QMLDIR_COMMAND}
-            COMMENT "Copying qmldir to binary directory")
 endif ()
 
 target_link_libraries(StatusQ PRIVATE
@@ -222,10 +199,6 @@ target_include_directories(StatusQ PUBLIC include)
 install(TARGETS StatusQ
         RUNTIME DESTINATION StatusQ
         LIBRARY DESTINATION StatusQ
-        )
-
-install(FILES src/StatusQ/qmldir
-        DESTINATION StatusQ
         )
 
 # https://doc.qt.io/qtcreator/creator-qml-modules-with-plugins.html#importing-qml-modules

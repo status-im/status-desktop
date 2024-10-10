@@ -22,7 +22,6 @@ add_executable(${PROJECT_NAME}
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         SANDBOX_SRC_DIR="${CMAKE_CURRENT_LIST_DIR}"
-        STATUSQ_MODULE_PATH="${STATUSQ_MODULE_PATH}"
         STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
         )
 
@@ -30,4 +29,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt5::Core
         Qt5::Quick
         Qt5::QuickControls2
+        StatusQ
         )

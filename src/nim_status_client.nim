@@ -4,10 +4,12 @@ import status_go
 import keycard_go
 import app/core/main
 import constants as main_constants
+import statusq_bridge
 
 import app/global/global_singleton
 import app/global/local_app_settings
 import app/boot/app_controller
+
 
 when defined(macosx) and defined(arm64):
   import posix
@@ -210,6 +212,8 @@ proc mainProc() =
 
   # Ensure we have the featureFlags instance available from the start
   singletonInstance.engine.setRootContextProperty("featureFlagsRootContextProperty", newQVariant(singletonInstance.featureFlags()))
+
+  statusq_registerQmlTypes()
 
   app.installEventFilter(osThemeEvent)
   app.installEventFilter(urlSchemeEvent)

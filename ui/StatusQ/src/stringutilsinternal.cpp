@@ -7,10 +7,9 @@
 #include <QUrl>
 #include <QTextDocumentFragment>
 
-StringUtilsInternal::StringUtilsInternal(QQmlEngine* engine, QObject* parent)
-    : m_engine(engine)
-    , QObject(parent)
-{ }
+StringUtilsInternal::StringUtilsInternal(QObject* parent) : QObject(parent)
+{
+}
 
 QString StringUtilsInternal::escapeHtml(const QString& unsafe) const
 {
@@ -31,7 +30,9 @@ QString resolveFileUsingQmlImportPaths(QQmlEngine *engine, const QString &relati
 
 QString StringUtilsInternal::readTextFile(const QString& filePath) const
 {
-    auto selector = QQmlFileSelector::get(m_engine);
+    auto engine = qmlEngine(this);
+
+    auto selector = QQmlFileSelector::get(engine);
     if (!selector) {
         qWarning() << Q_FUNC_INFO << "No QQmlFileSelector available to load text file:" << filePath;
         return {};
@@ -50,7 +51,7 @@ QString StringUtilsInternal::readTextFile(const QString& filePath) const
 
     QFile file(selectedFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        const auto resolvedFilePath = resolveFileUsingQmlImportPaths(m_engine, filePath);
+        const auto resolvedFilePath = resolveFileUsingQmlImportPaths(engine, filePath);
         if (resolvedFilePath.isEmpty()) {
             qWarning() << Q_FUNC_INFO << "Can't find file in QML import paths" << filePath;
             return {};
@@ -75,7 +76,24 @@ QString StringUtilsInternal::extractDomainFromLink(const QString& link) const
     return url.host();
 }
 
-QString StringUtilsInternal::plainText(const QString &htmlFragment) const
+QString StringUtilsInternal::plainText(const QString& htmlFragment) const
 {
     return QTextDocumentFragment::fromHtml(htmlFragment).toPlainText();
+}
+
+bool StringUtilsInternal::isCompressedPubKey(const QString& pubKey) const
+{
+    if (pubKey.length() < 48 || pubKey.length() > 50)
+        return false;
+
+    if (!pubKey.startsWith("zQ3sh"))
+        return false;
+
+    return std::all_of(pubKey.constBegin(), pubKey.constEnd(),
+                       [](QChar x) {
+        if (x == 'I' || x == 'O')
+            return false;
+
+        return x.isLetterOrNumber();
+    });
 }

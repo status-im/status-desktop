@@ -779,10 +779,6 @@ QtObject {
         return (startsWith0x(value) && isHex(value) && value.length === communityIdLength) || globalUtilsInst.isCompressedPubKey(value)
     }
 
-    function isCompressedPubKey(pubKey) {
-        return globalUtilsInst.isCompressedPubKey(pubKey)
-    }
-
     function isAlias(name) {
         return globalUtilsInst.isAlias(name)
     }
