@@ -27,12 +27,16 @@ Item {
 
     implicitHeight: layout.childrenRect.height
 
+    function validate() {
+        editor.isError = !hasSelectedImage
+    }
+
     ColumnLayout {
         id: layout
 
         anchors.fill: parent
 
-        spacing: 19
+        spacing: 16
 
         StatusBaseText {
             text: qsTr("Community banner")
@@ -66,6 +70,17 @@ Item {
                 additionalText: qsTr("Optimal aspect ratio 16:9")
                 additionalTextPixelSize: Theme.tertiaryTextFontSize
             }
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.topMargin: -layout.spacing/2
+            visible: editor.isError
+            text: qsTr("Upload a community banner")
+            font.pixelSize: Theme.tertiaryTextFontSize
+            color: Theme.palette.dangerColor1
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 }

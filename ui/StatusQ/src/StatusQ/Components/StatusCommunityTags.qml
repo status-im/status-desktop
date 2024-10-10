@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -76,7 +76,7 @@ Item {
             delegate: StatusCommunityTag {
                 emoji: model.emoji
                 name: model.name
-                removable: root.mode === StatusCommunityTags.ShowSelectedOnly && root.active
+                removable: root.mode === StatusCommunityTags.ShowSelectedOnly && root.active && repeater.count > 1
                 highlighted: root.mode === StatusCommunityTags.Highlight && model.selected
 
                 onClicked: root.clicked(model)

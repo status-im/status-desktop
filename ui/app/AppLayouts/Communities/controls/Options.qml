@@ -31,7 +31,6 @@ ColumnLayout {
         StatusCheckBox {
             id: archiveSupportToggle
             width: (parent.width-12)
-            checked: false
             leftSide: false
             padding: 0
             anchors.verticalCenter: parent.verticalCenter
@@ -39,11 +38,7 @@ ColumnLayout {
 
             StatusToolTip {
                 text: qsTr('For this Community Setting to work, you also need to activate "Archive Protocol Enabled" in Advanced Settings')
-                visible: hoverHandler.hovered
-            }
-            HoverHandler {
-                id: hoverHandler
-                enabled: true
+                visible: parent.hovered
             }
         }
     }
@@ -65,7 +60,7 @@ ColumnLayout {
     ColumnLayout {
         Layout.preferredWidth: parent.width
         Layout.topMargin: 22
-        spacing: 0
+        spacing: 4
         StatusCheckBox {
             id: requestToJoinToggle
             Layout.fillWidth: true
@@ -78,9 +73,8 @@ ColumnLayout {
         }
 
         StatusBaseText {
-            id: warningText
             Layout.fillWidth: true
-            Layout.rightMargin: 12
+            Layout.rightMargin: 64
             visible: requestToJoinToggle.checked
             wrapMode: Text.WordWrap
             text: qsTr("Warning: Only token gated communities (or token gated channels inside non-token gated community) are encrypted")
