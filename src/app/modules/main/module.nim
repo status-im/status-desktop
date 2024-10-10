@@ -1361,7 +1361,7 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
   singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
     fmt "{contactName} asks to join {community.name}", community.id)
 
-  self.view.model().addPendingMember(membershipRequest.communityId, self.createMemberItem(
+  self.view.model().addMember(membershipRequest.communityId, self.createMemberItem(
     membershipRequest.publicKey,
     membershipRequest.id,
     MembershipRequestState(membershipRequest.state),
@@ -1369,7 +1369,7 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
   ))
 
 method communityMembershipRequestCanceled*[T](self: Module[T], communityId: string, requestId: string, pubKey: string) =
-  self.view.model().removePendingMember(communityId, pubKey)
+  self.view.model().removeMember(communityId, pubKey)
 
 method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)
