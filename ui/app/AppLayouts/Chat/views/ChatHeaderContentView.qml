@@ -270,7 +270,8 @@ Item {
 
             objectName: "chatInfoBtnInHeader"
             title: chatContentModule? chatContentModule.chatDetails.name : ""
-
+            requiresPermissions: chatContentModule ? chatContentModule.chatDetails.requiresPermissions : false
+            locked: requiresPermissions && (chatContentModule ? !chatContentModule.chatDetails.canPost : false)
             subTitle: {
                 if(!chatContentModule)
                     return ""
