@@ -91,9 +91,14 @@ else # "variables.mk" was included. Business as usual until the end of this file
 
 all: nim_status_client
 
-nix-shell: export NIX_USER_CONF_FILES := $(PWD)/nix/nix.conf
-nix-shell:
-	nix-shell
+shell: export NIX_USER_CONF_FILES := $(shell pwd)/nix/nix.conf
+shell: ##@prepare Enter into a pre-configured shell
+shell:
+ifndef IN_NIX_SHELL
+	nix develop --impure # nixGL needs currentTime
+else
+	@echo "${YELLOW}Nix shell is already active$(RESET)"
+endif
 
 # must be included after the default target
 -include $(BUILD_SYSTEM_DIR)/makefiles/targets.mk
