@@ -1,7 +1,7 @@
 ARG QT_VERSION=5.15.2
 
 # QT Installation Image --------------------------------------------------------
-FROM ubuntu:20.04 AS qt-install
+FROM ubuntu:22.04 AS qt-install
 
 ARG QT_VERSION
 
@@ -17,7 +17,7 @@ RUN python3 -m pip install setuptools \
  && python3 -m aqt install --output /opt/qt ${QT_VERSION} linux desktop -m qtwebengine
 
 # Build Image ------------------------------------------------------------------
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ARG LINUXDEPLOYQT_VERSION=20230423-8428c59
 ARG QT_VERSION
