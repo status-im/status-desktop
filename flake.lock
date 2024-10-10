@@ -14,6 +14,43 @@
         "url": "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz"
       }
     },
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1659877975,
+        "narHash": "sha256-zllb8aq3YO3h8B/U0/J1WBgAL8EX5yWf5pMj3G0NAmc=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "c0e246b9b83f637f4681389ecabcb2681b4f3af0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nixgl": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1672992692,
+        "narHash": "sha256-/eLQLSNIa22ARTZbk+x8i0iE8khe1eiHWkuxgTVXZ7g=",
+        "owner": "nix-community",
+        "repo": "nixGL",
+        "rev": "643e730efb981ffaf8478f441ec9b9aeea1c89f5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixGL",
+        "rev": "643e730efb981ffaf8478f441ec9b9aeea1c89f5",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1651477912,
@@ -33,6 +70,7 @@
     "root": {
       "inputs": {
         "flake-compat": "flake-compat",
+        "nixgl": "nixgl",
         "nixpkgs": "nixpkgs"
       }
     }

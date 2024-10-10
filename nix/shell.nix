@@ -25,6 +25,7 @@ in pkgs.mkShell {
 
   # TODO:check the required packages
   buildInputs = with pkgs; [
+    # dev and CI
     bash curl wget git file unzip jq lsb-release which cacert gnupg
     linuxdeployqt appimagekit
     libglvnd # TODO: Qt 5.15.2 fix, review after upgrade
@@ -32,6 +33,10 @@ in pkgs.mkShell {
     go_1_21 go-bindata mockgen protobuf3_20 protoc-gen-go
     pcre nss pcsclite extra-cmake-modules
     xorg.libxcb xorg.libX11 libxkbcommon
+    # dev machine only
+    nixUnstable # for flake support TODO: remove with nixpkgs upgrade
+    nixgl.auto.nixGLDefault
+    gdb
   ] ++ (with gst_all_1; [
     gst-libav gstreamer
     gst-plugins-bad  gst-plugins-base
@@ -62,6 +67,7 @@ in pkgs.mkShell {
   # TODO:check which deps are needed
   LD_LIBRARY_PATH = with pkgs; lib.makeLibraryPath (
   [
+    libudev0-shim # this only needed to run, not build
     alsaLib
     expat
     fontconfig

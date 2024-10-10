@@ -17,6 +17,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	all \
 	nix-shell \
 	bottles \
+	check-nix-shell \
 	check-qt-dir \
 	check-pkg-target-linux \
 	check-pkg-target-macos \
@@ -102,6 +103,13 @@ else
  LIBSTATUS_EXT := so
  PKG_TARGET := pkg-linux
  RUN_TARGET := run-linux
+endif
+
+check-nix-shell:
+ifeq ($(detected_OS),Linux)
+ ifndef IN_NIX_SHELL
+	$(error Running outside of Nix shell is not supported)
+ endif
 endif
 
 check-qt-dir:
@@ -365,7 +373,7 @@ storybook-build: | storybook-configure
 
 run-storybook: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook"
-	$(STORYBOOK_BUILD_PATH)/bin/Storybook
+	nixGL $(STORYBOOK_BUILD_PATH)/bin/Storybook
 
 run-storybook-tests: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook Tests"
@@ -453,7 +461,7 @@ status-go-clean:
 	rm -f $(STATUSGO)
 
 export STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
-export STATUSKEYCARDGO_LIBDIR := "$(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")"
+export STATUSKEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")
 
 status-keycard-go: $(STATUSKEYCARDGO)
 $(STATUSKEYCARDGO): | deps
@@ -578,7 +586,7 @@ ifeq ($(detected_OS),Darwin)
 		bin/nim_status_client
 endif
 
-nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
+nim_status_client: check-nix-shell force-rebuild-status-go $(NIM_STATUS_CLIENT)
 
 ifdef IN_NIX_SHELL
 APPIMAGE_TOOL := appimagetool
@@ -825,15 +833,15 @@ ICON_TOOL := node_modules/.bin/fileicon
 # STATUS_PORT ?= 30306
 # WAKUV2_PORT ?= 30307
 
+run-linux: export LD_LIBRARY_PATH := $(QT5_LIBDIR):$(STATUSGO_LIBDIR):$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)" \
-	./bin/nim_status_client $(ARGS)
+	nixGL ./bin/nim_status_client $(ARGS)
 
+run-linux-gdb: export LD_LIBRARY_PATH := $(QT5_LIBDIR):$(STATUSGO_LIBDIR):$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)" \
-	gdb -ex=r ./bin/nim_status_client $(ARGS)
+	nixGL gdb -ex=r ./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
 	mkdir -p bin/StatusDev.app/Contents/{MacOS,Resources}
