@@ -767,10 +767,6 @@ QtObject {
     property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
     property var communitiesModuleInst: typeof communitiesModule !== "undefined" ? communitiesModule : null
 
-    function restartApplication() {
-        globalUtilsInst.restartApplication()
-    }
-
     function isChatKey(value) {
         return (startsWith0x(value) && isHex(value) && value.length === 132) || globalUtilsInst.isCompressedPubKey(value)
     }
@@ -942,10 +938,6 @@ QtObject {
         return getElidedPk(compressedPk)
     }
 
-    function plainText(text) {
-        return globalUtilsInst.plainText(text)
-    }
-
     function parseContactUrl(link) {
         let index = link.lastIndexOf("/u/")
 
@@ -962,10 +954,6 @@ QtObject {
         } catch (e) {
             return null
         }
-    }
-
-    function downloadImageByUrl(url, path) {
-        globalUtilsInst.downloadImageByUrl(url, path)
     }
 
     function getKeypairLocation(keypair, fromAccountDetailsView) {

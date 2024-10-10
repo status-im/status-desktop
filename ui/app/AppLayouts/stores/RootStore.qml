@@ -193,10 +193,6 @@ QtObject {
         communitiesModuleInst.cancelRequestToJoinCommunity(id)
     }
 
-    function plainText(text) {
-        return globalUtils.plainText(text);
-    }
-
     function generateAlias(pk) {
         return globalUtils.generateAlias(pk);
     }

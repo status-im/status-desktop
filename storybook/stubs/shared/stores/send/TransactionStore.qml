@@ -103,10 +103,6 @@ QtObject {
         return "OPT"
     }
 
-    function plainText(htmlFragment) {
-        return SQUtils.StringUtils.plainText(htmlFragment)
-    }
-
     function prepareTransactionsForAddress(address) {
         console.log("prepareTransactionsForAddress:", address)
     }

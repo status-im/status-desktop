@@ -80,10 +80,6 @@ QtObject {
         return globalUtils.wei2Eth(wei, decimals)
     }
 
-    function plainText(text) {
-        return globalUtils.plainText(text)
-    }
-
     function getAsset(assetsList, symbol) {
         for(var i=0; i< assetsList.rowCount();i++) {
             let asset = assetsList.get(i)

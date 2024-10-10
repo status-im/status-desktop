@@ -232,9 +232,7 @@ SettingsContentBase {
                 headerSettings.title: qsTr("Change language")
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
                 confirmButtonLabel: qsTr("Restart")
-                onConfirmButtonClicked: {
-                    Utils.restartApplication()
-                }
+                onConfirmButtonClicked: SystemUtils.restartApplication()
             }
         }
     }

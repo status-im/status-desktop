@@ -76,15 +76,6 @@ QtObject:
     except:
       return false
 
-  proc downloadImage*(self: Utils, content: string, path: string) {.slot.} =
-    downloadImage(content, path)
-
-  proc downloadImageByUrl*(self: Utils, url: string, path: string) {.slot.} =
-    downloadImageByUrl(url, path)
-
-  proc restartApplication*(self: Utils) {.slot.} =
-    restartApplication()
-
   proc generateQRCodeSVG*(self: Utils, text: string, border: int = 0): string =
     var qr0: array[0..qrcodegen_BUFFER_LEN_MAX, uint8]
     var tempBuffer: array[0..qrcodegen_BUFFER_LEN_MAX, uint8]
