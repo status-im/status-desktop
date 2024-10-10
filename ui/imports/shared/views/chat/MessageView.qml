@@ -152,6 +152,9 @@ Loader {
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
     function openProfileContextMenu(sender, mouse, isReply = false) {
+        if (isViewMemberMessagesePopup)
+            return false
+
         if (isReply && !quotedMessageFrom) {
             // The responseTo message was deleted
             // so we don't enable to right click the unavailable profile
@@ -174,7 +177,7 @@ Loader {
     }
 
     function openMessageContextMenu() {
-        if (placeholderMessage || !root.rootStore.mainModuleInst.activeSection.joined)
+        if (isViewMemberMessagesePopup || placeholderMessage || !root.rootStore.mainModuleInst.activeSection.joined)
             return
 
         const params = {
