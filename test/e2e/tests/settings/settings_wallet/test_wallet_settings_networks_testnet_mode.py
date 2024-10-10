@@ -10,6 +10,8 @@ from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703505', 'Network: Testnet switching')
 @pytest.mark.case(703505)
 def test_switch_testnet_mode(main_screen: MainWindow):
@@ -27,7 +29,7 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is on when it should not"
 
     with step('Turn on Testnet mode'):
-        networks.switch_testnet_mode_toggle().turn_on_testnet_mode_in_testnet_modal()
+        networks.switch_testnet_mode_toggle().turn_on_button.click()
 
     with step('Verify that Testnet mode turned on'):
         assert len(main_screen.wait_for_notification()) == 1, \
@@ -49,7 +51,7 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         # TODO: add verificatin for test net label
 
     with step('Turn off Testnet mode in wallet settings'):
-        networks.switch_testnet_mode_toggle().turn_off_testnet_mode_in_testnet_modal()
+        networks.switch_testnet_mode_toggle().turn_off_button.click()
 
     with step('Verify that Testnet mode turned off'):
         assert len(main_screen.wait_for_notification()) == 2
@@ -78,7 +80,7 @@ def test_toggle_testnet_toggle_on_and_close_the_confirmation(main_screen: MainWi
         testnet_modal = networks.switch_testnet_mode_toggle()
 
     with step('Click cross button on the Testnet modal'):
-        testnet_modal.close_testnet_modal_with_cross_button()
+        testnet_modal.close_cross_button.click()
         assert not networks.is_testnet_mode_toggle_checked()
 
     with step('Verify that Testnet mode is not turned off'):
@@ -102,7 +104,7 @@ def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: Ma
         testnet_modal = networks.switch_testnet_mode_toggle()
 
     with step('Confirm enabling testnet mode in testnet modal'):
-        testnet_modal.turn_on_testnet_mode_in_testnet_modal()
+        testnet_modal.turn_on_button.click()
 
     with step('Verify testnet mode is enabled'):
         assert len(main_screen.wait_for_notification()) == 1, \
@@ -119,7 +121,7 @@ def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: Ma
         testnet_modal = networks.switch_testnet_mode_toggle()
 
     with step('Click Cancel button on the Testnet modal'):
-        testnet_modal.click_cancel_button_in_testnet_modal()
+        testnet_modal.cancel_button.click()
         assert networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is turned OFF when it should not"
 
     with step('Verify that Testnet mode is not turned off'):

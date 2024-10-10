@@ -33,8 +33,8 @@ pytestmark = marks
 @pytest.mark.parametrize('user_image, zoom, shift', [
     pytest.param(
         random.choice(['sample_JPEG_1920×1280.jpeg', 'file_example_PNG_3MB.png', 'file_example_JPG_2500kB.jpg']
-            ),
-        random.choice(range(1, 11, )),
+                      ),
+        random.choice(range(1, 10)),
         shift_image(0, 1000, 1000, 0))
 ])
 def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,

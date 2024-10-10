@@ -37,6 +37,7 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).save_changes()
         authenticate_with_password(user_account)
+        account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
         assert len(main_screen.wait_for_notification()) == 1, \
