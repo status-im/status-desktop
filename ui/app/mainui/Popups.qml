@@ -504,7 +504,7 @@ QtObject {
             id: sendIDRequestPopupComponent
             SendContactRequestModal {
                 id: sendIDRequestPopup
-                onAccepted: rootStore.contactStore.sendVerificationRequest(sendIDRequestPopup.publicKey, sendIDRequestPopup.message)
+                onAccepted: rootStore.contactStore.sendVerificationRequest(sendIDRequestPopup.publicKey, message)
                 onClosed: destroy()
             }
         },
@@ -562,7 +562,7 @@ QtObject {
 
             SendContactRequestModal {
                 id: sendContactRequestPopup
-                onAccepted: rootStore.contactStore.sendContactRequest(sendContactRequestPopup.publicKey, sendContactRequestPopup.message)
+                onAccepted: rootStore.contactStore.sendContactRequest(sendContactRequestPopup.publicKey, message)
                 onClosed: destroy()
             }
         },
