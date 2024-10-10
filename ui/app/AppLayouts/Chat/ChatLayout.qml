@@ -104,22 +104,21 @@ StackLayout {
         }
     }
 
-    readonly property var coolSectionItemModel: {
-        let m = sectionItemModel
-        m.members = joinedMembers
-        m.bannedMembers = bannedMembers
-        m.pendingMemberRequests = pendingMemberRequests
-        m.declinedMemberRequests = declinedMemberRequests
-        console.log('====declinedMemberRequests', declinedMemberRequests.count)
-        return m
+    readonly property var sectionItemWithMembers: {
+        let sectionItemCopy = sectionItemModel
+        sectionItemCopy.members = joinedMembers
+        sectionItemCopy.bannedMembers = bannedMembers
+        sectionItemCopy.pendingMemberRequests = pendingMemberRequests
+        sectionItemCopy.declinedMemberRequests = declinedMemberRequests
+        return sectionItemCopy
     }
 
     property var sendModalPopup
 
-    readonly property bool isOwner: coolSectionItemModel.memberRole === Constants.memberRole.owner
-    readonly property bool isAdmin: coolSectionItemModel.memberRole === Constants.memberRole.admin
-    readonly property bool isTokenMasterOwner: coolSectionItemModel.memberRole === Constants.memberRole.tokenMaster
-    readonly property bool isControlNode: coolSectionItemModel.isControlNode
+    readonly property bool isOwner: sectionItemWithMembers.memberRole === Constants.memberRole.owner
+    readonly property bool isAdmin: sectionItemWithMembers.memberRole === Constants.memberRole.admin
+    readonly property bool isTokenMasterOwner: sectionItemWithMembers.memberRole === Constants.memberRole.tokenMaster
+    readonly property bool isControlNode: sectionItemWithMembers.isControlNode
     readonly property bool isPrivilegedUser: isControlNode || isOwner || isAdmin || isTokenMasterOwner
     readonly property int isInvitationPending: root.rootStore.chatCommunitySectionModule.requestToJoinState !== Constants.RequestToJoinState.None
 
@@ -133,7 +132,7 @@ StackLayout {
     signal openAppSearch()
 
     // Community transfer ownership related props/signals:
-    property bool isPendingOwnershipRequest: coolSectionItemModel.isPendingOwnershipRequest
+    property bool isPendingOwnershipRequest: sectionItemWithMembers.isPendingOwnershipRequest
 
     onIsPrivilegedUserChanged: if (root.currentIndex === 1) root.currentIndex = 0
 
@@ -149,7 +148,7 @@ StackLayout {
 
         sourceComponent: {
             if (sectionItem.isCommunity() && !sectionItem.amIMember) {
-                if (coolSectionItemModel.amIBanned) {
+                if (sectionItemWithMembers.amIBanned) {
                     return communityBanComponent
                 } else if (sectionItem.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin) {
                     return controlNodeOfflineComponent
@@ -175,7 +174,7 @@ StackLayout {
         id: joinCommunityViewComponent
         JoinCommunityView {
             id: joinCommunityView
-            readonly property var communityData: coolSectionItemModel
+            readonly property var communityData: sectionItemWithMembers
             readonly property string communityId: communityData.id
             name: communityData.name
             introMessage: communityData.introMessage
@@ -221,7 +220,7 @@ StackLayout {
             id: chatView
 
             readonly property var sectionItem: root.rootStore.chatCommunitySectionModule
-            readonly property string communityId: root.coolSectionItemModel.id
+            readonly property string communityId: root.sectionItemWithMembers.id
 
             objectName: "chatViewComponent"
 
@@ -235,11 +234,11 @@ StackLayout {
             walletAssetsStore: root.walletAssetsStore
             currencyStore: root.currencyStore
             sendModalPopup: root.sendModalPopup
-            sectionItemModel: root.coolSectionItemModel
+            sectionItemModel: root.sectionItemWithMembers
             amIMember: sectionItem.amIMember
-            amISectionAdmin: root.coolSectionItemModel.memberRole === Constants.memberRole.owner ||
-                             root.coolSectionItemModel.memberRole === Constants.memberRole.admin ||
-                             root.coolSectionItemModel.memberRole === Constants.memberRole.tokenMaster
+            amISectionAdmin: root.sectionItemWithMembers.memberRole === Constants.memberRole.owner ||
+                             root.sectionItemWithMembers.memberRole === Constants.memberRole.admin ||
+                             root.sectionItemWithMembers.memberRole === Constants.memberRole.tokenMaster
             hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
 
@@ -300,12 +299,12 @@ StackLayout {
                 root.openAppSearch()
             }
             onRequestToJoinClicked: {
-                Global.communityIntroPopupRequested(communityId, root.coolSectionItemModel.name, root.coolSectionItemModel.introMessage,
-                                                    root.coolSectionItemModel.image, root.isInvitationPending)
+                Global.communityIntroPopupRequested(communityId, root.sectionItemWithMembers.name, root.sectionItemWithMembers.introMessage,
+                                                    root.sectionItemWithMembers.image, root.isInvitationPending)
             }
             onInvitationPendingClicked: {
-                Global.communityIntroPopupRequested(communityId, root.coolSectionItemModel.name, root.coolSectionItemModel.introMessage,
-                                                    root.coolSectionItemModel.image, root.isInvitationPending)
+                Global.communityIntroPopupRequested(communityId, root.sectionItemWithMembers.name, root.sectionItemWithMembers.introMessage,
+                                                    root.sectionItemWithMembers.image, root.isInvitationPending)
             }
         }
     }
@@ -329,7 +328,7 @@ StackLayout {
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
-            community: coolSectionItemModel
+            community: sectionItemWithMembers
             communitySettingsDisabled: root.communitySettingsDisabled
             onCommunitySettingsDisabledChanged: if (communitySettingsDisabled) goTo(Constants.CommunitySettingsSections.Overview)
 
@@ -342,7 +341,7 @@ StackLayout {
         id: controlNodeOfflineComponent
         ControlNodeOfflineCommunityView {
             id: controlNodeOfflineView
-            readonly property var communityData: coolSectionItemModel
+            readonly property var communityData: sectionItemWithMembers
             name: communityData.name
             communityDesc: communityData.description
             color: communityData.color
@@ -360,7 +359,7 @@ StackLayout {
         id: communityBanComponent
         BannedMemberCommunityView {
             id: communityBanView
-            readonly property var communityData: coolSectionItemModel
+            readonly property var communityData: sectionItemWithMembers
             name: communityData.name
             communityDesc: communityData.description
             color: communityData.color
