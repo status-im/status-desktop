@@ -1,5 +1,6 @@
 {
-  pkgs
+  pkgs,
+  flake
 }:
 
 let
@@ -36,7 +37,7 @@ in pkgs.mkShell {
     # dev machine only
     nixUnstable # for flake support TODO: remove with nixpkgs upgrade
     nixgl.auto.nixGLDefault
-    gdb
+    gdb figlet
   ] ++ (with gst_all_1; [
     gst-libav gstreamer
     gst-plugins-bad  gst-plugins-base
@@ -56,6 +57,7 @@ in pkgs.mkShell {
   shellHook = ''
     export MAKEFLAGS="-j$NIX_BUILD_CORES"
     export PATH="${pkgs.lddWrapped}/bin:$PATH"
+    figlet -t "${flake.description}"
   '';
 
   LIBKRB5_PATH = pkgs.libkrb5;
