@@ -40,7 +40,10 @@ SystemTrayIcon {
 
         MenuItem {
             text: qsTr("Quit")
-            onTriggered: Qt.quit()
+            onTriggered: {
+                console.log('quit tray')
+                Qt.quit()
+            }
         }
     }
 

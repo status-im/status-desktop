@@ -80,6 +80,7 @@ Item {
         confirmationText: qsTr("Make sure you have your account password and seed phrase stored. Without them you can lock yourself out of your account and lose funds.")
         confirmButtonLabel: qsTr("Sign out & Quit")
         onConfirmButtonClicked: {
+                console.log('quit onConfirmButtonClicked')
             Qt.quit()
         }
     }
