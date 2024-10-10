@@ -49,6 +49,31 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
         run-storybook-tests \
 	update
 
+# This is a code for automatic help generator.
+# It supports ANSI colors and categories.
+# To add new item into help output, simply add comments
+# starting with '##'. To add category, use @category.
+GREEN  := $(shell echo "\e[32m")
+WHITE  := $(shell echo "\e[37m")
+YELLOW := $(shell echo "\e[33m")
+RESET  := $(shell echo "\e[0m")
+HELP_FUN = \
+		   %help; \
+		   while(<>) { push @{$$help{$$2 // 'options'}}, [$$1, $$3] if /^([a-zA-Z0-9\-]+)\s*:.*\#\#(?:@([a-zA-Z\-]+))?\s(.*)$$/ }; \
+		   print "Usage: make [target]\n\n"; \
+		   for (sort keys %help) { \
+			   print "${WHITE}$$_:${RESET}\n"; \
+			   for (@{$$help{$$_}}) { \
+				   $$sep = " " x (32 - length $$_->[0]); \
+				   print "  ${YELLOW}$$_->[0]${RESET}$$sep${GREEN}$$_->[1]${RESET}\n"; \
+			   }; \
+			   print "\n"; \
+		   }
+
+help: SHELL := /bin/sh
+help: ##@other Show this help
+	@perl -e '$(HELP_FUN)' $(MAKEFILE_LIST)
+
 ifeq ($(NIM_PARAMS),)
 # "variables.mk" was not included, so we update the submodules.
 GIT_SUBMODULE_UPDATE := git submodule update --init --recursive
