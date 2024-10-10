@@ -264,6 +264,7 @@ ifeq ($(USE_NWAKU), true)
 	NEGENTROPY := vendor/status-go/third_party/nwaku/vendor/negentropy/cpp/libnegentropy.a
 	LIBWAKU := vendor/status-go/third_party/nwaku/build/libwaku.$(LIB_EXT)
 	LIBWAKU_LIBDIR := $(shell pwd)/$(shell dirname "$(LIBWAKU)")
+	export LIBWAKU
 	NIM_EXTRA_PARAMS +=	--passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku" --passL:"$(NEGENTROPY)"
 endif
 
