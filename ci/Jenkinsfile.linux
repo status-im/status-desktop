@@ -83,7 +83,8 @@ pipeline {
 
     stage('Package') {
       steps { script {
-        linux.bundle('tgz-linux', nixShell=true)
+        //linux.bundle('tgz-linux', nixShell=true)
+        linux.bundle('tgz-linux', 0, true)
       } }
     }
 
