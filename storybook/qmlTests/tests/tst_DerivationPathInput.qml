@@ -3,8 +3,6 @@ import QtQuick.Controls 2.14
 import QtQml 2.14
 import QtTest 1.0
 
-import StatusQ 0.1 // https://github.com/status-im/status-desktop/issues/10218
-
 import shared.popups.addaccount.panels 1.0
 import shared.popups.addaccount.panels.DerivationPathInput 1.0
 

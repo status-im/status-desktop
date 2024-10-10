@@ -1,7 +1,6 @@
 ﻿import QtQuick 2.15
 import QtTest 1.15
 
-import StatusQ 0.1 // See #10218
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
