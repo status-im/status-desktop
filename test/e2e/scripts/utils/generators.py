@@ -15,7 +15,7 @@ def random_name_string():
 def random_password_string():
     return ''.join((random.choice(
         string.ascii_letters + string.digits + string.punctuation)
-        for _ in range(10, 28))
+        for _ in range(10, 65))
     )
 
 
