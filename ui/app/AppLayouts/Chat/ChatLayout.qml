@@ -225,7 +225,7 @@ StackLayout {
             currencyStore: root.currencyStore
             sendModalPopup: root.sendModalPopup
             sectionItemModel: root.sectionItemModel
-            joinedMembers: root.joinedMembers
+            joinedMembersCount: root.joinedMembers.count
             amIMember: sectionItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
