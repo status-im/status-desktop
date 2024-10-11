@@ -76,12 +76,10 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     )
 
 target_link_libraries(
-    ${PROJECT_LIB} PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2 Qt5::WebView)
+    ${PROJECT_LIB} PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2 Qt5::WebView StatusQ)
 
 target_link_libraries(
     ${PROJECT_NAME} PRIVATE ${PROJECT_LIB})
-
-add_dependencies(${PROJECT_NAME} StatusQ)
 
 enable_testing()
 
@@ -91,9 +89,7 @@ add_executable(
 )
 
 target_link_libraries(
-    PagesValidator PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2 Qt5::WebView)
-
-add_dependencies(PagesValidator StatusQ)
+    PagesValidator PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2 Qt5::WebView StatusQ)
 
 target_compile_definitions(PagesValidator PRIVATE
         QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
@@ -113,8 +109,6 @@ add_test(NAME DirectoryFilesWatcherTest COMMAND DirectoryFilesWatcherTest)
 add_executable(QmlTests
     qmlTests/main.cpp
     ${TEST_QML_FILES})
-
-add_dependencies(QmlTests StatusQ)
 
 target_compile_definitions(QmlTests PRIVATE
         QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"

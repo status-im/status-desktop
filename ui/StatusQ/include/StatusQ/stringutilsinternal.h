@@ -3,15 +3,12 @@
 #include <QObject>
 #include <QString>
 
-class QJSEngine;
-class QQmlEngine;
-
 class StringUtilsInternal : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit StringUtilsInternal(QQmlEngine* engine, QObject* parent = nullptr);
+    explicit StringUtilsInternal(QObject* parent = nullptr);
 
     Q_INVOKABLE QString escapeHtml(const QString& unsafe) const;
 
@@ -20,7 +17,4 @@ public:
     Q_INVOKABLE QString extractDomainFromLink(const QString& link) const;
 
     Q_INVOKABLE QString plainText(const QString& htmlFragment) const;
-
-private:
-    QQmlEngine* m_engine{nullptr};
 };

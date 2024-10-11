@@ -1,6 +1,8 @@
 #include <QQmlEngine>
 #include <QtQuickTest>
 
+#include <StatusQ/typesregistration.h>
+
 class Setup : public QObject
 {
     Q_OBJECT
@@ -24,6 +26,8 @@ public slots:
 
         for (const auto& path : additionalImportPaths)
             engine->addImportPath(path);
+
+        registerStatusQTypes();
 
         QStandardPaths::setTestModeEnabled(true);
 

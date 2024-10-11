@@ -26,7 +26,6 @@ ListView {
         hasMention: model.hasMention
         isPinned: model.isPinned
         pinnedBy: model.pinnedBy
-        hasExpired: model.hasExpired
         reactionsModel: model.reactions || []
 
         messageDetails: StatusMessageDetails {

@@ -7,15 +7,7 @@
 #include <QUrl>
 #include <QTextDocumentFragment>
 
-StringUtilsInternal::StringUtilsInternal(QQmlEngine* engine, QObject* parent)
-    : m_engine(engine)
-    , QObject(parent)
-{ }
-
-QString StringUtilsInternal::escapeHtml(const QString& unsafe) const
-{
-    return unsafe.toHtmlEscaped();
-}
+namespace {
 
 QString resolveFileUsingQmlImportPaths(QQmlEngine *engine, const QString &relativeFilePath) {
     const auto importPaths = engine->importPathList();
@@ -29,9 +21,22 @@ QString resolveFileUsingQmlImportPaths(QQmlEngine *engine, const QString &relati
     return {};
 }
 
+} // unnamed namespace
+
+StringUtilsInternal::StringUtilsInternal(QObject* parent) : QObject(parent)
+{
+}
+
+QString StringUtilsInternal::escapeHtml(const QString& unsafe) const
+{
+    return unsafe.toHtmlEscaped();
+}
+
 QString StringUtilsInternal::readTextFile(const QString& filePath) const
 {
-    auto selector = QQmlFileSelector::get(m_engine);
+    auto engine = qmlEngine(this);
+
+    auto selector = QQmlFileSelector::get(engine);
     if (!selector) {
         qWarning() << Q_FUNC_INFO << "No QQmlFileSelector available to load text file:" << filePath;
         return {};
@@ -50,7 +55,7 @@ QString StringUtilsInternal::readTextFile(const QString& filePath) const
 
     QFile file(selectedFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        const auto resolvedFilePath = resolveFileUsingQmlImportPaths(m_engine, filePath);
+        const auto resolvedFilePath = resolveFileUsingQmlImportPaths(engine, filePath);
         if (resolvedFilePath.isEmpty()) {
             qWarning() << Q_FUNC_INFO << "Can't find file in QML import paths" << filePath;
             return {};
@@ -75,7 +80,7 @@ QString StringUtilsInternal::extractDomainFromLink(const QString& link) const
     return url.host();
 }
 
-QString StringUtilsInternal::plainText(const QString &htmlFragment) const
+QString StringUtilsInternal::plainText(const QString& htmlFragment) const
 {
     return QTextDocumentFragment::fromHtml(htmlFragment).toPlainText();
 }

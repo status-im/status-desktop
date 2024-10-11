@@ -40,7 +40,6 @@ file(GLOB_RECURSE TEST_QML_FILES "*.qml")
 add_executable(QmlTests main.cpp "${TEST_QML_FILES}")
 
 target_compile_definitions(QmlTests PRIVATE
-    STATUSQ_MODULE_PATH="${STATUSQ_MODULE_PATH}"
     STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
     # no need to copy around qml test files for shadow builds - just set the respective define
     QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
