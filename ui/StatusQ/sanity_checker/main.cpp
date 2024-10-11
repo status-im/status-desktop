@@ -4,6 +4,8 @@
 #include <QQmlComponent>
 #include <QQmlEngine>
 
+#include <StatusQ/typesregistration.h>
+
 int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     QQmlEngine engine;
@@ -17,18 +19,7 @@ int main(int argc, char *argv[]) {
     const QString iterationPath{QStringLiteral(STATUSQ_MODULE_IMPORT_PATH)};
     engine.addImportPath(iterationPath);
 
-    // Create a dummy component with StatusQ import.
-    // NOTE: https://github.com/status-im/status-desktop/issues/10218
-
-    QQmlComponent mainComponent(&engine);
-    mainComponent.setData("import QtQuick 2.15\nimport StatusQ 0.1\nItem { }", {});
-
-    if (mainComponent.isError()) {
-        qWarning() << "Failed to import StatusQ 0.1:" << mainComponent.errors();
-        return EXIT_FAILURE;
-    }
-
-    // Start iterating over directory
+    registerStatusQTypes();
 
     bool errorsFound = false;
 

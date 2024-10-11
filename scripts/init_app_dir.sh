@@ -9,11 +9,10 @@ mkdir -p \
   "${APP_DIR}/usr/lib" \
   "${APP_DIR}/usr/qml" \
   "${APP_DIR}/usr/i18n" \
-  "${APP_DIR}/usr/bin/StatusQ" \
   "${APP_DIR}/usr/plugins/platforminputcontexts"
 
 cp bin/nim_status_client "${APP_DIR}/usr/bin"
-cp bin/StatusQ/* "${APP_DIR}/usr/bin/StatusQ"
+cp bin/StatusQ/* "${APP_DIR}/usr/lib"
 cp nim-status.desktop "${APP_DIR}/."
 cp status.png "${APP_DIR}/status.png"
 cp status.png "${APP_DIR}/usr/"

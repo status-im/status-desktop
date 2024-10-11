@@ -17,6 +17,7 @@ if defined(macosx):
   switch("passL", "-rpath" & " " & getEnv("QT5_LIBDIR"))
   switch("passL", "-rpath" & " " & getEnv("STATUSGO_LIBDIR"))
   switch("passL", "-rpath" & " " & getEnv("STATUSKEYCARDGO_LIBDIR"))
+  switch("passL", "-rpath" & " " & getEnv("STATUSQ_INSTALL_PATH") & "/StatusQ")
   # statically link these libs
   switch("passL", "bottles/openssl@1.1/lib/libcrypto.a")
   switch("passL", "bottles/openssl@1.1/lib/libssl.a")
