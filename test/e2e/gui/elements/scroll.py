@@ -9,8 +9,6 @@ from .object import QObject
 LOG = logging.getLogger(__name__)
 
 
-# TODO: fix scroll https://github.com/status-im/status-desktop/issues/16325
-
 class Scroll(QObject):
 
     @allure.step('Scroll vertical down to object {1}')

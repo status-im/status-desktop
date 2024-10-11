@@ -43,7 +43,7 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
             f"Toast message about adding saved address is not correct or not present. Current list of messages: {messages}"
 
     with step('Edit saved address to new name'):
-        SavedAddressesView().open_edit_address_popup(name).edit_saved_address(new_name, address)
+        SavedAddressesView().open_edit_address_popup(name).edit_saved_address(new_name)
 
     with step('Verify that saved address with new name is in the list of saved addresses'):
         assert driver.waitFor(
