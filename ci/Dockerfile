@@ -1,12 +1,14 @@
 ARG QT_VERSION=5.15.2
 
 # QT Installation Image --------------------------------------------------------
-FROM ubuntu:22.04 AS qt-install
+FROM ubuntu:20.04 AS qt-install
 
 ARG QT_VERSION
 
-RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends sudo python3 python3-pip \
- && apt-get -qq clean
+RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends \
+    sudo python3 python3-pip python3-dev \
+    build-essential gcc g++ \
+    && apt-get -qq clean
 
 RUN chmod -R 777 /opt
 
@@ -17,7 +19,7 @@ RUN python3 -m pip install setuptools \
  && python3 -m aqt install --output /opt/qt ${QT_VERSION} linux desktop -m qtwebengine
 
 # Build Image ------------------------------------------------------------------
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 
 ARG LINUXDEPLOYQT_VERSION=20230423-8428c59
 ARG QT_VERSION
@@ -40,8 +42,8 @@ RUN apt update -yq && apt install -yq software-properties-common \
  && add-apt-repository -y ppa:git-core/ppa \
  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
  && apt update -yq && apt full-upgrade -yq && apt install -yq --no-install-recommends --fix-missing  \
-    gnupg2 openssh-client ca-certificates locales sudo jq curl wget fuse s3cmd file llvm tk-dev xz-utils \
-    git make build-essential pkg-config extra-cmake-modules g++-11 gcc-11 \
+    gnupg2 openssh-client ca-certificates locales sudo jq curl wget fuse s3cmd file unzip llvm tk-dev xz-utils \
+    git make build-essential pkg-config extra-cmake-modules gcc-9 g++-9 \
     libgl1-mesa-dev libsm6 libice6 libfontconfig1 libdbus-1-3 libssl-dev libz-dev \
     zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev unixodbc-dev libpq-dev \
     libncurses5-dev libncursesw5-dev libpcsclite-dev  libpcre3-dev libnss3 \
@@ -52,14 +54,9 @@ RUN apt update -yq && apt install -yq software-properties-common \
     libxrandr2 libxcursor1 libxi6 libxcb-randr0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
     libxcb-render-util0 libxcb-shape0 libxcb-render0 libxcb-xinerama0 \
  &&  update-alternatives \
-    --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 \
-    --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
+    --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 \
+    --slave /usr/bin/g++ g++ /usr/bin/g++-9 \
  && apt-get -qq clean
-
- # Libssl 1.1
- # Package obtained from https://answers.launchpad.net/~ubuntu-security-proposed/+archive/ubuntu/ppa/+build/23606713
-RUN wget https://answers.launchpad.net/~ubuntu-security-proposed/+archive/ubuntu/ppa/+build/23606713/+files/libssl1.1_1.1.1l-1ubuntu1.3_amd64.deb
-RUN dpkg -i libssl1.1_1.1.1l-1ubuntu1.3_amd64.deb
 
 # Install linuxdeployqt
 RUN mkdir -p /usr/local/bin \
@@ -94,6 +91,22 @@ RUN GOLANG_SHA256="e330e5d977bf4f3bdc157bc46cf41afa5b13d66c914e12fd6b694ccda65fc
  && rm "${GOLANG_TARBALL}" \
  && sudo ln -s /usr/local/go/bin/go /usr/local/bin
 
+# Install Protoc
+RUN PROTOC_SHA256="75d8a9d7a2c42566e46411750d589c51276242d8b6247a5724bac0f9283e05a8" \
+ && PROTOC_TARBALL="protoc-3.20.0-linux-x86_64.zip" \
+ && wget -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/${PROTOC_TARBALL}" \
+ && echo "${PROTOC_SHA256} ${PROTOC_TARBALL}" | sha256sum -c \
+ && sudo unzip -d /usr/local "${PROTOC_TARBALL}" \
+ && rm "${PROTOC_TARBALL}"
+
+# Install Protoc-deg-go
+RUN PROTOC_GEN_SHA256="0b2c257938a8cd9ba3506bbdbbaad45e51245b6f9e0743035ade7acf746c6be7" \
+ && PROTOC_GEN_TARBALL="protoc-gen-go.v1.34.1.linux.amd64.tar.gz" \
+ && wget -q "https://github.com/protocolbuffers/protobuf-go/releases/download/v1.34.1/${PROTOC_GEN_TARBALL}" \
+ && echo "${PROTOC_GEN_SHA256} ${PROTOC_GEN_TARBALL}" | sha256sum -c \
+ && sudo tar -C /usr/local/bin -xzf "${PROTOC_GEN_TARBALL}" \
+ && rm "${PROTOC_GEN_TARBALL}"
+
 # Create Nix directory as root.
 RUN mkdir /nix && chown 1001:1001 /nix
 
@@ -103,7 +116,11 @@ RUN sudo groupadd -g 1001 jenkins \
 USER jenkins
 ENV HOME="/home/jenkins"
 
+# Access to tools installed by Go.
+ENV PATH="${HOME}/go/bin:${PATH}"
+
 # Nix for jenkins user to build status-go.
+RUN curl -s https://nixos.org/releases/nix/nix-2.19.3/install | sh -s -- --no-daemon# Nix for jenkins user to build status-go.
 RUN curl -s https://nixos.org/releases/nix/nix-2.19.3/install | sh -s -- --no-daemon
 
 # Installing rust
