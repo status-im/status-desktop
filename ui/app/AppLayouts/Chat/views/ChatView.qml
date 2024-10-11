@@ -50,6 +50,7 @@ StatusSectionLayout {
     required property SharedStores.CurrenciesStore currencyStore
     required property var sendModalPopup
     property var sectionItemModel
+    property var joinedMembers
 
     property var emojiPopup
     property var stickersPopup
@@ -300,7 +301,8 @@ StatusSectionLayout {
         id: communtiyColumnComponent
         CommunityColumnView {
             communitySectionModule: root.rootStore.chatCommunitySectionModule
-            communityData: sectionItemModel
+            communityData: root.sectionItemModel
+            joinedMembers: root.joinedMembers
             store: root.rootStore
             communitiesStore: root.communitiesStore
             walletAssetsStore: root.walletAssetsStore

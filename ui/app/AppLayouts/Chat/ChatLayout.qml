@@ -77,7 +77,7 @@ StackLayout {
             }
         }
     }
-    readonly property var pendingMemberRequests: SortFilterProxyModel {
+    readonly property var pendingMembers: SortFilterProxyModel {
         sourceModel: sectionItemModel.allMembers
 
         filters: AnyOf {
@@ -95,7 +95,7 @@ StackLayout {
             }
         }
     }
-    readonly property var declinedMemberRequests: SortFilterProxyModel {
+    readonly property var declinedMembers: SortFilterProxyModel {
         sourceModel: sectionItemModel.allMembers
 
         filters: ValueFilter {
@@ -104,21 +104,12 @@ StackLayout {
         }
     }
 
-    readonly property var sectionItemWithMembers: {
-        let sectionItemCopy = sectionItemModel
-        sectionItemCopy.members = joinedMembers
-        sectionItemCopy.bannedMembers = bannedMembers
-        sectionItemCopy.pendingMemberRequests = pendingMemberRequests
-        sectionItemCopy.declinedMemberRequests = declinedMemberRequests
-        return sectionItemCopy
-    }
-
     property var sendModalPopup
 
-    readonly property bool isOwner: sectionItemWithMembers.memberRole === Constants.memberRole.owner
-    readonly property bool isAdmin: sectionItemWithMembers.memberRole === Constants.memberRole.admin
-    readonly property bool isTokenMasterOwner: sectionItemWithMembers.memberRole === Constants.memberRole.tokenMaster
-    readonly property bool isControlNode: sectionItemWithMembers.isControlNode
+    readonly property bool isOwner: sectionItemModel.memberRole === Constants.memberRole.owner
+    readonly property bool isAdmin: sectionItemModel.memberRole === Constants.memberRole.admin
+    readonly property bool isTokenMasterOwner: sectionItemModel.memberRole === Constants.memberRole.tokenMaster
+    readonly property bool isControlNode: sectionItemModel.isControlNode
     readonly property bool isPrivilegedUser: isControlNode || isOwner || isAdmin || isTokenMasterOwner
     readonly property int isInvitationPending: root.rootStore.chatCommunitySectionModule.requestToJoinState !== Constants.RequestToJoinState.None
 
@@ -132,7 +123,7 @@ StackLayout {
     signal openAppSearch()
 
     // Community transfer ownership related props/signals:
-    property bool isPendingOwnershipRequest: sectionItemWithMembers.isPendingOwnershipRequest
+    property bool isPendingOwnershipRequest: sectionItemModel.isPendingOwnershipRequest
 
     onIsPrivilegedUserChanged: if (root.currentIndex === 1) root.currentIndex = 0
 
@@ -148,7 +139,7 @@ StackLayout {
 
         sourceComponent: {
             if (sectionItem.isCommunity() && !sectionItem.amIMember) {
-                if (sectionItemWithMembers.amIBanned) {
+                if (sectionItemModel.amIBanned) {
                     return communityBanComponent
                 } else if (sectionItem.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin) {
                     return controlNodeOfflineComponent
@@ -174,23 +165,22 @@ StackLayout {
         id: joinCommunityViewComponent
         JoinCommunityView {
             id: joinCommunityView
-            readonly property var communityData: sectionItemWithMembers
-            readonly property string communityId: communityData.id
-            name: communityData.name
-            introMessage: communityData.introMessage
-            communityDesc: communityData.description
-            color: communityData.color
-            image: communityData.image
-            membersCount: communityData.joinedMembers.count
+            readonly property string communityId: sectionItemModel.id
+            name: sectionItemModel.name
+            introMessage: sectionItemModel.introMessage
+            communityDesc: sectionItemModel.description
+            color: sectionItemModel.color
+            image: sectionItemModel.image
+            membersCount: joinedMembers.count
             accessType: mainViewLoader.accessType
             joinCommunity: true
-            amISectionAdmin: communityData.memberRole === Constants.memberRole.owner ||
-                             communityData.memberRole === Constants.memberRole.admin ||
-                             communityData.memberRole === Constants.memberRole.tokenMaster
+            amISectionAdmin: sectionItemModel.memberRole === Constants.memberRole.owner ||
+                             sectionItemModel.memberRole === Constants.memberRole.admin ||
+                             sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             communityItemsModel: root.rootStore.communityItemsModel
             requirementsMet: root.permissionsStore.allTokenRequirementsMet
             requirementsCheckPending: root.rootStore.permissionsCheckOngoing
-            requiresRequest: !communityData.amIMember
+            requiresRequest: !sectionItemModel.amIMember
             communityHoldingsModel: root.permissionsStore.becomeMemberPermissionsModel
             viewOnlyHoldingsModel: root.permissionsStore.viewOnlyPermissionsModel
             viewAndPostHoldingsModel: root.permissionsStore.viewAndPostPermissionsModel
@@ -203,13 +193,13 @@ StackLayout {
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
             onRequestToJoinClicked: {
-                Global.communityIntroPopupRequested(joinCommunityView.communityId, communityData.name,
-                                                    communityData.introMessage, communityData.image,
+                Global.communityIntroPopupRequested(joinCommunityView.communityId, sectionItemModel.name,
+                                                    sectionItemModel.introMessage, sectionItemModel.image,
                                                     root.isInvitationPending)
             }
             onInvitationPendingClicked: {
-                Global.communityIntroPopupRequested(joinCommunityView.communityId, communityData.name, communityData.introMessage,
-                                                    communityData.image, root.isInvitationPending)
+                Global.communityIntroPopupRequested(joinCommunityView.communityId, sectionItemModel.name, sectionItemModel.introMessage,
+                                                    sectionItemModel.image, root.isInvitationPending)
             }
         }
     }
@@ -220,7 +210,7 @@ StackLayout {
             id: chatView
 
             readonly property var sectionItem: root.rootStore.chatCommunitySectionModule
-            readonly property string communityId: root.sectionItemWithMembers.id
+            readonly property string communityId: root.sectionItemModel.id
 
             objectName: "chatViewComponent"
 
@@ -234,11 +224,12 @@ StackLayout {
             walletAssetsStore: root.walletAssetsStore
             currencyStore: root.currencyStore
             sendModalPopup: root.sendModalPopup
-            sectionItemModel: root.sectionItemWithMembers
+            sectionItemModel: root.sectionItemModel
+            joinedMembers: root.joinedMembers
             amIMember: sectionItem.amIMember
-            amISectionAdmin: root.sectionItemWithMembers.memberRole === Constants.memberRole.owner ||
-                             root.sectionItemWithMembers.memberRole === Constants.memberRole.admin ||
-                             root.sectionItemWithMembers.memberRole === Constants.memberRole.tokenMaster
+            amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
+                             root.sectionItemModel.memberRole === Constants.memberRole.admin ||
+                             root.sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
 
@@ -299,12 +290,12 @@ StackLayout {
                 root.openAppSearch()
             }
             onRequestToJoinClicked: {
-                Global.communityIntroPopupRequested(communityId, root.sectionItemWithMembers.name, root.sectionItemWithMembers.introMessage,
-                                                    root.sectionItemWithMembers.image, root.isInvitationPending)
+                Global.communityIntroPopupRequested(communityId, root.sectionItemModel.name, root.sectionItemModel.introMessage,
+                                                    root.sectionItemModel.image, root.isInvitationPending)
             }
             onInvitationPendingClicked: {
-                Global.communityIntroPopupRequested(communityId, root.sectionItemWithMembers.name, root.sectionItemWithMembers.introMessage,
-                                                    root.sectionItemWithMembers.image, root.isInvitationPending)
+                Global.communityIntroPopupRequested(communityId, root.sectionItemModel.name, root.sectionItemModel.introMessage,
+                                                    root.sectionItemModel.image, root.isInvitationPending)
             }
         }
     }
@@ -328,7 +319,11 @@ StackLayout {
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
-            community: sectionItemWithMembers
+            community: root.sectionItemModel
+            joinedMembers: root.joinedMembers
+            bannedMembers: root.bannedMembers
+            pendingMembers: root.pendingMembers
+            declinedMembers: root.declinedMembers
             communitySettingsDisabled: root.communitySettingsDisabled
             onCommunitySettingsDisabledChanged: if (communitySettingsDisabled) goTo(Constants.CommunitySettingsSections.Overview)
 
@@ -341,12 +336,11 @@ StackLayout {
         id: controlNodeOfflineComponent
         ControlNodeOfflineCommunityView {
             id: controlNodeOfflineView
-            readonly property var communityData: sectionItemWithMembers
-            name: communityData.name
-            communityDesc: communityData.description
-            color: communityData.color
-            image: communityData.image
-            membersCount: communityData.members.count
+            name: root.sectionItemModel.name
+            communityDesc: root.sectionItemModel.description
+            color: root.sectionItemModel.color
+            image: root.sectionItemModel.image
+            membersCount: root.joinedMembers.count
             communityItemsModel: root.rootStore.communityItemsModel
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
@@ -359,12 +353,12 @@ StackLayout {
         id: communityBanComponent
         BannedMemberCommunityView {
             id: communityBanView
-            readonly property var communityData: sectionItemWithMembers
-            name: communityData.name
-            communityDesc: communityData.description
-            color: communityData.color
-            image: communityData.image
-            membersCount: communityData.members.count
+            readonly property var communityData: sectionItemModel
+            name: root.sectionItemModel.name
+            communityDesc: root.sectionItemModel.description
+            color: root.sectionItemModel.color
+            image: root.sectionItemModel.image
+            membersCount: root.joinedMembers.count
             communityItemsModel: root.rootStore.communityItemsModel
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications

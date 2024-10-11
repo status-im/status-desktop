@@ -95,7 +95,7 @@ StatusStackModal {
         ProfilePopupInviteFriendsPanel {
             rootStore: root.rootStore
             contactsStore: root.contactsStore
-            community: root.community
+            communityId: root.communityId
             onPubKeysChanged: root.pubKeys = pubKeys
         },
 

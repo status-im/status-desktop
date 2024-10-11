@@ -44,6 +44,7 @@ Item {
     required property CurrenciesStore currencyStore
     property bool hasAddedContacts: false
     property var communityData
+    property var joinedMembers
     property alias createChannelPopup: createChannelPopup
 
     property int requestToJoinState: Constants.RequestToJoinState.None
@@ -79,7 +80,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         name: communityData.name
-        membersCount: communityData.members.count
+        membersCount: joinedMembers.count
         image: communityData.image
         color: communityData.color
         amISectionAdmin: root.isSectionAdmin

@@ -14,8 +14,8 @@ SettingsPage {
     property RootStore rootStore
     property var membersModel
     property var bannedMembersModel
-    property var pendingMemberRequestsModel
-    property var declinedMemberRequestsModel
+    property var pendingMembersModel
+    property var declinedMembersModel
     property string communityName
 
     property int memberRole
@@ -79,7 +79,7 @@ SettingsPage {
                 objectName: "pendingRequestsButton"
                 width: implicitWidth
                 text: qsTr("Pending Requests")
-                enabled: pendingMemberRequestsModel.count > 0
+                enabled: pendingMembersModel.count > 0
             }
 
             StatusTabButton {
@@ -87,7 +87,7 @@ SettingsPage {
                 objectName: "declinedRequestsButton"
                 width: implicitWidth
                 text: qsTr("Rejected")
-                enabled: declinedMemberRequestsModel.count > 0
+                enabled: declinedMembersModel.count > 0
             }
 
             StatusTabButton {
@@ -138,14 +138,14 @@ SettingsPage {
             }
 
             MembersTabPanel {
-                model: root.pendingMemberRequestsModel
+                model: root.pendingMembersModel
                 rootStore: root.rootStore
                 memberRole: root.memberRole
                 placeholderText: {
-                    if (root.pendingMemberRequestsModel.count === 0)
+                    if (root.pendingMembersModel.count === 0)
                         return qsTr("No pending requests to search")
 
-                    return qsTr("Search %1's %n pending request(s)", "", root.pendingMemberRequestsModel.count).arg(root.communityName)
+                    return qsTr("Search %1's %n pending request(s)", "", root.pendingMembersModel.count).arg(root.communityName)
                 }
                 panelType: MembersTabPanel.TabType.PendingRequests
 
@@ -157,14 +157,14 @@ SettingsPage {
             }
 
             MembersTabPanel {
-                model: root.declinedMemberRequestsModel
+                model: root.declinedMembersModel
                 rootStore: root.rootStore
                 memberRole: root.memberRole
                 placeholderText: {
-                    if (root.declinedMemberRequestsModel.count === 0)
+                    if (root.declinedMembersModel.count === 0)
                         return qsTr("No rejected members to search")
 
-                    return qsTr("Search %1's %n rejected member(s)", "", root.declinedMemberRequestsModel.count).arg(root.communityName)
+                    return qsTr("Search %1's %n rejected member(s)", "", root.declinedMembersModel.count).arg(root.communityName)
                 }
                 panelType: MembersTabPanel.TabType.DeclinedRequests
 
