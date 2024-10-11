@@ -56,6 +56,11 @@ RUN apt update -yq && apt install -yq software-properties-common \
     --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
  && apt-get -qq clean
 
+ # Libssl 1.1
+ # Package obtained from https://answers.launchpad.net/~ubuntu-security-proposed/+archive/ubuntu/ppa/+build/23606713
+RUN wget https://answers.launchpad.net/~ubuntu-security-proposed/+archive/ubuntu/ppa/+build/23606713/+files/libssl1.1_1.1.1l-1ubuntu1.3_amd64.deb
+RUN dpkg -i libssl1.1_1.1.1l-1ubuntu1.3_amd64.deb
+
 # Install linuxdeployqt
 RUN mkdir -p /usr/local/bin \
  && curl -Lo/usr/local/bin/linuxdeployqt "https://status-misc.ams3.digitaloceanspaces.com/desktop/linuxdeployqt-${LINUXDEPLOYQT_VERSION}-x86_64.AppImage" \
