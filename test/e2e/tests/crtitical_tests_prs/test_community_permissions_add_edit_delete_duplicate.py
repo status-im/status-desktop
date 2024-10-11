@@ -30,7 +30,8 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow, params):
 
     main_screen.create_community(params['name'], params['description'],
                                  params['intro'], params['outro'],
-                                 params['logo']['fp'], params['banner']['fp'])
+                                 params['logo']['fp'], params['banner']['fp'],
+                                 ['Activism', 'Art'], constants.community_tags[:2])
 
     permission_set = random.choice(permission_data)
 
