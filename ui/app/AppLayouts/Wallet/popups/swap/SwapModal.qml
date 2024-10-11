@@ -151,7 +151,7 @@ StatusDialog {
                         id: shareButton
 
                         onClicked: {
-                            const url = root.swapAdaptor.getShareTransactionUrl(Constants.SendType.Swap,
+                            const url = root.swapAdaptor.swapStore.getShareTransactionUrl(Constants.SendType.Swap,
                                                                                 root.swapInputParamsForm.fromTokensKey,
                                                                                 root.swapInputParamsForm.fromTokenAmount,
                                                                                 root.swapInputParamsForm.selectedAccountAddress,

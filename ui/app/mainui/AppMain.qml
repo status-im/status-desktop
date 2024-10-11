@@ -43,6 +43,7 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
+import AppLayouts.Wallet.popups.swap 1.0 as WalletSwapPopups
 
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
@@ -386,7 +387,12 @@ Item {
             console.log("=========== onShowTransactionModal txType:", txType, "asset:", asset, "amount:", amount, "address:", address, "chainId:", chainId, "toAsset:", toAsset)
 
             if (txType === Constants.SendType.Swap) {
-                // TODO_ES implement
+                d.swapFormData.fromTokensKey = asset
+                d.swapFormData.toTokenKey = toAsset
+                d.swapFormData.fromTokenAmount = amount
+                d.swapFormData.selectedAccountAddress = address
+                d.swapFormData.selectedNetworkChainId = chainId
+                Global.openSwapModalRequested(d.swapFormData)
                 return
             }
 
@@ -400,16 +406,12 @@ Item {
             case Constants.SendType.ERC1155Transfer:
                 sendModal.preSelectedHoldingType = Constants.TokenType.ERC1155
                 break
-            case Constants.SendType.Transfer:
-                sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
-                break
-            case Constants.SendType.ENSRegister: // TODO_ES test ens
+            case Constants.SendType.ENSRegister:
             case Constants.SendType.ENSSetPubKey:
             case Constants.SendType.ENSRelease:
-                sendModal.preSelectedHoldingType = Constants.TokenType.ENS
-                break
+            case Constants.SendType.Transfer:
             case Constants.SendType.StickersBuy:
-                // TOOD_ES handle
+                sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
                 break
             default:
                 break
@@ -420,6 +422,10 @@ Item {
 
     QtObject {
         id: d
+
+        property WalletSwapPopups.SwapInputParamsForm swapFormData: WalletSwapPopups.SwapInputParamsForm {
+            selectedAccountAddress: WalletStores.RootStore.selectedAddress
+        }
 
         property var activityCenterPopupObj: null
 

@@ -137,10 +137,15 @@ proc `$`*(contactUrlDataDto: ContactUrlDataDto): string =
   jsonObj["publicKey"] = %* contactUrlDataDto.publicKey
   return $jsonObj
 
+proc `%`*(transactionURLData: TransactionURLDataDto): JsonNode =
+  return %* [{
+    "txType": transactionURLData.txType,
+    "asset": transactionURLData.asset,
+    "amount": transactionURLData.amount,
+    "address": transactionURLData.address,
+    "chainId": transactionURLData.chainId,
+    "toAsset": transactionURLData.toAsset,
+  }]
+
 proc `$`*(transactionURLData: TransactionURLDataDto): string =
-  var jsonObj = newJObject()
-  jsonObj["txType"] = %* transactionURLData.txType
-  jsonObj["asset"] = %* transactionURLData.asset
-  jsonObj["amount"] = %* transactionURLData.amount
-  jsonObj["address"] = %* transactionURLData.address
-  return $jsonObj
+  return $(%transactionURLData)
