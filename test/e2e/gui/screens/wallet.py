@@ -8,7 +8,6 @@ import configs
 import constants.user
 import driver
 from driver.objects_access import walk_children
-from gui.components.base_popup import BasePopup
 from gui.components.context_menu import ContextMenu
 from gui.components.wallet.add_saved_address_popup import AddressPopup, EditSavedAddressPopup
 from gui.components.wallet.asset_context_menu_popup import AssetContextMenuPopup
@@ -23,7 +22,6 @@ from gui.elements.list import List
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
 from gui.objects_map import wallet_names, settings_names, names
-from scripts.utils.decorators import close_exists
 
 
 class WalletScreen(QObject):
