@@ -12,8 +12,8 @@ class ChangePasswordPopup(BasePopup):
 
     def __init__(self):
         super(ChangePasswordPopup, self).__init__()
-        self._re_encrypt_data_restart_button = Button(names.reEncryptRestartButton)
-        self._re_encryption_complete_element = TextLabel(names.reEncryptionComplete)
+        self.re_encrypt_data_restart_button = Button(names.reEncryptRestartButton)
+        self.re_encryption_complete_element = TextLabel(names.reEncryptionComplete)
 
     def click_re_encrypt_data_restart_button(self):
         """
@@ -23,9 +23,9 @@ class ChangePasswordPopup(BasePopup):
         This time is not really predictable, especially for huge DBs.
         In case it does not please check https://github.com/status-im/status-desktop/issues/13013 for context
         """
-        self._re_encrypt_data_restart_button.click()
-        assert driver.waitForObject(self._re_encryption_complete_element.real_name, 30000), \
+        self.re_encrypt_data_restart_button.click()
+        assert driver.waitForObject(self.re_encryption_complete_element.real_name, 30000), \
             f'Re-encryption confirmation is not present within 30 seconds'
-        assert driver.waitForObject(self._re_encrypt_data_restart_button.real_name, 30000)
-        assert getattr(self._re_encrypt_data_restart_button.object, 'text') == PasswordView.RESTART_STATUS.value
-        self._re_encrypt_data_restart_button.click()
+        assert driver.waitForObject(self.re_encrypt_data_restart_button.real_name, 30000)
+        assert getattr(self.re_encrypt_data_restart_button.object, 'text') == PasswordView.RESTART_STATUS.value
+        self.re_encrypt_data_restart_button.click()
