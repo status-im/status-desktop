@@ -342,6 +342,11 @@ proc init*(self: Controller) =
       if args.communityId == self.sectionId:
         self.delegate.onSectionMutedChanged()
 
+    self.events.on(SIGNAL_COMMUNITY_MEMBERS_CHANGED) do(e: Args):
+      let args = CommunityMembersArgs(e)
+      if args.communityId == self.sectionId:
+        self.delegate.updateCommunityMemberList(args.members)
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
