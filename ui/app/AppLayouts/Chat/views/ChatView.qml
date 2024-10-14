@@ -179,17 +179,7 @@ StatusSectionLayout {
             store: root.rootStore
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
-            usersModel: {
-                if (!root.chatContentModule || !root.chatContentModule.chatDetails) {
-                    return null
-                }
-                let isFullCommunityList = !root.chatContentModule.chatDetails.requiresPermissions
-                if (root.chatContentModule.chatDetails.belongsToCommunity && isFullCommunityList) {
-                    // Community channel with no permisisons. We can use the section's membersModel
-                    return root.rootStore.chatCommunitySectionModule.membersModel
-                }
-                return root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
-            }
+            usersModel: root.chatContentModule && root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
         }
     }
 

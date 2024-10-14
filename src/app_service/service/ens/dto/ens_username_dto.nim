@@ -15,7 +15,7 @@ proc `==`*(l, r: EnsUsernameDto): bool =
     return l.chainId == r.chainid and l.username == r.username
 
 proc `$`*(self: EnsUsernameDto): string =
-  result = fmt"""EnsUsernameDto(
+  result = fmt"""ContactDto(
     chainId: {self.chainId},
     username: {self.username},
     txType: {self.txType},

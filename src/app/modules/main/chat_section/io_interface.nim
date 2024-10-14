@@ -46,12 +46,6 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateCommunityMemberList*(self: AccessInterface, members: seq[ChatMember]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getSectionMemberList*(self: AccessInterface): QVariant {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onActiveSectionChange*(self: AccessInterface, sectionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

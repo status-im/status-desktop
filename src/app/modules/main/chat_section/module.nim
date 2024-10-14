@@ -17,7 +17,6 @@ import ../../shared_models/token_criteria_model
 import ../../shared_models/token_permission_chat_list_model
 
 import chat_content/module as chat_content_module
-import chat_content/users/module as users_module
 
 import ../../../global/global_singleton
 import ../../../core/eventemitter
@@ -54,7 +53,6 @@ type
     chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
     chatsLoaded: bool
-    membersListModule: users_module.AccessInterface
 
 # Forward declaration
 proc buildChatSectionUI(
@@ -123,11 +121,6 @@ proc newModule*(
   result.chatsLoaded = false
 
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
-  if isCommunity:
-    result.membersListModule = users_module.newModule(events, sectionId, chatId = "", isCommunity,
-      isUsersListAvailable = true, contactService, chatService, communityService, messageService, isSectionMemberList = true)
-  else:
-    result.membersListModule = nil
 
 proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   if (address.len == 0):
@@ -225,8 +218,6 @@ method delete*(self: Module) =
   for cModule in self.chatContentModules.values:
     cModule.delete
   self.chatContentModules.clear
-  if self.membersListModule != nil:
-    self.membersListModule.delete
 
 method isCommunity*(self: Module): bool =
   return self.controller.isCommunity()
@@ -449,10 +440,6 @@ method onChatsLoaded*(
   self.buildChatSectionUI(community, chats, events, settingsService, nodeConfigurationService,
     contactService, chatService, communityService, messageService, mailserversService, sharedUrlsService)
 
-  # Generate members list
-  if self.membersListModule != nil:
-    self.membersListModule.load()
-
   if(not self.controller.isCommunity()):
     # we do this only in case of chat section (not in case of communities)
     self.initContactRequestsModel()
@@ -492,12 +479,6 @@ proc checkIfModuleDidLoad(self: Module) =
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
-
-method getSectionMemberList*(self: Module): QVariant =
-  return self.membersListModule.getUsersListVariant()
-
-method updateCommunityMemberList*(self: Module, members: seq[ChatMember]) =
-  self.membersListModule.updateMembersList(members)
 
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()

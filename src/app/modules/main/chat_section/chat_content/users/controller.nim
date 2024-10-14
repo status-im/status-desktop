@@ -21,6 +21,9 @@ type
     communityService: community_service.Service
     messageService: message_service.Service
 
+# Forward declaration
+proc getChat*(self: Controller): ChatDto
+
 proc newController*(
   delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
@@ -60,7 +63,7 @@ proc init*(self: Controller) =
     self.delegate.loggedInUserImageChanged()
 
   # Events only for the user list, so not needed in one to one chats
-  if self.isUsersListAvailable:
+  if(self.isUsersListAvailable):
     self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
       var args = TrustArgs(e)
       self.delegate.contactUpdated(args.publicKey)
@@ -115,11 +118,19 @@ proc belongsToCommunity*(self: Controller): bool =
 proc getMyCommunity*(self: Controller): CommunityDto =
   return self.communityService.getCommunityById(self.sectionId)
 
-proc getMyChatId*(self: Controller): string =
-  return self.chatId
-
-proc getMyChat*(self: Controller): ChatDto =
+proc getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
+
+proc getChatMembers*(self: Controller): seq[ChatMember] =
+  if self.belongsToCommunity:
+    let myCommunity = self.getMyCommunity()
+    # TODO: when a new channel is added, chat may arrive earlier and we have no up to date community yet
+    # see log here: https://github.com/status-im/status-desktop/issues/14442#issuecomment-2120756598
+    # should be resolved in https://github.com/status-im/status-desktop/issues/14219
+    let members = myCommunity.getCommunityChat(self.chatId).members
+    if members.len > 0:
+      return members
+  return self.chatService.getChatById(self.chatId).members
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =
