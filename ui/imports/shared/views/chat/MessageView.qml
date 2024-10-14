@@ -135,6 +135,7 @@ Loader {
     property bool hasMention: false
 
     property bool sendViaPersonalChatEnabled
+    property bool transactionDeepLinkEnabled
 
     property bool stickersLoaded: false
     property string sticker
@@ -759,7 +760,10 @@ Loader {
 
                     const linkPreviewType = root.linkPreviewModel.getLinkPreviewType(link)
 
-                    if (linkPreviewType === Constants.LinkPreviewType.Standard || !Utils.isStatusDeepLink(link)) {
+                    if (linkPreviewType === Constants.LinkPreviewType.Standard 
+                        || !Utils.isStatusDeepLink(link)
+                        || (!root.transactionDeepLinkEnabled && Utils.isStatusTransactionDeepLink(link))) 
+                    {
                         Global.openLink(link)
                         return
                     }

@@ -19,6 +19,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/token/service as token_service
 import app_service/service/settings/service as settings_service
+import app_service/service/shared_urls/dto/url_data as shared_urls_dto
 import ./dto as transaction_dto
 import ./dtoV2
 import ./dto_conversion
@@ -504,3 +505,14 @@ proc sendRouterTransactionsWithSignatures*(self: Service, uuid: string, signatur
     error "unexpected sending transactions response"
     return "unexpected sending transactions response"
   return ""
+
+proc shareTransactionURL*(self: Service, urlData: shared_urls_dto.TransactionURLDataDto): string =
+  try:
+    let response = transactions.shareTransactionURL(%urlData)
+    if response.error != nil:
+      error "Error sharing transaction url. Error: ", message = response.error
+      return ""
+    return response.result.getStr
+  except Exception as e:
+    error "Error sharing transaction url", message = e.msg
+    return ""

@@ -14,6 +14,7 @@ import app_service/service/transaction/service as transaction_service
 import app_service/service/keycard/service as keycard_service
 import app_service/service/keycard/constants as keycard_constants
 import app_service/service/transaction/dto
+import app_service/service/shared_urls/dto/url_data as shared_urls_dto
 import app/modules/shared_models/currency_amount
 import app_service/service/network/network_item as network_service_item
 
@@ -410,3 +411,6 @@ method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: 
 method transactionSendingComplete*(self: Module, txHash: string, status: string) =
   self.clearTmpData(self.tmpKeepPinPass)
   self.view.sendtransactionSendingCompleteSignal(txHash, status)
+
+method shareTransactionURL*(self: Module, urlData: shared_urls_dto.TransactionURLDataDto): string =
+  return self.controller.shareTransactionURL(urlData)

@@ -293,6 +293,10 @@ QtObject {
         return link.includes(Constants.deepLinkPrefix) || link.includes(Constants.externalStatusLink)
     }
 
+    function isStatusTransactionDeepLink(link) {
+        return isStatusDeepLink(link) && link.indexOf("/tx/") > -1
+    }
+
     function removeGifUrls(message) {
         return message.replace(/(?:https?|ftp):\/\/[\n\S]*(\.gif)+/gm, '');
     }

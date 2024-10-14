@@ -51,6 +51,7 @@ QtObject {
     property NetworkConnectionStore networkConnectionStore
     property WalletStore.BuyCryptoStore buyCryptoStore
     property bool isDevBuild
+    property bool transactionDeepLinkEnabled
 
     signal openExternalLink(string link)
     signal saveDomainToUnfurledWhitelist(string domain)
@@ -1253,6 +1254,7 @@ QtObject {
                     swapFormData: swapInputParamsForm
                     swapOutputData: SwapOutputData{}
                 }
+                transactionDeepLinkEnabled: root.transactionDeepLinkEnabled
                 loginType: root.rootStore.loginType
                 onClosed: destroy()
             }

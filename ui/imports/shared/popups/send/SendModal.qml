@@ -64,6 +64,8 @@ StatusDialog {
     property int loginType
     property bool showCustomRoutingMode
 
+    property bool transactionDeepLinkEnabled
+
     // In case selected address is incorrect take first account from the list
     readonly property alias selectedAccount: selectedSenderAccountEntry.item
 
@@ -467,6 +469,38 @@ StatusDialog {
                             }
 
                             amountToSend.forceActiveFocus()
+                        }
+                    }
+
+                    ShareButton {
+                        id: shareButton
+
+                        visible: {
+                            if (!popup.transactionDeepLinkEnabled)
+                                return false
+                            switch (store.sendType) {
+                                case Constants.SendType.Bridge:
+                                case Constants.SendType.Transfer:
+                                case Constants.SendType.ERC721Transfer:
+                                case Constants.SendType.ERC1155Transfer:
+                                    return true
+                                default: 
+                                    return false
+                            } 
+                        }
+                        enabled: d.isSelectedHoldingValidAsset || (!d.isCollectiblesTransfer && amountToSend.ready) || recipientInputLoader.ready
+
+                        onClicked: {
+                            let asset = ""
+                            if (!!d.selectedHolding) { 
+                                asset = d.isCollectiblesTransfer ? d.selectedHolding.symbol : d.selectedHolding.tokensKey
+                            }
+                            let recipient = ""
+                            if (recipientInputLoader.ready) {
+                                recipient = popup.store.selectedSenderAccountAddress
+                            }
+                            const url = popup.store.getShareTransactionUrl(store.sendType, asset, amountToSend.asNumber, recipient, 0)
+                            ClipboardUtils.setText(url)
                         }
                     }
                 }
