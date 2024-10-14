@@ -100,7 +100,8 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
 
             community = main_screen.create_community(community_params['name'], community_params['description'],
                                                      community_params['intro'], community_params['outro'],
-                                                     community_params['logo']['fp'], community_params['banner']['fp'])
+                                                     community_params['logo']['fp'], community_params['banner']['fp'],
+                                                     ['Activism', 'Art'], constants.community_tags[:2])
             community.left_panel.invite_people_to_community([user_one.name], 'Message')
             community.left_panel.invite_people_to_community([user_three.name], 'Message')
             main_screen.hide()

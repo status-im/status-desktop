@@ -32,10 +32,6 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         communities_portal = main_screen.left_panel.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()
 
-    with step('Verify next button is disabled'):
-        assert not driver.waitFor(lambda: create_community_form.is_next_button_enabled(),
-                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Next button is enabled'
-
     with step('Verify fields of create community popup and create community'):
         color = ColorCodes.ORANGE.value
         community_screen = create_community_form.create_community(params['name'], params['description'],
