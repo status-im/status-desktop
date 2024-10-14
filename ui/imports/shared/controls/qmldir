@@ -17,7 +17,6 @@ ErrorDetails 1.0 ErrorDetails.qml
 ErrorTag 1.0 ErrorTag.qml
 ExpandableTag 1.0 ExpandableTag.qml
 FoldableHeader 1.0 FoldableHeader.qml
-FormGroup 1.0 FormGroup.qml
 GetSyncCodeDesktopInstructions 1.0 GetSyncCodeDesktopInstructions.qml
 GetSyncCodeMobileInstructions 1.0 GetSyncCodeMobileInstructions.qml
 ImportKeypairInfo 1.0 ImportKeypairInfo.qml

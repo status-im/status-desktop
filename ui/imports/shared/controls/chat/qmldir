@@ -13,7 +13,6 @@ LinkPreviewSettingsCardMenu 1.0 LinkPreviewSettingsCardMenu.qml
 MessageMouseArea 1.0 MessageMouseArea.qml
 MessageReactionsRow 1.0 MessageReactionsRow.qml
 ProfileHeader 1.0 ProfileHeader.qml
-RectangleCorner 1.0 RectangleCorner.qml
 Retry 1.0 Retry.qml
 SentMessage 1.0 SentMessage.qml
 StateBubble 1.0 StateBubble.qml
