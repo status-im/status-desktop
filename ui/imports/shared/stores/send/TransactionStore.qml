@@ -157,6 +157,14 @@ QtObject {
         }
     }
 
+    function getShareTransactionUrl(txType, asset, amount, address, chainId) {
+        return walletSectionSendInst.shareTransactionURL(txType, asset, amount, address, chainId, "")
+    }
+
+    function getShortChainIds(chainShortNames) {
+        return walletSectionSendInst.getShortChainIds(chainShortNames)
+    }
+
     function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
         return currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
     }

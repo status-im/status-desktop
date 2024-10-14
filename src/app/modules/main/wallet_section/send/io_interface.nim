@@ -2,6 +2,7 @@ import Tables
 import app/modules/shared_models/currency_amount
 import app_service/service/transaction/dto
 import app_service/service/transaction/router_transactions_dto
+import app_service/service/shared_urls/dto/url_data
 import app_service/service/network/network_item
 import app/modules/shared_models/collectibles_model as collectibles
 from app_service/service/keycard/service import KeycardEvent
@@ -90,4 +91,7 @@ method getNetworkItem*(self: AccessInterface, chainId: int): NetworkItem {.base.
   raise newException(ValueError, "No implementation available")
 
 method getNetworkChainId*(self: AccessInterface, shortName: string): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method shareTransactionURL*(self: AccessInterface, urlData: TransactionURLDataDto): string {.base.} =
   raise newException(ValueError, "No implementation available")

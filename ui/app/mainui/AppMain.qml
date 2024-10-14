@@ -44,6 +44,7 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
+import AppLayouts.Wallet.popups.swap 1.0 as WalletSwapPopups
 
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
@@ -93,6 +94,7 @@ Item {
         dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
         swapEnabled: featureFlags ? featureFlags.swapEnabled : false
         sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
+        transactionDeepLinkEnabled: featureFlags ? featureFlags.transactionDeepLinkEnabled : false
     }
 
     required property bool isCentralizedMetricsEnabled
@@ -386,10 +388,46 @@ Item {
                 ""
             )
         }
+
+        function onShowTransactionModal(txType, asset, amount, address, chainId, toAsset) {
+            if (txType === Constants.SendType.Swap) {
+                d.swapFormData.fromTokensKey = asset
+                d.swapFormData.toTokenKey = toAsset
+                d.swapFormData.fromTokenAmount = amount
+                d.swapFormData.selectedAccountAddress = address
+                d.swapFormData.selectedNetworkChainId = chainId
+                Global.openSwapModalRequested(d.swapFormData)
+                return
+            }
+
+            sendModal.preSelectedSendType = txType
+            sendModal.preDefinedAmountToSend = amount
+            sendModal.preSelectedHoldingID = asset
+            switch(txType) {
+            case Constants.SendType.ERC721Transfer:
+                sendModal.preSelectedHoldingType = Constants.TokenType.ERC721
+                break
+            case Constants.SendType.ERC1155Transfer:
+                sendModal.preSelectedHoldingType = Constants.TokenType.ERC1155
+                break
+            case Constants.SendType.Transfer:
+            case Constants.SendType.Bridge:
+                sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
+                break
+            default:
+                console.error("Unsupported txType: %1 to open transaction modal").arg(txType)
+                return
+            }
+            sendModal.open(address)
+        }
     }
 
     QtObject {
         id: d
+
+        property WalletSwapPopups.SwapInputParamsForm swapFormData: WalletSwapPopups.SwapInputParamsForm {
+            selectedAccountAddress: WalletStores.RootStore.selectedAddress
+        }
 
         property var activityCenterPopupObj: null
 
@@ -426,6 +464,7 @@ Item {
         buyCryptoStore: appMain.buyCryptoStore
         networkConnectionStore: appMain.networkConnectionStore
         isDevBuild: !production
+        transactionDeepLinkEnabled: appMain.featureFlagsStore.transactionDeepLinkEnabled
 
         onOpenExternalLink: globalConns.onOpenLink(link)
         onSaveDomainToUnfurledWhitelist: {
@@ -1369,6 +1408,7 @@ Item {
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled && appMain.networkConnectionStore.sendBuyBridgeEnabled
+                                transactionDeepLinkEnabled: featureFlagsStore.transactionDeepLinkEnabled && appMain.networkConnectionStore.sendBuyBridgeEnabled
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -1519,6 +1559,7 @@ Item {
                                 transactionStore: appMain.transactionStore
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
+                                transactionDeepLinkEnabled: featureFlagsStore.transactionDeepLinkEnabled && appMain.networkConnectionStore.sendBuyBridgeEnabled
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -1633,6 +1674,7 @@ Item {
                 collectiblesStore: appMain.walletCollectiblesStore
 
                 showCustomRoutingMode: !production
+                transactionDeepLinkEnabled: featureFlagsStore.transactionDeepLinkEnabled
 
                 onClosed: {
                     sendModal.closed()
