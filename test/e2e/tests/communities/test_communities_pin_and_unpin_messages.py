@@ -72,7 +72,8 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
                 settings.left_panel.open_advanced_settings().enable_creation_of_communities()
             community = main_screen.create_community(community_params['name'], community_params['description'],
                                                      community_params['intro'], community_params['outro'],
-                                                     community_params['logo']['fp'], community_params['banner']['fp'])
+                                                     community_params['logo']['fp'], community_params['banner']['fp'],
+                                                     ['Activism', 'Art'], constants.community_tags[:2])
             community.left_panel.invite_people_to_community([user_one.name], 'Message')
             main_screen.hide()
 

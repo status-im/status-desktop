@@ -59,7 +59,8 @@ def test_clicking_community_category(main_screen: MainWindow, category_name, gen
         main_screen.create_community(community_params['name'], community_params['description'],
                                      community_params['intro'], community_params['outro'],
                                      community_params['logo']['fp'],
-                                     community_params['banner']['fp'])
+                                     community_params['banner']['fp'],
+                                     ['Activism', 'Art'], constants.community_tags[:2])
         community_screen = main_screen.left_panel.select_community(community_params['name'])
 
     with step('Create community category and verify that it displays correctly'):

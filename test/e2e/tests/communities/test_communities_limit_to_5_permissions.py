@@ -26,7 +26,8 @@ def test_add_5_member_role_permissions(main_screen: MainWindow, params):
 
     main_screen.create_community(params['name'], params['description'],
                                  params['intro'], params['outro'],
-                                 params['logo']['fp'], params['banner']['fp'])
+                                 params['logo']['fp'], params['banner']['fp'],
+                                 ['Activism', 'Art'], constants.community_tags[:2])
 
     with step('Open add new permission page'):
         community_screen = main_screen.left_panel.select_community(params['name'])
