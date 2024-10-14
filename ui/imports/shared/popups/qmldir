@@ -1,6 +1,5 @@
 AlertPopup 1.0 AlertPopup.qml
 BlockContactConfirmationDialog 1.0 BlockContactConfirmationDialog.qml
-ChatCommandsPopup 1.0 ChatCommandsPopup.qml
 CommonContactDialog 1.0 CommonContactDialog.qml
 CommunityAssetsInfoPopup 1.0 CommunityAssetsInfoPopup.qml
 CommunityMembershipSetupDialog 1.0 CommunityMembershipSetupDialog.qml
@@ -11,11 +10,13 @@ DeleteMessageConfirmationPopup 1.0 DeleteMessageConfirmationPopup.qml
 DownloadModal 1.0 DownloadModal.qml
 DownloadPage 1.0 DownloadPage.qml
 GetSyncCodeInstructionsPopup 1.0 GetSyncCodeInstructionsPopup.qml
+ImageContextMenu 1.0 ImageContextMenu.qml
 ImageCropWorkflow 1.0 ImageCropWorkflow.qml
 ImportCommunityPopup 1.0 ImportCommunityPopup.qml
 InviteFriendsPopup 1.0 InviteFriendsPopup.qml
 MarkAsIDVerifiedDialog 1.0 MarkAsIDVerifiedDialog.qml
 MarkAsUntrustedPopup 1.0 MarkAsUntrustedPopup.qml
+MetricsEnablePopup 1.0 MetricsEnablePopup.qml
 ModalPopup 1.0 ModalPopup.qml
 NicknamePopup 1.0 NicknamePopup.qml
 NoPermissionsToJoinPopup 1.0 NoPermissionsToJoinPopup.qml
@@ -31,6 +32,4 @@ SendContactRequestModal 1.0 SendContactRequestModal.qml
 SettingsDirtyToastMessage 1.0 SettingsDirtyToastMessage.qml
 UnblockContactConfirmationDialog 1.0 UnblockContactConfirmationDialog.qml
 UserAgreementPopup 1.0 UserAgreementPopup.qml
-MetricsEnablePopup 1.0 MetricsEnablePopup.qml
 UserStatusContextMenu 1.0 UserStatusContextMenu.qml
-ImageContextMenu 1.0 ImageContextMenu.qml

@@ -9,7 +9,6 @@ StatusBaseInput 0.1 StatusBaseInput.qml
 StatusBlockProgressBar 0.1 StatusBlockProgressBar.qml
 StatusButton 0.1 StatusButton.qml
 StatusButtonRow 0.1 StatusButtonRow.qml
-StatusChatCommandButton 0.1 StatusChatCommandButton.qml
 StatusChatInfoButton 0.1 StatusChatInfoButton.qml
 StatusChatListCategoryItemButton 0.1 StatusChatListCategoryItemButton.qml
 StatusCheckBox 0.1 StatusCheckBox.qml
