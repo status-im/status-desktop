@@ -186,11 +186,6 @@ StatusWindow {
                         onClicked: mainPageView.page("StatusTabSwitch");
                     }
                     StatusNavigationListItem {
-                        title: "StatusChatCommandButton"
-                        selected: viewLoader.source.toString().includes(title)
-                        onClicked: mainPageView.page(title);
-                    }
-                    StatusNavigationListItem {
                         title: "Controls"
                         selected: viewLoader.source.toString().includes(title)
                         onClicked: mainPageView.control(title);
