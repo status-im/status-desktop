@@ -72,10 +72,10 @@
         <file>StatusQ/Components/private/chart/ChartCanvas.qml</file>
         <file>StatusQ/Components/private/chart/Library/Animator.qml</file>
         <file>StatusQ/Components/private/chart/Library/Chart.bundle.js</file>
-        <file>StatusQ/Components/private/chart/Library/chartjs-plugin-crosshair.js</file>
-        <file>StatusQ/Components/private/chart/Library/chartjs-plugin-datalabels.js</file>
         <file>StatusQ/Components/private/chart/Library/Library.js</file>
         <file>StatusQ/Components/private/chart/Library/Polyfills.js</file>
+        <file>StatusQ/Components/private/chart/Library/chartjs-plugin-crosshair.js</file>
+        <file>StatusQ/Components/private/chart/Library/chartjs-plugin-datalabels.js</file>
         <file>StatusQ/Components/private/qmldir</file>
         <file>StatusQ/Components/private/qwebchannel/helpers.js</file>
         <file>StatusQ/Components/private/qwebchannel/qwebchannel.js</file>
@@ -90,8 +90,8 @@
         <file>StatusQ/Components/private/statusMessage/StatusSticker.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusTextMessage.qml</file>
         <file>StatusQ/Components/qmldir</file>
-        <file>StatusQ/Controls/StatusAccountSelector.qml</file>
         <file>StatusQ/Controls/StatusActivityCenterButton.qml</file>
+        <file>StatusQ/Controls/StatusAmountInput.qml</file>
         <file>StatusQ/Controls/StatusBackButton.qml</file>
         <file>StatusQ/Controls/StatusBanner.qml</file>
         <file>StatusQ/Controls/StatusBaseButton.qml</file>
@@ -120,7 +120,6 @@
         <file>StatusQ/Controls/StatusImageCrop.qml</file>
         <file>StatusQ/Controls/StatusImageSelector.qml</file>
         <file>StatusQ/Controls/StatusInput.qml</file>
-        <file>StatusQ/Controls/StatusAmountInput.qml</file>
         <file>StatusQ/Controls/StatusItemDelegate.qml</file>
         <file>StatusQ/Controls/StatusItemPicker.qml</file>
         <file>StatusQ/Controls/StatusLabeledSlider.qml</file>
@@ -184,8 +183,8 @@
         <file>StatusQ/Core/StatusModalHeaderSettings.qml</file>
         <file>StatusQ/Core/StatusProfileImageSettings.qml</file>
         <file>StatusQ/Core/StatusRollArea.qml</file>
-        <file>StatusQ/Core/StatusSharedUpdateTimer.qml</file>
         <file>StatusQ/Core/StatusScrollView.qml</file>
+        <file>StatusQ/Core/StatusSharedUpdateTimer.qml</file>
         <file>StatusQ/Core/StatusTooltipSettings.qml</file>
         <file>StatusQ/Core/Theme/StatusColors.qml</file>
         <file>StatusQ/Core/Theme/StatusDarkTheme.qml</file>
@@ -254,7 +253,7 @@
         <file>StatusQ/Popups/statusModal/StatusImageWithTitle.qml</file>
         <file>StatusQ/Popups/statusModal/StatusModalFooter.qml</file>
         <file>StatusQ/Popups/statusModal/StatusModalHeader.qml</file>
-        <file>StatusQ/Validators/qmldir</file>
         <file>StatusQ/Validators/AmountValidator.qml</file>
+        <file>StatusQ/Validators/qmldir</file>
     </qresource>
 </RCC>

@@ -11,7 +11,6 @@ Item {
 
     property var acc
     property string fromAddress
-    property var selectedRecipient
     property var selectedAsset
     property string selectedAmount
     property string selectedFiatAmount

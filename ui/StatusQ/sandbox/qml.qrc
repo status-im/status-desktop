@@ -42,7 +42,6 @@
         <file>images/SRToken.png</file>
         <file>images/StatusPunks.png</file>
         <file>images/SuperRareCommunityBanner.png</file>
-        <file>pages/StatusAccountSelectorPage.qml</file>
         <file>pages/StatusAddressPage.qml</file>
         <file>pages/StatusCardPage.qml</file>
         <file>pages/StatusChatCommandButtonPage.qml</file>
