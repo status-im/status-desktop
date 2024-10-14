@@ -977,14 +977,6 @@ Loader {
                     }
                 }
 
-                transcationComponent: Component {
-                    TransactionBubbleView {
-                        transactionParams: root.transactionParams
-                        store: root.rootStore
-                        contactsStore: root.contactsStore
-                    }
-                }
-
                 invitationComponent: Component {
                     InvitationBubbleView {
                         store: root.rootStore
