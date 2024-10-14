@@ -15,7 +15,6 @@ MessageReactionsRow 1.0 MessageReactionsRow.qml
 ProfileHeader 1.0 ProfileHeader.qml
 RectangleCorner 1.0 RectangleCorner.qml
 Retry 1.0 Retry.qml
-SendTransactionButton 1.0 SendTransactionButton.qml
 SentMessage 1.0 SentMessage.qml
 StateBubble 1.0 StateBubble.qml
 UserImage 1.0 UserImage.qml

@@ -41,7 +41,6 @@ Control {
     property list<Item> quickActions
     property var statusChatInput
     property alias linksComponent: linksLoader.sourceComponent
-    property alias transcationComponent: transactionBubbleLoader.sourceComponent
     property alias invitationComponent: invitationBubbleLoader.sourceComponent
     property alias mouseArea: mouseArea
 
@@ -378,11 +377,6 @@ Control {
                                 ((!!root.linkPreviewModel && root.linkPreviewModel.count > 0)
                                 || (!!root.gifLinks && root.gifLinks.length > 0))
                         visible: active 
-                    }
-                    Loader {
-                        id: transactionBubbleLoader
-                        active: root.messageDetails.contentType === StatusMessage.ContentType.Transaction && !editMode
-                        visible: active
                     }
                     Loader {
                         id: invitationBubbleLoader
