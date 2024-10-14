@@ -17,6 +17,7 @@ CalloutCard {
 
     readonly property LinkData linkData: LinkData { }
     readonly property UserData userData: UserData { }
+    readonly property TransactionData transactionData: TransactionData { }
     readonly property CommunityData communityData: CommunityData { }
     readonly property ChannelData channelData: ChannelData { }
 
@@ -284,7 +285,57 @@ CalloutCard {
             PropertyChanges { target: footerLoader; active: false; visible: !root.userData.bio; Layout.fillHeight: true }
             PropertyChanges { target: title; text: root.userData.name }
             PropertyChanges { target: description; text: root.userData.bio; Layout.minimumHeight: 32; visible: true }
+        },
+        State {
+            name: "transaction"
+            when: root.type === Constants.LinkPreviewType.StatusTransaction
+            PropertyChanges { target: root; implicitHeight: 187 }
+            PropertyChanges { target: bannerImageLoader; visible: false }
+            PropertyChanges { target: footerLoader; active: false; visible: false }
+            PropertyChanges {
+                target: title;
+                text: {
+                    switch(root.transactionData.txType) {
+                    case Constants.SendType.Bridge:
+                        return qsTr("Bridge transaction")
+                    case Constants.SendType.Swap:
+                        return qsTr("Swap transaction")
+                    default:
+                        return qsTr("Send transaction")
+                    }
+                }
+            }
+            PropertyChanges {
+                target: description;
+                text: {
+                    let description = ""
+                    switch(root.transactionData.txType) {
+                    case Constants.SendType.Bridge:
+                        description += qsTr("Bridge") + " "
+                        break
+                    case Constants.SendType.Swap:
+                        description += qsTr("Swap") + " "
+                        break
+                    default:
+                        description += qsTr("Send") + " "
+                        break
+                    }
+                    if (root.transactionData.amount) {
+                        description += root.transactionData.amount + " "
+                    }
+                    if (root.transactionData.asset) {
+                        description += root.transactionData.asset + " "
+                    }
+                    if (root.transactionData.address) {
+                        description += qsTr("to %1").arg(root.transactionData.address) + " "
+                    }
+                    if (root.transactionData.chainId) {
+                        description += qsTr("on %1").arg(root.transactionData.chainId) // TODO use network name
+                    }
+                }
+            }
         }
+
     ]
 
     QtObject {

@@ -1410,7 +1410,8 @@ QtObject {
         Standard = 1,
         StatusContact = 2,
         StatusCommunity = 3,
-        StatusCommunityChannel = 4
+        StatusCommunityChannel = 4,
+        StatusTransaction = 5
     }
 
     enum StandardLinkPreviewType {
