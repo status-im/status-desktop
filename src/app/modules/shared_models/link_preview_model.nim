@@ -35,6 +35,8 @@ type
     StatusCommunityChannelCommunityPreview 
     StatusCommunityChannelCommunityPreviewIcon
     StatusCommunityChannelCommunityPreviewBanner
+    # Status transaction
+    StatusTransactionPreview
 
 QtObject:
   type
@@ -105,6 +107,8 @@ QtObject:
       ModelRole.StatusCommunityChannelCommunityPreview.int:"statusCommunityChannelCommunityPreview",
       ModelRole.StatusCommunityChannelCommunityPreviewIcon.int:"statusCommunityChannelCommunityPreviewIcon",
       ModelRole.StatusCommunityChannelCommunityPreviewBanner.int:"statusCommunityChannelCommunityPreviewBanner",
+      # Transaction
+      ModelRole.StatusTransactionPreview.int:"statusTransactionPreview",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -165,6 +169,9 @@ QtObject:
     of ModelRole.StatusCommunityChannelCommunityPreviewBanner:
       if (let community = item.linkPreview.getChannelCommunity(); community) != nil:
         result = newQVariant(community.getBanner())
+    of ModelRole.StatusTransactionPreview:
+      if item.linkPreview.statusTransactionPreview != nil:
+        result = newQVariant(item.linkPreview.statusTransactionPreview)
     else:
       result = newQVariant()
 

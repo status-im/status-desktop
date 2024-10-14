@@ -2,6 +2,7 @@ import json, chronicles
 import status_contact_link_preview
 import status_community_link_preview
 import status_community_channel_link_preview
+import status_transaction_link_preview
 include ../../../common/json_utils
 
 
@@ -10,6 +11,7 @@ type StatusLinkPreview* = ref object
   contact*: StatusContactLinkPreview
   community*: StatusCommunityLinkPreview
   channel*: StatusCommunityChannelLinkPreview
+  transaction*: StatusTransactionLinkPreview
 
 proc toStatusLinkPreview*(jsonObj: JsonNode): StatusLinkPreview =
   result = StatusLinkPreview()
@@ -27,6 +29,10 @@ proc toStatusLinkPreview*(jsonObj: JsonNode): StatusLinkPreview =
   if jsonObj.getProp("channel", channel):
     result.channel = toStatusCommunityChannelLinkPreview(contact)
 
+  var transaction: JsonNode
+  if jsonObj.getProp("transaction", transaction):
+    result.transaction = toStatusTransactionLinkPreview(transaction)
+
 proc `%`*(self: StatusLinkPreview): JsonNode =
   var obj = %*{
     "url": self.url
@@ -37,4 +43,6 @@ proc `%`*(self: StatusLinkPreview): JsonNode =
     obj["community"] = %*self.community
   if self.channel != nil:
     obj["channel"] = %*self.channel
+  if self.transaction != nil:
+    obj["transaction"] = %*self.transaction
   return obj

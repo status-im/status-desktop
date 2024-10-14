@@ -90,6 +90,14 @@ SplitView {
                     color: "orchid"
                 }
             }
+            transactionData {
+                txType: txTypeInput.currentValue
+                address: addressInput.text
+                amount: amountInput.text
+                asset: symbolInput.text
+                toAsset: toSymbolInput.text
+                chainId: networkInput.currentValue
+            }
         }
     }
         
@@ -136,6 +144,16 @@ SplitView {
                         previewCard.type = Constants.LinkPreviewType.StatusCommunityChannel
                         titleInput.text = "general"
                         descriptionInput.text = "Channel description goes here. If blank it will enable multi line title."
+                    }
+                }
+
+                RadioButton {
+                    text: qsTr("Transaction")
+                    checked: previewCard.type === Constants.LinkPreviewType.StatusTransaction
+                    onToggled: {
+                        previewCard.type = Constants.LinkPreviewType.StatusTransaction
+                        titleInput.text = "Transaction"
+                        descriptionInput.text = "Transaction description goes here. If blank it will enable multi line title."
                     }
                 }
             }
@@ -261,6 +279,76 @@ SplitView {
                     text: qsTr("Red channel color")
                     checked: previewCard.channelData.color === "red"
                     onToggled: previewCard.channelData.color = "red"
+                }
+            }
+
+            ColumnLayout {
+                visible: previewCard.type === Constants.LinkPreviewType.StatusTransaction
+                Label {
+                    text: "Transaction type"
+                }
+                ComboBox {
+                    id: txTypeInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    textRole: "text"
+                    valueRole: "value"
+                    model: [
+                        { value: Constants.SendType.Transfer, text: "Send" },
+                        { value: Constants.SendType.Bridge, text: "Bridge" },
+                        { value: Constants.SendType.Swap, text: "Swap" }
+                    ]
+                }
+                Label {
+                    text: "Address"
+                }
+                TextField {
+                    id: addressInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "0x60f80121c31a0d46b5279700f9df786054aa5ee5"
+                }
+                Label {
+                    text: "Amount"
+                }
+                TextField {
+                    id: amountInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "0.1"
+                }
+                Label {
+                    text: "Symbol"
+                }
+                TextField {
+                    id: symbolInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "ETH"
+                }
+                Label {
+                    text: "toSymbol"
+                }
+                TextField {
+                    id: toSymbolInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "DAI"
+                }
+                Label {
+                    text: "Network"
+                }
+                ComboBox {
+                    id: networkInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    textRole: "text"
+                    valueRole: "value"
+                    model: [
+                        { value: Constants.chains.mainnetChainId, text: "Mainet" },
+                        { value: Constants.chains.optimismChainId, text: "Optimism" },
+                        { value: Constants.chains.arbitrumChainId, text: "Arbitrum" }
+                    ]
                 }
             }
 

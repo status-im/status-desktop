@@ -57,16 +57,35 @@ SplitView {
                     color: "orchid"
                 }
             }
+            transactionData {
+                txType: txTypeInput.currentValue
+                address: addressInput.text
+                amount: amountInput.text
+                asset: symbolInput.text
+                toAsset: toSymbolInput.text
+                chainId: networkInput.currentValue
+            }
         }
     }
 
     Pane {
         SplitView.preferredWidth: 300
         SplitView.fillHeight: true
-        ColumnLayout {
-            spacing: 24
+        Flickable {
+            anchors.fill: parent
+            contentHeight: dataColumn.height
+            ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOn }
             ColumnLayout {
-
+                id: dataColumn
+                Label {
+                    text: "State"
+                }
+                ComboBox {
+                    id: stateInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    model: ["invalid", "loading", "loading failed", "loaded"]
+                }
                 Label {
                     text: "Preview type"
                 }
@@ -74,7 +93,7 @@ SplitView {
                     id: previewTypeInput
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    model: ["unknown", "standard", "user profile", "community", "channel"]
+                    model: ["unknown", "standard", "user profile", "community", "channel", "transaction"]
                 }
                 Label {
                     text: "Community name"
@@ -145,13 +164,74 @@ SplitView {
                     text: "https://rarible.com/public/favicon.png"
                 }
                 Label {
-                    text: "State"
+                    text: "\nTransaction preview:\n"
+                    font.bold: true
+                }
+                Label {
+                    text: "Transaction type"
                 }
                 ComboBox {
-                    id: stateInput
+                    id: txTypeInput
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    model: ["invalid", "loading", "loading failed", "loaded"]
+                    textRole: "text"
+                    valueRole: "value"
+                    model: [
+                        { value: Constants.SendType.Transfer, text: "Send" },
+                        { value: Constants.SendType.Bridge, text: "Bridge" },
+                        { value: Constants.SendType.Swap, text: "Swap" }
+                    ]
+                }
+                Label {
+                    text: "Address"
+                }
+                TextField {
+                    id: addressInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "0x60f80121c31a0d46b5279700f9df786054aa5ee5"
+                }
+                Label {
+                    text: "Amount"
+                }
+                TextField {
+                    id: amountInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "0.1"
+                }
+                Label {
+                    text: "Symbol"
+                }
+                TextField {
+                    id: symbolInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "ETH"
+                }
+                Label {
+                    text: "toSymbol"
+                }
+                TextField {
+                    id: toSymbolInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    text: "DAI"
+                }
+                Label {
+                    text: "Network"
+                }
+                ComboBox {
+                    id: networkInput
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    textRole: "text"
+                    valueRole: "value"
+                    model: [
+                        { value: Constants.chains.mainnetChainId, text: "Mainet" },
+                        { value: Constants.chains.optimismChainId, text: "Optimism" },
+                        { value: Constants.chains.arbitrumChainId, text: "Arbitrum" }
+                    ]
                 }
             }
         }
