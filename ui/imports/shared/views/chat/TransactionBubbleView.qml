@@ -55,15 +55,6 @@ Item {
         }
     }
 
-    property var selectedRecipient: {
-        return {
-            address: transactionParamsObject.address,
-            name: senderDisplayName,
-            type: RecipientSelector.Type.Contact,
-            alias: senderDisplayName
-        }
-    }
-
     property string tokenAmount: transactionParamsObject.value
     property string tokenSymbol: token.symbol || ""
     property string fiatValue: {
@@ -211,7 +202,6 @@ Item {
                 token: root.token
                 fiatValue: root.fiatValue
                 tokenAmount: root.tokenAmount
-                selectedRecipient: root.selectedRecipient
             }
         }
 
@@ -223,7 +213,6 @@ Item {
                 selectedAmount: tokenAmount
                 selectedFiatAmount: fiatValue
                 fromAddress: transactionParamsObject.fromAddress
-                selectedRecipient: root.selectedRecipient
                 onSendTransaction: {
                     // TODO: https://github.com/status-im/status-desktop/issues/6778
                     console.log("not implemented")

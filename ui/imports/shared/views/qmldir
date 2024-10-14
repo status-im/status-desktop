@@ -3,7 +3,6 @@ AssetsView 1.0 AssetsView.qml
 AssetsViewAdaptor 1.0 AssetsViewAdaptor.qml
 ConfirmHideAssetPopup 1.0 ConfirmHideAssetPopup.qml
 ConfirmHideCommunityAssetsPopup 1.0 ConfirmHideCommunityAssetsPopup.qml
-EnsResolver 1.0 EnsResolver.qml
 ExistingContacts 1.0 ExistingContacts.qml
 HistoryView 1.0 HistoryView.qml
 NoFriendsRectangle 1.0 NoFriendsRectangle.qml
@@ -11,7 +10,6 @@ PasswordConfirmationView 1.0 PasswordConfirmationView.qml
 PasswordView 1.0 PasswordView.qml
 PickedContacts 1.0 PickedContacts.qml
 ProfileDialogView 1.0 ProfileDialogView.qml
-SearchResults 1.0 SearchResults.qml
 SyncingCodeInstructions 1.0 SyncingCodeInstructions.qml
 SyncingDeviceView 1.0 SyncingDeviceView.qml
 SyncingDisplayCode 1.0 SyncingDisplayCode.qml

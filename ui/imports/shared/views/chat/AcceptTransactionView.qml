@@ -22,7 +22,6 @@ Item {
     property var token
     property string tokenAmount
     property string fiatValue
-    property var selectedRecipient
     property int state: Constants.addressRequested
 
     Separator {
