@@ -24,7 +24,6 @@ Column {
     signal goToNetworksView()
     signal goToAccountOrderView()
     signal goToAccountView(var account)
-    signal goToDappPermissionsView()
     signal goToManageTokensView()
     signal goToSavedAddressesView()
 

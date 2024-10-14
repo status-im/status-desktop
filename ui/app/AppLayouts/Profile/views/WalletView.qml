@@ -370,10 +370,6 @@ SettingsContentBase {
             sendModal: root.rootStore.sendModalPopup
         }
 
-        DappPermissionsView {
-            walletStore: root.walletStore
-        }
-
         Component {
             id: addNewAccountButtonComponent
             StatusButton {
