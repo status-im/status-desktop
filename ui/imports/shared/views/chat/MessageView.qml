@@ -162,7 +162,7 @@ Loader {
         }
         const publicKey = isReply ? quotedMessageFrom : root.senderId
         const isBridgedAccount = isReply ? (quotedMessageContentType === Constants.messageContentType.bridgeMessageType) : root.isBridgeMessage
-        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey, root.rootStore.contactsStore.myPublicKey, isBridgedAccount)
+        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey, isBridgedAccount)
         const chatType = chatContentModule.chatDetails.type
         // set false for now, because the remove from group option is still available after member is removed
         const isAdmin = false // chatContentModule.amIChatAdmin()

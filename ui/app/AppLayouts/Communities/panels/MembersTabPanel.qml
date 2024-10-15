@@ -311,7 +311,7 @@ Item {
 
                 onClicked: {
                     if(mouse.button === Qt.RightButton) {
-                        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.rootStore.contactsStore.getProfileContext(model.pubKey, Global.userProfile.pubKey)
+                        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.rootStore.contactsStore.getProfileContext(model.pubKey)
 
                         Global.openMenu(memberContextMenuComponent, this, {
                             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,

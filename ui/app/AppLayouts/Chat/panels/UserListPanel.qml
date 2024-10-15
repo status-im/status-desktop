@@ -118,7 +118,7 @@ Item {
                 ringSettings.ringSpecModel: model.colorHash
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
-                        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.store.contactsStore.getProfileContext(model.pubKey, userProfile.pubKey)
+                        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.store.contactsStore.getProfileContext(model.pubKey)
                         const chatType = chatContentModule.chatDetails.type
                         const isAdmin = chatContentModule.amIChatAdmin()
 
