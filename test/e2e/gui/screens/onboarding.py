@@ -509,11 +509,11 @@ class CreatePasswordView(OnboardingView):
 
     @allure.step('Set password in first field')
     def set_password_in_first_field(self, value: str):
-        self._new_password_text_field.clear().text = value
+        self._new_password_text_field.text = value
 
     @allure.step('Set password in confirmation field')
     def set_password_in_confirmation_field(self, value: str):
-        self._confirm_password_text_field.clear().text = value
+        self._confirm_password_text_field.text = value
 
     @allure.step('Set password and open Confirmation password view')
     def create_password(self, value: str) -> 'ConfirmPasswordView':

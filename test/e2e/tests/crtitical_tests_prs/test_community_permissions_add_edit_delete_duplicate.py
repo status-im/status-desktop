@@ -7,7 +7,7 @@ from allure_commons._allure import step
 import configs
 import constants
 import driver
-from constants import permission_data
+from constants import permission_data, RandomCommunity
 from constants.community_settings import ToastMessages, PermissionsElements
 from gui.components.changes_detected_popup import PermissionsChangesDetectedToastMessage
 from gui.components.delete_popup import DeletePermissionPopup
@@ -21,26 +21,23 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703632',
                  'Manage community: Adding new permissions, Editing permissions, Deleting permission')
 @pytest.mark.case(703632, 705014, 705016)
-@pytest.mark.parametrize('params', [constants.community_params])
 @pytest.mark.critical
-def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow, params):
+def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
 
-    main_screen.create_community(params['name'], params['description'],
-                                 params['intro'], params['outro'],
-                                 params['logo']['fp'], params['banner']['fp'],
-                                 ['Activism', 'Art'], constants.community_tags[:2])
-
-    permission_set = random.choice(permission_data)
+    with step('Create community and select it'):
+        community = RandomCommunity()
+        main_screen.create_community(community_data=community)
+        community_screen = main_screen.left_panel.select_community(community.name)
 
     with step('Open add new permission page'):
-        community_screen = main_screen.left_panel.select_community(params['name'])
         community_setting = community_screen.left_panel.open_community_settings()
         permissions_intro_view = community_setting.left_panel.open_permissions()
 
     with step('Create new permission'):
+        permission_set = random.choice(permission_data)
         permissions_settings = permissions_intro_view.add_new_permission()
         permissions_settings.set_who_holds_checkbox_state(permission_set['checkbox_state'])
         permissions_settings.set_who_holds_asset_and_amount(permission_set['first_asset'],
@@ -72,7 +69,7 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow, params):
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         if permission_set['in_channel'] is False:
             assert driver.waitFor(
-                lambda: params['name'] in permissions_settings.get_in_community_in_channel_tags_titles(),
+                lambda: community.name in permissions_settings.get_in_community_in_channel_tags_titles(),
                 configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         if permission_set['in_channel']:
             assert driver.waitFor(lambda: permission_set[

@@ -5,7 +5,6 @@ import pyperclip
 import pytest
 from allure_commons._allure import step
 
-from constants import RandomUser
 from constants.wallet import WalletSeedPhrase
 from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_mnemonic
@@ -21,7 +20,6 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703030', 'Manage a seed phrase imported account')
 @pytest.mark.case(703030)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
                          'new_name, new_color, new_emoji, new_emoji_unicode', [
                              pytest.param('SPAcc24', '#2a4af5', 'sunglasses', '1f60e',

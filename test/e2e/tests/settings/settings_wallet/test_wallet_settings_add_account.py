@@ -21,7 +21,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/703598',
                  'Add new account from wallet settings screen')
 @pytest.mark.case(703598)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
                          [
                              pytest.param(''.join(random.choices(string.ascii_letters +

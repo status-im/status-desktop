@@ -4,15 +4,12 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import UserAccount, RandomUser
 from helpers.WalletHelper import authenticate_with_password
-from scripts.utils.generators import random_password_string
 from tests.wallet_main_screen import marks
 
 import constants
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -20,7 +17,6 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703029', 'Manage a private key imported account')
 @pytest.mark.case(703029)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('address_pair', [constants.user.private_key_address_pair_1])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
                          'new_name, new_color, new_emoji, new_emoji_unicode', [

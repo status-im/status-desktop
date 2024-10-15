@@ -9,7 +9,7 @@ import configs
 import constants
 import driver
 from configs import WALLET_SEED
-from constants import ReturningUser
+from constants import ReturningUser, RandomCommunity
 from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
 from helpers.SettingsHelper import enable_testnet_mode
@@ -32,23 +32,20 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
     profile_view = open_import_seed_view_and_do_import(keys_screen, user_account.seed_phrase, user_account)
     finalize_onboarding_and_login(profile_view, user_account)
 
+    enable_testnet_mode(main_window)
+
     with step('Enable creation of community option'):
         settings = main_window.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
-
-    enable_testnet_mode(main_window)
 
     with step('Switch manage community on testnet option'):
         settings = main_window.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().switch_manage_on_community()
 
-    with step('Create simple community'):
-        community_params = constants.community_params
-        main_window.create_community(community_params['name'], community_params['description'],
-                                     community_params['intro'], community_params['outro'],
-                                     community_params['logo']['fp'], community_params['banner']['fp'],
-                                     ['Activism', 'Art'], constants.community_tags[:2])
-        community_screen = main_window.left_panel.select_community(community_params['name'])
+    with step('Create community and select it'):
+        community = RandomCommunity()
+        main_window.create_community(community_data=community)
+        community_screen = main_window.left_panel.select_community(community.name)
 
     with step('Open mint owner token view'):
         community_setting = community_screen.left_panel.open_community_settings()
@@ -62,8 +59,7 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
         edit_owner_token_view.select_network(network_name)
 
     with step('Verify fees title and gas fees exist'):
-        assert driver.waitFor(lambda: edit_owner_token_view.get_fee_title == 'Mint ' + community_params[
-            'name'] + MintOwnerTokensElements.SIGN_TRANSACTION_MINT_TITLE.value + network_name,
+        assert driver.waitFor(lambda: edit_owner_token_view.get_fee_title == 'Mint ' + community.name + MintOwnerTokensElements.SIGN_TRANSACTION_MINT_TITLE.value + network_name,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         assert driver.waitFor(lambda: edit_owner_token_view.get_fee_total_value != '',
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
@@ -72,8 +68,7 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
         start_minting = edit_owner_token_view.click_mint()
 
     with step('Verify fee text and sign transaction'):
-        assert start_minting.get_fee_title == 'Mint ' + community_params[
-            'name'] + MintOwnerTokensElements.SIGN_TRANSACTION_MINT_TITLE.value + network_name
+        assert start_minting.get_fee_title == 'Mint ' + community.name + MintOwnerTokensElements.SIGN_TRANSACTION_MINT_TITLE.value + network_name
         assert start_minting.get_fee_total_value != ''
         start_minting.sign_transaction(user_account.password)
         time.sleep(1)
@@ -81,11 +76,9 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
 
     with step('Verify toast messages about started minting process appears'):
         toast_messages = main_window.wait_for_notification()
-        assert driver.waitFor(lambda: (MintOwnerTokensElements.TOAST_AIRDROPPING_TOKEN_1.value + community_params[
-            'name'] + MintOwnerTokensElements.TOAST_AIRDROPPING_TOKEN_2.value) in toast_messages,
+        assert driver.waitFor(lambda: (MintOwnerTokensElements.TOAST_AIRDROPPING_TOKEN_1.value + community.name + MintOwnerTokensElements.TOAST_AIRDROPPING_TOKEN_2.value) in toast_messages,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-        assert driver.waitFor(lambda: (community_params[
-                                           'name'] + MintOwnerTokensElements.TOAST_TOKENS_BEING_MINTED.value) in toast_messages,
+        assert driver.waitFor(lambda: (community.name + MintOwnerTokensElements.TOAST_TOKENS_BEING_MINTED.value) in toast_messages,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Verify that status of both tokens'):

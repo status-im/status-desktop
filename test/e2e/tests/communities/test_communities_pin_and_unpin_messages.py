@@ -1,6 +1,4 @@
 import time
-from copy import deepcopy
-from datetime import datetime
 
 import allure
 import pytest
@@ -11,8 +9,7 @@ from gui.components.community.pinned_messages_popup import PinnedMessagesPopup
 from gui.main_window import MainWindow
 from . import marks
 import configs
-import constants
-from constants import ColorCodes, UserAccount, RandomUser
+from constants import ColorCodes, UserAccount, RandomUser, RandomCommunity
 from gui.screens.community_settings import CommunitySettingsScreen
 from gui.screens.messages import MessagesScreen
 
@@ -28,8 +25,6 @@ pytestmark = marks
 def test_join_community_and_pin_unpin_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
-    community_params = deepcopy(constants.community_params)
-    community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
     main_screen = MainWindow()
 
     with multiple_instances() as aut_one, multiple_instances() as aut_two:
@@ -70,11 +65,12 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             with step('Enable creation of community option'):
                 settings = main_screen.left_panel.open_settings()
                 settings.left_panel.open_advanced_settings().enable_creation_of_communities()
-            community = main_screen.create_community(community_params['name'], community_params['description'],
-                                                     community_params['intro'], community_params['outro'],
-                                                     community_params['logo']['fp'], community_params['banner']['fp'],
-                                                     ['Activism', 'Art'], constants.community_tags[:2])
-            community.left_panel.invite_people_to_community([user_one.name], 'Message')
+
+            with step('Create community and select it'):
+                community = RandomCommunity()
+                main_screen.create_community(community_data=community)
+                community_screen = main_screen.left_panel.select_community(community.name)
+            community_screen.left_panel.invite_people_to_community([user_one.name], 'Message')
             main_screen.hide()
 
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
@@ -82,12 +78,12 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
-            community_screen = chat.accept_community_invite(community_params['name'], 0)
+            chat.accept_community_invite(community.name, 0)
 
         with step(f'User {user_one.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
-            assert community_params['name'] in welcome_popup.title
-            assert community_params['intro'] == welcome_popup.intro
+            assert community.name in welcome_popup.title
+            assert community.introduction == welcome_popup.intro
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
@@ -104,7 +100,7 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             assert '2' in community_screen.left_panel.members
 
         with step(f'Go to edit community for {user_two.name} and check that pin message checkbox is not checked'):
-            community_screen = main_screen.left_panel.select_community(community_params['name'])
+            community_screen = main_screen.left_panel.select_community(community.name)
             community_setting = community_screen.left_panel.open_community_settings()
             edit_community_form = community_setting.left_panel.open_overview().open_edit_community_view()
             assert not edit_community_form.pin_message_checkbox_state

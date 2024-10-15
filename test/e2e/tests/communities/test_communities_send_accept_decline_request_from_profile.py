@@ -1,6 +1,3 @@
-from copy import deepcopy
-from datetime import datetime
-
 import allure
 import pytest
 from allure_commons._allure import step
@@ -11,8 +8,7 @@ from gui.components.remove_contact_popup import RemoveContactPopup
 from gui.main_window import MainWindow
 from . import marks
 import configs
-import constants
-from constants import UserAccount, RandomUser
+from constants import UserAccount, RandomUser, RandomCommunity
 
 pytestmark = marks
 
@@ -26,8 +22,6 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
     user_three: UserAccount = RandomUser()
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     main_screen = MainWindow()
-    community_params = deepcopy(constants.community_params)
-    community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
 
     with multiple_instances(user_data=None) as aut_one, multiple_instances(
             user_data=None) as aut_two, multiple_instances(user_data=None) as aut_three:
@@ -96,14 +90,16 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             aut_two.attach()
             main_screen.prepare()
             with step('Enable creation of community option'):
+                settings = main_screen.left_panel.open_settings()
                 settings.left_panel.open_advanced_settings().enable_creation_of_communities()
 
-            community = main_screen.create_community(community_params['name'], community_params['description'],
-                                                     community_params['intro'], community_params['outro'],
-                                                     community_params['logo']['fp'], community_params['banner']['fp'],
-                                                     ['Activism', 'Art'], constants.community_tags[:2])
-            community.left_panel.invite_people_to_community([user_one.name], 'Message')
-            community.left_panel.invite_people_to_community([user_three.name], 'Message')
+            with step('Create community and select it'):
+                community = RandomCommunity()
+                main_screen.create_community(community_data=community)
+                community_screen = main_screen.left_panel.select_community(community.name)
+
+            community_screen.left_panel.invite_people_to_community([user_one.name], 'Message')
+            community_screen.left_panel.invite_people_to_community([user_three.name], 'Message')
             main_screen.hide()
 
         with step(f'User {user_three.name}, accept invitation from {user_two.name}'):
@@ -111,12 +107,12 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
-            community_screen = chat.accept_community_invite(community_params['name'], 0)
+            community_screen = chat.accept_community_invite(community.name, 0)
 
         with step(f'User {user_three.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
-            assert community_params['name'] in welcome_popup.title
-            assert community_params['intro'] == welcome_popup.intro
+            assert community.name in welcome_popup.title
+            assert community.introduction == welcome_popup.intro
             welcome_popup.join().authenticate(user_three.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
@@ -127,18 +123,18 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
-            community_screen = chat.accept_community_invite(community_params['name'], 0)
+            community_screen = chat.accept_community_invite(community.name, 0)
 
         with step(f'User {user_one.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
-            assert community_params['name'] in welcome_popup.title
-            assert community_params['intro'] == welcome_popup.intro
+            assert community.name in welcome_popup.title
+            assert community.introduction == welcome_popup.intro
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
 
         with step(f'User {user_one.name} send contact request to {user_three.name} from user profile'):
-            community_screen = main_screen.left_panel.select_community(community_params['name'])
+            community_screen = main_screen.left_panel.select_community(community.name)
             profile_popup = community_screen.right_panel.click_member(user_three.name)
             profile_popup.send_request().send(f'Hello {user_three.name}')
             ProfilePopupFromMembers().wait_until_appears()
@@ -147,7 +143,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
         with step(f'User {user_three.name}, accept contact request from {user_one.name} from user profile'):
             aut_three.attach()
             main_screen.prepare()
-            community_screen = main_screen.left_panel.select_community(community_params['name'])
+            community_screen = main_screen.left_panel.select_community(community.name)
             profile_popup = community_screen.right_panel.click_member(user_one.name)
             profile_popup.review_contact_request().accept()
             main_screen.hide()
