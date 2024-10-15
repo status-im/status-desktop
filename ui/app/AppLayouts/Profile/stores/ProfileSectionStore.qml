@@ -18,8 +18,6 @@ QtObject {
     property var mainModuleInst: mainModule
     property var profileSectionModuleInst: profileSectionModule
 
-    property var sendModalPopup
-
     readonly property bool fetchingUpdate: aboutModuleInst.fetching
 
     property ContactsStore contactsStore: ContactsStore {

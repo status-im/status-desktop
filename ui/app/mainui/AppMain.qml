@@ -59,9 +59,8 @@ Item {
         currencyStore: appMain.currencyStore
     }
 
-    property AppStores.RootStore rootStore: AppStores.RootStore {
-        profileSectionStore.sendModalPopup: sendModal
-    }
+    property AppStores.RootStore rootStore: AppStores.RootStore {}
+
     property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
         contactsStore: appMain.rootStore.contactStore
         currencyStore: appMain.currencyStore
