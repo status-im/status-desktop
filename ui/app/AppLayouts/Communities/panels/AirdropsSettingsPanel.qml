@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.layouts 1.0
@@ -86,7 +87,7 @@ StackView {
 
         contentItem: WelcomeSettingsView {
             viewWidth: root.viewWidth
-            image: Style.png("community/airdrops8_1")
+            image: Theme.png("community/airdrops8_1")
             title: qsTr("Airdrop community tokens")
             subtitle: qsTr("You can mint custom tokens and collectibles for your community")
             checkersModel: [

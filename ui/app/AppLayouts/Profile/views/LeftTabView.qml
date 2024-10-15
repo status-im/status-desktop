@@ -1,7 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
 import utils 1.0
@@ -24,20 +25,20 @@ Item {
         id: title
         text: qsTr("Settings")
         anchors.top: parent.top
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.bigPadding
+        anchors.leftMargin: Theme.bigPadding
     }
 
     StatusScrollView {
         id: scrollView
         contentWidth: availableWidth
-        contentHeight: profileMenu.height + Style.current.bigPadding
+        contentHeight: profileMenu.height + Theme.bigPadding
         anchors.right: parent.right
         anchors.left: parent.left
-        leftPadding: Style.current.halfPadding
+        leftPadding: Theme.halfPadding
         anchors.top: title.bottom
-        anchors.topMargin: Style.current.halfPadding
+        anchors.topMargin: Theme.halfPadding
         anchors.bottom: parent.bottom
 
         MenuPanel {

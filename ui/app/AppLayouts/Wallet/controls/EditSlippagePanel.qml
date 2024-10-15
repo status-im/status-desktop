@@ -28,8 +28,8 @@ Control {
                                                    root.selectedToToken.symbol : ""
     }
 
-    horizontalPadding: Style.current.padding
-    verticalPadding: Style.current.bigPadding
+    horizontalPadding: Theme.padding
+    verticalPadding: Theme.bigPadding
 
     background: Rectangle {
         radius: 16
@@ -40,7 +40,7 @@ Control {
 
     contentItem: ColumnLayout {
         id: baseLayout
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
         RowLayout {
             StatusBaseText {
                 Layout.fillWidth: true
@@ -75,7 +75,7 @@ Control {
         StatusModalDivider {
             Layout.fillWidth: true
             Layout.topMargin: 0
-            Layout.bottomMargin: -Style.current.smallPadding
+            Layout.bottomMargin: -Theme.smallPadding
             dividerColor: Theme.palette.directColor8
         }
         RowLayout {
@@ -86,8 +86,8 @@ Control {
                 font.weight: Font.Medium
             }
             StatusSmartIdenticon {
-                Layout.preferredWidth: Style.current.padding
-                Layout.preferredHeight: Style.current.padding
+                Layout.preferredWidth: Theme.padding
+                Layout.preferredHeight: Theme.padding
                 asset.name: !!root.selectedToToken && !!root.selectedToToken.image
                               ? root.selectedToToken.image
                               : Constants.tokenIcon(d.selectedToTokenSymbol)

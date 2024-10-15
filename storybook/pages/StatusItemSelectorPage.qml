@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -13,7 +14,7 @@ ColumnLayout {
     StatusItemSelector {
         id: selector
 
-        icon: Style.png("tokens/SNT")
+        icon: Theme.png("tokens/SNT")
         title: "Item Selector Title"
 
         placeholderText: "Example: Empty items"
@@ -43,7 +44,7 @@ ColumnLayout {
                     onClicked: {
                         model.append({
                             text: input.text,
-                            imageSource: Style.png("tokens/SNT"),
+                            imageSource: Theme.png("tokens/SNT"),
                             isIcon: false,
                             operator: model.count > 0 ? OperatorsUtils.Operators.Or
                                                       : OperatorsUtils.Operators.None

@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQml.Models 2.15
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 
@@ -45,7 +46,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusButton {
                 objectName: "cancelButton"

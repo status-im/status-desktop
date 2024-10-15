@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -40,7 +40,7 @@ ColumnLayout {
     StatusListView {
         Layout.fillWidth: true
         Layout.preferredHeight: 250
-        spacing: Style.current.padding
+        spacing: Theme.padding
         model: root.keycardStore.keycardModule.keycardDetailsModel
 
         delegate: KeycardItem {
@@ -59,13 +59,13 @@ ColumnLayout {
 
     Item {
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.current.halfPadding
+        Layout.preferredHeight: Theme.halfPadding
     }
 
     StatusSectionHeadline {
         Layout.fillWidth: true
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
         text: qsTr("Configure your Keycard")
     }
 
@@ -151,7 +151,7 @@ ColumnLayout {
     StatusListItem {
         Layout.fillWidth: true
         title: qsTr("Advanced")
-        statusListItemTitle.color: Style.current.secondaryText
+        statusListItemTitle.color: Theme.palette.secondaryText
         components: [
             StatusIcon {
                 icon: d.collapsed? "tiny/chevron-down" : "tiny/chevron-up"

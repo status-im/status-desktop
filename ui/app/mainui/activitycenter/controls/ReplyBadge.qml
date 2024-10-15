@@ -1,5 +1,5 @@
-import QtQuick 2.4
-import QtQuick.Layouts 1.4
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -18,7 +18,7 @@ Badge {
 
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
-    color: hoverArea.containsMouse ? hoverArea.pressed ? Theme.palette.baseColor3 : Theme.palette.baseColor2 : Style.current.transparent
+    color: hoverArea.containsMouse ? hoverArea.pressed ? Theme.palette.baseColor3 : Theme.palette.baseColor2 : Theme.palette.transparent
 
     RowLayout {
         id: layout
@@ -34,7 +34,7 @@ Badge {
         spacing: 4
 
         StatusIcon {
-            source: Style.svg("reply-small-arrow")
+            source: Theme.svg("reply-small-arrow")
             Layout.preferredWidth: 16
             Layout.preferredHeight: 16
         }

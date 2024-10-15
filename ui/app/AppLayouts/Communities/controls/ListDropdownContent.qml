@@ -95,7 +95,7 @@ StatusListView {
 
         name: model.name
         shortName: model.shortName ?? ""
-        iconSource: model.iconSource ? model.iconSource : Style.png("tokens/DEFAULT-TOKEN")
+        iconSource: model.iconSource ? model.iconSource : Theme.png("tokens/DEFAULT-TOKEN")
         showSubItemsIcon: !!model.subItems && model.subItems.count > 0
         selected: root.checkedKeys.includes(model.key)
         amount: {
@@ -163,7 +163,7 @@ StatusListView {
         id: footerComponent
 
         Item {
-            width: ListView.view ? ListView.view.width - Style.current.smallPadding : 0
+            width: ListView.view ? ListView.view.width - Theme.smallPadding : 0
             height: d.sectionHeight
 
             Loader {
@@ -204,7 +204,7 @@ StatusListView {
     QtObject {
         id: d
 
-        readonly property int padding: Style.current.halfPadding
+        readonly property int padding: Theme.halfPadding
         readonly property int sectionHeight: 34
     }
 
@@ -223,7 +223,7 @@ StatusListView {
             }
 
             StatusBaseText {
-                anchors.leftMargin: Style.current.halfPadding
+                anchors.leftMargin: Theme.halfPadding
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width - anchors.leftMargin

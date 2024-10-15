@@ -1,4 +1,5 @@
-import QtQuick 2.14
+import QtQuick 2.15
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -127,7 +128,7 @@ Row {
             StatusBaseText {
                 id: headerTitle
                 objectName: "headerTitle"
-                font.family: Theme.palette.baseFont.name
+                font.family: Theme.baseFont.name
                 font.pixelSize: 17
                 font.bold: true
                 elide: statusImageWithTitle.titleElide
@@ -154,7 +155,7 @@ Row {
         StatusBaseText {
             id: headerSubTitle
             objectName: "headerSubTitle"
-            font.family: Theme.palette.baseFont.name
+            font.family: Theme.baseFont.name
             font.pixelSize: 15
             color:Theme.palette.baseColor1
             width: parent.width

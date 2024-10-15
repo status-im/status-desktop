@@ -66,20 +66,20 @@ Control {
         StatusBaseText {
             id: tagPrimaryLabel
             Layout.maximumWidth: root.availableWidth
-            font.pixelSize: Style.current.tertiaryTextFontSize
+            font.pixelSize: Theme.tertiaryTextFontSize
             visible: text !== ""
             elide: Text.ElideRight
         }
         StatusBaseText {
             id: middleLabel
-            font.pixelSize: Style.current.tertiaryTextFontSize
+            font.pixelSize: Theme.tertiaryTextFontSize
             color: Theme.palette.baseColor1
             visible: text !== ""
         }
         StatusBaseText {
             id: tagSecondaryLabel
             Layout.maximumWidth: root.secondarylabelMaxWidth
-            font.pixelSize: Style.current.tertiaryTextFontSize
+            font.pixelSize: Theme.tertiaryTextFontSize
             color: Theme.palette.baseColor1
             visible: text !== ""
             elide: Text.ElideMiddle

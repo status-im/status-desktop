@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
 
+import StatusQ.Core.Theme 0.1
+
 import AppLayouts.Communities.popups 1.0
 
 import utils 1.0
@@ -49,7 +51,7 @@ SplitView {
                 property string id: "1"
                 property string name: "Socks"
                 property var members: { "count": 5 }
-                property string image: Style.png("tokens/UNI")
+                property string image: Theme.png("tokens/UNI")
                 property string color: "orchid"
             }
         }

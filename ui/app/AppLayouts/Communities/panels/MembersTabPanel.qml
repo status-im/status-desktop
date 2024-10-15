@@ -205,7 +205,7 @@ Item {
                             d.pendingTextMaxWidth = Math.max(implicitWidth, d.pendingTextMaxWidth)
                         }
                         visible: !!text && isPendingState
-                        rightPadding: isKickPending || isBanPending || isUnbanPending ? 0 : Style.current.bigPadding
+                        rightPadding: isKickPending || isBanPending || isUnbanPending ? 0 : Theme.bigPadding
                         anchors.verticalCenter: parent.verticalCenter
                         text: pendingStateText
                         color: Theme.palette.baseColor1
@@ -287,7 +287,7 @@ Item {
                         text: qsTr("Reject")
                         type: StatusBaseButton.Type.Danger
                         icon.name: "close-circle"
-                        icon.color: enabled ? Style.current.danger : disabledTextColor
+                        icon.color: enabled ? Theme.palette.dangerColor1 : disabledTextColor
                         enabled: !rejectPendingButtonVisible
                         onClicked: root.declineRequestToJoin(model.requestToJoinId)
                     }

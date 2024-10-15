@@ -1,8 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
-import QtGraphicalEffects 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -55,7 +55,7 @@ StatusDialog {
             text: qsTr("Pinned messages will appear here.")
             Layout.alignment: Qt.AlignCenter
             verticalAlignment: Text.AlignVCenter
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
         }
 
         ButtonGroup {
@@ -159,9 +159,9 @@ StatusDialog {
                 StatusFlatRoundButton {
                     id: unpinButton
                     anchors.top: parent.top
-                    anchors.topMargin: Style.current.bigPadding
+                    anchors.topMargin: Theme.bigPadding
                     anchors.right: parent.right
-                    anchors.rightMargin: Style.current.bigPadding
+                    anchors.rightMargin: Theme.bigPadding
                     z: mouseArea.z + 1
                     width: 32
                     height: 32
@@ -178,7 +178,7 @@ StatusDialog {
                     id: radio
                     visible: root.messageToPin
                     anchors.right: parent.right
-                    anchors.rightMargin: Style.current.bigPadding
+                    anchors.rightMargin: Theme.bigPadding
                     anchors.verticalCenter: parent.verticalCenter
                     ButtonGroup.group: pinButtonGroup
                     onCheckedChanged: { // NB this should be `onToggled` but MouseArea above handles the whole delegate

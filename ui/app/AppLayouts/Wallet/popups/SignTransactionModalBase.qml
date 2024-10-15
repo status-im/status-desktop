@@ -50,7 +50,7 @@ StatusDialog {
     property ObjectModel rightFooterContents: ObjectModel {
         RowLayout {
             Layout.rightMargin: 4
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             StatusFlatButton {
                 objectName: "rejectButton"
                 Layout.preferredHeight: signButton.height
@@ -233,7 +233,7 @@ StatusDialog {
                     objectName: "countdownPill"
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    anchors.margins: Style.current.padding
+                    anchors.margins: Theme.padding
                     timestamp: root.requestTimestamp
                     expirationSeconds: root.expirationSeconds
                     visible: !!root.hasExpiryDate
@@ -242,7 +242,7 @@ StatusDialog {
 
             StatusDialogDivider {
                 Layout.fillWidth: true
-                Layout.bottomMargin: Style.current.bigPadding
+                Layout.bottomMargin: Theme.bigPadding
                 visible: root.showHeaderDivider
             }
 

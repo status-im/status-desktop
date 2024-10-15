@@ -99,7 +99,7 @@ DropArea {
             StatusRoundIcon {
                 Layout.preferredWidth: d.iconSize
                 Layout.preferredHeight: d.iconSize
-                radius: root.isCollection ? Style.current.radius : height/2
+                radius: root.isCollection ? Theme.radius : height/2
                 visible: root.unknownCommunityName || !root.groupImage
                 asset.name: root.unknownCommunityName ? "help" : root.isCollection ? "gallery" : "group"
                 asset.color: root.unknownCommunityName ? Theme.palette.directColor1 : "black"
@@ -108,7 +108,7 @@ DropArea {
 
             StatusRoundedImage {
                 visible: !!root.groupImage
-                radius: root.isCollection ? Style.current.radius : height/2
+                radius: root.isCollection ? Theme.radius : height/2
                 Layout.preferredWidth: d.iconSize
                 Layout.preferredHeight: d.iconSize
 
@@ -143,7 +143,7 @@ DropArea {
                     icon.height: Theme.primaryTextFontSize
                     icon.width: Theme.primaryTextFontSize
                     icon.color: Theme.palette.directColor1
-                    color: Style.current.transparent
+                    color: Theme.palette.transparent
                     textToCopy: model.communityName
                     onCopyClicked: ClipboardUtils.setText(textToCopy)
                 }

@@ -1,6 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -14,9 +16,9 @@ ColumnLayout {
     property bool amISectionAdmin: true
     property bool isCommunityEditable: true
     property color color: "orchid"
-    property url image: Style.png("tokens/UNI")
+    property url image: Theme.png("tokens/UNI")
     property bool colorVisible: false
-    property url banner: ctrlCommunityBanner.checked ? Style.png("settings/communities@2x") : ""
+    property url banner: ctrlCommunityBanner.checked ? Theme.png("settings/communities@2x") : ""
     readonly property bool shardingEnabled: ctrlShardingEnabled.checked
     property alias shardIndex: ctrlShardIndex.value
     property bool adminControlsEnabled: true
@@ -94,15 +96,15 @@ ColumnLayout {
         RadioButton {
             checked: true
             text: qsTr("UNI")
-            onCheckedChanged: if(checked) root.image = Style.png("tokens/UNI")
+            onCheckedChanged: if(checked) root.image = Theme.png("tokens/UNI")
         }
         RadioButton {
             text: qsTr("SOCKS")
-            onCheckedChanged: if(checked) root.image = Style.png("tokens/SOCKS")
+            onCheckedChanged: if(checked) root.image = Theme.png("tokens/SOCKS")
         }
         RadioButton {
             text: qsTr("Status")
-            onCheckedChanged: if(checked) root.image = Style.png("tokens/SNT")
+            onCheckedChanged: if(checked) root.image = Theme.png("tokens/SNT")
         }
     }
 

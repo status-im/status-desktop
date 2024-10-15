@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import SortFilterProxyModel 0.2
 
@@ -314,7 +315,7 @@ DappsComboBox {
             accountEmoji: account.emoji
 
             networkName: network.chainName
-            networkIconPath: Style.svg(network.iconUrl)
+            networkIconPath: Theme.svg(network.iconUrl)
 
             fiatFees: request.fiatMaxFees ? request.fiatMaxFees.toFixed() : ""
             cryptoFees: request.ethMaxFees ? request.ethMaxFees.toFixed() : ""

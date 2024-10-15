@@ -1,7 +1,7 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import QtQml.Models 2.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -49,7 +49,7 @@ StatusDialog {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         StyledText {
             Layout.fillWidth: true
@@ -84,10 +84,10 @@ StatusDialog {
                 checked: root.ensUsernamesStore.preferredUsername === ensUsername
 
                 contentItem: StyledText {
-                    color: Style.current.textColor
+                    color: Theme.palette.textColor
                     text: radioDelegate.text
                     rightPadding: radioDelegate.indicator.width + radioDelegate.spacing
-                    topPadding: Style.current.halfPadding
+                    topPadding: Theme.halfPadding
                 }
 
                 MouseArea {

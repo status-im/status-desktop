@@ -1,7 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Dialogs 1.3
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import utils 1.0
 import shared.panels 1.0
@@ -39,7 +38,7 @@ Item {
             Behavior on opacity { NumberAnimation { duration: 100 } }
             color: "#33869eff"
             border.color: Theme.palette.primaryColor1
-            radius: Style.current.radius
+            radius: Theme.radius
             NoImageUploadedPanel {
                 visible: !editor.userSelectedImage
                 anchors.centerIn: parent

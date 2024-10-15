@@ -1,9 +1,11 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+
 import utils 1.0
 import shared.views 1.0
 
@@ -35,13 +37,13 @@ Item {
     }
 
     ColumnLayout {
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
         anchors.centerIn: parent
         height: 460
         z: view.zFront
         PasswordView {
             id: view
-            Layout.preferredWidth: root.width - 2 * Style.current.bigPadding
+            Layout.preferredWidth: root.width - 2 * Theme.bigPadding
             Layout.maximumWidth: 460
             Layout.fillHeight: true
             passwordStrengthScoreFunction: root.startupStore.getPasswordStrengthScore

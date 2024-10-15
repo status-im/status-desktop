@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
+import StatusQ.Core.Theme 0.1
 
 import Storybook 1.0
 import Models 1.0
@@ -91,7 +92,7 @@ SplitView {
 
                     networkShortName: priv.selectedNetwork.shortName
                     networkName: priv.selectedNetwork.chainName
-                    networkIconPath: Style.svg(priv.selectedNetwork.iconUrl)
+                    networkIconPath: Theme.svg(priv.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
 
                     serviceProviderName: Constants.swap.paraswapName

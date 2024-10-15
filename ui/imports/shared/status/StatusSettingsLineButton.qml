@@ -1,5 +1,4 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
 
 import utils 1.0
 import ".."
@@ -7,6 +6,7 @@ import "../panels"
 
 import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Core 0.1 as StatusQCore
+import StatusQ.Core.Theme 0.1
 
 Rectangle {
     property string text
@@ -24,37 +24,37 @@ Rectangle {
 
     id: root
     implicitHeight: 52
-    color: isHovered ? Style.current.backgroundHover : Style.current.transparent
-    radius: Style.current.radius
+    color: isHovered ? Theme.palette.backgroundHover : Theme.palette.transparent
+    radius: Theme.radius
     border.width: 0
     anchors.left: parent.left
-    anchors.leftMargin: -Style.current.padding
+    anchors.leftMargin: -Theme.padding
     anchors.right: parent.right
-    anchors.rightMargin: -Style.current.padding
+    anchors.rightMargin: -Theme.padding
 
     RoundedIcon {
         id: pinImage
         visible: !!root.iconSource.toString()
         source: root.iconSource
-        iconColor: Style.current.primary
-        color: Style.current.secondaryBackground
+        iconColor: Theme.palette.primaryColor1
+        color: Theme.palette.secondaryBackground
         width: 40
         height: 40
         iconWidth: 24
         iconHeight: 24
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
     }
 
     StyledText {
         id: textItem
         anchors.left: pinImage.visible ? pinImage.right : parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
         text: root.text
         font.pixelSize: 15
-        color: Style.current.textColor
+        color: Theme.palette.textColor
     }
 
     StyledText {
@@ -64,11 +64,11 @@ Rectangle {
         elide: Text.ElideRight
         font.pixelSize: 15
         horizontalAlignment: Text.AlignRight
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
         anchors.left: textItem.right
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.right: root.isSwitch ? switchItem.left : caret.left
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.verticalCenter: textItem.verticalCenter
 
     }
@@ -79,7 +79,7 @@ Rectangle {
         visible: root.isSwitch
         checked: root.switchChecked
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.verticalCenter: textItem.verticalCenter
     }
 
@@ -87,15 +87,15 @@ Rectangle {
         id: badge
         visible: root.isBadge & !root.isSwitch
         anchors.right: root.isSwitch ? switchItem.left : caret.left
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.verticalCenter: textItem.verticalCenter
         radius: root.badgeRadius
-        color: Style.current.blue
+        color: Theme.palette.primaryColor1
         width: root.badgeSize
         height: root.badgeSize
         Text {
             font.pixelSize: 12
-            color: Style.current.white
+            color: Theme.palette.white
             anchors.centerIn: parent
             text: root.badgeText
         }
@@ -105,10 +105,10 @@ Rectangle {
         id: caret
         visible: !root.isSwitch
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.verticalCenter: textItem.verticalCenter
         icon: "next"
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
     }
 
     MouseArea {

@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import utils 1.0
 import shared.panels 1.0
@@ -62,9 +62,9 @@ Popup {
     modal: false
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
-        radius: Style.current.radius
-        color: Style.current.background
-        border.color: Style.current.border
+        radius: Theme.radius
+        color: Theme.palette.background
+        border.color: Theme.palette.border
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 3
@@ -185,7 +185,7 @@ Popup {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: 134
-                    source: Style.svg("stickers_sad_icon")
+                    source: Theme.svg("stickers_sad_icon")
                 }
 
                 Item {
@@ -212,7 +212,7 @@ Popup {
                     text: qsTr("Get Stickers")
                     enabled: d.online
                     anchors.top: noStickersContainer.bottom
-                    anchors.topMargin: Style.current.padding
+                    anchors.topMargin: Theme.padding
                     anchors.horizontalCenter: parent.horizontalCenter
                     onClicked: {
                         stickersContainer.visible = false
@@ -254,9 +254,9 @@ Popup {
             id: footerContent
             Layout.fillWidth: true
             Layout.preferredHeight: 44
-            Layout.rightMargin: Style.current.padding / 2
-            Layout.leftMargin: Style.current.padding / 2
-            spacing: Style.current.padding / 2
+            Layout.rightMargin: Theme.padding / 2
+            Layout.leftMargin: Theme.padding / 2
+            spacing: Theme.padding / 2
 
             StatusRoundButton {
                 id: btnAddStickerPack
@@ -325,7 +325,7 @@ Popup {
                             Layout.preferredWidth: 24
                             Layout.preferredHeight: 24
                             radius: width / 2
-                            color: Style.current.backgroundHover
+                            color: Theme.palette.backgroundHover
                         }
                     }
                     Item {

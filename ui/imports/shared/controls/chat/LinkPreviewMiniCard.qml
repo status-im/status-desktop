@@ -41,7 +41,7 @@ CalloutCard {
     verticalPadding: 15
     horizontalPadding: 12
     borderColor: Theme.palette.directColor7
-    backgroundColor: root.containsMouse ? Theme.palette.directColor7 : Style.current.background
+    backgroundColor: root.containsMouse ? Theme.palette.directColor7 : Theme.palette.background
 
     // behavior
     states: [
@@ -188,7 +188,7 @@ CalloutCard {
                         objectName: "linkPreviewTitleText"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        font.pixelSize: Style.current.additionalTextSize
+                        font.pixelSize: Theme.additionalTextSize
                         font.weight: Font.Medium
                         wrapMode: Text.Wrap
                         elide: Text.ElideRight
@@ -207,7 +207,7 @@ CalloutCard {
                         id: secondTitleText
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        font.pixelSize: Style.current.additionalTextSize
+                        font.pixelSize: Theme.additionalTextSize
                         font.weight: Font.Medium
                         wrapMode: Text.Wrap
                         elide: Text.ElideRight
@@ -221,7 +221,7 @@ CalloutCard {
                     objectName: "linkPreviewSubtitleText"
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    font.pixelSize: Style.current.tertiaryTextFontSize
+                    font.pixelSize: Theme.tertiaryTextFontSize
                     color: Theme.palette.baseColor1
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight

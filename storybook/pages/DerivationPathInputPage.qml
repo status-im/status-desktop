@@ -36,7 +36,7 @@ SplitView {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            derivationPathSelection.popup(0, testControl.height + Style.current.halfPadding)
+                            derivationPathSelection.popup(0, testControl.height + Theme.halfPadding)
                         }
                     }
                 }

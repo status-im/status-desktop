@@ -1,7 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.13
-import QtQuick.Controls.Universal 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -43,7 +42,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.onboarding.loginHeight
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
 
         Image {
             id: keysImg
@@ -63,7 +62,7 @@ Item {
         StyledText {
             id: txtDesc
             Layout.alignment: Qt.AlignHCenter
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pixelSize: Constants.onboarding.fontSize3
@@ -71,14 +70,14 @@ Item {
 
         Item {
             id: spacer
-            Layout.preferredHeight: Style.current.padding
+            Layout.preferredHeight: Theme.padding
             Layout.preferredWidth: 1
         }
 
         Row {
             id: whatYouLoseGet
             visible: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileCreateSameChatKey
-            spacing: Style.current.bigPadding
+            spacing: Theme.bigPadding
             Layout.alignment: Qt.AlignHCenter
 
             Rectangle {
@@ -90,7 +89,7 @@ Item {
                 ColumnLayout {
                     anchors.fill: parent
                     anchors.margins: d.infoMargin
-                    spacing: Style.current.bigPadding
+                    spacing: Theme.bigPadding
 
                     RowLayout {
                         StyledText {
@@ -165,7 +164,7 @@ Item {
                 ColumnLayout {
                     anchors.fill: parent
                     anchors.margins: d.infoMargin
-                    spacing: Style.current.bigPadding
+                    spacing: Theme.bigPadding
 
                     RowLayout {
                         StyledText {
@@ -327,7 +326,7 @@ Item {
                 target: keysImg
                 Layout.preferredWidth: d.imgKeysWH
                 Layout.preferredHeight: d.imgKeysWH
-                source: Style.png("onboarding/keys")
+                source: Theme.png("onboarding/keys")
             }
             PropertyChanges {
                 target: txtTitle
@@ -362,7 +361,7 @@ Item {
                 target: keysImg
                 Layout.preferredWidth: d.imgKeysWH
                 Layout.preferredHeight: d.imgKeysWH
-                source: Style.png("onboarding/keys")
+                source: Theme.png("onboarding/keys")
             }
             PropertyChanges {
                 target: txtTitle
@@ -397,7 +396,7 @@ Item {
                 target: keysImg
                 Layout.preferredWidth: d.imgKeysWH
                 Layout.preferredHeight: d.imgKeysWH
-                source: Style.png("onboarding/keys")
+                source: Theme.png("onboarding/keys")
             }
             PropertyChanges {
                 target: txtTitle
@@ -436,7 +435,7 @@ Item {
                 target: keysImg
                 Layout.preferredWidth: d.imgSeedPhraseWH
                 Layout.preferredHeight: d.imgSeedPhraseWH
-                source: Style.png("onboarding/seed-phrase")
+                source: Theme.png("onboarding/seed-phrase")
             }
             PropertyChanges {
                 target: txtDesc
@@ -467,7 +466,7 @@ Item {
                 target: keysImg
                 Layout.preferredWidth: d.imgKeysWH
                 Layout.preferredHeight: d.imgKeysWH
-                source: Style.png("onboarding/keys")
+                source: Theme.png("onboarding/keys")
             }
             PropertyChanges {
                 target: txtTitle
@@ -535,7 +534,7 @@ Item {
                 target: keysImg
                 Layout.preferredWidth: Constants.keycard.general.imageWidth
                 Layout.preferredHeight: Constants.keycard.general.imageHeight
-                source: Style.png("keycard/keycard-new")
+                source: Theme.png("keycard/keycard-new")
             }
             PropertyChanges {
                 target: txtTitle

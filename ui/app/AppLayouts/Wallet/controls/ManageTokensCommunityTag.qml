@@ -37,7 +37,7 @@ Control {
     }
 
     horizontalPadding: 12
-    verticalPadding: Style.current.halfPadding
+    verticalPadding: Theme.halfPadding
     spacing: 4
 
     background: Loader {
@@ -80,7 +80,7 @@ Control {
             StatusBaseText {
                 Layout.fillWidth: true
                 visible: (!!root.communityName || d.unknownCommunityName)
-                font.pixelSize: Style.current.tertiaryTextFontSize
+                font.pixelSize: Theme.tertiaryTextFontSize
                 font.weight: Font.Medium
                 text:  {
                     if (d.unknownCommunityName) {
@@ -108,10 +108,10 @@ Control {
                 Layout.preferredHeight: 16
 
                 visible: d.unknownCommunityName && root.hovered
-                icon.height: Style.current.tertiaryTextFontSize
-                icon.width: Style.current.tertiaryTextFontSize
+                icon.height: Theme.tertiaryTextFontSize
+                icon.width: Theme.tertiaryTextFontSize
                 icon.color: Theme.palette.directColor1
-                color: Style.current.transparent
+                color: Theme.palette.transparent
                 textToCopy: root.communityName
                 onCopyClicked: ClipboardUtils.setText(textToCopy)
             }           

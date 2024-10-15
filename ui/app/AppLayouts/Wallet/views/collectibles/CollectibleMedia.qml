@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -13,7 +13,7 @@ StatusRoundedMedia {
     property bool isCollectibleLoading: false
     property bool isMetadataValid: false
 
-    radius: Style.current.radius
+    radius: Theme.radius
     color: isError || isEmpty ? Theme.palette.baseColor5 : backgroundColor
 
     Loader {

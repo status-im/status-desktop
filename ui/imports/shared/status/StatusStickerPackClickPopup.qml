@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
@@ -60,7 +60,7 @@ ModalPopup {
         packName: name
         packAuthor: author
         packNameFontSize: 17
-        spacing: Style.current.padding / 2
+        spacing: Theme.padding / 2
     }
 
     contentWrapper.anchors.topMargin: 0
@@ -70,7 +70,7 @@ ModalPopup {
         id: stickerGridInPopup
         model: stickers
         anchors.fill: parent
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         packId: stickerPackDetailsPopup.packId
     }
 

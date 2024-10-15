@@ -39,9 +39,9 @@ Item {
         id: communitiesView
 
         anchors.fill: parent
-        topMargin: Style.current.bigPadding
-        bottomMargin: Style.current.bigPadding
-        leftMargin: Style.current.bigPadding
+        topMargin: Theme.bigPadding
+        bottomMargin: Theme.bigPadding
+        leftMargin: Theme.bigPadding
 
         visible: count
         model: root.communitiesProxyModel
@@ -52,8 +52,8 @@ Item {
             readonly property bool isTokenGatedCommunity: PermissionsHelpers.isTokenGatedCommunity(permissionsList)
 
             cardSize: StatusCommunityCard.Size.Small
-            implicitWidth: GridView.view.cellWidth - Style.current.padding
-            implicitHeight: GridView.view.cellHeight - Style.current.padding
+            implicitWidth: GridView.view.cellWidth - Theme.padding
+            implicitHeight: GridView.view.cellHeight - Theme.padding
             titleFontSize: 15
             communityId: model.id ?? ""
             loaded: !!model.id && !model.isShowcaseLoading

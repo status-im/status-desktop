@@ -28,14 +28,14 @@ Control {
     component Separator: Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
-        Layout.topMargin: Style.current.padding
+        Layout.topMargin: Theme.padding
 
         color: Theme.palette.baseColor2
     }
 
     component ErrorText: StatusBaseText {
         Layout.fillWidth: true
-        Layout.topMargin: Style.current.halfPadding
+        Layout.topMargin: Theme.halfPadding
         horizontalAlignment: Text.AlignRight
 
         font.pixelSize: Theme.tertiaryTextFontSize
@@ -61,7 +61,7 @@ Control {
             id: feeTotalRow
 
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
 
             title: qsTr("Total")
             highlightFee: true
@@ -73,7 +73,7 @@ Control {
         }
 
         StatusBaseText {
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             Layout.fillWidth: true
 
             visible: accountSelector.visible
@@ -88,7 +88,7 @@ Control {
             id: accountSelector
 
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.halfPadding
+            Layout.topMargin: Theme.halfPadding
 
             visible: root.showAccountsSelector
             forceError: accountErrorText.visible

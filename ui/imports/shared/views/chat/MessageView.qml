@@ -463,7 +463,7 @@ Loader {
                         `<head>`+
                         `<style type="text/css">`+
                         `a {`+
-                        `color: ${Style.current.textColor};`+
+                        `color: ${Theme.palette.textColor};`+
                         `text-decoration: none;`+
                         `}`+
                         `</style>`+
@@ -474,12 +474,12 @@ Loader {
                         `</html>`;
             }
             font.pixelSize: 14
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
             width: parent.width - 120
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
-            topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
+            topPadding: root.prevMessageIndex === 1 ? Theme.bigPadding : 0
         }
     }
 
@@ -507,12 +507,12 @@ Loader {
                 }
             }
             font.pixelSize: 14
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
             width: parent.width - 120
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
-            topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
+            topPadding: root.prevMessageIndex === 1 ? Theme.bigPadding : 0
         }
     }
 
@@ -524,11 +524,11 @@ Loader {
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("%1 pinned a message").arg(senderDisplayName)
             color: Theme.palette.directColor3
-            font.family: Theme.palette.baseFont.name
+            font.family: Theme.baseFont.name
             font.pixelSize: Theme.primaryTextFontSize
             textFormat: Text.RichText
             wrapMode: Text.Wrap
-            topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
+            topPadding: root.prevMessageIndex === 1 ? Theme.bigPadding : 0
         }
     }
 
@@ -678,12 +678,12 @@ Loader {
 
                 pinnedMsgInfoText: root.isDiscordMessage ? qsTr("Pinned") : qsTr("Pinned by")
                 reactionIcons: [
-                    Style.svg("emojiReactions/heart"),
-                    Style.svg("emojiReactions/thumbsUp"),
-                    Style.svg("emojiReactions/thumbsDown"),
-                    Style.svg("emojiReactions/laughing"),
-                    Style.svg("emojiReactions/sad"),
-                    Style.svg("emojiReactions/angry"),
+                    Theme.svg("emojiReactions/heart"),
+                    Theme.svg("emojiReactions/thumbsUp"),
+                    Theme.svg("emojiReactions/thumbsDown"),
+                    Theme.svg("emojiReactions/laughing"),
+                    Theme.svg("emojiReactions/sad"),
+                    Theme.svg("emojiReactions/angry"),
                 ]
 
                 timestamp: root.messageTimestamp
@@ -716,8 +716,8 @@ Loader {
                             root.prevMessageContentType === Constants.messageContentType.bridgeMessageType ||
                             root.senderId !== root.prevMessageSenderId || root.prevMessageDeleted
                 isActiveMessage: d.isMessageActive
-                topPadding: showHeader ? Style.current.halfPadding : 0
-                bottomPadding: showHeader && d.nextMessageHasHeader ? Style.current.halfPadding : 2
+                topPadding: showHeader ? Theme.halfPadding : 0
+                bottomPadding: showHeader && d.nextMessageHasHeader ? Theme.halfPadding : 2
                 disableHover: root.disableHover ||
                               (delegate.hideQuickActions && !d.addReactionAllowed) ||
                               (root.chatLogView && root.chatLogView.moving) ||
@@ -860,7 +860,7 @@ Loader {
                         colorHash: root.senderColorHash
                         showRing: !root.isDiscordMessage && !root.senderIsEnsVerified && !root.isBridgeMessage
                     }
-                    sender.badgeImage: Style.svg("discord-bridge")
+                    sender.badgeImage: Theme.svg("discord-bridge")
                 }
 
                 replyDetails: StatusMessageDetails {
@@ -957,7 +957,7 @@ Loader {
 
                         linkPreviewModel: root.linkPreviewModel
                         gifLinks: root.gifLinks
-                        playAnimations: Window.window.active && root.messageStore.isChatActive
+                        playAnimations: root.Window.window.active && root.messageStore.isChatActive
                         isOnline: root.rootStore.mainModuleInst.isOnline
                         highlightLink: delegate.hoveredLink
                         onImageClicked: (image, mouse, imageSource, url) => {

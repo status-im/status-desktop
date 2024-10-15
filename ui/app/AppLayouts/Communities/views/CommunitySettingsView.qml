@@ -98,7 +98,7 @@ StatusSectionLayout {
                 top: parent.top
                 bottom: backToCommunityButton.top
                 bottomMargin: 12
-                topMargin: Style.current.smallPadding
+                topMargin: Theme.smallPadding
                 horizontalCenter: parent.horizontalCenter
             }
             width: parent.width
@@ -114,8 +114,8 @@ StatusSectionLayout {
                 asset.color: community.color
                 asset.isImage: true
                 Layout.fillWidth: true
-                Layout.leftMargin: Style.current.halfPadding
-                Layout.rightMargin: Style.current.halfPadding
+                Layout.leftMargin: Theme.halfPadding
+                Layout.rightMargin: Theme.halfPadding
                 type: StatusChatInfoButton.Type.OneToOneChat
                 hoverEnabled: true
                 onClicked: root.backToCommunityClicked()
@@ -126,10 +126,10 @@ StatusSectionLayout {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: Style.current.halfPadding
-                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Theme.halfPadding
+                Layout.rightMargin: Theme.padding
                 model: stackLayout.children
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
                 enabled: !root.communitySettingsDisabled
 
                 delegate: StatusNavigationListItem {

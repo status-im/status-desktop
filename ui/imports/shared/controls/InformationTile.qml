@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -24,11 +24,11 @@ Rectangle {
     signal copyClicked(string textToCopy)
 
     implicitHeight: root.copy ? 75 : 52
-    implicitWidth: layout.width + Style.current.xlPadding
-    radius: Style.current.radius
+    implicitWidth: layout.width + Theme.xlPadding
+    radius: Theme.radius
     border.width: 1
     border.color: Theme.palette.baseColor2
-    color: Style.current.transparent
+    color: Theme.palette.transparent
 
     ColumnLayout {
         id: layout
@@ -36,7 +36,7 @@ Rectangle {
         anchors.centerIn: parent
         StatusBaseText {
             id: primaryText
-            Layout.maximumWidth: root.maxWidth - Style.current.xlPadding
+            Layout.maximumWidth: root.maxWidth - Theme.xlPadding
             font.pixelSize: 13
             color: Theme.palette.directColor5
             visible: text
@@ -46,7 +46,7 @@ Rectangle {
             width: 100
             StatusTextWithLoadingState {
                 id: secondaryText
-                Layout.maximumWidth: root.maxWidth - Style.current.xlPadding - (root.copy ? 50 : 0)
+                Layout.maximumWidth: root.maxWidth - Theme.xlPadding - (root.copy ? 50 : 0)
                 font.pixelSize: 15
                 customColor: Theme.palette.directColor1
                 visible: text
@@ -66,7 +66,7 @@ Rectangle {
         }
         ScrollView {
             Layout.preferredHeight: 24
-            Layout.maximumWidth: root.maxWidth - Style.current.xlPadding
+            Layout.maximumWidth: root.maxWidth - Theme.xlPadding
             clip: true
             visible: tags.count > 0
             ListView {

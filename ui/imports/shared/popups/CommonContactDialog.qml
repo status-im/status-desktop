@@ -38,9 +38,9 @@ StatusDialog {
     contentItem: ColumnLayout {
         RowLayout {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            spacing: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
+            spacing: Theme.padding
 
             UserImage {
                 name: root.mainDisplayName
@@ -75,7 +75,7 @@ StatusDialog {
                     StatusContactVerificationIcons {
                         id: verificationIcons
                         anchors.left: contactName.right
-                        anchors.leftMargin: Style.current.halfPadding
+                        anchors.leftMargin: Theme.halfPadding
                         anchors.verticalCenter: contactName.verticalCenter
                         isContact: contactDetails.isContact
                         trustIndicator: contactDetails.trustStatus
@@ -84,7 +84,7 @@ StatusDialog {
                     }
                 }
                 RowLayout {
-                    spacing: Style.current.halfPadding
+                    spacing: Theme.halfPadding
                     StatusBaseText {
                         id: contactSecondaryName
                         color: Theme.palette.baseColor1
@@ -122,9 +122,9 @@ StatusDialog {
 
         StatusDialogDivider {
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
         }
 
         StatusScrollView {

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -89,13 +89,13 @@ Item {
     ColumnLayout {
         id: layout
         anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width - 2 * Style.current.padding
-        spacing: Style.current.halfPadding
+        width: parent.width - 2 * Theme.padding
+        spacing: Theme.halfPadding
 
         StatusStepper {
             Layout.preferredWidth: Constants.addAccountPopup.stepperWidth
             Layout.preferredHeight: Constants.addAccountPopup.stepperHeight
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             Layout.alignment: Qt.AlignCenter
             title: qsTr("Step %1 of 4").arg(d.step)
             titleFontSize: Constants.addAccountPopup.labelFontSize1
@@ -120,7 +120,7 @@ Item {
             id: word
             objectName: "AddAccountPopup-EnterSeedPhraseWord"
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.xlPadding
+            Layout.topMargin: Theme.xlPadding
             validationMode: StatusInput.ValidationMode.Always
             label: qsTr("Word #%1").arg(root.store.currentState.stateType === Constants.addAccountPopup.state.enterSeedPhraseWord1?
                                             root.store.seedPhraseWord1WordNumber + 1 :

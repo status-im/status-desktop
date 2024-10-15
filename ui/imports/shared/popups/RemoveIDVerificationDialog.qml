@@ -5,6 +5,7 @@ import QtQml.Models 2.15
 import utils 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 CommonContactDialog {
@@ -17,7 +18,7 @@ CommonContactDialog {
 
     StatusBaseText {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.halfPadding
+        Layout.bottomMargin: Theme.halfPadding
         wrapMode: Text.WordWrap
         text: qsTr("%1’s identity will no longer be verified. This is only visible to you.").arg(mainDisplayName)
     }

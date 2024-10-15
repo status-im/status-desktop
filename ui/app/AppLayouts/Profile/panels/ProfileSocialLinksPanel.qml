@@ -57,11 +57,11 @@ Control {
 
     contentItem: ColumnLayout {
         id: layout
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.bottomMargin: Style.current.padding
+            Layout.bottomMargin: Theme.padding
             StatusBaseText {
                 text: qsTr("In showcase")
                 color: Theme.palette.directColor1
@@ -108,7 +108,7 @@ Control {
 
             model: root.socialLinksModel
             interactive: false
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             displaced: Transition {
                 NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }

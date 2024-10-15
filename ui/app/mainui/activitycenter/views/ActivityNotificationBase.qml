@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -28,7 +28,7 @@ Item {
 
     implicitHeight: Math.max(60, bodyLoader.height + bodyLoader.anchors.topMargin * 2 +
                                  (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
-                                 (badgeLoader.item ? badgeLoader.height + Style.current.smallPadding : 0))
+                                 (badgeLoader.item ? badgeLoader.height + Theme.smallPadding : 0))
 
     StatusDateGroupLabel {
         id: dateGroupLabel
@@ -53,9 +53,9 @@ Item {
     Loader {
         id: bodyLoader
         anchors.top: dateGroupLabel.visible ? dateGroupLabel.bottom : parent.top
-        anchors.topMargin: Style.current.smallPadding
+        anchors.topMargin: Theme.smallPadding
         anchors.right: ctaLoader.left
-        anchors.rightMargin: Style.current.smallPadding
+        anchors.rightMargin: Theme.smallPadding
         anchors.left: parent.left
         clip: true
     }
@@ -63,7 +63,7 @@ Item {
     Loader {
         id: badgeLoader
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.smallPadding
+        anchors.bottomMargin: Theme.smallPadding
         anchors.left: parent.left
         anchors.leftMargin: 50 // TODO find a way to align with the text of the message
     }
@@ -72,7 +72,7 @@ Item {
         id: ctaLoader
         anchors.verticalCenter: bodyLoader.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
 
         sourceComponent: StatusFlatRoundButton {
             icon.width: 20
@@ -81,7 +81,7 @@ Item {
             icon.color: notification && notification.read ? icon.disabledColor : Theme.palette.primaryColor1
             tooltip.text: notification && notification.read ? qsTr("Mark as Unread") : qsTr("Mark as Read")
             tooltip.orientation: StatusToolTip.Orientation.Left
-            tooltip.x: -tooltip.width - Style.current.padding
+            tooltip.x: -tooltip.width - Theme.padding
             tooltip.y: 4
             onClicked: {
                 notification.read ?

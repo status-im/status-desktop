@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import utils 1.0
 
@@ -15,8 +15,8 @@ StatusDialog {
     id: root
 
     width: 600
-    topPadding: Style.current.bigPadding
-    bottomPadding: Style.current.bigPadding
+    topPadding: Theme.bigPadding
+    bottomPadding: Theme.bigPadding
     closePolicy: Popup.NoAutoClose
 
     header: StatusDialogHeader {
@@ -36,13 +36,13 @@ StatusDialog {
     }
 
     contentItem: ColumnLayout {
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         StatusCheckBox {
             Layout.fillWidth: true
             id: acknowledge
             objectName: "acknowledgeCheckBox"
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             text: qsTr("I acknowledge that Status Desktop is in Beta and by using it I take the full responsibility for all risks concerning my data and funds.")
         }
 

@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
@@ -33,7 +33,7 @@ Item {
         id: textItem
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.smallPadding
+        anchors.rightMargin: Theme.smallPadding
         visible: !pending
         text: {
             if (root.accepted) {
@@ -59,7 +59,7 @@ Item {
         id: buttons
         anchors.centerIn: parent
         visible: pending || acceptedPending || declinedPending
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
         StatusFlatButton {
             icon.name: "checkmark-circle"
             icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor

@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
@@ -123,7 +123,7 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         Row {
             id: collectibleImageDetails
@@ -163,7 +163,7 @@ Item {
                         Loader {
                             anchors.top: parent.top
                             anchors.left: parent.left
-                            anchors.margins: Style.current.padding
+                            anchors.margins: Theme.padding
                             sourceComponent: d.balanceTag
                             // only show balance tag on top of the first image in stack
                             active: index === 0 && d.balanceAggregator.value > 1 && root.visible
@@ -176,7 +176,7 @@ Item {
                 id: collectibleNameAndDescription
                 spacing: 12
 
-                width: parent.width - collectibleImageDetails.visibleImageWidth - Style.current.bigPadding
+                width: parent.width - collectibleImageDetails.visibleImageWidth - Theme.bigPadding
 
                 StatusBaseText {
                     id: collectibleName
@@ -290,13 +290,13 @@ Item {
                             width: parent.width
                             height: visible ? 42: 0
                             visible: !root.activityModel.count && !d.activityLoading
-                            font.pixelSize: Style.current.primaryTextFontSize
+                            font.pixelSize: Theme.primaryTextFontSize
                             text: qsTr("Activity will appear here")
                         }
                         delegate: TransactionDelegate {
                             required property var model
                             required property int index
-                            width: parent.width
+                            width: ListView.view.width
                             modelData: model.activityEntry
                             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
                             flatNetworks: root.rootStore.flatNetworks

@@ -1,7 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -52,7 +53,7 @@ SettingsContentBase {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
             Image {
-                source: Style.png("settings/communities")
+                source: Theme.png("settings/communities")
                 mipmap: true
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 Layout.preferredWidth: 434
@@ -95,7 +96,7 @@ SettingsContentBase {
             width: parent.width
             anchors.top: parent.top
             anchors.left: parent.left
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             Heading {
                 text: qsTr("Owner")
@@ -170,7 +171,7 @@ SettingsContentBase {
 
     component Heading: StatusBaseText {
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         color: Theme.palette.baseColor1
     }
 

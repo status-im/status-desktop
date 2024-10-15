@@ -39,19 +39,19 @@ Item {
         id: accountsView
 
         anchors.fill: parent
-        topMargin: Style.current.bigPadding
-        bottomMargin: Style.current.bigPadding
-        leftMargin: Style.current.bigPadding
+        topMargin: Theme.bigPadding
+        bottomMargin: Theme.bigPadding
+        leftMargin: Theme.bigPadding
 
         visible: count
         ScrollBar.vertical: StatusScrollBar { anchors.right: parent.right; anchors.rightMargin: width / 2 }
         model: root.accountsModel
         delegate: InfoCard {
             id: accountInfoDelegate
-            implicitWidth: GridView.view.cellWidth - Style.current.padding
-            implicitHeight: GridView.view.cellHeight - Style.current.padding
+            implicitWidth: GridView.view.cellWidth - Theme.padding
+            implicitHeight: GridView.view.cellHeight - Theme.padding
             title: model.name
-            subTitle: StatusQUtils.Utils.elideText(model.address, 6, 4).replace("0x", "0×")
+            subTitle: StatusQUtils.Utils.elideAndFormatWalletAddress(model.address)
             asset.color: Utils.getColorForId(model.colorId)
             asset.emoji: model.emoji ?? ""
             asset.name: asset.emoji || "filled-account"
@@ -96,7 +96,7 @@ Item {
             }
             onClicked: {
                 if (mouse.button === Qt.RightButton) {
-                    Global.openMenu(delegatesActionsMenu, this, { 
+                    Global.openMenu(delegatesActionsMenu, this, {
                         accountAddress: model.address,
                         accountName: model.name,
                         accountColorId: model.colorId

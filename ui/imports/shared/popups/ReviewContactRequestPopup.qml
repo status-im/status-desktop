@@ -26,12 +26,12 @@ CommonContactDialog {
         color: "transparent"
         border.width: 1
         border.color: Theme.palette.baseColor2
-        radius: Style.current.radius
+        radius: Theme.radius
 
         ColumnLayout {
             id: msgColumn
             anchors.fill: parent
-            anchors.margins: Style.current.padding
+            anchors.margins: Theme.padding
 
             StatusTimeStampLabel {
                 Layout.maximumWidth: parent.width

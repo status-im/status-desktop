@@ -1,6 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -33,7 +34,7 @@ Item {
             const children = this.children
             Object.keys(children).forEach(function (key) {
                 const child = children[key]
-                h += child.height + Style.current.padding
+                h += child.height + Theme.padding
             })
             return h
         }
@@ -45,7 +46,7 @@ Item {
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
             antialiasing: true
-            source: Style.png("onboarding/fingerprint@2x")
+            source: Theme.png("onboarding/fingerprint@2x")
             mipmap: true
             cache: false
         }
@@ -53,7 +54,7 @@ Item {
         StyledText {
             id: txtTitle
             text: qsTr("Biometrics")
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Theme.padding
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: keysImg.bottom
@@ -65,8 +66,8 @@ Item {
             id: txtDesc
             width: 426
             anchors.top: txtTitle.bottom
-            anchors.topMargin: Style.current.padding
-            color: Style.current.secondaryText
+            anchors.topMargin: Theme.padding
+            color: Theme.palette.secondaryText
             text: root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserNewKeycardKeys ||
                   root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhraseIntoKeycard ||
                   root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunOldUserKeycardImport?
@@ -80,7 +81,7 @@ Item {
             anchors.topMargin: 40
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: txtDesc.bottom
-            spacing: Style.current.bigPadding
+            spacing: Theme.bigPadding
             StatusButton {
                 id: button
                 objectName: "touchIdYesUseTouchIDButton"

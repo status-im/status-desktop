@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import shared.stores 1.0
 import shared.views 1.0
@@ -15,11 +15,11 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.topMargin: Style.current.xlPadding
-        anchors.bottomMargin: Style.current.halfPadding
-        anchors.leftMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
-        spacing: Style.current.padding
+        anchors.topMargin: Theme.xlPadding
+        anchors.bottomMargin: Theme.halfPadding
+        anchors.leftMargin: Theme.xlPadding
+        anchors.rightMargin: Theme.xlPadding
+        spacing: Theme.padding
 
         PasswordView {
             Layout.minimumWidth: 460

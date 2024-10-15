@@ -1,7 +1,5 @@
-import QtQuick 2.3
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1

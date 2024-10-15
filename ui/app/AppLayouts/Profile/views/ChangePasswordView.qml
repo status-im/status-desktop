@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.12
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import shared.panels 1.0
 import shared.controls 1.0
@@ -91,7 +91,7 @@ SettingsContentBase {
 
                 StatusBaseText {
                     anchors.fill: parent
-                    anchors.margins: Style.current.padding
+                    anchors.margins: Theme.padding
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.WordWrap
                     text: biometricsSwitch.checked ? qsTr("Do you want to enable biometrics for login and transaction authentication?") :

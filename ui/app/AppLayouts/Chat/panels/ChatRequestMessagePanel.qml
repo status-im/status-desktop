@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import utils 1.0
 
@@ -17,7 +17,7 @@ Item {
 
     Image {
         id: waveImg
-        source: Style.png("chat/wave")
+        source: Theme.png("chat/wave")
         width: 80
         height: 80
         anchors.horizontalCenter: parent.horizontalCenter
@@ -30,7 +30,7 @@ Item {
         anchors.top: waveImg.bottom
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width / 1.3
         color: Theme.palette.directColor1
@@ -53,7 +53,7 @@ Item {
         visible: !isUserAdded
         text: qsTr("Add to contacts")
         anchors.top: contactText2.bottom
-        anchors.topMargin: Style.current.smallPadding
+        anchors.topMargin: Theme.smallPadding
         anchors.horizontalCenter: parent.horizontalCenter
         onClicked: addContactClicked()
     }

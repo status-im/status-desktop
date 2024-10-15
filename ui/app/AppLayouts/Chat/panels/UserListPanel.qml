@@ -1,5 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -28,12 +29,12 @@ Item {
     StatusBaseText {
         id: titleText
         anchors.top: parent.top
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         opacity: (root.width > 58) ? 1.0 : 0.0
         visible: (opacity > 0.1)
-        font.pixelSize: Style.current.primaryTextFontSize
+        font.pixelSize: Theme.primaryTextFontSize
         font.weight: Font.Medium
         color: Theme.palette.directColor1
         text: root.label
@@ -42,14 +43,14 @@ Item {
     StatusBaseText {
         id: communityMemberReevaluationInProgressText
         visible: root.communityMemberReevaluationStatus === Constants.CommunityMemberReevaluationStatus.InProgress
-        height: visible ? implicitHeight : 0 
+        height: visible ? implicitHeight : 0
         anchors.top: titleText.bottom
-        anchors.topMargin: visible ? Style.current.padding : 0
+        anchors.topMargin: visible ? Theme.padding : 0
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        font.pixelSize: Style.current.secondaryTextFontSize
+        anchors.rightMargin: Theme.padding
+        font.pixelSize: Theme.secondaryTextFontSize
         color: Theme.palette.directColor1
         text: qsTr("Member re-evaluation in progress...")
         wrapMode: Text.WordWrap
@@ -67,11 +68,11 @@ Item {
     Item {
         anchors {
             top: communityMemberReevaluationInProgressText.bottom
-            topMargin: Style.current.padding
+            topMargin: Theme.padding
             left: parent.left
-            leftMargin: Style.current.halfPadding
+            leftMargin: Theme.halfPadding
             right: parent.right
-            rightMargin: Style.current.halfPadding
+            rightMargin: Theme.halfPadding
             bottom: parent.bottom
         }
 
@@ -84,7 +85,7 @@ Item {
             clip: false
 
             anchors.fill: parent
-            anchors.bottomMargin: Style.current.bigPadding
+            anchors.bottomMargin: Theme.bigPadding
             displayMarginEnd: anchors.bottomMargin
 
             model: SortFilterProxyModel {
@@ -143,9 +144,9 @@ Item {
             height: 24
             StatusBaseText {
                 anchors.fill: parent
-                anchors.leftMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
                 verticalAlignment: Text.AlignVCenter
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
                 text: {
                     switch(parseInt(section)) {

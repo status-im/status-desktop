@@ -1,6 +1,7 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 ThemePalette {
+    id: root
 
     name: "light"
 
@@ -98,6 +99,12 @@ ThemePalette {
 
     blockProgressBarColor: baseColor3
 
+    // Style compat
+    background: white
+    separator: baseColor2
+    darkGrey: baseColor1
+    secondaryMenuBackground: baseColor4
+
     statusAppLayout: QtObject {
         property color backgroundColor: white
         property color rightPanelBackgroundColor: white
@@ -144,7 +151,7 @@ ThemePalette {
     statusMenu: QtObject {
         property color backgroundColor: white
         property color hoverBackgroundColor: baseColor2
-        property color separatorColor: baseColor2
+        property color separatorColor: root.separator
     }
 
     statusModal: QtObject {

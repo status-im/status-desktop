@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -13,19 +13,19 @@ Rectangle {
     property string communityId
     signal backupButtonClicked()
 
-    height: childrenRect.height + Style.current.padding
+    height: childrenRect.height + Theme.padding
     anchors.left: parent.left
-    anchors.leftMargin: Style.current.padding
+    anchors.leftMargin: Theme.padding
     anchors.right: parent.right
-    anchors.rightMargin: Style.current.padding
-    border.color: Style.current.border
+    anchors.rightMargin: Theme.padding
+    border.color: Theme.palette.border
     radius: 16
     color: "transparent"
 
     Rectangle {
         width: 66
         height: 4
-        color: Style.current.secondaryMenuBackground
+        color: Theme.palette.secondaryMenuBackground
         anchors.top: parent.top
         anchors.topMargin: -2
         anchors.horizontalCenter: parent.horizontalCenter
@@ -70,9 +70,9 @@ Rectangle {
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.xlPadding
+        anchors.rightMargin: Theme.xlPadding
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.xlPadding
+        anchors.leftMargin: Theme.xlPadding
     }
 
     StatusButton {
@@ -80,7 +80,7 @@ Rectangle {
         text: qsTr("Back up")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: backUpText.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         onClicked: root.backupButtonClicked()
     }
 }

@@ -72,7 +72,7 @@ StatusDialog {
         contentWidth: availableWidth
         contentHeight: loader.item.height
 
-        padding: Style.current.padding
+        padding: Theme.padding
 
         Loader {
             id: loader
@@ -133,7 +133,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         rightButtons: ObjectModel {
             StatusFlatButton {
@@ -164,7 +164,7 @@ StatusDialog {
         id: initialPanel
 
         ColumnLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             CustomText {
                 text: qsTr("Congratulations! You have been sent the %1 Community Owner token.").arg(root.communityName)
@@ -182,7 +182,7 @@ StatusDialog {
                 id: tokenPanel
 
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Style.current.padding
+                Layout.topMargin: Theme.padding
 
                 isOwner: true
                 artwork: root.communityLogo
@@ -193,8 +193,8 @@ StatusDialog {
             Rectangle {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: tokenPanel.width
-                Layout.preferredHeight: boxContent.implicitHeight + Style.current.padding
-                Layout.bottomMargin: Style.current.padding
+                Layout.preferredHeight: boxContent.implicitHeight + Theme.padding
+                Layout.bottomMargin: Theme.padding
 
                 radius: 8
                 border.color: Theme.palette.baseColor2
@@ -207,16 +207,16 @@ StatusDialog {
                     spacing: 2
 
                     StatusBaseText {
-                        Layout.leftMargin: Style.current.padding
+                        Layout.leftMargin: Theme.padding
 
                         text: qsTr("Symbol")
                         elide: Text.ElideRight
-                        font.pixelSize: Style.current.additionalTextSize
+                        font.pixelSize: Theme.additionalTextSize
                         color: Theme.palette.baseColor1
                     }
 
                     StatusBaseText {
-                        Layout.leftMargin: Style.current.padding
+                        Layout.leftMargin: Theme.padding
 
                         text: root.tokenSymbol
                         elide: Text.ElideRight
@@ -228,7 +228,7 @@ StatusDialog {
 
             StatusListItem {
                 Layout.fillWidth: true
-                Layout.bottomMargin: Style.current.padding
+                Layout.bottomMargin: Theme.padding
 
                 title: root.communityName
                 border.color: Theme.palette.baseColor2
@@ -243,10 +243,10 @@ StatusDialog {
                         }
 
                         StatusBaseText {
-                            Layout.rightMargin: Style.current.padding
+                            Layout.rightMargin: Theme.padding
 
                             text: qsTr("Visit Community")
-                            font.pixelSize: Style.current.additionalTextSize
+                            font.pixelSize: Theme.additionalTextSize
                             color: Theme.palette.primaryColor1
                         }
                     }
@@ -264,7 +264,7 @@ StatusDialog {
         id: finalisePanel
 
         ColumnLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             CustomText {
                 text: qsTr("Finalising your ownership of the %1 Community requires you to:").arg(root.communityName)
@@ -276,7 +276,7 @@ StatusDialog {
             }
 
             CustomText {
-                Layout.topMargin: -Style.current.halfPadding
+                Layout.topMargin: -Theme.halfPadding
 
                 text: qsTr("It is vital to keep your device online and running Status in order for the Community to operate effectively. Login with this account via another synced desktop device if you think it might be better suited for this purpose.")
             }
@@ -287,7 +287,7 @@ StatusDialog {
             }
 
             CustomText {
-                Layout.topMargin: -Style.current.halfPadding
+                Layout.topMargin: -Theme.halfPadding
 
                 text: qsTr("This transaction updates the %1 Community smart contract, making you the %1 Community owner.").arg(root.communityName)
             }
@@ -324,11 +324,11 @@ StatusDialog {
             }
 
             StatusCheckBox {
-                Layout.topMargin: -Style.current.halfPadding
+                Layout.topMargin: -Theme.halfPadding
                 Layout.fillWidth: true
 
                 checked: d.ackCheck
-                font.pixelSize: Style.current.primaryTextFontSize
+                font.pixelSize: Theme.primaryTextFontSize
                 text: qsTr("I acknowledge that I must keep this device online and running Status as much of the time as possible for the %1 Community to operate effectively").arg(root.communityName)
 
                 onCheckStateChanged: d.ackCheck = checked

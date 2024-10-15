@@ -93,7 +93,7 @@ RightTabBaseView {
 
             ImportKeypairInfo {
                 Layout.fillWidth: true
-                Layout.topMargin: Style.current.bigPadding
+                Layout.topMargin: Theme.bigPadding
                 Layout.preferredHeight: childrenRect.height
                 visible: root.store.walletSectionInst.hasPairedDevices && root.store.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
 
@@ -108,7 +108,7 @@ RightTabBaseView {
                     id: walletTabBar
                     objectName: "rightSideWalletTabBar"
                     Layout.fillWidth: true
-                    Layout.topMargin: Style.current.padding
+                    Layout.topMargin: Theme.padding
 
                     StatusTabButton {
                         objectName: "assetsTabButton"

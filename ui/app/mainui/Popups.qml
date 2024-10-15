@@ -1217,7 +1217,7 @@ QtObject {
                 showCancelButton: true
                 headerSettings.title: qsTr("Hide %1").arg(collectibleName)
                 headerSettings.asset.name: collectibleImage
-                headerSettings.asset.bgRadius: Style.current.radius
+                headerSettings.asset.bgRadius: Theme.radius
                 confirmationText: qsTr("Are you sure you want to hide %1? You will no longer see or be able to interact with this collectible anywhere inside Status.").arg(collectibleName)
                 onCancelButtonClicked: close()
                 onConfirmButtonClicked: {

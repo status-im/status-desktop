@@ -1,6 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
@@ -12,7 +14,7 @@ Item {
     property string packName: "Status Cat"
     property string packAuthor: "cryptoworld1373"
     property int packNameFontSize: 15
-    property int spacing: Style.current.padding
+    property int spacing: Theme.padding
 
     height: childrenRect.height
     width: parent.width
@@ -31,24 +33,24 @@ Item {
         StyledText {
             id: txtPackName
             text: packName
-            font.family: Style.current.baseFont.name
+            font.family: Theme.baseFont.name
             font.weight: Font.Bold
             font.pixelSize: packNameFontSize
         }
         StyledText {
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
             text: packAuthor
-            font.family: Style.current.baseFont.name
+            font.family: Theme.baseFont.name
             font.pixelSize: 15
         }
     }
 
     Separator {
         anchors.top: imgThumb.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.left: parent.left
-        anchors.leftMargin: -Style.current.padding
+        anchors.leftMargin: -Theme.padding
         anchors.right: parent.right
-        anchors.rightMargin: -Style.current.padding
+        anchors.rightMargin: -Theme.padding
     }
 }

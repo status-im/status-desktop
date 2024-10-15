@@ -162,11 +162,11 @@ Control {
                 Layout.fillWidth: true
                 Layout.fillHeight: false
 
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
 
                 StatusBaseText {
                     color: Theme.palette.baseColor1
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     text: qsTr("Sort by:")
                 }
 

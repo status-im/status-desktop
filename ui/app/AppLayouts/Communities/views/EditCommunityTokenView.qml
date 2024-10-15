@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -100,7 +100,7 @@ StatusScrollView {
         id: mainLayout
 
         width: root.viewWidth
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         StatusBaseText {
             elide: Text.ElideRight
@@ -228,12 +228,12 @@ StatusScrollView {
 
                 StatusSmartIdenticon {
                     Layout.alignment: Qt.AlignVCenter
-                    Layout.leftMargin: Style.current.padding
+                    Layout.leftMargin: Theme.padding
 
                     asset.height: 24
                     asset.width: asset.height
                     asset.isImage: true
-                    asset.name: Style.svg(token.chainIcon)
+                    asset.name: Theme.svg(token.chainIcon)
                     active: true
                     visible: active
                 }
@@ -241,7 +241,7 @@ StatusScrollView {
                 StatusBaseText {
                     Layout.alignment: Qt.AlignVCenter
                     Layout.fillWidth: true
-                    Layout.rightMargin: Style.current.padding
+                    Layout.rightMargin: Theme.padding
 
                     font.pixelSize: 13
                     font.weight: Font.Medium
@@ -259,7 +259,7 @@ StatusScrollView {
         NetworkWarningPanel {
             visible: !!root.networkThatIsNotActive
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
 
             networkThatIsNotActive: root.networkThatIsNotActive
             onEnableNetwork: root.enableNetwork()
@@ -351,7 +351,7 @@ StatusScrollView {
             id: feesBox
 
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
 
             accountErrorText: root.feeErrorText
             implicitWidth: 0
@@ -386,8 +386,8 @@ StatusScrollView {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            Layout.bottomMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
+            Layout.bottomMargin: Theme.padding
             text: qsTr("Preview")
             enabled: d.isFullyFilled
             highlighted: visualFocus
@@ -457,7 +457,7 @@ StatusScrollView {
         property alias checked: switch_.checked
 
         Layout.fillWidth: true
-        Layout.topMargin: Style.current.padding
+        Layout.topMargin: Theme.padding
         spacing: 64
 
         CustomLabelDescriptionComponent {

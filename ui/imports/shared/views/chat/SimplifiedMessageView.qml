@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as CoreUtils
@@ -29,7 +29,7 @@ RowLayout {
         Layout.preferredWidth: root.messageDetails.sender.profileImage.assetSettings.width
         Layout.preferredHeight: profileImage.height
         Layout.alignment: Qt.AlignTop
-        Layout.leftMargin: Style.current.padding
+        Layout.leftMargin: Theme.padding
         Layout.topMargin: 2
 
         StatusSmartIdenticon {

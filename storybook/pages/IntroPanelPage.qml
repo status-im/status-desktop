@@ -6,6 +6,8 @@ import Models 1.0
 import Storybook 1.0
 import utils 1.0
 
+import StatusQ.Core.Theme 0.1
+
 import AppLayouts.Communities.panels 1.0
 
 SplitView {
@@ -32,7 +34,7 @@ SplitView {
             width: 600
             anchors.centerIn: parent
 
-            image: Style.png("community/airdrops8_1")
+            image: Theme.png("community/airdrops8_1")
 
             title: radioButtonsGroup.text
             subtitle: radioButtonsGroup.text

@@ -1,6 +1,9 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
+import StatusQ.Core.Theme 0.1
+
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
@@ -19,7 +22,7 @@ Item {
         objectName: "emptyChatPanelImage"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        source: Style.png("chat/chat@2x")
+        source: Theme.png("chat/chat@2x")
     }
 
     Item {
@@ -33,7 +36,7 @@ Item {
             id: shareKeyLink
             text: qsTr("Share your chat key")
             font.pixelSize: 15
-            color: Style.current.blue
+            color: Theme.palette.primaryColor1
 
             MouseArea {
                 anchors.fill: parent
@@ -53,7 +56,7 @@ Item {
             id: orText
             text: qsTr("or")
             font.pixelSize: 15
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
             anchors.left: shareKeyLink.right
             anchors.leftMargin: 2
             anchors.bottom: shareKeyLink.bottom
@@ -63,7 +66,7 @@ Item {
             id: inviteLink
             text: qsTr("invite")
             font.pixelSize: 15
-            color: Style.current.blue
+            color: Theme.palette.primaryColor1
             anchors.left: orText.right
             anchors.leftMargin: 2
             anchors.bottom: shareKeyLink.bottom
@@ -88,7 +91,7 @@ Item {
     StyledText {
         text: qsTr("friends to start messaging in Status")
         font.pixelSize: 15
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
         anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
         anchors.top: links.bottom
     }

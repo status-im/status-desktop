@@ -254,13 +254,13 @@ Item {
                     StatusBaseText {
                         Layout.fillWidth: true
                         text: qsTr("Token lists")
-                        color: Style.current.textColor
+                        color: Theme.palette.textColor
                     }
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
                         text: qsTr("Last updated %1 @%2").arg(LocaleUtils.formatDate(root.tokenListUpdatedAt * 1000)).arg(LocaleUtils.formatTime(root.tokenListUpdatedAt, Locale.ShortFormat))
-                        font.pixelSize: Style.current.additionalTextSize
-                        color: Style.current.darkGrey
+                        font.pixelSize: Theme.additionalTextSize
+                        color: Theme.palette.darkGrey
                     }
                 }
                 SupportedTokenListsPanel {

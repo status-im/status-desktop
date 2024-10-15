@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import shared.status 1.0
 import shared.popups 1.0
@@ -48,15 +48,15 @@ Item {
         }
 
         Separator {
-            height: Style.current.padding
+            height: Theme.padding
         }
 
         StatusSectionHeadline {
-            leftPadding: Style.current.padding
-            rightPadding: Style.current.padding
+            leftPadding: Theme.padding
+            rightPadding: Theme.padding
             text: qsTr("Layer 2")
-            topPadding: Style.current.smallPadding
-            bottomPadding: Style.current.smallPadding
+            topPadding: Theme.smallPadding
+            bottomPadding: Theme.smallPadding
         }
 
         Repeater {
@@ -77,15 +77,15 @@ Item {
         }
 
         Separator {
-            height: Style.current.padding
+            height: Theme.padding
         }
 
         StatusSectionHeadline {
-            leftPadding: Style.current.padding
-            rightPadding: Style.current.padding
+            leftPadding: Theme.padding
+            rightPadding: Theme.padding
             text: qsTr("Advanced")
-            topPadding: Style.current.smallPadding
-            bottomPadding: Style.current.smallPadding
+            topPadding: Theme.smallPadding
+            bottomPadding: Theme.smallPadding
         }
 
         StatusListItem {

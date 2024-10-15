@@ -1,23 +1,24 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components.private 0.1
 
 Rectangle {
     id: root
     implicitHeight: (root.contentType === Constants.messageContentType.imageType)
-                    ? replyToUsername.height + imageThumbnail.height + Style.current.padding
+                    ? replyToUsername.height + imageThumbnail.height + Theme.padding
                     : (root.contentType === Constants.messageContentType.stickerType)
-                      ? replyToUsername.height + stickerThumbnail.height + Style.current.padding
+                      ? replyToUsername.height + stickerThumbnail.height + Theme.padding
                       : 50
 
-    color: Style.current.replyBackground
+    color: Theme.palette.baseColor3
     radius: 16
     clip: true
 
@@ -38,17 +39,17 @@ Rectangle {
         anchors.right: parent.right
         height: parent.height / 2
         width: 32
-        radius: Style.current.radius
+        radius: Theme.radius
     }
 
     StyledText {
         id: replyToUsername
         text: "↪ " + userName
-        color: Style.current.textColor
+        color: Theme.palette.textColor
         anchors.top: parent.top
-        anchors.topMargin: Style.current.halfPadding
+        anchors.topMargin: Theme.halfPadding
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.smallPadding
+        anchors.leftMargin: Theme.smallPadding
         font.pixelSize: 13
         font.weight: Font.Medium
     }
@@ -58,10 +59,10 @@ Rectangle {
         anchors.top: replyToUsername.bottom
         anchors.topMargin: -3
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.bottom: parent.bottom
         clip: true
-        color: Style.current.transparent
+        color: Theme.palette.transparent
         visible: (root.contentType !== Constants.messageContentType.imageType) && (root.contentType !== Constants.messageContentType.stickerType)
 
         StyledText {
@@ -72,7 +73,7 @@ Rectangle {
             font.pixelSize: 13
             font.weight: Font.Normal
             textFormat: Text.RichText
-            color: Style.current.textColor
+            color: Theme.palette.textColor
         }
     }
 
@@ -96,7 +97,7 @@ Rectangle {
         imageWidth: 64
         imageHeight: 64
         stickerData: root.stickerData
-        color: Style.current.transparent
+        color: Theme.palette.transparent
         contentType: root.contentType
     }
 
@@ -112,8 +113,8 @@ Rectangle {
         anchors.rightMargin: 4
         contentItem: StatusIcon {
             id: iconImg
-            source: Style.svg("close")
-            color: Style.current.textColor
+            source: Theme.svg("close")
+            color: Theme.palette.textColor
             sourceSize: Qt.size(width, height)
             width: closeBtn.width
             height: closeBtn.height

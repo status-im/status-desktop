@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQml 2.15
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
 
 import StatusQ.Components 0.1
@@ -245,7 +245,7 @@ Item {
         ChatAnchorButtonsPanel {
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
+            anchors.rightMargin: Theme.padding
 
             mentionsCount: d.chatDetails ? d.chatDetails.notificationCount : 0
             recentMessagesButtonVisible: {

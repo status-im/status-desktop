@@ -1,8 +1,9 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
@@ -26,9 +27,9 @@ Popup {
     closePolicy: Popup.NoAutoClose
 
     background: Rectangle {
-        radius: Style.current.radius
-        color: Style.current.background
-        border.color: Style.current.border
+        radius: Theme.radius
+        color: Theme.palette.background
+        border.color: Theme.palette.border
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 3
@@ -44,7 +45,7 @@ Popup {
         id: gifImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        source: Style.svg(`gifs-${Style.current.name}`)
+        source: Theme.svg(`gifs-${Theme.palette.name}`)
     }
 
     StatusBaseText {
@@ -54,7 +55,7 @@ Popup {
         anchors.topMargin: 8
         text: qsTr("Enable Tenor GIFs?")
         font.weight: Font.Medium
-        font.pixelSize: Style.current.primaryTextFontSize
+        font.pixelSize: Theme.primaryTextFontSize
     }
 
     StatusBaseText {
@@ -68,7 +69,7 @@ Popup {
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         font.pixelSize: 13
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
     }
 
     StatusButton {

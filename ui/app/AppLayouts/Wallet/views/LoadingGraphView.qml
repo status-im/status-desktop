@@ -1,8 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
-import QtQuick.Controls 2.14
-import QtQuick.Window 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -27,7 +25,7 @@ Loader {
 
         Image {
             id: mask
-            source: Style.svg("mask/dummyLineGraph")
+            source: Theme.svg("mask/dummyLineGraph")
             sourceSize: Qt.size(parent.width, parent.height)
             smooth: true
             visible: false

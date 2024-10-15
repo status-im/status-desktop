@@ -2,8 +2,9 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtGraphicalEffects 1.15
 
-import shared.panels 1.0
+import StatusQ.Core.Theme 0.1
 
+import shared.panels 1.0
 import utils 1.0
 
 Item {
@@ -128,8 +129,8 @@ Item {
         sourceComponent: Rectangle {
             anchors.fill: parent
             border.width: 1
-            border.color: Style.current.border
-            radius: Style.current.radius
+            border.color: Theme.palette.border
+            radius: Theme.radius
 
             StyledText {
                 anchors.centerIn: parent
@@ -137,8 +138,8 @@ Item {
                         qsTr("Error loading the image") :
                         qsTr("Loading image...")
                 color: imageMessage.status === Image.Error?
-                        Style.current.red :
-                        Style.current.textColor
+                        Theme.palette.dangerColor1 :
+                        Theme.palette.textColor
                 font.pixelSize: 15
             }
         }

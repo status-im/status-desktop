@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -96,7 +96,7 @@ StatusListItem {
             width: visible ? 32 : 0
             height: visible ? 32 : 0
             icon.name: "close-circle"
-            icon.color: Style.current.danger
+            icon.color: Theme.palette.dangerColor1
             onClicked: root.contactRequestRejected(root.publicKey)
         },
         StatusFlatRoundButton {
@@ -105,7 +105,7 @@ StatusListItem {
             width: visible ? 32 : 0
             height: visible ? 32 : 0
             icon.name: "checkmark-circle"
-            icon.color: Style.current.success
+            icon.color: Theme.palette.successColor1
             onClicked: root.contactRequestAccepted(root.publicKey)
         },
         StatusFlatRoundButton {
@@ -114,7 +114,7 @@ StatusListItem {
             width: visible ? 32 : 0
             height: visible ? 32 : 0
             icon.name: "cancel"
-            icon.color: Style.current.danger
+            icon.color: Theme.palette.dangerColor1
             onClicked: root.rejectionRemoved(root.publicKey)
         },
         StatusBaseText {

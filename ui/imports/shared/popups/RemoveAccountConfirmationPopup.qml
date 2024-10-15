@@ -29,7 +29,7 @@ StatusDialog {
 
     width: 521
     focus: visible
-    padding: Style.current.padding
+    padding: Theme.padding
 
     QtObject {
         id: d
@@ -55,14 +55,14 @@ StatusDialog {
     }
 
     contentItem: ColumnLayout {
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
 
         StatusBaseText {
             objectName: "RemoveAccountPopup-Notification"
             Layout.preferredWidth: parent.width
             wrapMode: Text.WordWrap
             textFormat: Text.RichText
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: d.lineHeight
             text: {
                 switch(root.accountType) {
@@ -76,10 +76,10 @@ StatusDialog {
 
         StatusBaseText {
             Layout.preferredWidth: parent.width
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             visible: root.accountType === Constants.generatedWalletType || root.accountType === Constants.seedWalletType
             text: qsTr("Derivation path for %1").arg(root.accountName)
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: d.lineHeight
         }
 
@@ -101,10 +101,10 @@ StatusDialog {
             objectName: "RemoveAccountPopup-HavePenPaper"
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: d.checkboxHeight
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             visible: root.accountType !== Constants.watchWalletType
-            spacing: Style.current.padding
-            font.pixelSize: Style.current.primaryTextFontSize
+            spacing: Theme.padding
+            font.pixelSize: Theme.primaryTextFontSize
             text: {
                 if (root.accountType === Constants.keyWalletType) {
                     return qsTr("I have a copy of the private key")
@@ -115,7 +115,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusFlatButton {
                 objectName: "RemoveAccountPopup-CancelButton"

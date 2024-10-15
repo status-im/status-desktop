@@ -337,7 +337,7 @@ StatusModal {
             topPadding: 24 // (16 + 8 for Name, until we add it to the StatusInput component)
             bottomPadding: 28
 
-            spacing: Style.current.xlPadding
+            spacing: Theme.xlPadding
 
             Loader {
                 id: limitPopup
@@ -345,7 +345,7 @@ StatusModal {
                 asynchronous: true
 
                 sourceComponent: StatusDialog {
-                    width: root.width - 2*Style.current.padding
+                    width: root.width - 2*Theme.padding
 
                     title: Constants.walletConstants.maxNumberOfSavedAddressesTitle
 
@@ -514,7 +514,7 @@ StatusModal {
                 width: scrollView.availableWidth
                 visible: d.cardsModel.count > 0
 
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
 
                 Repeater {
                     model: d.cardsModel

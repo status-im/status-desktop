@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.panels 1.0
@@ -24,18 +24,18 @@ Item {
     property var getNetworkName: function () {}
 
     width: parent.width
-    height: visible ? advancedGasSelector.height + Style.current.halfPadding : 0
+    height: visible ? advancedGasSelector.height + Theme.halfPadding : 0
 
     Column {
         id: advancedGasSelector
         width: parent.width
         anchors.top: parent.top
-        anchors.topMargin: Style.current.halfPadding
+        anchors.topMargin: Theme.halfPadding
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.rightMargin: 10
 
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
 
         // Normal transaction
         Repeater {
@@ -72,7 +72,7 @@ Item {
 
                 property double totalGasAmountFiat: root.getFiatValue(totalGasAmountEth, Constants.ethToken) + root.getFiatValue(totalGasAmountL1Eth, Constants.ethToken)
 
-                statusListItemSubTitle.width: listItem.width/2 - Style.current.smallPadding
+                statusListItemSubTitle.width: listItem.width/2 - Theme.smallPadding
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 statusListItemSubTitle.wrapMode: Text.NoWrap
                 components: [
@@ -102,7 +102,7 @@ Item {
                 property string approvalGasFeesSymbol: Constants.ethToken
                 property double approvalGasFeesFiat: root.getFiatValue(approvalGasFees, approvalGasFeesSymbol)
                 subTitle: root.formatCurrencyAmount(approvalGasFees, approvalGasFeesSymbol)
-                statusListItemSubTitle.width: listItem1.width/2 - Style.current.smallPadding
+                statusListItemSubTitle.width: listItem1.width/2 - Theme.smallPadding
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 statusListItemSubTitle.wrapMode: Text.NoWrap
                 visible: modelData.approvalRequired

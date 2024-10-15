@@ -47,7 +47,7 @@ Item {
 
         // account + balance
         RowLayout {
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             StatusBaseText {
                 objectName: "walletHeaderTitle"
                 Layout.alignment: Qt.AlignVCenter

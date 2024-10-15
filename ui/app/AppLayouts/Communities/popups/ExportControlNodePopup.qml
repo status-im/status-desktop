@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQml.Models 2.14
+import QtQml.Models 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -78,8 +78,8 @@ StatusDialog {
         Loader {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.leftMargin: Style.current.bigPadding
-            Layout.rightMargin: Style.current.bigPadding
+            Layout.leftMargin: Theme.bigPadding
+            Layout.rightMargin: Theme.bigPadding
             sourceComponent: d.hasSyncedDesktopDevices ? devicesInstructions : noDevicesInstructions
         }
     }
@@ -97,7 +97,7 @@ StatusDialog {
         id: devicesInstructions
 
         ColumnLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             Rectangle {
                 Layout.fillWidth: true
@@ -114,7 +114,7 @@ StatusDialog {
                     anchors.topMargin: 28
                     anchors.bottomMargin: 28
                     color: Theme.palette.indirectColor4
-                    radius: Style.current.radius
+                    radius: Theme.radius
                     clip: true
 
                     StatusListView {
@@ -135,13 +135,13 @@ StatusDialog {
                             width: ListView.view.width
                             implicitHeight: 64
                             anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
-                            horizontalPadding: Style.current.padding
+                            horizontalPadding: Theme.padding
                             verticalPadding: 12
                             text: model.name
                             enabled: model.enabled && !model.isMobile
                             background: null
                             contentItem: RowLayout {
-                                spacing: Style.current.padding
+                                spacing: Theme.padding
                                 StatusRoundIcon {
                                     Layout.alignment: Qt.AlignLeading
                                     asset.name: SQUtils.Utils.deviceIcon(model.deviceType)
@@ -199,7 +199,7 @@ StatusDialog {
     Component {
         id: noDevicesInstructions
         ColumnLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             StatusSwitchTabBar {
                 id: switchBar
@@ -280,7 +280,7 @@ StatusDialog {
     component Paragraph: StatusBaseText {
         Layout.fillWidth: true
         Layout.minimumHeight: 40
-        font.pixelSize: Style.current.primaryTextFontSize
+        font.pixelSize: Theme.primaryTextFontSize
         lineHeightMode: Text.FixedHeight
         lineHeight: 22
         wrapMode: Text.Wrap

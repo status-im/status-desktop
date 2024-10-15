@@ -1,9 +1,10 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtQml.Models 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
@@ -11,7 +12,6 @@ import shared.popups 1.0
 import shared.panels 1.0
 
 import "../../Chat/popups"
-import "."
 
 import AppLayouts.Profile.stores 1.0
 
@@ -43,12 +43,12 @@ Item {
         id: title
         height: visible ? contentHeight : 0
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         visible: contactsList.count > 0 && root.title !== ""
         text: root.title
         font.weight: Font.Medium
         font.pixelSize: 15
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
     }
 
     StatusListView {

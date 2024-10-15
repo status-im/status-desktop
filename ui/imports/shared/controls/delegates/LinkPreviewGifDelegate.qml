@@ -6,6 +6,7 @@ import shared.controls.chat 1.0
 import shared.status 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 CalloutCard {
     id: root
@@ -56,7 +57,7 @@ CalloutCard {
                 Rectangle {
                     anchors.fill: parent
                     color: "black"
-                    radius: Style.current.radius
+                    radius: Theme.radius
                     opacity: .4
                 }
                 StatusBaseText {

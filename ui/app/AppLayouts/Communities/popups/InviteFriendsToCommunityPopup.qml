@@ -1,6 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.4
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
@@ -86,7 +87,7 @@ StatusStackModal {
         text: root.validationError || root.successMessage
         visible: root.validationError !== "" || root.successMessage !== ""
         font.pixelSize: 13
-        color: !!root.validationError ? Style.current.danger : Style.current.success
+        color: !!root.validationError ? Theme.palette.dangerColor1 : Theme.palette.successColor1
         horizontalAlignment: Text.AlignHCenter
         height: visible ? contentHeight : 0
     }

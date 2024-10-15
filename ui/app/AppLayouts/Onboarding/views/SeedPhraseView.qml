@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -28,8 +28,8 @@ Item {
 
         property var seedPhraseModel: []
         readonly property int numOfColumns: 4
-        readonly property int rowSpacing: Style.current.bigPadding
-        readonly property int columnSpacing: Style.current.bigPadding
+        readonly property int rowSpacing: Theme.bigPadding
+        readonly property int columnSpacing: Theme.bigPadding
     }
 
     Keys.onPressed: {
@@ -42,7 +42,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.onboarding.loginHeight
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
 
         StatusBaseText {
             id: title
@@ -92,7 +92,7 @@ Item {
                         anchors.left: wordNumber.right
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: Style.current.xlPadding
+                        anchors.leftMargin: Theme.xlPadding
                         horizontalAlignment: Qt.AlignLeft
                         font.pixelSize: Constants.keycard.general.seedPhraseCellFontSize
                         color: Theme.palette.directColor1

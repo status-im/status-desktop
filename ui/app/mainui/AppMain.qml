@@ -856,9 +856,9 @@ Item {
                     switch(appMain.profileStore.currentUserStatus){
                         case Constants.currentUserStatus.automatic:
                         case Constants.currentUserStatus.alwaysOnline:
-                            return Style.current.green;
+                            return Theme.palette.successColor1
                         default:
-                            return Style.current.midGrey;
+                            return Theme.palette.baseColor1
                     }
                 }
 
@@ -1599,7 +1599,7 @@ Item {
                 // TODO get screen size // Taken from old code top bar height was fixed there to 56
                 readonly property int _buttonSize: 56
 
-                x: parent.width - width - Style.current.smallPadding
+                x: parent.width - width - Theme.smallPadding
                 y: parent.y + _buttonSize
                 height: appView.height - _buttonSize * 2
                 store: ChatStores.RootStore {

@@ -1,10 +1,9 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import utils 1.0
 
 import StatusQ 0.1
 import StatusQ.Models 0.1
-import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -17,7 +16,6 @@ QtObject {
     property var collectibles: _jointCollectiblesBySymbolModel
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
-    property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
 
     readonly property bool areTestNetworksEnabled: networksModuleInst.areTestNetworksEnabled
     readonly property bool isGoerliEnabled: networksModuleInst.isGoerliEnabled

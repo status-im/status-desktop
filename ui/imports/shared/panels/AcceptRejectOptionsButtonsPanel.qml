@@ -1,7 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
@@ -11,7 +12,7 @@ import shared.controls.chat.menuItems 1.0
 Row {
     id: root
     height: declineBtn.height
-    spacing: Style.current.halfPadding
+    spacing: Theme.halfPadding
 
     property alias menuButton: menuButton
 
@@ -28,8 +29,8 @@ Row {
         height: 32
         anchors.verticalCenter: parent.verticalCenter
         icon.name: "close-circle"
-        icon.color: Style.current.danger
-        backgroundHoverColor: Utils.setColorAlpha(Style.current.danger, 0.1)
+        icon.color: Theme.palette.dangerColor1
+        backgroundHoverColor: Utils.setColorAlpha(Theme.palette.dangerColor1, 0.1)
         onClicked: root.declineClicked()
     }
 
@@ -40,8 +41,8 @@ Row {
         height: 32
         anchors.verticalCenter: parent.verticalCenter
         icon.name: "checkmark-circle"
-        icon.color: Style.current.success
-        backgroundHoverColor: Utils.setColorAlpha(Style.current.success, 0.1)
+        icon.color: Theme.palette.successColor1
+        backgroundHoverColor: Utils.setColorAlpha(Theme.palette.successColor1, 0.1)
         onClicked: root.acceptClicked()
     }
 

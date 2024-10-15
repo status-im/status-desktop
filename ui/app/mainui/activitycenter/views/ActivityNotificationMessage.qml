@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as CoreUtils
@@ -15,7 +15,7 @@ ActivityNotificationBase {
     readonly property bool isOutgoingMessage: notification && notification.message && notification.message.amISender || false
     readonly property string contactId: notification ? isOutgoingMessage ? notification.chatId : notification.author : ""
     readonly property string contactName: contactDetails ? ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
-                                                                      contactDetails.displayName, contactDetails.alias) : ""
+                                                                                    contactDetails.displayName, contactDetails.alias) : ""
 
     property var contactDetails: null
     property int maximumLineCount: 2
@@ -64,15 +64,6 @@ ActivityNotificationBase {
         target: root.store.contactsStore.myContactsModel
 
         function onItemChanged(pubKey) {
-            if (pubKey === root.contactId)
-                root.updateContactDetails()
-        }
-    }
-
-    Connections {
-        target: Global
-
-        function onContactRenamed(pubKey) {
             if (pubKey === root.contactId)
                 root.updateContactDetails()
         }

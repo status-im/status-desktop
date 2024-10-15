@@ -38,9 +38,9 @@ Item {
     RowLayout {
         id: row
         anchors.fill: parent
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: Style.current.padding
-        spacing: Style.current.padding
+        anchors.leftMargin: Theme.padding
+        anchors.rightMargin: Theme.padding
+        spacing: Theme.padding
 
         StatusRollArea {
             Layout.fillWidth: true
@@ -111,7 +111,7 @@ Item {
         id: errorText
         visible: !!text
         anchors.top: parent.top
-        anchors.topMargin: Style.current.smallPadding
+        anchors.topMargin: Theme.smallPadding
         color: Theme.palette.dangerColor1
     }
 }

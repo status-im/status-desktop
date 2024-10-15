@@ -78,20 +78,20 @@ StatusScrollView {
     ColumnLayout {
         id: column
         width: root.availableWidth
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         StatusInput {
             id: tagsFilter
             label: qsTr("Select tags that will fit your Community")
-            labelPadding: Style.current.bigPadding
+            labelPadding: Theme.bigPadding
             input.asset.name: "search"
             placeholderText: qsTr("Search tags")
             Layout.fillWidth: true
         }
 
         ColumnLayout {
-            Layout.topMargin: Style.current.padding
-            Layout.bottomMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
+            Layout.bottomMargin: Theme.padding
 
             StatusCommunityTags {
                 filterString: tagsFilter.text
@@ -130,12 +130,12 @@ StatusScrollView {
                 item.selected = false;
             }
             Layout.fillWidth: true
-            Layout.bottomMargin: Style.current.padding
+            Layout.bottomMargin: Theme.padding
         }
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.bottomMargin: Style.current.padding
+            Layout.bottomMargin: Theme.padding
             text: qsTr("No tags selected yet")
             color: Theme.palette.baseColor1
             visible: d.countSelectedTags === 0

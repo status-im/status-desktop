@@ -392,7 +392,7 @@ SplitView {
     StatusMenu {
         id: toolTip
         width: 243 //By design
-        topPadding: Style.current.padding
+        topPadding: Theme.padding
         bottomPadding: topPadding
         leftPadding: topPadding
         rightPadding: topPadding

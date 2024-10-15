@@ -1,14 +1,15 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import utils 1.0
 
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 StyledTextEdit {
     id: root
 
     property bool loading: false
-    property color customColor: Style.current.textColor
+    property color customColor: Theme.palette.textColor
 
     color: loading ? "transparent" : customColor
 

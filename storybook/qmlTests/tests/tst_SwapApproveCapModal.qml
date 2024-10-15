@@ -6,6 +6,7 @@ import QtQml 2.15
 import Models 1.0
 
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.popups.swap 1.0
@@ -35,7 +36,7 @@ Item {
 
             networkShortName: Constants.networkShortChainNames.mainnet
             networkName: "Mainnet"
-            networkIconPath: Style.svg("network/Network=Ethereum")
+            networkIconPath: Theme.svg("network/Network=Ethereum")
             networkBlockExplorerUrl: "https://etherscan.io/"
 
             fiatFees: "1.54 USD"
@@ -159,7 +160,7 @@ Item {
             compare(smartContractBox.caption, qsTr("Via smart contract"))
             compare(smartContractBox.primaryText, controlUnderTest.serviceProviderName)
             compare(smartContractBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.serviceProviderContractAddress))
-            compare(smartContractBox.icon, Style.png("swap/paraswap"))
+            compare(smartContractBox.icon, Theme.png("swap/paraswap"))
         }
 
         function test_networkInfo() {

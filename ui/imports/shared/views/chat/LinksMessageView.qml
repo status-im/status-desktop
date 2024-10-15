@@ -103,17 +103,17 @@ Flow {
         Rectangle {
             id: enableLinkRoot
             implicitWidth: 300
-            implicitHeight: childrenRect.height + Style.current.smallPadding
+            implicitHeight: childrenRect.height + Theme.smallPadding
             radius: 16
             border.width: 1
-            border.color: Style.current.border
-            color: Style.current.background
+            border.color: Theme.palette.border
+            color: Theme.palette.background
 
             StatusFlatRoundButton {
                 anchors.top: parent.top
-                anchors.topMargin: Style.current.smallPadding
+                anchors.topMargin: Theme.smallPadding
                 anchors.right: parent.right
-                anchors.rightMargin: Style.current.smallPadding
+                anchors.rightMargin: Theme.smallPadding
                 icon.width: 20
                 icon.height: 20
                 icon.name: "close-circle"
@@ -121,12 +121,12 @@ Flow {
             }
             Image {
                 id: unfurlingImage
-                source: Style.png("unfurling-image")
+                source: Theme.png("unfurling-image")
                 width: 132
                 height: 94
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                anchors.topMargin: Style.current.smallPadding
+                anchors.topMargin: Theme.smallPadding
             }
             StatusBaseText {
                 id: enableText
@@ -135,7 +135,7 @@ Flow {
                 width: parent.width
                 wrapMode: Text.WordWrap
                 anchors.top: unfurlingImage.bottom
-                anchors.topMargin: Style.current.halfPadding
+                anchors.topMargin: Theme.halfPadding
                 color: Theme.palette.directColor1
             }
             StatusBaseText {
@@ -151,7 +151,7 @@ Flow {
             Separator {
                 id: sep1
                 anchors.top: infoText.bottom
-                anchors.topMargin: Style.current.smallPadding
+                anchors.topMargin: Theme.smallPadding
             }
             StatusFlatButton {
                 id: enableBtn
@@ -179,13 +179,13 @@ Flow {
                 StatusFlatButton {
                     id: dontAskBtn
                     width: parent.width
-                    height: (parent.height+Style.current.padding)
+                    height: (parent.height+Theme.padding)
                     anchors.top: parent.top
-                    anchors.topMargin: -Style.current.padding
+                    anchors.topMargin: -Theme.padding
                     contentItem: Item {
                         StatusBaseText {
                             anchors.centerIn: parent
-                            anchors.verticalCenterOffset: Style.current.halfPadding
+                            anchors.verticalCenterOffset: Theme.halfPadding
                             font: dontAskBtn.font
                             color: dontAskBtn.textColor
                             text: qsTr("Don't ask me again")
@@ -193,7 +193,7 @@ Flow {
                     }
                     onClicked: root.setNeverAskAboutUnfurlingAgain(true)
                     Component.onCompleted: {
-                        background.radius = Style.current.padding;
+                        background.radius = Theme.padding
                     }
                 }
             }

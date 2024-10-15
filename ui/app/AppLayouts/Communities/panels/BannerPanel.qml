@@ -19,9 +19,9 @@ Rectangle {
 
     implicitWidth: 272
     implicitHeight: 168
-    border.color: Style.current.border
+    border.color: Theme.palette.border
     radius: 16
-    color: Style.current.transparent
+    color: Theme.palette.transparent
 
     signal buttonClicked()
 
@@ -39,7 +39,7 @@ Rectangle {
     Rectangle {
         width: 70
         height: 4
-        color: Style.current.background
+        color: Theme.palette.background
         anchors.top: parent.top
         anchors.topMargin: -2
         anchors.horizontalCenter: parent.horizontalCenter
@@ -60,9 +60,9 @@ Rectangle {
         color: Theme.palette.directColor1
         wrapMode: Text.WordWrap
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.xlPadding
+        anchors.rightMargin: Theme.xlPadding
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.xlPadding
+        anchors.leftMargin: Theme.xlPadding
     }
 
     StatusQControls.StatusButton {

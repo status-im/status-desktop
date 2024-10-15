@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -56,21 +56,21 @@ Item {
     RowLayout {
         id: mainLayout
         anchors.fill: parent
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignVCenter
-            Layout.leftMargin: Style.current.halfPadding
+            Layout.leftMargin: Theme.halfPadding
             color: Theme.palette.baseColor2
-            radius: Style.current.radius
+            radius: Theme.radius
             RowLayout {
                 anchors.fill: parent
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
                 StatusBaseText {
                     id: label
-                    Layout.leftMargin: Style.current.padding
+                    Layout.leftMargin: Theme.padding
                     Layout.alignment: Qt.AlignVCenter
                     visible: text !== ""
                     font.pixelSize: 15
@@ -105,7 +105,7 @@ Item {
                                 Layout.preferredHeight: 30
                                 implicitWidth: contentWidth
                                 orientation: ListView.Horizontal
-                                spacing: Style.current.halfPadding
+                                spacing: Theme.halfPadding
                                 interactive: false
                             }
 
@@ -124,8 +124,8 @@ Item {
                                 onCursorPositionChanged: {
                                     if (scrollView.contentX > cursorRectangle.x)
                                         scrollView.contentX = cursorRectangle.x;
-                                    if (scrollView.contentX < ((cursorRectangle.x+Style.current.smallPadding)-scrollView.width) && ((cursorRectangle.x+Style.current.smallPadding) > scrollView.width))
-                                        scrollView.contentX = (cursorRectangle.x-scrollView.width+Style.current.smallPadding);
+                                    if (scrollView.contentX < ((cursorRectangle.x+Theme.smallPadding)-scrollView.width) && ((cursorRectangle.x+Theme.smallPadding) > scrollView.width))
+                                        scrollView.contentX = (cursorRectangle.x-scrollView.width+Theme.smallPadding);
                                 }
 
                                 cursorDelegate: StatusCursorDelegate {
@@ -191,7 +191,7 @@ Item {
                 StatusBaseText {
                     id: warningLabel
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                    Layout.rightMargin: Style.current.padding
+                    Layout.rightMargin: Theme.padding
                     visible: text !== ""
                     font.pixelSize: 10
                     color: Theme.palette.dangerColor1
@@ -231,9 +231,9 @@ Item {
 
         parent: scrollView
         x: Math.min(parent.width, parent.contentWidth)
-        y: parent.height + Style.current.halfPadding
+        y: parent.height + Theme.halfPadding
         visible: edit.text !== "" && !forceHide
-        padding: Style.current.halfPadding
+        padding: Theme.halfPadding
         background: StatusDialogBackground {
             id: bg
             layer.enabled: true

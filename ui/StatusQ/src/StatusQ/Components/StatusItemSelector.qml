@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -23,7 +23,7 @@ import StatusQ.Core.Utils 0.1
    Example of how to use it:
    \qml
         StatusItemSelector {
-            icon: Style.svg("contact_verified")
+            icon: Theme.svg("contact_verified")
             title: qsTr("Who holds")
             defaultItemText: qsTr("Example: 10 SNT")
             andOperatorText: qsTr("and")

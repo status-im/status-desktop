@@ -1,6 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.0
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -124,11 +123,11 @@ StatusScrollView {
         id: mainLayout
 
         width: root.viewWidth
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         RowLayout {
             visible: !root.preview && !root.deploymentCompleted
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             StatusDotsLoadingIndicator { visible: (root.deployState === Constants.ContractTransactionStatus.InProgress) }
 
@@ -171,7 +170,7 @@ StatusScrollView {
             StatusBaseText {
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
-                font.pixelSize: Style.current.primaryTextFontSize
+                font.pixelSize: Theme.primaryTextFontSize
                 color: Theme.palette.baseColor1
                 text: qsTr("Review token details before minting it as they can't be edited later")
             }
@@ -181,7 +180,7 @@ StatusScrollView {
             id: feesBox
 
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
 
             implicitWidth: 0
             visible: root.preview
@@ -215,7 +214,7 @@ StatusScrollView {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.halfPadding
+            Layout.topMargin: Theme.halfPadding
 
             visible: root.preview
             enabled: !root.isFeeLoading && root.feeErrorText === ""
@@ -251,7 +250,7 @@ StatusScrollView {
                                 (token.infiniteSupply || token.remainingTokens > 0)
                 multiplierIndex: root.multiplierIndex
 
-                Layout.topMargin: Style.current.padding
+                Layout.topMargin: Theme.padding
                 Layout.fillWidth: true
 
                 onViewProfileRequested: root.viewProfileRequested(contactId)
@@ -269,14 +268,14 @@ StatusScrollView {
             id: tokenHolderContact
 
             ColumnLayout {
-                Layout.topMargin: Style.current.padding
+                Layout.topMargin: Theme.padding
                 Layout.fillWidth: true
 
                 StatusBaseText {
                     Layout.fillWidth: true
 
                     wrapMode: Text.Wrap
-                    font.pixelSize: Style.current.primaryTextFontSize
+                    font.pixelSize: Theme.primaryTextFontSize
                     color: Theme.palette.baseColor1
 
                     text: qsTr("%1 token hodler").arg(root.name)
@@ -286,7 +285,7 @@ StatusScrollView {
                     id: infoBoxPanel
 
                     Layout.fillWidth: true
-                    Layout.topMargin: Style.current.padding
+                    Layout.topMargin: Theme.padding
 
                     enabled: root.deploymentCompleted && (token.infiniteSupply || token.remainingTokens > 0)
                     visible: d.joinModel.rowCount() === 0
@@ -305,7 +304,7 @@ StatusScrollView {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    anchors.bottomMargin: Style.current.bigPadding
+                    anchors.bottomMargin: Theme.bigPadding
                     displayMarginEnd: anchors.bottomMargin
 
                     model: d.joinModel

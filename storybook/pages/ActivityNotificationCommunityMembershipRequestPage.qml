@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.15
 
 import Qt.labs.settings 1.0
 
+import StatusQ.Core.Theme 0.1
+
 import mainui.activitycenter.views 1.0
 import mainui.activitycenter.stores 1.0
 
@@ -74,7 +76,7 @@ SplitView {
         function getContactDetailsAsJson(arg1, arg2) {
             return JSON.stringify({
                 displayName: "Mock user",
-                displayIcon: Style.png("tokens/AST"),
+                displayIcon: Theme.png("tokens/AST"),
                 publicKey: 123456789,
                 name: "",
                 ensVerified: false,
@@ -130,7 +132,7 @@ SplitView {
         function getCommunityDetailsAsJson(community) {
             return {
                 name : "Mock Community",
-                image : Style.png("tokens/UNI"),
+                image : Theme.png("tokens/UNI"),
                 color : "orchid"
             }
         }

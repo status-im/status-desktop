@@ -14,7 +14,7 @@ StatusBaseText {
     height: 50
 
     color: Theme.palette.baseColor1
-    padding: Style.current.padding
+    padding: Theme.padding
     bottomPadding: 0
 
     elide: Text.ElideRight

@@ -12,11 +12,11 @@ InformationTag {
 
     tagPrimaryLabel.text: qsTr("Connected. You can now go back to the dApp.")
     tagPrimaryLabel.color: Theme.palette.directColor1
-    tagPrimaryLabel.font.pixelSize: Style.current.additionalTextSize
+    tagPrimaryLabel.font.pixelSize: Theme.additionalTextSize
     backgroundColor: Theme.palette.successColor3
     bgBorderColor: Theme.palette.alphaColor(Theme.palette.successColor1, 0.4)
     asset.color: tagPrimaryLabel.color
-    verticalPadding: Style.current.halfPadding
+    verticalPadding: Theme.halfPadding
     horizontalPadding: 12
     leftComponent: successBadge
 

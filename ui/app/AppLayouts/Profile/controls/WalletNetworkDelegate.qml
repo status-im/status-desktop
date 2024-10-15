@@ -8,16 +8,15 @@ StatusListItem {
     property var network
     property bool areTestNetworksEnabled
     title: network.chainName
-    asset.name: Style.svg(network.iconUrl)
+    asset.name: Theme.svg(network.iconUrl)
     asset.isImage: true
     width: parent.width
-    leftPadding: Style.current.padding
-    rightPadding: Style.current.padding
+    leftPadding: Theme.padding
+    rightPadding: Theme.padding
     components: [
         StatusBaseText {
             objectName: "testnetLabel_" + network.chainName
             text: qsTr("Sepolia testnet active")
-            font.pixelSize: 15
             color: Theme.palette.baseColor1
             visible: areTestNetworksEnabled
         },

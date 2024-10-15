@@ -1,13 +1,15 @@
 import QtQuick 2.15
 import QtGraphicalEffects 1.15
 
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 
 OpacityMask {
     id: root
     property bool leftTail: true
-    readonly property int smallCorner: Style.current.radius / 2
-    readonly property int bigCorner: Style.current.radius * 2
+    readonly property int smallCorner: Theme.radius / 2
+    readonly property int bigCorner: Theme.radius * 2
     readonly property int fakeCornerSize: bigCorner * 2
 
     cached: true

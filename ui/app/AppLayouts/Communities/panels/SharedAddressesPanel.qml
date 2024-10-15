@@ -10,7 +10,6 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
-import StatusQ.Internal 0.1 as SQInternal
 
 import SortFilterProxyModel 0.2
 
@@ -63,7 +62,7 @@ Control {
     signal close()
 
     padding: 0
-    spacing: Style.current.padding
+    spacing: Theme.padding
 
     QtObject {
         id: d
@@ -224,7 +223,7 @@ Control {
                 text: d.lostCommunityPermission ? qsTr("Selected addresses have insufficient tokens to maintain %1 membership").arg(root.communityName) :
                                                   d.lostChannelPermissions ? qsTr("By deselecting these addresses, you will lose channel permissions") :
                                                                              ""
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
                 color: Theme.palette.indirectColor1
             }
@@ -306,9 +305,9 @@ Control {
         // divider with top rounded corners + drop shadow
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: Style.current.padding * 2
+            Layout.preferredHeight: Theme.padding * 2
             color: permissionsView.color
-            radius: Style.current.padding
+            radius: Theme.padding
             border.width: 1
             border.color: Theme.palette.baseColor3
             visible: permissionsView.hasAnyVisiblePermission
@@ -340,7 +339,7 @@ Control {
 
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.topMargin: -Style.current.padding // compensate for the half-rounded divider above
+            Layout.topMargin: -Theme.padding // compensate for the half-rounded divider above
             visible: permissionsView.hasAnyVisiblePermission
         }
     }
