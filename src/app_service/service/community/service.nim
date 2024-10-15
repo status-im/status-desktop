@@ -509,7 +509,10 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
           CommunityCategoryArgs(communityId: community.id, category: category))
 
-  proc communityTokensChanged(community: CommunityDto, prev_community: CommunityDto): bool =
+    self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED,
+      CommunityMembersArgs(communityId: community.id, members: community.members))
+
+  proc communityTokensChanged(self: Service, community: CommunityDto, prev_community: CommunityDto): bool =
     let communityTokens = community.communityTokensMetadata
     let prevCommunityTokens = prev_community.communityTokensMetadata
     # checking length is sufficient - communityTokensMetadata list can only extend
@@ -533,17 +536,6 @@ QtObject:
 
       let prevCommunity = self.communities[community.id]
 
-      # If there's settings without `id` it means the original
-      # signal didn't include actual communitySettings, hence we
-      # assign the settings we already have, otherwise we risk our
-      # settings to be overridden with wrong defaults.
-      if community.settings.id == "":
-        community.settings = prevCommunity.settings
-
-      # Save the updated community before calling events, because some events triggers look ups on the new community
-      # We will save again at the end if other properties were updated
-      self.saveUpdatedCommunity(community)
-
       try:
         let currOwner = community.findOwner()
         let prevOwner = prevCommunity.findOwner()
@@ -559,8 +551,15 @@ QtObject:
         let response = tokens_backend.registerLostOwnershipNotification(community.id)
         checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
-      if communityTokensChanged(community, prevCommunity):
+      if self.communityTokensChanged(community, prevCommunity):
         self.events.emit(SIGNAL_COMMUNITY_TOKENS_CHANGED, nil)
+
+      # If there's settings without `id` it means the original
+      # signal didn't include actual communitySettings, hence we
+      # assign the settings we already have, otherwise we risk our
+      # settings to be overridden with wrong defaults.
+      if community.settings.id == "":
+        community.settings = prevCommunity.settings
 
       var deletedCategories: seq[string] = @[]
 
@@ -568,6 +567,7 @@ QtObject:
       if(community.categories.len > prevCommunity.categories.len):
         for category in community.categories:
           if findIndexById(category.id, prevCommunity.categories) == -1:
+            self.communities[community.id].categories.add(category)
             let chats = self.getChatsInCategory(community, category.id)
 
             self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
@@ -665,12 +665,13 @@ QtObject:
       # members list was changed
       if community.members != prevCommunity.members:
         self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED,
-          CommunityMembersArgs(communityId: community.id, members: community.members))
+        CommunityMembersArgs(communityId: community.id, members: community.members))
 
       # token metadata was added
       if community.communityTokensMetadata.len > prevCommunity.communityTokensMetadata.len:
         for tokenMetadata in community.communityTokensMetadata:
           if findIndexBySymbol(tokenMetadata.symbol, prevCommunity.communityTokensMetadata) == -1:
+            self.communities[community.id].communityTokensMetadata.add(tokenMetadata)
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED,
                              CommunityTokenMetadataArgs(communityId: community.id,
                                                         tokenMetadata: tokenMetadata))
@@ -679,14 +680,16 @@ QtObject:
       if community.tokenPermissions.len > prevCommunity.tokenPermissions.len:
         for id, tokenPermission in community.tokenPermissions:
           if not prevCommunity.tokenPermissions.hasKey(id):
+            self.communities[community.id].tokenPermissions[id] = tokenPermission
 
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED,
-              CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: tokenPermission))
+            CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: tokenPermission))
       elif community.tokenPermissions.len < prevCommunity.tokenPermissions.len:
         for id, prvTokenPermission in prevCommunity.tokenPermissions:
           if not community.tokenPermissions.hasKey(id):
+            self.communities[community.id].tokenPermissions.del(id)
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
-              CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: prvTokenPermission))
+            CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: prvTokenPermission))
       else:
         for id, tokenPermission in community.tokenPermissions:
           if not prevCommunity.tokenPermissions.hasKey(id):
@@ -722,13 +725,16 @@ QtObject:
                 break
 
           if permissionUpdated:
+            self.communities[community.id].tokenPermissions[id] = tokenPermission
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED,
               CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: tokenPermission))
 
-      let wasJoined = prevCommunity.joined
+      let wasJoined = self.communities[community.id].joined
+
+      self.saveUpdatedCommunity(community)
 
       # If the community was not joined before but is now, we signal it
-      if not wasJoined and community.joined and community.isMember:
+      if(not wasJoined and community.joined and community.isMember):
         self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
 
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))

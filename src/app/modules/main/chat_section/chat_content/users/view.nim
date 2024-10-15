@@ -33,10 +33,10 @@ QtObject:
 
   proc modelChanged*(self: View) {.signal.}
 
-  proc getModel*(self: View): QVariant {.slot.} =
+  proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
 
-  QtProperty[QVariant] model:
+  QtProperty[QVariant]model:
     read = getModel
     notify = modelChanged
 
