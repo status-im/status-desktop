@@ -23,14 +23,14 @@ import SortFilterProxyModel 0.2
 
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.panels 1.0
-import AppLayouts.Profile.stores 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import "../helpers"
 import "../controls"
 import "../popups"
 import "../panels"
 import "../../Wallet"
-import "../stores"
 
 Item {
     id: root
@@ -40,9 +40,9 @@ Item {
     property var parentModule
 
     property SharedStores.RootStore sharedRootStore
-    property RootStore rootStore
-    property CreateChatPropertiesStore createChatPropertiesStore
-    property ContactsStore contactsStore
+    property ChatStores.RootStore rootStore
+    property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
+    property ProfileStores.ContactsStore contactsStore
     property var emojiPopup
     property var stickersPopup
 
@@ -101,11 +101,11 @@ Item {
             model: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.urlsModel : null
         }
 
-        readonly property UsersStore activeUsersStore: UsersStore {
+        readonly property ChatStores.UsersStore activeUsersStore: ChatStores.UsersStore {
             usersModule: !!d.activeChatContentModule ? d.activeChatContentModule.usersModule : null
         }
 
-        readonly property MessageStore activeMessagesStore: MessageStore {
+        readonly property ChatStores.MessageStore activeMessagesStore: ChatStores.MessageStore {
             messageModule: d.activeChatContentModule ? d.activeChatContentModule.messagesModule : null
             chatSectionModule: root.rootStore.chatCommunitySectionModule
         }
@@ -372,7 +372,7 @@ Item {
                     }
 
                     onKeyUpPress: {
-                        d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
+                        d.activeMessagesStore.setEditModeOnLastMessage(root.contactsStore.myPublicKey)
                     }
 
                     onLinkPreviewReloaded: (link) => d.activeChatContentModule.inputAreaModule.reloadLinkPreview(link)

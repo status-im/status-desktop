@@ -35,7 +35,7 @@ QtObject {
     // Each `ChatLayout` has its own chatCommunitySectionModule
     // (on the backend chat and community sections share the same module since they are actually the same)
     property var chatCommunitySectionModule
-    readonly property var sectionDetails: _d.sectionDetailsInstantiator.count ? _d.sectionDetailsInstantiator.objectAt(0) : null
+    readonly property var sectionDetails: d.sectionDetailsInstantiator.count ? d.sectionDetailsInstantiator.objectAt(0) : null
 
     property var communityItemsModel: chatCommunitySectionModule.model
 
@@ -148,9 +148,9 @@ QtObject {
 
     readonly property string overviewChartData: chatCommunitySectionModule.overviewChartData
 
-    readonly property bool isUserAllowedToSendMessage: _d.isUserAllowedToSendMessage
-    readonly property string chatInputPlaceHolderText: _d.chatInputPlaceHolderText
-    readonly property var oneToOneChatContact: _d.oneToOneChatContact
+    readonly property bool isUserAllowedToSendMessage: d.isUserAllowedToSendMessage
+    readonly property string chatInputPlaceHolderText: d.chatInputPlaceHolderText
+    readonly property var oneToOneChatContact: d.oneToOneChatContact
     // Since qml component doesn't follow encaptulation from the backend side, we're introducing
     // a method which will return appropriate chat content module for selected chat/channel
     function currentChatContentModule() {
@@ -288,8 +288,6 @@ QtObject {
     property var communitiesModuleInst: communitiesModule
     property var communitiesList: communitiesModuleInst.model
 
-    property var userProfileInst: userProfile
-
     property string signingPhrase: walletSection.signingPhrase
 
     property string channelEmoji: chatCommunitySectionModule && chatCommunitySectionModule.emoji ? chatCommunitySectionModule.emoji : ""
@@ -306,7 +304,7 @@ QtObject {
 
     readonly property int loginType: getLoginType()
 
-    property string name: userProfileInst.name
+    property string name: d.userProfileInst.name
 
     property StickersStore stickersStore: StickersStore {
         stickersModule: stickersModuleInst
@@ -317,7 +315,7 @@ QtObject {
     }
 
     function isCurrentUser(pubkey) {
-        return userProfileInst.pubKey === pubkey
+        return d.userProfileInst.pubKey === pubkey
     }
 
     function displayName(name, pubkey) {
@@ -325,7 +323,7 @@ QtObject {
     }
 
     function myPublicKey() {
-        return userProfileInst.pubKey
+        return d.userProfileInst.pubKey
     }
 
     function createCommunity(args = {
@@ -601,12 +599,12 @@ QtObject {
     }
 
     function getLoginType() {
-        if(!userProfileInst)
+        if(!d.userProfileInst)
             return Constants.LoginType.Password
 
-        if(userProfileInst.usingBiometricLogin)
+        if(d.userProfileInst.usingBiometricLogin)
             return Constants.LoginType.Biometrics
-        if(userProfileInst.isKeycardUser)
+        if(d.userProfileInst.isKeycardUser)
             return Constants.LoginType.Keycard
         return Constants.LoginType.Password
     }
@@ -638,7 +636,10 @@ QtObject {
     }
 
     readonly property QtObject _d: QtObject {
-        id: _d
+        id: d
+
+        readonly property var userProfileInst: userProfile
+
         readonly property var sectionDetailsInstantiator: Instantiator {
             model: SortFilterProxyModel {
                 sourceModel: mainModuleInst.sectionsModel
@@ -664,51 +665,51 @@ QtObject {
         readonly property bool amIMember: chatCommunitySectionModule ? chatCommunitySectionModule.amIMember : false
 
         property var oneToOneChatContact: undefined
-        readonly property string oneToOneChatContactName: !!_d.oneToOneChatContact ? ProfileUtils.displayName(_d.oneToOneChatContact.localNickname,
-                                                                                                    _d.oneToOneChatContact.name,
-                                                                                                    _d.oneToOneChatContact.displayName,
-                                                                                                    _d.oneToOneChatContact.alias) : ""
+        readonly property string oneToOneChatContactName: !!d.oneToOneChatContact ? ProfileUtils.displayName(d.oneToOneChatContact.localNickname,
+                                                                                                    d.oneToOneChatContact.name,
+                                                                                                    d.oneToOneChatContact.displayName,
+                                                                                                    d.oneToOneChatContact.alias) : ""
 
         //Update oneToOneChatContact when the contact is updated
         readonly property var myContactsModelConnection: Connections {
             target: root.contactsStore.myContactsModel ?? null
-            enabled: _d.activeChatType === Constants.chatType.oneToOne
+            enabled: d.activeChatType === Constants.chatType.oneToOne
 
             function onItemChanged(pubKey) {
-                if (pubKey === _d.activeChatId) {
-                    _d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
+                if (pubKey === d.activeChatId) {
+                    d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
                 }
             }
         }
 
         readonly property var receivedContactsReqModelConnection: Connections {
             target: root.contactsStore.receivedContactRequestsModel ?? null
-            enabled: _d.activeChatType === Constants.chatType.oneToOne
+            enabled: d.activeChatType === Constants.chatType.oneToOne
 
             function onItemChanged(pubKey) {
-                if (pubKey === _d.activeChatId) {
-                    _d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
+                if (pubKey === d.activeChatId) {
+                    d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
                 }
             }
         }
 
         readonly property var sentContactReqModelConnection: Connections {
             target: root.contactsStore.sentContactRequestsModel ?? null
-            enabled: _d.activeChatType === Constants.chatType.oneToOne
+            enabled: d.activeChatType === Constants.chatType.oneToOne
 
             function onItemChanged(pubKey) {
-                if (pubKey === _d.activeChatId) {
-                    _d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
+                if (pubKey === d.activeChatId) {
+                    d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
                 }
             }
         }
 
         readonly property bool isUserAllowedToSendMessage: {
-            if (_d.activeChatType === Constants.chatType.oneToOne && _d.oneToOneChatContact) {
-                return _d.oneToOneChatContact.contactRequestState === Constants.ContactRequestState.Mutual
-            } else if (_d.activeChatType === Constants.chatType.privateGroupChat) {
-                return _d.amIMember
-            } else if (_d.activeChatType === Constants.chatType.communityChat) {
+            if (d.activeChatType === Constants.chatType.oneToOne && d.oneToOneChatContact) {
+                return d.oneToOneChatContact.contactRequestState === Constants.ContactRequestState.Mutual
+            } else if (d.activeChatType === Constants.chatType.privateGroupChat) {
+                return d.amIMember
+            } else if (d.activeChatType === Constants.chatType.communityChat) {
                 return currentChatContentModule().chatDetails.canPost
             }
 
@@ -716,10 +717,10 @@ QtObject {
         }
 
         readonly property string chatInputPlaceHolderText: {
-            if(!_d.isUserAllowedToSendMessage && _d.activeChatType === Constants.chatType.privateGroupChat) {
+            if(!d.isUserAllowedToSendMessage && d.activeChatType === Constants.chatType.privateGroupChat) {
                 return qsTr("You need to be a member of this group to send messages")
-            } else if(!_d.isUserAllowedToSendMessage && _d.activeChatType === Constants.chatType.oneToOne) {
-                return qsTr("Add %1 as a contact to send a message").arg(_d.oneToOneChatContactName)
+            } else if(!d.isUserAllowedToSendMessage && d.activeChatType === Constants.chatType.oneToOne) {
+                return qsTr("Add %1 as a contact to send a message").arg(d.oneToOneChatContactName)
             }
 
             return qsTr("Message")
@@ -727,8 +728,8 @@ QtObject {
 
         //Update oneToOneChatContact when activeChat id changes
         Binding on oneToOneChatContact {
-            when: _d.activeChatId && _d.activeChatType === Constants.chatType.oneToOne
-            value: Utils.getContactDetailsAsJson(_d.activeChatId, false)
+            when: d.activeChatId && d.activeChatType === Constants.chatType.oneToOne
+            value: Utils.getContactDetailsAsJson(d.activeChatId, false)
             restoreMode: Binding.RestoreBindingOrValue
         }
     }
