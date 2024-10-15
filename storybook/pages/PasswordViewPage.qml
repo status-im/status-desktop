@@ -53,6 +53,7 @@ SplitView {
             Switch {
                 id: createNewPassword
                 text: "Create new password"
+                checked: true
             }
 
             Switch {
@@ -63,9 +64,12 @@ SplitView {
             Switch {
                 id: titleVisibleSwitch
                 text: "Title visible"
+                checked: true
             }
         }
     }
 }
 
 // category: Views
+
+// https://www.figma.com/design/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=41014-22302&node-type=frame&t=0JUvGJPEhU9e9QB9-0
