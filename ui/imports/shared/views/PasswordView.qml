@@ -1,10 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
-import shared.panels 1.0
-import shared.controls 1.0
-import shared.stores 1.0
 import utils 1.0
 
 import StatusQ.Controls 0.1
@@ -16,7 +13,8 @@ import StatusQ.Popups 0.1
 ColumnLayout {
     id: root
 
-    property bool ready: newPswInput.text.length >= Constants.minPasswordLength && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
+    readonly property bool ready: newPswInput.text.length >= Constants.minPasswordLength && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
+
     property bool createNewPsw: true
     property string title: createNewPsw ? qsTr("Create a password") : qsTr("Change your password")
     property bool titleVisible: true
@@ -86,19 +84,24 @@ ColumnLayout {
         property bool containsNumbers: false
         property bool containsSymbols: false
 
-        readonly property var validatorRegexp: /^[!-~]{0,64}$/
-        readonly property string validatorErrMessage: qsTr("Only letters, numbers, underscores and hyphens allowed")
+        readonly property var validatorRegexp: /^[!-~]+$/
+        readonly property string validatorErrMessage: qsTr("Only ASCII letters, numbers, and symbols are allowed")
+        readonly property string passTooLongErrMessage: qsTr("Maximum %n character(s)", "", Constants.maxPasswordLength)
 
         // Password strength categorization / validation
         function lowerCaseValidator(text) { return (/[a-z]/.test(text)) }
         function upperCaseValidator(text) { return (/[A-Z]/.test(text)) }
         function numbersValidator(text) { return (/\d/.test(text)) }
-        // That incudes NOT extended ASCII printable symbols less space:
+        // That includes NOT extended ASCII printable symbols less space:
         function symbolsValidator(text) { return (/[!-\/:-@[-`{-~]/.test(text)) }
 
         function validateCharacterSet(text) {
             if(!(d.validatorRegexp).test(text)) {
                 errorTxt.text = d.validatorErrMessage
+                return false
+            }
+            if(text.length > Constants.maxPasswordLength) {
+                errorTxt.text = d.passTooLongErrMessage
                 return false
             }
 
@@ -125,15 +128,15 @@ ColumnLayout {
             // 3 rules to validate:
             // * Password is in pwnd passwords database
             if(isInPwndDatabase())
-                errorTxt.text = qsTr("This password has been pwned and shouldn't be used")
+                errorTxt.text = qsTr("Password pwned, shouldn't be used")
 
             // * Common password
             else if(isCommonPassword())
-                errorTxt.text = qsTr("This password is a common word and shouldn't be used")
+                errorTxt.text = qsTr("Common password, shouldn't be used")
 
             // * Password too short
             else if(isTooShort())
-                errorTxt.text = qsTr("Password must be at least %n character(s) long", "", Constants.minPasswordLength)
+                errorTxt.text = qsTr("Minimum %n character(s)", "", Constants.minPasswordLength)
         }
 
         function isInPwndDatabase() {
@@ -262,12 +265,12 @@ ColumnLayout {
                 // Update strength indicator:
                 strengthInditactor.strength = d.convertStrength(root.passwordStrengthScoreFunction(newPswInput.text))
 
-                if(!d.validateCharacterSet(text)) return
-
                 d.containsLower = d.lowerCaseValidator(text)
                 d.containsUpper = d.upperCaseValidator(text)
                 d.containsNumbers = d.numbersValidator(text)
                 d.containsSymbols = d.symbolsValidator(text)
+
+                if(!d.validateCharacterSet(text)) return
 
                 if (text.length === confirmPswInput.text.length) {
                     root.checkPasswordMatches(false)
@@ -306,7 +309,6 @@ ColumnLayout {
 
     Rectangle {
         Layout.fillWidth: true
-        Layout.fillHeight: true
         Layout.minimumHeight: 80
         border.color: Theme.palette.baseColor2
         border.width: 1

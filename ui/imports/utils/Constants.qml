@@ -1046,6 +1046,7 @@ QtObject {
     readonly property string wrongDerivationPathError: "error parsing derivation path"
 
     readonly property int minPasswordLength: 10
+    readonly property int maxPasswordLength: 100
 
     readonly property QtObject suggestedRoutesExtraParamsProperties: QtObject {
         readonly property string packId: "packID"

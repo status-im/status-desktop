@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
@@ -42,7 +42,7 @@ StatusProgressBar {
     id: control
 
     /*!
-       \qmlproperty string StatusPasswordStrengthIndicator::strength
+       \qmlproperty int StatusPasswordStrengthIndicator::strength
        This property holds the password strength value. Possible values are:
        \list
        \li StatusPasswordStrengthIndicator.Strength.None
@@ -53,7 +53,7 @@ StatusProgressBar {
        \li StatusPasswordStrengthIndicator.Strength.Great
        \endlist
     */
-    property var strength
+    property int strength
     /*!
        \qmlproperty string StatusPasswordStrengthIndicator::labelVeryWeak
        This property holds the text shown when the strength is StatusPasswordStrengthIndicator.Strength.VeryWeak.
